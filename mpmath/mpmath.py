@@ -126,7 +126,7 @@ class mpf(tuple):
             return mpf(fpow(s, intt, mpf._prec, mpf._rounding))
 
     def sqrt(s): return mpf(fsqrt(s, mpf._prec, mpf._rounding))
-    def exp(s):  return mpf(fexp(s, mpf._prec, mpf._rounding))
+    #def exp(s):  return mpf(fexp(s, mpf._prec, mpf._rounding))
     def log(s):  return mpf(flog(s, mpf._prec, mpf._rounding))
     def sin(s):  return mpf(fsin(s, mpf._prec, mpf._rounding))
     def cos(s):  return mpf(fcos(s, mpf._prec, mpf._rounding))
