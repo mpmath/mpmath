@@ -1,15 +1,8 @@
 import sys
-
 import math
 from time import clock
-
 from mpmath import *
 from mpmath.lib import _pi_agm
-
-def fpi(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    """Compute a floating-point approximation of pi"""
-    return normalize(pi_fixed(prec+5), -prec-5, prec, rounding)
-
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns
@@ -34,7 +27,7 @@ def display_fraction(digits, skip=0, colwidth=10, columns=5):
 def calculateit(approx, func, base, n, tofile):
 
     intpart = small_numeral(int(approx), base)
-    if intpart == 0:
+    if intpart == "0":
         skip = 0
     else:
         skip = len(intpart)
