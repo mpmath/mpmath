@@ -103,6 +103,8 @@ def test_round_half_even():
     assert normalize(-0xe8, -4, 4, ROUND_HALF_EVEN)[:2] == (-7, 1)
     assert normalize(-0xe9, -4, 4, ROUND_HALF_EVEN)[:2] == (-15, 0)
 
+
+
 #----------------------------------------------------------------------------
 # Test basic arithmetic
 #
@@ -156,6 +158,20 @@ def test_integers():
             assert mpf(a) * mpf(b) == a*b
     mpf.dps = 15
 
+
+#----------------------------------------------------------------------------
+# Type comparison
+#
+
+def test_type_compare():
+    assert mpf(2) == mpc(2,0)
+    assert mpf(0) == mpc(0)
+    assert mpf(2) != mpc(2, 0.00001)
+    assert mpf(2) == 2.0
+    assert mpf(2) != 3.0
+    assert mpf(2) == 2
+    assert mpf(2) != '2.0'
+    assert mpc(2) != '2.0'
 
 
 #----------------------------------------------------------------------------

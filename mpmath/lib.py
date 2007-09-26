@@ -976,7 +976,7 @@ def fcexp(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 def fcsin(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     prec2 = prec+4
     RF = ROUND_FLOOR
-    # sin(x+yi) = sin(x)*cosh(y)+cos(x)*sinh(y)*i
+    # sin(x+y*i) = sin(x)*cosh(y)+cos(x)*sinh(y)*i
     c, s = cos_sin(re, prec2, RF)
     expb1 = fexp(im, prec2, RF)
     expb2 = fdiv(fone, expb1, prec2, RF)
@@ -987,7 +987,7 @@ def fcsin(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 def fccos(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     prec2 = prec+4
     RF = ROUND_FLOOR
-    # cos(x+yi) = cos(x)*cosh(y)-sin(x)*sinh(y)*i
+    # cos(x+y*i) = cos(x)*cosh(y)-sin(x)*sinh(y)*i
     c, s = cos_sin(re, prec2, RF)
     expb1 = fexp(im, prec2, RF)
     expb2 = fdiv(fone, expb1, prec2, RF)

@@ -1,31 +1,10 @@
 from lib import *
-
-from decimal import Context, getcontext, setcontext, Decimal
-
-
-
-class context(type):
-    _prec = 53
-    _dps = 15
-    _rounding = ROUND_HALF_EVEN
-
-    def _setprec(self, n):
-        self._prec = max(1, int(n))
-        self._dps = max(1, int(round(int(n)/LOG2_10)-1))
-
-    prec = property(lambda self: self._prec, _setprec)
-
-    def _setdps(self, n):
-        self._prec = max(1, int(round((int(n)+1)*LOG2_10)))
-        self._dps = max(1, int(n))
-
-    dps = property(lambda self: self._dps, _setdps)
-
-    extraprec = lambda self, n: self._setprec(self._prec+n)
-    extradps = lambda self, n: self._setdps(self._dps+n)
-
+from decimal import Decimal
 
 class mpnumeric(object):
+    """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
+    if x can be converted to an mpf (if it is a float, int, mpf, ...),
+    and an mpc if x is complex."""
     def __new__(cls, val):
         if isinstance(val, cls):
             return val
@@ -33,7 +12,22 @@ class mpnumeric(object):
             return mpc(val)
         return mpf(val)
 
+class context(type):
+    """Metaclass for mpf and mpc. Holds global working precision."""
+    _prec = 53
+    _dps = 15
+    _rounding = ROUND_HALF_EVEN
+    def _setprec(self, n):
+        self._prec = max(1, int(n))
+        self._dps = max(1, int(round(int(n)/LOG2_10)-1))
+    prec = property(lambda self: self._prec, _setprec)
+    def _setdps(self, n):
+        self._prec = max(1, int(round((int(n)+1)*LOG2_10)))
+        self._dps = max(1, int(n))
+    dps = property(lambda self: self._dps, _setdps)
+
 def _convert(x):
+    """Convet x to mpf data"""
     if isinstance(x, float):
         return float_from_pyfloat(x, mpf._prec, mpf._rounding)
     if isinstance(x, (int, long)):
@@ -49,9 +43,11 @@ class mpf(mpnumeric):
 
     def __new__(cls, val=fzero):
         if isinstance(val, mpf):
-            return _make_mpf(normalize(val.val[0], val.val[1], cls._prec, cls._rounding))
+            return _make_mpf(normalize(val.val[0], val.val[1], \
+                cls._prec, cls._rounding))
         elif isinstance(val, tuple):
-            return _make_mpf(normalize(val[0], val[1], cls._prec, cls._rounding))
+            return _make_mpf(normalize(val[0], val[1], cls._prec, \
+                cls._rounding))
         else:
             return _make_mpf(_convert(val))
 
@@ -76,18 +72,6 @@ class mpf(mpnumeric):
             # this would cause unreasonable inefficiency for large numbers.
             return hash(self.val)
 
-    def __eq__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return s.val == t.val
-
-    def __ne__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return s.val != t.val
-
-    def __cmp__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return fcmp(s.val, t.val)
-
     def __int__(s):
         return float_to_int(s.val)
 
@@ -96,6 +80,36 @@ class mpf(mpnumeric):
 
     def __complex__(s):
         return float(s) + 0j
+
+    def __eq__(s, t):
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) == t
+            if isinstance(t, str):
+                return False
+            try:
+                t = mpf(t)
+            except Exception:
+                return False
+        return s.val == t.val
+
+    def __ne__(s, t):
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) != t
+            if isinstance(t, str):
+                return True
+            try:
+                t = mpf(t)
+            except Exception:
+                return True
+            t = mpf(t)
+        return s.val != t.val
+
+    def __cmp__(s, t):
+        if not isinstance(t, mpf):
+            t = mpf(t)
+        return fcmp(s.val, t.val)
 
     def __abs__(s):
         return _make_mpf(fabs(s.val, mpf._prec, mpf._rounding))
@@ -224,8 +238,18 @@ class mpc(mpnumeric):
 
     def __eq__(s, t):
         if not isinstance(t, mpc):
+            if isinstance(t, str):
+                return False
             t = mpc(t)
         return s.real == t.real and s.imag == t.imag
+
+    def _compare(*args):
+        raise TypeError("no ordering relation is defined for complex numbers")
+
+    __gt__ = _compare
+    __le__ = _compare
+    __gt__ = _compare
+    __ge__ = _compare
 
     def __nonzero__(s):
         return s.real != 0 or s.imag != 0
