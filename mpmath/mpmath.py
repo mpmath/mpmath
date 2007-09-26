@@ -311,6 +311,8 @@ class mpc(mpnumeric):
                 s = s*s
                 n //= 2
             return w
+        if n == 0.5:
+            return sqrt(s)
         raise NotImplementedError
 
 
@@ -340,6 +342,12 @@ def exp(x):
     else:
         return _make_mpc(fcexp(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
+def log(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf) and x > 0:
+        return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
+    raise NotImplementedError
+
 def cos(x):
     x = mpnumeric(x)
     if isinstance(x, mpf):
@@ -357,5 +365,5 @@ def sin(x):
 
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
-  "sqrt", "hypot", "exp", "cos", "sin"]
+  "sqrt", "hypot", "exp", "log", "cos", "sin"]
 
