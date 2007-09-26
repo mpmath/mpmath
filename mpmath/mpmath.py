@@ -2,13 +2,7 @@ from lib import *
 
 from decimal import Context, getcontext, setcontext, Decimal
 
-def _convert(x):
-    if isinstance(x, float):
-        return float_from_pyfloat(x, mpf._prec, mpf._rounding)
-    if isinstance(x, (int, long)):
-        return float_from_int(x, mpf._prec, mpf._rounding)
-    if isinstance(x, (Decimal, str)):
-        return mpf(decimal_to_binary(x, mpf._prec, mpf._rounding))
+
 
 class context(type):
     _prec = 53
@@ -31,132 +25,313 @@ class context(type):
     extradps = lambda self, n: self._setdps(self._dps+n)
 
 
-class mpf(tuple):
+class mpnumeric(object):
+    def __new__(cls, val):
+        if isinstance(val, cls):
+            return val
+        if isinstance(val, complex):
+            return mpc(val)
+        return mpf(val)
+
+def _convert(x):
+    if isinstance(x, float):
+        return float_from_pyfloat(x, mpf._prec, mpf._rounding)
+    if isinstance(x, (int, long)):
+        return float_from_int(x, mpf._prec, mpf._rounding)
+    if isinstance(x, (Decimal, str)):
+        return decimal_to_binary(x, mpf._prec, mpf._rounding)
+    raise TypeError("cannot create mpf from " + repr(x))
+
+
+class mpf(mpnumeric):
 
     __metaclass__ = context
 
     def __new__(cls, val=fzero):
-        if val.__class__ is tuple:
-            return tuple.__new__(cls, val)
-        elif isinstance(val, mpf):
-            return +val
+        if isinstance(val, mpf):
+            return _make_mpf(normalize(val.val[0], val.val[1], cls._prec, cls._rounding))
+        elif isinstance(val, tuple):
+            return _make_mpf(normalize(val[0], val[1], cls._prec, cls._rounding))
         else:
-            return tuple.__new__(cls, _convert(val))
+            return _make_mpf(_convert(val))
 
-    man = property(lambda self: self[0])
-    exp = property(lambda self: self[1])
-    bc = property(lambda self: self[2])
+    man = property(lambda self: self.val[0])
+    exp = property(lambda self: self.val[1])
+    bc = property(lambda self: self.val[2])
 
     def __repr__(s):
         st = "mpf('%s')"
-        return st % binary_to_decimal(s, mpf._dps+2)
+        return st % binary_to_decimal(s.val, mpf._dps+2)
 
     def __str__(s):
-        return binary_to_decimal(s, mpf._dps)
+        return binary_to_decimal(s.val, mpf._dps)
 
-    def __cmp__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return fcmp(s, t)
+    def __hash__(s):
+        try:
+            # Try to be compatible with hash values for floats and ints
+            return hash(float(s))
+        except OverflowError:
+            # We must unfortunately sacrifice compatibility with ints here. We
+            # could do hash(man << exp) when the exponent is positive, but
+            # this would cause unreasonable inefficiency for large numbers.
+            return hash(self.val)
 
     def __eq__(s, t):
         if not isinstance(t, mpf): t = mpf(t)
-        return s[:] == t[:]
+        return s.val == t.val
 
     def __ne__(s, t):
         if not isinstance(t, mpf): t = mpf(t)
-        return s[:] != t[:]
+        return s.val != t.val
 
-    def __lt__(s, t): return s.__cmp__(t) < 0
-    def __le__(s, t): return s.__cmp__(t) <= 0
-    def __gt__(s, t): return s.__cmp__(t) > 0
-    def __ge__(s, t): return s.__cmp__(t) >= 0
+    def __cmp__(s, t):
+        if not isinstance(t, mpf): t = mpf(t)
+        return fcmp(s.val, t.val)
 
     def __int__(s):
-        return float_to_int(s)
+        return float_to_int(s.val)
 
     def __float__(s):
-        return float_to_pyfloat(s)
+        return float_to_pyfloat(s.val)
 
     def __complex__(s):
-        return float_to_pyfloat(s) + 0j
+        return float(s) + 0j
 
     def __abs__(s):
-        return mpf(fabs(s, mpf._prec, mpf._rounding))
+        return _make_mpf(fabs(s.val, mpf._prec, mpf._rounding))
 
     def __pos__(s):
-        return mpf(normalize(s[0], s[1], mpf._prec, mpf._rounding))
+        return mpf(s)
 
     def __neg__(s):
-        return mpf(fneg(s, mpf._prec, mpf._rounding))
+        return _make_mpf(fneg(s.val, mpf._prec, mpf._rounding))
 
     def __add__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fadd(s, t, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) + t
+            t = mpf(t)
+        return _make_mpf(fadd(s.val, t.val, mpf._prec, mpf._rounding))
 
     __radd__ = __add__
 
     def __sub__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fsub(s, t, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) - t
+            t = mpf(t)
+        return _make_mpf(fsub(s.val, t.val, mpf._prec, mpf._rounding))
 
     def __rsub__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fsub(t, s, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return t - mpc(s)
+            t = mpf(t)
+        return _make_mpf(fsub(t.val, s.val, mpf._prec, mpf._rounding))
 
     def __mul__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fmul(s, t, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) * t
+            t = mpf(t)
+        return _make_mpf(fmul(s.val, t.val, mpf._prec, mpf._rounding))
 
     def __div__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fdiv(s, t, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return mpc(s) / t
+            t = mpf(t)
+        return _make_mpf(fdiv(s.val, t.val, mpf._prec, mpf._rounding))
 
     def __rdiv__(s, t):
-        if not isinstance(t, mpf): t = mpf(t)
-        return mpf(fdiv(t, s, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return t / mpc(s)
+            t = mpf(t)
+        return _make_mpf(fdiv(t.val, s.val, mpf._prec, mpf._rounding))
 
     def __pow__(s, t):
         if isinstance(t, (int, long)):
-            return mpf(fpow(s, t, mpf._prec, mpf._rounding))
-        if not isinstance(t, mpf): t = mpf(t)
+            return _make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))
+        if not isinstance(t, mpf):
+            t = mpf(t)
         if t == 0.5:
-            return s.sqrt()
+            return sqrt(s)
         intt = int(t)
         if t == intt:
-            return mpf(fpow(s, intt, mpf._prec, mpf._rounding))
+            return _make_mpf(fpow(s.val, intt, mpf._prec, mpf._rounding))
 
-    def sqrt(s): return mpf(fsqrt(s, mpf._prec, mpf._rounding))
-    #def exp(s):  return mpf(fexp(s, mpf._prec, mpf._rounding))
-    def log(s):  return mpf(flog(s, mpf._prec, mpf._rounding))
-    def sin(s):  return mpf(fsin(s, mpf._prec, mpf._rounding))
-    def cos(s):  return mpf(fcos(s, mpf._prec, mpf._rounding))
-    def tan(s):  return mpf(ftan(s, mpf._prec, mpf._rounding))
+    def sqrt(s): return mpf(fsqrt(s.val, mpf._prec, mpf._rounding))
 
-    @classmethod
-    def const_pi(cls):
-        """Return pi as an mpf rounded to the current working precision"""
-        return mpf(fpi(cls._prec, cls._rounding))
 
-    @classmethod
-    def const_gamma(cls):
-        """Return Euler's constant gamma as an mpf rounded to the
-        current working precision"""
-        return mpf(fgamma(cls._prec, cls._rounding))
 
-    @classmethod
-    def const_log2(cls):
-        """Return log(2) as an mpf rounded to the current working
-        precision"""
-        return mpf(flog2(cls._prec, cls._rounding))
+def _make_mpf(tpl, construct=object.__new__, cls=mpf):
+    a = construct(cls)
+    a.val = tpl
+    return a
 
-    @classmethod
-    def const_log10(cls):
-        """Return log(10) as an mpf rounded to the current working
-        precision"""
-        return mpf(flog10(cls._prec, cls._rounding))
+
+class constant(mpf):
+
+    def __new__(cls, func):
+        a = object.__new__(cls)
+        a.func = func
+        return a
+
+    @property
+    def val(self):
+        return self.func(mpf._prec, mpf._rounding)
+
+pi = constant(fpi)
+e = constant(lambda p, r: fexp(fone, p, r))
+cgamma = constant(fgamma)
+clog2 = constant(flog2)
+clog10 = constant(flog10)
+
 
 def hypot(x, y):
     x = mpf(x)
     y = mpf(y)
-    return mpf(fhypot(x, y, mpf._prec, mpf._rounding))
+    return mpf(fhypot(x.val, y.val, mpf._prec, mpf._rounding))
+
+
+class mpc(mpnumeric):
+
+    def __new__(cls, real=0, imag=0):
+        s = object.__new__(cls)
+        if isinstance(real, (complex, mpc)):
+            real, imag = real.real, real.imag
+        s.real = mpf(real)
+        s.imag = mpf(imag)
+        return s
+
+    def __repr__(s):
+        r = repr(s.real)[4:-1]
+        i = repr(s.imag)[4:-1]
+        return "mpc(real=%s, imag=%s)" % (r, i)
+
+    def __str__(s):
+        return "(%s + %sj)" % (s.real, s.imag)
+
+    def __complex__(s):
+        return complex(float(s.real), float(s.imag))
+
+    def __pos__(s):
+        return mpc(s.real, s.imag)
+
+    def __abs__(s):
+        return hypot(s.real, s.imag)
+
+    def __eq__(s, t):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        return s.real == t.real and s.imag == t.imag
+
+    def __nonzero__(s):
+        return s.real != 0 or s.imag != 0
+
+    def conjugate(s):
+        return mpc(s.real, -s.imag)
+
+    def __add__(s, t):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        return mpc(s.real+t.real, s.imag+t.imag)
+
+    __radd__ = __add__
+
+    def __neg__(s):
+        return mpc(-s.real, -s.imag)
+
+    def __sub__(s, t):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        return mpc(s.real-t.real, s.imag-t.imag)
+
+    def __rsub__(s, t):
+        return (-s) + t
+
+    def __mul__(s, t):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        a = s.real; b = s.imag; c = t.real; d = t.imag
+        if b == d == 0:
+            return mpc(a*c, 0)
+        else:
+            return mpc(a*c-b*d, a*d+b*c)
+
+    __rmul__ = __mul__
+
+    def __div__(s, t):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        a = s.real; b = s.imag; c = t.real; d = t.imag
+        mag = c*c + d*d
+        return mpc((a*c+b*d)/mag, (b*c-a*d)/mag)
+
+    def __rdiv__(s, t):
+        return mpc(t) / s
+
+    def __pow__(s, n):
+        if n == 0: return mpc(1)
+        if n == 1: return +s
+        if n == -1: return 1/s
+        if n == 2: return s*s
+        if isinstance(n, (int, long)) and n > 0:
+            # TODO: should increase working precision here
+            w = mpc(1)
+            while n:
+                if n & 1:
+                    w = w*s
+                    n -= 1
+                s = s*s
+                n //= 2
+            return w
+        raise NotImplementedError
+
+
+complex_types = (complex, mpc)
+
+
+def _make_mpc(tpl, construct=object.__new__, cls=mpc):
+    a = construct(cls)
+    a.real, a.imag = map(_make_mpf, tpl)
+    return a
+
+j = mpc(0,1)
+
+
+def sqrt(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf) and x >= 0:
+        return _make_mpf(fsqrt(x.val, mpf._prec, mpf._rounding))
+    x = mpc(x)
+    return _make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+
+
+def exp(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf):
+        return _make_mpf(fexp(x.val, mpf._prec, mpf._rounding))
+    else:
+        return _make_mpc(fcexp(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+
+def cos(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf):
+        return _make_mpf(fcos(x.val, mpf._prec, mpf._rounding))
+    else:
+        return _make_mpc(fccos(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+
+def sin(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf):
+        return _make_mpf(fsin(x.val, mpf._prec, mpf._rounding))
+    else:
+        return _make_mpc(fcsin(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+
+
+
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
+  "sqrt", "hypot", "exp", "cos", "sin"]
 

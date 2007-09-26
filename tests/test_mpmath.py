@@ -1,4 +1,4 @@
-from lib import *
+from mpmath.lib import *
 from mpmath import *
 import random
 import time
@@ -178,22 +178,22 @@ tlog10 = "2.3025850929940456840179914546843642076011014886287729760333279009\
 def test_constants():
     for prec in [3, 7, 10, 15, 20, 37, 80, 100, 29]:
         mpf.dps = prec
-        assert mpf.const_pi() == mpf(tpi)
-        assert mpf.const_gamma() == mpf(tgamma)
-        assert mpf.const_log2() == mpf(tlog2)
-        assert mpf.const_log10() == mpf(tlog10)
+        assert pi == mpf(tpi)
+        assert cgamma == mpf(tgamma)
+        assert clog2 == mpf(tlog2)
+        assert clog10 == mpf(tlog10)
     mpf.dps = 15
 
 def test_str_1000_digits():
     mpf.dps = 1001
     assert str(mpf(2)**0.5)[-10:] == '9518488472'
-    assert str(mpf.const_pi())[-10:] == '2164201989'
+    assert str(pi)[-10:] == '2164201989'
     mpf.dps = 15
 
 def test_str_10000_digits():
     mpf.dps = 10001
     assert str(mpf(2)**0.5)[-10:] == '5873258352'
-    assert str(mpf.const_pi())[-10:] == '5256375679'
+    assert str(pi)[-10:] == '5256375679'
     mpf.dps = 15
 
 

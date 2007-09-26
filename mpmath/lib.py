@@ -950,21 +950,48 @@ def ftan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-def fcabs(z, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    return fhypot(z[0], z[1], prec, rounding)
+def fcabs(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    return fhypot(re, im, prec, rounding)
 
 
 # For complex square roots, we have sqrt(a+b*I) = sqrt((r+a)/2) + 
 # I*b/sqrt(2*(r+a)) where r = abs(a+b*I), when a+b*I is not a negative
 # real number (http://en.wikipedia.org/wiki/Square_root)
-def fcsqrt(z, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    re, im = z
+def fcsqrt(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     if re == im == fzero:
-        return z
+        return (re, im)
     if re[0] < 0 and im[0] == 0:
-        return (fzero, fsqrt(-re, prec, rounding))
+        return (fzero, fsqrt(fneg(re, prec, rounding), prec, rounding))
     RF, prec2 = ROUND_FLOOR, prec+4
-    rpx = fadd(fcabs(z, prec2, RF), re, prec2, RF)
+    rpx = fadd(fcabs(re, im, prec2, RF), re, prec2, RF)
     are = fsqrt(fdiv(rpx, ftwo, prec2, RF), prec, rounding)
     aim = fdiv(im, fsqrt(fmul(rpx, ftwo, prec2, RF)), prec, rounding)
     return are, aim
+
+def fcexp(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    mag = fexp(re, prec+4, ROUND_FLOOR)
+    are, aim = cos_sin(im, prec+4, ROUND_FLOOR)
+    return fmul(mag, are, prec, rounding), fmul(mag, aim, prec, rounding)
+
+def fcsin(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    prec2 = prec+4
+    RF = ROUND_FLOOR
+    # sin(x+yi) = sin(x)*cosh(y)+cos(x)*sinh(y)*i
+    c, s = cos_sin(re, prec2, RF)
+    expb1 = fexp(im, prec2, RF)
+    expb2 = fdiv(fone, expb1, prec2, RF)
+    ch = fmul(fadd(expb1, expb2, prec2, RF), fhalf, prec2, RF)
+    sh = fmul(fsub(expb1, expb2, prec2, RF), fhalf, prec2, RF)
+    return fmul(s, ch, prec, rounding), fmul(c, sh, prec, rounding)
+
+def fccos(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    prec2 = prec+4
+    RF = ROUND_FLOOR
+    # cos(x+yi) = cos(x)*cosh(y)-sin(x)*sinh(y)*i
+    c, s = cos_sin(re, prec2, RF)
+    expb1 = fexp(im, prec2, RF)
+    expb2 = fdiv(fone, expb1, prec2, RF)
+    ch = fmul(fadd(expb1, expb2, prec2, RF), fhalf, prec2, RF)
+    sh = fmul(fsub(expb1, expb2, prec2, RF), fhalf, prec2, RF)
+    return fmul(c, ch, prec, rounding), \
+        fneg(fmul(s, sh, prec, rounding), prec, rounding)
