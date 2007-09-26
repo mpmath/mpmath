@@ -342,7 +342,9 @@ def exp(x):
     else:
         return _make_mpc(fcexp(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
-def log(x):
+def log(x, base=None):
+    if base is not None:
+        return log(x) / log(base)
     x = mpnumeric(x)
     if isinstance(x, mpf) and x > 0:
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
