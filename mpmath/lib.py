@@ -186,14 +186,14 @@ def rshift(x, n, mode):
     # or shifting. The simplest rounding modes can be handled entirely through
     # shifts:
     if mode < ROUND_HALF_UP:
+        if mode == ROUND_FLOOR:
+            return x >> n
         if mode == ROUND_DOWN:
             if x > 0: return x >> n
             else:     return -((-x) >> n)
         if mode == ROUND_UP:
             if x > 0: return -((-x) >> n)
             else:     return x >> n
-        if mode == ROUND_FLOOR:
-            return x >> n
         if mode == ROUND_CEILING:
             return -((-x) >> n)
 
@@ -219,11 +219,16 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         return 0, 0, 0
     bc = bitcount(man)
     if bc > prec:
-        man = rshift(man, bc-prec, rounding)
-        exp += (bc - prec)
-        # bc = prec        # XXX: this would much faster, but fails in
-                           # corner cases. is there a better way?
-        bc = bitcount(man)
+        # special case: man is 1 less than power of two: shifting with
+        # rounding could add a bit back
+        if not ((man+1) & man):
+            man = rshift(man, bc-prec, rounding)
+            exp += (bc - prec)
+            bc = bitcount(man)
+        else:
+            man = rshift(man, bc-prec, rounding)
+            exp += (bc - prec)
+            bc = prec
     # Strip trailing zeros
     if not man & 1:
         tr = trailing_zeros(man)
@@ -231,7 +236,7 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
             man >>= tr
             exp += tr
             bc -= tr
-    assert bitcount(man) <= prec
+    #assert bitcount(man) <= prec
     if not man:
         return 0, 0, 0
     return man, exp, bc
