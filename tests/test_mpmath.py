@@ -175,6 +175,14 @@ def test_integers():
             assert mpf(a) * mpf(b) == a*b
     mpf.dps = 15
 
+def test_exact_sqrts():
+    for i in range(20000):
+        assert sqrt(mpf(i*i)) == i
+    for i in range(100):
+        for a in [1, 8, 25, 112307]:
+            assert sqrt(mpf((a*a, 2*i))) == mpf((a, i))
+            assert sqrt(mpf((a*a, -2*i))) == mpf((a, -i))
+
 
 #----------------------------------------------------------------------------
 # Type comparison
