@@ -147,6 +147,17 @@ def bitcount(n, log=math.log, table=(0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4)):
         bc = 0
     return bc + table[n >> bc]
 
+# from decimal.py -- faster for small precs
+def bitcount2(n, correction = {
+        '0': 4, '1': 3, '2': 2, '3': 2,
+        '4': 1, '5': 1, '6': 1, '7': 1,
+        '8': 0, '9': 0, 'a': 0, 'b': 0,
+        'c': 0, 'd': 0, 'e': 0, 'f': 0}):
+    if n < 0:
+        n = -n
+    hex_n = "%x" % n
+    return 4*len(hex_n) - correction[hex_n[0]]
+
 def trailing_zeros(n):
     """Count trailing zero bits in an integer. If n is negative, it is
     replaced by its absolute value."""
@@ -217,7 +228,10 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     returned value is a tuple (man, exp, bc)."""
     if not man:
         return 0, 0, 0
-    bc = bitcount(man)
+    if prec < 100:
+        bc = bitcount2(man)
+    else:
+        bc = bitcount(man)
     if bc > prec:
         # special case: man is 1 less than power of two: shifting with
         # rounding could add a bit back
