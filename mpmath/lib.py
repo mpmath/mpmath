@@ -196,9 +196,9 @@ def rshift(x, n, mode):
     # integers toward zero and negative integers away from zero when dividing
     # or shifting. The simplest rounding modes can be handled entirely through
     # shifts:
-    if mode < ROUND_HALF_UP:
-        if mode == ROUND_FLOOR:
-            return x >> n
+    if mode == ROUND_FLOOR:
+        return x >> n
+    elif mode < ROUND_HALF_UP:
         if mode == ROUND_DOWN:
             if x > 0: return x >> n
             else:     return -((-x) >> n)
