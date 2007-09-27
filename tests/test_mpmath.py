@@ -104,6 +104,23 @@ def test_round_half_even():
     assert normalize(-0xe9, -4, 4, ROUND_HALF_EVEN)[:2] == (-15, 0)
 
 
+def test_rounding_bugs():
+    assert normalize(72057594037927935, -56, 53, ROUND_UP) == (1, 0, 1)
+
+
+# Advanced rounding test
+
+def test_add_rounding():
+    mpf.dps = 15
+    mpf.round_up()
+    assert (mpf(1) + 1e-50) - 1 == 2.2204460492503131e-16
+    assert mpf(1) - 1e-50 == 1.0
+    mpf.round_down()
+    assert 1 - (mpf(1) - 1e-50) == 1.1102230246251565e-16
+    assert mpf(1) + 1e-50 == 1.0
+    mpf.round_half_even()
+
+
 
 #----------------------------------------------------------------------------
 # Test basic arithmetic

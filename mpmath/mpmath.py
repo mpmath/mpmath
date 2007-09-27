@@ -26,6 +26,17 @@ class context(type):
         self._dps = max(1, int(n))
     dps = property(lambda self: self._dps, _setdps)
 
+    def round_up(self): self._rounding = ROUND_UP
+    def round_down(self): self._rounding = ROUND_DOWN
+    def round_floor(self): self._rounding = ROUND_FLOOR
+    def round_ceiling(self): self._rounding = ROUND_CEILING
+    def round_half_down(self): self._rounding = ROUND_HALF_DOWN
+    def round_half_up(self): self._rounding = ROUND_HALF_UP
+    def round_half_even(self): self._rounding = ROUND_HALF_EVEN
+
+    round_default = round_half_even
+
+
 def _convert(x):
     """Convet x to mpf data"""
     if isinstance(x, float):

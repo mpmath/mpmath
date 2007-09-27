@@ -221,7 +221,9 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
         exp += (bc - prec)
-        bc = prec
+        # bc = prec        # XXX: this would much faster, but fails in
+                           # corner cases. is there a better way?
+        bc = bitcount(man)
     # Strip trailing zeros
     if not man & 1:
         tr = trailing_zeros(man)
@@ -229,6 +231,7 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
             man >>= tr
             exp += tr
             bc -= tr
+    assert bitcount(man) <= prec
     if not man:
         return 0, 0, 0
     return man, exp, bc
@@ -329,7 +332,7 @@ def fcmp(s, t):
 
     # The numbers have similar magnitude but different exponents.
     # So we subtract and check the sign of resulting mantissa.
-    return cmp(fsub(s, t, prec=5)[0], 0)
+    return cmp(fsub(s, t, 5, ROUND_FLOOR)[0], 0)
 
 
 #----------------------------------------------------------------------------#
@@ -383,10 +386,20 @@ def fadd(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     # the result should be adjusted up or down. This is not yet implemented.
 
     if sexp - texp > 10:
-        bitdelta = (sbc+sexp)-(tbc+texp)
+        bitdelta = (sbc + sexp) - (tbc + texp)
         if bitdelta > prec + 5:
-            # TODO: handle rounding here
-            return normalize(sman, sexp, prec, rounding)
+            if rounding > 4:     # nearby rounding
+                return normalize(sman, sexp, prec, rounding)
+
+            # shift s and add a dummy bit outside the precision range to
+            # force rounding up or down
+            offset = min(bitdelta + 3, prec+3)
+            sman <<= offset
+            if tman > 0:
+                sman += 1
+            else:
+                sman -= 1
+            return normalize(sman, sexp-offset, prec, rounding)
 
     # General case
     return normalize(tman+(sman<<(sexp-texp)), texp, prec, rounding)
