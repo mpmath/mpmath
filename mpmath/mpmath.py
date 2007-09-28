@@ -37,11 +37,13 @@ class context(type):
     round_default = round_half_even
 
 
+inttypes = (int, long)
+
 def _convert(x):
     """Convet x to mpf data"""
     if isinstance(x, float):
         return float_from_pyfloat(x, mpf._prec, mpf._rounding)
-    if isinstance(x, (int, long)):
+    if isinstance(x, inttypes):
         return float_from_int(x, mpf._prec, mpf._rounding)
     if isinstance(x, (Decimal, str)):
         return decimal_to_binary(x, mpf._prec, mpf._rounding)
@@ -133,6 +135,8 @@ class mpf(mpnumeric):
 
     def __add__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(fadd(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) + t
             t = mpf(t)
@@ -142,6 +146,8 @@ class mpf(mpnumeric):
 
     def __sub__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(fsub(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) - t
             t = mpf(t)
@@ -149,6 +155,8 @@ class mpf(mpnumeric):
 
     def __rsub__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(fsub((t, 0, bitcount(t)), s.val, mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return t - mpc(s)
             t = mpf(t)
@@ -156,6 +164,8 @@ class mpf(mpnumeric):
 
     def __mul__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(normalize(s.val[0]*t, s.val[1], mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) * t
             t = mpf(t)
@@ -163,6 +173,8 @@ class mpf(mpnumeric):
 
     def __div__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(fdiv(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) / t
             t = mpf(t)
@@ -170,13 +182,15 @@ class mpf(mpnumeric):
 
     def __rdiv__(s, t):
         if not isinstance(t, mpf):
+            if isinstance(t, inttypes):
+                return _make_mpf(fdiv((t, 0, bitcount(t)), s.val, mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return t / mpc(s)
             t = mpf(t)
         return _make_mpf(fdiv(t.val, s.val, mpf._prec, mpf._rounding))
 
     def __pow__(s, t):
-        if isinstance(t, (int, long)):
+        if isinstance(t, inttypes):
             return _make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))
         if not isinstance(t, mpf):
             t = mpf(t)
@@ -186,8 +200,8 @@ class mpf(mpnumeric):
         if t == intt:
             return _make_mpf(fpow(s.val, intt, mpf._prec, mpf._rounding))
 
-    def sqrt(s): return mpf(fsqrt(s.val, mpf._prec, mpf._rounding))
-
+    def sqrt(s):
+        return sqrt(s)
 
 
 def _make_mpf(tpl, construct=object.__new__, cls=mpf):
