@@ -1,8 +1,9 @@
 import sys
 import math
 from time import clock
-from mpmath import *
-from mpmath.lib import _pi_agm
+from mpmath import mpf
+from mpmath.lib import _pi_agm, small_numeral, normalize, bin_to_radix, \
+    fixed_to_str
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns
