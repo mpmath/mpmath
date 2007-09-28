@@ -154,6 +154,17 @@ def test_standard_float():
     assert mpf(-4.4408920985006262E-16) > mpf(-1.7763568394002505E-15)
 
 
+def test_mixed_types():
+    assert 1 + mpf(3) == mpf(3) + 1 == 4
+    assert 1 - mpf(3) == -(mpf(3) - 1) == -2
+    assert 3 * mpf(2) == mpf(2) * 3 == 6
+    assert 6 / mpf(2) == mpf(6) / 2 == 3
+    assert 1.0 + mpf(3) == mpf(3) + 1.0 == 4
+    assert 1.0 - mpf(3) == -(mpf(3) - 1.0) == -2
+    assert 3.0 * mpf(2) == mpf(2) * 3.0 == 6
+    assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
+
+
 # Test that integer arithmetic is exact
 def test_integers():
     random.seed(0)

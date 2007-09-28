@@ -171,6 +171,8 @@ class mpf(mpnumeric):
             t = mpf(t)
         return _make_mpf(fmul(s.val, t.val, mpf._prec, mpf._rounding))
 
+    __rmul__ = __mul__
+
     def __div__(s, t):
         if not isinstance(t, mpf):
             if isinstance(t, inttypes):
