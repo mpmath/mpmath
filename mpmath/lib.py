@@ -7,8 +7,6 @@ A floating-point number x = man * 2**exp is represented by the tuple
 (man, exp, bc) where man is the mantissa, exp is the exponent, and bc
 is the number of bits in the mantissa. To simplify equality testing,
 the mantissa always gets normalized by removing trailing zero bits.
-However, unnormalized mantissas are permitted as input to arithmetic
-operations.
 
 The bitcount is slightly redundant to store in the number, but may as
 well be reused since it always gets computed during normalization,
