@@ -219,7 +219,7 @@ def rshift(x, n, rounding):
 
     # To get away easily, we exploit the fact that Python rounds positive
     # integers toward zero and negative integers away from zero when dividing
-    # or shifting. The simplest rounding roundings can be handled entirely
+    # or shifting. The simplest roundings can be handled entirely
     # through shifts:
     if rounding == ROUND_FLOOR:
         return x >> n
