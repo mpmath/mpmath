@@ -49,8 +49,24 @@ ROUND_HALF_DOWN = RoundingMode(6, 'ROUND_HALF_DOWN')
 ROUND_HALF_EVEN = RoundingMode(7, 'ROUND_HALF_EVEN')
 
 
-def _quadratic_steps(start, target):
-    # generate list of precision steps for quadratically convergent algorithms
+def giant_steps(start, target):
+    """Generate a list of precisions ranging from 'start' to 'target'
+    that doubles with each step. This is used by quadratically
+    convergent iterations (that is, Newton iterations), where we want
+    to keep the precision at the same level as the accuracy in each
+    step to minimize work.
+
+    For example, to find a sequence of precisions to reach 1000 bits
+    starting from a 53-bit estimate, giant_steps(53, 1000) gives
+
+        [64, 126, 251, 501, 1000]
+
+    So, if we start Newton's method with a 53-bit accurate initial
+    guess, the first iteration should be carried out at 64-bit
+    precision, the second at 126-bit precision, and so on.
+
+    Note the conservative rounding (1000 to 501, etc); this is used
+    guard against unit errors in the last place."""
     L = [target]
     while L[-1] > start*2:
         L = L + [L[-1]//2 + 1]
@@ -65,9 +81,9 @@ def _quadratic_steps(start, target):
 
 LOG2_10 = math.log(10,2)  # 3.3219...
 
-# TODO: only binary_to_decimal is used currently. Things could be sped
-# up by using the other functions below, currently used only by the
-# pidigits.py demo
+# TODO: only binary_to_decimal and decimal_to_binary are used currently.
+# Things could be sped up by using the other functions below, currently used
+# only by the pidigits.py demo
 
 getctx = decimal.getcontext
 Dec = decimal.Decimal
@@ -517,13 +533,6 @@ due to the fact that Python uses the Karatsuba algorithm for integer
 multiplication, which is asymptotically faster than its division
 algorithm.
 
-For optimal speed, we exploit the "self-correcting" nature of
-Newton's method to perform subcomputations at as low a precision level
-as possible. Starting from a 50-bit floating-point estimate, the
-first step can be computed using 100-bit precision, the second
-at 200-bit precision, and so on; full precision is only needed for
-the final step.
-
 Both functions use fixed-point arithmetic and assume that the input y
 is a big integer, i.e. given the integer y and precision prec,
 they return floor(sqrt(x) * 2**prec) where y = floor(x * 2**prec).
@@ -542,7 +551,7 @@ def _sqrt_fixed(y, prec):
     else:
         r = int((y >> (prec-100))**0.5)
     prevp = 50
-    for p in _quadratic_steps(50, prec+8):
+    for p in giant_steps(50, prec+8):
         # Newton iteration: r_{n+1} = (r_{n} + y/r_{n})/2
         # print "sqrt", p
         r = _lshift(r, p-prevp-1) + (_rshift(y, prec-p-prevp+1)//r)
@@ -553,7 +562,7 @@ def _sqrt_fixed2(y, prec):
     r = float_to_pyfloat(normalize(y, -prec, 64, ROUND_FLOOR)) ** -0.5
     r = int(r * 2**50)
     prevp = 50
-    for p in _quadratic_steps(50, prec+8):
+    for p in giant_steps(50, prec+8):
         # print "sqrt", p
         r2 = _rshift(r*r, 2*prevp - p)
         A = _lshift(r, p-prevp)
@@ -851,7 +860,7 @@ def _log_newton(x, prec):
     fx = math.log(float_to_pyfloat((x, -prec, 1)))
     r = int(fx * 2.0**50)
     prevp = 50
-    for p in _quadratic_steps(50, prec+8):
+    for p in giant_steps(50, prec+8):
         rb = _lshift(r, p-prevp)
         e = exp_series(-rb, p)
         r = rb + ((_rshift(x, prec-p)*e)>>p) - (1 << p)
