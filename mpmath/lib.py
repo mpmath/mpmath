@@ -437,7 +437,7 @@ def fadd(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     #  #  1111111110000...
 
     # However, if the rounding isn't to nearest, correct rounding mandates
-    # the result should be adjusted up or down. This is not yet implemented.
+    # the result should be adjusted up or down.
 
     if sexp - texp > 10:
         bitdelta = (sbc + sexp) - (tbc + texp)
