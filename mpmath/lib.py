@@ -190,21 +190,26 @@ def trailing_zeros(n):
     while not n & 1: n >>= 1; t += 1
     return t
 
-def _rshift(x, n):
-    # quick right shift with default rounding
+def rshift_quick(x, n):
+    """For an integer x, calculate x >> n with the fastest (floor)
+    rounding. Unlike the plain Python expression (x >> n), n is
+    allowed to be negative, in which case a left shift is performed."""
     if n >= 0: return x >> n
     else:      return x << (-n)
 
-def _lshift(x, n):
-    # quick left shift with default rounding
+def lshift_quick(x, n):
+    """For an integer x, calculate x << n. Unlike the plain Python
+    expression (x << n), n is allowed to be negative, in which case a
+    right shift with default (floor) rounding is performed."""
     if n >= 0: return x << n
     else:      return x >> (-n)
 
-def rshift(x, n, mode):
-    """Shift x n bits to the right (i.e., calculate x/(2**n)), and
-    round to the nearest integer in accordance with the specified
-    rounding mode. The exponent n may be negative, in which case x is
-    shifted to the left (and no rounding is necessary)."""
+def rshift(x, n, rounding):
+    """Shift x (a plain Python integer) n bits to the right (i.e.,
+    calculate x/(2**n)), and round to the nearest integer in accordance
+    with the specified rounding mode. The exponent n may be negative,
+    in which case x is shifted to the left (and no rounding is
+    necessary)."""
 
     if not n or not x:
         return x
@@ -214,27 +219,27 @@ def rshift(x, n, mode):
 
     # To get away easily, we exploit the fact that Python rounds positive
     # integers toward zero and negative integers away from zero when dividing
-    # or shifting. The simplest rounding modes can be handled entirely through
-    # shifts:
-    if mode == ROUND_FLOOR:
+    # or shifting. The simplest rounding roundings can be handled entirely
+    # through shifts:
+    if rounding == ROUND_FLOOR:
         return x >> n
-    elif mode < ROUND_HALF_UP:
-        if mode == ROUND_DOWN:
+    elif rounding < ROUND_HALF_UP:
+        if rounding == ROUND_DOWN:
             if x > 0: return x >> n
             else:     return -((-x) >> n)
-        if mode == ROUND_UP:
+        if rounding == ROUND_UP:
             if x > 0: return -((-x) >> n)
             else:     return x >> n
-        if mode == ROUND_CEILING:
+        if rounding == ROUND_CEILING:
             return -((-x) >> n)
 
     # Here we need to inspect the bits around the cutoff point
     if x > 0: t = x >> (n-1)
     else:     t = (-x) >> (n-1)
     if t & 1:
-        if mode == ROUND_HALF_UP or \
-           (mode == ROUND_HALF_DOWN and x & ((1<<(n-1))-1)) or \
-           (mode == ROUND_HALF_EVEN and (t&2 or x & ((1<<(n-1))-1))):
+        if rounding == ROUND_HALF_UP or \
+           (rounding == ROUND_HALF_DOWN and x & ((1<<(n-1))-1)) or \
+           (rounding == ROUND_HALF_EVEN and (t&2 or x & ((1<<(n-1))-1))):
             if x > 0:  return (t>>1)+1
             else:      return -((t>>1)+1)
     if x > 0: return t>>1
@@ -242,10 +247,11 @@ def rshift(x, n, mode):
 
 def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     """Normalize the binary floating-point number represented by
-    man * 2**exp to the specified precision level, rounding according
-    to the specified rounding mode if necessary. The mantissa is also
+    man * 2**exp to the specified precision level, rounding if the
+    number of bits in the mantissa exceeds prec. The mantissa is also
     stripped of trailing zero bits, and its bits are counted. The
     returned value is a tuple (man, exp, bc)."""
+
     if not man:
         return 0, 0, 0
     if prec < 100:
@@ -253,12 +259,23 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     else:
         bc = bitcount(man)
     if bc > prec:
-        # special case: man is 1 less than power of two: shifting with
-        # rounding could add a bit back
-        if not ((man+1) & man):
+        # Right shifting by bc-prec nearly always guarantees that
+        # the result has at most prec bits. There is one exceptional
+        # case: if abs(man) is 1 less than a power of two and rounding
+        # is done away from zero, it turns into the higher power of two.
+        # This case must be handled separately; otherwise a bc of 0
+        # gets returned.
+
+        # TODO: by comparing sign and rounding mode, we could just
+        # return (+/- 1, exp+bc, 1) right here
+        absman = man
+        if absman < 0:
+            absman = -absman
+        if not ((absman+1) & absman):
             man = rshift(man, bc-prec, rounding)
             exp += (bc - prec)
             bc = bitcount(man)
+        # Default case
         else:
             man = rshift(man, bc-prec, rounding)
             exp += (bc - prec)
@@ -554,7 +571,7 @@ def _sqrt_fixed(y, prec):
     for p in giant_steps(50, prec+8):
         # Newton iteration: r_{n+1} = (r_{n} + y/r_{n})/2
         # print "sqrt", p
-        r = _lshift(r, p-prevp-1) + (_rshift(y, prec-p-prevp+1)//r)
+        r = lshift_quick(r, p-prevp-1) + (rshift_quick(y, prec-p-prevp+1)//r)
         prevp = p
     return r >> 8
 
@@ -564,9 +581,9 @@ def _sqrt_fixed2(y, prec):
     prevp = 50
     for p in giant_steps(50, prec+8):
         # print "sqrt", p
-        r2 = _rshift(r*r, 2*prevp - p)
-        A = _lshift(r, p-prevp)
-        T = _rshift(y, prec-p)
+        r2 = rshift_quick(r*r, 2*prevp - p)
+        A = lshift_quick(r, p-prevp)
+        T = rshift_quick(y, prec-p)
         S = (T*r2) >> p
         B = (3 << p) - S
         r = (A*B)>>(p+1)
@@ -594,7 +611,7 @@ def fsqrt(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         man <<= 1
     shift = bitcount(man) - prec2
     shift -= shift & 1
-    man = _rshift(man, shift)
+    man = rshift_quick(man, shift)
 
     if prec < 65000:
         man = _sqrt_fixed(man, prec2)
@@ -803,7 +820,7 @@ def exp_series(x, prec):
     if prec > 60:
         guards += int(math.log(prec))
     prec2 = prec + guards
-    x = _rshift(x, r - guards)
+    x = rshift_quick(x, r - guards)
     s = (1 << prec2) + x
     a = x
     k = 2
@@ -861,9 +878,9 @@ def _log_newton(x, prec):
     r = int(fx * 2.0**50)
     prevp = 50
     for p in giant_steps(50, prec+8):
-        rb = _lshift(r, p-prevp)
+        rb = lshift_quick(r, p-prevp)
         e = exp_series(-rb, p)
-        r = rb + ((_rshift(x, prec-p)*e)>>p) - (1 << p)
+        r = rb + ((rshift_quick(x, prec-p)*e)>>p) - (1 << p)
         prevp = p
     return r >> 8
 
@@ -882,7 +899,7 @@ def flog(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         # estimate how close
         prec2 += -(near_one[1]) - bitcount(near_one[0])
     # Separate mantissa and exponent, calculate, join parts
-    t = _rshift(man, bc-prec2)
+    t = rshift_quick(man, bc-prec2)
     l = _log_newton(t, prec2)
     a = (exp + bc) * log2_fixed(prec2)
     return normalize(l+a, -prec2, prec, rounding)
