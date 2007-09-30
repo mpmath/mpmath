@@ -1,15 +1,19 @@
 """
 This module contains "low-level" functions for multiprecision floating-
 point arithmetic implemented in pure Python. The code is written in a
-functional style for simplicity and speed. The only data structures used
-are tuples. (Avoiding objects makes the arithmetic run twice as fast in
-some cases.)
+functional style for simplicity and speed.
 
 A floating-point number x = man * 2**exp is represented by the tuple
 (man, exp, bc) where man is the mantissa, exp is the exponent, and bc
-is the number of bits in the mantissa. The bitcount is slightly
-redundant, but may as well be reused since it always gets computed
-during normalization.
+is the number of bits in the mantissa. To simplify equality testing,
+the mantissa always gets normalized by removing trailing zero bits.
+However, unnormalized mantissas are permitted as input to arithmetic
+operations.
+
+The bitcount is slightly redundant to store in the number, but may as
+well be reused since it always gets computed during normalization,
+and slightly speeds up subsequent operations on a number.
+
 """
 
 
@@ -811,7 +815,7 @@ def fexp(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     prec2 = prec + 4 + max(0, bc+exp)
     t = make_fixed(x, prec2)
     # abs(x) > 1?
-    if fcmp(fabs(x), fone) > 0:
+    if exp+bc > 1:  #fcmp(fabs(x), fone) > 0:
         lg2 = log2_fixed(prec2)
         n, t = divmod(t, lg2)
     else:
