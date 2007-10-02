@@ -1055,9 +1055,9 @@ def fatan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         t = fatan(fneg(x), prec+4, ROUND_FLOOR)
         return normalize(-t[0], t[1], prec, rounding)
     if fcmp(x, _cutoff_1) < 0:
-        return _atan_series_1(x)
+        return _atan_series_1(x, prec, rounding)
     if fcmp(x, _cutoff_2) < 0:
-        return _atan_series_2(x)
+        return _atan_series_2(x, prec, rounding)
     # For large x, use atan(x) = pi/2 - atan(1/x)
     if x[1] > 10*prec:
         pi = fpi(prec, rounding)
