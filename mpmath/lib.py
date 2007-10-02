@@ -1087,10 +1087,10 @@ def fcsqrt(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         return (re, im)
     if re[0] < 0 and im[0] == 0:
         return (fzero, fsqrt(fneg(re, prec, rounding), prec, rounding))
-    RF, prec2 = ROUND_FLOOR, prec+4
+    RF, prec2 = ROUND_FLOOR, prec+20
     rpx = fadd(fcabs(re, im, prec2, RF), re, prec2, RF)
     are = fsqrt(fdiv(rpx, ftwo, prec2, RF), prec, rounding)
-    aim = fdiv(im, fsqrt(fmul(rpx, ftwo, prec2, RF)), prec, rounding)
+    aim = fdiv(im, fsqrt(fmul(rpx, ftwo, prec2, RF), prec2, RF), prec, rounding)
     return are, aim
 
 def fcexp(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):

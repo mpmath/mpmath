@@ -353,6 +353,12 @@ def test_complex_functions():
             assert tan(mpc(z)).ae(cmath.tan(z))
 
 def test_complex_powers():
+    for dps in [15, 30, 100]:
+        # Check accuracy for complex square root
+        mpf.dps = dps
+        a = mpc(1j)**0.5
+        assert a.real == a.imag == mpf(2)**0.5 / 2
+    mpf.dps = 15
     random.seed(1)
     for i in range(100):
         x1 = random.uniform(-10, 10)
