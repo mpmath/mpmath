@@ -109,7 +109,7 @@ precision.
     >>> print pi
     3.14159265358979
     >>> mpf.dps = 50
-    >>> pi
+    >>> print pi
     3.1415926535897932384626433832795028841971693993751
 
     >>> mpf.dps = 15
@@ -118,6 +118,20 @@ precision.
     >>> mpf.dps = 50
     >>> e**(-pi*1j)
     mpc(real='-1', imag='1.0106 [...] E-51')
+
+Directed rounding is partially implemented. For example, this computes
+and verifies a 15-digit approximation interval for pi:
+
+    >>> mpf.dps = 15
+    >>> mpf.round_down(); pi1 = +pi
+    >>> mpf.round_up(); pi2 = +pi
+    >>> pi1
+    mpf('3.1415926535897931')
+    >>> pi2
+    mpf('3.1415926535897936')
+    >>> mpf.dps = 30
+    >>> pi1 < pi < pi2
+    True
 
 
 3. Help and bug reports
