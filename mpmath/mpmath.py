@@ -384,7 +384,6 @@ class mpc(mpnumeric):
             return w
         if n == 0.5:
             return sqrt(s)
-        print "hah"
         return power(s, n)
 
     # TODO: refactor and merge with mpf.ae

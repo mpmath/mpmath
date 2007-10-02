@@ -350,6 +350,10 @@ def test_complex_powers():
         z1 = complex(x1, y1)
         z2 = complex(x2, y2)
         assert (mpc(z1)**mpc(z2)).ae(z1**z2, 1e-12)
+    assert (e**(-pi*1j)).ae(-1)
+    mpf.dps = 50
+    assert (e**(-pi*1j)).ae(-1)
+    mpf.dps = 15
 
 def test_trig_hard():
     mpf.prec = 150
