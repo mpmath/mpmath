@@ -2,3 +2,4 @@ include mpmath/*.py
 include demo/*.py
 include tests/*.py
 include LICENSE
+include CHANGES
