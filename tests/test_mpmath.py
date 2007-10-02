@@ -2,6 +2,8 @@ from mpmath.lib import *
 from mpmath import *
 import random
 import time
+import math
+import cmath
 
 #----------------------------------------------------------------------------
 # Low-level tests
@@ -124,11 +126,33 @@ def test_add_rounding():
     assert mpf(1) + 1e-50 == 1.0
     mpf.round_half_even()
 
+def test_almost_equal():
+    assert mpf(1.2).ae(mpf(1.20000001), 1e-7)
+    assert not mpf(1.2).ae(mpf(1.20000001), 1e-9)
+    assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
 
 
 #----------------------------------------------------------------------------
 # Test basic arithmetic
 #
+
+def test_add():
+    assert mpf(4) + mpf(-70) == -66
+    assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
+    assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
+    assert mpf(3) + mpf((1, 10000000000)) == mpf((1, 10000000000))
+    assert mpf((1, -10000000000)) + mpf(3) == mpf(3)
+    assert mpf(3) + mpf((1, -10000000000)) == mpf(3)
+    assert mpf(1) + 1e-15 != 1
+    assert mpf(1) + 1e-20 == 1
+    assert mpf(1.07e-22) + 0 == mpf(1.07e-22)
+    assert mpf(0) + mpf(1.07e-22) == mpf(1.07e-22)
+
+def test_complex():
+    # many more tests needed
+    assert 1 + mpc(2) == 3
+    assert not mpc(2).ae(2 + 1e-13)
+    assert mpc(2+1e-15j).ae(2)
 
 # Results should agree with those of small floats at standard precision
 def test_standard_float():
@@ -259,7 +283,18 @@ def test_str_10000_digits():
     assert str(pi)[-10:] == '5256375679'
     mpf.dps = 15
 
-
+def test_float_sqrt():
+    # These should round identically
+    for x in [0, 1e-7, 0.1, 0.5, 1, 2, 3, 4, 5, 0.333, 76.19]:
+        assert sqrt(mpf(x)) == float(x)**0.5
+    assert sqrt(-1) == 1j
+    assert sqrt(-2).ae(cmath.sqrt(-2))
+    assert sqrt(-3).ae(cmath.sqrt(-3))
+    assert sqrt(-100).ae(cmath.sqrt(-100))
+    assert sqrt(1j).ae(cmath.sqrt(1j))
+    assert sqrt(-1j).ae(cmath.sqrt(-1j))
+    assert sqrt(math.pi + math.e*1j).ae(cmath.sqrt(math.pi + math.e*1j))
+    assert sqrt(math.pi - math.e*1j).ae(cmath.sqrt(math.pi - math.e*1j))
 
 def test_hypot():
     assert hypot(0, 0) == 0
@@ -267,6 +302,42 @@ def test_hypot():
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
+
+def test_exp():
+    assert exp(0) == 1
+    assert exp(10000).ae(mpf('8.8068182256629215873e4342'))
+    assert exp(-10000).ae(mpf('1.1354838653147360985e-4343'))
+    assert exp(clog2 * 10).ae(1024)
+    assert exp(2+2j).ae(cmath.exp(2+2j))
+
+def test_log():
+    assert log(1) == 0
+    for x in [0.5, 1.5, 2.0, 3.0, 100, 10**50, 1e-50]:
+        assert log(x) == math.log(x)
+        assert log(x, x) == 1
+    assert log(1024, 2) == 10
+    assert log(10**1234, 10) == 1234
+    #assert log(2+2j).ae(cmath.log(2+2j))
+
+def test_trig_basic():
+    for x in (range(100) + range(-100,0)):
+        t = x / 4.1
+        assert cos(mpf(t)).ae(math.cos(t))
+        assert sin(mpf(t)).ae(math.sin(t))
+        #assert tan(mpf(t)).ae(math.tan(t))
+    assert sin(1+1j).ae(cmath.sin(1+1j))
+    assert sin(-4-3.6j).ae(cmath.sin(-4-3.6j))
+    assert cos(1+1j).ae(cmath.cos(1+1j))
+    assert cos(-4-3.6j).ae(cmath.cos(-4-3.6j))
+
+def test_trig_hard():
+    mpf.prec = 150
+    a = mpf(10**50)
+    mpf.prec = 53
+    assert sin(a).ae(-0.7896724934293100827)
+    assert cos(a).ae(-0.6135286082336635622)
+    assert sin(1e-6).ae(9.999999999998333e-007)
+    assert cos(1e-6).ae(0.9999999999995)
 
 
 

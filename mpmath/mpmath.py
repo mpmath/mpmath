@@ -205,6 +205,46 @@ class mpf(mpnumeric):
     def sqrt(s):
         return sqrt(s)
 
+    def ae(s, t, rel_eps=None, abs_eps=None):
+        """
+        Determine whether the difference between s and t is smaller
+        than a given epsilon ("ae" is short for "almost equal").
+
+        Both a maximum relative difference and a maximum difference
+        ('epsilons') may be specified. The absolute difference is
+        defined as |s-t| and the relative difference is defined
+        as |s-t|/max(|s|, |t|).
+
+        If only one epsilon is given, both are set to the same value.
+        If none is given, both epsilons are set to 2**(-prec+m) where
+        prec is the current working precision and m is a small integer.
+        """
+        if not isinstance(t, mpf):
+            t = mpf(t)
+        if abs_eps is None and rel_eps is None:
+            rel_eps = abs_eps = _make_mpf((1, -mpf._prec+4, 1))
+        if abs_eps is None:
+            abs_eps = rel_eps
+        elif rel_eps is None:
+            rel_eps = abs_eps
+        diff = abs(s-t)
+        if diff <= abs_eps:
+            return True
+        abss = abs(s)
+        abst = abs(t)
+        if abss < abst:
+            err = diff/abst
+        else:
+            err = diff/abss
+        return err <= rel_eps
+
+    def almost_zero(s, prec):
+        """Quick check if |s| < 2**-prec. May return a false negative
+        if s is very close to the threshold."""
+        return s.bc + s.exp < prec
+
+
+
 
 def _make_mpf(tpl, construct=object.__new__, cls=mpf):
     a = construct(cls)
@@ -222,6 +262,7 @@ class constant(mpf):
     @property
     def val(self):
         return self.func(mpf._prec, mpf._rounding)
+
 
 pi = constant(fpi)
 e = constant(lambda p, r: fexp(fone, p, r))
@@ -342,6 +383,28 @@ class mpc(mpnumeric):
             return sqrt(s)
         raise NotImplementedError
 
+    # TODO: refactor and merge with mpf.ae
+    def ae(s, t, rel_eps=None, abs_eps=None):
+        if not isinstance(t, mpc):
+            t = mpc(t)
+        if abs_eps is None and rel_eps is None:
+            abs_eps = rel_eps = _make_mpf((1, -mpf._prec+4, 1))
+        if abs_eps is None:
+            abs_eps = rel_eps
+        elif rel_eps is None:
+            rel_eps = abs_eps
+        diff = abs(s-t)
+        if diff <= abs_eps:
+            return True
+        abss = abs(s)
+        abst = abs(t)
+        if abss < abst:
+            err = diff/abst
+        else:
+            err = diff/abss
+        return err <= rel_eps
+
+
 
 complex_types = (complex, mpc)
 
@@ -371,7 +434,10 @@ def exp(x):
 
 def log(x, base=None):
     if base is not None:
-        return log(x) / log(base)
+        mpf.prec += 3
+        a = log(x) / log(base)
+        mpf.prec -= 3
+        return +a
     x = mpnumeric(x)
     if isinstance(x, mpf) and x > 0:
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
