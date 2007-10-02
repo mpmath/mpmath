@@ -21,7 +21,10 @@ For a detailed changelog, see the CHANGES file.
 1. Download & installation
 --------------------------
 
-The latest released version can be downloaded from the mpmath
+mpmath requires a recent version of Python. It has been tested with
+Python 2.5 and should work with Python 2.4.
+
+The latest release of mpmath can be downloaded from the mpmath
 website. It should also be available in the Python Package Index at
 http://pypi.python.org/pypi
 
@@ -41,7 +44,7 @@ Import mpmath with
     from mpmath import *
 
 This provides the classes mpf and mpc which work analogously to
-Python's float and complex:
+Python's float and complex types:
 
     >>> mpf(2) / mpf(3)
     mpf('0.66666666666666663')
@@ -73,6 +76,7 @@ prec=53 and dps=15, the same as Python floats.
     mpf('0.66666666666666666666666666666663')
     >>> print _
     0.666666666666666666666666666667
+    >>> mpf.dps = 15     # restore to default
 
 You can create mpfs and mpcs from Python numbers, or combine mpfs
 and mpcs with Python numbers in arithmetic operations, but be
@@ -119,9 +123,8 @@ precision.
 3. Help and bug reports
 -----------------------
 
-Please send any questions and comments to Fredrik
-<fredrik.johansson@gmail.com>
-
-You can also report bugs at the mpmath issue tracker,
+You can report bugs at the mpmath issue tracker,
 http://code.google.com/p/mpmath/issues/list
 
+Please send any comments or questions to Fredrik
+<fredrik.johansson@gmail.com>
