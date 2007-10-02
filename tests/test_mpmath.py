@@ -317,14 +317,14 @@ def test_log():
         assert log(x, x) == 1
     assert log(1024, 2) == 10
     assert log(10**1234, 10) == 1234
-    #assert log(2+2j).ae(cmath.log(2+2j))
+    assert log(2+2j).ae(cmath.log(2+2j))
 
 def test_trig_basic():
     for x in (range(100) + range(-100,0)):
         t = x / 4.1
         assert cos(mpf(t)).ae(math.cos(t))
         assert sin(mpf(t)).ae(math.sin(t))
-        #assert tan(mpf(t)).ae(math.tan(t))
+        assert tan(mpf(t)).ae(math.tan(t))
     assert sin(1+1j).ae(cmath.sin(1+1j))
     assert sin(-4-3.6j).ae(cmath.sin(-4-3.6j))
     assert cos(1+1j).ae(cmath.cos(1+1j))
@@ -339,6 +339,18 @@ def test_trig_hard():
     assert sin(1e-6).ae(9.999999999998333e-007)
     assert cos(1e-6).ae(0.9999999999995)
 
+def test_atan():
+    assert atan(-2.3).ae(math.atan(-2.3))
+    assert atan2(1,1).ae(math.atan2(1,1))
+    assert atan2(1,-1).ae(math.atan2(1,-1))
+    assert atan2(-1,-1).ae(math.atan2(-1,-1))
+    assert atan2(-1,1).ae(math.atan2(-1,1))
+    assert atan2(-1,0).ae(math.atan2(-1,0))
+    assert atan2(1,0).ae(math.atan2(1,0))
+    assert atan(1e-50).ae(1e-50, abs_eps=0)
+    assert atan(1e50).ae(pi/2)
+    assert atan(-1e-50).ae(-1e-50, abs_eps=0)
+    assert atan(-1e50).ae(-pi/2)
 
 
 if __name__ == "__main__":

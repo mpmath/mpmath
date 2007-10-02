@@ -201,6 +201,7 @@ class mpf(mpnumeric):
         intt = int(t)
         if t == intt:
             return _make_mpf(fpow(s.val, intt, mpf._prec, mpf._rounding))
+        return power(s, t)
 
     def sqrt(s):
         return sqrt(s)
@@ -381,7 +382,7 @@ class mpc(mpnumeric):
             return w
         if n == 0.5:
             return sqrt(s)
-        raise NotImplementedError
+        return power(s, n)
 
     # TODO: refactor and merge with mpf.ae
     def ae(s, t, rel_eps=None, abs_eps=None):
@@ -424,7 +425,6 @@ def sqrt(x):
     x = mpc(x)
     return _make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
-
 def exp(x):
     x = mpnumeric(x)
     if isinstance(x, mpf):
@@ -439,9 +439,24 @@ def log(x, base=None):
         mpf.prec -= 3
         return +a
     x = mpnumeric(x)
+    if not x:
+        raise ValueError, "logarithm of 0"
     if isinstance(x, mpf) and x > 0:
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
-    raise NotImplementedError
+    else:
+        x = mpc(x)
+        mpf._prec += 3
+        mag = abs(x)
+        phase = atan2(x.imag, x.real)
+        mpf._prec -= 3
+        return mpc(log(mag), phase)
+
+def power(x, y):
+    # TODO: accurate estimate for extra precision needed
+    mpf._prec += 10
+    t = exp(y * log(x))
+    mpf._prec -= 10
+    return +t
 
 def cos(x):
     x = mpnumeric(x)
@@ -457,8 +472,42 @@ def sin(x):
     else:
         return _make_mpc(fcsin(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
+def tan(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf):
+        return _make_mpf(ftan(x.val, mpf._prec, mpf._rounding))
+    return sin(x) / cos(x)
+
+def atan(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf):
+        return _make_mpf(fatan(x.val, mpf._prec, mpf._rounding))
+    raise NotImplementedError
+
+def atan2(y,x):
+    """atan2(y, x) has the same magnitude as atan(y/x) but
+    accounts for the signs of y and x"""
+    x = mpf(x)
+    y = mpf(y)
+    if y < 0:
+        return -atan2(-y, x)
+    if not x and not y:
+        return mpf(0)
+    if y > 0 and x == 0:
+        mpf._prec += 2
+        t = pi/2
+        mpf._prec -= 2
+        return t
+    mpf._prec += 2
+    if x > 0:
+        a = atan(y/x)
+    else:
+        a = pi - atan(-y/x)
+    mpf._prec -= 2
+    return +a
+
 
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
-  "sqrt", "hypot", "exp", "log", "cos", "sin"]
+  "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power"]
 

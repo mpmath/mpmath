@@ -1001,7 +1001,72 @@ def ftan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     c, s = cos_sin(x, prec+2, rounding)
     return fdiv(s, c, prec, rounding)
 
+#----------------------------------------------------------------------
+# Inverse tangent
+#
 
+"""
+Near x = 0, use atan(x) = x - x**3/3 + x**5/5 - ...
+Near x = 1, use atan(x) = y/x * (1 + 2/3*y + 2*4/3/5*y**2 + ...)
+where y = x**2/(1+x**2).
+
+TODO: these series are not impressively fast. It is probably better
+to calculate atan from tan, using Newton's method or even the
+secant method.
+"""
+
+def _atan_series_1(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    man, exp, bc = x
+    # Increase absolute precision when extremely close to 0
+    bc = bitcount(man)
+    diff = -(bc + exp)
+    prec2 = prec
+    if diff > 10:
+        if 3*diff - 4 > prec:  # x**3 term vanishes; atan(x) ~x
+            return normalize(man, exp, prec, rounding)
+        prec2 = prec + diff
+    prec2 += 15  # XXX: better estimate for number of guard bits
+    x = make_fixed(x, prec2)
+    x2 = (x*x)>>prec2; one = 1<<prec2; s=a=x
+    for n in xrange(1, 1000000):
+        a = (a*x2) >> prec2
+        s += a // ((-1)**n * (n+n+1))
+        if -100 < a < 100:
+            break
+    return normalize(s, -prec2, prec, rounding)
+
+def _atan_series_2(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    prec2 = prec + 15
+    x = make_fixed(x, prec2)
+    one = 1<<prec2; x2 = (x*x)>>prec2; y=(x2<<prec2)//(one+x2)
+    s = a = one
+    for n in xrange(1, 1000000):
+        a = ((a*y)>>prec2) * (2*n) // (2*n+1)
+        if a < 100:
+            break
+        s += a
+    return normalize(y*s//x, -prec2, prec, rounding)
+
+_cutoff_1 = (5, -3, 3)   # ~0.6
+_cutoff_2 = (3, -1, 2)   # 1.5
+
+def fatan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+    if x[0] < 0:
+        t = fatan(fneg(x), prec+4, ROUND_FLOOR)
+        return normalize(-t[0], t[1], prec, rounding)
+    if fcmp(x, _cutoff_1) < 0:
+        return _atan_series_1(x)
+    if fcmp(x, _cutoff_2) < 0:
+        return _atan_series_2(x)
+    # For large x, use atan(x) = pi/2 - atan(1/x)
+    if x[1] > 10*prec:
+        pi = fpi(prec, rounding)
+        pihalf = pi[0], pi[1]-1, pi[2]
+    else:
+        pi = fpi(prec+4, ROUND_FLOOR)
+        pihalf = pi[0], pi[1]-1, pi[2]
+        t = fatan(fdiv(fone, x, prec+4, ROUND_FLOOR), prec+4, ROUND_FLOOR)
+        return fsub(pihalf, t, prec, rounding)
 
 
 #----------------------------------------------------------------------------#
