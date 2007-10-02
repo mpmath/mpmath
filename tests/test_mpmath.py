@@ -330,6 +330,27 @@ def test_trig_basic():
     assert cos(1+1j).ae(cmath.cos(1+1j))
     assert cos(-4-3.6j).ae(cmath.cos(-4-3.6j))
 
+def test_complex_functions():
+    for x in (range(10) + range(-10,0)):
+        for y in (range(10) + range(-10,0)):
+            z = complex(x, y)/4.3 + 0.01j
+            assert exp(mpc(z)).ae(cmath.exp(z))
+            assert log(mpc(z)).ae(cmath.log(z))
+            assert cos(mpc(z)).ae(cmath.cos(z))
+            assert sin(mpc(z)).ae(cmath.sin(z))
+            assert tan(mpc(z)).ae(cmath.tan(z))
+
+def test_complex_powers():
+    random.seed(1)
+    for i in range(100):
+        x1 = random.uniform(-10, 10)
+        y1 = random.uniform(-10, 10)
+        x2 = random.uniform(-10, 10)
+        y2 = random.uniform(-10, 10)
+        z1 = complex(x1, y1)
+        z2 = complex(x2, y2)
+        assert (mpc(z1)**mpc(z2)).ae(z1**z2, 1e-12)
+
 def test_trig_hard():
     mpf.prec = 150
     a = mpf(10**50)
