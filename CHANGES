@@ -1,0 +1,23 @@
+-- 0.2 --
+Released October 2, 2007
+
+* 50% faster exponential function
+* faster mpf <-> int ops
+* fixed import error in pidigits.py; added demos to source distribution
+* __rmul__ was missing on mpf
+* fixed bitcount bug also for -(2**n-1)
+* more docstrings
+* more tests; tests included in source distribution
+* approximate equality testing (.ae method) supported
+* implemented atan and atan2 functions
+* tan works for both mpfs and mpcs
+* complex logarithms and complex powers supported
+* more details in README
+
+-- 0.1 --
+Released September 27, 2007
+
+* imported code from SymPy's numerics module
+* renamed functions and restructured various parts of the code
+* fixed erroneous bitcount for 2**n-1 mantissa with directed rounding
+* various small speed improvements and bug fixes

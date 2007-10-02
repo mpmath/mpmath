@@ -195,6 +195,8 @@ class mpf(mpnumeric):
         if isinstance(t, inttypes):
             return _make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))
         if not isinstance(t, mpf):
+            if isinstance(t, complex_types):
+                return power(s, t)
             t = mpf(t)
         if t == 0.5:
             return sqrt(s)
@@ -382,6 +384,7 @@ class mpc(mpnumeric):
             return w
         if n == 0.5:
             return sqrt(s)
+        print "hah"
         return power(s, n)
 
     # TODO: refactor and merge with mpf.ae
