@@ -229,6 +229,18 @@ def test_exact_sqrts():
             assert sqrt(mpf((a*a, 2*i))) == mpf((a, i))
             assert sqrt(mpf((a*a, -2*i))) == mpf((a, -i))
 
+def test_sqrt_rounding():
+    for i in [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15]:
+        for dps in [7, 15, 83, 106, 2000]:
+            mpf.dps = dps
+            mpf.round_down()
+            assert (mpf(i)**0.5)**2 < i
+            mpf.round_up()
+            assert (mpf(i)**0.5)**2 > i
+    mpf.dps = 15
+    mpf.round_default()
+        
+
 
 #----------------------------------------------------------------------------
 # Type comparison

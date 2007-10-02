@@ -616,7 +616,7 @@ def fsqrt(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     else:
         man = _sqrt_fixed2(man, prec2)
 
-    return normalize(man, (exp+shift-prec2)//2, prec, ROUND_HALF_EVEN)
+    return normalize(man, (exp+shift-prec2)//2, prec, rounding)
 
 
 def fhypot(x, y, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
