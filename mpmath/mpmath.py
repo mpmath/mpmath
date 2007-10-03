@@ -547,9 +547,18 @@ def acos(x):
 
 def sinh(x):
     x = mpnumeric(x)
+    oldprec = mpf._prec
+    a = abs(x)
     mpf._prec += 10
+    high = a.exp + a.bc
+    if high < -10:
+        # Use Taylor series very close to 0
+        if high < (-(mpf._prec-10) * 0.3):
+            return x + (x**3)/6 + (x**5)/120
+        # Otherwise, just increase precision to avoid cancellation
+        mpf._prec += (-high)
     t = 0.5*(exp(x) - exp(-x))
-    mpf._prec -= 10
+    mpf._prec = oldprec
     return +t
 
 def cosh(x):
@@ -561,17 +570,31 @@ def cosh(x):
 
 def tanh(x):
     x = mpnumeric(x)
+    oldprec = mpf._prec
+    a = abs(x)
     mpf._prec += 10
+    high = a.exp + a.bc
+    if high < -10:
+        if high < (-(mpf._prec-10) * 0.3):
+            return x - (x**3)/3 + 2*(x**5)/15
+        mpf._prec += (-high)
     a = exp(2*x)
     t = (a-1)/(a+1)
-    mpf._prec -= 10
+    mpf._prec = oldprec
     return +t
 
 def asinh(x):
     x = mpnumeric(x)
+    oldprec = mpf._prec
+    a = abs(x)
     mpf._prec += 10
+    high = a.exp + a.bc
+    if high < -10:
+        if high < (-(mpf._prec-10) * 0.3):
+            return x - (x**3)/6 + 3*(x**5)/40
+        mpf._prec += (-high)
     t = log(x + sqrt(x**2 + 1))
-    mpf._prec -= 10
+    mpf._prec = oldprec
     return +t
 
 def acosh(x):
@@ -583,10 +606,19 @@ def acosh(x):
 
 def atanh(x):
     x = mpnumeric(x)
+    oldprec = mpf._prec
+    a = abs(x)
     mpf._prec += 10
+    high = a.exp + a.bc
+    if high < -10:
+        #print mpf._prec, x, x-(x**3)/3+(x**5)/5
+        if high < (-(mpf._prec-10) * 0.3):
+            return x - (x**3)/3 + (x**5)/5
+        mpf._prec += (-high)
     t = 0.5*(log(1+x)-log(1-x))
-    mpf._prec -= 10
+    mpf._prec = oldprec
     return +t
+
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
   "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power",
