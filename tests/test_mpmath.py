@@ -331,26 +331,32 @@ def test_log():
     assert log(10**1234, 10) == 1234
     assert log(2+2j).ae(cmath.log(2+2j))
 
-def test_trig_basic():
+def test_trig_hyperb_basic():
     for x in (range(100) + range(-100,0)):
         t = x / 4.1
         assert cos(mpf(t)).ae(math.cos(t))
         assert sin(mpf(t)).ae(math.sin(t))
         assert tan(mpf(t)).ae(math.tan(t))
+        assert cosh(mpf(t)).ae(math.cosh(t))
+        assert sinh(mpf(t)).ae(math.sinh(t))
+        assert tanh(mpf(t)).ae(math.tanh(t))
     assert sin(1+1j).ae(cmath.sin(1+1j))
     assert sin(-4-3.6j).ae(cmath.sin(-4-3.6j))
     assert cos(1+1j).ae(cmath.cos(1+1j))
     assert cos(-4-3.6j).ae(cmath.cos(-4-3.6j))
 
-def test_complex_functions():
-    for x in (range(10) + range(-10,0)):
-        for y in (range(10) + range(-10,0)):
-            z = complex(x, y)/4.3 + 0.01j
-            assert exp(mpc(z)).ae(cmath.exp(z))
-            assert log(mpc(z)).ae(cmath.log(z))
-            assert cos(mpc(z)).ae(cmath.cos(z))
-            assert sin(mpc(z)).ae(cmath.sin(z))
-            assert tan(mpc(z)).ae(cmath.tan(z))
+def random_complexes(N):
+    random.seed(1)
+    a = []
+    for i in range(N):
+        x1 = random.uniform(-10, 10)
+        y1 = random.uniform(-10, 10)
+        x2 = random.uniform(-10, 10)
+        y2 = random.uniform(-10, 10)
+        z1 = complex(x1, y1)
+        z2 = complex(x2, y2)
+        a.append((z1, z2))
+    return a
 
 def test_complex_powers():
     for dps in [15, 30, 100]:
@@ -360,13 +366,7 @@ def test_complex_powers():
         assert a.real == a.imag == mpf(2)**0.5 / 2
     mpf.dps = 15
     random.seed(1)
-    for i in range(100):
-        x1 = random.uniform(-10, 10)
-        y1 = random.uniform(-10, 10)
-        x2 = random.uniform(-10, 10)
-        y2 = random.uniform(-10, 10)
-        z1 = complex(x1, y1)
-        z2 = complex(x2, y2)
+    for (z1, z2) in random_complexes(100):
         assert (mpc(z1)**mpc(z2)).ae(z1**z2, 1e-12)
     assert (e**(-pi*1j)).ae(-1)
     mpf.dps = 50
@@ -399,9 +399,66 @@ def test_atan():
         assert (4*atan(1)).ae(pi)
     mpf.dps = 15
 
+def test_areal_inverses():
+    assert asin(mpf(0)) == 0
+    assert asinh(mpf(0)) == 0
+    assert acosh(mpf(1)) == 0
+    assert isinstance(asin(mpf(0.5)), mpf)
+    assert isinstance(asin(mpf(2.0)), mpc)
+    assert isinstance(acos(mpf(0.5)), mpf)
+    assert isinstance(acos(mpf(2.0)), mpc)
+    assert isinstance(atanh(mpf(0.1)), mpf)
+    assert isinstance(atanh(mpf(1.1)), mpc)
+
+    random.seed(1)
+    for i in range(50):
+        x = random.uniform(0, 1)
+        assert asin(mpf(x)).ae(math.asin(x))
+        assert acos(mpf(x)).ae(math.acos(x))
+
+        x = random.uniform(-10, 10)
+        assert asinh(mpf(x)).ae(cmath.asinh(x).real)
+        assert isinstance(asinh(mpf(x)), mpf)
+        x = random.uniform(1, 10)
+        assert acosh(mpf(x)).ae(cmath.acosh(x).real)
+        assert isinstance(acosh(mpf(x)), mpf)
+        x = random.uniform(-10, 0.999)
+        assert isinstance(acosh(mpf(x)), mpc)
+
+        x = random.uniform(-1, 1)
+        assert atanh(mpf(x)).ae(cmath.atanh(x).real)
+        assert isinstance(atanh(mpf(x)), mpf)
+
+
+def test_complex_functions():
+    for x in (range(10) + range(-10,0)):
+        for y in (range(10) + range(-10,0)):
+            z = complex(x, y)/4.3 + 0.01j
+            assert exp(mpc(z)).ae(cmath.exp(z))
+            assert log(mpc(z)).ae(cmath.log(z))
+            assert cos(mpc(z)).ae(cmath.cos(z))
+            assert sin(mpc(z)).ae(cmath.sin(z))
+            assert tan(mpc(z)).ae(cmath.tan(z))
+            assert sinh(mpc(z)).ae(cmath.sinh(z))
+            assert cosh(mpc(z)).ae(cmath.cosh(z))
+            assert tanh(mpc(z)).ae(cmath.tanh(z))
+
+def test_complex_inverse_functions():
+    for (z1, z2) in random_complexes(30):
+        # apparently cmath uses a different branch, so we
+        # can't use it for comparison
+        assert sinh(asinh(z1)).ae(z1)
+        #
+        assert acosh(z1).ae(cmath.acosh(z1))
+        assert atanh(z1).ae(cmath.atanh(z1))
+        assert atan(z1).ae(cmath.atan(z1))
+        # the reason we set a big eps here is that the cmath
+        # functions are inaccurate
+        assert asin(z1).ae(cmath.asin(z1), rel_eps=1e-12)
+        assert acos(z1).ae(cmath.acos(z1), rel_eps=1e-12)
 
 if __name__ == "__main__":
-    globals_ = globals().keys()
+    globals_ = sorted(globals().keys())
     t1 = time.time()
     for f in globals_:
         if f.startswith("test_"):

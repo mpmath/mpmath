@@ -479,7 +479,7 @@ def tan(x):
     if isinstance(x, mpf):
         return _make_mpf(ftan(x.val, mpf._prec, mpf._rounding))
     # the complex division can cause enormous cancellation.
-    # TODO: dynamically estimate the extra precision needed
+    # TODO: handle cancellation robustly
     mpf._prec += 20
     t = sin(x) / cos(x)
     mpf._prec -= 20
@@ -489,11 +489,17 @@ def atan(x):
     x = mpnumeric(x)
     if isinstance(x, mpf):
         return _make_mpf(fatan(x.val, mpf._prec, mpf._rounding))
-    raise NotImplementedError
+    # TODO: maybe get this to agree with Python's cmath atan about the
+    # branch to choose on the imaginary axis
+    # TODO: handle cancellation robustly
+    mpf._prec += 10
+    t = (0.5j)*(log(1-1j*x) - log(1+1j*x))
+    mpf._prec -= 10
+    return +t
 
 def atan2(y,x):
-    """atan2(y, x) has the same magnitude as atan(y/x) but
-    accounts for the signs of y and x"""
+    """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
+    the signs of y and x. (For real arguments only.)"""
     x = mpf(x)
     y = mpf(y)
     if y < 0:
@@ -513,8 +519,76 @@ def atan2(y,x):
     mpf._prec -= 2
     return +a
 
+# TODO: robustly deal with cancellation in all of the following functions
 
+def _asin_complex(z):
+    mpf._prec += 10
+    t = -1j * log(1j * z + sqrt(1 - z*z))
+    mpf._prec -= 10
+    return +t
+
+def asin(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf) and abs(x) <= 1:
+        return _asin_complex(x).real
+    return _asin_complex(x)
+
+def _acos_complex(z):
+    mpf._prec += 10
+    t = pi/2 + 1j * log(1j * z + sqrt(1 - z*z))
+    mpf._prec -= 10
+    return +t
+
+def acos(x):
+    x = mpnumeric(x)
+    if isinstance(x, mpf) and abs(x) <= 1:
+        return _acos_complex(x).real
+    return _acos_complex(x)
+
+def sinh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    t = 0.5*(exp(x) - exp(-x))
+    mpf._prec -= 10
+    return +t
+
+def cosh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    t = 0.5*(exp(x) + exp(-x))
+    mpf._prec -= 10
+    return +t
+
+def tanh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    a = exp(2*x)
+    t = (a-1)/(a+1)
+    mpf._prec -= 10
+    return +t
+
+def asinh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    t = log(x + sqrt(x**2 + 1))
+    mpf._prec -= 10
+    return +t
+
+def acosh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    t = log(x + sqrt(x-1)*sqrt(x+1))
+    mpf._prec -= 10
+    return +t
+
+def atanh(x):
+    x = mpnumeric(x)
+    mpf._prec += 10
+    t = 0.5*(log(1+x)-log(1-x))
+    mpf._prec -= 10
+    return +t
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
-  "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power"]
+  "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power",
+  "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh"]
 
