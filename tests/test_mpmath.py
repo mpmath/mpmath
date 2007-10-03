@@ -193,11 +193,13 @@ def test_mixed_types():
     assert 3.0 * mpf(2) == mpf(2) * 3.0 == 6
     assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
 
-
 # Test that integer arithmetic is exact
-def test_integers():
+def test_aintegers():
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
+      for rounding in [ROUND_DOWN, ROUND_UP, ROUND_FLOOR, ROUND_CEILING,
+          ROUND_HALF_UP, ROUND_HALF_DOWN, ROUND_HALF_EVEN]:
+        mpf._rounding = rounding
         mpf.dps = prec
         M = 10**(prec-2)
         M2 = 10**(prec//2-2)
@@ -213,6 +215,7 @@ def test_integers():
             a = random.randint(-M2, M2)
             b = random.randint(-M2, M2)
             assert mpf(a) * mpf(b) == a*b
+    mpf.round_default()
     mpf.dps = 15
 
 def test_exact_sqrts():

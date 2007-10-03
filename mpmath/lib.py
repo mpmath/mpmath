@@ -36,7 +36,9 @@ class RoundingMode(int):
         a = int.__new__(cls, level)
         a.name = name
         return a
-    def __repr__(self): return self.name
+    def __repr__(self):
+        return self.name
+    __str__ = __repr__
 
 ROUND_DOWN    = RoundingMode(1, 'ROUND_DOWN')
 ROUND_UP      = RoundingMode(2, 'ROUND_UP')
@@ -98,15 +100,16 @@ def binary_to_decimal(s, n):
     return a
 
 def decimal_to_binary(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    dps = int(prec*LOG2_10) + 5
+    dps = int(prec*LOG2_10) + 10
     prec_ = getctx().prec
     getctx().prec = dps
     d = Dec(x).normalize()
     sgn, digits, dexp = d.as_tuple()
     d = d * Dec(10)**(-dexp)
-    power = fpow(ften, -dexp, prec+5)
-    y = fdiv(float_from_int(int(d), prec+5), power, prec, rounding)
+    power = fpow(ften, -dexp, prec+10)
+    y = fdiv(float_from_int(int(d), prec+10), power, prec+10, ROUND_HALF_EVEN)
     getctx().prec = prec_
+    y = normalize(y[0], y[1], prec, rounding)
     return y
 
 def bin_to_radix(x, xbits, base, bdigits):
