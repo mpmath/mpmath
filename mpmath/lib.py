@@ -873,7 +873,7 @@ def _log_newton(x, prec):
     extra = 8
     # 50-bit approximation
     #r = int(_clog(Float((x, -prec), 64)) * 2.0**50)
-    fx = math.log(float_to_pyfloat((x, -prec, 1)))
+    fx = math.log(float_to_pyfloat((x, -prec, bitcount(x))))
     r = int(fx * 2.0**50)
     prevp = 50
     for p in giant_steps(50, prec+extra):
