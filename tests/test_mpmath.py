@@ -109,6 +109,7 @@ def test_round_half_even():
 def test_rounding_bugs():
     # 1 less than power-of-two cases
     assert normalize(72057594037927935, -56, 53, ROUND_UP) == (1, 0, 1)
+    assert normalize(73786976294838205979L, -65, 53, ROUND_HALF_EVEN) == (1, 1, 1)
     assert normalize(31, 0, 4, ROUND_UP) == (1, 5, 1)
     assert normalize(-31, 0, 4, ROUND_FLOOR) == (-1, 5, 1)
     assert normalize(255, 0, 7, ROUND_UP) == (1, 8, 1)

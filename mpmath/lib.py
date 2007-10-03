@@ -257,27 +257,14 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     else:
         bc = bitcount(man)
     if bc > prec:
-        # Right shifting by bc-prec nearly always guarantees that
-        # the result has at most prec bits. There is one exceptional
-        # case: if abs(man) is 1 less than a power of two and rounding
-        # is done away from zero, it turns into the higher power of two.
-        # This case must be handled separately; otherwise a bc of 0
-        # gets returned.
+        man = rshift(man, bc-prec, rounding)
+        exp += (bc - prec)
 
-        # TODO: by comparing sign and rounding mode, we could just
-        # return (+/- 1, exp+bc, 1) right here
-        absman = man
-        if absman < 0:
-            absman = -absman
-        if not ((absman+1) & absman):
-            man = rshift(man, bc-prec, rounding)
-            exp += (bc - prec)
-            bc = bitcount(man)
-        # Default case
-        else:
-            man = rshift(man, bc-prec, rounding)
-            exp += (bc - prec)
-            bc = prec
+        # Unfortunately, this doesn't always work, so we have to
+        # count the bits again. TODO: figure out how to avoid
+        #bc = prec
+        bc = bitcount(man)
+
     # Strip trailing zeros
     if not man & 1:
         tr = trailing_zeros(man)
