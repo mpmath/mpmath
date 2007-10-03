@@ -1,3 +1,12 @@
+--0.3 (developing)--
+Currently in SVN
+* fixed high-precision accuracy problem in complex sqrt
+* fixed high-precision accuracy problem in atan and complex log
+* fixed directed rounding for sqrt (always rounded to nearest)
+* implemented all hyperbolic and inverse functions (there are some
+  accuracy issues left to sort out)
+* many more tests added
+
 -- 0.2 --
 Released October 2, 2007
 
