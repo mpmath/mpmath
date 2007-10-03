@@ -92,11 +92,16 @@ initialize an mpf with a full-precision value, use a string:
     >>> mpf('0.1')
     mpf('0.1000000000000000000000000000000000000000000000000001')   # ok
 
-The functions exp, log, power, cos, sin, tan, and a few others
-are available and support both real and complex input. The constants
-pi, e, and cgamma (Euler's constant) are available as special objects
-that behave like mpfs but whose values automatically adjust to the
-precision.
+The following functions are available and support both real and complex
+arguments:
+
+  sqrt, exp, log, power, cos, sin, tan, cosh, sinh, tanh,
+  acos, asin, atan, acosh, asinh, atanh
+
+Additionally, the functions hypot and atan2 are implemented, for real
+arguments only. The constants pi, e, and cgamma (Euler's constant) are
+available as special objects that behave like mpfs but whose values
+automatically adjust to the precision.
 
     >>> mpf.dps = 15
     >>> print cos(1)
@@ -134,7 +139,30 @@ and verifies a 15-digit approximation interval for pi:
     True
 
 
-3. Help and bug reports
+3. Known problems
+-----------------
+
+* mpmath temporarily increases the working precision during function
+  evaluations to suppress the effects of intermediate rounding errors.
+  In most functions, the precision is currently increased by a fixed amount
+  that gives accurate results for "normal" input. Close to zeros and
+  singularities, and/or with the precision set to (say) several hundred
+  digits, the last few digits in a result may be wrong.
+
+* Directed rounding works for addition and multiplication. It is implemented
+  heuristically for other operations, and their results may be off by one
+  or two bits in the last place (if otherwise accurate).
+
+* binary <-> decimal conversion currently uses the decimal module, which
+  is very slow and fails for extremely large and small numbers
+
+* Some IEEE 754 features such as infinities, NaN and denormal rounding
+  are not implemented
+
+* Various small bugs...
+
+
+4. Help and bug reports
 -----------------------
 
 You can report bugs at the mpmath issue tracker,
