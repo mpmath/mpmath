@@ -447,10 +447,10 @@ def log(x, base=None):
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
     else:
         x = mpc(x)
-        mpf._prec += 3
+        mpf._prec += 6
         mag = abs(x)
         phase = atan2(x.imag, x.real)
-        mpf._prec -= 3
+        mpf._prec -= 6
         return mpc(log(mag), phase)
 
 def power(x, y):
@@ -478,7 +478,12 @@ def tan(x):
     x = mpnumeric(x)
     if isinstance(x, mpf):
         return _make_mpf(ftan(x.val, mpf._prec, mpf._rounding))
-    return sin(x) / cos(x)
+    # the complex division can cause enormous cancellation.
+    # TODO: dynamically estimate the extra precision needed
+    mpf._prec += 20
+    t = sin(x) / cos(x)
+    mpf._prec -= 20
+    return +t
 
 def atan(x):
     x = mpnumeric(x)

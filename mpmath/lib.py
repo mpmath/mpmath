@@ -836,7 +836,7 @@ def exp_series(x, prec):
 def fexp(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     man, exp, bc = x
     # extra precision needs to be similar in magnitude to log_2(|x|)
-    prec2 = prec + 4 + max(0, bc+exp)
+    prec2 = prec + 6 + max(0, bc+exp)
     t = make_fixed(x, prec2)
     # abs(x) > 1?
     if exp+bc > 1:  #fcmp(fabs(x), fone) > 0:
@@ -870,17 +870,18 @@ be used in that case).
 # This function performs the Newton iteration using fixed-point
 # arithmetic. x is assumed to have magnitude ~= 1
 def _log_newton(x, prec):
+    extra = 8
     # 50-bit approximation
     #r = int(_clog(Float((x, -prec), 64)) * 2.0**50)
     fx = math.log(float_to_pyfloat((x, -prec, 1)))
     r = int(fx * 2.0**50)
     prevp = 50
-    for p in giant_steps(50, prec+8):
+    for p in giant_steps(50, prec+extra):
         rb = lshift_quick(r, p-prevp)
         e = exp_series(-rb, p)
         r = rb + ((rshift_quick(x, prec-p)*e)>>p) - (1 << p)
         prevp = p
-    return r >> 8
+    return r >> extra
 
 def flog(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     if x == fzero: raise ValueError, "logarithm of 0"
