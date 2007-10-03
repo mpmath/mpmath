@@ -260,10 +260,13 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
         man = rshift(man, bc-prec, rounding)
         exp += (bc - prec)
 
-        # Unfortunately, this doesn't always work, so we have to
-        # count the bits again. TODO: figure out how to avoid
-        #bc = prec
-        bc = bitcount(man)
+        # If shifting to a power of two, the bitcount may be wrong
+        # and has to be redone. Check last 3 bits to avoid recounting
+        # in most cases.
+        if man & 7:
+            bc = prec
+        else:
+            bc = bitcount(man)
 
     # Strip trailing zeros
     if not man & 1:
