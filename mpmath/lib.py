@@ -99,15 +99,15 @@ def binary_to_decimal(s, n):
     getctx().prec = prec_
     return a
 
-def decimal_to_binary(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def decimal_to_binary(x, prec, rounding):
     dps = int(prec*LOG2_10) + 10
     prec_ = getctx().prec
     getctx().prec = dps
     d = Dec(x).normalize()
     sgn, digits, dexp = d.as_tuple()
     d = d * Dec(10)**(-dexp)
-    power = fpow(ften, -dexp, prec+10)
-    y = fdiv(float_from_int(int(d), prec+10), power, prec+10, ROUND_HALF_EVEN)
+    power = fpow(ften, -dexp, prec+10, ROUND_FLOOR)
+    y = fdiv(float_from_int(int(d), prec+10, ROUND_FLOOR), power, prec+10, ROUND_HALF_EVEN)
     getctx().prec = prec_
     y = normalize(y[0], y[1], prec, rounding)
     return y
@@ -246,7 +246,7 @@ def rshift(x, n, rounding):
     if x > 0: return t>>1
     else:     return -(t>>1)
 
-def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def normalize(man, exp, prec, rounding):
     """Normalize the binary floating-point number represented by
     man * 2**exp to the specified precision level, rounding if the
     number of bits in the mantissa exceeds prec. The mantissa is also
@@ -289,15 +289,15 @@ def normalize(man, exp, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-def float_from_int(n, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def float_from_int(n, prec, rounding):
     return normalize(n, 0, prec, rounding)
 
-def float_from_rational(p, q, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def float_from_rational(p, q, prec, rounding):
     """Create floating-point number from a rational number p/q"""
     n = prec + bitcount(q) + 2
     return normalize((p<<n)//q, -n, prec, rounding)
 
-def float_from_pyfloat(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def float_from_pyfloat(x, prec, rounding):
     # We assume that a float mantissa has 53 bits
     m, e = math.frexp(x)
     return normalize(int(m*(1<<53)), e-53, prec, rounding)
@@ -327,12 +327,12 @@ def float_to_rational(s):
         return man, 2**-exp
 
 
-fzero = float_from_int(0)
-fone = float_from_int(1)
-ftwo = float_from_int(2)
-ften = float_from_int(10)
-fhalf = float_from_rational(1, 2)
-assert fhalf == float_from_pyfloat(0.5)
+fzero = float_from_int(0, 5, ROUND_FLOOR)
+fone = float_from_int(1, 5, ROUND_FLOOR)
+ftwo = float_from_int(2, 5, ROUND_FLOOR)
+ften = float_from_int(10, 5, ROUND_FLOOR)
+fhalf = float_from_rational(1, 2, 5, ROUND_FLOOR)
+assert fhalf == float_from_pyfloat(0.5, 5, ROUND_FLOOR)
 
 
 #----------------------------------------------------------------------------#
@@ -388,7 +388,7 @@ def fcmp(s, t):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-def fadd(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fadd(s, t, prec, rounding):
     """Floating-point addition. Given two tuples s and t containing the
     components of floating-point numbers, return their sum rounded to 'prec'
     bits using the 'rounding' mode, represented as a tuple of components."""
@@ -452,23 +452,27 @@ def fadd(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     return normalize(tman+(sman<<(sexp-texp)), texp, prec, rounding)
 
 
-def fsub(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fsub(s, t, prec, rounding):
     """Floating-point subtraction"""
     return fadd(s, (-t[0], t[1], t[2]), prec, rounding)
 
-def fneg(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fneg(s, prec, rounding):
     """Floating-point negation. In addition to changing sign, rounds to
     the specified precision."""
     return normalize(-s[0], s[1], prec, rounding)
 
-def fabs(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fneg_noround(s):
+    """Negate without normalizing"""
+    return (-s[0], s[1], s[2])
+
+def fabs(s, prec, rounding):
     man, exp, bc = s
     if man < 0:
         return normalize(-man, exp, prec, rounding)
     return normalize(man, exp, prec, rounding)
 
 
-def fmul(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fmul(s, t, prec, rounding):
     """Floating-point multiplication"""
 
     sman, sexp, sbc = s
@@ -479,7 +483,7 @@ def fmul(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     return normalize(sman*tman, sexp+texp, prec, rounding)
 
 
-def fdiv(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fdiv(s, t, prec, rounding):
     """Floating-point division"""
     sman, sexp, sbc = s
     tman, texp, tbc = t
@@ -497,8 +501,15 @@ def fdiv(s, t, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 
     return normalize((sman<<extra)//tman, sexp-texp-extra, prec, rounding)
 
+def fdiv2_noround(s):
+    """Quickly divide by two without rounding"""
+    man, exp, bc = s
+    if not man:
+        return s
+    return man, exp-1, bc
 
-def fpow(s, n, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+
+def fpow(s, n, prec, rounding):
     """Compute s**n, where n is an integer"""
     n = int(n)
     if n == 0: return fone
@@ -582,7 +593,7 @@ def _sqrt_fixed2(y, prec):
     r = (r * y) >> prec
     return r >> 8
 
-def fsqrt(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fsqrt(s, prec, rounding):
     """
     If x is a positive Float, sqrt(x) returns the square root of x as a
     Float, rounded to the current working precision.
@@ -612,7 +623,7 @@ def fsqrt(s, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     return normalize(man, (exp+shift-prec2)//2, prec, rounding)
 
 
-def fhypot(x, y, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fhypot(x, y, prec, rounding):
     if y == fzero: return fabs(x, prec, rounding)
     if x == fzero: return fabs(y, prec, rounding)
     RF = ROUND_FLOOR
@@ -714,7 +725,7 @@ def pi_fixed(prec):
     else:
         return _pi_agm(prec)
 
-def fpi(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fpi(prec, rounding):
     """Compute a floating-point approximation of pi"""
     return normalize(pi_fixed(prec+5), -prec-5, prec, rounding)
 
@@ -726,14 +737,14 @@ def fpi(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 def log2_fixed(prec):
     return _machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
 
-def flog2(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def flog2(prec, rounding):
     return normalize(log2_fixed(prec+5), -prec-5, prec, rounding)
 
 @_constmemo
 def log10_fixed(prec):
     return _machin([(46, 31), (34, 49), (20, 161)], prec, True)
 
-def flog10(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def flog10(prec, rounding):
     return normalize(log10_fixed(prec+5), -prec-5, prec, rounding)
 
 """
@@ -768,7 +779,7 @@ def gamma_fixed(prec):
     S = ((A<<prec) // B) - p*log2_fixed(prec)
     return S >> 30
 
-def fgamma(prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fgamma(prec, rounding):
     return normalize(gamma_fixed(prec+5), -prec-5, prec, rounding)
 
 
@@ -826,7 +837,7 @@ def exp_series(x, prec):
         s = (s*s) >> prec2
     return s >> guards
 
-def fexp(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fexp(x, prec, rounding):
     man, exp, bc = x
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
@@ -876,7 +887,7 @@ def _log_newton(x, prec):
         prevp = p
     return r >> extra
 
-def flog(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def flog(x, prec, rounding):
     if x == fzero: raise ValueError, "logarithm of 0"
     if x == fone:  return fzero
     man, exp, bc = x
@@ -885,7 +896,7 @@ def flog(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     prec2 = prec + int(math.log(1+abs(bc+exp), 2)) + 10
     # Watch out for the case when x is very close to 1
     if -1 < bc + exp < 2:
-        near_one = fabs(fsub(x, fone))
+        near_one = fabs(fsub(x, fone, STANDARD_PREC, ROUND_FLOOR), STANDARD_PREC, ROUND_FLOOR)
         if near_one == 0:
             return fzero
         # estimate how close
@@ -937,6 +948,8 @@ v            v            v            v           v
   -1 |                      _________   ..........
       0                       pi                     2*pi
 
+
+TODO: could use cos series
 """
 
 def _sin_series(x, prec):
@@ -957,11 +970,8 @@ def _trig_reduce(x, prec):
     rem -= pi4
     return n, rem
 
-def cos_sin(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    """
-    cos_sin(x) calculates both the cosine and the sine of x rounded
-    to the nearest Float value, and returns the tuple (cos(x), sin(x)).
-    """
+def cos_sin(x, prec, rounding):
+    """Simultaneously compute (cos(x), sin(x)) for real x."""
     man, exp, bc = x
     bits_from_unit = abs(bc + exp)
     prec2 = prec + bits_from_unit + 15
@@ -985,15 +995,72 @@ def cos_sin(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     s = normalize(s, -prec2, prec, rounding)
     return c, s
 
-def fcos(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fcos(x, prec, rounding):
     return cos_sin(x, prec, rounding)[0]
 
-def fsin(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fsin(x, prec, rounding):
     return cos_sin(x, prec, rounding)[1]
 
-def ftan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    c, s = cos_sin(x, prec+2, rounding)
+def ftan(x, prec, rounding):
+    c, s = cos_sin(x, prec+6, ROUND_FLOOR)
     return fdiv(s, c, prec, rounding)
+
+
+#----------------------------------------------------------------------
+# Hyperbolic functions
+#
+
+def _sinh_series(x, prec):
+    x2 = (x*x) >> prec
+    s = a = x
+    k = 3
+    while a:
+        a = ((a * x2) >> prec) // (k*(k-1))
+        s += a
+        k += 2
+    return s
+
+def cosh_sinh(x, prec, rounding):
+    """Simultaneously compute (cosh(x), sinh(x))"""
+
+    man, exp, bc = x
+    high_bit = exp + bc
+
+    prec2 = prec + 6
+
+    if high_bit < -3:
+        # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
+        # TODO: support directed rounding
+        if high_bit < -prec-2:
+            return (x, fone)
+
+        # Avoid cancellation when computing sinh
+        # TODO: might be faster to use sinh series directly
+        prec2 += (-high_bit) + 4
+
+    # In the general case, we use
+    #    cosh(x) = (exp(x) + exp(-x))/2
+    #    sinh(x) = (exp(x) - exp(-x))/2
+    # and note that the exponential only needs to be computed once.
+    ep = fexp(x, prec2, ROUND_FLOOR)
+    em = fdiv(fone, ep, prec2, ROUND_FLOOR)
+    ch = fdiv2_noround(fadd(ep, em, prec, rounding))
+    sh = fdiv2_noround(fsub(ep, em, prec, rounding))
+    return ch, sh
+
+def fcosh(x, prec, rounding):
+    """Compute cosh(x) for a real argument x"""
+    return cosh_sinh(x, prec, rounding)[0]
+
+def fsinh(x, prec, rounding):
+    """Compute sinh(x) for a real argument x"""
+    return cosh_sinh(x, prec, rounding)[1]
+
+def ftanh(x, prec, rounding):
+    """Compute tanh(x) for a real argument x"""
+    ch, sh = cosh_sinh(x, prec+6, ROUND_FLOOR)
+    return fdiv(sh, ch, prec, rounding)
+
 
 #----------------------------------------------------------------------
 # Inverse tangent
@@ -1009,7 +1076,7 @@ to calculate atan from tan, using Newton's method or even the
 secant method.
 """
 
-def _atan_series_1(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def _atan_series_1(x, prec, rounding):
     man, exp, bc = x
     # Increase absolute precision when extremely close to 0
     bc = bitcount(man)
@@ -1029,7 +1096,7 @@ def _atan_series_1(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
             break
     return normalize(s, -prec2, prec, rounding)
 
-def _atan_series_2(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def _atan_series_2(x, prec, rounding):
     prec2 = prec + 15
     x = make_fixed(x, prec2)
     one = 1<<prec2; x2 = (x*x)>>prec2; y=(x2<<prec2)//(one+x2)
@@ -1044,9 +1111,9 @@ def _atan_series_2(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 _cutoff_1 = (5, -3, 3)   # ~0.6
 _cutoff_2 = (3, -1, 2)   # 1.5
 
-def fatan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fatan(x, prec, rounding):
     if x[0] < 0:
-        t = fatan(fneg(x), prec+4, ROUND_FLOOR)
+        t = fatan(fneg_noround(x), prec+4, ROUND_FLOOR)
         return normalize(-t[0], t[1], prec, rounding)
     if fcmp(x, _cutoff_1) < 0:
         return _atan_series_1(x, prec, rounding)
@@ -1069,14 +1136,14 @@ def fatan(x, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-def fcabs(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fcabs(re, im, prec, rounding):
     return fhypot(re, im, prec, rounding)
 
 
 # For complex square roots, we have sqrt(a+b*I) = sqrt((r+a)/2) + 
 # I*b/sqrt(2*(r+a)) where r = abs(a+b*I), when a+b*I is not a negative
 # real number (http://en.wikipedia.org/wiki/Square_root)
-def fcsqrt(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fcsqrt(re, im, prec, rounding):
     if re == im == fzero:
         return (re, im)
     if re[0] < 0 and im[0] == 0:
@@ -1087,30 +1154,37 @@ def fcsqrt(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
     aim = fdiv(im, fsqrt(fmul(rpx, ftwo, prec2, RF), prec2, RF), prec, rounding)
     return are, aim
 
-def fcexp(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
+def fcexp(re, im, prec, rounding):
     mag = fexp(re, prec+4, ROUND_FLOOR)
     are, aim = cos_sin(im, prec+4, ROUND_FLOOR)
     return fmul(mag, are, prec, rounding), fmul(mag, aim, prec, rounding)
 
-def fcsin(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    prec2 = prec+4
+def fcsin(re, im, prec, rounding):
+    prec2 = prec + 6
     RF = ROUND_FLOOR
     # sin(x+y*i) = sin(x)*cosh(y)+cos(x)*sinh(y)*i
-    c, s = cos_sin(re, prec2, RF)
-    expb1 = fexp(im, prec2, RF)
-    expb2 = fdiv(fone, expb1, prec2, RF)
-    ch = fmul(fadd(expb1, expb2, prec2, RF), fhalf, prec2, RF)
-    sh = fmul(fsub(expb1, expb2, prec2, RF), fhalf, prec2, RF)
-    return fmul(s, ch, prec, rounding), fmul(c, sh, prec, rounding)
+    c, s = cos_sin(re, prec2, ROUND_FLOOR)
+    ch, sh = cosh_sinh(im, prec2, ROUND_FLOOR)
+    sre = fmul(s, ch, prec, rounding)
+    sim = fmul(c, sh, prec, rounding)
+    return sre, sim
 
-def fccos(re, im, prec=STANDARD_PREC, rounding=ROUND_HALF_EVEN):
-    prec2 = prec+4
-    RF = ROUND_FLOOR
+def fccos(re, im, prec, rounding):
+    prec2 = prec + 6
     # cos(x+y*i) = cos(x)*cosh(y)-sin(x)*sinh(y)*i
-    c, s = cos_sin(re, prec2, RF)
-    expb1 = fexp(im, prec2, RF)
-    expb2 = fdiv(fone, expb1, prec2, RF)
-    ch = fmul(fadd(expb1, expb2, prec2, RF), fhalf, prec2, RF)
-    sh = fmul(fsub(expb1, expb2, prec2, RF), fhalf, prec2, RF)
-    return fmul(c, ch, prec, rounding), \
-        fneg(fmul(s, sh, prec, rounding), prec, rounding)
+    c, s = cos_sin(re, prec2, ROUND_FLOOR)
+    ch, sh = cosh_sinh(im, prec2, ROUND_FLOOR)
+    sre = fmul(c, ch, prec, rounding)
+    sim = fneg_noround(fmul(s, sh, prec, rounding))
+    return sre, sim
+
+# TODO: complex tan
+
+def fcsinh(re, im, prec, rounding):
+    # use sinh(x) = -i*sin(x*i)
+    im, re = fcsin(im, re, prec, rounding)
+    return re, im
+
+def fccosh(re, im, prec, rounding):
+    # use cosh(x) = cos(x*i)
+    return fccos(im, fneg_noround(re), prec, rounding)

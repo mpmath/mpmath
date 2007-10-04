@@ -427,12 +427,23 @@ def sqrt(x):
     x = mpc(x)
     return _make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
-def exp(x):
-    x = mpnumeric(x)
-    if isinstance(x, mpf):
-        return _make_mpf(fexp(x.val, mpf._prec, mpf._rounding))
-    else:
-        return _make_mpc(fcexp(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+def entire_function(name, real_f, complex_f):
+    def f(x):
+        x = mpnumeric(x)
+        if isinstance(x, mpf):
+            return _make_mpf(real_f(x.val, mpf._prec, mpf._rounding))
+        else:
+            return _make_mpc(complex_f(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+    f.__name__ = name
+    return f
+
+
+exp = entire_function('exp', fexp, fcexp)
+cos = entire_function('cos', fcos, fccos)
+sin = entire_function('sin', fsin, fcsin)
+cosh = entire_function('cosh', fcosh, fccosh)
+sinh = entire_function('sinh', fsinh, fcsinh)
+
 
 def log(x, base=None):
     if base is not None:
@@ -459,20 +470,6 @@ def power(x, y):
     t = exp(y * log(x))
     mpf._prec -= 10
     return +t
-
-def cos(x):
-    x = mpnumeric(x)
-    if isinstance(x, mpf):
-        return _make_mpf(fcos(x.val, mpf._prec, mpf._rounding))
-    else:
-        return _make_mpc(fccos(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
-
-def sin(x):
-    x = mpnumeric(x)
-    if isinstance(x, mpf):
-        return _make_mpf(fsin(x.val, mpf._prec, mpf._rounding))
-    else:
-        return _make_mpc(fcsin(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
 def tan(x):
     x = mpnumeric(x)
@@ -544,29 +541,6 @@ def acos(x):
     if isinstance(x, mpf) and abs(x) <= 1:
         return _acos_complex(x).real
     return _acos_complex(x)
-
-def sinh(x):
-    x = mpnumeric(x)
-    oldprec = mpf._prec
-    a = abs(x)
-    mpf._prec += 10
-    high = a.exp + a.bc
-    if high < -10:
-        # Use Taylor series very close to 0
-        if high < (-(mpf._prec-10) * 0.3):
-            return x + (x**3)/6 + (x**5)/120
-        # Otherwise, just increase precision to avoid cancellation
-        mpf._prec += (-high)
-    t = 0.5*(exp(x) - exp(-x))
-    mpf._prec = oldprec
-    return +t
-
-def cosh(x):
-    x = mpnumeric(x)
-    mpf._prec += 10
-    t = 0.5*(exp(x) + exp(-x))
-    mpf._prec -= 10
-    return +t
 
 def tanh(x):
     x = mpnumeric(x)
