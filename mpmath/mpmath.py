@@ -203,7 +203,7 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return power(s, t)
             t = mpf(t)
-        if t == 0.5:
+        if t.val == fhalf:
             return sqrt(s)
         intt = int(t)
         if t == intt:
@@ -427,11 +427,13 @@ j = mpc(0,1)
 
 def sqrt(x):
     x = mpnumeric(x)
-    if isinstance(x, mpf) and x >= 0:
+    if isinstance(x, mpf) and x.val[0] >= 0:
         return _make_mpf(fsqrt(x.val, mpf._prec, mpf._rounding))
     x = mpc(x)
     return _make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
+
+# Functions that map reals to real and complexes to complexes
 def entire_function(name, real_f, complex_f):
     def f(x):
         x = mpnumeric(x)
@@ -441,7 +443,6 @@ def entire_function(name, real_f, complex_f):
             return _make_mpc(complex_f(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
     f.__name__ = name
     return f
-
 
 exp = entire_function('exp', fexp, fcexp)
 cos = entire_function('cos', fcos, fccos)
@@ -459,7 +460,7 @@ def log(x, base=None):
     x = mpnumeric(x)
     if not x:
         raise ValueError, "logarithm of 0"
-    if isinstance(x, mpf) and x > 0:
+    if isinstance(x, mpf) and x.val[0] > 0:
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
     else:
         x = mpc(x)

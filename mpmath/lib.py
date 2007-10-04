@@ -580,6 +580,15 @@ def _sqrt_fixed(y, prec):
         prevp = p
     return r >> 8
 
+# separate implementation for less than 200 bits
+#def _sqrt_fixed0(y, prec, p=2**53):
+#    r = int(y**0.5 * p) << (prec - 53)
+#    r = (r + (y << prec) // r)
+#    if prec < 100:
+#        return r >> (prec >> 1)
+#    r = (r + (y << prec) // r)
+#    return r >> (prec >> 1)
+
 def _sqrt_fixed2(y, prec):
     r = float_to_pyfloat(normalize(y, -prec, 64, ROUND_FLOOR)) ** -0.5
     r = int(r * 2**50)
@@ -601,29 +610,36 @@ def fsqrt(s, prec, rounding):
     If x is a positive Float, sqrt(x) returns the square root of x as a
     Float, rounded to the current working precision.
     """
+    if s == fone:
+        return fone
+
     man, exp, bc = s
-    if not man: return fzero
-    if (man, exp) == (1, 0): return fone
 
-    prec2 = prec + 10
+    if not man:
+        return fzero
 
-    # Convert to a fixed-point number with prec bits. Adjust
+    # Convert to a fixed-point number with prec2 bits. Adjust
     # exponents to be even so that they can be divided in half
-    if prec2 & 1:
-        prec2 += 1
+    prec2 = prec + 10 + (prec & 1)
+
     if exp & 1:
         exp -= 1
         man <<= 1
-    shift = bitcount(man) - prec2
+        bc += 1
+
+    shift = bc - prec2
     shift -= shift & 1
     man = rshift_quick(man, shift)
 
+    #if prec2 < 400:
+    #    man = _sqrt_fixed0(man, prec2)
     if prec < 65000:
         man = _sqrt_fixed(man, prec2)
     else:
         man = _sqrt_fixed2(man, prec2)
 
-    return normalize(man, (exp+shift-prec2)//2, prec, rounding)
+    return normalize(man, (exp+shift-prec2)>>1, prec, rounding)
+
 
 
 def fhypot(x, y, prec, rounding):
