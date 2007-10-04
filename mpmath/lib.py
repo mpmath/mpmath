@@ -1034,7 +1034,7 @@ def cosh_sinh(x, prec, rounding):
         # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
         # TODO: support directed rounding
         if high_bit < -prec-2:
-            return (fpos(x, prec, rounding), fone)
+            return (fone, fpos(x, prec, rounding))
 
         # Avoid cancellation when computing sinh
         # TODO: might be faster to use sinh series directly

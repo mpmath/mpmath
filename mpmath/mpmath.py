@@ -14,16 +14,21 @@ class mpnumeric(object):
 
 class context(type):
     """Metaclass for mpf and mpc. Holds global working precision."""
+
     _prec = 53
     _dps = 15
     _rounding = ROUND_HALF_EVEN
+
     def _setprec(self, n):
         self._prec = max(1, int(n))
         self._dps = max(1, int(round(int(n)/LOG2_10)-1))
+
     prec = property(lambda self: self._prec, _setprec)
+
     def _setdps(self, n):
         self._prec = max(1, int(round((int(n)+1)*LOG2_10)))
         self._dps = max(1, int(n))
+
     dps = property(lambda self: self._dps, _setdps)
 
     def round_up(self): self._rounding = ROUND_UP
