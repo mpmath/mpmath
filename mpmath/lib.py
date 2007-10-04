@@ -388,6 +388,9 @@ def fcmp(s, t):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
+def fpos(x, prec, rounding):
+    return normalize(x[0], x[1], prec, rounding)
+
 def fadd(s, t, prec, rounding):
     """Floating-point addition. Given two tuples s and t containing the
     components of floating-point numbers, return their sum rounded to 'prec'
@@ -1021,18 +1024,17 @@ def _sinh_series(x, prec):
     return s
 
 def cosh_sinh(x, prec, rounding):
-    """Simultaneously compute (cosh(x), sinh(x))"""
+    """Simultaneously compute (cosh(x), sinh(x)) for real x"""
 
     man, exp, bc = x
     high_bit = exp + bc
-
     prec2 = prec + 6
 
     if high_bit < -3:
         # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
         # TODO: support directed rounding
         if high_bit < -prec-2:
-            return (x, fone)
+            return (fpos(x, prec, rounding), fone)
 
         # Avoid cancellation when computing sinh
         # TODO: might be faster to use sinh series directly
@@ -1181,10 +1183,10 @@ def fccos(re, im, prec, rounding):
 # TODO: complex tan
 
 def fcsinh(re, im, prec, rounding):
-    # use sinh(x) = -i*sin(x*i)
+    # sinh(x) = -i*sin(x*i)
     im, re = fcsin(im, re, prec, rounding)
     return re, im
 
 def fccosh(re, im, prec, rounding):
-    # use cosh(x) = cos(x*i)
+    # cosh(x) = cos(x*i)
     return fccos(im, fneg_noround(re), prec, rounding)
