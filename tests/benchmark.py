@@ -27,7 +27,9 @@ tests = []
 def deftest(op):
     exec w.replace("OP", op)
 
-atests = ["x + y", "x - y", "x * y", "x / y", "x == y",
+atests = ["int(x)", "float(x)", "str(x)", "+x", "-x",
+  "x * 10", "x + 10", "x / 10",
+  "x + y", "x - y", "x * y", "x / y", "x == y",
   "x < y", "abs(x)", "sqrt(abs(x))", "abs(x)**0.5",
   "exp(x)", "log(abs(x))", "x**42", "x**y",
   "sin(x)", "tan(x)", "atan(x)", "cosh(x)", "asin(x)",
