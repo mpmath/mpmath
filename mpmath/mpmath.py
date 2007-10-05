@@ -468,8 +468,8 @@ class constant(mpf):
     def val(self):
         return self.func(mpf._prec, mpf._rounding)
 
-    def __repr__(self):
-        return "<%s: %s~>" % (self.name, mpf.__str__(self))
+    #def __repr__(self):
+    #    return "<%s: %s~>" % (self.name, mpf.__str__(self))
 
 
 pi = constant(fpi, "pi")
