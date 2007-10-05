@@ -377,14 +377,24 @@ def test_complex_powers():
     assert (e**(-pi*1j)).ae(-1)
     mpf.dps = 15
 
-def test_trig_hard():
+def test_atrig_hard():
     mpf.prec = 150
     a = mpf(10**50)
     mpf.prec = 53
     assert sin(a).ae(-0.7896724934293100827)
     assert cos(a).ae(-0.6135286082336635622)
-    assert sin(1e-6).ae(9.999999999998333e-007)
+    # Check relative accuracy close to x = zero
+    assert sin(1e-100) == 1e-100  # when rounding to nearest
+    assert sin(1e-6).ae(9.999999999998333e-007, rel_eps=2e-15, abs_eps=0)
+    assert sin(1e-6j).ae(1.0000000000001666e-006j, rel_eps=2e-15, abs_eps=0)
+    assert sin(-1e-6j).ae(-1.0000000000001666e-006j, rel_eps=2e-15, abs_eps=0)
+    assert cos(1e-100) == 1
     assert cos(1e-6).ae(0.9999999999995)
+    assert cos(-1e-6j).ae(1.0000000000005)
+    assert tan(1e-100) == 1e-100
+    assert tan(1e-6).ae(1.0000000000003335e-006, rel_eps=2e-15, abs_eps=0)
+    assert tan(1e-6j).ae(9.9999999999966644e-007j, rel_eps=2e-15, abs_eps=0)
+    assert tan(-1e-6j).ae(-9.9999999999966644e-007j, rel_eps=2e-15, abs_eps=0)
 
 def test_atan():
     assert atan(-2.3).ae(math.atan(-2.3))
@@ -394,9 +404,9 @@ def test_atan():
     assert atan2(-1,1).ae(math.atan2(-1,1))
     assert atan2(-1,0).ae(math.atan2(-1,0))
     assert atan2(1,0).ae(math.atan2(1,0))
-    assert atan(1e-50).ae(1e-50, abs_eps=0)
+    assert atan(1e-50) == 1e-50
     assert atan(1e50).ae(pi/2)
-    assert atan(-1e-50).ae(-1e-50, abs_eps=0)
+    assert atan(-1e-50) == -1e-50
     assert atan(-1e50).ae(-pi/2)
     for dps in [25, 70, 100, 300, 1000]:
         mpf.dps = dps
