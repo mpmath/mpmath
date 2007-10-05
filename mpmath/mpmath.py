@@ -42,13 +42,13 @@ class context(type):
     round_default = round_half_even
 
 
-inttypes = (int, long)
+int_types = (int, long)
 
 def _convert(x):
     """Convet x to mpf data"""
     if isinstance(x, float):
         return float_from_pyfloat(x, mpf._prec, mpf._rounding)
-    if isinstance(x, inttypes):
+    if isinstance(x, int_types):
         return float_from_int(x, mpf._prec, mpf._rounding)
     if isinstance(x, (Decimal, str)):
         return decimal_to_binary(x, mpf._prec, mpf._rounding)
@@ -140,7 +140,7 @@ class mpf(mpnumeric):
 
     def __add__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(fadd(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) + t
@@ -151,7 +151,7 @@ class mpf(mpnumeric):
 
     def __sub__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(fsub(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) - t
@@ -160,7 +160,7 @@ class mpf(mpnumeric):
 
     def __rsub__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(fsub((t, 0, bitcount(t)), s.val, mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return t - mpc(s)
@@ -169,7 +169,7 @@ class mpf(mpnumeric):
 
     def __mul__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(normalize(s.val[0]*t, s.val[1], mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) * t
@@ -180,7 +180,7 @@ class mpf(mpnumeric):
 
     def __div__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(fdiv(s.val, (t, 0, bitcount(t)), mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return mpc(s) / t
@@ -189,7 +189,7 @@ class mpf(mpnumeric):
 
     def __rdiv__(s, t):
         if not isinstance(t, mpf):
-            if isinstance(t, inttypes):
+            if isinstance(t, int_types):
                 return _make_mpf(fdiv((t, 0, bitcount(t)), s.val, mpf._prec, mpf._rounding))
             if isinstance(t, complex_types):
                 return t / mpc(s)
@@ -197,7 +197,7 @@ class mpf(mpnumeric):
         return _make_mpf(fdiv(t.val, s.val, mpf._prec, mpf._rounding))
 
     def __pow__(s, t):
-        if isinstance(t, inttypes):
+        if isinstance(t, int_types):
             return _make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
@@ -205,9 +205,9 @@ class mpf(mpnumeric):
             t = mpf(t)
         if t.val == fhalf:
             return sqrt(s)
-        intt = int(t)
-        if t == intt:
-            return _make_mpf(fpow(s.val, intt, mpf._prec, mpf._rounding))
+        man, exp, bc = t.val
+        if exp >= 0:
+            return _make_mpf(fpow(s.val, man<<exp, mpf._prec, mpf._rounding))
         return power(s, t)
 
     def sqrt(s):
@@ -328,7 +328,7 @@ class mpc(mpnumeric):
     __ge__ = _compare
 
     def __nonzero__(s):
-        return s.real != 0 or s.imag != 0
+        return bool(s.real) or bool(s.imag)
 
     def conjugate(s):
         return mpc(s.real, -s.imag)
@@ -426,6 +426,9 @@ j = mpc(0,1)
 
 
 def sqrt(x):
+    """For real x >= 0, return the square root of x. For negative or
+    complex x, return the principal branch of the complex square root
+    of x."""
     x = mpnumeric(x)
     if isinstance(x, mpf) and x.val[0] >= 0:
         return _make_mpf(fsqrt(x.val, mpf._prec, mpf._rounding))
@@ -433,28 +436,49 @@ def sqrt(x):
     return _make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
 
-# Functions that map reals to real and complexes to complexes
-def entire_function(name, real_f, complex_f):
+# Since E-functions simply map reals to reals and complexes to complexes, we
+# can construct all of them the same way (unlike log, sqrt, etc)
+def ef(name, real_f, complex_f, doc):
     def f(x):
         x = mpnumeric(x)
         if isinstance(x, mpf):
             return _make_mpf(real_f(x.val, mpf._prec, mpf._rounding))
         else:
-            return _make_mpc(complex_f(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
+            return _make_mpc(complex_f(x.real.val, x.imag.val, mpf._prec,
+                mpf._rounding))
     f.__name__ = name
+    f.__doc__ = doc
     return f
 
-exp = entire_function('exp', fexp, fcexp)
-cos = entire_function('cos', fcos, fccos)
-sin = entire_function('sin', fsin, fcsin)
-cosh = entire_function('cosh', fcosh, fccosh)
-sinh = entire_function('sinh', fsinh, fcsinh)
+exp = ef('exp', fexp, fcexp, "Exponential function of a real or complex number")
+cos = ef('cos', fcos, fccos, "Cosine of a real or complex number")
+sin = ef('sin', fsin, fcsin, "Sine of a real or complex number")
+cosh = ef('cosh', fcosh, fccosh, "Hyperbolic cosine of a real or complex number")
+sinh = ef('sinh', fsinh, fcsinh, "Hyperbolic sine of a real or complex number")
 
 
-def log(x, base=None):
-    if base is not None:
+def arg(x):
+    """arg(x) returns the complex argument (phase) of x. The returned
+    value is an mpf instance. The argument is defined to follow the
+    convention -pi < arg(x) <= pi. On the negative real half-axis,
+    it is taken to be +pi."""
+    x = mpc(x)
+    mpf._prec += 5
+    t = atan2(x.imag, x.real)
+    mpf._prec -= 5
+    return +t
+
+def log(x, b=None):
+    """Returns the base-b logarithm of x. If b is unspecified, return
+    the natural (base-e) logarithm. log(x, b) is defined as
+    log(x)/log(b). log(0) raises ValueError.
+
+    The natural logarithm is real if x > 0 and complex if x < 0 or if x
+    is complex. The principal branch of the complex logarithm is chosen,
+    for which Im(log(x)) = -pi < arg(x) <= pi. """
+    if b is not None:
         mpf.prec += 3
-        a = log(x) / log(base)
+        a = log(x) / log(b)
         mpf.prec -= 3
         return +a
     x = mpnumeric(x)
@@ -463,12 +487,7 @@ def log(x, base=None):
     if isinstance(x, mpf) and x.val[0] > 0:
         return _make_mpf(flog(x.val, mpf._prec, mpf._rounding))
     else:
-        x = mpc(x)
-        mpf._prec += 6
-        mag = abs(x)
-        phase = atan2(x.imag, x.real)
-        mpf._prec -= 6
-        return mpc(log(mag), phase)
+        return mpc(log(abs(x)), arg(x))
 
 def power(x, y):
     # TODO: accurate estimate for extra precision needed
@@ -602,5 +621,5 @@ def atanh(x):
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
   "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power",
-  "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh"]
+  "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh", "arg"]
 
