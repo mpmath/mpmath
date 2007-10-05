@@ -145,8 +145,9 @@ def _spouge_sum(x, prec, a, c):
 
 
 def gamma(x):
-    """Returns the gamma function of x. x must not be a nonpositive
-    integer."""
+    """Returns the gamma function of x. Raises an exception if
+    x == 0, -1, -2, -3, ... where the gamma function has a pole."""
+
     oldprec = mpf.prec
     mpf.prec += 4
 
@@ -183,7 +184,8 @@ def gamma(x):
 
 def factorial(x):
     """Returns the factorial of x, defined in terms of the gamma
-    function for non-integer x. x must not be a negative integer."""
+    function for non-integer x. An exception is raised if x is a
+    negative integer."""
     return gamma(x-1)
 
 
