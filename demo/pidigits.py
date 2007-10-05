@@ -3,7 +3,7 @@ import math
 from time import clock
 from mpmath import mpf
 from mpmath.lib import _pi_agm, small_numeral, normalize, bin_to_radix, \
-    fixed_to_str
+    fixed_to_str, ROUND_FLOOR
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns
@@ -39,7 +39,7 @@ def calculateit(approx, func, base, n, tofile):
     print "Step 1 of 2: calculating binary value..."
     t = clock()
     a = func(prec=prec, verbose=True, verbose_base=base)
-    a = mpf(normalize(a, -prec, prec))
+    a = mpf(normalize(a, -prec, prec, ROUND_FLOOR))
     step1_time = clock() - t
 
     print "Step 2 of 2: converting to specified base..."
