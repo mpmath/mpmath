@@ -145,12 +145,8 @@ def _spouge_sum(x, prec, a, c):
 
 
 def gamma(x):
-    """
-    gamma(x) -- calculate the gamma function of a real or complex
-    number x.
-    
-    x must not be a negative integer or 0
-    """
+    """Returns the gamma function of x. x must not be a nonpositive
+    integer."""
     oldprec = mpf.prec
     mpf.prec += 4
 
@@ -186,6 +182,8 @@ def gamma(x):
 
 
 def factorial(x):
+    """Returns the factorial of x, defined in terms of the gamma
+    function for non-integer x. x must not be a negative integer."""
     return gamma(x-1)
 
 
@@ -231,6 +229,7 @@ def _lower_gamma_series(are, aim, zre, zim, prec):
     return mpc(sre, sim)
 
 def lower_gamma(a, z):
+    """Returns the lower incomplete gamma function gamma(a, z)"""
     oldprec = mpf.prec
     # XXX: may need more precision
     mpf.prec += 15
@@ -242,12 +241,14 @@ def lower_gamma(a, z):
     return +y
 
 def upper_gamma(a, z):
+    """Returns the upper incomplete gamma function Gamma(a, z)"""
     mpf.prec += 10
     t = gamma(a) - lower_gamma(a, z)
     mpf.prec -= 10
     return +t
 
 def erf(x):
+    """Returns the error function of x."""
     x = mpnumeric(x)
     if x == 0:
         return x
@@ -342,11 +343,7 @@ def _re(s):
     return s.real
 
 def zeta(s):
-    """
-    zeta(s) -- calculate the Riemann zeta function of a real or complex
-    argument s.
-
-    """
+    """Returns the Riemann zeta function of s."""
     oldprec = mpf.prec
     mpf.prec += 10
     s = mpnumeric(s)
