@@ -475,7 +475,10 @@ class constant(mpf):
     #    return "<%s: %s~>" % (self.name, mpf.__str__(self))
 
 
+_180 = float_from_int(180, 10, ROUND_FLOOR)
+
 pi = constant(fpi, "pi")
+degree = constant(lambda p, r: fdiv(fpi(p+4, ROUND_FLOOR), _180, p, r), "degree")
 e = constant(lambda p, r: fexp(fone, p, r), "e")
 cgamma = constant(fgamma, "Euler's constant gamma")
 clog2 = constant(flog2, "log(2)")
@@ -710,7 +713,9 @@ def atanh(x):
     return +t
 
 
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10", "j",
-  "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2", "power",
-  "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh", "arg"]
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10",
+  "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
+  "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
+  "arg", "degree"]
+
 
