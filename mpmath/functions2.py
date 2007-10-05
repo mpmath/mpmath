@@ -10,6 +10,16 @@ from lib import make_fixed
 def _fix(x, prec):
     return make_fixed(x.val, prec)
 
+def _re(s):
+    if isinstance(s, mpf):
+        return s
+    return s.real
+
+def _im(s):
+    if isinstance(s, mpf):
+        return s
+    return s.imag
+
 
 #---------------------------------------------------------------------------#
 #                                                                           #
@@ -259,7 +269,11 @@ def erf(x):
         return -erf(-w)
     oldprec = mpf.prec
     mpf.prec += 10
+
     y = lower_gamma(0.5, w**2) / sqrt(pi)
+    if _re(x) == 0 and _im(x) < 0:
+        y = -y
+
     if isinstance(x, mpf):
         y = y.real
     mpf.prec = oldprec
@@ -338,11 +352,6 @@ def _logk(k):
         x = log(k)
         _log_cache[k] = (p, x)
         return x
-
-def _re(s):
-    if isinstance(s, mpf):
-        return s
-    return s.real
 
 def zeta(s):
     """Returns the Riemann zeta function of s."""
