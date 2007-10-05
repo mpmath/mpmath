@@ -12,6 +12,10 @@ def test_incomplete_gamma():
     assert erf(pi).ae(0.99999112385363235839)
     assert erf(1j).ae(1.6504257587975428760j)
     assert erf(-1j).ae(-1.6504257587975428760j)
+    assert isinstance(erf(1), mpf)
+    assert isinstance(erf(-1), mpf)
+    assert isinstance(erf(0), mpf)
+    assert isinstance(erf(0j), mpc)
 
 def test_gamma():
     mpf.dps = 15

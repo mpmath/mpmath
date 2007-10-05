@@ -255,6 +255,9 @@ class mpf(mpnumeric):
             return make_mpf(fpow(s.val, man<<exp, mpf._prec, mpf._rounding))
         return power(s, t)
 
+    def __rpow__(s, t):
+        return mpnumeric(t) ** s
+
     def sqrt(s):
         return sqrt(s)
 
@@ -414,6 +417,9 @@ class mpc(mpnumeric):
             return sqrt(s)
         return power(s, n)
 
+    def __rpow__(s, t):
+        return mpnumeric(t) ** s
+
     # TODO: refactor and merge with mpf.ae
     def ae(s, t, rel_eps=None, abs_eps=None):
         if not isinstance(t, mpc):
@@ -473,16 +479,6 @@ clog2 = constant(flog2, "log(2)")
 clog10 = constant(flog10, "log(10)")
 
 
-def hypot(x, y):
-    """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
-    must be real."""
-    x = mpf(x)
-    y = mpf(y)
-    return mpf(fhypot(x.val, y.val, mpf._prec, mpf._rounding))
-
-
-
-
 def sqrt(x):
     """For real x >= 0, returns the square root of x. For negative or
     complex x, returns the principal branch of the complex square root
@@ -493,6 +489,12 @@ def sqrt(x):
     x = mpc(x)
     return make_mpc(fcsqrt(x.real.val, x.imag.val, mpf._prec, mpf._rounding))
 
+def hypot(x, y):
+    """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
+    must be real."""
+    x = mpf(x)
+    y = mpf(y)
+    return mpf(fhypot(x.val, y.val, mpf._prec, mpf._rounding))
 
 # Since E-functions simply map reals to reals and complexes to complexes, we
 # can construct all of them the same way (unlike log, sqrt, etc)
@@ -513,7 +515,6 @@ cos = ef('cos', fcos, fccos, "Returns the cosine of x.")
 sin = ef('sin', fsin, fcsin, "Returns the sine of x.")
 cosh = ef('cosh', fcosh, fccosh, "Returns the hyperbolic cosine of x.")
 sinh = ef('sinh', fsinh, fcsinh, "Returns the hyperbolic sine of x.")
-
 
 # TODO: implement tanh and complex tan in lib instead
 def tan(x):

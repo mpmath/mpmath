@@ -266,6 +266,8 @@ def erf(x):
         return x
     w = mpc(x)
     if w.real < 0:
+        if isinstance(x, mpf):
+            return -erf(-x)
         return -erf(-w)
     oldprec = mpf.prec
     mpf.prec += 10
@@ -276,6 +278,7 @@ def erf(x):
 
     if isinstance(x, mpf):
         y = y.real
+
     mpf.prec = oldprec
     return +y
 
