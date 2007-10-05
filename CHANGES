@@ -1,11 +1,16 @@
 --0.3 (developing)--
-Currently in SVN
+Released October 5, 2007
+
 * fixed high-precision accuracy problem in complex sqrt
 * fixed high-precision accuracy problem in atan and complex log
 * fixed directed rounding for sqrt (always rounded to nearest)
 * implemented all hyperbolic and inverse functions (there are some
   accuracy issues left to sort out)
-* many more tests added
+* included gamma, factorial, erf, zeta incomplete gamma functions
+* made sin and tan more accurate for complex input very close to 0
+* more docstrings
+* many more tests
+* including a benchmark script
 
 -- 0.2 --
 Released October 2, 2007
