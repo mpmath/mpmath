@@ -404,6 +404,7 @@ def test_atan():
     assert atan2(-1,1).ae(math.atan2(-1,1))
     assert atan2(-1,0).ae(math.atan2(-1,0))
     assert atan2(1,0).ae(math.atan2(1,0))
+    assert atan2(0,0) == 0
     assert atan(1e-50) == 1e-50
     assert atan(1e50).ae(pi/2)
     assert atan(-1e-50) == -1e-50

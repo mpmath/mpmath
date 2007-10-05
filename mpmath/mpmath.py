@@ -144,6 +144,9 @@ class mpf(mpnumeric):
     def __complex__(s):
         return float(s) + 0j
 
+    def __nonzero__(s):
+        return bool(s.man)
+
     def __eq__(s, t):
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
