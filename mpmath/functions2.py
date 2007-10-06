@@ -178,11 +178,11 @@ def gamma(x):
     else:
         x -= 1
         prec, a, c = _get_spouge_coefficients(mpf.prec + 8)
-        if isinstance(x, mpf) and x == int(x):
-            xs = int(x)
+        # TODO: figure out when we can just use Stirling's formula
+        if isinstance(x, mpf) and x.exp >= 0:
+            s = _spouge_sum(x.man << x.exp, prec, a, c)
         else:
-            xs = x
-        s = _spouge_sum(xs, prec, a, c)
+            s = _spouge_sum(x, prec, a, c)
         # TODO: higher precision may be needed here when the precision
         # and/or size of x are extremely large
         xpa = x + a
