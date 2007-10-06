@@ -185,8 +185,9 @@ def gamma(x):
         s = _spouge_sum(xs, prec, a, c)
         # TODO: higher precision may be needed here when the precision
         # and/or size of x are extremely large
+        xpa = x + a
         mpf.prec += 10
-        g = exp(log(x+a)*(x+0.5)) * exp(-x-a) * s
+        g = exp(log(xpa) * (x + 0.5) - xpa) * s
 
     mpf.prec = oldprec
     return +g
