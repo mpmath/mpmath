@@ -1157,6 +1157,16 @@ def fatan(x, prec, rounding):
 def fcabs(re, im, prec, rounding):
     return fhypot(re, im, prec, rounding)
 
+def fcmul(a, b, c, d, prec, rounding):
+    # calculate (a+b*I)*(c+d*I)
+    if b == d == fzero:
+        return fmul(a, c, prec, rounding), fzero
+    prec2 = prec + 10
+    RF = ROUND_FLOOR
+    re = fsub(fmul(a,c, prec2, RF), fmul(b,d, prec2, RF), prec, rounding)
+    im = fadd(fmul(a,d, prec2, RF), fmul(b,c, prec2, RF), prec, rounding)
+    return re, im
+
 
 # For complex square roots, we have sqrt(a+b*I) = sqrt((r+a)/2) + 
 # I*b/sqrt(2*(r+a)) where r = abs(a+b*I), when a+b*I is not a negative

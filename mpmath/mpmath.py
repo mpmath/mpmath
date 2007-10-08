@@ -408,11 +408,8 @@ class mpc(mpnumeric):
     def __mul__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
-        a = s.real; b = s.imag; c = t.real; d = t.imag
-        if b == d == 0:
-            return mpc(a*c, 0)
-        else:
-            return mpc(a*c-b*d, a*d+b*c)
+        return mpc(*fcmul(s.real.val, s.imag.val, t.real.val, t.imag.val,
+            mpf._prec, mpf._rounding))
 
     __rmul__ = __mul__
 
