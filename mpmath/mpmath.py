@@ -5,12 +5,36 @@ class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
     and an mpc if x is complex."""
+
     def __new__(cls, val):
+        # TODO: should maybe normalize here
         if isinstance(val, cls):
             return val
         if isinstance(val, complex):
             return mpc(val)
         return mpf(val)
+
+
+def convert_lossless(x):
+    """Attempt to convert x to an mpf or mpc losslessly. If x is an
+    mpf or mpc, return it unchanged. If x is an int, create an mpf with
+    sufficient precision to represent it exactly.
+
+    If x is a decimal or str, just convert it to an mpf with the
+    current working precision (perhaps this should be done
+    differently...)"""
+    if isinstance(x, mpnumeric):
+        return x
+    if isinstance(x, float):
+        return make_mpf(float_from_pyfloat(x, 53, ROUND_FLOOR))
+    if isinstance(x, int_types):
+        return make_mpf(float_from_int(x, bitcount(x), ROUND_FLOOR))
+    if isinstance(x, complex):
+        return mpc(x)
+    if isinstance(x, (Decimal, str)):
+        return make_mpf(decimal_to_binary(x, mpf._prec, mpf._rounding))
+    raise TypeError("cannot create mpf from " + repr(x))
+
 
 class context(type):
     """Metaclass for mpf and mpc. Holds global working precision."""
@@ -43,6 +67,7 @@ class context(type):
 
 
 int_types = (int, long)
+
 
 def _convert(x):
     """Convet x to mpf data"""
@@ -259,7 +284,7 @@ class mpf(mpnumeric):
         return power(s, t)
 
     def __rpow__(s, t):
-        return mpnumeric(t) ** s
+        return convert_lossless(t) ** s
 
     def sqrt(s):
         return sqrt(s)
@@ -421,7 +446,7 @@ class mpc(mpnumeric):
         return power(s, n)
 
     def __rpow__(s, t):
-        return mpnumeric(t) ** s
+        return convert_lossless(t) ** s
 
     # TODO: refactor and merge with mpf.ae
     def ae(s, t, rel_eps=None, abs_eps=None):
@@ -489,7 +514,7 @@ def sqrt(x):
     """For real x >= 0, returns the square root of x. For negative or
     complex x, returns the principal branch of the complex square root
     of x."""
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     if isinstance(x, mpf) and x.val[0] >= 0:
         return make_mpf(fsqrt(x.val, mpf._prec, mpf._rounding))
     x = mpc(x)
@@ -506,7 +531,7 @@ def hypot(x, y):
 # can construct all of them the same way (unlike log, sqrt, etc)
 def ef(name, real_f, complex_f, doc):
     def f(x):
-        x = mpnumeric(x)
+        x = convert_lossless(x)
         if isinstance(x, mpf):
             return make_mpf(real_f(x.val, mpf._prec, mpf._rounding))
         else:
@@ -525,7 +550,7 @@ sinh = ef('sinh', fsinh, fcsinh, "Returns the hyperbolic sine of x.")
 # TODO: implement tanh and complex tan in lib instead
 def tan(x):
     """Returns the tangent of x."""
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     if isinstance(x, mpf):
         return make_mpf(ftan(x.val, mpf._prec, mpf._rounding))
     # the complex division can cause enormous cancellation.
@@ -537,7 +562,7 @@ def tan(x):
 
 def tanh(x):
     """Returns the hyperbolic tangent of x."""
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     oldprec = mpf._prec
     a = abs(x)
     mpf._prec += 10
@@ -575,7 +600,7 @@ def log(x, b=None):
         a = log(x) / log(b)
         mpf.prec -= 3
         return +a
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     if not x:
         raise ValueError, "logarithm of 0"
     if isinstance(x, mpf) and x.val[0] > 0:
@@ -593,7 +618,7 @@ def power(x, y):
 
 def atan(x):
     """Returns the inverse tangent of x."""
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     if isinstance(x, mpf):
         return make_mpf(fatan(x.val, mpf._prec, mpf._rounding))
     # TODO: maybe get this to agree with Python's cmath atan about the
@@ -637,10 +662,8 @@ def _asin_complex(z):
 def asin(x):
     """Returns the inverse sine of x. Outside the range [-1, 1], the
     result is complex and defined as the principal branch value of
-
-        -i * log(i * x + sqrt(1 - x**2)).
-    """
-    x = mpnumeric(x)
+    -i * log(i * x + sqrt(1 - x**2))."""
+    x = convert_lossless(x)
     if isinstance(x, mpf) and abs(x) <= 1:
         return _asin_complex(x).real
     return _asin_complex(x)
@@ -654,21 +677,16 @@ def _acos_complex(z):
 def acos(x):
     """Returns the inverse cosine of x. Outside the range [-1, 1], the
     result is complex and defined as the principal branch value of
-
-        pi/2 + i * log(i * x + sqrt(1 - x**2)).
-    """
-    x = mpnumeric(x)
+    pi/2 + i * log(i * x + sqrt(1 - x**2))."""
+    x = convert_lossless(x)
     if isinstance(x, mpf) and abs(x) <= 1:
         return _acos_complex(x).real
     return _acos_complex(x)
 
 def asinh(x):
     """Returns the inverse hyperbolic sine of x. For complex x, the
-    result is the principal branch value of
-    
-        log(x + sqrt(1 + x**2)).
-    """
-    x = mpnumeric(x)
+    result is the principal branch value of log(x + sqrt(1 + x**2))."""
+    x = convert_lossless(x)
     oldprec = mpf._prec
     a = abs(x)
     mpf._prec += 10
@@ -685,7 +703,7 @@ def acosh(x):
     """Returns the inverse hyperbolic cosine of x. The value is
     given by log(x + sqrt(1 + x**2)), where the principal branch is
     used when the result is complex."""
-    x = mpnumeric(x)
+    x = convert_lossless(x)
     mpf._prec += 10
     t = log(x + sqrt(x-1)*sqrt(x+1))
     mpf._prec -= 10
@@ -694,11 +712,8 @@ def acosh(x):
 def atanh(x):
     """Returns the inverse hyperbolic tangent of x. Outside the range
     [-1, 1], the result is complex and defined as the principal branch
-    value of
-
-        (log(1+x) - log(1-x))/2.
-    """
-    x = mpnumeric(x)
+    value of (log(1+x) - log(1-x))/2."""
+    x = convert_lossless(x)
     oldprec = mpf._prec
     a = abs(x)
     mpf._prec += 10
