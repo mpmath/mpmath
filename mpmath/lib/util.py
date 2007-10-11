@@ -128,46 +128,88 @@ def trailing_zeros(n):
     while not n & 1: n >>= 1; t += 1
     return t
 
+
+def round_floor(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    return x >> n
+
+def round_ceiling(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    return -((-x) >> n)
+
+def round_down(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    if x > 0:
+        return x >> n
+    else:
+        return -((-x) >> n)
+
+def round_up(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    if x > 0:
+        return -((-x) >> n)
+    else:
+        return x >> n
+
+def round_half_up(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    positive = x > 0
+    if positive: t = x >> (n-1)
+    else:        t = (-x) >> (n-1)
+    if t & 1:
+        if positive: return (t>>1)+1
+        else:        return -((t>>1)+1)
+    if positive: return t>>1
+    else:        return -(t>>1)
+
+def round_half_down(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    positive = x > 0
+    if positive: t = x >> (n-1)
+    else:        t = (-x) >> (n-1)
+    if t & 1 and x & ((1<<(n-1))-1):
+        if positive: return (t>>1)+1
+        else:        return -((t>>1)+1)
+    if positive: return t>>1
+    else:        return -(t>>1)
+
+def round_half_even(x, n):
+    if not n or not x: return x
+    if n < 0: return x << -n
+    positive = x > 0
+    if positive: t = x >> (n-1)
+    else:        t = (-x) >> (n-1)
+    if t & 1 and (t&2 or x & ((1<<(n-1))-1)):
+        if positive: return (t>>1)+1
+        else:        return -((t>>1)+1)
+    if positive:  return t>>1
+    else:         return -(t>>1)
+
+
+rounding_functions = {
+  ROUND_FLOOR : round_floor,
+  ROUND_CEILING : round_ceiling,
+  ROUND_DOWN : round_down,
+  ROUND_UP : round_up,
+  ROUND_HALF_UP : round_half_up,
+  ROUND_HALF_DOWN : round_half_down,
+  ROUND_HALF_EVEN : round_half_even
+}
+
+
 def rshift(x, n, rounding):
     """Shift x (a plain Python integer) n bits to the right (i.e.,
     calculate x/(2**n)), and round to the nearest integer in accordance
     with the specified rounding mode. The exponent n may be negative,
     in which case x is shifted to the left (and no rounding is
     necessary)."""
-
-    if not n or not x:
-        return x
-    # Support left-shifting (no rounding needed)
-    if n < 0:
-        return x << -n
-
-    # To get away easily, we exploit the fact that Python rounds positive
-    # integers toward zero and negative integers away from zero when dividing
-    # or shifting. The simplest roundings can be handled entirely
-    # through shifts:
-    if rounding == ROUND_FLOOR:
-        return x >> n
-    elif rounding < ROUND_HALF_UP:
-        if rounding == ROUND_DOWN:
-            if x > 0: return x >> n
-            else:     return -((-x) >> n)
-        if rounding == ROUND_UP:
-            if x > 0: return -((-x) >> n)
-            else:     return x >> n
-        if rounding == ROUND_CEILING:
-            return -((-x) >> n)
-
-    # Here we need to inspect the bits around the cutoff point
-    if x > 0: t = x >> (n-1)
-    else:     t = (-x) >> (n-1)
-    if t & 1:
-        if rounding == ROUND_HALF_UP or \
-           (rounding == ROUND_HALF_DOWN and x & ((1<<(n-1))-1)) or \
-           (rounding == ROUND_HALF_EVEN and (t&2 or x & ((1<<(n-1))-1))):
-            if x > 0:  return (t>>1)+1
-            else:      return -((t>>1)+1)
-    if x > 0: return t>>1
-    else:     return -(t>>1)
+    return rounding_functions[rounding](x, n)
 
 
 
