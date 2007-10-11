@@ -1,9 +1,9 @@
 import sys
 import math
 from time import clock
-from mpmath import mpf
-from mpmath.lib import _pi_agm, small_numeral, normalize, bin_to_radix, \
-    fixed_to_str, ROUND_FLOOR
+
+from mpmath.lib import pi_agm, bin_to_radix, numeral
+
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns
@@ -25,27 +25,21 @@ def display_fraction(digits, skip=0, colwidth=10, columns=5):
             buf = buf[colwidth:]
         print s + ":", printed + colwidth*columns
 
-def calculateit(approx, func, base, n, tofile):
-
-    intpart = small_numeral(int(approx), base)
-    if intpart == "0":
-        skip = 0
-    else:
-        skip = len(intpart)
+def calculateit(base, n, tofile):
+    intpart = numeral(3, base)
+    skip = 1
 
     prec = int(n*math.log(base,2))+10
-    mpf.prec = prec
 
     print "Step 1 of 2: calculating binary value..."
     t = clock()
-    a = func(prec=prec, verbose=True, verbose_base=base)
-    a = mpf(normalize(a, -prec, prec, ROUND_FLOOR))
+    a = pi_agm(prec, verbose=True, verbose_base=base)
     step1_time = clock() - t
 
     print "Step 2 of 2: converting to specified base..."
     t = clock()
-    d = bin_to_radix(a.man, -a.exp, base, n)
-    d = fixed_to_str(d, base, n)
+    d = bin_to_radix(a, prec, base, n)
+    d = numeral(d, base, n)
     step2_time = clock() - t
 
     print "\nWriting output...\n"
@@ -70,7 +64,7 @@ def interactive():
     if tofile:
         tofile = open(tofile, "w")
 
-    calculateit(3.14, _pi_agm, base, digits, tofile)
+    calculateit(base, digits, tofile)
     raw_input("\nPress enter to close this script.")
 
 interactive()
