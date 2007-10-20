@@ -249,7 +249,7 @@ def numeral(n, base, size=0, digits=stddigits):
     """
 
     # Fast enough to do directly
-    if size < 1000:
+    if size < 250:
         return small_numeral(n, base, digits)
 
     # Divide in half
