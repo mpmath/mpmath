@@ -39,26 +39,6 @@ def convert_lossless(x):
     raise TypeError("cannot create mpf from " + repr(x))
 
 
-special_val = (0, 0, 0)
-
-NORMAL = 0
-INF = 1
-MINF = -1
-NAN = 2
-
-
-def do_special(a, b, op):
-    as = a.special
-    bs = b.special
-    if as == NAN: return a
-    if bs == NAN: return b
-    # Infinities
-    if op == '+':
-        if as * bs < 0: return nan
-        return as
-
-
-
 class context(type):
     """Metaclass for mpf and mpc. Holds global working precision."""
 
@@ -356,13 +336,6 @@ def make_mpf(tpl, construct=object.__new__, cls=mpf):
     a = construct(cls)
     a.val = tpl
     return a
-
-inf = make_mpf(fzero)
-inf.special = INF
-
-minus_inf = make_mpf(fzero)
-minus_inf.special = INF
-
 
 
 class mpc(mpnumeric):
