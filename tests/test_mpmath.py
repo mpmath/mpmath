@@ -247,7 +247,7 @@ def test_sqrt_rounding():
 
 
 #----------------------------------------------------------------------------
-# Type comparison
+# Type comparison and conversion
 #
 
 def test_type_compare():
@@ -259,6 +259,25 @@ def test_type_compare():
     assert mpf(2) == 2
     assert mpf(2) != '2.0'
     assert mpc(2) != '2.0'
+
+def test_str():
+    assert mpf('3') == mpf('3.0') == mpf('0003.') == mpf('0.03e2') == mpf(3.0)
+    assert mpf('30') == mpf('30.0') == mpf('00030.') == mpf(30.0)
+    for i in range(10):
+        for j in range(10):
+            assert mpf('%ie%i' % (i,j)) == i * 10**j
+    assert str(mpf('25000.0')) == '25000.0'
+    assert str(mpf('2500.0')) == '2500.0'
+    assert str(mpf('250.0')) == '250.0'
+    assert str(mpf('25.0')) == '25.0'
+    assert str(mpf('2.5')) == '2.5'
+    assert str(mpf('0.25')) == '0.25'
+    assert str(mpf('0.025')) == '0.025'
+    assert str(mpf('0.0025')) == '0.0025'
+    assert str(mpf('0.00025')) == '0.00025'
+    assert str(mpf('0.000025')) == '2.5e-5'
+    assert str(mpf('2.5e1000000000000000000000')) == '2.5e1000000000000000000000'
+    assert str(mpf('2.6e-1000000000000000000000')) == '2.6e-1000000000000000000000'
 
 
 #----------------------------------------------------------------------------
@@ -295,8 +314,8 @@ def test_str_1000_digits():
 
 def test_str_10000_digits():
     mpf.dps = 10001
-    assert str(mpf(2)**0.5)[-10:] == '5873258352'
-    assert str(pi)[-10:] == '5256375679'
+    assert str(mpf(2)**0.5)[-10:] == '5873258351'
+    assert str(pi)[-10:] == '5256375678'
     mpf.dps = 15
 
 def test_float_sqrt():

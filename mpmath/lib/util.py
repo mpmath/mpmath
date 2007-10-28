@@ -237,7 +237,7 @@ def small_numeral(n, base=10, digits=stddigits):
         digs.append(digits[digit])
     return "".join(digs[::-1])
 
-def numeral(n, base, size=0, digits=stddigits):
+def numeral(n, base=10, size=0, digits=stddigits):
     """
     Represent the integer n as a string of digits in the given base.
     Recursive division is used to make this function about 3x faster

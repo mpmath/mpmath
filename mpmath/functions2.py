@@ -197,7 +197,7 @@ def factorial(x):
     """Returns the factorial of x, defined in terms of the gamma
     function for non-integer x. An exception is raised if x is a
     negative integer."""
-    return gamma(x-1)
+    return gamma(x+1)
 
 
 #---------------------------------------------------------------------------#

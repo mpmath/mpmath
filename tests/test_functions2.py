@@ -44,6 +44,8 @@ def test_gamma():
     mpf.dps = 100
     assert gamma(0.5).ae(sqrt(pi))
     mpf.dps = 15
+    assert factorial(0) == 1
+    assert factorial(3) == 6
 
 def test_zeta():
     mpf.dps = 15

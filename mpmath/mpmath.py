@@ -1,6 +1,7 @@
 from lib import *
 from decimal import Decimal
 
+
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
@@ -13,7 +14,6 @@ class mpnumeric(object):
         if isinstance(val, complex):
             return mpc(val)
         return mpf(val)
-
 
 def convert_lossless(x):
     """Attempt to convert x to an mpf or mpc losslessly. If x is an
@@ -32,8 +32,31 @@ def convert_lossless(x):
     if isinstance(x, complex):
         return mpc(x)
     if isinstance(x, (Decimal, str)):
+        if x == 'inf': return inf
+        if x == '-inf': return minus_inf
+        if x == 'nan': return nan
         return make_mpf(decimal_to_binary(x, mpf._prec, mpf._rounding))
     raise TypeError("cannot create mpf from " + repr(x))
+
+
+special_val = (0, 0, 0)
+
+NORMAL = 0
+INF = 1
+MINF = -1
+NAN = 2
+
+
+def do_special(a, b, op):
+    as = a.special
+    bs = b.special
+    if as == NAN: return a
+    if bs == NAN: return b
+    # Infinities
+    if op == '+':
+        if as * bs < 0: return nan
+        return as
+
 
 
 class context(type):
@@ -118,7 +141,7 @@ class mpf(mpnumeric):
         """A new mpf can be created from a Python float, an int, a
         Decimal, or a decimal string representing a number in
         floating-point format. Examples:
-        
+
             mpf(25)
             mpf(2.5)
             mpf('2.5')
@@ -333,6 +356,12 @@ def make_mpf(tpl, construct=object.__new__, cls=mpf):
     a = construct(cls)
     a.val = tpl
     return a
+
+inf = make_mpf(fzero)
+inf.special = INF
+
+minus_inf = make_mpf(fzero)
+minus_inf.special = INF
 
 
 
