@@ -106,8 +106,8 @@ def sqrt_fixed2(y, prec):
     """
 
     # XXX
-    from mpmath.lib import float_to_pyfloat, normalize, ROUND_FLOOR
-    r = float_to_pyfloat(normalize(y, -prec, 64, ROUND_FLOOR)) ** -0.5
+    from mpmath.lib import to_float, normalize, ROUND_FLOOR
+    r = to_float(normalize(y, -prec, 64, ROUND_FLOOR)) ** -0.5
     r = int(r * 2**50)
 
     # r = invsqrt_initial(y, prec)

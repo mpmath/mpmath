@@ -26,16 +26,16 @@ def convert_lossless(x):
     if isinstance(x, mpnumeric):
         return x
     if isinstance(x, float):
-        return make_mpf(float_from_pyfloat(x, 53, ROUND_FLOOR))
+        return make_mpf(from_float(x, 53, ROUND_FLOOR))
     if isinstance(x, int_types):
-        return make_mpf(float_from_int(x, bitcount(x), ROUND_FLOOR))
+        return make_mpf(from_int(x, bitcount(x), ROUND_FLOOR))
     if isinstance(x, complex):
         return mpc(x)
     if isinstance(x, (Decimal, str)):
         if x == 'inf': return inf
         if x == '-inf': return minus_inf
         if x == 'nan': return nan
-        return make_mpf(decimal_to_binary(x, mpf._prec, mpf._rounding))
+        return make_mpf(from_str(x, mpf._prec, mpf._rounding))
     raise TypeError("cannot create mpf from " + repr(x))
 
 
@@ -75,11 +75,11 @@ int_types = (int, long)
 def _convert(x):
     """Convet x to mpf data"""
     if isinstance(x, float):
-        return float_from_pyfloat(x, mpf._prec, mpf._rounding)
+        return from_float(x, mpf._prec, mpf._rounding)
     if isinstance(x, int_types):
-        return float_from_int(x, mpf._prec, mpf._rounding)
+        return from_int(x, mpf._prec, mpf._rounding)
     if isinstance(x, (Decimal, str)):
-        return decimal_to_binary(x, mpf._prec, mpf._rounding)
+        return from_str(x, mpf._prec, mpf._rounding)
     raise TypeError("cannot create mpf from " + repr(x))
 
 
@@ -148,10 +148,10 @@ class mpf(mpnumeric):
 
     def __repr__(s):
         st = "mpf('%s')"
-        return st % binary_to_decimal(s.val, mpf._dps+2)
+        return st % to_str(s.val, mpf._dps+2)
 
     def __str__(s):
-        return binary_to_decimal(s.val, mpf._dps)
+        return to_str(s.val, mpf._dps)
 
     def __hash__(s):
         try:
@@ -164,10 +164,10 @@ class mpf(mpnumeric):
             return hash(self.val)
 
     def __int__(s):
-        return float_to_int(s.val)
+        return to_int(s.val)
 
     def __float__(s):
-        return float_to_pyfloat(s.val)
+        return to_float(s.val)
 
     def __complex__(s):
         return float(s) + 0j
@@ -499,7 +499,7 @@ class constant(mpf):
     #    return "<%s: %s~>" % (self.name, mpf.__str__(self))
 
 
-_180 = float_from_int(180, 10, ROUND_FLOOR)
+_180 = from_int(180, 10, ROUND_FLOOR)
 
 pi = constant(fpi, "pi")
 degree = constant(lambda p, r: fdiv(fpi(p+4, ROUND_FLOOR), _180, p, r), "degree")

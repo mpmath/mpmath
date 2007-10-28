@@ -1,3 +1,8 @@
+"""
+Conversion between mpmath floating-point numbers and other types
+(int, float, str...)
+"""
+
 from util import *
 from floatop import *
 from constants import flog2, flog10
@@ -6,7 +11,11 @@ import math
 LOG2_10 = math.log(10,2)  # 3.3219...
 
 
-def f2s(s, dps):
+#----------------------------------------------------------------------
+# Strings
+#
+
+def to_digits_exp(s, dps):
     """
     Helper function for representing the floating-point number s as a
     decimal with dps places. Returns (string, exponent) containing
@@ -15,11 +24,11 @@ def f2s(s, dps):
 
     If inexact, the decimal representation is rounded to the floor.
     """
-    RF = ROUND_FLOOR
-    bitprec = int(dps * LOG2_10) + 10
     man, exp, bc = s
     if not man:
         return '0', 0
+
+    bitprec = int(dps * LOG2_10) + 10
 
     # Cut down to size
     if abs(exp) > 500:
@@ -27,10 +36,11 @@ def f2s(s, dps):
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(exp) + 5
-        tmp = float_from_int(exp, expprec, RF)
+        RF = ROUND_FLOOR
+        tmp = from_int(exp, expprec, RF)
         tmp = fmul(tmp, flog2(expprec, RF), expprec, RF)
         tmp = fdiv(tmp, flog10(expprec, RF), expprec, RF)
-        b = float_to_int(tmp)
+        b = to_int(tmp)
         s = fdiv(s, fpow(ften, b, bitprec, ROUND_FLOOR), bitprec, ROUND_FLOOR)
         man, exp, bc = s
         exponent = b
@@ -51,14 +61,14 @@ def f2s(s, dps):
     return digits, exponent
 
 
-def binary_to_decimal(s, dps):
+def to_str(s, dps):
     """
     Represent as a decimal floating-point string that can be parsed by
     float.__init__ or Decimal.__init__ (or for that matter, by a human).
 
     The dps option specifies how many digits to include.
     """
-    digits, exponent = f2s(s, dps)
+    digits, exponent = to_digits_exp(s, dps)
 
     # Prettify numbers close to unit magnitude
     if -5 < exponent < 17:
@@ -82,7 +92,7 @@ def binary_to_decimal(s, dps):
     if exponent < 0: return digits + "e" + str(exponent)
 
 
-def decimal_to_binary(x, prec, rounding):
+def from_str(x, prec, rounding):
     """
     Create a floating-point number from a decimal float literal.
     """
@@ -103,28 +113,33 @@ def decimal_to_binary(x, prec, rounding):
         exp -= len(b)
         x = a + b
     x = int(x)
-    s = float_from_int(x, prec+10, ROUND_FLOOR)
+    s = from_int(x, prec+10, ROUND_FLOOR)
     s = fmul(s, fpow(ften, exp, prec+10, ROUND_FLOOR), prec, rounding)
     return s
 
-def float_from_int(n, prec, rounding):
+
+#----------------------------------------------------------------------
+# Integers
+#
+
+def from_int(n, prec, rounding):
     return normalize(n, 0, prec, rounding)
 
-def float_from_rational(p, q, prec, rounding):
-    """Create floating-point number from a rational number p/q"""
-    n = prec + bitcount(q) + 2
-    return normalize((p<<n)//q, -n, prec, rounding)
+def to_int(s):
+    man, exp, bc = s
+    return rshift(man, -exp, ROUND_DOWN)
 
-def float_from_pyfloat(x, prec, rounding):
+
+#----------------------------------------------------------------------
+# Regular python floats
+#
+
+def from_float(x, prec, rounding):
     # We assume that a float mantissa has 53 bits
     m, e = math.frexp(x)
     return normalize(int(m*(1<<53)), e-53, prec, rounding)
 
-def float_to_int(s):
-    man, exp, bc = s
-    return rshift(man, -exp, ROUND_DOWN)
-
-def float_to_pyfloat(s):
+def to_float(s):
     """Convert to a Python float. May raise OverflowError."""
     man, exp, bc = s
     try:
@@ -135,7 +150,17 @@ def float_to_pyfloat(s):
         m = man >> n
         return math.ldexp(m, exp + n)
 
-def float_to_rational(s):
+
+#----------------------------------------------------------------------
+# Rational numbers (for use by other libraries)
+#
+
+def from_rational(p, q, prec, rounding):
+    """Create floating-point number from a rational number p/q"""
+    n = prec + bitcount(q) + 2
+    return normalize((p<<n)//q, -n, prec, rounding)
+
+def to_rational(s):
     """Return (p, q) such that s = p/q exactly. p and q are not reduced
     to lowest terms."""
     man, exp, bc = s
@@ -143,4 +168,3 @@ def float_to_rational(s):
         return man * 2**exp, 1
     else:
         return man, 2**-exp
-
