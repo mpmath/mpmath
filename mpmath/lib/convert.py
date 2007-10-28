@@ -18,6 +18,8 @@ def f2s(s, dps):
     RF = ROUND_FLOOR
     bitprec = int(dps * LOG2_10) + 10
     man, exp, bc = s
+    if not man:
+        return '0', 0
 
     # Cut down to size
     if abs(exp) > 500:
@@ -75,10 +77,9 @@ def binary_to_decimal(s, dps):
     if digits[-1] == ".":
         digits += "0"
 
-    if exponent == 0:
-        return digits
-    else:
-        return digits + "e" + str(exponent)
+    if exponent == 0: return digits
+    if exponent > 0: return digits + "e+" + str(exponent)
+    if exponent < 0: return digits + "e" + str(exponent)
 
 
 def decimal_to_binary(x, prec, rounding):
