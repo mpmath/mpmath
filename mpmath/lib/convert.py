@@ -18,19 +18,28 @@ LOG2_10 = math.log(10,2)  # 3.3219...
 def to_digits_exp(s, dps):
     """
     Helper function for representing the floating-point number s as a
-    decimal with dps places. Returns (string, exponent) containing
-    the decimal digits as a string and an integer for the decimal
-    exponent.
+    decimal with dps places. Returns (sign, string, exponent)
+    containing '' or '-', the decimal digits as a string, and an
+    integer for the decimal exponent.
 
-    If inexact, the decimal representation is rounded to the floor.
+    If inexact, the decimal representation is rounded toward zero.
     """
+
+    # Extract sign so it doesn't mess up the string digit count
+    sign = ''
+    if s[0] < 0:
+        sign = '-'
+    s = fabs(s, s[2], ROUND_FLOOR)
     man, exp, bc = s
+
     if not man:
-        return '0', 0
+        return '', '0', 0
 
     bitprec = int(dps * LOG2_10) + 10
 
     # Cut down to size
+    # TODO: account for precision when doing this
+    exp_from_1 = exp + bc
     if abs(exp) > 500:
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
@@ -56,9 +65,8 @@ def to_digits_exp(s, dps):
     sd = bin_to_radix(sf, fixprec, 10, fixdps)
     digits = numeral(sd, base=10, size=dps)
 
-    # Next, figure out exponent and placement of decimal point
     exponent += len(digits) - fixdps - 1
-    return digits, exponent
+    return sign, digits, exponent
 
 
 def to_str(s, dps):
@@ -68,10 +76,19 @@ def to_str(s, dps):
 
     The dps option specifies how many digits to include.
     """
-    digits, exponent = to_digits_exp(s, dps)
+
+    # to_digits_exp rounds to floor.
+    # This sometimes kills some instances of "...00001"
+    sign, digits, exponent = to_digits_exp(s, dps+3)
+
+    # Rounding up kills some instances of "...99999"
+    if len(digits) > dps and digits[dps] in '56789':
+        digits = str(int(digits[:dps]) + 1)
+    else:
+        digits = digits[:dps]
 
     # Prettify numbers close to unit magnitude
-    if -5 < exponent < 17:
+    if -(dps//3) < exponent < dps+2:
         if exponent < 0:
             digits = ("0"*(-exponent)) + digits
             split = 1
@@ -80,16 +97,16 @@ def to_str(s, dps):
         exponent = 0
     else:
         split = 1
-    digits = (digits[:split] + "." + digits[split:dps])
+    digits = (digits[:split] + "." + digits[split:])
 
     # Clean up trailing zeros
     digits = digits.rstrip('0')
     if digits[-1] == ".":
         digits += "0"
 
-    if exponent == 0: return digits
-    if exponent > 0: return digits + "e+" + str(exponent)
-    if exponent < 0: return digits + "e" + str(exponent)
+    if exponent == 0: return sign + digits
+    if exponent > 0: return sign + digits + "e+" + str(exponent)
+    if exponent < 0: return sign + digits + "e" + str(exponent)
 
 
 def from_str(x, prec, rounding):
