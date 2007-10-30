@@ -83,7 +83,7 @@ def to_str(s, dps):
 
     # Rounding up kills some instances of "...99999"
     if len(digits) > dps and digits[dps] in '56789':
-        digits = str(int(digits[:dps]) + 1)
+        digits = str(int(digits[:dps]) + 1) # [:dps]
     else:
         digits = digits[:dps]
 
