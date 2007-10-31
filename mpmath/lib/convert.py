@@ -83,12 +83,16 @@ def to_str(s, dps):
 
     # Rounding up kills some instances of "...99999"
     if len(digits) > dps and digits[dps] in '56789':
-        digits = str(int(digits[:dps]) + 1) # [:dps]
+        digits2 = str(int(digits[:dps]) + 1) # [:dps]
+        #print "splt", digits, digits2, exponent
     else:
-        digits = digits[:dps]
+        digits2 = digits[:dps]
+
+    #exponent += (len(digits2) - len(digits))
+    digits = digits2
 
     # Prettify numbers close to unit magnitude
-    if -(dps//3) < exponent < dps+2:
+    if -(dps//3) < exponent < dps:
         if exponent < 0:
             digits = ("0"*(-exponent)) + digits
             split = 1

@@ -287,8 +287,8 @@ def test_str():
 # test eval(repr) invariant
 def test_areval():
     random.seed(1234)
-    for i in xrange(1000):
-        a = mpf(random.random() * 10**random.randint(-10, 10))
+    for i in xrange(5000):
+        a = mpf(random.random() * 10**random.randint(-100, 100))
         assert a == eval(repr(a))
 
 #----------------------------------------------------------------------------
