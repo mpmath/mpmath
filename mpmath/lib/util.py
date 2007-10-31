@@ -12,6 +12,8 @@ import decimal
 # Same as standard Python float
 STANDARD_PREC = 53
 
+LOG2_10 = math.log(10,2)  # 3.3219...
+
 
 # All supported rounding modes. We define them as integer constants for easy
 # management, but change __repr__ to give more information on inspection

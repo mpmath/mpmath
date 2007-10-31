@@ -1,14 +1,16 @@
 """
-Conversion between mpmath floating-point numbers and other types
-(int, float, str...)
+mpmath : lib.convert
+
+Conversion between raw mpmath floating-point numbers and other
+numerical types (int, float, str...)
+
+
 """
 
 from util import *
 from floatop import *
 from constants import flog2, flog10
 import math
-
-LOG2_10 = math.log(10,2)  # 3.3219...
 
 
 #----------------------------------------------------------------------
@@ -35,7 +37,7 @@ def to_digits_exp(s, dps):
     if not man:
         return '', '0', 0
 
-    bitprec = int(dps * LOG2_10) + 10
+    bitprec = int(dps * math.log(10,2)) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
@@ -60,7 +62,7 @@ def to_digits_exp(s, dps):
     # fixed-point number and then converting that number to
     # a decimal fixed-point number.
     fixprec = max(bitprec - exp, 0)
-    fixdps = int(fixprec / LOG2_10 + 0.5)
+    fixdps = int(fixprec / math.log(10,2) + 0.5)
     sf = make_fixed(s, fixprec)
     sd = bin_to_radix(sf, fixprec, 10, fixdps)
     digits = numeral(sd, base=10, size=dps)
@@ -70,11 +72,12 @@ def to_digits_exp(s, dps):
 
 
 def to_str(s, dps):
-    """
-    Convert to a decimal floating-point literal. The literal is
-    formatted so that it can be parsed back to a number by to_str,
-    float() or Decimal().
-    """
+    """Convert a raw mpf to a decimal floating-point literal with at
+    most `dps` decimal digits in the mantissa (not counting extra zeros
+    that may be inserted for visual purposes).
+
+    The literal is formatted so that it can be parsed back to a number
+    by to_str, float() or Decimal()."""
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
@@ -109,9 +112,15 @@ def to_str(s, dps):
 
 
 def from_str(x, prec, rounding):
+    """Create a raw mpf from a decimal literal, rounding in the
+    specified direction if the input number cannot be represented
+    exactly as a binary floating-point number with the given number of
+    bits. The literal syntax accepted is the same as for Python
+    floats.
+
+    TODO: the rounding does not work properly.
     """
-    Create a floating-point number from a decimal float literal.
-    """
+
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
@@ -139,9 +148,18 @@ def from_str(x, prec, rounding):
 #
 
 def from_int(n, prec, rounding):
+    """Create a raw mpf from an integer, rounding if necessary."""
     return normalize(n, 0, prec, rounding)
 
+def from_int_exact(n):
+    """Create a raw mpf from an integer, automatically choosing the
+    precision high enough to represent the integer exactly."""
+    t = trailing_zeros(n)
+    n >>= t
+    return (n, t, bitcount(n))
+
 def to_int(s):
+    """Convert a raw mpf to the nearest int, rounding down."""
     man, exp, bc = s
     return rshift(man, -exp, ROUND_DOWN)
 
@@ -151,12 +169,17 @@ def to_int(s):
 #
 
 def from_float(x, prec, rounding):
-    # We assume that a float mantissa has 53 bits
+    """Create a raw mpf from a Python float, rounding if necessary.
+    If prec >= 53, the result is guaranteed to represent exactly the
+    same number as the input."""
     m, e = math.frexp(x)
     return normalize(int(m*(1<<53)), e-53, prec, rounding)
 
 def to_float(s):
-    """Convert to a Python float. May raise OverflowError."""
+    """Convert a raw mpf to a Python float. The result is exact if the
+    bitcount of s is <= 53 and no underflow/overflow occurs. An
+    OverflowError is raised if the number is too large to be
+    represented as a regular float."""
     man, exp, bc = s
     try:
         return math.ldexp(man, exp)
@@ -172,13 +195,14 @@ def to_float(s):
 #
 
 def from_rational(p, q, prec, rounding):
-    """Create floating-point number from a rational number p/q"""
+    """Create a raw mpf from a rational number p/q, rounding if
+    necessary. TODO: support directed rounding properly."""
     n = prec + bitcount(q) + 2
     return normalize((p<<n)//q, -n, prec, rounding)
 
 def to_rational(s):
-    """Return (p, q) such that s = p/q exactly. p and q are not reduced
-    to lowest terms."""
+    """Convert a raw mpf to a rational number. Return integers (p, q)
+    such that s = p/q exactly. p and q are not reduced to lowest terms."""
     man, exp, bc = s
     if exp > 0:
         return man * 2**exp, 1
