@@ -50,7 +50,7 @@ def to_digits_exp(s, dps):
         tmp = fmul(tmp, flog2(expprec, RF), expprec, RF)
         tmp = fdiv(tmp, flog10(expprec, RF), expprec, RF)
         b = to_int(tmp)
-        s = fdiv(s, fpow(ften, b, bitprec, ROUND_FLOOR), bitprec, ROUND_FLOOR)
+        s = fdiv(s, fpow(ften, b, bitprec, RF), bitprec, RF)
         man, exp, bc = s
         exponent = b
     else:
@@ -71,10 +71,9 @@ def to_digits_exp(s, dps):
 
 def to_str(s, dps):
     """
-    Represent as a decimal floating-point string that can be parsed by
-    float.__init__ or Decimal.__init__ (or for that matter, by a human).
-
-    The dps option specifies how many digits to include.
+    Convert to a decimal floating-point literal. The literal is
+    formatted so that it can be parsed back to a number by to_str,
+    float() or Decimal().
     """
 
     # to_digits_exp rounds to floor.
@@ -83,13 +82,9 @@ def to_str(s, dps):
 
     # Rounding up kills some instances of "...99999"
     if len(digits) > dps and digits[dps] in '56789':
-        digits2 = str(int(digits[:dps]) + 1) # [:dps]
-        #print "splt", digits, digits2, exponent
+        digits = str(int(digits[:dps]) + 1) # [:dps]
     else:
-        digits2 = digits[:dps]
-
-    #exponent += (len(digits2) - len(digits))
-    digits = digits2
+        digits = digits[:dps]
 
     # Prettify numbers close to unit magnitude
     if -(dps//3) < exponent < dps:
