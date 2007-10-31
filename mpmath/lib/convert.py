@@ -1,10 +1,6 @@
 """
-mpmath : lib.convert
-
-Conversion between raw mpmath floating-point numbers and other
-numerical types (int, float, str...)
-
-
+Functions for converting between raw mpmath floating-point numbers and
+other types and number representations (int, float, str...).
 """
 
 from util import *
