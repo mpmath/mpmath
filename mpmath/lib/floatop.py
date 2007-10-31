@@ -39,8 +39,8 @@ def normalize(man, exp, prec, rounding):
         man >>= tr
         exp += tr
         bc -= tr
-    # If man is +/- a power of two as a result of rounding in rshift,
-    # bc may be wrong
+    # If result is +/- a power of two as a result of rounding in
+    # rshift, bc may be wrong
     if man == 1 or man == -1:
         bc = 1
     return (man, exp, bc)
@@ -81,7 +81,7 @@ def fcmp(s, t):
         if a > b: return 1
     else:
         if a < b: return 1
-        if a < b: return -1
+        if a > b: return -1
 
     # The numbers have similar magnitude but different exponents.
     # So we subtract and check the sign of resulting mantissa.
