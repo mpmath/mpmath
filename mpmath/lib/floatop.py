@@ -5,7 +5,6 @@ addition, subtraction, multiplication, division, integer powers.
 
 from util import *
 
-
 # Some commonly needed raw mpfs
 fzero = (0, 0, 0)
 fone = (1, 0, 1)
@@ -13,77 +12,73 @@ ftwo = (1, 1, 1)
 ften = (5, 1, 3)
 fhalf = (1, -1, 1)
 
-
-shifts = map(trailing_zeros, range(256))
-
+# Pre-computing and avoiding calls to trailing_zeros() in
+# normalize improves performance at 15-digit precision by ~15%
+shift_table = map(trailing_zeros, range(256))
 
 def normalize(man, exp, prec, rounding):
     """Create a raw mpf with value (man * 2**exp), rounding in the
     specified direction if the number of bits in the mantissa
     exceeds the precision. Trailing zero bits are also stripped from
     the mantissa to ensure that the representation is canonical."""
+
+    # The bit-level operations below assume a nonzero mantissa
     if not man:
         return fzero
-
     # Count bits in the input mantissa. bitcount2 is slightly faster
     # when man is expected to be small.
     if prec < 100:
         bc = bitcount2(man)
     else:
         bc = bitcount(man)
-
     # Cut mantissa down to size
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
         exp += (bc - prec)
         bc = prec
-
     # Strip trailing zeros
     if not man & 1:
+        # To within the nearest byte
         while not man & 0xff:
             man >>= 8
             exp += 8
             bc -= 8
-        t = shifts[man & 0xff]
+        t = shift_table[man & 0xff]
         man >>= t
         exp += t
         bc -= t
-
     # If result is +/- a power of two due to rounding up in rshift(),
     # bc may be wrong
     if man == 1 or man == -1:
         bc = 1
     return (man, exp, bc)
 
-
 def feq(s, t):
-    """Floating-point equality testing. The numbers are assumed to
-    be normalized, meaning that this simply performs tuple comparison."""
+    """Test equality of two raw mpfs. (This is simply tuple comparion;
+    this function is provided only for completeness)."""
     return s == t
 
-
 def fcmp(s, t):
-    """Floating-point comparison. Return -1 if s < t, 0 if s == t,
-    and 1 if s > t."""
+    """Compare the raw mpfs s and t. Return -1 if s < t, 0 if s == t,
+    and 1 if s > t. (Same convention as Python's cmp() function.)"""
 
-    # An inequality between two numbers s and t is determined by looking
-    # at the value of s-t. A full floating-point subtraction is relatively
-    # slow, so we first try to look at the exponents and signs of s and t.
+    # In principle, a comparison amounts to determining the sign of s-t.
+    # A full subtraction is relatively slow, however, so we first try to
+    # look at the components.
     sman, sexp, sbc = s
     tman, texp, tbc = t
 
-    # Very easy cases: check for 0's and opposite signs
+    # Very easy cases: check for zeros and opposite signs
     if not tman: return cmp(sman, 0)
     if not sman: return cmp(0, tman)
     if sman > 0 and tman < 0: return 1
     if sman < 0 and tman > 0: return -1
 
-    # In this case, the numbers likely have the same magnitude
+    # This reduces to direct integer comparison
     if sexp == texp: return cmp(sman, tman)
 
-    # The numbers have the same sign but different exponents. In this
-    # case we try to determine if they are of different magnitude by
-    # checking the position of the highest set bit in each number.
+    # Check position of the highest set bit in each number. If
+    # different, there is certainly an inequality.
     a = sbc + sexp
     b = tbc + texp
     if sman > 0:
@@ -93,20 +88,57 @@ def fcmp(s, t):
         if a < b: return 1
         if a > b: return -1
 
-    # The numbers have similar magnitude but different exponents.
-    # So we subtract and check the sign of resulting mantissa.
+    # Both numbers have the same highest bit. Subtract to find
+    # how the lower bits compare.
     return cmp(fsub(s, t, 5, ROUND_FLOOR)[0], 0)
 
-
-def fpos(x, prec, rounding):
-    return normalize(x[0], x[1], prec, rounding)
-
+def fpos(s, prec, rounding):
+    """Calculate 0+s for a raw mpf (i.e., just round s to the specified
+    precision, or return s unchanged if its mantissa is smaller than
+    the precision)."""
+    return normalize(s[0], s[1], prec, rounding)
 
 def fadd(s, t, prec, rounding):
-    """Floating-point addition. Given two tuples s and t containing the
-    components of floating-point numbers, return their sum rounded to 'prec'
-    bits using the 'rounding' mode, represented as a tuple of components."""
+    """Add two raw mpfs and round the result to the specified precision,
+    in the specified direction."""
 
+    # We will assume below that s has the higher exponent.
+    if t[1] > s[1]:
+        s, t = t, s
+    sman, sexp, sbc = s
+    tman, texp, tbc = t
+
+    # Check if one operand is zero. Zero always has exp = 0; if the
+    # other operand has a large exponent, its mantissa will unnecessarily
+    # be shifted a huge number of bits if we don't check for this case.
+    if not tman: return normalize(sman, sexp, prec, rounding)
+    if not sman: return normalize(tman, texp, prec, rounding)
+
+    #------------------------------------------------------------------------
+    # More generally, if one number is huge and the other is small,
+    # and in particular, if their mantissas don't overlap at all at
+    # the current precision level, we can avoid work.
+    #       precision
+    #    |            |
+    #     111111111
+    #  +                 222222222
+    #     ------------------------
+    #  #  1111111110000...
+    #
+    delta = (sbc + sexp) - (tbc + texp)
+    if delta > prec + 5:   # an arbitrary number ~> 3
+        # The result may have to be rounded up or down. So we shift s
+        # and add a dummy bit outside the precision range to force
+        # rounding.
+        offset = min(delta + 3, prec+3)
+        sman <<= offset
+        if tman > 0:
+            sman += 1
+        else:
+            sman -= 1
+        return normalize(sman, sexp-offset, prec, rounding)
+
+    #------------------------------------------------------------------------
     #  General algorithm: we set min(s.exp, t.exp) = 0, perform exact integer
     #  addition, and then round the result.
     #                   exp = 0
@@ -116,89 +148,39 @@ def fadd(s, t, prec, rounding):
     #      +        222222222   <-- t.man (no shifting necessary)
     #          --------------
     #      =   11111333333333
-
-    # We assume that s has the higher exponent. If not, just switch them:
-    if t[1] > s[1]:
-        s, t = t, s
-
-    sman, sexp, sbc = s
-    tman, texp, tbc = t
-
-    # Check if one operand is zero. Zero always has exp = 0; if the
-    # other operand has a large exponent, its mantissa will unnecessarily
-    # be shifted a huge number of bits if we don't check for this case.
-    if not tman:
-        return normalize(sman, sexp, prec, rounding)
-    if not sman:
-        return normalize(tman, texp, prec, rounding)
-
-    # More generally, if one number is huge and the other is small,
-    # and in particular, if their mantissas don't overlap at all at
-    # the current precision level, we can avoid work.
-
-    #       precision
-    #    |            |
-    #     111111111
-    #  +                 222222222
-    #     ------------------------
-    #  #  1111111110000...
-
-    # However, if the rounding isn't to nearest, correct rounding mandates
-    # the result should be adjusted up or down.
-
-    if sexp - texp > 10:
-        bitdelta = (sbc + sexp) - (tbc + texp)
-        if bitdelta > prec + 5:
-            if rounding > 4:     # nearby rounding
-                return normalize(sman, sexp, prec, rounding)
-
-            # shift s and add a dummy bit outside the precision range to
-            # force rounding up or down
-            offset = min(bitdelta + 3, prec+3)
-            sman <<= offset
-            if tman > 0:
-                sman += 1
-            else:
-                sman -= 1
-            return normalize(sman, sexp-offset, prec, rounding)
-
-    # General case
+    #
     return normalize(tman+(sman<<(sexp-texp)), texp, prec, rounding)
 
-
 def fsub(s, t, prec, rounding):
-    """Floating-point subtraction"""
+    """Return the difference of two raw mpfs, s-t. This function is
+    simply a wrapper of fadd that changes the sign of t."""
     return fadd(s, (-t[0], t[1], t[2]), prec, rounding)
 
-
 def fneg(s, prec, rounding):
-    """Floating-point negation. In addition to changing sign, rounds to
-    the specified precision."""
+    """Negate a raw mpf (return -s), rounding the result to the
+    specified precision."""
     return normalize(-s[0], s[1], prec, rounding)
 
-# TODO: rename to fneg_exact
-def fneg_noround(s):
-    """Negate without normalizing"""
+def fneg_exact(s):
+    """Negate a raw mpf (return -s), without performing any rounding."""
     return (-s[0], s[1], s[2])
 
-
 def fabs(s, prec, rounding):
+    """Return abs(s) of the raw mpf s, rounded to the specified
+    precision."""
     man, exp, bc = s
     if man < 0:
         return normalize(-man, exp, prec, rounding)
     return normalize(man, exp, prec, rounding)
 
-
 def fmul(s, t, prec, rounding):
-    """Floating-point multiplication"""
-
+    """Return the product of two raw mpfs, s*t, rounded to the
+    specified precision."""
     sman, sexp, sbc = s
     tman, texp, tbc = t
-
     # This is very simple. A possible optimization would be to throw
     # away some bits when prec is much smaller than sbc+tbc
     return normalize(sman*tman, sexp+texp, prec, rounding)
-
 
 def fdiv(s, t, prec, rounding):
     """Floating-point division"""
@@ -215,15 +197,14 @@ def fdiv(s, t, prec, rounding):
     extra = prec - sbc + tbc + 12
     if extra < 12:
         extra = 12
-
     return normalize((sman<<extra)//tman, sexp-texp-extra, prec, rounding)
 
-def fdiv2_noround(s):
-    """Quickly divide by two without rounding"""
+def fshift_exact(s, n):
+    """Quickly multiply the raw mpf s by 2**n without rounding."""
     man, exp, bc = s
     if not man:
         return s
-    return man, exp-1, bc
+    return man, exp+n, bc
 
 # TODO: use directed rounding all the way through (and, account for signs?)
 def fpow(s, n, prec, rounding):

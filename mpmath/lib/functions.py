@@ -264,8 +264,8 @@ def cosh_sinh(x, prec, rounding):
     # and note that the exponential only needs to be computed once.
     ep = fexp(x, prec2, ROUND_FLOOR)
     em = fdiv(fone, ep, prec2, ROUND_FLOOR)
-    ch = fdiv2_noround(fadd(ep, em, prec, rounding))
-    sh = fdiv2_noround(fsub(ep, em, prec, rounding))
+    ch = fshift_exact(fadd(ep, em, prec, rounding), -1)
+    sh = fshift_exact(fsub(ep, em, prec, rounding), -1)
     return ch, sh
 
 def fcosh(x, prec, rounding):
@@ -333,7 +333,7 @@ _cutoff_2 = (3, -1, 2)   # 1.5
 
 def fatan(x, prec, rounding):
     if x[0] < 0:
-        t = fatan(fneg_noround(x), prec+4, ROUND_FLOOR)
+        t = fatan(fneg_exact(x), prec+4, ROUND_FLOOR)
         return normalize(-t[0], t[1], prec, rounding)
     if fcmp(x, _cutoff_1) < 0:
         return _atan_series_1(x, prec, rounding)

@@ -72,7 +72,7 @@ def fcsqrt(a, b, prec, rounding):
 
     # When a+bi is a negative real number, we get a real sqrt times i
     if a[0] < 0 and b == fzero:
-        im = fsqrt(fneg_noround(a), prec, rounding)
+        im = fsqrt(fneg_exact(a), prec, rounding)
         return (fzero, im)
 
     ep = prec+20
@@ -142,7 +142,7 @@ def fccos(a, b, prec, rounding):
     re = fmul(c, ch, prec, rounding)
     im = fmul(s, sh, prec, rounding)
 
-    return re, fneg_noround(im)
+    return re, fneg_exact(im)
 
 
 def fcsin(a, b, prec, rounding):
@@ -172,7 +172,7 @@ def fcsin(a, b, prec, rounding):
 
 def fccosh(a, b, prec, rounding):
     """Complex hyperbolic cosine. Computed as cosh(z) = cos(z*i)."""
-    return fccos(b, fneg_noround(a), prec, rounding)
+    return fccos(b, fneg_exact(a), prec, rounding)
 
 
 def fcsinh(a, b, prec, rounding):
