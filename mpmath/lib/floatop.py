@@ -14,13 +14,16 @@ ften = (5, 1, 3)
 fhalf = (1, -1, 1)
 
 
+shifts = map(trailing_zeros, range(256))
+
+
 def normalize(man, exp, prec, rounding):
     """Create a raw mpf with value (man * 2**exp), rounding in the
     specified direction if the number of bits in the mantissa
-    exceeds the precision. This function ensures that the
-    representation is canonical by stripping all trailing zero bits.
-    """
-    if not man: return fzero
+    exceeds the precision. Trailing zero bits are also stripped from
+    the mantissa to ensure that the representation is canonical."""
+    if not man:
+        return fzero
 
     # Count bits in the input mantissa. bitcount2 is slightly faster
     # when man is expected to be small.
@@ -28,19 +31,26 @@ def normalize(man, exp, prec, rounding):
         bc = bitcount2(man)
     else:
         bc = bitcount(man)
+
     # Cut mantissa down to size
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
         exp += (bc - prec)
         bc = prec
+
     # Strip trailing zeros
     if not man & 1:
-        tr = trailing_zeros(man)
-        man >>= tr
-        exp += tr
-        bc -= tr
-    # If result is +/- a power of two as a result of rounding in
-    # rshift, bc may be wrong
+        while not man & 0xff:
+            man >>= 8
+            exp += 8
+            bc -= 8
+        t = shifts[man & 0xff]
+        man >>= t
+        exp += t
+        bc -= t
+
+    # If result is +/- a power of two due to rounding up in rshift(),
+    # bc may be wrong
     if man == 1 or man == -1:
         bc = 1
     return (man, exp, bc)
@@ -215,7 +225,7 @@ def fdiv2_noround(s):
         return s
     return man, exp-1, bc
 
-
+# TODO: use directed rounding all the way through (and, account for signs?)
 def fpow(s, n, prec, rounding):
     """Compute s**n, where n is an integer"""
     n = int(n)
