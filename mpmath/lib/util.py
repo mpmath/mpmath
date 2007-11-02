@@ -130,6 +130,9 @@ def trailing_zeros(n):
     while not n & 1: n >>= 1; t += 1
     return t
 
+#----------------------------------------------------------------------------
+# Integer shifting with directed rounding
+#
 
 def round_floor(x, n):
     if not n or not x: return x
@@ -212,6 +215,59 @@ def rshift(x, n, rounding):
     in which case x is shifted to the left (and no rounding is
     necessary)."""
     return rounding_functions[rounding](x, n)
+
+
+#----------------------------------------------------------------------------
+# Integer division with directed rounding
+#
+
+def divide_floor(p, q):
+    return p // q
+
+def divide_ceiling(p, q):
+    return -(p//-q)
+
+def divide_down(p, q):
+    if (p>0)^(q>0): return -(p//-q)
+    else:           return p // q
+
+def divide_up(p, q):
+    if (p>0)^(q>0): return p // q
+    else:           return -(p//-q)
+
+def divide_half_up(p, q):
+    if (p>0)^(q>0):
+        return -divide_half_up(p, -q)
+    quot = (p<<1)//q
+    if quot & 1:
+        return (quot+1)>>1
+    return quot>>1
+
+def divide_half_down(p, q):
+    if (p>0)^(q>0):
+        return -divide_half_down(p, -q)
+    quot, rem = divmod(p<<1, q)
+    if quot & 1 and rem:
+        return (quot+1)>>1
+    return quot>>1
+
+def divide_half_even(p, q):
+    if (p>0)^(q>0):
+        return -divide_half_even(p, -q)
+    quot, rem = divmod(p<<1, q)
+    if quot & 1 and (rem or quot & 2):
+        return (quot+1)>>1
+    return quot>>1
+
+division_functions = {
+  ROUND_FLOOR : divide_floor,
+  ROUND_CEILING : divide_ceiling,
+  ROUND_DOWN : divide_down,
+  ROUND_UP : divide_up,
+  ROUND_HALF_UP : divide_half_up,
+  ROUND_HALF_DOWN : divide_half_down,
+  ROUND_HALF_EVEN : divide_half_even
+}
 
 
 
