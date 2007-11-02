@@ -726,10 +726,14 @@ def atanh(x):
     mpf._prec = oldprec
     return +t
 
+def rand():
+    """Return an mpf chosen randomly from [0, 1)."""
+    return make_mpf(frand(mpf._prec))
+
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree"]
+  "arg", "degree", "rand"]
 
 

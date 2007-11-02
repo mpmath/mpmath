@@ -4,6 +4,7 @@ addition, subtraction, multiplication, division, integer powers.
 """
 
 from util import *
+import random
 
 
 # Some commonly needed raw mpfs
@@ -243,3 +244,9 @@ def fpow(s, n, prec, rounding):
         man, exp, bc = normalize(man*man, exp+exp, prec2, ROUND_FLOOR)
         n = n // 2
     return normalize(pm, pe, prec, rounding)
+
+
+def frand(prec):
+    """Return a raw mpf chosen randomly from [0, 1), with prec bits
+    in the mantissa."""
+    return normalize(random.randrange(0, 1<<prec), -prec, prec, ROUND_FLOOR)
