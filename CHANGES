@@ -3,7 +3,7 @@
 
 * new string conversion code (much faster; unlimited exponents)
 * fixed bug in factorial
-* performance improvements in various places
+* performance improvements (arithmetic is 15% faster)
 * refactored parts of the code and added many more docstrings
 
 

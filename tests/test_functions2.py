@@ -1,4 +1,3 @@
-import time
 import math
 from mpmath import *
 
@@ -67,13 +66,3 @@ def test_zeta():
     im = '236.5242296658162058024755079556629786895294952121891237'
     assert zeta(mpc(0.5, im)).ae(0, 1e-46)
     mpf.dps = 15
-
-if __name__ == "__main__":
-    globals_ = sorted(globals().keys())
-    t1 = time.time()
-    for f in globals_:
-        if f.startswith("test_"):
-            print "running", f, "..."
-            globals()[f]()
-    t2 = time.time()
-    print "passed all tests in", (t2-t1), "seconds"
