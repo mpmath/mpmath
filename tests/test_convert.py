@@ -1,5 +1,6 @@
 import random
 from mpmath import *
+from mpmath.lib import *
 
 def test_basic_string():
     """
@@ -39,3 +40,8 @@ def test_eval_repr_invariant():
                 assert eval(repr(a)) == a
             else:
                 assert eval(repr(a)).ae(a)
+
+def test_convert_rational():
+    assert from_rational(30, 5, 53, ROUND_HALF_EVEN) == (3, 1, 2)
+    assert from_rational(-7, 4, 53, ROUND_HALF_EVEN) == (-7, -2, 3)
+    assert to_rational((1, -1, 1)) == (1, 2)

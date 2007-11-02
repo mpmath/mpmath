@@ -192,9 +192,8 @@ def to_float(s):
 
 def from_rational(p, q, prec, rounding):
     """Create a raw mpf from a rational number p/q, rounding if
-    necessary. TODO: support directed rounding properly."""
-    n = prec + bitcount(q) + 2
-    return normalize((p<<n)//q, -n, prec, rounding)
+    necessary."""
+    return fdiv(from_int_exact(p), from_int_exact(q), prec, rounding)
 
 def to_rational(s):
     """Convert a raw mpf to a rational number. Return integers (p, q)
