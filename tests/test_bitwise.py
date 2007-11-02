@@ -181,38 +181,55 @@ def test_divide_half_down():
     assert divide_half_down(-300500000, 1000000) == -300
     assert divide_half_down(-300500001, 1000000) == -301
 
+
+def intdiv(p, q, prec, rounding):
+    return to_int(fdiv(from_int_exact(p), from_int_exact(q), prec, rounding))
+
+def bitwidth(n):
+    return max(1, bitcount(n)-trailing_zeros(n))
+
 def test_divide_half_even():
+    cases = [
+      (5, 1, 5),
+      (5, 2, 2),
+      (5, 3, 2),
+      (5, 4, 1),
+      (5, 5, 1),
+      (6, 4, 2),
+      (8, 3, 3),
+      (10, 4, 2),
+      (14, 4, 4),
+      (18, 4, 4),
+      (100, 2, 50),
+      (101, 2, 50),
+      (102, 2, 51),
+      (103, 2, 52),
+      (104, 2, 52),
+      (105, 2, 52),
+      (106, 2, 53),
+      (50479*318, 318, 50479),
+      (50479*317, 317, 50479),
+      (300499999, 1000000, 300),
+      (300500000, 1000000, 300),
+      (300500001, 1000000, 301),
+      (300499999, -1000000, -300),
+      (300500000, -1000000, -300),
+      (300500001, -1000000, -301)
+    ]
+    fi = from_int_exact
+    for a, b, c in cases:
+        assert intdiv(a, b, bitwidth(c), ROUND_HALF_EVEN) == c
+
     for j in range(1, 100):
         for k in range(1, 100):
-            q = divide_half_even(j, k)
+            if not j//k:
+                continue
+            prec = bitwidth(int(round(float(j)/k)))
+            q = intdiv(j, k, prec, ROUND_HALF_EVEN)
             fq = float(j)/k
             if q*k == j:
                 assert q == fq
             else:
                 if fq % 1.0 == 0.5: assert not q & 1
-                if fq % 1.0 < 0.5:  assert q < fq
-                if fq % 1.0 > 0.5:  assert q > fq
-    assert divide_half_even(5, 1) == 5
-    assert divide_half_even(5, 2) == 2
-    assert divide_half_even(5, 3) == 2
-    assert divide_half_even(5, 4) == 1
-    assert divide_half_even(5, 5) == 1
-    assert divide_half_even(6, 4) == 2
-    assert divide_half_even(10, 4) == 2
-    assert divide_half_even(14, 4) == 4
-    assert divide_half_even(18, 4) == 4
-    assert divide_half_even(100, 2) == 50
-    assert divide_half_even(101, 2) == 50
-    assert divide_half_even(102, 2) == 51
-    assert divide_half_even(103, 2) == 52
-    assert divide_half_even(104, 2) == 52
-    assert divide_half_even(105, 2) == 52
-    assert divide_half_even(106, 2) == 53
-    assert divide_half_even(50479*318, 318) == 50479
-    assert divide_half_even(50479*317, 317) == 50479
-    assert divide_half_even(300499999, 1000000) == 300
-    assert divide_half_even(300500000, 1000000) == 300
-    assert divide_half_even(300500001, 1000000) == 301
-    assert divide_half_even(300499999, -1000000) == -300
-    assert divide_half_even(300500000, -1000000) == -300
-    assert divide_half_even(300500001, -1000000) == -301
+                if fq % 1.0 < 0.5: assert q < fq
+                if fq % 1.0 > 0.5: assert q > fq

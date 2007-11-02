@@ -5,6 +5,7 @@ addition, subtraction, multiplication, division, integer powers.
 
 from util import *
 
+
 # Some commonly needed raw mpfs
 fzero = (0, 0, 0)
 fone = (1, 0, 1)
@@ -12,9 +13,11 @@ ftwo = (1, 1, 1)
 ften = (5, 1, 3)
 fhalf = (1, -1, 1)
 
+
 # Pre-computing and avoiding calls to trailing_zeros() in
 # normalize improves performance at 15-digit precision by ~15%
 shift_table = map(trailing_zeros, range(256))
+
 
 def normalize(man, exp, prec, rounding):
     """Create a raw mpf with value (man * 2**exp), rounding in the
@@ -25,12 +28,14 @@ def normalize(man, exp, prec, rounding):
     # The bit-level operations below assume a nonzero mantissa
     if not man:
         return fzero
+
     # Count bits in the input mantissa. bitcount2 is slightly faster
     # when man is expected to be small.
     if prec < 100:
         bc = bitcount2(man)
     else:
         bc = bitcount(man)
+
     # Cut mantissa down to size
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
@@ -53,10 +58,12 @@ def normalize(man, exp, prec, rounding):
         bc = 1
     return (man, exp, bc)
 
+
 def feq(s, t):
     """Test equality of two raw mpfs. (This is simply tuple comparion;
     this function is provided only for completeness)."""
     return s == t
+
 
 def fcmp(s, t):
     """Compare the raw mpfs s and t. Return -1 if s < t, 0 if s == t,
@@ -92,11 +99,13 @@ def fcmp(s, t):
     # how the lower bits compare.
     return cmp(fsub(s, t, 5, ROUND_FLOOR)[0], 0)
 
+
 def fpos(s, prec, rounding):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision, or return s unchanged if its mantissa is smaller than
     the precision)."""
     return normalize(s[0], s[1], prec, rounding)
+
 
 def fadd(s, t, prec, rounding):
     """Add two raw mpfs and round the result to the specified precision,
@@ -151,19 +160,23 @@ def fadd(s, t, prec, rounding):
     #
     return normalize(tman+(sman<<(sexp-texp)), texp, prec, rounding)
 
+
 def fsub(s, t, prec, rounding):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of fadd that changes the sign of t."""
     return fadd(s, (-t[0], t[1], t[2]), prec, rounding)
+
 
 def fneg(s, prec, rounding):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision."""
     return normalize(-s[0], s[1], prec, rounding)
 
+
 def fneg_exact(s):
     """Negate a raw mpf (return -s), without performing any rounding."""
     return (-s[0], s[1], s[2])
+
 
 def fabs(s, prec, rounding):
     """Return abs(s) of the raw mpf s, rounded to the specified
@@ -172,6 +185,7 @@ def fabs(s, prec, rounding):
     if man < 0:
         return normalize(-man, exp, prec, rounding)
     return normalize(man, exp, prec, rounding)
+
 
 def fmul(s, t, prec, rounding):
     """Return the product of two raw mpfs, s*t, rounded to the
@@ -182,22 +196,21 @@ def fmul(s, t, prec, rounding):
     # away some bits when prec is much smaller than sbc+tbc
     return normalize(sman*tman, sexp+texp, prec, rounding)
 
+
 def fdiv(s, t, prec, rounding):
     """Floating-point division"""
     sman, sexp, sbc = s
     tman, texp, tbc = t
 
-    # Perform integer division between mantissas. The mantissa of s must
-    # be padded appropriately to preserve accuracy.
-    
-    # Note: this algorithm does produce slightly wrong rounding in corner
-    # cases. Padding with a few extra bits makes the chance very small.
-    # Changing '12' to something lower will reveal the error in the
-    # test_standard_float test case
-    extra = prec - sbc + tbc + 12
-    if extra < 12:
-        extra = 12
-    return normalize((sman<<extra)//tman, sexp-texp-extra, prec, rounding)
+    # Same strategy as for addition: if there is a remainder, perturb
+    # the result a few bits outside the precision range before rounding
+    extra = max(prec - sbc + tbc + 5, 5)
+    quot, rem = divmod(sman<<extra, tman)
+    if rem:
+        quot = (quot << 5) + 1
+        extra += 5
+    return normalize(quot, sexp-texp-extra, prec, rounding)
+
 
 def fshift_exact(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""
@@ -205,6 +218,7 @@ def fshift_exact(s, n):
     if not man:
         return s
     return man, exp+n, bc
+
 
 # TODO: use directed rounding all the way through (and, account for signs?)
 def fpow(s, n, prec, rounding):
