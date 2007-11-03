@@ -12,6 +12,7 @@ LICENSE file for details)
 0. History
 ----------
 
+* Version 0.4 released on November 3, 2007
 * Version 0.3 released on October 5, 2007
 * Version 0.2 released on October 2, 2007
 * Version 0.1 released on September 27, 2007
@@ -40,6 +41,9 @@ http://mpmath.googlecode.com/svn/trunk/
 2. Documentation and usage
 --------------------------
 
+Note: some additional documentation is available on the mpmath website.
+The unit tests and internal docstrings may also be helpful.
+
 Import mpmath with
 
     from mpmath import *
@@ -51,7 +55,7 @@ Python's float and complex types:
     mpf('0.66666666666666663')
 
     >>> mpc(0, -1)
-    mpc(real='0', imag='-1')
+    mpc(real='0.0', imag='-1.0')
 
     >>> mpf(-0.6) ** mpf(-0.2)
     mpc(real='0.89603999408558288', imag='-0.65101116249684809')
@@ -158,15 +162,12 @@ and verifies a 15-digit approximation interval for pi:
   singularities, and/or with the precision set to (say) several hundred
   digits, the last few digits in a result may be wrong.
 
-* Directed rounding works for addition and multiplication. It is implemented
+* Directed rounding works for arithmetic operations. It is implemented
   heuristically for other operations, and their results may be off by one
   or two bits in the last place (if otherwise accurate).
 
-* binary <-> decimal conversion currently uses the decimal module, which
-  is very slow and fails for extremely large and small numbers
-
 * Some IEEE 754 features such as infinities, NaN and denormal rounding
-  are not implemented
+  are not supported
 
 
 4. Help and bug reports

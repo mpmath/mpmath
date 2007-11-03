@@ -1,11 +1,17 @@
---0.4-svn--
-(currently under development)
+--0.4--
+Released November 3, 2007
 
 * new string conversion code (much faster; unlimited exponents)
-* fixed bug in factorial
-* performance improvements (arithmetic is 15% faster)
-* refactored parts of the code and added many more docstrings
-
+* fixed bug in factorial (it gave the wrong value, though gamma worked)
+* division now uses a rigorous algorithm for directed rounding
+  (mpmath previously used a heuristic that got the last bit wrong
+  in 1/10000 of cases)
+* misc. performance improvements (arithmetic is 15% faster)
+* refactored parts of the code; added many more docstrings and tests
+* added a function rand() for generating full-precision random numbers
+* rewrote the benchmark script to compare against Decimal and to
+  automatically generate timings with psyco both disabled and enabled
+* rewrote unit tests to use py.test
 
 --0.3--
 Released October 5, 2007

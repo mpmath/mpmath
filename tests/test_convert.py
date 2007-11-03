@@ -50,6 +50,12 @@ def test_eval_repr_invariant():
             else:
                 assert eval(repr(a)).ae(a)
 
+def test_str_bugs():
+    # Decimal rounding used to give the wrong exponent in some cases
+    assert str(mpf('1e600')) == '1.0e+600'
+    assert str(mpf('1e10000')) == '1.0e+10000'
+
+
 def test_convert_rational():
     assert from_rational(30, 5, 53, ROUND_HALF_EVEN) == (3, 1, 2)
     assert from_rational(-7, 4, 53, ROUND_HALF_EVEN) == (-7, -2, 3)
