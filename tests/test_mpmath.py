@@ -48,33 +48,6 @@ def test_complex():
     assert not mpc(2).ae(2 + 1e-13)
     assert mpc(2+1e-15j).ae(2)
 
-# Results should agree with those of small floats at standard precision
-def test_standard_float():
-    random.seed(0)
-    sqrtfail = 0
-    for i in range(5000):
-        x = (random.random()*1000 - 1000) * 2.0**random.randint(-20, 20)
-        y = (random.random()*1000 - 1000) * 2.0**random.randint(-20, 20)
-        assert mpf(x) == x
-        assert (mpf(x) < mpf(y)) == (x < y)
-        assert (mpf(x) > mpf(y)) == (x > y)
-        assert (mpf(x) == mpf(y)) == (x == y)
-        assert (mpf(x) != mpf(y)) == (x != y)
-        assert (mpf(x) <= mpf(y)) == (x <= y)
-        assert (mpf(x) >= mpf(y)) == (x >= y)
-        assert mpf(x) == mpf(x)
-        assert mpf(x) + mpf(y) == x + y
-        assert mpf(x) * mpf(y) == x * y
-        assert mpf(x) / mpf(y) == x / y
-        assert abs(mpf(x)) == abs(x)
-        # this fails roughly 1 time out of 1000. not sure whether mpf
-        # or float is rounding the wrong way
-        sqrtfail += (abs(mpf(x))**0.5 != abs(x)**0.5)
-    assert sqrtfail < 5
-    # particular bugs
-    assert mpf(4.4408920985006262E-16) < mpf(1.7763568394002505E-15)
-    assert mpf(-4.4408920985006262E-16) > mpf(-1.7763568394002505E-15)
-
 
 def test_mixed_types():
     assert 1 + mpf(3) == mpf(3) + 1 == 4

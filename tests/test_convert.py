@@ -2,6 +2,7 @@ import random
 from mpmath import *
 from mpmath.lib import *
 
+
 def test_basic_string():
     """
     Test basic string conversion
@@ -28,6 +29,14 @@ def test_basic_string():
     assert str(mpf(-1.23402834e-15)) == '-1.23402834e-15'
     assert str(mpf(-1.2344e-15)) == '-1.2344e-15'
     assert repr(mpf(-1.2344e-15)) == "mpf('-1.2343999999999999e-15')"
+
+
+def test_tight_string_conversion():
+    # In an old version, '0.5' wasn't recognized as representing
+    # an exact binary number and was erroneously rounded up or down
+    assert from_str('0.5', 10, ROUND_FLOOR) == fhalf
+    assert from_str('0.5', 10, ROUND_CEILING) == fhalf
+
 
 def test_eval_repr_invariant():
     """Test that eval(repr(x)) == x"""

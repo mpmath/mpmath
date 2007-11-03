@@ -306,6 +306,9 @@ def numeral(n, base=10, size=0, digits=stddigits):
     be exact.
     """
 
+    if n < 0:
+        return "-" + numeral(-n, base, size, digits)
+
     # Fast enough to do directly
     if size < 250:
         return small_numeral(n, base, digits)

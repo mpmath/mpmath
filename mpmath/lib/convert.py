@@ -107,16 +107,7 @@ def to_str(s, dps):
     if exponent < 0: return sign + digits + "e" + str(exponent)
 
 
-def from_str(x, prec, rounding):
-    """Create a raw mpf from a decimal literal, rounding in the
-    specified direction if the input number cannot be represented
-    exactly as a binary floating-point number with the given number of
-    bits. The literal syntax accepted is the same as for Python
-    floats.
-
-    TODO: the rounding does not work properly.
-    """
-
+def str_to_man_exp(x, base=10):
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
@@ -133,10 +124,42 @@ def from_str(x, prec, rounding):
         a, b = parts[0], parts[1].rstrip('0')
         exp -= len(b)
         x = a + b
-    x = int(x)
-    s = from_int(x, prec+10, ROUND_FLOOR)
-    s = fmul(s, fpow(ften, exp, prec+10, ROUND_FLOOR), prec, rounding)
+    x = int(x, base)
+    return x, exp
+
+def from_str(x, prec, rounding):
+    """Create a raw mpf from a decimal literal, rounding in the
+    specified direction if the input number cannot be represented
+    exactly as a binary floating-point number with the given number of
+    bits. The literal syntax accepted is the same as for Python
+    floats.
+
+    TODO: the rounding does not work properly for large exponents.
+    """
+    man, exp = str_to_man_exp(x, base=10)
+
+    # XXX: appropriate cutoffs & track direction
+    # note no factors of 5
+    if abs(exp) > 400:
+        s = from_int(man, prec+10, ROUND_FLOOR)
+        s = fmul(s, fpow(ften, exp, prec+10, ROUND_FLOOR), prec, rounding)
+    else:
+        if exp >= 0:
+            s = from_int(man * 10**exp, prec, rounding)
+        else:
+            s = from_rational(man, 10**-exp, prec, rounding)
     return s
+
+# Binary string conversion. These are currently mainly used for debugging
+# and could use some improvement in the future
+
+def from_bstr(x):
+    man, exp = str_to_man_exp(x, base=2)
+    return normalize(man, exp, bitcount(man), ROUND_FLOOR)
+
+def to_bstr(x):
+    man, exp, bc = x
+    return numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
 
 
 #----------------------------------------------------------------------
