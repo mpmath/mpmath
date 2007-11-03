@@ -7,5 +7,5 @@ setup(name='mpmath',
       author='Fredrik Johansson',
       author_email='fredrik.johansson@gmail.com',
       license = 'BSD',
-      packages=['mpmath'],
+      packages=['mpmath', 'mpmath/lib'],
      )
