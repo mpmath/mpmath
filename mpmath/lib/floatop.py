@@ -6,7 +6,6 @@ addition, subtraction, multiplication, division, integer powers.
 from util import *
 import random as _random
 
-
 # Some commonly needed raw mpfs
 fzero = (0, 0, 0)
 fone = (1, 0, 1)
@@ -15,28 +14,55 @@ ften = (5, 1, 3)
 fhalf = (1, -1, 1)
 
 
+#-----------------------------------------------------------------------------
+#
+# normalize() is the workhorse function in mpmath. All floating-point
+# operations are implemented according to the pattern
+#
+#  1) convert floating-point problem to an equivalent integer problem
+#  2) solve integer problem using Python integer arithmetic
+#  3) use normalize() to convert the integer solution to a canonical
+#     floating-point number
+#
+# A number of hacks are used in normalize() to reduce the overhead of step
+# (3) as far as possible.
+#
+
 # Pre-computing and avoiding calls to trailing_zeros() in
 # normalize improves performance at 15-digit precision by ~15%
 shift_table = map(trailing_zeros, range(256))
 
+# The general method for counting bits is to use the bitcount() function,
+# which calls math.log. However, for prec ~< 200 bits, converting to a 
+# hex string and using table lookup for the last four bits is slightly
+# faster. This idea was taken from decimal.py
+correction = {
+        '0': 4, '1': 3, '2': 2, '3': 2,
+        '4': 1, '5': 1, '6': 1, '7': 1,
+        '8': 0, '9': 0, 'a': 0, 'b': 0,
+        'c': 0, 'd': 0, 'e': 0, 'f': 0}
+
 
 def normalize(man, exp, prec, rounding):
-    """Create a raw mpf with value (man * 2**exp), rounding in the
-    specified direction if the number of bits in the mantissa
+    """
+    normalize(man, exp, prec, rounding) -> return tuple representing
+    a fully rounded and normalized raw mpf with value (man * 2**exp)
+
+    The mantissa is rounded in the specified direction if the number of
     exceeds the precision. Trailing zero bits are also stripped from
-    the mantissa to ensure that the representation is canonical."""
+    the mantissa to ensure that the representation is canonical.
+    """
 
     # The bit-level operations below assume a nonzero mantissa
     if not man:
         return fzero
-
-    # Count bits in the input mantissa. bitcount2 is slightly faster
-    # when man is expected to be small.
-    if prec < 100:
-        bc = bitcount2(man)
+    # Count bits
+    if prec < 200:
+        # Inlined for a small speed boost at low precision
+        hex_n = "%x" % abs(man)
+        bc = 4*len(hex_n) - correction[hex_n[0]]
     else:
         bc = bitcount(man)
-
     # Cut mantissa down to size
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
@@ -59,6 +85,18 @@ def normalize(man, exp, prec, rounding):
         bc = 1
     return (man, exp, bc)
 
+
+# Equivalent to normalize(), but takes a full (man, exp, bc) tuple
+def fpos(s, prec, rounding):
+    """Calculate 0+s for a raw mpf (i.e., just round s to the specified
+    precision, or return s unchanged if its mantissa is smaller than
+    the precision)."""
+    return normalize(s[0], s[1], prec, rounding)
+
+
+#-----------------------------------------------------------------------------
+# Comparison operations
+#
 
 def feq(s, t):
     """Test equality of two raw mpfs. (This is simply tuple comparion;
@@ -101,12 +139,9 @@ def fcmp(s, t):
     return cmp(fsub(s, t, 5, ROUND_FLOOR)[0], 0)
 
 
-def fpos(s, prec, rounding):
-    """Calculate 0+s for a raw mpf (i.e., just round s to the specified
-    precision, or return s unchanged if its mantissa is smaller than
-    the precision)."""
-    return normalize(s[0], s[1], prec, rounding)
-
+#-----------------------------------------------------------------------------
+# Arithmetic: +, -, *, /, and related operations
+#
 
 def fadd(s, t, prec, rounding):
     """Add two raw mpfs and round the result to the specified precision,
@@ -165,7 +200,8 @@ def fadd(s, t, prec, rounding):
 def fsub(s, t, prec, rounding):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of fadd that changes the sign of t."""
-    return fadd(s, (-t[0], t[1], t[2]), prec, rounding)
+    man, exp, bc = t
+    return fadd(s, (-man, exp, bc), prec, rounding)
 
 
 def fneg(s, prec, rounding):
