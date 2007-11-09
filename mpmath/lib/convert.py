@@ -38,7 +38,7 @@ def to_digits_exp(s, dps):
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if abs(exp) > 500:
+    if abs(exp) > 2500:
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
@@ -205,13 +205,12 @@ def to_float(s):
     OverflowError is raised if the number is too large to be
     represented as a regular float."""
     man, exp, bc = s
-    try:
+    if bc < 100:
         return math.ldexp(man, exp)
-    except OverflowError:
-        # Try resizing the mantissa. Overflow may still happen here.
-        n = bc - 53
-        m = man >> n
-        return math.ldexp(m, exp + n)
+    # Try resizing the mantissa. Overflow may still happen here.
+    n = bc - 53
+    m = man >> n
+    return math.ldexp(m, exp + n)
 
 
 #----------------------------------------------------------------------

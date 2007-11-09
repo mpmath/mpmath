@@ -43,7 +43,7 @@ correction = {
         'c': 0, 'd': 0, 'e': 0, 'f': 0}
 
 
-def normalize(man, exp, prec, rounding):
+def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
     """
     normalize(man, exp, prec, rounding) -> return tuple representing
     a fully rounded and normalized raw mpf with value (man * 2**exp)
@@ -57,7 +57,7 @@ def normalize(man, exp, prec, rounding):
     if not man:
         return fzero
     # Count bits
-    if prec < 200:
+    if CO1 < man < CO2:
         # Inlined for a small speed boost at low precision
         hex_n = "%x" % abs(man)
         bc = 4*len(hex_n) - correction[hex_n[0]]
