@@ -185,6 +185,8 @@ def from_int_exact(n):
 def to_int(s):
     """Convert a raw mpf to the nearest int, rounding down."""
     man, exp, bc = s
+    if exp > 0:
+        return man << exp
     return rshift(man, -exp, ROUND_DOWN)
 
 

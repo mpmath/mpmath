@@ -42,7 +42,6 @@ correction = {
         '8': 0, '9': 0, 'a': 0, 'b': 0,
         'c': 0, 'd': 0, 'e': 0, 'f': 0}
 
-
 def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
     """
     normalize(man, exp, prec, rounding) -> return tuple representing
@@ -53,9 +52,6 @@ def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
     the mantissa to ensure that the representation is canonical.
     """
 
-    # The bit-level operations below assume a nonzero mantissa
-    if not man:
-        return fzero
     # Count bits
     if CO1 < man < CO2:
         # Inlined for a small speed boost at low precision
@@ -63,10 +59,19 @@ def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
         bc = 4*len(hex_n) - correction[hex_n[0]]
     else:
         bc = bitcount(man)
+    return normalize2(man, exp, bc, prec, rounding)
+
+def normalize2(man, exp, bc, prec, rounding):
+    """
+    Does the same as normalize(), but uses a precomputed bitcount.
+    """
+    # The bit-level operations below assume a nonzero mantissa
+    if not man:
+        return fzero
     # Cut mantissa down to size
     if bc > prec:
         man = rshift(man, bc-prec, rounding)
-        exp += (bc - prec)
+        exp += (bc-prec)
         bc = prec
     # Strip trailing zeros
     if not man & 1:
@@ -83,15 +88,15 @@ def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
     # bc may be wrong
     if man == 1 or man == -1:
         bc = 1
-    return (man, exp, bc)
+    return man, exp, bc
 
 
-# Equivalent to normalize(), but takes a full (man, exp, bc) tuple
 def fpos(s, prec, rounding):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision, or return s unchanged if its mantissa is smaller than
     the precision)."""
-    return normalize(s[0], s[1], prec, rounding)
+    man, exp, bc = s
+    return normalize2(man, exp, bc, prec, rounding)
 
 
 #-----------------------------------------------------------------------------
@@ -224,29 +229,41 @@ def fabs(s, prec, rounding):
     return normalize(man, exp, prec, rounding)
 
 
-def fmul(s, t, prec, rounding):
+def fmul(s, t, prec, rounding, bct=bctable):
     """Return the product of two raw mpfs, s*t, rounded to the
-    specified precision."""
+    specified precision.
+    """
+
+    # This function could be implemented by simply calling
+    # normalize(sman*tman, sexp+texp, prec, rounding), but
+    # we can gain a significant increase in speed by utilizing
+    # the fact that the bitcount is given approximately by sbc+tbc
+    # (so no call to bitcount() is needed)
     sman, sexp, sbc = s
     tman, texp, tbc = t
-    # This is very simple. A possible optimization would be to throw
-    # away some bits when prec is much smaller than sbc+tbc
-    return normalize(sman*tman, sexp+texp, prec, rounding)
+    man = sman * tman
+
+    return normalize2(man, sexp+texp, bitcount3(man, sbc+tbc), prec, rounding)
 
 
-def fdiv(s, t, prec, rounding):
+def fdiv(s, t, prec, rounding, bct=bctable):
     """Floating-point division"""
     sman, sexp, sbc = s
     tman, texp, tbc = t
 
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
-    extra = max(prec - sbc + tbc + 5, 5)
+    extra = prec-sbc+tbc+5
+    if extra < 5:
+        extra = 5
     quot, rem = divmod(sman<<extra, tman)
+
     if rem:
         quot = (quot << 5) + 1
         extra += 5
-    return normalize(quot, sexp-texp-extra, prec, rounding)
+
+    bc = bitcount3(quot, sbc+extra-tbc)
+    return normalize2(quot, sexp-texp-extra, bc, prec, rounding)
 
 
 def fshift_exact(s, n):

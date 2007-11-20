@@ -118,6 +118,22 @@ def bitcount2(n, correction = {
     return 4*len(hex_n) - correction[hex_n[0]]
 
 
+# Bitcounts of small integers
+bctable = map(bitcount, range(1024))
+
+
+def bitcount3(n, bc, bct=bctable):
+    """Count bits in n, given an approximate bitcount that is at
+    most a few bits too low."""
+    bc -= 3
+    if bc < 3:
+        if n > 0: return bct[n]
+        else:     return bct[-n]
+    else:
+        if n > 0: return bc + bct[n>>bc]
+        else:     return bc + bct[(-n)>>bc]
+
+
 def trailing_zeros(n):
     """Count trailing zero bits in an integer. If n is negative, it is
     replaced by its absolute value."""
@@ -135,34 +151,34 @@ def trailing_zeros(n):
 #
 
 def round_floor(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     return x >> n
 
 def round_ceiling(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     return -((-x) >> n)
 
 def round_down(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     if x > 0:
         return x >> n
     else:
         return -((-x) >> n)
 
 def round_up(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     if x > 0:
         return -((-x) >> n)
     else:
         return x >> n
 
 def round_half_up(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     positive = x > 0
     if positive: t = x >> (n-1)
     else:        t = (-x) >> (n-1)
@@ -173,8 +189,8 @@ def round_half_up(x, n):
     else:        return -(t>>1)
 
 def round_half_down(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     positive = x > 0
     if positive: t = x >> (n-1)
     else:        t = (-x) >> (n-1)
@@ -185,8 +201,8 @@ def round_half_down(x, n):
     else:        return -(t>>1)
 
 def round_half_even(x, n):
-    if not n or not x: return x
-    if n < 0: return x << -n
+    #if not n or not x: return x
+    #if n < 0: return x << -n
     positive = x > 0
     if positive: t = x >> (n-1)
     else:        t = (-x) >> (n-1)
