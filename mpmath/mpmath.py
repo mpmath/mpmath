@@ -293,9 +293,7 @@ class mpf(mpnumeric):
         if s.special or t.special or t == 0:
             if nan in (s, t): return nan
             if s.special and t.special: return nan
-            # inf / 0
             if not t.special:
-                print "duh", t, t == 0
                 if t == 0: return nan
                 return (inf, ninf)[(s < 0) ^ (t < 0)]
             return make_mpf(fzero)
