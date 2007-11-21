@@ -215,6 +215,17 @@ def to_float(s):
     return math.ldexp(m, exp + n)
 
 
+def fhash(s):
+    try:
+        # Try to be compatible with hash values for floats and ints
+        return hash(to_float(s))
+    except OverflowError:
+        # We must unfortunately sacrifice compatibility with ints here. We
+        # could do hash(man << exp) when the exponent is positive, but
+        # this would cause unreasonable inefficiency for large numbers.
+        return hash(s)
+
+
 #----------------------------------------------------------------------
 # Rational numbers (for use by other libraries)
 #

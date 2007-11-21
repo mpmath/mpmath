@@ -303,3 +303,4 @@ def frand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
     return normalize(_random.randrange(0, 1<<prec), -prec, prec, ROUND_FLOOR)
+
