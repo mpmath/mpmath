@@ -7,12 +7,15 @@ def transform(f, a, b):
     b = mpf(b)
     if (a, b) == (-1, 1):
         return f
-    else:
-        C = (b-a)/2
-        D = (b+a)/2
-        def g(x):
-            return C * f(D + C*x)
-        return g
+    if (a, b) == (-inf, inf):
+        return transform(lambda x: (f(-1/x+1)+f(1/x-1))/x**2, 0, 1)
+    if a == -inf: return transform(lambda x: f(-1/x+b+1)/x**2, 0, 1)
+    if b == inf: return transform(lambda x: f(1/x+a-1)/x**2, 0, 1)
+    C = (b-a)/2
+    D = (b+a)/2
+    def g(x):
+        return C * f(D + C*x)
+    return g
 
 def smallstr(f):
     prec = mpf.prec
@@ -20,7 +23,6 @@ def smallstr(f):
     s = str(f)
     mpf.prec = prec
     return s
-
 
 # Tanh-sinh (doubly exponential) quadrature
 
@@ -120,17 +122,26 @@ def quadts(f, a, b, **options):
     is bumpy or oscillatory.
     """
     verbose=options.get('verbose', False)
+    extra_level = 0
 
     if isinstance(a, tuple):
         (a, b), (c, d) = a, b
+        if a == b or c == d:
+            return mpf(0)
         g = f
         def f(y):
             return quadts(lambda x: g(x,y), a, b)
+        if inf in (abs(c), abs(d)):
+            extra_level = 1
         f = transform(f, c, d)
     else:
+        if a == b:
+            return mpf(0)
+        if inf in (abs(a), abs(b)):
+            extra_level = 1
         f = transform(f, a, b)
     prec = mpf.prec
-    m = TS_guess_level(prec)
+    m = TS_guess_level(prec) + extra_level
     nodes = TS_nodes(prec, m, verbose)
     val, err = TS_eval(f, nodes, m, verbose)
     return val

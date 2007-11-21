@@ -139,6 +139,8 @@ class mpf(mpnumeric):
             1.5
         """
         if isinstance(val, mpf):
+            if val.special:
+                return val
             return make_mpf(normalize(val.val[0], val.val[1], \
                 cls._prec, cls._rounding))
         elif isinstance(val, tuple):
@@ -184,7 +186,7 @@ class mpf(mpnumeric):
         return float(s) + 0j
 
     def __nonzero__(s):
-        return bool(s.man) or bool(s.special)
+        return bool(s.special) or bool(s.man)
 
     def __eq__(s, t):
         if not isinstance(t, mpf):
@@ -288,11 +290,12 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) / t
             t = convert_lossless(t)
-        if s.special or t.special:
+        if s.special or t.special or t == 0:
             if nan in (s, t): return nan
             if s.special and t.special: return nan
-            # 0 / inf
+            # inf / 0
             if not t.special:
+                print "duh", t, t == 0
                 if t == 0: return nan
                 return (inf, ninf)[(s < 0) ^ (t < 0)]
             return make_mpf(fzero)
@@ -303,9 +306,7 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return t / mpc(s)
             t = convert_lossless(t)
-        if s.special or t.special:
-            return (t / s)
-        return make_mpf(fdiv(t.val, s.val, mpf._prec, mpf._rounding))
+        return (t / s)
 
     def __pow__(s, t):
         if isinstance(t, int_types):
