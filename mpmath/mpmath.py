@@ -290,7 +290,7 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) / t
             t = convert_lossless(t)
-        if s.special or t.special or t == 0:
+        if s.special or t.special or t.val == fzero:
             if nan in (s, t): return nan
             if s.special and t.special: return nan
             if not t.special:
@@ -371,18 +371,21 @@ def make_mpf(tpl, construct=object.__new__, cls=mpf):
     a.val = tpl
     return a
 
-inf = mpf()
-inf.val = None
-inf.special = '+inf'
+class special(mpf):
+    def __new__(cls, specval):
+        a = object.__new__(cls)
+        a.special = specval
+        return a
 
-ninf = mpf()
-ninf.val = None
-ninf.special = '-inf'
+    @property
+    def val(self):
+        raise ValueError('This function does not know how to deal with the ' \
+          'special numbers +inf, -inf, or nan. (Attempted to access '\
+          'mantissa/exponent of x = %s.) ' % self)
 
-nan = mpf()
-nan.val = None
-nan.special = 'nan'
-
+inf = special('+inf')
+ninf = special('-inf')
+nan = special('nan')
 
 
 class mpc(mpnumeric):
