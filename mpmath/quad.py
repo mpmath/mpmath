@@ -91,8 +91,6 @@ def TS_eval(f, nodes, m, verbose=False):
     mpf.prec -= 30
     return +res[-1], TS_estimate_error(res, prec, eps)
 
-
-
 def TS_estimate_error(res, prec, eps):
     try:
         D1 = log(abs(res[-1]-res[-2]), 10)
@@ -103,45 +101,65 @@ def TS_estimate_error(res, prec, eps):
     D4 = min(0, max(D1**2/D2, 2*D1, D3))
     return mpf('0.1') ** -int(D4)
 
-
-
 def TS_guess_level(prec):
     return int(4 + max(0, log(prec/30.0, 2)))
+
+def TS_adaptive(f, prec, m, retry, verbose):
+    eps = mpf((1, -prec))
+    for m in xrange(m, m+retry+1):
+        if verbose:
+            print "using tanh-sinh algorithm with m =", m
+        nodes = TS_nodes(prec, m, verbose=verbose)
+        s, err = TS_eval(f, nodes, m, verbose=verbose)
+        steps = 2*len(nodes[0])
+        if err <= eps:
+            return s, err
+    if verbose:
+        print "Warning: failed to reach full accuracy. Estimated error:", \
+            smallstr(err)
+    return s, err
 
 
 def quadts(f, a, b, **options):
     """
-    Integrate f(x) dx over the interval [a, b], using "doubly
-    exponential" or "tanh-sinh" quadrature. This algorithm tends to
-    work exceptionally well at high precision levels when the
-    integrand is singular at the endpoints or when the interval
-    [a, b] is infinite.
+    Integrate f(x) dx over the interval [a, b], using tanh-sinh
+    quadrature. Use quadts(f, (a, b), (c, d)) to calculate the
+    two-dimensional integral over [a, b] x [c, d].
 
-    The algorithm is nonadaptive, however, and does not perform well if
-    there are singularities between the endpoints or if the integrand
-    is bumpy or oscillatory.
+    Options:
+      verbose=False
+        Set to True to display progress.
+
+      retry=2
+        If full accuracy is not reached, increase the number
+        of evaluation points and try again this many times.
+
+      error=False
+        Return error estimate along with the result.
     """
-    verbose=options.get('verbose', False)
+    verbose = options.get('verbose', False)
+    retry = options.get('retry', 2)
+    error = options.get('error', False)
     extra_level = 0
 
+    mpf.dps += 5
     if isinstance(a, tuple):
         (a, b), (c, d) = a, b
-        if a == b or c == d:
-            return mpf(0)
+        if a == b or c == d: return mpf(0)
         g = f
         def f(y):
-            return quadts(lambda x: g(x,y), a, b)
-        if inf in (abs(c), abs(d)):
-            extra_level = 1
+            return quadts(lambda x: g(x,y), a, b, retry=0)
+        if inf in (abs(c), abs(d)): extra_level = 1
         f = transform(f, c, d)
     else:
-        if a == b:
-            return mpf(0)
-        if inf in (abs(a), abs(b)):
-            extra_level = 1
+        if a == b: return mpf(0)
+        if inf in (abs(a), abs(b)): extra_level = 1
         f = transform(f, a, b)
+    mpf.dps -= 5
+
     prec = mpf.prec
     m = TS_guess_level(prec) + extra_level
-    nodes = TS_nodes(prec, m, verbose)
-    val, err = TS_eval(f, nodes, m, verbose)
+    val, err = TS_adaptive(f, prec, m, retry, verbose)
+    if error:
+        return val, err
     return val
