@@ -61,6 +61,7 @@ def normalize(man, exp, prec, rounding, CO1=-(1<<600), CO2=(1<<600)):
         bc = bitcount(man)
     return normalize2(man, exp, bc, prec, rounding)
 
+
 def normalize2(man, exp, bc, prec, rounding):
     """
     Does the same as normalize(), but uses a precomputed bitcount.
@@ -265,6 +266,34 @@ def fdiv(s, t, prec, rounding, bct=bctable):
     bc = bitcount3(quot, sbc+extra-tbc)
     return normalize2(quot, sexp-texp-extra, bc, prec, rounding)
 
+
+def fmod(s, t, prec, rounding):
+    sman, sexp, sbc = s
+    tman, texp, tbc = t
+    # Important special case: do nothing if t is larger
+    if ((sman < 0) == (tman < 0)) and texp > sexp+sbc:
+        return s
+    # Another important special case: this allows us to do e.g. x % 1.0
+    # to find the fractional part of x, and it'll work when x is huge.
+    if tman == 1 and sexp > texp+tbc:
+        return fzero
+    base = min(sexp, texp)
+    man = (sman << (sexp-base)) % (tman << (texp-base))
+    return normalize(man, base, prec, rounding)
+
+def fceil(s, prec, rounding):
+    sman, sexp, sbc = s
+    if sexp > 0:
+        return fpos(s, prec, rounding)
+    from convert import to_int, from_int
+    return from_int(to_int(s, ROUND_CEILING), prec, rounding)
+
+def ffloor(s, prec, rounding):
+    sman, sexp, sbc = s
+    if sexp > 0:
+        return fpos(s, prec, rounding)
+    from convert import to_int, from_int
+    return from_int(to_int(s, ROUND_FLOOR), prec, rounding)
 
 def fshift_exact(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""

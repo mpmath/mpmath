@@ -1,4 +1,5 @@
 from mpmath.lib import *
+from mpmath import mpf
 
 from random import randint, choice, seed
 
@@ -6,7 +7,7 @@ all_modes = [ROUND_FLOOR, ROUND_CEILING, ROUND_DOWN, ROUND_UP,
   ROUND_HALF_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN]
 
 fb = from_bstr
-fi = from_int_exact
+fi = from_int
 ff = from_float
 
 
@@ -124,3 +125,15 @@ def test_epsilon_rounding():
     assert fdiv(c, b, 3, ROUND_FLOOR) == fb('-0.110')
     assert fdiv(c, b, 2, ROUND_CEILING) == fb('-0.10')
     assert fdiv(c, b, 3, ROUND_CEILING) == fb('-0.101')
+
+
+def test_mod():
+    assert mpf(234) % 1 == 0
+    assert mpf(-3) % 256 == 253
+    assert mpf(0.25) % 23490.5 == 0.25
+    assert mpf(0.25) % -23490.5 == -23490.25
+    assert mpf(-0.25) % 23490.5 == 23490.25
+    assert mpf(-0.25) % -23490.5 == -0.25
+    # Check that these cases are handled efficiently
+    assert mpf('1e10000000000') % 1 == 0
+    assert mpf('1.23e-1000000000') % 1 == mpf('1.23e-1000000000')

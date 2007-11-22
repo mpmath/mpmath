@@ -306,6 +306,10 @@ class mpf(mpnumeric):
             t = convert_lossless(t)
         return (t / s)
 
+    def __mod__(s, t):
+        t = convert_lossless(t)
+        return make_mpf(fmod(s.val, t.val, mpf._prec, mpf._rounding))
+
     def __pow__(s, t):
         if isinstance(t, int_types):
             return make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))
@@ -572,9 +576,23 @@ def sqrt(x):
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
     must be real."""
-    x = mpf(x)
-    y = mpf(y)
-    return mpf(fhypot(x.val, y.val, mpf._prec, mpf._rounding))
+    x = convert_lossless(x)
+    y = convert_lossless(y)
+    return make_mpf(fhypot(x.val, y.val, mpf._prec, mpf._rounding))
+
+def floor(x):
+    """Computes the floor function of x. Note: returns an mpf, not a
+    Python int. If x is larger than the precision, it will be rounded,
+    not necessarily in the floor direction."""
+    x = convert_lossless(x)
+    return make_mpf(ffloor(x.val, mpf._prec, mpf._rounding))
+
+def ceil(x):
+    """Computes the ceiling function of x. Note: returns an mpf, not a
+    Python int. If x is larger than the precision, it will be rounded,
+    not necessarily in the ceiling direction."""
+    x = convert_lossless(x)
+    return make_mpf(fceil(x.val, mpf._prec, mpf._rounding))
 
 # Since E-functions simply map reals to reals and complexes to complexes, we
 # can construct all of them the same way (unlike log, sqrt, etc)
@@ -784,6 +802,6 @@ def rand():
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan"]
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil"]
 
 

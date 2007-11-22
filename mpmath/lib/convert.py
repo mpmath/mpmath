@@ -171,33 +171,34 @@ def to_bstr(x):
 # Integers
 #
 
-def from_int(n, prec, rounding):
-    """Create a raw mpf from an integer, rounding if necessary."""
+def from_int(n, prec=None, rounding=None):
+    """Create a raw mpf from an integer. If no precision is specified,
+    allocate enough precision to represent exactly."""
+    if prec is None:
+        t = trailing_zeros(n)
+        n >>= t
+        return (n, t, bitcount(n))
     return normalize(n, 0, prec, rounding)
 
-def from_int_exact(n):
-    """Create a raw mpf from an integer, automatically choosing the
-    precision high enough to represent the integer exactly."""
-    t = trailing_zeros(n)
-    n >>= t
-    return (n, t, bitcount(n))
-
-def to_int(s):
-    """Convert a raw mpf to the nearest int, rounding down."""
+def to_int(s, rounding=ROUND_DOWN):
+    """Convert a raw mpf to the nearest int. Rounding is done down by
+    default (same as int(float) in Python), but can be changed."""
     man, exp, bc = s
     if exp > 0:
         return man << exp
-    return rshift(man, -exp, ROUND_DOWN)
+    return rshift(man, -exp, rounding)
 
 
 #----------------------------------------------------------------------
 # Regular python floats
 #
 
-def from_float(x, prec, rounding):
+def from_float(x, prec=None, rounding=None):
     """Create a raw mpf from a Python float, rounding if necessary.
     If prec >= 53, the result is guaranteed to represent exactly the
-    same number as the input."""
+    same number as the input. If prec is not specified, use prec=53."""
+    if prec is None:
+        prec = 53
     m, e = math.frexp(x)
     return normalize(int(m*(1<<53)), e-53, prec, rounding)
 
@@ -233,7 +234,7 @@ def fhash(s):
 def from_rational(p, q, prec, rounding):
     """Create a raw mpf from a rational number p/q, rounding if
     necessary."""
-    return fdiv(from_int_exact(p), from_int_exact(q), prec, rounding)
+    return fdiv(from_int(p), from_int(q), prec, rounding)
 
 def to_rational(s):
     """Convert a raw mpf to a rational number. Return integers (p, q)
