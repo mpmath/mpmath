@@ -13,6 +13,7 @@ def ae(a, b):
 
 def test_basic_integrals():
     for prec in [15, 30, 100]:
+        mpf.dps = prec
         assert ae(quadts(lambda x: x**3 - 3*x**2, -2, 4), -12)
         assert ae(quadts(sin, 0, pi), 2)
         assert ae(quadts(sin, 0, 2*pi), 0)
@@ -22,17 +23,35 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 1/(1+x**2), -1, 1), pi/2)
         assert ae(quadts(lambda x: 1/(1+x**2), -inf, inf), pi)
         assert ae(quadts(lambda x: 2*sqrt(1-x**2), -1, 1), pi)
+    mpf.dps = 15
 
-def test_double_integrals():
-    for prec in [15, 30]:
-        assert ae(quadts(lambda x, y: cos(x+y/2), (-pi/2, pi/2), (0, pi)), 4)
-        assert ae(quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1)), cgamma)
-        assert ae(quadts(lambda x, y: 1/sqrt(1+x**2+y**2), (-1, 1), (-1, 1)), 4*log(2+sqrt(3))-2*pi/3)
-        assert ae(quadts(lambda x, y: 1/(1-x**2 * y**2), (0, 1), (0, 1)), pi**2 / 8)
-        assert ae(quadts(lambda x, y: 1/(1-x*y), (0, 1), (0, 1)), pi**2 / 6)
-        assert ae(quadts(lambda x, y: exp(-(x+y)), (0, inf), (0, inf)), 1)
-        # very slow
-        #assert ae(quadts(lambda x, y: exp(-x**2-y**2), (-inf, inf), (-inf, inf)), pi)
+# Double integrals
+def test_double_trivial():
+    assert ae(quadts(lambda x, y: x, (0, 1), (0, 1)), 0.5)
+    assert ae(quadts(lambda x, y: x, (-1, 1), (-1, 1)), 0.0)
+
+def test_double_1():
+    assert ae(quadts(lambda x, y: cos(x+y/2), (-pi/2, pi/2), (0, pi)), 4)
+
+def test_double_2():
+    assert ae(quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1)), cgamma)
+
+def test_double_3():
+    assert ae(quadts(lambda x, y: 1/sqrt(1+x**2+y**2), (-1, 1), (-1, 1)), 4*log(2+sqrt(3))-2*pi/3)
+
+def test_double_4():
+    assert ae(quadts(lambda x, y: 1/(1-x**2 * y**2), (0, 1), (0, 1)), pi**2 / 8)
+
+def test_double_5():
+    assert ae(quadts(lambda x, y: 1/(1-x*y), (0, 1), (0, 1)), pi**2 / 6)
+
+def test_double_6():
+    assert ae(quadts(lambda x, y: exp(-(x+y)), (0, inf), (0, inf)), 1)
+
+# fails
+def xtest_double_7():
+    assert ae(quadts(lambda x, y: exp(-x**2-y**2), (-inf, inf), (-inf, inf)), pi)
+
 
 # Test integrals from "Experimentation in Mathematics" by Borwein,
 # Bailey & Girgensohn
