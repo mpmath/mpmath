@@ -6,8 +6,10 @@ Released November 24, 2007
 * implemented __mod__ and __rmod__ for the mpf class
 * partial support for the special numbers +inf, -inf and nan
 * faster multiplication and division (up to 40% faster with psyco)
+* simplified syntax for conversion function (from_int instead of
+  from_int_exact, etc)
 * renamed cgamma to euler
-* more comments
+* more documentation strings
 
 --0.4--
 Released November 3, 2007
