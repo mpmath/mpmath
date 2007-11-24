@@ -185,6 +185,11 @@ def quadts(f, a, b, **options):
     quadrature. Use quadts(f, (a, b), (c, d)) to calculate the
     two-dimensional integral over [a, b] x [c, d].
 
+        >>> print quadts(lambda x: x**2, -2, 4)
+        24.0
+        >>> print quadts(lambda x, y: x+y, (0, 1), (0, 2))
+        3.0
+
     Options
     =======
 
