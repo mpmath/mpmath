@@ -558,7 +558,7 @@ _180 = from_int(180, 10, ROUND_FLOOR)
 pi = constant(fpi, "pi")
 degree = constant(lambda p, r: fdiv(fpi(p+4, ROUND_FLOOR), _180, p, r), "degree")
 e = constant(lambda p, r: fexp(fone, p, r), "e")
-cgamma = constant(fgamma, "Euler's constant gamma")
+euler = constant(fgamma, "Euler's constant gamma")
 clog2 = constant(flog2, "log(2)")
 clog10 = constant(flog10, "log(10)")
 
@@ -799,7 +799,7 @@ def rand():
     return make_mpf(frand(mpf._prec))
 
 
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "cgamma", "clog2", "clog10",
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil"]

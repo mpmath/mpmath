@@ -34,7 +34,7 @@ def test_double_1():
     assert ae(quadts(lambda x, y: cos(x+y/2), (-pi/2, pi/2), (0, pi)), 4)
 
 def test_double_2():
-    assert ae(quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1)), cgamma)
+    assert ae(quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1)), euler)
 
 def test_double_3():
     assert ae(quadts(lambda x, y: 1/sqrt(1+x**2+y**2), (-1, 1), (-1, 1)), 4*log(2+sqrt(3))-2*pi/3)
@@ -61,7 +61,7 @@ def test_expmath_integrals():
         assert ae(quadts(lambda x: x/sinh(x), 0, inf),                    pi**2 / 4)
         assert ae(quadts(lambda x: log(x)**2 / (1+x**2), 0, inf),         pi**3 / 8)
         assert ae(quadts(lambda x: (1+x**2)/(1+x**4), 0, inf),            pi/sqrt(2))
-        assert ae(quadts(lambda x: log(x)/cosh(x)**2, 0, inf),            log(pi)-2*log(2)-cgamma)
+        assert ae(quadts(lambda x: log(x)/cosh(x)**2, 0, inf),            log(pi)-2*log(2)-euler)
         assert ae(quadts(lambda x: log(1+x**3)/(1-x+x**2), 0, inf),       2*pi*log(3)/sqrt(3))
         assert ae(quadts(lambda x: log(x)**2 / (x**2+x+1), 0, 1),         8*pi**3 / (81*sqrt(3)))
         assert ae(quadts(lambda x: log(cos(x))**2, 0, pi/2),              pi/2 * (log(2)**2+pi**2/12))

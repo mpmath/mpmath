@@ -151,7 +151,7 @@ def test_constants():
     for prec in [3, 7, 10, 15, 20, 37, 80, 100, 29]:
         mpf.dps = prec
         assert pi == mpf(tpi)
-        assert cgamma == mpf(tgamma)
+        assert euler == mpf(tgamma)
         assert clog2 == mpf(tlog2)
         assert clog10 == mpf(tlog10)
     mpf.dps = 15

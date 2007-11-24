@@ -119,7 +119,7 @@ gamma function) and zeta (Riemann zeta function).
 Finally, the convenience functions hypot and atan2 are available
 (defined for real numbers only).
 
-The constants pi, e, and cgamma (Euler's constant) are available as
+The constants pi, e, and euler (Euler's constant) are available as
 special objects that behave like mpfs but whose values automatically
 adjust to the precision.
 
