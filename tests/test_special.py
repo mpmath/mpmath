@@ -48,3 +48,7 @@ def test_special():
     assert inf / inf is nan
     assert inf / -inf is nan
     assert inf / nan is nan
+
+    assert mpf('inf') == mpf('+inf') == inf
+    assert mpf('-inf') == -inf
+    assert mpf('nan') is nan

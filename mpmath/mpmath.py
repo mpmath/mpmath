@@ -1,6 +1,4 @@
 from lib import *
-from decimal import Decimal
-
 
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
@@ -20,9 +18,8 @@ def convert_lossless(x):
     mpf or mpc, return it unchanged. If x is an int, create an mpf with
     sufficient precision to represent it exactly.
 
-    If x is a decimal or str, just convert it to an mpf with the
-    current working precision (perhaps this should be done
-    differently...)"""
+    If x is a str, just convert it to an mpf with the current working
+    precision (perhaps this should be done differently...)"""
     if isinstance(x, mpnumeric):
         return x
     if isinstance(x, float):
@@ -31,7 +28,7 @@ def convert_lossless(x):
         return make_mpf(from_int(x, bitcount(x), ROUND_FLOOR))
     if isinstance(x, complex):
         return mpc(x)
-    if isinstance(x, (Decimal, str)):
+    if isinstance(x, str):
         if x in ('inf', '+inf'): return inf
         if x == '-inf': return ninf
         if x == 'nan': return nan
@@ -78,7 +75,7 @@ def _convert(x):
         return from_float(x, mpf._prec, mpf._rounding)
     if isinstance(x, int_types):
         return from_int(x, mpf._prec, mpf._rounding)
-    if isinstance(x, (Decimal, str)):
+    if isinstance(x, str):
         #if x in ('inf', '+inf'): return inf
         #if x == '-inf': return ninf
         #if x == 'nan': return nan
@@ -124,8 +121,8 @@ class mpf(mpnumeric):
 
     def __new__(cls, val=fzero):
         """A new mpf can be created from a Python float, an int, a
-        Decimal, or a decimal string representing a number in
-        floating-point format. Examples:
+        or a decimal string representing a number in floating-point
+        format. Examples:
 
             mpf(25)
             mpf(2.5)
@@ -146,8 +143,7 @@ class mpf(mpnumeric):
         elif isinstance(val, tuple):
             return make_mpf(normalize(val[0], val[1], cls._prec, \
                 cls._rounding))
-        else:
-            return make_mpf(_convert(val))
+        return +convert_lossless(val)
 
     man = property(lambda self: self.val[0])
     exp = property(lambda self: self.val[1])

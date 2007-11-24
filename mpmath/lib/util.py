@@ -7,7 +7,6 @@ Contents of this module:
 """
 
 import math
-import decimal
 
 # Same as standard Python float
 STANDARD_PREC = 53
