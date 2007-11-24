@@ -27,7 +27,7 @@ def transform(f, a, b):
     b = mpf(b)
     if (a, b) == (-1, 1):
         return f
-    # The substitution 1/x sends [0, inf] to [0, 1], which in turn
+    # The transformation 1/x sends [1, inf] to [0, 1], which in turn
     # can be transformed to [-1, 1] the usual way. For a double
     # infinite interval, we simply evaluate the function symmetrically
     if (a, b) == (-inf, inf):
@@ -126,7 +126,7 @@ def TS_nodes(prec, m, verbose=False):
             # note: the number displayed is rather arbitrary. should
             # figure out how to print something that looks more like a
             # percentage
-            print "calculating nodes:", smallstr(-log(diff, 10) / prec)
+            print "Calculating nodes:", smallstr(-log(diff, 10) / prec)
         xs.append(x)
         ws.append(w)
     TS_cache[(prec, m)] = (xs, ws)
@@ -141,7 +141,7 @@ def TS_eval(f, nodes, target_prec, working_prec, m, verbose=False):
     res = []
     for k in xrange(1, m+1):
         if verbose:
-            print "evaluating integral (level %s of %s)" % (k, m)
+            print "Evaluating integral (level %s of %s)" % (k, m)
         h = h / 2
         for i in xrange(0, len(xs), 2**(m-k)):
             if i % (2**(m-k+1)) != 0 or k == 1:
@@ -153,7 +153,7 @@ def TS_eval(f, nodes, target_prec, working_prec, m, verbose=False):
         if k > 2:
             err = TS_estimate_error(res, target_prec, eps)
             if verbose:
-                print "the estimated error is", smallstr(err)
+                print "Estimated error:", smallstr(err)
             if err <= eps:
                 break
     return +res[-1], TS_estimate_error(res, target_prec, eps)
@@ -166,7 +166,7 @@ def TS_adaptive(f, target_prec, working_prec, min_level, max_level, verbose):
     eps = mpf((1, -target_prec))
     for m in xrange(min_level, max_level+1):
         if verbose:
-            print "using tanh-sinh algorithm with m =", m
+            print "Using tanh-sinh algorithm with level ", m
         nodes = TS_nodes(working_prec, m, verbose=verbose)
         s, err = TS_eval(f, nodes, target_prec, working_prec, m,
             verbose=verbose)
@@ -174,7 +174,7 @@ def TS_adaptive(f, target_prec, working_prec, min_level, max_level, verbose):
         if err <= eps:
             return s, err
     if verbose:
-        print "Warning: failed to reach full accuracy. Estimated error:", \
+        print "Failed to reach full accuracy. Estimated error:", \
             smallstr(err)
     return s, err
 
@@ -207,7 +207,7 @@ def quadts(f, a, b, **options):
         inferred from the target precision.
 
     error
-        Return error estimate along with the result.
+        Set to True to obtain an error estimate along with the result.
 
     verbose
         Set to True to display progress messages.
@@ -215,7 +215,7 @@ def quadts(f, a, b, **options):
 
     verbose = options.get('verbose', False)
     target_prec = options.get('target_prec', mpf.prec)
-    working_prec = options.get('working_prec', target_prec + 30)
+    working_prec = options.get('working_prec', target_prec + 20)
     min_level = options.get('min_level', TS_guess_level(target_prec))
     max_level = options.get('max_level', min_level + 2)
 
