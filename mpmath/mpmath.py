@@ -306,6 +306,10 @@ class mpf(mpnumeric):
         t = convert_lossless(t)
         return make_mpf(fmod(s.val, t.val, mpf._prec, mpf._rounding))
 
+    def __rmod__(s, t):
+        t = convert_lossless(t)
+        return make_mpf(fmod(t.val, s.val, mpf._prec, mpf._rounding))
+
     def __pow__(s, t):
         if isinstance(t, int_types):
             return make_mpf(fpow(s.val, t, mpf._prec, mpf._rounding))

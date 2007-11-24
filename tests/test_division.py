@@ -137,3 +137,5 @@ def test_mod():
     # Check that these cases are handled efficiently
     assert mpf('1e10000000000') % 1 == 0
     assert mpf('1.23e-1000000000') % 1 == mpf('1.23e-1000000000')
+    # test __rmod__
+    assert 3 % mpf('1.75') == 1.25
