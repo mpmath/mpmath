@@ -12,6 +12,7 @@ LICENSE file for details)
 0. History
 ----------
 
+* Version 0.5 released on November 24, 2007
 * Version 0.4 released on November 3, 2007
 * Version 0.3 released on October 5, 2007
 * Version 0.2 released on October 2, 2007
@@ -164,10 +165,14 @@ and verifies a 15-digit approximation interval for pi:
 
 * Directed rounding works for arithmetic operations. It is implemented
   heuristically for other operations, and their results may be off by one
-  or two bits in the last place (if otherwise accurate).
+  or two units in the last place (even if otherwise accurate).
 
-* Some IEEE 754 features such as infinities, NaN and denormal rounding
-  are not supported
+* Some IEEE 754 features are not available. Inifinities and NaN are
+  partially supported; denormal rounding is currently not available
+  at all.
+
+* The interface for switching precision and rounding is not finalized.
+  The current method is not threadsafe.
 
 
 4. Help and bug reports

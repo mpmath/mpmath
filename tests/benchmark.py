@@ -1,3 +1,5 @@
+# Note: the code in this file is a big pile of ugly
+
 from mpmath import *
 from mpmath.lib import *
 from decimal import getcontext, Decimal

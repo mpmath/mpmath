@@ -1,3 +1,14 @@
+--0.5--
+Released November 24, 2007
+
+* added the quad module for arbitrary-precision numerical integration
+* floor and ceil functions available
+* implemented __mod__ and __rmod__ for the mpf class
+* partial support for the special numbers +inf, -inf and nan
+* faster multiplication and division (up to 40% faster with psyco)
+* renamed cgamma to euler
+* more comments
+
 --0.4--
 Released November 3, 2007
 
