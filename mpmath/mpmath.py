@@ -195,7 +195,7 @@ class mpf(mpnumeric):
             except:
                 return False
         if s.special or t.special:
-            if nan in (s, t):
+            if 'nan' in (s.special, t.special):
                 return False
             return s is t
         return s.val == t.val
