@@ -8,4 +8,5 @@ setup(name='mpmath',
       author_email='fredrik.johansson@gmail.com',
       license = 'BSD',
       packages=['mpmath', 'mpmath/lib'],
+      classifiers=['Topic :: Scientific/Engineering :: Mathematics']
      )
