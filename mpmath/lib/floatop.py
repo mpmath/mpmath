@@ -302,34 +302,68 @@ def fshift_exact(s, n):
         return s
     return man, exp+n, bc
 
+reciprocal_rounding = {
+  ROUND_DOWN : ROUND_UP,
+  ROUND_UP : ROUND_DOWN,
+  ROUND_FLOOR : ROUND_CEILING,
+  ROUND_CEILING : ROUND_FLOOR,
+  ROUND_HALF_DOWN : ROUND_HALF_UP,
+  ROUND_HALF_UP : ROUND_HALF_DOWN,
+  ROUND_HALF_EVEN : ROUND_HALF_EVEN
+}
 
-# TODO: use directed rounding all the way through (and, account for signs?)
+negative_rounding = {
+  ROUND_DOWN : ROUND_DOWN,
+  ROUND_UP : ROUND_UP,
+  ROUND_FLOOR : ROUND_CEILING,
+  ROUND_CEILING : ROUND_FLOOR,
+  ROUND_HALF_DOWN : ROUND_HALF_DOWN,
+  ROUND_HALF_UP : ROUND_HALF_UP,
+  ROUND_HALF_EVEN : ROUND_HALF_EVEN
+}
+
 def fpow(s, n, prec, rounding):
     """Compute s**n, where n is an integer"""
     n = int(n)
     if n == 0: return fone
-    if n == 1: return normalize(s[0], s[1], prec, rounding)
+    if n == 1: return fpos(s, prec, rounding)
     if n == 2: return fmul(s, s, prec, rounding)
     if n == -1: return fdiv(fone, s, prec, rounding)
     if n < 0:
-        return fdiv(fone, fpow(s, -n, prec+3, ROUND_FLOOR), prec, rounding)
+        inverse = fpow(s, -n, prec+5, reciprocal_rounding[rounding])
+        return fdiv(fone, inverse, prec, rounding)
+
+    man, exp, bc = s
+
+    # Use exact integer power when the exact mantissa is small
+    if bc*n < 5000 or man in (1, -1):
+        return normalize(man**n, exp*n, prec, rounding)
+
+    # Use directed rounding all the way through to maintain rigorous
+    # bounds for interval arithmetic
+    sign = 1
+    rounding2 = rounding
+    if man < 0 and n % 2:
+        sign = -1
+        rounding2 = negative_rounding[rounding]
+    man = abs(man)
+
     # Now we perform binary exponentiation. Need to estimate precision
     # to avoid rounding from temporary operations. Roughly log_2(n)
     # operations are performed.
-    prec2 = prec + int(4*math.log(n, 2) + 4)
-    man, exp, bc = normalize(s[0], s[1], prec2, ROUND_FLOOR)
+    prec2 = prec + 4*bitcount2(n) + 4
     pm, pe, pbc = fone
     while n:
         if n & 1:
-            pm, pe, pbc = normalize(pm*man, pe+exp, prec2, ROUND_FLOOR)
+            pm, pe, pbc = normalize(pm*man, pe+exp, prec2, rounding2)
             n -= 1
-        man, exp, bc = normalize(man*man, exp+exp, prec2, ROUND_FLOOR)
+        man, exp, bc = normalize(man*man, exp+exp, prec2, rounding2)
         n = n // 2
-    return normalize(pm, pe, prec, rounding)
+
+    return normalize(sign*pm, pe, prec, rounding)
 
 
 def frand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
     return normalize(_random.randrange(0, 1<<prec), -prec, prec, ROUND_FLOOR)
-
