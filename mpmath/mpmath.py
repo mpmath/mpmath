@@ -28,7 +28,7 @@ def convert_lossless(x):
         return make_mpf(from_int(x, bitcount(x), ROUND_FLOOR))
     if isinstance(x, complex):
         return mpc(x)
-    if isinstance(x, str):
+    if isinstance(x, (str, unicode)):
         if x in ('inf', '+inf'): return inf
         if x == '-inf': return ninf
         if x == 'nan': return nan
@@ -75,7 +75,7 @@ def _convert(x):
         return from_float(x, mpf._prec, mpf._rounding)
     if isinstance(x, int_types):
         return from_int(x, mpf._prec, mpf._rounding)
-    if isinstance(x, str):
+    if isinstance(x, (str, unicode)):
         #if x in ('inf', '+inf'): return inf
         #if x == '-inf': return ninf
         #if x == 'nan': return nan

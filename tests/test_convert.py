@@ -30,6 +30,9 @@ def test_basic_string():
     assert str(mpf(-1.2344e-15)) == '-1.2344e-15'
     assert repr(mpf(-1.2344e-15)) == "mpf('-1.2343999999999999e-15')"
 
+def test_unicode():
+    assert mpf(u'2.76') == 2.76
+    assert mpf(u'inf') == inf
 
 def test_tight_string_conversion():
     # In an old version, '0.5' wasn't recognized as representing
