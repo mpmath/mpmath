@@ -13,6 +13,15 @@ ftwo = (1, 1, 1)
 ften = (5, 1, 3)
 fhalf = (1, -1, 1)
 
+# Special numbers. The choice of representation is fairly arbitrary.
+# Any code that works with raw tuples can look for them by checking
+# whether the bitcount is None. These objects should always have
+# unique instances to permit identification via the 'is' operator.
+finf = ('+inf', None, None)
+fninf = ('-inf', None, None)
+fnan = ('nan', None, None)
+#fnzero = ('-0', None, None)
+
 
 #-----------------------------------------------------------------------------
 #
@@ -97,6 +106,8 @@ def fpos(s, prec, rounding):
     precision, or return s unchanged if its mantissa is smaller than
     the precision)."""
     man, exp, bc = s
+    if bc is None:
+        return s
     return normalize2(man, exp, bc, prec, rounding)
 
 
@@ -105,8 +116,10 @@ def fpos(s, prec, rounding):
 #
 
 def feq(s, t):
-    """Test equality of two raw mpfs. (This is simply tuple comparion;
-    this function is provided only for completeness)."""
+    """Test equality of two raw mpfs. (This is simply tuple comparion
+    unless either number is nan, in which case the result is False)."""
+    if s is fnan or t is fnan:
+        return False
     return s == t
 
 
@@ -119,6 +132,14 @@ def fcmp(s, t):
     # look at the components.
     sman, sexp, sbc = s
     tman, texp, tbc = t
+
+    # Handle special numbers
+    if sbc is None or tbc is None:
+        if s is t: return 0
+        # Follow same convention as Python's cmp for float nan
+        if t is fnan: return 1
+        if s is finf: return 1
+        return -1
 
     # Very easy cases: check for zeros and opposite signs
     if not tman: return cmp(sman, 0)
@@ -158,6 +179,14 @@ def fadd(s, t, prec, rounding):
         s, t = t, s
     sman, sexp, sbc = s
     tman, texp, tbc = t
+
+    # Handle special numbers
+    if sbc is None or tbc is None:
+        either = s, t
+        if fnan in either: return fnan
+        if finf in either and fninf in either: return fnan
+        if finf in either: return finf
+        return fninf
 
     # Check if one operand is zero. Zero always has exp = 0; if the
     # other operand has a large exponent, its mantissa will unnecessarily
@@ -207,28 +236,48 @@ def fsub(s, t, prec, rounding):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of fadd that changes the sign of t."""
     man, exp, bc = t
+    if bc is None:
+        return fadd(s, fneg(t, prec, rounding), prec, rounding)
     return fadd(s, (-man, exp, bc), prec, rounding)
 
 
 def fneg(s, prec, rounding):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision."""
-    return normalize(-s[0], s[1], prec, rounding)
+    man, exp, bc = s
+    if bc is None:
+        return fneg_exact(s)
+    return normalize(-man, exp, prec, rounding)
 
 
 def fneg_exact(s):
     """Negate a raw mpf (return -s), without performing any rounding."""
-    return (-s[0], s[1], s[2])
+    man, exp, bc = s
+    if bc is None:
+        if s is finf: return fninf
+        if s is fninf: return finf
+        return fnan
+    return (-man, exp, bc)
 
 
 def fabs(s, prec, rounding):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision."""
     man, exp, bc = s
+    if bc is None:
+        if s is fninf: return finf
+        return s
     if man < 0:
         return normalize(-man, exp, prec, rounding)
     return normalize(man, exp, prec, rounding)
 
+def fsign(s):
+    man, exp, bc = s
+    if bc is None:
+        if s is finf: return 1
+        if s is fninf: return -1
+        return 0
+    return cmp(man, 0)
 
 def fmul(s, t, prec, rounding, bct=bctable):
     """Return the product of two raw mpfs, s*t, rounded to the
@@ -242,6 +291,14 @@ def fmul(s, t, prec, rounding, bct=bctable):
     # (so no call to bitcount() is needed)
     sman, sexp, sbc = s
     tman, texp, tbc = t
+
+    if sbc is None or tbc is None:
+        either = s, t
+        if fnan in either: return fnan
+        if tbc is None: s, t = t, s
+        if t == fzero: return fnan
+        return {1:finf, -1:fninf}[fsign(s) * fsign(t)]
+
     man = sman * tman
 
     return normalize2(man, sexp+texp, bitcount3(man, sbc+tbc), prec, rounding)
@@ -251,6 +308,15 @@ def fdiv(s, t, prec, rounding, bct=bctable):
     """Floating-point division"""
     sman, sexp, sbc = s
     tman, texp, tbc = t
+
+    if (sbc is None) or (tbc is None) or (not tman):
+        if fnan in (s, t): return fnan
+        if sbc == tbc == None: return fnan
+        if tbc is not None:
+            if t == fzero:
+                return fnan
+            return {1:finf, -1:fninf}[fsign(s) * fsign(t)]
+        return fzero
 
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding

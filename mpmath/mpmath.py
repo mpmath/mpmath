@@ -28,7 +28,7 @@ def convert_lossless(x):
         return make_mpf(from_int(x, bitcount(x), ROUND_FLOOR))
     if isinstance(x, complex):
         return mpc(x)
-    if isinstance(x, (str, unicode)):
+    if isinstance(x, basestring):
         if x in ('inf', '+inf'): return inf
         if x == '-inf': return ninf
         if x == 'nan': return nan
@@ -75,10 +75,10 @@ def _convert(x):
         return from_float(x, mpf._prec, mpf._rounding)
     if isinstance(x, int_types):
         return from_int(x, mpf._prec, mpf._rounding)
-    if isinstance(x, (str, unicode)):
-        #if x in ('inf', '+inf'): return inf
-        #if x == '-inf': return ninf
-        #if x == 'nan': return nan
+    if isinstance(x, basestr):
+        if x in ('inf', '+inf'): return inf
+        if x == '-inf': return ninf
+        if x == 'nan': return nan
         return from_str(x, mpf._prec, mpf._rounding)
     raise TypeError("cannot create mpf from " + repr(x))
 
@@ -136,7 +136,8 @@ class mpf(mpnumeric):
             1.5
         """
         if isinstance(val, mpf):
-            if val.special:
+            man, exp, bc = val.val
+            if bc is None:
                 return val
             return make_mpf(normalize(val.val[0], val.val[1], \
                 cls._prec, cls._rounding))
@@ -148,6 +149,12 @@ class mpf(mpnumeric):
     man = property(lambda self: self.val[0])
     exp = property(lambda self: self.val[1])
     bc = property(lambda self: self.val[2])
+
+    @property
+    def special(self):
+        if self.bc != None:
+            return ''
+        return self.man
 
     def __repr__(s):
         st = "mpf('%s')"
@@ -194,11 +201,7 @@ class mpf(mpnumeric):
                 t = convert_lossless(t)
             except:
                 return False
-        if s.special or t.special:
-            if 'nan' in (s.special, t.special):
-                return False
-            return s is t
-        return s.val == t.val
+        return feq(s.val, t.val)
 
     def __ne__(s, t):
         return not s.__eq__(t)
@@ -238,13 +241,6 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) + t
             t = convert_lossless(t)
-        if s.special or t.special:
-            if nan in (s, t):
-                return nan
-            if t.special: s, t = t, s
-            if not t.special: return s
-            if s is t: return s
-            return nan
         return make_mpf(fadd(s.val, t.val, mpf._prec, mpf._rounding))
 
     __radd__ = __add__
@@ -254,8 +250,6 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) - t
             t = convert_lossless(t)
-        if s.special or t.special:
-            return s + (-t)
         return make_mpf(fsub(s.val, t.val, mpf._prec, mpf._rounding))
 
     def __rsub__(s, t):
@@ -263,8 +257,6 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return t - mpc(s)
             t = convert_lossless(t)
-        if s.special or t.special:
-            return t + (-s)
         return make_mpf(fsub(t.val, s.val, mpf._prec, mpf._rounding))
 
     def __mul__(s, t):
@@ -272,11 +264,6 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) * t
             t = convert_lossless(t)
-        if s.special or t.special:
-            if nan in (s, t): return nan
-            if t.special: s, t = t, s
-            if t == 0: return nan
-            return (inf, ninf)[(s < 0) ^ (t < 0)]
         return make_mpf(fmul(s.val, t.val, mpf._prec, mpf._rounding))
 
     __rmul__ = __mul__
@@ -286,14 +273,8 @@ class mpf(mpnumeric):
             if isinstance(t, complex_types):
                 return mpc(s) / t
             t = convert_lossless(t)
-        if s.special or t.special or t.val == fzero:
-            if nan in (s, t): return nan
-            if s.special and t.special: return nan
-            if not t.special:
-                if t == 0: return nan
-                return (inf, ninf)[(s < 0) ^ (t < 0)]
-            return make_mpf(fzero)
-        return make_mpf(fdiv(s.val, t.val, mpf._prec, mpf._rounding))
+        sval = s.val
+        return make_mpf(fdiv(sval, t.val, mpf._prec, mpf._rounding))
 
     def __rdiv__(s, t):
         if not isinstance(t, mpf):
@@ -375,22 +356,15 @@ def make_mpf(tpl, construct=object.__new__, cls=mpf):
     a.val = tpl
     return a
 
-class special(mpf):
-    def __new__(cls, specval):
-        a = object.__new__(cls)
-        a.special = specval
-        return a
 
-    @property
-    def val(self):
-        raise ValueError('This function does not know how to deal with the ' \
-          'special numbers +inf, -inf, or nan. (Attempted to access '\
-          'mantissa/exponent of x = %s.) ' % self)
+inf = make_mpf(finf)
+ninf = make_mpf(fninf)
+nan = make_mpf(fnan)
 
-inf = special('+inf')
-ninf = special('-inf')
-nan = special('nan')
-
+def isnan(x):
+    if not isinstance(x, mpf):
+        return False
+    return x.val == fnan
 
 class mpc(mpnumeric):
     """An mpc represents a complex number using a pair of mpf:s (one
@@ -802,6 +776,6 @@ def rand():
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil"]
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan"]
 
 

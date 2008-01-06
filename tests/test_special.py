@@ -6,18 +6,18 @@ def test_special():
     assert -inf == -inf
     assert inf != nan
     assert nan != nan
-    assert nan is nan
+    assert isnan(nan)
     assert --inf == inf
     assert abs(inf) == inf
     assert abs(-inf) == inf
     assert abs(nan) != abs(nan)
 
-    assert inf - inf is nan
-    assert inf + (-inf) is nan
-    assert -inf - (-inf) is nan
+    assert isnan(inf - inf)
+    assert isnan(inf + (-inf))
+    assert isnan(-inf - (-inf))
 
-    assert inf + nan is nan
-    assert -inf + nan is nan
+    assert isnan(inf + nan)
+    assert isnan(-inf + nan)
 
     assert mpf(2) + inf == inf
     assert 2 + inf == inf
@@ -30,8 +30,8 @@ def test_special():
     assert 3 > -inf
     assert -inf < 3
 
-    assert inf * 0 is nan
-    assert -inf * 0 is nan
+    assert isnan(inf * 0)
+    assert isnan(-inf * 0)
     assert inf * 3 == inf
     assert inf * -3 == -inf
     assert -inf * 3 == -inf
@@ -39,16 +39,16 @@ def test_special():
     assert inf * inf == inf
     assert -inf * -inf == inf
 
-    assert nan / 3 is nan
+    assert isnan(nan / 3)
     assert inf / -3 == -inf
     assert inf / 3 == inf
     assert 3 / inf == 0
     assert -3 / inf == 0
     assert 0 / inf == 0
-    assert inf / inf is nan
-    assert inf / -inf is nan
-    assert inf / nan is nan
+    assert isnan(inf / inf)
+    assert isnan(inf / -inf)
+    assert isnan(inf / nan)
 
     assert mpf('inf') == mpf('+inf') == inf
     assert mpf('-inf') == -inf
-    assert mpf('nan') is nan
+    assert isnan(mpf('nan'))
