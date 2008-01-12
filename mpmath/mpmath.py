@@ -33,7 +33,7 @@ def convert_lossless(x):
     raise TypeError("cannot create mpf from " + repr(x))
 
 
-def mpf_convert_operand(x):
+def mpf_convert_rhs(x):
     if isinstance(x, int_types):
         return make_mpf(from_int(x, bitcount(x), round_floor))
     if isinstance(x, float):
@@ -135,8 +135,7 @@ class mpf(mpnumeric):
     """
 
     __metaclass__ = context
-
-    special = ''
+    __slots__ = ['val']
 
     def __new__(cls, val=fzero):
         """A new mpf can be created from a Python float, an int, a
@@ -185,7 +184,7 @@ class mpf(mpnumeric):
             return feq(s.val, t.val)
         if isinstance(t, complex_types):
             return mpc(s) == t
-        t = mpf_convert_operand(t)
+        t = mpf_convert_rhs(t)
         if t is NotImplemented:
             return False
         return feq(s.val, t.val)
@@ -195,7 +194,7 @@ class mpf(mpnumeric):
 
     def __cmp__(s, t):
         if not isinstance(t, mpf):
-            t = mpf_convert_operand(t)
+            t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
         return fcmp(s.val, t.val)
@@ -209,7 +208,7 @@ class mpf(mpnumeric):
             if f is fsub: return s - t
             if f is fdiv: return s / t
             raise ValueError("bad operation")
-        t = mpf_convert_operand(t)
+        t = mpf_convert_rhs(t)
         if t is NotImplemented:
             return t
         return make_mpf(f(s.val, t.val, g_prec, g_rounding))
@@ -245,7 +244,7 @@ class mpf(mpnumeric):
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
                 return power(s, t)
-            t = mpf_convert_operand(t)
+            t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
         if t.val == fhalf:

@@ -492,7 +492,7 @@ def fdiv(s, t, prec, rounding, bct=bctable):
     """Floating-point division"""
     sman, sexp, sbc = s
     tman, texp, tbc = t
-    if (sbc == -1) or (tbc == -1) or (not tman):
+    if sbc == -1 or tbc == -1:
         if fnan in (s, t): return fnan
         if sbc == tbc == -1: return fnan
         if tbc != -1:
@@ -500,6 +500,8 @@ def fdiv(s, t, prec, rounding, bct=bctable):
                 return fnan
             return {1:finf, -1:fninf}[fsign(s) * fsign(t)]
         return fzero
+    if not tman:
+        return fnan
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
     extra = prec-sbc+tbc+5
@@ -509,8 +511,9 @@ def fdiv(s, t, prec, rounding, bct=bctable):
     if rem:
         quot = (quot << 5) + 1
         extra += 5
-    #bc = bitcount_from_estimate(quot, sbc+extra-tbc)
-    bc = bitcount(quot)
+    bc = sbc+extra-tbc-4
+    if bc < 4: bc = bctable[abs(quot)]
+    else:      bc += bctable[abs(quot)>>bc]
     return normalize(quot, sexp-texp-extra, bc, prec, rounding)
 
 def fmod(s, t, prec, rounding):
