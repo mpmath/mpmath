@@ -160,44 +160,17 @@ class mpf(mpnumeric):
 
     @property
     def special(self):
-        if self.bc != None:
+        if self.bc != -1:
             return ''
         return self.man
 
-    def __repr__(s):
-        st = "mpf('%s')"
-        if s.special:
-            return st % s.special
-        else:
-            return st % to_str(s.val, mpf._dps+2)
-
-    def __str__(s):
-        if s.special:
-            return s.special
-        return to_str(s.val, mpf._dps)
-
-    def __hash__(s):
-        if s.special:
-            return hash(s.special)
-        return fhash(s.val)
-
-    def __int__(s):
-        if s.special:
-            raise ValueError("cannot convert %s to int" % s.special)
-        return to_int(s.val)
-
-    def __float__(s):
-        if s.special:
-            if s.special == '+inf': return 1e1000
-            if s.special == '-inf': return -1e1000
-            if s.special == 'nan': return 1e1000 / 1e1000
-        return to_float(s.val)
-
-    def __complex__(s):
-        return float(s) + 0j
-
-    def __nonzero__(s):
-        return bool(s.special) or bool(s.man)
+    def __repr__(s): return "mpf('%s')" % to_str(s.val, mpf._dps+2)
+    def __str__(s): return to_str(s.val, mpf._dps)
+    def __hash__(s): return fhash(s.val)
+    def __int__(s): return to_int(s.val)
+    def __float__(s): return to_float(s.val)
+    def __complex__(s): return float(s) + 0j
+    def __nonzero__(s): return bool(s.man)
 
     def __eq__(s, t):
         if not isinstance(t, mpf):
@@ -217,31 +190,15 @@ class mpf(mpnumeric):
     def __cmp__(s, t):
         if not isinstance(t, mpf):
             t = convert_lossless(t)
-        # TODO: fix handling of nan
-        if s.special or t.special:
-            if s is t: return 0
-            if s is ninf: return -1
-            if s is inf: return 1
-            if t is inf: return -1
-            if t is ninf: return 1
-            if s is nan: return -1
-            return 1
         return fcmp(s.val, t.val)
 
     def __abs__(s):
-        if s.special:
-            if s is ninf: return inf
-            return s
         return make_mpf(fabs(s.val, mpf._prec, mpf._rounding))
 
     def __pos__(s):
         return mpf(s)
 
     def __neg__(s):
-        if s.special:
-            if s is inf: return ninf
-            if s is ninf: return inf
-            return s
         return make_mpf(fneg(s.val, mpf._prec, mpf._rounding))
 
     def __add__(s, t):

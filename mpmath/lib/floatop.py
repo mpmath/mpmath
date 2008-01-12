@@ -174,7 +174,7 @@ def to_man_exp(s):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
     man, exp, bc = s
     if bc == -1:
-        raise TypeError("mantissa and exponent are undefined for %s" % man)
+        raise ValueError("mantissa and exponent are undefined for %s" % man)
     return man, exp
 
 def from_int(n, prec=None, rounding=None):
@@ -188,7 +188,7 @@ def to_int(s, rounding=round_down):
     input is inf/nan, an exception is raised."""
     man, exp, bc = s
     if bc == -1:
-        raise TypeError("cannot convert %s to int" % man)
+        raise ValueError("cannot convert %s to int" % man)
     if exp > 0:
         return man << exp
     return rounding(man, -exp)
@@ -251,7 +251,7 @@ def to_rational(s):
     such that s = p/q exactly."""
     man, exp, bc = s
     if bc == -1:
-        raise TypeError("cannot convert %s to a rational number" % man)
+        raise ValueError("cannot convert %s to a rational number" % man)
     if exp >= 0:
         return man * (1<<exp), 1
     else:
