@@ -33,6 +33,24 @@ def convert_lossless(x):
     raise TypeError("cannot create mpf from " + repr(x))
 
 
+def mpf_convert_operand(x):
+    if isinstance(x, int_types):
+        return make_mpf(from_int(x, bitcount(x), round_floor))
+    if isinstance(x, float):
+        return make_mpf(from_float(x, 53, round_floor))
+    return NotImplemented
+
+def mpf_convert_lhs(x):
+    if isinstance(x, complex_types):
+        return mpc(x)
+    if isinstance(x, int_types):
+        return make_mpf(from_int(x, bitcount(x), round_floor))
+    if isinstance(x, float):
+        return make_mpf(from_float(x, 53, round_floor))
+    return NotImplemented
+
+
+
 # Global settings
 g_prec = 53
 g_rounding = round_half_even
@@ -158,16 +176,18 @@ class mpf(mpnumeric):
     def __complex__(s): return float(s) + 0j
     def __nonzero__(s): return bool(s.man)
 
+    def __abs__(s): return make_mpf(fabs(s.val, g_prec, g_rounding))
+    def __pos__(s): return make_mpf(fpos(s.val, g_prec, g_rounding))
+    def __neg__(s): return make_mpf(fneg(s.val, g_prec, g_rounding))
+
     def __eq__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return mpc(s) == t
-            if isinstance(t, str):
-                return False
-            try:
-                t = convert_lossless(t)
-            except:
-                return False
+        if isinstance(t, mpf):
+            return feq(s.val, t.val)
+        if isinstance(t, complex_types):
+            return mpc(s) == t
+        t = mpf_convert_operand(t)
+        if t is NotImplemented:
+            return False
         return feq(s.val, t.val)
 
     def __ne__(s, t):
@@ -175,72 +195,49 @@ class mpf(mpnumeric):
 
     def __cmp__(s, t):
         if not isinstance(t, mpf):
-            t = convert_lossless(t)
+            t = mpf_convert_operand(t)
+            if t is NotImplemented:
+                return t
         return fcmp(s.val, t.val)
 
-    def __abs__(s):
-        return make_mpf(fabs(s.val, g_prec, g_rounding))
-
-    def __pos__(s):
-        return mpf(s)
-
-    def __neg__(s):
-        return make_mpf(fneg(s.val, g_prec, g_rounding))
+    def binop(s, t, f):
+        if isinstance(t, complex_types):
+            s = mpc(s)
+            if f is feq: return s == t
+            if f is fmul: return s * t
+            if f is fadd: return s + t
+            if f is fsub: return s - t
+            if f is fdiv: return s / t
+            raise ValueError("bad operation")
+        t = mpf_convert_operand(t)
+        if t is NotImplemented:
+            return t
+        return make_mpf(f(s.val, t.val, g_prec, g_rounding))
 
     def __add__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return mpc(s) + t
-            t = convert_lossless(t)
-        return make_mpf(fadd(s.val, t.val, g_prec, g_rounding))
-
-    __radd__ = __add__
+        if isinstance(t, mpf):
+            return make_mpf(fadd(s.val, t.val, g_prec, g_rounding))
+        return s.binop(t, fadd)
 
     def __sub__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return mpc(s) - t
-            t = convert_lossless(t)
-        return make_mpf(fsub(s.val, t.val, g_prec, g_rounding))
-
-    def __rsub__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return t - mpc(s)
-            t = convert_lossless(t)
-        return make_mpf(fsub(t.val, s.val, g_prec, g_rounding))
+        if isinstance(t, mpf):
+            return make_mpf(fsub(s.val, t.val, g_prec, g_rounding))
+        return s.binop(t, fsub)
 
     def __mul__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return mpc(s) * t
-            t = convert_lossless(t)
-        return make_mpf(fmul(s.val, t.val, g_prec, g_rounding))
-
-    __rmul__ = __mul__
+        if isinstance(t, mpf):
+            return make_mpf(fmul(s.val, t.val, g_prec, g_rounding))
+        return s.binop(t, fmul)
 
     def __div__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return mpc(s) / t
-            t = convert_lossless(t)
-        sval = s.val
-        return make_mpf(fdiv(sval, t.val, g_prec, g_rounding))
-
-    def __rdiv__(s, t):
-        if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                return t / mpc(s)
-            t = convert_lossless(t)
-        return (t / s)
+        if isinstance(t, mpf):
+            return make_mpf(fdiv(s.val, t.val, g_prec, g_rounding))
+        return s.binop(t, fdiv)
 
     def __mod__(s, t):
-        t = convert_lossless(t)
-        return make_mpf(fmod(s.val, t.val, g_prec, g_rounding))
-
-    def __rmod__(s, t):
-        t = convert_lossless(t)
-        return make_mpf(fmod(t.val, s.val, g_prec, g_rounding))
+        if isinstance(t, mpf):
+            return make_mpf(fmod(s.val, t.val, g_prec, g_rounding))
+        return s.binop(t, fmod)
 
     def __pow__(s, t):
         if isinstance(t, int_types):
@@ -248,7 +245,9 @@ class mpf(mpnumeric):
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
                 return power(s, t)
-            t = convert_lossless(t)
+            t = mpf_convert_operand(t)
+            if t is NotImplemented:
+                return t
         if t.val == fhalf:
             return sqrt(s)
         man, exp, bc = t.val
@@ -256,8 +255,12 @@ class mpf(mpnumeric):
             return make_mpf(fpow(s.val, man<<exp, g_prec, g_rounding))
         return power(s, t)
 
-    def __rpow__(s, t):
-        return convert_lossless(t) ** s
+    __radd__ = __add__
+    __rmul__ = __mul__
+    def __rsub__(s, t): return mpf_convert_lhs(t) - s
+    def __rdiv__(s, t): return mpf_convert_lhs(t) / s
+    def __rpow__(s, t): return mpf_convert_lhs(t) ** s
+    def __rmod__(s, t): return mpf_convert_lhs(t) % s
 
     def sqrt(s):
         return sqrt(s)
