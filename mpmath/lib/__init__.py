@@ -1,5 +1,5 @@
 from util import *
-from convert import *
+from numerals import *
 from floatop import *
 from squareroot import *
 from constants import *

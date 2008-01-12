@@ -23,9 +23,9 @@ def convert_lossless(x):
     if isinstance(x, mpnumeric):
         return x
     if isinstance(x, float):
-        return make_mpf(from_float(x, 53, ROUND_FLOOR))
+        return make_mpf(from_float(x, 53, round_floor))
     if isinstance(x, int_types):
-        return make_mpf(from_int(x, bitcount(x), ROUND_FLOOR))
+        return make_mpf(from_int(x, bitcount(x), round_floor))
     if isinstance(x, complex):
         return mpc(x)
     if isinstance(x, basestring):
@@ -41,7 +41,15 @@ class context(type):
 
     _prec = 53
     _dps = 15
-    _rounding = ROUND_HALF_EVEN
+    __rounding = [round_half_even]
+
+
+    @property
+    def _rounding(self):
+        return self.__rounding[0]
+
+    def set_rounding(self, val):
+        self.__rounding[0] = val
 
     def _setprec(self, n):
         self._prec = max(1, int(n))
@@ -55,13 +63,13 @@ class context(type):
 
     dps = property(lambda self: self._dps, _setdps)
 
-    def round_up(self): self._rounding = ROUND_UP
-    def round_down(self): self._rounding = ROUND_DOWN
-    def round_floor(self): self._rounding = ROUND_FLOOR
-    def round_ceiling(self): self._rounding = ROUND_CEILING
-    def round_half_down(self): self._rounding = ROUND_HALF_DOWN
-    def round_half_up(self): self._rounding = ROUND_HALF_UP
-    def round_half_even(self): self._rounding = ROUND_HALF_EVEN
+    def round_up(self): self.__rounding = [round_up]
+    def round_down(self): self.__rounding = [round_down]
+    def round_floor(self): self.__rounding = [round_floor]
+    def round_ceiling(self): self.__rounding = [round_ceiling]
+    def round_half_down(self): self.__rounding = [round_half_down]
+    def round_half_up(self): self.__rounding = [round_half_up]
+    def round_half_even(self): self.__rounding = [round_half_even]
 
     round_default = round_half_even
 
@@ -137,12 +145,12 @@ class mpf(mpnumeric):
         """
         if isinstance(val, mpf):
             man, exp, bc = val.val
-            if bc is None:
+            if bc == -1:
                 return val
-            return make_mpf(normalize(val.val[0], val.val[1], \
+            return make_mpf(from_man_exp(val.val[0], val.val[1], \
                 cls._prec, cls._rounding))
         elif isinstance(val, tuple):
-            return make_mpf(normalize(val[0], val[1], cls._prec, \
+            return make_mpf(from_man_exp(val[0], val[1], cls._prec, \
                 cls._rounding))
         return +convert_lossless(val)
 
@@ -527,10 +535,10 @@ class constant(mpf):
     #    return "<%s: %s~>" % (self.name, mpf.__str__(self))
 
 
-_180 = from_int(180, 10, ROUND_FLOOR)
+_180 = from_int(180, 10, round_floor)
 
 pi = constant(fpi, "pi")
-degree = constant(lambda p, r: fdiv(fpi(p+4, ROUND_FLOOR), _180, p, r), "degree")
+degree = constant(lambda p, r: fdiv(fpi(p+4, round_floor), _180, p, r), "degree")
 e = constant(lambda p, r: fexp(fone, p, r), "e")
 euler = constant(fgamma, "Euler's constant gamma")
 clog2 = constant(flog2, "log(2)")
@@ -777,5 +785,3 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan"]
-
-

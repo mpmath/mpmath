@@ -65,9 +65,9 @@ def test_mixed_types():
 def test_aintegers():
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
-      for rounding in [ROUND_DOWN, ROUND_UP, ROUND_FLOOR, ROUND_CEILING,
-          ROUND_HALF_UP, ROUND_HALF_DOWN, ROUND_HALF_EVEN]:
-        mpf._rounding = rounding
+      for rounding in [round_down, round_up, round_floor, round_ceiling,
+          round_half_up, round_half_down, round_half_even]:
+        mpf.set_rounding(rounding)
         mpf.dps = prec
         M = 10**(prec-2)
         M2 = 10**(prec//2-2)

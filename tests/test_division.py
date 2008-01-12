@@ -3,8 +3,8 @@ from mpmath import mpf
 
 from random import randint, choice, seed
 
-all_modes = [ROUND_FLOOR, ROUND_CEILING, ROUND_DOWN, ROUND_UP,
-  ROUND_HALF_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN]
+all_modes = [round_floor, round_ceiling, round_down, round_up,
+  round_half_down, round_half_up, round_half_even]
 
 fb = from_bstr
 fi = from_int
@@ -16,23 +16,23 @@ def test_div_1_3():
     b = fi(3)
     c = fi(-1)
 
-    # Floor rounds down, ceiling rounds up
-    assert fdiv(a, b, 7, ROUND_FLOOR)     == fb('0.01010101')
-    assert fdiv(a, b, 7, ROUND_CEILING)   == fb('0.01010110')
-    assert fdiv(a, b, 7, ROUND_DOWN)      == fb('0.01010101')
-    assert fdiv(a, b, 7, ROUND_UP)        == fb('0.01010110')
-    assert fdiv(a, b, 7, ROUND_HALF_DOWN) == fb('0.01010101')
-    assert fdiv(a, b, 7, ROUND_HALF_UP)   == fb('0.01010101')
-    assert fdiv(a, b, 7, ROUND_HALF_EVEN) == fb('0.01010101')
+    # floor rounds down, ceiling rounds up
+    assert fdiv(a, b, 7, round_floor)     == fb('0.01010101')
+    assert fdiv(a, b, 7, round_ceiling)   == fb('0.01010110')
+    assert fdiv(a, b, 7, round_down)      == fb('0.01010101')
+    assert fdiv(a, b, 7, round_up)        == fb('0.01010110')
+    assert fdiv(a, b, 7, round_half_down) == fb('0.01010101')
+    assert fdiv(a, b, 7, round_half_up)   == fb('0.01010101')
+    assert fdiv(a, b, 7, round_half_even) == fb('0.01010101')
 
-    # Floor rounds up, ceiling rounds down
-    assert fdiv(c, b, 7, ROUND_FLOOR)     == fb('-0.01010110')
-    assert fdiv(c, b, 7, ROUND_CEILING)   == fb('-0.01010101')
-    assert fdiv(c, b, 7, ROUND_DOWN)      == fb('-0.01010101')
-    assert fdiv(c, b, 7, ROUND_UP)        == fb('-0.01010110')
-    assert fdiv(c, b, 7, ROUND_HALF_DOWN) == fb('-0.01010101')
-    assert fdiv(c, b, 7, ROUND_HALF_UP)   == fb('-0.01010101')
-    assert fdiv(c, b, 7, ROUND_HALF_EVEN) == fb('-0.01010101')
+    # floor rounds up, ceiling rounds down
+    assert fdiv(c, b, 7, round_floor)     == fb('-0.01010110')
+    assert fdiv(c, b, 7, round_ceiling)   == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_down)      == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_up)        == fb('-0.01010110')
+    assert fdiv(c, b, 7, round_half_down) == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_half_up)   == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_half_even) == fb('-0.01010101')
 
 
 def test_div_300():
@@ -44,31 +44,31 @@ def test_div_300():
 
     # Check nearest integer rounding (prec=9 as 2**8 < 300 < 2**9)
 
-    assert fdiv(a, q, 9, ROUND_DOWN) == fi(300)
-    assert fdiv(b, q, 9, ROUND_DOWN) == fi(300)
-    assert fdiv(c, q, 9, ROUND_DOWN) == fi(300)
-    assert fdiv(a, q, 9, ROUND_UP) == fi(301)
-    assert fdiv(b, q, 9, ROUND_UP) == fi(301)
-    assert fdiv(c, q, 9, ROUND_UP) == fi(301)
-    assert fdiv(a, q, 9, ROUND_HALF_UP) == fi(300)
-    assert fdiv(b, q, 9, ROUND_HALF_UP) == fi(301)
-    assert fdiv(c, q, 9, ROUND_HALF_UP) == fi(301)
-    assert fdiv(a, q, 9, ROUND_HALF_DOWN) == fi(300)
-    assert fdiv(b, q, 9, ROUND_HALF_DOWN) == fi(300)
-    assert fdiv(c, q, 9, ROUND_HALF_DOWN) == fi(301)
+    assert fdiv(a, q, 9, round_down) == fi(300)
+    assert fdiv(b, q, 9, round_down) == fi(300)
+    assert fdiv(c, q, 9, round_down) == fi(300)
+    assert fdiv(a, q, 9, round_up) == fi(301)
+    assert fdiv(b, q, 9, round_up) == fi(301)
+    assert fdiv(c, q, 9, round_up) == fi(301)
+    assert fdiv(a, q, 9, round_half_up) == fi(300)
+    assert fdiv(b, q, 9, round_half_up) == fi(301)
+    assert fdiv(c, q, 9, round_half_up) == fi(301)
+    assert fdiv(a, q, 9, round_half_down) == fi(300)
+    assert fdiv(b, q, 9, round_half_down) == fi(300)
+    assert fdiv(c, q, 9, round_half_down) == fi(301)
 
     # Nearest even integer is down
-    assert fdiv(a, q, 9, ROUND_HALF_EVEN) == fi(300)
-    assert fdiv(b, q, 9, ROUND_HALF_EVEN) == fi(300)
-    assert fdiv(c, q, 9, ROUND_HALF_EVEN) == fi(301)
+    assert fdiv(a, q, 9, round_half_even) == fi(300)
+    assert fdiv(b, q, 9, round_half_even) == fi(300)
+    assert fdiv(c, q, 9, round_half_even) == fi(301)
 
     # Nearest even integer is up
     a = fi(301499999)
     b = fi(301500000)
     c = fi(301500001)
-    assert fdiv(a, q, 9, ROUND_HALF_EVEN) == fi(301)
-    assert fdiv(b, q, 9, ROUND_HALF_EVEN) == fi(302)
-    assert fdiv(c, q, 9, ROUND_HALF_EVEN) == fi(302)
+    assert fdiv(a, q, 9, round_half_even) == fi(301)
+    assert fdiv(b, q, 9, round_half_even) == fi(302)
+    assert fdiv(c, q, 9, round_half_even) == fi(302)
 
 
 def test_tight_integer_division():
@@ -91,40 +91,40 @@ def test_epsilon_rounding():
 
     a = fb('0.101' + ('0'*200) + '1')
     b = fb('1.10101')
-    c = fmul(a, b, 250, ROUND_FLOOR) # Exact
-    assert fdiv(c, b, bitcount(a[0]), ROUND_FLOOR) == a # Exact
+    c = fmul(a, b, 250, round_floor) # exact
+    assert fdiv(c, b, bitcount(a[0]), round_floor) == a # exact
 
-    # Not exactly half, so both must round up
-    assert fdiv(c, b, 2, ROUND_HALF_DOWN) == fb('0.11')
-    assert fdiv(c, b, 2, ROUND_HALF_UP) == fb('0.11')
+    # not exactly half, so both must round up
+    assert fdiv(c, b, 2, round_half_down) == fb('0.11')
+    assert fdiv(c, b, 2, round_half_up) == fb('0.11')
 
-    assert fdiv(c, b, 2, ROUND_DOWN) == fb('0.10')
-    assert fdiv(c, b, 3, ROUND_DOWN) == fb('0.101')
-    assert fdiv(c, b, 2, ROUND_UP) == fb('0.11')
-    assert fdiv(c, b, 3, ROUND_UP) == fb('0.110')
-    assert fdiv(c, b, 2, ROUND_FLOOR) == fb('0.10')
-    assert fdiv(c, b, 3, ROUND_FLOOR) == fb('0.101')
-    assert fdiv(c, b, 2, ROUND_CEILING) == fb('0.11')
-    assert fdiv(c, b, 3, ROUND_CEILING) == fb('0.110')
+    assert fdiv(c, b, 2, round_down) == fb('0.10')
+    assert fdiv(c, b, 3, round_down) == fb('0.101')
+    assert fdiv(c, b, 2, round_up) == fb('0.11')
+    assert fdiv(c, b, 3, round_up) == fb('0.110')
+    assert fdiv(c, b, 2, round_floor) == fb('0.10')
+    assert fdiv(c, b, 3, round_floor) == fb('0.101')
+    assert fdiv(c, b, 2, round_ceiling) == fb('0.11')
+    assert fdiv(c, b, 3, round_ceiling) == fb('0.110')
 
     # The same for negative numbers
     a = fb('-0.101' + ('0'*200) + '1')
     b = fb('1.10101')
-    c = fmul(a, b, 250, ROUND_FLOOR)
-    assert fdiv(c, b, bitcount(a[0]), ROUND_FLOOR) == a
+    c = fmul(a, b, 250, round_floor)
+    assert fdiv(c, b, bitcount(a[0]), round_floor) == a
 
     # Both must round away from zero
-    assert fdiv(c, b, 2, ROUND_HALF_DOWN) == fb('-0.11')
-    assert fdiv(c, b, 2, ROUND_HALF_UP) == fb('-0.11')
+    assert fdiv(c, b, 2, round_half_down) == fb('-0.11')
+    assert fdiv(c, b, 2, round_half_up) == fb('-0.11')
 
-    assert fdiv(c, b, 2, ROUND_DOWN) == fb('-0.10')
-    assert fdiv(c, b, 3, ROUND_UP) == fb('-0.110')
+    assert fdiv(c, b, 2, round_down) == fb('-0.10')
+    assert fdiv(c, b, 3, round_up) == fb('-0.110')
 
     # Floor goes up, ceiling goes down
-    assert fdiv(c, b, 2, ROUND_FLOOR) == fb('-0.11')
-    assert fdiv(c, b, 3, ROUND_FLOOR) == fb('-0.110')
-    assert fdiv(c, b, 2, ROUND_CEILING) == fb('-0.10')
-    assert fdiv(c, b, 3, ROUND_CEILING) == fb('-0.101')
+    assert fdiv(c, b, 2, round_floor) == fb('-0.11')
+    assert fdiv(c, b, 3, round_floor) == fb('-0.110')
+    assert fdiv(c, b, 2, round_ceiling) == fb('-0.10')
+    assert fdiv(c, b, 3, round_ceiling) == fb('-0.101')
 
 
 def test_mod():

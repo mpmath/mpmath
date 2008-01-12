@@ -37,8 +37,8 @@ def test_unicode():
 def test_tight_string_conversion():
     # In an old version, '0.5' wasn't recognized as representing
     # an exact binary number and was erroneously rounded up or down
-    assert from_str('0.5', 10, ROUND_FLOOR) == fhalf
-    assert from_str('0.5', 10, ROUND_CEILING) == fhalf
+    assert from_str('0.5', 10, round_floor) == fhalf
+    assert from_str('0.5', 10, round_ceiling) == fhalf
 
 
 def test_eval_repr_invariant():
@@ -60,6 +60,6 @@ def test_str_bugs():
 
 
 def test_convert_rational():
-    assert from_rational(30, 5, 53, ROUND_HALF_EVEN) == (3, 1, 2)
-    assert from_rational(-7, 4, 53, ROUND_HALF_EVEN) == (-7, -2, 3)
+    assert from_rational(30, 5, 53, round_half_even) == (3, 1, 2)
+    assert from_rational(-7, 4, 53, round_half_even) == (-7, -2, 3)
     assert to_rational((1, -1, 1)) == (1, 2)

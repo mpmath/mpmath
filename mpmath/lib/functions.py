@@ -11,7 +11,7 @@ from util import *
 from floatop import *
 from squareroot import *
 from constants import *
-from convert import *
+#from convert import *
 
 
 """
@@ -73,7 +73,7 @@ def fexp(x, prec, rounding):
         n, t = divmod(t, lg2)
     else:
         n = 0
-    return normalize(exp_series(t, prec2), -prec2+n, prec, rounding)
+    return from_man_exp(exp_series(t, prec2), -prec2+n, prec, rounding)
 
 
 """
@@ -121,7 +121,7 @@ def flog(x, prec, rounding):
     prec2 = prec + int(math.log(1+abs(bc+exp), 2)) + 10
     # Watch out for the case when x is very close to 1
     if -1 < bc + exp < 2:
-        near_one = fabs(fsub(x, fone, STANDARD_PREC, ROUND_FLOOR), STANDARD_PREC, ROUND_FLOOR)
+        near_one = fabs(fsub(x, fone, STANDARD_PREC, round_floor), STANDARD_PREC, round_floor)
         if near_one == 0:
             return fzero
         # estimate how close
@@ -130,7 +130,7 @@ def flog(x, prec, rounding):
     t = rshift_quick(man, bc-prec2)
     l = _log_newton(t, prec2)
     a = (exp + bc) * log2_fixed(prec2)
-    return normalize(l+a, -prec2, prec, rounding)
+    return from_man_exp(l+a, -prec2, prec, rounding)
 
 
 
@@ -212,8 +212,8 @@ def cos_sin(x, prec, rounding):
     elif case == 3:
         c = _sin_series(rx, prec2)
         s = -sqrt_fixed(one - ((c*c)>>prec2), prec2)
-    c = normalize(c, -prec2, prec, rounding)
-    s = normalize(s, -prec2, prec, rounding)
+    c = from_man_exp(c, -prec2, prec, rounding)
+    s = from_man_exp(s, -prec2, prec, rounding)
     return c, s
 
 def fcos(x, prec, rounding):
@@ -223,7 +223,7 @@ def fsin(x, prec, rounding):
     return cos_sin(x, prec, rounding)[1]
 
 def ftan(x, prec, rounding):
-    c, s = cos_sin(x, prec+6, ROUND_FLOOR)
+    c, s = cos_sin(x, prec+6, round_floor)
     return fdiv(s, c, prec, rounding)
 
 
@@ -262,8 +262,8 @@ def cosh_sinh(x, prec, rounding):
     #    cosh(x) = (exp(x) + exp(-x))/2
     #    sinh(x) = (exp(x) - exp(-x))/2
     # and note that the exponential only needs to be computed once.
-    ep = fexp(x, prec2, ROUND_FLOOR)
-    em = fdiv(fone, ep, prec2, ROUND_FLOOR)
+    ep = fexp(x, prec2, round_floor)
+    em = fdiv(fone, ep, prec2, round_floor)
     ch = fshift_exact(fadd(ep, em, prec, rounding), -1)
     sh = fshift_exact(fsub(ep, em, prec, rounding), -1)
     return ch, sh
@@ -278,7 +278,7 @@ def fsinh(x, prec, rounding):
 
 def ftanh(x, prec, rounding):
     """Compute tanh(x) for a real argument x"""
-    ch, sh = cosh_sinh(x, prec+6, ROUND_FLOOR)
+    ch, sh = cosh_sinh(x, prec+6, round_floor)
     return fdiv(sh, ch, prec, rounding)
 
 
@@ -304,7 +304,7 @@ def _atan_series_1(x, prec, rounding):
     prec2 = prec
     if diff > 10:
         if 3*diff - 4 > prec:  # x**3 term vanishes; atan(x) ~x
-            return normalize(man, exp, prec, rounding)
+            return from_man_exp(man, exp, prec, rounding)
         prec2 = prec + diff
     prec2 += 15  # XXX: better estimate for number of guard bits
     x = make_fixed(x, prec2)
@@ -314,7 +314,7 @@ def _atan_series_1(x, prec, rounding):
         s += a // ((-1)**n * (n+n+1))
         if -100 < a < 100:
             break
-    return normalize(s, -prec2, prec, rounding)
+    return from_man_exp(s, -prec2, prec, rounding)
 
 def _atan_series_2(x, prec, rounding):
     prec2 = prec + 15
@@ -326,15 +326,15 @@ def _atan_series_2(x, prec, rounding):
         if a < 100:
             break
         s += a
-    return normalize(y*s//x, -prec2, prec, rounding)
+    return from_man_exp(y*s//x, -prec2, prec, rounding)
 
 _cutoff_1 = (5, -3, 3)   # ~0.6
 _cutoff_2 = (3, -1, 2)   # 1.5
 
 def fatan(x, prec, rounding):
     if x[0] < 0:
-        t = fatan(fneg_exact(x), prec+4, ROUND_FLOOR)
-        return normalize(-t[0], t[1], prec, rounding)
+        t = fatan(fneg(x), prec+4, round_floor)
+        return from_man_exp(-t[0], t[1], prec, rounding)
     if fcmp(x, _cutoff_1) < 0:
         return _atan_series_1(x, prec, rounding)
     if fcmp(x, _cutoff_2) < 0:
@@ -344,7 +344,7 @@ def fatan(x, prec, rounding):
         pi = fpi(prec, rounding)
         pihalf = pi[0], pi[1]-1, pi[2]
     else:
-        pi = fpi(prec+4, ROUND_FLOOR)
+        pi = fpi(prec+4, round_floor)
         pihalf = pi[0], pi[1]-1, pi[2]
-        t = fatan(fdiv(fone, x, prec+4, ROUND_FLOOR), prec+4, ROUND_FLOOR)
+        t = fatan(fdiv(fone, x, prec+4, round_floor), prec+4, round_floor)
         return fsub(pihalf, t, prec, rounding)

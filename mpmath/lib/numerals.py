@@ -1,17 +1,70 @@
-"""
-Functions for converting between raw mpmath floating-point numbers and
-other types and number representations (int, float, str...).
-"""
-
-from util import *
 from floatop import *
-from constants import flog2, flog10
-import math
-
+from constants import *
 
 #----------------------------------------------------------------------
 # Strings
 #
+
+
+def make_fixed(s, prec):
+    """Convert a floating-point number to a fixed-point big integer"""
+    man, exp, bc = s
+    offset = exp + prec
+    if offset >= 0:
+        return man << offset
+    else:
+        return man >> (-offset)
+
+# TODO: speed up for bases 2, 4, 8, 16, ...
+
+def bin_to_radix(x, xbits, base, bdigits):
+    """
+    Radix conversion for fixed-point numbers. That is, convert
+    x * 2**xbits to floor(x * 10**bdigits).
+    """
+    return x * (base**bdigits) >> xbits
+
+stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'
+
+def small_numeral(n, base=10, digits=stddigits):
+    """
+    Return the string numeral of a positive integer in an arbitrary
+    base. Most efficient for small input.
+    """
+    if base == 10:
+        return str(n)
+    digs = []
+    while n:
+        n, digit = divmod(n, base)
+        digs.append(digits[digit])
+    return "".join(digs[::-1])
+
+def numeral(n, base=10, size=0, digits=stddigits):
+    """
+    Represent the integer n as a string of digits in the given base.
+    Recursive division is used to make this function about 3x faster
+    than Python's str() for converting integers to decimal strings.
+
+    The 'size' parameters specifies the number of digits in n; this
+    number is only used to determine splitting points and need not
+    be exact.
+    """
+
+    if n < 0:
+        return "-" + numeral(-n, base, size, digits)
+
+    # Fast enough to do directly
+    if size < 250:
+        return small_numeral(n, base, digits)
+
+    # Divide in half
+    half = (size // 2) + (size & 1)
+    A, B = divmod(n, base**half)
+    ad = numeral(A, base, half, digits)
+    bd = numeral(B, base, half, digits).rjust(half, "0")
+    return ad + bd
+
+
 
 def to_digits_exp(s, dps):
     """
@@ -27,7 +80,7 @@ def to_digits_exp(s, dps):
     sign = ''
     if s[0] < 0:
         sign = '-'
-    s = fabs(s, s[2], ROUND_FLOOR)
+    s = fabs(s)
     man, exp, bc = s
 
     if not man:
@@ -43,7 +96,7 @@ def to_digits_exp(s, dps):
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(exp) + 5
-        RF = ROUND_FLOOR
+        RF = round_floor
         tmp = from_int(exp, expprec, RF)
         tmp = fmul(tmp, flog2(expprec, RF), expprec, RF)
         tmp = fdiv(tmp, flog10(expprec, RF), expprec, RF)
@@ -74,6 +127,10 @@ def to_str(s, dps):
 
     The literal is formatted so that it can be parsed back to a number
     by to_str, float() or Decimal()."""
+
+    # Special numbers
+    if s[2] == -1:
+        return s[0]
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
@@ -146,8 +203,8 @@ def from_str(x, prec, rounding):
     # XXX: appropriate cutoffs & track direction
     # note no factors of 5
     if abs(exp) > 400:
-        s = from_int(man, prec+10, ROUND_FLOOR)
-        s = fmul(s, fpow(ften, exp, prec+10, ROUND_FLOOR), prec, rounding)
+        s = from_int(man, prec+10, round_floor)
+        s = fmul(s, fpow(ften, exp, prec+10, round_floor), prec, rounding)
     else:
         if exp >= 0:
             s = from_int(man * 10**exp, prec, rounding)
@@ -160,87 +217,9 @@ def from_str(x, prec, rounding):
 
 def from_bstr(x):
     man, exp = str_to_man_exp(x, base=2)
-    return normalize(man, exp, bitcount(man), ROUND_FLOOR)
+    bc = bitcount(man)
+    return normalize(man, exp, bc, bc, round_floor)
 
 def to_bstr(x):
     man, exp, bc = x
     return numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
-
-
-#----------------------------------------------------------------------
-# Integers
-#
-
-def from_int(n, prec=None, rounding=None):
-    """Create a raw mpf from an integer. If no precision is specified,
-    allocate enough precision to represent exactly."""
-    if prec is None:
-        t = trailing_zeros(n)
-        n >>= t
-        return (n, t, bitcount(n))
-    return normalize(n, 0, prec, rounding)
-
-def to_int(s, rounding=ROUND_DOWN):
-    """Convert a raw mpf to the nearest int. Rounding is done down by
-    default (same as int(float) in Python), but can be changed."""
-    man, exp, bc = s
-    if exp > 0:
-        return man << exp
-    return rshift(man, -exp, rounding)
-
-
-#----------------------------------------------------------------------
-# Regular python floats
-#
-
-def from_float(x, prec=None, rounding=None):
-    """Create a raw mpf from a Python float, rounding if necessary.
-    If prec >= 53, the result is guaranteed to represent exactly the
-    same number as the input. If prec is not specified, use prec=53."""
-    if prec is None:
-        prec = 53
-    m, e = math.frexp(x)
-    return normalize(int(m*(1<<53)), e-53, prec, rounding)
-
-def to_float(s):
-    """Convert a raw mpf to a Python float. The result is exact if the
-    bitcount of s is <= 53 and no underflow/overflow occurs. An
-    OverflowError is raised if the number is too large to be
-    represented as a regular float."""
-    man, exp, bc = s
-    if bc < 100:
-        return math.ldexp(man, exp)
-    # Try resizing the mantissa. Overflow may still happen here.
-    n = bc - 53
-    m = man >> n
-    return math.ldexp(m, exp + n)
-
-
-def fhash(s):
-    try:
-        # Try to be compatible with hash values for floats and ints
-        return hash(to_float(s))
-    except OverflowError:
-        # We must unfortunately sacrifice compatibility with ints here. We
-        # could do hash(man << exp) when the exponent is positive, but
-        # this would cause unreasonable inefficiency for large numbers.
-        return hash(s)
-
-
-#----------------------------------------------------------------------
-# Rational numbers (for use by other libraries)
-#
-
-def from_rational(p, q, prec, rounding):
-    """Create a raw mpf from a rational number p/q, rounding if
-    necessary."""
-    return fdiv(from_int(p), from_int(q), prec, rounding)
-
-def to_rational(s):
-    """Convert a raw mpf to a rational number. Return integers (p, q)
-    such that s = p/q exactly. p and q are not reduced to lowest terms."""
-    man, exp, bc = s
-    if exp > 0:
-        return man * 2**exp, 1
-    else:
-        return man, 2**-exp

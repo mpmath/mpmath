@@ -14,28 +14,6 @@ STANDARD_PREC = 53
 LOG2_10 = math.log(10,2)  # 3.3219...
 
 
-# All supported rounding modes. We define them as integer constants for easy
-# management, but change __repr__ to give more information on inspection
-
-class Rounding(int):
-
-    def __new__(cls, level, name):
-        a = int.__new__(cls, level)
-        a.name = name
-        return a
-
-    def __repr__(self):
-        return self.name
-
-    __str__ = __repr__
-
-ROUND_DOWN    = Rounding(1, 'ROUND_DOWN')
-ROUND_UP      = Rounding(2, 'ROUND_UP')
-ROUND_FLOOR   = Rounding(3, 'ROUND_FLOOR')
-ROUND_CEILING = Rounding(4, 'ROUND_CEILING')
-ROUND_HALF_UP = Rounding(5, 'ROUND_HALF_UP')
-ROUND_HALF_DOWN = Rounding(6, 'ROUND_HALF_DOWN')
-ROUND_HALF_EVEN = Rounding(7, 'ROUND_HALF_EVEN')
 
 
 def giant_steps(start, target):
@@ -145,82 +123,6 @@ def trailing_zeros(n):
     while not n & 1: n >>= 1; t += 1
     return t
 
-#----------------------------------------------------------------------------
-# Integer shifting with directed rounding
-#
-
-def round_floor(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    return x >> n
-
-def round_ceiling(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    return -((-x) >> n)
-
-def round_down(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    if x > 0:
-        return x >> n
-    else:
-        return -((-x) >> n)
-
-def round_up(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    if x > 0:
-        return -((-x) >> n)
-    else:
-        return x >> n
-
-def round_half_up(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    positive = x > 0
-    if positive: t = x >> (n-1)
-    else:        t = (-x) >> (n-1)
-    if t & 1:
-        if positive: return (t>>1)+1
-        else:        return -((t>>1)+1)
-    if positive: return t>>1
-    else:        return -(t>>1)
-
-def round_half_down(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    positive = x > 0
-    if positive: t = x >> (n-1)
-    else:        t = (-x) >> (n-1)
-    if t & 1 and x & ((1<<(n-1))-1):
-        if positive: return (t>>1)+1
-        else:        return -((t>>1)+1)
-    if positive: return t>>1
-    else:        return -(t>>1)
-
-def round_half_even(x, n):
-    #if not n or not x: return x
-    #if n < 0: return x << -n
-    positive = x > 0
-    if positive: t = x >> (n-1)
-    else:        t = (-x) >> (n-1)
-    if t & 1 and (t&2 or x & ((1<<(n-1))-1)):
-        if positive: return (t>>1)+1
-        else:        return -((t>>1)+1)
-    if positive:  return t>>1
-    else:         return -(t>>1)
-
-
-rounding_functions = {
-  ROUND_FLOOR : round_floor,
-  ROUND_CEILING : round_ceiling,
-  ROUND_DOWN : round_down,
-  ROUND_UP : round_up,
-  ROUND_HALF_UP : round_half_up,
-  ROUND_HALF_DOWN : round_half_down,
-  ROUND_HALF_EVEN : round_half_even
-}
 
 
 def rshift(x, n, rounding):
@@ -229,8 +131,7 @@ def rshift(x, n, rounding):
     with the specified rounding mode. The exponent n may be negative,
     in which case x is shifted to the left (and no rounding is
     necessary)."""
-    return rounding_functions[rounding](x, n)
-
+    1 / 0
 
 
 # TODO: speed up for bases 2, 4, 8, 16, ...

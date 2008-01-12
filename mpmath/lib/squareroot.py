@@ -106,8 +106,7 @@ def sqrt_fixed2(y, prec):
     """
 
     # XXX
-    from mpmath.lib import to_float, normalize, ROUND_FLOOR
-    r = to_float(normalize(y, -prec, 64, ROUND_FLOOR)) ** -0.5
+    r = to_float(from_man_exp(y, -prec, 64, round_floor)) ** -0.5
     r = int(r * 2**50)
 
     # r = invsqrt_initial(y, prec)
@@ -182,7 +181,7 @@ def fsqrt(s, prec, rounding):
     else:
         man = sqrt_fixed2(man, prec2)
 
-    return normalize(man, (exp+shift-prec2)>>1, prec, rounding)
+    return from_man_exp(man, (exp+shift-prec2)>>1, prec, rounding)
 
 
 
@@ -192,7 +191,7 @@ def fhypot(x, y, prec, rounding):
     if x == fzero:
         return fabs(y, prec, rounding)
 
-    RF = ROUND_FLOOR
+    RF = round_floor
     hypot2 = fadd(fmul(x,x,prec+4,RF), fmul(y,y,prec+4,RF), prec+4, RF)
 
     return fsqrt(hypot2, prec, rounding)
