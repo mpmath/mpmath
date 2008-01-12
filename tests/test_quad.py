@@ -1,13 +1,6 @@
 from mpmath import *
 from mpmath.quad import *
 
-# This test takes a LOT of time to run without psyco
-try:
-    import psyco
-    psyco.full()
-except ImportError:
-    pass
-
 def ae(a, b):
     return abs(a-b) < 10**(-mpf.dps+5)
 

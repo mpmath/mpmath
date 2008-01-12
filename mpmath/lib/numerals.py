@@ -189,6 +189,8 @@ def str_to_man_exp(x, base=10):
     x = int(x, base)
     return x, exp
 
+special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
+
 def from_str(x, prec, rounding):
     """Create a raw mpf from a decimal literal, rounding in the
     specified direction if the input number cannot be represented
@@ -198,6 +200,9 @@ def from_str(x, prec, rounding):
 
     TODO: the rounding does not work properly for large exponents.
     """
+    if x in special_str:
+        return special_str[x]
+
     man, exp = str_to_man_exp(x, base=10)
 
     # XXX: appropriate cutoffs & track direction
