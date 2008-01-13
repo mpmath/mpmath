@@ -1,19 +1,9 @@
-"""
-Contents of this module:
-
-* Integer and bit-level operations
-* Miscellaneous utilities
-
-"""
-
 import math
 
 # Same as standard Python float
 STANDARD_PREC = 53
 
 LOG2_10 = math.log(10,2)  # 3.3219...
-
-
 
 
 def giant_steps(start, target):
@@ -65,73 +55,6 @@ def make_fixed(s, prec):
     else:
         return man >> (-offset)
 
-
-def bitcount(n, log=math.log, table=(0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4)):
-    """Give size of n in bits; i.e. the position of the highest set bit
-    in n. If n is negative, the absolute value is used. The bitcount of
-    zero is taken to be 0."""
-
-    if not n: return 0
-    if n < 0: n = -n
-
-    # math.log gives a good estimate, and never overflows, but
-    # is not always exact. Subtract 2 to underestimate, then
-    # count remaining bits by table lookup
-    bc = int(log(n, 2)) - 2
-    if bc < 0:
-        bc = 0
-    return bc + table[n >> bc]
-
-
-# from decimal.py -- faster for small precs
-def bitcount2(n, correction = {
-        '0': 4, '1': 3, '2': 2, '3': 2,
-        '4': 1, '5': 1, '6': 1, '7': 1,
-        '8': 0, '9': 0, 'a': 0, 'b': 0,
-        'c': 0, 'd': 0, 'e': 0, 'f': 0}):
-    if n < 0:
-        n = -n
-    hex_n = "%x" % n
-    return 4*len(hex_n) - correction[hex_n[0]]
-
-
-# Bitcounts of small integers
-bctable = map(bitcount, range(1024))
-
-
-def bitcount3(n, bc, bct=bctable):
-    """Count bits in n, given an approximate bitcount that is at
-    most a few bits too low."""
-    bc -= 3
-    if bc < 3:
-        if n > 0: return bct[n]
-        else:     return bct[-n]
-    else:
-        if n > 0: return bc + bct[n>>bc]
-        else:     return bc + bct[(-n)>>bc]
-
-
-def trailing_zeros(n):
-    """Count trailing zero bits in an integer. If n is negative, it is
-    replaced by its absolute value."""
-    if n & 1: return 0
-    if not n: return 0
-    if n < 0: n = -n
-    t = 0
-    while not n & 0xffffffffffffffff: n >>= 64; t += 64
-    while not n & 0xff: n >>= 8; t += 8
-    while not n & 1: n >>= 1; t += 1
-    return t
-
-
-
-def rshift(x, n, rounding):
-    """Shift x (a plain Python integer) n bits to the right (i.e.,
-    calculate x/(2**n)), and round to the nearest integer in accordance
-    with the specified rounding mode. The exponent n may be negative,
-    in which case x is shifted to the left (and no rounding is
-    necessary)."""
-    1 / 0
 
 
 # TODO: speed up for bases 2, 4, 8, 16, ...

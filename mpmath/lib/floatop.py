@@ -1,12 +1,6 @@
 """
 This module implements fundamental operations for floating-point
 arithmetic (bit fiddling, normalization, arithmetic, ...).
-
-Part of mpmath (http://code.google.com/p/mpmath/).
-
-Copyright (c) 2006-2008 Fredrik Johansson.
-This code is free software available under the BSD license
-(http://www.opensource.org/licenses/bsd-license.php).
 """
 
 import math

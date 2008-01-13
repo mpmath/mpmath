@@ -79,7 +79,7 @@ def test_tight_integer_division():
         a = choice([1, -1]) * randint(1, 1<<randint(10, 100))
         b = choice([1, -1]) * randint(1, 1<<randint(10, 100))
         p = a * b
-        width = bitcount(b) - trailing_zeros(b)
+        width = bitcount(b) - trailing(b)
         a = fi(a); b = fi(b); p = fi(p)
         for mode in all_modes:
             assert fdiv(p, a, width, mode) == b
