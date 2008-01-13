@@ -11,6 +11,7 @@
   exp(inf) -> inf and exp(-inf) -> 0 now work.
 * renamed several files. created mpmath.apps and moved tests into
   the main mpmath directory
+* wrote script to permit running unit tests without py.test available
 * improved bit counting code in fadd, fmul and fdiv, plus other
   small performance tweaks, resulting in a 20-30% speedup for
   arithmetic

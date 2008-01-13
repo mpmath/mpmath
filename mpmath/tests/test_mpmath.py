@@ -171,6 +171,7 @@ def test_str_10000_digits():
     mpf.dps = 15
 
 def test_float_sqrt():
+    mpf.dps = 15
     # These should round identically
     for x in [0, 1e-7, 0.1, 0.5, 1, 2, 3, 4, 5, 0.333, 76.19]:
         assert sqrt(mpf(x)) == float(x)**0.5
