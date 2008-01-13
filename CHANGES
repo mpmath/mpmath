@@ -1,4 +1,6 @@
---0.6 (svn)--
+--0.6--
+Released January 13, 2008
+
 * added the mpi type for interval arithmetic
 * powers with integer exponents are computed with directed rounding
   all the way through to preserve interval bounds more robustly
