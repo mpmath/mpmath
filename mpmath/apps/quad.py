@@ -9,7 +9,7 @@ http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
 http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
 """
 
-from mpmath import *
+from mpmath.mptypes import *
 
 
 #----------------------------------------------------------------------

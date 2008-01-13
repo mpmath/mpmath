@@ -1,5 +1,4 @@
 from mpmath import *
-from mpmath.quad import *
 
 def ae(a, b):
     return abs(a-b) < 10**(-mpf.dps+5)

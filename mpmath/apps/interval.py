@@ -1,4 +1,4 @@
-from mpmath import *
+from mpmath.mptypes import *
 
 class mpi:
 
