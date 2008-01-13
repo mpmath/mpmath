@@ -1,6 +1,7 @@
 from mpmath.mptypes import *
 
 class mpi:
+    """Interval arithmetic class. Precision is controlled by mpf.prec."""
 
     def __init__(self, a, b=None):
         if isinstance(a, mpi):
@@ -14,6 +15,8 @@ class mpi:
         mpf.round_up()
         self.b = mpf(b)
         mpf.round_default()
+        if isnan(self.a) or isnan(self.b):
+            self.a, self.b = -inf, inf
         assert self.a <= self.b, "endpoints must be properly ordered"
 
     def __repr__(self):
@@ -22,9 +25,13 @@ class mpi:
         mpf.dps -= 5
         return s
 
-    def __contains__(self, x):
-        """Return True if x is contained in the interval, otherwise False."""
-        return (self.a <= x) and (x <= self.b)
+    def __contains__(self, t):
+        t = mpi(t)
+        return (self.a <= t.a) and (t.b <= self.b)
+
+    def __eq__(s, t):
+        t = mpi(t)
+        return s.a == t.a and s.b == t.b
 
     def __neg__(self):
         return 0 - self
@@ -61,6 +68,8 @@ class mpi:
         xu, yu, zu, wu = s.a*t.a, s.a*t.b, s.b*t.a, s.b*t.b
         b = max(xu,yu,zu,wu)
         mpf.round_default()
+        if True in map(isnan, [xd,yd,zd,wd,xu,yu,zu,wu]):
+            return mpi(-inf, inf)
         return mpi(a, b)
 
     __rmul__ = __mul__
@@ -68,7 +77,7 @@ class mpi:
     def __div__(s, t):
         t = mpi(t)
         if 0 in t:
-            raise ZeroDivisionError, "cannot divide by interval containing 0"
+            return mpi(-inf, inf)
         mpf.round_down()
         xd, yd, zd, wd = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
         a = min(xd,yd,zd,wd)
@@ -76,6 +85,8 @@ class mpi:
         xu, yu, zu, wu = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
         b = max(xu,yu,zu,wu)
         mpf.round_default()
+        if True in map(isnan, [xd,yd,zd,wd,xu,yu,zu,wu]):
+            return mpi(-inf, inf)
         return mpi(a, b)
 
     def __rdiv__(s, t):
@@ -113,12 +124,3 @@ class mpi:
         mpf.round_default()
         return mpi(a, b)
 
-"""
-from mpmath import *
-mpi(1, 2)**2
-mpi(1) + mpi(0, 1e-50)
-mpi(2) ** mpi(2)
-mpi(2) ** mpi(0.5)
-mpi(2) + mpi(3,4)
-
-"""
