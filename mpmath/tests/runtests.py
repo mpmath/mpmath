@@ -35,7 +35,7 @@ else:
     tstart = clock()
     for priority, name, module in modules:
         print name
-        for f in module.__dict__:
+        for f in sorted(module.__dict__.keys()):
             if f.startswith('test_'):
                 print "   ", f[5:].ljust(25),
                 t1 = clock()

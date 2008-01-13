@@ -671,4 +671,4 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan"]
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq"]

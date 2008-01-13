@@ -33,6 +33,7 @@ def test_almost_equal():
 #
 
 def test_add():
+    mpf.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))

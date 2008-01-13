@@ -7,6 +7,7 @@ def test_basic_string():
     """
     Test basic string conversion
     """
+    mpf.dps = 15
     assert mpf('3') == mpf('3.0') == mpf('0003.') == mpf('0.03e2') == mpf(3.0)
     assert mpf('30') == mpf('30.0') == mpf('00030.') == mpf(30.0)
     for i in range(10):
@@ -31,10 +32,12 @@ def test_basic_string():
     assert repr(mpf(-1.2344e-15)) == "mpf('-1.2343999999999999e-15')"
 
 def test_unicode():
+    mpf.dps = 15
     assert mpf(u'2.76') == 2.76
     assert mpf(u'inf') == inf
 
 def test_tight_string_conversion():
+    mpf.dps = 15
     # In an old version, '0.5' wasn't recognized as representing
     # an exact binary number and was erroneously rounded up or down
     assert from_str('0.5', 10, round_floor) == fhalf
@@ -52,14 +55,17 @@ def test_eval_repr_invariant():
                 assert eval(repr(a)) == a
             else:
                 assert eval(repr(a)).ae(a)
+    mpf.dps = 15
 
 def test_str_bugs():
+    mpf.dps = 15
     # Decimal rounding used to give the wrong exponent in some cases
     assert str(mpf('1e600')) == '1.0e+600'
     assert str(mpf('1e10000')) == '1.0e+10000'
 
 
 def test_convert_rational():
+    mpf.dps = 15
     assert from_rational(30, 5, 53, round_half_even) == (3, 1, 2)
     assert from_rational(-7, 4, 53, round_half_even) == (-7, -2, 3)
     assert to_rational((1, -1, 1)) == (1, 2)
