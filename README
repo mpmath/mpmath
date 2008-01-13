@@ -12,6 +12,7 @@ LICENSE file for details)
 0. History
 ----------
 
+* Version 0.6 released on January 13, 2007
 * Version 0.5 released on November 24, 2007
 * Version 0.4 released on November 3, 2007
 * Version 0.3 released on October 5, 2007
@@ -39,11 +40,14 @@ The latest development code is available at
 http://mpmath.googlecode.com/svn/trunk/
 
 
-2. Documentation and usage
---------------------------
+2. Basic usage
+--------------
 
-Note: some additional documentation is available on the mpmath website.
-The unit tests and internal docstrings may also be helpful.
+Note: additional documentation is available on the mpmath website.
+The main documentation page is:
+-- http://code.google.com/p/mpmath/wiki/Documentation
+
+(The unit tests and internal docstrings may also be helpful.)
 
 Import mpmath with
 
@@ -138,7 +142,9 @@ adjust to the precision.
     >>> e**(-pi*1j)
     mpc(real='-1', imag='1.0106 [...] E-51')
 
-Directed rounding is partially implemented. For example, this computes
+There is partial support for directed rounding. Rounding is controlled by
+a global mode that affects all arithmetic operations. This mode is set
+through methods on the mpf class. For example, this computes
 and verifies a 15-digit approximation interval for pi:
 
     >>> mpf.dps = 15
@@ -152,9 +158,32 @@ and verifies a 15-digit approximation interval for pi:
     >>> pi1 < pi < pi2
     True
 
+3. Application code and demos
+-----------------------------
 
-3. Known problems
+In addition to the base arithmetic, mpmath provides various more or less
+useful functions and demo scripts. These features are described in more
+detail on the mpmath wiki.
+
+* Numerical integration: the quadts() function
+  Permits computing integrals with hundreds of digits of precision.
+
+  -- see http://code.google.com/p/mpmath/wiki/NumericalIntegration
+
+* Interval arithmetic: the mpi class
+  -- see http://code.google.com/p/mpmath/wiki/IntervalArithmetic
+
+* Educational interval arithmetic demo: mpmath/apps/taylordemo.py
+
+* Pi digits demo: mpmath/apps/pidigits.py
+  This script can be run interactively. It can compute 100,000's of digits
+  of pi fairly quickly, and prints them in nicely formatted columns.
+
+
+4. Known problems
 -----------------
+
+mpmath is a work in progress. Major issues include:
 
 * mpmath temporarily increases the working precision during function
   evaluations to suppress the effects of intermediate rounding errors.
