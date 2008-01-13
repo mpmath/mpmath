@@ -19,6 +19,17 @@ class mpi:
             self.a, self.b = -inf, inf
         assert self.a <= self.b, "endpoints must be properly ordered"
 
+    @property
+    def delta(self):
+        mpf.round_up()
+        d = self.b - self.a
+        mpf.round_default()
+        return d
+
+    @property
+    def mid(self):
+        return (self.b + self.a) / 2
+
     def __repr__(self):
         mpf.dps += 5
         s = "[%s, %s]"% (str(self.a), str(self.b))
@@ -80,13 +91,13 @@ class mpi:
             return mpi(-inf, inf)
         mpf.round_down()
         xd, yd, zd, wd = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
-        a = min(xd,yd,zd,wd)
         mpf.round_up()
         xu, yu, zu, wu = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
-        b = max(xu,yu,zu,wu)
         mpf.round_default()
         if True in map(isnan, [xd,yd,zd,wd,xu,yu,zu,wu]):
             return mpi(-inf, inf)
+        a = min(xd,yd,zd,wd,xu,yu,zu,wu)
+        b = max(xd,yd,zd,wd,xu,yu,zu,wu)
         return mpi(a, b)
 
     def __rdiv__(s, t):

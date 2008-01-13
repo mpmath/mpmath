@@ -41,3 +41,5 @@ def test_interval_arithmetic():
     assert mpi(inf) / 0 == mpi(-inf, inf)
     assert mpi(0) * inf == mpi(-inf, inf)
     assert 1 / mpi(2, inf) == mpi(0, 0.5)
+    assert str((mpi(50, 50) * mpi(-10, -10)) / 3) == \
+        '[-166.66666666666668561, -166.66666666666665719]'
