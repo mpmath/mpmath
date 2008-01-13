@@ -52,3 +52,13 @@ def test_special():
     assert mpf('inf') == mpf('+inf') == inf
     assert mpf('-inf') == -inf
     assert isnan(mpf('nan'))
+
+def test_functions_special():
+    assert exp(inf) == inf
+    assert exp(-inf) == 0
+    assert isnan(exp(nan))
+    assert log(inf) == inf
+    assert isnan(sin(inf))
+    assert isnan(sin(nan))
+    assert atan(inf).ae(pi/2)
+    assert atan(-inf).ae(-pi/2)

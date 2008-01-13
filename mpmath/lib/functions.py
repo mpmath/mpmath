@@ -64,6 +64,10 @@ def exp_series(x, prec):
 
 def fexp(x, prec, rounding):
     man, exp, bc = x
+    if bc == -1:
+        if x == fninf:
+            return fzero
+        return x
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
     t = make_fixed(x, prec2)
@@ -113,10 +117,13 @@ def _log_newton(x, prec):
     return r >> extra
 
 def flog(x, prec, rounding):
-    if x == fzero: raise ValueError, "logarithm of 0"
+    if x == fzero: return fnan
     if x == fone:  return fzero
     man, exp, bc = x
-    if man < 0: raise ValueError, "logarithm of a negative number"
+    if bc == -1:
+        if x == finf: return finf
+        return fnan
+    if man < 0: return fnan
     # Estimated precision needed for log(t) + n*log(2)
     prec2 = prec + int(math.log(1+abs(bc+exp), 2)) + 10
     # Watch out for the case when x is very close to 1
@@ -194,6 +201,8 @@ def _trig_reduce(x, prec):
 def cos_sin(x, prec, rounding):
     """Simultaneously compute (cos(x), sin(x)) for real x."""
     man, exp, bc = x
+    if bc == -1:
+        return (fnan, fnan)
     bits_from_unit = abs(bc + exp)
     prec2 = prec + bits_from_unit + 15
     xf = make_fixed(x, prec2)
@@ -243,8 +252,12 @@ def _sinh_series(x, prec):
 
 def cosh_sinh(x, prec, rounding):
     """Simultaneously compute (cosh(x), sinh(x)) for real x"""
-
     man, exp, bc = x
+    if bc == -1:
+        if x == finf: return (finf, finf)
+        if x == fninf: return (finf, fninf)
+        return fnan
+
     high_bit = exp + bc
     prec2 = prec + 6
 
@@ -332,7 +345,12 @@ _cutoff_1 = (5, -3, 3)   # ~0.6
 _cutoff_2 = (3, -1, 2)   # 1.5
 
 def fatan(x, prec, rounding):
-    if x[0] < 0:
+    man, exp, bc = x
+    if bc == -1:
+        if x == finf: return fshift_exact(fpi(prec, round_down), -1)
+        if x == fninf: return fneg(fshift_exact(fpi(prec, round_down), -1))
+        return fnan
+    if man < 0:
         t = fatan(fneg(x), prec+4, round_floor)
         return from_man_exp(-t[0], t[1], prec, rounding)
     if fcmp(x, _cutoff_1) < 0:

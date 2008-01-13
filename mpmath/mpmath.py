@@ -1,10 +1,44 @@
 from lib import *
 
+int_types = (int, long)
+
+# These properties are currently stored globally
+g_prec = 53
+g_dps = 15
+g_rounding = round_half_even
+
+class context(type):
+
+    def set_rounding(cls, val):
+        global g_rounding; g_rounding = val
+
+    _rounding = property(lambda cls: g_rounding, set_rounding)
+
+    def set_prec(self, n):
+        global g_prec, g_dps
+        g_prec = max(1, int(n))
+        g_dps = max(1, int(round(int(n)/LOG2_10)-1))
+    prec = property(lambda cls: g_prec, set_prec)
+
+    def set_dps(self, n):
+        global g_prec, g_dps
+        g_prec = max(1, int(round((int(n)+1)*LOG2_10)))
+        g_dps = max(1, int(n))
+    dps = property(lambda cls: g_dps, set_dps)
+
+    def round_up(cls): cls._rounding = round_up
+    def round_down(cls): cls._rounding = round_down
+    def round_floor(cls): cls._rounding = round_floor
+    def round_ceiling(cls): cls._rounding = round_ceiling
+    def round_half_down(cls): cls._rounding = round_half_down
+    def round_half_up(cls): cls._rounding = round_half_up
+    def round_half_even(cls): cls._rounding = round_half_even
+    def round_default(cls): cls._rounding = round_half_even
+
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
     and an mpc if x is complex."""
-
     def __new__(cls, val):
         # TODO: should maybe normalize here
         if isinstance(val, cls):
@@ -16,22 +50,20 @@ class mpnumeric(object):
 def convert_lossless(x):
     """Attempt to convert x to an mpf or mpc losslessly. If x is an
     mpf or mpc, return it unchanged. If x is an int, create an mpf with
-    sufficient precision to represent it exactly.
-
-    If x is a str, just convert it to an mpf with the current working
-    precision (perhaps this should be done differently...)"""
+    sufficient precision to represent it exactly. If x is a str, just
+    convert it to an mpf with the current working precision (perhaps
+    this should be done differently...)"""
     if isinstance(x, mpnumeric):
         return x
-    if isinstance(x, float):
-        return make_mpf(from_float(x, 53, round_floor))
     if isinstance(x, int_types):
         return make_mpf(from_int(x, bitcount(x), round_floor))
+    if isinstance(x, float):
+        return make_mpf(from_float(x, 53, round_floor))
     if isinstance(x, complex):
         return mpc(x)
     if isinstance(x, basestring):
-        return make_mpf(from_str(x, mpf._prec, mpf._rounding))
+        return make_mpf(from_str(x, g_prec, g_rounding))
     raise TypeError("cannot create mpf from " + repr(x))
-
 
 def mpf_convert_rhs(x):
     if isinstance(x, int_types):
@@ -48,58 +80,6 @@ def mpf_convert_lhs(x):
     if isinstance(x, float):
         return make_mpf(from_float(x, 53, round_floor))
     return NotImplemented
-
-
-
-# Global settings
-g_prec = 53
-g_rounding = round_half_even
-g_dps = 15
-
-class context(type):
-
-    def set_rounding(cls, val):
-        global g_rounding; g_rounding = val
-
-    _rounding = property(lambda cls: g_rounding, set_rounding)
-
-    def set_prec(self, n):
-        global g_prec, g_dps
-        g_prec = max(1, int(n))
-        g_dps = max(1, int(round(int(n)/LOG2_10)-1))
-
-    prec = property(lambda cls: g_prec, set_prec)
-    _prec = prec
-
-    def set_dps(self, n):
-        global g_prec, g_dps
-        g_prec = max(1, int(round((int(n)+1)*LOG2_10)))
-        g_dps = max(1, int(n))
-
-    dps = property(lambda cls: g_dps, set_dps)
-
-    def round_up(cls): cls._rounding = round_up
-    def round_down(cls): cls._rounding = round_down
-    def round_floor(cls): cls._rounding = round_floor
-    def round_ceiling(cls): cls._rounding = round_ceiling
-    def round_half_down(cls): cls._rounding = round_half_down
-    def round_half_up(cls): cls._rounding = round_half_up
-    def round_half_even(cls): cls._rounding = round_half_even
-    def round_default(cls): cls._rounding = round_half_even
-
-
-int_types = (int, long)
-
-
-def _convert(x):
-    """Convet x to mpf data"""
-    if isinstance(x, float):
-        return from_float(x, mpf._prec, mpf._rounding)
-    if isinstance(x, int_types):
-        return from_int(x, mpf._prec, mpf._rounding)
-    if isinstance(x, basestr):
-        return from_str(x, mpf._prec, mpf._rounding)
-    raise TypeError("cannot create mpf from " + repr(x))
 
 
 class mpf(mpnumeric):
@@ -265,42 +245,7 @@ class mpf(mpnumeric):
         return sqrt(s)
 
     def ae(s, t, rel_eps=None, abs_eps=None):
-        """
-        Determine whether the difference between s and t is smaller
-        than a given epsilon ("ae" is short for "almost equal").
-
-        Both a maximum relative difference and a maximum difference
-        ('epsilons') may be specified. The absolute difference is
-        defined as |s-t| and the relative difference is defined
-        as |s-t|/max(|s|, |t|).
-
-        If only one epsilon is given, both are set to the same value.
-        If none is given, both epsilons are set to 2**(-prec+m) where
-        prec is the current working precision and m is a small integer.
-        """
-        if not isinstance(t, mpf):
-            t = mpf(t)
-        if abs_eps is None and rel_eps is None:
-            rel_eps = abs_eps = make_mpf((1, -mpf._prec+4, 1))
-        if abs_eps is None:
-            abs_eps = rel_eps
-        elif rel_eps is None:
-            rel_eps = abs_eps
-        diff = abs(s-t)
-        if diff <= abs_eps:
-            return True
-        abss = abs(s)
-        abst = abs(t)
-        if abss < abst:
-            err = diff/abst
-        else:
-            err = diff/abss
-        return err <= rel_eps
-
-    def almost_zero(s, prec):
-        """Quick check if |s| < 2**-prec. May return a false negative
-        if s is very close to the threshold."""
-        return s.bc + s.exp < prec
+        return almosteq(s, t, rel_eps, abs_eps)
 
 
 def make_mpf(tpl, construct=object.__new__, cls=mpf):
@@ -337,17 +282,13 @@ class mpc(mpnumeric):
         i = repr(s.imag)[4:-1]
         return "mpc(real=%s, imag=%s)" % (r, i)
 
-    def __str__(s):
-        return "(%s + %sj)" % (s.real, s.imag)
-
-    def __complex__(s):
-        return complex(float(s.real), float(s.imag))
-
-    def __pos__(s):
-        return mpc(s.real, s.imag)
-
-    def __abs__(s):
-        return hypot(s.real, s.imag)
+    def __str__(s): return "(%s + %sj)" % (s.real, s.imag)
+    def __complex__(s): return complex(float(s.real), float(s.imag))
+    def __pos__(s): return mpc(s.real, s.imag)
+    def __abs__(s): return hypot(s.real, s.imag)
+    def __neg__(s): return mpc(-s.real, -s.imag)
+    def __nonzero__(s): return bool(s.real) or bool(s.imag)
+    def conjugate(s): return mpc(s.real, -s.imag)
 
     def __eq__(s, t):
         if not isinstance(t, mpc):
@@ -364,29 +305,15 @@ class mpc(mpnumeric):
     __gt__ = _compare
     __ge__ = _compare
 
-    def __nonzero__(s):
-        return bool(s.real) or bool(s.imag)
-
-    def conjugate(s):
-        return mpc(s.real, -s.imag)
-
     def __add__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
         return mpc(s.real+t.real, s.imag+t.imag)
 
-    __radd__ = __add__
-
-    def __neg__(s):
-        return mpc(-s.real, -s.imag)
-
     def __sub__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
         return mpc(s.real-t.real, s.imag-t.imag)
-
-    def __rsub__(s, t):
-        return (-s) + t
 
     def __mul__(s, t):
         if not isinstance(t, mpc):
@@ -394,17 +321,12 @@ class mpc(mpnumeric):
         return mpc(*fcmul(s.real.val, s.imag.val, t.real.val, t.imag.val,
             g_prec, g_rounding))
 
-    __rmul__ = __mul__
-
     def __div__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
         a = s.real; b = s.imag; c = t.real; d = t.imag
         mag = c*c + d*d
         return mpc((a*c+b*d)/mag, (b*c-a*d)/mag)
-
-    def __rdiv__(s, t):
-        return mpc(t) / s
 
     def __pow__(s, n):
         if n == 0: return mpc(1)
@@ -425,36 +347,22 @@ class mpc(mpnumeric):
             return sqrt(s)
         return power(s, n)
 
-    def __rpow__(s, t):
-        return convert_lossless(t) ** s
+    __radd__ = __add__
+    __rmul__ = __mul__
 
-    # TODO: refactor and merge with mpf.ae
+    def __rsub__(s, t): return (-s) + t
+    def __rpow__(s, t): return convert_lossless(t) ** s
+    def __rdiv__(s, t): return mpc(t) / s
+
     def ae(s, t, rel_eps=None, abs_eps=None):
-        if not isinstance(t, mpc):
-            t = mpc(t)
-        if abs_eps is None and rel_eps is None:
-            abs_eps = rel_eps = make_mpf((1, -mpf._prec+4, 1))
-        if abs_eps is None:
-            abs_eps = rel_eps
-        elif rel_eps is None:
-            rel_eps = abs_eps
-        diff = abs(s-t)
-        if diff <= abs_eps:
-            return True
-        abss = abs(s)
-        abst = abs(t)
-        if abss < abst:
-            err = diff/abst
-        else:
-            err = diff/abss
-        return err <= rel_eps
+        return almosteq(s, t, rel_eps, abs_eps)
 
 
 complex_types = (complex, mpc)
 
-def make_mpc(tpl, construct=object.__new__, cls=mpc):
+def make_mpc((re, im), construct=object.__new__, cls=mpc):
     a = construct(cls)
-    a.real, a.imag = map(make_mpf, tpl)
+    a.real, a.imag = make_mpf(re), make_mpf(im)
     return a
 
 j = mpc(0,1)
@@ -476,8 +384,8 @@ class constant(mpf):
     def val(self):
         return self.func(g_prec, g_rounding)
 
-    #def __repr__(self):
-    #    return "<%s: %s~>" % (self.name, mpf.__str__(self))
+    def __repr__(self):
+        return "<%s: %s~>" % (self.name, mpf.__str__(self))
 
 
 _180 = from_int(180, 10, round_floor)
@@ -486,8 +394,8 @@ pi = constant(fpi, "pi")
 degree = constant(lambda p, r: fdiv(fpi(p+4, round_floor), _180, p, r), "degree")
 e = constant(lambda p, r: fexp(fone, p, r), "e")
 euler = constant(fgamma, "Euler's constant gamma")
-clog2 = constant(flog2, "log(2)")
-clog10 = constant(flog10, "log(10)")
+clog2 = constant(flog2, "log 2")
+clog10 = constant(flog10, "log 10")
 
 
 def sqrt(x):
@@ -548,25 +456,25 @@ def tan(x):
         return make_mpf(ftan(x.val, g_prec, g_rounding))
     # the complex division can cause enormous cancellation.
     # TODO: handle more robustly
-    mpf._prec += 20
+    mpf.prec += 20
     t = sin(x) / cos(x)
-    mpf._prec -= 20
+    mpf.prec -= 20
     return +t
 
 def tanh(x):
     """Returns the hyperbolic tangent of x."""
     x = convert_lossless(x)
-    oldprec = mpf._prec
+    oldprec = mpf.prec
     a = abs(x)
-    mpf._prec += 10
+    mpf.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        if high < (-(mpf._prec-10) * 0.3):
+        if high < (-(mpf.prec-10) * 0.3):
             return x - (x**3)/3 + 2*(x**5)/15
-        mpf._prec += (-high)
+        mpf.prec += (-high)
     a = exp(2*x)
     t = (a-1)/(a+1)
-    mpf._prec = oldprec
+    mpf.prec = oldprec
     return +t
 
 def arg(x):
@@ -575,9 +483,9 @@ def arg(x):
     -pi < arg(x) <= pi. On the negative real half-axis, it is taken to
     be +pi."""
     x = mpc(x)
-    mpf._prec += 5
+    mpf.prec += 5
     t = atan2(x.imag, x.real)
-    mpf._prec -= 5
+    mpf.prec -= 5
     return +t
 
 def log(x, b=None):
@@ -604,9 +512,9 @@ def log(x, b=None):
 def power(x, y):
     """Returns x**y = exp(y*log(x)) for real or complex x and y."""
     # TODO: better estimate for extra precision needed
-    mpf._prec += 10
+    mpf.prec += 10
     t = exp(y * log(x))
-    mpf._prec -= 10
+    mpf.prec -= 10
     return +t
 
 def atan(x):
@@ -617,9 +525,9 @@ def atan(x):
     # TODO: maybe get this to agree with Python's cmath atan about the
     # branch to choose on the imaginary axis
     # TODO: handle cancellation robustly
-    mpf._prec += 10
+    mpf.prec += 10
     t = (0.5j)*(log(1-1j*x) - log(1+1j*x))
-    mpf._prec -= 10
+    mpf.prec -= 10
     return +t
 
 def atan2(y,x):
@@ -632,24 +540,24 @@ def atan2(y,x):
     if not x and not y:
         return mpf(0)
     if y > 0 and x == 0:
-        mpf._prec += 2
+        mpf.prec += 2
         t = pi/2
-        mpf._prec -= 2
+        mpf.prec -= 2
         return t
-    mpf._prec += 2
+    mpf.prec += 2
     if x > 0:
         a = atan(y/x)
     else:
         a = pi - atan(-y/x)
-    mpf._prec -= 2
+    mpf.prec -= 2
     return +a
 
 # TODO: robustly deal with cancellation in all of the following functions
 
 def _asin_complex(z):
-    mpf._prec += 10
+    mpf.prec += 10
     t = -1j * log(1j * z + sqrt(1 - z*z))
-    mpf._prec -= 10
+    mpf.prec -= 10
     return +t
 
 def asin(x):
@@ -662,9 +570,9 @@ def asin(x):
     return _asin_complex(x)
 
 def _acos_complex(z):
-    mpf._prec += 10
+    mpf.prec += 10
     t = pi/2 + 1j * log(1j * z + sqrt(1 - z*z))
-    mpf._prec -= 10
+    mpf.prec -= 10
     return +t
 
 def acos(x):
@@ -680,16 +588,16 @@ def asinh(x):
     """Returns the inverse hyperbolic sine of x. For complex x, the
     result is the principal branch value of log(x + sqrt(1 + x**2))."""
     x = convert_lossless(x)
-    oldprec = mpf._prec
+    oldprec = mpf.prec
     a = abs(x)
-    mpf._prec += 10
+    mpf.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        if high < (-(mpf._prec-10) * 0.3):
+        if high < (-(mpf.prec-10) * 0.3):
             return x - (x**3)/6 + 3*(x**5)/40
-        mpf._prec += (-high)
+        mpf.prec += (-high)
     t = log(x + sqrt(x**2 + 1))
-    mpf._prec = oldprec
+    mpf.prec = oldprec
     return +t
 
 def acosh(x):
@@ -697,9 +605,9 @@ def acosh(x):
     given by log(x + sqrt(1 + x**2)), where the principal branch is
     used when the result is complex."""
     x = convert_lossless(x)
-    mpf._prec += 10
+    mpf.prec += 10
     t = log(x + sqrt(x-1)*sqrt(x+1))
-    mpf._prec -= 10
+    mpf.prec -= 10
     return +t
 
 def atanh(x):
@@ -707,22 +615,57 @@ def atanh(x):
     [-1, 1], the result is complex and defined as the principal branch
     value of (log(1+x) - log(1-x))/2."""
     x = convert_lossless(x)
-    oldprec = mpf._prec
+    oldprec = mpf.prec
     a = abs(x)
-    mpf._prec += 10
+    mpf.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        #print mpf._prec, x, x-(x**3)/3+(x**5)/5
-        if high < (-(mpf._prec-10) * 0.3):
+        #print mpf.prec, x, x-(x**3)/3+(x**5)/5
+        if high < (-(mpf.prec-10) * 0.3):
             return x - (x**3)/3 + (x**5)/5
-        mpf._prec += (-high)
+        mpf.prec += (-high)
     t = 0.5*(log(1+x)-log(1-x))
-    mpf._prec = oldprec
+    mpf.prec = oldprec
     return +t
 
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""
-    return make_mpf(frand(mpf._prec))
+    return make_mpf(frand(mpf.prec))
+
+
+def almosteq(s, t, rel_eps=None, abs_eps=None):
+    """
+    Determine whether the difference between s and t is smaller
+    than a given epsilon.
+
+    Both a maximum relative difference and a maximum difference
+    ('epsilons') may be specified. The absolute difference is
+    defined as |s-t| and the relative difference is defined
+    as |s-t|/max(|s|, |t|).
+
+    If only one epsilon is given, both are set to the same value.
+    If none is given, both epsilons are set to 2**(-prec+m) where
+    prec is the current working precision and m is a small integer.
+    """
+    if not isinstance(t, mpnumeric):
+        t = convert_lossless(t)
+    if abs_eps is None and rel_eps is None:
+        rel_eps = abs_eps = make_mpf((1, -g_prec+4, 1))
+    if abs_eps is None:
+        abs_eps = rel_eps
+    elif rel_eps is None:
+        rel_eps = abs_eps
+    diff = abs(s-t)
+    if diff <= abs_eps:
+        return True
+    abss = abs(s)
+    abst = abs(t)
+    if abss < abst:
+        err = diff/abst
+    else:
+        err = diff/abss
+    return err <= rel_eps
+
 
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
