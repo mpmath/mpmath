@@ -1,6 +1,6 @@
 include mpmath/*.py
 include mpmath/lib/*.py
-include demo/*.py
-include tests/*.py
+include mpmath/apps/*.py
+include mpmath/tests/*.py
 include LICENSE
 include CHANGES

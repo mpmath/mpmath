@@ -1,3 +1,20 @@
+--0.6 (svn)--
+* added the mpi type for interval arithmetic
+* powers with integer exponents are computed with directed rounding
+  all the way through to preserve interval bounds more robustly
+  (however, the code is not fully tested and may have some bugs)
+* string input to mpf.__new__() can now be unicode
+* mpf.__eq__ now works in pypy
+* infs and nans are now implemented in mpmath.lib, resulting in
+  considerable simplification of the mpf class implementation
+* partial support for infs and nans in functions, e.g.
+  exp(inf) -> inf and exp(-inf) -> 0 now work.
+* renamed several files. created mpmath.apps and moved tests into
+  the main mpmath directory
+* improved bit counting code in fadd, fmul and fdiv, plus other
+  small performance tweaks, resulting in a 20-30% speedup for
+  arithmetic
+
 --0.5--
 Released November 24, 2007
 
