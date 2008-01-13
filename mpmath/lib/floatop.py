@@ -555,7 +555,15 @@ negative_rounding = {
 def fpow(s, n, prec, rounding):
     """Compute s**n, where n is an integer"""
     if s[2] == -1:
-        raise NotImplementedError("power of inf or nan")
+        if s == finf:
+            if n > 0: return s
+            if n == 0: return fnan
+            return fzero
+        if s == fninf:
+            if n > 0: return [finf, fninf][n & 1]
+            if n == 0: return fnan
+            return fzero
+        return fnan
 
     n = int(n)
     if n == 0: return fone
