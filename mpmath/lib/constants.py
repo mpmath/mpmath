@@ -8,7 +8,7 @@ from floatop import *
 from squareroot import *
 
 def constant_memo(f):
-    """Cache computer values of mathematical constants"""
+    """Cache computed values of mathematical constants"""
     f.memo_prec = -1
     f.memo_val = None
     def g(prec):

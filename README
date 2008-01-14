@@ -204,7 +204,7 @@ mpmath is a work in progress. Major issues include:
   The current method is not threadsafe.
 
 
-4. Help and bug reports
+5. Help and bug reports
 -----------------------
 
 You can report bugs at the mpmath issue tracker,
