@@ -202,7 +202,7 @@ def test_exp():
 def test_log():
     assert log(1) == 0
     for x in [0.5, 1.5, 2.0, 3.0, 100, 10**50, 1e-50]:
-        assert log(x) == math.log(x)
+        assert log(x).ae(math.log(x))
         assert log(x, x) == 1
     assert log(1024, 2) == 10
     assert log(10**1234, 10) == 1234

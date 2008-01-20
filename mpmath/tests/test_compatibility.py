@@ -40,14 +40,21 @@ def test_double_compatibility():
         assert floor(mpx) == math.floor(x)
 
 def test_sqrt():
-    # this fails roughly 1 time out of 1000. it appers to be float
+    # this fails quite often. it appers to be float
     # that rounds the wrong way, not mpf
     fail = 0
     mpf.prec = 53
     mpf.round_default()
     for x in xs:
-        fail += (abs(mpf(x))**0.5 != abs(x)**0.5)
-    assert fail < 2*(N/1000.0)
+        x = abs(x)
+        mpf.prec = 100
+        mp_high = mpf(x)**0.5
+        mpf.prec = 53
+        mp_low = mpf(x)**0.5
+        fp = x**0.5
+        assert abs(mp_low-mp_high) <= abs(fp-mp_high)
+        fail += mp_low != fp
+    assert fail < N/10
 
 def test_bugs():
     # particular bugs

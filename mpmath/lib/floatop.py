@@ -215,7 +215,12 @@ def from_float(x, prec=None, rounding=None):
     same number as the input. If prec is not specified, use prec=53."""
     if prec is None:
         prec, rounding = 53, round_floor
-    m, e = math.frexp(x)
+    try:
+        m, e = math.frexp(x)
+    except:
+        if x == 1e1000: return finf
+        if x == -1e1000: return fninf
+        return fnan
     return from_man_exp(int(m*(1<<53)), e-53, prec, rounding)
 
 def to_float(s):

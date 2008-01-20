@@ -164,7 +164,7 @@ def fsqrt(s, prec, rounding):
 
     # Convert to a fixed-point number with prec2 bits. Adjust
     # exponents to be even so that they can be divided in half
-    prec2 = prec + 10 + (prec & 1)
+    prec2 = prec + 12 + (prec & 1)
 
     if exp & 1:
         exp -= 1

@@ -74,3 +74,11 @@ def test_functions_special():
     assert isnan(sin(nan))
     assert atan(inf).ae(pi/2)
     assert atan(-inf).ae(-pi/2)
+
+def test_convert_special():
+    float_inf = 1e1000
+    float_ninf = -1e1000
+    float_nan = float_inf/float_ninf
+    assert mpf(3) * float_inf == inf
+    assert mpf(3) * float_ninf == -inf
+    assert isnan(mpf(3) * float_nan)
