@@ -215,6 +215,9 @@ def from_float(x, prec=None, rounding=None):
     same number as the input. If prec is not specified, use prec=53."""
     if prec is None:
         prec, rounding = 53, round_floor
+    # frexp only raises an exception for nan on some platforms
+    if x != x:
+        return fnan
     try:
         m, e = math.frexp(x)
     except:

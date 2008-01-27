@@ -184,6 +184,38 @@ class mpf(mpnumeric):
                 return t
         return fcmp(s.val, t.val)
 
+    def __lt__(s, t):
+        if s.val == fnan:
+            return False
+        r = s.__cmp__(t)
+        if r is NotImplemented:
+            return r
+        return r == -1
+
+    def __gt__(s, t):
+        if s.val == fnan:
+            return False
+        r = s.__cmp__(t)
+        if r is NotImplemented:
+            return r
+        return r == 1
+
+    def __le__(s, t):
+        if s.val == fnan:
+            return False
+        r = s.__cmp__(t)
+        if r is NotImplemented:
+            return r
+        return r <= 0
+
+    def __ge__(s, t):
+        if s.val == fnan:
+            return False
+        r = s.__cmp__(t)
+        if r is NotImplemented:
+            return r
+        return r >= 0
+
     def binop(s, t, f):
         if isinstance(t, complex_types):
             s = mpc(s)

@@ -30,6 +30,9 @@ def test_special():
     assert 3 > -inf
     assert -inf < 3
 
+    assert not (nan < 3)
+    assert not (nan > 3)
+
     assert isnan(inf * 0)
     assert isnan(-inf * 0)
     assert inf * 3 == inf
@@ -82,3 +85,5 @@ def test_convert_special():
     assert mpf(3) * float_inf == inf
     assert mpf(3) * float_ninf == -inf
     assert isnan(mpf(3) * float_nan)
+    #assert not (mpf(3) < float_nan)
+    #assert not (mpf(3) > float_nan)
