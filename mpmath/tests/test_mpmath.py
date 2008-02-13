@@ -113,6 +113,8 @@ def test_sqrt_rounding():
     mpf.dps = 15
     mpf.round_default()
         
+def test_odd_int_bug():
+    assert to_int(from_int(3), round_half_even) == 3
 
 
 #----------------------------------------------------------------------------

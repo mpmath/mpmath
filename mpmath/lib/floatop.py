@@ -183,7 +183,7 @@ def to_int(s, rounding=round_down):
     man, exp, bc = s
     if bc == -1:
         raise ValueError("cannot convert %s to int" % man)
-    if exp > 0:
+    if exp >= 0:
         return man << exp
     return rounding(man, -exp)
 
