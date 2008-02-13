@@ -359,8 +359,16 @@ def test_complex_inverse_functions():
         assert asin(z1).ae(cmath.asin(z1), rel_eps=1e-12)
         assert acos(z1).ae(cmath.acos(z1), rel_eps=1e-12)
 
+def test_ldexp():
+    mpf.dps = 15
+    assert ldexp(mpf(2.5), 0) == 2.5
+    assert ldexp(mpf(2.5), -1) == 1.25
+    assert ldexp(mpf(2.5), 2) == 10
+    assert ldexp(mpf('inf'), 3) == mpf('inf')
+
 def test_misc_bugs():
     # test that this doesn't raise an exception
     mpf.dps = 1000
     log(1302)
     mpf.dps = 15
+

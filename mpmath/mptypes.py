@@ -466,6 +466,14 @@ def ceil(x):
     x = convert_lossless(x)
     return make_mpf(fceil(x.val, g_prec, g_rounding))
 
+def ldexp(x, n):
+    """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
+    x = convert_lossless(x)
+    man, exp, bc = x.val
+    if bc == -1:
+        return x
+    return make_mpf((man, exp+n, bc))
+
 # Since E-functions simply map reals to reals and complexes to complexes, we
 # can construct all of them the same way (unlike log, sqrt, etc)
 def ef(name, real_f, complex_f, doc):
@@ -708,4 +716,5 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq"]
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
+  "ldexp"]
