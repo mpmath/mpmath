@@ -69,3 +69,17 @@ def test_convert_rational():
     assert from_rational(30, 5, 53, round_half_even) == (3, 1, 2)
     assert from_rational(-7, 4, 53, round_half_even) == (-7, -2, 3)
     assert to_rational((1, -1, 1)) == (1, 2)
+
+def test_custom_class():
+    class mympf:
+        def __mpfval__(self):
+            return mpf(3.5).val
+    class mympc:
+        def __mpcval__(self):
+            return mpf(3.5), mpf(2.5)
+    assert mpf(2) + mympf() == 5.5
+    assert mympf() + mpf(2) == 5.5
+    assert mpf(mympf()) == 3.5
+    assert mympc() + mpc(2) == mpc(5.5, 2.5)
+    assert mpc(2) + mympc() == mpc(5.5, 2.5)
+    assert mpc(mympc()) == (3.5+2.5j)
