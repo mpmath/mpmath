@@ -76,7 +76,7 @@ def test_custom_class():
             return mpf(3.5).val
     class mympc:
         def __mpcval__(self):
-            return mpf(3.5), mpf(2.5)
+            return mpf(3.5).val, mpf(2.5).val
     assert mpf(2) + mympf() == 5.5
     assert mympf() + mpf(2) == 5.5
     assert mpf(mympf()) == 3.5
