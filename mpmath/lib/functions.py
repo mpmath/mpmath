@@ -1,4 +1,5 @@
-"""
+"""Provides real valued functons.
+
 Transcendental functions for real numbers:
 * exp
 * log

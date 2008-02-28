@@ -12,6 +12,7 @@ or from the interpreter using
     >>> interactive()
 
 """
+__docformat__ = 'plaintext'
 
 import sys
 import math

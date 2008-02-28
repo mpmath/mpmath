@@ -1,3 +1,5 @@
+""" Provides varios conversation functions for numerals.
+"""
 from floatop import *
 from constants import *
 

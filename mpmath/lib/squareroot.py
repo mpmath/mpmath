@@ -2,6 +2,7 @@
 This module provides functions for computing approximate square roots
 (in fixed-point or floating-point form) of positive real numbers.
 """
+__docformat__ = 'plaintext'
 
 from util import *
 from floatop import *

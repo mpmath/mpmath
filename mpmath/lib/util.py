@@ -1,3 +1,4 @@
+__docformat__ = 'plaintext'
 import math
 
 # Same as standard Python float

@@ -1,4 +1,5 @@
-"""
+"""Provides various complex valued functions.
+
 Arithmetic operations and functions on complex numbers, represented on
 rectangular form as tuples of real floating-point numbers.
 

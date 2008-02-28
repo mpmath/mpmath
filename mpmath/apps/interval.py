@@ -1,3 +1,5 @@
+""" Defines mpi class for interval arithmetic.
+"""
 from mpmath.mptypes import *
 
 class mpi:

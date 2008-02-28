@@ -1,4 +1,5 @@
-"""
+"""Provides integration using quadratures.
+
 The implementation of the tanh-sinh algorithm is based on the
 description given in Borwein, Bailey & Girgensohn, "Experimentation
 in Mathematics - Computational Paths to Discovery", A K Peters,
@@ -8,6 +9,7 @@ Various documents are available online, e.g.
 http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
 http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
 """
+__docformat__ = 'plaintext'
 
 from mpmath.mptypes import *
 
