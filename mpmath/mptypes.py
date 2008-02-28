@@ -69,6 +69,10 @@ def convert_lossless(x):
         return mpc(x)
     if isinstance(x, basestring):
         return make_mpf(from_str(x, g_prec, g_rounding))
+    if hasattr(x, '__mpfval__'):
+        return make_mpf(x.__mpfval__())
+    if hasattr(x, '__mpcval__'):
+        return mpc(*x.__mpcval__())
     raise TypeError("cannot create mpf from " + repr(x))
 
 def mpf_convert_rhs(x):
@@ -76,6 +80,8 @@ def mpf_convert_rhs(x):
         return make_mpf(from_int(x, bitcount(x), round_floor))
     if isinstance(x, float):
         return make_mpf(from_float(x, 53, round_floor))
+    if hasattr(x, '__mpfval__'):
+        return make_mpf(x.__mpfval__())
     return NotImplemented
 
 def mpf_convert_lhs(x):
@@ -85,6 +91,8 @@ def mpf_convert_lhs(x):
         return make_mpf(from_int(x, bitcount(x), round_floor))
     if isinstance(x, float):
         return make_mpf(from_float(x, 53, round_floor))
+    if hasattr(x, '__mpfval__'):
+        return make_mpf(x.__mpfval__())
     return NotImplemented
 
 
@@ -311,6 +319,8 @@ class mpc(mpnumeric):
         s = object.__new__(cls)
         if isinstance(real, complex_types):
             real, imag = real.real, real.imag
+        elif hasattr(real, "__mpcval__"):
+            real, imag = real.__mpcval__()
         s.real = mpf(real)
         s.imag = mpf(imag)
         return s
@@ -467,6 +477,11 @@ def ceil(x):
     x = convert_lossless(x)
     return make_mpf(fceil(x.val, g_prec, g_rounding))
 
+def ldexp(x, n):
+    """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
+    x = convert_lossless(x)
+    return make_mpf(fshift_exact(x.val, n))
+
 # Since E-functions simply map reals to reals and complexes to complexes, we
 # can construct all of them the same way (unlike log, sqrt, etc)
 def ef(name, real_f, complex_f, doc):
@@ -571,8 +586,8 @@ def atan(x):
 def atan2(y,x):
     """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
     the signs of y and x. (Defined for real x and y only.)"""
-    x = mpf(x)
-    y = mpf(y)
+    x = convert_lossless(x)
+    y = convert_lossless(y)
     if y < 0:
         return -atan2(-y, x)
     if not x and not y:
@@ -685,8 +700,7 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
     If none is given, both epsilons are set to 2**(-prec+m) where
     prec is the current working precision and m is a small integer.
     """
-    if not isinstance(t, mpnumeric):
-        t = convert_lossless(t)
+    t = convert_lossless(t)
     if abs_eps is None and rel_eps is None:
         rel_eps = abs_eps = make_mpf((1, -g_prec+4, 1))
     if abs_eps is None:
@@ -709,4 +723,5 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq"]
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
+           "ldexp"]

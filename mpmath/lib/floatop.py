@@ -183,7 +183,7 @@ def to_int(s, rounding=round_down):
     man, exp, bc = s
     if bc == -1:
         raise ValueError("cannot convert %s to int" % man)
-    if exp > 0:
+    if exp >= 0:
         return man << exp
     return rounding(man, -exp)
 
@@ -596,10 +596,12 @@ def fpow(s, n, prec, rounding):
     # operations are performed.
     prec2 = prec + 4*bitcount(n) + 4
     pm, pe, pbc = fone
-    while n:
+    while 1:
         if n & 1:
             pm, pe, pbc = from_man_exp(pm*man, pe+exp, prec2, rounding2)
             n -= 1
+            if not n:
+                break
         man, exp, bc = from_man_exp(man*man, exp+exp, prec2, rounding2)
         n = n // 2
 
