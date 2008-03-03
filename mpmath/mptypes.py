@@ -41,6 +41,24 @@ class context(type):
     def round_half_even(cls): cls._rounding = round_half_even
     def round_default(cls): cls._rounding = round_half_even
 
+from mpmath import *
+
+def setprec(n):
+    """Set global working precision (measured in bits)"""
+    mpf.prec = n
+
+def getprec():
+    """Return global working precision (measured in bits)"""
+    return mpf.prec
+
+def setdps(n):
+    """Set global working precision (measured in decimals)"""
+    mpf.dps = n
+
+def getdps():
+    """Return global working precision (measured in decimals)"""
+    return mpf.dps
+
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
@@ -724,4 +742,4 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-           "ldexp"]
+  "ldexp", "getprec", "setprec", "getdps", "setdps"]
