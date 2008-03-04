@@ -60,7 +60,7 @@ atests = [
   ('Multiplication (x*y)', 'x*y', 'x*y', 'fmul(x, y, prec, RF)'),
   ('Division (x/y)', 'x/y', 'x/y', 'fdiv(x, y, prec, RF)'),
   ('Square root (x^0.5)', 'x.sqrt()', 'sqrt(x)', 'fsqrt(x, prec, RF)'),
-  ('Integer power (x^42)', 'x**42', 'x**42', 'fpow(x, 42, prec, RF)'),
+  ('Integer power (x^42)', 'x**42', 'x**42', 'fpowi(x, 42, prec, RF)'),
 #  ('Exponential function (exp(x))', 'dmath.exp(x)', 'exp(x)', 'fexp(x, prec, RF)'),
 #  ('Natural logarithm (log(x))', 'dmath.log(x+1)', 'log(x)', 'flog(x, prec, RF)'),
 #  ('Sine (sin(x))', 'dmath.sin(x)', 'sin(x)', 'fsin(x, prec, RF)'),
@@ -69,7 +69,7 @@ atests = [
 #  ('Hyperbolic cosine (cosh(x))', 'dmath.cosh(x)', 'cosh(x)', 'fcosh(x, prec, RF)')
 ]
 
-slow = ["exp", "log", "sin", "tan", "cos"]
+slow = ["power", "exp", "log", "sin", "tan", "cos"]
 
 for op in atests:
     cases = [op[0]]
