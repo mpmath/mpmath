@@ -15,6 +15,8 @@
   robust
 * external classes can interoperate with mpf and mpc instances
   by defining __mpfval__ or __mpcval__ methods
+* defined setprec, getprec, setdps, getdps functions as an
+  alternative way to manage the working precision
 
 --0.6--
 Released January 13, 2008
