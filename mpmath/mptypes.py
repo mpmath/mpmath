@@ -465,6 +465,25 @@ clog2 = constant(flog2, "log 2")
 clog10 = constant(flog10, "log 10")
 catalan = constant(fcatalan, "Catalan's constant")
 
+def fraction(p, q):
+    """Given Python integers p, q, return a lazy mpf with value p/q.
+    The value is updated with the precision.
+
+        >>> mpf.dps = 15
+        >>> a = fraction(1,100)
+        >>> b = mpf(1)/100
+        >>> print a; print b
+        0.01
+        0.01
+        >>> mpf.dps = 30
+        >>> print a; print b
+        0.01
+        0.0100000000000000002081668171172
+        >>> mpf.dps = 15
+    """
+    return constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
+        '%s/%s' % (p, q))
+
 def sqrt(x):
     """For real x >= 0, returns the square root of x. For negative or
     complex x, returns the principal branch of the complex square root
@@ -743,4 +762,4 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-  "ldexp", "getprec", "setprec", "getdps", "setdps", "catalan"]
+  "ldexp", "getprec", "setprec", "getdps", "setdps", "catalan", "fraction"]
