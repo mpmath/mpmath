@@ -3,7 +3,7 @@ This module defines the mpf, mpc classes, and standard functions for
 operating with them.
 """
 __docformat__ = 'plaintext'
- 
+
 from lib import *
 
 int_types = (int, long)
