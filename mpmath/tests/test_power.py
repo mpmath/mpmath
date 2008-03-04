@@ -15,8 +15,8 @@ def test_pow_integer_direction():
             b = random.randint(2, 100)
             ab = a**b
             # note: could actually be exact, but that's very unlikely!
-            assert to_int(fpow(from_int(a), b, prec, round_down)) < ab
-            assert to_int(fpow(from_int(a), b, prec, round_up)) > ab
+            assert to_int(fpow(from_int(a), from_int(b), prec, round_down)) < ab
+            assert to_int(fpow(from_int(a), from_int(b), prec, round_up)) > ab
 
 
 def test_pow_epsilon_rounding():

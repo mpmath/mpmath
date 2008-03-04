@@ -286,19 +286,18 @@ class mpf(mpnumeric):
 
     def __pow__(s, t):
         if isinstance(t, int_types):
-            return make_mpf(fpow(s.val, t, g_prec, g_rounding))
+            return make_mpf(fpowi(s.val, t, g_prec, g_rounding))
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
                 return power(s, t)
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
-        if t.val == fhalf:
-            return sqrt(s)
-        man, exp, bc = t.val
-        if exp >= 0:
-            return make_mpf(fpow(s.val, man<<exp, g_prec, g_rounding))
-        return power(s, t)
+        try:
+            return make_mpf(fpow(s.val, t.val, g_prec, g_rounding))
+        except ValueError:
+            # Turns complex
+            return power(s, t)
 
     __radd__ = __add__
     __rmul__ = __mul__

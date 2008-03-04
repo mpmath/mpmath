@@ -628,7 +628,26 @@ negative_rounding = {
   round_half_even : round_half_even
 }
 
-def fpow(s, n, prec, rounding):
+def fpow(s, t, prec, rounding):
+    """Compute s**t. Raise ValueError if s is negative and t is
+    fractional."""
+    sman, sexp, sbc = s
+    tman, texp, tbc = t
+    if sman < 0 and texp < 0:
+        raise ValueError
+    if texp >= 0:
+        return fpowi(s, tman << texp, prec, rounding)
+    # s**(n/2) = sqrt(s)**n
+    if texp == -1:
+        if tman == 1:
+            return fsqrt(s, prec, rounding)
+        return fpowi(fsqrt(s, prec+10, rounding), tman, prec, rounding)
+    # General formula: s**t = exp(t*log(s))
+    # TODO: handle rounding direction of the logarithm carefully
+    c = flog(s, prec+10, rounding)
+    return fexp(fmul(t, c, prec+10, rounding), prec, rounding)
+
+def fpowi(s, n, prec, rounding):
     """Compute s**n, where n is an integer"""
     if s[2] == -1:
         if s == finf:
@@ -647,7 +666,7 @@ def fpow(s, n, prec, rounding):
     if n == 2: return fmul(s, s, prec, rounding)
     if n == -1: return fdiv(fone, s, prec, rounding)
     if n < 0:
-        inverse = fpow(s, -n, prec+5, reciprocal_rounding[rounding])
+        inverse = fpowi(s, -n, prec+5, reciprocal_rounding[rounding])
         return fdiv(fone, inverse, prec, rounding)
 
     man, exp, bc = s
@@ -783,7 +802,7 @@ def to_digits_exp(s, dps):
         tmp = fmul(tmp, flog2(expprec, RF), expprec, RF)
         tmp = fdiv(tmp, flog10(expprec, RF), expprec, RF)
         b = to_int(tmp)
-        s = fdiv(s, fpow(ften, b, bitprec, RF), bitprec, RF)
+        s = fdiv(s, fpowi(ften, b, bitprec, RF), bitprec, RF)
         man, exp, bc = s
         exponent = b
     else:
@@ -891,7 +910,7 @@ def from_str(x, prec, rounding):
     # note no factors of 5
     if abs(exp) > 400:
         s = from_int(man, prec+10, round_floor)
-        s = fmul(s, fpow(ften, exp, prec+10, round_floor), prec, rounding)
+        s = fmul(s, fpowi(ften, exp, prec+10, round_floor), prec, rounding)
     else:
         if exp >= 0:
             s = from_int(man * 10**exp, prec, rounding)
