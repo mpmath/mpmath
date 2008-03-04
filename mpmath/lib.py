@@ -1353,6 +1353,10 @@ def fexp(x, prec, rounding):
         if x == fninf:
             return fzero
         return x
+    # Fast handling e**n. TODO: the best cutoff depends on both the
+    # size of n and the precision.
+    if exp >= 0 and prec > 600:
+        return fpowi(fe(prec+10, round_floor), man<<exp, prec, rounding)
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
     t = make_fixed(x, prec2)

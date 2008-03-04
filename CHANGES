@@ -1,3 +1,21 @@
+--0.7-svn--
+* implemented Catalan's constant
+* fast computation of e and exp(n) when precision is extremely high
+* new functions diff and diffc for numerical differentiation
+* implemented the ldexp function for fast multiplication by 2**n
+* mpf uses rich comparison methods (contributed by Pearu Peterson)
+* epydoc-friendly docstrings (contributed by Pearu Peterson)
+* support creating mpf from float nan or inf
+* flattened package structure for easier inclusion in other projects
+* <mpf> * <int> is twice as fast
+* small speed improvement to <mpf> ** <int> (contributed by Mario
+  Pernici)
+* renamed lib.fpow -> lib.fpowi and implemented lib.fpow for general
+  real powers. <mpf> ** <mpf> should now be slightly faster and more
+  robust
+* external classes can interoperate with mpf and mpc instances
+  by defining __mpfval__ or __mpcval__ methods
+
 --0.6--
 Released January 13, 2008
 
