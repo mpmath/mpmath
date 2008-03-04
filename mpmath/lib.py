@@ -1186,6 +1186,9 @@ def fpi(prec, rounding):
     """Compute a floating-point approximation of pi"""
     return from_man_exp(pi_fixed(prec+5), -prec-5, prec, rounding)
 
+def fdegree(prec, rounding, _180=from_int(180)):
+    return fdiv(fpi(prec+5, round_floor), _180, prec, rounding)
+
 @constant_memo
 def log2_fixed(prec):
     return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
@@ -1199,6 +1202,52 @@ def log10_fixed(prec):
 
 def flog10(prec, rounding):
     return from_man_exp(log10_fixed(prec+5), -prec-5, prec, rounding)
+
+# TODO: use to speed up exp
+@constant_memo
+def e_fixed(prec):
+    a = 1 << prec
+    s = a << 1
+    n = 2
+    while a:
+        a //= n
+        s += a
+        n += 1
+    return s
+
+def fe(prec, rounding):
+    return from_man_exp(e_fixed(prec+15), -prec-15, prec, rounding)
+
+
+"""
+Catalan's constant is computed using Lupas's rapidly convergent series
+(listed on http://mathworld.wolfram.com/CatalansConstant.html)
+
+            oo
+            ___       n-1  8n     2                   3    2
+        1  \      (-1)    2   (40n  - 24n + 3) [(2n)!] (n!)
+  K =  ---  )     -----------------------------------------
+       64  /___               3               2
+                             n  (2n-1) [(4n)!]
+           n = 1
+"""
+
+# Note: actually computes 64*C
+@constant_memo
+def catalan_fixed(prec):
+    a = one = 1 << prec
+    s, t, n = 0, 1, 1
+    while t:
+        a *= 32 * n**3 * (2*n-1)
+        a //= (3-16*n+16*n**2)**2
+        t = a * (-1)**(n-1) * (40*n**2-24*n+3) // (n**3 * (2*n-1))
+        s += t
+        n += 1
+    return s
+
+def fcatalan(prec, rounding):
+    return from_man_exp(catalan_fixed(prec+15), -prec-15-6, prec, rounding)
+
 
 
 """
