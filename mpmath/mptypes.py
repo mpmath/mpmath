@@ -756,10 +756,42 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
         err = diff/abss
     return err <= rel_eps
 
+def nstr(x, n=6):
+    """Convert an mpf or mpc to a decimal string literal with n significant
+    digits. The small default value for n is chosen to make this function
+    useful for printing collections of numbers.
+
+    If x is a list or tuple, the function is applied to each element.
+    For unrecognized classes, this simply returns str(x).
+
+    There is also a companion function nprint that prints the string
+    instead of returning it.
+
+        >>> nstr([+pi, ldexp(1,-500)])
+        '[3.14159, 3.05494e-151]'
+        >>> print([+pi, ldexp(1,-500)])
+        [3.14159, 3.05494e-151]
+    """
+    if isinstance(x, list):
+        return "[%s]" % (", ".join(nstr(c, n) for c in x))
+    if isinstance(x, tuple):
+        return "(%s)" % (", ".join(nstr(c, n) for c in x))
+    if isinstance(x, mpf):
+        return to_str(x.val, n)
+    if isinstance(x, mpc):
+        return "(%s + %sj)" % (to_str(x.real.val, n), to_str(x.imag.val, n))
+    if isinstance(x, basestring):
+        return repr(x)
+    return str(x)
+
+def nprint(x, n=6):
+    """Print the result of nstr(x, n)."""
+    print nstr(x, n)
 
 
 __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-  "ldexp", "getprec", "setprec", "getdps", "setdps", "catalan", "fraction"]
+  "ldexp", "getprec", "setprec", "getdps", "setdps", "catalan", "fraction",
+  "nstr", "nprint"]

@@ -29,6 +29,12 @@ def polyroots(coeffs, maxsteps=20):
     complex numbers sorted by absolute value, and err is an estimate of
     the maximum error. The polynomial should be given as a list of
     coefficients.
+
+        >>> nprint(polyroots([24,-14,-1,1]), 4)
+        ([(2.0 + 8.968e-44j), (3.0 + 1.156e-33j), (-4.0 + 0.0j)], 5.921e-16)
+        >>> nprint(polyroots([2,3,4]))
+        ([(-0.375 + -0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
+
     """
     deg = len(coeffs) - 1
     # Must be monic
