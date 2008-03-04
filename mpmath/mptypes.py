@@ -270,6 +270,8 @@ class mpf(mpnumeric):
     def __mul__(s, t):
         if isinstance(t, mpf):
             return make_mpf(fmul(s.val, t.val, g_prec, g_rounding))
+        if isinstance(t, int_types):
+            return make_mpf(fmuli(s.val, t, g_prec, g_rounding))
         return s.binop(t, fmul)
 
     def __div__(s, t):

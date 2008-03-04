@@ -538,6 +538,23 @@ def fmul(s, t, prec, rounding):
     else:      bc += bctable[abs(man)>>bc]
     return normalize(man, sexp+texp, bc, prec, rounding)
 
+def fmuli(s, n, prec, rounding):
+    """Multiply by a Python integer."""
+    man, exp, bc = s
+    if bc == -1:
+        return fmul(s, from_int(n), prec, rounding)
+    if not n:
+        return fzero
+    man *= n
+    # Generally n will be small
+    try:
+        bc += bctable[abs(n)] - 4
+    except:
+        bc += bitcount(n) - 4
+    if bc < 4: bc = bctable[abs(man)]
+    else:      bc += bctable[abs(man)>>bc]
+    return normalize(man, exp, bc, prec, rounding)
+
 def fshift_exact(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""
     man, exp, bc = s
