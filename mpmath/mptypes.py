@@ -9,7 +9,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
   "ldexp", "catalan", "fraction", "nstr", "nprint", "mp", "extraprec",
-  "extradps", "workprec", "workdps"]
+  "extradps", "workprec", "workdps", "eps"]
 
 from lib import *
 
@@ -125,7 +125,9 @@ def extraprec(n, normalize_output=False):
 
     extraprec(n)(f) returns a decorated version of the function f
     that increases the working precision by n bits before execution,
-    and restores the precision afterwards.
+    and restores the parent precision afterwards. With
+    normalize_output=True, it rounds the return value to the parent
+    precision.
     """
     return PrecisionManager(lambda p: p + n, None, normalize_output)
 
@@ -148,7 +150,8 @@ def workprec(n, normalize_output=False):
 
     workprec(n)(f) returns a decorated version of the function f
     that sets the precision to n bits before execution,
-    and restores the precision afterwards.
+    and restores the precision afterwards. With normalize_output=True,
+    it rounds the return value to the parent precision.
     """
     return PrecisionManager(lambda p: n, None, normalize_output)
 
@@ -159,38 +162,11 @@ def workdps(n, normalize_output=False):
     """
     return PrecisionManager(None, lambda d: n, normalize_output)
 
-class context(type):
-
-    def set_rounding(cls, val):
-        global g_rounding; g_rounding = val
-
-    _rounding = property(lambda cls: g_rounding, set_rounding)
-
-    def set_prec(self, n):
-        global g_prec, g_dps
-        g_prec = max(1, int(n))
-        g_dps = max(1, int(round(int(n)/LOG2_10)-1))
-    prec = property(lambda cls: g_prec, set_prec)
-
-    def set_dps(self, n):
-        global g_prec, g_dps
-        g_prec = max(1, int(round((int(n)+1)*LOG2_10)))
-        g_dps = max(1, int(n))
-    dps = property(lambda cls: g_dps, set_dps)
-
-    def round_up(cls): cls._rounding = round_up
-    def round_down(cls): cls._rounding = round_down
-    def round_floor(cls): cls._rounding = round_floor
-    def round_ceiling(cls): cls._rounding = round_ceiling
-    def round_half_down(cls): cls._rounding = round_half_down
-    def round_half_up(cls): cls._rounding = round_half_up
-    def round_half_even(cls): cls._rounding = round_half_even
-    def round_default(cls): cls._rounding = round_half_even
-
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
     and an mpc if x is complex."""
+    __slots__ = []
     def __new__(cls, val):
         # TODO: should maybe normalize here
         if isinstance(val, cls):
@@ -501,7 +477,7 @@ class mpc(mpnumeric):
         if n == 1: return +s
         if n == -1: return 1/s
         if n == 2: return s*s
-        if isinstance(n, (int, long)) and n > 0:
+        if isinstance(n, int_types) and n > 0:
             # TODO: should increase working precision here
             w = mpc(1)
             while n:
@@ -553,7 +529,7 @@ class constant(mpf):
         return self.func(g_prec, g_rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, mpf.__str__(self))
+        return "<%s: %s~>" % (self.name, nstr(self))
 
 
 _180 = from_int(180, 10, round_floor)
@@ -565,6 +541,7 @@ euler = constant(fgamma, "Euler's constant gamma")
 clog2 = constant(flog2, "log 2")
 clog10 = constant(flog10, "log 10")
 catalan = constant(fcatalan, "Catalan's constant")
+eps = constant(lambda p, r: (1, -p+1, 1), "epsilon of working precision")
 
 def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.
