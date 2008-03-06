@@ -41,8 +41,8 @@ Debian users can ``apt-get`` mpmath; `package information <http://packages.debia
 After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
 
     >>> from mpmath import *
-    >>> setdps(50)
-    >>> print mpf(2) ** mpf('0.5')
+    >>> setdps(50)      # set working precision to 50 decimals
+    >>> print mpf(2) ** mpf('0.5')    # mpf is an arbitrary-precision float type
     1.4142135623730950488016887242096980785696718753769
     >>> print 2*pi
     6.2831853071795864769252867665590057683943387987502
@@ -149,22 +149,7 @@ The arithmetic operations ``+``, ``-``, ``*`` and ``/`` always round their resul
 
 Radix conversion and evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in bad cases.
 
-When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100).
-
-Similar comments apply when converting from binary to decimal. After performing an approximate radix conversion, the result is first truncated to remove long sequences of trailing 0's and 9's, and then rounded in the half-up direction.
-
-Compatibility
--------------
-
-The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and uses *half-even* rounding. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with half-even rounding on most systems.)
-
-This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath, which also uses half-even rounding by default. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, for two reasons:
-
-1) Hardware floats have a limited exponent range, as discussed below.
-
-2) Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like ``log`` and ``sin``, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin ``float`` multiplication was inaccurate, causing mpmath's comparative tests to fail.)
-
-3) Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)
+When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100). Similar comments apply when converting from binary to decimal: after performing an approximate radix conversion with slightly increased precision, the result is first truncated to remove long sequences of trailing 0's and 9's, and then rounded in the half-up direction to the desired number of decimal digits.
 
 Exponent range
 --------------
@@ -183,6 +168,19 @@ Or why not 1 googolplex::
 Some care may be necessary when working with extremely large numbers. Although arithmetic is safe, it is for example futile to attempt to compute ``exp`` of either of the above two numbers. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise ``OverflowError: long int too large to convert to int``.
 
 In some situations, it would be more convenient if mpmath would "round" extremely small numbers to 0 and extremely large numbers to ``inf``, and directly raise an exception or return ``nan`` if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.
+
+Compatibility
+-------------
+
+The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and uses *half-even* rounding. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with half-even rounding on most systems.)
+
+This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath, which also uses half-even rounding by default. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, for two reasons:
+
+1) Hardware floats have a limited exponent range, as discussed above. Numbers very close to the exponent limit may be rounded subnormally, meaning that they lose precision.
+
+2) Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like ``log`` and ``sin``, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin ``float`` multiplication was inaccurate, causing mpmath's comparative tests to fail.)
+
+3) Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)
 
 
 Working with mpmath numbers

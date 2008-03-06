@@ -1,4 +1,16 @@
 --0.7-svn--
+* the interface for switching precision and rounding modes has been
+  changed. instead of changing mpf.prec, there is a new object mp
+  which holds the precision as mp.prec. this change improves
+  flexibility in the implementation. it will unfortunately break
+  any existing code written for mpmath, but broken code should be
+  trivial to update.
+* the functions workprec, workdps, extraprec, extradps have been
+  introduced for switching precision in a more safe manner,
+  ensuring that the precision gets reset when finished. they can
+  be used with the 'with' statement available in python 2.5
+* implemented the functions nstr, nprint for printing numbers with
+  a small or custom number of digits
 * implemented Catalan's constant
 * fast computation of e and exp(n) when precision is extremely high
 * new functions diff and diffc for numerical differentiation
@@ -15,8 +27,6 @@
   robust
 * external classes can interoperate with mpf and mpc instances
   by defining __mpfval__ or __mpcval__ methods
-* defined setprec, getprec, setdps, getdps functions as an
-  alternative way to manage the working precision
 
 --0.6--
 Released January 13, 2008

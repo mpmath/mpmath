@@ -317,8 +317,8 @@ ul.auto-toc {
 </ul>
 </li>
 <li><a class="reference" href="#rounding" id="id7" name="id7">3.3&nbsp;&nbsp;&nbsp;Rounding</a></li>
-<li><a class="reference" href="#compatibility" id="id8" name="id8">3.4&nbsp;&nbsp;&nbsp;Compatibility</a></li>
-<li><a class="reference" href="#exponent-range" id="id9" name="id9">3.5&nbsp;&nbsp;&nbsp;Exponent range</a></li>
+<li><a class="reference" href="#exponent-range" id="id8" name="id8">3.4&nbsp;&nbsp;&nbsp;Exponent range</a></li>
+<li><a class="reference" href="#compatibility" id="id9" name="id9">3.5&nbsp;&nbsp;&nbsp;Compatibility</a></li>
 </ul>
 </li>
 <li><a class="reference" href="#working-with-mpmath-numbers" id="id10" name="id10">4&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a><ul class="auto-toc">
@@ -360,8 +360,8 @@ python setup.py install
 <p>After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; from mpmath import *
-&gt;&gt;&gt; setdps(50)
-&gt;&gt;&gt; print mpf(2) ** mpf('0.5')
+&gt;&gt;&gt; setdps(50)      # set working precision to 50 decimals
+&gt;&gt;&gt; print mpf(2) ** mpf('0.5')    # mpf is an arbitrary-precision float type
 1.4142135623730950488016887242096980785696718753769
 &gt;&gt;&gt; print 2*pi
 6.2831853071795864769252867665590057683943387987502
@@ -486,21 +486,10 @@ prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 <p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic. The three <em>nearby</em> rounding modes generally provide greater accuracy, but are on the other hand slower. Half-even rounding, which mpmath uses by default, is both the most accurate and the slowest method.</p>
 <p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> always round their results <em>correctly</em>; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don't round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
 <p>Radix conversion and evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in bad cases.</p>
-<p>When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100).</p>
-<p>Similar comments apply when converting from binary to decimal. After performing an approximate radix conversion, the result is first truncated to remove long sequences of trailing 0's and 9's, and then rounded in the half-up direction.</p>
+<p>When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100). Similar comments apply when converting from binary to decimal: after performing an approximate radix conversion with slightly increased precision, the result is first truncated to remove long sequences of trailing 0's and 9's, and then rounded in the half-up direction to the desired number of decimal digits.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id8" id="compatibility" name="compatibility">3.4&nbsp;&nbsp;&nbsp;Compatibility</a></h2>
-<p>The floating-point arithmetic provided by processors that conform to the IEEE 754 <em>double precision</em> standard has a precision of 53 bits and uses <em>half-even</em> rounding. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python <tt class="docutils literal"><span class="pre">float</span></tt> type corresponds to an IEEE double with half-even rounding on most systems.)</p>
-<p>This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath, which also uses half-even rounding by default. Thus, under normal circumstances, mpmath should produce identical results to Python <tt class="docutils literal"><span class="pre">float</span></tt> operations. This is not always true, for two reasons:</p>
-<ol class="arabic simple">
-<li>Hardware floats have a limited exponent range, as discussed below.</li>
-<li>Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like <tt class="docutils literal"><span class="pre">log</span></tt> and <tt class="docutils literal"><span class="pre">sin</span></tt>, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin <tt class="docutils literal"><span class="pre">float</span></tt> multiplication was inaccurate, causing mpmath's comparative tests to fail.)</li>
-<li>Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)</li>
-</ol>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id9" id="exponent-range" name="exponent-range">3.5&nbsp;&nbsp;&nbsp;Exponent range</a></h2>
+<h2><a class="toc-backref" href="#id8" id="exponent-range" name="exponent-range">3.4&nbsp;&nbsp;&nbsp;Exponent range</a></h2>
 <p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory. Mpmath can for example hold an approximation of a large Mersenne prime:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; print (mpf(2)**32582657 - 1)
@@ -514,6 +503,16 @@ prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 </pre>
 <p>Some care may be necessary when working with extremely large numbers. Although arithmetic is safe, it is for example futile to attempt to compute <tt class="docutils literal"><span class="pre">exp</span></tt> of either of the above two numbers. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
 <p>In some situations, it would be more convenient if mpmath would &quot;round&quot; extremely small numbers to 0 and extremely large numbers to <tt class="docutils literal"><span class="pre">inf</span></tt>, and directly raise an exception or return <tt class="docutils literal"><span class="pre">nan</span></tt> if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="compatibility" name="compatibility">3.5&nbsp;&nbsp;&nbsp;Compatibility</a></h2>
+<p>The floating-point arithmetic provided by processors that conform to the IEEE 754 <em>double precision</em> standard has a precision of 53 bits and uses <em>half-even</em> rounding. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python <tt class="docutils literal"><span class="pre">float</span></tt> type corresponds to an IEEE double with half-even rounding on most systems.)</p>
+<p>This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath, which also uses half-even rounding by default. Thus, under normal circumstances, mpmath should produce identical results to Python <tt class="docutils literal"><span class="pre">float</span></tt> operations. This is not always true, for two reasons:</p>
+<ol class="arabic simple">
+<li>Hardware floats have a limited exponent range, as discussed above. Numbers very close to the exponent limit may be rounded subnormally, meaning that they lose precision.</li>
+<li>Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like <tt class="docutils literal"><span class="pre">log</span></tt> and <tt class="docutils literal"><span class="pre">sin</span></tt>, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin <tt class="docutils literal"><span class="pre">float</span></tt> multiplication was inaccurate, causing mpmath's comparative tests to fail.)</li>
+<li>Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)</li>
+</ol>
 </div>
 </div>
 <div class="section">
