@@ -17,8 +17,8 @@ ys = [(random()-1) * 10**randint(-140, 140) for x in range(N)]
 ys[int(N*0.8):] = xs[int(N*0.8):]
 
 def test_double_compatibility():
-    mpf.prec = 53
-    mpf.round_default()
+    mp.prec = 53
+    mp.rounding = 'default'
     for x, y in zip(xs, ys):
         mpx = mpf(x)
         mpy = mpf(y)
@@ -43,13 +43,13 @@ def test_sqrt():
     # this fails quite often. it appers to be float
     # that rounds the wrong way, not mpf
     fail = 0
-    mpf.prec = 53
-    mpf.round_default()
+    mp.prec = 53
+    mp.rounding = 'default'
     for x in xs:
         x = abs(x)
-        mpf.prec = 100
+        mp.prec = 100
         mp_high = mpf(x)**0.5
-        mpf.prec = 53
+        mp.prec = 53
         mp_low = mpf(x)**0.5
         fp = x**0.5
         assert abs(mp_low-mp_high) <= abs(fp-mp_high)

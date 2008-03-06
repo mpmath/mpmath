@@ -1,7 +1,7 @@
 from mpmath import *
 
 def test_interval_identity():
-    mpf.dps = 15
+    mp.dps = 15
     assert mpi(2) == mpi(2, 2)
     assert mpi(2) != mpi(-2, 2)
     assert mpi(-1, 1) == mpi(-1, 1)
@@ -23,16 +23,16 @@ def test_interval_identity():
     assert not (3 in mpi(-inf, 0))
 
 def test_interval_arithmetic():
-    mpf.dps = 15
+    mp.dps = 15
     assert mpi(2) + mpi(3,4) == mpi(5,6)
     assert mpi(1, 2)**2 == mpi(1, 4)
     assert mpi(1) + mpi(0, 1e-50) == mpi(1, mpf('1.0000000000000002'))
     x = 1 / (1 / mpi(3))
     assert x.a < 3 < x.b
     x = mpi(2) ** mpi(0.5)
-    mpf.dps += 5
+    mp.dps += 5
     sq = sqrt(2)
-    mpf.dps -= 5
+    mp.dps -= 5
     assert x.a < sq < x.b
     assert mpi(1) / mpi(1, inf)
     assert mpi(2, 3) / inf == mpi(0, 0)

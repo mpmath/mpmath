@@ -4,14 +4,160 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
+  "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
+  "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
+  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
+  "ldexp", "catalan", "fraction", "nstr", "nprint", "mp", "extraprec",
+  "extradps", "workprec", "workdps"]
+
 from lib import *
 
 int_types = (int, long)
 
-# These properties are currently stored globally
-g_prec = 53
-g_dps = 15
-g_rounding = round_half_even
+rounding_table = {
+  'floor' : round_floor,
+  'ceiling' : round_ceiling,
+  'down' : round_down,
+  'up' : round_up,
+  'half-down' : round_half_down,
+  'half-up' : round_half_up,
+  'half-even' : round_half_even,
+  'default' : round_half_even
+}
+
+reverse_rounding_table = {
+  round_floor : 'floor',
+  round_ceiling : 'ceiling',
+  round_down : 'down',
+  round_up : 'up',
+  round_half_down : 'half-down',
+  round_half_up : 'half-up',
+  round_half_even : 'half-even'
+}
+
+class Context(object):
+
+    def __repr__(self):
+        lines = ["Mpmath settings:",
+            ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
+            ("  mp.dps = %s" % self.dps).ljust(30) + "[default: 15]",
+            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'half-even']"]
+        return "\n".join(lines)
+
+    def default(self):
+        global g_prec, g_dps, g_rounding
+        g_prec = 53
+        g_dps = 15
+        g_rounding = round_half_even
+
+    def set_prec(self, n):
+        global g_prec, g_dps
+        g_prec = max(1, int(n))
+        g_dps = max(1, int(round(int(n)/LOG2_10)-1))
+
+    def set_dps(self, n):
+        global g_prec, g_dps
+        g_prec = max(1, int(round((int(n)+1)*LOG2_10)))
+        g_dps = max(1, int(n))
+
+    def set_rounding(self, s):
+        global g_rounding
+        try:
+            g_rounding = rounding_table[s]
+        except KeyError:
+            raise ValueError(("unknown rounding mode: %s.\n" % s) + 
+                "Value must be one of: %r" % rounding_table.keys())
+
+    prec = property(lambda self: g_prec, set_prec)
+    dps = property(lambda self: g_dps, set_dps)
+    rounding = property(lambda self: reverse_rounding_table[g_rounding], set_rounding)
+
+mp = Context()
+mp.default()
+
+
+class PrecisionManager:
+
+    def __init__(self, precfun, dpsfun, normalize_output=False):
+        self.precfun = precfun
+        self.dpsfun = dpsfun
+        self.normalize_output = normalize_output
+
+    def __call__(self, f):
+        def g(*args, **kwargs):
+            orig = mp.prec
+            try:
+                if self.precfun:
+                    mp.prec = self.precfun(mp.prec)
+                else:
+                    mp.dps = self.dpsfun(mp.dps)
+                if self.normalize_output:
+                    return +f(*args, **kwargs)
+                else:
+                    return f(*args, **kwargs)
+            finally:
+                mp.prec = orig
+        g.__name__ = f.__name__
+        g.__doc__ = f.__doc__
+        return g
+
+    def __enter__(self):
+        self.orig_prec = mp.prec
+        if self.precfun:
+            mp.prec = self.precfun(mp.prec)
+        else:
+            mp.dps = self.dpsfun(mp.dps)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        mp.prec = self.orig_prec
+        return False
+
+def extraprec(n, normalize_output=False):
+    """
+    The block
+
+        with extraprec(n):
+            <code>
+
+    increases the precision n bits, executes <code>, and then
+    restores the precision.
+
+    extraprec(n)(f) returns a decorated version of the function f
+    that increases the working precision by n bits before execution,
+    and restores the precision afterwards.
+    """
+    return PrecisionManager(lambda p: p + n, None, normalize_output)
+
+def extradps(n, normalize_output=False):
+    """
+    This function is analogous to extraprec (see documentation)
+    but changes the decimal precision instead of the number of bits.
+    """
+    return PrecisionManager(None, lambda d: d + n, normalize_output)
+
+def workprec(n, normalize_output=False):
+    """
+    The block
+
+        with workprec(n):
+            <code>
+
+    sets the precision to n bits, executes <code>, and then restores
+    the precision.
+
+    workprec(n)(f) returns a decorated version of the function f
+    that sets the precision to n bits before execution,
+    and restores the precision afterwards.
+    """
+    return PrecisionManager(lambda p: n, None, normalize_output)
+
+def workdps(n, normalize_output=False):
+    """
+    This function is analogous to workprec (see documentation)
+    but changes the decimal precision instead of the number of bits.
+    """
+    return PrecisionManager(None, lambda d: n, normalize_output)
 
 class context(type):
 
@@ -40,24 +186,6 @@ class context(type):
     def round_half_up(cls): cls._rounding = round_half_up
     def round_half_even(cls): cls._rounding = round_half_even
     def round_default(cls): cls._rounding = round_half_even
-
-from mpmath import *
-
-def setprec(n):
-    """Set global working precision (measured in bits)"""
-    mpf.prec = n
-
-def getprec():
-    """Return global working precision (measured in bits)"""
-    return mpf.prec
-
-def setdps(n):
-    """Set global working precision (measured in decimals)"""
-    mpf.dps = n
-
-def getdps():
-    """Return global working precision (measured in decimals)"""
-    return mpf.dps
 
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
@@ -117,36 +245,9 @@ def mpf_convert_lhs(x):
 class mpf(mpnumeric):
     """An mpf instance holds a real-valued floating-point number. mpf:s
     work analogously to Python floats, but support arbitrary-precision
-    arithmetic. The mpf class has two properties 'dps' and 'prec' which
-    respectively hold the working precision as measured in decimal
-    digits and in bits. (The default is 15 digits / 53 bits, the same
-    as Python floats.) For example, this increases precision by 10
-    bits:
+    arithmetic."""
 
-        mpf.prec += 10
-
-    The global working precision controls the precision at which all
-    arithmetic operations on mpf:s is carried out. Directed rounding is
-    also (partially) implemented; all calculations will be rounded up
-    after calling
-
-        mpf.round_up()
-
-    mpf.round_half_even() is the default rounding.
-
-    An mpf is represented internally as a tuple of integers (man, exp,
-    bc) where man is the mantissa, exp is the exponent and bc is the
-    number of bits in the mantissa (bc <= mpf.prec if the number is
-    normalized to the current working precision). Mathematically, that
-    means the mpf x has the value x = man * 2**exp. The components can
-    be accessed using the .val property of an mpf.
-
-    A useful difference between mpf:s and Python floats is that
-    operations on mpf:s that mathematically produce complex numbers
-    (like mpf(-1)**0.5) return mpc:s instead of raising exceptions.
-    """
-
-    __metaclass__ = context
+    #__metaclass__ = context
     __slots__ = ['val']
 
     def __new__(cls, val=fzero):
@@ -469,17 +570,17 @@ def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.
     The value is updated with the precision.
 
-        >>> mpf.dps = 15
+        >>> mp.dps = 15
         >>> a = fraction(1,100)
         >>> b = mpf(1)/100
         >>> print a; print b
         0.01
         0.01
-        >>> mpf.dps = 30
+        >>> mp.dps = 30
         >>> print a; print b
         0.01
         0.0100000000000000002081668171172
-        >>> mpf.dps = 15
+        >>> mp.dps = 15
     """
     return constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
         '%s/%s' % (p, q))
@@ -547,37 +648,35 @@ def tan(x):
         return make_mpf(ftan(x.val, g_prec, g_rounding))
     # the complex division can cause enormous cancellation.
     # TODO: handle more robustly
-    mpf.prec += 20
+    mp.prec += 20
     t = sin(x) / cos(x)
-    mpf.prec -= 20
+    mp.prec -= 20
     return +t
 
 def tanh(x):
     """Returns the hyperbolic tangent of x."""
     x = convert_lossless(x)
-    oldprec = mpf.prec
+    oldprec = mp.prec
     a = abs(x)
-    mpf.prec += 10
+    mp.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        if high < (-(mpf.prec-10) * 0.3):
+        if high < (-(mp.prec-10) * 0.3):
             return x - (x**3)/3 + 2*(x**5)/15
-        mpf.prec += (-high)
+        mp.prec += (-high)
     a = exp(2*x)
     t = (a-1)/(a+1)
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +t
 
+@extraprec(5)
 def arg(x):
     """Returns the complex argument (phase) of x. The returned value is
     an mpf instance. The argument is here defined to satisfy
     -pi < arg(x) <= pi. On the negative real half-axis, it is taken to
     be +pi."""
     x = mpc(x)
-    mpf.prec += 5
-    t = atan2(x.imag, x.real)
-    mpf.prec -= 5
-    return +t
+    return atan2(x.imag, x.real)
 
 def log(x, b=None):
     """Returns the base-b logarithm of x. If b is unspecified, return
@@ -588,9 +687,9 @@ def log(x, b=None):
     is complex. The principal branch of the complex logarithm is chosen,
     for which Im(log(x)) = -pi < arg(x) <= pi. """
     if b is not None:
-        mpf.prec += 3
+        mp.prec += 3
         a = log(x) / log(b)
-        mpf.prec -= 3
+        mp.prec -= 3
         return +a
     x = convert_lossless(x)
     if not x:
@@ -600,13 +699,11 @@ def log(x, b=None):
     else:
         return mpc(log(abs(x)), arg(x))
 
+@extraprec(10, normalize_output=True)
 def power(x, y):
     """Returns x**y = exp(y*log(x)) for real or complex x and y."""
     # TODO: better estimate for extra precision needed
-    mpf.prec += 10
-    t = exp(y * log(x))
-    mpf.prec -= 10
-    return +t
+    return exp(y * log(x))
 
 def atan(x):
     """Returns the inverse tangent of x."""
@@ -616,9 +713,9 @@ def atan(x):
     # TODO: maybe get this to agree with Python's cmath atan about the
     # branch to choose on the imaginary axis
     # TODO: handle cancellation robustly
-    mpf.prec += 10
+    mp.prec += 10
     t = (0.5j)*(log(1-1j*x) - log(1+1j*x))
-    mpf.prec -= 10
+    mp.prec -= 10
     return +t
 
 def atan2(y,x):
@@ -631,25 +728,23 @@ def atan2(y,x):
     if not x and not y:
         return mpf(0)
     if y > 0 and x == 0:
-        mpf.prec += 2
+        mp.prec += 2
         t = pi/2
-        mpf.prec -= 2
+        mp.prec -= 2
         return t
-    mpf.prec += 2
+    mp.prec += 2
     if x > 0:
         a = atan(y/x)
     else:
         a = pi - atan(-y/x)
-    mpf.prec -= 2
+    mp.prec -= 2
     return +a
 
 # TODO: robustly deal with cancellation in all of the following functions
 
+@extraprec(10, normalize_output=True)
 def _asin_complex(z):
-    mpf.prec += 10
-    t = -1j * log(1j * z + sqrt(1 - z*z))
-    mpf.prec -= 10
-    return +t
+    return -1j * log(1j * z + sqrt(1 - z*z))
 
 def asin(x):
     """Returns the inverse sine of x. Outside the range [-1, 1], the
@@ -661,9 +756,9 @@ def asin(x):
     return _asin_complex(x)
 
 def _acos_complex(z):
-    mpf.prec += 10
+    mp.prec += 10
     t = pi/2 + 1j * log(1j * z + sqrt(1 - z*z))
-    mpf.prec -= 10
+    mp.prec -= 10
     return +t
 
 def acos(x):
@@ -679,50 +774,47 @@ def asinh(x):
     """Returns the inverse hyperbolic sine of x. For complex x, the
     result is the principal branch value of log(x + sqrt(1 + x**2))."""
     x = convert_lossless(x)
-    oldprec = mpf.prec
+    oldprec = mp.prec
     a = abs(x)
-    mpf.prec += 10
+    mp.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        if high < (-(mpf.prec-10) * 0.3):
+        if high < (-(mp.prec-10) * 0.3):
             return x - (x**3)/6 + 3*(x**5)/40
-        mpf.prec += (-high)
+        mp.prec += (-high)
     t = log(x + sqrt(x**2 + 1))
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +t
 
+@extraprec(10, normalize_output=True)
 def acosh(x):
     """Returns the inverse hyperbolic cosine of x. The value is
     given by log(x + sqrt(1 + x**2)), where the principal branch is
     used when the result is complex."""
     x = convert_lossless(x)
-    mpf.prec += 10
-    t = log(x + sqrt(x-1)*sqrt(x+1))
-    mpf.prec -= 10
-    return +t
+    return log(x + sqrt(x-1)*sqrt(x+1))
 
 def atanh(x):
     """Returns the inverse hyperbolic tangent of x. Outside the range
     [-1, 1], the result is complex and defined as the principal branch
     value of (log(1+x) - log(1-x))/2."""
     x = convert_lossless(x)
-    oldprec = mpf.prec
+    oldprec = mp.prec
     a = abs(x)
-    mpf.prec += 10
+    mp.prec += 10
     high = a.exp + a.bc
     if high < -10:
-        #print mpf.prec, x, x-(x**3)/3+(x**5)/5
-        if high < (-(mpf.prec-10) * 0.3):
+        #print mp.prec, x, x-(x**3)/3+(x**5)/5
+        if high < (-(mp.prec-10) * 0.3):
             return x - (x**3)/3 + (x**5)/5
-        mpf.prec += (-high)
+        mp.prec += (-high)
     t = 0.5*(log(1+x)-log(1-x))
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +t
 
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""
-    return make_mpf(frand(mpf.prec))
-
+    return make_mpf(frand(mp.prec))
 
 def almosteq(s, t, rel_eps=None, abs_eps=None):
     """
@@ -787,11 +879,3 @@ def nstr(x, n=6):
 def nprint(x, n=6):
     """Print the result of nstr(x, n)."""
     print nstr(x, n)
-
-
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
-  "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
-  "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-  "ldexp", "getprec", "setprec", "getdps", "setdps", "catalan", "fraction",
-  "nstr", "nprint"]

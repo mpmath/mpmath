@@ -45,14 +45,6 @@ def transform(f, a, b):
         return C * f(D + C*x)
     return g
 
-def smallstr(f):
-    """Represent x as a string with just a few digits"""
-    prec = mpf.prec
-    mpf.dps = 5
-    s = str(f)
-    mpf.prec = prec
-    return s
-
 
 #----------------------------------------------------------------------
 # Tanh-sinh (doubly exponential) quadrature
@@ -93,8 +85,9 @@ def TS_node(k, h, prec):
         x[k] = tanh(pi/2 * sinh(k*h))
         w[k] = pi/2 * cosh(k*h) / cosh(pi/2 sinh(k*h))**2
     """
-    oldprec = mpf.prec; mpf.prec = prec
-    mpf.round_up()
+    oldprec = mp.prec
+    mp.prec = prec
+    mp.rounding = 'up'
     t = mpf(k) * h
     # We only need to calculate one exponential
     a = exp(t); ar = 1/a
@@ -102,8 +95,8 @@ def TS_node(k, h, prec):
     b = exp((pi * sinht) / 2); br = 1/b
     sinhb, coshb = (b-br)/2, (b+br)/2
     x, w = sinhb/coshb, (pi/2)*cosht/coshb**2
-    mpf.round_default()
-    mpf.prec = oldprec
+    mp.rounding = 'default'
+    mp.prec = oldprec
     return x, w
 
 TS_cache = {}
@@ -128,7 +121,7 @@ def TS_nodes(prec, m, verbose=False):
             # note: the number displayed is rather arbitrary. should
             # figure out how to print something that looks more like a
             # percentage
-            print "Calculating nodes:", smallstr(-log(diff, 10) / prec)
+            print "Calculating nodes:", nstr(-log(diff, 10) / prec)
         xs.append(x)
         ws.append(w)
     TS_cache[(prec, m)] = (xs, ws)
@@ -155,7 +148,7 @@ def TS_eval(f, nodes, target_prec, working_prec, m, verbose=False):
         if k > 2:
             err = TS_estimate_error(res, target_prec, eps)
             if verbose:
-                print "Estimated error:", smallstr(err)
+                print "Estimated error:", nstr(err)
             if err <= eps:
                 break
     return +res[-1], TS_estimate_error(res, target_prec, eps)
@@ -177,7 +170,7 @@ def TS_adaptive(f, target_prec, working_prec, min_level, max_level, verbose):
             return s, err
     if verbose:
         print "Failed to reach full accuracy. Estimated error:", \
-            smallstr(err)
+            nstr(err)
     return s, err
 
 
@@ -197,7 +190,7 @@ def quadts(f, a, b, **options):
 
     target_prec
         The number of accurate bits to aim for in the result. If not
-        specified, the current working precision mpf.prec is used.
+        specified, the current working precision mp.prec is used.
 
     working_prec
         Precision to use when evaluating the function. This should
@@ -221,13 +214,13 @@ def quadts(f, a, b, **options):
     """
 
     verbose = options.get('verbose', False)
-    target_prec = options.get('target_prec', mpf.prec)
+    target_prec = options.get('target_prec', mp.prec)
     working_prec = options.get('working_prec', target_prec + 20)
     min_level = options.get('min_level', TS_guess_level(target_prec))
     max_level = options.get('max_level', min_level + 2)
 
-    oldprec = mpf.prec
-    mpf.prec = working_prec
+    oldprec = mp.prec
+    mp.prec = working_prec
 
     # Handle double integrals
     if isinstance(a, tuple):
@@ -254,7 +247,7 @@ def quadts(f, a, b, **options):
     val, err = TS_adaptive(f, target_prec, working_prec,
         min_level, max_level, verbose=verbose)
 
-    mpf.prec = oldprec
+    mp.prec = oldprec
     if options.get('error', False):
         return val, err
     return val

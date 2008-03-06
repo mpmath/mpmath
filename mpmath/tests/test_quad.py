@@ -1,11 +1,11 @@
 from mpmath import *
 
 def ae(a, b):
-    return abs(a-b) < 10**(-mpf.dps+5)
+    return abs(a-b) < 10**(-mp.dps+5)
 
 def test_basic_integrals():
     for prec in [15, 30, 100]:
-        mpf.dps = prec
+        mp.dps = prec
         assert ae(quadts(lambda x: x**3 - 3*x**2, -2, 4), -12)
         assert ae(quadts(sin, 0, pi), 2)
         assert ae(quadts(sin, 0, 2*pi), 0)
@@ -15,7 +15,7 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 1/(1+x**2), -1, 1), pi/2)
         assert ae(quadts(lambda x: 1/(1+x**2), -inf, inf), pi)
         assert ae(quadts(lambda x: 2*sqrt(1-x**2), -1, 1), pi)
-    mpf.dps = 15
+    mp.dps = 15
 
 # Double integrals
 def test_double_trivial():
@@ -49,7 +49,7 @@ def xtest_double_7():
 # Bailey & Girgensohn
 def test_expmath_integrals():
     for prec in [15, 30, 50]:
-        mpf.dps = prec
+        mp.dps = prec
         assert ae(quadts(lambda x: x/sinh(x), 0, inf),                    pi**2 / 4)
         assert ae(quadts(lambda x: log(x)**2 / (1+x**2), 0, inf),         pi**3 / 8)
         assert ae(quadts(lambda x: (1+x**2)/(1+x**4), 0, inf),            pi/sqrt(2))
@@ -60,7 +60,7 @@ def test_expmath_integrals():
         assert ae(quadts(lambda x: x**2 / sin(x)**2, 0, pi/2),            pi*log(2))
         assert ae(quadts(lambda x: x**2/sqrt(exp(x)-1), 0, inf),          4*pi*(log(2)**2 + pi**2/12))
         assert ae(quadts(lambda x: x*exp(-x)*sqrt(1-exp(-2*x)), 0, inf),  pi*(1+2*log(2))/8)
-    mpf.dps = 15
+    mp.dps = 15
 
 # Do not reach full accuracy
 def xtest_expmath_fail():

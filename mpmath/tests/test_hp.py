@@ -158,12 +158,12 @@ tan_abi_imag = \
 
 def test_hp():
     for dps in precs:
-        mpf.dps = dps + 8
+        mp.dps = dps + 8
         aa = mpf(a)
         bb = mpf(b)
         a1000 = 1000*mpf(a)
         abi = mpc(aa, bb)
-        mpf.dps = dps
+        mp.dps = dps
         assert (sqrt(3) + pi/2).ae(aa)
         assert (e + 1/euler**2).ae(bb)
 

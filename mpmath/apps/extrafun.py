@@ -2,7 +2,8 @@
 Numerical implementations of special functions (gamma, ...)
 """
 
-from mpmath.mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin, power
+from mpmath.mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
+    power, extraprec, mp
 from mpmath.lib import make_fixed
 
 #from sympy import Rational
@@ -73,8 +74,8 @@ def _calc_spouge_coefficients(a, prec):
     # need to allocate extra bits to ensure full accuracy. The integer
     # part of the largest term has size ~= exp(a) or 2**(1.4*a)
     floatprec = prec + int(a*1.4)
-    oldprec = mpf.prec
-    mpf.prec = floatprec
+    oldprec = mp.prec
+    mp.prec = floatprec
 
     c = [0] * a
     b = exp(a-1)
@@ -86,7 +87,7 @@ def _calc_spouge_coefficients(a, prec):
         # Divide off e and k instead of computing exp and k! from scratch
         b = b / (e * k)
 
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return c
 
 # Cached lookup of coefficients
@@ -158,8 +159,8 @@ def gamma(x):
     """Returns the gamma function of x. Raises an exception if
     x == 0, -1, -2, -3, ... where the gamma function has a pole."""
 
-    oldprec = mpf.prec
-    mpf.prec += 4
+    oldprec = mp.prec
+    mp.prec += 4
 
     x = mpnumeric(x)
 
@@ -173,11 +174,11 @@ def gamma(x):
     if re < 0.25:
         if im == 0 and re == int(re):
             raise ZeroDivisionError, "gamma function pole"
-        mpf.prec += 4
+        mp.prec += 4
         g = pi / (sin(pi*x) * gamma(1-x))
     else:
         x -= 1
-        prec, a, c = _get_spouge_coefficients(mpf.prec + 8)
+        prec, a, c = _get_spouge_coefficients(mp.prec + 8)
         # TODO: figure out when we can just use Stirling's formula
         if isinstance(x, mpf) and x.exp >= 0:
             s = _spouge_sum(x.man << x.exp, prec, a, c)
@@ -186,10 +187,10 @@ def gamma(x):
         # TODO: higher precision may be needed here when the precision
         # and/or size of x are extremely large
         xpa = x + a
-        mpf.prec += 10
+        mp.prec += 10
         g = exp(log(xpa) * (x + 0.5) - xpa) * s
 
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +g
 
 
@@ -241,24 +242,19 @@ def _lower_gamma_series(are, aim, zre, zim, prec):
     sim = mpf((sim, -prec))
     return mpc(sre, sim)
 
+@extraprec(15, normalize_output=True)
 def lower_gamma(a, z):
     """Returns the lower incomplete gamma function gamma(a, z)"""
-    oldprec = mpf.prec
     # XXX: may need more precision
-    mpf.prec += 15
     a = mpc(a)
     z = mpc(z)
-    s = _lower_gamma_series(a.real, a.imag, z.real, z.imag, oldprec+15)
-    y = exp(log(z)*a) * exp(-z) * s / a
-    mpf.prec = oldprec
-    return +y
+    s = _lower_gamma_series(a.real, a.imag, z.real, z.imag, mp.prec)
+    return exp(log(z)*a) * exp(-z) * s / a
 
+@extraprec(10, normalize_output=True)
 def upper_gamma(a, z):
     """Returns the upper incomplete gamma function Gamma(a, z)"""
-    mpf.prec += 10
-    t = gamma(a) - lower_gamma(a, z)
-    mpf.prec -= 10
-    return +t
+    return gamma(a) - lower_gamma(a, z)
 
 def erf(x):
     """Returns the error function of x."""
@@ -270,8 +266,8 @@ def erf(x):
         if isinstance(x, mpf):
             return -erf(-x)
         return -erf(-w)
-    oldprec = mpf.prec
-    mpf.prec += 10
+    oldprec = mp.prec
+    mp.prec += 10
 
     y = lower_gamma(0.5, w**2) / sqrt(pi)
     if _re(x) == 0 and _im(x) < 0:
@@ -280,7 +276,7 @@ def erf(x):
     if isinstance(x, mpf):
         y = y.real
 
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +y
 
 
@@ -349,7 +345,7 @@ def _zeta_coefs(n):
 _log_cache = {}
 
 def _logk(k):
-    p = mpf.prec
+    p = mp.prec
     if k in _log_cache and _log_cache[k][0] >= p:
         return +_log_cache[k][1]
     else:
@@ -359,14 +355,14 @@ def _logk(k):
 
 def zeta(s):
     """Returns the Riemann zeta function of s."""
-    oldprec = mpf.prec
-    mpf.prec += 10
+    oldprec = mp.prec
+    mp.prec += 10
     s = mpnumeric(s)
     if _re(s) < 0:
         # Reflection formula (XXX: gets bad around the zeros)
         y = power(2, s) * power(pi, s-1) * sin(pi*s/2) * gamma(1-s) * zeta(1-s)
     else:
-        p = mpf.prec
+        p = mp.prec
         n = int((p + 2.28*abs(float(mpc(s).imag)))/2.54) + 3
         d = _zeta_coefs(n)
         if isinstance(s, mpf) and s == int(s):
@@ -380,5 +376,5 @@ def zeta(s):
             for k in range(n):
                 t += (-1)**k * mpf(d[k]-d[n]) * exp(-_logk(k+1)*s)
             y = (t / -d[n]) / (mpf(1) - exp(log(2)*(1-s)))
-    mpf.prec = oldprec
+    mp.prec = oldprec
     return +y

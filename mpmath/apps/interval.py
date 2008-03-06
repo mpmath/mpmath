@@ -3,7 +3,7 @@
 from mpmath.mptypes import *
 
 class mpi:
-    """Interval arithmetic class. Precision is controlled by mpf.prec."""
+    """Interval arithmetic class. Precision is controlled by mp.prec."""
 
     def __init__(self, a, b=None):
         if isinstance(a, mpi):
@@ -12,20 +12,20 @@ class mpi:
             return
         if b is None:
             b = a
-        mpf.round_down()
+        mp.rounding = 'down'
         self.a = mpf(a)
-        mpf.round_up()
+        mp.rounding = 'up'
         self.b = mpf(b)
-        mpf.round_default()
+        mp.rounding = 'default'
         if isnan(self.a) or isnan(self.b):
             self.a, self.b = -inf, inf
         assert self.a <= self.b, "endpoints must be properly ordered"
 
     @property
     def delta(self):
-        mpf.round_up()
+        mp.rounding = 'up'
         d = self.b - self.a
-        mpf.round_default()
+        mp.rounding = 'default'
         return d
 
     @property
@@ -33,9 +33,9 @@ class mpi:
         return (self.b + self.a) / 2
 
     def __repr__(self):
-        mpf.dps += 5
+        mp.dps += 5
         s = "[%s, %s]"% (str(self.a), str(self.b))
-        mpf.dps -= 5
+        mp.dps -= 5
         return s
 
     def __contains__(self, t):
@@ -51,22 +51,22 @@ class mpi:
 
     def __add__(s, t):
         t = mpi(t)
-        mpf.round_down()
+        mp.rounding = 'down'
         a = s.a + t.a
-        mpf.round_up()
+        mp.rounding = 'up'
         b = s.b + t.b
-        mpf.round_default()
+        mp.rounding = 'default'
         return mpi(a, b)
 
     __radd__ = __add__
 
     def __sub__(s, t):
         t = mpi(t)
-        mpf.round_down()
+        mp.rounding = 'down'
         a = s.a - t.b
-        mpf.round_up()
+        mp.rounding = 'up'
         b = s.b - t.a
-        mpf.round_default()
+        mp.rounding = 'default'
         return mpi(a, b)
 
     def __rsub__(s, t):
@@ -74,13 +74,13 @@ class mpi:
 
     def __mul__(s, t):
         t = mpi(t)
-        mpf.round_down()
+        mp.rounding = 'down'
         xd, yd, zd, wd = s.a*t.a, s.a*t.b, s.b*t.a, s.b*t.b
         a = min(xd,yd,zd,wd)
-        mpf.round_up()
+        mp.rounding = 'up'
         xu, yu, zu, wu = s.a*t.a, s.a*t.b, s.b*t.a, s.b*t.b
         b = max(xu,yu,zu,wu)
-        mpf.round_default()
+        mp.rounding = 'default'
         if True in map(isnan, [xd,yd,zd,wd,xu,yu,zu,wu]):
             return mpi(-inf, inf)
         return mpi(a, b)
@@ -91,11 +91,11 @@ class mpi:
         t = mpi(t)
         if 0 in t:
             return mpi(-inf, inf)
-        mpf.round_down()
+        mp.rounding = 'down'
         xd, yd, zd, wd = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
-        mpf.round_up()
+        mp.rounding = 'up'
         xu, yu, zu, wu = s.a/t.a, s.a/t.b, s.b/t.a, s.b/t.b
-        mpf.round_default()
+        mp.rounding = 'default'
         if True in map(isnan, [xd,yd,zd,wd,xu,yu,zu,wu]):
             return mpi(-inf, inf)
         a = min(xd,yd,zd,wd,xu,yu,zu,wu)
@@ -114,13 +114,13 @@ class mpi:
         if not isinstance(t, mpi) and 0 < s.a:
             n = int(t)
             if n == t:
-                mpf.round_down()
+                mp.rounding = 'down'
                 a = s.a ** n
                 b = s.b ** n
-                mpf.round_up()
+                mp.rounding = 'up'
                 c = s.a ** n
                 d = s.b ** n
-                mpf.round_default()
+                mp.rounding = 'default'
                 aa = min(a,b,c,d)
                 bb = max(a,b,c,d)
                 return mpi(aa, bb)
@@ -130,10 +130,10 @@ class mpi:
         else:
             assert s.a >= 1 and s.b >= 1
         assert s.a >= 0 and s.b >= 0
-        mpf.round_down()
+        mp.rounding = 'down'
         a = exp(t.a*log(s.a))
-        mpf.round_up()
+        mp.rounding = 'up'
         b = exp(t.b*log(s.b))
-        mpf.round_default()
+        mp.rounding = 'default'
         return mpi(a, b)
 

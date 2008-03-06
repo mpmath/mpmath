@@ -2,7 +2,7 @@ import math
 from mpmath import *
 
 def test_incomplete_gamma():
-    mpf.dps = 15
+    mp.dps = 15
     assert upper_gamma(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)
     assert erf(0) == 0
     assert erf(1).ae(0.84270079294971486934)
@@ -17,7 +17,7 @@ def test_incomplete_gamma():
     assert isinstance(erf(0j), mpc)
 
 def test_gamma():
-    mpf.dps = 15
+    mp.dps = 15
     assert gamma(0.25).ae(3.6256099082219083119)
     assert gamma(0.0001).ae(9999.4228832316241908)
     assert gamma(300).ae('1.0201917073881354535e612')
@@ -36,18 +36,18 @@ def test_gamma():
         fact *= i
     for dps in [170, 600]:
         fact = 1
-        mpf.dps = dps
+        mp.dps = dps
         for i in range(1, 105):
             assert gamma(i) == fact
             fact *= i
-    mpf.dps = 100
+    mp.dps = 100
     assert gamma(0.5).ae(sqrt(pi))
-    mpf.dps = 15
+    mp.dps = 15
     assert factorial(0) == 1
     assert factorial(3) == 6
 
 def test_zeta():
-    mpf.dps = 15
+    mp.dps = 15
     assert zeta(2).ae(pi**2 / 6)
     assert zeta(2.0).ae(pi**2 / 6)
     assert zeta(mpc(2)).ae(pi**2 / 6)
@@ -62,7 +62,7 @@ def test_zeta():
     assert zeta(mpc(0.5, 14.1347251417346937904)).ae(0)
     assert zeta(mpc(0.5, 21.0220396387715549926)).ae(0)
     assert zeta(mpc(0.5, 25.0108575801456887632)).ae(0)
-    mpf.dps = 50
+    mp.dps = 50
     im = '236.5242296658162058024755079556629786895294952121891237'
     assert zeta(mpc(0.5, im)).ae(0, 1e-46)
-    mpf.dps = 15
+    mp.dps = 15

@@ -26,9 +26,9 @@ def setprec(type, prec):
     if type == 'Decimal':
         getcontext().prec = prec
     else:
-        mpf.dps = prec
+        mp.dps = prec
         # change prec value to bits for mpfval use
-        prec = mpf.prec
+        prec = mp.prec
     return prec
 
 testcode = \

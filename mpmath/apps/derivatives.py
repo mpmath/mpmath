@@ -25,18 +25,18 @@ def diff(f, x, direction=0):
     To eliminate cancellation errors, diff temporarily doubles the
     working precision while calculating the function values.
     """
-    prec = getprec()
+    prec = mp.prec
     extra = 5
     h = ldexp(1, -prec-extra)
     try:
-        setprec(2*(prec+extra))
+        mp.prec = 2*(prec+extra)
         if   direction == 0:  return (f(x+h) - f(x-h)) * ldexp(1, prec+extra-1)
         elif direction == 1:  return (f(x+h) - f(x)) * ldexp(1, prec+extra)
         elif direction == -1: return (f(x) - f(x-h)) * ldexp(1, prec+extra)
         else:
             raise ValueError("invalid difference direction: %r" % direction)
     finally:
-        setprec(prec)
+        mp.prec = prec
 
 def diffc(f, x, n=1, radius=mpf(0.5)):
     """
@@ -54,9 +54,9 @@ def diffc(f, x, n=1, radius=mpf(0.5)):
     for a derivative that should be real may indicate a large numerical
     error.
     """
-    prec = getprec()
+    prec = mp.prec
     try:
-        setprec(prec + 10)
+        mp.prec += 10
         def g(t):
             rei = radius*exp(j*t)
             z = x + rei
@@ -64,5 +64,5 @@ def diffc(f, x, n=1, radius=mpf(0.5)):
         d = quadts(g, 0, 2*pi)
         return d * factorial(n) / (2*pi)
     finally:
-        setprec(prec)
+        mp.prec = prec
 

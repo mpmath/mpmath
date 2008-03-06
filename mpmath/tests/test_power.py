@@ -53,15 +53,15 @@ def test_pow_epsilon_rounding():
 
     for (inprec, outprec) in [(100, 20), (5000, 3000)]:
 
-        mpf.prec = inprec
+        mp.prec = inprec
 
         pos10001 = mpf(1) + mpf(2)**(-inprec+5)
         pos09999 = mpf(1) - mpf(2)**(-inprec+5)
         neg10001 = -pos10001
         neg09999 = -pos09999
 
-        mpf.prec = outprec
-        mpf.round_up()
+        mp.prec = outprec
+        mp.rounding = 'up'
         assert pos10001**5 > 1
         assert pos09999**5 == 1
         assert neg10001**5 < -1
@@ -80,7 +80,7 @@ def test_pow_epsilon_rounding():
         assert neg10001**-6 == 1
         assert neg09999**-6 > 1
 
-        mpf.round_down()
+        mp.rounding = 'down'
         assert pos10001**5 == 1
         assert pos09999**5 < 1
         assert neg10001**5 == -1
@@ -99,7 +99,7 @@ def test_pow_epsilon_rounding():
         assert neg10001**-6 < 1
         assert neg09999**-6 == 1
 
-        mpf.round_ceiling()
+        mp.rounding = 'ceiling'
         assert pos10001**5 > 1
         assert pos09999**5 == 1
         assert neg10001**5 == -1
@@ -118,7 +118,7 @@ def test_pow_epsilon_rounding():
         assert neg10001**-6 == 1
         assert neg09999**-6 > 1
 
-        mpf.round_floor()
+        mp.rounding = 'floor'
         assert pos10001**5 == 1
         assert pos09999**5 < 1
         assert neg10001**5 < -1
@@ -137,6 +137,6 @@ def test_pow_epsilon_rounding():
         assert neg10001**-6 < 1
         assert neg09999**-6 == 1
 
-    mpf.round_default()
-    mpf.dps = 15
+    mp.rounding = 'default'
+    mp.dps = 15
 

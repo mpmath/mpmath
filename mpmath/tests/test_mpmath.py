@@ -13,14 +13,14 @@ import cmath
 
 # Advanced rounding test
 def test_add_rounding():
-    mpf.dps = 15
-    mpf.round_up()
+    mp.dps = 15
+    mp.rounding = 'up'
     assert (mpf(1) + 1e-50) - 1 == 2.2204460492503131e-16
     assert mpf(1) - 1e-50 == 1.0
-    mpf.round_down()
+    mp.rounding = 'down'
     assert 1 - (mpf(1) - 1e-50) == 1.1102230246251565e-16
     assert mpf(1) + 1e-50 == 1.0
-    mpf.round_half_even()
+    mp.rounding = 'default'
 
 def test_almost_equal():
     assert mpf(1.2).ae(mpf(1.20000001), 1e-7)
@@ -33,7 +33,7 @@ def test_almost_equal():
 #
 
 def test_add():
-    mpf.dps = 15
+    mp.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
@@ -66,10 +66,10 @@ def test_mixed_types():
 def test_aintegers():
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
-      for rounding in [round_down, round_up, round_floor, round_ceiling,
-          round_half_up, round_half_down, round_half_even]:
-        mpf.set_rounding(rounding)
-        mpf.dps = prec
+      for rounding in ['down', 'up', 'floor', 'ceiling', 'half-up',
+        'half-down', 'half-even']:
+        mp.rounding = rounding
+        mp.dps = prec
         M = 10**(prec-2)
         M2 = 10**(prec//2-2)
         for i in range(10):
@@ -84,19 +84,19 @@ def test_aintegers():
             a = random.randint(-M2, M2)
             b = random.randint(-M2, M2)
             assert mpf(a) * mpf(b) == a*b
-    mpf.round_default()
-    mpf.dps = 15
+    mp.rounding = 'default'
+    mp.dps = 15
 
 def test_exact_sqrts():
     for i in range(20000):
         assert sqrt(mpf(i*i)) == i
     random.seed(1)
     for prec in [100, 300, 1000, 10000]:
-        mpf.dps = prec
+        mp.dps = prec
         for i in range(20):
             A = random.randint(10**(prec//2-2), 10**(prec//2-1))
             assert sqrt(mpf(A*A)) == A
-    mpf.dps = 15
+    mp.dps = 15
     for i in range(100):
         for a in [1, 8, 25, 112307]:
             assert sqrt(mpf((a*a, 2*i))) == mpf((a, i))
@@ -105,13 +105,13 @@ def test_exact_sqrts():
 def test_sqrt_rounding():
     for i in [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15]:
         for dps in [7, 15, 83, 106, 2000]:
-            mpf.dps = dps
-            mpf.round_down()
+            mp.dps = dps
+            mp.rounding = 'down'
             assert (mpf(i)**0.5)**2 < i
-            mpf.round_up()
+            mp.rounding = 'up'
             assert (mpf(i)**0.5)**2 > i
-    mpf.dps = 15
-    mpf.round_default()
+    mp.dps = 15
+    mp.rounding = 'default'
         
 def test_odd_int_bug():
     assert to_int(from_int(3), round_half_even) == 3
@@ -161,7 +161,7 @@ tcatalan = "0.91596559417721901505460351493238411077414937428167213426649811\
 
 def test_constants():
     for prec in [3, 7, 10, 15, 20, 37, 80, 100, 29]:
-        mpf.dps = prec
+        mp.dps = prec
         assert pi == mpf(tpi)
         assert e == mpf(te)
         assert degree == mpf(tdegree)
@@ -169,24 +169,24 @@ def test_constants():
         assert clog2 == mpf(tlog2)
         assert clog10 == mpf(tlog10)
         assert catalan == mpf(tcatalan)
-    mpf.dps = 15
+    mp.dps = 15
 
 def test_str_1000_digits():
-    mpf.dps = 1001
+    mp.dps = 1001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
     assert str(pi)[-10:-1] == '2164201989'[:9]
-    mpf.dps = 15
+    mp.dps = 15
 
 def test_str_10000_digits():
-    mpf.dps = 10001
+    mp.dps = 10001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
-    mpf.dps = 15
+    mp.dps = 15
 
 def test_float_sqrt():
-    mpf.dps = 15
+    mp.dps = 15
     # These should round identically
     for x in [0, 1e-7, 0.1, 0.5, 1, 2, 3, 4, 5, 0.333, 76.19]:
         assert sqrt(mpf(x)) == float(x)**0.5
@@ -264,22 +264,22 @@ def random_complexes(N):
 def test_complex_powers():
     for dps in [15, 30, 100]:
         # Check accuracy for complex square root
-        mpf.dps = dps
+        mp.dps = dps
         a = mpc(1j)**0.5
         assert a.real == a.imag == mpf(2)**0.5 / 2
-    mpf.dps = 15
+    mp.dps = 15
     random.seed(1)
     for (z1, z2) in random_complexes(100):
         assert (mpc(z1)**mpc(z2)).ae(z1**z2, 1e-12)
     assert (e**(-pi*1j)).ae(-1)
-    mpf.dps = 50
+    mp.dps = 50
     assert (e**(-pi*1j)).ae(-1)
-    mpf.dps = 15
+    mp.dps = 15
 
 def test_atrig_hard():
-    mpf.prec = 150
+    mp.prec = 150
     a = mpf(10**50)
-    mpf.prec = 53
+    mp.prec = 53
     assert sin(a).ae(-0.7896724934293100827)
     assert cos(a).ae(-0.6135286082336635622)
     # Check relative accuracy close to x = zero
@@ -309,9 +309,9 @@ def test_atan():
     assert atan(-1e-50) == -1e-50
     assert atan(-1e50).ae(-pi/2)
     for dps in [25, 70, 100, 300, 1000]:
-        mpf.dps = dps
+        mp.dps = dps
         assert (4*atan(1)).ae(pi)
-    mpf.dps = 15
+    mp.dps = 15
 
 def test_areal_inverses():
     assert asin(mpf(0)) == 0
@@ -372,7 +372,7 @@ def test_complex_inverse_functions():
         assert acos(z1).ae(cmath.acos(z1), rel_eps=1e-12)
 
 def test_ldexp():
-    mpf.dps = 15
+    mp.dps = 15
     assert ldexp(mpf(2.5), 0) == 2.5
     assert ldexp(mpf(2.5), -1) == 1.25
     assert ldexp(mpf(2.5), 2) == 10
@@ -380,7 +380,7 @@ def test_ldexp():
 
 def test_misc_bugs():
     # test that this doesn't raise an exception
-    mpf.dps = 1000
+    mp.dps = 1000
     log(1302)
-    mpf.dps = 15
+    mp.dps = 15
 
