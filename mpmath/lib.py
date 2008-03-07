@@ -41,7 +41,7 @@ round_floor = intern('f')
 round_ceiling = intern('c')
 round_up = intern('u')
 round_down = intern('d')
-rounds_to_floor = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
+shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
 
 def round_int(x, n, rounding):
     if rounding is round_half_even:
@@ -126,7 +126,7 @@ def normalize(sign, man, exp, bc, prec, rounding):
                 man = (t>>1)+1
             else:
                 man = t>>1
-        elif rounds_to_floor[rounding][sign]:
+        elif shifts_down[rounding][sign]:
             man >>= n
         else:
             man = -((-man)>>n)
@@ -638,35 +638,55 @@ def fpowi(s, n, prec, rounding):
         inverse = fpowi(s, -n, prec+5, reciprocal_rounding[rounding])
         return fdiv(fone, inverse, prec, rounding)
 
+    result_sign = sign & n
+
     # Use exact integer power when the exact mantissa is small
-    if bc*n < 5000 or man == 1:
+    if man == 1:
+        return (result_sign, 1, exp*n, 1)
+    if bc*n < 1000:
         man **= n
-        return normalize(sign&n, man, exp*n, bitcount(man), prec, rounding)
+        return normalize(result_sign, man, exp*n, bitcount(man), prec, rounding)
 
     # Use directed rounding all the way through to maintain rigorous
     # bounds for interval arithmetic
-    rounding2 = rounding
-    if sign:
-        if not n % 2:
-            sign = 0
-        else:
-            rounding2 = negative_rounding[rounding]
+    rounds_down = (rounding is round_half_even) or \
+        shifts_down[rounding][result_sign]
 
     # Now we perform binary exponentiation. Need to estimate precision
-    # to avoid rounding from temporary operations. Roughly log_2(n)
+    # to avoid rounding errors from temporary operations. Roughly log_2(n)
     # operations are performed.
-    prec2 = prec + 4*bitcount(n) + 4
-    ps, pm, pe, pbc = fone
+    workprec = prec + 4*bitcount(n) + 4
+    _, pm, pe, pbc = fone
     while 1:
         if n & 1:
-            _, pm, pe, _ = from_man_exp(pm*man, pe+exp, prec2, rounding2)
+            pm = pm*man
+            pe = pe+exp
+            pbc += bc - 2
+            pbc = pbc + bctable[pm >> pbc]
+            if pbc > workprec:
+                if rounds_down:
+                    pm = pm >> (pbc-workprec)
+                else:
+                    pm = -((-pm) >> (pbc-workprec))
+                pe += pbc - workprec
+                pbc = workprec
             n -= 1
             if not n:
                 break
-        _, man, exp, _ = from_man_exp(man*man, exp+exp, prec2, rounding2)
+        man = man*man
+        exp = exp+exp
+        bc = bc + bc - 2
+        bc = bc + bctable[man >> bc]
+        if bc > workprec:
+            if rounds_down:
+                man = man >> (bc-workprec)
+            else:
+                man = -((-man) >> (bc-workprec))
+            exp += bc - workprec
+            bc = workprec
         n = n // 2
 
-    return normalize(sign, pm, pe, bitcount(pm), prec, rounding)
+    return normalize(result_sign, pm, pe, pbc, prec, rounding)
 
 
 ##############################################################################
