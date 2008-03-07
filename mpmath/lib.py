@@ -10,14 +10,14 @@ def giant_steps(start, target):
         L = L + [L[-1]//2 + 1]
     return L[::-1]
 
-def rshift_quick(x, n):
+def rshift(x, n):
     """For an integer x, calculate x >> n with the fastest (floor)
     rounding. Unlike the plain Python expression (x >> n), n is
     allowed to be negative, in which case a left shift is performed."""
     if n >= 0: return x >> n
     else:      return x << (-n)
 
-def lshift_quick(x, n):
+def lshift(x, n):
     """For an integer x, calculate x << n. Unlike the plain Python
     expression (x << n), n is allowed to be negative, in which case a
     right shift with default (floor) rounding is performed."""
@@ -428,7 +428,7 @@ def fadd(s, t, prec, rounding):
     #       ------------------------
     #       1111111110000... (222)
     offset = sexp - texp
-    if offset > 50:
+    if offset > 100:
         delta = sbc + sexp - tbc - texp
         if delta > prec + 4:
             offset = min(delta, prec) + 4
@@ -504,7 +504,7 @@ def fmuli(s, n, prec, rounding):
     else:      bc += bctable[man>>bc]
     return normalize(sign, man, exp, bc, prec, rounding)
 
-def fshift_exact(s, n):
+def fshift(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""
     sign, man, exp, bc = s
     if not man:
@@ -977,7 +977,7 @@ def sqrt_fixed(y, prec):
         # formula (y<<precision)//r. The precision term is a bit messy and
         # takes into account the fact that y, r_n and r_{n+1} all have
         # different precision levels. As before, the "-1" divides by two.
-        r = lshift_quick(r, p-prevp-1) + (lshift_quick(y, p+prevp-prec-1)//r)
+        r = lshift(r, p-prevp-1) + (lshift(y, p+prevp-prec-1)//r)
 
         prevp = p
 
@@ -1025,15 +1025,15 @@ def sqrt_fixed2(y, prec):
         # of legibility.
 
         # Compute r**2 at precision p.
-        r2 = rshift_quick(r*r, 2*prevp - p)
+        r2 = rshift(r*r, 2*prevp - p)
 
         # A = r, converted from precision prevp to p
-        A = lshift_quick(r, p-prevp)
+        A = lshift(r, p-prevp)
 
         # S = y * r2, computed at precision p. We shift y by '-prec' to
         # account for its initial precision, and by 'p' for the fixed-point
         # multiplication
-        S = (lshift_quick(y, p-prec) * r2) >> p
+        S = (lshift(y, p-prec) * r2) >> p
 
         # B = (3-S) and finally the outer product, both done at precision p
         B = (3<<p) - S
@@ -1078,7 +1078,7 @@ def fsqrt(s, prec, rounding):
     # Mantissa may have more bits than we need. Trim it down.
     shift = bc - prec2
     shift -= shift & 1
-    man = rshift_quick(man, shift)
+    man = rshift(man, shift)
 
     if prec < 65000:
         man = sqrt_fixed(man, prec2)
@@ -1296,11 +1296,11 @@ def fgamma(prec, rounding):
 # (the multiplication by 2**n just amounts to shifting the exponent).
 
 def exp_series(x, prec):
-    r = int(2.2 * prec ** 0.42)
+    r = int(2 * prec**0.4)
     # XXX: more careful calculation of guard bits
     guards = r + 3
-    if prec > 60:
-        guards += int(math.log(prec))
+    #if prec > 60:
+    #    guards += int(math.log(prec))
     prec2 = prec + guards
     x <<= (guards - r)
     s = (1 << prec2) + x
@@ -1340,7 +1340,11 @@ def fexp(x, prec, rounding):
         n, t = divmod(t, lg2)
     else:
         n = 0
-    return from_man_exp(exp_series(t, prec2), -prec2+n, prec, rounding)
+    man = exp_series(t, prec2)
+    #print prec2, bitcount(man)
+    bc = prec2 + bctable[man >> prec2]
+    return normalize(0, man, -prec2+n, bc, prec, rounding)
+    #return from_man_exp(exp_series(t, prec2), -prec2+n, prec, rounding)
 
 
 #----------------------------------------------------------------------------#
@@ -1369,16 +1373,16 @@ def fexp(x, prec, rounding):
 
 # This function performs the Newton iteration using fixed-point
 # arithmetic. x is assumed to have magnitude ~= 1
-def _log_newton(x, prec):
+def log_newton(x, prec):
     extra = 8
     # 50-bit approximation
-    fx = math.log(to_float((0, x, -prec, bitcount(x))))
+    fx = math.log(x) - 0.69314718055994529*prec
     r = int(fx * 2.0**50)
     prevp = 50
     for p in giant_steps(50, prec+extra):
-        rb = lshift_quick(r, p-prevp)
+        rb = lshift(r, p-prevp)
         e = exp_series(-rb, p)
-        r = rb + ((rshift_quick(x, prec-p)*e)>>p) - (1 << p)
+        r = rb + ((rshift(x, prec-p)*e)>>p) - (1 << p)
         prevp = p
     return r >> extra
 
@@ -1394,19 +1398,20 @@ def flog(x, prec, rounding):
         return fnan
     if x == fone:
         return fzero
+    bc_plus_exp = bc + exp
     # Estimated precision needed for log(t) + n*log(2)
-    prec2 = prec + int(math.log(1+abs(bc+exp), 2)) + 10
+    prec2 = prec + int(math.log(1+abs(bc_plus_exp), 2)) + 10
     # Watch out for the case when x is very close to 1
-    if -1 < bc + exp < 2:
+    if -1 < bc_plus_exp < 2:
         near_one = fabs(fsub(x, fone, 53, round_floor), 53, round_floor)
         if near_one == 0:
             return fzero
         # estimate how close
         prec2 += -(near_one[2]) - bitcount(abs(near_one[1]))
     # Separate mantissa and exponent, calculate, join parts
-    t = rshift_quick(man, bc-prec2)
-    l = _log_newton(t, prec2)
-    a = (exp + bc) * log2_fixed(prec2)
+    t = rshift(man, bc-prec2)
+    l = log_newton(t, prec2)
+    a = bc_plus_exp * log2_fixed(prec2)
     return from_man_exp(l+a, -prec2, prec, rounding)
 
 
@@ -1458,7 +1463,7 @@ def sin_taylor(x, prec):
     s = a = x
     k = 3
     while a:
-        a = ((a * x2) >> prec) // (-k*(k-1))
+        a = ((a * x2) >> prec) // (k*(1-k))
         s += a
         k += 2
     return s
@@ -1553,8 +1558,8 @@ def cosh_sinh(x, prec, rounding):
     # and note that the exponential only needs to be computed once.
     ep = fexp(x, prec2, round_floor)
     em = fdiv(fone, ep, prec2, round_floor)
-    ch = fshift_exact(fadd(ep, em, prec, rounding), -1)
-    sh = fshift_exact(fsub(ep, em, prec, rounding), -1)
+    ch = fshift(fadd(ep, em, prec, rounding), -1)
+    sh = fshift(fsub(ep, em, prec, rounding), -1)
     return ch, sh
 
 def fcosh(x, prec, rounding):
@@ -1625,8 +1630,8 @@ def fatan(x, prec, rounding):
     sign, man, exp, bc = x
     if not man:
         if x == fzero: return fzero
-        if x == finf: return fshift_exact(fpi(prec, round_down), -1)
-        if x == fninf: return fneg(fshift_exact(fpi(prec, round_down), -1))
+        if x == finf: return fshift(fpi(prec, round_down), -1)
+        if x == fninf: return fneg(fshift(fpi(prec, round_down), -1))
         return fnan
     if sign:
         return fneg(fatan(fneg(x), prec, rounding))
@@ -1637,10 +1642,10 @@ def fatan(x, prec, rounding):
     # For large x, use atan(x) = pi/2 - atan(1/x)
     if x[2] > 10*prec:
         pi = fpi(prec, rounding)
-        pihalf = fshift_exact(pi, -1)
+        pihalf = fshift(pi, -1)
     else:
         pi = fpi(prec+4, round_floor)
-        pihalf = fshift_exact(pi, -1)
+        pihalf = fshift(pi, -1)
         t = fatan(fdiv(fone, x, prec+4, round_floor), prec+4, round_floor)
         return fsub(pihalf, t, prec, rounding)
 

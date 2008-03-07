@@ -367,6 +367,13 @@ class mpf(mpnumeric):
                 return r
             return s.binop(t, fmul)
 
+    def __rmul__(s, t):
+        if isinstance(t, int_types):
+            r = new(mpf)
+            r._mpf_ = fmuli(s._mpf_, t, g_prec, g_rounding)
+            return r
+        return s.binop(t, fmul)
+
     def __div__(s, t):
         if isinstance(t, mpf):
             return make_mpf(fdiv(s._mpf_, t._mpf_, g_prec, g_rounding))
@@ -393,7 +400,7 @@ class mpf(mpnumeric):
             return power(s, t)
 
     __radd__ = __add__
-    __rmul__ = __mul__
+    #__rmul__ = __mul__
 
     def __rsub__(s, t): return mpf_convert_lhs(t) - s
 
@@ -618,12 +625,16 @@ def ceil(x):
 def ldexp(x, n):
     """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
     x = convert_lossless(x)
-    return make_mpf(fshift_exact(x._mpf_, n))
+    return make_mpf(fshift(x._mpf_, n))
 
 # Since E-functions simply map reals to reals and complexes to complexes, we
 # can construct all of them the same way (unlike log, sqrt, etc)
 def ef(name, real_f, complex_f, doc):
     def f(x):
+        try:
+            return make_mpf(real_f(x._mpf_, g_prec, g_rounding))
+        except AttributeError:
+            pass
         x = convert_lossless(x)
         if isinstance(x, mpf):
             return make_mpf(real_f(x._mpf_, g_prec, g_rounding))
