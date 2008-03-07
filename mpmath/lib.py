@@ -90,6 +90,7 @@ bctable = map(bitcount, range(1024))
 fzero = (0, 0, 0, 0)
 fnzero = (1, 0, 0, 0)
 fone = (0, 1, 0, 1)
+fnone = (1, 1, 0, 1)
 ftwo = (0, 1, 1, 1)
 ften = (0, 5, 1, 3)
 fhalf = (0, 1, -1, 1)
@@ -1571,29 +1572,73 @@ def trig_reduce(x, prec):
 
 def cos_sin(x, prec, rounding):
     """Simultaneously compute (cos(x), sin(x)) for real x."""
+
     sign, man, exp, bc = x
-    if (not man) and exp:
-        return (fnan, fnan)
-    bits_from_unit = abs(bc + exp)
-    prec2 = prec + bits_from_unit + 15
-    xf = make_fixed(x, prec2)
-    n, rx = trig_reduce(xf, prec2)
+
+    if not man:
+        if exp:
+            return (fnan, fnan)
+        else:
+            return fone, fzero
+
+    magnitude = bc + exp
+
+    # Very close to 0
+    if magnitude < -prec:
+        # Essentially exact
+        if rounding is round_nearest:
+            return fone, fpos(x, prec, rounding)
+        # Magic for interval arithmetic
+        # cos(x) lies between 1 and 1-eps(1)/2
+        if rounding in (round_up, round_ceiling):
+            c = fone
+        else:
+            c = (0, (1<<prec)-1, -prec, prec)
+        # sin(x) lies between x and x-eps(x)/2
+        if rounding in (round_up, [round_ceiling, round_floor][sign]):
+            s = fpos(x, prec, rounding)
+        elif sign:
+            s = fadd(x, (0, 1, magnitude-prec-4, 1), prec, rounding)
+        else:
+            s = fadd(x, (1, 1, magnitude-prec-4, 1), prec, rounding)
+        return c, s
+
+    bits_from_unit = abs(magnitude)
+
+    prec1 = prec + bits_from_unit + 15
+    wp = prec1
+
+    while 1:
+        n, rx = trig_reduce(make_fixed(x, wp), wp)
+        # If we're close to a root, we have to increase the
+        # fixed-point precision to obtain full relative accuracy
+        if abs(rx >> (prec1-8)) < 10:
+            wp += prec1 - bitcount(abs(rx))
+        else:
+            break
+
     case = n % 4
-    one = 1 << prec2
-    if case == 0:
-        s = sin_taylor(rx, prec2)
-        c = sqrt_fixed(one - ((s*s)>>prec2), prec2)
-    elif case == 1:
-        c = -sin_taylor(rx, prec2)
-        s = sqrt_fixed(one - ((c*c)>>prec2), prec2)
-    elif case == 2:
-        s = -sin_taylor(rx, prec2)
-        c = -sqrt_fixed(one - ((s*s)>>prec2), prec2)
-    elif case == 3:
-        c = sin_taylor(rx, prec2)
-        s = -sqrt_fixed(one - ((c*c)>>prec2), prec2)
-    c = from_man_exp(c, -prec2, prec, rounding)
-    s = from_man_exp(s, -prec2, prec, rounding)
+    one = 1 << wp
+
+    s = sin_taylor(rx, wp)
+    c = sqrt_fixed(one - ((s*s)>>wp), wp)
+
+    if   case == 1: c, s = -s, c
+    elif case == 2: s, c = -s, -c
+    elif case == 3: c, s = s, -c
+
+    c = from_man_exp(c, -wp, prec, rounding)
+    s = from_man_exp(s, -wp, prec, rounding)
+
+    # Can't have exactly +1 or -1 when rounding away
+    if rounding is not round_nearest and (c[1] == 1 or s[1] == 1):
+        if rounding in (round_down, round_floor):
+            if   c == fone: c = (0, (1<<prec)-1, -prec, prec)
+            elif s == fone: c = (0, (1<<prec)-1, -prec, prec)
+        if rounding in (round_down, round_ceiling):
+            if   c == fnone: c = (1, (1<<prec)-1, -prec, prec)
+            elif s == fnone: s = (1, (1<<prec)-1, -prec, prec)
+
     return c, s
 
 def fcos(x, prec, rounding):
