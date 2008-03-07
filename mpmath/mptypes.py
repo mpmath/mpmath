@@ -37,6 +37,8 @@ reverse_rounding_table = {
 
 class Context(object):
 
+    __slots__ = []
+
     def __repr__(self):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
