@@ -343,7 +343,6 @@ class mpf(mpnumeric):
                 return r
             return s.binop(t, fadd)
 
-    """
     def __sub__(s, t):
         r = new(mpf)
         sval = s._mpf_
@@ -355,12 +354,6 @@ class mpf(mpnumeric):
                 r._mpf_ = fadd(sval, from_int(-t), g_prec, g_rounding)
                 return r
             return s.binop(t, fsub)
-    """
-
-    def __sub__(s, t):
-        if isinstance(t, mpf):
-            return make_mpf(fsub(s._mpf_, t._mpf_, g_prec, g_rounding))
-        return s.binop(t, fsub)
 
     def __mul__(s, t):
         r = new(mpf)

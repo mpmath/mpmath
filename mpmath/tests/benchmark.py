@@ -56,7 +56,7 @@ atests = [
   ('Equality (x==y)', 'x==y', 'x==y', 'feq(x, y)'),
   ('Comparison (x<y)', 'x<y', 'x<y', 'fcmp(x, y) < 0'),
   ('Addition (x+y)', 'x+y', 'x+y', 'fadd(x, y, prec, RF)'),
-  ('Subtraction (x-y)', 'x+y', 'x+y', 'fsub(x, y, prec, RF)'),
+  ('Subtraction (x-y)', 'x-y', 'x-y', 'fsub(x, y, prec, RF)'),
   ('Multiplication (x*y)', 'x*y', 'x*y', 'fmul(x, y, prec, RF)'),
   ('Division (x/y)', 'x/y', 'x/y', 'fdiv(x, y, prec, RF)'),
   ('Square root (x^0.5)', 'x.sqrt()', 'sqrt(x)', 'fsqrt(x, prec, RF)'),
