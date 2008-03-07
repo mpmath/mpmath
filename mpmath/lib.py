@@ -1182,6 +1182,68 @@ def machin(coefs, prec, hyperbolic=False):
 
 #----------------------------------------------------------------------------
 # Pi
+
+def agm_status(prec, step, adiff, verbose_base):
+    logdiff = math.log(max(1, adiff), verbose_base)
+    digits = int(prec/math.log(verbose_base,2) - logdiff)
+    print "  iteration", step, ("(accuracy ~= %i base-%i digits)" % \
+       (digits, verbose_base))
+
+def pi_agm(prec, verbose=False, verbose_base=10):
+    """
+    Compute floor(pi * 2**prec) as a big integer using the Brent-
+    Salamin algorithm based on the arithmetic-geometric mean.
+
+    See for example Wikipedia (http://en.wikipedia.org/wiki/Brent-
+    Salamin_algorithm) or "Pi and the AGM" by Jonathan and Peter
+    Borwein (Wiley, 1987). The algorithm (as stated in the Wikipedia
+    article) consists of setting
+
+      a_0 = 1
+      b_0 = 1/sqrt(2)
+      t_0 = 1/4
+      p_0 = 1
+
+    and computing
+
+      a_{n+1} = (a_n + b_n)/2
+      b_{n+1} = sqrt(a_n * b_n)
+      t_{n+1} = t_n - p_n*(a_n - a_{n+1})**2
+      p_{n+1} = 2*p_n
+
+    for n = 0, 1, 2, 3, ..., after which the approximation is given by
+    pi ~= (a_n + b_n)**2 / (4*t_n). Each step roughly doubles the
+    number of correct digits.
+    """
+    extraprec = 50
+    prec += extraprec
+
+    # Initialial values. a, b and t are fixed-point numbers
+    a = 1 << prec
+    b = sqrt_fixed2(a >> 1, prec)
+    t = a >> 2
+    p = 1
+
+    step = 1
+    while 1:
+        an = (a + b) >> 1
+        adiff = a - an
+        if verbose:
+            agm_status(prec, step, adiff, verbose_base)
+        # No change in a
+        if p > 16 and abs(adiff) < 1000:
+            break
+        prod = (a * b) >> prec
+        b = sqrt_fixed2(prod, prec)
+        t = t - p*((adiff**2) >> prec)
+        p = 2*p
+        a = an
+        step += 1
+    if verbose:
+        print "  final division"
+    pi = ((((a+b)**2) >> 2) // t)
+    return pi >> extraprec
+
 @constant_memo
 def pi_fixed(prec):
     """
@@ -1191,7 +1253,9 @@ def pi_fixed(prec):
     is used. For high precisions, the more efficient arithmetic-
     geometric mean iteration is used.
     """
-    return machin([(16, 5), (-4, 239)], prec)
+    if prec < 2000:
+        return machin([(16, 5), (-4, 239)], prec)
+    return pi_agm(prec)
 
 def fpi(prec, rounding):
     """Compute a floating-point approximation of pi"""
