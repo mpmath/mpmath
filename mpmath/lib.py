@@ -761,7 +761,7 @@ def to_digits_exp(s, dps):
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if abs(exp) > 2500:
+    if abs(exp) > 3500:
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
