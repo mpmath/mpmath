@@ -11,9 +11,6 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
   "ldexp", "catalan", "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps"]
 
-import math
-LOG2_10 = math.log(10,2)  # 3.3219...
-
 from lib import *
 
 int_types = (int, long)
@@ -55,11 +52,11 @@ class Context(object):
     def set_prec(self, n):
         global g_prec, g_dps
         g_prec = max(1, int(n))
-        g_dps = max(1, int(round(int(n)/LOG2_10)-1))
+        g_dps = prec_to_dps(n)
 
     def set_dps(self, n):
         global g_prec, g_dps
-        g_prec = max(1, int(round((int(n)+1)*LOG2_10)))
+        g_prec = dps_to_prec(n)
         g_dps = max(1, int(n))
 
     def set_rounding(self, s):
@@ -253,14 +250,7 @@ class mpf(mpnumeric):
     exp = property(lambda self: self._mpf_[2])
     bc = property(lambda self: self._mpf_[3])
 
-    def __repr__(s):
-        dps = g_dps
-        if dps == 15:
-            return "mpf('%s')" % to_str(s._mpf_, g_dps+2)
-        else:
-            # 2 extra digits isn't enough on some precision levels
-            return "mpf('%s')" % to_str(s._mpf_, g_dps+3)
-
+    def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, repr_dps(g_prec))
     def __str__(s): return to_str(s._mpf_, g_dps)
     def __hash__(s): return fhash(s._mpf_)
     def __int__(s): return to_int(s._mpf_)

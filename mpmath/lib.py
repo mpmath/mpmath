@@ -4,6 +4,25 @@ import math
 from bisect import bisect
 from random import randrange
 
+def prec_to_dps(n):
+    """Return number of accurate decimals that can be represented
+    with a precision of n bits."""
+    return max(1, int(round(int(n)/3.3219280948873626)-1))
+
+def dps_to_prec(n):
+    """Return the number of bits required to represent n decimals
+    accurately."""
+    return max(1, int(round((int(n)+1)*3.3219280948873626)))
+
+def repr_dps(n):
+    """Return the number of decimal digits required to represent
+    a number with n-bit precision so that it can be uniquely
+    reconstructed from the representation."""
+    dps = prec_to_dps(n)
+    if dps == 15:
+        return 17
+    return dps + 3
+
 def giant_steps(start, target):
     L = [target]
     while L[-1] > start*2:
