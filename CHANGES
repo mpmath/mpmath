@@ -19,6 +19,11 @@
 * implemented the functions nstr, nprint for printing numbers with
   a small or custom number of digits
 
+* accuracy of cos and sin near roots has been fixed
+
+* implemented a magical constant eps that gives the "machine"
+  epsilon.
+
 * implemented Catalan's constant
 
 * new functions diff and diffc for numerical differentiation
@@ -50,6 +55,7 @@
   * <mpf> * <int> is twice as fast
   * exp and log are about 10% faster
   * fast computation of e and exp(n) when precision is extremely high
+
 
 --0.6--
 Released January 13, 2008
