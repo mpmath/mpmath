@@ -50,10 +50,7 @@ def test_eval_repr_invariant():
         mp.dps = dps
         for i in xrange(1000):
             a = mpf(random.random())**0.5 * 10**random.randint(-100, 100)
-            if dps == 15:
-                assert eval(repr(a)) == a
-            else:
-                assert eval(repr(a)).ae(a)
+            assert eval(repr(a)) == a
     mp.dps = 15
 
 def test_str_bugs():

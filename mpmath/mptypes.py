@@ -253,7 +253,14 @@ class mpf(mpnumeric):
     exp = property(lambda self: self._mpf_[2])
     bc = property(lambda self: self._mpf_[3])
 
-    def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, g_dps+2)
+    def __repr__(s):
+        dps = g_dps
+        if dps == 15:
+            return "mpf('%s')" % to_str(s._mpf_, g_dps+2)
+        else:
+            # 2 extra digits isn't enough on some precision levels
+            return "mpf('%s')" % to_str(s._mpf_, g_dps+3)
+
     def __str__(s): return to_str(s._mpf_, g_dps)
     def __hash__(s): return fhash(s._mpf_)
     def __int__(s): return to_int(s._mpf_)
