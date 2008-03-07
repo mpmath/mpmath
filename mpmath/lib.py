@@ -632,7 +632,16 @@ def fpowi(s, n, prec, rounding):
     n = int(n)
     if n == 0: return fone
     if n == 1: return fpos(s, prec, rounding)
-    if n == 2: return fmul(s, s, prec, rounding)
+    if n == 2:
+        _, man, exp, bc = s
+        if not man:
+            return fzero
+        man = man*man
+        if man == 1:
+            return (0, 1, exp+exp, 1)
+        bc = bc + bc - 2
+        bc += bctable[man>>bc]
+        return normalize(0, man, exp+exp, bc, prec, rounding)
     if n == -1: return fdiv(fone, s, prec, rounding)
     if n < 0:
         inverse = fpowi(s, -n, prec+5, reciprocal_rounding[rounding])
