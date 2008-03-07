@@ -1,5 +1,162 @@
-"""Provides integration using quadratures.
+"""
+This module implements high-level calculus-oriented functions:
 
+* Numerical differentiation
+* Numerical polynomial operations
+* Numerical root-finding
+* Numerical integration
+
+"""
+
+__docformat__ = 'plaintext'
+
+from mptypes import *
+from apps.extrafun import factorial
+
+#----------------------------------------------------------------------------#
+#                                Differentiation                             #
+#----------------------------------------------------------------------------#
+
+def diff(f, x, direction=0):
+    """
+    Compute f'(x) using a simple finite difference approximation.
+
+    With direction = 0, use the central difference f(x-h), f(x+h)
+    With direction = 1, use the forward difference f(x), f(x+h)
+    With direction = -1, use the backward difference f(x-h), f(x)
+
+        >>> print diff(cos, 1)
+        -0.841470984807897
+        >>> print diff(abs, 0, 0)
+        0.0
+        >>> print diff(abs, 0, 1)
+        1.0
+        >>> print diff(abs, 0, -1)
+        -1.0
+
+    The step size is taken similar to the epsilon of the precision.
+    To eliminate cancellation errors, diff temporarily doubles the
+    working precision while calculating the function values.
+    """
+    prec = mp.prec
+    extra = 5
+    h = ldexp(1, -prec-extra)
+    try:
+        mp.prec = 2*(prec+extra)
+        if   direction == 0:  return (f(x+h) - f(x-h)) * ldexp(1, prec+extra-1)
+        elif direction == 1:  return (f(x+h) - f(x)) * ldexp(1, prec+extra)
+        elif direction == -1: return (f(x) - f(x-h)) * ldexp(1, prec+extra)
+        else:
+            raise ValueError("invalid difference direction: %r" % direction)
+    finally:
+        mp.prec = prec
+
+def diffc(f, x, n=1, radius=mpf(0.5)):
+    """
+    Compute an approximation of the nth derivative of f at the point x
+    using the Cauchy integral formula. This only works for analytic
+    functions. A circular path with the given radius is used.
+
+    diffc increases the working precision slightly to avoid simple
+    rounding errors. Note that, especially for large n, differentiation
+    is extremely ill-conditioned, so this precaution does not
+    guarantee a correct result. (Provided there are no singularities
+    in the way, increasing the radius may help.)
+
+    The returned value will be a complex number; a large imaginary part
+    for a derivative that should be real may indicate a large numerical
+    error.
+    """
+    prec = mp.prec
+    try:
+        mp.prec += 10
+        def g(t):
+            rei = radius*exp(j*t)
+            z = x + rei
+            return rei * f(z) / (z-x)**(n+1)
+        d = quadts(g, 0, 2*pi)
+        return d * factorial(n) / (2*pi)
+    finally:
+        mp.prec = prec
+
+
+#----------------------------------------------------------------------------#
+#                                Polynomials                                 #
+#----------------------------------------------------------------------------#
+
+def polyval(coeffs, x, derivative=False):
+    """
+    Given coefficients [c0, c1, c2, ..., cn], evaluate
+    P(x) = c0 + c1*x + c2*x**2 + ... + cn*x**n.
+
+    If derivative=True is set, a tuple (P(x), P'(x)) is returned.
+    """
+    p = mpnumeric(coeffs[-1])
+    q = mpf(0)
+    for c in coeffs[-2::-1]:
+        if derivative:
+            q = p + x*q
+        p = c + x*p
+    if derivative:
+        return p, q
+    else:
+        return p
+
+def polyroots(coeffs, maxsteps=20):
+    """
+    Numerically locate all (complex) roots of a polynomial using the
+    Durand-Kerner method.
+
+    This function returns a tuple (roots, err) where roots is a list of
+    complex numbers sorted by absolute value, and err is an estimate of
+    the maximum error. The polynomial should be given as a list of
+    coefficients.
+
+        >>> nprint(polyroots([24,-14,-1,1]), 4)
+        ([(2.0 + 8.968e-44j), (3.0 + 1.156e-33j), (-4.0 + 0.0j)], 5.921e-16)
+        >>> nprint(polyroots([2,3,4]))
+        ([(-0.375 + -0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
+
+    """
+    deg = len(coeffs) - 1
+    # Must be monic
+    lead = mpnumeric(coeffs[-1])
+    if lead == 1:
+        coeffs = map(mpnumeric, coeffs)
+    else:
+        coeffs = [c/lead for c in coeffs]
+    f = lambda x: polyval(coeffs, x)
+    roots = [mpc((0.4+0.9j)**n) for n in range(deg)]
+    error = [mpf(1) for n in range(deg)]
+    for step in range(maxsteps):
+        if max(error).ae(0):
+            break
+        for i in range(deg):
+            if not error[i].ae(0):
+                p = roots[i]
+                x = f(p)
+                for j in range(deg):
+                    if i != j:
+                        try:
+                            x /= (p-roots[j])
+                        except ZeroDivisionError:
+                            continue
+                roots[i] = p - x
+                error[i] = abs(x)
+    roots.sort(key=abs)
+    err = max(error)
+    err = max(err, ldexp(1, -getprec()+1))
+    return roots, err
+
+
+##############################################################################
+##############################################################################
+
+#----------------------------------------------------------------------------#
+#       Implementation of tanh-sinh (doubly exponential) quadrature          #
+#----------------------------------------------------------------------------#
+
+"""
 The implementation of the tanh-sinh algorithm is based on the
 description given in Borwein, Bailey & Girgensohn, "Experimentation
 in Mathematics - Computational Paths to Discovery", A K Peters,
@@ -9,14 +166,6 @@ Various documents are available online, e.g.
 http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
 http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
 """
-__docformat__ = 'plaintext'
-
-from mpmath.mptypes import *
-
-
-#----------------------------------------------------------------------
-# Utilities
-#
 
 def transform(f, a, b):
     """Given an integrand f defined over the interval [a, b], return an
@@ -45,11 +194,6 @@ def transform(f, a, b):
         return C * f(D + C*x)
     return g
 
-
-#----------------------------------------------------------------------
-# Tanh-sinh (doubly exponential) quadrature
-#
-
 def TS_estimate_error(res, prec, eps):
     """Estimate error of the calculation at the present level by
     comparing it to the results from two previous levels. The
@@ -62,7 +206,6 @@ def TS_estimate_error(res, prec, eps):
     D3 = -prec
     D4 = min(0, max(D1**2/D2, 2*D1, D3))
     return mpf('0.1') ** -int(D4)
-
 
 def TS_guess_level(prec):
     """Guess a reasonable first level of tanh-sinh quadrature for a
