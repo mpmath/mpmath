@@ -108,8 +108,8 @@ def TS_nodes(prec, m, verbose=False):
     """
     if (prec, m) in TS_cache:
         return TS_cache[(prec, m)]
-    eps = mpf((1, -prec))
-    h = mpf((1, -m))
+    eps = ldexp(1, -prec)
+    h = ldexp(1, -m)
     xs = []
     ws = []
     for k in xrange(20 * 2**m + 1):
@@ -129,7 +129,7 @@ def TS_nodes(prec, m, verbose=False):
 
 def TS_eval(f, nodes, target_prec, working_prec, m, verbose=False):
     """Evaluate f at the given set of tanh-sinh nodes."""
-    eps = mpf((1, -target_prec))
+    eps = ldexp(1, -target_prec)
     S = mpf(0)
     h = mpf(1)
     xs, ws = nodes
@@ -158,7 +158,7 @@ def TS_adaptive(f, target_prec, working_prec, min_level, max_level, verbose):
     """Repeatedly attempt to integrate f, trying different levels. Quit
     as soon as the estimated error is small enough, or if that doesn't
     happen, when the max level has been tried."""
-    eps = mpf((1, -target_prec))
+    eps = ldexp(1, -target_prec)
     for m in xrange(min_level, max_level+1):
         if verbose:
             print "Using tanh-sinh algorithm with level ", m

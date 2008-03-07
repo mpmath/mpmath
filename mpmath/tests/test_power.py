@@ -139,4 +139,3 @@ def test_pow_epsilon_rounding():
 
     mp.rounding = 'default'
     mp.dps = 15
-

@@ -10,7 +10,7 @@ def getrandom(type):
     if type == 'mpf':
         return mpf(random() * 2.0**randint(-10, 10)) ** 0.5
     if type == 'mpfval':
-        return (mpf(random() * 2.0**randint(-10, 10)) ** 0.5).val
+        return (mpf(random() * 2.0**randint(-10, 10)) ** 0.5)._mpf_
     if type == 'Decimal':
         return Decimal(repr(random() * 2.0**randint(-10, 10))).sqrt()
     raise TypeError
@@ -61,8 +61,8 @@ atests = [
   ('Division (x/y)', 'x/y', 'x/y', 'fdiv(x, y, prec, RF)'),
   ('Square root (x^0.5)', 'x.sqrt()', 'sqrt(x)', 'fsqrt(x, prec, RF)'),
   ('Integer power (x^42)', 'x**42', 'x**42', 'fpowi(x, 42, prec, RF)'),
-#  ('Exponential function (exp(x))', 'dmath.exp(x)', 'exp(x)', 'fexp(x, prec, RF)'),
-#  ('Natural logarithm (log(x))', 'dmath.log(x+1)', 'log(x)', 'flog(x, prec, RF)'),
+  ('Exponential function (exp(x))', 'x.exp()', 'exp(x)', 'fexp(x, prec, RF)'),
+  ('Natural logarithm (log(x))', 'x.ln()', 'log(x)', 'flog(x, prec, RF)'),
 #  ('Sine (sin(x))', 'dmath.sin(x)', 'sin(x)', 'fsin(x, prec, RF)'),
 #  ('Tangent (tan(x))', 'dmath.tan(x)', 'tan(x)', 'ftan(x, prec, RF)'),
 #  ('Inverse tangent(atan(x))', 'dmath.atan(x)', 'atan(x)', 'fatan(x, prec, RF)'),

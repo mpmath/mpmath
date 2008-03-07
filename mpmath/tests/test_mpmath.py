@@ -66,8 +66,7 @@ def test_mixed_types():
 def test_aintegers():
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
-      for rounding in ['down', 'up', 'floor', 'ceiling', 'half-up',
-        'half-down', 'half-even']:
+      for rounding in ['down', 'up', 'floor', 'ceiling', 'half-even']:
         mp.rounding = rounding
         mp.dps = prec
         M = 10**(prec-2)

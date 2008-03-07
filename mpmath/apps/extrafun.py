@@ -9,7 +9,7 @@ from mpmath.lib import make_fixed
 #from sympy import Rational
 
 def _fix(x, prec):
-    return make_fixed(x.val, prec)
+    return make_fixed(x._mpf_, prec)
 
 def _re(s):
     if isinstance(s, mpf):

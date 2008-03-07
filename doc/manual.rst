@@ -16,7 +16,7 @@ Mpmath manual
 About mpmath
 ============
 
-Mpmath is a pure-Python library for arbitrary-precision floating-point arithmetic. It implements all the functions found in Python's ``math`` and ``cmath`` modules (``exp``, ``log``, ``sin``...), plus a few nonelementary special functions (``gamma``, ``zeta``...), and has utilities for arbitrary-precision numerical differentiation, integration, root-finding, and interval arithmetic. It has extensive support for complex numbers and is much faster (typically 10 or 100 times) than Python's standard ``decimal`` library.
+Mpmath is a Python library for arbitrary-precision floating-point arithmetic. It implements all the functions found in Python's ``math`` and ``cmath`` modules (``exp``, ``log``, ``sin``...), plus a few nonelementary special functions (``gamma``, ``zeta``...), and has utilities for arbitrary-precision numerical differentiation, integration, root-finding, and interval arithmetic. It has extensive support for complex numbers and is much faster (typically 10 or 100 times) than Python's standard ``decimal`` library.
 
 Mpmath is lightweight (~100 KB), free (BSD license), and easy to install or include in other software due to being written in pure Python without any external dependencies.
 

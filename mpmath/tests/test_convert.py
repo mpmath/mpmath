@@ -43,7 +43,6 @@ def test_tight_string_conversion():
     assert from_str('0.5', 10, round_floor) == fhalf
     assert from_str('0.5', 10, round_ceiling) == fhalf
 
-
 def test_eval_repr_invariant():
     """Test that eval(repr(x)) == x"""
     random.seed(123)
@@ -66,17 +65,19 @@ def test_str_bugs():
 
 def test_convert_rational():
     mp.dps = 15
-    assert from_rational(30, 5, 53, round_half_even) == (3, 1, 2)
-    assert from_rational(-7, 4, 53, round_half_even) == (-7, -2, 3)
-    assert to_rational((1, -1, 1)) == (1, 2)
+    assert from_rational(30, 5, 53, round_half_even) == (0, 3, 1, 2)
+    assert from_rational(-7, 4, 53, round_half_even) == (1, 7, -2, 3)
+    assert to_rational((0, 1, -1, 1)) == (1, 2)
 
 def test_custom_class():
     class mympf:
-        def __mpfval__(self):
-            return mpf(3.5).val
+        @property
+        def _mpf_(self):
+            return mpf(3.5)._mpf_
     class mympc:
-        def __mpcval__(self):
-            return mpf(3.5).val, mpf(2.5).val
+        @property
+        def _mpc_(self):
+            return mpf(3.5), mpf(2.5)
     assert mpf(2) + mympf() == 5.5
     assert mympf() + mpf(2) == 5.5
     assert mpf(mympf()) == 3.5
