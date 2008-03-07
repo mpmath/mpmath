@@ -3,7 +3,7 @@ from mpmath import mpf
 
 from random import randint, choice, seed
 
-all_modes = [round_floor, round_ceiling, round_down, round_up, round_half_even]
+all_modes = [round_floor, round_ceiling, round_down, round_up, round_nearest]
 
 fb = from_bstr
 fi = from_int
@@ -16,18 +16,18 @@ def test_div_1_3():
     c = fi(-1)
 
     # floor rounds down, ceiling rounds up
-    assert fdiv(a, b, 7, round_floor)     == fb('0.01010101')
-    assert fdiv(a, b, 7, round_ceiling)   == fb('0.01010110')
-    assert fdiv(a, b, 7, round_down)      == fb('0.01010101')
-    assert fdiv(a, b, 7, round_up)        == fb('0.01010110')
-    assert fdiv(a, b, 7, round_half_even) == fb('0.01010101')
+    assert fdiv(a, b, 7, round_floor)   == fb('0.01010101')
+    assert fdiv(a, b, 7, round_ceiling) == fb('0.01010110')
+    assert fdiv(a, b, 7, round_down)    == fb('0.01010101')
+    assert fdiv(a, b, 7, round_up)      == fb('0.01010110')
+    assert fdiv(a, b, 7, round_nearest) == fb('0.01010101')
 
     # floor rounds up, ceiling rounds down
-    assert fdiv(c, b, 7, round_floor)     == fb('-0.01010110')
-    assert fdiv(c, b, 7, round_ceiling)   == fb('-0.01010101')
-    assert fdiv(c, b, 7, round_down)      == fb('-0.01010101')
-    assert fdiv(c, b, 7, round_up)        == fb('-0.01010110')
-    assert fdiv(c, b, 7, round_half_even) == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_floor)   == fb('-0.01010110')
+    assert fdiv(c, b, 7, round_ceiling) == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_down)    == fb('-0.01010101')
+    assert fdiv(c, b, 7, round_up)      == fb('-0.01010110')
+    assert fdiv(c, b, 7, round_nearest) == fb('-0.01010101')
 
 
 def test_div_300():
@@ -47,17 +47,17 @@ def test_div_300():
     assert fdiv(c, q, 9, round_up) == fi(301)
 
     # Nearest even integer is down
-    assert fdiv(a, q, 9, round_half_even) == fi(300)
-    assert fdiv(b, q, 9, round_half_even) == fi(300)
-    assert fdiv(c, q, 9, round_half_even) == fi(301)
+    assert fdiv(a, q, 9, round_nearest) == fi(300)
+    assert fdiv(b, q, 9, round_nearest) == fi(300)
+    assert fdiv(c, q, 9, round_nearest) == fi(301)
 
     # Nearest even integer is up
     a = fi(301499999)
     b = fi(301500000)
     c = fi(301500001)
-    assert fdiv(a, q, 9, round_half_even) == fi(301)
-    assert fdiv(b, q, 9, round_half_even) == fi(302)
-    assert fdiv(c, q, 9, round_half_even) == fi(302)
+    assert fdiv(a, q, 9, round_nearest) == fi(301)
+    assert fdiv(b, q, 9, round_nearest) == fi(302)
+    assert fdiv(c, q, 9, round_nearest) == fi(302)
 
 
 def test_tight_integer_division():

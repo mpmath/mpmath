@@ -1,32 +1,55 @@
 --0.7-svn--
+
 * the interface for switching precision and rounding modes has been
   changed. instead of changing mpf.prec, there is a new object mp
   which holds the precision as mp.prec. this change improves
   flexibility in the implementation. it will unfortunately break
   any existing code written for mpmath, but broken code should be
   trivial to update.
+
 * the functions workprec, workdps, extraprec, extradps have been
   introduced for switching precision in a more safe manner,
   ensuring that the precision gets reset when finished. they can
   be used with the 'with' statement available in python 2.5
+
+* the round-half-down and round-half-up modes have been deprecated,
+  since they added complexity without being particularly useful.
+  round-half-even has been renamed to round-nearest.
+
 * implemented the functions nstr, nprint for printing numbers with
   a small or custom number of digits
+
 * implemented Catalan's constant
-* fast computation of e and exp(n) when precision is extremely high
+
 * new functions diff and diffc for numerical differentiation
+
 * implemented the ldexp function for fast multiplication by 2**n
+
 * mpf uses rich comparison methods (contributed by Pearu Peterson)
+
 * epydoc-friendly docstrings (contributed by Pearu Peterson)
+
 * support creating mpf from float nan or inf
+
 * flattened package structure for easier inclusion in other projects
-* <mpf> * <int> is twice as fast
-* small speed improvement to <mpf> ** <int> (contributed by Mario
-  Pernici)
+
 * renamed lib.fpow -> lib.fpowi and implemented lib.fpow for general
   real powers. <mpf> ** <mpf> should now be slightly faster and more
   robust
+
 * external classes can interoperate with mpf and mpc instances
-  by defining __mpfval__ or __mpcval__ methods
+  by defining _mpf_ or _mpc_ properties
+
+* the internal number representation has been changed to include
+  an explicit sign bit. as a result of this change and other small
+  tweaks, arithmetic is up to 20% faster and the total running
+  time for mpmath's unit tests has dropped 10%.
+
+* miscellaneous speed improvements:
+  * <mpf> ** <int> is 2-3 times faster (contributed by Mario Pernici)
+  * <mpf> * <int> is twice as fast
+  * exp and log are about 10% faster
+  * fast computation of e and exp(n) when precision is extremely high
 
 --0.6--
 Released January 13, 2008

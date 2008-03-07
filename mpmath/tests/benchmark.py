@@ -35,7 +35,7 @@ testcode = \
 """
 def testit(prec, N):
     from time import clock
-    RF = round_half_even
+    RF = round_nearest
     prec = setprec('TYPE', prec)
     xs, ys, xys = rndnums('TYPE', N)
     t = 1e100

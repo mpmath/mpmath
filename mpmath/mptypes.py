@@ -23,8 +23,8 @@ rounding_table = {
   'ceiling' : round_ceiling,
   'down' : round_down,
   'up' : round_up,
-  'half-even' : round_half_even,
-  'default' : round_half_even
+  'nearest' : round_nearest,
+  'default' : round_nearest
 }
 
 reverse_rounding_table = {
@@ -32,7 +32,7 @@ reverse_rounding_table = {
   round_ceiling : 'ceiling',
   round_down : 'down',
   round_up : 'up',
-  round_half_even : 'half-even'
+  round_nearest : 'nearest'
 }
 
 class Context(object):
@@ -41,14 +41,14 @@ class Context(object):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
             ("  mp.dps = %s" % self.dps).ljust(30) + "[default: 15]",
-            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'half-even']"]
+            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'nearest']"]
         return "\n".join(lines)
 
     def default(self):
         global g_prec, g_dps, g_rounding
         g_prec = 53
         g_dps = 15
-        g_rounding = round_half_even
+        g_rounding = round_nearest
 
     def set_prec(self, n):
         global g_prec, g_dps
@@ -218,7 +218,7 @@ def mpf_convert_lhs(x):
 
 new = object.__new__
 
-ctx = [53, round_half_even]
+ctx = [53, round_nearest]
 
 class mpf(mpnumeric):
     """An mpf instance holds a real-valued floating-point number. mpf:s

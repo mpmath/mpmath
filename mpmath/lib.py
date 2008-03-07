@@ -36,7 +36,7 @@ def trailing(n):
 
 trailtable = map(trailing, range(256))
 
-round_half_even = intern('h')
+round_nearest = intern('n')
 round_floor = intern('f')
 round_ceiling = intern('c')
 round_up = intern('u')
@@ -44,7 +44,7 @@ round_down = intern('d')
 shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
 
 def round_int(x, n, rounding):
-    if rounding is round_half_even:
+    if rounding is round_nearest:
         if x >= 0:
             t = x >> (n-1)
             if t & 1 and ((t & 2) or (x & h_mask[n<300][n])):
@@ -120,7 +120,7 @@ def normalize(sign, man, exp, bc, prec, rounding):
         return fzero
     n = bc - prec
     if n > 0:
-        if rounding is round_half_even:
+        if rounding is round_nearest:
             t = man >> (n-1)
             if t & 1 and ((t & 2) or (man & h_mask[n<300][n])):
                 man = (t>>1)+1
@@ -584,7 +584,7 @@ reciprocal_rounding = {
   round_up : round_down,
   round_floor : round_ceiling,
   round_ceiling : round_floor,
-  round_half_even : round_half_even
+  round_nearest : round_nearest
 }
 
 negative_rounding = {
@@ -592,7 +592,7 @@ negative_rounding = {
   round_up : round_up,
   round_floor : round_ceiling,
   round_ceiling : round_floor,
-  round_half_even : round_half_even
+  round_nearest : round_nearest
 }
 
 def fpow(s, t, prec, rounding):
@@ -658,7 +658,7 @@ def fpowi(s, n, prec, rounding):
 
     # Use directed rounding all the way through to maintain rigorous
     # bounds for interval arithmetic
-    rounds_down = (rounding is round_half_even) or \
+    rounds_down = (rounding is round_nearest) or \
         shifts_down[rounding][result_sign]
 
     # Now we perform binary exponentiation. Need to estimate precision
