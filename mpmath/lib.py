@@ -4,6 +4,30 @@ import math
 from bisect import bisect
 from random import randrange
 
+#----------------------------------------------------------------------------#
+#                    Some commonly needed float values                       #
+#----------------------------------------------------------------------------#
+
+# Regular number format:
+# (-1)**sign * mantissa * 2**exponent, plus bitcount of mantissa
+fzero = (0, 0, 0, 0)
+fnzero = (1, 0, 0, 0)
+fone = (0, 1, 0, 1)
+fnone = (1, 1, 0, 1)
+ftwo = (0, 1, 1, 1)
+ften = (0, 5, 1, 3)
+fhalf = (0, 1, -1, 1)
+
+# Arbitrary encoding for special numbers: zero mantissa, nonzero exponent
+fnan = (0, 0, -123, -1)
+finf = (0, 0, -456, -2)
+fninf = (1, 0, -789, -3)
+
+
+#----------------------------------------------------------------------------#
+#           Various utilities related to precision and bit-fiddling          #
+#----------------------------------------------------------------------------#
+
 def prec_to_dps(n):
     """Return number of accurate decimals that can be represented
     with a precision of n bits."""
@@ -24,6 +48,8 @@ def repr_dps(n):
     return dps + 3
 
 def giant_steps(start, target):
+    """Return a list of integers ~= [start, 2*start, ..., target/2,
+    target] describing suitable precision steps for Newton's method."""
     L = [target]
     while L[-1] > start*2:
         L = L + [L[-1]//2 + 1]
@@ -53,15 +79,34 @@ def trailing(n):
         t += 1
     return t
 
-trailtable = map(trailing, range(256))
+# Small powers of 2
+powers = [1<<_ for _ in range(300)]
 
+def bitcount(n):
+    """Calculate bit size of the nonnegative integer n."""
+    bc = bisect(powers, n)
+    if bc != 300:
+        return bc
+    bc = int(math.log(n, 2)) - 4
+    return bc + bctable[n>>bc]
+
+# Used to avoid slow function calls as far as possible
+trailtable = map(trailing, range(256))
+bctable = map(bitcount, range(1024))
+
+#----------------------------------------------------------------------------#
+#                                  Rounding                                  #
+#----------------------------------------------------------------------------#
+
+# All supported rounding modes
 round_nearest = intern('n')
 round_floor = intern('f')
 round_ceiling = intern('c')
 round_up = intern('u')
 round_down = intern('d')
-shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
 
+# This function can be used to round a mantissa generally. However,
+# we will try to do most rounding inline for efficiency.
 def round_int(x, n, rounding):
     if rounding is round_nearest:
         if x >= 0:
@@ -85,6 +130,8 @@ def round_int(x, n, rounding):
             return -((-x) >> n)
         return x >> n
 
+# These masks are used to pick out segments of numbers to determine
+# which direction to round when rounding to nearest.
 class h_mask_big:
     def __getitem__(self, n):
         return (1<<(n-1))-1
@@ -92,52 +139,40 @@ class h_mask_big:
 h_mask_small = [0]+[((1<<(_-1))-1) for _ in range(1, 300)]
 h_mask = [h_mask_big(), h_mask_small]
 
-powers = [1<<_ for _ in range(300)]
+# The >> operator rounds to floor. shifts_down[rounding][sign]
+# tells whether this is the right direction to use, or if the
+# number should be negated before shifting
+shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
 
-def bitcount(n):
-    """Calculate size in bits of a nonnegative integer."""
-    bc = bisect(powers, n)
-    if bc != 300:
-        return bc
-    bc = int(math.log(n, 2)) - 4
-    return bc + bctable[n>>bc]
 
-bctable = map(bitcount, range(1024))
+#----------------------------------------------------------------------------#
+#                          Normalization of raw mpfs                         #
+#----------------------------------------------------------------------------#
 
-# Regular number format:
-# (-1)**sign * mantissa * 2**exponent, plus bitcount of mantissa
-fzero = (0, 0, 0, 0)
-fnzero = (1, 0, 0, 0)
-fone = (0, 1, 0, 1)
-fnone = (1, 1, 0, 1)
-ftwo = (0, 1, 1, 1)
-ften = (0, 5, 1, 3)
-fhalf = (0, 1, -1, 1)
-
-# Arbitrary encoding for special numbers: zero mantissa, nonzero exponent
-fnan = (0, 0, -123, -1)
-finf = (0, 0, -456, -2)
-fninf = (1, 0, -789, -3)
+# This function is called almost every time an mpf is created.
+# It has been optimized accordingly.
 
 def normalize(sign, man, exp, bc, prec, rounding):
-    """Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
+    """
+    Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
     normalized mantissa. The mantissa is rounded in the specified
     direction if its size exceeds the precision. Trailing zero bits
     are also stripped from the mantissa to ensure that the
     representation is canonical.
 
-    Conditions on input:
+    Conditions on the input:
     * The input must represent a regular (finite) number
-    * Sign bit must be 0 or 1
-    * Mantissa must be positive
-    * Exponent must be an integer
-    * Bitcount must be exact
+    * The sign bit must be 0 or 1
+    * The mantissa must be positive
+    * The mxponent must be an integer
+    * The bitcount must be exact
 
     If these conditions are not met, use from_man_exp, fpos, or any
     of the conversion functions to create normalized raw mpf tuples.
     """
     if not man:
         return fzero
+    # Cut mantissa down to size if larger than target precision
     n = bc - prec
     if n > 0:
         if rounding is round_nearest:
@@ -152,6 +187,7 @@ def normalize(sign, man, exp, bc, prec, rounding):
             man = -((-man)>>n)
         exp += n
         bc = prec
+    # Strip trailing bits
     if not man & 1:
         t = trailtable[man & 255]
         if not t:
@@ -163,9 +199,18 @@ def normalize(sign, man, exp, bc, prec, rounding):
         man >>= t
         exp += t
         bc -= t
+    # Bit count can be wrong if the input mantissa was 1 less than
+    # a power of 2 and got rounded up, thereby adding an extra bit.
+    # With trailing bits removed, all powers of two have mantissa 1,
+    # so this is easy to check for.
     if man == 1:
         bc = 1
     return sign, man, exp, bc
+
+
+#----------------------------------------------------------------------------#
+#                            Conversion functions                            #
+#----------------------------------------------------------------------------#
 
 def from_man_exp(man, exp, prec=None, rounding=None):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
@@ -211,6 +256,7 @@ def to_int(s, rounding=None):
         if sign:
             return (-man) << exp
         return man << exp
+    # Make default rounding fast
     if not rounding:
         if sign:
             return -(man >> (-exp))
@@ -298,17 +344,29 @@ def to_rational(s):
     else:
         return man, 1<<(-exp)
 
+def to_fixed(s, prec):
+    """Convert a raw mpf to a fixed-point big integer"""
+    sign, man, exp, bc = s
+    offset = exp + prec
+    if sign:
+        if offset >= 0: return (-man) << offset
+        else:           return (-man) >> (-offset)
+    else:
+        if offset >= 0: return man << offset
+        else:           return man >> (-offset)
+
+
+##############################################################################
+##############################################################################
+
+#----------------------------------------------------------------------------#
+#                       Arithmetic operations, etc.                          #
+#----------------------------------------------------------------------------#
+
 def frand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
     return from_man_exp(randrange(0, 1<<prec), -prec, prec, round_floor)
-
-
-#----------------------------------------------------------------------------#
-#                                                                            #
-#                       Arithmetic operations, etc.                          #
-#                                                                            #
-#----------------------------------------------------------------------------#
 
 def feq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparion
@@ -486,6 +544,7 @@ def fsub(s, t, prec, rounding):
     return fadd(s, (1-sign, man, exp, bc), prec, rounding)
 
 def fmul(s, t, prec, rounding):
+    """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     sign = ssign ^ tsign
@@ -635,7 +694,7 @@ def fpow(s, t, prec, rounding):
     return fexp(fmul(t, c, prec+10, rounding), prec, rounding)
 
 def fpowi(s, n, prec, rounding):
-    """Compute s**n, where n is an integer"""
+    """Compute s**n, where s is a raw mpf and n is a Python integer."""
     sign, man, exp, bc = s
 
     if (not man) and exp:
@@ -721,34 +780,22 @@ def fpowi(s, n, prec, rounding):
 ##############################################################################
 ##############################################################################
 
-
-def make_fixed(s, prec):
-    """Convert a floating-point number to a fixed-point big integer"""
-    sign, man, exp, bc = s
-    offset = exp + prec
-    if sign:
-        if offset >= 0: return (-man) << offset
-        else:           return (-man) >> (-offset)
-    else:
-        if offset >= 0: return man << offset
-        else:           return man >> (-offset)
+#----------------------------------------------------------------------------#
+#                              Radix conversion                              #
+#----------------------------------------------------------------------------#
 
 # TODO: speed up for bases 2, 4, 8, 16, ...
 
 def bin_to_radix(x, xbits, base, bdigits):
-    """
-    Radix conversion for fixed-point numbers. That is, convert
-    x * 2**xbits to floor(x * 10**bdigits).
-    """
+    """Changes radix of a fixed-point number; i.e., converts
+    x * 2**xbits to floor(x * 10**bdigits)."""
     return x * (base**bdigits) >> xbits
 
 stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'
 
 def small_numeral(n, base=10, digits=stddigits):
-    """
-    Return the string numeral of a positive integer in an arbitrary
-    base. Most efficient for small input.
-    """
+    """Return the string numeral of a positive integer in an arbitrary
+    base. Most efficient for small input."""
     if base == 10:
         return str(n)
     digs = []
@@ -758,23 +805,18 @@ def small_numeral(n, base=10, digits=stddigits):
     return "".join(digs[::-1])
 
 def numeral(n, base=10, size=0, digits=stddigits):
-    """
-    Represent the integer n as a string of digits in the given base.
+    """Represent the integer n as a string of digits in the given base.
     Recursive division is used to make this function about 3x faster
     than Python's str() for converting integers to decimal strings.
 
     The 'size' parameters specifies the number of digits in n; this
-    number is only used to determine splitting points and need not
-    be exact.
-    """
-
+    number is only used to determine splitting points and need not be
+    exact."""
     if n < 0:
         return "-" + numeral(-n, base, size, digits)
-
     # Fast enough to do directly
     if size < 250:
         return small_numeral(n, base, digits)
-
     # Divide in half
     half = (size // 2) + (size & 1)
     A, B = divmod(n, base**half)
@@ -782,19 +824,15 @@ def numeral(n, base=10, size=0, digits=stddigits):
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-
-
 def to_digits_exp(s, dps):
-    """
-    Helper function for representing the floating-point number s as a
-    decimal with dps places. Returns (sign, string, exponent)
-    containing '' or '-', the decimal digits as a string, and an
-    integer for the decimal exponent.
+    """Helper function for representing the floating-point number s as
+    a decimal with dps digits. Returns (sign, string, exponent) where
+    sign is '' or '-', string is the digit string, and exponent is
+    the decimal exponent as an int.
 
-    If inexact, the decimal representation is rounded toward zero.
-    """
+    If inexact, the decimal representation is rounded toward zero."""
 
-    # Extract sign so it doesn't mess up the string digit count
+    # Extract sign first so it doesn't mess up the string digit count
     if s[0]:
         sign = '-'
         s = fneg(s)
@@ -831,13 +869,12 @@ def to_digits_exp(s, dps):
     # a decimal fixed-point number.
     fixprec = max(bitprec - exp, 0)
     fixdps = int(fixprec / math.log(10,2) + 0.5)
-    sf = make_fixed(s, fixprec)
+    sf = to_fixed(s, fixprec)
     sd = bin_to_radix(sf, fixprec, 10, fixdps)
     digits = numeral(sd, base=10, size=dps)
 
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
-
 
 def to_str(s, dps):
     """Convert a raw mpf to a decimal floating-point literal with at
@@ -891,8 +928,8 @@ def to_str(s, dps):
     if exponent > 0: return sign + digits + "e+" + str(exponent)
     if exponent < 0: return sign + digits + "e" + str(exponent)
 
-
 def str_to_man_exp(x, base=10):
+    """Helper function for from_str."""
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
@@ -956,8 +993,13 @@ def to_bstr(x):
     sign, man, exp, bc = x
     return ['','-'][sign] + numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
 
+
 ##############################################################################
 ##############################################################################
+
+#----------------------------------------------------------------------------#
+#                                Square roots                                #
+#----------------------------------------------------------------------------#
 
 
 def sqrt_initial(y, prec):
@@ -970,13 +1012,11 @@ def sqrt_initial(y, prec):
     if prec < 200: return int(y**0.5 * 2.0**(50 - prec*0.5))
     else:          return int((y >> (prec-100))**0.5)
 
-
 # XXX: doesn't work
 def invsqrt_initial(y, prec):
     """Like sqrt_initial, but computes 1/sqrt(y) instead of sqrt(y)."""
     if prec < 200: return int(y**-0.5 * 2.0**(50 + prec*0.5))
     else:          return int((y >> (prec-100)) ** -0.5)
-
 
 def sqrt_fixed(y, prec):
     """
@@ -1017,7 +1057,6 @@ def sqrt_fixed(y, prec):
     prevp = 50
 
     for p in giant_steps(50, prec+extra):
-
         # Explanation: in the first term, we shift by the appropriate number
         # of bits to convert r from the previous precision to the current one.
         # The "-1" divides by two in the same step.
@@ -1027,11 +1066,8 @@ def sqrt_fixed(y, prec):
         # takes into account the fact that y, r_n and r_{n+1} all have
         # different precision levels. As before, the "-1" divides by two.
         r = lshift(r, p-prevp-1) + (lshift(y, p+prevp-prec-1)//r)
-
         prevp = p
-
     return r >> extra
-
 
 def sqrt_fixed2(y, prec):
     """
@@ -1061,7 +1097,6 @@ def sqrt_fixed2(y, prec):
     # XXX
     r = to_float(from_man_exp(y, -prec, 64, round_floor)) ** -0.5
     r = int(r * 2**50)
-
     # r = invsqrt_initial(y, prec)
 
     extra = 10
@@ -1095,18 +1130,14 @@ def sqrt_fixed2(y, prec):
 
     return r >> extra
 
-
-
-
 def fsqrt(s, prec, rounding):
-    """
-    Floating-point square root.
+    """Compute the square root of a raw mpf.
 
     Returns a tuple representing the square root of s, rounded to the
     nearest floating-point number in the specified rounding direction.
     The input must be a tuple representing a nonnegative floating-point
-    number.
-    """
+    number."""
+
     if s == fone:
         return fone
     sign, man, exp, bc = s
@@ -1137,6 +1168,8 @@ def fsqrt(s, prec, rounding):
     return from_man_exp(man, (exp+shift-prec2)>>1, prec, rounding)
 
 def fhypot(x, y, prec, rounding):
+    """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
+    x and y."""
     if y == fzero: return fabs(x, prec, rounding)
     if x == fzero: return fabs(y, prec, rounding)
     RF = round_floor
@@ -1148,9 +1181,7 @@ def fhypot(x, y, prec, rounding):
 ##############################################################################
 
 #----------------------------------------------------------------------------#
-#                                                                            #
 #                           Mathematical constants                           #
-#                                                                            #
 #----------------------------------------------------------------------------#
 
 def constant_memo(f):
@@ -1281,9 +1312,9 @@ def fpi(prec, rounding):
     """Compute a floating-point approximation of pi"""
     return from_man_exp(pi_fixed(prec+5), -prec-5, prec, rounding)
 
-def fdegree(prec, rounding, _180=from_int(180)):
+def fdegree(prec, rounding):
     """Compute 1 degree = pi / 180."""
-    return fdiv(fpi(prec+5, round_floor), _180, prec, rounding)
+    return from_man_exp(pi_fixed(prec+10)//180, -prec-10, prec, rounding)
 
 #----------------------------------------------------------------------------
 # Logarithms of integers are needed for various computations involving
@@ -1446,7 +1477,7 @@ def fexp(x, prec, rounding):
         return fpowi(fe(prec+10, round_floor), man<<exp, prec, rounding)
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
-    t = make_fixed(x, prec2)
+    t = to_fixed(x, prec2)
     # abs(x) > 1?
     if exp+bc > 1:
         lg2 = log2_fixed(prec2)
@@ -1500,6 +1531,7 @@ def log_newton(x, prec):
     return r >> extra
 
 def flog(x, prec, rounding):
+    """Compute the natural logarithm of a positive raw mpf x."""
     sign, man, exp, bc = x
     if not man:
         if x == fzero:
@@ -1628,7 +1660,7 @@ def cos_sin(x, prec, rounding):
     wp = prec1
 
     while 1:
-        n, rx = trig_reduce(make_fixed(x, wp), wp)
+        n, rx = trig_reduce(to_fixed(x, wp), wp)
         # If we're close to a root, we have to increase the
         # fixed-point precision to obtain full relative accuracy
         if abs(rx >> (prec1-8)) < 10:
@@ -1759,7 +1791,7 @@ def atan_taylor(x, prec, rounding):
             return from_man_exp(man, exp, prec, rounding)
         prec2 = prec + diff
     prec2 += 15  # XXX: better estimate for number of guard bits
-    x = make_fixed(x, prec2)
+    x = to_fixed(x, prec2)
     x2 = (x*x)>>prec2; one = 1<<prec2; s=a=x
     for n in xrange(1, 1000000):
         a = (a*x2) >> prec2
@@ -1770,7 +1802,7 @@ def atan_taylor(x, prec, rounding):
 
 def atan_euler(x, prec, rounding):
     prec2 = prec + 15
-    x = make_fixed(x, prec2)
+    x = to_fixed(x, prec2)
     one = 1<<prec2; x2 = (x*x)>>prec2; y=(x2<<prec2)//(one+x2)
     s = a = one
     for n in xrange(1, 1000000):
@@ -1810,6 +1842,9 @@ def fatan(x, prec, rounding):
 ##############################################################################
 ##############################################################################
 
+#----------------------------------------------------------------------------#
+#                              Complex numbers                               #
+#----------------------------------------------------------------------------#
 
 # Use fastest rounding mode for intermediate calculations
 RF = round_down

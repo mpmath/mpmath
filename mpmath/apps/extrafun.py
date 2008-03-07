@@ -4,12 +4,12 @@ Numerical implementations of special functions (gamma, ...)
 
 from mpmath.mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
     power, extraprec, mp
-from mpmath.lib import make_fixed
+from mpmath.lib import to_fixed
 
 #from sympy import Rational
 
 def _fix(x, prec):
-    return make_fixed(x._mpf_, prec)
+    return to_fixed(x._mpf_, prec)
 
 def _re(s):
     if isinstance(s, mpf):
