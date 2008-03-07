@@ -1634,7 +1634,7 @@ def cos_sin(x, prec, rounding):
     if rounding is not round_nearest and (c[1] == 1 or s[1] == 1):
         if rounding in (round_down, round_floor):
             if   c == fone: c = (0, (1<<prec)-1, -prec, prec)
-            elif s == fone: c = (0, (1<<prec)-1, -prec, prec)
+            elif s == fone: s = (0, (1<<prec)-1, -prec, prec)
         if rounding in (round_down, round_ceiling):
             if   c == fnone: c = (1, (1<<prec)-1, -prec, prec)
             elif s == fnone: s = (1, (1<<prec)-1, -prec, prec)
