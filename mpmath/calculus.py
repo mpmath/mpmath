@@ -1,5 +1,5 @@
 """
-This module implements high-level calculus-oriented functions:
+High-level calculus-oriented functions.
 
 * Numerical differentiation
 * Numerical polynomial operations
@@ -11,7 +11,7 @@ This module implements high-level calculus-oriented functions:
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from apps.extrafun import factorial
+from specfun import factorial
 
 #----------------------------------------------------------------------------#
 #                                Differentiation                             #

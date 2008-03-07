@@ -1,10 +1,12 @@
 """
-Numerical implementations of special functions (gamma, ...)
+Nonelementary special functions (gamma, zeta, ...)
 """
 
-from mpmath.mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
+__docformat__ = 'plaintext'
+
+from mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
     power, extraprec, mp
-from mpmath.lib import to_fixed
+from lib import to_fixed
 
 #from sympy import Rational
 

@@ -1,6 +1,10 @@
-""" Defines mpi class for interval arithmetic.
 """
-from mpmath.mptypes import *
+Defines the mpi class for interval arithmetic.
+"""
+
+__docformat__ = 'plaintext'
+
+from mptypes import *
 
 class mpi:
     """Interval arithmetic class. Precision is controlled by mp.prec."""
