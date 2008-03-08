@@ -604,7 +604,7 @@ def fdiv(s, t, prec, rounding):
             if t == fnan: return fnan
             return fzero
         if t == fzero:
-            return fnan
+            raise ZeroDivisionError
         s_special = (not sman) and sexp
         t_special = (not tman) and texp
         if s_special and t_special:
