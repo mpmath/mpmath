@@ -600,7 +600,7 @@ def fdiv(s, t, prec, rounding):
     tsign, tman, texp, tbc = t
     if not sman or not tman:
         if s == fzero:
-            if t == fzero: return fnan
+            if t == fzero: raise ZeroDivisionError
             if t == fnan: return fnan
             return fzero
         if t == fzero:
