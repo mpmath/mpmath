@@ -202,7 +202,7 @@ def polyroots(coeffs, maxsteps=20):
                 error[i] = abs(x)
     roots.sort(key=abs)
     err = max(error)
-    err = max(err, ldexp(1, -getprec()+1))
+    err = max(err, ldexp(1, -mp.prec+1))
     return roots, err
 
 

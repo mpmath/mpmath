@@ -206,6 +206,29 @@ Numerical differentiation
 Root-finding
 ------------
 
+The function ``secant`` calculates a root of a given function using the secant method. A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method.
+
+If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) A particularly efficient general approach is to compute the initial approximation using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
+
+A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3.
+
+    >>> mp.dps = 30
+    >>> print secant(sin, 3)
+    3.14159265358979323846264338328
+
+The secant methods can be used to find complex roots, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line).
+
+    >>> mp.dps = 15
+    >>> print secant(lambda x: x**3 + 2*x + 1, j)
+    (0.226698825758202 + 1.46771150871022j)
+
+A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence):
+
+    >>> mp.dps = 30
+    >>> print secant(zeta, 0.5+14j)
+    (0.5 + 14.1347251417346937904572519836j)
+
+
 Polynomials
 -----------
 
