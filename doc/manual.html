@@ -299,7 +299,7 @@ ul.auto-toc {
 <tbody valign="top">
 <tr><th class="docinfo-name">Author:</th>
 <td>Fredrik Johansson &lt;<a class="reference" href="mailto:fredrik.johansson&#64;gmail.com">fredrik.johansson&#64;gmail.com</a>&gt;</td></tr>
-<tr class="field"><th class="docinfo-name">Updated:</th><td class="field-body">2008-03-06</td>
+<tr class="field"><th class="docinfo-name">Updated:</th><td class="field-body">2008-03-09</td>
 </tr>
 <tr class="field"><th class="docinfo-name">Mpmath version:</th><td class="field-body">0.7</td>
 </tr>
@@ -310,37 +310,47 @@ ul.auto-toc {
 <ul class="auto-toc simple">
 <li><a class="reference" href="#about-mpmath" id="id1" name="id1">1&nbsp;&nbsp;&nbsp;About mpmath</a></li>
 <li><a class="reference" href="#installation" id="id2" name="id2">2&nbsp;&nbsp;&nbsp;Installation</a></li>
-<li><a class="reference" href="#basic-principles" id="id3" name="id3">3&nbsp;&nbsp;&nbsp;Basic principles</a><ul class="auto-toc">
-<li><a class="reference" href="#representation-of-numbers" id="id4" name="id4">3.1&nbsp;&nbsp;&nbsp;Representation of numbers</a></li>
-<li><a class="reference" href="#precision-and-accuracy" id="id5" name="id5">3.2&nbsp;&nbsp;&nbsp;Precision and accuracy</a><ul class="auto-toc">
-<li><a class="reference" href="#decimals" id="id6" name="id6">3.2.1&nbsp;&nbsp;&nbsp;Decimals</a></li>
+<li><a class="reference" href="#basic-arithmetic" id="id3" name="id3">3&nbsp;&nbsp;&nbsp;Basic arithmetic</a><ul class="auto-toc">
+<li><a class="reference" href="#working-with-mpmath-numbers" id="id4" name="id4">3.1&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a></li>
+<li><a class="reference" href="#controlling-precision" id="id5" name="id5">3.2&nbsp;&nbsp;&nbsp;Controlling precision</a><ul class="auto-toc">
+<li><a class="reference" href="#temporarily-changing-the-precision" id="id6" name="id6">3.2.1&nbsp;&nbsp;&nbsp;Temporarily changing the precision</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#rounding" id="id7" name="id7">3.3&nbsp;&nbsp;&nbsp;Rounding</a></li>
-<li><a class="reference" href="#exponent-range" id="id8" name="id8">3.4&nbsp;&nbsp;&nbsp;Exponent range</a></li>
-<li><a class="reference" href="#compatibility" id="id9" name="id9">3.5&nbsp;&nbsp;&nbsp;Compatibility</a></li>
+<li><a class="reference" href="#caveat-providing-correct-input" id="id7" name="id7">3.3&nbsp;&nbsp;&nbsp;Caveat: providing correct input</a></li>
+<li><a class="reference" href="#magical-numbers" id="id8" name="id8">3.4&nbsp;&nbsp;&nbsp;Magical numbers</a></li>
+<li><a class="reference" href="#mathematical-functions" id="id9" name="id9">3.5&nbsp;&nbsp;&nbsp;Mathematical functions</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#working-with-mpmath-numbers" id="id10" name="id10">4&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a><ul class="auto-toc">
-<li><a class="reference" href="#setting-precision" id="id11" name="id11">4.1&nbsp;&nbsp;&nbsp;Setting precision</a></li>
-<li><a class="reference" href="#mathematical-functions" id="id12" name="id12">4.2&nbsp;&nbsp;&nbsp;Mathematical functions</a></li>
+<li><a class="reference" href="#high-level-features" id="id10" name="id10">4&nbsp;&nbsp;&nbsp;High-level features</a><ul class="auto-toc">
+<li><a class="reference" href="#numerical-integration" id="id11" name="id11">4.1&nbsp;&nbsp;&nbsp;Numerical integration</a></li>
+<li><a class="reference" href="#numerical-differentiation" id="id12" name="id12">4.2&nbsp;&nbsp;&nbsp;Numerical differentiation</a></li>
+<li><a class="reference" href="#root-finding" id="id13" name="id13">4.3&nbsp;&nbsp;&nbsp;Root-finding</a></li>
+<li><a class="reference" href="#polynomials" id="id14" name="id14">4.4&nbsp;&nbsp;&nbsp;Polynomials</a></li>
+<li><a class="reference" href="#interval-arithmetic" id="id15" name="id15">4.5&nbsp;&nbsp;&nbsp;Interval arithmetic</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#high-level-functions" id="id13" name="id13">5&nbsp;&nbsp;&nbsp;High-level functions</a><ul class="auto-toc">
-<li><a class="reference" href="#numerical-integration" id="id14" name="id14">5.1&nbsp;&nbsp;&nbsp;Numerical integration</a></li>
-<li><a class="reference" href="#numerical-differentiation" id="id15" name="id15">5.2&nbsp;&nbsp;&nbsp;Numerical differentiation</a></li>
-<li><a class="reference" href="#root-finding" id="id16" name="id16">5.3&nbsp;&nbsp;&nbsp;Root-finding</a></li>
-<li><a class="reference" href="#polynomials" id="id17" name="id17">5.4&nbsp;&nbsp;&nbsp;Polynomials</a></li>
-<li><a class="reference" href="#interval-arithmetic" id="id18" name="id18">5.5&nbsp;&nbsp;&nbsp;Interval arithmetic</a></li>
+<li><a class="reference" href="#technical-details" id="id16" name="id16">5&nbsp;&nbsp;&nbsp;Technical details</a><ul class="auto-toc">
+<li><a class="reference" href="#representation-of-numbers" id="id17" name="id17">5.1&nbsp;&nbsp;&nbsp;Representation of numbers</a></li>
+<li><a class="reference" href="#precision-and-accuracy" id="id18" name="id18">5.2&nbsp;&nbsp;&nbsp;Precision and accuracy</a><ul class="auto-toc">
+<li><a class="reference" href="#decimal-issues" id="id19" name="id19">5.2.1&nbsp;&nbsp;&nbsp;Decimal issues</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#notes-on-performance" id="id19" name="id19">6&nbsp;&nbsp;&nbsp;Notes on performance</a></li>
+<li><a class="reference" href="#rounding" id="id20" name="id20">5.3&nbsp;&nbsp;&nbsp;Rounding</a></li>
+<li><a class="reference" href="#exponent-range" id="id21" name="id21">5.4&nbsp;&nbsp;&nbsp;Exponent range</a></li>
+<li><a class="reference" href="#compatibility" id="id22" name="id22">5.5&nbsp;&nbsp;&nbsp;Compatibility</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#performance-notes" id="id23" name="id23">6&nbsp;&nbsp;&nbsp;Performance notes</a><ul class="auto-toc">
+<li><a class="reference" href="#optimization-tricks" id="id24" name="id24">6.1&nbsp;&nbsp;&nbsp;Optimization tricks</a></li>
+<li><a class="reference" href="#using-the-right-tool" id="id25" name="id25">6.2&nbsp;&nbsp;&nbsp;Using the right tool</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id1" id="about-mpmath" name="about-mpmath">1&nbsp;&nbsp;&nbsp;About mpmath</a></h1>
-<p>Mpmath is a pure-Python library for arbitrary-precision floating-point arithmetic. It implements all the functions found in Python's <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules (<tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">log</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>...), plus a few nonelementary special functions (<tt class="docutils literal"><span class="pre">gamma</span></tt>, <tt class="docutils literal"><span class="pre">zeta</span></tt>...), and has utilities for arbitrary-precision numerical differentiation, integration, root-finding, and interval arithmetic. It has extensive support for complex numbers and is much faster (typically 10 or 100 times) than Python's standard <tt class="docutils literal"><span class="pre">decimal</span></tt> library.</p>
-<p>Mpmath is lightweight (~100 KB), free (BSD license), and easy to install or include in other software due to being written in pure Python without any external dependencies.</p>
+<p>Mpmath is a pure-Python library for arbitrary-precision floating-point arithmetic. It implements all the functions found in Python's <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules (<tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">log</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>...), plus a few nonelementary special functions (<tt class="docutils literal"><span class="pre">gamma</span></tt>, <tt class="docutils literal"><span class="pre">zeta</span></tt>...), and has utilities for arbitrary-precision numerical differentiation, integration, root-finding, and interval arithmetic. It supports unlimited exponents, has full support for complex numbers, and offers better performance than Python's standard <tt class="docutils literal"><span class="pre">decimal</span></tt> library.</p>
+<p>Mpmath is lightweight (~100 KB), free (BSD license), and easy to install or include in other software due to being written entirely in Python without any external dependencies.</p>
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id2" id="installation" name="installation">2&nbsp;&nbsp;&nbsp;Installation</a></h1>
@@ -352,27 +362,210 @@ python easy_install.py mpmath
 <pre class="literal-block">
 C:\&lt;pythonpath&gt;\Scripts\easy_install.exe mpmath
 </pre>
-<p>Alternatively, you can manually download the latest released version of mpmath from the <a class="reference" href="http://code.google.com/p/mpmath/">mpmath website</a> or the <a class="reference" href="http://pypi.python.org/pypi">Python Package Index</a>. To install mpmath, either run the binary installer (Windows only) or extract the source archive and run:</p>
+<p>Alternatively, you can manually download the latest released version of mpmath from the <a class="reference" href="http://code.google.com/p/mpmath/">mpmath website</a> or the <a class="reference" href="http://pypi.python.org/pypi">Python Package Index</a>. Either run the binary installer (Windows only) or extract the source archive and run:</p>
 <pre class="literal-block">
 python setup.py install
 </pre>
-<p>Debian users can <tt class="docutils literal"><span class="pre">apt-get</span></tt> mpmath; <a class="reference" href="http://packages.debian.org/python-mpmath">package information</a> is available on the Debian website.</p>
+<p>Debian and Ubuntu users can <tt class="docutils literal"><span class="pre">apt-get</span></tt> mpmath; <a class="reference" href="http://packages.debian.org/python-mpmath">package information</a> is available on the Debian website.</p>
 <p>After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; from mpmath import *
-&gt;&gt;&gt; setdps(50)      # set working precision to 50 decimals
-&gt;&gt;&gt; print mpf(2) ** mpf('0.5')    # mpf is an arbitrary-precision float type
+&gt;&gt;&gt; mp.dps = 50
+&gt;&gt;&gt; print mpf(2) ** mpf('0.5')
 1.4142135623730950488016887242096980785696718753769
 &gt;&gt;&gt; print 2*pi
 6.2831853071795864769252867665590057683943387987502
 </pre>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id3" id="basic-principles" name="basic-principles">3&nbsp;&nbsp;&nbsp;Basic principles</a></h1>
-<p>Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some knowledge of mpmath's terminology and internal number model can be very useful to avoid common errors, and is recommended for trying more advanced calculations.</p>
-<p>If you just want to try out mpmath's features, feel free to skip ahead to the next section.</p>
+<h1><a class="toc-backref" href="#id3" id="basic-arithmetic" name="basic-arithmetic">3&nbsp;&nbsp;&nbsp;Basic arithmetic</a></h1>
 <div class="section">
-<h2><a class="toc-backref" href="#id4" id="representation-of-numbers" name="representation-of-numbers">3.1&nbsp;&nbsp;&nbsp;Representation of numbers</a></h2>
+<h2><a class="toc-backref" href="#id4" id="working-with-mpmath-numbers" name="working-with-mpmath-numbers">3.1&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a></h2>
+<p>Mpmath provides two main numerical types: <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt>. The <tt class="docutils literal"><span class="pre">mpf</span></tt> type is analogous to Python's built-in <tt class="docutils literal"><span class="pre">float</span></tt>. It holds a real number or one of the special values <tt class="docutils literal"><span class="pre">inf</span></tt> (positive infinity), <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> (not-a-number, indicating an indeterminate result). You can create <tt class="docutils literal"><span class="pre">mpf</span></tt> instances from strings, integers, floats, and other <tt class="docutils literal"><span class="pre">mpf</span></tt> instances:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mpf(4)
+mpf('4.0')
+&gt;&gt;&gt; mpf(2.5)
+mpf('2.5')
+&gt;&gt;&gt; mpf(&quot;1.25e6&quot;)
+mpf('1250000.0')
+&gt;&gt;&gt; mpf(mpf(2))
+mpf('2.0')
+&gt;&gt;&gt; mpf(&quot;inf&quot;)
+mpf('+inf')
+</pre>
+</blockquote>
+<p>An <tt class="docutils literal"><span class="pre">mpc</span></tt> represents a complex number in rectangular form as a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> instances. It can be constructed from a Python <tt class="docutils literal"><span class="pre">complex</span></tt>, a real number, or a pair of real numbers:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mpc(2,3)
+mpc(real='2.0', imag='3.0')
+&gt;&gt;&gt; mpc(complex(2,3)).imag
+mpf('3.0')
+</pre>
+</blockquote>
+<p>You can mix <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt> instances with each other and with Python numbers:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mpf(3) + 2*mpf('2.5') + 1.0
+mpf('9')
+&gt;&gt;&gt; mpc(1j)**0.5
+mpc(real='0.70710678118654757', imag='0.70710678118654757')
+</pre>
+</blockquote>
+<p>Prettier output can be obtained by using <tt class="docutils literal"><span class="pre">str()</span></tt> or <tt class="docutils literal"><span class="pre">print</span></tt>, which hide the <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt> constructor signatures and suppress small rounding artifacts:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mpf(&quot;3.14159&quot;)
+mpf('3.1415899999999999')
+&gt;&gt;&gt; print mpf(&quot;3.14159&quot;)
+3.14159
+&gt;&gt;&gt; print mpc(1j)**0.5
+(0.707106781186548 + 0.707106781186548j)
+</pre>
+</blockquote>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id5" id="controlling-precision" name="controlling-precision">3.2&nbsp;&nbsp;&nbsp;Controlling precision</a></h2>
+<p>Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling <tt class="docutils literal"><span class="pre">mpf()</span></tt> rounds the result to the current working precision. The working precision is controlled by a special object called <tt class="docutils literal"><span class="pre">mp</span></tt>, which has the following default state:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp
+Mpmath settings:
+  mp.prec = 53                [default: 53]
+  mp.dps = 15                 [default: 15]
+  mp.rounding = 'nearest'     [default: 'nearest']
+</pre>
+</blockquote>
+<p>The term <em>precision</em> (<strong>prec</strong>) always refers to the arithmetic precision measured in bits. The <em>decimal precision</em> is called the <strong>dps</strong> (short for <em>decimal places</em>). Binary and decimal precision are related roughly according to the formula <tt class="docutils literal"><span class="pre">prec</span> <span class="pre">=</span> <span class="pre">3.33*dps</span></tt>. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used; see the section &quot;Decimal issues&quot; below).</p>
+<p>Changing one property of the <tt class="docutils literal"><span class="pre">mp</span></tt> object automatically updates the other; usually you just want to change the <tt class="docutils literal"><span class="pre">dps</span></tt> value:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 100
+&gt;&gt;&gt; mp.dps
+100
+&gt;&gt;&gt; mp.prec
+336
+</pre>
+</blockquote>
+<p>When you've set the precision level, all <tt class="docutils literal"><span class="pre">mpf</span></tt> operations are carried out at that precision:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 50
+&gt;&gt;&gt; mpf(1) / 6
+mpf('0.16666666666666666666666666666666666666666666666666656')
+&gt;&gt;&gt; mp.dps = 25
+&gt;&gt;&gt; mpf(2) ** mpf('0.5')
+mpf('1.414213562373095048801688713')
+</pre>
+</blockquote>
+<p>The precision of complex arithmetic is also controlled by the <tt class="docutils literal"><span class="pre">mp</span></tt> object:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 10
+&gt;&gt;&gt; mpc(1,2) / 3
+mpc(real='0.3333333333321', imag='0.6666666666642')
+</pre>
+</blockquote>
+<p>The number of digits with which numbers are printed is determined by the working precision. To specify the number of digits to show (without changing the working precision), use the <tt class="docutils literal"><span class="pre">nstr</span></tt> and <tt class="docutils literal"><span class="pre">nprint</span></tt> functions:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 15
+&gt;&gt;&gt; a = mpf(1) / 6
+&gt;&gt;&gt; a
+mpf('0.16666666666666666')
+&gt;&gt;&gt; nstr(a, 8)
+'0.16666667'
+&gt;&gt;&gt; nprint(a, 8)
+0.16666667
+&gt;&gt;&gt; nstr(a, 50)
+'0.16666666666666665741480812812369549646973609924316'
+</pre>
+</blockquote>
+<div class="section">
+<h3><a class="toc-backref" href="#id6" id="temporarily-changing-the-precision" name="temporarily-changing-the-precision">3.2.1&nbsp;&nbsp;&nbsp;Temporarily changing the precision</a></h3>
+<p>It is often useful to change the precision during only part of a calculation. A way to temporarily increase the precision and then restore it is as follows:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.prec += 2
+ (...)
+&gt;&gt;&gt; mp.prec -= 2
+</pre>
+</blockquote>
+<p>In Python 2.5, the <tt class="docutils literal"><span class="pre">with</span></tt> statement along with the mpmath functions <tt class="docutils literal"><span class="pre">workprec</span></tt>, <tt class="docutils literal"><span class="pre">workdps</span></tt>, <tt class="docutils literal"><span class="pre">extraprec</span></tt> and <tt class="docutils literal"><span class="pre">extradps</span></tt> can be used to temporarily change precision in a more safe manner:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; from __future__ import with_statement
+&gt;&gt;&gt; with workdps(20):
+...     print mpf(1)/7
+...     with extradps(10):
+...         print mpf(1)/7
+...
+0.14285714285714285714
+0.142857142857142857142857142857
+&gt;&gt;&gt; mp.dps
+15
+</pre>
+</blockquote>
+<p>The <tt class="docutils literal"><span class="pre">with</span></tt> statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised. (The effect of the <tt class="docutils literal"><span class="pre">with</span></tt> statement can be emulated in Python 2.4 by using a <tt class="docutils literal"><span class="pre">try/finally</span></tt> block.)</p>
+<p>The <tt class="docutils literal"><span class="pre">workprec</span></tt> family of functions can also be used as function decorators:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; &#64;workdps(6)
+... def f():
+...     return mpf(1)/3
+...
+&gt;&gt;&gt; f()
+mpf('0.33333331346511841')
+</pre>
+</blockquote>
+</div>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id7" id="caveat-providing-correct-input" name="caveat-providing-correct-input">3.3&nbsp;&nbsp;&nbsp;Caveat: providing correct input</a></h2>
+<p>Note that when creating a new <tt class="docutils literal"><span class="pre">mpf</span></tt>, the value will at most be as accurate as the input. <strong>Be careful when mixing mpmath numbers with Python floats</strong>. When working at high precision, fractional <tt class="docutils literal"><span class="pre">mpf</span></tt> values should be created from strings or integers:</p>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 30
+&gt;&gt;&gt; mpf(10.9)   # bad
+mpf('10.9000000000000003552713678800501')
+&gt;&gt;&gt; mpf('10.9')  # good
+mpf('10.9')
+&gt;&gt;&gt; mpf(109) / mpf(10)   # also good
+mpf('10.9')
+</pre>
+<p>(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe, however, since those can be represented exactly by Python floats.)</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id8" id="magical-numbers" name="magical-numbers">3.4&nbsp;&nbsp;&nbsp;Magical numbers</a></h2>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id9" id="mathematical-functions" name="mathematical-functions">3.5&nbsp;&nbsp;&nbsp;Mathematical functions</a></h2>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id10" id="high-level-features" name="high-level-features">4&nbsp;&nbsp;&nbsp;High-level features</a></h1>
+<div class="section">
+<h2><a class="toc-backref" href="#id11" id="numerical-integration" name="numerical-integration">4.1&nbsp;&nbsp;&nbsp;Numerical integration</a></h2>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id12" id="numerical-differentiation" name="numerical-differentiation">4.2&nbsp;&nbsp;&nbsp;Numerical differentiation</a></h2>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id13" id="root-finding" name="root-finding">4.3&nbsp;&nbsp;&nbsp;Root-finding</a></h2>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id14" id="polynomials" name="polynomials">4.4&nbsp;&nbsp;&nbsp;Polynomials</a></h2>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id15" id="interval-arithmetic" name="interval-arithmetic">4.5&nbsp;&nbsp;&nbsp;Interval arithmetic</a></h2>
+</div>
+</div>
+<div class="section">
+<h1><a class="toc-backref" href="#id16" id="technical-details" name="technical-details">5&nbsp;&nbsp;&nbsp;Technical details</a></h1>
+<p>Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some knowledge of mpmath's terminology and internal number model can be useful to avoid common errors, and is recommended for trying more advanced calculations.</p>
+<div class="section">
+<h2><a class="toc-backref" href="#id17" id="representation-of-numbers" name="representation-of-numbers">5.1&nbsp;&nbsp;&nbsp;Representation of numbers</a></h2>
 <p>Mpmath uses binary arithmetic. A binary floating-point number is a number of the form <tt class="docutils literal"><span class="pre">man</span> <span class="pre">*</span> <span class="pre">2^exp</span></tt> where both <tt class="docutils literal"><span class="pre">man</span></tt> (the <em>mantissa</em>) and <tt class="docutils literal"><span class="pre">exp</span></tt> (the <em>exponent</em>) are integers. Some examples of floating-point numbers are given in the following table.</p>
 <blockquote>
 <table border="1" class="docutils">
@@ -409,43 +602,45 @@ python setup.py install
 </blockquote>
 <p>Note that the representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that <tt class="docutils literal"><span class="pre">man</span></tt> is an odd number, unless it is 0; we take zero to have <tt class="docutils literal"><span class="pre">man</span> <span class="pre">=</span> <span class="pre">exp</span> <span class="pre">=</span> <span class="pre">0</span></tt>. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)</p>
 <p>Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: <tt class="docutils literal"><span class="pre">(m*2^e)</span> <span class="pre">*</span> <span class="pre">(n*2^f)</span> <span class="pre">=</span> <span class="pre">(m*n)</span> <span class="pre">*</span> <span class="pre">2^(e+f)</span></tt>. Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.</p>
-<p>More technically, mpmath represents a floating-point number as a 3-tuple <tt class="docutils literal"><span class="pre">(man,</span> <span class="pre">exp,</span> <span class="pre">bc)</span></tt> where <tt class="docutils literal"><span class="pre">bc</span></tt> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, storing the bitcount significantly speeds up arithmetic, since the bitcount is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose.</p>
-<p>Mpmath numbers can also hold the special values <tt class="docutils literal"><span class="pre">inf</span></tt> (positive infinity), <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> (not-a-number, indicating an invalid result). These numbers use a nonnumerical internal representation.</p>
+<p>More technically, mpmath represents a floating-point number as a 4-tuple <tt class="docutils literal"><span class="pre">(sign,</span> <span class="pre">man,</span> <span class="pre">exp,</span> <span class="pre">bc)</span></tt> where <cite>sign</cite> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <tt class="docutils literal"><span class="pre">bc</span></tt> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
+<p>The special numbers <tt class="docutils literal"><span class="pre">+inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> are represented internally by a zero mantissa and a nonzero exponent.</p>
 <p>For further details on how the arithmetic is implemented, refer to the mpmath source code. The basic arithmetic operations are found in the <tt class="docutils literal"><span class="pre">lib.py</span></tt> module; many functions there are commented extensively.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id5" id="precision-and-accuracy" name="precision-and-accuracy">3.2&nbsp;&nbsp;&nbsp;Precision and accuracy</a></h2>
+<h2><a class="toc-backref" href="#id18" id="precision-and-accuracy" name="precision-and-accuracy">5.2&nbsp;&nbsp;&nbsp;Precision and accuracy</a></h2>
 <p>Contrary to popular superstition, floating-point numbers  do not come with an inherent &quot;small uncertainty&quot;. Every binary floating-point number is an exact rational number. With arbitrary-precision integers used for the mantissa and exponent, floating-point numbers can be added, subtracted and multiplied <em>exactly</em>. In particular, integers and integer multiples of 1/2, 1/4, 1/8, 1/16, etc. can be represented, added and multiplied exactly in binary floating-point.</p>
-<p>The reason why floating-point arithmetic is generally approximate is that we set a limit to the size of the mantissa for efficiency reasons. The maximum allowed width (bitcount) of the mantissa is called the precision or <tt class="docutils literal"><span class="pre">prec</span></tt> for short. Sums and products are exact as long as the absolute value of the mantissa is smaller than <tt class="docutils literal"><span class="pre">2^prec</span></tt>. As soon as the mantissa becomes larger than this threshold, we truncate it to have at most  <tt class="docutils literal"><span class="pre">prec</span></tt> bits (the exponent is incremented accordingly to preserve the magnitude of the number), and it is this operation that typically introduces numerical errors. Division is also not generally exact; although we can add and multiply exactly by setting the precision high enough, no precision is high enough to represent for example 1/3 exactly.</p>
+<p>The reason why floating-point arithmetic is generally approximate is that we set a limit to the size of the mantissa for efficiency reasons. The maximum allowed width (bitcount) of the mantissa is called the precision or <tt class="docutils literal"><span class="pre">prec</span></tt> for short. Sums and products are exact as long as the absolute value of the mantissa is smaller than <tt class="docutils literal"><span class="pre">2^prec</span></tt>. As soon as the mantissa becomes larger than this threshold, we truncate it to have at most  <tt class="docutils literal"><span class="pre">prec</span></tt> bits (the exponent is incremented accordingly to preserve the magnitude of the number), and it is this operation that typically introduces numerical errors. Division is also not generally exact; although we can add and multiply exactly by setting the precision high enough, no precision is high enough to represent for example 1/3 exactly (the same obviously applies for roots, trigonometric functions, etc).</p>
 <div class="section">
-<h3><a class="toc-backref" href="#id6" id="decimals" name="decimals">3.2.1&nbsp;&nbsp;&nbsp;Decimals</a></h3>
-<p>Unfortunately for some applications, decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers <tt class="docutils literal"><span class="pre">0.1</span></tt>, <tt class="docutils literal"><span class="pre">0.01</span></tt>, <tt class="docutils literal"><span class="pre">0.001</span></tt> has an exact representation as a binary floating-point number. Mpmath does not fully solve this problem; users who need <em>exact</em> decimal fractions should look at the <tt class="docutils literal"><span class="pre">decimal</span></tt> module in Python's standard library. However, mpmath can work with approximations of decimal fractions that are much better than those of standard floats. Instead of <tt class="docutils literal"><span class="pre">0.1000000000000000056</span></tt>, you can have:</p>
-<blockquote>
-0.10000000000000000000000000000000000000000028</blockquote>
-<p>or an approximation with any higher finite accuracy. The idea behind binary floating-point arithmetic is that one often does not need to print every value; instead, a calculation involving several steps can be performed entirely using efficient binary arithmetic, and only the final result needs to be converted to a decimal numeral that can be read by humans. If the calculation is done with precision a little higher than the target accuracy, rounding off the last few digits in the output gives a correct decimal value.</p>
-<p>There are a few subtle differences between binary and decimal precision. In mpmath, the term <em>precision</em> (<strong>prec</strong>) always refers to the arithmetic precision measured in bits. The <em>decimal precision</em> is called the <strong>dps</strong> (short for <em>decimal places</em>). Binary and decimal precision are related roughly according to the formula <tt class="docutils literal"><span class="pre">prec</span> <span class="pre">=</span> <span class="pre">3.33*dps</span></tt>. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places.</p>
-<p>However, the meaning of &quot;decimal precision&quot; can depend slightly on context. Precision and accuracy are not always correlated when translating from binary to decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number 2^-50 has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits:</p>
+<h3><a class="toc-backref" href="#id19" id="decimal-issues" name="decimal-issues">5.2.1&nbsp;&nbsp;&nbsp;Decimal issues</a></h3>
+<p>Unfortunately for some applications, decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers <tt class="docutils literal"><span class="pre">0.1</span></tt>, <tt class="docutils literal"><span class="pre">0.01</span></tt>, <tt class="docutils literal"><span class="pre">0.001</span></tt> has an exact representation as a binary floating-point number. Mpmath does not fully solve this problem; users who need <em>exact</em> decimal fractions should look at the <tt class="docutils literal"><span class="pre">decimal</span></tt> module in Python's standard library.</p>
+<p>There are a few subtle differences between binary and decimal precision. Precision and accuracy do not always correlate when translating from binary to decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number 2^-50 has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits:</p>
 <blockquote>
 0.00000000000000088817841970012523233890533447265625</blockquote>
-<p>Generally, it works out to just think &quot;I want 1000 digits, so I'll set the precision to <tt class="docutils literal"><span class="pre">1000</span> <span class="pre">*</span> <span class="pre">3.33</span> <span class="pre">=</span> <span class="pre">3330</span></tt> bits&quot;. In fact, as documented below, mpmath will do this conversion automatically for you, meaning that you can enter a desired <em>dps</em> value and mpmath will automatically choose the appropriate <em>prec</em>. More precisely, mpmath uses the following formulas to translate between prec and dps:</p>
+<p>Generally, it works out to just choose 1000 * 3.33 bits of precision in order to obtain 1000 decimal digits. In fact, mpmath will do the conversion automatically for you: you can enter a desired <em>dps</em> value and mpmath will automatically choose the appropriate <em>prec</em>. More precisely, mpmath uses the following formulas to translate between prec and dps:</p>
 <pre class="literal-block">
 dps(prec) = max(1, int(round(int(prec) / C - 1)))
 
 prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 </pre>
 <p>where <tt class="docutils literal"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">log(10)/log(2)</span></tt> is the exact version of the &quot;3.33&quot; conversion ratio. Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This margin is added to ensure that <em>n</em>-digit decimal numbers, when converted to binary, will retain all <em>n</em> digits correct when converted back to decimal.</p>
-<p>The dps value controls the number of digits to display when printing numbers with <tt class="docutils literal"><span class="pre">str</span></tt>, while the decimal precision used by <tt class="docutils literal"><span class="pre">repr</span></tt> is set two digits higher. For example, with 15 dps we have:</p>
+<blockquote>
+<ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">str</span></tt> decimal precision is roughly one digit less than the exact equivalent binary precision, to hide minor rounding errors and artifacts resulting from binary-decimal conversion</li>
+<li>The <tt class="docutils literal"><span class="pre">repr</span></tt> decimal precision is roughly one digit greater to ensure that <tt class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">eval(repr(x))</span></tt> holds, i.e. that numbers can be converted to strings and back losslessly.</li>
+</ul>
+</blockquote>
+<p>For example, the standard precision is 53 bits, which corresponds to a dps value of 15. The actual decimal precision given by 53 bits is 15.95 ~= 16.</p>
+<p>The dps value controls the number of digits to display when printing numbers with <tt class="docutils literal"><span class="pre">str</span></tt>, while the decimal precision used by <tt class="docutils literal"><span class="pre">repr</span></tt> is set two or three digits higher. For example, with 15 dps we have:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; str(pi)
 '3.14159265358979'
 &gt;&gt;&gt; repr(+pi)
 &quot;mpf('3.1415926535897931')&quot;
 </pre>
-<p>In other words, the <tt class="docutils literal"><span class="pre">str</span></tt> decimal precision is roughly one digit less than the binary precision, and the <tt class="docutils literal"><span class="pre">repr</span></tt> decimal precision is roughly one digit greater. The extra precision for <tt class="docutils literal"><span class="pre">repr</span></tt> is to ensure that <tt class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">eval(repr(x))</span></tt> holds, i.e. that numbers can be converted to strings and back losslessly. (Note: it seems that this invariance does not hold on all precision levels, although it does in fact work at the standard precision. The conversion formula may be updated in a future version of mpmath.)</p>
 </div>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id7" id="rounding" name="rounding">3.3&nbsp;&nbsp;&nbsp;Rounding</a></h2>
+<h2><a class="toc-backref" href="#id20" id="rounding" name="rounding">5.3&nbsp;&nbsp;&nbsp;Rounding</a></h2>
 <p>There are several different strategies for rounding a too large mantissa or a result that cannot at all be represented exactly in floating-point form (such as <tt class="docutils literal"><span class="pre">log(2)</span></tt>). Mpmath supports the following rounding modes:</p>
 <blockquote>
 <table border="1" class="docutils">
@@ -471,25 +666,19 @@ prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 <tr><td>Up</td>
 <td>Away from 0</td>
 </tr>
-<tr><td>Half-down</td>
-<td>To nearest; down if right between</td>
-</tr>
-<tr><td>Half-up</td>
-<td>To nearest; right if right between</td>
-</tr>
-<tr><td>Half-even</td>
-<td>To nearest; to the nearest even number if right between</td>
+<tr><td>Nearest</td>
+<td>To nearest; to the nearest even number on a tie</td>
 </tr>
 </tbody>
 </table>
 </blockquote>
-<p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic. The three <em>nearby</em> rounding modes generally provide greater accuracy, but are on the other hand slower. Half-even rounding, which mpmath uses by default, is both the most accurate and the slowest method.</p>
-<p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> always round their results <em>correctly</em>; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don't round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
-<p>Radix conversion and evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in bad cases.</p>
-<p>When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100). Similar comments apply when converting from binary to decimal: after performing an approximate radix conversion with slightly increased precision, the result is first truncated to remove long sequences of trailing 0's and 9's, and then rounded in the half-up direction to the desired number of decimal digits.</p>
+<p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method.</p>
+<p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don't round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
+<p>Evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
+<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100). When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0's and 9's, and finally rounds to nearest, rounding up (away from zero) on a tie.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id8" id="exponent-range" name="exponent-range">3.4&nbsp;&nbsp;&nbsp;Exponent range</a></h2>
+<h2><a class="toc-backref" href="#id21" id="exponent-range" name="exponent-range">5.4&nbsp;&nbsp;&nbsp;Exponent range</a></h2>
 <p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory. Mpmath can for example hold an approximation of a large Mersenne prime:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; print (mpf(2)**32582657 - 1)
@@ -498,66 +687,71 @@ prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 <p>Or why not 1 googolplex:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; print mpf(10) ** (10**100)
-1.0e+100000000000000000000000000000000000000000000000000000000000000000000000000
-00000000000000000000000000
+1.0e+100000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000
 </pre>
 <p>Some care may be necessary when working with extremely large numbers. Although arithmetic is safe, it is for example futile to attempt to compute <tt class="docutils literal"><span class="pre">exp</span></tt> of either of the above two numbers. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
 <p>In some situations, it would be more convenient if mpmath would &quot;round&quot; extremely small numbers to 0 and extremely large numbers to <tt class="docutils literal"><span class="pre">inf</span></tt>, and directly raise an exception or return <tt class="docutils literal"><span class="pre">nan</span></tt> if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.</p>
 </div>
 <div class="section">
-<h2><a class="toc-backref" href="#id9" id="compatibility" name="compatibility">3.5&nbsp;&nbsp;&nbsp;Compatibility</a></h2>
-<p>The floating-point arithmetic provided by processors that conform to the IEEE 754 <em>double precision</em> standard has a precision of 53 bits and uses <em>half-even</em> rounding. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python <tt class="docutils literal"><span class="pre">float</span></tt> type corresponds to an IEEE double with half-even rounding on most systems.)</p>
-<p>This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath, which also uses half-even rounding by default. Thus, under normal circumstances, mpmath should produce identical results to Python <tt class="docutils literal"><span class="pre">float</span></tt> operations. This is not always true, for two reasons:</p>
+<h2><a class="toc-backref" href="#id22" id="compatibility" name="compatibility">5.5&nbsp;&nbsp;&nbsp;Compatibility</a></h2>
+<p>The floating-point arithmetic provided by processors that conform to the IEEE 754 <em>double precision</em> standard has a precision of 53 bits and uses rounding to nearest. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python <tt class="docutils literal"><span class="pre">float</span></tt> type corresponds to an IEEE double with rounding to nearest on most systems.)</p>
+<p>This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath. Thus, under normal circumstances, mpmath should produce identical results to Python <tt class="docutils literal"><span class="pre">float</span></tt> operations. This is not always true, for two reasons:</p>
 <ol class="arabic simple">
 <li>Hardware floats have a limited exponent range, as discussed above. Numbers very close to the exponent limit may be rounded subnormally, meaning that they lose precision.</li>
-<li>Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like <tt class="docutils literal"><span class="pre">log</span></tt> and <tt class="docutils literal"><span class="pre">sin</span></tt>, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin <tt class="docutils literal"><span class="pre">float</span></tt> multiplication was inaccurate, causing mpmath's comparative tests to fail.)</li>
+<li>Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like <tt class="docutils literal"><span class="pre">log</span></tt> and <tt class="docutils literal"><span class="pre">sin</span></tt>, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin <tt class="docutils literal"><span class="pre">float</span></tt> multiplication was inaccurate, causing mpmath's float compatibility tests to fail.)</li>
 <li>Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)</li>
 </ol>
 </div>
 </div>
 <div class="section">
-<h1><a class="toc-backref" href="#id10" id="working-with-mpmath-numbers" name="working-with-mpmath-numbers">4&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a></h1>
+<h1><a class="toc-backref" href="#id23" id="performance-notes" name="performance-notes">6&nbsp;&nbsp;&nbsp;Performance notes</a></h1>
+<p>In rough numbers, Python floats are 100 times slower than raw hardware floats, and mpmath floats at standard precision are 100 times slower than Python floats. It's fortunate that a modern CPU does some 10^9 operations per second, at least leaving some 10^5 operations per second for mpmath (which is plenty for many uses). Because most time at low precision levels is spent on bookkeeping and interpreter overhead, the execution time increases sublinearly with small increments in precision. 50-digit arithmetic is essentially as fast as 15-digit arithmetic.  Asymptotically, mpmath arithmetic is as fast as Python big integer arithmetic, which is actually quite efficient up to several thousand digits (thanks to the use of Karatsuba multiplication).</p>
 <div class="section">
-<h2><a class="toc-backref" href="#id11" id="setting-precision" name="setting-precision">4.1&nbsp;&nbsp;&nbsp;Setting precision</a></h2>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id12" id="mathematical-functions" name="mathematical-functions">4.2&nbsp;&nbsp;&nbsp;Mathematical functions</a></h2>
-</div>
-</div>
-<div class="section">
-<h1><a class="toc-backref" href="#id13" id="high-level-functions" name="high-level-functions">5&nbsp;&nbsp;&nbsp;High-level functions</a></h1>
-<div class="section">
-<h2><a class="toc-backref" href="#id14" id="numerical-integration" name="numerical-integration">5.1&nbsp;&nbsp;&nbsp;Numerical integration</a></h2>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id15" id="numerical-differentiation" name="numerical-differentiation">5.2&nbsp;&nbsp;&nbsp;Numerical differentiation</a></h2>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id16" id="root-finding" name="root-finding">5.3&nbsp;&nbsp;&nbsp;Root-finding</a></h2>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id17" id="polynomials" name="polynomials">5.4&nbsp;&nbsp;&nbsp;Polynomials</a></h2>
-</div>
-<div class="section">
-<h2><a class="toc-backref" href="#id18" id="interval-arithmetic" name="interval-arithmetic">5.5&nbsp;&nbsp;&nbsp;Interval arithmetic</a></h2>
-</div>
-</div>
-<div class="section">
-<h1><a class="toc-backref" href="#id19" id="notes-on-performance" name="notes-on-performance">6&nbsp;&nbsp;&nbsp;Notes on performance</a></h1>
-<p>In rough numbers, Python floats are 100 times slower than raw hardware floats, and mpmath floats at standard precision are 100 times slower than Python floats. It's fortunate that a modern CPU does some 10^9 operations per second, at least leaving some 10^5 operations per second for mpmath. 100,000 operations per second is fortunately plenty for many applications; mpmath also implements elementary functions like <tt class="docutils literal"><span class="pre">exp</span></tt> and <tt class="docutils literal"><span class="pre">sin</span></tt> efficiently, so that they are only slightly (3x to 5x) slower than plain arithmetic.</p>
-<p>Because most time at low precision levels is constant overhead, the execution time increases sublinearly with small increments in precision. 50-digit arithmetic is essentially as fast as 15-digit arithmetic.  Asymptotically, mpmath arithmetic is as fast as Python big integer arithmetic, which is actually quite efficient up to 10,000 digits or so (due to the use of Karatsuba multiplication).</p>
-<p>There are a few tricks that can speed up mpmath code at low to medium precision (up to a few hundred digits). Changing the rounding mode to <em>floor</em> gives a slight speedup, on the order 10-50%, at the cost of reduced accuracy. The JIT compiler <a class="reference" href="http://psyco.sourceforge.net/">Psyco</a> fairly consistently speeds up mpmath about 2x. An additional 2x gain is possible by using the low-level functions in <tt class="docutils literal"><span class="pre">mpmath.lib</span></tt>.</p>
-<p>A simple trick that can pay off in some cases is to store constants to avoid repeated type conversions. The second of the following code snippets is a whole 3x faster than the first:</p>
+<h2><a class="toc-backref" href="#id24" id="optimization-tricks" name="optimization-tricks">6.1&nbsp;&nbsp;&nbsp;Optimization tricks</a></h2>
+<p>There are a few tricks that can significantly speed up mpmath code at low to medium precision (up to a few hundred digits):</p>
+<blockquote>
+<ul class="simple">
+<li>Repeated type conversions from floats, strings and integers should be avoided.</li>
+<li>Changing the rounding mode to <em>floor</em> can give a slight speedup.</li>
+<li>The JIT compiler <a class="reference" href="http://psyco.sourceforge.net/">psyco</a> fairly consistently speeds up mpmath about 2x.</li>
+<li>An additional 2x gain is possible by using the low-level functions in <tt class="docutils literal"><span class="pre">mpmath.lib</span></tt> instead of <tt class="docutils literal"><span class="pre">mpf</span></tt> instances.</li>
+</ul>
+</blockquote>
+<p>Here follows a simple example demonstrating some of these options.</p>
+<p>Original algorithm (0.028 seconds):</p>
 <pre class="literal-block">
 x = mpf(1)
 for i in range(1000):
-    x += 0.5
-
-x = mpf(1)
-onehalf = mpf(0.5)
-for i in range(1000):
-    x += onehalf
+    x += 0.1
 </pre>
+<p>Preconverting the float constant (0.080 seconds):</p>
+<pre class="literal-block">
+x = mpf(1)
+one_tenth = mpf(0.1)
+for i in range(1000):
+    x += one_tenth
+</pre>
+<p>With psyco (0.0036 seconds):</p>
+<pre class="literal-block">
+import psyco; psyco.full()
+x = mpf(1)
+one_tenth = mpf(0.1)
+for i in range(1000):
+    x += one_tenth
+</pre>
+<p>With psyco and low-level functions (0.0017 seconds):</p>
+<pre class="literal-block">
+import psyco; psyco.full()
+x = from_int(1)
+one_tenth = from_float(0.1)
+for i in range(1000):
+    x = fadd(x, one_tenth, 53, round_nearest)
+</pre>
+<p>The last version is 16.5 times faster than the first. Not all calculations can be sped up the same way, of course, or doing so may just be inconvenient.</p>
+</div>
+<div class="section">
+<h2><a class="toc-backref" href="#id25" id="using-the-right-tool" name="using-the-right-tool">6.2&nbsp;&nbsp;&nbsp;Using the right tool</a></h2>
 <p>Many calculations can be done with ordinary floating-point arithmetic, and only in special cases require multiprecision arithmetic (for example to avoid overflows in corner cases). In these situations, it may be possible to write code that uses fast regular floats by default, and automatically (or manually) falls backs to mpmath only when needed. Python's dynamic namespaces and ability to compile code on the fly are helpful. Here is a simple (probably not failsafe) example:</p>
 <pre class="literal-block">
 import math
@@ -583,7 +777,7 @@ mpf('8.8068182256629216e+4342')
 &gt;&gt;&gt; evalmath('exp(10000) / exp(10000)')
 1.0
 </pre>
-<p>If you find that mpmath is orders of magnitude too slow for your needs, you should definitely look elsewhere, for example at the highly optimized C library <a class="reference" href="http://www.mpfr.org/">MPFR</a>, or the Python interface for the GNU Multiprecision Library, <a class="reference" href="http://code.google.com/p/gmpy/">GMPY</a>.</p>
+</div>
 </div>
 </div>
 </body>

@@ -81,6 +81,63 @@ def diffc(f, x, n=1, radius=mpf(0.5)):
 
 
 #----------------------------------------------------------------------------#
+#                           Generic root-finding                             #
+#----------------------------------------------------------------------------#
+
+msg1 = "Cannot perform a step with the secant method because the " \
+  "function values are equal at the two chosen start points. Try " \
+  "different start points."
+
+msg2 = "The derivative cannot be computed. The previous value " \
+  "will be reused for the next iteration."
+
+def secant(f, x0, x1=None, maxsteps=20, verbose=False):
+    """Solve the equation f(x) = 0 using the secant method, starting
+    at the given initial point x0 and performing up to `maxsteps`
+    steps or quitting when the difference between successive x values
+    is smaller than the epsilon of the current working precision.
+
+    The secant method requires a second starting point x1 with both
+    x0 and x1 located close to the root. If only x0 is provided, x1
+    is automatically generated as x0 + 1/4."""
+    weps = 2*eps
+    x = x0 * mpf(1)
+    if x1 is None:
+        xprev = x0 + mpf(0.25)
+    else:
+        xprev = x1 * mpf(1)
+    deriv_prev = None
+    fxprev = f(xprev)
+    for i in xrange(maxsteps):
+        if verbose:
+            print "Step", i
+            print "x =", x
+        fx = f(x)
+        ydiff = fx - fxprev
+        xdiff = x - xprev
+        if verbose:
+            print "f(x) =", fx
+            print "xdiff = ", xdiff
+            print "ydiff = ", ydiff
+        try:
+            deriv = xdiff / ydiff
+            deriv_prev = deriv
+        except ZeroDivisionError:
+            if deriv_prev is None:
+                raise ZeroDivisionError(msg1)
+            if verbose and abs(xdiff) > weps:
+                print msg2
+            deriv = deriv_prev
+        x, xprev = x - fx*deriv, x
+        fxprev = fx
+        if verbose:
+            print
+        if abs(xdiff) <= weps:
+            break
+    return x
+
+
+#----------------------------------------------------------------------------#
 #                                Polynomials                                 #
 #----------------------------------------------------------------------------#
 
