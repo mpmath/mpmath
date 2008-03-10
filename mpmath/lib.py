@@ -639,6 +639,25 @@ def fdiv(s, t, prec, rounding):
     else:      bc += bctable[quot>>bc]
     return normalize(sign, quot, sexp-texp-extra, bc, prec, rounding)
 
+def fdivi(n, t, prec, rounding):
+    """Floating-point division with a Python integer as numerator"""
+    tsign, tman, texp, tbc = t
+    if not n or not tman:
+        return fdiv(from_int(n), t, prec, rounding)
+    if tsign:
+        tman = -tman
+    extra = prec + tbc + 5
+    quot, rem = divmod(n<<extra, tman)
+    if quot >= 0:
+        sign = 0
+    else:
+        quot = -quot
+        sign = 1
+    if rem:
+        quot = (quot << 5) + 1
+        extra += 5
+    return normalize(sign, quot, -texp-extra, bitcount(quot), prec, rounding)
+
 def fmod(s, t, prec, rounding):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t

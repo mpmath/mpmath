@@ -404,8 +404,10 @@ class mpf(mpnumeric):
     def __rsub__(s, t): return mpf_convert_lhs(t) - s
 
     def __rdiv__(s, t):
-        if t == 1:
-            return make_mpf(fdiv(fone, s._mpf_, g_prec, g_rounding))
+        if isinstance(t, int_types):
+            r = new(mpf)
+            r._mpf_ = fdivi(t, s._mpf_, g_prec, g_rounding)
+            return r
         return mpf_convert_lhs(t) / s
 
     def __rpow__(s, t): return mpf_convert_lhs(t) ** s
