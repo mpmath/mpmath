@@ -1,6 +1,23 @@
 import math
 from mpmath import *
 
+def test_bessel():
+    mp.dps = 15
+    assert j0(1).ae(0.765197686557966551)
+    assert j0(pi).ae(-0.304242177644093864)
+    assert j0(1000).ae(0.0247866861524201746)
+    assert j0(-25).ae(0.0962667832759581162)
+    assert j1(1).ae(0.440050585744933516)
+    assert j1(pi).ae(0.284615343179752757)
+    assert j1(1000).ae(0.00472831190708952392)
+    assert j1(-25).ae(0.125350249580289905)
+    assert jv(5,1).ae(0.000249757730211234431)
+    assert jv(5,pi).ae(0.0521411843671184747)
+    assert jv(5,1000).ae(0.00502540694523318607)
+    assert jv(5,-25).ae(0.0660079953984229934)
+    assert jv(-3,2).ae(-0.128943249474402051)
+    assert jv(-4,2).ae(0.0339957198075684341)
+
 def test_incomplete_gamma():
     mp.dps = 15
     assert upper_gamma(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)

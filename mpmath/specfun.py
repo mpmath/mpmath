@@ -6,7 +6,7 @@ __docformat__ = 'plaintext'
 
 from mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
     power, extraprec, mp
-from lib import to_fixed
+from lib import bitcount, to_fixed, from_man_exp, round_nearest, fmuli
 
 #from sympy import Rational
 
@@ -22,6 +22,62 @@ def _im(s):
     if isinstance(s, mpf):
         return s
     return s.imag
+
+#---------------------------------------------------------------------------#
+#                                                                           #
+#                             Bessel functions                              #
+#                                                                           #
+#---------------------------------------------------------------------------#
+
+def _fact(n):
+    k = 1
+    p = 1
+    while k <= n:
+        p *= k
+        k += 1
+    return p
+
+# Fixed-point summation for integer n and real x mpf value
+def jn_series_real(n, x, prec):
+    if n < 0:
+        return fmuli(jn_series_real(-n, x, prec), (-1)**(-n),
+            prec, round_nearest)
+    extraprec = 15 + bitcount(abs(n))
+    prec += extraprec
+    x = to_fixed(x, prec)
+    x2 = (x**2) >> prec
+    if not n:
+        s = t = 1 << prec
+    else:
+        s = t = (x**n // _fact(n)) >> ((n-1)*prec + n)
+    k = 1
+    while t:
+        t = ((t * x2) // (-4*k*(k+n))) >> prec
+        s += t
+        k += 1
+    return from_man_exp(s, -prec, prec, round_nearest)
+
+def jv(v, x):
+    """
+    Compute the Bessel function J_v(x). Currently `v` must be an
+    integer and `x` must be real.
+    """
+    assert type(v) is int
+    x = mpf(x)
+    prec = mp.prec
+    b = jn_series_real(v, x._mpf_, prec+5)
+    return mpf(b)
+
+jn = jv
+
+def j0(x):
+    """Bessel function J_0(x). Currently, `x` must be real."""
+    return jv(0, x)
+
+def j1(x):
+    """Bessel function J_1(x). Currently, `x` must be real."""
+    return jv(1, x)
+
 
 
 #---------------------------------------------------------------------------#

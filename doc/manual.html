@@ -620,7 +620,7 @@ mpf('10.9')
 <p>Complex integrals are also supported. The next example computes Euler's constant gamma by using Cauchy's integral formula and looking at the pole of the Riemann zeta function at <em>z</em> = 1.</p>
 <blockquote>
 <pre class="doctest-block">
-&gt;&gt;&gt; print 1/(2*pi) * quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
+&gt;&gt;&gt; print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
 (0.577215664901533 + 2.86444093843177e-25j)
 </pre>
 </blockquote>
@@ -644,26 +644,30 @@ mpf('10.9')
 <p>It is possible to calculate double integrals with <tt class="docutils literal"><span class="pre">quadts</span></tt>. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the <em>x</em> variable and the second interval specifies the range of the <em>y</em> variable.</p>
 <blockquote>
 <pre class="doctest-block">
-&gt;&gt;&gt; print quadts(lambda x, y: cos(x+y/2), (-pi/2, pi/2), (0, pi))
+&gt;&gt;&gt; f = lambda x, y: cos(x+y/2)
+&gt;&gt;&gt; print quadts(f, (-pi/2, pi/2), (0, pi))
 4.0
 </pre>
 </blockquote>
-<p>Here are some more difficult examples taken from <a class="reference" href="http://mathworld.wolfram.com/DoubleIntegral.html">http://mathworld.wolfram.com/DoubleIntegral.html</a> (all except the second contain corner singularities). Each integral is calculated with <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">30</span></tt> (which takes a couple of seconds), and the result is compared to the known analytical value.</p>
+<p>Here are some more difficult examples taken from <a class="reference" href="http://mathworld.wolfram.com/DoubleIntegral.html">MathWorld</a> (all except the second contain corner singularities). Each integral is calculated with <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">30</span></tt> (which takes a couple of seconds), and the result is compared to the known analytical value.</p>
 <blockquote>
 <pre class="doctest-block">
-&gt;&gt;&gt; print quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1))
+&gt;&gt;&gt; f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
+&gt;&gt;&gt; print quadts(f, (0, 1), (0, 1))
 0.577215664901532860606512090082
 &gt;&gt;&gt; print euler
 0.577215664901532860606512090082
 </pre>
 <pre class="doctest-block">
-&gt;&gt;&gt; print quadts(lambda x, y: 1/sqrt(1+x**2+y**2), (-1, 1), (-1, 1))
+&gt;&gt;&gt; f = lambda x, y: 1/sqrt(1+x**2+y**2)
+&gt;&gt;&gt; print quadts(f, (-1, 1), (-1, 1))
 3.17343648530607134219175646705
 &gt;&gt;&gt; print 4*log(2+sqrt(3))-2*pi/3
 3.17343648530607134219175646705
 </pre>
 <pre class="doctest-block">
-&gt;&gt;&gt; print quadts(lambda x, y: 1/(1-x**2 * y**2), (0, 1), (0, 1))
+&gt;&gt;&gt; f = lambda x, y: 1/(1-x**2 * y**2), (0, 1)
+&gt;&gt;&gt; print quadts(f, (0, 1))
 1.23370055013616982735431137498
 &gt;&gt;&gt; print pi**2 / 8
 1.23370055013616982735431137498
@@ -716,18 +720,20 @@ quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), 0, 1)
 quadts(lambda x: log(1+x**2)/x**2, 0, 1)
 quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
 </pre>
-<p>Apparently simple-looking double integrals might not be possible to evaluate directly. In this example, <cite>quadts</cite> will run for several seconds before returning a value with very low accuracy:</p>
+<p>Apparently simple-looking double integrals might not be possible to evaluate directly. In this example, <tt class="docutils literal"><span class="pre">quadts</span></tt> will run for several seconds before returning a value with very low accuracy:</p>
 <blockquote>
 <pre class="doctest-block">
 &gt;&gt;&gt; mpf.dps = 15
-&gt;&gt;&gt; quadts(lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2), (0, 1), (0, 1), error=1)
+&gt;&gt;&gt; f = lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2)
+&gt;&gt;&gt; quadts(f, (0, 1), (0, 1), error=1)
 (mpf('0.38259743528830826'), mpf('1.0e-6'))
 </pre>
 </blockquote>
 <p>The problem is due to the non-analytic behavior of the function at (0.5, 0.5). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them):</p>
 <blockquote>
 <pre class="doctest-block">
-&gt;&gt;&gt; print quadts(lambda x, y: 4*sqrt((x-0.5)**2+(y-0.5)**2), (0.5, 1), (0.5, 1))
+&gt;&gt;&gt; f = lambda x, y: 4*sqrt((x-0.5)**2 + (y-0.5)**2)
+&gt;&gt;&gt; print quadts(f, (0.5, 1), (0.5, 1))
 0.382597858232106
 &gt;&gt;&gt; print (sqrt(2) + asinh(1))/6
 0.382597858232106
@@ -823,7 +829,7 @@ mpf('62.375')
 </div>
 <div class="section">
 <h3><a class="toc-backref" href="#id22" id="finding-roots-of-polynomials" name="finding-roots-of-polynomials">4.4.2&nbsp;&nbsp;&nbsp;Finding roots of polynomials</a></h3>
-<p>The function <tt class="docutils literal"><span class="pre">polyroots</span></tt> computes all <em>n</em> real or complex roots of an <em>n</em>-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots <tt class="docutils literal"><span class="pre">3*x^2</span> <span class="pre">-</span> <span class="pre">7*x</span> <span class="pre">+</span> <span class="pre">2</span></tt> (which are 1/3 and 2):</p>
+<p>The function <tt class="docutils literal"><span class="pre">polyroots</span></tt> computes all <em>n</em> real or complex roots of an <em>n</em>-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of <tt class="docutils literal"><span class="pre">3*x^2</span> <span class="pre">-</span> <span class="pre">7*x</span> <span class="pre">+</span> <span class="pre">2</span></tt> (which are 1/3 and 2):</p>
 <blockquote>
 <pre class="doctest-block">
 &gt;&gt;&gt; roots, err = polyroots([2, -7, 3])

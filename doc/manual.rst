@@ -239,7 +239,7 @@ You can integrate over infinite or half-infinite intervals:
 
 Complex integrals are also supported. The next example computes Euler's constant gamma by using Cauchy's integral formula and looking at the pole of the Riemann zeta function at *z* = 1.
 
-    >>> print 1/(2*pi) * quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
+    >>> print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
     (0.577215664901533 + 2.86444093843177e-25j)
 
 Functions with integral representations, such as the gamma function, can be implemented  directly from the definition.
@@ -259,22 +259,28 @@ Double integrals
 
 It is possible to calculate double integrals with ``quadts``. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the *x* variable and the second interval specifies the range of the *y* variable.
 
-    >>> print quadts(lambda x, y: cos(x+y/2), (-pi/2, pi/2), (0, pi))
+    >>> f = lambda x, y: cos(x+y/2)
+    >>> print quadts(f, (-pi/2, pi/2), (0, pi))
     4.0
 
-Here are some more difficult examples taken from http://mathworld.wolfram.com/DoubleIntegral.html (all except the second contain corner singularities). Each integral is calculated with ``mp.dps = 30`` (which takes a couple of seconds), and the result is compared to the known analytical value.
 
-    >>> print quadts(lambda x, y: (x-1)/((1-x*y)*log(x*y)), (0, 1), (0, 1))
+
+Here are some more difficult examples taken from `MathWorld <http://mathworld.wolfram.com/DoubleIntegral.html>`_ (all except the second contain corner singularities). Each integral is calculated with ``mp.dps = 30`` (which takes a couple of seconds), and the result is compared to the known analytical value.
+
+    >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
+    >>> print quadts(f, (0, 1), (0, 1))
     0.577215664901532860606512090082
     >>> print euler
     0.577215664901532860606512090082
 
-    >>> print quadts(lambda x, y: 1/sqrt(1+x**2+y**2), (-1, 1), (-1, 1))
+    >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
+    >>> print quadts(f, (-1, 1), (-1, 1))
     3.17343648530607134219175646705
     >>> print 4*log(2+sqrt(3))-2*pi/3
     3.17343648530607134219175646705
 
-    >>> print quadts(lambda x, y: 1/(1-x**2 * y**2), (0, 1), (0, 1))
+    >>> f = lambda x, y: 1/(1-x**2 * y**2), (0, 1)
+    >>> print quadts(f, (0, 1))
     1.23370055013616982735431137498
     >>> print pi**2 / 8
     1.23370055013616982735431137498
@@ -319,15 +325,17 @@ Even for analytic integrals on finite intervals, there is no guarantee that `qua
     quadts(lambda x: log(1+x**2)/x**2, 0, 1)
     quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
 
-Apparently simple-looking double integrals might not be possible to evaluate directly. In this example, `quadts` will run for several seconds before returning a value with very low accuracy:
+Apparently simple-looking double integrals might not be possible to evaluate directly. In this example, ``quadts`` will run for several seconds before returning a value with very low accuracy:
 
     >>> mpf.dps = 15
-    >>> quadts(lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2), (0, 1), (0, 1), error=1)
+    >>> f = lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2)
+    >>> quadts(f, (0, 1), (0, 1), error=1)
     (mpf('0.38259743528830826'), mpf('1.0e-6'))
 
 The problem is due to the non-analytic behavior of the function at (0.5, 0.5). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them):
 
-    >>> print quadts(lambda x, y: 4*sqrt((x-0.5)**2+(y-0.5)**2), (0.5, 1), (0.5, 1))
+    >>> f = lambda x, y: 4*sqrt((x-0.5)**2 + (y-0.5)**2)
+    >>> print quadts(f, (0.5, 1), (0.5, 1))
     0.382597858232106
     >>> print (sqrt(2) + asinh(1))/6
     0.382597858232106
@@ -414,7 +422,7 @@ The point and coefficient list may contain complex numbers.
 Finding roots of polynomials
 ............................
 
-The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots ``3*x^2 - 7*x + 2`` (which are 1/3 and 2):
+The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of ``3*x^2 - 7*x + 2`` (which are 1/3 and 2):
 
     >>> roots, err = polyroots([2, -7, 3])
     >>> print err
