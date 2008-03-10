@@ -52,7 +52,9 @@
 
 * miscellaneous speed improvements:
   * <mpf> ** <int> is 2-3 times faster (contributed by Mario Pernici)
-  * <mpf> * <int> is twice as fast
+  * <mpf> * <int> and <int> * <mpf> is roughly twice as fast
+  * <int> / <mpf> is roughly twice as fast (contributed by Mario
+    Pernici)
   * exp and log are about 10% faster
   * fast computation of e and exp(n) when precision is extremely high
 
