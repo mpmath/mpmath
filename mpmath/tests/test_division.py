@@ -29,6 +29,21 @@ def test_div_1_3():
     assert fdiv(c, b, 7, round_up)      == fb('-0.01010110')
     assert fdiv(c, b, 7, round_nearest) == fb('-0.01010101')
 
+def test_fdivi_1_3():
+    a = 1
+    b = fi(3)
+    c = -1
+    assert fdivi(a, b, 7, round_floor)   == fb('0.01010101')
+    assert fdivi(a, b, 7, round_ceiling) == fb('0.01010110')
+    assert fdivi(a, b, 7, round_down)    == fb('0.01010101')
+    assert fdivi(a, b, 7, round_up)      == fb('0.01010110')
+    assert fdivi(a, b, 7, round_nearest) == fb('0.01010101')
+    assert fdivi(c, b, 7, round_floor)   == fb('-0.01010110')
+    assert fdivi(c, b, 7, round_ceiling) == fb('-0.01010101')
+    assert fdivi(c, b, 7, round_down)    == fb('-0.01010101')
+    assert fdivi(c, b, 7, round_up)      == fb('-0.01010110')
+    assert fdivi(c, b, 7, round_nearest) == fb('-0.01010101')
+
 
 def test_div_300():
 
