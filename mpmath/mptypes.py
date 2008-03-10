@@ -454,7 +454,9 @@ class mpc(mpnumeric):
         i = repr(s.imag)[4:-1]
         return "mpc(real=%s, imag=%s)" % (r, i)
 
-    def __str__(s): return "(%s + %sj)" % (s.real, s.imag)
+    def __str__(s):
+        return "(%s)" % complex_to_str(s.real._mpf_, s.imag._mpf_, g_dps)
+
     def __complex__(s): return complex(float(s.real), float(s.imag))
     def __pos__(s): return mpc(s.real, s.imag)
     def __abs__(s): return hypot(s.real, s.imag)

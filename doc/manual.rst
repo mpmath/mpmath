@@ -4,7 +4,8 @@
 Mpmath manual
 =============
 
-:Author: Fredrik Johansson <fredrik.johansson@gmail.com>
+:Author: Fredrik Johansson
+:E-mail: fredrik.johansson@gmail.com
 :Updated: 2008-03-09
 :Mpmath version: 0.7
 
@@ -125,7 +126,7 @@ The precision of complex arithmetic is also controlled by the ``mp`` object:
     >>> mpc(1,2) / 3
     mpc(real='0.3333333333321', imag='0.6666666666642')
 
-The number of digits with which numbers are printed is determined by the working precision. To specify the number of digits to show (without changing the working precision), use the ``nstr`` and ``nprint`` functions:
+The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the ``nstr`` and ``nprint`` functions:
 
     >>> mp.dps = 15
     >>> a = mpf(1) / 6
@@ -203,12 +204,15 @@ Numerical integration
 Numerical differentiation
 -------------------------
 
-Root-finding
-------------
+Root-finding with the secant method
+-----------------------------------
 
 The function ``secant`` calculates a root of a given function using the secant method. A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method.
 
 If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) A particularly efficient general approach is to compute the initial approximation using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
+
+Simple examples
+...............
 
 A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3.
 
@@ -216,7 +220,7 @@ A simple example use of the secant method is to compute pi as the root of sin(*x
     >>> print secant(sin, 3)
     3.14159265358979323846264338328
 
-The secant methods can be used to find complex roots, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line).
+The secant methods can be used to find complex roots of analytic functions, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line).
 
     >>> mp.dps = 15
     >>> print secant(lambda x: x**3 + 2*x + 1, j)
@@ -228,9 +232,70 @@ A nice application is to compute nontrivial roots of the Riemann zeta function w
     >>> print secant(zeta, 0.5+14j)
     (0.5 + 14.1347251417346937904572519836j)
 
+A useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value:
+
+    >>> def lambert(x):
+    ...     return secant(lambda w: w*exp(w) - x, log(1+x))
+    ...
+    >>> mp.dps = 15
+    >>> print lambert(1)
+    0.567143290409784
+    >>> print lambert(1000)
+    5.2496028524016
+
+Options
+.......
+
+Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point ``x0``; ``secant`` automatically sets the second point to ``x0 + 1/4``. Manually providing also the second point can help in some cases if ``secant`` fails to converge.
+
+By default, ``secant`` performs a maximum of 20 steps, which can be increased or decreased using the ``maxsteps`` keyword argument. You can pass ``secant`` the option ``verbose=True`` to show detailed progress.
 
 Polynomials
 -----------
+
+Polynomial evaluation
+.....................
+
+Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates ``2 + 5*x + x^3`` at ``x = 3.5``:
+
+    >>> mp.dps = 20
+    >>> polyval([2, 5, 0, 1], mpf('3.5'))
+    mpf('62.375')
+
+With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point:
+
+    >>> polyval([2, 5, 0, 1], mpf('3.5'), derivative=True)
+    (mpf('62.375'), mpf('41.75'))
+
+The point and coefficient list may contain complex numbers.
+
+Finding roots of polynomials
+............................
+
+The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots ``3*x^2 - 7*x + 2`` (which are 1/3 and 2):
+
+    >>> roots, err = polyroots([2, -7, 3])
+    >>> print err
+    2.66453525910038e-16
+    >>> for root in roots:
+    ...     print root
+    ...
+    (0.333333333333333 - 9.62964972193618e-35j)
+    (2.0 + 1.5395124730131e-50j)
+
+As should be expected from the internal use of complex arithmetic, the calculated roots have small but nonzero imaginary parts.
+
+The following example computes all the 5th roots of unity; i.e. the roots of ``x^5 - 1``:
+
+    >>> mp.dps = 20
+    >>> for a in polyroots([-1, 0, 0, 0, 0, 1])[0]:
+    ...     print a
+    ...
+    (-0.8090169943749474241 + 0.58778525229247312917j)
+    (1.0 + 0.0j)
+    (0.3090169943749474241 + 0.95105651629515357212j)
+    (-0.8090169943749474241 - 0.58778525229247312917j)
+    (0.3090169943749474241 + -0.95105651629515357212j)
 
 Interval arithmetic
 -------------------
@@ -336,7 +401,7 @@ Exponent range
 
 In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory. Mpmath can for example hold an approximation of a large Mersenne prime::
 
-    >>> print (mpf(2)**32582657 - 1)
+    >>> print mpf(2)**32582657 - 1
     1.24575026015369e+9808357
 
 Or why not 1 googolplex::
@@ -352,13 +417,13 @@ In some situations, it would be more convenient if mpmath would "round" extremel
 Compatibility
 -------------
 
-The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and uses rounding to nearest. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with rounding to nearest on most systems.)
+The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and rounds to nearest. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with rounding to nearest on most systems.)
 
-This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, for two reasons:
+This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, for the following reasons:
 
-1) Hardware floats have a limited exponent range, as discussed above. Numbers very close to the exponent limit may be rounded subnormally, meaning that they lose precision.
+1) Hardware floats have a limited exponent range, as discussed above. Machine floats very close to the exponent limit may be rounded subnormally, meaning that they lose precision. Python may also raise an exception instead of rounding a ``float`` subnormally.
 
-2) Hardware floats don't always round correctly. (This is commonly the case for transcendental functions like ``log`` and ``sin``, but even square roots seem to be inaccurate on most systems, and mpmath has been run on at least one modern system where Python's builtin ``float`` multiplication was inaccurate, causing mpmath's float compatibility tests to fail.)
+2) Hardware floating-point operations don't always round correctly. This is commonly the case for hardware implementations of transcendental functions like ``log`` and ``sin``, but even square roots seem to be inaccurate on some systems, and mpmath has been run on at least one modern system where Python's builtin ``float`` multiplication was inaccurate, causing mpmath's float compatibility tests to fail.
 
 3) Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)
 

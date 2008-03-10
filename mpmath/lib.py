@@ -997,6 +997,13 @@ def to_bstr(x):
     sign, man, exp, bc = x
     return ['','-'][sign] + numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
 
+def complex_to_str(re, im, dps):
+    rs = to_str(re, dps)
+    if im[0]:
+        return rs + " - " + to_str(fneg(im), dps) + "j"
+    else:
+        return rs + " + " + to_str(im, dps) + "j"
+
 
 ##############################################################################
 ##############################################################################
