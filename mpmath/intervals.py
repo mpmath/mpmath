@@ -115,7 +115,7 @@ class mpi:
     __rfloordiv__ = __rdiv__
 
     def __pow__(s, t):
-        if not isinstance(t, mpi) and 0 < s.a:
+        if not isinstance(t, mpi) and 0 <= s.a:
             n = int(t)
             if n == t:
                 mp.rounding = 'down'

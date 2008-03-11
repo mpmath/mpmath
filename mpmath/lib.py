@@ -1119,9 +1119,7 @@ def sqrt_fixed2(y, prec):
 
     However, since Python uses Karatsuba algorithm for multiplication,
     three multiplications can be performed much more quickly than a
-    single division at high precision levels. In practice, the cutoff
-    where sqrt_fixed2 becomes faster than sqrt_fixed seems to be around
-    60,000 bits.
+    single division at high precision levels.
     """
 
     # XXX
@@ -1190,7 +1188,7 @@ def fsqrt(s, prec, rounding):
     shift -= shift & 1
     man = rshift(man, shift)
 
-    if prec < 65000:
+    if prec < 20000:
         man = sqrt_fixed(man, prec2)
     else:
         man = sqrt_fixed2(man, prec2)
