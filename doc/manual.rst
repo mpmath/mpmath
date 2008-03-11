@@ -12,34 +12,16 @@ Mpmath manual
 .. section-numbering::
 
 .. contents::
+    :depth: 2
     :local:
 
-About mpmath
-============
+Basics
+======
 
-Mpmath is a pure-Python library for arbitrary-precision floating-point arithmetic. It implements all the functions found in Python's ``math`` and ``cmath`` modules (``exp``, ``log``, ``sin``...), plus a few nonelementary special functions (``gamma``, ``zeta``...), and has utilities for arbitrary-precision numerical differentiation, integration, root-finding, and interval arithmetic. It supports unlimited exponents, has full support for complex numbers, and offers better performance than Python's standard ``decimal`` library.
+Setup
+-----
 
-Mpmath is lightweight (~100 KB), free (BSD license), and easy to install or include in other software due to being written entirely in Python without any external dependencies.
-
-Installation
-============
-
-You can install the latest released version of mpmath by running::
-
-    python easy_install.py mpmath
-
-or, on Windows::
-
-    C:\<pythonpath>\Scripts\easy_install.exe mpmath
-
-Alternatively, you can manually download the latest released version of mpmath from the `mpmath website
-<http://code.google.com/p/mpmath/>`_ or the `Python Package Index <http://pypi.python.org/pypi>`_. Either run the binary installer (Windows only) or extract the source archive and run::
-
-    python setup.py install
-
-Debian and Ubuntu users can ``apt-get`` mpmath; `package information <http://packages.debian.org/python-mpmath>`_ is available on the Debian website.
-
-After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
+For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
 
     >>> from mpmath import *
     >>> mp.dps = 50
@@ -47,9 +29,6 @@ After the setup has completed, you should be able to fire up the interactive Pyt
     1.4142135623730950488016887242096980785696718753769
     >>> print 2*pi
     6.2831853071795864769252867665590057683943387987502
-
-Basic arithmetic
-================
 
 Working with mpmath numbers
 ---------------------------
@@ -101,9 +80,7 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.dps = 15                 [default: 15]
       mp.rounding = 'nearest'     [default: 'nearest']
 
-The term *precision* (**prec**) always refers to the arithmetic precision measured in bits. The *decimal precision* is called the **dps** (short for *decimal places*). Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used; see the section "Decimal issues" below).
-
-Changing one property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value:
+The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used). Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value:
 
     >>> mp.dps = 100
     >>> mp.dps
@@ -111,7 +88,7 @@ Changing one property of the ``mp`` object automatically updates the other; usua
     >>> mp.prec
     336
 
-When you've set the precision level, all ``mpf`` operations are carried out at that precision:
+When the precision has been set, all ``mpf`` operations are carried out at that precision:
 
     >>> mp.dps = 50
     >>> mpf(1) / 6
@@ -138,6 +115,8 @@ The number of digits with which numbers are printed by default is determined by 
     0.16666667
     >>> nstr(a, 50)
     '0.16666666666666665741480812812369549646973609924316'
+
+The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. These modes are described in more detail in the section on rounding below. The default rounding mode (round to nearest) is the best setting for most purposes.
 
 Temporarily changing the precision
 ..................................
@@ -185,12 +164,93 @@ mpf('10.9')
 >>> mpf(109) / mpf(10)   # also good
 mpf('10.9')
 
-(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe, however, since those can be represented exactly by Python floats.)
+(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
 
-Magical numbers
+Special numbers
 ---------------
 
+Mpmath provides several special numbers, which are summarized in the following table.
 
++-----------+--------------------------------------------+
+| Symbol    |  Description                               |
++-----------+--------------------------------------------+
+| ``j``     | Imaginary unit                             |
++-----------+--------------------------------------------+
+| ``inf``   | Positive infinity                          |
++-----------+--------------------------------------------+
+| ``-inf``  | Negative infinity                          |
++-----------+--------------------------------------------+
+| ``nan``   | Not-a-number                               |
++-----------+--------------------------------------------+
+| ``pi``    | pi = 3.14159                               |
++-----------+--------------------------------------------+
+| ``degree``| 1 deg = pi/180 = 0.0174532                 |
++-----------+--------------------------------------------+
+| ``e``     | Base of the natural logarithm, e = 2.71828 |
++-----------+--------------------------------------------+
+| ``euler`` | Euler's constant, gamma = 0.577216         |
++-----------+--------------------------------------------+
+|``catalan``| Catalan's constant, C or K = 0.915966      |
++-----------+--------------------------------------------+
+| ``clog2`` | log(2) = 0.693147                          |
++-----------+--------------------------------------------+
+| ``clog10``| log(10) = 2.30259                          |
++-----------+--------------------------------------------+
+| ``eps``   | Epsilon of working precision               |
++-----------+--------------------------------------------+
+
+The first four objects (``j``, ``inf``, ``-inf``, ``nan``) of these are merely provided as shortcuts to ``mpc`` and ``mpf`` instances with these fixed values. The remaining numbers are lazy implementations of numerical constants, meaning that they have potentially infinite precision; whenever they are used, they automatically evaluate to the working precision. A special number can be converted to a regular ``mpf`` using the unary ``+`` operator::
+
+    >>> mp.dps = 15
+    >>> pi
+    <pi: 3.14159~>
+    >>> 2*pi
+    mpf('6.2831853071795862')
+    >>> +pi
+    mpf('3.1415926535897931')
+    >>> mp.dps = 40
+    <pi: 3.14159~>
+    >>> 2*pi
+    mpf('6.283185307179586476925286766559005768394338')
+    >>> +pi
+    mpf('3.141592653589793238462643383279502884197169')
+
+The number ``eps`` is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented at the current working precision::
+
+    >>> mp.dps = 15
+    >>> eps
+    <epsilon of working precision: 2.22045e-16~>
+    >>> 1 + eps
+    mpf('1.0000000000000002')
+    >>> 1 + eps/2
+    mpf('1.0')
+    >>>
+    >>> mp.dps = 100
+    >>> eps
+    <epsilon of working precision: 1.42873e-101~>
+
+An useful application of ``eps`` is to perform approximate comparisons that work at any precision level, for example to check for convergence of iterative algorithms::
+
+    >>> def a_series():
+    ...     s = 0
+    ...     n = 1
+    ...     while 1:
+    ...         term = mpf(5) ** (-n)
+    ...         s += term
+    ...         if term < eps:
+    ...             print "added", n, "terms"
+    ...             return s
+    ...         n += 1
+    ...
+    >>> mp.dps = 15
+    >>> a_series()
+    added 23 terms
+    mpf('0.25000000000000011')
+    >>>
+    >>> mp.dps = 40
+    >>> a_series()
+    added 59 terms
+    mpf('0.2500000000000000000000000000000000000000057')
 
 Mathematical functions
 ----------------------
