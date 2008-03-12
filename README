@@ -41,6 +41,10 @@ To install, unpack the mpmath archive and run
 
   python setup.py install
 
+Mpmath can also be installed using
+
+  python -m easy_install mpmath
+
 The latest development code is available from
 http://code.google.com/p/mpmath/source/checkout
 

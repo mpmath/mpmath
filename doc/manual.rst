@@ -28,7 +28,7 @@ This manual gives an introduction to mpmath's major features. Some supplementary
 Basics
 ======
 
-For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running ``python easy_install mpmath``). After the setup has completed, you can fire up the interactive Python interpreter and try the following::
+For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you can fire up the interactive Python interpreter and try the following::
 
     >>> from mpmath import *
     >>> mp.dps = 50
@@ -55,7 +55,7 @@ Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type 
     >>> mpf("inf")
     mpf('+inf')
 
-An ``mpc`` represents a complex number in rectangular form as a pair of ``mpf`` instances. It can be constructed from a Python ``complex``, a real number, or a pair of real numbers::
+The ``mpc`` type represents a complex number in rectangular form as a pair of ``mpf`` instances. It can be constructed from a Python ``complex``, a real number, or a pair of real numbers::
 
     >>> mpc(2,3)
     mpc(real='2.0', imag='3.0')
@@ -313,7 +313,7 @@ Function                Description
 ``hypot(x,y)``          Euclidean norm
 ``exp(x)``              Exponential function
 ``log(x,b)``            Natural logarithm (optionally base-b logarithm)
-``power(x,y)``          Power, x^y
+``power(x,y)``          Power, ``x**y``
 ``cos(x)``              Cosine
 ``sin(x)``              Sine
 ``tan(x)``              Tangent
@@ -454,7 +454,7 @@ While double integrals are reasonably fast, even a simple triple integral at ver
 Error detection
 ...............
 
-The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is very bumpy or oscillatory (such integrals should manually be split into smaller pieces). If the ``error`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass ``quadts`` the option ``verbose=True`` to show detailed progress.
+The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is oscillatory (such integrals should manually be split into smaller pieces). If the ``error`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass ``quadts`` the option ``verbose=True`` to show detailed progress.
 
 A simple example where the algorithm fails is the function f(*x*) = abs(sin(*x*)), which is not smooth at *x* = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, ``quadts`` gives a good estimate of the magnitude of the error::
 
@@ -462,7 +462,7 @@ A simple example where the algorithm fails is the function f(*x*) = abs(sin(*x*)
     >>> quadts(lambda x: abs(sin(x)), 0, 2*pi, error=True)
     (mpf('3.9990089417677899'), mpf('0.001'))
 
-Attempting to evaluate oscillatory integrals on large intervals by means of the tanh-sinh method is generally futile. This integral should be pi/2 = 1.57::
+This highly oscillatory integral should be pi/2 = 1.57::
 
     >>> print quadts(lambda x: sin(x)/x, 0, inf, error=True)
     (mpf('2.3840907358976544'), mpf('1.0'))

@@ -1641,14 +1641,6 @@ def sin_taylor(x, prec):
         k += 2
     return s
 
-def trig_reduce(x, prec):
-    pi_ = pi_fixed(prec)
-    pi4 = pi_ >> 2
-    pi2 = pi_ >> 1
-    n, rem = divmod(x + pi4, pi2)
-    rem -= pi4
-    return n, rem
-
 def cos_sin(x, prec, rounding):
     """Simultaneously compute (cos(x), sin(x)) for real x."""
 
@@ -1661,6 +1653,7 @@ def cos_sin(x, prec, rounding):
             return fone, fzero
 
     magnitude = bc + exp
+    abs_mag = abs(magnitude)
 
     # Very close to 0
     if magnitude < -prec:
@@ -1682,17 +1675,23 @@ def cos_sin(x, prec, rounding):
             s = fadd(x, (1, 1, magnitude-prec-4, 1), prec, rounding)
         return c, s
 
-    bits_from_unit = abs(magnitude)
-
-    prec1 = prec + bits_from_unit + 15
-    wp = prec1
+    wp = wp1 = prec + 15
 
     while 1:
-        n, rx = trig_reduce(to_fixed(x, wp), wp)
+        # Reduce modulo pi/4
+        rp = wp + abs_mag
+        a = to_fixed(x, rp)
+        pi_ = pi_fixed(rp)
+        pi4 = pi_ >> 2
+        pi2 = pi_ >> 1
+        n, rx = divmod(a+pi4, pi2)
+        rx -= pi4
+        rx >>= abs_mag
+
         # If we're close to a root, we have to increase the
         # fixed-point precision to obtain full relative accuracy
-        if abs(rx >> (prec1-8)) < 10:
-            wp += prec1 - bitcount(abs(rx))
+        if abs(rx >> (wp1 - 8)) < 10:
+            wp += wp1 - bitcount(abs(rx))
         else:
             break
 

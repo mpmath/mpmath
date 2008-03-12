@@ -387,7 +387,7 @@ pre.literal-block, pre.doctest-block {
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id2" id="basics" name="basics">2&nbsp;&nbsp;&nbsp;Basics</a></h1>
-<p>For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running <tt class="docutils literal"><span class="pre">python</span> <span class="pre">easy_install</span> <span class="pre">mpmath</span></tt>). After the setup has completed, you can fire up the interactive Python interpreter and try the following:</p>
+<p>For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you can fire up the interactive Python interpreter and try the following:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; from mpmath import *
 &gt;&gt;&gt; mp.dps = 50
@@ -412,7 +412,7 @@ mpf('2.0')
 &gt;&gt;&gt; mpf(&quot;inf&quot;)
 mpf('+inf')
 </pre>
-<p>An <tt class="docutils literal"><span class="pre">mpc</span></tt> represents a complex number in rectangular form as a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> instances. It can be constructed from a Python <tt class="docutils literal"><span class="pre">complex</span></tt>, a real number, or a pair of real numbers:</p>
+<p>The <tt class="docutils literal"><span class="pre">mpc</span></tt> type represents a complex number in rectangular form as a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> instances. It can be constructed from a Python <tt class="docutils literal"><span class="pre">complex</span></tt>, a real number, or a pair of real numbers:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; mpc(2,3)
 mpc(real='2.0', imag='3.0')
@@ -698,7 +698,7 @@ mpf('0.2500000000000000000000000000000000000000057')
 <td>Natural logarithm (optionally base-b logarithm)</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">power(x,y)</span></tt></td>
-<td>Power, x^y</td>
+<td>Power, <tt class="docutils literal"><span class="pre">x**y</span></tt></td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">cos(x)</span></tt></td>
 <td>Cosine</td>
@@ -901,14 +901,14 @@ mpf('0.2500000000000000000000000000000000000000057')
 </div>
 <div class="section">
 <h3><a id="error-detection" name="error-detection">3.1.3&nbsp;&nbsp;&nbsp;Error detection</a></h3>
-<p>The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is very bumpy or oscillatory (such integrals should manually be split into smaller pieces). If the <tt class="docutils literal"><span class="pre">error</span></tt> option is set, <tt class="docutils literal"><span class="pre">quadts</span></tt> will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass <tt class="docutils literal"><span class="pre">quadts</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
+<p>The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is oscillatory (such integrals should manually be split into smaller pieces). If the <tt class="docutils literal"><span class="pre">error</span></tt> option is set, <tt class="docutils literal"><span class="pre">quadts</span></tt> will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass <tt class="docutils literal"><span class="pre">quadts</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
 <p>A simple example where the algorithm fails is the function f(<em>x</em>) = abs(sin(<em>x</em>)), which is not smooth at <em>x</em> = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, <tt class="docutils literal"><span class="pre">quadts</span></tt> gives a good estimate of the magnitude of the error:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; mp.dps = 15
 &gt;&gt;&gt; quadts(lambda x: abs(sin(x)), 0, 2*pi, error=True)
 (mpf('3.9990089417677899'), mpf('0.001'))
 </pre>
-<p>Attempting to evaluate oscillatory integrals on large intervals by means of the tanh-sinh method is generally futile. This integral should be pi/2 = 1.57:</p>
+<p>This highly oscillatory integral should be pi/2 = 1.57:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; print quadts(lambda x: sin(x)/x, 0, inf, error=True)
 (mpf('2.3840907358976544'), mpf('1.0'))
