@@ -20,8 +20,8 @@ body {
 
 div.document {
     max-width: 700px;
-    color: black;
-    background-color: white;
+    color: #000;
+    background-color: #fff;
     padding:25px;
     border:5px solid #ddd;
 }
@@ -33,6 +33,14 @@ h1 {
 
 table {
     border-collapse: collapse;
+}
+
+pre.literal-block, pre.doctest-block {
+  font-family: consolas, courier new, monospace;
+  line-height:1.3em;
+  border-top:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+  background-color:#f0f0f0;
 }
 
 """)

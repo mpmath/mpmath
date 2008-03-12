@@ -6,15 +6,8 @@ Mpmath manual
 
 :Author: Fredrik Johansson
 :E-mail: fredrik.johansson@gmail.com
-:Updated: 2008-03-09
+:Updated: 2008-03-12
 :Mpmath version: 0.7
-
-This document is a user's guide for mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website http://code.google.com/p/mpmath/
-
-The most up-to-date version of this document is available at the mpmath website in the following formats:
-
-* http://mpmath.googlecode.com/svn/trunk/doc/manual.html (HTML)
-* http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf (PDF)
 
 .. section-numbering::
 
@@ -22,13 +15,21 @@ The most up-to-date version of this document is available at the mpmath website 
     :depth: 2
     :local:
 
+About this document
+===================
+
+This document is a user's guide for mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website http://code.google.com/p/mpmath/. The most up-to-date version of this document is available at the mpmath website in the following formats:
+
+* http://mpmath.googlecode.com/svn/trunk/doc/manual.html (HTML)
+* http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf (PDF)
+
 Basics
 ======
 
 Setup
 -----
 
-For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running ``python easy_install mpmath``). After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
+For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running ``python easy_install mpmath``). After the setup has completed, you can fire up the interactive Python interpreter and try the following::
 
     >>> from mpmath import *
     >>> mp.dps = 50
@@ -37,12 +38,12 @@ For download and installation instructions, please refer to the README or the mp
     >>> print 2*pi
     6.2831853071795864769252867665590057683943387987502
 
-In all interactive code examples that follow, it will be assumed that all contents of the ``mpmath`` library have been imported with "``import *``".
+In all interactive code examples that follow, it will be assumed that the main contents of the ``mpmath`` package have been imported with "``import *``".
 
 Working with mpmath numbers
 ---------------------------
 
-Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
+Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances::
 
     >>> mpf(4)
     mpf('4.0')
@@ -55,21 +56,22 @@ Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type 
     >>> mpf("inf")
     mpf('+inf')
 
-An ``mpc`` represents a complex number in rectangular form as a pair of ``mpf`` instances. It can be constructed from a Python ``complex``, a real number, or a pair of real numbers:
+An ``mpc`` represents a complex number in rectangular form as a pair of ``mpf`` instances. It can be constructed from a Python ``complex``, a real number, or a pair of real numbers::
 
     >>> mpc(2,3)
     mpc(real='2.0', imag='3.0')
     >>> mpc(complex(2,3)).imag
     mpf('3.0')
 
-You can mix ``mpf`` and ``mpc`` instances with each other and with Python numbers:
+You can mix ``mpf`` and ``mpc`` instances with each other and with Python numbers::
 
+    >>> mp.dps = 15
     >>> mpf(3) + 2*mpf('2.5') + 1.0
-    mpf('9')
+    mpf('9.0')
     >>> mpc(1j)**0.5
     mpc(real='0.70710678118654757', imag='0.70710678118654757')
 
-Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` constructor signatures and suppress small rounding artifacts:
+Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` constructor signatures and suppress small rounding artifacts::
 
     >>> mpf("3.14159")
     mpf('3.1415899999999999')
@@ -85,14 +87,13 @@ Mpmath numbers can have unlimited magnitude. An ``mpf`` can for example hold an 
 
 Or why not 1 googolplex::
 
-    >>> print mpf(10) ** (10**100)
-    1.0e+100000000000000000000000000000000000000000000000000
-    00000000000000000000000000000000000000000000000000
+    >>> print mpf(10) ** (10**100)  # doctest:+ELLIPSIS
+    1.0e+100000000000000000000000000000000000000000000000000...
 
 Controlling precision
 ---------------------
 
-Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling ``mpf()`` rounds the result to the current working precision. The working precision is controlled by a special object called ``mp``, which has the following default state:
+Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling ``mpf()`` rounds the result to the current working precision. The working precision is controlled by a special object called ``mp``, which has the following default state::
 
     >>> mp
     Mpmath settings:
@@ -100,7 +101,7 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.dps = 15                 [default: 15]
       mp.rounding = 'nearest'     [default: 'nearest']
 
-The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used). Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value:
+The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used). Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value::
 
     >>> mp.dps = 100
     >>> mp.dps
@@ -108,7 +109,7 @@ The term **prec** denotes the binary precision (measured in bits) while **dps** 
     >>> mp.prec
     336
 
-When the precision has been set, all ``mpf`` operations are carried out at that precision:
+When the precision has been set, all ``mpf`` operations are carried out at that precision::
 
     >>> mp.dps = 50
     >>> mpf(1) / 6
@@ -117,13 +118,13 @@ When the precision has been set, all ``mpf`` operations are carried out at that 
     >>> mpf(2) ** mpf('0.5')
     mpf('1.414213562373095048801688713')
 
-The precision of complex arithmetic is also controlled by the ``mp`` object:
+The precision of complex arithmetic is also controlled by the ``mp`` object::
 
     >>> mp.dps = 10
     >>> mpc(1,2) / 3
     mpc(real='0.3333333333321', imag='0.6666666666642')
 
-The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the ``nstr`` and ``nprint`` functions:
+The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the ``nstr`` and ``nprint`` functions::
 
     >>> mp.dps = 15
     >>> a = mpf(1) / 6
@@ -141,16 +142,16 @@ The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, a
 Temporarily changing the precision
 ..................................
 
-It is often useful to change the precision during only part of a calculation. A way to temporarily increase the precision and then restore it is as follows:
+It is often useful to change the precision during only part of a calculation. A way to temporarily increase the precision and then restore it is as follows::
 
     >>> mp.prec += 2
-     (...)
+    >>> # do_something()
     >>> mp.prec -= 2
 
-In Python 2.5, the ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner:
+In Python 2.5, the ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner::
 
     >>> from __future__ import with_statement
-    >>> with workdps(20):
+    >>> with workdps(20):  # doctest: +SKIP
     ...     print mpf(1)/7
     ...     with extradps(10):
     ...         print mpf(1)/7
@@ -162,7 +163,7 @@ In Python 2.5, the ``with`` statement along with the mpmath functions ``workprec
 
 The ``with`` statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised. (The effect of the ``with`` statement can be emulated in Python 2.4 by using a ``try/finally`` block.)
 
-The ``workprec`` family of functions can also be used as function decorators:
+The ``workprec`` family of functions can also be used as function decorators::
 
     >>> @workdps(6)
     ... def f():
@@ -180,9 +181,9 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
     >>> mpf(10.9)   # bad
     mpf('10.9000000000000003552713678800501')
     >>> mpf('10.9')  # good
-    mpf('10.9')
+    mpf('10.8999999999999999999999999999997')
     >>> mpf(109) / mpf(10)   # also good
-    mpf('10.9')
+    mpf('10.8999999999999999999999999999997')
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
 
@@ -231,6 +232,7 @@ The remaining numbers are lazy implementations of numerical constants that can b
     >>> +pi
     mpf('3.1415926535897931')
     >>> mp.dps = 40
+    >>> pi
     <pi: 3.14159~>
     >>> 2*pi
     mpf('6.283185307179586476925286766559005768394338')
@@ -277,7 +279,7 @@ An useful application of ``eps`` is to perform approximate comparisons that work
 Mathematical functions
 ----------------------
 
-Mpmath implements the standard functions available in Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision:
+Mpmath implements the standard functions available in Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision::
 
     >>> mp.dps = 25
     >>> print cosh('1.234')
@@ -289,7 +291,7 @@ Mpmath implements the standard functions available in Python's ``math`` and ``cm
     >>> print exp(2+3j)
     (-7.315110094901102517486536 + 1.042743656235904414101504j)
 
-Some functions that do not exist in the standard Python ``math`` library are available, such as factorials (with support for noninteger arguments):
+Some functions that do not exist in the standard Python ``math`` library are available, such as factorials (with support for noninteger arguments)::
 
     >>> mp.dps = 20
     >>> print factorial(10)
@@ -303,6 +305,7 @@ The list of functions is given in the following table.
 
 =====================   ==================================================================
 Function                Description
+=====================   ==================================================================
 ``sqrt(x)``             Square root
 ``hypot(x,y)``          Euclidean norm
 ``exp(x)``              Exponential function
@@ -333,7 +336,7 @@ Function                Description
 ``zeta(x)``             Riemann zeta function
 ``j0(x)``               Bessel function J_0(x)
 ``j1(x)``               Bessel function J_1(x)
-``jn(x)``               Bessel function J_n(x)
+``jn(n,x)``             Bessel function J_n(x)
 =====================   ==================================================================
 
 The following functions do not accept complex input: ``hypot``, ``atan2``, ``floor``, ``ceil``, ``j0``, ``j1`` and ``jn``.
@@ -345,17 +348,17 @@ High-level features
 Numerical integration
 ---------------------
 
-The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example,
+The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example::
 
     >>> print quadts(sin, 0, pi)
     2.0
 
-Tanh-sinh quadrature is extremely efficient for high-precision integration of analytic functions. Unlike the more well-known Gaussian quadrature algorithm, it is relatively insensitive to integrable singularities at the endpoints of the interval. The ``quadts`` function attempts to evaluate the integral to the full working precision; for example, it can calculate 100 digits of pi by integrating the area under the half circle arc ``x^2 + y^2 = 1 (y > 0)``:
+Tanh-sinh quadrature is extremely efficient for high-precision integration of analytic functions. Unlike the more well-known Gaussian quadrature algorithm, it is relatively insensitive to integrable singularities at the endpoints of the interval. The ``quadts`` function attempts to evaluate the integral to the full working precision; for example, it can calculate 100 digits of pi by integrating the area under the half circle arc ``x^2 + y^2 = 1 (y > 0)``::
 
     >>> mp.dps = 100
     >>> print quadts(lambda x: 2*sqrt(1 - x**2), -1, 1)
-    3.14159265358979323846264338327950288419716939937510582097
-    4944592307816406286208998628034825342117068
+    ... # doctest:+ELLIPSIS
+    3.14159265358979323846264338327950288419716939937510582097...
 
 The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like this one can often be evaluated in less than a second. The timings for computing this integral at various precision levels on the author's computer is:
 
@@ -374,19 +377,20 @@ The second integration at the same precision level is much faster. The reason fo
 Features and application examples
 .................................
 
-You can integrate over infinite or half-infinite intervals:
+You can integrate over infinite or half-infinite intervals::
 
+    >>> mp.dps = 15
     >>> print quadts(lambda x: 2/(x**2+1), 0, inf)
     3.14159265358979
     >>> print quadts(lambda x: exp(-x**2), -inf, inf)**2
     3.14159265358979
 
-Complex integrals are also supported. The next example computes Euler's constant gamma by using Cauchy's integral formula and looking at the pole of the Riemann zeta function at *z* = 1.
+Complex integrals are also supported. The next example computes Euler's constant gamma by using Cauchy's integral formula and looking at the pole of the Riemann zeta function at *z* = 1::
 
     >>> print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
     (0.577215664901533 + 2.86444093843177e-25j)
 
-Functions with integral representations, such as the gamma function, can be implemented  directly from the definition.
+Functions with integral representations, such as the gamma function, can be implemented directly from the definition::
 
     >>> def Gamma(z):
     ...     return quadts(lambda t: exp(-t)*t**(z-1), 0, inf)
@@ -401,30 +405,29 @@ Functions with integral representations, such as the gamma function, can be impl
 Double integrals
 ................
 
-It is possible to calculate double integrals with ``quadts``. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the *x* variable and the second interval specifies the range of the *y* variable.
+It is possible to calculate double integrals with ``quadts``. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the *x* variable and the second interval specifies the range of the *y* variable::
 
     >>> f = lambda x, y: cos(x+y/2)
     >>> print quadts(f, (-pi/2, pi/2), (0, pi))
     4.0
 
+Here are some more difficult examples taken from `MathWorld <http://mathworld.wolfram.com/DoubleIntegral.html>`_ (all except the second contain corner singularities)::
 
-
-Here are some more difficult examples taken from `MathWorld <http://mathworld.wolfram.com/DoubleIntegral.html>`_ (all except the second contain corner singularities). Each integral is calculated with ``mp.dps = 30`` (which takes a couple of seconds), and the result is compared to the known analytical value.
-
+    >>> mp.dps = 30
     >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
-    >>> print quadts(f, (0, 1), (0, 1))
+    >>> print quadts(f, (0, 1), (0, 1))  # doctest: +SKIP
     0.577215664901532860606512090082
     >>> print euler
     0.577215664901532860606512090082
 
     >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
-    >>> print quadts(f, (-1, 1), (-1, 1))
+    >>> print quadts(f, (-1, 1), (-1, 1))  # doctest: +SKIP
     3.17343648530607134219175646705
     >>> print 4*log(2+sqrt(3))-2*pi/3
     3.17343648530607134219175646705
 
-    >>> f = lambda x, y: 1/(1-x**2 * y**2), (0, 1)
-    >>> print quadts(f, (0, 1))
+    >>> f = lambda x, y: 1/(1-x**2 * y**2)
+    >>> print quadts(f, (0, 1), (0, 1))  # doctest: +SKIP
     1.23370055013616982735431137498
     >>> print pi**2 / 8
     1.23370055013616982735431137498
@@ -434,49 +437,51 @@ Here are some more difficult examples taken from `MathWorld <http://mathworld.wo
     >>> print pi**2 / 6
     1.64493406684822643647241516665
 
-There is no direct support for computing triple or higher dimensional integrals; if desired, this can be done easily by passing a function that calls `quadts()` recursively. While double integrals are reasonably fast, even a simple triple integral at very low precision will probably take several minutes to calculate. A quadruple integral will require a whole lot of patience.
+There is currently no direct support for computing triple or higher dimensional integrals; if desired, this can be done easily by passing a function that calls ``quadts`` recursively::
+
+    >>> mp.dps = 15
+    >>> f = lambda x, y: quadts(lambda z: sin(x)/z+y*z, 1, 2)
+    >>> print quadts(f, (1, 2), (1, 2))
+    2.91296002641413
+    >>> print mpf(9)/4 + (cos(1)-cos(2))*log(2)
+    2.91296002641413
+
+While double integrals are reasonably fast, even a simple triple integral at very low precision is likely to take several seconds to evaluate (harder integrals may take minutes). A quadruple integral will require a whole lot of patience.
 
 Error detection
 ...............
 
-The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is very bumpy or oscillatory (such integrals should manually be split into smaller pieces). If the ``error=1`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging.
+The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is very bumpy or oscillatory (such integrals should manually be split into smaller pieces). If the ``error`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass ``quadts`` the option ``verbose=True`` to show detailed progress.
 
-A simple example where the algorithm fails is the function f(*x*) = abs(sin(*x*)), which is not smooth at *x* = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, ``quadts`` gives a good estimate of the magnitude of the error:
+A simple example where the algorithm fails is the function f(*x*) = abs(sin(*x*)), which is not smooth at *x* = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, ``quadts`` gives a good estimate of the magnitude of the error::
 
     >>> mp.dps = 15
-    >>> quadts(lambda x: abs(sin(x)), 0, 2*pi, error=1)
+    >>> quadts(lambda x: abs(sin(x)), 0, 2*pi, error=True)
     (mpf('3.9990089417677899'), mpf('0.001'))
 
-Attempting to evaluate oscillatory integrals on large intervals by means of the tanh-sinh method is generally futile. This integral should be pi/2 = 1.57:
+Attempting to evaluate oscillatory integrals on large intervals by means of the tanh-sinh method is generally futile. This integral should be pi/2 = 1.57::
 
-    >>> print quadts(lambda x: sin(x)/x, 0, inf, error=1)
+    >>> print quadts(lambda x: sin(x)/x, 0, inf, error=True)
     (mpf('2.3840907358976544'), mpf('1.0'))
 
-The next integral should be approximately 0.627 but `quadts` generates complete nonsense both in the result and the error estimate (the error estimate is somewhat arbitrarily capped at 1.0):
+The next integral should be approximately 0.627 but ``quadts`` generates complete nonsense both in the result and the error estimate (the error estimate is somewhat arbitrarily capped at 1.0)::
 
-    >>> print quadts(lambda x: sin(x**2), 0, inf, error=1)
+    >>> print quadts(lambda x: sin(x**2), 0, inf, error=True)
     (mpf('2.5190134849122411e+21'), mpf('1.0'))
 
-However, oscillation may not be a problem if suppressed by sufficiently fast decay. This integral is exactly 1/2.
+However, oscillation is not a problem if suppressed by sufficiently fast (preferrably exponential) decay. This integral is exactly 1/2::
 
     >>> print quadts(lambda x: exp(-x)*sin(x), 0, inf)
     0.5
 
-Even for analytic integrals on finite intervals, there is no guarantee that `quadts` will be successful. A few examples of integrals for which `quadts` currently fails to reach full accuracy are::
-
-    quadts(lambda x: sqrt(tan(x)), 0, pi/2)
-    quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), 0, 1)
-    quadts(lambda x: log(1+x**2)/x**2, 0, 1)
-    quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
-
-Apparently simple-looking double integrals might not be possible to evaluate directly. In this example, ``quadts`` will run for several seconds before returning a value with very low accuracy:
+Another illustrative example is the following double integral, which ``quadts`` will process for several seconds before returning a value with very low accuracy::
 
     >>> mpf.dps = 15
     >>> f = lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2)
     >>> quadts(f, (0, 1), (0, 1), error=1)
     (mpf('0.38259743528830826'), mpf('1.0e-6'))
 
-The problem is due to the non-analytic behavior of the function at (0.5, 0.5). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them):
+The problem is due to the non-analytic behavior of the function at the midpoint (1/2, 1/2). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them)::
 
     >>> f = lambda x, y: 4*sqrt((x-0.5)**2 + (y-0.5)**2)
     >>> print quadts(f, (0.5, 1), (0.5, 1))
@@ -484,7 +489,16 @@ The problem is due to the non-analytic behavior of the function at (0.5, 0.5). W
     >>> print (sqrt(2) + asinh(1))/6
     0.382597858232106
 
-The value agrees with the known answer and the running time in this case is just 0.7 seconds.
+The value agrees with the known answer and the running time in this case is just 0.7 seconds on the author's computer.
+
+Even for analytic integrals on finite intervals, there is no guarantee that ``quadts`` will be successful. A few examples of integrals for which ``quadts`` currently fails to reach full accuracy are::
+
+    quadts(lambda x: sqrt(tan(x)), 0, pi/2)
+    quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), 0, 1)
+    quadts(lambda x: log(1+x**2)/x**2, 0, 1)
+    quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
+
+(It is possible that future improvements to the ``quadts`` implementation will make these particular examples work.)
 
 Numerical differentiation
 -------------------------
@@ -499,13 +513,13 @@ If the rough location of the root is known, the secant method can be used to ref
 Simple examples
 ...............
 
-A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3.
+A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3::
 
     >>> mp.dps = 30
     >>> print secant(sin, 3)
     3.14159265358979323846264338328
 
-The secant method can be used to find complex roots of analytic functions, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line).
+The secant method can be used to find complex roots of analytic functions, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line)::
 
     >>> mp.dps = 15
     >>> print secant(lambda x: x**3 + 2*x + 1, j)
@@ -514,19 +528,19 @@ The secant method can be used to find complex roots of analytic functions, altho
 Applications
 ............
 
-A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence):
+A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence)::
 
     >>> mp.dps = 30
     >>> print secant(zeta, 0.5+14j)
     (0.5 + 14.1347251417346937904572519836j)
 
-The secant method can also be used as an optimization algorithm, by passing it a derivative of a function. The following example locates the positive minimum of the gamma function:
+The secant method can also be used as an optimization algorithm, by passing it a derivative of a function. The following example locates the positive minimum of the gamma function::
 
     >>> mp.dps = 20
     >>> print secant(lambda x: diff(gamma, x), 1)
     1.4616321449683623413
 
-Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value:
+Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value::
 
     >>> def lambert(x):
     ...     return secant(lambda w: w*exp(w) - x, log(1+x))
@@ -550,13 +564,13 @@ Polynomials
 Polynomial evaluation
 .....................
 
-Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates ``2 + 5*x + x^3`` at ``x = 3.5``:
+Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates ``2 + 5*x + x^3`` at ``x = 3.5``::
 
     >>> mp.dps = 20
     >>> polyval([2, 5, 0, 1], mpf('3.5'))
     mpf('62.375')
 
-With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point:
+With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point::
 
     >>> polyval([2, 5, 0, 1], mpf('3.5'), derivative=True)
     (mpf('62.375'), mpf('41.75'))
@@ -566,8 +580,9 @@ The point and coefficients may be complex numbers.
 Finding roots of polynomials
 ............................
 
-The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of ``3*x^2 - 7*x + 2`` (which are 1/3 and 2):
+The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of ``3*x^2 - 7*x + 2`` (which are 1/3 and 2)::
 
+    >>> mp.dps = 15
     >>> roots, err = polyroots([2, -7, 3])
     >>> print err
     2.66453525910038e-16
@@ -579,7 +594,7 @@ The function ``polyroots`` computes all *n* real or complex roots of an *n*-th d
 
 As should be expected from the internal use of complex arithmetic, the calculated roots have small but nonzero imaginary parts.
 
-The following example computes all the 5th roots of unity; i.e. the roots of ``x^5 - 1``:
+The following example computes all the 5th roots of unity; i.e. the roots of ``x^5 - 1``::
 
     >>> mp.dps = 20
     >>> for a in polyroots([-1, 0, 0, 0, 0, 1])[0]:
@@ -658,6 +673,7 @@ For example, the standard precision is 53 bits, which corresponds to a dps value
 
 The dps value controls the number of digits to display when printing numbers with ``str``, while the decimal precision used by ``repr`` is set two or three digits higher. For example, with 15 dps we have::
 
+    >>> mp.dps = 15
     >>> str(pi)
     '3.14159265358979'
     >>> repr(+pi)
@@ -693,16 +709,7 @@ Rounding for radix conversion is a slightly tricky business. When converting to 
 Exponent range
 --------------
 
-In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory. Mpmath can for example hold an approximation of a large Mersenne prime::
-
-    >>> print mpf(2)**32582657 - 1
-    1.24575026015369e+9808357
-
-Or why not 1 googolplex::
-
-    >>> print mpf(10) ** (10**100)
-    1.0e+100000000000000000000000000000000000000000000000000
-    00000000000000000000000000000000000000000000000000
+In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory.
 
 Some care may be necessary when working with extremely large numbers. Although arithmetic is safe, it is for example futile to attempt to compute ``exp`` of either of the above two numbers. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise ``OverflowError: long int too large to convert to int``.
 
@@ -722,76 +729,69 @@ This corresponds roughly to a decimal accuracy of 15 digits, and is the default 
 3) Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)
 
 
-Performance notes
-=================
-
-In rough numbers, Python floats are 100 times slower than raw hardware floats, and mpmath floats at standard precision are 100 times slower than Python floats. It's fortunate that a modern CPU does some 10^9 operations per second, at least leaving some 10^5 operations per second for mpmath (which is plenty for many uses). Because most time at low precision levels is spent on bookkeeping and interpreter overhead, the execution time increases sublinearly with small increments in precision. 50-digit arithmetic is essentially as fast as 15-digit arithmetic.  Asymptotically, mpmath arithmetic is as fast as Python big integer arithmetic, which is actually quite efficient up to several thousand digits (thanks to the use of Karatsuba multiplication).
-
 Optimization tricks
--------------------
+===================
 
 There are a few tricks that can significantly speed up mpmath code at low to medium precision (up to a few hundred digits):
 
-  * Repeated type conversions from floats, strings and integers should be avoided.
-
-  * Changing the rounding mode to *floor* can give a slight speedup.
+  * Repeated type conversions from floats, strings and integers are expensive (exceptions: ``n/x``, ``n*x`` and ``x**n`` are fast when ``n`` is an ``int`` and ``x`` is an ``mpf``). Pre-evaluate numerical constants that are used repeatedly, such as in the body of a function passed to ``quadts``.
 
   * The JIT compiler `psyco <http://psyco.sourceforge.net/>`_ fairly consistently speeds up mpmath about 2x.
 
   * An additional 2x gain is possible by using the low-level functions in ``mpmath.lib`` instead of ``mpf`` instances.
 
+  * Changing the rounding mode to *floor* can give a slight speedup.
+
 Here follows a simple example demonstrating some of these options.
 
 Original algorithm (0.028 seconds)::
 
-    x = mpf(1)
-    for i in range(1000):
-        x += 0.1
+    >>> x = mpf(1)
+    >>> for i in range(1000):
+    ...     x += 0.1
 
 Preconverting the float constant (0.0080 seconds)::
 
-    x = mpf(1)
-    one_tenth = mpf(0.1)
-    for i in range(1000):
-        x += one_tenth
+    >>> x = mpf(1)
+    >>> one_tenth = mpf(0.1)
+    >>> for i in range(1000):
+    ...     x += one_tenth
 
 With psyco (0.0036 seconds)::
 
-    import psyco; psyco.full()
-    x = mpf(1)
-    one_tenth = mpf(0.1)
-    for i in range(1000):
-        x += one_tenth
+    >>> import psyco; psyco.full()
+    >>> x = mpf(1)
+    >>> one_tenth = mpf(0.1)
+    >>> for i in range(1000):
+    ...     x += one_tenth
 
 With psyco and low-level functions (0.0017 seconds)::
 
-    import psyco; psyco.full()
-    x = from_int(1)
-    one_tenth = from_float(0.1)
-    for i in range(1000):
-        x = fadd(x, one_tenth, 53, round_nearest)
+    >>> import psyco; psyco.full()
+    >>> from mpmath.lib import from_int, from_float, fadd, round_nearest
+    >>> x = from_int(1)
+    >>> one_tenth = from_float(0.1)
+    >>> for i in range(1000):
+    ...     x = fadd(x, one_tenth, 53, round_nearest)
 
-The last version is 16.5 times faster than the first. Not all calculations can be sped up the same way, of course, or doing so may just be inconvenient.
-
-Using the right tool
---------------------
+The last version is 16.5 times faster than the first (however, this example is extreme; the gain will usually be smaller in realistic calculations).
 
 Many calculations can be done with ordinary floating-point arithmetic, and only in special cases require multiprecision arithmetic (for example to avoid overflows in corner cases). In these situations, it may be possible to write code that uses fast regular floats by default, and automatically (or manually) falls backs to mpmath only when needed. Python's dynamic namespaces and ability to compile code on the fly are helpful. Here is a simple (probably not failsafe) example::
 
-    import math
-    import mpmath
-
-    def evalmath(expr):
-        try:
-            r = eval(expr, math.__dict__)
-        except OverflowError:
-            r = eval(expr, mpmath.__dict__)
-            try:
-                r = float(r)
-            except OverflowError:
-                pass
-        return r
-
+    >>> import math
+    >>> import mpmath
+    >>>
+    >>> def evalmath(expr):
+    ...     try:
+    ...         r = eval(expr, math.__dict__)
+    ...     except OverflowError:
+    ...         r = eval(expr, mpmath.__dict__)
+    ...         try:
+    ...             r = float(r)
+    ...         except OverflowError:
+    ...             pass
+    ...     return r
+    ...
     >>> evalmath('sin(3)')
     0.14112000805986721
     >>>
