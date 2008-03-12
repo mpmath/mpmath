@@ -27,7 +27,6 @@ The following people have contributed patches to mpmath:
 * Mario Pernici
 * Ondrej Certik
 
-
 1. Download & installation
 --------------------------
 
@@ -45,25 +44,28 @@ To install, unpack the mpmath archive and run
 The latest development code is available from
 http://code.google.com/p/mpmath/source/checkout
 
+2. Running tests
+----------------
 
-2. Documentation
+The unit tests in mpmath/tests/ can be run via the script
+runtests.py, but it is recommended to run them with py.test
+(http://codespeak.net/py/dist/index.html), especially
+to generate more useful reports in case there are failures.
+
+You may also want to check out the demo scripts in demo/
+
+3. Documentation
 ----------------
 
 See doc/manual.html and the mpmath website.
 
-
-
-3. Known problems
+4. Known problems
 -----------------
 
 mpmath is a work in progress. Major issues include:
 
-* mpmath temporarily increases the working precision during function
-  evaluations to suppress the effects of intermediate rounding errors.
-  In most functions, the precision is currently increased by a fixed amount
-  that gives accurate results for "normal" input. Close to zeros and
-  singularities, and/or with the precision set to (say) several hundred
-  digits, the last few digits in a result may be wrong.
+* Some functions may return incorrect values when given extremely
+  large arguments or arguments extremely close to singularities
 
 * Directed rounding works for arithmetic operations. It is implemented
   heuristically for other operations, and their results may be off by one
@@ -76,8 +78,7 @@ mpmath is a work in progress. Major issues include:
 * The interface for switching precision and rounding is not finalized.
   The current method is not threadsafe.
 
-
-4. Help and bug reports
+5. Help and bug reports
 -----------------------
 
 You can report bugs and send patches to the mpmath issue tracker,

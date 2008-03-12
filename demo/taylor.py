@@ -1,5 +1,10 @@
 """
 Interval arithmetic demo: estimating error of numerical Taylor series.
+
+This module can be run interactively with
+
+    python taylor.py
+
 """
 
 from mpmath import *

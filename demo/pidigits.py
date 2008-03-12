@@ -6,11 +6,6 @@ This module can be run interactively with
 
     python pidigits.py
 
-or from the interpreter using
-
-    >>> from mpmath.apps.pidigits import *
-    >>> interactive()
-
 """
 __docformat__ = 'plaintext'
 
