@@ -22,10 +22,11 @@ Released March 12, 2008
 * implemented the functions nstr, nprint for printing numbers with
   a small or custom number of digits
 
-* accuracy of cos and sin near roots has been fixed
+* accuracy of cos and sin near roots has been fixed. computing
+  sin(x) or cos(x) where x is huge is also much faster
 
 * implemented a magical constant eps that gives the "machine"
-  epsilon.
+  epsilon
 
 * additional mathematical functions: implemented Catalan's constant
   and Bessel functions J_n(x) for integer n and real x
