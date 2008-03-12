@@ -28,7 +28,7 @@ print """
 This script prints answers to a selection of the "Many Digits"
 competition problems: http://www.cs.ru.nl/~milad/manydigits/problems.php
 
-The output for each problem is the first 100 first digits after the
+The output for each problem is the first 100 digits after the
 decimal point in the result.
 """
 

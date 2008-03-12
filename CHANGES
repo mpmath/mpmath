@@ -1,4 +1,5 @@
---0.7-svn--
+--0.7--
+Released March 12, 2008
 
 * the interface for switching precision and rounding modes has been
   changed. instead of changing mpf.prec, there is a new object mp

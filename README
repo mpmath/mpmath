@@ -6,12 +6,21 @@ A Python library for arbitrary-precision floating-point arithmetic.
 Website: http://code.google.com/p/mpmath
 Author: Fredrik Johansson <fredrik.johansson@gmail.com>
 
-mpmath is free software released under the New BSD License (see the
+Mpmath is free software released under the New BSD License (see the
 LICENSE file for details)
 
 0. History and credits
 ----------------------
 
+The following people have contributed patches to mpmath:
+
+* Pearu Peterson
+* Mario Pernici
+* Ondrej Certik
+
+Release history:
+
+* Version 0.7 released on March 12, 2008
 * Version 0.6 released on January 13, 2008
 * Version 0.5 released on November 24, 2007
 * Version 0.4 released on November 3, 2007
@@ -21,16 +30,10 @@ LICENSE file for details)
 
 For a detailed changelog, see the CHANGES file.
 
-The following people have contributed patches to mpmath:
-
-* Pearu Peterson
-* Mario Pernici
-* Ondrej Certik
-
 1. Download & installation
 --------------------------
 
-mpmath requires a recent version of Python. It has been tested with
+Mpmath requires a recent version of Python. It has been tested with
 Python 2.5 and should work with Python 2.4.
 
 The latest release of mpmath can be downloaded from the mpmath
@@ -56,20 +59,21 @@ runtests.py, but it is recommended to run them with py.test
 (http://codespeak.net/py/dist/index.html), especially
 to generate more useful reports in case there are failures.
 
-You may also want to check out the demo scripts in demo/
+You may also want to check out the demo scripts in the demo
+directory.
 
 3. Documentation
 ----------------
 
-See doc/manual.html and the mpmath website.
+See doc/manual.html or the mpmath website.
 
 4. Known problems
 -----------------
 
-mpmath is a work in progress. Major issues include:
+Mpmath is a work in progress. Major issues include:
 
 * Some functions may return incorrect values when given extremely
-  large arguments or arguments extremely close to singularities
+  large arguments or arguments very close to singularities.
 
 * Directed rounding works for arithmetic operations. It is implemented
   heuristically for other operations, and their results may be off by one
@@ -85,8 +89,8 @@ mpmath is a work in progress. Major issues include:
 5. Help and bug reports
 -----------------------
 
-You can report bugs and send patches to the mpmath issue tracker,
-http://code.google.com/p/mpmath/issues/list
+General questions and comments can be sent to the mpmath mailinglist,
+mpmath@googlegroups.com
 
-Please send any other comments or questions to Fredrik
-<fredrik.johansson@gmail.com>
+You can also report bugs and send patches to the mpmath issue tracker,
+http://code.google.com/p/mpmath/issues/list
