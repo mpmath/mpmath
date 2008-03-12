@@ -18,7 +18,7 @@ Mpmath manual
 About this document
 ===================
 
-This document is a user's guide for mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website http://code.google.com/p/mpmath/. The most up-to-date version of this document is available at the mpmath website in the following formats:
+This document is a guide to mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website http://code.google.com/p/mpmath/. The most up-to-date version of this document is available at the mpmath website in the following formats:
 
 * http://mpmath.googlecode.com/svn/trunk/doc/manual.html (HTML)
 * http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf (PDF)
@@ -348,8 +348,8 @@ The following functions do not accept complex input: ``hypot``, ``atan2``, ``flo
 High-level features
 ===================
 
-Numerical integration
----------------------
+Integration
+-----------
 
 The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example::
 
@@ -418,19 +418,19 @@ Here are some more difficult examples taken from `MathWorld <http://mathworld.wo
 
     >>> mp.dps = 30
     >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
-    >>> print quadts(f, (0, 1), (0, 1))  # doctest: +SKIP
+    >>> print quadts(f, (0, 1), (0, 1))
     0.577215664901532860606512090082
     >>> print euler
     0.577215664901532860606512090082
 
     >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
-    >>> print quadts(f, (-1, 1), (-1, 1))  # doctest: +SKIP
+    >>> print quadts(f, (-1, 1), (-1, 1))
     3.17343648530607134219175646705
     >>> print 4*log(2+sqrt(3))-2*pi/3
     3.17343648530607134219175646705
 
     >>> f = lambda x, y: 1/(1-x**2 * y**2)
-    >>> print quadts(f, (0, 1), (0, 1))  # doctest: +SKIP
+    >>> print quadts(f, (0, 1), (0, 1))
     1.23370055013616982735431137498
     >>> print pi**2 / 8
     1.23370055013616982735431137498
@@ -503,8 +503,8 @@ Even for analytic integrals on finite intervals, there is no guarantee that ``qu
 
 (It is possible that future improvements to the ``quadts`` implementation will make these particular examples work.)
 
-Numerical differentiation
--------------------------
+Differentiation
+---------------
 
 The function ``diff`` computes a derivative of a given function. It uses a simple two-point finite difference approximation, but increases the working precision to get good results. The step size is chosen roughly equal to the ``eps`` of the working precision, and the function values are computed at twice the working precision; for reasonably smooth functions, this typically gives full accuracy::
 
@@ -532,7 +532,6 @@ The accuracy can be improved by increasing the radius of the integration contour
 
     >>> print diffc(sin, 0, 13, radius=5)
     (1.0 - 3.3608728322706e-23j)
-
 
 Root-finding
 ------------
@@ -739,7 +738,7 @@ There is both a negative and a positive endpoint, so we cannot tell for certain 
 Technical details
 =================
 
-Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some knowledge of mpmath's terminology and internal number model can be useful to avoid common errors, and is recommended for trying more advanced calculations.
+Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some more details of mpmath's terminology and internal number model can be useful to avoid common errors, and is recommended for trying more advanced calculations.
 
 Representation of numbers
 -------------------------
@@ -758,7 +757,7 @@ Mpmath uses binary arithmetic. A binary floating-point number is a number of the
   |  1.25  |    5     |    -2    |
   +--------+----------+----------+
 
-Note that the representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that ``man`` is an odd number, unless it is 0; we take zero to have ``man = exp = 0``. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)
+The representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that ``man`` is an odd number, with the exception of zero which is always taken to have ``man = exp = 0``. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)
 
 Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: ``(m*2^e) * (n*2^f) = (m*n) * 2^(e+f)``. Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.
 
@@ -778,27 +777,24 @@ The reason why floating-point arithmetic is generally approximate is that we set
 Decimal issues
 ..............
 
-Unfortunately for some applications, decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers ``0.1``, ``0.01``, ``0.001`` has an exact representation as a binary floating-point number. Mpmath does not fully solve this problem; users who need *exact* decimal fractions should look at the ``decimal`` module in Python's standard library.
+Mpmath uses binary arithmetic internally, while most interaction with the user is done via the decimal number system. Translating between binary and decimal numbers is a somewhat subtle matter; many Python novices run into the following "bug" (addressed in the `General Python FAQ <http://www.python.org/doc/faq/general/#why-are-floating-point-calculations-so-inaccurate>`_)::
 
-There are a few subtle differences between binary and decimal precision. Precision and accuracy do not always correlate when translating from binary to decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number 2^-50 has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits:
+    >>> 0.1
+    0.10000000000000001
 
-    0.00000000000000088817841970012523233890533447265625
+Decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers ``0.1``, ``0.01``, ``0.001`` has an exact representation as a binary floating-point number. Although mpmath can approximate decimal fractions with any accuracy, it does not solve this problem for all uses; users who need *exact* decimal fractions should look at the ``decimal`` module in Python's standard library (or perhaps use fractions, which are much faster).
 
-Generally, it works out to just choose 1000 * 3.33 bits of precision in order to obtain 1000 decimal digits. In fact, mpmath will do the conversion automatically for you: you can enter a desired *dps* value and mpmath will automatically choose the appropriate *prec*. More precisely, mpmath uses the following formulas to translate between prec and dps::
+With ``prec`` bits of precision, an arbitrary number can be approximated to within ``2^(-prec)``. With ``dps`` decimal digits, the corresponding error is ``10^-dps``. The equivalent values for ``prec`` and ``dps`` are therefore related proportionally via the factor ``C = log(10)/log(2)``, or roughly 3.32. For example, the standard (binary) precision in mpmath is 53 bits, which corresponds to a decimal precision of 15.95 digits.
+
+More precisely, mpmath uses the following formulas to translate between ``prec`` and ``dps``::
 
   dps(prec) = max(1, int(round(int(prec) / C - 1)))
 
   prec(dps) = max(1, int(round((int(dps) + 1) * C)))
 
-where ``C = log(10)/log(2)`` is the exact version of the "3.33" conversion ratio. Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This margin is added to ensure that *n*-digit decimal numbers, when converted to binary, will retain all *n* digits correct when converted back to decimal.
+Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This is done to hide minor rounding errors and artifacts resulting from binary-decimal conversion. As a result, mpmath interprets 53 bits as giving 15 digits of decimal precision, not 16.
 
-  * The ``str`` decimal precision is roughly one digit less than the exact equivalent binary precision, to hide minor rounding errors and artifacts resulting from binary-decimal conversion
-
-  * The ``repr`` decimal precision is roughly one digit greater to ensure that ``x == eval(repr(x))`` holds, i.e. that numbers can be converted to strings and back losslessly.
-
-For example, the standard precision is 53 bits, which corresponds to a dps value of 15. The actual decimal precision given by 53 bits is 15.95 ~= 16.
-
-The dps value controls the number of digits to display when printing numbers with ``str``, while the decimal precision used by ``repr`` is set two or three digits higher. For example, with 15 dps we have::
+The ``dps`` value controls the number of digits to display when printing numbers with ``str``, while the decimal precision used by ``repr`` is set two or three digits higher. For example, with 15 dps we have::
 
     >>> mp.dps = 15
     >>> str(pi)
@@ -806,10 +802,18 @@ The dps value controls the number of digits to display when printing numbers wit
     >>> repr(+pi)
     "mpf('3.1415926535897931')"
 
+The extra digits in the output from ``repr`` ensure that ``x == eval(repr(x))`` holds, i.e. that numbers can be converted to strings and back losslessly.
+
+It should be noted that precision and accuracy do not always correlate when translating from binary to decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number ``2^-50`` has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits::
+
+    0.00000000000000088817841970012523233890533447265625
+
+In fact, all binary floating-point numbers can be represented exactly as decimals (despite the converse not being true), but displaying more than ``dps`` digits is usually not useful, since typically only at most ``dps`` digits will be correct when the floating-point number is an approximation for some computed quantity.
+
 Rounding
 --------
 
-There are several different strategies for rounding a too large mantissa or a result that cannot at all be represented exactly in floating-point form (such as ``log(2)``). Mpmath supports the following rounding modes:
+There are several different strategies for rounding a too large mantissa or a result that cannot at all be represented exactly in binary floating-point form (such as 1/3 or log(2)). Mpmath supports the following rounding modes:
 
   +-----------+---------------------------------------------------------+
   | Name      | Direction                                               |
@@ -831,45 +835,40 @@ The arithmetic operations ``+``, ``-``, ``*`` and ``/`` acting on real floating-
 
 Evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.
 
-Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100). When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0's and 9's, and finally rounds to nearest, rounding up (away from zero) on a tie.
+Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^-100 and smaller than 10^100), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.
+
+When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0's and 9's, and finally rounds to nearest, rounding up (away from zero) on a tie. The ``decimal`` library could be used to provide more control over the rounding in the binary-to-decimal conversion, and mpmath did do radix conversions via ``decimal`` in older versions, but this was far too slow compared to using a custom algorithm.
 
 Exponent range
 --------------
 
-In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^-300 and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by computer's memory.
+In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly ``10^-300`` and ``10^300``. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer's memory.
 
-Some care may be necessary when working with extremely large numbers. Although arithmetic is safe, it is for example futile to attempt to compute ``exp`` of either of the above two numbers. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise ``OverflowError: long int too large to convert to int``.
+Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of ``10^100000``. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise ``OverflowError: long int too large to convert to int``.
 
-In some situations, it would be more convenient if mpmath would "round" extremely small numbers to 0 and extremely large numbers to ``inf``, and directly raise an exception or return ``nan`` if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.
+In some situations, it might be more convenient if mpmath could "round" extremely small numbers to 0 and extremely large numbers to ``inf``, and directly raise an exception or return ``nan`` if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.
 
 Compatibility
 -------------
 
-The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and rounds to nearest. (Additional precision and rounding modes are usually available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with rounding to nearest on most systems.)
+The floating-point arithmetic provided by processors that conform to the IEEE 754 *double precision* standard has a precision of 53 bits and rounds to nearest. (Additional precision and rounding modes are available, but regular double precision arithmetic should be the most familiar to Python users, since the Python ``float`` type corresponds to an IEEE double with rounding to nearest on most systems.)
 
-This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, for the following reasons:
-
-1) Hardware floats have a limited exponent range, as discussed above. Machine floats very close to the exponent limit may be rounded subnormally, meaning that they lose precision. Python may also raise an exception instead of rounding a ``float`` subnormally.
-
-2) Hardware floating-point operations don't always round correctly. This is commonly the case for hardware implementations of transcendental functions like ``log`` and ``sin``, but even square roots seem to be inaccurate on some systems, and mpmath has been run on at least one modern system where Python's builtin ``float`` multiplication was inaccurate, causing mpmath's float compatibility tests to fail.
-
-3) Mpmath may of course have bugs. (However, the basic arithmetic has been tested fairly thoroughly by now. (1) and (2) are the more common causes of discrepancies.)
-
+This corresponds roughly to a decimal accuracy of 15 digits, and is the default precision used by mpmath. Thus, under normal circumstances, mpmath should produce identical results to Python ``float`` operations. This is not always true, mainly due to the simple fact that mpmath is able to produce more accurate results for transcendental functions. Machine floats very close to the exponent limit also round subnormally, meaning that they lose precision (Python may raise an exception instead of rounding a ``float`` subnormally).
 
 Optimization tricks
 ===================
 
 There are a few tricks that can significantly speed up mpmath code at low to medium precision (up a hundred digits or so):
 
-  * Repeated type conversions from floats, strings and integers are expensive (exceptions: ``n/x``, ``n*x`` and ``x**n`` are fast when ``n`` is an ``int`` and ``x`` is an ``mpf``). Pre-evaluate numerical constants that are used repeatedly, such as in the body of a function passed to ``quadts``.
+* Repeated type conversions from floats, strings and integers are expensive (exceptions: ``n/x``, ``n*x`` and ``x**n`` are fast when ``n`` is an ``int`` and ``x`` is an ``mpf``). Numerical constants that are used repeatedly, such as in the body of a function passed to ``quadts``, should be pre-converted to ``mpf`` instances.
 
-  * The JIT compiler `psyco <http://psyco.sourceforge.net/>`_ fairly consistently speeds up mpmath about 2x.
+* The JIT compiler `psyco <http://psyco.sourceforge.net/>`_ fairly consistently speeds up mpmath about 2x.
 
-  * An additional 2x gain is possible by using the low-level functions in ``mpmath.lib`` instead of ``mpf`` instances.
+* An additional 2x gain is possible by using the low-level functions in ``mpmath.lib`` instead of ``mpf`` instances.
 
-  * Changing the rounding mode to *floor* can give a slight speedup.
+* Changing the rounding mode to *floor* can give a slight speedup.
 
-Here follows a simple example demonstrating some of these options.
+Here follows a simple example demonstrating some of these optimizations.
 
 Original algorithm (0.028 seconds)::
 

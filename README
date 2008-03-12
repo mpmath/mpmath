@@ -9,8 +9,8 @@ Author: Fredrik Johansson <fredrik.johansson@gmail.com>
 mpmath is free software released under the New BSD License (see the
 LICENSE file for details)
 
-0. History
-----------
+0. History and credits
+----------------------
 
 * Version 0.6 released on January 13, 2008
 * Version 0.5 released on November 24, 2007
@@ -20,6 +20,12 @@ LICENSE file for details)
 * Version 0.1 released on September 27, 2007
 
 For a detailed changelog, see the CHANGES file.
+
+The following people have contributed patches to mpmath:
+
+* Pearu Peterson
+* Mario Pernici
+* Ondrej Certik
 
 
 1. Download & installation
@@ -36,8 +42,8 @@ To install, unpack the mpmath archive and run
 
   python setup.py install
 
-The latest development code is available at
-http://mpmath.googlecode.com/svn/trunk/
+The latest development code is available from
+http://code.google.com/p/mpmath/source/checkout
 
 
 2. Documentation
@@ -46,29 +52,8 @@ http://mpmath.googlecode.com/svn/trunk/
 See doc/manual.html and the mpmath website.
 
 
-3. Application code and demos
------------------------------
 
-In addition to the base arithmetic, mpmath provides various more or less
-useful functions and demo scripts. These features are described in more
-detail on the mpmath wiki.
-
-* Numerical integration: the quadts() function
-  Permits computing integrals with hundreds of digits of precision.
-
-  -- see http://code.google.com/p/mpmath/wiki/NumericalIntegration
-
-* Interval arithmetic: the mpi class
-  -- see http://code.google.com/p/mpmath/wiki/IntervalArithmetic
-
-* Educational interval arithmetic demo: mpmath/apps/taylordemo.py
-
-* Pi digits demo: mpmath/apps/pidigits.py
-  This script can be run interactively. It can compute 100,000's of digits
-  of pi fairly quickly, and prints them in nicely formatted columns.
-
-
-4. Known problems
+3. Known problems
 -----------------
 
 mpmath is a work in progress. Major issues include:
@@ -92,11 +77,11 @@ mpmath is a work in progress. Major issues include:
   The current method is not threadsafe.
 
 
-5. Help and bug reports
+4. Help and bug reports
 -----------------------
 
-You can report bugs at the mpmath issue tracker,
+You can report bugs and send patches to the mpmath issue tracker,
 http://code.google.com/p/mpmath/issues/list
 
-Please send any comments or questions to Fredrik
+Please send any other comments or questions to Fredrik
 <fredrik.johansson@gmail.com>

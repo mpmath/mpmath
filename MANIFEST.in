@@ -1,5 +1,6 @@
+include doc/manual.html
+include demo/*.py
 include mpmath/*.py
-include mpmath/lib/*.py
 include mpmath/apps/*.py
 include mpmath/tests/*.py
 include LICENSE

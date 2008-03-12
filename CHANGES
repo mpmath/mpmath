@@ -4,13 +4,15 @@
   changed. instead of changing mpf.prec, there is a new object mp
   which holds the precision as mp.prec. this change improves
   flexibility in the implementation. it will unfortunately break
-  any existing code written for mpmath, but broken code should be
-  trivial to update.
+  any existing code written for mpmath, but the broken code should
+  be trivial to update.
 
 * the functions workprec, workdps, extraprec, extradps have been
   introduced for switching precision in a more safe manner,
   ensuring that the precision gets reset when finished. they can
   be used with the 'with' statement available in python 2.5
+
+* improved documentation (manual.html)
 
 * the round-half-down and round-half-up modes have been deprecated,
   since they added complexity without being particularly useful.
@@ -24,7 +26,8 @@
 * implemented a magical constant eps that gives the "machine"
   epsilon.
 
-* implemented Catalan's constant
+* additional mathematical functions: implemented Catalan's constant
+  and Bessel functions J_n(x) for integer n and real x
 
 * new functions diff and diffc for numerical differentiation
 
@@ -36,14 +39,17 @@
 
 * support creating mpf from float nan or inf
 
-* flattened package structure for easier inclusion in other projects
+* fixed printing of complex numbers with negative imaginary part
+
+* flattened package structure to simplify inclusion of mpmath in other
+  packages
+
+* external classes can interoperate with mpf and mpc instances
+  by defining _mpf_ or _mpc_ properties
 
 * renamed lib.fpow -> lib.fpowi and implemented lib.fpow for general
   real powers. <mpf> ** <mpf> should now be slightly faster and more
   robust
-
-* external classes can interoperate with mpf and mpc instances
-  by defining _mpf_ or _mpc_ properties
 
 * the internal number representation has been changed to include
   an explicit sign bit. as a result of this change and other small
