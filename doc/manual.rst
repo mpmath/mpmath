@@ -225,7 +225,7 @@ Mpmath provides several special numbers, which are summarized in the following t
 
 The first four objects (``j``, ``inf``, ``-inf``, ``nan``) are merely shortcuts to ``mpc`` and ``mpf`` instances with these fixed values.
 
-The remaining numbers are lazy implementations of numerical constants that can be computed with any precision. Whenever they are used, they automatically evaluate to the current working precision. A lazy number can be converted to a regular ``mpf`` using the unary ``+`` operator::
+The remaining numbers are lazy implementations of numerical constants that can be computed with any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular ``mpf`` using the unary ``+`` operator::
 
     >>> mp.dps = 15
     >>> pi
@@ -859,7 +859,7 @@ This corresponds roughly to a decimal accuracy of 15 digits, and is the default 
 Optimization tricks
 ===================
 
-There are a few tricks that can significantly speed up mpmath code at low to medium precision (up to a few hundred digits):
+There are a few tricks that can significantly speed up mpmath code at low to medium precision (up a hundred digits or so):
 
   * Repeated type conversions from floats, strings and integers are expensive (exceptions: ``n/x``, ``n*x`` and ``x**n`` are fast when ``n`` is an ``int`` and ``x`` is an ``mpf``). Pre-evaluate numerical constants that are used repeatedly, such as in the body of a function passed to ``quadts``.
 

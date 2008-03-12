@@ -49,11 +49,15 @@ pre.literal-block, pre.doctest-block {
 
 lines.insert(lines.index("</body>\n"), \
 """
-<!-- Generate pageview statistics -->
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
 <script type="text/javascript">
-_uacct = "UA-2697185-2";
-urchinTracker();
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
 </script>
 """)
 
