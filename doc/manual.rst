@@ -23,11 +23,10 @@ This document is a user's guide for mpmath, a Python library for arbitrary-preci
 * http://mpmath.googlecode.com/svn/trunk/doc/manual.html (HTML)
 * http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf (PDF)
 
+This manual gives an introduction to mpmath's major features. Some supplementary documentation, FAQs, additional examples, etc may be available on the mpmath website.
+
 Basics
 ======
-
-Setup
------
 
 For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running ``python easy_install mpmath``). After the setup has completed, you can fire up the interactive Python interpreter and try the following::
 
@@ -40,8 +39,8 @@ For download and installation instructions, please refer to the README or the mp
 
 In all interactive code examples that follow, it will be assumed that the main contents of the ``mpmath`` package have been imported with "``import *``".
 
-Working with mpmath numbers
----------------------------
+Mpmath numbers
+--------------
 
 Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances::
 
@@ -80,17 +79,7 @@ Prettier output can be obtained by using ``str()`` or ``print``, which hide the 
     >>> print mpc(1j)**0.5
     (0.707106781186548 + 0.707106781186548j)
 
-Mpmath numbers can have unlimited magnitude. An ``mpf`` can for example hold an approximation of a large Mersenne prime::
-
-    >>> print mpf(2)**32582657 - 1
-    1.24575026015369e+9808357
-
-Or why not 1 googolplex::
-
-    >>> print mpf(10) ** (10**100)  # doctest:+ELLIPSIS
-    1.0e+100000000000000000000000000000000000000000000000000...
-
-Controlling precision
+Setting the precision
 ---------------------
 
 Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling ``mpf()`` rounds the result to the current working precision. The working precision is controlled by a special object called ``mp``, which has the following default state::
@@ -101,7 +90,11 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.dps = 15                 [default: 15]
       mp.rounding = 'nearest'     [default: 'nearest']
 
-The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used). Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value::
+The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
+
+The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. These modes are described in more detail in the section on rounding below. The default rounding mode (round to nearest) is the best setting for most purposes.
+
+Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value::
 
     >>> mp.dps = 100
     >>> mp.dps
@@ -137,7 +130,17 @@ The number of digits with which numbers are printed by default is determined by 
     >>> nstr(a, 50)
     '0.16666666666666665741480812812369549646973609924316'
 
-The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. These modes are described in more detail in the section on rounding below. The default rounding mode (round to nearest) is the best setting for most purposes.
+There is no restriction on the magnitude of numbers. An ``mpf`` can for example hold an approximation of a large Mersenne prime::
+
+    >>> print mpf(2)**32582657 - 1
+    1.24575026015369e+9808357
+
+Or why not 1 googolplex::
+
+    >>> print mpf(10) ** (10**100)  # doctest:+ELLIPSIS
+    1.0e+100000000000000000000000000000000000000000000000000...
+
+The (binary) exponent is stored exactly and is independent of the precision.
 
 Temporarily changing the precision
 ..................................
@@ -172,8 +175,8 @@ The ``workprec`` family of functions can also be used as function decorators::
     >>> f()
     mpf('0.33333331346511841')
 
-Caveat: providing correct input
--------------------------------
+Providing correct input
+-----------------------
 
 Note that when creating a new ``mpf``, the value will at most be as accurate as the input. **Be careful when mixing mpmath numbers with Python floats**. When working at high precision, fractional ``mpf`` values should be created from strings or integers::
 
@@ -503,17 +506,38 @@ Even for analytic integrals on finite intervals, there is no guarantee that ``qu
 Numerical differentiation
 -------------------------
 
-Root-finding with the secant method
------------------------------------
+The function ``diff`` computes a derivative of a given function. It uses a simple two-point finite difference approximation, but increases the working precision to get good results. The step size is chosen roughly equal to the ``eps`` of the working precision, and the function values are computed at twice the working precision; for reasonably smooth functions, this typically gives full accuracy::
 
-The function ``secant`` calculates a root of a given function using the secant method. A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method.
+    >>> mp.dps = 15
+    >>> print diff(cos, 1)
+    -0.841470984807897
+    >>> print -sin(1)
+    -0.841470984807897
 
-If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
+One-sided derivatives can be computed by specifying the ``direction`` parameter. With ``direction = 0`` (default), ``diff`` uses a central difference (``f(x-h)``, ``f(x+h)``). With ``direction = 1``, it uses a forward difference (``f(x)``, ``f(x+h)``), and with ``direction = -1``, a backward difference (``f(x-h)``, ``f(x)``)::
 
-Simple examples
-...............
+    >>> print diff(abs, 0, direction=0)
+    0.0
+    >>> print diff(abs, 0, direction=1)
+    1.0
+    >>> print diff(abs, 0, direction=-1)
+    -1.0
 
-A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3::
+Although the finite difference approximation can be applied recursively to compute *n*-th order derivatives, this is inefficient for large *n* since ``2^n`` evaluation points are required, using ``2^n``-fold extra precision. As an alternative, the function ``diffc`` computes derivatives of arbitrary order by means of complex contour integration. It is for example able to compute a 13th-order derivative of sin (here at *x* = 0)::
+
+    >>> print diffc(sin, 0, 13)
+    (0.999998702480854 + 6.05532349899064e-13j)
+
+The accuracy can be improved by increasing the radius of the integration contour (provided that the function is well-behaved within this region)::
+
+    >>> print diffc(sin, 0, 13, radius=5)
+    (1.0 - 3.3608728322706e-23j)
+
+
+Root-finding
+------------
+
+The function ``secant`` locates a root of a given function using the secant method. A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3::
 
     >>> mp.dps = 30
     >>> print secant(sin, 3)
@@ -524,6 +548,8 @@ The secant method can be used to find complex roots of analytic functions, altho
     >>> mp.dps = 15
     >>> print secant(lambda x: x**3 + 2*x + 1, j)
     (0.226698825758202 + 1.46771150871022j)
+
+A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method. When the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
 
 Applications
 ............
@@ -608,6 +634,107 @@ The following example computes all the 5th roots of unity; i.e. the roots of ``x
 
 Interval arithmetic
 -------------------
+
+The ``mpi`` type holds an interval defined by a pair of ``mpf`` values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.
+
+You can create an ``mpi`` from a number (treated as a zero-width interval) or a pair of numbers. Strings are treated as exact decimal numbers (note that a Python float like 0.1 generally does not represent the same number as its literal; use ``'0.1'`` instead)::
+
+    >>> mp.dps = 15
+    >>> mpi(3)
+    [3.0, 3.0]
+    >>> mpi(2, 3)
+    [2.0, 3.0]
+    >>> mpi(0.1)  # probably not what you want
+    [0.10000000000000000555, 0.10000000000000000555]
+    >>> mpi('0.1')  # good
+    [0.099999999999999991673, 0.10000000000000000555]
+
+The fact that ``'0.1'`` results in an interval of nonzero width proves that 1/10 cannot be represented using binary floating-point numbers at this precision level (in fact, it cannot be represented exactly at any precision).
+
+Some basic examples of interval arithmetic operations are::
+
+    >>> mpi(0,1) + 1
+    [1.0, 2.0]
+    >>> mpi(0,1) + mpi(4,6)
+    [4.0, 7.0]
+    >>> 2 * mpi(2, 3)
+    [4.0, 6.0]
+    >>> mpi(-1, 1) * mpi(10, 20)
+    [-20.0, 20.0]
+
+Intervals have the properties ``.a``, ``.b`` (endpoints), ``.mid``, and ``.delta`` (width)::
+
+    >>> x = mpi(2, 5)
+    >>> x.a
+    mpf('2.0')
+    >>> x.b
+    mpf('5.0')
+    >>> x.mid
+    mpf('3.5')
+    >>> x.delta
+    mpf('3.0')
+
+Intervals may be infinite or half-infinite::
+
+    >>> 1 / mpi(2, inf)
+    [0.0, 0.5]
+
+The ``in`` operator tests whether a number or interval is contained in another interval::
+
+    >>> mpi(0, 2) in mpi(0, 10)
+    True
+    >>> 3 in mpi(-inf, 0)
+    False
+
+Division is generally not an exact operation in floating-point arithmetic. Using interval arithmetic, we can track both the error from the division and the error that propagates if we follow up with the inverse operation::
+
+    >>> 1 / mpi(3)
+    [0.33333333333333331483, 0.33333333333333337034]
+    >>> 1 / (1 / mpi(3))
+    [2.9999999999999995559, 3.0000000000000004441]
+
+The same goes for computing square roots::
+
+    >>> (mpi(2) ** 0.5) ** 2
+    [1.9999999999999995559, 2.0000000000000004441]
+
+By design, interval arithmetic propagates errors, no matter how tiny, that would get rounded off in normal floating-point arithmetic::
+
+    >>> mpi(1) + mpi('1e-10000')
+    [1.0, 1.000000000000000222]
+
+Interval arithmetic uses the same precision as the ``mpf`` class; if ``mp.dps = 50`` is set, all interval operations will be carried out with 50-digit precision. Of course, interval arithmetic is guaranteed to give correct bounds at any precision, but a higher precision makes the intervals narrower and hence more accurate::
+
+    >>> mp.dps = 5
+    >>> mpi(pi)
+    [3.141590118, 3.141593933]
+    >>> mp.dps = 30
+    >>> mpi(pi)  # doctest: +ELLIPSIS
+    [3.14159265358979...793333, 3.14159265358979...797277]
+
+It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators ``+, -, *, /``, as well as integer powers should work correctly. It is not currently possible to use functions like ``sin`` or ``log`` with interval arguments. You can convert mathematical constants to intervals (as in the previous example) and compute fractional powers, but this is not currently guaranteed to give correct results (although it most likely will).
+
+Establishing inequalities
+.........................
+
+Interval arithmetic can be used to establish inequalities such as ``exp(pi*sqrt(163)) < 640320**3 + 744``. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result::
+
+    >>> mp.dps = 25
+    >>> exp(pi*sqrt(163)) < (640320**3 + 744)
+    False
+
+The answer should be True, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep ``mp.dps = 25``, but it is honest enough to admit it::
+
+    >>> mpi(e) ** (mpi(pi) * mpi(163)**0.5) - (640320**3 + 744)
+    ... # doctest: +ELLIPSIS
+    [-0.000000793..., 0.000000946...]
+
+There is both a negative and a positive endpoint, so we cannot tell for certain whether the true difference is on one side or the other of zero. The solution is to increase the precision until the answer is strictly one-signed::
+
+    >>> mp.dps = 35
+    >>> mpi(e) ** (mpi(pi) * mpi(163)**0.5) - (640320**3 + 744)
+    ... # doctest: +ELLIPSIS
+    [-7.499745...e-13, -7.498606...-13]
 
 Technical details
 =================
