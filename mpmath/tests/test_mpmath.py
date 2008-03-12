@@ -165,8 +165,8 @@ def test_constants():
         assert e == mpf(te)
         assert degree == mpf(tdegree)
         assert euler == mpf(tgamma)
-        assert clog2 == mpf(tlog2)
-        assert clog10 == mpf(tlog10)
+        assert ln2 == mpf(tlog2)
+        assert ln10 == mpf(tlog10)
         assert catalan == mpf(tcatalan)
     mp.dps = 15
 
@@ -209,7 +209,7 @@ def test_exp():
     assert exp(0) == 1
     assert exp(10000).ae(mpf('8.8068182256629215873e4342'))
     assert exp(-10000).ae(mpf('1.1354838653147360985e-4343'))
-    assert exp(clog2 * 10).ae(1024)
+    assert exp(ln2 * 10).ae(1024)
     assert exp(2+2j).ae(cmath.exp(2+2j))
 
 def test_log():

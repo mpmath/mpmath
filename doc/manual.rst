@@ -9,9 +9,16 @@ Mpmath manual
 :Updated: 2008-03-09
 :Mpmath version: 0.7
 
+This document is a user's guide for mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website http://code.google.com/p/mpmath/
+
+The most up-to-date version of this document is available at the mpmath website in the following formats:
+
+* http://mpmath.googlecode.com/svn/trunk/doc/manual.html (HTML)
+* http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf (PDF)
+
 .. section-numbering::
 
-.. contents::
+.. contents:: Table of contents
     :depth: 2
     :local:
 
@@ -21,7 +28,7 @@ Basics
 Setup
 -----
 
-For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
+For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running ``python easy_install mpmath``). After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
 
     >>> from mpmath import *
     >>> mp.dps = 50
@@ -29,6 +36,8 @@ For download and installation instructions, please refer to the README or the mp
     1.4142135623730950488016887242096980785696718753769
     >>> print 2*pi
     6.2831853071795864769252867665590057683943387987502
+
+In all interactive code examples that follow, it will be assumed that all contents of the ``mpmath`` library have been imported with "``import *``".
 
 Working with mpmath numbers
 ---------------------------
@@ -68,6 +77,17 @@ Prettier output can be obtained by using ``str()`` or ``print``, which hide the 
     3.14159
     >>> print mpc(1j)**0.5
     (0.707106781186548 + 0.707106781186548j)
+
+Mpmath numbers can have unlimited magnitude. An ``mpf`` can for example hold an approximation of a large Mersenne prime::
+
+    >>> print mpf(2)**32582657 - 1
+    1.24575026015369e+9808357
+
+Or why not 1 googolplex::
+
+    >>> print mpf(10) ** (10**100)
+    1.0e+100000000000000000000000000000000000000000000000000
+    00000000000000000000000000000000000000000000000000
 
 Controlling precision
 ---------------------
@@ -154,15 +174,15 @@ The ``workprec`` family of functions can also be used as function decorators:
 Caveat: providing correct input
 -------------------------------
 
-Note that when creating a new ``mpf``, the value will at most be as accurate as the input. **Be careful when mixing mpmath numbers with Python floats**. When working at high precision, fractional ``mpf`` values should be created from strings or integers:
+Note that when creating a new ``mpf``, the value will at most be as accurate as the input. **Be careful when mixing mpmath numbers with Python floats**. When working at high precision, fractional ``mpf`` values should be created from strings or integers::
 
->>> mp.dps = 30
->>> mpf(10.9)   # bad
-mpf('10.9000000000000003552713678800501')
->>> mpf('10.9')  # good
-mpf('10.9')
->>> mpf(109) / mpf(10)   # also good
-mpf('10.9')
+    >>> mp.dps = 30
+    >>> mpf(10.9)   # bad
+    mpf('10.9000000000000003552713678800501')
+    >>> mpf('10.9')  # good
+    mpf('10.9')
+    >>> mpf(109) / mpf(10)   # also good
+    mpf('10.9')
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
 
@@ -192,14 +212,16 @@ Mpmath provides several special numbers, which are summarized in the following t
 +-----------+--------------------------------------------+
 |``catalan``| Catalan's constant, C or K = 0.915966      |
 +-----------+--------------------------------------------+
-| ``clog2`` | log(2) = 0.693147                          |
+| ``ln2``   | log(2) = 0.693147                          |
 +-----------+--------------------------------------------+
-| ``clog10``| log(10) = 2.30259                          |
+| ``ln10``  | log(10) = 2.30259                          |
 +-----------+--------------------------------------------+
 | ``eps``   | Epsilon of working precision               |
 +-----------+--------------------------------------------+
 
-The first four objects (``j``, ``inf``, ``-inf``, ``nan``) of these are merely provided as shortcuts to ``mpc`` and ``mpf`` instances with these fixed values. The remaining numbers are lazy implementations of numerical constants, meaning that they have potentially infinite precision; whenever they are used, they automatically evaluate to the working precision. A special number can be converted to a regular ``mpf`` using the unary ``+`` operator::
+The first four objects (``j``, ``inf``, ``-inf``, ``nan``) are merely shortcuts to ``mpc`` and ``mpf`` instances with these fixed values.
+
+The remaining numbers are lazy implementations of numerical constants that can be computed with any precision. Whenever they are used, they automatically evaluate to the current working precision. A lazy number can be converted to a regular ``mpf`` using the unary ``+`` operator::
 
     >>> mp.dps = 15
     >>> pi
@@ -215,14 +237,14 @@ The first four objects (``j``, ``inf``, ``-inf``, ``nan``) of these are merely p
     >>> +pi
     mpf('3.141592653589793238462643383279502884197169')
 
-The number ``eps`` is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented at the current working precision::
+The special number ``eps`` is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented with the current working precision::
 
     >>> mp.dps = 15
     >>> eps
     <epsilon of working precision: 2.22045e-16~>
     >>> 1 + eps
     mpf('1.0000000000000002')
-    >>> 1 + eps/2
+    >>> 1 + eps/2    # Too small to make a difference
     mpf('1.0')
     >>>
     >>> mp.dps = 100
@@ -255,13 +277,75 @@ An useful application of ``eps`` is to perform approximate comparisons that work
 Mathematical functions
 ----------------------
 
+Mpmath implements the standard functions available in Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision:
+
+    >>> mp.dps = 25
+    >>> print cosh('1.234')
+    1.863033801698422589073644
+    >>> print asin(1)
+    1.570796326794896619231322
+    >>> print log(1+2j)
+    (0.8047189562170501873003797 + 1.107148717794090503017065j)
+    >>> print exp(2+3j)
+    (-7.315110094901102517486536 + 1.042743656235904414101504j)
+
+Some functions that do not exist in the standard Python ``math`` library are available, such as factorials (with support for noninteger arguments):
+
+    >>> mp.dps = 20
+    >>> print factorial(10)
+    3628800.0
+    >>> print factorial(0.25)
+    0.90640247705547707798
+    >>> print factorial(2+3j)
+    (-0.44011340763700171113 - 0.06363724312631702183j)
+
+The list of functions is given in the following table.
+
+=====================   ==================================================================
+Function                Description
+``sqrt(x)``             Square root
+``hypot(x,y)``          Euclidean norm
+``exp(x)``              Exponential function
+``log(x,b)``            Natural logarithm (optionally base-b logarithm)
+``power(x,y)``          Power, x^y
+``cos(x)``              Cosine
+``sin(x)``              Sine
+``tan(x)``              Tangent
+``cosh(x)``             Hyperbolic cosine
+``sinh(x)``             Hyperbolic sine
+``tanh(x)``             Hyperbolic tangent
+``acos(x)``             Inverse cosine
+``asin(x)``             Inverse sine
+``atan(x)``             Inverse tangent
+``atan2(y,x)``          Inverse tangent atan(y/x) with attention to signs of both x and y
+``acosh(x)``            Inverse hyperbolic cosine
+``asinh(x)``            Inverse hyperbolic sine
+``atanh(x)``            Inverse hyperbolic tangent
+``floor(x)``            Floor function (round to integer in the direction of -inf)
+``ceil(x)``             Ceiling function (round to integer in the direction of +inf)
+``arg(x)``              Complex argument
+``rand()``              Generate a random number in [0, 1)
+``factorial(x)``        Factorial
+``gamma(x)``            Gamma function
+``lower_gamma(a,x)``    Lower gamma function
+``upper_gamma(a,x)``    Upper gamma function
+``erf(x)``              Error function
+``zeta(x)``             Riemann zeta function
+``j0(x)``               Bessel function J_0(x)
+``j1(x)``               Bessel function J_1(x)
+``jn(x)``               Bessel function J_n(x)
+=====================   ==================================================================
+
+The following functions do not accept complex input: ``hypot``, ``atan2``, ``floor``, ``ceil``, ``j0``, ``j1`` and ``jn``.
+
+
 High-level features
 ===================
 
 Numerical integration
 ---------------------
 
-The function ``quadts`` performs tanh-sinh quadrature (also known as doubly exponential quadrature). The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example,
+The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example,
 
     >>> print quadts(sin, 0, pi)
     2.0
@@ -400,7 +484,7 @@ The problem is due to the non-analytic behavior of the function at (0.5, 0.5). W
     >>> print (sqrt(2) + asinh(1))/6
     0.382597858232106
 
-The value agrees with the analytic result and the running time in this case is just 0.7 seconds.
+The value agrees with the known answer and the running time in this case is just 0.7 seconds.
 
 Numerical differentiation
 -------------------------
@@ -410,7 +494,7 @@ Root-finding with the secant method
 
 The function ``secant`` calculates a root of a given function using the secant method. A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method.
 
-If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) A particularly efficient general approach is to compute the initial approximation using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
+If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
 
 Simple examples
 ...............
@@ -456,7 +540,7 @@ Finally, a useful application is to compute inverse functions, such as the Lambe
 Options
 .......
 
-Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point ``x0``; ``secant`` automatically sets the second point to ``x0 + 1/4``. Manually providing also the second point can help in some cases if ``secant`` fails to converge.
+Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point ``x0``; ``secant`` automatically sets the second point (somewhat arbitrarily) to ``x0 + 1/4``. Manually providing also the second point can help in some cases if ``secant`` fails to converge.
 
 By default, ``secant`` performs a maximum of 20 steps, which can be increased or decreased using the ``maxsteps`` keyword argument. You can pass ``secant`` the option ``verbose=True`` to show detailed progress.
 
@@ -477,7 +561,7 @@ With ``derivative=True``, both the polynomial and its derivative are evaluated a
     >>> polyval([2, 5, 0, 1], mpf('3.5'), derivative=True)
     (mpf('62.375'), mpf('41.75'))
 
-The point and coefficient list may contain complex numbers.
+The point and coefficients may be complex numbers.
 
 Finding roots of polynomials
 ............................
@@ -664,7 +748,7 @@ Original algorithm (0.028 seconds)::
     for i in range(1000):
         x += 0.1
 
-Preconverting the float constant (0.080 seconds)::
+Preconverting the float constant (0.0080 seconds)::
 
     x = mpf(1)
     one_tenth = mpf(0.1)

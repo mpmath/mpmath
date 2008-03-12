@@ -4,7 +4,7 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "clog2", "clog10",
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "ln2", "ln10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
@@ -570,8 +570,8 @@ pi = constant(fpi, "pi")
 degree = constant(fdegree, "degree")
 e = constant(fe, "e")
 euler = constant(fgamma, "Euler's constant gamma")
-clog2 = constant(flog2, "log 2")
-clog10 = constant(flog10, "log 10")
+ln2 = constant(flog2, "log 2")
+ln10 = constant(flog10, "log 10")
 catalan = constant(fcatalan, "Catalan's constant")
 eps = constant(lambda p, r: (0, 1, -p+1, 1), "epsilon of working precision")
 

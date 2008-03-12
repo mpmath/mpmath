@@ -288,6 +288,33 @@ tt.docutils {
 ul.auto-toc {
   list-style-type: none }
 
+body {
+    margin:0px;
+    padding:5px;
+    border-left: 25px solid #ccc;
+    background-color: #ccc;
+    font-size: 13px; font-family: arial, sans-serif;
+    line-height:1.5em;
+}
+
+div.document {
+    max-width: 700px;
+    color: black;
+    background-color: white;
+    padding:25px;
+    border:5px solid #ddd;
+}
+
+h1 {
+    margin-top:0;
+    padding-top:20px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+
 </style>
 </head>
 <body>
@@ -308,7 +335,14 @@ ul.auto-toc {
 </tbody>
 </table>
 <!-- -*- rest -*- -->
+<p>This document is a user's guide for mpmath, a Python library for arbitrary-precision floating-point arithmetic. For general information about mpmath, see the website <a class="reference" href="http://code.google.com/p/mpmath/">http://code.google.com/p/mpmath/</a></p>
+<p>The most up-to-date version of this document is available at the mpmath website in the following formats:</p>
+<ul class="simple">
+<li><a class="reference" href="http://mpmath.googlecode.com/svn/trunk/doc/manual.html">http://mpmath.googlecode.com/svn/trunk/doc/manual.html</a> (HTML)</li>
+<li><a class="reference" href="http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf">http://mpmath.googlecode.com/svn/trunk/doc/manual.pdf</a> (PDF)</li>
+</ul>
 <div class="contents local topic">
+<p class="topic-title first"><a id="table-of-contents" name="table-of-contents">Table of contents</a></p>
 <ul class="auto-toc simple">
 <li><a class="reference" href="#basics" id="id1" name="id1">1&nbsp;&nbsp;&nbsp;Basics</a><ul class="auto-toc">
 <li><a class="reference" href="#setup" id="id2" name="id2">1.1&nbsp;&nbsp;&nbsp;Setup</a></li>
@@ -346,7 +380,7 @@ ul.auto-toc {
 <h1><a class="toc-backref" href="#id1" id="basics" name="basics">1&nbsp;&nbsp;&nbsp;Basics</a></h1>
 <div class="section">
 <h2><a class="toc-backref" href="#id2" id="setup" name="setup">1.1&nbsp;&nbsp;&nbsp;Setup</a></h2>
-<p>For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
+<p>For download and installation instructions, please refer to the README or the mpmath website (in most cases, installation should be as simple as running <tt class="docutils literal"><span class="pre">python</span> <span class="pre">easy_install</span> <span class="pre">mpmath</span></tt>). After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; from mpmath import *
 &gt;&gt;&gt; mp.dps = 50
@@ -355,6 +389,7 @@ ul.auto-toc {
 &gt;&gt;&gt; print 2*pi
 6.2831853071795864769252867665590057683943387987502
 </pre>
+<p>In all interactive code examples that follow, it will be assumed that all contents of the <tt class="docutils literal"><span class="pre">mpmath</span></tt> library have been imported with &quot;<tt class="docutils literal"><span class="pre">import</span> <span class="pre">*</span></tt>&quot;.</p>
 </div>
 <div class="section">
 <h2><a class="toc-backref" href="#id3" id="working-with-mpmath-numbers" name="working-with-mpmath-numbers">1.2&nbsp;&nbsp;&nbsp;Working with mpmath numbers</a></h2>
@@ -402,6 +437,17 @@ mpf('3.1415899999999999')
 (0.707106781186548 + 0.707106781186548j)
 </pre>
 </blockquote>
+<p>Mpmath numbers can have unlimited magnitude. An <tt class="docutils literal"><span class="pre">mpf</span></tt> can for example hold an approximation of a large Mersenne prime:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; print mpf(2)**32582657 - 1
+1.24575026015369e+9808357
+</pre>
+<p>Or why not 1 googolplex:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; print mpf(10) ** (10**100)
+1.0e+100000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000
+</pre>
 </div>
 <div class="section">
 <h2><a class="toc-backref" href="#id4" id="controlling-precision" name="controlling-precision">1.3&nbsp;&nbsp;&nbsp;Controlling precision</a></h2>
@@ -502,7 +548,7 @@ mpf('0.33333331346511841')
 <div class="section">
 <h2><a class="toc-backref" href="#id5" id="caveat-providing-correct-input" name="caveat-providing-correct-input">1.4&nbsp;&nbsp;&nbsp;Caveat: providing correct input</a></h2>
 <p>Note that when creating a new <tt class="docutils literal"><span class="pre">mpf</span></tt>, the value will at most be as accurate as the input. <strong>Be careful when mixing mpmath numbers with Python floats</strong>. When working at high precision, fractional <tt class="docutils literal"><span class="pre">mpf</span></tt> values should be created from strings or integers:</p>
-<pre class="doctest-block">
+<pre class="literal-block">
 &gt;&gt;&gt; mp.dps = 30
 &gt;&gt;&gt; mpf(10.9)   # bad
 mpf('10.9000000000000003552713678800501')
@@ -552,10 +598,10 @@ mpf('10.9')
 <tr><td><tt class="docutils literal"><span class="pre">catalan</span></tt></td>
 <td>Catalan's constant, C or K = 0.915966</td>
 </tr>
-<tr><td><tt class="docutils literal"><span class="pre">clog2</span></tt></td>
+<tr><td><tt class="docutils literal"><span class="pre">ln2</span></tt></td>
 <td>log(2) = 0.693147</td>
 </tr>
-<tr><td><tt class="docutils literal"><span class="pre">clog10</span></tt></td>
+<tr><td><tt class="docutils literal"><span class="pre">ln10</span></tt></td>
 <td>log(10) = 2.30259</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">eps</span></tt></td>
@@ -563,7 +609,8 @@ mpf('10.9')
 </tr>
 </tbody>
 </table>
-<p>The first four objects (<tt class="docutils literal"><span class="pre">j</span></tt>, <tt class="docutils literal"><span class="pre">inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt>, <tt class="docutils literal"><span class="pre">nan</span></tt>) of these are merely provided as shortcuts to <tt class="docutils literal"><span class="pre">mpc</span></tt> and <tt class="docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values. The remaining numbers are lazy implementations of numerical constants, meaning that they have potentially infinite precision; whenever they are used, they automatically evaluate to the working precision. A special number can be converted to a regular <tt class="docutils literal"><span class="pre">mpf</span></tt> using the unary <tt class="docutils literal"><span class="pre">+</span></tt> operator:</p>
+<p>The first four objects (<tt class="docutils literal"><span class="pre">j</span></tt>, <tt class="docutils literal"><span class="pre">inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt>, <tt class="docutils literal"><span class="pre">nan</span></tt>) are merely shortcuts to <tt class="docutils literal"><span class="pre">mpc</span></tt> and <tt class="docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values.</p>
+<p>The remaining numbers are lazy implementations of numerical constants that can be computed with any precision. Whenever they are used, they automatically evaluate to the current working precision. A lazy number can be converted to a regular <tt class="docutils literal"><span class="pre">mpf</span></tt> using the unary <tt class="docutils literal"><span class="pre">+</span></tt> operator:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; mp.dps = 15
 &gt;&gt;&gt; pi
@@ -579,14 +626,14 @@ mpf('6.283185307179586476925286766559005768394338')
 &gt;&gt;&gt; +pi
 mpf('3.141592653589793238462643383279502884197169')
 </pre>
-<p>The number <tt class="docutils literal"><span class="pre">eps</span></tt> is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented at the current working precision:</p>
+<p>The special number <tt class="docutils literal"><span class="pre">eps</span></tt> is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented with the current working precision:</p>
 <pre class="literal-block">
 &gt;&gt;&gt; mp.dps = 15
 &gt;&gt;&gt; eps
 &lt;epsilon of working precision: 2.22045e-16~&gt;
 &gt;&gt;&gt; 1 + eps
 mpf('1.0000000000000002')
-&gt;&gt;&gt; 1 + eps/2
+&gt;&gt;&gt; 1 + eps/2    # Too small to make a difference
 mpf('1.0')
 &gt;&gt;&gt;
 &gt;&gt;&gt; mp.dps = 100
@@ -601,7 +648,7 @@ mpf('1.0')
 ...     while 1:
 ...         term = mpf(5) ** (-n)
 ...         s += term
-...         if abs(term) &lt; eps:
+...         if term &lt; eps:
 ...             print &quot;added&quot;, n, &quot;terms&quot;
 ...             return s
 ...         n += 1
@@ -619,13 +666,145 @@ mpf('0.2500000000000000000000000000000000000000057')
 </div>
 <div class="section">
 <h2><a class="toc-backref" href="#id7" id="mathematical-functions" name="mathematical-functions">1.6&nbsp;&nbsp;&nbsp;Mathematical functions</a></h2>
+<p>Mpmath implements the standard functions available in Python's <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules, for both real and complex numbers and with arbitrary precision:</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 25
+&gt;&gt;&gt; print cosh('1.234')
+1.863033801698422589073644
+&gt;&gt;&gt; print asin(1)
+1.570796326794896619231322
+&gt;&gt;&gt; print log(1+2j)
+(0.8047189562170501873003797 + 1.107148717794090503017065j)
+&gt;&gt;&gt; print exp(2+3j)
+(-7.315110094901102517486536 + 1.042743656235904414101504j)
+</pre>
+</blockquote>
+<p>Some functions that do not exist in the standard Python <tt class="docutils literal"><span class="pre">math</span></tt> library are available, such as factorials (with support for noninteger arguments):</p>
+<blockquote>
+<pre class="doctest-block">
+&gt;&gt;&gt; mp.dps = 20
+&gt;&gt;&gt; print factorial(10)
+3628800.0
+&gt;&gt;&gt; print factorial(0.25)
+0.90640247705547707798
+&gt;&gt;&gt; print factorial(2+3j)
+(-0.44011340763700171113 - 0.06363724312631702183j)
+</pre>
+</blockquote>
+<p>The list of functions is given in the following table.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>Function</td>
+<td>Description</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt></td>
+<td>Square root</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">hypot(x,y)</span></tt></td>
+<td>Euclidean norm</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">exp(x)</span></tt></td>
+<td>Exponential function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">log(x,b)</span></tt></td>
+<td>Natural logarithm (optionally base-b logarithm)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">power(x,y)</span></tt></td>
+<td>Power, x^y</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">cos(x)</span></tt></td>
+<td>Cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">sin(x)</span></tt></td>
+<td>Sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">tan(x)</span></tt></td>
+<td>Tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">cosh(x)</span></tt></td>
+<td>Hyperbolic cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">sinh(x)</span></tt></td>
+<td>Hyperbolic sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">tanh(x)</span></tt></td>
+<td>Hyperbolic tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">acos(x)</span></tt></td>
+<td>Inverse cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">asin(x)</span></tt></td>
+<td>Inverse sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atan(x)</span></tt></td>
+<td>Inverse tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atan2(y,x)</span></tt></td>
+<td>Inverse tangent atan(y/x) with attention to signs of both x and y</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">acosh(x)</span></tt></td>
+<td>Inverse hyperbolic cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">asinh(x)</span></tt></td>
+<td>Inverse hyperbolic sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atanh(x)</span></tt></td>
+<td>Inverse hyperbolic tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">floor(x)</span></tt></td>
+<td>Floor function (round to integer in the direction of -inf)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ceil(x)</span></tt></td>
+<td>Ceiling function (round to integer in the direction of +inf)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">arg(x)</span></tt></td>
+<td>Complex argument</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">rand()</span></tt></td>
+<td>Generate a random number in [0, 1)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">factorial(x)</span></tt></td>
+<td>Factorial</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">gamma(x)</span></tt></td>
+<td>Gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">lower_gamma(a,x)</span></tt></td>
+<td>Lower gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">upper_gamma(a,x)</span></tt></td>
+<td>Upper gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">erf(x)</span></tt></td>
+<td>Error function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">zeta(x)</span></tt></td>
+<td>Riemann zeta function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">j0(x)</span></tt></td>
+<td>Bessel function J_0(x)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">j1(x)</span></tt></td>
+<td>Bessel function J_1(x)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">jn(x)</span></tt></td>
+<td>Bessel function J_n(x)</td>
+</tr>
+</tbody>
+</table>
+<p>The following functions do not accept complex input: <tt class="docutils literal"><span class="pre">hypot</span></tt>, <tt class="docutils literal"><span class="pre">atan2</span></tt>, <tt class="docutils literal"><span class="pre">floor</span></tt>, <tt class="docutils literal"><span class="pre">ceil</span></tt>, <tt class="docutils literal"><span class="pre">j0</span></tt>, <tt class="docutils literal"><span class="pre">j1</span></tt> and <tt class="docutils literal"><span class="pre">jn</span></tt>.</p>
 </div>
 </div>
 <div class="section">
 <h1><a class="toc-backref" href="#id8" id="high-level-features" name="high-level-features">2&nbsp;&nbsp;&nbsp;High-level features</a></h1>
 <div class="section">
 <h2><a class="toc-backref" href="#id9" id="numerical-integration" name="numerical-integration">2.1&nbsp;&nbsp;&nbsp;Numerical integration</a></h2>
-<p>The function <tt class="docutils literal"><span class="pre">quadts</span></tt> performs tanh-sinh quadrature (also known as doubly exponential quadrature). The syntax for integrating a function <em>f</em> between the endpoints <em>a</em> and <em>b</em> is <tt class="docutils literal"><span class="pre">quadts(f,</span> <span class="pre">a,</span> <span class="pre">b)</span></tt>. For example,</p>
+<p>The function <tt class="docutils literal"><span class="pre">quadts</span></tt> performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function <em>f</em> between the endpoints <em>a</em> and <em>b</em> is <tt class="docutils literal"><span class="pre">quadts(f,</span> <span class="pre">a,</span> <span class="pre">b)</span></tt>. For example,</p>
 <blockquote>
 <pre class="doctest-block">
 &gt;&gt;&gt; print quadts(sin, 0, pi)
@@ -801,7 +980,7 @@ quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
 0.382597858232106
 </pre>
 </blockquote>
-<p>The value agrees with the analytic result and the running time in this case is just 0.7 seconds.</p>
+<p>The value agrees with the known answer and the running time in this case is just 0.7 seconds.</p>
 </div>
 </div>
 <div class="section">
@@ -810,7 +989,7 @@ quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
 <div class="section">
 <h2><a class="toc-backref" href="#id11" id="root-finding-with-the-secant-method" name="root-finding-with-the-secant-method">2.3&nbsp;&nbsp;&nbsp;Root-finding with the secant method</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">secant</span></tt> calculates a root of a given function using the secant method. A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method.</p>
-<p>If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) A particularly efficient general approach is to compute the initial approximation using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's <tt class="docutils literal"><span class="pre">secant</span></tt> method.</p>
+<p>If the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's <tt class="docutils literal"><span class="pre">secant</span></tt> method.</p>
 <div class="section">
 <h3><a id="simple-examples" name="simple-examples">2.3.1&nbsp;&nbsp;&nbsp;Simple examples</a></h3>
 <p>A simple example use of the secant method is to compute pi as the root of sin(<em>x</em>) closest to <em>x</em> = 3.</p>
@@ -864,7 +1043,7 @@ quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
 </div>
 <div class="section">
 <h3><a id="options" name="options">2.3.3&nbsp;&nbsp;&nbsp;Options</a></h3>
-<p>Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point <tt class="docutils literal"><span class="pre">x0</span></tt>; <tt class="docutils literal"><span class="pre">secant</span></tt> automatically sets the second point to <tt class="docutils literal"><span class="pre">x0</span> <span class="pre">+</span> <span class="pre">1/4</span></tt>. Manually providing also the second point can help in some cases if <tt class="docutils literal"><span class="pre">secant</span></tt> fails to converge.</p>
+<p>Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point <tt class="docutils literal"><span class="pre">x0</span></tt>; <tt class="docutils literal"><span class="pre">secant</span></tt> automatically sets the second point (somewhat arbitrarily) to <tt class="docutils literal"><span class="pre">x0</span> <span class="pre">+</span> <span class="pre">1/4</span></tt>. Manually providing also the second point can help in some cases if <tt class="docutils literal"><span class="pre">secant</span></tt> fails to converge.</p>
 <p>By default, <tt class="docutils literal"><span class="pre">secant</span></tt> performs a maximum of 20 steps, which can be increased or decreased using the <tt class="docutils literal"><span class="pre">maxsteps</span></tt> keyword argument. You can pass <tt class="docutils literal"><span class="pre">secant</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
 </div>
 </div>
@@ -887,7 +1066,7 @@ mpf('62.375')
 (mpf('62.375'), mpf('41.75'))
 </pre>
 </blockquote>
-<p>The point and coefficient list may contain complex numbers.</p>
+<p>The point and coefficients may be complex numbers.</p>
 </div>
 <div class="section">
 <h3><a id="finding-roots-of-polynomials" name="finding-roots-of-polynomials">2.4.2&nbsp;&nbsp;&nbsp;Finding roots of polynomials</a></h3>
@@ -1089,7 +1268,7 @@ x = mpf(1)
 for i in range(1000):
     x += 0.1
 </pre>
-<p>Preconverting the float constant (0.080 seconds):</p>
+<p>Preconverting the float constant (0.0080 seconds):</p>
 <pre class="literal-block">
 x = mpf(1)
 one_tenth = mpf(0.1)
