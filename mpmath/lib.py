@@ -1048,47 +1048,43 @@ def invsqrt_initial(y, prec):
     if prec < 200: return int(y**-0.5 * 2.0**(50 + prec*0.5))
     else:          return int((y >> (prec-100)) ** -0.5)
 
-def sqrt_fixed(y, prec):
-    """
-    Square root of a fixed-point number.
 
-    Given the big integer y = floor(x * 2**prec), this function returns
-    floor(r * 2**prec) where r = sqrt(x).
 
-    We start from a 50-bit estimate for r generated with ordinary
-    floating-point arithmetic, and then refines the value to full
-    accuracy using the iteration
+# We start from a 50-bit estimate for r generated with ordinary
+# floating-point arithmetic, and then refines the value to full
+# accuracy using the iteration
 
-                 1  /        y  \
-        r     = --- | r  +  --- |
-         n+1     2  \ n     r_n /
+#             1  /        y  \
+#    r     = --- | r  +  --- |
+#     n+1     2  \ n     r_n /
 
-    which is simply Newton's method applied to the equation r**2 = y.
+# which is simply Newton's method applied to the equation r**2 = y.
 
-    Newton's method doubles the accuracy with each step. We make use of
-    this fact by only using a precision corresponding to the current
-    accuracy during intermediate iterations. For example, with a 50-bit
-    accurate r_1, r_2 can be computed using 100-bit precision, r_3
-    using 200-bit precision, and so on. (In practice, the precision
-    levels must be chosen slightly more conservatively to account for
-    rounding errors in the last one or two bits.)
+# Newton's method doubles the accuracy with each step. We make use of
+# this fact by only using a precision corresponding to the current
+# accuracy during intermediate iterations. For example, with a 50-bit
+# accurate r_1, r_2 can be computed using 100-bit precision, r_3
+# using 200-bit precision, and so on. (In practice, the precision
+# levels must be chosen slightly more conservatively to account for
+# rounding errors in the last one or two bits.)
 
-    It is assumed that x ~= 1 (the main fsqrt() function fiddles with
-    the exponent of the input to reduce it to unit magnitude before
-    passing it here.)
+# It is assumed that x ~= 1 (the main fsqrt() function fiddles with
+# the exponent of the input to reduce it to unit magnitude before
+# passing it here.)
 
-    TODO: it would be possible to specify separate precision levels
-    for the input and output, which could be useful when calculating
-    pure-integer square roots.
-    """
+# TODO: it would be possible to specify separate precision levels
+# for the input and output, which could be useful when calculating
+# pure-integer square roots.
 
+# This is the reference implementation. In sqrt_fixed below we
+# do the steps inline at low precision for a ~15% speedup
+def _sqrt_fixed(y, prec):
     r = sqrt_initial(y, prec)
     extra = 10
     prevp = 50
-
     for p in giant_steps(50, prec+extra):
-        # Explanation: in the first term, we shift by the appropriate number
-        # of bits to convert r from the previous precision to the current one.
+        # In the first term, we shift by the appropriate number of bits to
+        # convert r from the previous precision to the current one.
         # The "-1" divides by two in the same step.
 
         # In the second term, we do a fixed-point division using the usual
@@ -1097,6 +1093,35 @@ def sqrt_fixed(y, prec):
         # different precision levels. As before, the "-1" divides by two.
         r = lshift(r, p-prevp-1) + (lshift(y, p+prevp-prec-1)//r)
         prevp = p
+    return r >> extra
+
+def sqrt_fixed(y, prec):
+    """
+    Square root of a fixed-point number. Given the big integer
+    y = floor(x * 2**prec), this function returns floor(r * 2**prec)
+    where r = sqrt(x).
+
+    It is assumed that x ~= 1.
+    """
+    r = sqrt_initial(y, prec)
+    extra = 10
+    prevp = 50
+    prec2 = prec + extra
+    # unwind giant_steps; for prec2 <= 100 giant_steps(50, prec2)
+    # has one element, for 100 < prec2 < 200 it has at 2 elements
+    if prec2 <= 199:
+        if prec2 <= 100:
+            r = lshift(r, prec2-51) + ((y << 59)//r)
+            return r >> extra
+        p = prec2//2 + 1
+        r = (r << (p-51)) + (lshift(y, p+59-prec2)//r)
+        r = (r << (prec2-p-1)) + ((y << (p+9))//r)
+        return r >> extra
+    prevp1 = prec2//2 + 1
+    for p in giant_steps(50, prevp1):
+        r = (r << (p-prevp-1)) + (y >> (prec2-p-prevp-9))//r
+        prevp = p
+    r = (r << (prec2-prevp1-1)) + (y << (prevp1+9))//r
     return r >> extra
 
 def sqrt_fixed2(y, prec):
