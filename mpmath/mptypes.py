@@ -250,6 +250,9 @@ class mpf(mpnumeric):
     exp = property(lambda self: self._mpf_[2])
     bc = property(lambda self: self._mpf_[3])
 
+    def __getstate__(self): return self._mpf_
+    def __setstate__(self, val): self._mpf_ = val
+
     def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, repr_dps(g_prec))
     def __str__(s): return to_str(s._mpf_, g_dps)
     def __hash__(s): return fhash(s._mpf_)
