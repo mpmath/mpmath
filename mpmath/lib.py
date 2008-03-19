@@ -1654,8 +1654,6 @@ def flog(x, prec, rounding):
 #       0                       pi                     2*pi
 
 
-# TODO: could use cos series too when extremely close to 0
-
 def sin_taylor(x, prec):
     x2 = (x*x) >> prec
     s = a = x
@@ -1666,16 +1664,43 @@ def sin_taylor(x, prec):
         k += 2
     return s
 
-def cos_sin(x, prec, rounding):
-    """Simultaneously compute (cos(x), sin(x)) for real x."""
+def cos_taylor(x, prec):
+    x2 = (x*x) >> prec
+    a = c = (1<<prec)
+    k = 2
+    while a:
+        a = ((a * x2) >> prec) // (k*(1-k))
+        c += a
+        k += 2
+    return c
+
+# TODO: what we really want is the general version of Ziv's algorithm
+def clamp1(x, prec, rounding):
+    """Ensure that cos and sin values round away from -1 and 1 when
+    using directed rounding."""
+    if rounding is round_nearest or x[1] != 1:
+        return x
+    if rounding in (round_down, round_floor):
+        if x == fone: return (0, (1<<prec)-1, -prec, prec)
+    if rounding in (round_down, round_ceiling):
+        if x == fnone: return (1, (1<<prec)-1, -prec, prec)
+    return x
+
+def cos_sin(x, prec, rounding, nt=2):
+    """Simultaneously compute (cos(x), sin(x)) for real x
+    for nt=2; for nt=0 (1) compute only cos (sin)
+    """
 
     sign, man, exp, bc = x
 
     if not man:
         if exp:
-            return (fnan, fnan)
+            c, s = (fnan, fnan)
         else:
-            return fone, fzero
+            c, s = fone, fzero
+        if   nt == 2:  return c, s
+        elif nt == 0: return c
+        else: return s
 
     magnitude = bc + exp
     abs_mag = abs(magnitude)
@@ -1684,7 +1709,10 @@ def cos_sin(x, prec, rounding):
     if magnitude < -prec:
         # Essentially exact
         if rounding is round_nearest:
-            return fone, fpos(x, prec, rounding)
+            c, s = fone, fpos(x, prec, rounding)
+            if   nt == 2: return c, s
+            elif nt == 0: return c
+            else: return s
         # Magic for interval arithmetic
         # cos(x) lies between 1 and 1-eps(1)/2
         if rounding in (round_up, round_ceiling):
@@ -1698,17 +1726,19 @@ def cos_sin(x, prec, rounding):
             s = fadd(x, (0, 1, magnitude-prec-4, 1), prec, rounding)
         else:
             s = fadd(x, (1, 1, magnitude-prec-4, 1), prec, rounding)
-        return c, s
+        if   nt == 2: return c, s
+        elif nt == 0: return c
+        else:         return s
 
-    wp = wp1 = prec + 15
+    wp = wp1 = prec + 22
 
     while 1:
         # Reduce modulo pi/4
         rp = wp + abs_mag
         a = to_fixed(x, rp)
-        pi_ = pi_fixed(rp)
-        pi4 = pi_ >> 2
-        pi2 = pi_ >> 1
+        pi = pi_fixed(rp)
+        pi4 = pi >> 2
+        pi2 = pi >> 1
         n, rx = divmod(a+pi4, pi2)
         rx -= pi4
         rx >>= abs_mag
@@ -1721,34 +1751,34 @@ def cos_sin(x, prec, rounding):
             break
 
     case = n % 4
-    one = 1 << wp
-
-    s = sin_taylor(rx, wp)
-    c = sqrt_fixed(one - ((s*s)>>wp), wp)
-
-    if   case == 1: c, s = -s, c
-    elif case == 2: s, c = -s, -c
-    elif case == 3: c, s = s, -c
-
-    c = from_man_exp(c, -wp, prec, rounding)
-    s = from_man_exp(s, -wp, prec, rounding)
-
-    # Can't have exactly +1 or -1 when rounding away
-    if rounding is not round_nearest and (c[1] == 1 or s[1] == 1):
-        if rounding in (round_down, round_floor):
-            if   c == fone: c = (0, (1<<prec)-1, -prec, prec)
-            elif s == fone: s = (0, (1<<prec)-1, -prec, prec)
-        if rounding in (round_down, round_ceiling):
-            if   c == fnone: c = (1, (1<<prec)-1, -prec, prec)
-            elif s == fnone: s = (1, (1<<prec)-1, -prec, prec)
-
-    return c, s
+    if nt == 2:
+        one = 1 << wp
+        s = sin_taylor(rx, wp)
+        c = sqrt_fixed(one - ((s*s)>>wp), wp)
+        if   case == 1: c, s = -s, c
+        elif case == 2: s, c = -s, -c
+        elif case == 3: c, s = s, -c
+        c = clamp1(from_man_exp(c, -wp, prec, rounding), prec, rounding)
+        s = clamp1(from_man_exp(s, -wp, prec, rounding), prec, rounding)
+        return c, s
+    elif nt == 0:
+        if   case == 0: c = cos_taylor(rx, wp)
+        elif case == 1: c = -sin_taylor(rx, wp)
+        elif case == 2: c = -cos_taylor(rx, wp)
+        elif case == 3: c = sin_taylor(rx, wp)
+        return clamp1(from_man_exp(c, -wp, prec, rounding), prec, rounding)
+    else:
+        if   case == 0: s = sin_taylor(rx, wp)
+        elif case == 1: s = cos_taylor(rx, wp)
+        elif case == 2: s = -sin_taylor(rx, wp)
+        elif case == 3: s = -cos_taylor(rx, wp)
+        return clamp1(from_man_exp(s, -wp, prec, rounding), prec, rounding)
 
 def fcos(x, prec, rounding):
-    return cos_sin(x, prec, rounding)[0]
+    return cos_sin(x, prec, rounding, 0)
 
 def fsin(x, prec, rounding):
-    return cos_sin(x, prec, rounding)[1]
+    return cos_sin(x, prec, rounding, 1)
 
 def ftan(x, prec, rounding):
     c, s = cos_sin(x, prec+6, round_floor)
@@ -1956,6 +1986,8 @@ def fcexp(a, b, prec, rounding):
     exp/cos/sin are accurate and efficient for all real numbers, then
     so is this function for all complex numbers.
     """
+    if a == fzero:
+        return cos_sin(b, prec, rounding)
     mag = fexp(a, prec+4, rounding)
     c, s = cos_sin(b, prec+4, rounding)
     re = fmul(mag, c, prec, rounding)
