@@ -91,7 +91,10 @@ class PrecisionManager:
                 else:
                     mp.dps = self.dpsfun(mp.dps)
                 if self.normalize_output:
-                    return +f(*args, **kwargs)
+                    v = f(*args, **kwargs)
+                    if type(v) is tuple:
+                        return tuple([+a for a in v])
+                    return +v
                 else:
                     return f(*args, **kwargs)
             finally:

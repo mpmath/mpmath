@@ -11,7 +11,7 @@ High-level calculus-oriented functions.
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from specfun import factorial
+from specfun import factorial, bernoulli
 
 #----------------------------------------------------------------------------#
 #                                Differentiation                             #
@@ -451,3 +451,115 @@ def quadts(f, a, b, **options):
     if options.get('error', False):
         return val, err
     return val
+
+##############################################################################
+##############################################################################
+
+#----------------------------------------------------------------------------#
+#                               Numerical summation                          #
+#----------------------------------------------------------------------------#
+
+@extraprec(15, normalize_output=True)
+def sumem(f, a=0, b=inf, N=None, fderiv=None, verbose=False):
+    """
+    Calculate the sum of f(n) for n = a..b using Euler-Maclaurin
+    summation. This algorithm is efficient for slowly convergent
+    nonoscillatory sums; the essential condition is that f must be
+    analytic. The method relies on approximating the sum by an
+    integral, so f must be smooth and well-behaved enough to be
+    integrated numerically.
+
+    A tuple (s, err) is returned where s is the calculated sum and err
+    is the estimated magnitude of the error. With verbose=True,
+    detailed information about progress and errors is printed.
+
+        >>> mp.dps = 15
+        >>> s, err = sumem(lambda n: 1/n**2, 1, inf)
+        >>> print s
+        1.64493406684823
+        >>> print pi**2 / 6
+        1.64493406684823
+        >>> nprint(err)
+        2.22045e-16
+
+    N is the number of terms to compute directly before using the
+    Euler-Maclaurin formula to approximate the tail. It must be set
+    high enough; often roughly N ~ dps is the right size.
+
+    High-order derivatives of f are also needed. By default, these
+    are computed using numerical integration, which is the most
+    expensive part of the calculation. The default method assumes
+    that all poles of f are located close to the origin. A custom
+    nth derivative function fderiv(x, n) can be provided as a
+    keyword parameter.
+
+    This is much more efficient:
+
+        >>> f = lambda n: 1/n**2
+        >>> fp = lambda x, n: (-1)**n * factorial(n+1) * x**(-2-n)
+        >>> mp.dps = 50
+        >>> s, err = sumem(lambda n: 1/n**2, 1, inf, fderiv=fp)
+        >>> print s
+        1.6449340668482264364724151666460251892189499012068
+        >>> print pi**2 / 6
+        1.6449340668482264364724151666460251892189499012068
+
+    If b = inf, f and its derivatives are all assumed to vanish
+    at infinity. It is assumed that a is finite, so doubly
+    infinite sums cannot be evaluated directly.
+    """
+    if N is None:
+        N = 3*mp.dps + 20
+    a, b, N = mpf(a), mpf(b), mpf(N)
+    infinite = (b == inf)
+    weps = eps * 2**8
+    if verbose:
+        print "Summing f(k) from k = %i to %i" % (a, a+N-1)
+    S = sum(f(mpf(k)) for k in xrange(a, a+N))
+    if verbose:
+        print "Integrating f(x) from x = %i to %s" % (a+N, nstr(b))
+    I, ierr = quadts(f, a+N, b, error=1)
+    # There is little hope if the tail cannot be integrated
+    # accurately. Estimate magnitude of tail as the error.
+    if ierr > weps:
+        if verbose:
+            print "Failed to converge to target accuracy (integration failed)"
+        return S+I, abs(I) + ierr
+    if infinite:
+        C = f(a+N) / 2
+    else:
+        C = (f(a+N) + f(b)) / 2
+    # Default (inefficient) approach for derivatives
+    if not fderiv:
+        fderiv = lambda x, n: diffc(f, x, n, radius=N*0.75)
+    k = 1
+    prev = 0
+    if verbose:
+        print "Summing tail"
+    while 1:
+        if infinite:
+            D = fderiv(a+N, 2*k-1)
+        else:
+            D = fderiv(a+N, 2*k-1) - fderiv(b, 2*k-1)
+        term = bernoulli(2*k) / factorial(2*k) * D
+        mag = abs(term)
+        if verbose:
+            print "term", k, "magnitude =", nstr(mag)
+        # Error can be estimated as the magnitude of the smallest term
+        if k >= 2:
+            if mag < weps:
+                if verbose:
+                    print "Converged to target accuracy"
+                res, err = I + C + S, eps * 2**15
+                break
+            if mag > abs(prev):
+                if verbose:
+                    print "Failed to converge to target accuracy (N too low)"
+                res, err = I + C + S, abs(term)
+                break
+        S -= term
+        k += 1
+        prev = term
+    if isinstance(res, mpc) and not isinstance(I, mpc):
+        return res.real, err
+    return res, err

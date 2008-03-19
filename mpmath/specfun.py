@@ -436,3 +436,13 @@ def zeta(s):
             y = (t / -d[n]) / (mpf(1) - exp(log(2)*(1-s)))
     mp.prec = oldprec
     return +y
+
+@extraprec(5, normalize_output=True)
+def bernoulli(n):
+    """Returns the nth Bernoulli number"""
+    if n == 1:
+        return mpf(-0.5)
+    if n & 1:
+        return mpf(0)
+    m = n // 2
+    return (-1)**(m-1) * 2 * factorial(n) / (2*pi)**(n) * zeta(n)
