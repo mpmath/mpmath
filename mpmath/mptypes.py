@@ -12,6 +12,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "ln2", "ln10",
   "extradps", "workprec", "workdps", "eps"]
 
 from lib import *
+from libmpc import *
 
 int_types = (int, long)
 
@@ -195,7 +196,7 @@ def convert_lossless(x):
     if hasattr(x, '_mpf_'):
         return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'):
-        return mpc(*x._mpc_)
+        return make_mpc(x._mpc_)
     raise TypeError("cannot create mpf from " + repr(x))
 
 def mpf_convert_rhs(x):
@@ -426,10 +427,10 @@ class mpf(mpnumeric):
         return almosteq(s, t, rel_eps, abs_eps)
 
 
-def make_mpf(tpl, construct=object.__new__, cls=mpf):
+def make_mpf(v, construct=object.__new__, cls=mpf):
     """Create mpf verbatim from a given tuple of data."""
     a = construct(cls)
-    a._mpf_ = tpl
+    a._mpf_ = v
     return a
 
 
@@ -447,15 +448,25 @@ class mpc(mpnumeric):
     for the real part and another for the imaginary part.) The mpc
     class behaves fairly similarly to Python's complex type."""
 
+    __slots__ = ['_mpc_']
+
     def __new__(cls, real=0, imag=0):
         s = object.__new__(cls)
         if isinstance(real, complex_types):
             real, imag = real.real, real.imag
         elif hasattr(real, "_mpc_"):
-            real, imag = real._mpc_
-        s.real = mpf(real)
-        s.imag = mpf(imag)
+            s._mpc_ = real._mpc_
+            return s
+        real = mpf(real)
+        imag = mpf(imag)
+        s._mpc_ = (real._mpf_, imag._mpf_)
         return s
+
+    real = property(lambda self: make_mpf(self._mpc_[0]))
+    imag = property(lambda self: make_mpf(self._mpc_[1]))
+
+    def __getstate__(self): return self._mpc_
+    def __setstate__(self, val): self._mpc_ = val
 
     def __repr__(s):
         r = repr(s.real)[4:-1]
@@ -467,7 +478,7 @@ class mpc(mpnumeric):
 
     def __complex__(s): return complex(float(s.real), float(s.imag))
     def __pos__(s): return mpc(s.real, s.imag)
-    def __abs__(s): return hypot(s.real, s.imag)
+    def __abs__(s): return make_mpf(mpc_abs(s._mpc_, g_prec, g_rounding))
     def __neg__(s): return mpc(-s.real, -s.imag)
     def __nonzero__(s): return bool(s.real) or bool(s.imag)
     def conjugate(s): return mpc(s.real, -s.imag)
@@ -490,25 +501,22 @@ class mpc(mpnumeric):
     def __add__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
-        return mpc(s.real+t.real, s.imag+t.imag)
+        return make_mpc(mpc_add(s._mpc_, t._mpc_, g_prec, g_rounding))
 
     def __sub__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
-        return mpc(s.real-t.real, s.imag-t.imag)
+        return make_mpc(mpc_sub(s._mpc_, t._mpc_, g_prec, g_rounding))
 
     def __mul__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
-        return mpc(*fcmul(s.real._mpf_, s.imag._mpf_, t.real._mpf_, t.imag._mpf_,
-            g_prec, g_rounding))
+        return make_mpc(mpc_mul(s._mpc_, t._mpc_, g_prec, g_rounding))
 
     def __div__(s, t):
         if not isinstance(t, mpc):
             t = mpc(t)
-        a = s.real; b = s.imag; c = t.real; d = t.imag
-        mag = c*c + d*d
-        return mpc((a*c+b*d)/mag, (b*c-a*d)/mag)
+        return make_mpc(mpc_div(s._mpc_, t._mpc_, g_prec, g_rounding))
 
     def __pow__(s, n):
         if n == 0: return mpc(1)
@@ -542,9 +550,9 @@ class mpc(mpnumeric):
 
 complex_types = (complex, mpc)
 
-def make_mpc((re, im), construct=object.__new__, cls=mpc):
+def make_mpc(v, construct=object.__new__, cls=mpc):
     a = construct(cls)
-    a.real, a.imag = make_mpf(re), make_mpf(im)
+    a._mpc_ = v
     return a
 
 j = mpc(0,1)
@@ -608,7 +616,7 @@ def sqrt(x):
     if isinstance(x, mpf) and not x._mpf_[0]:
         return make_mpf(fsqrt(x._mpf_, g_prec, g_rounding))
     x = mpc(x)
-    return make_mpc(fcsqrt(x.real._mpf_, x.imag._mpf_, g_prec, g_rounding))
+    return make_mpc(mpc_sqrt((x.real._mpf_, x.imag._mpf_), g_prec, g_rounding))
 
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
@@ -648,16 +656,16 @@ def ef(name, real_f, complex_f, doc):
         if isinstance(x, mpf):
             return make_mpf(real_f(x._mpf_, g_prec, g_rounding))
         else:
-            return make_mpc(complex_f(x.real._mpf_, x.imag._mpf_, g_prec, g_rounding))
+            return make_mpc(complex_f(x._mpc_, g_prec, g_rounding))
     f.__name__ = name
     f.__doc__ = doc
     return f
 
-exp = ef('exp', fexp, fcexp, "Returns the exponential function of x.")
-cos = ef('cos', fcos, fccos, "Returns the cosine of x.")
-sin = ef('sin', fsin, fcsin, "Returns the sine of x.")
-cosh = ef('cosh', fcosh, fccosh, "Returns the hyperbolic cosine of x.")
-sinh = ef('sinh', fsinh, fcsinh, "Returns the hyperbolic sine of x.")
+exp = ef('exp', fexp, mpc_exp, "Returns the exponential function of x.")
+cos = ef('cos', fcos, mpc_cos, "Returns the cosine of x.")
+sin = ef('sin', fsin, mpc_sin, "Returns the sine of x.")
+cosh = ef('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
+sinh = ef('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
 
 # TODO: implement tanh and complex tan in lib instead
 def tan(x):
@@ -716,7 +724,8 @@ def log(x, b=None):
     if isinstance(x, mpf) and x > 0:
         return make_mpf(flog(x._mpf_, g_prec, g_rounding))
     else:
-        return mpc(log(abs(x)), arg(x))
+        x = mpc(x)
+        return make_mpc(mpc_log(x._mpc_, g_prec, g_rounding))
 
 @extraprec(10, normalize_output=True)
 def power(x, y):
@@ -742,22 +751,7 @@ def atan2(y,x):
     the signs of y and x. (Defined for real x and y only.)"""
     x = convert_lossless(x)
     y = convert_lossless(y)
-    if y < 0:
-        return -atan2(-y, x)
-    if not x and not y:
-        return mpf(0)
-    if y > 0 and x == 0:
-        mp.prec += 2
-        t = pi/2
-        mp.prec -= 2
-        return t
-    mp.prec += 2
-    if x > 0:
-        a = atan(y/x)
-    else:
-        a = pi - atan(-y/x)
-    mp.prec -= 2
-    return +a
+    return make_mpf(fatan2(y._mpf_, x._mpf_, g_prec, g_rounding))
 
 # TODO: robustly deal with cancellation in all of the following functions
 

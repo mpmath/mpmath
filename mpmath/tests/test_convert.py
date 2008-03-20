@@ -74,7 +74,7 @@ def test_custom_class():
     class mympc:
         @property
         def _mpc_(self):
-            return mpf(3.5), mpf(2.5)
+            return mpf(3.5)._mpf_, mpf(2.5)._mpf_
     assert mpf(2) + mympf() == 5.5
     assert mympf() + mpf(2) == 5.5
     assert mpf(mympf()) == 3.5

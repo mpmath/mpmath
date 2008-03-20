@@ -8,4 +8,3 @@ from calculus import sumem
 
 from specfun import gamma, factorial, lower_gamma, upper_gamma, erf
 from specfun import zeta, bernoulli, jv, j0, j1
-
