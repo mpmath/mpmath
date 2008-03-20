@@ -875,7 +875,7 @@ def to_digits_exp(s, dps):
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if abs(exp) > 3500:
+    if abs(exp_from_1) > 3500:
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
@@ -894,7 +894,7 @@ def to_digits_exp(s, dps):
     # First, calculate mantissa digits by converting to a binary
     # fixed-point number and then converting that number to
     # a decimal fixed-point number.
-    fixprec = max(bitprec - exp, 0)
+    fixprec = max(bitprec - exp - bc, 0)
     fixdps = int(fixprec / math.log(10,2) + 0.5)
     sf = to_fixed(s, fixprec)
     sd = bin_to_radix(sf, fixprec, 10, fixdps)
@@ -924,7 +924,8 @@ def to_str(s, dps):
     sign, digits, exponent = to_digits_exp(s, dps+3)
 
     # Rounding up kills some instances of "...99999"
-    if len(digits) > dps and digits[dps] in '56789':
+    if len(digits) > dps and digits[dps] in '56789' and \
+        (dps < 500 or digits[dps-4:dps] == '9999'):
         digits2 = str(int(digits[:dps]) + 1)
         if len(digits2) > dps:
             digits2 = digits2[:dps]
