@@ -35,13 +35,15 @@ reverse_rounding_table = {
 
 class Context(object):
 
-    __slots__ = []
+    __slots__ = ['trap_complex']
 
     def __repr__(self):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
             ("  mp.dps = %s" % self.dps).ljust(30) + "[default: 15]",
-            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'nearest']"]
+            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'nearest']",
+            ("  mp.trap_complex = %s" % self.trap_complex).ljust(30) + "[default: False]",
+        ]
         return "\n".join(lines)
 
     def default(self):
@@ -49,6 +51,7 @@ class Context(object):
         gp = 53
         gd = 15
         gr = round_nearest
+        self.trap_complex = False
 
     def set_prec(self, n):
         global gp, gd
@@ -402,6 +405,8 @@ class mpf(mpnumeric):
         try:
             return make_mpf(fpow(s._mpf_, t._mpf_, gp, gr))
         except ComplexResult:
+            if mp.trap_complex:
+                raise
             return make_mpc(mpc_pow((s._mpf_, fzero), (t._mpf_, fzero), gp, gr))
 
     __radd__ = __add__
@@ -640,6 +645,8 @@ def mpfunc(name, real_f, complex_f, doc):
             try:
                 return make_mpf(real_f(x._mpf_, prec, rnd))
             except ComplexResult:
+                if mp.trap_complex:
+                    raise
                 x = (x._mpf_, fzero)
         else:
             x = x._mpc_
@@ -713,6 +720,8 @@ def log(x, b=None):
         try:
             return make_mpf(flog(x._mpf_, gp, gr))
         except ComplexResult:
+            if mp.trap_complex:
+                raise
             x = x._mpf_, fzero
     else:
         x = x._mpc_

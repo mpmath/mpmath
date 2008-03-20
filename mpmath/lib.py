@@ -706,7 +706,7 @@ def fpow(s, t, prec, rnd):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ssign and texp < 0:
-        raise ComplexResult
+        raise ComplexResult("negative number raised to a fractional power")
     if texp >= 0:
         return fpowi(s, (-1)**tsign * (tman<<texp), prec, rnd)
     # s**(n/2) = sqrt(s)**n
@@ -1193,7 +1193,7 @@ def fsqrt(s, prec, rnd):
         return fone
     sign, man, exp, bc = s
     if sign:
-        raise ComplexResult
+        raise ComplexResult("square root of a negative number")
     if not man:
         return fzero
 
@@ -1591,7 +1591,7 @@ def flog(x, prec, rnd):
             return finf
         return fnan
     if sign:
-        raise ComplexResult
+        raise ComplexResult("logarithm of a negative number")
     if x == fone:
         return fzero
     bc_plus_exp = bc + exp
