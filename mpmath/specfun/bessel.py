@@ -1,20 +1,8 @@
 from ..lib import bitcount, to_fixed, from_man_exp, round_nearest
+from ..libmpc import complex_int_pow
 from ..mptypes import mp, mpnumeric, mpf, mpc, make_mpf, make_mpc
 
 from .factorials import int_fac
-
-def powc(sre, sim, n, prec):
-    """Exact fixed-point complex power: returns
-    (sre+sim*I)**n * (2**prec)**n"""
-    wre = 1
-    wim = 0
-    while n:
-        if n & 1:
-            wre, wim = (wre*sre - wim*sim), (wim*sre + wre*sim)
-            n -= 1
-        sre, sim = (sre**2 - sim**2), (2*sre*sim)
-        n //= 2
-    return wre, wim
 
 # A Bessel function of the first kind of integer order, J_n(x), is
 # given by the power series
@@ -77,7 +65,7 @@ def mpc_jn_series(n, z, prec):
         sre = tre = 1 << prec
         sim = tim = 0
     else:
-        re, im = powc(zre, zim, n, prec)
+        re, im = complex_int_pow(zre, zim, n)
         sre = tre = (re // int_fac(n)) >> ((n-1)*prec + n)
         sim = tim = (im // int_fac(n)) >> ((n-1)*prec + n)
     k = 1

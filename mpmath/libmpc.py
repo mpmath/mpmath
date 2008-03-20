@@ -21,6 +21,9 @@ def mpc_add((a, b), (c, d), prec, rnd):
 def mpc_sub((a, b), (c, d), prec, rnd):
     return fsub(a, c, prec, rnd), fsub(b, d, prec, rnd)
 
+def mpc_pos((a, b), prec, rnd):
+    return fpos(a, prec, rnd), fpos(b, prec, rnd)
+
 def mpc_abs((a, b), prec, rnd):
     """Absolute value of a complex number, |a+bi|.
     Returns an mpf value."""
@@ -44,6 +47,16 @@ def mpc_mul((a, b), (c, d), prec, rnd):
     im = fadd(fmul(a,d, ep, rf), fmul(b,c, ep, rf), prec, rnd)
     return re, im
 
+def mpc_mul_mpf((a, b), p, prec, rnd):
+    re = fmul(a, p, prec, rnd)
+    im = fmul(b, p, prec, rnd)
+    return re, im
+
+def mpc_mul_int((a, b), n, prec, rnd):
+    re = fmuli(a, n, prec, rnd)
+    im = fmuli(b, n, prec, rnd)
+    return re, im
+
 def mpc_div((a, b), (c, d), prec, rnd):
     wp = prec + 10
     # mag = c*c + d*d
@@ -52,6 +65,60 @@ def mpc_div((a, b), (c, d), prec, rnd):
     t = fadd(fmul(a,c,wp,rf), fmul(b,d,wp,rf), wp, rf)
     u = fsub(fmul(b,c,wp,rf), fmul(a,d,wp,rf), wp, rf)
     return fdiv(t,mag,prec,rnd), fdiv(u,mag,prec,rnd)
+
+def complex_int_pow(a, b, n):
+    """Complex integer power: computes (a+b*I)**n exactly for
+    nonnegative n (a and b must be Python ints)."""
+    wre = 1
+    wim = 0
+    while n:
+        if n & 1:
+            wre, wim = wre*a - wim*b, wim*a + wre*b
+            n -= 1
+        a, b = a*a - b*b, 2*a*b
+        n //= 2
+    return wre, wim
+
+def mpc_pow(z, w, prec, rnd):
+    if w[1] == fzero:
+        return mpc_pow_mpf(z, w[0], prec, rnd)
+    return mpc_exp(mpc_mul(mpc_log(z, prec+10, rf), w, prec+10, rf), prec, rnd)
+
+def mpc_pow_mpf(z, p, prec, rnd):
+    psign, pman, pexp, pbc = p
+    if pexp >= 0:
+        return mpc_pow_int(z, (-1)**psign * (pman<<pexp), prec, rnd)
+    if pexp == -1:
+        sqrtz = mpc_sqrt(z, prec+10, rf)
+        return mpc_pow_int(sqrtz, (-1)**psign * pman, prec, rnd)
+    return mpc_exp(mpc_mul_mpf(mpc_log(z, prec+10, rf), p, prec+10, rf), prec, rnd)
+
+def mpc_pow_int(z, n, prec, rnd):
+    if n == 0: return mpc_one
+    if n == 1: return mpc_pos(z, prec, rnd)
+    if n == 2: return mpc_mul(z, z, prec, rnd)
+    if n == -1: return mpc_div(mpc_one, z, prec, rnd)
+    if n < 0: return mpc_div(mpc_one, mpc_pow_int(z, -n, prec+4, rf), prec, rnd)
+    a, b = z
+    asign, aman, aexp, abc = a
+    bsign, bman, bexp, bbc = b
+    if asign: aman = -aman
+    if bsign: bman = -bman
+    de = aexp - bexp
+    abs_de = abs(de)
+    exact_size = n*(abs_de + max(abc, bbc))
+    if exact_size < 10000:
+        if de > 0:
+            aman <<= de
+            aexp = bexp
+        else:
+            bman <<= (-de)
+            bexp = aexp
+        re, im = complex_int_pow(aman, bman, n)
+        re = from_man_exp(re, n*aexp, prec, rnd)
+        im = from_man_exp(im, n*bexp, prec, rnd)
+        return re, im
+    return mpc_exp(mpc_mul_int(mpc_log(z, prec+10, rf), n, prec+10, rf), prec, rnd)
 
 def mpc_sqrt((a, b), prec, rnd):
     """Complex square root (principal branch).
@@ -98,8 +165,7 @@ def mpc_exp((a, b), prec, rnd):
     return re, im
 
 def mpc_log(z, prec, rnd):
-    return flog(mpc_abs(z, prec, rnd), prec, rnd), \
-        mpc_arg(z, prec, rnd)
+    return flog(mpc_abs(z, prec, rnd), prec, rnd), mpc_arg(z, prec, rnd)
 
 def mpc_cos((a, b), prec, rnd):
     """Complex cosine. The formula used is cos(a+bi) = cos(a)*cosh(b) -

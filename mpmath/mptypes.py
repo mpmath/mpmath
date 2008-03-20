@@ -518,24 +518,13 @@ class mpc(mpnumeric):
             t = mpc(t)
         return make_mpc(mpc_div(s._mpc_, t._mpc_, g_prec, g_rounding))
 
-    def __pow__(s, n):
-        if n == 0: return mpc(1)
-        if n == 1: return +s
-        if n == -1: return 1/s
-        if n == 2: return s*s
-        if isinstance(n, int_types) and n > 0:
-            # TODO: should increase working precision here
-            w = mpc(1)
-            while n:
-                if n & 1:
-                    w = w*s
-                    n -= 1
-                s = s*s
-                n //= 2
-            return w
-        if n == 0.5:
-            return sqrt(s)
-        return power(s, n)
+    def __pow__(s, t):
+        if isinstance(t, int_types):
+            return make_mpc(mpc_pow_int(s._mpc_, t, g_prec, g_rounding))
+        t = convert_lossless(t)
+        if isinstance(t, mpf):
+            return make_mpc(mpc_pow_mpf(s._mpc_, t._mpf_, g_prec, g_rounding))
+        return make_mpc(mpc_pow(s._mpc_, t._mpc_, g_prec, g_rounding))
 
     __radd__ = __add__
     __rmul__ = __mul__
