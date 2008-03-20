@@ -656,43 +656,18 @@ def mpfunc(name, real_f, complex_f, doc):
     return f
 
 exp = mpfunc('exp', fexp, mpc_exp, "Returns the exponential function of x.")
+
 cos = mpfunc('cos', fcos, mpc_cos, "Returns the cosine of x.")
 sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
+tan = mpfunc('tan', ftan, mpc_tan, "Returns the tangent of x.")
+
 cosh = mpfunc('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
 sinh = mpfunc('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
-atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
-asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
+tanh = mpfunc('tanh', ftanh, mpc_tanh, "Returns the hyperbolic tangent of x.")
+
 acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
-
-
-# TODO: implement tanh and complex tan in lib instead
-def tan(x):
-    """Returns the tangent of x."""
-    x = convert_lossless(x)
-    if isinstance(x, mpf):
-        return make_mpf(ftan(x._mpf_, gp, gr))
-    # the complex division can cause enormous cancellation.
-    # TODO: handle more robustly
-    mp.prec += 20
-    t = sin(x) / cos(x)
-    mp.prec -= 20
-    return +t
-
-def tanh(x):
-    """Returns the hyperbolic tangent of x."""
-    x = convert_lossless(x)
-    oldprec = mp.prec
-    a = abs(x)
-    mp.prec += 10
-    high = a.exp + a.bc
-    if high < -10:
-        if high < (-(mp.prec-10) * 0.3):
-            return x - (x**3)/3 + 2*(x**5)/15
-        mp.prec += (-high)
-    a = exp(2*x)
-    t = (a-1)/(a+1)
-    mp.prec = oldprec
-    return +t
+asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
+atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
 
 @extraprec(5)
 def arg(x):

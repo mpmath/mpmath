@@ -193,6 +193,25 @@ def mpc_sin((a, b), prec, rnd):
     im = fmul(c, sh, prec, rnd)
     return re, im
 
+def mpc_tan(z, prec, rnd):
+    a, b = z
+    asign, aman, aexp, abc = a
+    bsign, bman, bexp, bbc = b
+    if b == fzero: return ftan(a, prec, rnd), fzero
+    if a == fzero: return fzero, ftanh(b, prec, rnd)
+    wp = prec + 25
+    # very close to 0
+    high = max(aexp+abc, bexp+bbc)
+    if high < -10:
+        return mpc_div(mpc_sin(z, wp, rf), mpc_cos(z, wp, rf), prec, rnd)
+    # tan(z) = (-I) * (exp(2*I*z) - 1) / (exp(2*I*z + 1)
+    z2i = fneg(fshift(b, 1)), fshift(a, 1)
+    re, im = mpc_exp(z2i, wp, rf)
+    rem1 = fadd(re, fnone, wp, rf)
+    rep1 = fadd(re, fone, wp, rf)
+    a, b = mpc_div((rem1, im), (rep1, im), prec, rnd)
+    return b, fneg(a)
+
 def mpc_cosh((a, b), prec, rnd):
     """Complex hyperbolic cosine. Computed as cosh(z) = cos(z*i)."""
     return mpc_cos((b, fneg(a)), prec, rnd)
@@ -200,6 +219,11 @@ def mpc_cosh((a, b), prec, rnd):
 def mpc_sinh((a, b), prec, rnd):
     """Complex hyperbolic sine. Computed as sinh(z) = -i*sin(z*i)."""
     b, a = mpc_sin((b, a), prec, rnd)
+    return a, b
+
+def mpc_tanh((a, b), prec, rnd):
+    """Complex hyperbolic tangent. Computed as tanh(z) = -i*tan(z*i)."""
+    b, a = mpc_tan((b, a), prec, rnd)
     return a, b
 
 # TODO: avoid loss of accuracy
