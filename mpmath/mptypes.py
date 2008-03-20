@@ -638,7 +638,7 @@ def mpfunc(name, real_f, complex_f, doc):
         prec, rnd = gp, gr
         try:
             return make_mpf(real_f(x._mpf_, prec, rnd))
-        except AttributeError:
+        except:
             pass
         x = convert_lossless(x)
         if isinstance(x, mpf):
@@ -661,7 +661,8 @@ sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
 cosh = mpfunc('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
 sinh = mpfunc('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
 atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
-
+asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
+acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
 
 
 # TODO: implement tanh and complex tan in lib instead
@@ -738,36 +739,6 @@ def atan2(y,x):
     x = convert_lossless(x)
     y = convert_lossless(y)
     return make_mpf(fatan2(y._mpf_, x._mpf_, gp, gr))
-
-# TODO: robustly deal with cancellation in all of the following functions
-
-@extraprec(10, normalize_output=True)
-def _asin_complex(z):
-    return -1j * log(1j * z + sqrt(1 - z*z))
-
-def asin(x):
-    """Returns the inverse sine of x. Outside the range [-1, 1], the
-    result is complex and defined as the principal branch value of
-    -i * log(i * x + sqrt(1 - x**2))."""
-    x = convert_lossless(x)
-    if isinstance(x, mpf) and abs(x) <= 1:
-        return _asin_complex(x).real
-    return _asin_complex(x)
-
-def _acos_complex(z):
-    mp.prec += 10
-    t = pi/2 + 1j * log(1j * z + sqrt(1 - z*z))
-    mp.prec -= 10
-    return +t
-
-def acos(x):
-    """Returns the inverse cosine of x. Outside the range [-1, 1], the
-    result is complex and defined as the principal branch value of
-    pi/2 + i * log(i * x + sqrt(1 - x**2))."""
-    x = convert_lossless(x)
-    if isinstance(x, mpf) and abs(x) <= 1:
-        return _acos_complex(x).real
-    return _acos_complex(x)
 
 def asinh(x):
     """Returns the inverse hyperbolic sine of x. For complex x, the

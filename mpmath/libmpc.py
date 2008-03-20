@@ -215,3 +215,23 @@ def mpc_atan((a, b), prec, rnd):
     a, b = mpc_sub(l1, l2, prec, rnd)
     # (I/2) * (a+b*I) = (-b/2 + a/2*I)
     return fneg(fshift(b,-1)), fshift(a,-1)
+
+def mpc_asin(z, prec, rnd):
+    # asin(z) = -I * log(I*z + sqrt(1-z*z))
+    a, b = z
+    Iz = fneg(b), a
+    wp = prec + 15
+    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp,rf), wp, rf), wp, rf)
+    a, b = mpc_log(mpc_add(Iz, x, wp, rf), prec, rnd)
+    return b, fneg(a)
+
+def mpc_acos(z, prec, rnd):
+    # acos(z) = pi/2 + I * log(I*z + sqrt(1-z*z))
+    a, b = z
+    Iz = fneg(b), a
+    wp = prec + 15
+    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp,rf), wp, rf), wp, rf)
+    a, b = mpc_log(mpc_add(Iz, x, wp, rf), wp, rf)
+    a, b = fneg(b), fpos(a, prec, rnd)
+    a = fadd(a, fshift(fpi(wp, rf), -1), prec, rnd)
+    return a, b

@@ -451,10 +451,11 @@ def fneg(s, prec=None, rnd=None):
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
     sign, man, exp, bc = s
-    if (not man) and exp:
-        if s is finf: return fninf
-        if s is fninf: return finf
-        return fnan
+    if not man:
+        if exp:
+            if s is finf: return fninf
+            if s is fninf: return finf
+        return s
     if not prec:
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
@@ -1933,3 +1934,32 @@ def fatan2(y, x, prec, rnd):
         return fadd(fpi(prec+4, rf), tquo, prec, rnd)
     else:
         return fpos(tquo, prec, rnd)
+
+def fasin(x, prec, rnd):
+    # asin(x) = 2*atan(x/(1+sqrt(1-x**2)))
+    sign, man, exp, bc = x
+    if bc+exp > 0 and x not in (fone, fnone):
+        raise ComplexResult("asin(x) is real only for -1 <= x <= 1")
+    wp = prec + 15
+    wr = round_down
+    a = fmul(x, x, wp, wr)
+    b = fadd(fone, fsqrt(fsub(fone, a, wp, wr), wp, wr), wp, wr)
+    c = fdiv(x, b, wp, wr)
+    return fshift(fatan(c, prec, rnd), 1)
+
+def facos(x, prec, rnd):
+    # acos(x) = 2*atan(sqrt(1-x**2)/(1+x))
+    sign, man, exp, bc = x
+    if bc+exp > 0:
+        if x not in (fone, fnone):
+            raise ComplexResult("acos(x) is real only for -1 <= x <= 1")
+        if x == fnone:
+            return fpi(prec, rnd)
+    wp = prec + 15
+    wr = round_down
+    a = fmul(x, x, wp, wr)
+    b = fsqrt(fsub(fone, a, wp, wr), wp, wr)
+    c = fdiv(b, fadd(fone, x, wp, wr), wp, wr)
+    return fshift(fatan(c, prec, rnd), 1)
+
+
