@@ -18,8 +18,14 @@ wr = round_down
 def mpc_add((a, b), (c, d), prec, rnd):
     return fadd(a, c, prec, rnd), fadd(b, d, prec, rnd)
 
+def mpc_add_mpf((a, b), p, prec, rnd):
+      return fadd(a, p, prec, rnd), b
+
 def mpc_sub((a, b), (c, d), prec, rnd):
     return fsub(a, c, prec, rnd), fsub(b, d, prec, rnd)
+
+def mpc_sub_mpf((a, b), p, prec, rnd):
+    return fsub(a, p, prec, rnd), b
 
 def mpc_pos((a, b), prec, rnd):
     return fpos(a, prec, rnd), fpos(b, prec, rnd)
@@ -68,6 +74,11 @@ def mpc_div((a, b), (c, d), prec, rnd):
     t = fadd(fmul(a,c,wp,wr), fmul(b,d,wp,wr), wp, wr)
     u = fsub(fmul(b,c,wp,wr), fmul(a,d,wp,wr), wp, wr)
     return fdiv(t,mag,prec,rnd), fdiv(u,mag,prec,rnd)
+
+def mpc_div_mpf((a, b), p, prec, rnd):
+    re = fdiv(a, p, prec, rnd)
+    im = fdiv(b, p, prec, rnd)
+    return re, im
 
 def complex_int_pow(a, b, n):
     """Complex integer power: computes (a+b*I)**n exactly for
@@ -178,6 +189,8 @@ def mpc_cos((a, b), prec, rnd):
     multiplications are pewrormed, so no cancellation errors are
     possible. The formula is also efficient since we can compute both
     pairs (cos, sin) and (cosh, sinh) in single stwps."""
+    if a == fzero:
+        return fcosh(b, prec, rnd), fzero
     wp = prec + 6
     c, s = cos_sin(a, wp, wr)
     ch, sh = cosh_sinh(b, wp, wr)
@@ -189,6 +202,8 @@ def mpc_sin((a, b), prec, rnd):
     """Complex sine. We have sin(a+bi) = sin(a)*cosh(b) +
     cos(a)*sinh(b)*i. See the docstring for mpc_cos for additional
     comments."""
+    if a == fzero:
+        return fzero, fsinh(b, prec, rnd)
     wp = prec + 6
     c, s = cos_sin(a, wp, wr)
     ch, sh = cosh_sinh(b, wp, wr)

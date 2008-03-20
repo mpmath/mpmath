@@ -350,6 +350,8 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fadd(sval, from_int(t), gp, gr)
                 return r
+            if isinstance(t, mpc):
+                return t + s
             return s.binop(t, fadd)
 
     def __sub__(s, t):
@@ -362,6 +364,7 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fadd(sval, from_int(-t), gp, gr)
                 return r
+            # TODO  if isinstance(t, mpc)
             return s.binop(t, fsub)
 
     def __mul__(s, t):
@@ -374,6 +377,8 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fmuli(sval, t, gp, gr)
                 return r
+            if isinstance(t, mpc):
+                return t * s
             return s.binop(t, fmul)
 
     def __rmul__(s, t):
@@ -410,7 +415,6 @@ class mpf(mpnumeric):
             return make_mpc(mpc_pow((s._mpf_, fzero), (t._mpf_, fzero), gp, gr))
 
     __radd__ = __add__
-    #__rmul__ = __mul__
 
     def __rsub__(s, t): return mpf_convert_lhs(t) - s
 
@@ -492,6 +496,8 @@ class mpc(mpnumeric):
             t = mpc(t)
         return s.real == t.real and s.imag == t.imag
 
+    def __ne__(s, t): return not s.__eq__(t)
+
     def _compare(*args):
         raise TypeError("no ordering relation is defined for complex numbers")
 
@@ -502,23 +508,47 @@ class mpc(mpnumeric):
 
     def __add__(s, t):
         if not isinstance(t, mpc):
-            t = mpc(t)
+            try:
+                t = mpf(t)
+                return make_mpc(mpc_add_mpf(s._mpc_, t._mpf_, gp, gr))
+            except:
+                t = mpc(t)
         return make_mpc(mpc_add(s._mpc_, t._mpc_, gp, gr))
 
     def __sub__(s, t):
         if not isinstance(t, mpc):
-            t = mpc(t)
+            try:
+                t = mpf(t)
+                return make_mpc(mpc_sub_mpf(s._mpc_, t._mpf_, gp, gr))
+            except:
+                t = mpc(t)
         return make_mpc(mpc_sub(s._mpc_, t._mpc_, gp, gr))
 
     def __mul__(s, t):
         if not isinstance(t, mpc):
+            if isinstance(t, int_types):
+                return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
+            if isinstance(t, mpf):
+                return make_mpc(mpc_mul_mpf(s._mpc_, t._mpf_, gp, gr))
             t = mpc(t)
         return make_mpc(mpc_mul(s._mpc_, t._mpc_, gp, gr))
 
-    def __div__(s, t):
+    def __rmul__(s, t):
+        if isinstance(t, int_types):
+            return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
         if not isinstance(t, mpc):
             t = mpc(t)
+        return make_mpc(mpc_mul(s._mpc_, t._mpc_, gp, gr))
+    
+    def __div__(s, t):
+        if not isinstance(t, mpc):
+            try:
+                t = mpf(t)
+                return make_mpc(mpc_div_mpf(s._mpc_, t._mpf_, gp, gr))
+            except:
+                t = mpc(t)
         return make_mpc(mpc_div(s._mpc_, t._mpc_, gp, gr))
+
 
     def __pow__(s, t):
         if isinstance(t, int_types):
@@ -529,7 +559,6 @@ class mpc(mpnumeric):
         return make_mpc(mpc_pow(s._mpc_, t._mpc_, gp, gr))
 
     __radd__ = __add__
-    __rmul__ = __mul__
 
     def __rsub__(s, t): return (-s) + t
     def __rpow__(s, t): return convert_lossless(t) ** s
