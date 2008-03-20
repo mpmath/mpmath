@@ -201,3 +201,17 @@ def mpc_sinh((a, b), prec, rnd):
     """Complex hyperbolic sine. Computed as sinh(z) = -i*sin(z*i)."""
     b, a = mpc_sin((b, a), prec, rnd)
     return a, b
+
+# TODO: avoid loss of accuracy
+def mpc_atan((a, b), prec, rnd):
+    # atan(z) = (I/2)*(log(1-I*z) - log(1+I*z))
+    # x = 1-I*z = 1 + b - I*a
+    # y = 1+I*z = 1 - b + I*a
+    wp = prec + 15
+    x = fadd(fone, b, wp, rf), fneg(a)
+    y = fsub(fone, b, wp, rf), a
+    l1 = mpc_log(x, wp, rf)
+    l2 = mpc_log(y, wp, rf)
+    a, b = mpc_sub(l1, l2, prec, rnd)
+    # (I/2) * (a+b*I) = (-b/2 + a/2*I)
+    return fneg(fshift(b,-1)), fshift(a,-1)

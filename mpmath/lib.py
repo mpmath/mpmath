@@ -8,6 +8,9 @@ import math
 from bisect import bisect
 from random import randrange
 
+class ComplexResult(ValueError):
+    pass
+
 #----------------------------------------------------------------------------#
 #                    Some commonly needed float values                       #
 #----------------------------------------------------------------------------#
@@ -698,12 +701,12 @@ negative_rnd = {
 }
 
 def fpow(s, t, prec, rnd):
-    """Compute s**t. Raise ValueError if s is negative and t is
+    """Compute s**t. Raises ComplexResult if s is negative and t is
     fractional."""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ssign and texp < 0:
-        raise ValueError
+        raise ComplexResult
     if texp >= 0:
         return fpowi(s, (-1)**tsign * (tman<<texp), prec, rnd)
     # s**(n/2) = sqrt(s)**n
@@ -1190,7 +1193,7 @@ def fsqrt(s, prec, rnd):
         return fone
     sign, man, exp, bc = s
     if sign:
-        raise ValueError
+        raise ComplexResult
     if not man:
         return fzero
 
@@ -1588,7 +1591,7 @@ def flog(x, prec, rnd):
             return finf
         return fnan
     if sign:
-        return fnan
+        raise ComplexResult
     if x == fone:
         return fzero
     bc_plus_exp = bc + exp
