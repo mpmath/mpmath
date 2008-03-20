@@ -618,9 +618,9 @@ def mpfunc(name, real_f, complex_f, doc):
     f.__doc__ = doc
     return f
 
+sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "Returns the principal square root of x.")
 exp = mpfunc('exp', fexp, mpc_exp, "Returns the exponential function of x.")
 ln = mpfunc('ln', flog, mpc_log, "Returns the natural logarithm of x.")
-sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "Returns the principal square root of x.")
 
 cos = mpfunc('cos', fcos, mpc_cos, "Returns the cosine of x.")
 sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
@@ -633,6 +633,10 @@ tanh = mpfunc('tanh', ftanh, mpc_tanh, "Returns the hyperbolic tangent of x.")
 acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
 asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
 atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
+
+asinh = mpfunc('asinh', fasinh, mpc_asinh, "Returns the inverse hyperbolic sine of x.")
+acosh = mpfunc('acosh', facosh, mpc_acosh, "Returns the inverse hyperbolic cosine of x.")
+atanh = mpfunc('atanh', fatanh, mpc_atanh, "Returns the inverse hyperbolic tangent of x.")
 
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
@@ -686,7 +690,6 @@ def log(x, b=None):
 
 def power(x, y):
     """Returns x**y = exp(y*log(x)) for real or complex x and y."""
-    # TODO: better estimate for extra precision needed
     return convert_lossless(x) ** convert_lossless(y)
 
 def atan2(y,x):
@@ -695,48 +698,6 @@ def atan2(y,x):
     x = convert_lossless(x)
     y = convert_lossless(y)
     return make_mpf(fatan2(y._mpf_, x._mpf_, gp, gr))
-
-def asinh(x):
-    """Returns the inverse hyperbolic sine of x. For complex x, the
-    result is the principal branch value of log(x + sqrt(1 + x**2))."""
-    x = convert_lossless(x)
-    oldprec = mp.prec
-    a = abs(x)
-    mp.prec += 10
-    high = a.exp + a.bc
-    if high < -10:
-        if high < (-(mp.prec-10) * 0.3):
-            return x - (x**3)/6 + 3*(x**5)/40
-        mp.prec += (-high)
-    t = log(x + sqrt(x**2 + 1))
-    mp.prec = oldprec
-    return +t
-
-@extraprec(10, normalize_output=True)
-def acosh(x):
-    """Returns the inverse hyperbolic cosine of x. The value is
-    given by log(x + sqrt(1 + x**2)), where the principal branch is
-    used when the result is complex."""
-    x = convert_lossless(x)
-    return log(x + sqrt(x-1)*sqrt(x+1))
-
-def atanh(x):
-    """Returns the inverse hyperbolic tangent of x. Outside the range
-    [-1, 1], the result is complex and defined as the principal branch
-    value of (log(1+x) - log(1-x))/2."""
-    x = convert_lossless(x)
-    oldprec = mp.prec
-    a = abs(x)
-    mp.prec += 10
-    high = a.exp + a.bc
-    if high < -10:
-        #print mp.prec, x, x-(x**3)/3+(x**5)/5
-        if high < (-(mp.prec-10) * 0.3):
-            return x - (x**3)/3 + (x**5)/5
-        mp.prec += (-high)
-    t = 0.5*(log(1+x)-log(1-x))
-    mp.prec = oldprec
-    return +t
 
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""

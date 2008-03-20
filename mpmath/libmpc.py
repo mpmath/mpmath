@@ -24,6 +24,9 @@ def mpc_sub((a, b), (c, d), prec, rnd):
 def mpc_pos((a, b), prec, rnd):
     return fpos(a, prec, rnd), fpos(b, prec, rnd)
 
+def mpc_shift((a, b), n):
+    return fshift(a, n), fshift(b, n)
+
 def mpc_abs((a, b), prec, rnd):
     """Absolute value of a complex number, |a+bi|.
     Returns an mpf value."""
@@ -259,3 +262,30 @@ def mpc_acos(z, prec, rnd):
     a, b = fneg(b), fpos(a, prec, rnd)
     a = fadd(a, fshift(fpi(wp, rf), -1), prec, rnd)
     return a, b
+
+def mpc_asinh(z, prec, rnd):
+    # asinh(z) = log(x + sqrt(x**2 + 1))
+    wp = prec + 15
+    wr = round_down
+    z2 = mpc_mul(z, z, wp, wr)
+    q = mpc_sqrt(mpc_add(z2, mpc_one, wp, wr), wp, wr)
+    return mpc_log(mpc_add(z, q, wp, wr), prec, rnd)
+
+def mpc_acosh(z, prec, rnd):
+    # acosh(z) = log(z+sqrt(z-1)*sqrt(z+1))
+    wp = prec + 15
+    wr = round_down
+    a = mpc_sqrt(mpc_add(z, mpc_one, wp, wr), wp, wr)
+    b = mpc_sqrt(mpc_sub(z, mpc_one, wp, wr), wp, wr)
+    q = mpc_mul(a, b, wp, wr)
+    return mpc_log(mpc_add(z, q, wp, wr), prec, rnd)
+
+def mpc_atanh(z, prec, rnd):
+    # atanh(z) = (log(1+z)-log(1-z))/2
+    wp = prec + 15
+    wr = round_down
+    a = mpc_add(z, mpc_one, wp, wr)
+    b = mpc_sub(mpc_one, z, wp, wr)
+    a = mpc_log(a, wp, wr)
+    b = mpc_log(b, wp, wr)
+    return mpc_shift(mpc_sub(a, b, wp, wr), -1)

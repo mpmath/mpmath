@@ -1950,7 +1950,7 @@ def fasin(x, prec, rnd):
 def facos(x, prec, rnd):
     # acos(x) = 2*atan(sqrt(1-x**2)/(1+x))
     sign, man, exp, bc = x
-    if bc+exp > 0:
+    if bc + exp > 0:
         if x not in (fone, fnone):
             raise ComplexResult("acos(x) is real only for -1 <= x <= 1")
         if x == fnone:
@@ -1962,4 +1962,31 @@ def facos(x, prec, rnd):
     c = fdiv(b, fadd(fone, x, wp, wr), wp, wr)
     return fshift(fatan(c, prec, rnd), 1)
 
+def fasinh(x, prec, rnd):
+    # asinh(x) = log(x+sqrt(x**2+1))
+    wp = prec + 15
+    wr = round_down
+    q = fsqrt(fadd(fmul(x,x,wp,wr), fone, wp, wr), wp, wr)
+    return flog(fadd(x, q, wp, wr), prec, rnd)
+
+def facosh(x, prec, rnd):
+    # acosh(x) = log(x+sqrt(x**2-1))
+    wp = prec + 15
+    wr = round_down
+    if fcmp(x, fone) == -1:
+        raise ComplexResult("acosh(x) is real only for x >= 1")
+    q = fsqrt(fadd(fmul(x,x,wp,wr), fnone, wp, wr), wp, wr)
+    return flog(fadd(x, q, wp, wr), prec, rnd)
+
+def fatanh(x, prec, rnd):
+    # atanh(x) = log((1+x)/(1-x))/2
+    sign, man, exp, bc = x
+    mag = bc + exp
+    if mag > 0:
+        raise ComplexResult("atanh(x) is real only for -1 < x < 1")
+    wp = prec + 15
+    wr = round_down
+    a = fadd(x, fone, wp, wr)
+    b = fsub(fone, x, wp, wr)
+    return fshift(flog(fdiv(a, b, wp, wr), prec, rnd), -1)
 
