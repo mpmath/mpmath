@@ -32,36 +32,6 @@ def test_almost_equal():
 # Test basic arithmetic
 #
 
-def test_add():
-    mp.dps = 15
-    assert mpf(4) + mpf(-70) == -66
-    assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
-    assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
-    assert mpf(3) + mpf((1, 10000000000)) == mpf((1, 10000000000))
-    assert mpf((1, -10000000000)) + mpf(3) == mpf(3)
-    assert mpf(3) + mpf((1, -10000000000)) == mpf(3)
-    assert mpf(1) + 1e-15 != 1
-    assert mpf(1) + 1e-20 == 1
-    assert mpf(1.07e-22) + 0 == mpf(1.07e-22)
-    assert mpf(0) + mpf(1.07e-22) == mpf(1.07e-22)
-
-def test_complex():
-    # many more tests needed
-    assert 1 + mpc(2) == 3
-    assert not mpc(2).ae(2 + 1e-13)
-    assert mpc(2+1e-15j).ae(2)
-
-
-def test_mixed_types():
-    assert 1 + mpf(3) == mpf(3) + 1 == 4
-    assert 1 - mpf(3) == -(mpf(3) - 1) == -2
-    assert 3 * mpf(2) == mpf(2) * 3 == 6
-    assert 6 / mpf(2) == mpf(6) / 2 == 3
-    assert 1.0 + mpf(3) == mpf(3) + 1.0 == 4
-    assert 1.0 - mpf(3) == -(mpf(3) - 1.0) == -2
-    assert 3.0 * mpf(2) == mpf(2) * 3.0 == 6
-    assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
-
 # Test that integer arithmetic is exact
 def test_aintegers():
     random.seed(0)
@@ -114,21 +84,6 @@ def test_sqrt_rounding():
         
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
-
-
-#----------------------------------------------------------------------------
-# Type comparison and conversion
-#
-
-def test_type_compare():
-    assert mpf(2) == mpc(2,0)
-    assert mpf(0) == mpc(0)
-    assert mpf(2) != mpc(2, 0.00001)
-    assert mpf(2) == 2.0
-    assert mpf(2) != 3.0
-    assert mpf(2) == 2
-    assert mpf(2) != '2.0'
-    assert mpc(2) != '2.0'
 
 
 
