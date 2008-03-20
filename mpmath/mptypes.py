@@ -599,13 +599,40 @@ def fraction(p, q):
     return constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
         '%s/%s' % (p, q))
 
-one_half = mpf(0.5)
+def mpfunc(name, real_f, complex_f, doc):
+    def f(x):
+        prec, rnd = gp, gr
+        if not isinstance(x, mpnumeric):
+            x = convert_lossless(x)
+        if isinstance(x, mpf):
+            try:
+                return make_mpf(real_f(x._mpf_, prec, rnd))
+            except ComplexResult:
+                if mp.trap_complex:
+                    raise
+                x = (x._mpf_, fzero)
+        else:
+            x = x._mpc_
+        return make_mpc(complex_f(x, prec, rnd))
+    f.__name__ = name
+    f.__doc__ = doc
+    return f
 
-def sqrt(x):
-    """For real x >= 0, returns the square root of x. For negative or
-    complex x, returns the principal branch of the complex square root
-    of x."""
-    return convert_lossless(x) ** one_half
+exp = mpfunc('exp', fexp, mpc_exp, "Returns the exponential function of x.")
+ln = mpfunc('ln', flog, mpc_log, "Returns the natural logarithm of x.")
+sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "Returns the principal square root of x.")
+
+cos = mpfunc('cos', fcos, mpc_cos, "Returns the cosine of x.")
+sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
+tan = mpfunc('tan', ftan, mpc_tan, "Returns the tangent of x.")
+
+cosh = mpfunc('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
+sinh = mpfunc('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
+tanh = mpfunc('tanh', ftanh, mpc_tanh, "Returns the hyperbolic tangent of x.")
+
+acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
+asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
+atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
 
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
@@ -633,42 +660,6 @@ def ldexp(x, n):
     x = convert_lossless(x)
     return make_mpf(fshift(x._mpf_, n))
 
-def mpfunc(name, real_f, complex_f, doc):
-    def f(x):
-        prec, rnd = gp, gr
-        try:
-            return make_mpf(real_f(x._mpf_, prec, rnd))
-        except:
-            pass
-        x = convert_lossless(x)
-        if isinstance(x, mpf):
-            try:
-                return make_mpf(real_f(x._mpf_, prec, rnd))
-            except ComplexResult:
-                if mp.trap_complex:
-                    raise
-                x = (x._mpf_, fzero)
-        else:
-            x = x._mpc_
-        return make_mpc(complex_f(x, prec, rnd))
-    f.__name__ = name
-    f.__doc__ = doc
-    return f
-
-exp = mpfunc('exp', fexp, mpc_exp, "Returns the exponential function of x.")
-
-cos = mpfunc('cos', fcos, mpc_cos, "Returns the cosine of x.")
-sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
-tan = mpfunc('tan', ftan, mpc_tan, "Returns the tangent of x.")
-
-cosh = mpfunc('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
-sinh = mpfunc('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
-tanh = mpfunc('tanh', ftanh, mpc_tanh, "Returns the hyperbolic tangent of x.")
-
-acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
-asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
-atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
-
 @extraprec(5)
 def arg(x):
     """Returns the complex argument (phase) of x. The returned value is
@@ -688,20 +679,10 @@ def log(x, b=None):
     for which Im(log(x)) = -pi < arg(x) <= pi. """
     if b is not None:
         mp.prec += 3
-        a = log(x) / log(b)
+        a = ln(x) / ln(b)
         mp.prec -= 3
         return +a
-    x = convert_lossless(x)
-    if isinstance(x, mpf):
-        try:
-            return make_mpf(flog(x._mpf_, gp, gr))
-        except ComplexResult:
-            if mp.trap_complex:
-                raise
-            x = x._mpf_, fzero
-    else:
-        x = x._mpc_
-    return make_mpc(mpc_log(x, gp, gr))
+    return ln(x)
 
 def power(x, y):
     """Returns x**y = exp(y*log(x)) for real or complex x and y."""
