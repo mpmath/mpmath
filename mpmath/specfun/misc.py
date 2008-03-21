@@ -1,6 +1,8 @@
+# XXX: this file needs cleanup
+
 __docformat__ = 'plaintext'
 
-from mpmath.mptypes import mpnumeric, mpf, mpc, pi, euler, exp, log, sqrt, sin,\
+from mpmath.mptypes import mpnumeric, mpf, mpc, pi, exp, log, sqrt, sin,\
     power, extraprec, mp
 from mpmath.lib import bitcount, to_fixed, from_man_exp, round_nearest, fmuli
 
@@ -206,3 +208,74 @@ def bernoulli(n):
         return mpf(0)
     m = n // 2
     return (-1)**(m-1) * 2 * factorial(n) / (2*pi)**(n) * zeta(n)
+
+from mpmath.lib import fmuli, fmul, fpos, fdiv, fadd, fdivi, fsub, from_int, round_down, fone, fzero
+from mpmath.mptypes import make_mpf
+
+# For sequential computation of Bernoulli numbers, we use Ramanujan's formula
+
+#                            / n + 3 \
+#   B   =  (A(n) - S(n))  /  |       |
+#    n                       \   n   /
+
+# where A(n) = (n+3)/3 when n = 0 or 2 (mod 6), A(n) = -(n+3)/6
+# when n = 4 (mod 6), and
+
+#          [n/6]
+#           ___
+#          \      /  n + 3  \
+#   S(n) =  )     |         | * B
+#          /___   \ n - 6*k /    n-6*k
+#          k = 1
+
+def bernoulli2n():
+    """Generate B(2), B(4), B(6), ..."""
+    oprec = mp.prec
+    rounding = mp.rounding[0]
+    prec = oprec + 20
+    computed = {0:fone}
+    m, bin1, bin = 2, 1, 10
+    f3 = from_int(3)
+    f6 = from_int(6)
+    wr = round_nearest
+    while 1:
+        case = m % 6
+        s = fzero
+        if m < 6: a = 0
+        else:     a = bin1
+        for j in xrange(1, m//6+1):
+            s = fadd(s, fmuli(computed[m-6*j], a, prec, wr), prec, wr)
+            # Inner binomial coefficient
+            j6 = 6*j
+            a *= ((m-5-j6)*(m-4-j6)*(m-3-j6)*(m-2-j6)*(m-1-j6)*(m-j6))
+            a //= ((4+j6)*(5+j6)*(6+j6)*(7+j6)*(8+j6)*(9+j6))
+        if case == 0: b = fdivi(m+3, f3, prec, wr)
+        if case == 2: b = fdivi(m+3, f3, prec, wr)
+        if case == 4: b = fdivi(-m-3, f6, prec, wr)
+        b = fdiv(fsub(b, s, prec, wr), from_int(bin), prec, wr)
+        computed[m] = b
+        yield make_mpf(fpos(b, oprec, rounding))
+        m += 2
+        bin = bin * ((m+2)*(m+3)) // (m*(m-1))
+        if m > 6: bin1 = bin1 * ((2+m)*(3+m)) // ((m-7)*(m-6))
+
+from mpmath.lib import log2_fixed
+
+def logk():
+    """Generate log(2), log(3), log(4), ..."""
+    prec = mp.prec + 20
+    one = 1 << prec
+    L = log2_fixed(prec)
+    p = 2
+    while 1:
+        yield mpf((L, -prec))
+        s = 0
+        u = one
+        k = 1
+        a = (2*p+1)**2
+        while u:
+            s += u // k
+            u //= a
+            k += 2
+        L += 2*s//(2*p+1)
+        p += 1

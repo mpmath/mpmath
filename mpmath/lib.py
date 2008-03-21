@@ -1402,62 +1402,6 @@ def e_fixed(prec):
 def fe(prec, rnd):
     return from_man_exp(e_fixed(prec+15), -prec-15, prec, rnd)
 
-#----------------------------------------------------------------------------
-# Catalan's constant is computed using Lupas's rapidly convergent series
-# (listed on http://mathworld.wolfram.com/CatalansConstant.html)
-#            oo
-#            ___       n-1  8n     2                   3    2
-#        1  \      (-1)    2   (40n  - 24n + 3) [(2n)!] (n!)
-#  K =  ---  )     -----------------------------------------
-#       64  /___               3               2
-#                             n  (2n-1) [(4n)!]
-#           n = 1
-@constant_memo
-def catalan64_fixed(prec):
-    a = one = 1 << prec
-    s, t, n = 0, 1, 1
-    while t:
-        a *= 32 * n**3 * (2*n-1)
-        a //= (3-16*n+16*n**2)**2
-        t = a * (-1)**(n-1) * (40*n**2-24*n+3) // (n**3 * (2*n-1))
-        s += t
-        n += 1
-    return s
-
-def fcatalan(prec, rnd):
-    return from_man_exp(catalan64_fixed(prec+15), -prec-(15+6), prec, rnd)
-
-#----------------------------------------------------------------------------
-# Euler's constant (gamma) is computed using the Brent-McMillan formula,
-# gamma ~= A(n)/B(n) - log(n), where
-#   A(n) = sum_{k=0,1,2,...} (n**k / k!)**2 * H(k)
-#   B(n) = sum_{k=0,1,2,...} (n**k / k!)**2
-#   H(k) = 1 + 1/2 + 1/3 + ... + 1/k
-# The error is bounded by O(exp(-4n)). Choosing n to be a power
-# of two, 2**p, the logarithm becomes particularly easy to calculate.
-# Reference:
-# Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
-# http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
-@constant_memo
-def gamma_fixed(prec):
-    prec += 30
-    # choose p such that exp(-4*(2**p)) < 2**-n
-    p = int(math.log((prec/4) * math.log(2), 2)) + 1
-    n = 1<<p
-    r = one = 1<<prec
-    H, A, B, npow, k, d = 0, 0, 0, 1, 1, 1
-    while r:
-        A += (r * H) >> prec
-        B += r
-        r = r * (n*n) // (k*k)
-        H += one // k
-        k += 1
-    S = ((A<<prec) // B) - p*log2_fixed(prec)
-    return S >> 30
-
-def fgamma(prec, rnd):
-    return from_man_exp(gamma_fixed(prec+5), -prec-5, prec, rnd)
-
 
 ##############################################################################
 ##############################################################################

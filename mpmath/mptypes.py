@@ -4,11 +4,11 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "euler", "ln2", "ln10",
+__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-  "ldexp", "catalan", "fraction", "nstr", "nprint", "mp", "extraprec",
+  "ldexp", "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps"]
 
 from lib import *
@@ -603,10 +603,8 @@ _180 = from_int(180, 10, round_floor)
 pi = constant(fpi, "pi")
 degree = constant(fdegree, "degree")
 e = constant(fe, "e")
-euler = constant(fgamma, "Euler's constant gamma")
 ln2 = constant(flog2, "log 2")
 ln10 = constant(flog10, "log 10")
-catalan = constant(fcatalan, "Catalan's constant")
 eps = constant(lambda p, r: (0, 1, -p+1, 1), "epsilon of working precision")
 
 def fraction(p, q):

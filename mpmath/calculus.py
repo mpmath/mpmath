@@ -11,7 +11,7 @@ High-level calculus-oriented functions.
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from specfun import factorial, bernoulli
+from specfun import factorial, bernoulli2n
 
 #----------------------------------------------------------------------------#
 #                                Differentiation                             #
@@ -460,7 +460,7 @@ def quadts(f, a, b, **options):
 #----------------------------------------------------------------------------#
 
 @extraprec(15, normalize_output=True)
-def sumem(f, a=0, b=inf, N=None, fderiv=None, verbose=False):
+def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
     """
     Calculate the sum of f(n) for n = a..b using Euler-Maclaurin
     summation. This algorithm is efficient for slowly convergent
@@ -516,9 +516,12 @@ def sumem(f, a=0, b=inf, N=None, fderiv=None, verbose=False):
     if verbose:
         print "Summing f(k) from k = %i to %i" % (a, a+N-1)
     S = sum(f(mpf(k)) for k in xrange(a, a+N))
-    if verbose:
-        print "Integrating f(x) from x = %i to %s" % (a+N, nstr(b))
-    I, ierr = quadts(f, a+N, b, error=1)
+    if integral is None:
+        if verbose:
+            print "Integrating f(x) from x = %i to %s" % (a+N, nstr(b))
+        I, ierr = quadts(f, a+N, b, error=1)
+    else:
+        I, ierr = integral(a+N, b), mpf(0)
     # There is little hope if the tail cannot be integrated
     # accurately. Estimate magnitude of tail as the error.
     if ierr > weps:
@@ -536,12 +539,15 @@ def sumem(f, a=0, b=inf, N=None, fderiv=None, verbose=False):
     prev = 0
     if verbose:
         print "Summing tail"
+    B = bernoulli2n()
+    fac = 2
     while 1:
         if infinite:
             D = fderiv(a+N, 2*k-1)
         else:
             D = fderiv(a+N, 2*k-1) - fderiv(b, 2*k-1)
-        term = bernoulli(2*k) / factorial(2*k) * D
+        # B(2*k) / fac(2*k)
+        term = B.next() / fac * D
         mag = abs(term)
         if verbose:
             print "term", k, "magnitude =", nstr(mag)
@@ -559,6 +565,7 @@ def sumem(f, a=0, b=inf, N=None, fderiv=None, verbose=False):
                 break
         S -= term
         k += 1
+        fac *= (2*k) * (2*k-1)
         prev = term
     if isinstance(res, mpc) and not isinstance(I, mpc):
         return res.real, err
