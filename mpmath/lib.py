@@ -1152,7 +1152,7 @@ def sqrt_fixed2(y, prec):
     r = int(r * 2**50)
     # r = invsqrt_initial(y, prec)
 
-    extra = 10
+    extra = int(10 + 2*prec**0.3)
     prevp = 50
 
     for p in giant_steps(50, prec+extra):
