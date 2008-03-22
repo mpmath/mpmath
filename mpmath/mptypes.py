@@ -191,7 +191,7 @@ def convert_lossless(x):
     if isinstance(x, int_types):
         return make_mpf(from_int(x))
     if isinstance(x, float):
-        return make_mpf(from_float(x, 53, round_floor))
+        return make_mpf(from_float(x))
     if isinstance(x, complex):
         return mpc(x)
     if isinstance(x, basestring):
@@ -204,9 +204,9 @@ def convert_lossless(x):
 
 def mpf_convert_rhs(x):
     if isinstance(x, int_types):
-        return make_mpf(from_int(x, bitcount(x), round_floor))
+        return make_mpf(from_int(x))
     if isinstance(x, float):
-        return make_mpf(from_float(x, 53, round_floor))
+        return make_mpf(from_float(x))
     if hasattr(x, '_mpf_'):
         return make_mpf(x._mpf_)
     return NotImplemented
@@ -215,16 +215,14 @@ def mpf_convert_lhs(x):
     if isinstance(x, complex_types):
         return mpc(x)
     if isinstance(x, int_types):
-        return make_mpf(from_int(x, bitcount(x), round_floor))
+        return make_mpf(from_int(x))
     if isinstance(x, float):
-        return make_mpf(from_float(x, 53, round_floor))
+        return make_mpf(from_float(x))
     if hasattr(x, '_mpf_'):
         return make_mpf(x._mpf_)
     return NotImplemented
 
 new = object.__new__
-
-ctx = [53, round_nearest]
 
 class mpf(mpnumeric):
     """An mpf instance holds a real-valued floating-point number. mpf:s
@@ -596,9 +594,6 @@ class constant(mpf):
 
     def __repr__(self):
         return "<%s: %s~>" % (self.name, nstr(self))
-
-
-_180 = from_int(180, 10, round_floor)
 
 pi = constant(fpi, "pi")
 degree = constant(fdegree, "degree")

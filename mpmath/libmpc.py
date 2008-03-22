@@ -12,37 +12,34 @@ def complex_to_str(re, im, dps):
     else:
         return rs + " + " + to_str(im, dps) + "j"
 
-# Fastest rounding mode for intermediate calculations
-wr = round_down
-
-def mpc_add((a, b), (c, d), prec, rnd):
+def mpc_add((a, b), (c, d), prec, rnd=round_fast):
     return fadd(a, c, prec, rnd), fadd(b, d, prec, rnd)
 
-def mpc_add_mpf((a, b), p, prec, rnd):
+def mpc_add_mpf((a, b), p, prec, rnd=round_fast):
       return fadd(a, p, prec, rnd), b
 
-def mpc_sub((a, b), (c, d), prec, rnd):
+def mpc_sub((a, b), (c, d), prec, rnd=round_fast):
     return fsub(a, c, prec, rnd), fsub(b, d, prec, rnd)
 
-def mpc_sub_mpf((a, b), p, prec, rnd):
+def mpc_sub_mpf((a, b), p, prec, rnd=round_fast):
     return fsub(a, p, prec, rnd), b
 
-def mpc_pos((a, b), prec, rnd):
+def mpc_pos((a, b), prec, rnd=round_fast):
     return fpos(a, prec, rnd), fpos(b, prec, rnd)
 
 def mpc_shift((a, b), n):
     return fshift(a, n), fshift(b, n)
 
-def mpc_abs((a, b), prec, rnd):
+def mpc_abs((a, b), prec, rnd=round_fast):
     """Absolute value of a complex number, |a+bi|.
     Returns an mpf value."""
     return fhypot(a, b, prec, rnd)
 
-def mpc_arg((a, b), prec, rnd):
+def mpc_arg((a, b), prec, rnd=round_fast):
     """Argument of a complex number. Returns an mpf value."""
     return fatan2(b, a, prec, rnd)
 
-def mpc_mul((a, b), (c, d), prec, rnd):
+def mpc_mul((a, b), (c, d), prec, rnd=round_fast):
     """Complex multiplication.
 
     Returns the real and imaginary part of (a+bi)*(c+di), rounded to
@@ -52,30 +49,30 @@ def mpc_mul((a, b), (c, d), prec, rnd):
     if b == d == fzero:
         return fmul(a, c, prec, rnd), fzero
     wp = prec + 10
-    re = fsub(fmul(a,c, wp, wr), fmul(b,d, wp, wr), prec, rnd)
-    im = fadd(fmul(a,d, wp, wr), fmul(b,c, wp, wr), prec, rnd)
+    re = fsub(fmul(a,c,wp), fmul(b,d,wp), prec, rnd)
+    im = fadd(fmul(a,d,wp), fmul(b,c,wp), prec, rnd)
     return re, im
 
-def mpc_mul_mpf((a, b), p, prec, rnd):
+def mpc_mul_mpf((a, b), p, prec, rnd=round_fast):
     re = fmul(a, p, prec, rnd)
     im = fmul(b, p, prec, rnd)
     return re, im
 
-def mpc_mul_int((a, b), n, prec, rnd):
+def mpc_mul_int((a, b), n, prec, rnd=round_fast):
     re = fmuli(a, n, prec, rnd)
     im = fmuli(b, n, prec, rnd)
     return re, im
 
-def mpc_div((a, b), (c, d), prec, rnd):
+def mpc_div((a, b), (c, d), prec, rnd=round_fast):
     wp = prec + 10
     # mag = c*c + d*d
-    mag = fadd(fmul(c, c, wp, wr), fmul(d, d, wp, wr), wp, wr)
+    mag = fadd(fmul(c, c, wp), fmul(d, d, wp), wp)
     # (a*c+b*d)/mag, (b*c-a*d)/mag
-    t = fadd(fmul(a,c,wp,wr), fmul(b,d,wp,wr), wp, wr)
-    u = fsub(fmul(b,c,wp,wr), fmul(a,d,wp,wr), wp, wr)
+    t = fadd(fmul(a,c,wp), fmul(b,d,wp), wp)
+    u = fsub(fmul(b,c,wp), fmul(a,d,wp), wp)
     return fdiv(t,mag,prec,rnd), fdiv(u,mag,prec,rnd)
 
-def mpc_div_mpf((a, b), p, prec, rnd):
+def mpc_div_mpf((a, b), p, prec, rnd=round_fast):
     re = fdiv(a, p, prec, rnd)
     im = fdiv(b, p, prec, rnd)
     return re, im
@@ -93,26 +90,26 @@ def complex_int_pow(a, b, n):
         n //= 2
     return wre, wim
 
-def mpc_pow(z, w, prec, rnd):
+def mpc_pow(z, w, prec, rnd=round_fast):
     if w[1] == fzero:
         return mpc_pow_mpf(z, w[0], prec, rnd)
-    return mpc_exp(mpc_mul(mpc_log(z, prec+10, wr), w, prec+10, wr), prec, rnd)
+    return mpc_exp(mpc_mul(mpc_log(z, prec+10), w, prec+10), prec, rnd)
 
-def mpc_pow_mpf(z, p, prec, rnd):
+def mpc_pow_mpf(z, p, prec, rnd=round_fast):
     psign, pman, pexp, pbc = p
     if pexp >= 0:
         return mpc_pow_int(z, (-1)**psign * (pman<<pexp), prec, rnd)
     if pexp == -1:
-        sqrtz = mpc_sqrt(z, prec+10, wr)
+        sqrtz = mpc_sqrt(z, prec+10)
         return mpc_pow_int(sqrtz, (-1)**psign * pman, prec, rnd)
-    return mpc_exp(mpc_mul_mpf(mpc_log(z, prec+10, wr), p, prec+10, wr), prec, rnd)
+    return mpc_exp(mpc_mul_mpf(mpc_log(z, prec+10), p, prec+10), prec, rnd)
 
-def mpc_pow_int(z, n, prec, rnd):
+def mpc_pow_int(z, n, prec, rnd=round_fast):
     if n == 0: return mpc_one
     if n == 1: return mpc_pos(z, prec, rnd)
     if n == 2: return mpc_mul(z, z, prec, rnd)
     if n == -1: return mpc_div(mpc_one, z, prec, rnd)
-    if n < 0: return mpc_div(mpc_one, mpc_pow_int(z, -n, prec+4, wr), prec, rnd)
+    if n < 0: return mpc_div(mpc_one, mpc_pow_int(z, -n, prec+4), prec, rnd)
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -132,9 +129,9 @@ def mpc_pow_int(z, n, prec, rnd):
         re = from_man_exp(re, n*aexp, prec, rnd)
         im = from_man_exp(im, n*bexp, prec, rnd)
         return re, im
-    return mpc_exp(mpc_mul_int(mpc_log(z, prec+10, wr), n, prec+10, wr), prec, rnd)
+    return mpc_exp(mpc_mul_int(mpc_log(z, prec+10), n, prec+10), prec, rnd)
 
-def mpc_sqrt((a, b), prec, rnd):
+def mpc_sqrt((a, b), prec, rnd=round_fast):
     """Complex square root (principal branch).
 
     We have sqrt(a+bi) = sqrt((r+a)/2) + b/sqrt(2*(r+a))*i where
@@ -146,15 +143,15 @@ def mpc_sqrt((a, b), prec, rnd):
         im = fsqrt(fneg(a), prec, rnd)
         return (fzero, im)
     wp = prec+20
-    t  = fadd(mpc_abs((a, b), wp, wr), a, wp, wr)  # t = abs(a+bi) + a
-    u  = fmul(t, fhalf, wp, wr)                  # u = t / 2
-    re = fsqrt(u, prec, rnd)                # re = sqrt(u)
-    v  = fmul(t, ftwo, wp, wr)                   # v = t * 2
-    w  = fsqrt(v, wp, wr)                        # w = sqrt(v)
-    im = fdiv(b, w, prec, rnd)              # im = b / w
+    t  = fadd(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
+    u  = fmul(t, fhalf, wp)                # u = t / 2
+    re = fsqrt(u, prec, rnd)               # re = sqrt(u)
+    v  = fmul(t, ftwo, wp)                 # v = t * 2
+    w  = fsqrt(v, wp)                      # w = sqrt(v)
+    im = fdiv(b, w, prec, rnd)             # im = b / w
     return re, im
 
-def mpc_exp((a, b), prec, rnd):
+def mpc_exp((a, b), prec, rnd=round_fast):
     """
     Complex exponential function.
 
@@ -178,10 +175,10 @@ def mpc_exp((a, b), prec, rnd):
     im = fmul(mag, s, prec, rnd)
     return re, im
 
-def mpc_log(z, prec, rnd):
+def mpc_log(z, prec, rnd=round_fast):
     return flog(mpc_abs(z, prec, rnd), prec, rnd), mpc_arg(z, prec, rnd)
 
-def mpc_cos((a, b), prec, rnd):
+def mpc_cos((a, b), prec, rnd=round_fast):
     """Complex cosine. The formula used is cos(a+bi) = cos(a)*cosh(b) -
     sin(a)*sinh(b)*i.
 
@@ -192,26 +189,26 @@ def mpc_cos((a, b), prec, rnd):
     if a == fzero:
         return fcosh(b, prec, rnd), fzero
     wp = prec + 6
-    c, s = cos_sin(a, wp, wr)
-    ch, sh = cosh_sinh(b, wp, wr)
+    c, s = cos_sin(a, wp)
+    ch, sh = cosh_sinh(b, wp)
     re = fmul(c, ch, prec, rnd)
     im = fmul(s, sh, prec, rnd)
     return re, fneg(im)
 
-def mpc_sin((a, b), prec, rnd):
+def mpc_sin((a, b), prec, rnd=round_fast):
     """Complex sine. We have sin(a+bi) = sin(a)*cosh(b) +
     cos(a)*sinh(b)*i. See the docstring for mpc_cos for additional
     comments."""
     if a == fzero:
         return fzero, fsinh(b, prec, rnd)
     wp = prec + 6
-    c, s = cos_sin(a, wp, wr)
-    ch, sh = cosh_sinh(b, wp, wr)
+    c, s = cos_sin(a, wp)
+    ch, sh = cosh_sinh(b, wp)
     re = fmul(s, ch, prec, rnd)
     im = fmul(c, sh, prec, rnd)
     return re, im
 
-def mpc_tan(z, prec, rnd):
+def mpc_tan(z, prec, rnd=round_fast):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -221,83 +218,83 @@ def mpc_tan(z, prec, rnd):
     # very close to 0
     high = max(aexp+abc, bexp+bbc)
     if high < -10:
-        return mpc_div(mpc_sin(z, wp, wr), mpc_cos(z, wp, wr), prec, rnd)
+        return mpc_div(mpc_sin(z, wp), mpc_cos(z, wp), prec, rnd)
     # tan(z) = (-I) * (exp(2*I*z) - 1) / (exp(2*I*z + 1)
     z2i = fneg(fshift(b, 1)), fshift(a, 1)
-    re, im = mpc_exp(z2i, wp, wr)
-    rem1 = fadd(re, fnone, wp, wr)
-    rwp1 = fadd(re, fone, wp, wr)
+    re, im = mpc_exp(z2i, wp)
+    rem1 = fadd(re, fnone, wp)
+    rwp1 = fadd(re, fone, wp)
     a, b = mpc_div((rem1, im), (rwp1, im), prec, rnd)
     return b, fneg(a)
 
-def mpc_cosh((a, b), prec, rnd):
+def mpc_cosh((a, b), prec, rnd=round_fast):
     """Complex hyperbolic cosine. Computed as cosh(z) = cos(z*i)."""
     return mpc_cos((b, fneg(a)), prec, rnd)
 
-def mpc_sinh((a, b), prec, rnd):
+def mpc_sinh((a, b), prec, rnd=round_fast):
     """Complex hyperbolic sine. Computed as sinh(z) = -i*sin(z*i)."""
     b, a = mpc_sin((b, a), prec, rnd)
     return a, b
 
-def mpc_tanh((a, b), prec, rnd):
+def mpc_tanh((a, b), prec, rnd=round_fast):
     """Complex hyperbolic tangent. Computed as tanh(z) = -i*tan(z*i)."""
     b, a = mpc_tan((b, a), prec, rnd)
     return a, b
 
 # TODO: avoid loss of accuracy
-def mpc_atan((a, b), prec, rnd):
+def mpc_atan((a, b), prec, rnd=round_fast):
     # atan(z) = (I/2)*(log(1-I*z) - log(1+I*z))
     # x = 1-I*z = 1 + b - I*a
     # y = 1+I*z = 1 - b + I*a
     wp = prec + 15
-    x = fadd(fone, b, wp, wr), fneg(a)
-    y = fsub(fone, b, wp, wr), a
-    l1 = mpc_log(x, wp, wr)
-    l2 = mpc_log(y, wp, wr)
+    x = fadd(fone, b, wp), fneg(a)
+    y = fsub(fone, b, wp), a
+    l1 = mpc_log(x, wp)
+    l2 = mpc_log(y, wp)
     a, b = mpc_sub(l1, l2, prec, rnd)
     # (I/2) * (a+b*I) = (-b/2 + a/2*I)
     return fneg(fshift(b,-1)), fshift(a,-1)
 
-def mpc_asin(z, prec, rnd):
+def mpc_asin(z, prec, rnd=round_fast):
     # asin(z) = -I * log(I*z + sqrt(1-z*z))
     a, b = z
     Iz = fneg(b), a
     wp = prec + 15
-    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp,wr), wp, wr), wp, wr)
-    a, b = mpc_log(mpc_add(Iz, x, wp, wr), prec, rnd)
+    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp), wp), wp)
+    a, b = mpc_log(mpc_add(Iz, x, wp), prec, rnd)
     return b, fneg(a)
 
-def mpc_acos(z, prec, rnd):
+def mpc_acos(z, prec, rnd=round_fast):
     # acos(z) = pi/2 + I * log(I*z + sqrt(1-z*z))
     a, b = z
     Iz = fneg(b), a
     wp = prec + 15
-    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp,wr), wp, wr), wp, wr)
-    a, b = mpc_log(mpc_add(Iz, x, wp, wr), wp, wr)
+    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp), wp), wp)
+    a, b = mpc_log(mpc_add(Iz, x, wp), wp)
     a, b = fneg(b), fpos(a, prec, rnd)
-    a = fadd(a, fshift(fpi(wp, wr), -1), prec, rnd)
+    a = fadd(a, fshift(fpi(wp), -1), prec, rnd)
     return a, b
 
-def mpc_asinh(z, prec, rnd):
+def mpc_asinh(z, prec, rnd=round_fast):
     # asinh(z) = log(x + sqrt(x**2 + 1))
     wp = prec + 15
-    z2 = mpc_mul(z, z, wp, wr)
-    q = mpc_sqrt(mpc_add(z2, mpc_one, wp, wr), wp, wr)
-    return mpc_log(mpc_add(z, q, wp, wr), prec, rnd)
+    z2 = mpc_mul(z, z, wp)
+    q = mpc_sqrt(mpc_add(z2, mpc_one, wp), wp)
+    return mpc_log(mpc_add(z, q, wp), prec, rnd)
 
-def mpc_acosh(z, prec, rnd):
+def mpc_acosh(z, prec, rnd=round_fast):
     # acosh(z) = log(z+sqrt(z-1)*sqrt(z+1))
     wp = prec + 15
-    a = mpc_sqrt(mpc_add(z, mpc_one, wp, wr), wp, wr)
-    b = mpc_sqrt(mpc_sub(z, mpc_one, wp, wr), wp, wr)
-    q = mpc_mul(a, b, wp, wr)
-    return mpc_log(mpc_add(z, q, wp, wr), prec, rnd)
+    a = mpc_sqrt(mpc_add(z, mpc_one, wp), wp)
+    b = mpc_sqrt(mpc_sub(z, mpc_one, wp), wp)
+    q = mpc_mul(a, b, wp)
+    return mpc_log(mpc_add(z, q, wp), prec, rnd)
 
-def mpc_atanh(z, prec, rnd):
+def mpc_atanh(z, prec, rnd=round_fast):
     # atanh(z) = (log(1+z)-log(1-z))/2
     wp = prec + 15
-    a = mpc_add(z, mpc_one, wp, wr)
-    b = mpc_sub(mpc_one, z, wp, wr)
-    a = mpc_log(a, wp, wr)
-    b = mpc_log(b, wp, wr)
-    return mpc_shift(mpc_sub(a, b, wp, wr), -1)
+    a = mpc_add(z, mpc_one, wp)
+    b = mpc_sub(mpc_one, z, wp)
+    a = mpc_log(a, wp)
+    b = mpc_log(b, wp)
+    return mpc_shift(mpc_sub(a, b, wp), -1)

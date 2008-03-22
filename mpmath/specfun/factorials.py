@@ -19,23 +19,22 @@ def int_fac(n, memo={0:1, 1:1}):
 spouge_cache = {}
 
 def calc_spouge_coefficients(a, prec):
-    rnd = round_floor
     wp = prec + int(a*1.4)
     c = [0] * a
     # b = exp(a-1)
-    b = fexp(from_int(a-1), wp, rnd)
+    b = fexp(from_int(a-1), wp)
     # e = exp(1)
-    e = fexp(fone, wp, rnd)
+    e = fexp(fone, wp)
     # sqrt(2*pi)
-    sq2pi = fsqrt(fshift(fpi(wp, rnd), 1), wp, rnd)
+    sq2pi = fsqrt(fshift(fpi(wp), 1), wp)
     c[0] = to_fixed(sq2pi, prec)
     for k in xrange(1, a):
         # c[k] = ((-1)**(k-1) * (a-k)**k) * b / sqrt(a-k)
-        term = fmuli(b, ((-1)**(k-1) * (a-k)**k), wp, rnd)
-        term = fdiv(term, fsqrt(from_int(a-k), wp, rnd), wp, rnd)
+        term = fmuli(b, ((-1)**(k-1) * (a-k)**k), wp)
+        term = fdiv(term, fsqrt(from_int(a-k), wp), wp)
         c[k] = to_fixed(term, prec)
         # b = b / (e * k)
-        b = fdiv(b, fmul(e, from_int(k), wp, rnd), wp, rnd)
+        b = fdiv(b, fmul(e, from_int(k), wp), wp)
     return c
 
 # Cached lookup of coefficients
@@ -93,7 +92,7 @@ def spouge_sum_complex(re, im, prec, a, c):
     im = from_man_exp(sim, -prec, prec, round_floor)
     return re, im
 
-def mpf_gamma(x, prec, rounding, p1=1):
+def mpf_gamma(x, prec, rounding=round_fast, p1=1):
     sign, man, exp, bc = x
     if exp >= 0:
         if sign or (p1 and not man):
@@ -102,56 +101,54 @@ def mpf_gamma(x, prec, rounding, p1=1):
         if exp + bc <= 10:
             return from_int(int_fac((man<<exp)-p1), prec, rounding)
     wp = prec + 15
-    rnd = round_floor
     if p1:
-        x = fsub(x, fone, wp, rnd)
+        x = fsub(x, fone, wp)
     # x < 0.25
     if sign or exp+bc < -1:
         # gamma = pi / (sin(pi*x) * gamma(1-x))
         wp += 15
-        pi = fpi(wp, rnd)
-        pix = fmul(x, pi, wp, rnd)
-        t = fsin(pix, wp, rnd)
-        g = mpf_gamma(fsub(fone, x, wp, rnd), wp, rnd)
-        return fdiv(pix, fmul(t, g, wp, rnd), prec, rounding)
+        pi = fpi(wp)
+        pix = fmul(x, pi, wp)
+        t = fsin(pix, wp)
+        g = mpf_gamma(fsub(fone, x, wp), wp)
+        return fdiv(pix, fmul(t, g, wp), prec, rounding)
     sprec, a, c = get_spouge_coefficients(wp)
     s = spouge_sum_real(x, sprec, a, c)
     # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    xpa = fadd(x, from_int(a), wp, rnd)
-    logxpa = flog(xpa, wp, rnd)
-    xph = fadd(x, fhalf, wp, rnd)
-    t = fsub(fmul(logxpa, xph, wp, rnd), xpa, wp, rnd)
-    t = fmul(fexp(t, wp, rnd), s, prec, rounding)
+    xpa = fadd(x, from_int(a), wp)
+    logxpa = flog(xpa, wp)
+    xph = fadd(x, fhalf, wp)
+    t = fsub(fmul(logxpa, xph, wp), xpa, wp)
+    t = fmul(fexp(t, wp), s, prec, rounding)
     return t
 
-def mpc_gamma(x, prec, rounding, p1=1):
+def mpc_gamma(x, prec, rounding=round_fast, p1=1):
     re, im = x
     if im == fzero:
         return mpf_gamma(re, prec, rounding, p1), fzero
     wp = prec + 25
-    rnd = round_floor
     sign, man, exp, bc = re
     if p1:
-        re = fsub(re, fone, wp, rnd)
+        re = fsub(re, fone, wp)
         x = re, im
     if sign or exp+bc < -1:
         # Reflection formula
         wp += 15
-        pi = fpi(wp, rnd), fzero
-        pix = mpc_mul(x, pi, wp, rnd)
-        t = mpc_sin(pix, wp, rnd)
-        u = mpc_sub(mpc_one, x, wp, rnd)
-        g = mpc_gamma(u, wp, rnd)
-        w = mpc_mul(t, g, wp, rnd)
-        return mpc_div(pix, w, wp, rnd)
+        pi = fpi(wp), fzero
+        pix = mpc_mul(x, pi, wp)
+        t = mpc_sin(pix, wp)
+        u = mpc_sub(mpc_one, x, wp)
+        g = mpc_gamma(u, wp)
+        w = mpc_mul(t, g, wp)
+        return mpc_div(pix, w, wp)
     sprec, a, c = get_spouge_coefficients(wp)
     s = spouge_sum_complex(re, im, sprec, a, c)
     # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    repa = fadd(re, from_int(a), wp, rnd)
-    logxpa = mpc_log((repa, im), wp, rnd)
-    reph = fadd(re, fhalf, wp, rnd)
-    t = mpc_sub(mpc_mul(logxpa, (reph, im), wp, rnd), (repa, im), wp, rnd)
-    t = mpc_mul(mpc_exp(t, wp, rnd), s, prec, rounding)
+    repa = fadd(re, from_int(a), wp)
+    logxpa = mpc_log((repa, im), wp)
+    reph = fadd(re, fhalf, wp)
+    t = mpc_sub(mpc_mul(logxpa, (reph, im), wp), (repa, im), wp)
+    t = mpc_mul(mpc_exp(t, wp), s, prec, rounding)
     return t
 
 def gamma(x):

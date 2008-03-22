@@ -232,27 +232,26 @@ def bernoulli2n():
     """Generate B(2), B(4), B(6), ..."""
     oprec = mp.prec
     rounding = mp.rounding[0]
-    prec = oprec + 20
+    prec = oprec + 30
     computed = {0:fone}
     m, bin1, bin = 2, 1, 10
     f3 = from_int(3)
     f6 = from_int(6)
-    wr = round_nearest
     while 1:
         case = m % 6
         s = fzero
         if m < 6: a = 0
         else:     a = bin1
         for j in xrange(1, m//6+1):
-            s = fadd(s, fmuli(computed[m-6*j], a, prec, wr), prec, wr)
+            s = fadd(s, fmuli(computed[m-6*j], a, prec), prec)
             # Inner binomial coefficient
             j6 = 6*j
             a *= ((m-5-j6)*(m-4-j6)*(m-3-j6)*(m-2-j6)*(m-1-j6)*(m-j6))
             a //= ((4+j6)*(5+j6)*(6+j6)*(7+j6)*(8+j6)*(9+j6))
-        if case == 0: b = fdivi(m+3, f3, prec, wr)
-        if case == 2: b = fdivi(m+3, f3, prec, wr)
-        if case == 4: b = fdivi(-m-3, f6, prec, wr)
-        b = fdiv(fsub(b, s, prec, wr), from_int(bin), prec, wr)
+        if case == 0: b = fdivi(m+3, f3, prec)
+        if case == 2: b = fdivi(m+3, f3, prec)
+        if case == 4: b = fdivi(-m-3, f6, prec)
+        b = fdiv(fsub(b, s, prec), from_int(bin), prec)
         computed[m] = b
         yield make_mpf(fpos(b, oprec, rounding))
         m += 2

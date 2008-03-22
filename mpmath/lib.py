@@ -112,6 +112,8 @@ round_ceiling = intern('c')
 round_up = intern('u')
 round_down = intern('d')
 
+round_fast = round_down
+
 # This function can be used to round a mantissa generally. However,
 # we will try to do most rounding inline for efficiency.
 def round_int(x, n, rnd):
@@ -219,7 +221,7 @@ def normalize(sign, man, exp, bc, prec, rnd):
 #                            Conversion functions                            #
 #----------------------------------------------------------------------------#
 
-def from_man_exp(man, exp, prec=None, rnd=None):
+def from_man_exp(man, exp, prec=None, rnd=round_fast):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
     sign = 0
@@ -240,7 +242,7 @@ def from_man_exp(man, exp, prec=None, rnd=None):
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
-def from_int(n, prec=None, rnd=None):
+def from_int(n, prec=None, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
     the mantissa is stored exactly."""
     return from_man_exp(n, 0, prec, rnd)
@@ -274,7 +276,7 @@ def to_int(s, rnd=None):
     else:
         return round_int(man, -exp, rnd)
 
-def fceil(s, prec, rnd):
+def fceil(s, prec, rnd=round_fast):
     """Calculate ceil of a raw mpf, and round the result in the given
     direction (not necessarily ceiling). Note: returns a raw mpf
     representing an integer, not a Python int."""
@@ -285,7 +287,7 @@ def fceil(s, prec, rnd):
         return fpos(s, prec, rnd)
     return from_int(to_int(s, round_ceiling), prec, rnd)
 
-def ffloor(s, prec, rnd):
+def ffloor(s, prec, rnd=round_fast):
     """Calculate floor of a raw mpf, and round the result in the given
     direction (not necessarily floor). Note: returns a raw mpf
     representing an integer, not a Python int."""
@@ -296,12 +298,10 @@ def ffloor(s, prec, rnd):
         return fpos(s, prec, rnd)
     return from_int(to_int(s, round_floor), prec, rnd)
 
-def from_float(x, prec=None, rnd=None):
+def from_float(x, prec=53, rnd=round_fast):
     """Create a raw mpf from a Python float, rounding if necessary.
     If prec >= 53, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=53."""
-    if not prec:
-        prec, rnd = 53, round_floor
     # frexp only raises an exception for nan on some platforms
     if x != x:
         return fnan
@@ -333,7 +333,7 @@ def to_float(s):
     m = man >> n
     return math.ldexp(m, exp + n)
 
-def from_rational(p, q, prec, rnd):
+def from_rational(p, q, prec, rnd=round_fast):
     """Create a raw mpf from a rational number p/q, rnd if
     necessary."""
     return fdiv(from_int(p), from_int(q), prec, rnd)
@@ -438,7 +438,7 @@ def fcmp(s, t):
         return -1
     return 1
 
-def fpos(s, prec, rnd):
+def fpos(s, prec, rnd=round_fast):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision)."""
     sign, man, exp, bc = s
@@ -446,7 +446,7 @@ def fpos(s, prec, rnd):
         return s
     return normalize(sign, man, exp, bc, prec, rnd)
 
-def fneg(s, prec=None, rnd=None):
+def fneg(s, prec=None, rnd=round_fast):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
@@ -460,7 +460,7 @@ def fneg(s, prec=None, rnd=None):
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
 
-def fabs(s, prec=None, rnd=None):
+def fabs(s, prec=None, rnd=round_fast):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision. The prec argument can be omitted to generate an
     exact result."""
@@ -485,7 +485,7 @@ def fsign(s):
         return 0
     return (-1) ** sign
 
-def fadd(s, t, prec, rnd):
+def fadd(s, t, prec, rnd=round_fast):
     if t[2] > s[2]:
         s, t = t, s
     ssign, sman, sexp, sbc = s
@@ -543,7 +543,7 @@ def fadd(s, t, prec, rnd):
         bc = bitcount(man)
         return normalize(sign, man, texp, bc, prec, rnd)
 
-def fsub(s, t, prec, rnd):
+def fsub(s, t, prec, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of fadd that changes the sign of t."""
     sign, man, exp, bc = t
@@ -551,7 +551,7 @@ def fsub(s, t, prec, rnd):
         return fadd(s, fneg(t, prec, rnd), prec, rnd)
     return fadd(s, (1-sign, man, exp, bc), prec, rnd)
 
-def fmul(s, t, prec, rnd):
+def fmul(s, t, prec, rnd=round_fast):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -571,7 +571,7 @@ def fmul(s, t, prec, rnd):
     else:      bc += bctable[man>>bc]
     return normalize(sign, man, sexp+texp, bc, prec, rnd)
 
-def fmuli(s, n, prec, rnd):
+def fmuli(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
     sign, man, exp, bc = s
     if not man:
@@ -598,7 +598,7 @@ def fshift(s, n):
         return s
     return sign, man, exp+n, bc
 
-def fdiv(s, t, prec, rnd):
+def fdiv(s, t, prec, rnd=round_fast):
     """Floating-point division"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -643,7 +643,7 @@ def fdiv(s, t, prec, rnd):
     else:      bc += bctable[quot>>bc]
     return normalize(sign, quot, sexp-texp-extra, bc, prec, rnd)
 
-def fdivi(n, t, prec, rnd):
+def fdivi(n, t, prec, rnd=round_fast):
     """Floating-point division with a Python integer as numerator"""
     tsign, tman, texp, tbc = t
     if not n or not tman:
@@ -662,7 +662,7 @@ def fdivi(n, t, prec, rnd):
         extra += 5
     return normalize(sign, quot, -texp-extra, bitcount(quot), prec, rnd)
 
-def fmod(s, t, prec, rnd):
+def fmod(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ((not sman) and sexp) or ((not tman) and texp):
@@ -701,7 +701,7 @@ negative_rnd = {
   round_nearest : round_nearest
 }
 
-def fpow(s, t, prec, rnd):
+def fpow(s, t, prec, rnd=round_fast):
     """Compute s**t. Raises ComplexResult if s is negative and t is
     fractional."""
     ssign, sman, sexp, sbc = s
@@ -720,7 +720,7 @@ def fpow(s, t, prec, rnd):
     c = flog(s, prec+10, rnd)
     return fexp(fmul(t, c, prec+10, rnd), prec, rnd)
 
-def fpowi(s, n, prec, rnd):
+def fpowi(s, n, prec, rnd=round_fast):
     """Compute s**n, where s is a raw mpf and n is a Python integer."""
     sign, man, exp, bc = s
 
@@ -880,12 +880,11 @@ def to_digits_exp(s, dps):
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(abs(exp)) + 5
-        RF = round_floor
-        tmp = from_int(exp, expprec, RF)
-        tmp = fmul(tmp, flog2(expprec, RF), expprec, RF)
-        tmp = fdiv(tmp, flog10(expprec, RF), expprec, RF)
+        tmp = from_int(exp, expprec)
+        tmp = fmul(tmp, flog2(expprec), expprec)
+        tmp = fdiv(tmp, flog10(expprec), expprec)
         b = to_int(tmp)
-        s = fdiv(s, fpowi(ften, b, bitprec, RF), bitprec, RF)
+        s = fdiv(s, fpowi(ften, b, bitprec), bitprec)
         _sign, man, exp, bc = s
         exponent = b
     else:
@@ -979,7 +978,7 @@ def str_to_man_exp(x, base=10):
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
 
-def from_str(x, prec, rnd):
+def from_str(x, prec, rnd=round_fast):
     """Create a raw mpf from a decimal literal, rounding in the
     specified direction if the input number cannot be represented
     exactly as a binary floating-point number with the given number of
@@ -996,8 +995,8 @@ def from_str(x, prec, rnd):
     # XXX: appropriate cutoffs & track direction
     # note no factors of 5
     if abs(exp) > 400:
-        s = from_int(man, prec+10, round_floor)
-        s = fmul(s, fpowi(ften, exp, prec+10, round_floor), prec, rnd)
+        s = from_int(man, prec+10)
+        s = fmul(s, fpowi(ften, exp, prec+10), prec, rnd)
     else:
         if exp >= 0:
             s = from_int(man * 10**exp, prec, rnd)
@@ -1148,7 +1147,7 @@ def sqrt_fixed2(y, prec):
     """
 
     # XXX
-    r = to_float(from_man_exp(y, -prec, 64, round_floor)) ** -0.5
+    r = to_float(from_man_exp(y, -prec, 64)) ** -0.5
     r = int(r * 2**50)
     # r = invsqrt_initial(y, prec)
 
@@ -1183,7 +1182,7 @@ def sqrt_fixed2(y, prec):
 
     return r >> extra
 
-def fsqrt(s, prec, rnd):
+def fsqrt(s, prec, rnd=round_fast):
     """Compute the square root of a raw mpf.
 
     Returns a tuple representing the square root of s, rounded to the
@@ -1220,13 +1219,12 @@ def fsqrt(s, prec, rnd):
 
     return from_man_exp(man, (exp+shift-prec2)>>1, prec, rnd)
 
-def fhypot(x, y, prec, rnd):
+def fhypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
     x and y."""
     if y == fzero: return fabs(x, prec, rnd)
     if x == fzero: return fabs(y, prec, rnd)
-    RF = round_floor
-    hypot2 = fadd(fmul(x,x,prec+4,RF), fmul(y,y,prec+4,RF), prec+4, RF)
+    hypot2 = fadd(fmul(x,x,prec+4), fmul(y,y,prec+4), prec+4)
     return fsqrt(hypot2, prec, rnd)
 
 
@@ -1361,11 +1359,11 @@ def pi_fixed(prec):
         return machin([(16, 5), (-4, 239)], prec)
     return pi_agm(prec)
 
-def fpi(prec, rnd):
+def fpi(prec, rnd=round_fast):
     """Compute a floating-point approximation of pi"""
     return from_man_exp(pi_fixed(prec+5), -prec-5, prec, rnd)
 
-def fdegree(prec, rnd):
+def fdegree(prec, rnd=round_fast):
     """Compute 1 degree = pi / 180."""
     return from_man_exp(pi_fixed(prec+10)//180, -prec-10, prec, rnd)
 
@@ -1376,14 +1374,14 @@ def fdegree(prec, rnd):
 def log2_fixed(prec):
     return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
 
-def flog2(prec, rnd):
+def flog2(prec, rnd=round_fast):
     return from_man_exp(log2_fixed(prec+5), -prec-5, prec, rnd)
 
 @constant_memo
 def log10_fixed(prec):
     return machin([(46, 31), (34, 49), (20, 161)], prec, True)
 
-def flog10(prec, rnd):
+def flog10(prec, rnd=round_fast):
     return from_man_exp(log10_fixed(prec+5), -prec-5, prec, rnd)
 
 #----------------------------------------------------------------------------
@@ -1399,7 +1397,7 @@ def e_fixed(prec):
         n += 1
     return s
 
-def fe(prec, rnd):
+def fe(prec, rnd=round_fast):
     return from_man_exp(e_fixed(prec+15), -prec-15, prec, rnd)
 
 
@@ -1460,7 +1458,7 @@ def exp_series(x, prec):
         r -= 1
     return s >> guards
 
-def fexp(x, prec, rnd):
+def fexp(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if not man:
         if not exp:
@@ -1471,7 +1469,7 @@ def fexp(x, prec, rnd):
     # Fast handling e**n. TODO: the best cutoff depends on both the
     # size of n and the precision.
     if prec > 600 and exp >= 0:
-        return fpowi(fe(prec+10, round_floor), man<<exp, prec, rnd)
+        return fpowi(fe(prec+10), man<<exp, prec, rnd)
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
     t = to_fixed(x, prec2)
@@ -1527,7 +1525,7 @@ def log_newton(x, prec):
         prevp = p
     return r >> extra
 
-def flog(x, prec, rnd):
+def flog(x, prec, rnd=round_fast):
     """Compute the natural logarithm of a positive raw mpf x."""
     sign, man, exp, bc = x
     if not man:
@@ -1545,7 +1543,7 @@ def flog(x, prec, rnd):
     prec2 = prec + int(math.log(1+abs(bc_plus_exp), 2)) + 10
     # Watch out for the case when x is very close to 1
     if -1 < bc_plus_exp < 2:
-        near_one = fabs(fsub(x, fone, 53, round_floor), 53, round_floor)
+        near_one = fabs(fsub(x, fone, 53), 53)
         if near_one == 0:
             return fzero
         # estimate how close
@@ -1630,7 +1628,7 @@ def clamp1(x, prec, rnd):
         if x == fnone: return (1, (1<<prec)-1, -prec, prec)
     return x
 
-def cos_sin(x, prec, rnd, nt=2):
+def cos_sin(x, prec, rnd=round_fast, nt=2):
     """Simultaneously compute (cos(x), sin(x)) for real x
     for nt=2; for nt=0 (1) compute only cos (sin)
     """
@@ -1718,14 +1716,14 @@ def cos_sin(x, prec, rnd, nt=2):
         elif case == 3: s = -cos_taylor(rx, wp)
         return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
 
-def fcos(x, prec, rnd):
+def fcos(x, prec, rnd=round_fast):
     return cos_sin(x, prec, rnd, 0)
 
-def fsin(x, prec, rnd):
+def fsin(x, prec, rnd=round_fast):
     return cos_sin(x, prec, rnd, 1)
 
-def ftan(x, prec, rnd):
-    c, s = cos_sin(x, prec+6, round_floor)
+def ftan(x, prec, rnd=round_fast):
+    c, s = cos_sin(x, prec+6)
     return fdiv(s, c, prec, rnd)
 
 
@@ -1743,7 +1741,7 @@ def sinh_taylor(x, prec):
         k += 2
     return s
 
-def cosh_sinh(x, prec, rnd):
+def cosh_sinh(x, prec, rnd=round_fast):
     """Simultaneously compute (cosh(x), sinh(x)) for real x"""
     sign, man, exp, bc = x
     if (not man) and exp:
@@ -1771,23 +1769,23 @@ def cosh_sinh(x, prec, rnd):
     #    cosh(x) = (exp(x) + exp(-x))/2
     #    sinh(x) = (exp(x) - exp(-x))/2
     # and note that the exponential only needs to be computed once.
-    ep = fexp(x, prec2, round_floor)
-    em = fdiv(fone, ep, prec2, round_floor)
+    ep = fexp(x, prec2)
+    em = fdiv(fone, ep, prec2)
     ch = fshift(fadd(ep, em, prec, rnd), -1)
     sh = fshift(fsub(ep, em, prec, rnd), -1)
     return ch, sh
 
-def fcosh(x, prec, rnd):
+def fcosh(x, prec, rnd=round_fast):
     """Compute cosh(x) for a real argument x"""
     return cosh_sinh(x, prec, rnd)[0]
 
-def fsinh(x, prec, rnd):
+def fsinh(x, prec, rnd=round_fast):
     """Compute sinh(x) for a real argument x"""
     return cosh_sinh(x, prec, rnd)[1]
 
-def ftanh(x, prec, rnd):
+def ftanh(x, prec, rnd=round_fast):
     """Compute tanh(x) for a real argument x"""
-    ch, sh = cosh_sinh(x, prec+6, round_floor)
+    ch, sh = cosh_sinh(x, prec+6)
     return fdiv(sh, ch, prec, rnd)
 
 
@@ -1805,7 +1803,7 @@ to calculate atan from tan, using Newton's method or even the
 secant method.
 """
 
-def atan_taylor(x, prec, rnd):
+def atan_taylor(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     assert not sign
     # Increase absolute precision when extremely close to 0
@@ -1826,7 +1824,7 @@ def atan_taylor(x, prec, rnd):
             break
     return from_man_exp(s, -prec2, prec, rnd)
 
-def atan_euler(x, prec, rnd):
+def atan_euler(x, prec, rnd=round_fast):
     prec2 = prec + 15
     x = to_fixed(x, prec2)
     one = 1<<prec2; x2 = (x*x)>>prec2; y=(x2<<prec2)//(one+x2)
@@ -1841,12 +1839,12 @@ def atan_euler(x, prec, rnd):
 _cutoff_1 = (0, 5, -3, 3)   # ~0.6
 _cutoff_2 = (0, 3, -1, 2)   # 1.5
 
-def fatan(x, prec, rnd):
+def fatan(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if not man:
         if x == fzero: return fzero
-        if x == finf: return fshift(fpi(prec, round_down), -1)
-        if x == fninf: return fneg(fshift(fpi(prec, round_down), -1))
+        if x == finf: return fshift(fpi(prec), -1)
+        if x == fninf: return fneg(fshift(fpi(prec), -1))
         return fnan
     if sign:
         return fneg(fatan(fneg(x), prec, rnd))
@@ -1859,12 +1857,12 @@ def fatan(x, prec, rnd):
         pi = fpi(prec, rnd)
         pihalf = fshift(pi, -1)
     else:
-        pi = fpi(prec+4, round_floor)
+        pi = fpi(prec+4)
         pihalf = fshift(pi, -1)
-        t = fatan(fdiv(fone, x, prec+4, round_floor), prec+4, round_floor)
+        t = fatan(fdiv(fone, x, prec+4), prec+4)
         return fsub(pihalf, t, prec, rnd)
 
-def fatan2(y, x, prec, rnd):
+def fatan2(y, x, prec, rnd=round_fast):
     xsign, xman, xexp, xbc = x
     ysign, yman, yexp, ybc = y
     if ysign:
@@ -1873,26 +1871,24 @@ def fatan2(y, x, prec, rnd):
         if not yman:
             return fzero
         return fshift(fpi(prec, rnd), -1)
-    rf = round_down
-    tquo = fatan(fdiv(y, x, prec+4, rf), prec+4, rf)
+    tquo = fatan(fdiv(y, x, prec+4), prec+4)
     if xsign:
-        return fadd(fpi(prec+4, rf), tquo, prec, rnd)
+        return fadd(fpi(prec+4), tquo, prec, rnd)
     else:
         return fpos(tquo, prec, rnd)
 
-def fasin(x, prec, rnd):
+def fasin(x, prec, rnd=round_fast):
     # asin(x) = 2*atan(x/(1+sqrt(1-x**2)))
     sign, man, exp, bc = x
     if bc+exp > 0 and x not in (fone, fnone):
         raise ComplexResult("asin(x) is real only for -1 <= x <= 1")
     wp = prec + 15
-    wr = round_down
-    a = fmul(x, x, wp, wr)
-    b = fadd(fone, fsqrt(fsub(fone, a, wp, wr), wp, wr), wp, wr)
-    c = fdiv(x, b, wp, wr)
+    a = fmul(x, x, wp)
+    b = fadd(fone, fsqrt(fsub(fone, a, wp), wp), wp)
+    c = fdiv(x, b, wp)
     return fshift(fatan(c, prec, rnd), 1)
 
-def facos(x, prec, rnd):
+def facos(x, prec, rnd=round_fast):
     # acos(x) = 2*atan(sqrt(1-x**2)/(1+x))
     sign, man, exp, bc = x
     if bc + exp > 0:
@@ -1901,37 +1897,33 @@ def facos(x, prec, rnd):
         if x == fnone:
             return fpi(prec, rnd)
     wp = prec + 15
-    wr = round_down
-    a = fmul(x, x, wp, wr)
-    b = fsqrt(fsub(fone, a, wp, wr), wp, wr)
-    c = fdiv(b, fadd(fone, x, wp, wr), wp, wr)
+    a = fmul(x, x, wp)
+    b = fsqrt(fsub(fone, a, wp), wp)
+    c = fdiv(b, fadd(fone, x, wp), wp)
     return fshift(fatan(c, prec, rnd), 1)
 
-def fasinh(x, prec, rnd):
+def fasinh(x, prec, rnd=round_fast):
     # asinh(x) = log(x+sqrt(x**2+1))
     wp = prec + 15
-    wr = round_down
-    q = fsqrt(fadd(fmul(x,x,wp,wr), fone, wp, wr), wp, wr)
-    return flog(fadd(x, q, wp, wr), prec, rnd)
+    q = fsqrt(fadd(fmul(x,x,wp), fone, wp), wp)
+    return flog(fadd(x, q, wp), prec, rnd)
 
-def facosh(x, prec, rnd):
+def facosh(x, prec, rnd=round_fast):
     # acosh(x) = log(x+sqrt(x**2-1))
     wp = prec + 15
-    wr = round_down
     if fcmp(x, fone) == -1:
         raise ComplexResult("acosh(x) is real only for x >= 1")
-    q = fsqrt(fadd(fmul(x,x,wp,wr), fnone, wp, wr), wp, wr)
-    return flog(fadd(x, q, wp, wr), prec, rnd)
+    q = fsqrt(fadd(fmul(x,x,wp), fnone, wp), wp)
+    return flog(fadd(x, q, wp), prec, rnd)
 
-def fatanh(x, prec, rnd):
+def fatanh(x, prec, rnd=round_fast):
     # atanh(x) = log((1+x)/(1-x))/2
     sign, man, exp, bc = x
     mag = bc + exp
     if mag > 0:
         raise ComplexResult("atanh(x) is real only for -1 < x < 1")
     wp = prec + 15
-    wr = round_down
-    a = fadd(x, fone, wp, wr)
-    b = fsub(fone, x, wp, wr)
-    return fshift(flog(fdiv(a, b, wp, wr), prec, rnd), -1)
+    a = fadd(x, fone, wp)
+    b = fsub(fone, x, wp)
+    return fshift(flog(fdiv(a, b, wp), prec, rnd), -1)
 
