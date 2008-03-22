@@ -30,6 +30,17 @@ def test_hyper():
     assert ellipe(0.5).ae(pi**(mpf(3)/2)/gamma(0.25)**2 +gamma(0.25)**2/(8*sqrt(pi)))
     assert ellipe(1) == 1
 
+def test_agm():
+    assert agm(0,0) == 0
+    assert agm(0,1) == 0
+    assert agm(1,1) == 1
+    assert agm(7,7) == 7
+    assert agm(j,j) == j
+    assert (1/agm(1,sqrt(2))).ae(0.834626841674073186)
+    assert agm(1,2).ae(1.4567910310469068692)
+    assert agm(1,3).ae(1.8636167832448965424)
+    assert agm(1,j).ae(0.599070117367796104+0.599070117367796104j)
+
 def test_incomplete_gamma():
     mp.dps = 15
     assert upper_gamma(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)

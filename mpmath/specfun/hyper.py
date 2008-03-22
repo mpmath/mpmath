@@ -4,7 +4,7 @@ Hypergeometric functions.
 
 from ..lib import from_man_exp, to_fixed
 from ..mptypes import mp, mpf, mpc, make_mpf, make_mpc, \
-    convert_lossless, inf, pi
+    convert_lossless, inf, pi, extraprec, eps, sqrt
 
 def mpf_hyp2f1((ap, aq), (bp, bq), (cp, cq), x, prec, rnd):
     wp = prec + 25
@@ -87,3 +87,17 @@ def ellipe(m):
     if m == 1:
         return m
     return pi/2 * hyp2f1((1,2),(-1,2),(1,1),m)
+
+# TODO: for complex a, b handle the branch cut correctly
+@extraprec(15, normalize_output=True)
+def agm(a, b):
+    """Arithmetic-geometric mean of a and b."""
+    a = convert_lossless(a)
+    b = convert_lossless(b)
+    if not a or not b:
+        return a*b
+    weps = eps * 16
+    half = mpf(0.5)
+    while abs(a-b) > weps:
+        a, b = (a+b)*half, (a*b)**half
+    return a

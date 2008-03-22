@@ -7,7 +7,8 @@ from calculus import diff, diffc, secant, polyval, polyroots, quadts
 from calculus import sumem
 
 from specfun import gamma, factorial, lower_gamma, upper_gamma, erf
-from specfun import zeta, bernoulli, jv, j0, j1
+from specfun import zeta, bernoulli, bernoulli2n, jv, j0, j1
 
 from specfun import phi, catalan, euler, khinchin, glaisher, apery
-from specfun import hyp2f1, ellipk, ellipe
+from specfun import hyp2f1, ellipk, ellipe, agm
+
