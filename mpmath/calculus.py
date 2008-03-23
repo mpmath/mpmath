@@ -235,15 +235,32 @@ def transform(f, a, b):
     b = mpf(b)
     if (a, b) == (-1, 1):
         return f
+    one = mpf(1)
+    half = mpf(0.5)
     # The transformation 1/x sends [1, inf] to [0, 1], which in turn
     # can be transformed to [-1, 1] the usual way. For a double
     # infinite interval, we simply evaluate the function symmetrically
     if (a, b) == (-inf, inf):
-        return transform(lambda x: (f(-1/x+1)+f(1/x-1))/x**2, 0, 1)
+        # return transform(lambda x: (f(-1/x+1)+f(1/x-1))/x**2, 0, 1)
+        def y(x):
+            u = 2/(x+one)
+            w = one - u
+            return half * (f(w)+f(-w)) * u**2
+        return y
     if a == -inf:
-        return transform(lambda x: f(-1/x+b+1)/x**2, 0, 1)
+        # return transform(lambda x: f(-1/x+b+1)/x**2, 0, 1)
+        b1 = b+1
+        def y(x):
+            u = 2/(x+one)
+            return half * f(b1-u) * u**2
+        return y
     if b == inf:
-        return transform(lambda x: f(1/x+a-1)/x**2, 0, 1)
+        # return transform(lambda x: f(1/x+a-1)/x**2, 0, 1)
+        a1 = a-1
+        def y(x):
+            u = 2/(x+one)
+            return half * f(a1+u) * u**2
+        return y
     # Simple linear change of variables
     C = (b-a)/2
     D = (b+a)/2
