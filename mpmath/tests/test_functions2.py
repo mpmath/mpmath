@@ -19,7 +19,7 @@ def test_bessel():
     assert jv(-4,2).ae(0.0339957198075684341)
     assert jv(3,3+2j).ae(0.424718794929639595942 + 0.625665327745785804812j)
 
-def test_hyper():
+def test_hyper_misc():
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
     assert hyp2f1((1,4),(1,2),(3,4),mpf(80)/81).ae(1.8)
     assert hyp2f1((2,3),(1,1),(3,2),(2+j)/3).ae(1.327531603558679093+0.439585080092769253j)
@@ -29,6 +29,39 @@ def test_hyper():
     assert ellipe(0).ae(pi/2)
     assert ellipe(0.5).ae(pi**(mpf(3)/2)/gamma(0.25)**2 +gamma(0.25)**2/(8*sqrt(pi)))
     assert ellipe(1) == 1
+
+def test_hyper_1f1():
+    v = 1.2917526488617656673
+    assert hyper([(1,2)],[(3,2)],0.7).ae(v)
+    assert hyper([(1,2)],[(3,2)],0.7+0j).ae(v)
+    assert hyper([0.5],[(3,2)],0.7).ae(v)
+    assert hyper([0.5],[1.5],0.7).ae(v)
+    assert hyper([0.5],[(3,2)],0.7+0j).ae(v)
+    assert hyper([0.5],[1.5],0.7+0j).ae(v)
+    assert hyper([(1,2)],[1.5+0j],0.7).ae(v)
+    assert hyper([0.5+0j],[1.5],0.7).ae(v)
+    assert hyper([0.5+0j],[1.5+0j],0.7+0j).ae(v)
+
+def test_hyper_2f1():
+    v = 1.0652207633823291032
+    assert hyper([(1,2), (3,4)], [2], 0.3).ae(v)
+    assert hyper([(1,2), 0.75], [2], 0.3).ae(v)
+    assert hyper([0.5, 0.75], [2.0], 0.3).ae(v)
+    assert hyper([0.5, 0.75], [2.0], 0.3+0j).ae(v)
+    assert hyper([0.5+0j, (3,4)], [2.0], 0.3+0j).ae(v)
+    assert hyper([0.5+0j, (3,4)], [2.0], 0.3).ae(v)
+    assert hyper([0.5, (3,4)], [2.0+0j], 0.3).ae(v)
+    assert hyper([0.5+0j, 0.75+0j], [2.0+0j], 0.3+0j).ae(v)
+    v = 1.09234681096223231717 + 0.18104859169479360380j
+    assert hyper([(1,2),0.75+j], [2], 0.5).ae(v)
+    assert hyper([0.5,0.75+j], [2.0], 0.5).ae(v)
+    assert hyper([0.5,0.75+j], [2.0], 0.5+0j).ae(v)
+    assert hyper([0.5,0.75+j], [2.0+0j], 0.5+0j).ae(v)
+    v = 0.9625 - 0.125j
+    assert hyper([(3,2),-1],[4], 0.1+j/3).ae(v)
+    assert hyper([1.5,-1.0],[4], 0.1+j/3).ae(v)
+    assert hyper([1.5,-1.0],[4+0j], 0.1+j/3).ae(v)
+    assert hyper([1.5+0j,-1.0+0j],[4+0j], 0.1+j/3).ae(v)
 
 def test_agm():
     assert agm(0,0) == 0

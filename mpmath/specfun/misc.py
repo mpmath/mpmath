@@ -76,6 +76,9 @@ def upper_gamma(a, z):
     """Returns the upper incomplete gamma function Gamma(a, z)"""
     return gamma(a) - lower_gamma(a, z)
 
+'''
+# Using hyper implementation instead
+
 def erf(x):
     """Returns the error function of x."""
     x = mpnumeric(x)
@@ -98,6 +101,7 @@ def erf(x):
 
     mp.prec = oldprec
     return +y
+'''
 
 
 #---------------------------------------------------------------------------#
