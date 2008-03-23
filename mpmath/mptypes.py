@@ -174,10 +174,8 @@ class mpnumeric(object):
     __slots__ = []
     def __new__(cls, val):
         # TODO: should maybe normalize here
-        if isinstance(val, cls):
-            return val
-        if isinstance(val, complex):
-            return mpc(val)
+        if isinstance(val, cls): return val
+        if isinstance(val, complex): return mpc(val)
         return mpf(val)
 
 def convert_lossless(x):
@@ -186,40 +184,33 @@ def convert_lossless(x):
     sufficient precision to represent it exactly. If x is a str, just
     convert it to an mpf with the current working precision (perhaps
     this should be done differently...)"""
-    if isinstance(x, mpnumeric):
-        return x
-    if isinstance(x, int_types):
-        return make_mpf(from_int(x))
-    if isinstance(x, float):
-        return make_mpf(from_float(x))
-    if isinstance(x, complex):
-        return mpc(x)
-    if isinstance(x, basestring):
-        return make_mpf(from_str(x, gp, gr))
-    if hasattr(x, '_mpf_'):
-        return make_mpf(x._mpf_)
-    if hasattr(x, '_mpc_'):
-        return make_mpc(x._mpc_)
+    if isinstance(x, mpnumeric): return x
+    if isinstance(x, int_types): return make_mpf(from_int(x))
+    if isinstance(x, float): return make_mpf(from_float(x))
+    if isinstance(x, complex): return mpc(x)
+    if isinstance(x, basestring): return make_mpf(from_str(x, gp, gr))
+    if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
+    if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
+    raise TypeError("cannot create mpf from " + repr(x))
+
+def mpf_convert_arg(x):
+    if isinstance(x, int_types): return from_int(x)
+    if isinstance(x, float): return from_float(x)
+    if isinstance(x, basestring): return from_str(x, gp, gr)
+    if hasattr(x, '_mpf_'): return x._mpf_
     raise TypeError("cannot create mpf from " + repr(x))
 
 def mpf_convert_rhs(x):
-    if isinstance(x, int_types):
-        return make_mpf(from_int(x))
-    if isinstance(x, float):
-        return make_mpf(from_float(x))
-    if hasattr(x, '_mpf_'):
-        return make_mpf(x._mpf_)
+    if isinstance(x, int_types): return from_int(x)
+    if isinstance(x, float): return from_float(x)
+    if hasattr(x, '_mpf_'): return x._mpf_
     return NotImplemented
 
 def mpf_convert_lhs(x):
-    if isinstance(x, complex_types):
-        return mpc(x)
-    if isinstance(x, int_types):
-        return make_mpf(from_int(x))
-    if isinstance(x, float):
-        return make_mpf(from_float(x))
-    if hasattr(x, '_mpf_'):
-        return make_mpf(x._mpf_)
+    if isinstance(x, complex_types): return mpc(x)
+    if isinstance(x, int_types): return make_mpf(from_int(x))
+    if isinstance(x, float): return make_mpf(from_float(x))
+    if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     return NotImplemented
 
 new = object.__new__
@@ -229,26 +220,26 @@ class mpf(mpnumeric):
     work analogously to Python floats, but support arbitrary-precision
     arithmetic."""
 
-    #__metaclass__ = context
     __slots__ = ['_mpf_']
 
     def __new__(cls, val=fzero):
         """A new mpf can be created from a Python float, an int, a
         or a decimal string representing a number in floating-point
         format."""
-        if isinstance(val, mpf):
+        if type(val) is cls:
             sign, man, exp, bc = val._mpf_
             if (not man) and exp:
                 return val
             return make_mpf(normalize(sign, man, exp, bc, gp, gr))
-        elif isinstance(val, tuple):
+        elif type(val) is tuple:
             if len(val) == 2:
                 return make_mpf(from_man_exp(val[0], val[1], gp, gr))
             if len(val) == 4:
                 sign, man, exp, bc = val
                 return make_mpf(normalize(sign, man, exp, bc, gp, gr))
             raise ValueError
-        return +convert_lossless(val)
+        else:
+            return make_mpf(fpos(mpf_convert_arg(val), gp, gr))
 
     man_exp = property(lambda self: self._mpf_[1:3])
     man = property(lambda self: self._mpf_[1])
@@ -273,24 +264,29 @@ class mpf(mpnumeric):
     def __neg__(s): return make_mpf(fneg(s._mpf_, gp, gr))
 
     def __eq__(s, t):
-        if isinstance(t, mpf):
+        if type(t) is mpf:
             return feq(s._mpf_, t._mpf_)
-        if isinstance(t, complex_types):
-            return mpc(s) == t
-        t = mpf_convert_rhs(t)
-        if t is NotImplemented:
-            return False
-        return feq(s._mpf_, t._mpf_)
+        u = mpf_convert_rhs(t)
+        if u is NotImplemented:
+            if isinstance(t, complex_types):
+                return mpc(s) == t
+            return u
+        return feq(s._mpf_, u)
 
     def __ne__(s, t):
-        return not s.__eq__(t)
+        v = s.__eq__(t)
+        if v is NotImplemented:
+            return v
+        return not v
 
     def __cmp__(s, t):
-        if not isinstance(t, mpf):
+        if not type(t) is mpf:
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
-        return fcmp(s._mpf_, t._mpf_)
+        else:
+            t = t._mpf_
+        return fcmp(s._mpf_, t)
 
     def __lt__(s, t):
         if s._mpf_ == fnan:
@@ -336,7 +332,7 @@ class mpf(mpnumeric):
         t = mpf_convert_rhs(t)
         if t is NotImplemented:
             return t
-        return make_mpf(f(s._mpf_, t._mpf_, gp, gr))
+        return make_mpf(f(s._mpf_, t, gp, gr))
 
     def __add__(s, t):
         r = new(mpf)
@@ -405,12 +401,15 @@ class mpf(mpnumeric):
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
+        else:
+            t = t._mpf_
+
         try:
-            return make_mpf(fpow(s._mpf_, t._mpf_, gp, gr))
+            return make_mpf(fpow(s._mpf_, t, gp, gr))
         except ComplexResult:
             if mp.trap_complex:
                 raise
-            return make_mpc(mpc_pow((s._mpf_, fzero), (t._mpf_, fzero), gp, gr))
+            return make_mpc(mpc_pow((s._mpf_, fzero), (t, fzero), gp, gr))
 
     __radd__ = __add__
 
