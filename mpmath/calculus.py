@@ -73,7 +73,7 @@ def diffc(f, x, n=1, radius=mpf(0.5)):
         def g(t):
             rei = radius*exp(j*t)
             z = x + rei
-            return rei * f(z) / (z-x)**(n+1)
+            return f(z) / rei**n
         d = quadts(g, 0, 2*pi)
         return d * factorial(n) / (2*pi)
     finally:
@@ -296,7 +296,7 @@ def TS_guess_level(prec):
     return int(4 + max(0, log(prec/30.0, 2)))
 
 
-def TS_node(k, h, prec):
+def TS_node(k, hn, prec, a, ar):
     """Calculate an (abscissa, weight) pair for tanh-sinh quadrature.
 
         x[k] = tanh(pi/2 * sinh(k*h))
@@ -305,16 +305,16 @@ def TS_node(k, h, prec):
     oldprec = mp.prec
     mp.prec = prec
     mp.rounding = 'up'
-    t = mpf(k) * h
+    t = ldexp(mpf(k), -hn)
     # We only need to calculate one exponential
-    a = exp(t); ar = 1/a
-    sinht, cosht = (a-ar)/2, (a+ar)/2
-    b = exp((pi * sinht) / 2); br = 1/b
-    sinhb, coshb = (b-br)/2, (b+br)/2
-    x, w = sinhb/coshb, (pi/2)*cosht/coshb**2
+    #sinht, cosht = ldexp(a-ar, -1), ldexp(a+ar, -1)
+    b = exp(a - ar); br = 1/b
+    sinhb, coshb = ldexp(b-br, -1), ldexp(b+br, -1)
+    x, w = sinhb/coshb, (a + ar)/coshb**2
     mp.rounding = 'default'
     mp.prec = oldprec
     return x, w
+
 
 TS_cache = {}
 
@@ -326,11 +326,15 @@ def TS_nodes(prec, m, verbose=False):
     if (prec, m) in TS_cache:
         return TS_cache[(prec, m)]
     eps = ldexp(1, -prec)
-    h = ldexp(1, -m)
-    xs = []
-    ws = []
-    for k in xrange(20 * 2**m + 1):
-        x, w = TS_node(k, h, prec)
+    t = ldexp(1, -m)
+    a0 = exp(t); a0m = 1/a0
+    a1 = a1m = ldexp(pi, -2)
+    xs = [0]
+    ws = [ldexp(pi, -1)]
+    for k in xrange(1, 20 * 2**m + 1):
+        a1 = a1*a0
+        a1m = a1m*a0m
+        x, w = TS_node(k, m, prec, a1, a1m)
         diff = abs(x-1)
         if diff <= eps:
             break
