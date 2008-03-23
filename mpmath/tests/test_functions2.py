@@ -29,6 +29,10 @@ def test_hyper_misc():
     assert ellipe(0).ae(pi/2)
     assert ellipe(0.5).ae(pi**(mpf(3)/2)/gamma(0.25)**2 +gamma(0.25)**2/(8*sqrt(pi)))
     assert ellipe(1) == 1
+    mp.dps = 25
+    v = mpc('1.2282306665029814734863026', '-0.1225033830118305184672133')
+    assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
+    mp.dps = 15
 
 def test_hyper_1f1():
     v = 1.2917526488617656673
