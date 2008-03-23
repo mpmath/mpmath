@@ -1,8 +1,8 @@
-from ..lib import bitcount, to_fixed, from_man_exp, round_nearest
-from ..libmpc import complex_int_pow
-from ..mptypes import mp, mpnumeric, mpf, mpc, make_mpf, make_mpc
+from mpmath.lib import bitcount, to_fixed, from_man_exp, round_nearest
+from mpmath.libmpc import complex_int_pow
+from mpmath.mptypes import mp, mpnumeric, mpf, mpc, make_mpf, make_mpc
 
-from .factorials import int_fac
+from factorials import int_fac
 
 # A Bessel function of the first kind of integer order, J_n(x), is
 # given by the power series

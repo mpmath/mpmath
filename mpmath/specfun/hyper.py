@@ -2,8 +2,8 @@
 Hypergeometric functions.
 """
 
-from ..lib import from_man_exp, to_fixed
-from ..mptypes import mp, mpf, mpc, make_mpf, make_mpc, \
+from mpmath.lib import from_man_exp, to_fixed
+from mpmath.mptypes import mp, mpf, mpc, make_mpf, make_mpc, \
     convert_lossless, inf, pi, extraprec, eps, sqrt
 
 import operator
