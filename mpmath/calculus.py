@@ -635,6 +635,8 @@ def ODE_step_euler(x, y, h, derivs):
     X = derivs(x,y)
     return vadd(y, smul(h, X))
 
+half = mpf(0.5)
+
 def ODE_step_rk4(x, y, h, derivs):
     """
     Advances the solution y(x) from x to x+h using the 4th-order Runge-Kutta
@@ -643,12 +645,15 @@ def ODE_step_rk4(x, y, h, derivs):
     derivs .... a python function f(x, (y1, y2, y3, ...)) returning
     a tuple (y1', y2', y3', ...) where y1' is the derivative of y1 at x.
     """
+    h2 = h/2
+    third = mpf(1)/3
+    sixth = mpf(1)/6
     k1 = smul(h, derivs(x, y))
-    k2 = smul(h, derivs(x+h/2, vadd(y, smul(1./2, k1))))
-    k3 = smul(h, derivs(x+h/2, vadd(y, smul(1./2, k2))))
+    k2 = smul(h, derivs(x+h2, vadd(y, smul(half, k1))))
+    k3 = smul(h, derivs(x+h2, vadd(y, smul(half, k2))))
     k4 = smul(h, derivs(x+h, vadd(y, k3)))
-    return vadd(y, smul(1./6, k1), smul(1./3, k2), smul(1./3, k3), 
-            smul(1./6, k4))
+    return vadd(y, smul(sixth, k1), smul(third, k2), smul(third, k3), 
+            smul(sixth, k4))
 
 def arange(a, b, dt):
     """

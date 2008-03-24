@@ -397,6 +397,7 @@ class mpf(mpnumeric):
             return make_mpf(fpowi(s._mpf_, t, gp, gr))
         if not isinstance(t, mpf):
             if isinstance(t, complex_types):
+                t = convert_lossless(t)
                 return make_mpc(mpc_pow((s._mpf_, fzero), t._mpc_, gp, gr))
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
