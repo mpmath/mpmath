@@ -591,3 +591,142 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
     if isinstance(res, mpc) and not isinstance(I, mpc):
         return res.real, err
     return res, err
+
+def ODE_integrate(t_list, x0, derivs, step):
+    """
+    Given the list t_list of values, returns the solution at these points.
+    """
+    x = x0
+    result = [x]
+    for i in range(len(t_list)-1):
+        dt = t_list[i+1] - t_list[i]
+        x = step(t_list[i], x, dt, derivs)
+        result.append(x)
+    return result
+
+def smul(a, x):
+    """Multiplies the vector "x" by the scalar "a"."""
+    R = []
+    for i in range(len(x)):
+        R.append(a*x[i])
+    return R
+
+def vadd(*args):
+    """Adds vectors "x", "y", ... together."""
+    assert len(args) >= 2
+    n = len(args[0])
+    for x in args:
+        assert len(x) == n
+    R = []
+    for i in range(n):
+        s = 0.
+        for x in args:
+            s += x[i]
+        R.append(s)
+    return R
+
+def ODE_step_euler(x, y, h, derivs):
+    """
+    Advances the solution y(x) from x to x+h using the Euler method.
+
+    derivs .... a python function f(x, (y1, y2, y3, ...)) returning
+    a tuple (y1', y2', y3', ...) where y1' is the derivative of y1 at x.
+    """
+    X = derivs(x,y)
+    return vadd(y, smul(h, X))
+
+def ODE_step_rk4(x, y, h, derivs):
+    """
+    Advances the solution y(x) from x to x+h using the 4th-order Runge-Kutta
+    method.
+
+    derivs .... a python function f(x, (y1, y2, y3, ...)) returning
+    a tuple (y1', y2', y3', ...) where y1' is the derivative of y1 at x.
+    """
+    k1 = smul(h, derivs(x, y))
+    k2 = smul(h, derivs(x+h/2, vadd(y, smul(1./2, k1))))
+    k3 = smul(h, derivs(x+h/2, vadd(y, smul(1./2, k2))))
+    k4 = smul(h, derivs(x+h, vadd(y, k3)))
+    return vadd(y, smul(1./6, k1), smul(1./3, k2), smul(1./3, k3), 
+            smul(1./6, k4))
+
+def arange(a, b, dt):
+    """
+    Returns a list [a, a + dt, a + 2*dt, ..., b]
+    """
+    a, b, dt = mpf(a), mpf(b), mpf(dt)
+    t = a
+    result = [t]
+    while t <= b:
+        t += dt
+        result.append(t)
+    return result
+
+def hypser(a, b, c, z):
+    """
+    Calculates 2F1 using a series expansion.
+    """
+    a, b, c = mpf(a), mpf(b), mpf(c)
+    z = mpc(z)
+    fac = mpf("1.0")
+    temp = fac
+    deriv = mpf("0.0")
+    # The upper bound (1000) should be either passed as a parameter, or
+    # automatically determined for some given precision:
+    for n in range(1,1000):
+        fac *= a*b/c
+        deriv += fac
+        fac *= z/n
+        series = temp + fac
+        temp = series
+        a += 1
+        b += 1
+        c += 1
+    return series, deriv
+
+def hypgeo(a, b, c, z):
+    """
+    Calculates 2F1 by solving a differential equation.
+    """
+
+    def derivs(s, (yy1, yy2, yy3, yy4)):
+        """
+        F .... y1 = yy1 + I*yy2
+        F' ... y2 = yy3 + I*yy4
+
+        """
+        z1 = z
+        y1 = yy1 + 1j*yy2
+        y2 = yy3 + 1j*yy4
+        Z = z0 + s * (z1-z0)
+        A = y2 * (z1-z0)
+        B = (z1-z0)*(a*b*y1-(c-(a+b+1)*Z)*y2)/(Z*(1-Z))
+        return A.real, A.imag, B.real, B.imag
+
+    a, b, c = mpf(a), mpf(b), mpf(c)
+    z = mpc(z)
+
+    if z.real**2 + z.imag**2 <= 0.25:
+        series, deriv = hypser(a, b, c, z)
+        return series
+    if z.real < 0.0: 
+        z0 = -mpf("0.5")
+    elif z.real <= 1.0:
+        z0 = mpf("0.5")
+    else:
+        if z.imag >= 0.:
+            z0 = mpf("0.5")*1j
+        else:
+            z0 = -mpf("0.5")*1j
+
+    solver = ODE_step_rk4
+    s = arange(0, 1, 0.0001)
+    series, deriv = hypser(a, b, c, z0)
+    yy1, yy2 = series.real, series.imag
+    yy3, yy4 = deriv.real, deriv.imag
+    sol = ODE_integrate(s, (yy1, yy2, yy3, yy4), derivs, solver)
+    yy1 = sol[-1][0]
+    yy2 = sol[-1][1]
+    y1 = yy1 + 1j*yy2
+    F = y1
+    return F
