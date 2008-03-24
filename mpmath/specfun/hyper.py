@@ -242,7 +242,7 @@ def sum_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x):
         return make_mpc((re, im))
 
 def parse_param(x):
-    if type(x) is tuple:
+    if isinstance(x, tuple):
         p, q = x
         return [[p, q]], [], []
     if isinstance(x, (int, long)):
@@ -250,8 +250,62 @@ def parse_param(x):
     x = convert_lossless(x)
     if isinstance(x, mpf):
         return [], [x._mpf_], []
-    return [], [], [x._mpc_]
+    if isinstance(x, mpc):
+        return [], [], [x._mpc_]
 
+class _mpq(tuple):
+    @property
+    def _mpf_(self):
+        return (mpf(self[0])/self[1])._mpf_
+    def __add__(self, other):
+        if isinstance(other, _mpq):
+            a, b = self
+            c, d = other
+            return _mpq((a*d+b*c, b*d))
+        return NotImplemented
+    def __sub__(self, other):
+        if isinstance(other, _mpq):
+            a, b = self
+            c, d = other
+            return _mpq((a*d-b*c, b*d))
+        return NotImplemented
+
+_1 = _mpq((1,1))
+_0 = _mpq((0,1))
+
+def _as_num(x):
+    if isinstance(x, list):
+        return _mpq(x)
+    return x
+
+def eval_hyp2f1(a,b,c,z):
+    ar, af, ac = parse_param(a)
+    br, bf, bc = parse_param(b)
+    cr, cf, cc = parse_param(c)
+    absz = abs(z)
+    if absz == 1:
+        print "Warning: 2F1 might not converge for |z| = 1"
+    if absz <= 1:
+        if ar and br and cr:
+            return sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
+        return hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
+    # Use 1/z transformation
+    a = (ar and _as_num(ar[0])) or convert_lossless(a)
+    b = (br and _as_num(br[0])) or convert_lossless(b)
+    c = (cr and _as_num(cr[0])) or convert_lossless(c)
+    orig = mp.prec
+    try:
+        from factorials import gamma as G
+        mp.prec = orig + 15
+        h1 = eval_hyp2f1(a, _1-c+a, _1-b+a, 1/z)
+        h2 = eval_hyp2f1(b, _1-c+b, _1-a+b, 1/z)
+        Gc = G(c)
+        s1 = Gc*G(b-a)/G(b)/G(c-a) * (-z)**(_0-a) * h1
+        s2 = Gc*G(a-b)/G(a)/G(c-b) * (-z)**(_0-b) * h2
+        v = s1 + s2
+    finally:
+        mp.prec = orig
+    return +v
 
 #---------------------------------------------------------------------------#
 #                      And now the user-friendly versions                   #
@@ -280,13 +334,7 @@ def hyper(as, bs, z):
             return sum_hyp1f1_rat(a, b, z)
         return hypsum(ar, af, ac, br, bf, bc, z)
     if degree == (2, 1):
-        ar1, af1, ac1 = parse_param(as[0])
-        ar2, af2, ac2 = parse_param(as[1])
-        br, bf, bc = parse_param(bs[0])
-        if ar1 and ar2 and br:
-            a, b, c = ar1[0], ar2[0], br[0]
-            return sum_hyp2f1_rat(a, b, c, z)
-        return hypsum(ar1+ar2, af1+af2, ac1+ac2, br, bf, bc, z)
+        return eval_hyp2f1(as[0],as[1],bs[0],z)
     ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
     for a in as:
         r, f, c = parse_param(a)
@@ -355,7 +403,7 @@ def ellipe(m):
 # TODO: for complex a, b handle the branch cut correctly
 @extraprec(15, normalize_output=True)
 def agm(a, b):
-    """Arithmetic-geometric mean of a and b..."""
+    """Arithmetic-geometric mean of a and b."""
     a = convert_lossless(a)
     b = convert_lossless(b)
     if not a or not b:
