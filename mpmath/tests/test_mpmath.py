@@ -170,8 +170,10 @@ def test_exp():
 def test_issue_33():
     mp.dps = 512
     a = exp(-1)
+    b = exp(1)
     mp.dps = 15
     assert (+a).ae(0.36787944117144233)
+    assert (+b).ae(2.7182818284590451)
 
 def test_log():
     assert log(1) == 0
