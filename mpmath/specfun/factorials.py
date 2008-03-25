@@ -1,6 +1,6 @@
 from mpmath.lib import *
 from mpmath.libmpc import *
-from mpmath.mptypes import mp, mpf, make_mpf, make_mpc, convert_lossless
+from mpmath.mptypes import mp, mpf, mpc, make_mpf, make_mpc, convert_lossless
 
 def int_fac(n, memo={0:1, 1:1}):
     """Return n factorial (for integers n >= 0 only)."""
@@ -166,3 +166,62 @@ def factorial(x):
         return make_mpf(mpf_gamma(x._mpf_, prec, round_nearest, 0))
     else:
         return make_mpc(mpc_gamma(x._mpc_, prec, round_nearest, 0))
+
+def isnpint(x):
+    if not x:
+        return True
+    if isinstance(x, mpf):
+        sign, man, exp, bc = x._mpf_
+        return sign and exp >= 0
+    if isinstance(x, mpc):
+        return not x.imag and isnpint(x.real)
+
+def gammaquot(a, b):
+    """
+    Computes the product / quotient of gamma functions
+
+        G(a_0) G(a_1) ... G(a_p)
+        ------------------------
+        G(b_0) G(b_1) ... G(a_q)
+
+    with proper cancellation of poles (interpreting the expression as a
+    limit). Returns +inf if the limit diverges.
+    """
+    a = [convert_lossless(x) for x in a]
+    b = [convert_lossless(x) for x in b]
+    poles_num = []
+    poles_den = []
+    regular_num = []
+    regular_den = []
+    for x in a: [regular_num, poles_num][isnpint(x)].append(x)
+    for x in b: [regular_den, poles_den][isnpint(x)].append(x)
+    # One more pole in numerator or denominator gives 0 or inf
+    if len(poles_num) < len(poles_den): return mpf(0)
+    if len(poles_num) > len(poles_den): return mpf('+inf')
+    # All poles cancel
+    # lim G(i)/G(j) = (-1)**(i+j) * gamma(1-j) / gamma(1-i)
+    p = mpf(1)
+    orig = mp.prec
+    try:
+        mp.prec = orig + 15
+        while poles_num:
+            i = poles_num.pop()
+            j = poles_den.pop()
+            p *= (-1)**(i+j) * gamma(1-j) / gamma(1-i)
+        for x in regular_num: p *= gamma(x)
+        for x in regular_den: p /= gamma(x)
+    finally:
+        mp.prec = orig
+    return +p
+
+def binomial(n, k):
+    """Binomial coefficient, C(n,k) = n!/(k!*(n-k)!)."""
+    return gammaquot([n+1], [k+1, n-k+1])
+
+def rf(x, n):
+    """Rising factorial (Pochhammer symbol), x_(n)"""
+    return gammaquot([x+n], [x])
+
+def ff(x, n):
+    """Falling factorial, x_(n)"""
+    return gammaquot([x+1], [x-n+1])

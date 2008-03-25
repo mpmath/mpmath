@@ -75,7 +75,26 @@ def test_hyper_2f1():
     assert hyper([0.2,(3,10)],[0.4+0j],4+2j).ae(v)
     assert hyper([0.2,(3,10)],[(4,10)],4+2j).ae(v)
 
+def test_orthpoly():
+    mp.dps = 15
+    assert jacobi(-4,2,3,0.7).ae(22800./4913)
+    assert jacobi(3,2,4,5.5) == 4133.125
+    assert jacobi(1.5,5/6.,4,0).ae(-1.0851951434075508417)
+    assert legendre(5, 7) == 129367
+    assert legendre(0.5,0).ae(0.53935260118837935667)
+    assert legendre(-1,-1) == 1
+    assert legendre(0,-1) == 1
+    assert legendre(0, 1) == 1
+    assert legendre(1, -1) == -1
+    assert legendre(7, 1) == 1
+    assert legendre(7, -1) == -1
+    assert legendre(8,1.5).ae(15457523./32768)
+    assert legendre(j,-j).ae(2.4448182735671431011 + 0.6928881737669934843j)
+    assert chebyu(5,1) == 6
+    assert chebyt(3,2) == 26
+
 def test_agm():
+    mp.dps = 15
     assert agm(0,0) == 0
     assert agm(0,1) == 0
     assert agm(1,1) == 1
@@ -130,6 +149,34 @@ def test_gamma():
     mp.dps = 15
     assert factorial(0) == 1
     assert factorial(3) == 6
+
+def test_gamma_quotients():
+    mp.dps = 15
+    h = 1e-8
+    ep = 1e-4
+    G = gamma
+    assert gammaquot([-1],[-3,-4]) == 0
+    assert gammaquot([-1,0],[-5]) == inf
+    assert abs(gammaquot([-1],[-2]) - G(-1+h)/G(-2+h)) < 1e-4
+    assert abs(gammaquot([-4,-3],[-2,0]) - G(-4+h)*G(-3+h)/G(-2+h)/G(0+h)) < 1e-4
+    assert rf(3,0) == 1
+    assert rf(2.5,1) == 2.5
+    assert rf(-5,2) == 20
+    assert rf(j,j).ae(gamma(2*j)/gamma(j))
+    assert ff(-2,0) == 1
+    assert ff(-2,1) == -2
+    assert ff(4,3) == 24
+    assert ff(3,4) == 0
+    assert binomial(0,0) == 1
+    assert binomial(1,0) == 1
+    assert binomial(0,-1) == 0
+    assert binomial(3,2) == 3
+    assert binomial(5,2) == 10
+    assert binomial(5,3) == 10
+    assert binomial(5,5) == 1
+    assert binomial(-1,0) == 1
+    assert binomial(-2,-4) == 3
+    assert binomial(4.5, 1.5) == 6.5625
 
 def test_zeta():
     mp.dps = 15

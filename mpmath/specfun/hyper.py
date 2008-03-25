@@ -6,6 +6,8 @@ from mpmath.lib import from_man_exp, to_fixed
 from mpmath.mptypes import mp, mpf, mpc, make_mpf, make_mpc, \
     convert_lossless, inf, pi, extraprec, eps, sqrt
 
+from factorials import gammaquot, binomial
+
 import operator
 
 """
@@ -284,6 +286,8 @@ def eval_hyp2f1(a,b,c,z):
     cr, cf, cc = parse_param(c)
     absz = abs(z)
     if absz == 1:
+        # TODO: determine whether it actually does, and otherwise
+        # return infinity instead
         print "Warning: 2F1 might not converge for |z| = 1"
     if absz <= 1:
         if ar and br and cr:
@@ -295,13 +299,15 @@ def eval_hyp2f1(a,b,c,z):
     c = (cr and _as_num(cr[0])) or convert_lossless(c)
     orig = mp.prec
     try:
-        from factorials import gamma as G
         mp.prec = orig + 15
         h1 = eval_hyp2f1(a, _1-c+a, _1-b+a, 1/z)
         h2 = eval_hyp2f1(b, _1-c+b, _1-a+b, 1/z)
-        Gc = G(c)
-        s1 = Gc*G(b-a)/G(b)/G(c-a) * (-z)**(_0-a) * h1
-        s2 = Gc*G(a-b)/G(a)/G(c-b) * (-z)**(_0-b) * h2
+        #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
+        #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
+        f1 = gammaquot([c,b-a],[b,c-a])
+        f2 = gammaquot([c,a-b],[a,c-b])
+        s1 = f1 * (-z)**(_0-a) * h1
+        s2 = f2 * (-z)**(_0-b) * h2
         v = s1 + s2
     finally:
         mp.prec = orig
@@ -413,3 +419,54 @@ def agm(a, b):
     while abs(a-b) > weps:
         a, b = (a+b)*half, (a*b)**half
     return a
+
+def jacobi(n, a, b, x):
+    """Jacobi polynomial P_n^(a,b)(x)."""
+    orig = mp.prec
+    try:
+        mp.prec = orig + 15
+        x = convert_lossless(x)
+        v = binomial(n+a,n) * hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
+    finally:
+        mp.prec = orig
+    return +v
+
+def legendre(n, x):
+    """Legendre polynomial P_n(x)."""
+    orig = mp.prec
+    try:
+        mp.prec = orig + 15
+        x = convert_lossless(x)
+        if not isinstance(n, (int, long)):
+            n = convert_lossless(n)
+        if x == -1:
+            # TODO: hyp2f1 should handle this
+            if x == int(x):
+                return (-1)**(n + (n>=0)) * mpf(-1)
+            return inf
+        v = hyp2f1(-n,n+1,1,(1-x)/2)
+    finally:
+        mp.prec = orig
+    return +v
+
+def chebyt(n, x):
+    """Chebyshev polynomial of the first kind T_n(x)."""
+    orig = mp.prec
+    try:
+        mp.prec = orig + 15
+        x = convert_lossless(x)
+        v = hyp2f1(-n,n,0.5,(1-x)/2)
+    finally:
+        mp.prec = orig
+    return +v
+
+def chebyu(n, x):
+    """Chebyshev polynomial of the second kind U_n(x)."""
+    orig = mp.prec
+    try:
+        mp.prec = orig + 15
+        x = convert_lossless(x)
+        v = (n+1) * hyp2f1(-n,n+2,1.5,(1-x)/2)
+    finally:
+        mp.prec = orig
+    return +v
