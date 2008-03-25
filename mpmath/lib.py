@@ -1469,7 +1469,7 @@ def fexp(x, prec, rnd=round_fast):
     # Fast handling e**n. TODO: the best cutoff depends on both the
     # size of n and the precision.
     if prec > 600 and exp >= 0:
-        return fpowi(fe(prec+10), man<<exp, prec, rnd)
+        return fpowi(fe(prec+10), (-1) * (man<<exp), prec, rnd)
     # extra precision needs to be similar in magnitude to log_2(|x|)
     prec2 = prec + 6 + max(0, bc+exp)
     t = to_fixed(x, prec2)
