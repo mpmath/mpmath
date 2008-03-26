@@ -56,8 +56,8 @@ def mpc_mul((a, b), (c, d), prec, rnd=round_fast):
         if ((not aman) and aexp) or ((not bman) and bexp) or \
             ((not cman) and cexp) or ((not dman) and dexp):
             wp = prec + 10
-            re = fsub(fmul(a,c, wp), fmul(b,d, wp), prec, rnd)
-            im = fadd(fmul(a,d, wp), fmul(b,c, wp), prec, rnd)
+            re = fsub(fmul(a,c), fmul(b,d), prec, rnd)
+            im = fadd(fmul(a,d), fmul(b,c), prec, rnd)
             return re, im
         # bi * c = bci
         # bi * di = -bd
@@ -130,10 +130,10 @@ def mpc_mul_int((a, b), n, prec, rnd=round_fast):
 def mpc_div((a, b), (c, d), prec, rnd=round_fast):
     wp = prec + 10
     # mag = c*c + d*d
-    mag = fadd(fmul(c, c, wp), fmul(d, d, wp), wp)
+    mag = fadd(fmul(c, c), fmul(d, d), wp)
     # (a*c+b*d)/mag, (b*c-a*d)/mag
-    t = fadd(fmul(a,c,wp), fmul(b,d,wp), wp)
-    u = fsub(fmul(b,c,wp), fmul(a,d,wp), wp)
+    t = fadd(fmul(a,c), fmul(b,d), wp)
+    u = fsub(fmul(b,c), fmul(a,d), wp)
     return fdiv(t,mag,prec,rnd), fdiv(u,mag,prec,rnd)
 
 def mpc_div_mpf((a, b), p, prec, rnd=round_fast):
@@ -208,9 +208,9 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
         return (fzero, im)
     wp = prec+20
     t  = fadd(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
-    u  = fmul(t, fhalf, wp)                # u = t / 2
+    u  = fmul(t, fhalf)                # u = t / 2
     re = fsqrt(u, prec, rnd)               # re = sqrt(u)
-    v  = fmul(t, ftwo, wp)                 # v = t * 2
+    v  = fmul(t, ftwo)                 # v = t * 2
     w  = fsqrt(v, wp)                      # w = sqrt(v)
     im = fdiv(b, w, prec, rnd)             # im = b / w
     return re, im

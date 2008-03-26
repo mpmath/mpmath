@@ -47,6 +47,6 @@ def testit():
         print
         print "finished tests in", ("%.2f" % (tend-tstart)), "seconds"
 
-#import cProfile
-#cProfile.run("testit()", sort=2)
-testit()
+import cProfile
+cProfile.run("testit()", sort=2)
+#testit()

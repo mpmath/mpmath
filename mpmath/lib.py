@@ -551,7 +551,7 @@ def fsub(s, t, prec, rnd=round_fast):
         return fadd(s, fneg(t, prec, rnd), prec, rnd)
     return fadd(s, (1-sign, man, exp, bc), prec, rnd)
 
-def fmul(s, t, prec, rnd=round_fast):
+def fmul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -569,7 +569,10 @@ def fmul(s, t, prec, rnd=round_fast):
     bc = sbc + tbc - 4
     if bc < 4: bc = bctable[man]
     else:      bc += bctable[man>>bc]
-    return normalize(sign, man, sexp+texp, bc, prec, rnd)
+    if prec:
+        return normalize(sign, man, sexp+texp, bc, prec, rnd)
+    else:
+        return (sign, man, sexp+texp, bc)
 
 def fmuli(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
@@ -718,7 +721,7 @@ def fpow(s, t, prec, rnd=round_fast):
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
     c = flog(s, prec+10, rnd)
-    return fexp(fmul(t, c, prec+10, rnd), prec, rnd)
+    return fexp(fmul(t, c), prec, rnd)
 
 def fpowi(s, n, prec, rnd=round_fast):
     """Compute s**n, where s is a raw mpf and n is a Python integer."""
@@ -880,8 +883,8 @@ def to_digits_exp(s, dps):
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(abs(exp)) + 5
-        tmp = from_int(exp, expprec)
-        tmp = fmul(tmp, flog2(expprec), expprec)
+        tmp = from_int(exp)
+        tmp = fmul(tmp, flog2(expprec))
         tmp = fdiv(tmp, flog10(expprec), expprec)
         b = to_int(tmp)
         s = fdiv(s, fpowi(ften, b, bitprec), bitprec)
@@ -1224,7 +1227,7 @@ def fhypot(x, y, prec, rnd=round_fast):
     x and y."""
     if y == fzero: return fabs(x, prec, rnd)
     if x == fzero: return fabs(y, prec, rnd)
-    hypot2 = fadd(fmul(x,x,prec+4), fmul(y,y,prec+4), prec+4)
+    hypot2 = fadd(fmul(x,x), fmul(y,y), prec+4)
     return fsqrt(hypot2, prec, rnd)
 
 
@@ -1883,7 +1886,7 @@ def fasin(x, prec, rnd=round_fast):
     if bc+exp > 0 and x not in (fone, fnone):
         raise ComplexResult("asin(x) is real only for -1 <= x <= 1")
     wp = prec + 15
-    a = fmul(x, x, wp)
+    a = fmul(x, x)
     b = fadd(fone, fsqrt(fsub(fone, a, wp), wp), wp)
     c = fdiv(x, b, wp)
     return fshift(fatan(c, prec, rnd), 1)
@@ -1897,7 +1900,7 @@ def facos(x, prec, rnd=round_fast):
         if x == fnone:
             return fpi(prec, rnd)
     wp = prec + 15
-    a = fmul(x, x, wp)
+    a = fmul(x, x)
     b = fsqrt(fsub(fone, a, wp), wp)
     c = fdiv(b, fadd(fone, x, wp), wp)
     return fshift(fatan(c, prec, rnd), 1)
@@ -1905,7 +1908,7 @@ def facos(x, prec, rnd=round_fast):
 def fasinh(x, prec, rnd=round_fast):
     # asinh(x) = log(x+sqrt(x**2+1))
     wp = prec + 15
-    q = fsqrt(fadd(fmul(x,x,wp), fone, wp), wp)
+    q = fsqrt(fadd(fmul(x,x), fone, wp), wp)
     return flog(fadd(x, q, wp), prec, rnd)
 
 def facosh(x, prec, rnd=round_fast):
@@ -1913,7 +1916,7 @@ def facosh(x, prec, rnd=round_fast):
     wp = prec + 15
     if fcmp(x, fone) == -1:
         raise ComplexResult("acosh(x) is real only for x >= 1")
-    q = fsqrt(fadd(fmul(x,x,wp), fnone, wp), wp)
+    q = fsqrt(fadd(fmul(x,x), fnone, wp), wp)
     return flog(fadd(x, q, wp), prec, rnd)
 
 def fatanh(x, prec, rnd=round_fast):
