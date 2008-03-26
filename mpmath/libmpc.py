@@ -43,15 +43,79 @@ def mpc_mul((a, b), (c, d), prec, rnd=round_fast):
     """Complex multiplication.
 
     Returns the real and imaginary part of (a+bi)*(c+di), rounded to
-    the specified precision. The rnd mode applies to the real and
-    imaginary parts swparately."""
-    # All-real case
-    if b == d == fzero:
-        return fmul(a, c, prec, rnd), fzero
-    wp = prec + 10
-    re = fsub(fmul(a,c,wp), fmul(b,d,wp), prec, rnd)
-    im = fadd(fmul(a,d,wp), fmul(b,c,wp), prec, rnd)
-    return re, im
+    the specified precision. The rounding mode applies to the real and
+    imaginary parts separately."""
+
+    asign, aman, aexp, abc = a
+    bsign, bman, bexp, bbc = b
+    csign, cman, cexp, cbc = c
+    dsign, dman, dexp, dbc = d
+
+    if 0 in (aman, bman, cman, dman):
+        # TODO: use a better strategy for complex infs
+        if ((not aman) and aexp) or ((not bman) and bexp) or \
+            ((not cman) and cexp) or ((not dman) and dexp):
+            wp = prec + 10
+            re = fsub(fmul(a,c, wp), fmul(b,d, wp), prec, rnd)
+            im = fadd(fmul(a,d, wp), fmul(b,c, wp), prec, rnd)
+            return re, im
+        # bi * c = bci
+        # bi * di = -bd
+        # bi * (c + di) = -bd + bci
+        if not aman:
+            if not dman: return fzero, fmul(b, c, prec, rnd)
+            if not cman: return fmul(fneg(b), d, prec, rnd), fzero
+            return fmul(fneg(b), d, prec, rnd), fmul(b, c, prec, rnd)
+        # a * c = ac
+        # a * di = adi
+        # a * (c + di) = ac + adi
+        if not bman:
+            if not dman: return fmul(a, c, prec, rnd), fzero
+            if not cman: return fzero, fmul(a, d, prec, rnd)
+            return fmul(a, c, prec, rnd), fmul(a, d, prec, rnd)
+        # (a + bi) * c
+        if not dman:
+            return fmul(a, c, prec, rnd), fmul(b, c, prec, rnd)
+        # (a + bi) * di = -bd + adi
+        return fmul(fneg(b), d, prec, rnd), fmul(a, d, prec, rnd)
+
+    # Avoid normalizing the temporary products
+    bct = bctable
+
+    psign = asign ^ csign
+    pman = aman * cman
+    pexp = aexp + cexp
+    pbc = abc + cbc - 4
+    if pbc < 4: pbc = bct[pman]
+    else:       pbc += bct[pman>>pbc]
+    p = psign, pman, pexp, pbc
+
+    qsign = (bsign ^ dsign) ^ 1
+    qman = bman * dman
+    qexp = bexp + dexp
+    qbc = bbc + dbc - 4
+    if qbc < 4: qbc = bct[qman]
+    else:       qbc += bct[qman>>qbc]
+    q = qsign, qman, qexp, qbc
+
+    rsign = bsign ^ csign
+    rman = bman * cman
+    rexp = bexp + cexp
+    rbc = bbc + cbc - 4
+    if rbc < 4: rbc = bct[rman]
+    else:       rbc += bct[rman>>rbc]
+    r = rsign, rman, rexp, rbc
+
+    ssign = asign ^ dsign
+    sman = aman * dman
+    sexp = aexp + dexp
+    sbc = abc + dbc - 4
+    if sbc < 4: sbc = bct[sman]
+    else:       sbc += bct[sman>>sbc]
+    s = ssign, sman, sexp, sbc
+
+    return fadd(p, q, prec, rnd), fadd(r, s, prec, rnd)
+
 
 def mpc_mul_mpf((a, b), p, prec, rnd=round_fast):
     re = fmul(a, p, prec, rnd)

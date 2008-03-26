@@ -113,3 +113,10 @@ def test_complex_misc():
     assert 1 + mpc(2) == 3
     assert not mpc(2).ae(2 + 1e-13)
     assert mpc(2+1e-15j).ae(2)
+
+def test_complex_zeros():
+    for a in [0,2]:
+      for b in [0,3]:
+        for c in [0,4]:
+          for d in [0,5]:
+            assert mpc(a,b)*mpc(c,d) == complex(a,b)*complex(c,d)
