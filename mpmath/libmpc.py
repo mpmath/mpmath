@@ -203,16 +203,31 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
     if a == b == fzero:
         return (a, b)
     # When a+bi is a negative real number, we get a real sqrt times i
-    if a[0] and b == fzero:
-        im = fsqrt(fneg(a), prec, rnd)
-        return (fzero, im)
+    if b is fzero:
+        if a[0]:
+            im = fsqrt(fneg(a), prec, rnd)
+            return (fzero, im)
+        else:
+            re = fsqrt(a, prec, rnd)
+            return (re, fzero)
     wp = prec+20
-    t  = fadd(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
-    u  = fmul(t, fhalf)                # u = t / 2
-    re = fsqrt(u, prec, rnd)               # re = sqrt(u)
-    v  = fmul(t, ftwo)                 # v = t * 2
-    w  = fsqrt(v, wp)                      # w = sqrt(v)
-    im = fdiv(b, w, prec, rnd)             # im = b / w
+    if not a[0]:                               # case a positive
+        t  = fadd(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
+        u = fshift(t, -1)                      # u = t/2
+        re = fsqrt(u, prec, rnd)               # re = sqrt(u)
+        v = fshift(t, 1)                       # v = 2*t
+        w  = fsqrt(v, wp)                      # w = sqrt(v)
+        im = fdiv(b, w, prec, rnd)             # im = b / w
+    else:                                      # case a negative
+        t =fsub(mpc_abs((a, b), wp), a, wp)    # t = abs(a+bi) - a
+        u = fshift(t, -1)                      # u = t/2
+        im = fsqrt(u, prec, rnd)               # im = sqrt(u)
+        v = fshift(t, 1)                       # v = 2*t
+        w  = fsqrt(v, wp)                      # w = sqrt(v)
+        re = fdiv(b, w, prec, rnd)             # re = b/w
+        if b[0]:
+            re = fneg(re, prec, rnd)
+            im = fneg(im, prec, wp)
     return re, im
 
 def mpc_exp((a, b), prec, rnd=round_fast):
