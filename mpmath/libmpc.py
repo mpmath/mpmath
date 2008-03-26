@@ -209,23 +209,23 @@ def mpc_sin((a, b), prec, rnd=round_fast):
     return re, im
 
 def mpc_tan(z, prec, rnd=round_fast):
+    """Complex tangent. Computed as tan(a+bi) = sin(2a)/M + sinh(2b)/M*i
+    where M = cos(2a) + cosh(2b)."""
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
     if b == fzero: return ftan(a, prec, rnd), fzero
     if a == fzero: return fzero, ftanh(b, prec, rnd)
-    wp = prec + 25
-    # very close to 0
-    high = max(aexp+abc, bexp+bbc)
-    if high < -10:
-        return mpc_div(mpc_sin(z, wp), mpc_cos(z, wp), prec, rnd)
-    # tan(z) = (-I) * (exp(2*I*z) - 1) / (exp(2*I*z + 1)
-    z2i = fneg(fshift(b, 1)), fshift(a, 1)
-    re, im = mpc_exp(z2i, wp)
-    rem1 = fadd(re, fnone, wp)
-    rwp1 = fadd(re, fone, wp)
-    a, b = mpc_div((rem1, im), (rwp1, im), prec, rnd)
-    return b, fneg(a)
+    wp = prec + 15
+    a = fshift(a, 1)
+    b = fshift(b, 1)
+    c, s = cos_sin(a, wp)
+    ch, sh = cosh_sinh(b, wp)
+    # TODO: handle cancellation when c ~=  -1 and ch ~= 1
+    mag = fadd(c, ch, wp)
+    re = fdiv(s, mag, prec, rnd)
+    im = fdiv(sh, mag, prec, rnd)
+    return re, im
 
 def mpc_cosh((a, b), prec, rnd=round_fast):
     """Complex hyperbolic cosine. Computed as cosh(z) = cos(z*i)."""
