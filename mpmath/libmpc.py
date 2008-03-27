@@ -203,7 +203,7 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
     if a == b == fzero:
         return (a, b)
     # When a+bi is a negative real number, we get a real sqrt times i
-    if b is fzero:
+    if b == fzero:
         if a[0]:
             im = fsqrt(fneg(a), prec, rnd)
             return (fzero, im)
@@ -219,15 +219,15 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
         w  = fsqrt(v, wp)                      # w = sqrt(v)
         im = fdiv(b, w, prec, rnd)             # im = b / w
     else:                                      # case a negative
-        t =fsub(mpc_abs((a, b), wp), a, wp)    # t = abs(a+bi) - a
+        t = fsub(mpc_abs((a, b), wp), a, wp)   # t = abs(a+bi) - a
         u = fshift(t, -1)                      # u = t/2
         im = fsqrt(u, prec, rnd)               # im = sqrt(u)
         v = fshift(t, 1)                       # v = 2*t
         w  = fsqrt(v, wp)                      # w = sqrt(v)
         re = fdiv(b, w, prec, rnd)             # re = b/w
         if b[0]:
-            re = fneg(re, prec, rnd)
-            im = fneg(im, prec, wp)
+            re = fneg(re)
+            im = fneg(im)
     return re, im
 
 def mpc_exp((a, b), prec, rnd=round_fast):

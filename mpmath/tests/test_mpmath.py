@@ -238,6 +238,25 @@ def test_complex_powers():
     assert (e**(-pi*1j)).ae(-1)
     mp.dps = 15
 
+def test_complex_sqrt_accuracy():
+    def test_mpc_sqrt(lst):
+      for a, b in lst:
+        z = mpc(a + j*b)
+        assert abs(sqrt(z*z) - z) <  10**-dps
+        z = mpc(-a + j*b)
+        assert abs(sqrt(z*z) + z) <  10**-dps
+        z = mpc(a - j*b)
+        assert abs(sqrt(z*z) - z) <  10**-dps
+        z = mpc(-a - j*b)
+        assert abs(sqrt(z*z) + z) <  10**-dps
+    random.seed(2)
+    N = 10
+    mp.dps = 30
+    dps = mp.dps
+    test_mpc_sqrt([(random.uniform(0, 10),random.uniform(0, 10)) for i in range(N)])
+    test_mpc_sqrt([(i + 0.1, (i + 0.2)*10**i) for i in range(N)])
+    mp.dps = 15
+
 def test_atan():
     assert atan(-2.3).ae(math.atan(-2.3))
     assert atan2(1,1).ae(math.atan2(1,1))

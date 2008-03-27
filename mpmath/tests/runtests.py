@@ -5,6 +5,9 @@ python runtests.py -py
 python runtests.py -psyco
   Enable psyco to make tests run about 50% faster
 
+python runtests.py -profile
+  Generate profile stats (this is much slower)
+
 """
 
 import sys
@@ -13,6 +16,11 @@ if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
     import psyco
     psyco.full()
+
+profile = False
+if "-profile" in sys.argv:
+    sys.argv.remove('-profile')
+    profile = True
 
 def testit():
     if "-py" in sys.argv:
@@ -47,6 +55,8 @@ def testit():
         print
         print "finished tests in", ("%.2f" % (tend-tstart)), "seconds"
 
-import cProfile
-cProfile.run("testit()", sort=2)
-#testit()
+if profile:
+    import cProfile
+    cProfile.run("testit()", sort=2)
+else:
+    testit()
