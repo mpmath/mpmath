@@ -4,7 +4,7 @@ from mptypes import *
 from intervals import mpi
 
 from calculus import diff, diffc, secant, polyval, polyroots, quadts
-from calculus import sumem
+from calculus import sumem, chebyfit
 
 from specfun import gamma, factorial, lower_gamma, upper_gamma, \
     gammaquot, binomial, rf, ff

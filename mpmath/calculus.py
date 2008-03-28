@@ -592,6 +592,10 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
         return res.real, err
     return res, err
 
+#----------------------------------------------------------------------------#
+#                                  ODE solvers                               #
+#----------------------------------------------------------------------------#
+
 def ODE_integrate(t_list, x0, derivs, step):
     """
     Given the list t_list of values, returns the solution at these points.
@@ -667,71 +671,61 @@ def arange(a, b, dt):
         result.append(t)
     return result
 
-def hypser(a, b, c, z):
-    """
-    Calculates 2F1 using a series expansion.
-    """
-    a, b, c = mpf(a), mpf(b), mpf(c)
-    z = mpc(z)
-    fac = mpf("1.0")
-    temp = fac
-    deriv = mpf("0.0")
-    # The upper bound (1000) should be either passed as a parameter, or
-    # automatically determined for some given precision:
-    for n in range(1,1000):
-        fac *= a*b/c
-        deriv += fac
-        fac *= z/n
-        series = temp + fac
-        temp = series
-        a += 1
-        b += 1
-        c += 1
-    return series, deriv
+#----------------------------------------------------------------------------#
+#                              Approximation methods                         #
+#----------------------------------------------------------------------------#
 
-def hypgeo(a, b, c, z):
-    """
-    Calculates 2F1 by solving a differential equation.
-    """
+# The Chebyshev approximation formula is given at:
+# http://mathworld.wolfram.com/ChebyshevApproximationFormula.html
 
-    def derivs(s, (yy1, yy2, yy3, yy4)):
-        """
-        F .... y1 = yy1 + I*yy2
-        F' ... y2 = yy3 + I*yy4
+# The only major changes in the following code is that we return the
+# expanded polynomial coefficients instead of Chebyshev coefficients,
+# and that we automatically transform [a,b] -> [-1,1] and back
+# for convenience.
 
-        """
-        z1 = z
-        y1 = yy1 + 1j*yy2
-        y2 = yy3 + 1j*yy4
-        Z = z0 + s * (z1-z0)
-        A = y2 * (z1-z0)
-        B = (z1-z0)*(a*b*y1-(c-(a+b+1)*Z)*y2)/(Z*(1-Z))
-        return A.real, A.imag, B.real, B.imag
+# Coefficient in Chebyshev approximation
+def chebcoeff(f,a,b,j,N):
+    s = mpf(0)
+    h = mpf(0.5)
+    for k in range(1, N+1):
+        t = cos(pi*(k-h)/N)
+        s += f(t*(b-a)*h + (b+a)*h) * cos(pi*j*(k-h)/N)
+    return 2*s/N
 
-    a, b, c = mpf(a), mpf(b), mpf(c)
-    z = mpc(z)
+# Generate Chebyshev polynomials T_n(ax+b) in expanded form
+def chebT(a=1, b=0):
+    Tb = [1]
+    yield Tb
+    Ta = [b, a]
+    while 1:
+        yield Ta
+        # Recurrence: T[n+1](ax+b) = 2*(ax+b)*T[n](ax+b) - T[n-1](ax+b)
+        Tmp = [0] + [2*a*t for t in Ta]
+        for i, c in enumerate(Ta): Tmp[i] += 2*b*c
+        for i, c in enumerate(Tb): Tmp[i] -= c
+        Ta, Tb = Tmp, Ta
 
-    if z.real**2 + z.imag**2 <= 0.25:
-        series, deriv = hypser(a, b, c, z)
-        return series
-    if z.real < 0.0: 
-        z0 = -mpf("0.5")
-    elif z.real <= 1.0:
-        z0 = mpf("0.5")
-    else:
-        if z.imag >= 0.:
-            z0 = mpf("0.5")*1j
-        else:
-            z0 = -mpf("0.5")*1j
-
-    solver = ODE_step_rk4
-    s = arange(0, 1, 0.0001)
-    series, deriv = hypser(a, b, c, z0)
-    yy1, yy2 = series.real, series.imag
-    yy3, yy4 = deriv.real, deriv.imag
-    sol = ODE_integrate(s, (yy1, yy2, yy3, yy4), derivs, solver)
-    yy1 = sol[-1][0]
-    yy2 = sol[-1][1]
-    y1 = yy1 + 1j*yy2
-    F = y1
-    return F
+def chebyfit(f,a,b,N):
+    """Chebyshev approximation: returns coefficients of a degree N-1
+    polynomial that approximates f on the interval [a, b], along with
+    an estimate of the maximum error."""
+    orig = mp.prec
+    try:
+        mp.prec = orig + int(N**0.5) + 20
+        c = [chebcoeff(f,a,b,k,N) for k in range(N)]
+        d = [mpf(0)] * N
+        d[0] = -c[0]/2
+        h = mpf(0.5)
+        T = chebT(mpf(2)/(b-a), mpf(-1)*(b+a)/(b-a))
+        for k in range(N):
+            Tk = T.next()
+            for i in range(len(Tk)):
+                d[i] += c[k]*Tk[i]
+        # Estimate maximum error
+        err = mpf(0)
+        for k in range(N):
+            x = cos(pi*k/N) * (b-a)*h + (b+a)*h
+            err = max(err, abs(f(x) - polyval(d, x)))
+    finally:
+        mp.prec = orig
+        return d, +err
