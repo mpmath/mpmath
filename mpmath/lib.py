@@ -1097,7 +1097,7 @@ def _sqrt_fixed(y, prec):
         prevp = p
     return r >> extra
 
-def sqrt_fixed(y, prec):
+def sqrt_fixed(y, prec,shifted=True):
     """
     Square root of a fixed-point number. Given the big integer
     y = floor(x * 2**prec), this function returns floor(r * 2**prec)
@@ -1111,20 +1111,20 @@ def sqrt_fixed(y, prec):
     prec2 = prec + extra
     # unwind giant_steps; for prec2 <= 100 giant_steps(50, prec2)
     # has one element, for 100 < prec2 < 200 it has at 2 elements
-    if prec2 <= 199:
-        if prec2 <= 100:
-            r = lshift(r, prec2-51) + ((y << 59)//r)
-            return r >> extra
+    if prec2 <= 100:
+        r = lshift(r, prec2-51) + ((y << 59)//r)
+    elif prec2 <= 199:
         p = prec2//2 + 1
         r = (r << (p-51)) + (lshift(y, p+59-prec2)//r)
         r = (r << (prec2-p-1)) + ((y << (p+9))//r)
-        return r >> extra
-    prevp1 = prec2//2 + 1
-    for p in giant_steps(50, prevp1):
-        r = (r << (p-prevp-1)) + (y >> (prec2-p-prevp-9))//r
-        prevp = p
-    r = (r << (prec2-prevp1-1)) + (y << (prevp1+9))//r
-    return r >> extra
+    else:
+        prevp1 = prec2//2 + 1
+        for p in giant_steps(50, prevp1):
+            r = (r << (p-prevp-1)) + (y >> (prec2-p-prevp-9))//r
+            prevp = p
+        r = (r << (prec2-prevp1-1)) + (y << (prevp1+9))//r
+    if shifted: return r >> extra
+    else:       return r, extra
 
 def sqrt_fixed2(y, prec):
     """
@@ -1216,11 +1216,12 @@ def fsqrt(s, prec, rnd=round_fast):
     man = rshift(man, shift)
 
     if prec < 20000:
-        man = sqrt_fixed(man, prec2)
+        man, extra = sqrt_fixed(man, prec2, False)
     else:
         man = sqrt_fixed2(man, prec2)
+        extra = 0
 
-    return from_man_exp(man, (exp+shift-prec2)>>1, prec, rnd)
+    return from_man_exp(man, ((exp+shift-prec2)>>1) - extra, prec, rnd)
 
 def fhypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
