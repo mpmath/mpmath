@@ -14,6 +14,66 @@ from mptypes import *
 from specfun import factorial, bernoulli2n
 
 #----------------------------------------------------------------------------#
+#                       General extrapolation methods                        #
+#----------------------------------------------------------------------------#
+
+def richardson_extrapolation(f, n, N):
+    if not callable(f):
+        g = f; f = lambda k: g.__getitem__(int(k))
+    orig = mp.prec
+    try:
+        mp.prec = 2*orig
+        s = mpf(0)
+        for j in range(0, N+1):
+            c = (n+j)**N * (-1)**(j+N) / (factorial(j) * factorial(N-j))
+            s += c * f(mpf(n+j))
+    finally:
+        mp.prec = orig
+    return +s
+
+def shanks_extrapolation(f, n, m=1):
+    if not callable(f):
+        g = f; f = lambda k: g.__getitem__(int(k))
+    orig = mp.prec
+    try:
+        mp.prec = 2*orig
+        table = [f(mpf(j)) for j in range(n+m+2)]
+        table2 = table[:]
+        for i in range(1, m+1):
+            for j in range(i, n+m+1):
+                x, y, z = table[j-1], table[j], table[j+1]
+                try:
+                    table2[j] = (z*x - y**2) / (z + x - 2*y)
+                except ZeroDivisionError:
+                    return table2[j-1]
+            table = table2[:]
+    finally:
+        mp.prec = orig
+    return +table[n]
+
+def limit(f, x, direction=-1, n=None, N=None):
+    """Compute lim of f(t) as t -> x using Richardson extrapolation.
+    For infinite x, the function values [f(n), ... f(n+N)] are used.
+    For finite x, [f(x-direction/n)), ... f(x-direction/(n+N))] are
+    used. If x is inf, f can be also be a precomputed sequence
+    with a __getitem__ method."""
+    if callable(f):
+        if not n: n = 3 + int(mp.dps * 0.5)
+        if not N: N = 2*n
+    else:
+        # If a sequence, take as many terms are are available
+        g = f; f = lambda k: g.__getitem__(int(k))
+        if not N: N = len(g)-1
+        if not n: n = 0
+    if   x == inf:  return richardson_extrapolation(lambda k: f(mpf(k)), n, N)
+    elif x == -inf: return richardson_extrapolation(lambda k: f(mpf(-k)), n, N)
+    direction *= mpf(1)
+    def g(k):
+        return f(x - direction/(1+k))
+    return richardson_extrapolation(g, n, N)
+
+
+#----------------------------------------------------------------------------#
 #                                Differentiation                             #
 #----------------------------------------------------------------------------#
 
@@ -479,6 +539,49 @@ def quadts(f, a, b, **options):
 #----------------------------------------------------------------------------#
 #                               Numerical summation                          #
 #----------------------------------------------------------------------------#
+
+def sumrich(f, a, b, n=None, N=None):
+    """Sum f(k) for k = a..b using Richardson extrapolation. This
+    function is essentially equivalent to using limit() on the
+    sequence of partial sums."""
+    assert b == inf
+    if not n: n = 3 + int(mp.dps * 0.5)
+    if not N: N = 2*n
+    orig = mp.prec
+    try:
+        mp.prec = 2*orig
+        s = mpf(0)
+        tbl = []
+        for k in range(a, a+n+N+1):
+            s += f(mpf(k))
+            tbl.append(s)
+        s = richardson_extrapolation(lambda k: tbl[int(k)], n, N)
+    finally:
+        mp.prec = orig
+    return +s
+
+def sumsh(f, a, b, n=None, m=None):
+    """Sum f(k) for k = a..b using an n-term Shanks
+    transformation. With m > 1, the Shanks transformation is applied
+    recursively m times.
+
+    Shanks summation often works well for slowly convergent and/or
+    alternating Taylor series."""
+    assert b == inf
+    if not n: n = 5 + int(mp.dps * 1.2)
+    if not m: m = 2 + n//3
+    orig = mp.prec
+    try:
+        mp.prec = 2*orig
+        s = mpf(0)
+        tbl = []
+        for k in range(a, a+n+m+2):
+            s += f(mpf(k))
+            tbl.append(s)
+        s = shanks_extrapolation(tbl, n, m)
+    finally:
+        mp.prec = orig
+    return +s
 
 @extraprec(15, normalize_output=True)
 def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):

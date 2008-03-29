@@ -344,12 +344,3 @@ def test_misc_bugs():
     mp.dps = 1000
     log(1302)
     mp.dps = 15
-
-def test_approximation():
-    mp.dps = 15
-    f = lambda x: cos(2-2*x)/x
-    p, err = chebyfit(f, 2, 4, 8)
-    assert err < 1e-5
-    for i in range(10):
-        x = 2 + i/5.
-        assert abs(polyval(p, x) - f(x)) < err
