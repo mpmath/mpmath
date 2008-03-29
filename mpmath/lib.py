@@ -1437,29 +1437,25 @@ def fe(prec, rnd=round_fast):
 # exp(x) as exp(t)*(2**n), using the Maclaurin series for exp(t)
 # (the multiplication by 2**n just amounts to shifting the exponent).
 
-def exp_series(x, prec):
-    r = int(2 * prec**0.4)
-    # XXX: more careful calculation of guard bits
-    guards = r + 3
-    #if prec > 60:
-    #    guards += int(math.log(prec))
-    prec2 = prec + guards
-    x <<= (guards - r)
-    s = (1 << prec2) + x
+# Input: x * 2**prec
+# Output: exp(x) * 2**(prec + r)
+def exp_series(x, prec, r):
+    x >>= r
+    s = (1 << prec) + x
     a = x
     k = 2
     # Sum exp(x/2**r)
     while 1:
-        a = ((a*x) >> prec2) // k
+        a = ((a*x) >> prec) // k
         if not a:
             break
         s += a
         k += 1
     # Calculate s**(2**r) by repeated squaring
     while r:
-        s = (s*s) >> prec2
+        s = (s*s) >> prec
         r -= 1
-    return s >> guards
+    return s
 
 def fexp(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
@@ -1474,19 +1470,20 @@ def fexp(x, prec, rnd=round_fast):
     if prec > 600 and exp >= 0:
         return fpowi(fe(prec+10), (-1)**sign *(man<<exp), prec, rnd)
     # extra precision needs to be similar in magnitude to log_2(|x|)
-    prec2 = prec + 6 + max(0, bc+exp)
-    t = to_fixed(x, prec2)
+    # for the modulo reduction, plus r for the error from squaring r times
+    wp = prec + max(0, bc+exp)
+    r = int(2 * wp**0.4)
+    wp += r + 20
+    t = to_fixed(x, wp)
     # abs(x) > 1?
     if exp+bc > 1:
-        lg2 = log2_fixed(prec2)
+        lg2 = log2_fixed(wp)
         n, t = divmod(t, lg2)
     else:
         n = 0
-    man = exp_series(t, prec2)
-    #print prec2, bitcount(man)
-    bc = prec2 + bctable[man >> prec2]
-    return normalize(0, man, -prec2+n, bc, prec, rnd)
-    #return from_man_exp(exp_series(t, prec2), -prec2+n, prec, rnd)
+    man = exp_series(t, wp, r)
+    bc = wp + bctable[man >> wp]
+    return normalize(0, man, -wp+n, bc, prec, rnd)
 
 
 #----------------------------------------------------------------------------#
@@ -1516,15 +1513,20 @@ def fexp(x, prec, rnd=round_fast):
 # This function performs the Newton iteration using fixed-point
 # arithmetic. x is assumed to have magnitude ~= 1
 def log_newton(x, prec):
-    extra = 8
+    extra = 10
     # 50-bit approximation
     fx = math.log(x) - 0.69314718055994529*prec
     r = int(fx * 2.0**50)
     prevp = 50
     for p in giant_steps(50, prec+extra):
         rb = lshift(r, p-prevp)
-        e = exp_series(-rb, p)
-        r = rb + ((rshift(x, prec-p)*e)>>p) - (1 << p)
+
+        # Parameters for exponential series
+        r = int(2 * p**0.4)
+        exp_extra = r + 10
+
+        e = exp_series((-rb) << exp_extra, p + exp_extra, r)
+        r = rb + ((rshift(x, prec-p)*e)>>(p + exp_extra)) - (1 << p)
         prevp = p
     return r >> extra
 
@@ -1543,7 +1545,7 @@ def flog(x, prec, rnd=round_fast):
         return fzero
     bc_plus_exp = bc + exp
     # Estimated precision needed for log(t) + n*log(2)
-    prec2 = prec + int(math.log(1+abs(bc_plus_exp), 2)) + 10
+    prec2 = prec + int(math.log(1+abs(bc_plus_exp), 2)) + 15
     # Watch out for the case when x is very close to 1
     if -1 < bc_plus_exp < 2:
         near_one = fabs(fsub(x, fone, 53), 53)
