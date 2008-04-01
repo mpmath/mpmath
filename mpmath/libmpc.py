@@ -334,25 +334,150 @@ def mpc_atan((a, b), prec, rnd=round_fast):
     # (I/2) * (a+b*I) = (-b/2 + a/2*I)
     return fneg(fshift(b,-1)), fshift(a,-1)
 
-def mpc_asin(z, prec, rnd=round_fast):
-    # asin(z) = -I * log(I*z + sqrt(1-z*z))
+beta_crossover = from_float(0.6417)
+alpha_crossover = from_float(1.5)
+
+def acos_asin(z, prec, rnd, n):
+    """ complex acos for n = 0, asin for n = 1
+    The algorithm is described in 
+    T.E. Hull, T.F. Fairgrieve and P.T.P. Tang
+    'Implementing the Complex Arcsine and Arcosine Functions
+    using Exception Handling', 
+    ACM Trans. on Math. Software Vol. 23 (1997), p299
+    The complex acos and asin can be defined as
+    acos(z) = acos(beta) - I*sign(a)* log(alpha + sqrt(alpha**2 -1))
+    asin(z) = asin(beta) + I*sign(a)* log(alpha + sqrt(alpha**2 -1))
+    where z = a + I*b
+    alpha = (1/2)*(r + s); beta = (1/2)*(r - s) = a/alpha
+    r = sqrt((a+1)**2 + y**2); s = sqrt((a-1)**2 + y**2)
+    These expressions are rewritten in different ways in different
+    regions, delimited by two crossovers alpha_crossover and beta_crossover,
+    and by abs(a) <= 1, in order to improve the numerical accuracy.
+    """
     a, b = z
-    Iz = fneg(b), a
-    wp = prec + 15
-    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp), wp), wp)
-    a, b = mpc_log(mpc_add(Iz, x, wp), prec, rnd)
-    return b, fneg(a)
+    wp = prec + 10
+    # special cases with real argument
+    if b == fzero:
+        am = fsub(fone, fabs(a), wp)
+        # case abs(a) <= 1 
+        if not am[0]:
+            if n == 0:
+                return facos(a, prec, rnd), fzero
+            else:
+                return fasin(a, prec, rnd), fzero
+        # cases abs(a) > 1
+        else:
+            # case a < -1
+            if a[0]:
+                pi = fpi(prec, rnd)
+                c = facosh(fneg(a), prec, rnd)
+                if n == 0:
+                    return pi, fneg(c)
+                else:
+                    return fneg(fshift(pi, -1)), c
+            # case a > 1
+            else:
+                c = facosh(a, prec, rnd)
+                if n == 0:
+                    return fzero, c
+                else:
+                    pi = fpi(prec, rnd)
+                    return fshift(pi, -1), fneg(c)
+    asign = bsign = 0
+    if a[0]:
+        a = fneg(a)
+        asign = 1
+    if b[0]:
+        b = fneg(b)
+        bsign = 1
+    am = fsub(fone, a, wp)
+    ap = fadd(fone, a, wp)
+    r = fhypot(ap, b, wp)
+    s = fhypot(am, b, wp)
+    alpha = fshift(fadd(r, s, wp), -1)
+    beta = fdiv(a, alpha, wp)
+    b2 = fmul(b,b, wp)
+    # case beta <= beta_crossover
+    if not fsub(beta_crossover, beta, wp)[0]:
+        if n == 0:
+            re = facos(beta, wp)
+        else:
+            re = fasin(beta, wp)
+    else:
+        # to compute the real part in this region use the identity
+        # asin(beta) = atan(beta/sqrt(1-beta**2))
+        # beta/sqrt(1-beta**2) = (alpha + a) * (alpha - a)
+        # alpha + a is numerically accurate; alpha - a can have 
+        # cancellations leading to numerical inaccuracies, so rewrite
+        # it in differente ways according to the region
+        Ax = fadd(alpha, a, wp)
+        # case a <= 1
+        if not am[0]:
+            # c = b*b/(r + (a+1)); d = (s + (1-a))
+            # alpha - a = (1/2)*(c + d)
+            # case n=0: re = atan(sqrt((1/2) * Ax * (c + d))/a)
+            # case n=1: re = atan(a/sqrt((1/2) * Ax * (c + d)))
+            c = fdiv(b2, fadd(r, ap, wp), wp)
+            d = fadd(s, am, wp)
+            re = fshift(fmul(Ax, fadd(c, d, wp), wp), -1)
+            if n == 0:
+                re = fatan(fdiv(fsqrt(re, wp), a, wp), wp)
+            else:
+                re = fatan(fdiv(a, fsqrt(re, wp), wp), wp)
+        else:
+            # c = Ax/(r + (a+1)); d = Ax/(s - (1-a))
+            # alpha - a = (1/2)*(c + d)
+            # case n = 0: re = atan(b*sqrt(c + d)/2/a)
+            # case n = 1: re = atan(a/(b*sqrt(c + d)/2)
+            c = fdiv(Ax, fadd(r, ap, wp), wp)
+            d = fdiv(Ax, fsub(s, am, wp), wp)
+            re = fshift(fadd(c, d, wp), -1)
+            re = fmul(b, fsqrt(re, wp), wp)
+            if n == 0:
+                re = fatan(fdiv(re, a, wp), wp)
+            else:
+                re = fatan(fdiv(a, re, wp), wp)
+    # to compute alpha + sqrt(alpha**2 - 1), if alpha <= alpha_crossover
+    # replace it with 1 + Am1 + sqrt(Am1*(alpha+1)))
+    # where Am1 = alpha -1
+    # if alpha <= alpha_crossover:
+    if not fsub(alpha_crossover, alpha, wp)[0]:
+        c1 = fdiv(b2, fadd(r, ap, wp), wp)
+        # case a < 1
+        if fneg(am)[0]:
+            # Am1 = (1/2) * (b*b/(r + (a+1)) + b*b/(s + (1-a))
+            c2 = fadd(s, am, wp)
+            c2 = fdiv(b2, c2, wp)
+            Am1 = fshift(fadd(c1, c2, wp), -1)
+        else:
+            # Am1 = (1/2) * (b*b/(r + (a+1)) + (s - (1-a)))
+            c2 = fsub(s, am, wp)
+            Am1 = fshift(fadd(c1, c2, wp), -1)
+        # im = log(1 + Am1 + sqrt(Am1*(alpha+1)))
+        im = fmul(Am1, fadd(alpha, fone, wp), wp)
+        im = flog(fadd(fone, fadd(Am1, fsqrt(im, wp), wp), wp), wp)
+    else:
+        # im = log(alpha + sqrt(alpha*alpha - 1))
+        im = fsqrt(fsub(fmul(alpha, alpha, wp), fone, wp), wp)
+        im = flog(fadd(alpha, im, wp), wp)
+    if asign:
+        if n == 0:
+            re = fsub(fpi(wp), re, wp)
+        else:
+            re = fneg(re)
+    if not bsign and n == 0:
+        im = fneg(im)
+    if bsign and n == 1:
+        im = fneg(im)
+    re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
+    im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    return re, im
 
 def mpc_acos(z, prec, rnd=round_fast):
-    # acos(z) = pi/2 + I * log(I*z + sqrt(1-z*z))
-    a, b = z
-    Iz = fneg(b), a
-    wp = prec + 15
-    x = mpc_sqrt(mpc_sub(mpc_one, mpc_mul(z,z,wp), wp), wp)
-    a, b = mpc_log(mpc_add(Iz, x, wp), wp)
-    a, b = fneg(b), fpos(a, prec, rnd)
-    a = fadd(a, fshift(fpi(wp), -1), prec, rnd)
-    return a, b
+    return acos_asin(z, prec, rnd, 0)
+
+def mpc_asin(z, prec, rnd=round_fast):
+    return acos_asin(z, prec, rnd, 1)
 
 def mpc_asinh(z, prec, rnd=round_fast):
     # asinh(z) = log(x + sqrt(x**2 + 1))

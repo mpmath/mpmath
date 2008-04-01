@@ -331,6 +331,14 @@ def test_complex_inverse_functions():
         # functions are inaccurate
         assert asin(z1).ae(cmath.asin(z1), rel_eps=1e-12)
         assert acos(z1).ae(cmath.acos(z1), rel_eps=1e-12)
+        one = mpf(1)
+        for i in range(-9, 10, 3):
+            for k in range(-9, 10, 3):
+                a = 0.9*j*10**k + 0.8*one*10**i
+                b = cos(acos(a))
+                assert b.ae(a)
+                b = sin(asin(a))
+                assert b.ae(a)
 
 def test_ldexp():
     mp.dps = 15
