@@ -339,7 +339,16 @@ def test_complex_inverse_functions():
             assert b.ae(a)
             b = sin(asin(a))
             assert b.ae(a)
-
+    one = mpf(1)
+    err = 2*10**-15
+    for i in range(-9, 9, 3):
+        for k in range(-9, 9, 3):
+            a = -0.9*10**k + j*0.8*one*10**i
+            b = cosh(acosh(a))
+            assert b.ae(a, err)
+            b = sinh(asinh(a))
+            assert b.ae(a, err)
+    
 def test_ldexp():
     mp.dps = 15
     assert ldexp(mpf(2.5), 0) == 2.5

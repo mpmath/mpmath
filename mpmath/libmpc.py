@@ -480,19 +480,19 @@ def mpc_asin(z, prec, rnd=round_fast):
     return acos_asin(z, prec, rnd, 1)
 
 def mpc_asinh(z, prec, rnd=round_fast):
-    # asinh(z) = log(x + sqrt(x**2 + 1))
-    wp = prec + 15
-    z2 = mpc_mul(z, z, wp)
-    q = mpc_sqrt(mpc_add(z2, mpc_one, wp), wp)
-    return mpc_log(mpc_add(z, q, wp), prec, rnd)
+    # asinh(z) = I * asin(-I z)
+    a, b = z
+    a, b =  mpc_asin((b, fneg(a)), prec, rnd)
+    return fneg(b), a
 
 def mpc_acosh(z, prec, rnd=round_fast):
-    # acosh(z) = log(z+sqrt(z-1)*sqrt(z+1))
-    wp = prec + 15
-    a = mpc_sqrt(mpc_add(z, mpc_one, wp), wp)
-    b = mpc_sqrt(mpc_sub(z, mpc_one, wp), wp)
-    q = mpc_mul(a, b, wp)
-    return mpc_log(mpc_add(z, q, wp), prec, rnd)
+    # acosh(z) = -I * acos(z)   for Im(acos(z)) <= 0
+    #            +I * acos(z)   otherwise
+    a, b = mpc_acos(z, prec, rnd)
+    if b[0] or b == fzero:
+        return fneg(b), a
+    else:
+        return b, fneg(a)
 
 def mpc_atanh(z, prec, rnd=round_fast):
     # atanh(z) = (log(1+z)-log(1-z))/2
