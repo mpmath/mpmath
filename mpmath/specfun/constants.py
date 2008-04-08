@@ -108,7 +108,7 @@ def euler_fixed(prec):
 def khinchin_fixed(prec):
     orig = mp.prec
     try:
-        mp.prec = int(prec + prec**0.5 + 5)
+        mp.prec = int(prec + prec**0.5 + 15)
         s = mpf(0)
         t = one = mpf(1)
         B = bernoulli2n()
@@ -174,7 +174,7 @@ def glaisher_fixed(prec):
     orig = mp.prec
     try:
         dps = mp.dps
-        mp.prec = prec + 20
+        mp.prec = prec + 30
         N = int(1.0*dps + 5)
         logs = logk()
         s = mpf(0)
@@ -240,12 +240,12 @@ def apery_fixed(prec):
 
 fme = from_man_exp
 
-def mpf_phi(p, r): return fme(phi_fixed(p+5), -p-5, p, r)
-def mpf_khinchin(p, r): return fme(khinchin_fixed(p+5), -p-5, p, r)
-def mpf_glaisher(p, r): return fme(glaisher_fixed(p+5), -p-5, p, r)
-def mpf_apery(p, r): return fme(apery_fixed(p+5), -p-5, p, r)
-def mpf_euler(p, r): return fme(euler_fixed(p+5), -p-5, p, r)
-def mpf_catalan(p, r): return fme(catalan_fixed(p+5), -p-5, p, r)
+def mpf_phi(p, r): return fme(phi_fixed(p+10), -p-10, p, r)
+def mpf_khinchin(p, r): return fme(khinchin_fixed(p+10), -p-10, p, r)
+def mpf_glaisher(p, r): return fme(glaisher_fixed(p+10), -p-10, p, r)
+def mpf_apery(p, r): return fme(apery_fixed(p+10), -p-10, p, r)
+def mpf_euler(p, r): return fme(euler_fixed(p+10), -p-10, p, r)
+def mpf_catalan(p, r): return fme(catalan_fixed(p+10), -p-10, p, r)
 
 phi = constant(mpf_phi, "Golden ratio (phi)")
 catalan = constant(mpf_catalan, "Catalan's constant")
