@@ -3,7 +3,7 @@
 __docformat__ = 'plaintext'
 
 from mpmath.mptypes import mpnumeric, mpf, mpc, pi, exp, log, sqrt, sin,\
-    power, extraprec, mp
+    power, extraprec, mp, convert_lossless, j, eps, ldexp, inf, isnan, nan
 from mpmath.lib import bitcount, to_fixed, from_man_exp, round_nearest, fmuli
 
 from factorials import gamma, factorial
@@ -282,3 +282,67 @@ def logk():
             k += 2
         L += 2*s//(2*p+1)
         p += 1
+
+@extraprec(30, normalize_output=True)
+def lambertw(z, k=0, approx=None):
+    """
+    lambertw(z,k) gives the kth branch of the Lambert W function W(z),
+    defined as the kth solution of z = W(z)*exp(W(z)).
+
+    lambertw(z) == lambertw(z, k=0) gives the principal branch
+    value (0th branch solution), which is real for z > -1/e .
+
+    The k = -1 branch is real for -1/e < z < 0. All branches except
+    k = 0 have a logarithmic singularity at 0.
+
+    The definition, implementation and choice of branches is based
+    on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5
+    (1996) 329-359, available online here:
+    http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
+
+    TODO: use a series expansion when extremely close to the branch point
+    at -1/e and make sure that the proper branch is chosen there
+    """
+    z = convert_lossless(z)
+    if isnan(z):
+        return z
+    # We must be extremely careful near the singularities at -1/e and 0
+    u = exp(-1)
+    if abs(z) <= u:
+        if not z:
+            # w(0,0) = 0; for all other branches we hit the pole
+            if not k:
+                return z
+            return -inf
+        if not k:
+            w = z
+        # For small real z < 0, the -1 branch behaves roughly like log(-z)
+        elif k == -1 and not z.imag and z.real < 0:
+            w = log(-z)
+        # Use a simple asymptotic approximation.
+        else:
+            w = log(z)
+            # The branches are roughly logarithmic. This approximation
+            # gets better for large |k|; need to check that this always
+            # works for k ~= -1, 0, 1.
+            if k: w += k * 2*pi*j
+    else:
+        if z == inf: return z
+        if z == -inf: return nan
+        # Simple asymptotic approximation as above
+        w = log(z)
+        if k: w += k * 2*pi*j
+    # Use Halley iteration to solve w*exp(w) = z
+    two = mpf(2)
+    weps = ldexp(eps, 15)
+    for i in xrange(100):
+        ew = exp(w)
+        wew = w*ew
+        wewz = wew-z
+        wn = w - wewz/(wew+ew-(w+two)*wewz/(two*w+two))
+        if abs(wn-w) < weps*abs(wn):
+            return wn
+        else:
+            w = wn
+    print "Warning: Lambert W iteration failed to converge:", z
+    return wn

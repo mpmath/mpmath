@@ -246,6 +246,9 @@ class mpf(mpnumeric):
     exp = property(lambda self: self._mpf_[2])
     bc = property(lambda self: self._mpf_[3])
 
+    real = property(lambda self: self)
+    imag = property(lambda self: zero)
+
     def __getstate__(self): return self._mpf_
     def __setstate__(self, val): self._mpf_ = val
 
@@ -437,7 +440,8 @@ def make_mpf(v, construct=object.__new__, cls=mpf):
     a._mpf_ = v
     return a
 
-
+one = make_mpf(fone)
+zero = make_mpf(fzero)
 inf = make_mpf(finf)
 ninf = make_mpf(fninf)
 nan = make_mpf(fnan)

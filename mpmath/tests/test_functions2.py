@@ -198,3 +198,53 @@ def test_zeta():
     im = '236.5242296658162058024755079556629786895294952121891237'
     assert zeta(mpc(0.5, im)).ae(0, 1e-46)
     mp.dps = 15
+
+def test_lambertw():
+    mp.dps = 15
+    assert lambertw(0) == 0
+    assert lambertw(0+0j) == 0
+    assert lambertw(inf) == inf
+    assert isnan(lambertw(-inf))
+    assert isnan(lambertw(nan))
+    assert lambertw(0,-1) == -inf
+    assert lambertw(0,1) == -inf
+    assert lambertw(0,3) == -inf
+    assert lambertw(e).ae(1)
+    assert lambertw(1).ae(0.567143290409783873)
+    assert lambertw(-pi/2).ae(j*pi/2)
+    assert lambertw(-log(2)/2).ae(-log(2))
+    assert lambertw(0.25).ae(0.203888354702240164)
+    assert lambertw(-0.25).ae(-0.357402956181388903)
+    assert lambertw(-1./10000,0).ae(-0.000100010001500266719)
+    assert lambertw(-0.25,-1).ae(-2.15329236411034965)
+    assert lambertw(0.25,-1).ae(-3.00899800997004620-4.07652978899159763j)
+    assert lambertw(-0.25,-1).ae(-2.15329236411034965)
+    assert lambertw(0.25,1).ae(-3.00899800997004620+4.07652978899159763j)
+    assert lambertw(-0.25,1).ae(-3.48973228422959210+7.41405453009603664j)
+    assert lambertw(-4).ae(0.67881197132094523+1.91195078174339937j)
+    assert lambertw(-4,1).ae(-0.66743107129800988+7.76827456802783084j)
+    assert lambertw(-4,-1).ae(0.67881197132094523-1.91195078174339937j)
+    assert lambertw(1000).ae(5.24960285240159623)
+    assert lambertw(1000,1).ae(4.91492239981054535+5.44652615979447070j)
+    assert lambertw(1000,-1).ae(4.91492239981054535-5.44652615979447070j)
+    assert lambertw(1000,5).ae(3.5010625305312892+29.9614548941181328j)
+    assert lambertw(3+4j).ae(1.281561806123775878+0.533095222020971071j)
+    assert lambertw(3+4j,1).ae(-0.11691092896595324+5.61888039871282334j)
+    assert lambertw(3+4j,-1).ae(0.25856740686699742-3.85211668616143559j)
+    assert lambertw(-0.5,-1).ae(-0.794023632344689368-0.770111750510379110j)
+    assert lambertw(-1./10000,1).ae(-11.82350837248724344+6.80546081842002101j)
+    assert lambertw(-1./10000,-1).ae(-11.6671145325663544)
+    assert lambertw(-1./10000,-2).ae(-11.82350837248724344-6.80546081842002101j)
+    assert lambertw(-1./100000,4).ae(-14.9186890769540539+26.1856750178782046j)
+    assert lambertw(-1./100000,5).ae(-15.0931437726379218666+32.5525721210262290086j)
+    assert lambertw((2+j)/10).ae(0.173704503762911669+0.071781336752835511j)
+    assert lambertw((2+j)/10,1).ae(-3.21746028349820063+4.56175438896292539j)
+    assert lambertw((2+j)/10,-1).ae(-3.03781405002993088-3.53946629633505737j)
+    assert lambertw((2+j)/10,4).ae(-4.6878509692773249+23.8313630697683291j)
+    assert lambertw(-(2+j)/10).ae(-0.226933772515757933-0.164986470020154580j)
+    assert lambertw(-(2+j)/10,1).ae(-2.43569517046110001+0.76974067544756289j)
+    assert lambertw(-(2+j)/10,-1).ae(-3.54858738151989450-6.91627921869943589j)
+    assert lambertw(-(2+j)/10,4).ae(-4.5500846928118151+20.6672982215434637j)
+    mp.dps = 50
+    assert lambertw(pi).ae('1.073658194796149172092178407024821347547745350410314531')
+    mp.dps = 15
