@@ -168,6 +168,12 @@ def test_exp():
     assert exp(0) == 1
     assert exp(10000).ae(mpf('8.8068182256629215873e4342'))
     assert exp(-10000).ae(mpf('1.1354838653147360985e-4343'))
+    a = exp(mpf((1, 8198646019315405L, -53, 53)))
+    assert(a.bc == bitcount(a.man))
+    mp.prec = 67
+    a = exp(mpf((1, 1781864658064754565L, -60, 61)))
+    assert(a.bc == bitcount(a.man))
+    mp.prec = 53
     assert exp(ln2 * 10).ae(1024)
     assert exp(2+2j).ae(cmath.exp(2+2j))
 

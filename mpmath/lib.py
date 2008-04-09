@@ -1483,7 +1483,7 @@ def fexp(x, prec, rnd=round_fast):
     else:
         n = 0
     man = exp_series(t, wp, r)
-    bc = wp + bctable[man >> wp]
+    bc = wp - 2 + bctable[man >> (wp - 2)]
     return normalize(0, man, -wp+n, bc, prec, rnd)
 
 
