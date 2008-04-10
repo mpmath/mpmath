@@ -832,3 +832,228 @@ def chebyfit(f,a,b,N):
     finally:
         mp.prec = orig
         return d, +err
+
+
+#----------------------------------------------------------------------------#
+#                 Lattice reduction and constant recognition                 #
+#----------------------------------------------------------------------------#
+
+
+"""
+This is a fairly direct translation to Python of the pseudocode given by
+David Bailey, "The PSLQ Integer Relation Algorithm":
+http://www.cecm.sfu.ca/organics/papers/bailey/paper/html/node3.html
+
+The stopping criteria are NOT yet properly implemented.
+"""
+def pslq(x, eps=None):
+    """
+    Given a vector of real numbers x = [x1, x2, ..., xn], pslq(x) uses the
+    PSLQ algorithm to find a list of integers [c1, c2, ..., cn] such that
+    c1*x1 + c2*x2 + ... + cn*cn = 0 approximately.
+    """
+    n = len(x)
+    assert n >= 1
+    prec = mp.prec
+    assert prec >= 53
+    target = prec // max(2,n)
+    if target < 30:
+        if target < 5:
+            print "Warning: precision for PSLQ may be too low"
+        target = int(prec * 0.75)
+    if eps is None:
+        eps = mpf(2)**(-target)
+    x = [None] + x
+    g = sqrt(mpf(4)/3)
+    A = {}
+    B = {}
+    H = {}
+    # Initialization
+    # step 1
+    for i in range(1, n+1):
+        for j in range(1, n+1):
+            A[i,j] = B[i,j] = mpf(int(i == j))
+            H[i,j] = mpf(0)
+    # step 2
+    s = [None] + [mpf(0)] * n
+    for k in range(1, n+1):
+        t = mpf(0)
+        for j in range(k, n+1):
+            t += x[j]**2
+        s[k] = sqrt(t)
+    t = s[1]
+    y = x[:]
+    for k in range(1, n+1):
+        y[k] = x[k] / t
+        s[k] = s[k] / t
+    # step 3
+    for i in range(1, n+1):
+        for j in range(i+1, n): H[i,j] = mpf(0)
+        if i <= n-1: H[i,i] = s[i+1]/s[i]
+        for j in range(1, i): H[i,j] = -y[i]*y[j]/(s[j]*s[j+1])
+    # step 4
+    for i in range(2, n+1):
+        for j in range(i-1, 0, -1):
+            t = floor(H[i,j]/H[j,j] + 0.5)
+            y[j] = y[j] + t*y[i]
+            for k in range(1, j+1):
+                H[i,k] = H[i,k] - t*H[j,k]
+            for k in range(1, n+1):
+                A[i,k] = A[i,k] - t*A[j,k]
+                B[k,j] = B[k,j] + t*B[k,i]
+    # Main algorithm
+    for REP in range(100):
+        # step 1
+        m = -1
+        szmax = -1
+        for i in range(1, n):
+            h = H[i,i]
+            sz = sqrt(mpf(4)/3)**i * abs(h)
+            if sz > szmax:
+                m = i
+                szmax = sz
+        # step 2
+        y[m], y[m+1] = y[m+1], y[m]
+        tmp = {}
+        for i in range(1,n+1): H[m,i], H[m+1,i] = H[m+1,i], H[m,i]
+        for i in range(1,n+1): A[m,i], A[m+1,i] = A[m+1,i], A[m,i]
+        for i in range(1,n+1): B[i,m], B[i,m+1] = B[i,m+1], B[i,m]
+        # step 3
+        if m <= n - 2:
+            t0 = sqrt(H[m,m]**2 + H[m,m+1]**2)
+            t1 = H[m,m] / t0
+            t2 = H[m,m+1] / t0
+            for i in range(m, n+1):
+                t3 = H[i,m]
+                t4 = H[i,m+1]
+                H[i,m] = t1*t3+t2*t4
+                H[i,m+1] = -t2*t3+t1*t4
+        # step 4
+        for i in range(m+1, n+1):
+            for j in range(min(i-1, m+1), 0, -1):
+                try:
+                    t = floor(H[i,j]/H[j,j] + 0.5)
+                # XXX
+                except ZeroDivisionError:
+                    break
+                y[j] = y[j] + t*y[i]
+                for k in range(1, j+1):
+                    H[i,k] = H[i,k] - t*H[j,k]
+                for k in range(1, n+1):
+                    A[i,k] = A[i,k] - t*A[j,k]
+                    B[k,j] = B[k,j] + t*B[k,i]
+        for i in range(1, n+1):
+            if abs(y[i]) < eps:
+                vec = [int(int(B[j,i])) for j in range(1,n+1)]
+                if max(abs(v) for v in vec) < 10**6:
+                    return vec
+    return None
+
+def fracgcd(p, q):
+    x, y = p, q
+    while y:
+        x, y = y, x % y
+    if x != 1:
+        p //= x
+        q //= x
+    if q == 1:
+        return p
+    return p, q
+
+def pslqstring(r, constants):
+    q = r[0]
+    r = r[1:]
+    s = []
+    for i in range(len(r)):
+        p = r[i]
+        if p:
+            z = fracgcd(-p,q)
+            cs = constants[i][1]
+            if cs == '1':
+                cs = ''
+            else:
+                cs = '*' + cs
+            if isinstance(z, (int, long)):
+                if z > 0: term = str(z) + cs
+                else:     term = ("(%s)" % z) + cs
+            else:
+                term = ("(%s/%s)" % z) + cs
+            s.append(term)
+    s = ' + '.join(s)
+    if '+' in s or '*' in s:
+        s = '(' + s + ')'
+    return s
+
+functional_transforms = [
+  (lambda x:x, '%s'),
+  (lambda x:mpf(1)/x, '1/%s'),
+  (lambda x:x**2, 'sqrt(%s)'),
+  (lambda x:sqrt(x), '%s**2'),
+  (lambda x:exp(x), 'log(%s)'),
+  (lambda x:log(x), 'exp(%s)')
+]
+
+constant_transforms = [
+  (lambda x,c: x*c, '%s/%s'),
+  (lambda x,c: x/c, '%s*%s')
+]
+
+def identify(x, constants=[], maxcoeff=1000, verbose=False):
+    """"
+    Attempt to express x in terms of the given base constants.
+    Linear combinations of the given constants can be identified,
+    as well as certain simple nonlinear relations. The function
+    returns a list of formulas as strings.
+
+    In order not to produce spurious approximations, high precision
+    should be used; preferrably 50 digits or more.
+
+    Examples:
+
+        >>> mp.dps = 15
+        >>> identify(0.22222222222222222)
+        ['(2/9)', '1/(9/2)', 'sqrt((4/81))']
+
+        >>> mp.dps = 50
+        >>> identify(3*pi + 4*sqrt(2), ['pi','sqrt(2)'])
+        ['(3*pi + 4*sqrt(2))']
+
+        >>> mp.dps = 15
+
+    Further example identifications that should work (many redundant
+    results will be found):
+
+        mp.dps = 50
+        base = ['sqrt(2)','pi','log(2)']
+        identify(0.25, base)
+        identify(3*pi + 2*sqrt(2) + 5*log(2)/7, base)
+        identify(exp(pi+2), base)
+        identify(1/(3+sqrt(2)), base)
+        identify(sqrt(2)/(3*pi+4), base)
+        identify(phi, base+['sqrt(5)'])
+    """
+    # We always want to find at least rational terms
+    if '1' not in constants:
+        constants = ['1'] + constants
+    x *= mpf(1)
+    sols = []
+    constants = [(eval(p), p) for p in constants]
+    for ft, ftn in functional_transforms:
+        for ct, ctn in constant_transforms:
+            for c, cn in constants:
+                if cn == '1' and ctn == '%s/%s':
+                    continue
+                t = ft(ct(x,c))
+                r = pslq([t] + [a[0] for a in constants], eps**0.8)
+                if r is None or max(abs(uw) for uw in r) > maxcoeff:
+                    continue
+                if r[0]:
+                    if cn == '1':
+                        s = ftn % pslqstring(r, constants)
+                    else:
+                        s = ctn % ((ftn % pslqstring(r, constants)), cn)
+                    if verbose:
+                        print "Found:", s
+                    sols.append(s)
+    return sols
+

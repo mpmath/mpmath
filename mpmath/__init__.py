@@ -6,6 +6,8 @@ from intervals import mpi
 from calculus import diff, diffc, secant, polyval, polyroots, quadts
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
 
+from calculus import pslq, identify
+
 from specfun import lambertw
 
 from specfun import gamma, factorial, lower_gamma, upper_gamma, \
