@@ -6,7 +6,7 @@ from intervals import mpi
 from calculus import diff, diffc, secant, polyval, polyroots, quadts
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
 
-from calculus import pslq, identify
+from calculus import pslq, identify, findpoly
 
 from specfun import lambertw
 

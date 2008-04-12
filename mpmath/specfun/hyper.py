@@ -383,6 +383,8 @@ def funcwrapper(f):
         finally:
             mp.prec = orig
         return +v
+    g.__name__ = f.__name__
+    g.__doc__ = f.__doc__
     return g
 
 @funcwrapper

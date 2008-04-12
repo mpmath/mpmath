@@ -424,6 +424,9 @@ class mpf(mpnumeric):
             return make_mpf(fdivi(t, s._mpf_, gp, gr))
         return mpf_convert_lhs(t) / s
 
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
+
     def __rpow__(s, t): return mpf_convert_lhs(t) ** s
     def __rmod__(s, t): return mpf_convert_lhs(t) % s
 
@@ -551,7 +554,6 @@ class mpc(mpnumeric):
                 t = mpc(t)
         return make_mpc(mpc_div(s._mpc_, t._mpc_, gp, gr))
 
-
     def __pow__(s, t):
         if isinstance(t, int_types):
             return make_mpc(mpc_pow_int(s._mpc_, t, gp, gr))
@@ -565,6 +567,9 @@ class mpc(mpnumeric):
     def __rsub__(s, t): return (-s) + t
     def __rpow__(s, t): return convert_lossless(t) ** s
     def __rdiv__(s, t): return mpc(t) / s
+
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
 
     def ae(s, t, rel_eps=None, abs_eps=None):
         return almosteq(s, t, rel_eps, abs_eps)
