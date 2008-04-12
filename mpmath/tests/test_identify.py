@@ -15,5 +15,5 @@ def test_identify():
     assert identify(log(5)) == 'log(5)'
     assert identify(exp(3*pi), ['pi']) == 'exp((3*pi))'
     assert identify(3, full=True) == ['3', '3', '1/(1/3)', 'sqrt(9)',
-        '1/sqrt((1/9))', '(sqrt(12)/2)**2', '1/(sqrt(12)/6)**2',
-        'sqrt(1)/sqrt((1/9))', '1**2/(sqrt(12)/6)**2']
+        '1/sqrt((1/9))', '(sqrt(12)/2)**2', '1/(sqrt(12)/6)**2']
+    assert identify(pi+1, {'a':+pi}) == '(1 + 1*a)'

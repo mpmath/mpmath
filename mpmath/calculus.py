@@ -1042,13 +1042,13 @@ transforms = [
   (lambda x,c: (c/x)**2, '$c/sqrt($y)', 0),
   (lambda x,c: c*x**2, 'sqrt($y)/sqrt($c)', 1),
   (lambda x,c: x**2/c, 'sqrt($c)*sqrt($y)', 1),
-  (lambda x,c: c/x**2, 'sqrt($c)/sqrt($y)', 0),
+  (lambda x,c: c/x**2, 'sqrt($c)/sqrt($y)', 1),
   (lambda x,c: sqrt(x*c), '$y**2/$c', 0),
   (lambda x,c: sqrt(x/c), '$c*$y**2', 1),
   (lambda x,c: sqrt(c/x), '$c/$y**2', 0),
   (lambda x,c: c*sqrt(x), '$y**2/$c**2', 1),
   (lambda x,c: sqrt(x)/c, '$c**2*$y**2', 1),
-  (lambda x,c: c/sqrt(x), '$c**2/$y**2', 0),
+  (lambda x,c: c/sqrt(x), '$c**2/$y**2', 1),
   (lambda x,c: exp(x*c), 'log($y)/$c', 0),
   (lambda x,c: exp(x/c), '$c*log($y)', 1),
   (lambda x,c: exp(c/x), '$c/log($y)', 0),
@@ -1124,14 +1124,18 @@ def identify(x, constants=[], full=False, maxcoeff=1000, quadratics=True,
         else:
             return "-(%s)" % sol
 
-    # We always want to find at least rational terms
-    if '1' not in constants:
-        constants = ['1'] + constants
-
     sols = []
-    import mpmath
-    constants = [(eval(p, mpmath.__dict__), p) for p in constants]
     weps = eps**0.7
+
+    if isinstance(constants, dict):
+        constants = [(mpf(v), name) for (name, v) in constants.items()]
+    else:
+        import mpmath
+        constants = [(eval(p, mpmath.__dict__), p) for p in constants]
+
+    # We always want to find at least rational terms
+    if 1 not in [value for (name, value) in constants]:
+        constants = [(mpf(1), '1')] + constants
 
     # PSLQ with simple algebraic and functional transformations
     for ft, ftn, red in transforms:

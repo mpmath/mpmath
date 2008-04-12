@@ -1,0 +1,158 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Speed tricks &mdash; mpmath Documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:   '',
+        VERSION:    '0.8'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/interface.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="contents.html">
+    <link rel="index" title="Global index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="top" title="mpmath Documentation" href="index.html">
+    <link rel="next" title="Welcome to mpmath&#8217;s documentation!" href="index.html">
+    <link rel="prev" title="Technical details" href="technical.html">
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="index.html" title="Welcome to mpmath&#8217;s documentation!" accesskey="N">next</a> |</li>
+          <li class="right"><a href="technical.html" title="Technical details" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section">
+<h1 id="speed-tricks">Speed tricks<a class="headerlink" href="#speed-tricks" title="Permalink to this headline">¶</a></h1>
+<p>There are a few tricks that can significantly speed up mpmath code at low to medium precision (up a hundred digits or so):</p>
+<ul class="simple">
+<li>Repeated type conversions from floats, strings and integers are expensive (exceptions: <tt class="docutils literal"><span class="pre">n/x</span></tt>, <tt class="docutils literal"><span class="pre">n*x</span></tt> and <tt class="docutils literal"><span class="pre">x**n</span></tt> are fast when <tt class="docutils literal"><span class="pre">n</span></tt> is an <tt class="docutils literal"><span class="pre">int</span></tt> and <tt class="docutils literal"><span class="pre">x</span></tt> is an <tt class="docutils literal"><span class="pre">mpf</span></tt>). Numerical constants that are used repeatedly, such as in the body of a function passed to <tt class="docutils literal"><span class="pre">quadts</span></tt>, should be pre-converted to <tt class="docutils literal"><span class="pre">mpf</span></tt> instances.</li>
+<li>The JIT compiler <a class="reference" href="http://psyco.sourceforge.net/">psyco</a> fairly consistently speeds up mpmath about 2x.</li>
+<li>An additional 2x gain is possible by using the low-level functions in <tt class="docutils literal"><span class="pre">mpmath.lib</span></tt> instead of <tt class="docutils literal"><span class="pre">mpf</span></tt> instances.</li>
+<li>Changing the rounding mode to <em>floor</em> can give a slight speedup.</li>
+</ul>
+<p>Here follows a simple example demonstrating some of these optimizations.</p>
+<p>Original algorithm (0.028 seconds):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="mf">0.1</span>
+</pre></div>
+<p>Preconverting the float constant (0.0080 seconds):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="n">one_tenth</span>
+</pre></div>
+<p>With psyco (0.0036 seconds):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="n">one_tenth</span>
+</pre></div>
+<p>With psyco and low-level functions (0.0017 seconds):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath.lib</span> <span class="k">import</span> <span class="n">from_int</span><span class="p">,</span> <span class="n">from_float</span><span class="p">,</span> <span class="n">fadd</span><span class="p">,</span> <span class="n">round_nearest</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">from_int</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">from_float</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">=</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">one_tenth</span><span class="p">,</span> <span class="mf">53</span><span class="p">,</span> <span class="n">round_nearest</span><span class="p">)</span>
+</pre></div>
+<p>The last version is 16.5 times faster than the first (however, this example is extreme; the gain will usually be smaller in realistic calculations).</p>
+<p>Many calculations can be done with ordinary floating-point arithmetic, and only in special cases require multiprecision arithmetic (for example to avoid overflows in corner cases). In these situations, it may be possible to write code that uses fast regular floats by default, and automatically (or manually) falls backs to mpmath only when needed. Python&#8217;s dynamic namespaces and ability to compile code on the fly are helpful. Here is a simple (probably not failsafe) example:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">evalmath</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">r</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">r</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">mpmath</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">r</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">pass</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">r</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evalmath</span><span class="p">(</span><span class="s">&#39;sin(3)&#39;</span><span class="p">)</span>
+<span class="go">0.14112000805986721</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evalmath</span><span class="p">(</span><span class="s">&#39;exp(10000)&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;8.8068182256629216e+4342&#39;)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evalmath</span><span class="p">(</span><span class="s">&#39;exp(10000) / exp(10000)&#39;</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidebarwrapper">
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="technical.html" title="previous chapter">Technical details</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="index.html" title="next chapter">Welcome to mpmath&#8217;s documentation!</a></p>
+          
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+            
+              <li><a href="_sources/speedtricks.txt">Show Source</a></li>
+            
+            </ul>
+          
+          
+          
+            <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18"> <input type="submit" value="Go">
+              <input type="hidden" name="check_keywords" value="yes">
+              <input type="hidden" name="area" value="default">
+            </form>
+            
+          
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="index.html" title="Welcome to mpmath&#8217;s documentation!" accesskey="N">next</a> |</li>
+          <li class="right"><a href="technical.html" title="Technical details" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Apr 12, 2008.
+    </div>
+  </body>
+</html>

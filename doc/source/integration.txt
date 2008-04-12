@@ -1,0 +1,161 @@
+Integration
+===========
+
+Integration with the tanh-sinh algorithm (``quadts``)
+-----------------------------------------------------
+
+The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example::
+
+    >>> from mpmath import *
+    >>> print quadts(sin, 0, pi)
+    2.0
+
+Tanh-sinh quadrature is extremely efficient for high-precision integration of analytic functions. Unlike the more well-known Gaussian quadrature algorithm, it is relatively insensitive to integrable singularities at the endpoints of the interval. The ``quadts`` function attempts to evaluate the integral to the full working precision; for example, it can calculate 100 digits of pi by integrating the area under the half circle arc ``x^2 + y^2 = 1 (y > 0)``::
+
+    >>> mp.dps = 100
+    >>> print quadts(lambda x: 2*sqrt(1 - x**2), -1, 1)
+    ... # doctest:+ELLIPSIS
+    3.14159265358979323846264338327950288419716939937510582097...
+
+Neat examples
+-------------
+
+Intervals can be infinite or half-infinite:
+
+    >>> mp.dps = 15
+    >>> print quadts(lambda x: 2/(x**2+1), 0, inf)
+    3.14159265358979
+    >>> print quadts(lambda x: exp(-x**2), -inf, inf)**2
+    3.14159265358979
+
+Complex integrals are also supported. The next example computes Euler's constant gamma by integrating around the pole of the Riemann zeta function at *z* = 1::
+
+    >>> print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
+    (0.577215664901533 - 4.88811920958765e-23j)
+
+Functions with integral representations, such as the gamma function, can be implemented directly from the definition::
+
+    >>> def Gamma(z):
+    ...     return quadts(lambda t: exp(-t)*t**(z-1), 0, inf)
+    ...
+    >>> print Gamma(1)
+    1.0
+    >>> print Gamma(10)
+    362880.0
+    >>> print Gamma(1+1j)
+    (0.498015668118356 - 0.154949828301811j)
+
+Multiple integrals
+------------------
+
+It is possible to calculate double integrals with ``quadts``. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the *x* variable and the second interval specifies the range of the *y* variable::
+
+    >>> f = lambda x, y: cos(x+y/2)
+    >>> print quadts(f, (-pi/2, pi/2), (0, pi))
+    4.0
+
+Here are some more difficult examples taken from `MathWorld <http://mathworld.wolfram.com/DoubleIntegral.html>`_ (all except the second contain corner singularities)::
+
+    >>> mp.dps = 30
+    >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
+    >>> print quadts(f, (0, 1), (0, 1))
+    0.577215664901532860606512090082
+    >>> print euler
+    0.577215664901532860606512090082
+
+    >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
+    >>> print quadts(f, (-1, 1), (-1, 1))
+    3.17343648530607134219175646705
+    >>> print 4*log(2+sqrt(3))-2*pi/3
+    3.17343648530607134219175646705
+
+    >>> f = lambda x, y: 1/(1-x**2 * y**2)
+    >>> print quadts(f, (0, 1), (0, 1))
+    1.23370055013616982735431137498
+    >>> print pi**2 / 8
+    1.23370055013616982735431137498
+
+    >>> print quadts(lambda x, y: 1/(1-x*y), (0, 1), (0, 1))
+    1.64493406684822643647241516665
+    >>> print pi**2 / 6
+    1.64493406684822643647241516665
+
+There is currently no direct support for computing triple or higher dimensional integrals; if desired, this can be done easily by passing a function that calls ``quadts`` recursively::
+
+    >>> mp.dps = 15
+    >>> f = lambda x, y: quadts(lambda z: sin(x)/z+y*z, 1, 2)
+    >>> print quadts(f, (1, 2), (1, 2))
+    2.91296002641413
+    >>> print mpf(9)/4 + (cos(1)-cos(2))*log(2)
+    2.91296002641413
+
+While double integrals are reasonably fast, even a simple triple integral at very low precision is likely to take several seconds to evaluate (harder integrals may take minutes). A quadruple integral will require a whole lot of patience.
+
+Error detection
+---------------
+
+The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is oscillatory (such integrals should manually be split into smaller pieces). If the ``error`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass ``quadts`` the option ``verbose=True`` to show detailed progress.
+
+A simple example where the algorithm fails is the function f(*x*) = abs(sin(*x*)), which is not smooth at *x* = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, ``quadts`` gives a good estimate of the magnitude of the error::
+
+    >>> mp.dps = 15
+    >>> quadts(lambda x: abs(sin(x)), 0, 2*pi, error=True)
+    (mpf('3.9990089417677899'), mpf('0.001'))
+
+This highly oscillatory integral should be pi/2 = 1.57::
+
+    >>> print quadts(lambda x: sin(x)/x, 0, inf, error=True)
+    (mpf('2.3840907358976577'), mpf('1.0'))
+
+The next integral should be approximately 0.627 but ``quadts`` generates complete nonsense both in the result and the error estimate (the error estimate is somewhat arbitrarily capped at 1.0)::
+
+    >>> print quadts(lambda x: sin(x**2), 0, inf, error=True)
+    (mpf('2.5190134849122411e+21'), mpf('1.0'))
+
+However, oscillation is not a problem if suppressed by sufficiently fast (preferrably exponential) decay. This integral is exactly 1/2::
+
+    >>> print quadts(lambda x: exp(-x)*sin(x), 0, inf)
+    0.5
+
+Another illustrative example is the following double integral, which ``quadts`` will process for several seconds before returning a value with very low accuracy::
+
+    >>> mpf.dps = 15
+    >>> f = lambda x, y: sqrt((x-0.5)**2+(y-0.5)**2)
+    >>> quadts(f, (0, 1), (0, 1), error=1)
+    (mpf('0.38259743528830826'), mpf('1.0e-6'))
+
+The problem is due to the non-analytic behavior of the function at the midpoint (1/2, 1/2). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them)::
+
+    >>> f = lambda x, y: 4*sqrt((x-0.5)**2 + (y-0.5)**2)
+    >>> print quadts(f, (0.5, 1), (0.5, 1))
+    0.382597858232106
+    >>> print (sqrt(2) + asinh(1))/6
+    0.382597858232106
+
+The value agrees with the known answer and the running time in this case is just 0.7 seconds on the author's computer.
+
+Even for analytic integrals on finite intervals, there is no guarantee that ``quadts`` will be successful. A few examples of integrals for which ``quadts`` currently fails to reach full accuracy are::
+
+    quadts(lambda x: sqrt(tan(x)), 0, pi/2)
+    quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), 0, 1)
+    quadts(lambda x: log(1+x**2)/x**2, 0, 1)
+    quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), 0, 1)
+
+(It is possible that future improvements to the ``quadts`` implementation will make these particular examples work.)
+
+Performance
+-----------
+
+The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like this one can often be evaluated in less than a second. The timings for computing this integral at various precision levels on the author's computer is:
+
++-----+------------------+-------------------+
+| dps | First evaluation | Second evaluation |
++-----+------------------+-------------------+
+| 15  |  0.017 seconds   |  0.0054 seconds   |
++-----+------------------+-------------------+
+| 50  |  0.085 seconds   |  0.016 seconds    |
++-----+------------------+-------------------+
+| 500 |  8.9 seconds     |  0.48 seconds     |
++-----+------------------+-------------------+
+
+The second integration at the same precision level is much faster. The reason for this is that the tanh-sinh algorithm must be initalized by computing a set of nodes, and this initalization if often more expensive than actually evaluating the integral. Mpmath automatically caches all computed nodes to make subsequent integrations faster, but the cache is lost when Python shuts down, so if you would frequently like to use mpmath to calculate 1000-digit integrals, you may want to save the nodes to a file. The nodes are stored in a dict ``TS_cache`` located in the ``mpmath.calculus`` module, which can be pickled if desired.

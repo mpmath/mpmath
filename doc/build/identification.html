@@ -1,0 +1,243 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Number identification &mdash; mpmath Documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:   '',
+        VERSION:    '0.8'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/interface.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="contents.html">
+    <link rel="index" title="Global index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="top" title="mpmath Documentation" href="index.html">
+    <link rel="next" title="Technical details" href="technical.html">
+    <link rel="prev" title="Interpolation" href="interpolation.html">
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="technical.html" title="Technical details" accesskey="N">next</a> |</li>
+          <li class="right"><a href="interpolation.html" title="Interpolation" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section">
+<h1 id="number-identification">Number identification<a class="headerlink" href="#number-identification" title="Permalink to this headline">¶</a></h1>
+<p>Almost all function in mpmath are concerned with producing approximations from exact mathematical formulas. It is also useful to consider the inverse problem: given only a decimal approximation for a number, such as 0.7320508075688772935274463, is it possible to find an exact formula?</p>
+<p>Subject to certain restrictions, such &#8220;reverse engineering&#8221; is indeed possible thanks to the existence of <em>integer relation algorithms</em>. Mpmath implements the PSLQ algorithm (developed by H. Ferguson), which is perhaps the best known integer relation algorithm.</p>
+<p>Automated number recognition based on PSLQ does have limited power. Any occurring transcendental constants (pi, e, etc) must be known in advance, and the relation between those constants in the formula must be linear (such as x = 3*pi + 4*e). More complex formulas can be found by combining PSLQ with functional transformations; however, this is only feasible to a limited extent since the computation time grows exponentially with the number of operations that need to be combined.</p>
+<p>The number identification facilities in mpmath are inspired by the <a class="reference" href="http://oldweb.cecm.sfu.ca/projects/ISC/ISCmain.html">Inverse Symbolic Calculator</a> (ISC). The ISC is more powerful than mpmath, as it uses a lookup table of millions of precomputed constants (thereby mitigating the problem with exponential complexity).</p>
+<div class="section">
+<h2 id="generic-identification-identify">Generic identification (<tt class="docutils literal"><span class="pre">identify</span></tt>)<a class="headerlink" href="#generic-identification-identify" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">identify(x,</span> <span class="pre">constants=[])</span></tt> attempts to find a formula that expresses <tt class="docutils literal"><span class="pre">x</span></tt> in terms of the given base constants. It searches for matching formulas of the following types:</p>
+<ol class="arabic simple">
+<li>Fractions</li>
+<li>Quadratic algebraic numbers</li>
+<li>Rational linear combinations of the base constants</li>
+<li>Any of the above after first transforming x into f(x) where f(x) is 1/x, sqrt(x), x^2, log(x) or exp(x), either directly or with x or f(x) multiplied or divided by one of the base constants</li>
+<li>Products of fractional powers of the base constants and small integers</li>
+</ol>
+<p>The constants should be specified as strings representing valid mpmath expressions.</p>
+<div class="section">
+<h3 id="simple-examples">Simple examples<a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h3>
+<p>Here is one (carefully prepared) example of each type of formula listed above:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bases</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">,</span> <span class="s">&#39;e&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="s">&#39;3.14285714285714285714285714286&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+<span class="go">&#39;(22/7)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="s">&#39;1.61803398874989484820458683437&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+<span class="go">&#39;((1+sqrt(5))/2)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="s">&#39;13.049153732048106695868313445&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+<span class="go">&#39;(3*pi + (4/3)*e)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="s">&#39;0.88137358701954302523260932498&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+<span class="go">&#39;log(((2+sqrt(8))/2))&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="s">&#39;2.14990849617352175383504427507&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
+<span class="go">&#39;5**(1/3)*pi**(1/5)&#39;</span>
+</pre></div>
+<p>Using a dict of constants:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="n">e</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mf">2</span><span class="o">*</span><span class="n">e</span><span class="p">})</span>
+<span class="go">&#39;((-2) + 1*a + (1/2)*b)&#39;</span>
+</pre></div>
+</div>
+<div class="section">
+<h3 id="things-to-consider">Things to consider<a class="headerlink" href="#things-to-consider" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The input <tt class="docutils literal"><span class="pre">x</span></tt> must be a real number. All base constants must be positive real numbers and must not be rationals or rational linear combinations of each other.</li>
+<li>The worst-case computation time grows quickly with the number of base constants. Already with 3 or 4 base constants, <tt class="docutils literal"><span class="pre">identify</span></tt> may require several seconds to finish; perhaps a minute in the worst case. To search for relations among a larger number of constants, you should consider using <tt class="docutils literal"><span class="pre">pslq()</span></tt> directly (see below).</li>
+<li>High precision should be used; preferrably at least 25-50 digits. If the precision is too low, <tt class="docutils literal"><span class="pre">identify</span></tt> will find spurious solutions. Of course, this can be fine if you are just looking for approximate matches.</li>
+<li>The extended transformations are applied to x, not the constants separately. As a result, <tt class="docutils literal"><span class="pre">identify</span></tt> will for example be able to recognize <tt class="docutils literal"><span class="pre">exp(2*pi+3)</span></tt> with <tt class="docutils literal"><span class="pre">pi</span></tt> given as a base constant, but not <tt class="docutils literal"><span class="pre">2*exp(pi)+3</span></tt>. It will be able to recognize the latter if <tt class="docutils literal"><span class="pre">exp(pi)</span></tt> is given explicitly as a base constant.</li>
+<li>The returned formula can be evaluated as a Python expression. Note, however, that Python will evaluate the formula erroneously if it contains integer fractions.</li>
+</ul>
+</div>
+<div class="section">
+<h3 id="finding-many-solutions">Finding many solutions<a class="headerlink" href="#finding-many-solutions" title="Permalink to this headline">¶</a></h3>
+<p>By default, <tt class="docutils literal"><span class="pre">identify</span></tt> stops as soon as it finds a match. With <tt class="docutils literal"><span class="pre">full=True</span></tt>, it will continue applying transformations, and return a list of all matches:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">identify</span><span class="p">(</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">s</span>
+<span class="go">1/10</span>
+<span class="go">(1/10)</span>
+<span class="go">1/(2*5)</span>
+<span class="go">1/sqrt(100)</span>
+<span class="go">sqrt((1/100))</span>
+<span class="go">(sqrt(40)/20)**2</span>
+<span class="go">1/(sqrt(40)/2)**2</span>
+</pre></div>
+<p>Note that the formulas are sorted by length. Consequentially, the first one in the list will often be the mathematically simplest one. The first formula in the list is <em>not</em> necessarily the same one as the formula returned by <tt class="docutils literal"><span class="pre">identify</span></tt> with <tt class="docutils literal"><span class="pre">full=False</span></tt>.</p>
+</div>
+<div class="section">
+<h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
+<p>Many special functions can be evaluated in terms of common mathematical constants at special points. Examples include the gamma function at half-integers, its derivative at positive integers, and the Riemann zeta function at even integers:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">])</span>
+<span class="go">&#39;sqrt(((9/16)*pi))&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;euler&#39;</span><span class="p">])</span>
+<span class="go">&#39;(3 + (-2)*euler)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="mf">6</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">])</span>
+<span class="go">&#39;(pi**6)/(3**3*5*7)&#39;</span>
+</pre></div>
+<p>Formulas generated by <tt class="docutils literal"><span class="pre">identify</span></tt> can be parsed by SymPy. This is useful since the raw output from <tt class="docutils literal"><span class="pre">identify</span></tt> often needs cleanup:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">sympy</span> <span class="k">import</span> <span class="n">pprint</span><span class="p">,</span> <span class="n">sympify</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sympify</span><span class="p">(</span><span class="n">identify</span><span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="mf">6</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">])))</span>
+<span class="go">  6</span>
+<span class="go">pi</span>
+<span class="go">---</span>
+<span class="go">945</span>
+</pre></div>
+<p>On the other hand, <tt class="docutils literal"><span class="pre">identify</span></tt> can be used to simplify expressions that are too complicated for SymPy to deal with directly:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">sympify</span><span class="p">(</span><span class="s">&#39;-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sympify</span><span class="p">(</span><span class="n">identify</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evalf</span><span class="p">()),</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mf">0</span><span class="p">]))</span>
+<span class="go">        ___</span>
+<span class="go">      \/ 5</span>
+<span class="go">1/2 + -----</span>
+<span class="go">        2</span>
+</pre></div>
+</div>
+</div>
+<div class="section">
+<h2 id="algebraic-identification-findpoly">Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)<a class="headerlink" href="#algebraic-identification-findpoly" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">findpoly(x,n)</span></tt> returns a list of integer coefficients for a polynomial of degree at most n having x as a root. By default (degree n = 1), it simply finds a linear polynomial with a rational root:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="go">[7, -10]</span>
+</pre></div>
+<p>Numbers of the form <tt class="docutils literal"><span class="pre">m</span> <span class="pre">+</span> <span class="pre">n*sqrt(p)</span></tt> are solutions to quadratic equations:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">[-1, -2, 1]</span>
+</pre></div>
+<p>The following gives an algebraic approximation of pi (judging from the coefficients, pi is not very good at being an algebraic number):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">[-457, -2658, -1734, 836]</span>
+</pre></div>
+<p>The generated coefficient list is valid input to <tt class="docutils literal"><span class="pre">polyval</span></tt> and <tt class="docutils literal"><span class="pre">polyroots</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span><span class="mf">3</span><span class="p">),</span> <span class="n">pi</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.205968823749572e-11&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">3</span><span class="p">))[</span><span class="mf">0</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="go">(-0.200777515923391 + 0.0j)</span>
+<span class="go">(-0.866652458240562 - 7.70371977754894e-34j)</span>
+<span class="go">(3.14159265358979 + 0.0j)</span>
+</pre></div>
+<p>When identifying exact algebraic numbers, the precision must be set very high to avoid false solutions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
+<span class="go">[-8917, -1498, -6860, 2618]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
+<span class="go">[1, 0, -10, 0, 1]</span>
+</pre></div>
+</div>
+<div class="section">
+<h2 id="integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">pslq([x1,x2,...,xn])</span></tt> returns a list of integers <tt class="docutils literal"><span class="pre">[c1,c2,...,cn]</span></tt> such that c1*x1 + x2*x2 + ... + cn*xn = 0 approximately. In other words, it determines whether x1, x2, ..., xn, with coefficients allowed by the working precision, are linearly dependent over the rational numbers. It returns <tt class="xref docutils literal"><span class="pre">None</span></tt> on failure.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidebarwrapper">
+          
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Number identification</a><ul>
+<li><a class="reference" href="#generic-identification-identify">Generic identification (<tt class="docutils literal"><span class="pre">identify</span></tt>)</a><ul>
+<li><a class="reference" href="#simple-examples">Simple examples</a></li>
+<li><a class="reference" href="#things-to-consider">Things to consider</a></li>
+<li><a class="reference" href="#finding-many-solutions">Finding many solutions</a></li>
+<li><a class="reference" href="#neat-examples">Neat examples</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#algebraic-identification-findpoly">Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)</a></li>
+<li><a class="reference" href="#integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="interpolation.html" title="previous chapter">Interpolation</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="technical.html" title="next chapter">Technical details</a></p>
+          
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+            
+              <li><a href="_sources/identification.txt">Show Source</a></li>
+            
+            </ul>
+          
+          
+          
+            <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18"> <input type="submit" value="Go">
+              <input type="hidden" name="check_keywords" value="yes">
+              <input type="hidden" name="area" value="default">
+            </form>
+            
+          
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="technical.html" title="Technical details" accesskey="N">next</a> |</li>
+          <li class="right"><a href="interpolation.html" title="Interpolation" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Apr 12, 2008.
+    </div>
+  </body>
+</html>

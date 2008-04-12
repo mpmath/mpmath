@@ -1,0 +1,180 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Optimization &mdash; mpmath Documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:   '',
+        VERSION:    '0.8'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/interface.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="contents.html">
+    <link rel="index" title="Global index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="top" title="mpmath Documentation" href="index.html">
+    <link rel="next" title="Limits" href="limits.html">
+    <link rel="prev" title="Differentiation" href="differentiation.html">
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="limits.html" title="Limits" accesskey="N">next</a> |</li>
+          <li class="right"><a href="differentiation.html" title="Differentiation" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section">
+<h1 id="optimization">Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h1>
+<div class="section">
+<h2 id="root-finding-with-the-secant-method-secant">Root-finding with the secant method (<tt class="docutils literal"><span class="pre">secant</span></tt>)<a class="headerlink" href="#root-finding-with-the-secant-method-secant" title="Permalink to this headline">¶</a></h2>
+<p>The function <tt class="docutils literal"><span class="pre">secant</span></tt> locates a root of a given function using the secant method. A simple example use of the secant method is to compute pi as the root of sin(<em>x</em>) closest to <em>x</em> = 3:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">secant</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">3.14159265358979323846264338328</span>
+</pre></div>
+<p>The secant method can be used to find complex roots of analytic functions, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">secant</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+<span class="go">(0.226698825758202 + 1.46771150871022j)</span>
+</pre></div>
+<p>A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method. When the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy&#8217;s many solvers), and then refining it to high precision using mpmath&#8217;s <tt class="docutils literal"><span class="pre">secant</span></tt> method.</p>
+<div class="section">
+<h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
+<p>A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">secant</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.5 + 14.1347251417346937904572519836j)</span>
+</pre></div>
+<p>The secant method can also be used as an optimization algorithm, by passing it a derivative of a function. The following example locates the positive minimum of the gamma function:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">secant</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diff</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">1.4616321449683623413</span>
+</pre></div>
+<p>Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of <em>w</em> exp(<em>w</em>), given the first term of the solution&#8217;s asymptotic expansion as the initial value:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">lambert</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">secant</span><span class="p">(</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.567143290409784</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">5.2496028524016</span>
+</pre></div>
+</div>
+<div class="section">
+<h3 id="options">Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<p>Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point <tt class="docutils literal"><span class="pre">x0</span></tt>; <tt class="docutils literal"><span class="pre">secant</span></tt> automatically sets the second point (somewhat arbitrarily) to <tt class="docutils literal"><span class="pre">x0</span> <span class="pre">+</span> <span class="pre">1/4</span></tt>. Manually providing also the second point can help in some cases if <tt class="docutils literal"><span class="pre">secant</span></tt> fails to converge.</p>
+<p>By default, <tt class="docutils literal"><span class="pre">secant</span></tt> performs a maximum of 20 steps, which can be increased or decreased using the <tt class="docutils literal"><span class="pre">maxsteps</span></tt> keyword argument. You can pass <tt class="docutils literal"><span class="pre">secant</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
+</div>
+</div>
+<div class="section">
+<h2 id="finding-all-roots-of-a-polynomial-polyroots">Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)<a class="headerlink" href="#finding-all-roots-of-a-polynomial-polyroots" title="Permalink to this headline">¶</a></h2>
+<p>The function <tt class="docutils literal"><span class="pre">polyroots</span></tt> computes all <em>n</em> real or complex roots of an <em>n</em>-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of <tt class="docutils literal"><span class="pre">3*x^2</span> <span class="pre">-</span> <span class="pre">7*x</span> <span class="pre">+</span> <span class="pre">2</span></tt> (which are 1/3 and 2):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">roots</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">7</span><span class="p">,</span> <span class="mf">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">err</span>
+<span class="go">2.66453525910038e-16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">root</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">root</span>
+<span class="gp">...</span>
+<span class="go">(0.333333333333333 - 1.92592994438724e-34j)</span>
+<span class="go">(2.0 + 0.0j)</span>
+</pre></div>
+<p>As should be expected from the internal use of complex arithmetic, the calculated roots have small but nonzero imaginary parts.</p>
+<p>The following example computes all the 5th roots of unity; i.e. the roots of <tt class="docutils literal"><span class="pre">x^5</span> <span class="pre">-</span> <span class="pre">1</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])[</span><span class="mf">0</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">a</span>
+<span class="gp">...</span>
+<span class="go">(-0.8090169943749474241 + 0.58778525229247312917j)</span>
+<span class="go">(1.0 + 0.0j)</span>
+<span class="go">(0.3090169943749474241 + 0.95105651629515357212j)</span>
+<span class="go">(-0.8090169943749474241 - 0.58778525229247312917j)</span>
+<span class="go">(0.3090169943749474241 - 0.95105651629515357212j)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidebarwrapper">
+          
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Optimization</a><ul>
+<li><a class="reference" href="#root-finding-with-the-secant-method-secant">Root-finding with the secant method (<tt class="docutils literal"><span class="pre">secant</span></tt>)</a><ul>
+<li><a class="reference" href="#neat-examples">Neat examples</a></li>
+<li><a class="reference" href="#options">Options</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#finding-all-roots-of-a-polynomial-polyroots">Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="differentiation.html" title="previous chapter">Differentiation</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="limits.html" title="next chapter">Limits</a></p>
+          
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+            
+              <li><a href="_sources/optimization.txt">Show Source</a></li>
+            
+            </ul>
+          
+          
+          
+            <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18"> <input type="submit" value="Go">
+              <input type="hidden" name="check_keywords" value="yes">
+              <input type="hidden" name="area" value="default">
+            </form>
+            
+          
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="limits.html" title="Limits" accesskey="N">next</a> |</li>
+          <li class="right"><a href="differentiation.html" title="Differentiation" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Apr 12, 2008.
+    </div>
+  </body>
+</html>

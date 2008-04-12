@@ -1,0 +1,82 @@
+Optimization
+============
+
+Root-finding with the secant method (``secant``)
+------------------------------------------------
+
+The function ``secant`` locates a root of a given function using the secant method. A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3::
+
+    >>> from mpmath import *
+    >>> mp.dps = 30
+    >>> print secant(sin, 3)
+    3.14159265358979323846264338328
+
+The secant method can be used to find complex roots of analytic functions, although it must in that case generally be given a nonreal starting value (or else it will never leave the real line)::
+
+    >>> mp.dps = 15
+    >>> print secant(lambda x: x**3 + 2*x + 1, j)
+    (0.226698825758202 + 1.46771150871022j)
+
+A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method. When the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for double roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy's many solvers), and then refining it to high precision using mpmath's ``secant`` method.
+
+Neat examples
+.............
+
+A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence)::
+
+    >>> mp.dps = 30
+    >>> print secant(zeta, 0.5+14j)
+    (0.5 + 14.1347251417346937904572519836j)
+
+The secant method can also be used as an optimization algorithm, by passing it a derivative of a function. The following example locates the positive minimum of the gamma function::
+
+    >>> mp.dps = 20
+    >>> print secant(lambda x: diff(gamma, x), 1)
+    1.4616321449683623413
+
+Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value::
+
+    >>> def lambert(x):
+    ...     return secant(lambda w: w*exp(w) - x, log(1+x))
+    ...
+    >>> mp.dps = 15
+    >>> print lambert(1)
+    0.567143290409784
+    >>> print lambert(1000)
+    5.2496028524016
+
+Options
+.......
+
+Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point ``x0``; ``secant`` automatically sets the second point (somewhat arbitrarily) to ``x0 + 1/4``. Manually providing also the second point can help in some cases if ``secant`` fails to converge.
+
+By default, ``secant`` performs a maximum of 20 steps, which can be increased or decreased using the ``maxsteps`` keyword argument. You can pass ``secant`` the option ``verbose=True`` to show detailed progress.
+
+Finding all roots of a polynomial (``polyroots``)
+-------------------------------------------------
+
+The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial using complex arithmetic, and returns them along with an error estimate. As a simple example, it will successfully compute the two real roots of ``3*x^2 - 7*x + 2`` (which are 1/3 and 2)::
+
+    >>> mp.dps = 15
+    >>> roots, err = polyroots([2, -7, 3])
+    >>> print err
+    2.66453525910038e-16
+    >>> for root in roots:
+    ...     print root
+    ...
+    (0.333333333333333 - 1.92592994438724e-34j)
+    (2.0 + 0.0j)
+
+As should be expected from the internal use of complex arithmetic, the calculated roots have small but nonzero imaginary parts.
+
+The following example computes all the 5th roots of unity; i.e. the roots of ``x^5 - 1``::
+
+    >>> mp.dps = 20
+    >>> for a in polyroots([-1, 0, 0, 0, 0, 1])[0]:
+    ...     print a
+    ...
+    (-0.8090169943749474241 + 0.58778525229247312917j)
+    (1.0 + 0.0j)
+    (0.3090169943749474241 + 0.95105651629515357212j)
+    (-0.8090169943749474241 - 0.58778525229247312917j)
+    (0.3090169943749474241 - 0.95105651629515357212j)

@@ -1,0 +1,432 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Functions &mdash; mpmath Documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:   '',
+        VERSION:    '0.8'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/interface.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="contents.html">
+    <link rel="index" title="Global index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="top" title="mpmath Documentation" href="index.html">
+    <link rel="next" title="Interval arithmetic" href="intervals.html">
+    <link rel="prev" title="Mpmath basics" href="basics.html">
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="N">next</a> |</li>
+          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section">
+<h1 id="functions">Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<p>Mpmath provides a rich library of mathematical functions.</p>
+<div class="section">
+<h2 id="constants-pi-e-etc">Constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">e</span></tt>, etc)<a class="headerlink" href="#constants-pi-e-etc" title="Permalink to this headline">¶</a></h2>
+<p>The predefined objects <tt class="docutils literal"><span class="pre">j</span></tt> (imaginary unit), <tt class="docutils literal"><span class="pre">inf</span></tt> (positive infinity) and <tt class="docutils literal"><span class="pre">nan</span></tt> (not-a-number) are shortcuts to <tt class="docutils literal"><span class="pre">mpc</span></tt> and <tt class="docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values.</p>
+<p>Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="21%" />
+<col width="60%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>Symbol</td>
+<td>Value</td>
+<td>Description</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">pi</span></tt></td>
+<td>3.141592654</td>
+<td>Area of the unit circle</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">degree</span></tt></td>
+<td>0.017453292</td>
+<td>1 degree of angle = pi/180</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">e</span></tt></td>
+<td>2.718281828</td>
+<td>Base of the natural logarithm</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">phi</span></tt></td>
+<td>1.618033989</td>
+<td>The golden ratio, (1+sqrt(5))/2</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ln2</span></tt></td>
+<td>0.693147180</td>
+<td>The natural logarithm of 2</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ln10</span></tt></td>
+<td>2.302585093</td>
+<td>The natural logarithm of 10</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">euler</span></tt></td>
+<td>0.577215664</td>
+<td>Euler&#8217;s constant (gamma)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">catalan</span></tt></td>
+<td>0.915965594</td>
+<td>Catalan&#8217;s constant</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">apery</span></tt></td>
+<td>1.202056903</td>
+<td>Apery&#8217;s constant, zeta(3)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">khinchin</span></tt></td>
+<td>2.685452001</td>
+<td>Khinchin&#8217;s constant</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">glaisher</span></tt></td>
+<td>1.282427129</td>
+<td>Glaisher&#8217;s constant</td>
+</tr>
+</tbody>
+</table>
+<p>These constants are implemented as lazy objects that can be computed with any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular <tt class="docutils literal"><span class="pre">mpf</span></tt> using the unary <tt class="docutils literal"><span class="pre">+</span></tt> operator:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span>
+<span class="go">&lt;pi: 3.14159~&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="go">mpf(&#39;6.2831853071795862&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
+<span class="go">mpf(&#39;3.1415926535897931&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span>
+<span class="go">&lt;pi: 3.14159~&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="go">mpf(&#39;6.283185307179586476925286766559005768394338&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
+<span class="go">mpf(&#39;3.141592653589793238462643383279502884197169&#39;)</span>
+</pre></div>
+<p>To show many digits of a number, you can just set the desired precision and print it:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span>    <span class="c"># doctest:+SKIP</span>
+<span class="go">3.141592653589793238462643383279502884197169399375105820974944592307816406286208</span>
+<span class="go">99862803482534211706798214808651328230664709384460955058223172535940812848111745</span>
+<span class="go">02841027019385211055596446229489549303819644288109756659334461284756482337867831</span>
+<span class="go">65271201909145648566923460348610454326648213393607260249141273724587006606315588</span>
+<span class="go">17488152092096282925409171536436789259036001133053054882046652138414695194151160</span>
+<span class="go">94330572703657595919530921861173819326117931051185480744623799627495673518857527</span>
+<span class="go">24891227938183011949129833673362440656643086021394946395224737190702179860943702</span>
+<span class="go">77053921717629317675238467481846766940513200056812714526356082778577134275778960</span>
+<span class="go">91736371787214684409012249534301465495853710507922796892589235420199561121290219</span>
+<span class="go">60864034418159813629774771309960518707211349999998372978049951059731732816096318</span>
+<span class="go">59502445945534690830264252230825334468503526193118817101000313783875288658753320</span>
+<span class="go">83814206171776691473035982534904287554687311595628638823537875937519577818577805</span>
+<span class="go">32171226806613001927876611195909216420198</span>
+</pre></div>
+<p>The time needed to compute many digits of the various constants differs greatly. On the author&#8217;s computer, the golden ratio can be evaluated to 100,000 digits in one second, while obtaining just 500 digits of Khinchin&#8217;s constant takes several seconds. However, mpmath caches computed values of constants so that subsequent calculations at the same or lower precision are instant. This important for general efficiency reasons since for example the value of pi is required internally by mpmath to compute trigonometric functions.</p>
+</div>
+<div class="section">
+<h2 id="mathematical-functions">Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h2>
+<p>Mpmath implements the standard functions available in Python&#8217;s <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules, for both real and complex numbers and with arbitrary precision:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cosh</span><span class="p">(</span><span class="s">&#39;1.234&#39;</span><span class="p">)</span>
+<span class="go">1.863033801698422589073644</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">asin</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.570796326794896619231322</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.8047189562170501873003797 + 1.107148717794090503017065j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-7.315110094901102517486536 + 1.042743656235904414101504j)</span>
+</pre></div>
+<p>Some functions that do not exist in the standard Python <tt class="docutils literal"><span class="pre">math</span></tt> library are available, such as factorials (with support for noninteger arguments):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">factorial</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">3628800.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">factorial</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">0.90640247705547707798</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">factorial</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.44011340763700171113 - 0.06363724312631702183j)</span>
+</pre></div>
+<p>The list of functions is given in the following table.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Function</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt></td>
+<td>Square root</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">hypot(x,y)</span></tt></td>
+<td>Euclidean norm</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">exp(x)</span></tt></td>
+<td>Exponential function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">log(x,b)</span></tt></td>
+<td>Natural logarithm (optionally base-b logarithm)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">power(x,y)</span></tt></td>
+<td>Power, <tt class="docutils literal"><span class="pre">x**y</span></tt></td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">cos(x)</span></tt></td>
+<td>Cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">sin(x)</span></tt></td>
+<td>Sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">tan(x)</span></tt></td>
+<td>Tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">cosh(x)</span></tt></td>
+<td>Hyperbolic cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">sinh(x)</span></tt></td>
+<td>Hyperbolic sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">tanh(x)</span></tt></td>
+<td>Hyperbolic tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">acos(x)</span></tt></td>
+<td>Inverse cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">asin(x)</span></tt></td>
+<td>Inverse sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atan(x)</span></tt></td>
+<td>Inverse tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atan2(y,x)</span></tt></td>
+<td>Inverse tangent atan(y/x) with attention to signs of both x and y</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">acosh(x)</span></tt></td>
+<td>Inverse hyperbolic cosine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">asinh(x)</span></tt></td>
+<td>Inverse hyperbolic sine</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">atanh(x)</span></tt></td>
+<td>Inverse hyperbolic tangent</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">floor(x)</span></tt></td>
+<td>Floor function (round to integer in the direction of -inf)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ceil(x)</span></tt></td>
+<td>Ceiling function (round to integer in the direction of +inf)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">arg(x)</span></tt></td>
+<td>Complex argument</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">factorial(x)</span></tt></td>
+<td>Factorial</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">gamma(x)</span></tt></td>
+<td>Gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">lower_gamma(a,x)</span></tt></td>
+<td>Lower gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">upper_gamma(a,x)</span></tt></td>
+<td>Upper gamma function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">erf(x)</span></tt></td>
+<td>Error function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">zeta(x)</span></tt></td>
+<td>Riemann zeta function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">j0(x)</span></tt></td>
+<td>Bessel function J_0(x)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">j1(x)</span></tt></td>
+<td>Bessel function J_1(x)</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">jn(n,x)</span></tt></td>
+<td>Bessel function J_n(x)</td>
+</tr>
+</tbody>
+</table>
+<p>The following functions do not accept complex input: <tt class="docutils literal"><span class="pre">hypot</span></tt>, <tt class="docutils literal"><span class="pre">atan2</span></tt>, <tt class="docutils literal"><span class="pre">floor</span></tt>, <tt class="docutils literal"><span class="pre">ceil</span></tt>, <tt class="docutils literal"><span class="pre">j0</span></tt>, <tt class="docutils literal"><span class="pre">j1</span></tt> and <tt class="docutils literal"><span class="pre">jn</span></tt>.</p>
+<div class="section">
+<h3 id="elementary-functions-sqrt-exp-sin">Elementary functions (<tt class="docutils literal"><span class="pre">sqrt</span></tt>, <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, ...)<a class="headerlink" href="#elementary-functions-sqrt-exp-sin" title="Permalink to this headline">¶</a></h3>
+<p>Trigonometric functions can be evaluated at degree angles using the <tt class="docutils literal"><span class="pre">degree</span></tt> constant:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">45</span><span class="o">*</span><span class="n">degree</span><span class="p">)</span>
+<span class="go">0.707106781186548</span>
+</pre></div>
+</div>
+<div class="section">
+<h3 id="factorial-related">Factorial related<a class="headerlink" href="#factorial-related" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section">
+<h3 id="hypergeometric-functions">Hypergeometric functions<a class="headerlink" href="#hypergeometric-functions" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section">
+<h3 id="miscellaneous-special-functions">Miscellaneous special functions<a class="headerlink" href="#miscellaneous-special-functions" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section">
+<h2 id="number-sequences">Number sequences<a class="headerlink" href="#number-sequences" title="Permalink to this headline">¶</a></h2>
+<p>For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch.</p>
+<p>The precision of each generated number will be the same as that of the first, regardless of whether the global working precision is changed subsequently.</p>
+<dl class="docutils">
+<dt>bernoulli_range</dt>
+<dd>Bernoulli numbers: 1, -1/2, 1/6, 0, -1/30, 0, 1/42, 0, ...</dd>
+<dt>log_range</dt>
+<dd>Nonzero integer logarithms: log(2), log(3), log(4), ...</dd>
+</dl>
+</div>
+<div class="section">
+<h2 id="utility-functions">Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section">
+<h3 id="current-epsilon">Current epsilon<a class="headerlink" href="#current-epsilon" title="Permalink to this headline">¶</a></h3>
+<p>The special number <tt class="docutils literal"><span class="pre">eps</span></tt> is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented with the current working precision:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eps</span>
+<span class="go">&lt;epsilon of working precision: 2.22045e-16~&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">+</span> <span class="n">eps</span>
+<span class="go">mpf(&#39;1.0000000000000002&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">+</span> <span class="n">eps</span><span class="o">/</span><span class="mf">2</span>    <span class="c"># Too small to make a difference</span>
+<span class="go">mpf(&#39;1.0&#39;)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eps</span>
+<span class="go">&lt;epsilon of working precision: 1.42873e-101~&gt;</span>
+</pre></div>
+<p>An useful application of <tt class="docutils literal"><span class="pre">eps</span></tt> is to perform approximate comparisons that work at any precision level, for example to check for convergence of iterative algorithms:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">a_series</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">s</span> <span class="o">=</span> <span class="mf">0</span>
+<span class="gp">... </span>    <span class="n">n</span> <span class="o">=</span> <span class="mf">1</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="mf">1</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">term</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="n">s</span> <span class="o">+=</span> <span class="n">term</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">term</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">print</span> <span class="s">&quot;added&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s">&quot;terms&quot;</span>
+<span class="gp">... </span>            <span class="k">return</span> <span class="n">s</span>
+<span class="gp">... </span>        <span class="n">n</span> <span class="o">+=</span> <span class="mf">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_series</span><span class="p">()</span>
+<span class="go">added 23 terms</span>
+<span class="go">mpf(&#39;0.25000000000000011&#39;)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_series</span><span class="p">()</span>
+<span class="go">added 59 terms</span>
+<span class="go">mpf(&#39;0.2500000000000000000000000000000000000000057&#39;)</span>
+</pre></div>
+</div>
+<div class="section">
+<h3 id="random-numbers">Random numbers<a class="headerlink" href="#random-numbers" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">rand()</span></tt> returns a random number chosen from the uniform distribution on the interval [0, 1). All bits up to the working precision are random (this is not true if generating a <tt class="docutils literal"><span class="pre">float</span></tt> directly with Python&#8217;s <tt class="docutils literal"><span class="pre">random</span></tt> module and then converting it into an <tt class="docutils literal"><span class="pre">mpf</span></tt>).</p>
+</div>
+<div class="section">
+<h3 id="polynomial-evaluation">Polynomial evaluation<a class="headerlink" href="#polynomial-evaluation" title="Permalink to this headline">¶</a></h3>
+<p>Polynomial functions can be evaluated using <tt class="docutils literal"><span class="pre">polyval</span></tt>, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates <tt class="docutils literal"><span class="pre">2</span> <span class="pre">+</span> <span class="pre">5*x</span> <span class="pre">+</span> <span class="pre">x^3</span></tt> at <tt class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">3.5</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;3.5&#39;</span><span class="p">))</span>
+<span class="go">mpf(&#39;62.375&#39;)</span>
+</pre></div>
+<p>With <tt class="docutils literal"><span class="pre">derivative=True</span></tt>, both the polynomial and its derivative are evaluated at the same point:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;3.5&#39;</span><span class="p">),</span> <span class="n">derivative</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">(mpf(&#39;62.375&#39;), mpf(&#39;41.75&#39;))</span>
+</pre></div>
+<p>The point and coefficients may be complex numbers.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidebarwrapper">
+          
+            <h3>Table Of Contents</h3>
+            <ul>
+<li><a class="reference" href="">Functions</a><ul>
+<li><a class="reference" href="#constants-pi-e-etc">Constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">e</span></tt>, etc)</a></li>
+<li><a class="reference" href="#mathematical-functions">Mathematical functions</a><ul>
+<li><a class="reference" href="#elementary-functions-sqrt-exp-sin">Elementary functions (<tt class="docutils literal"><span class="pre">sqrt</span></tt>, <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, ...)</a></li>
+<li><a class="reference" href="#factorial-related">Factorial related</a></li>
+<li><a class="reference" href="#hypergeometric-functions">Hypergeometric functions</a></li>
+<li><a class="reference" href="#miscellaneous-special-functions">Miscellaneous special functions</a></li>
+</ul>
+</li>
+<li><a class="reference" href="#number-sequences">Number sequences</a></li>
+<li><a class="reference" href="#utility-functions">Utility functions</a><ul>
+<li><a class="reference" href="#current-epsilon">Current epsilon</a></li>
+<li><a class="reference" href="#random-numbers">Random numbers</a></li>
+<li><a class="reference" href="#polynomial-evaluation">Polynomial evaluation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="basics.html" title="previous chapter">Mpmath basics</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="intervals.html" title="next chapter">Interval arithmetic</a></p>
+          
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+            
+              <li><a href="_sources/functions.txt">Show Source</a></li>
+            
+            </ul>
+          
+          
+          
+            <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18"> <input type="submit" value="Go">
+              <input type="hidden" name="check_keywords" value="yes">
+              <input type="hidden" name="area" value="default">
+            </form>
+            
+          
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="N">next</a> |</li>
+          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Apr 12, 2008.
+    </div>
+  </body>
+</html>
