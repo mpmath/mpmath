@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # mpmath documentation build configuration file, created by
-# sphinx-quickstart on Fri Mar 28 13:50:14 2008.
+# sphinx-quickstart on Sun Apr 13 00:14:30 2008.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
