@@ -2,11 +2,11 @@
 Hypergeometric functions.
 """
 
-from mpmath.lib import from_man_exp, to_fixed
-from mpmath.mptypes import mp, mpf, mpc, make_mpf, make_mpc, \
-    convert_lossless, inf, pi, extraprec, eps, sqrt
+from mpmath.lib import *
+from mpmath.libmpc import *
+from mpmath.mptypes import *
 
-from factorials import gammaquot, binomial
+from misc import gammaquot, binomial, gamma, factorial, int_fac
 
 import operator
 
@@ -14,7 +14,11 @@ import operator
 TODO:
   * By counting the number of multiplications vs divisions,
     the bit size of p can be kept around wp instead of growing
-    it to n*wp for some (possible large) n
+    it to n*wp for some (possibly large) n
+
+  * Due to roundoff error, the series may fail to converge
+    when x is negative and the convergence is slow.
+
 """
 
 def hypsum(ar, af, ac, br, bf, bc, x):
@@ -171,8 +175,45 @@ def hypsum(ar, af, ac, br, bf, bc, x):
 #   about 2x faster at low precision                                        #
 #---------------------------------------------------------------------------#
 
+def sum_hyp0f1_rat((bp, bq), x):
+    """Sum 0F1 for rational a. x must be mpf or mpc."""
+    prec = mp.prec
+    rnd = mp.rounding[0]
+    wp = prec + 25
+    if isinstance(x, mpf):
+        x = to_fixed(x._mpf_, wp)
+        s = p = 1 << wp
+        n = 1
+        while 1:
+            p = (p * (bq*x) // (n*bp)) >> wp
+            if -100 < p < 100:
+                break
+            s += p; n += 1; bp += bq
+        return make_mpf(from_man_exp(s, -wp, prec, rnd))
+    else:
+        wp = prec + 25
+        zre, zim = x._mpc_
+        zre = to_fixed(zre, wp)
+        zim = to_fixed(zim, wp)
+        sre = pre = 1 << wp
+        sim = pim = 0
+        n = 1
+        while 1:
+            r1 = bq
+            r2 = n*bp
+            pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
+            pre = ((pre * r1) // r2) >> wp
+            pim = ((pim * r1) // r2) >> wp
+            if -100 < pre < 100 and -100 < pim < 100:
+                break
+            sre += pre; sim += pim; n += 1; bp += bq
+        re = from_man_exp(sre, -wp, prec, rnd)
+        im = from_man_exp(sim, -wp, prec, rnd)
+        return make_mpc((re, im))
+
+
 def sum_hyp1f1_rat((ap, aq), (bp, bq), x):
-    """Sum 1F1 for rational a, b, c. x must be mpf or mpc."""
+    """Sum 1F1 for rational a, b. x must be mpf or mpc."""
     prec = mp.prec
     rnd = mp.rounding[0]
     wp = prec + 25
@@ -332,6 +373,11 @@ def hyper(as, bs, z):
     q = len(bs)
     z = convert_lossless(z)
     degree = p, q
+    if degree == (0, 1):
+        br, bf, bc = parse_param(bs[0])
+        if br:
+            return sum_hyp0f1_rat(br[0], z)
+        return hypsum([], [], [], br, bf, bc, z)
     if degree == (1, 1):
         ar, af, ac = parse_param(as[0])
         br, bf, bc = parse_param(bs[0])
@@ -386,6 +432,20 @@ def funcwrapper(f):
     g.__name__ = f.__name__
     g.__doc__ = f.__doc__
     return g
+
+@extraprec(20, normalize_output=True)
+def lower_gamma(a,z):
+    """Lower incomplete gamma function gamma(a, z)"""
+    z = convert_lossless(z)
+    if not isinstance(a, (int, long)):
+        a = convert_lossless(a)
+    # XXX: may need more precision
+    return hyp1f1(1, 1+a, z) * z**a * exp(-z) / a
+
+@extraprec(20, normalize_output=True)
+def upper_gamma(a,z):
+    """Upper incomplete gamma function Gamma(a, z)"""
+    return gamma(a) - lower_gamma(a, z)
 
 @funcwrapper
 def erf(z):
@@ -472,3 +532,103 @@ def chebyu(n, x):
     finally:
         mp.prec = orig
     return +v
+
+# A Bessel function of the first kind of integer order, J_n(x), is
+# given by the power series
+
+#             oo
+#             ___         k         2 k + n
+#            \        (-1)     / x \
+#    J_n(x) = )    ----------- | - |
+#            /___  k! (k + n)! \ 2 /
+#            k = 0
+
+# Simplifying the quotient between two successive terms gives the
+# ratio x^2 / (-4*k*(k+n)). Hence, we only need one full-precision
+# multiplication and one division by a small integer per term.
+# The complex version is very similar, the only difference being
+# that the multiplication is actually 4 multiplies.
+
+# In the general case, we have
+# J_v(x) = (x/2)**v / v! * 0F1(v+1, (-1/4)*z**2)
+
+# TODO: for extremely large x, we could use an asymptotic
+# trigonometric approximation.
+
+# TODO: recompute at higher precision if the fixed-point mantissa
+# is very small
+
+def mpf_jn_series(n, x, prec):
+    negate = n < 0 and n & 1
+    n = abs(n)
+    origprec = prec
+    prec += 20 + bitcount(abs(n))
+    x = to_fixed(x, prec)
+    x2 = (x**2) >> prec
+    if not n:
+        s = t = 1 << prec
+    else:
+        s = t = (x**n // int_fac(n)) >> ((n-1)*prec + n)
+    k = 1
+    while t:
+        t = ((t * x2) // (-4*k*(k+n))) >> prec
+        s += t
+        k += 1
+    if negate:
+        s = -s
+    return make_mpf(from_man_exp(s, -prec, origprec, round_nearest))
+
+def mpc_jn_series(n, z, prec):
+    negate = n < 0 and n & 1
+    n = abs(n)
+    origprec = prec
+    prec += 20 + bitcount(abs(n))
+    zre, zim = z
+    zre = to_fixed(zre, prec)
+    zim = to_fixed(zim, prec)
+    z2re = (zre**2 - zim**2) >> prec
+    z2im = (zre*zim) >> (prec-1)
+    if not n:
+        sre = tre = 1 << prec
+        sim = tim = 0
+    else:
+        re, im = complex_int_pow(zre, zim, n)
+        sre = tre = (re // int_fac(n)) >> ((n-1)*prec + n)
+        sim = tim = (im // int_fac(n)) >> ((n-1)*prec + n)
+    k = 1
+    while abs(tre) + abs(tim) > 3:
+        p = -4*k*(k+n)
+        tre, tim = tre*z2re - tim*z2im, tim*z2re + tre*z2im
+        tre = (tre // p) >> prec
+        tim = (tim // p) >> prec
+        sre += tre
+        sim += tim
+        k += 1
+    if negate:
+        sre = -sre
+        sim = -sim
+    re = from_man_exp(sre, -prec, origprec, round_nearest)
+    im = from_man_exp(sim, -prec, origprec, round_nearest)
+    return make_mpc((re, im))
+
+def jv(v, x):
+    """Bessel function J_v(x)."""
+    prec = mp.prec
+    x = convert_lossless(x)
+    if isinstance(v, (int, long)):
+        if isinstance(x, mpf):
+            return mpf_jn_series(v, x._mpf_, prec)
+        if isinstance(x, mpc):
+            return mpc_jn_series(v, (x.real._mpf_, x.imag._mpf_), prec)
+    hx = x/2
+    return hx**v * hyp0f1(v+1, -hx**2) / factorial(v)
+
+jn = jv
+
+def j0(x):
+    """Bessel function J_0(x)."""
+    return jv(0, x)
+
+def j1(x):
+    """Bessel function J_1(x)."""
+    return jv(1, x)

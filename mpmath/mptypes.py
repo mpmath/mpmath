@@ -9,7 +9,8 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
   "ldexp", "fraction", "nstr", "nprint", "mp", "extraprec",
-  "extradps", "workprec", "workdps", "eps"]
+  "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
+  "make_mpc"]
 
 from lib import *
 from libmpc import *
@@ -272,7 +273,7 @@ class mpf(mpnumeric):
         u = mpf_convert_rhs(t)
         if u is NotImplemented:
             if isinstance(t, complex_types):
-                return mpc(s) == t
+                return (not t.imag) and s == t.real
             return u
         return feq(s._mpf_, u)
 
@@ -283,45 +284,49 @@ class mpf(mpnumeric):
         return not v
 
     def __cmp__(s, t):
-        if not type(t) is mpf:
+        if type(t) is mpf:
+            t = t._mpf_
+        else:
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
-        else:
-            t = t._mpf_
         return fcmp(s._mpf_, t)
 
     def __lt__(s, t):
-        if s._mpf_ == fnan:
-            return False
-        r = s.__cmp__(t)
-        if r is NotImplemented:
-            return r
-        return r == -1
+        if type(t) is mpf:
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+        return flt(s._mpf_, t)
 
     def __gt__(s, t):
-        if s._mpf_ == fnan:
-            return False
-        r = s.__cmp__(t)
-        if r is NotImplemented:
-            return r
-        return r == 1
+        if type(t) is mpf:
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+        return fgt(s._mpf_, t)
 
     def __le__(s, t):
-        if s._mpf_ == fnan:
-            return False
-        r = s.__cmp__(t)
-        if r is NotImplemented:
-            return r
-        return r <= 0
+        if type(t) is mpf:
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+        return fle(s._mpf_, t)
 
     def __ge__(s, t):
-        if s._mpf_ == fnan:
-            return False
-        r = s.__cmp__(t)
-        if r is NotImplemented:
-            return r
-        return r >= 0
+        if type(t) is mpf:
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+        return fge(s._mpf_, t)
 
     def binop(s, t, f):
         if isinstance(t, complex_types):

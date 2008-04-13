@@ -438,6 +438,26 @@ def fcmp(s, t):
         return -1
     return 1
 
+def flt(s, t):
+    if s == fnan or t == fnan:
+        return False
+    return fcmp(s, t) < 0
+
+def fle(s, t):
+    if s == fnan or t == fnan:
+        return False
+    return fcmp(s, t) <= 0
+
+def fgt(s, t):
+    if s == fnan or t == fnan:
+        return False
+    return fcmp(s, t) > 0
+
+def fge(s, t):
+    if s == fnan or t == fnan:
+        return False
+    return fcmp(s, t) >= 0
+
 def fpos(s, prec, rnd=round_fast):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision)."""

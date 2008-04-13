@@ -18,6 +18,8 @@ def test_bessel():
     assert jv(-3,2).ae(-0.128943249474402051)
     assert jv(-4,2).ae(0.0339957198075684341)
     assert jv(3,3+2j).ae(0.424718794929639595942 + 0.625665327745785804812j)
+    assert jv(0.25,4).ae(-0.374760630804249715)
+    assert jv(1+2j,3+4j).ae(0.319247428741872131 - 0.669557748880365678j)
 
 def test_hyper_misc():
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
@@ -34,6 +36,13 @@ def test_hyper_misc():
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
     mp.dps = 15
 
+def test_hyper_0f1():
+    v = 8.63911136507950465
+    assert hyper([],[(1,3)],1.5).ae(v)
+    assert hyper([],[1/3.],1.5).ae(v)
+    assert hyp0f1(1/3.,1.5).ae(v)
+    assert hyp0f1((1,3),1.5).ae(v)
+
 def test_hyper_1f1():
     v = 1.2917526488617656673
     assert hyper([(1,2)],[(3,2)],0.7).ae(v)
@@ -45,6 +54,8 @@ def test_hyper_1f1():
     assert hyper([(1,2)],[1.5+0j],0.7).ae(v)
     assert hyper([0.5+0j],[1.5],0.7).ae(v)
     assert hyper([0.5+0j],[1.5+0j],0.7+0j).ae(v)
+    assert hyp1f1(0.5,1.5,0.7).ae(v)
+    assert hyp1f1((1,2),1.5,0.7).ae(v)
 
 def test_hyper_2f1():
     v = 1.0652207633823291032
