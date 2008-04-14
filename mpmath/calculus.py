@@ -500,38 +500,81 @@ def quadts(f, a, b, **options):
     min_level = options.get('min_level', TS_guess_level(target_prec))
     max_level = options.get('max_level', min_level + 2)
 
-    oldprec = mp.prec
-    mp.prec = working_prec
+    orig = mp.prec
 
-    # Handle double integrals
-    if isinstance(a, tuple):
-        (a, b), (c, d) = a, b
-        if c == d:
+    try:
+        mp.prec = working_prec
+
+        # Handle double integrals
+        if isinstance(a, tuple):
+            (a, b), (c, d) = a, b
+            if c == d:
+                return mpf(0)
+            g = f
+            # Define the inner integral to recursively call quadts. We must
+            # be careful to pass along the right settings.
+            def f(x):
+                return quadts(lambda y: g(x,y), c, d,
+                    min_level=min_level, max_level=max_level,
+                    target_prec=target_prec, working_prec=working_prec)
+        if a == b:
             return mpf(0)
-        g = f
-        # Define the inner integral to recursively call quadts. We must
-        # be careful to pass along the right settings.
-        def f(x):
-            return quadts(lambda y: g(x,y), c, d,
-                min_level=min_level, max_level=max_level,
-                target_prec=target_prec, working_prec=working_prec)
-    if a == b:
-        return mpf(0)
 
-    # Based on experience, integrals on (semi)infinite intervals require
-    # a little extra work
-    if inf in (abs(a), abs(b)):
-        min_level += 1; max_level += 1
+        # Based on experience, integrals on (semi)infinite intervals require
+        # a little extra work
+        if inf in (abs(a), abs(b)):
+            min_level += 1; max_level += 1
 
-    # Standardize to [-1, 1] and evaluate
-    f = transform(f, a, b)
-    val, err = TS_adaptive(f, target_prec, working_prec,
-        min_level, max_level, verbose=verbose)
+        # Standardize to [-1, 1] and evaluate
+        f = transform(f, a, b)
+        val, err = TS_adaptive(f, target_prec, working_prec,
+            min_level, max_level, verbose=verbose)
 
-    mp.prec = oldprec
-    if options.get('error', False):
-        return val, err
-    return val
+        if options.get('error', False):
+            return val, err
+        return val
+    finally:
+        mp.prec = orig
+
+
+def quadosc(f, a, b, period=None, zeros=None, alt=0):
+    """
+    Integrates f(x) from a to b where a or b is infinite and f is
+    a slowly decaying oscillatory function. The zeros of f must be
+    provided, either by specifying a period (suitable when f contains
+    a pure sine or cosine factor) or providing a function that
+    returns the nth zero (suitable when the oscillation is not
+    strictly periodic).
+    """
+    a = convert_lossless(a)
+    b = convert_lossless(b)
+    if a == -inf and b == inf:
+        s1 = quadosc(f, a, 0, zeros=zeros, period=period, alt=alt)
+        s2 = quadosc(f, 0, b, zeros=zeros, period=period, alt=alt)
+        return s1 + s2
+    if a == -inf:
+        if zeros:
+            return quadosc(lambda x: f(-x), -b, -a, lambda n: zeros(-n), alt=alt)
+        else:
+            return quadosc(lambda x: f(-x), -b, -a, period=period, alt=alt)
+    if b != inf:
+        raise ValueError("quadosc requires an infinite integration interval")
+    if not zeros:
+        zeros = lambda n: n*period/2
+    for n in range(1,10):
+        p = zeros(n)
+        if p > a:
+            break
+    if n >= 9:
+        raise ValueError("zeros do not appear to be correctly indexed")
+    if alt == 0:
+        s = quadts(f, a, zeros(n+1))
+        s += sumrich(lambda k: quadts(f, zeros(2*k), zeros(2*k+2)), n, inf)
+    else:
+        s = quadts(f, a, zeros(n))
+        s += sumsh(lambda k: quadts(f, zeros(k), zeros(k+1)), n, inf)
+    return s
+
 
 ##############################################################################
 ##############################################################################
