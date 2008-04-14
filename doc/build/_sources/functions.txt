@@ -220,6 +220,22 @@ Random numbers
 
 ``rand()`` returns a random number chosen from the uniform distribution on the interval [0, 1). All bits up to the working precision are random (this is not true if generating a ``float`` directly with Python's ``random`` module and then converting it into an ``mpf``).
 
+The output might look like this:
+
+    >>> mp.dps = 30
+    >>> for i in range(10): print rand()  # doctest:+SKIP
+    ...
+    0.391978954448554897401435871089
+    0.0807882783964168543644048960474
+    0.703930940186206635051721420436
+    0.626158757167772268326252881759
+    0.662757493867073525281224309434
+    0.756414034497179767347019515565
+    0.927214900855958669681240990671
+    0.244655678804068448731650701685
+    0.34560622640274419514821879678
+    0.353366977589549657670073479468
+
 
 Polynomial evaluation
 .....................

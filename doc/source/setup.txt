@@ -1,0 +1,21 @@
+Download and installation
+=========================
+
+If you have `setuptools <http://pypi.python.org/pypi/setuptools>`_ installed, you can download and install the latest release of mpmath in one step by running:
+
+    python -m easy_install mpmath
+
+Alternatively, setup files can be downloaded manually from the `mpmath download page <http://code.google.com/p/mpmath/downloads/list>`_ or the `Python Package Index <http://pypi.python.org/pypi/mpmath/>`_. If you are using Windows, you can pick the binary installer (mpmath-X.X.win32.exe). Otherwise, download the source package (available as both .zip and .tar.gz), extract it, and run
+
+    python setup.py install
+
+Debian and Ubuntu users can apt-get mpmath (see package information, please verify that the most recent version is available). 
+
+After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
+
+    >>> from mpmath import *
+    >>> mp.dps = 50
+    >>> print mpf(2) ** mpf('0.5')
+    1.4142135623730950488016887242096980785696718753769
+    >>> print 2*pi
+    6.2831853071795864769252867665590057683943387987502

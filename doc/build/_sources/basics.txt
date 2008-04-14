@@ -1,25 +1,14 @@
 Mpmath basics
 =============
 
-Download and installation
--------------------------
-
-For download and installation instructions, please refer to the README or the mpmath website. After the setup has completed, you can fire up the interactive Python interpreter and try the following::
-
-    >>> from mpmath import *
-    >>> mp.dps = 50
-    >>> print mpf(2) ** mpf('0.5')
-    1.4142135623730950488016887242096980785696718753769
-    >>> print 2*pi
-    6.2831853071795864769252867665590057683943387987502
-
 In all interactive code examples that follow, it will be assumed that the main contents of the ``mpmath`` package have been imported with "``import *``".
 
+    >>> from mpmath import *
 
 Mpmath numbers
 --------------
 
-Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
+Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` (negative infinity) and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
 
     >>> mpf(4)
     mpf('4.0')
@@ -70,7 +59,7 @@ Mpmath uses a global working precision; it does not keep track of the precision 
 
 The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
 
-The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. These modes are described in more detail in the section on rounding below. The default rounding mode (round to nearest) is the best setting for most purposes.
+The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. The default rounding mode (round to nearest) is the best setting for most purposes.
 
 Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value:
 
@@ -156,7 +145,7 @@ The ``workprec`` family of functions can also be used as function decorators:
 Providing correct input
 -----------------------
 
-Note that when creating a new ``mpf``, the value will at most be as accurate as the input. **Be careful when mixing mpmath numbers with Python floats**. When working at high precision, fractional ``mpf`` values should be created from strings or integers:
+Note that when creating a new ``mpf``, the value will at most be as accurate as the input. *Be careful when mixing mpmath numbers with Python floats*. When working at high precision, fractional ``mpf`` values should be created from strings or integers:
 
     >>> mp.dps = 30
     >>> mpf(10.9)   # bad

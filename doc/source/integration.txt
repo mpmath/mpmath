@@ -1,8 +1,8 @@
 Integration
 ===========
 
-Integration with the tanh-sinh algorithm (``quadts``)
------------------------------------------------------
+Tanh-sinh quadrature (``quadts``)
+---------------------------------
 
 The function ``quadts`` performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function *f* between the endpoints *a* and *b* is ``quadts(f, a, b)``. For example::
 
@@ -18,7 +18,7 @@ Tanh-sinh quadrature is extremely efficient for high-precision integration of an
     3.14159265358979323846264338327950288419716939937510582097...
 
 Neat examples
--------------
+.............
 
 Intervals can be infinite or half-infinite:
 
@@ -46,7 +46,7 @@ Functions with integral representations, such as the gamma function, can be impl
     (0.498015668118356 - 0.154949828301811j)
 
 Multiple integrals
-------------------
+..................
 
 It is possible to calculate double integrals with ``quadts``. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the *x* variable and the second interval specifies the range of the *y* variable::
 
@@ -92,7 +92,7 @@ There is currently no direct support for computing triple or higher dimensional 
 While double integrals are reasonably fast, even a simple triple integral at very low precision is likely to take several seconds to evaluate (harder integrals may take minutes). A quadruple integral will require a whole lot of patience.
 
 Error detection
----------------
+...............
 
 The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is oscillatory (such integrals should manually be split into smaller pieces). If the ``error`` option is set, ``quadts`` will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass ``quadts`` the option ``verbose=True`` to show detailed progress.
 
@@ -144,7 +144,7 @@ Even for analytic integrals on finite intervals, there is no guarantee that ``qu
 (It is possible that future improvements to the ``quadts`` implementation will make these particular examples work.)
 
 Performance
------------
+...........
 
 The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like this one can often be evaluated in less than a second. The timings for computing this integral at various precision levels on the author's computer is:
 
@@ -159,3 +159,115 @@ The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like 
 +-----+------------------+-------------------+
 
 The second integration at the same precision level is much faster. The reason for this is that the tanh-sinh algorithm must be initalized by computing a set of nodes, and this initalization if often more expensive than actually evaluating the integral. Mpmath automatically caches all computed nodes to make subsequent integrations faster, but the cache is lost when Python shuts down, so if you would frequently like to use mpmath to calculate 1000-digit integrals, you may want to save the nodes to a file. The nodes are stored in a dict ``TS_cache`` located in the ``mpmath.calculus`` module, which can be pickled if desired.
+
+Oscillatory quadrature (``quadosc``)
+------------------------------------
+
+It is common to encounter integrals with an integrand of the form ``f(x) = g(x)*sin(a*x+b)``, where ``g(x)`` is a smoothly decaying function and the range of integration is the entire real line or half the real line. The tanh-sinh quadrature rule is practically useless for integrals of this kind unless ``g(x)`` decays exponentially.
+
+Various algorithms more appropriate for oscillatory integration are known, with varying degrees of sophistication. The function ``quadosc`` in mpmath uses a very simple strategy: it treats the integral as an infinite series, where each term is the integral over a single period. This series will in general converge slowly, but can be accelerated using generic summation algorithms. An advantage of this method is that the oscillation need not be strictly periodic; it is sufficient that the zeros follow a "smooth" distribution.
+
+Specifying the rate of oscillation
+..................................
+
+The user must supply ``quadosc`` with details about the oscillation rate of ``f(x)`` via the ``period`` or ``zeros`` parameter.
+
+If ``f(x)`` behaves like a scaled sine or cosine, with a constant distance between each zero, it is sufficient to provide the period. For example, if ``f`` ``sin(3*x)``, the period should be set to ``6*pi``. Note that the period is defined as the distance between *two* consecutive zeros (one period of a sine wave consisting of both one positive and one negative "lobe").
+
+The parameter ``zeros`` is a function that, given an integer ``n``, returns the location where f crosses the axis the nth time, counting from the starting point of integration. To elaborate, the convention is as follows:
+
+* If integrating from ``a`` to ``inf``, ``zeros(1)``, ``zeros(2)``, ... give the 1st zero to the right of ``a``, the 2nd zero, etc
+* If integrating from ``-inf`` to ``b``, ``zeros(-1)``, ``zeros(-2)``, ... give the 1st zero to the left of ``b``, the 2nd zero, etc
+* If integrating from ``-inf`` to ``inf``, ``zeros(1)``, ``zeros(2)``, ... give the positive zeros (away from 0) and ``zeros(-1)``, ``zeros(-2)``, ... give the negative zeros
+
+The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at ``zeros(-1)`` or zeros(2), as long as the zeros are properly ordered.
+
+For a periodic function with period ``p``, it is equivalent to pass ``period=p`` or ``zeros = lambda n: p*n/2`` as a parameter.
+
+Alternating method
+..................
+
+To be specific, ``quadosc`` implements two different algorithms: by default, each term is the integral over a full period all terms, which means all terms should have the same sign (``g(x)`` is assumed to decay smoothly). Alternatively, ``quadosc`` can integrate over half-periods, giving an alternating series. The alternating version can be selected by providing the option ``alt=1``. The alternating version sometimes works better for some integrals and vice versa, but it is hard to know in advance which is more accurate. Both methods will be used in the examples below.
+
+
+Examples with simple periodic integrands
+........................................
+
+The integral of the sinc function ``sin(x)/x`` is a perfect match for ``quadosc``. In this case, both the alternating and nonalternating versions work well:
+
+    >>> mp.dps = 30
+    >>> print quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=0)
+    1.57079632679489661923132169164
+    >>> print quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=1)
+    1.57079632679489661923132169164
+    >>> print pi/2
+    1.57079632679489661923132169164
+
+Here with ``zeros`` instead of ``period``:
+
+    >>> print quadosc(lambda x: sin(x)/x, 0, inf, zeros=lambda n: n*pi)
+    1.57079632679489661923132169164
+
+In the following integral, the period is different, and the first zero is not located at zero (this does not pose a problem):
+
+    >>> print quadosc(lambda x: sin(3*x+4)/x**2, 1, inf, period=6*pi, alt=0)
+    0.260725538961809481605366600383
+    >>> print quadosc(lambda x: sin(3*x+4)/x**2, 1, inf, period=6*pi, alt=1)
+    0.260725538961809481605366600383
+
+The next example involves one of the author's favorite integrals. The example demonstrates that the integration can be done over the entire real line:
+
+    >>> print quadosc(lambda x: cos(x)/(1+x**2), -inf, inf, period=2*pi, alt=0)
+    1.15572734979092171791009318331
+    >>> print quadosc(lambda x: cos(x)/(1+x**2), -inf, inf, period=2*pi, alt=1)
+    1.15572734979092171791009318331
+
+The integral is remarkable due to having the following (surprising) value:
+
+    >>> print pi/e
+    1.15572734979092171791009318331
+
+Nonperiodic integrands
+......................
+
+Important examples of oscillatory integrals with a nonconstant rate of oscillation include those involving Bessel functions. We will illustrate with the J0 function, whose positive zeros occur roughly at 2.40, 5.52, 8.65, and so on. The zeros can be calculated to high accuracy by starting from a simple asymptotic approximation and calling the ``secant`` root-finder:
+
+    >>> def j0zero(n):
+    ...     return secant(j0, pi*(n-0.25))
+    ...
+
+By definition, the J0 function is normalized so that its integral from 0 to infinity is 1. This should now be easy to verify:
+
+    >>> mp.dps = 15
+    >>> print quadosc(j0, 0, inf, zeros=j0zero, alt=0)
+    0.991051642366528
+    >>> print quadosc(j0, 0, inf, zeros=j0zero, alt=1)
+    1.0
+
+The alternating method turned out to work much better in this case. We can also try a non-pure Bessel integral:
+
+    >>> print quadosc(lambda x: j0(x)/(x+1), 0, inf, zeros=j0zero, alt=0)
+    0.754611883758088
+    >>> print quadosc(lambda x: j0(x)/(x+1), 0, inf, zeros=j0zero, alt=1)
+    0.754610025770972
+
+It is hard to tell, but the second version is again the more accurate one. A fairly reliable solution is to repeate the calculation at slightly higher precision to see which one changes the least:
+
+    >>> mp.dps = 20
+    >>> print quadosc(lambda x: j0(x)/(x+1), 0, inf, zeros=j0zero, alt=0)
+    0.75461086177790761193
+    >>> print quadosc(lambda x: j0(x)/(x+1), 0, inf, zeros=j0zero, alt=1)
+    0.75461002577097216866
+
+Finally, let us consider the integral of ``sin(x**2)`` from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for ``quadosc``:
+
+    >>> mp.dps = 30
+    >>> print quadosc(lambda x: sin(x**2), 0, inf, zeros=lambda n: sqrt(n*pi), alt=0)
+    0.623537861432463506322183303555
+    >>> print quadosc(lambda x: sin(x**2), 0, inf, zeros=lambda n: sqrt(n*pi), alt=1)
+    0.626657068657750125603941321203
+
+The value generated with ``alt=1`` is correct. This can be verified by recomputing at a higher precision, or in this case by comparing with the well-known analytical result for the Fresnel integral:
+
+    >>> print sqrt(pi/8)
+    0.626657068657750125603941321203

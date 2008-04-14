@@ -1,0 +1,112 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Download and installation &mdash; mpmath Documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css">
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:   '',
+        VERSION:    '0.8'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/interface.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="contents" title="Global table of contents" href="contents.html">
+    <link rel="index" title="Global index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="top" title="mpmath Documentation" href="index.html">
+    <link rel="next" title="Mpmath basics" href="basics.html">
+    <link rel="prev" title="Welcome to mpmath&#8217;s documentation!" href="index.html">
+  </head>
+  <body>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="N">next</a> |</li>
+          <li class="right"><a href="index.html" title="Welcome to mpmath&#8217;s documentation!" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section">
+<h1 id="download-and-installation">Download and installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h1>
+<p>If you have <a class="reference" href="http://pypi.python.org/pypi/setuptools">setuptools</a> installed, you can download and install the latest release of mpmath in one step by running:</p>
+<blockquote>
+python -m easy_install mpmath</blockquote>
+<p>Alternatively, setup files can be downloaded manually from the <a class="reference" href="http://code.google.com/p/mpmath/downloads/list">mpmath download page</a> or the <a class="reference" href="http://pypi.python.org/pypi/mpmath/">Python Package Index</a>. If you are using Windows, you can pick the binary installer (mpmath-X.X.win32.exe). Otherwise, download the source package (available as both .zip and .tar.gz), extract it, and run</p>
+<blockquote>
+python setup.py install</blockquote>
+<p>Debian and Ubuntu users can apt-get mpmath (see package information, please verify that the most recent version is available).</p>
+<p>After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">**</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;0.5&#39;</span><span class="p">)</span>
+<span class="go">1.4142135623730950488016887242096980785696718753769</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="go">6.2831853071795864769252867665590057683943387987502</span>
+</pre></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidebarwrapper">
+          
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html" title="previous chapter">Welcome to mpmath&#8217;s documentation!</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="basics.html" title="next chapter">Mpmath basics</a></p>
+          
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+            
+              <li><a href="_sources/setup.txt">Show Source</a></li>
+            
+            </ul>
+          
+          
+          
+            <h3>Quick search</h3>
+            <form class="search" action="search.html" method="get">
+              <input type="text" name="q" size="18"> <input type="submit" value="Go">
+              <input type="hidden" name="check_keywords" value="yes">
+              <input type="hidden" name="area" value="default">
+            </form>
+            
+          
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
+        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
+          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="N">next</a> |</li>
+          <li class="right"><a href="index.html" title="Welcome to mpmath&#8217;s documentation!" accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Apr 13, 2008.
+    </div>
+  </body>
+</html>

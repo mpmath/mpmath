@@ -340,6 +340,21 @@
 <div class="section">
 <h3 id="random-numbers">Random numbers<a class="headerlink" href="#random-numbers" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">rand()</span></tt> returns a random number chosen from the uniform distribution on the interval [0, 1). All bits up to the working precision are random (this is not true if generating a <tt class="docutils literal"><span class="pre">float</span></tt> directly with Python&#8217;s <tt class="docutils literal"><span class="pre">random</span></tt> module and then converting it into an <tt class="docutils literal"><span class="pre">mpf</span></tt>).</p>
+<p>The output might look like this:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span> <span class="k">print</span> <span class="n">rand</span><span class="p">()</span>  <span class="c"># doctest:+SKIP</span>
+<span class="gp">...</span>
+<span class="go">0.391978954448554897401435871089</span>
+<span class="go">0.0807882783964168543644048960474</span>
+<span class="go">0.703930940186206635051721420436</span>
+<span class="go">0.626158757167772268326252881759</span>
+<span class="go">0.662757493867073525281224309434</span>
+<span class="go">0.756414034497179767347019515565</span>
+<span class="go">0.927214900855958669681240990671</span>
+<span class="go">0.244655678804068448731650701685</span>
+<span class="go">0.34560622640274419514821879678</span>
+<span class="go">0.353366977589549657670073479468</span>
+</pre></div>
 </div>
 <div class="section">
 <h3 id="polynomial-evaluation">Polynomial evaluation<a class="headerlink" href="#polynomial-evaluation" title="Permalink to this headline">¶</a></h3>
