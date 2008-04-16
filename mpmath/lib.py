@@ -736,8 +736,13 @@ def fpow(s, t, prec, rnd=round_fast):
     # s**(n/2) = sqrt(s)**n
     if texp == -1:
         if tman == 1:
+            if tsign:
+                return fdiv(fone, fsqrt(s, prec+10, reciprocal_rnd[rnd]), prec, rnd)
             return fsqrt(s, prec, rnd)
-        return fpowi(fsqrt(s, prec+10, rnd), tman, prec, rnd)
+        else:
+            if tsign:
+                return fpowi(fsqrt(s, prec+10, reciprocal_rnd[rnd]), -tman, prec, rnd)
+            return fpowi(fsqrt(s, prec+10, rnd), tman, prec, rnd)
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
     c = flog(s, prec+10, rnd)
