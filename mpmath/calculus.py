@@ -219,51 +219,66 @@ def polyval(coeffs, x, derivative=False):
     else:
         return p
 
-def polyroots(coeffs, maxsteps=20):
+def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     """
     Numerically locate all (complex) roots of a polynomial using the
     Durand-Kerner method.
 
-    This function returns a tuple (roots, err) where roots is a list of
-    complex numbers sorted by absolute value, and err is an estimate of
-    the maximum error. The polynomial should be given as a list of
-    coefficients.
+    With error=True, this function returns a tuple (roots, err) where roots
+    is a list of complex numbers sorted by absolute value, and err is an
+    estimate of the maximum error. The polynomial should be given as a list
+    of coefficients.
 
         >>> nprint(polyroots([24,-14,-1,1]), 4)
-        ([(2.0 + 8.968e-44j), (3.0 + 1.156e-33j), (-4.0 + 0.0j)], 5.921e-16)
-        >>> nprint(polyroots([2,3,4]))
-        ([(-0.375 + -0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
+        [-4.0, 2.0, 3.0]
+        >>> nprint(polyroots([2,3,4], error=True))
+        ([(-0.375 - 0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
 
     """
-    deg = len(coeffs) - 1
-    # Must be monic
-    lead = mpnumeric(coeffs[-1])
-    if lead == 1:
-        coeffs = map(mpnumeric, coeffs)
+    orig = mp.prec
+    weps = +eps
+    try:
+        mp.prec += 10
+        deg = len(coeffs) - 1
+        # Must be monic
+        lead = convert_lossless(coeffs[-1])
+        if lead == 1:
+            coeffs = map(convert_lossless, coeffs)
+        else:
+            coeffs = [c/lead for c in coeffs]
+        f = lambda x: polyval(coeffs, x)
+        roots = [mpc((0.4+0.9j)**n) for n in range(deg)]
+        err = [mpf(1) for n in range(deg)]
+        for step in range(maxsteps):
+            if max(err).ae(0):
+                break
+            for i in range(deg):
+                if not err[i].ae(0):
+                    p = roots[i]
+                    x = f(p)
+                    for j in range(deg):
+                        if i != j:
+                            try:
+                                x /= (p-roots[j])
+                            except ZeroDivisionError:
+                                continue
+                    roots[i] = p - x
+                    err[i] = abs(x)
+        if cleanup:
+            for i in range(deg):
+                if abs(roots[i].imag) < weps:
+                    roots[i] = roots[i].real
+                elif abs(roots[i].real) < weps:
+                    roots[i] = roots[i].imag * 1j
+        roots.sort(key=lambda x: (abs(x.imag), x.real))
+    finally:
+        mp.prec = orig
+    if error:
+        err = max(err)
+        err = max(err, ldexp(1, -orig+1))
+        return [+r for r in roots], +err
     else:
-        coeffs = [c/lead for c in coeffs]
-    f = lambda x: polyval(coeffs, x)
-    roots = [mpc((0.4+0.9j)**n) for n in range(deg)]
-    error = [mpf(1) for n in range(deg)]
-    for step in range(maxsteps):
-        if max(error).ae(0):
-            break
-        for i in range(deg):
-            if not error[i].ae(0):
-                p = roots[i]
-                x = f(p)
-                for j in range(deg):
-                    if i != j:
-                        try:
-                            x /= (p-roots[j])
-                        except ZeroDivisionError:
-                            continue
-                roots[i] = p - x
-                error[i] = abs(x)
-    roots.sort(key=abs)
-    err = max(error)
-    err = max(err, ldexp(1, -mp.prec+1))
-    return roots, err
+        return [+r for r in roots]
 
 
 ##############################################################################
@@ -627,7 +642,8 @@ def sumsh(f, a, b, n=None, m=None):
     return +s
 
 @extraprec(15, normalize_output=True)
-def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
+def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
+    verbose=False):
     """
     Calculate the sum of f(n) for n = a..b using Euler-Maclaurin
     summation. This algorithm is efficient for slowly convergent
@@ -641,7 +657,7 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
     detailed information about progress and errors is printed.
 
         >>> mp.dps = 15
-        >>> s, err = sumem(lambda n: 1/n**2, 1, inf)
+        >>> s, err = sumem(lambda n: 1/n**2, 1, inf, error=True)
         >>> print s
         1.64493406684823
         >>> print pi**2 / 6
@@ -665,8 +681,7 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
         >>> f = lambda n: 1/n**2
         >>> fp = lambda x, n: (-1)**n * factorial(n+1) * x**(-2-n)
         >>> mp.dps = 50
-        >>> s, err = sumem(lambda n: 1/n**2, 1, inf, fderiv=fp)
-        >>> print s
+        >>> print sumem(lambda n: 1/n**2, 1, inf, fderiv=fp)
         1.6449340668482264364724151666460251892189499012068
         >>> print pi**2 / 6
         1.6449340668482264364724151666460251892189499012068
@@ -694,7 +709,10 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
     if ierr > weps:
         if verbose:
             print "Failed to converge to target accuracy (integration failed)"
-        return S+I, abs(I) + ierr
+        if error:
+            return S+I, abs(I) + ierr
+        else:
+            return S+I
     if infinite:
         C = f(a+N) / 2
     else:
@@ -735,8 +753,11 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, verbose=False):
         fac *= (2*k) * (2*k-1)
         prev = term
     if isinstance(res, mpc) and not isinstance(I, mpc):
-        return res.real, err
-    return res, err
+        res, err = res.real, err
+    if error:
+        return res, err
+    else:
+        return res
 
 #----------------------------------------------------------------------------#
 #                                  ODE solvers                               #
@@ -851,10 +872,10 @@ def chebT(a=1, b=0):
         for i, c in enumerate(Tb): Tmp[i] -= c
         Ta, Tb = Tmp, Ta
 
-def chebyfit(f,a,b,N):
+def chebyfit(f,a,b,N,error=False):
     """Chebyshev approximation: returns coefficients of a degree N-1
-    polynomial that approximates f on the interval [a, b], along with
-    an estimate of the maximum error."""
+    polynomial that approximates f on the interval [a, b]. With error=True,
+    also returns an estimate of the maximum error."""
     orig = mp.prec
     try:
         mp.prec = orig + int(N**0.5) + 20
@@ -874,7 +895,10 @@ def chebyfit(f,a,b,N):
             err = max(err, abs(f(x) - polyval(d, x)))
     finally:
         mp.prec = orig
-        return d, +err
+        if error:
+            return d, +err
+        else:
+            return d
 
 
 #----------------------------------------------------------------------------#

@@ -67,7 +67,7 @@
 </pre></div>
 <p>Complex integrals are also supported. The next example computes Euler&#8217;s constant gamma by integrating around the pole of the Riemann zeta function at <em>z</em> = 1:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">(0.577215664901533 - 4.88811920958765e-23j)</span>
+<span class="go">(0.577215664901533 - 3.64632996762876e-23j)</span>
 </pre></div>
 <p>Functions with integral representations, such as the gamma function, can be implemented directly from the definition:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
@@ -167,7 +167,7 @@
 </div>
 <div class="section">
 <h3 id="performance">Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
-<p>The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like this one can often be evaluated in less than a second. The timings for computing this integral at various precision levels on the author&#8217;s computer is:</p>
+<p>The tanh-sinh scheme is efficient enough that analytic 100-digit integrals often can often be evaluated in less than a second. The timings for <tt class="docutils literal"><span class="pre">quadts(lambda</span> <span class="pre">x:</span> <span class="pre">2*sqrt(1-x**2),</span> <span class="pre">-1,</span> <span class="pre">1)</span></tt> at various precision levels on the author&#8217;s computer is:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="12%" />
@@ -210,16 +210,16 @@
 <li>If integrating from <tt class="docutils literal"><span class="pre">-inf</span></tt> to <tt class="docutils literal"><span class="pre">b</span></tt>, <tt class="docutils literal"><span class="pre">zeros(-1)</span></tt>, <tt class="docutils literal"><span class="pre">zeros(-2)</span></tt>, ... give the 1st zero to the left of <tt class="docutils literal"><span class="pre">b</span></tt>, the 2nd zero, etc</li>
 <li>If integrating from <tt class="docutils literal"><span class="pre">-inf</span></tt> to <tt class="docutils literal"><span class="pre">inf</span></tt>, <tt class="docutils literal"><span class="pre">zeros(1)</span></tt>, <tt class="docutils literal"><span class="pre">zeros(2)</span></tt>, ... give the positive zeros (away from 0) and <tt class="docutils literal"><span class="pre">zeros(-1)</span></tt>, <tt class="docutils literal"><span class="pre">zeros(-2)</span></tt>, ... give the negative zeros</li>
 </ul>
-<p>The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at <tt class="docutils literal"><span class="pre">zeros(-1)</span></tt> or zeros(2), as long as the zeros are properly ordered.</p>
+<p>The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at <tt class="docutils literal"><span class="pre">zeros(-1)</span></tt> or <tt class="docutils literal"><span class="pre">zeros(2)</span></tt>, as long as the zeros are properly ordered.</p>
 <p>For a periodic function with period <tt class="docutils literal"><span class="pre">p</span></tt>, it is equivalent to pass <tt class="docutils literal"><span class="pre">period=p</span></tt> or <tt class="docutils literal"><span class="pre">zeros</span> <span class="pre">=</span> <span class="pre">lambda</span> <span class="pre">n:</span> <span class="pre">p*n/2</span></tt> as a parameter.</p>
 </div>
 <div class="section">
 <h3 id="alternating-method">Alternating method<a class="headerlink" href="#alternating-method" title="Permalink to this headline">¶</a></h3>
-<p>To be specific, <tt class="docutils literal"><span class="pre">quadosc</span></tt> implements two different algorithms: by default, each term is the integral over a full period all terms, which means all terms should have the same sign (<tt class="docutils literal"><span class="pre">g(x)</span></tt> is assumed to decay smoothly). Alternatively, <tt class="docutils literal"><span class="pre">quadosc</span></tt> can integrate over half-periods, giving an alternating series. The alternating version can be selected by providing the option <tt class="docutils literal"><span class="pre">alt=1</span></tt>. The alternating version sometimes works better for some integrals and vice versa, but it is hard to know in advance which is more accurate. Both methods will be used in the examples below.</p>
+<p><tt class="docutils literal"><span class="pre">quadosc</span></tt> implements two different algorithms: by default, each term is the integral over a full period, which means all terms should have the same sign (<tt class="docutils literal"><span class="pre">g(x)</span></tt> is assumed to decay smoothly). Alternatively, <tt class="docutils literal"><span class="pre">quadosc</span></tt> can integrate over half-periods, giving an alternating series. The alternating version can be selected by providing the option <tt class="docutils literal"><span class="pre">alt=1</span></tt>. The alternating version sometimes works better for some integrals and vice versa, but it is hard to know in advance which is more accurate. Both methods will be used in the examples below.</p>
 </div>
 <div class="section">
 <h3 id="examples-with-simple-periodic-integrands">Examples with simple periodic integrands<a class="headerlink" href="#examples-with-simple-periodic-integrands" title="Permalink to this headline">¶</a></h3>
-<p>The integral of the sinc function <tt class="docutils literal"><span class="pre">sin(x)/x</span></tt> is a perfect match for <tt class="docutils literal"><span class="pre">quadosc</span></tt>. In this case, both the alternating and nonalternating versions work well:</p>
+<p>The integral of the sinc function sin(x)/x is a perfect match for <tt class="docutils literal"><span class="pre">quadosc</span></tt>. In this case, both the alternating and nonalternating versions work well:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">1.57079632679489661923132169164</span>
@@ -244,7 +244,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">1.15572734979092171791009318331</span>
 </pre></div>
-<p>The integral is remarkable due to having the following (surprising) value:</p>
+<p>The integral is remarkable because of having the following neat value:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="n">e</span>
 <span class="go">1.15572734979092171791009318331</span>
 </pre></div>
@@ -276,7 +276,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">j0</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.75461002577097216866</span>
 </pre></div>
-<p>Finally, let us consider the integral of <tt class="docutils literal"><span class="pre">sin(x**2)</span></tt> from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for <tt class="docutils literal"><span class="pre">quadosc</span></tt>:</p>
+<p>Finally, let us consider the integral of sin(x^2) from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for <tt class="docutils literal"><span class="pre">quadosc</span></tt>:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">pi</span><span class="p">),</span> <span class="n">alt</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.623537861432463506322183303555</span>
@@ -359,7 +359,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 14, 2008.
+      Last updated on Apr 15, 2008.
     </div>
   </body>
 </html>

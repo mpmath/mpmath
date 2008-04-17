@@ -46,10 +46,10 @@
 <div class="section">
 <h2 id="chebyshev-approximation-chebyfit">Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)<a class="headerlink" href="#chebyshev-approximation-chebyfit" title="Permalink to this headline">¶</a></h2>
 <p>Chebyshev approximation is very useful if one needs repeated evaluation of an expensive function, such as function defined implicitly by an integral or a differential equation. (In particular, it provides the opportunity to turn a slow mpmath function into a fast machine-precision version of the same.)</p>
-<p><tt class="docutils literal"><span class="pre">chebyfit(f,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">N)</span></tt> generates a polynomial of degree N-1 that approximates f on the finite interval [a, b]. It returns a list containing the polynomial coefficients, as well as a number estimating the maximum error on the interval.</p>
+<p><tt class="docutils literal"><span class="pre">chebyfit(f,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">N)</span></tt> generates a polynomial of degree N-1 that approximates f on the finite interval [a, b] and returns a list containing the polynomial coefficients. With <tt class="docutils literal"><span class="pre">error=True</span></tt>, it also returns a number estimating the maximum error on the interval.</p>
 <p>Here we use it to generate a low-degree approximation of f(x) = cos(x), valid on the interval [1, 2]:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
 <span class="go">[0.949553, 0.174141, -0.732491, 0.146166, 2.91682e-3]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mf">12</span><span class="p">)</span>
@@ -67,7 +67,7 @@
 <span class="go">1.61349954245e-5</span>
 </pre></div>
 <p>The degree N can be set arbitrarily high, to obtain an arbitrarily good approximation. As a rule of thumb, an N-term Chebyshev approximation is good to N/(b-a) decimal places (although this depends on how well-behaved f is). The cost grows accordingly: <tt class="docutils literal"><span class="pre">chebyfit</span></tt> evaluates the function (N^2)/2 times to compute the coefficients and an additional N times to estimate the error.</p>
-<p>One should be careful to use a sufficiently high working precision both when calling <tt class="docutils literal"><span class="pre">chebyfit</span></tt> and when evaluating the resulting polynomial, as the polynomial is sometimes ill-conditioned. It is for example difficult to reach 15-digit accuracy when evaluating the polynomial using machine precision floats, no matter the theoretical accuracy of the polynomial.</p>
+<p>One should be careful to use a sufficiently high working precision both when calling <tt class="docutils literal"><span class="pre">chebyfit</span></tt> and when evaluating the resulting polynomial, as the polynomial is sometimes ill-conditioned. It is for example difficult to reach 15-digit accuracy when evaluating the polynomial using machine precision floats, no matter the theoretical accuracy of the polynomial. (The option to return the coefficients in Chebyshev form should be made available in the future.)</p>
 <p>It is important to note the Chebyshev approximation works poorly if f is not smooth. A function containing singularities, rapid oscillation, etc can be approximated more effectively by multiplying it with a weight function that cancels out the nonsmooth features.</p>
 </div>
 </div>
@@ -127,7 +127,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 13, 2008.
+      Last updated on Apr 17, 2008.
     </div>
   </body>
 </html>

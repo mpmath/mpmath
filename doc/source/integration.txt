@@ -31,7 +31,7 @@ Intervals can be infinite or half-infinite:
 Complex integrals are also supported. The next example computes Euler's constant gamma by integrating around the pole of the Riemann zeta function at *z* = 1::
 
     >>> print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
-    (0.577215664901533 - 4.88811920958765e-23j)
+    (0.577215664901533 - 3.64632996762876e-23j)
 
 Functions with integral representations, such as the gamma function, can be implemented directly from the definition::
 
@@ -146,7 +146,7 @@ Even for analytic integrals on finite intervals, there is no guarantee that ``qu
 Performance
 ...........
 
-The tanh-sinh scheme is efficient enough that analytic 100-digit integrals like this one can often be evaluated in less than a second. The timings for computing this integral at various precision levels on the author's computer is:
+The tanh-sinh scheme is efficient enough that analytic 100-digit integrals often can often be evaluated in less than a second. The timings for ``quadts(lambda x: 2*sqrt(1-x**2), -1, 1)`` at various precision levels on the author's computer is:
 
 +-----+------------------+-------------------+
 | dps | First evaluation | Second evaluation |
@@ -180,20 +180,20 @@ The parameter ``zeros`` is a function that, given an integer ``n``, returns the 
 * If integrating from ``-inf`` to ``b``, ``zeros(-1)``, ``zeros(-2)``, ... give the 1st zero to the left of ``b``, the 2nd zero, etc
 * If integrating from ``-inf`` to ``inf``, ``zeros(1)``, ``zeros(2)``, ... give the positive zeros (away from 0) and ``zeros(-1)``, ``zeros(-2)``, ... give the negative zeros
 
-The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at ``zeros(-1)`` or zeros(2), as long as the zeros are properly ordered.
+The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at ``zeros(-1)`` or ``zeros(2)``, as long as the zeros are properly ordered.
 
 For a periodic function with period ``p``, it is equivalent to pass ``period=p`` or ``zeros = lambda n: p*n/2`` as a parameter.
 
 Alternating method
 ..................
 
-To be specific, ``quadosc`` implements two different algorithms: by default, each term is the integral over a full period all terms, which means all terms should have the same sign (``g(x)`` is assumed to decay smoothly). Alternatively, ``quadosc`` can integrate over half-periods, giving an alternating series. The alternating version can be selected by providing the option ``alt=1``. The alternating version sometimes works better for some integrals and vice versa, but it is hard to know in advance which is more accurate. Both methods will be used in the examples below.
+``quadosc`` implements two different algorithms: by default, each term is the integral over a full period, which means all terms should have the same sign (``g(x)`` is assumed to decay smoothly). Alternatively, ``quadosc`` can integrate over half-periods, giving an alternating series. The alternating version can be selected by providing the option ``alt=1``. The alternating version sometimes works better for some integrals and vice versa, but it is hard to know in advance which is more accurate. Both methods will be used in the examples below.
 
 
 Examples with simple periodic integrands
 ........................................
 
-The integral of the sinc function ``sin(x)/x`` is a perfect match for ``quadosc``. In this case, both the alternating and nonalternating versions work well:
+The integral of the sinc function sin(x)/x is a perfect match for ``quadosc``. In this case, both the alternating and nonalternating versions work well:
 
     >>> mp.dps = 30
     >>> print quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=0)
@@ -222,7 +222,7 @@ The next example involves one of the author's favorite integrals. The example de
     >>> print quadosc(lambda x: cos(x)/(1+x**2), -inf, inf, period=2*pi, alt=1)
     1.15572734979092171791009318331
 
-The integral is remarkable due to having the following (surprising) value:
+The integral is remarkable because of having the following neat value:
 
     >>> print pi/e
     1.15572734979092171791009318331
@@ -259,7 +259,7 @@ It is hard to tell, but the second version is again the more accurate one. A fai
     >>> print quadosc(lambda x: j0(x)/(x+1), 0, inf, zeros=j0zero, alt=1)
     0.75461002577097216866
 
-Finally, let us consider the integral of ``sin(x**2)`` from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for ``quadosc``:
+Finally, let us consider the integral of sin(x^2) from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for ``quadosc``:
 
     >>> mp.dps = 30
     >>> print quadosc(lambda x: sin(x**2), 0, inf, zeros=lambda n: sqrt(n*pi), alt=0)

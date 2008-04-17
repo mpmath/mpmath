@@ -153,11 +153,11 @@
 <p>The generated coefficient list is valid input to <tt class="docutils literal"><span class="pre">polyval</span></tt> and <tt class="docutils literal"><span class="pre">polyroots</span></tt>:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span><span class="mf">3</span><span class="p">),</span> <span class="n">pi</span><span class="p">)</span>
 <span class="go">mpf(&#39;3.205968823749572e-11&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">3</span><span class="p">))[</span><span class="mf">0</span><span class="p">]:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">3</span><span class="p">)):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
-<span class="go">(-0.200777515923391 + 0.0j)</span>
-<span class="go">(-0.866652458240562 - 7.70371977754894e-34j)</span>
-<span class="go">(3.14159265358979 + 0.0j)</span>
+<span class="go">-0.866652458240562</span>
+<span class="go">-0.200777515923391</span>
+<span class="go">3.14159265358979</span>
 </pre></div>
 <p>When identifying exact algebraic numbers, the precision must be set very high to avoid false solutions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
@@ -237,7 +237,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 13, 2008.
+      Last updated on Apr 17, 2008.
     </div>
   </body>
 </html>

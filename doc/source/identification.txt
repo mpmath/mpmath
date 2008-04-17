@@ -131,11 +131,11 @@ The generated coefficient list is valid input to ``polyval`` and ``polyroots``:
 
     >>> polyval(findpoly(pi,3), pi)
     mpf('3.205968823749572e-11')
-    >>> for r in polyroots(findpoly(pi, 3))[0]:
+    >>> for r in polyroots(findpoly(pi, 3)):
     ...     print r
-    (-0.200777515923391 + 0.0j)
-    (-0.866652458240562 - 7.70371977754894e-34j)
-    (3.14159265358979 + 0.0j)
+    -0.866652458240562
+    -0.200777515923391
+    3.14159265358979
 
 When identifying exact algebraic numbers, the precision must be set very high to avoid false solutions:
 

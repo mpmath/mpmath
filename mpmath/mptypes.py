@@ -794,7 +794,7 @@ def nstr(x, n=6):
     if isinstance(x, mpf):
         return to_str(x._mpf_, n)
     if isinstance(x, mpc):
-        return "(%s + %sj)" % (to_str(x.real._mpf_, n), to_str(x.imag._mpf_, n))
+        return "(" + complex_to_str(x._mpc_[0], x._mpc_[1], n)  + ")"
     if isinstance(x, basestring):
         return repr(x)
     return str(x)
