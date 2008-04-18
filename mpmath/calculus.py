@@ -306,8 +306,8 @@ def transform(f, a, b):
     If a and b are finite, this is achived by means of a linear change
     of variables. If at least one point is infinite, the substitution
     t = 1/x is used."""
-    a = mpf(a)
-    b = mpf(b)
+    a = convert_lossless(a)
+    b = convert_lossless(b)
     if (a, b) == (-1, 1):
         return f
     one = mpf(1)

@@ -10,7 +10,8 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
   "ldexp", "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
-  "make_mpc"]
+  "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
+  "asec", "acsc", "acot", "asech", "acsch", "acoth"]
 
 from lib import *
 from libmpc import *
@@ -651,28 +652,64 @@ def mpfunc(name, real_f, complex_f, doc):
             x = x._mpc_
         return make_mpc(complex_f(x, prec, rnd))
     f.__name__ = name
-    f.__doc__ = doc
+    f.__doc__ = "Returns the %s of x" % doc
     return f
 
-sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "Returns the principal square root of x.")
-exp = mpfunc('exp', fexp, mpc_exp, "Returns the exponential function of x.")
-ln = mpfunc('ln', flog, mpc_log, "Returns the natural logarithm of x.")
+def altfunc(f, name, desc):
+    def g(x):
+        orig = mp.prec
+        try:
+            mp.prec = orig + 10
+            return one/f(x)
+        finally:
+            mp.prec = orig
+    g.__name__ = name
+    g.__doc__ = "Returns the %s of x, 1/%s(x)" % (desc, f.__name__)
+    return g
 
-cos = mpfunc('cos', fcos, mpc_cos, "Returns the cosine of x.")
-sin = mpfunc('sin', fsin, mpc_sin, "Returns the sine of x.")
-tan = mpfunc('tan', ftan, mpc_tan, "Returns the tangent of x.")
+def altinvfunc(f, name, desc):
+    def g(x):
+        orig = mp.prec
+        try:
+            mp.prec = orig + 10
+            return f(one/x)
+        finally:
+            mp.prec = orig
+    g.__name__ = name
+    g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
+    return g
 
-cosh = mpfunc('cosh', fcosh, mpc_cosh, "Returns the hyperbolic cosine of x.")
-sinh = mpfunc('sinh', fsinh, mpc_sinh, "Returns the hyperbolic sine of x.")
-tanh = mpfunc('tanh', ftanh, mpc_tanh, "Returns the hyperbolic tangent of x.")
+sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root")
+exp = mpfunc('exp', fexp, mpc_exp, "exponential function")
+ln = mpfunc('ln', flog, mpc_log, "natural logarithm")
 
-acos = mpfunc('acos', facos, mpc_acos, "Returns the inverse cosine of x.")
-asin = mpfunc('asin', fasin, mpc_asin, "Returns the inverse sine of x.")
-atan = mpfunc('atan', fatan, mpc_atan, "Returns the inverse tangent of x.")
+cos = mpfunc('cos', fcos, mpc_cos, "cosine")
+sin = mpfunc('sin', fsin, mpc_sin, "sine")
+tan = mpfunc('tan', ftan, mpc_tan, "tangent")
+cosh = mpfunc('cosh', fcosh, mpc_cosh, "hyperbolic cosine")
+sinh = mpfunc('sinh', fsinh, mpc_sinh, "hyperbolic sine")
+tanh = mpfunc('tanh', ftanh, mpc_tanh, "hyperbolic tangent")
 
-asinh = mpfunc('asinh', fasinh, mpc_asinh, "Returns the inverse hyperbolic sine of x.")
-acosh = mpfunc('acosh', facosh, mpc_acosh, "Returns the inverse hyperbolic cosine of x.")
-atanh = mpfunc('atanh', fatanh, mpc_atanh, "Returns the inverse hyperbolic tangent of x.")
+acos = mpfunc('acos', facos, mpc_acos, "inverse cosine")
+asin = mpfunc('asin', fasin, mpc_asin, "inverse sine")
+atan = mpfunc('atan', fatan, mpc_atan, "inverse tangent")
+asinh = mpfunc('asinh', fasinh, mpc_asinh, "inverse hyperbolic sine")
+acosh = mpfunc('acosh', facosh, mpc_acosh, "inverse hyperbolic cosine")
+atanh = mpfunc('atanh', fatanh, mpc_atanh, "inverse hyperbolic tangent")
+
+sec = altfunc(cos, 'sec', 'secant')
+csc = altfunc(sin, 'csc', 'cosecant')
+cot = altfunc(tan, 'cot', 'cotangent')
+sech = altfunc(cosh, 'sech', 'hyperbolic secant')
+csch = altfunc(sinh, 'csch', 'hyperbolic cosecant')
+coth = altfunc(tanh, 'coth', 'hyperbolic cotangent')
+
+asec = altinvfunc(acos, 'asec', 'secant')
+acsc = altinvfunc(asin, 'acsc', 'cosecant')
+acot = altinvfunc(atan, 'acot', 'cotangent')
+asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
+acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
+acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y

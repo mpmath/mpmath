@@ -17,6 +17,9 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 2*sqrt(1-x*x), -1, 1), pi)
     mp.dps = 15
 
+def test_complex_integration():
+    assert quadts(lambda x: x, 0, 1+j).ae(j)
+
 def test_quadosc():
     mp.dps = 15
     assert quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=0).ae(pi/2)
