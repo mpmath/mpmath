@@ -1,3 +1,55 @@
+--0.8--
+(currently in svn)
+
+* compatibility tests should now pass on systems where Python is
+  compiled to use 80-bit registers for floating point operations
+* fixed mpmath to work with some versions of Python 2.4 where a
+  list indexing bug is present in the Python core
+* implemented the complete set of reciprocal trigonometric and
+  hyperbolic functions and their inverses (cotangent, secant, etc)
+* oscillatory quadrature algorithm implemented
+* fixed computation of exp(n) for negative integers and x**y for
+  negative half integers y
+* implemented the PSLQ algorithm and constant recognition functions
+* implemented Richardson and Shanks transformations for computing
+  limits and series
+* better algorithms for various complex elementary functions
+  (tan and tanh by Fredrik; sqrt, acos, asin, acosh and asinh
+  improved by Mario Pernici)
+* slightly faster square roots at low precision (contributed by
+  Mario Pernici)
+* mpf ** complex now works
+* implemented basic ODE solvers (contributed by Ondrej Certik)
+* faster generation of quadrature nodes (contributed by Mario Pernici)
+* faster change of variables for quadrature
+* comparisons and conversions have been optimized slightly.
+  comparisons with float(nan) also work as intended.
+* the rounding argument for lib and libmpc functions, and for
+  some functions also the the prec argument, are now optional,
+  resulting in cleaner and slightly faster lib code
+* implemented the Lambert W function
+* implemented the arithmetic-geometric mean function
+* implemented generic hypergeometric series and some special
+  hypergeometric functions (elliptic integrals, orthogonal polynomials)
+* several more mathematical constants
+* fast sequential computation of integer logarithms and Bernoulli
+  numbers
+* str() is several times faster at very high precision
+* implementations of most elementary functions moved to the lib
+  and libmpc modules
+* support for trapping complex results
+* multiplication and integer powers for complex numbers is faster
+  and more accurate
+* miscellaneous speed improvements to complex arithmetic (contributed
+  by Mario Pernici)
+* gamma and factorial are about 2x faster
+* Bessel function jv works for complex arguments and noninteger v
+* faster computation of cos and sin when only one of them is needed
+  (contributed by Mario Pernici)
+* implemented the Euler-Maclaurin algorithm for summation of series
+* polyroots returns nicer results
+* pickling now works for mpf and mpc instances
+
 --0.7--
 Released March 12, 2008
 
@@ -7,57 +59,39 @@ Released March 12, 2008
   flexibility in the implementation. it will unfortunately break
   any existing code written for mpmath, but the broken code should
   be trivial to update.
-
 * the functions workprec, workdps, extraprec, extradps have been
   introduced for switching precision in a more safe manner,
   ensuring that the precision gets reset when finished. they can
   be used with the 'with' statement available in python 2.5
-
 * improved documentation (manual.html)
-
 * the round-half-down and round-half-up modes have been deprecated,
   since they added complexity without being particularly useful.
   round-half-even has been renamed to round-nearest.
-
 * implemented the functions nstr, nprint for printing numbers with
   a small or custom number of digits
-
 * accuracy of cos and sin near roots has been fixed. computing
   sin(x) or cos(x) where x is huge is also much faster
-
 * implemented a magical constant eps that gives the "machine"
   epsilon
-
 * additional mathematical functions: implemented Catalan's constant
   and Bessel functions J_n(x) for integer n and real x
-
 * new functions diff and diffc for numerical differentiation
-
 * implemented the ldexp function for fast multiplication by 2**n
-
 * mpf uses rich comparison methods (contributed by Pearu Peterson)
-
 * epydoc-friendly docstrings (contributed by Pearu Peterson)
-
 * support creating mpf from float nan or inf
-
 * fixed printing of complex numbers with negative imaginary part
-
 * flattened package structure to simplify inclusion of mpmath in other
   packages
-
 * external classes can interoperate with mpf and mpc instances
   by defining _mpf_ or _mpc_ properties
-
 * renamed lib.fpow -> lib.fpowi and implemented lib.fpow for general
   real powers. <mpf> ** <mpf> should now be slightly faster and more
   robust
-
 * the internal number representation has been changed to include
   an explicit sign bit. as a result of this change and other small
   tweaks, arithmetic is up to 20% faster and the total running
   time for mpmath's unit tests has dropped 10%.
-
 * miscellaneous speed improvements:
   * <mpf> ** <int> is 2-3 times faster (contributed by Mario Pernici)
   * <mpf> * <int> and <int> * <mpf> is roughly twice as fast
@@ -65,7 +99,6 @@ Released March 12, 2008
     Pernici)
   * exp and log are about 10% faster
   * fast computation of e and exp(n) when precision is extremely high
-
 
 --0.6--
 Released January 13, 2008

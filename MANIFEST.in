@@ -1,7 +1,9 @@
-include doc/manual.html
+include doc/run_doctest.py
+include doc/build.py
+include doc/source/*.txt
+include doc/source/conf.py
 include demo/*.py
 include mpmath/*.py
-include mpmath/apps/*.py
 include mpmath/tests/*.py
 include LICENSE
 include CHANGES

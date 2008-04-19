@@ -12,7 +12,8 @@ LICENSE file for details)
 0. History and credits
 ----------------------
 
-The following people have contributed patches to mpmath:
+The following people have contributed patches and new features
+to mpmath:
 
 * Pearu Peterson
 * Mario Pernici
@@ -20,6 +21,7 @@ The following people have contributed patches to mpmath:
 
 Release history:
 
+* Version 0.8 released on April 19, 2008
 * Version 0.7 released on March 12, 2008
 * Version 0.6 released on January 13, 2008
 * Version 0.5 released on November 24, 2007
@@ -65,7 +67,7 @@ directory.
 3. Documentation
 ----------------
 
-See doc/manual.html or the mpmath website.
+Extensive documentation is available on the mpmath website.
 
 4. Known problems
 -----------------
