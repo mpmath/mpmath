@@ -16,6 +16,11 @@ ys = [(random()-1) * 10**randint(-140, 140) for x in range(N)]
 # include some equal values
 ys[int(N*0.8):] = xs[int(N*0.8):]
 
+# Detect whether Python is compiled to use 80-bit floating-point
+# instructions, in which case the double compatibility test breaks
+uses_x87 = -4.1974624032366689e+117 / -8.4657370748010221e-47 \
+    == 4.9581771393902231e+163
+
 def test_double_compatibility():
     mp.prec = 53
     mp.rounding = 'default'
@@ -30,10 +35,22 @@ def test_double_compatibility():
         assert (mpx <= mpy) == (x <= y)
         assert (mpx >= mpy) == (x >= y)
         assert mpx == mpx
-        assert mpx + mpy == x + y
-        assert mpx * mpy == x * y
-        assert mpx / mpy == x / y
-        assert mpx % mpy == x % y
+        if uses_x87:
+            mp.prec = 80
+            a = mpx + mpy
+            b = mpx * mpy
+            c = mpx / mpy
+            d = mpx % mpy
+            mp.prec = 53
+            assert +a == x + y
+            assert +b == x * y
+            assert +c == x / y
+            assert +d == x % y
+        else:
+            assert mpx + mpy == x + y
+            assert mpx * mpy == x * y
+            assert mpx / mpy == x / y
+            assert mpx % mpy == x % y
         assert abs(mpx) == abs(x)
         assert mpf(repr(x)) == x
         assert ceil(mpx) == math.ceil(x)
