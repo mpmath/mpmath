@@ -45,7 +45,7 @@
 <h1 id="number-identification">Number identification<a class="headerlink" href="#number-identification" title="Permalink to this headline">¶</a></h1>
 <p>Almost all function in mpmath are concerned with producing approximations from exact mathematical formulas. It is also useful to consider the inverse problem: given only a decimal approximation for a number, such as 0.7320508075688772935274463, is it possible to find an exact formula?</p>
 <p>Subject to certain restrictions, such &#8220;reverse engineering&#8221; is indeed possible thanks to the existence of <em>integer relation algorithms</em>. Mpmath implements the PSLQ algorithm (developed by H. Ferguson), which is perhaps the best known integer relation algorithm.</p>
-<p>Automated number recognition based on PSLQ does have limited power. Any occurring transcendental constants (pi, e, etc) must be known in advance, and the relation between those constants in the formula must be linear (such as x = 3*pi + 4*e). More complex formulas can be found by combining PSLQ with functional transformations; however, this is only feasible to a limited extent since the computation time grows exponentially with the number of operations that need to be combined.</p>
+<p>Automated number recognition based on PSLQ does have limited power. Any occurring transcendental constants (pi, e, etc) must be guessed by the user, and the relation between those constants in the formula must be linear (such as x = 3*pi + 4*e). More complex formulas can be found by combining PSLQ with functional transformations; however, this is only feasible to a limited extent since the computation time grows exponentially with the number of operations that need to be combined.</p>
 <p>The number identification facilities in mpmath are inspired by the <a class="reference" href="http://oldweb.cecm.sfu.ca/projects/ISC/ISCmain.html">Inverse Symbolic Calculator</a> (ISC). The ISC is more powerful than mpmath, as it uses a lookup table of millions of precomputed constants (thereby mitigating the problem with exponential complexity).</p>
 <div class="section">
 <h2 id="constant-recognition-identify">Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)<a class="headerlink" href="#constant-recognition-identify" title="Permalink to this headline">¶</a></h2>
@@ -106,8 +106,46 @@
 <p>Note that the formulas are sorted by length. Consequentially, the first one in the list will often be the mathematically simplest one. The first formula in the list is <em>not</em> necessarily the same one as the formula returned by <tt class="docutils literal"><span class="pre">identify</span></tt> with <tt class="docutils literal"><span class="pre">full=False</span></tt>.</p>
 </div>
 <div class="section">
+<h3 id="finding-approximate-solutions">Finding approximate solutions<a class="headerlink" href="#finding-approximate-solutions" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">tolerance</span></tt> setting can be changed in order to find approximate matches. We can for example try to generate approximations for pi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
+<span class="go">&#39;(22/7)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="go">&#39;(355/113)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+<span class="go">&#39;(5**(339/269))/(2**(64/269)*3**(13/269)*7**(92/269))&#39;</span>
+</pre></div>
+<p>With <tt class="docutils literal"><span class="pre">full=True</span></tt>, and by supplying a few base constants, <tt class="docutils literal"><span class="pre">identify</span></tt> can generate almost endless lists of approximations for any number (the output below has been truncated to show only the first few):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;catalan&#39;</span><span class="p">],</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">p</span>
+<span class="gp">... </span> <span class="c"># doctest: +ELLIPSIS</span>
+<span class="go">e/log((6 + (-4/3)*e))</span>
+<span class="go">(3**3*5*e*catalan**2)/(2*7**2)</span>
+<span class="go">sqrt(((-13) + 1*e + 22*catalan))</span>
+<span class="go">log(((-6) + 24*e + 4*catalan)/e)</span>
+<span class="go">exp(catalan*((-1/5) + (8/15)*e))</span>
+<span class="go">catalan*(6 + (-6)*e + 15*catalan)</span>
+<span class="go">sqrt((5 + 26*e + (-3)*catalan))/e</span>
+<span class="go">e*sqrt(((-27) + 2*e + 25*catalan))</span>
+<span class="go">log(((-1) + (-11)*e + 59*catalan))</span>
+<span class="go">((3/20) + (21/20)*e + (3/20)*catalan)</span>
+<span class="gp">...</span>
+</pre></div>
+<p>The numerical values are roughly as close to pi as permitted by the specified tolerance:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">e</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">6</span><span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">3.14157719846001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">135</span><span class="o">*</span><span class="n">e</span><span class="o">*</span><span class="n">catalan</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">98</span>
+<span class="go">3.14166950419369</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="mf">13</span><span class="o">+</span><span class="mf">22</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span>
+<span class="go">3.14158000062992</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">24</span><span class="o">*</span><span class="n">e</span><span class="o">-</span><span class="mf">6</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span>
+<span class="go">3.14158791577159</span>
+</pre></div>
+</div>
+<div class="section">
 <h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
-<p>Many special functions can be evaluated in terms of common mathematical constants at special points. Examples include the gamma function at half-integers, its derivative at positive integers, and the Riemann zeta function at even integers:</p>
+<p>Many transcendental functions can be evaluated in terms of common mathematical constants at special points. Examples include the gamma function at half-integers, its derivative at positive integers, and the Riemann zeta function at even integers:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">])</span>
 <span class="go">&#39;sqrt(((9/16)*pi))&#39;</span>
@@ -171,6 +209,25 @@
 <div class="section">
 <h2 id="integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">pslq([x1,x2,...,xn])</span></tt> returns a list of integers <tt class="docutils literal"><span class="pre">[c1,c2,...,cn]</span></tt> such that c1*x1 + x2*x2 + ... + cn*xn = 0 approximately. In other words, it determines whether x1, x2, ..., xn, with coefficients allowed by the working precision, are linearly dependent over the rational numbers. It returns <tt class="xref docutils literal"><span class="pre">None</span></tt> on failure.</p>
+<p>We can use it to verify Takano&#8217;s Machin-like formula, which expresses pi using inverse cotangent values as pi/4 = 12*acot(49)+32*acot(57)-5*acot(239)+12*acot(110443):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="o">/</span><span class="mf">4</span><span class="p">,</span> <span class="n">acot</span><span class="p">(</span><span class="mf">49</span><span class="p">),</span> <span class="n">acot</span><span class="p">(</span><span class="mf">57</span><span class="p">),</span> <span class="n">acot</span><span class="p">(</span><span class="mf">239</span><span class="p">),</span> <span class="n">acot</span><span class="p">(</span><span class="mf">110443</span><span class="p">)])</span>
+<span class="go">[1, -12, -32, 5, -12]</span>
+</pre></div>
+<p>We could try to generate a custom Machin-like formula by running the PSLQ algorithm with a few inverse cotangent values, for example acot(2), acot(3) ... acot(10). Unfortunately, there is a linear independence among these values, resulting in a zero coefficient for pi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">acot</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">11</span><span class="p">)])</span>
+<span class="go">[0, 1, -1, 0, 0, 0, -1, 0, 0, 0]</span>
+</pre></div>
+<p>We get some better luck by removing a few of them:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">acot</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">11</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">5</span><span class="p">)])</span>
+<span class="go">[1, -8, 0, 0, 4, 0, 0, 0]</span>
+</pre></div>
+<p>In other words, we found the following formula:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">8</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>
+<span class="go">3.14159265358979323846264338328</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span>
+<span class="go">3.14159265358979323846264338328</span>
+</pre></div>
 </div>
 </div>
 
@@ -188,6 +245,7 @@
 <li><a class="reference" href="#simple-examples">Simple examples</a></li>
 <li><a class="reference" href="#things-to-consider">Things to consider</a></li>
 <li><a class="reference" href="#finding-many-solutions">Finding many solutions</a></li>
+<li><a class="reference" href="#finding-approximate-solutions">Finding approximate solutions</a></li>
 <li><a class="reference" href="#neat-examples">Neat examples</a></li>
 </ul>
 </li>
@@ -239,5 +297,16 @@
       &copy; Copyright 2008, Fredrik Johansson.
       Last updated on Apr 19, 2008.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

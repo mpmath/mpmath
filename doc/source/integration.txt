@@ -271,3 +271,28 @@ The value generated with ``alt=1`` is correct. This can be verified by recomputi
 
     >>> print sqrt(pi/8)
     0.626657068657750125603941321203
+
+Solving ODEs (``odeint``)
+-------------------------
+
+Systems of ordinary differential equations can be integrated using the ``odeint`` function, which takes as input:
+
+* A function that computes the vector of derivatives
+* A vector of initial values
+* A vector of positions/time values to step between
+
+It returns the list of function values at each step. As a simple example, we can consider the system x'' + x = 0. By introducing the variables x = x, y = x', this second-order differential equation can be rewritten as the first-order system x' = y, y' = -x. The analytic solutions with initial values x = 0, y = 1 are of course sin(t) and cos(t):
+
+    >>> mp.dps = 25
+    >>> t = arange(0, 1, 1e-4)
+    >>> sol = odeint(lambda (x,y),t: (y,-x), (0, 1), t)
+    >>> print sol[-1][0]
+    0.841416950370044847975007
+    >>> print sin(t[-1])
+    0.8414169503700448484253423
+    >>> print sol[-1][1]
+    0.5403864502649686951810432
+    >>> print cos(t[-1])
+    0.5403864502649686944799696
+
+When integrating from 0 to 1, the result with a step size of 1e-4 is in this case accurate to about 18 digits. Currently, ``odeint`` uses a simple implementation the fourth-order Runge-Kutta algorithm, with which one must unfortunately set an impractically small step size to obtain much higher precision.

@@ -60,6 +60,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
 <span class="go">6.2831853071795864769252867665590057683943387987502</span>
 </pre></div>
+<p><em>Note: if you have mpmath 0.6 or earlier installed, you may have to either first uninstall the old version, or manually delete the obsolete mpmath/lib directory. Otherwise this directory will be imported erroneously.</em></p>
 </div>
 <div class="section">
 <h2 id="running-tests">Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
@@ -81,6 +82,7 @@
 <p>You can also test that all the interactive examples in the documentation work by running</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">run_doctest.py</span></tt></blockquote>
+<p>(The doctests may take several minutes.)</p>
 <p>Finally, some additional demo scripts are available in the <tt class="docutils literal"><span class="pre">demo</span></tt> directory included in the source package.</p>
 </div>
 </div>
@@ -144,5 +146,16 @@
       &copy; Copyright 2008, Fredrik Johansson.
       Last updated on Apr 19, 2008.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

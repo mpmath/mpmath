@@ -289,6 +289,29 @@
 </pre></div>
 </div>
 </div>
+<div class="section">
+<h2 id="solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)<a class="headerlink" href="#solving-odes-odeint" title="Permalink to this headline">¶</a></h2>
+<p>Systems of ordinary differential equations can be integrated using the <tt class="docutils literal"><span class="pre">odeint</span></tt> function, which takes as input:</p>
+<ul class="simple">
+<li>A function that computes the vector of derivatives</li>
+<li>A vector of initial values</li>
+<li>A vector of positions/time values to step between</li>
+</ul>
+<p>It returns the list of function values at each step. As a simple example, we can consider the system x&#8217;&#8217; + x = 0. By introducing the variables x = x, y = x&#8217;, this second-order differential equation can be rewritten as the first-order system x&#8217; = y, y&#8217; = -x. The analytic solutions with initial values x = 0, y = 1 are of course sin(t) and cos(t):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="p">),</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="mf">0</span><span class="p">]</span>
+<span class="go">0.841416950370044847975007</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span>
+<span class="go">0.8414169503700448484253423</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="mf">1</span><span class="p">]</span>
+<span class="go">0.5403864502649686951810432</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span>
+<span class="go">0.5403864502649686944799696</span>
+</pre></div>
+<p>When integrating from 0 to 1, the result with a step size of 1e-4 is in this case accurate to about 18 digits. Currently, <tt class="docutils literal"><span class="pre">odeint</span></tt> uses a simple implementation the fourth-order Runge-Kutta algorithm, with which one must unfortunately set an impractically small step size to obtain much higher precision.</p>
+</div>
 </div>
 
 
@@ -315,6 +338,7 @@
 <li><a class="reference" href="#nonperiodic-integrands">Nonperiodic integrands</a></li>
 </ul>
 </li>
+<li><a class="reference" href="#solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -359,7 +383,18 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 15, 2008.
+      Last updated on Apr 19, 2008.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

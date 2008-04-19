@@ -67,7 +67,17 @@ directory.
 3. Documentation
 ----------------
 
-Extensive documentation is available on the mpmath website.
+Documentation in reStructuredText format is available in the
+doc directory included with the source package. These files
+are human-readable, but can be compiled to prettier HTML using
+the build.py script (requires Sphinx, http://sphinx.pocoo.org/).
+
+See setup.txt in the documentation for more information.
+
+The most recent documentation is also available in HTML
+format on the mpmath website:
+
+http://mpmath.googlecode.com/svn/trunk/doc/build/index.html
 
 4. Known problems
 -----------------

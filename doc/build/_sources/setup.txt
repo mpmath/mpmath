@@ -23,6 +23,8 @@ After the setup has completed, you should be able to fire up the interactive Pyt
     >>> print 2*pi
     6.2831853071795864769252867665590057683943387987502
 
+*Note: if you have mpmath 0.6 or earlier installed, you may have to either first uninstall the old version, or manually delete the obsolete mpmath/lib directory. Otherwise this directory will be imported erroneously.*
+
 Running tests
 -------------
 
@@ -50,5 +52,7 @@ If you downloaded the source package, the text source for these documentation pa
 You can also test that all the interactive examples in the documentation work by running
 
     ``python run_doctest.py``
+
+(The doctests may take several minutes.)
 
 Finally, some additional demo scripts are available in the ``demo`` directory included in the source package.

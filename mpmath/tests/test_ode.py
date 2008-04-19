@@ -1,4 +1,4 @@
-from mpmath.calculus import ODE_step_euler, ODE_step_rk4, ODE_integrate, arange
+from mpmath.calculus import ODE_step_euler, ODE_step_rk4, odeint, arange
 
 solvers = [ODE_step_euler, ODE_step_rk4]
 
@@ -13,12 +13,12 @@ def test_ode1():
     x1' =  x2
     x2' = -x1
     """
-    def derivs(t, (x1, x2)):
+    def derivs((x1, x2), t):
         return x2, -x1
 
     for solver in solvers:
         t = arange(0, 3.1415926, 0.005)
-        sol = ODE_integrate(t, (0., 1.), derivs, solver)
+        sol = odeint(derivs, (0., 1.), t, solver)
         x1 = [a[0] for a in sol]
         x2 = [a[1] for a in sol]
         # the result is x1 = sin(t), x2 = cos(t)
@@ -35,12 +35,12 @@ def test_ode2():
     i.e. x = exp(x)
 
     """
-    def derivs(t, (x)):
+    def derivs((x), t):
         return x
 
     for solver in solvers:
         t = arange(0, 1, 1e-3)
-        sol = ODE_integrate(t, (1.,), derivs, solver)
+        sol = odeint(derivs, (1.,), t, solver)
         x = [a[0] for a in sol]
         # the result is x = exp(t)
         # let's just check the end point for t = 1, i.e. x = e

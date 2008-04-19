@@ -563,15 +563,18 @@ def quadosc(f, a, b, period=None, zeros=None, alt=0):
     """
     a = convert_lossless(a)
     b = convert_lossless(b)
+    if period is None and zeros is None:
+        raise ValueError( \
+            "either the period or zeros keyword parameter must be specified")
     if a == -inf and b == inf:
         s1 = quadosc(f, a, 0, zeros=zeros, period=period, alt=alt)
         s2 = quadosc(f, 0, b, zeros=zeros, period=period, alt=alt)
         return s1 + s2
     if a == -inf:
         if zeros:
-            return quadosc(lambda x: f(-x), -b, -a, lambda n: zeros(-n), alt=alt)
+            return quadosc(lambda x:f(-x),-b,-a, lambda n: zeros(-n), alt=alt)
         else:
-            return quadosc(lambda x: f(-x), -b, -a, period=period, alt=alt)
+            return quadosc(lambda x:f(-x),-b,-a, period=period, alt=alt)
     if b != inf:
         raise ValueError("quadosc requires an infinite integration interval")
     if not zeros:
@@ -763,18 +766,6 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
 #                                  ODE solvers                               #
 #----------------------------------------------------------------------------#
 
-def ODE_integrate(t_list, x0, derivs, step):
-    """
-    Given the list t_list of values, returns the solution at these points.
-    """
-    x = x0
-    result = [x]
-    for i in range(len(t_list)-1):
-        dt = t_list[i+1] - t_list[i]
-        x = step(t_list[i], x, dt, derivs)
-        result.append(x)
-    return result
-
 def smul(a, x):
     """Multiplies the vector "x" by the scalar "a"."""
     R = []
@@ -803,7 +794,7 @@ def ODE_step_euler(x, y, h, derivs):
     derivs .... a python function f(x, (y1, y2, y3, ...)) returning
     a tuple (y1', y2', y3', ...) where y1' is the derivative of y1 at x.
     """
-    X = derivs(x,y)
+    X = derivs(y,x)
     return vadd(y, smul(h, X))
 
 half = mpf(0.5)
@@ -819,23 +810,23 @@ def ODE_step_rk4(x, y, h, derivs):
     h2 = h/2
     third = mpf(1)/3
     sixth = mpf(1)/6
-    k1 = smul(h, derivs(x, y))
-    k2 = smul(h, derivs(x+h2, vadd(y, smul(half, k1))))
-    k3 = smul(h, derivs(x+h2, vadd(y, smul(half, k2))))
-    k4 = smul(h, derivs(x+h, vadd(y, k3)))
+    k1 = smul(h, derivs(y, x))
+    k2 = smul(h, derivs(vadd(y, smul(half, k1)), x+h2))
+    k3 = smul(h, derivs(vadd(y, smul(half, k2)), x+h2))
+    k4 = smul(h, derivs(vadd(y, k3), x+h))
     return vadd(y, smul(sixth, k1), smul(third, k2), smul(third, k3), 
             smul(sixth, k4))
 
-def arange(a, b, dt):
+def odeint(derivs, x0, t_list, step=ODE_step_rk4):
     """
-    Returns a list [a, a + dt, a + 2*dt, ..., b]
+    Given the list t_list of values, returns the solution at these points.
     """
-    a, b, dt = mpf(a), mpf(b), mpf(dt)
-    t = a
-    result = [t]
-    while t <= b:
-        t += dt
-        result.append(t)
+    x = x0
+    result = [x]
+    for i in range(len(t_list)-1):
+        dt = t_list[i+1] - t_list[i]
+        x = step(t_list[i], x, dt, derivs)
+        result.append(x)
     return result
 
 #----------------------------------------------------------------------------#
@@ -1130,8 +1121,8 @@ transforms = [
   (lambda x,c: c/log(x), 'exp($c/$y)', 0),
 ]
 
-def identify(x, constants=[], full=False, maxcoeff=1000, quadratics=True,
-    verbose=False):
+def identify(x, constants=[], full=False, maxcoeff=1000, tolerance=None,
+    quadratics=True, verbose=False):
     """"
     This function attempts to find a symbolic expression for the given
     quantity x. It can identify simple algebraic numbers, as well as
@@ -1185,14 +1176,19 @@ def identify(x, constants=[], full=False, maxcoeff=1000, quadratics=True,
         else:    return '0'
 
     if x < 0:
-        sol = identify(-x, constants, full, maxcoeff, quadratics, verbose)
+        sol = identify(-x, constants, full, maxcoeff, tolerance, quadratics, verbose)
+        if sol is None:
+            return sol
         if full:
             return ["-(%s)"%s for s in sol]
         else:
             return "-(%s)" % sol
 
     sols = []
-    weps = eps**0.7
+    if tolerance:
+        weps = mpf(tolerance)
+    else:
+        weps = eps**0.7
 
     if isinstance(constants, dict):
         constants = [(mpf(v), name) for (name, v) in constants.items()]

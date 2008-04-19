@@ -11,7 +11,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "ldexp", "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
-  "asec", "acsc", "acot", "asech", "acsch", "acoth"]
+  "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange"]
 
 from lib import *
 from libmpc import *
@@ -775,6 +775,21 @@ def atan2(y,x):
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""
     return make_mpf(frand(mp.prec))
+
+def arange(a, b, dt):
+    """Returns a list [a, a + dt, a + 2*dt, ..., b]"""
+    a, b, dt = mpf(a), mpf(b), mpf(dt)
+    result = []
+    i = 0
+    t = a
+    while 1:
+        t = a + dt*i
+        i += 1
+        if t < b:
+            result.append(t)
+        else:
+            break
+    return result
 
 def almosteq(s, t, rel_eps=None, abs_eps=None):
     """
