@@ -606,9 +606,9 @@ def fmuli(s, n, prec, rnd=round_fast):
         n = -n
     man *= n
     # Generally n will be small
-    try:
+    if n < 1024:
         bc += bctable[n] - 4
-    except:
+    else:
         bc += bitcount(n) - 4
     if bc < 4: bc = bctable[man]
     else:      bc += bctable[man>>bc]
