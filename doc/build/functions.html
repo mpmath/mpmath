@@ -170,6 +170,21 @@
 <span class="go">46705057548209662896867568997817626620037806847842642167105610253517933039999796</span>
 <span class="go">6863567179835779017033</span>
 </pre></div>
+<p>The Lambert W function is the inverse function of w*exp(w):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>
+<span class="go">0.56714329040978387299996866221035555</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+<p>The Lambert W function has infinitely many complex branches. By default, the principal branch (k = 0) is evaluated. You can choose a custom branch:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>
+<span class="go">(-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">(1.0 - 9.9465893710591698326300157883907326e-38j)</span>
+</pre></div>
 <p>The list of available elementary functions (and related simple functions) is given in the following table.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -574,7 +589,18 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 19, 2008.
+      Last updated on Apr 20, 2008.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

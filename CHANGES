@@ -1,5 +1,5 @@
 --0.8--
-(currently in svn)
+Released April 20, 2008
 
 New features:
 * the full set of reciprocal trigonometric and hyperbolic functions
@@ -9,9 +9,6 @@ New features:
 * Richardson and Shanks transformations for computing limits and series
 * Euler-Maclaurin summation of series
 * basic ODE solvers (contributed by Ondrej Certik)
-* the rounding argument for lib and libmpc functions, and for
-  some functions also the the prec argument, are now optional,
-  resulting in cleaner and slightly faster lib code
 * the Lambert W function
 * arithmetic-geometric mean function
 * generic hypergeometric series and some special hypergeometric
@@ -23,7 +20,7 @@ New features:
 * support for trapping complex results
 * using Sphinx to generate HTML documentation
 
-Bugfixes and other improvements:
+Bugfixes, speed enhancements, and other improvements:
 * compatibility tests should now pass on systems where Python is
   compiled to use 80-bit registers for floating point operations
 * fixed mpmath to work with some versions of Python 2.4 where a
@@ -49,6 +46,9 @@ Bugfixes and other improvements:
 * str() is several times faster at very high precision
 * implementations of most elementary functions moved to the lib
   and libmpc modules for cleaner separation of functionality
+* the rounding argument for lib and libmpc functions, and for
+  some functions also the the prec argument, are now optional,
+  resulting in cleaner and slightly faster lib code
 * gamma and factorial are about 2x faster
 * polyroots returns nicer results
 * pickling now works for mpf and mpc instances

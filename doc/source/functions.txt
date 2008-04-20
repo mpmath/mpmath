@@ -107,6 +107,23 @@ An example with very high precision:
     46705057548209662896867568997817626620037806847842642167105610253517933039999796
     6863567179835779017033
 
+The Lambert W function is the inverse function of w*exp(w):
+
+    >>> mp.dps = 35
+    >>> w = lambertw(1)
+    >>> print w
+    0.56714329040978387299996866221035555
+    >>> print w*exp(w)
+    1.0
+
+The Lambert W function has infinitely many complex branches. By default, the principal branch (k = 0) is evaluated. You can choose a custom branch:
+
+    >>> w = lambertw(1, k=3)
+    >>> print w
+    (-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)
+    >>> print w*exp(w)
+    (1.0 - 9.9465893710591698326300157883907326e-38j)
+
 The list of available elementary functions (and related simple functions) is given in the following table.
 
 =====================   ==================================================================
