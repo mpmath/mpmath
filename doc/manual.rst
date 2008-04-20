@@ -9,6 +9,8 @@ Mpmath manual
 :Updated: 2008-03-12
 :Mpmath version: 0.7
 
+**Note: this manual is now obsolete.** Go to http://mpmath.googlecode.com/svn/trunk/doc/build/index.html for the most up to date mpmath documentation.
+
 .. section-numbering::
 
 .. contents:: Table of contents
