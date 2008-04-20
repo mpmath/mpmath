@@ -1,3 +1,7 @@
+"""
+Low-level functions for complex arithmetic.
+"""
+
 from lib import *
 
 # An mpc value is a (real, imag) tuple

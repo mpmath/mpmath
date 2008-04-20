@@ -1,17 +1,18 @@
 """
-High-level calculus-oriented functions.
+High-level, mostly calculus-oriented functions.
 
 * Numerical differentiation
 * Numerical polynomial operations
 * Numerical root-finding
 * Numerical integration
 
+etc
 """
 
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from specfun import factorial, bernoulli2n
+from specfun import factorial, bernoulli_range
 
 #----------------------------------------------------------------------------#
 #                       General extrapolation methods                        #
@@ -552,7 +553,7 @@ def quadts(f, a, b, **options):
         mp.prec = orig
 
 
-def quadosc(f, a, b, period=None, zeros=None, alt=0):
+def quadosc(f, a, b, period=None, zeros=None, alt=1):
     """
     Integrates f(x) from a to b where a or b is infinite and f is
     a slowly decaying oscillatory function. The zeros of f must be
@@ -727,7 +728,7 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
     prev = 0
     if verbose:
         print "Summing tail"
-    B = bernoulli2n()
+    B = bernoulli_range()
     fac = 2
     while 1:
         if infinite:

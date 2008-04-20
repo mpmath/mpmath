@@ -1,14 +1,22 @@
 """
-Miscellaneous useful (or just interesting :) mathematical constants.
+Miscellaneous special functions
 """
 
-from mpmath import *
 from mpmath.lib import *
 from mpmath.libmpc import *
+from mpmath.mptypes import *
+
 from mpmath.mptypes import constant
 
+__docformat__ = 'plaintext'
 
-#----------------------------------------------------------------------#
+#---------------------------------------------------------------------------#
+#                                                                           #
+#                       First some mathematical constants                   #
+#                                                                           #
+#---------------------------------------------------------------------------#
+
+
 # The golden ratio is given by phi = (1 + sqrt(5))/2
 
 @constant_memo
@@ -17,9 +25,6 @@ def phi_fixed(prec):
     sqrt = [sqrt_fixed2, sqrt_fixed][prec < 20000]
     a = sqrt(5<<prec, prec) + (1 << prec)
     return a >> 11
-
-
-#----------------------------------------------------------------------#
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
 # (listed on http://mathworld.wolfram.com/CatalansConstant.html)
@@ -43,8 +48,6 @@ def catalan_fixed(prec):
         s += t
         n += 1
     return s >> (20 + 6)
-
-#----------------------------------------------------------------------#
 
 # Euler's constant (gamma) is computed using the Brent-McMillan formula,
 # gamma ~= A(n)/B(n) - log(n), where
@@ -77,9 +80,6 @@ def euler_fixed(prec):
     S = ((A<<prec) // B) - p*log2_fixed(prec)
     return S >> 30
 
-
-#----------------------------------------------------------------------#
-
 # Khinchin's constant is relatively difficult to compute. Here
 # we use the rational zeta series
 
@@ -111,7 +111,7 @@ def khinchin_fixed(prec):
         mp.prec = int(prec + prec**0.5 + 15)
         s = mpf(0)
         t = one = mpf(1)
-        B = bernoulli2n()
+        B = bernoulli_range()
         fac = mpf(4)
         pipow = twopi2 = (2*pi)**2
         n = 1
@@ -130,10 +130,7 @@ def khinchin_fixed(prec):
     finally:
         mp.prec = orig
 
-#----------------------------------------------------------------------#
-
 # Glaisher's constant is defined as A = exp(1/2 - zeta'(-1)).
-
 # One way to compute it would be to perform direct numerical
 # differentiation, but computing arbitrary Riemann zeta function
 # values at high precision is expensive. We instead use the formula
@@ -176,7 +173,7 @@ def glaisher_fixed(prec):
         dps = mp.dps
         mp.prec = prec + 30
         N = int(1.0*dps + 5)
-        logs = logk()
+        logs = log_range()
         s = mpf(0)
         # E-M step 1: sum log(k)/k**2 for k = 2..N-1
         for n in range(2, N):
@@ -189,7 +186,7 @@ def glaisher_fixed(prec):
         # E-M step 3: endpoint correction term f(N)/2
         s += logN/(N**2 * 2)
         # E-M step 4: the series of derivatives
-        pN, a, b, j, B2k, fac, k = N**3, 1, -2, 3, bernoulli2n(), 2, 1
+        pN, a, b, j, B2k, fac, k = N**3, 1, -2, 3, bernoulli_range(), 2, 1
         while 1:
             # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
             D = (a+b*logN)/pN
@@ -208,8 +205,6 @@ def glaisher_fixed(prec):
         return to_fixed(A._mpf_, prec)
     finally:
         mp.prec = orig
-
-#----------------------------------------------------------------------#
 
 # Apery's constant can be computed using the very rapidly convergent
 # series
@@ -234,9 +229,6 @@ def apery_fixed(prec):
         term = (-1)**n * (205*(n**2) + 250*n + 77) * d
         n += 1
     return s >> (20 + 6)
-
-
-#----------------------------------------------------------------------#
 
 fme = from_man_exp
 
@@ -458,7 +450,7 @@ def isnpint(x):
     if isinstance(x, mpc):
         return not x.imag and isnpint(x.real)
 
-def gammaquot(a, b):
+def gammaprod(a, b):
     """
     Computes the product / quotient of gamma functions
 
@@ -498,15 +490,15 @@ def gammaquot(a, b):
 
 def binomial(n, k):
     """Binomial coefficient, C(n,k) = n!/(k!*(n-k)!)."""
-    return gammaquot([n+1], [k+1, n-k+1])
+    return gammaprod([n+1], [k+1, n-k+1])
 
 def rf(x, n):
-    """Rising factorial (Pochhammer symbol), x_(n)"""
-    return gammaquot([x+n], [x])
+    """Rising factorial (Pochhammer symbol), x^(n)"""
+    return gammaprod([x+n], [x])
 
 def ff(x, n):
     """Falling factorial, x_(n)"""
-    return gammaquot([x+1], [x-n+1])
+    return gammaprod([x+1], [x-n+1])
 
 
 
@@ -636,7 +628,7 @@ from mpmath.mptypes import make_mpf
 #          /___   \ n - 6*k /    n-6*k
 #          k = 1
 
-def bernoulli2n():
+def bernoulli_range():
     """Generates B(2), B(4), B(6), ..."""
     oprec = mp.prec
     rounding = mp.rounding[0]
@@ -666,91 +658,12 @@ def bernoulli2n():
         bin = bin * ((m+2)*(m+3)) // (m*(m-1))
         if m > 6: bin1 = bin1 * ((2+m)*(3+m)) // ((m-7)*(m-6))
 
-from mpmath.lib import log2_fixed
 
-def logk():
-    """Generate log(2), log(3), log(4), ..."""
-    prec = mp.prec + 20
-    one = 1 << prec
-    L = log2_fixed(prec)
-    p = 2
-    while 1:
-        yield mpf((L, -prec))
-        s = 0
-        u = one
-        k = 1
-        a = (2*p+1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p+1)
-        p += 1
-
-@extraprec(30, normalize_output=True)
-def lambertw(z, k=0, approx=None):
-    """
-    lambertw(z,k) gives the kth branch of the Lambert W function W(z),
-    defined as the kth solution of z = W(z)*exp(W(z)).
-
-    lambertw(z) == lambertw(z, k=0) gives the principal branch
-    value (0th branch solution), which is real for z > -1/e .
-
-    The k = -1 branch is real for -1/e < z < 0. All branches except
-    k = 0 have a logarithmic singularity at 0.
-
-    The definition, implementation and choice of branches is based
-    on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5
-    (1996) 329-359, available online here:
-    http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
-
-    TODO: use a series expansion when extremely close to the branch point
-    at -1/e and make sure that the proper branch is chosen there
-    """
-    z = convert_lossless(z)
-    if isnan(z):
-        return z
-    # We must be extremely careful near the singularities at -1/e and 0
-    u = exp(-1)
-    if abs(z) <= u:
-        if not z:
-            # w(0,0) = 0; for all other branches we hit the pole
-            if not k:
-                return z
-            return -inf
-        if not k:
-            w = z
-        # For small real z < 0, the -1 branch behaves roughly like log(-z)
-        elif k == -1 and not z.imag and z.real < 0:
-            w = log(-z)
-        # Use a simple asymptotic approximation.
-        else:
-            w = log(z)
-            # The branches are roughly logarithmic. This approximation
-            # gets better for large |k|; need to check that this always
-            # works for k ~= -1, 0, 1.
-            if k: w += k * 2*pi*j
-    else:
-        if z == inf: return z
-        if z == -inf: return nan
-        # Simple asymptotic approximation as above
-        w = log(z)
-        if k: w += k * 2*pi*j
-    # Use Halley iteration to solve w*exp(w) = z
-    two = mpf(2)
-    weps = ldexp(eps, 15)
-    for i in xrange(100):
-        ew = exp(w)
-        wew = w*ew
-        wewz = wew-z
-        wn = w - wewz/(wew+ew-(w+two)*wewz/(two*w+two))
-        if abs(wn-w) < weps*abs(wn):
-            return wn
-        else:
-            w = wn
-    print "Warning: Lambert W iteration failed to converge:", z
-    return wn
-
+#---------------------------------------------------------------------------#
+#                                                                           #
+#                          Hypergeometric functions                         #
+#                                                                           #
+#---------------------------------------------------------------------------#
 
 import operator
 
@@ -1089,8 +1002,8 @@ def eval_hyp2f1(a,b,c,z):
         h2 = eval_hyp2f1(b, _1-c+b, _1-a+b, 1/z)
         #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
         #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
-        f1 = gammaquot([c,b-a],[b,c-a])
-        f2 = gammaquot([c,a-b],[a,c-b])
+        f1 = gammaprod([c,b-a],[b,c-a])
+        f2 = gammaprod([c,a-b],[a,c-b])
         s1 = f1 * (-z)**(_0-a) * h1
         s2 = f2 * (-z)**(_0-b) * h2
         v = s1 + s2
@@ -1376,3 +1289,93 @@ def j0(x):
 def j1(x):
     """Bessel function J_1(x)."""
     return jv(1, x)
+
+#---------------------------------------------------------------------------#
+#                                                                           #
+#                               Miscellaneous                               #
+#                                                                           #
+#---------------------------------------------------------------------------#
+
+
+def log_range():
+    """Generate log(2), log(3), log(4), ..."""
+    prec = mp.prec + 20
+    one = 1 << prec
+    L = log2_fixed(prec)
+    p = 2
+    while 1:
+        yield mpf((L, -prec))
+        s = 0
+        u = one
+        k = 1
+        a = (2*p+1)**2
+        while u:
+            s += u // k
+            u //= a
+            k += 2
+        L += 2*s//(2*p+1)
+        p += 1
+
+@extraprec(30, normalize_output=True)
+def lambertw(z, k=0, approx=None):
+    """
+    lambertw(z,k) gives the kth branch of the Lambert W function W(z),
+    defined as the kth solution of z = W(z)*exp(W(z)).
+
+    lambertw(z) == lambertw(z, k=0) gives the principal branch
+    value (0th branch solution), which is real for z > -1/e .
+
+    The k = -1 branch is real for -1/e < z < 0. All branches except
+    k = 0 have a logarithmic singularity at 0.
+
+    The definition, implementation and choice of branches is based
+    on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5
+    (1996) 329-359, available online here:
+    http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
+
+    TODO: use a series expansion when extremely close to the branch point
+    at -1/e and make sure that the proper branch is chosen there
+    """
+    z = convert_lossless(z)
+    if isnan(z):
+        return z
+    # We must be extremely careful near the singularities at -1/e and 0
+    u = exp(-1)
+    if abs(z) <= u:
+        if not z:
+            # w(0,0) = 0; for all other branches we hit the pole
+            if not k:
+                return z
+            return -inf
+        if not k:
+            w = z
+        # For small real z < 0, the -1 branch behaves roughly like log(-z)
+        elif k == -1 and not z.imag and z.real < 0:
+            w = log(-z)
+        # Use a simple asymptotic approximation.
+        else:
+            w = log(z)
+            # The branches are roughly logarithmic. This approximation
+            # gets better for large |k|; need to check that this always
+            # works for k ~= -1, 0, 1.
+            if k: w += k * 2*pi*j
+    else:
+        if z == inf: return z
+        if z == -inf: return nan
+        # Simple asymptotic approximation as above
+        w = log(z)
+        if k: w += k * 2*pi*j
+    # Use Halley iteration to solve w*exp(w) = z
+    two = mpf(2)
+    weps = ldexp(eps, 15)
+    for i in xrange(100):
+        ew = exp(w)
+        wew = w*ew
+        wewz = wew-z
+        wn = w - wewz/(wew+ew-(w+two)*wewz/(two*w+two))
+        if abs(wn-w) < weps*abs(wn):
+            return wn
+        else:
+            w = wn
+    print "Warning: Lambert W iteration failed to converge:", z
+    return wn

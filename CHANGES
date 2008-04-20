@@ -1,52 +1,55 @@
 --0.8--
 (currently in svn)
 
+New features:
+* the full set of reciprocal trigonometric and hyperbolic functions
+  and their inverses (cotangent, secant, etc) is available
+* oscillatory quadrature algorithm
+* the PSLQ algorithm and constant recognition functions
+* Richardson and Shanks transformations for computing limits and series
+* Euler-Maclaurin summation of series
+* basic ODE solvers (contributed by Ondrej Certik)
+* the rounding argument for lib and libmpc functions, and for
+  some functions also the the prec argument, are now optional,
+  resulting in cleaner and slightly faster lib code
+* the Lambert W function
+* arithmetic-geometric mean function
+* generic hypergeometric series and some special hypergeometric
+  functions (elliptic integrals, orthogonal polynomials)
+* several more mathematical constants
+* fast sequential computation of integer logarithms and Bernoulli
+  numbers
+* Bessel function jv works for complex arguments and noninteger v
+* support for trapping complex results
+* using Sphinx to generate HTML documentation
+
+Bugfixes and other improvements:
 * compatibility tests should now pass on systems where Python is
   compiled to use 80-bit registers for floating point operations
 * fixed mpmath to work with some versions of Python 2.4 where a
   list indexing bug is present in the Python core
-* implemented the complete set of reciprocal trigonometric and
-  hyperbolic functions and their inverses (cotangent, secant, etc)
-* oscillatory quadrature algorithm implemented
-* fixed computation of exp(n) for negative integers and x**y for
-  negative half integers y
-* implemented the PSLQ algorithm and constant recognition functions
-* implemented Richardson and Shanks transformations for computing
-  limits and series
 * better algorithms for various complex elementary functions
   (tan and tanh by Fredrik; sqrt, acos, asin, acosh and asinh
   improved by Mario Pernici)
-* slightly faster square roots at low precision (contributed by
-  Mario Pernici)
-* mpf ** complex now works
-* implemented basic ODE solvers (contributed by Ondrej Certik)
-* faster generation of quadrature nodes (contributed by Mario Pernici)
-* faster change of variables for quadrature
-* comparisons and conversions have been optimized slightly.
-  comparisons with float(nan) also work as intended.
-* the rounding argument for lib and libmpc functions, and for
-  some functions also the the prec argument, are now optional,
-  resulting in cleaner and slightly faster lib code
-* implemented the Lambert W function
-* implemented the arithmetic-geometric mean function
-* implemented generic hypergeometric series and some special
-  hypergeometric functions (elliptic integrals, orthogonal polynomials)
-* several more mathematical constants
-* fast sequential computation of integer logarithms and Bernoulli
-  numbers
-* str() is several times faster at very high precision
-* implementations of most elementary functions moved to the lib
-  and libmpc modules
-* support for trapping complex results
 * multiplication and integer powers for complex numbers is faster
   and more accurate
 * miscellaneous speed improvements to complex arithmetic (contributed
   by Mario Pernici)
-* gamma and factorial are about 2x faster
-* Bessel function jv works for complex arguments and noninteger v
 * faster computation of cos and sin when only one of them is needed
   (contributed by Mario Pernici)
-* implemented the Euler-Maclaurin algorithm for summation of series
+* slightly faster square roots at low precision (contributed by
+  Mario Pernici)
+* fixed computation of exp(n) for negative integers and x**y for
+  negative half integers y
+* mpf ** complex now works
+* faster generation of quadrature nodes (contributed by Mario Pernici)
+* faster change of variables for quadrature
+* comparisons and conversions have been optimized slightly.
+  comparisons with float(nan) also work as intended.
+* str() is several times faster at very high precision
+* implementations of most elementary functions moved to the lib
+  and libmpc modules for cleaner separation of functionality
+* gamma and factorial are about 2x faster
 * polyroots returns nicer results
 * pickling now works for mpf and mpc instances
 

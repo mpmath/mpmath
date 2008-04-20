@@ -1,7 +1,7 @@
 Functions
 =========
 
-Mpmath provides a rich library of mathematical functions.
+Mpmath provides a rich collection of mathematical functions.
 
 Constants (``pi``, ``e``, etc)
 ------------------------------
@@ -74,10 +74,10 @@ To show many digits of a number, you can just set the desired precision and prin
 
 The time needed to compute many digits of the various constants differs greatly. On the author's computer, the golden ratio can be evaluated to 100,000 digits in one second, while obtaining just 500 digits of Khinchin's constant takes several seconds. However, mpmath caches computed values of constants so that subsequent calculations at the same or lower precision are instant. This important for general efficiency reasons since for example the value of pi is required internally by mpmath to compute trigonometric functions.
 
-Mathematical functions
-----------------------
+Elementary functions (``sqrt``, ``exp``, ``sin``, ...)
+------------------------------------------------------
 
-Mpmath implements the standard functions available in Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision::
+Mpmath implements the standard functions available in Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision. Many other named elementary functions are also available, including the reciprocal trigonometric and hyperbolic functions sec, csc, cot, sech, etc. Here are some simple evaluations using elementary functions:
 
     >>> mp.dps = 25
     >>> print cosh('1.234')
@@ -89,17 +89,25 @@ Mpmath implements the standard functions available in Python's ``math`` and ``cm
     >>> print exp(2+3j)
     (-7.315110094901102517486536 + 1.042743656235904414101504j)
 
-Some functions that do not exist in the standard Python ``math`` library are available, such as factorials (with support for noninteger arguments)::
+Trigonometric functions can be evaluated at degree angles using the ``degree`` constant:
 
-    >>> mp.dps = 20
-    >>> print factorial(10)
-    3628800.0
-    >>> print factorial(0.25)
-    0.90640247705547707798
-    >>> print factorial(2+3j)
-    (-0.44011340763700171113 - 0.06363724312631702183j)
+    >>> mp.dps = 15
+    >>> print cos(45*degree)
+    0.707106781186548
 
-The list of functions is given in the following table.
+An example with very high precision:
+
+    >>> mp.dps = 500
+    >>> print tanh(pi)     # doctest:+SKIP
+    0.996272076220749944264690580012536711896899190804587614362612415978541298982821
+    71768528355120691683454615502559430681804165984973439112096298906391022044704505
+    48122748988701224416244977555668537821981195835666118518137460301886473587466464
+    21806234986385738703533092864596585365203757599676939623117433432914420827886553
+    76127620464757884951425425306744563300307924663159394900310518383521418687640452
+    46705057548209662896867568997817626620037806847842642167105610253517933039999796
+    6863567179835779017033
+
+The list of available elementary functions (and related simple functions) is given in the following table.
 
 =====================   ==================================================================
 Function                Description
@@ -109,71 +117,133 @@ Function                Description
 ``exp(x)``              Exponential function
 ``log(x,b)``            Natural logarithm (optionally base-b logarithm)
 ``power(x,y)``          Power, ``x**y``
+``floor(x)``            Floor function (round to integer in the direction of -inf)
+``ceil(x)``             Ceiling function (round to integer in the direction of +inf)
+``arg(z)``              Complex argument of z
 ``cos(x)``              Cosine
 ``sin(x)``              Sine
 ``tan(x)``              Tangent
+``sec(x)``              Secant
+``csc(x)``              Cosecant
+``cot(x)``              Cotangent
 ``cosh(x)``             Hyperbolic cosine
 ``sinh(x)``             Hyperbolic sine
 ``tanh(x)``             Hyperbolic tangent
+``sech(x)``             Hyperbolic secant
+``csch(x)``             Hyperbolic cosecant
+``coth(x)``             Hyperbolic cotangent
 ``acos(x)``             Inverse cosine
 ``asin(x)``             Inverse sine
 ``atan(x)``             Inverse tangent
 ``atan2(y,x)``          Inverse tangent atan(y/x) with attention to signs of both x and y
+``asec(x)``             Inverse secant
+``acsc(x)``             Inverse cosecant
+``acot(x)``             Inverse cotangent
 ``acosh(x)``            Inverse hyperbolic cosine
 ``asinh(x)``            Inverse hyperbolic sine
 ``atanh(x)``            Inverse hyperbolic tangent
-``floor(x)``            Floor function (round to integer in the direction of -inf)
-``ceil(x)``             Ceiling function (round to integer in the direction of +inf)
-``arg(x)``              Complex argument
+``asech(x)``            Inverse hyperbolic secant
+``acsch(x)``            Inverse hyperbolic cosecant
+``acoth(x)``            Inverse hyperbolic cotangent
+``lambertw(x,k)``       Lambert W function
+=====================   ==================================================================
+
+Nonelementary functions
+-----------------------
+
+Various useful nonelementary functions that do not exist in the standard Python ``math`` library are available, such as factorials (with support for noninteger arguments):
+
+    >>> mp.dps = 20
+    >>> print factorial(10)
+    3628800.0
+    >>> print factorial(0.25)
+    0.90640247705547707798
+    >>> print factorial(2+3j)
+    (-0.44011340763700171113 - 0.06363724312631702183j)
+
+The nonelementary functions can all be evaluated to high precision:
+
+    >>> mp.dps = 200
+    >>> print j0(ellipe(1/pi)) + erf(1)     # doctest:+SKIP
+    1.389312963715905348881873975556967070995660558533781734716705228600460043954957
+    61618134488095800072249215436991243117271403513444828929928306553194119494900584
+    6834728102001723155155631593301614083021
+
+The function ``hyper`` sums a general hypergeometric series (this works only for argument where the series converges):
+
+    >>> print hyper([1,2,3],[4,5,6], 1/pi)     # doctest:+SKIP
+    1.016210574248696702302096161058517020553783149632248720837030993406388717433423
+    76737176412753643360654694328402996208151824851693763066257492700066724382806555
+    22803873785096931980990953468408484030225
+
+=====================   ==================================================================
+Function                Description
+=====================   ==================================================================
 ``factorial(x)``        Factorial
 ``gamma(x)``            Gamma function
+``binomial(x,y)``       Binomial coefficient
+``gammaprod(x,y)``      Gamma function product G(x[0])*G(x[1])... / (G(y[0])*G(y[1])...)
+``rf(x,n)``             Rising factorial (Pochhammer symbol), x^(n)
+``ff(x,n)``             Falling factorial, x_(n)
 ``lower_gamma(a,x)``    Lower gamma function
 ``upper_gamma(a,x)``    Upper gamma function
 ``erf(x)``              Error function
 ``zeta(x)``             Riemann zeta function
+``bernoulli(n)``        Bernoulli number, B_n
 ``j0(x)``               Bessel function J_0(x)
 ``j1(x)``               Bessel function J_1(x)
 ``jn(n,x)``             Bessel function J_n(x)
+``ellipe(x)``           Complete elliptic integral E
+``ellipk(x)``           Complete elliptic integral K
+``agm(x,y)``            Arithmetic geometric mean
+``hyper(as,bs,z)``      Hypergeometric function PFQ
+``hyp0f1(a,z)``         Hypergeometric function 0F1
+``hyp1f1(a,b,z)``       Hypergeometric function 1F1
+``hyp2f1(a,b,c,z)``     Hypergeometric function 2F1
+``jacobi(n,a,b,x)``     Jacobi polynomial / Jacobi function
+``legendre(n,x)``       Legendre polynomial / Legendre function
+``chebyt(n,x)``         Chebyshev polynomial of the first kind, T_n(x)
+``chebyu(n,x)``         Chebyshev polynomial of the second kind, U_n(x)
 =====================   ==================================================================
-
-The following functions do not accept complex input: ``hypot``, ``atan2``, ``floor``, ``ceil``, ``j0``, ``j1`` and ``jn``.
-
-
-Elementary functions (``sqrt``, ``exp``, ``sin``, ...)
-......................................................
-
-Trigonometric functions can be evaluated at degree angles using the ``degree`` constant:
-
-    >>> mp.dps = 15
-    >>> print cos(45*degree)
-    0.707106781186548
-
-Factorial related
-.................
-
-
-Hypergeometric functions
-........................
-
-
-Miscellaneous special functions
-...............................
 
 Number sequences
 ----------------
 
-For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch.
+For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch. 
 
 The precision of each generated number will be the same as that of the first, regardless of whether the global working precision is changed subsequently.
 
-bernoulli_range
-    Bernoulli numbers: 1, -1/2, 1/6, 0, -1/30, 0, 1/42, 0, ...
+``bernoulli_range``
+    Generates the Bernoulli numbers with positive even index: 1/6, -1/30, 1/42, ...
 
-log_range
-    Nonzero integer logarithms: log(2), log(3), log(4), ...
+    >>> mp.dps = 15
+    >>> b = bernoulli_range()
+    >>> print b.next()
+    0.166666666666667
+    >>> print b.next()
+    -0.0333333333333333
+
+``log_range``
+    Generates the nonzero integer logarithms: log(2), log(3), log(4), ...
+
+    >>> l = log_range()
+    >>> print l.next()
+    0.693147180559945
+    >>> print l.next()
+    1.09861228866811
 
 Utility functions
 -----------------
+
+Ranges
+......
+
+``arange``, with the same argument order as Python's built-in ``range`` function, generates a range of floating-point numbers, not including the endpoint:
+
+    >>> arange(0, 1, 0.25)
+    [mpf('0.0'), mpf('0.25'), mpf('0.5'), mpf('0.75')]
+
+All three arguments must currently be given.
 
 Current epsilon
 ...............
@@ -236,17 +306,16 @@ The output might look like this:
     0.34560622640274419514821879678
     0.353366977589549657670073479468
 
-
 Polynomial evaluation
 .....................
 
-Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates ``2 + 5*x + x^3`` at ``x = 3.5``::
+Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates 2 + 5x + x^3 at x = 3.5:
 
     >>> mp.dps = 20
     >>> polyval([2, 5, 0, 1], mpf('3.5'))
     mpf('62.375')
 
-With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point::
+With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point:
 
     >>> polyval([2, 5, 0, 1], mpf('3.5'), derivative=True)
     (mpf('62.375'), mpf('41.75'))

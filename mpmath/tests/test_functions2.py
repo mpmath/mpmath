@@ -166,10 +166,10 @@ def test_gamma_quotients():
     h = 1e-8
     ep = 1e-4
     G = gamma
-    assert gammaquot([-1],[-3,-4]) == 0
-    assert gammaquot([-1,0],[-5]) == inf
-    assert abs(gammaquot([-1],[-2]) - G(-1+h)/G(-2+h)) < 1e-4
-    assert abs(gammaquot([-4,-3],[-2,0]) - G(-4+h)*G(-3+h)/G(-2+h)/G(0+h)) < 1e-4
+    assert gammaprod([-1],[-3,-4]) == 0
+    assert gammaprod([-1,0],[-5]) == inf
+    assert abs(gammaprod([-1],[-2]) - G(-1+h)/G(-2+h)) < 1e-4
+    assert abs(gammaprod([-4,-3],[-2,0]) - G(-4+h)*G(-3+h)/G(-2+h)/G(0+h)) < 1e-4
     assert rf(3,0) == 1
     assert rf(2.5,1) == 2.5
     assert rf(-5,2) == 20
