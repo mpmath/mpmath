@@ -36,7 +36,7 @@ def test_double_compatibility():
         assert (mpx >= mpy) == (x >= y)
         assert mpx == mpx
         if uses_x87:
-            mp.prec = 80
+            mp.prec = 64
             a = mpx + mpy
             b = mpx * mpy
             c = mpx / mpy
