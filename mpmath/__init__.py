@@ -1,3 +1,5 @@
+__version__ = '0.8-svn'
+
 import lib
 
 from mptypes import *

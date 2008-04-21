@@ -2,11 +2,10 @@
 Miscellaneous special functions
 """
 
-from mpmath.lib import *
-from mpmath.libmpc import *
-from mpmath.mptypes import *
-
-from mpmath.mptypes import constant
+from lib import *
+from libmpc import *
+from mptypes import *
+from mptypes import constant
 
 __docformat__ = 'plaintext'
 
