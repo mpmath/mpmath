@@ -776,16 +776,47 @@ def rand():
     """Return an mpf chosen randomly from [0, 1)."""
     return make_mpf(frand(mp.prec))
 
-def arange(a, b, dt):
-    """Returns a list [a, a + dt, a + 2*dt, ..., b]"""
+from operator import gt, lt
+
+def arange(*args):
+    """arange([a,] b[, dt]) -> list [a, a + dt, a + 2*dt, ..., b]"""
+    if not len(args) <= 3:
+        raise TypeError('arange expected at most 3 arguments, got %i' 
+                        % len(args))
+    if not len(args) >= 1:
+        raise TypeError('arange expected at least 1 argument, got %i'
+                        % len(args))
+    # set default
+    a = 0
+    dt = 1
+    # interpret arguments
+    if len(args) == 1:
+        b = args[0]
+    elif len(args) >= 2:
+        a = args[0]
+        b = args[1]
+    if len(args) == 3:
+        dt = args[2]
     a, b, dt = mpf(a), mpf(b), mpf(dt)
+    assert a + dt != a, 'dt is too small and would cause an infinite loop'
+    # adapt code for sign of dt
+    if a > b:
+        if dt > 0:
+            return []
+        op = gt 
+    else:
+        if dt < 0:
+            return []
+        op = lt
+    # create list
     result = []
     i = 0
     t = a
     while 1:
         t = a + dt*i
         i += 1
-        if t < b:
+        ##print i, t, op(t, b)
+        if op(t, b):
             result.append(t)
         else:
             break
