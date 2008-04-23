@@ -1,3 +1,5 @@
+#!python
+
 """
 python runtests.py -py
   Use py.test to run tests (more useful for debugging)
