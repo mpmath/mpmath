@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 
 import os
 if not os.path.exists("build"):

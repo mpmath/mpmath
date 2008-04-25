@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 
 """
 python runtests.py -py
