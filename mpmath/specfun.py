@@ -608,9 +608,6 @@ def bernoulli(n):
     m = n // 2
     return (-1)**(m-1) * 2 * factorial(n) / (2*pi)**n * zeta(n)
 
-from mpmath.lib import fmuli, fmul, fpos, fdiv, fadd, fdivi, fsub, from_int, round_down, fone, fzero
-from mpmath.mptypes import make_mpf
-
 # For sequential computation of Bernoulli numbers, we use Ramanujan's formula
 
 #                            / n + 3 \
