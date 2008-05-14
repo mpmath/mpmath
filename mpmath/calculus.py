@@ -778,12 +778,13 @@ def vadd(*args):
     """Adds vectors "x", "y", ... together."""
     assert len(args) >= 2
     n = len(args[0])
+    rest = args[1:]
     for x in args:
         assert len(x) == n
     R = []
     for i in range(n):
-        s = 0.
-        for x in args:
+        s = args[0][i]
+        for x in rest:
             s += x[i]
         R.append(s)
     return R
@@ -808,15 +809,17 @@ def ODE_step_rk4(x, y, h, derivs):
     derivs .... a python function f(x, (y1, y2, y3, ...)) returning
     a tuple (y1', y2', y3', ...) where y1' is the derivative of y1 at x.
     """
-    h2 = h/2
+    h2 = ldexp(h, -1)
     third = mpf(1)/3
-    sixth = mpf(1)/6
+    sixth = ldexp(third, -1)
     k1 = smul(h, derivs(y, x))
     k2 = smul(h, derivs(vadd(y, smul(half, k1)), x+h2))
     k3 = smul(h, derivs(vadd(y, smul(half, k2)), x+h2))
     k4 = smul(h, derivs(vadd(y, k3), x+h))
-    return vadd(y, smul(sixth, k1), smul(third, k2), smul(third, k3), 
-            smul(sixth, k4))
+    v = []
+    for i in range(len(y)):
+        v.append(y[i] + third*(k2[i]+k3[i] + half*(k1[i]+k4[i])))
+    return v
 
 def odeint(derivs, x0, t_list, step=ODE_step_rk4):
     """
