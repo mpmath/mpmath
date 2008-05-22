@@ -173,7 +173,7 @@ def normalize(sign, man, exp, bc, prec, rnd):
     * The input must represent a regular (finite) number
     * The sign bit must be 0 or 1
     * The mantissa must be positive
-    * The mxponent must be an integer
+    * The exponent must be an integer
     * The bitcount must be exact
 
     If these conditions are not met, use from_man_exp, fpos, or any
@@ -214,6 +214,49 @@ def normalize(sign, man, exp, bc, prec, rnd):
     # so this is easy to check for.
     if man == 1:
         bc = 1
+    return sign, man, exp, bc
+
+def normalize1(sign, man, exp, bc, prec, rnd):
+    """same as normalize, but with the added condition that 
+       man is odd or zero
+    """
+    if not man:
+        return fzero
+    if bc <= prec:
+        return sign, man, exp, bc
+    n = bc - prec
+    if rnd is round_nearest:
+        t = man >> (n-1)
+        if t & 1 and ((t & 2) or (man & h_mask[n<300][n])):
+            man = (t>>1)+1
+        else:
+            man = t>>1
+    elif shifts_down[rnd][sign]:
+        man >>= n
+    else:
+        man = -((-man)>>n)
+    exp += n
+    bc = prec
+    # Strip trailing bits
+    if not man & 1:
+        t = trailtable[man & 255]
+        if not t:
+            while not man & 255:
+                man >>= 8
+                exp += 8
+                bc -= 8
+            t = trailtable[man & 255]
+        man >>= t
+        exp += t
+        bc -= t
+    # Bit count can be wrong if the input mantissa was 1 less than
+    # a power of 2 and got rounded up, thereby adding an extra bit.
+    # With trailing bits removed, all powers of two have mantissa 1,
+    # so this is easy to check for.
+    if man == 1:
+        bc = 1
+    #if (sign0, man0, exp0, bc0) != (sign, man, exp, bc) and bc0 <= prec:
+    #    print 'DB normalize1 changed with  bc0 <= prec'
     return sign, man, exp, bc
 
 
@@ -464,7 +507,7 @@ def fpos(s, prec, rnd=round_fast):
     sign, man, exp, bc = s
     if (not man) and exp:
         return s
-    return normalize(sign, man, exp, bc, prec, rnd)
+    return normalize1(sign, man, exp, bc, prec, rnd)
 
 def fneg(s, prec=None, rnd=round_fast):
     """Negate a raw mpf (return -s), rounding the result to the
@@ -478,7 +521,7 @@ def fneg(s, prec=None, rnd=round_fast):
         return s
     if not prec:
         return (1-sign, man, exp, bc)
-    return normalize(1-sign, man, exp, bc, prec, rnd)
+    return normalize1(1-sign, man, exp, bc, prec, rnd)
 
 def fabs(s, prec=None, rnd=round_fast):
     """Return abs(s) of the raw mpf s, rounded to the specified
@@ -493,7 +536,7 @@ def fabs(s, prec=None, rnd=round_fast):
         if sign:
             return (not sign, man, exp, bc)
         return s
-    return normalize(0, man, exp, bc, prec, rnd)
+    return normalize1(0, man, exp, bc, prec, rnd)
 
 def fsign(s):
     """Return -1, 0, or 1 (as a Python int, not a raw mpf) depending on
@@ -521,8 +564,8 @@ def fadd(s, t, prec, rnd=round_fast):
         # Check if one operand is zero. Zero always has exp = 0; if the
         # other operand has a huge exponent, its mantissa will unnecessarily
         # be shifted into something huge if we don't check for this case.
-        if not tman: return normalize(ssign, sman, sexp, sbc, prec, rnd)
-        if not sman: return normalize(tsign, tman, texp, tbc, prec, rnd)
+        if not tman: return normalize1(ssign, sman, sexp, sbc, prec, rnd)
+        if not sman: return normalize1(tsign, tman, texp, tbc, prec, rnd)
 
     # More generally, if one number is huge and the other is small,
     # and in particular, if their mantissas don't overlap at all at
@@ -543,25 +586,44 @@ def fadd(s, t, prec, rnd=round_fast):
             else:     sman += 1
             # TODO: use that bc ~= sbc+offset
             bc = bitcount(sman)
-            return normalize(ssign, sman, sexp-offset, bc, prec, rnd)
-    if ssign == tsign:
-        man = tman + (sman << offset)
-        sbc += offset
-        if tbc > sbc: bc = tbc - 4
-        else:         bc = sbc - 4
-        if bc < 4:    bc = bctable[man]
-        else:         bc += bctable[man>>bc]
-        return normalize(ssign, man, texp, bc, prec, rnd)
-    else:
-        if ssign: man = tman - (sman << offset)
-        else:     man = (sman << offset) - tman
-        if man >= 0:
-            sign = 0
+            return normalize1(ssign, sman, sexp-offset, bc, prec, rnd)
+    if offset:
+        if ssign == tsign:
+            man = tman + (sman << offset)
+            sbc += offset
+            if tbc > sbc: bc = tbc - 4
+            else:         bc = sbc - 4
+            if bc < 4:    bc = bctable[man]
+            else:         bc += bctable[man>>bc]
+            return normalize1(ssign, man, texp, bc, prec, rnd)
         else:
-            man = -man
-            sign = 1
-        bc = bitcount(man)
-        return normalize(sign, man, texp, bc, prec, rnd)
+            if ssign: man = tman - (sman << offset)
+            else:     man = (sman << offset) - tman
+            if man >= 0:
+                ssign = 0
+            else:
+                man = -man
+                ssign = 1
+            bc = bitcount(man)
+            return normalize1(ssign, man, texp, bc, prec, rnd)
+    else:
+        if ssign == tsign:
+            man = tman + sman
+            if tbc > sbc: bc = tbc - 4
+            else:         bc = sbc - 4
+            if bc < 4:    bc = bctable[man]
+            else:         bc += bctable[man>>bc]
+            return normalize(ssign, man, texp, bc, prec, rnd)
+        else:
+            if ssign: man = tman - sman
+            else:     man = sman - tman
+            if man >= 0:
+                ssign = 0
+            else:
+                man = -man
+                ssign = 1
+            bc = bitcount(man)
+            return normalize(ssign, man, texp, bc, prec, rnd)
 
 def fsub(s, t, prec, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
@@ -590,7 +652,7 @@ def fmul(s, t, prec=0, rnd=round_fast):
     if bc < 4: bc = bctable[man]
     else:      bc += bctable[man>>bc]
     if prec:
-        return normalize(sign, man, sexp+texp, bc, prec, rnd)
+        return normalize1(sign, man, sexp+texp, bc, prec, rnd)
     else:
         return (sign, man, sexp+texp, bc)
 
@@ -625,7 +687,13 @@ def fdiv(s, t, prec, rnd=round_fast):
     """Floating-point division"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
-    if not sman or not tman:
+    if not sman or tman <= 1:
+        if tman == 1:
+            #if sbc > prec:
+            #    print 'DB', s,t, prec
+            #    return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
+            #return ssign^tsign, sman, sexp-texp, sbc
+            return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
         if s == fzero:
             if t == fzero: raise ZeroDivisionError
             if t == fnan: return fnan
@@ -683,6 +751,7 @@ def fdivi(n, t, prec, rnd=round_fast):
     if rem:
         quot = (quot << 5) + 1
         extra += 5
+        return normalize1(sign, quot, -texp-extra, bitcount(quot), prec, rnd)
     return normalize(sign, quot, -texp-extra, bitcount(quot), prec, rnd)
 
 def fmod(s, t, prec, rnd=round_fast):
@@ -775,7 +844,7 @@ def fpowi(s, n, prec, rnd=round_fast):
             return (0, 1, exp+exp, 1)
         bc = bc + bc - 2
         bc += bctable[man>>bc]
-        return normalize(0, man, exp+exp, bc, prec, rnd)
+        return normalize1(0, man, exp+exp, bc, prec, rnd)
     if n == -1: return fdiv(fone, s, prec, rnd)
     if n < 0:
         inverse = fpowi(s, -n, prec+5, reciprocal_rnd[rnd])
@@ -788,7 +857,7 @@ def fpowi(s, n, prec, rnd=round_fast):
         return (result_sign, 1, exp*n, 1)
     if bc*n < 1000:
         man **= n
-        return normalize(result_sign, man, exp*n, bitcount(man), prec, rnd)
+        return normalize1(result_sign, man, exp*n, bitcount(man), prec, rnd)
 
     # Use directed rounding all the way through to maintain rigorous
     # bounds for interval arithmetic
