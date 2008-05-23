@@ -349,6 +349,8 @@ def TS_estimate_error(res, prec, eps):
     comparing it to the results from two previous levels. The
     algorithm is that described by D. H. Bailey."""
     try:
+        if res[-1] == res[-2] == res[-3]:
+            return mpf(0)
         D1 = log(abs(res[-1]-res[-2]), 10)
         D2 = log(abs(res[-1]-res[-3]), 10)
     except ValueError:
@@ -811,7 +813,6 @@ def ODE_step_rk4(x, y, h, derivs):
     """
     h2 = ldexp(h, -1)
     third = mpf(1)/3
-    sixth = ldexp(third, -1)
     k1 = smul(h, derivs(y, x))
     k2 = smul(h, derivs(vadd(y, smul(half, k1)), x+h2))
     k3 = smul(h, derivs(vadd(y, smul(half, k2)), x+h2))

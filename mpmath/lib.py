@@ -255,8 +255,6 @@ def normalize1(sign, man, exp, bc, prec, rnd):
     # so this is easy to check for.
     if man == 1:
         bc = 1
-    #if (sign0, man0, exp0, bc0) != (sign, man, exp, bc) and bc0 <= prec:
-    #    print 'DB normalize1 changed with  bc0 <= prec'
     return sign, man, exp, bc
 
 
@@ -689,10 +687,6 @@ def fdiv(s, t, prec, rnd=round_fast):
     tsign, tman, texp, tbc = t
     if not sman or tman <= 1:
         if tman == 1:
-            #if sbc > prec:
-            #    print 'DB', s,t, prec
-            #    return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
-            #return ssign^tsign, sman, sexp-texp, sbc
             return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
         if s == fzero:
             if t == fzero: raise ZeroDivisionError
