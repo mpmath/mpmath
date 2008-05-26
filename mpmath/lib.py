@@ -1710,6 +1710,26 @@ def cos_taylor(x, prec):
         k += 2
     return c
 
+# Input: x * 2**prec
+# Output: c * 2**(prec + r), s * 2**(prec + r)
+def expi_series(x, prec, r):
+    x >>= r
+    one = 1 << prec
+    x2 = (x*x) >> prec
+    s = x
+    a = x
+    k = 2
+    while a:
+        a = ((a * x2) >> prec) // (-k*(k+1))
+        s += a
+        k += 2
+    c = sqrt_fixed(one - ((s*s)>>prec), prec)
+    # Calculate (c + j*s)**(2**r) by repeated squaring
+    for j in range(r):
+      c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
+    return c, s
+
+
 # TODO: what we really want is the general version of Ziv's algorithm
 def clamp1(x, prec, rnd):
     """Ensure that cos and sin values round away from -1 and 1 when
@@ -1785,30 +1805,62 @@ def cos_sin(x, prec, rnd=round_fast, nt=2):
             wp += wp1 - bitcount(abs(rx))
         else:
             break
-
+    
     case = n % 4
-    if nt == 2:
-        one = 1 << wp
-        s = sin_taylor(rx, wp)
-        c = sqrt_fixed(one - ((s*s)>>wp), wp)
-        if   case == 1: c, s = -s, c
-        elif case == 2: s, c = -s, -c
-        elif case == 3: c, s = s, -c
-        c = clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
-        s = clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
-        return c, s
-    elif nt == 0:
-        if   case == 0: c = cos_taylor(rx, wp)
-        elif case == 1: c = -sin_taylor(rx, wp)
-        elif case == 2: c = -cos_taylor(rx, wp)
-        elif case == 3: c = sin_taylor(rx, wp)
-        return clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+    if prec < 6000:  
+        if nt == 2:
+            one = 1 << wp
+            s = sin_taylor(rx, wp)
+            c = sqrt_fixed(one - ((s*s)>>wp), wp)
+            if   case == 1: c, s = -s, c
+            elif case == 2: s, c = -s, -c
+            elif case == 3: c, s = s, -c
+            c = clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+            s = clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
+            return c, s
+        elif nt == 0:
+            if   case == 0: c = cos_taylor(rx, wp)
+            elif case == 1: c = -sin_taylor(rx, wp)
+            elif case == 2: c = -cos_taylor(rx, wp)
+            elif case == 3: c = sin_taylor(rx, wp)
+            return clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+        else:
+            if   case == 0: s = sin_taylor(rx, wp)
+            elif case == 1: s = cos_taylor(rx, wp)
+            elif case == 2: s = -sin_taylor(rx, wp)
+            elif case == 3: s = -cos_taylor(rx, wp)
+            return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
     else:
-        if   case == 0: s = sin_taylor(rx, wp)
-        elif case == 1: s = cos_taylor(rx, wp)
-        elif case == 2: s = -sin_taylor(rx, wp)
-        elif case == 3: s = -cos_taylor(rx, wp)
-        return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
+        #Use Brent's trick for large precision, 
+        # see documentation to exp_series
+        wp0 = wp
+        wp += abs_mag
+        r = int(2 * wp**0.4)
+        wp += r + 20
+        rx <<= (wp-wp0)
+        rc, rs = expi_series(rx, wp, r)
+        if nt == 2:
+            one = 1 << wp
+            s = rs
+            c = rc
+            if   case == 1: c, s = -s, c
+            elif case == 2: s, c = -s, -c
+            elif case == 3: c, s = s, -c
+            c = clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+            s = clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
+            return c, s
+        elif nt == 0:
+            if   case == 0: c = rc
+            elif case == 1: c = -rs
+            elif case == 2: c = -rc
+            elif case == 3: c = rs
+            return clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+        else:
+            if   case == 0: s = rs
+            elif case == 1: s = rc
+            elif case == 2: s = -rs
+            elif case == 3: s = -rc
+            return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
 
 def fcos(x, prec, rnd=round_fast):
     return cos_sin(x, prec, rnd, 0)
