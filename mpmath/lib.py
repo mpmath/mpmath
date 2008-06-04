@@ -1943,17 +1943,16 @@ def ftanh(x, prec, rnd=round_fast):
 Near x = 0, use atan(x) = x - x**3/3 + x**5/5 - ...
 Near x = 1, use atan(x) = y/x * (1 + 2/3*y + 2*4/3/5*y**2 + ...)
 where y = x**2/(1+x**2).
+At high precision use the Newton method  for 1.0/8 <= x < 256
 
-TODO: these series are not impressively fast. It is probably better
-to calculate atan from tan, using Newton's method or even the
-secant method.
+TODO: see if one can improve the case x < 1.0/8;
+      write a fixed-point function atan_newton
 """
 
 def atan_taylor(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     assert not sign
     # Increase absolute precision when extremely close to 0
-    bc = bitcount(man)
     diff = -(bc + exp)
     prec2 = prec
     if diff > 10:
@@ -1992,21 +1991,57 @@ def fatan(x, prec, rnd=round_fast):
         if x == finf: return fshift(fpi(prec), -1)
         if x == fninf: return fneg(fshift(fpi(prec), -1))
         return fnan
-    if sign:
-        return fneg(fatan(fneg(x), prec, rnd))
-    if fcmp(x, _cutoff_1) < 0:
-        return atan_taylor(x, prec, rnd)
-    if fcmp(x, _cutoff_2) < 0:
-        return atan_euler(x, prec, rnd)
-    # For large x, use atan(x) = pi/2 - atan(1/x)
-    if x[2] > 10*prec:
-        pi = fpi(prec, rnd)
-        pihalf = fshift(pi, -1)
+    flag_nr = True
+    if prec < 400:
+        flag_nr = False
     else:
-        pi = fpi(prec+4)
-        pihalf = fshift(pi, -1)
-        t = fatan(fdiv(fone, x, prec+4), prec+4)
+        ebc = exp + bc
+    # the Newton method is used if flag_nr = True; otherwise one of the
+    # two series is used.
+    # This selection is based on a benchmark.
+        if ebc < -2 or ebc > 8:
+            flag_nr = False
+        elif ebc == -2:
+            if prec < 1500:
+                flag_nr = False
+        elif ebc <= 0:
+            if prec < 600:
+                flag_nr = False
+        else:
+            if prec < 400*ebc:
+                flag_nr = False
+    if not flag_nr:
+        if sign:
+            return fneg(fatan(fneg(x), prec, rnd))
+        if fcmp(x, _cutoff_1) < 0:
+            return atan_taylor(x, prec, rnd)
+        if fcmp(x, _cutoff_2) < 0:
+            return atan_euler(x, prec, rnd)
+        # For large x, use atan(x) = pi/2 - atan(1/x)
+        if x[2] > 10*prec:
+            pi = fpi(prec, rnd)
+            pihalf = fshift(pi, -1)
+        else:
+            pi = fpi(prec+4)
+            pihalf = fshift(pi, -1)
+            t = fatan(fdiv(fone, x, prec+4), prec+4)
         return fsub(pihalf, t, prec, rnd)
+    # use Newton's method
+    extra = 10
+    extra_p = 100
+    prec2 = prec + extra
+    r = math.atan(to_float(x))
+    r = from_float(r, 50, rnd)
+    for p in giant_steps(50, prec2):
+        wp = p + extra_p
+        t = ftan(r, wp, rnd)
+        tmp1 = fsub(x, t, wp, rnd)
+        tmp2 = fmul(t, t, wp, rnd)
+        tmp2 = fadd(fone, tmp2, wp, rnd)
+        tmp1 = fdiv(tmp1, tmp2, wp, rnd)
+        r = fadd(r, tmp1, wp, rnd)
+    sign, man, exp, bc = r
+    return normalize(sign, man, exp, bc, prec, rnd)
 
 def fatan2(y, x, prec, rnd=round_fast):
     xsign, xman, xexp, xbc = x
@@ -2024,15 +2059,40 @@ def fatan2(y, x, prec, rnd=round_fast):
         return fpos(tquo, prec, rnd)
 
 def fasin(x, prec, rnd=round_fast):
-    # asin(x) = 2*atan(x/(1+sqrt(1-x**2)))
     sign, man, exp, bc = x
     if bc+exp > 0 and x not in (fone, fnone):
         raise ComplexResult("asin(x) is real only for -1 <= x <= 1")
-    wp = prec + 15
-    a = fmul(x, x)
-    b = fadd(fone, fsqrt(fsub(fone, a, wp), wp), wp)
-    c = fdiv(x, b, wp)
-    return fshift(fatan(c, prec, rnd), 1)
+    flag_nr = True
+    if prec < 1000 or exp+bc < -13:
+        flag_nr = False
+    else:
+        ebc = exp + bc
+        if ebc < -13:
+            flag_nr = False
+        elif ebc < -3:
+            if prec < 3000:
+                flag_nr = False
+    if not flag_nr:
+        # asin(x) = 2*atan(x/(1+sqrt(1-x**2)))
+        wp = prec + 15
+        a = fmul(x, x)
+        b = fadd(fone, fsqrt(fsub(fone, a, wp), wp), wp)
+        c = fdiv(x, b, wp)
+        return fshift(fatan(c, prec, rnd), 1)
+    # use Newton's method
+    extra = 10
+    extra_p = 10
+    prec2 = prec + extra
+    r = math.asin(to_float(x))
+    r = from_float(r, 50, rnd)
+    for p in giant_steps(50, prec2):
+        wp = p + extra_p
+        c, s = cos_sin(r, wp, rnd)
+        tmp = fsub(x, s, wp, rnd)
+        tmp = fdiv(tmp, c, wp, rnd)
+        r = fadd(r, tmp, wp, rnd)
+    sign, man, exp, bc = r
+    return normalize(sign, man, exp, bc, prec, rnd)
 
 def facos(x, prec, rnd=round_fast):
     # acos(x) = 2*atan(sqrt(1-x**2)/(1+x))
