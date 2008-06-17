@@ -62,6 +62,14 @@ def giant_steps(start, target):
         L = L + [L[-1]//2 + 1]
     return L[::-1]
 
+def giant_steps2(start, target):
+    """Return a list of integers ~= [start, 3*start, ..., target/3,
+    target] describing suitable precision steps for Halley's method."""
+    L = [target]
+    while L[-1] > start*3:
+        L = L + [L[-1]//3 + 1]
+    return L[::-1]
+
 def rshift(x, n):
     """For an integer x, calculate x >> n with the fastest (floor)
     rounding. Unlike the plain Python expression (x >> n), n is
@@ -1582,8 +1590,15 @@ def fexp(x, prec, rnd=round_fast):
 #----------------------------------------------------------------------------#
 
 # The basic strategy for computing log(x) is to set r = log(x) and use
-# Newton's method to solve the equation exp(r) = x. We set the initial
-# value r_0 to math.log(x) and then iterate r_{n+1} = r_n + exp(-r_n) - 1
+# Newton's method to solve the equation exp(r) = x. 
+# To obtain the Newton method one solves exp(r+h) = x, expanding in h
+# which is supposed to be small; one has
+# h = log(x * exp(-r)), which can be expanded in powers of
+# s = (x * exp(-r) - 1) : h = s - s*s/2 + s**3/3 + ...
+# The first order approximation is Newton method, the second order is
+# Halley method. We use the second order approximation.
+# We set the initial value r_0 to math.log(x) and then iterate 
+# r_{n+1} = (r_n + exp(-r_n) - 1) - (r_n + exp(-r_n) - 1)/2
 # until convergence. As with square roots, we increase the working
 # precision dynamically during the process so that only one full-precision
 # evaluation of exp is required.
@@ -1603,19 +1618,19 @@ def fexp(x, prec, rnd=round_fast):
 # arithmetic. x is assumed to have magnitude ~= 1
 def log_newton(x, prec):
     extra = 10
-    # 50-bit approximation
+    # 40-bit approximation
     fx = math.log(x) - 0.69314718055994529*prec
-    r = int(fx * 2.0**50)
-    prevp = 50
-    for p in giant_steps(50, prec+extra):
+    r = int(fx * 2.0**40)
+    prevp = 40
+    for p in giant_steps2(40, prec+extra):
         rb = lshift(r, p-prevp)
-
         # Parameters for exponential series
         r = int(2 * p**0.4)
         exp_extra = r + 10
-
         e = exp_series((-rb) << exp_extra, p + exp_extra, r)
-        r = rb + ((rshift(x, prec-p)*e)>>(p + exp_extra)) - (1 << p)
+        s = ((rshift(x, prec-p)*e)>>(p + exp_extra)) - (1 << p)
+        s1 = -((s*s)>>(p+1))
+        r = rb + s + s1
         prevp = p
     return r >> extra
 

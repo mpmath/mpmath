@@ -197,3 +197,7 @@ def test_hp():
         # precomputed input
         assert (tan(abi).real).ae(mpf(tan_abi_real), abs_eps=1e-205)
         assert (tan(abi).imag).ae(mpf(tan_abi_imag), abs_eps=1e-205)
+    mp.dps = 460
+    assert str(log(3))[-20:] == '02166121184001409826'
+    mp.dps = 15
+ 
