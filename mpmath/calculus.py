@@ -1128,7 +1128,7 @@ transforms = [
 
 def identify(x, constants=[], full=False, maxcoeff=1000, tolerance=None,
     quadratics=True, verbose=False):
-    """"
+    """
     This function attempts to find a symbolic expression for the given
     quantity x. It can identify simple algebraic numbers, as well as
     simple combinations of the given list of base constants, and
