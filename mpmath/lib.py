@@ -1554,6 +1554,31 @@ def exp_series(x, prec, r):
         r -= 1
     return s
 
+def exp_series2(x, prec, r):
+    x >>= r
+    sign = 0
+    if x < 0:
+        sign = 1
+        x = -x
+    x2 = (x*x) >> prec
+    s1 = a = x
+    k = 3
+    while a:
+        a = ((a * x2) >> prec) // (k*(k-1))
+        s1 += a
+        k += 2
+    c1 = sqrt_fixed(((s1*s1) >> prec) + (1<<prec), prec)
+    if sign:
+        s = c1 - s1
+    else:
+        s = c1 + s1
+    # Calculate s**(2**r) by repeated squaring
+    while r:
+        s = (s*s) >> prec
+        r -= 1
+    return s
+
+
 def fexp(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if not man:
@@ -1569,16 +1594,31 @@ def fexp(x, prec, rnd=round_fast):
     # extra precision needs to be similar in magnitude to log_2(|x|)
     # for the modulo reduction, plus r for the error from squaring r times
     wp = prec + max(0, bc+exp)
-    r = int(2 * wp**0.4)
-    wp += r + 20
-    t = to_fixed(x, wp)
-    # abs(x) > 1?
-    if exp+bc > 1:
-        lg2 = log2_fixed(wp)
-        n, t = divmod(t, lg2)
+    if wp < 300:
+        r = int(2*wp**0.4)
+        if bc+exp < 0:
+            r = max(1, r + bc + exp)
+        wp += r + 20
+        t = to_fixed(x, wp)
+        # abs(x) > 1?
+        if exp+bc > 1:
+            lg2 = log2_fixed(wp)
+            n, t = divmod(t, lg2)
+        else:
+            n = 0
+        man = exp_series(t, wp, r)
     else:
-        n = 0
-    man = exp_series(t, wp, r)
+        r = int(0.7 * wp**0.5)
+        if bc+exp < 0:
+            r = max(1, r + bc + exp)
+        wp += r + 20
+        t = to_fixed(x, wp)
+        if exp+bc > 1:
+            lg2 = log2_fixed(wp)
+            n, t = divmod(t, lg2)
+        else:
+            n = 0
+        man = exp_series2(t, wp, r)
     bc = wp - 2 + bctable[man >> (wp - 2)]
     return normalize(0, man, -wp+n, bc, prec, rnd)
 
@@ -1822,7 +1862,7 @@ def cos_sin(x, prec, rnd=round_fast, nt=2):
             break
     
     case = n % 4
-    if prec < 6000:  
+    if prec < 600:  
         if nt == 2:
             one = 1 << wp
             s = sin_taylor(rx, wp)
@@ -1850,7 +1890,7 @@ def cos_sin(x, prec, rnd=round_fast, nt=2):
         # see documentation to exp_series
         wp0 = wp
         wp += abs_mag
-        r = int(2 * wp**0.4)
+        r = int(0.137 * prec**0.579)
         wp += r + 20
         rx <<= (wp-wp0)
         rc, rs = expi_series(rx, wp, r)
