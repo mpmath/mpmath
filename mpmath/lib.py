@@ -976,7 +976,7 @@ def fpowi(s, n, prec, rnd=round_fast):
 def bin_to_radix(x, xbits, base, bdigits):
     """Changes radix of a fixed-point number; i.e., converts
     x * 2**xbits to floor(x * 10**bdigits)."""
-    return x * (base**bdigits) >> xbits
+    return x * (MPBASE(base)**bdigits) >> xbits
 
 stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'
 
@@ -991,7 +991,10 @@ def small_numeral(n, base=10, digits=stddigits):
         digs.append(digits[digit])
     return "".join(digs[::-1])
 
-def numeral(n, base=10, size=0, digits=stddigits):
+def numeral_gmpy(n, base=10, size=0, digits=stddigits):
+    return gmpy.digits(n, base)
+
+def numeral_python(n, base=10, size=0, digits=stddigits):
     """Represent the integer n as a string of digits in the given base.
     Recursive division is used to make this function about 3x faster
     than Python's str() for converting integers to decimal strings.
@@ -1010,6 +1013,11 @@ def numeral(n, base=10, size=0, digits=stddigits):
     ad = numeral(A, base, half, digits)
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
+
+if MODE == "gmpy":
+    numeral = numeral_gmpy
+else:
+    numeral = numeral_python
 
 def to_digits_exp(s, dps):
     """Helper function for representing the floating-point number s as
@@ -1466,7 +1474,7 @@ def machin(coefs, prec, hyperbolic=False):
 # Pi
 
 def agm_status(prec, step, adiff, verbose_base):
-    logdiff = math.log(max(1, adiff), verbose_base)
+    logdiff = bitcount(adiff) * math.log(2,verbose_base)
     digits = int(prec/math.log(verbose_base,2) - logdiff)
     print "  iteration", step, ("(accuracy ~= %i base-%i digits)" % \
        (digits, verbose_base))
