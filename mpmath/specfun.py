@@ -596,7 +596,7 @@ def zeta(s):
             for k in range(n):
                 t += (-1)**k * mpf(d[k]-d[n]) * exp(-_logk(k+1)*s)
             return (t / -d[n]) / (mpf(1) - exp(log(2)*(1-s)))
-    
+
 
 @extraprec(5, normalize_output=True)
 def bernoulli(n):
@@ -1268,7 +1268,7 @@ def jv(v, x):
     """Bessel function J_v(x)."""
     prec = mp.prec
     x = convert_lossless(x)
-    if isinstance(v, (int, long)):
+    if isinstance(v, int_types):
         if isinstance(x, mpf):
             return mpf_jn_series(v, x._mpf_, prec)
         if isinstance(x, mpc):
