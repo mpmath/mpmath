@@ -236,6 +236,14 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         ([(-0.375 - 0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
 
     """
+
+    
+    if len(coeffs) == 1:
+        if coeffs[0]:
+            return []
+        else:
+            raise ValueError,"tautology"
+    
     orig = mp.prec
     weps = +eps
     try:
@@ -248,12 +256,12 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         else:
             coeffs = [c/lead for c in coeffs]
         f = lambda x: polyval(coeffs, x)
-        roots = [mpc((0.4+0.9j)**n) for n in range(deg)]
-        err = [mpf(1) for n in range(deg)]
-        for step in range(maxsteps):
+        roots = [mpc((0.4+0.9j)**n) for n in xrange(deg)]
+        err = [mpf(1) for n in xrange(deg)]
+        for step in xrange(maxsteps):
             if max(err).ae(0):
                 break
-            for i in range(deg):
+            for i in xrange(deg):
                 if not err[i].ae(0):
                     p = roots[i]
                     x = f(p)
@@ -266,7 +274,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
                     roots[i] = p - x
                     err[i] = abs(x)
         if cleanup:
-            for i in range(deg):
+            for i in xrange(deg):
                 if abs(roots[i].imag) < weps:
                     roots[i] = roots[i].real
                 elif abs(roots[i].real) < weps:
