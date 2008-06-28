@@ -1573,17 +1573,26 @@ def flog10(prec, rnd=round_fast):
     return from_man_exp(log10_fixed(prec+5), -prec-5, prec, rnd)
 
 #----------------------------------------------------------------------------
-# exp(1) is computed using the Taylor series for exp
+# exp(1) is computed from the Taylor series for exp, using binary splitting.
+
+# See http://numbers.computation.free.fr/Constants/Algorithms/splitting.html
+# for an explanation of this algorithm
+
+def bspe(a,b):
+    if b-a == 1:
+        return ONE, MPBASE(b)
+    m = (a+b)//2
+    p1, q1 = bspe(a,m)
+    p2, q2 = bspe(m,b)
+    return p1*q2+p2, q1*q2
+
 @constant_memo
 def e_fixed(prec):
-    a = ONE << prec
-    s = a << 1
-    n = TWO
-    while a:
-        a //= n
-        s += a
-        n += 1
-    return s
+    # Slight overestimate of N needed for 1/N! < 2**(-prec)
+    # This could be tightened for large N.
+    N = int(1.1*prec/math.log(prec) + 20)
+    p, q = bspe(0,N)
+    return ((p+q)<<prec)//q
 
 def fe(prec, rnd=round_fast):
     return from_man_exp(e_fixed(prec+15), -prec-15, prec, rnd)
