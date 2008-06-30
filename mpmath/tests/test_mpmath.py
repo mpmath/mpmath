@@ -280,6 +280,7 @@ def test_atan():
     assert atan(1e50).ae(pi/2)
     assert atan(-1e-50) == -1e-50
     assert atan(-1e50).ae(-pi/2)
+    assert atan(10**1000).ae(pi/2)
     for dps in [25, 70, 100, 300, 1000]:
         mp.dps = dps
         assert (4*atan(1)).ae(pi)

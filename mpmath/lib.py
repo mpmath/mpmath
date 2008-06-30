@@ -2180,7 +2180,7 @@ def fatan(x, prec, rnd=round_fast):
         else:
             pi = fpi(prec+4)
             pihalf = fshift(pi, -1)
-            t = fatan(fdiv(fone, x, prec+4), prec+4)
+        t = fatan(fdiv(fone, x, prec+4), prec+4)
         return fsub(pihalf, t, prec, rnd)
     # use Newton's method
     extra = 10
