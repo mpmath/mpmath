@@ -68,7 +68,7 @@ class Context(object):
         try:
             gr = rounding_table[s]
         except KeyError:
-            raise ValueError(("unknown rounding mode: %s.\n" % s) + 
+            raise ValueError(("unknown rounding mode: %s.\n" % s) +
                 "Value must be one of: %r" % rounding_table.keys())
 
     prec = property(lambda self: gp, set_prec)
@@ -236,7 +236,7 @@ class mpf(mpnumeric):
                 return make_mpf(from_man_exp(val[0], val[1], gp, gr))
             if len(val) == 4:
                 sign, man, exp, bc = val
-                return make_mpf(normalize(sign, MPBASE(man), exp, bc, gp, gr))
+                return make_mpf(normalize(sign, MP_BASE(man), exp, bc, gp, gr))
             raise ValueError
         else:
             return make_mpf(fpos(mpf_convert_arg(val), gp, gr))
@@ -617,7 +617,7 @@ degree = constant(fdegree, "degree")
 e = constant(fe, "e")
 ln2 = constant(flog2, "log 2")
 ln10 = constant(flog10, "log 10")
-eps = constant(lambda p, r: (0, ONE, -p+1, 1), "epsilon of working precision")
+eps = constant(lambda p, r: (0, MP_ONE, -p+1, 1), "epsilon of working precision")
 
 def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.
@@ -783,7 +783,7 @@ from operator import gt, lt
 def arange(*args):
     """arange([a,] b[, dt]) -> list [a, a + dt, a + 2*dt, ..., b]"""
     if not len(args) <= 3:
-        raise TypeError('arange expected at most 3 arguments, got %i' 
+        raise TypeError('arange expected at most 3 arguments, got %i'
                         % len(args))
     if not len(args) >= 1:
         raise TypeError('arange expected at least 1 argument, got %i'
@@ -805,7 +805,7 @@ def arange(*args):
     if a > b:
         if dt > 0:
             return []
-        op = gt 
+        op = gt
     else:
         if dt < 0:
             return []
