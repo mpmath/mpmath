@@ -12,11 +12,11 @@ from random import randrange
 # Support GMPY for high-speed large integer arithmetic.                      #
 #                                                                            #
 # To allow an external module to handle arithmetic, we need to make sure     #
-# that all high-precision variables are declared of the correct type. MPBASE #
+# that all high-precision variables are declared of the correct type. MP_BASE#
 # is the constructor for the high-precision type. It defaults to Python's    #
 # long type but can be assinged another type, typically gmpy.mpz.            #
 #                                                                            #
-# MPBASE must be used for the mantissa component of an mpf and must be used  #
+# MP_BASE must be used for the mantissa component of an mpf and must be used #
 # for internal fixed-point operations.                                       #
 #                                                                            #
 # Side-effects                                                               #
@@ -1560,22 +1560,57 @@ def pi_agm(prec, verbose=False, verbose_base=10):
     pi = ((((a+b)**2) >> 2) // t)
     return pi >> extraprec
 
+# Chudnovsky's series for pi, with binary splitting
+# The formulas are given in ftp://ftp.gmplib.org/pub/src/gmp-chudnovsky.c
+
+# Constants in Chudnovsky's series
+CHUD_A = MP_BASE(13591409)
+CHUD_B = MP_BASE(545140134)
+CHUD_C = MP_BASE(640320)
+CHUD_D = MP_BASE(12)
+
+def bs_chudnovsky(a,b,level,verbose):
+    if b-a == 1:
+        g = MP_BASE((6*b-5)*(2*b-1)*(6*b-1))
+        p = b**3 * CHUD_C**3 // 24
+        q = (-1)**b * g * (CHUD_A+CHUD_B*b)
+    else:
+        if verbose and level < 4:
+            print "  binary splitting", a, b
+        mid = (a+b)//2
+        g1, p1, q1 = bs_chudnovsky(a,mid,level+1,verbose)
+        g2, p2, q2 = bs_chudnovsky(mid,b,level+1,verbose)
+        p = p1*p2
+        g = g1*g2
+        q = q1*p2 + q2*g1
+    return g, p, q
+
+def pi_chudnovsky(prec, verbose=False, verbose_base=None):
+    """
+    Calculate floor(pi * 2**prec) using Chudnovsky's algorithm.
+    """
+    # The Chudnovsky series gives 14.18 digits per term
+    N = int(prec/3.3219280948/14.181647462 + 2)
+    if verbose:
+        print "binary splitting with N =", N
+    g, p, q = bs_chudnovsky(0,N,0,verbose)
+    sqrtC = sqrt_fixed(CHUD_C<<prec, prec)
+    v = p*CHUD_C*sqrtC//((q+CHUD_A*p)*CHUD_D)
+    return v
+
 @constant_memo
 def pi_fixed(prec):
     """
     Compute floor(pi * 2**prec) as a big integer.
-
-    For low precisions, Machin's formula pi = 16*acot(5)-4*acot(239)
-    is used. For high precisions, the more efficient arithmetic-
-    geometric mean iteration is used.
     """
-    if prec < 2000:
-        return machin([(16, 5), (-4, 239)], prec)
-    return pi_agm(prec)
+    #if prec < 2000:
+    #    return machin([(16, 5), (-4, 239)], prec)
+    #return pi_agm(prec)
+    return pi_chudnovsky(prec)
 
 def fpi(prec, rnd=round_fast):
     """Compute a floating-point approximation of pi"""
-    return from_man_exp(pi_fixed(prec+5), -prec-5, prec, rnd)
+    return from_man_exp(pi_fixed(prec+10), -prec-10, prec, rnd)
 
 def fdegree(prec, rnd=round_fast):
     """Compute 1 degree = pi / 180."""
