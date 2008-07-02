@@ -4,7 +4,7 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 
 __docformat__ = 'plaintext'
 
-import math
+import math, os
 from bisect import bisect
 from random import randrange
 
@@ -26,13 +26,19 @@ from random import randrange
 
 MODE = 'python'
 MP_BASE = long
-try:
-    import gmpy
-    if gmpy.version() >= '1.03':
-        MODE = 'gmpy'
-        MP_BASE = gmpy.mpz
-except:
-    pass
+if not os.environ.has_key('MPMATH_NOGMPY'):
+    try:
+        import gmpy
+        if gmpy.version() >= '1.03':
+            MODE = 'gmpy'
+            MP_BASE = gmpy.mpz
+    except:
+        pass
+
+if os.environ.has_key('MPMATH_STRICT'):
+    STRICT = True
+else:
+    STRICT = False
 
 MP_BASE_TYPE = type(MP_BASE(0))
 MP_ZERO = MP_BASE(0)
@@ -235,7 +241,7 @@ shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
 # This function is called almost every time an mpf is created.
 # It has been optimized accordingly.
 
-def normalize(sign, man, exp, bc, prec, rnd):
+def _normalize(sign, man, exp, bc, prec, rnd):
     """
     Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
     normalized mantissa. The mantissa is rounded in the specified
@@ -255,8 +261,6 @@ def normalize(sign, man, exp, bc, prec, rnd):
     """
     if not man:
         return fzero
-    # All tests should pass with the following assert() uncommented.
-    # assert type(man) == MP_BASE_TYPE
     # Cut mantissa down to size if larger than target precision
     n = bc - prec
     if n > 0:
@@ -292,14 +296,12 @@ def normalize(sign, man, exp, bc, prec, rnd):
         bc = 1
     return sign, man, exp, bc
 
-def normalize1(sign, man, exp, bc, prec, rnd):
+def _normalize1(sign, man, exp, bc, prec, rnd):
     """same as normalize, but with the added condition that
        man is odd or zero
     """
     if not man:
         return fzero
-    # All tests should pass with the following assert() uncommented.
-    # assert type(man) == MP_BASE_TYPE
     if bc <= prec:
         return sign, man, exp, bc
     n = bc - prec
@@ -334,6 +336,21 @@ def normalize1(sign, man, exp, bc, prec, rnd):
     if man == 1:
         bc = 1
     return sign, man, exp, bc
+
+def strict_normalize(sign, man, exp, bc, prec, rnd):
+    assert type(man) == MP_BASE_TYPE
+    return _normalize(sign, man, exp, bc, prec, rnd)
+
+def strict_normalize1(sign, man, exp, bc, prec, rnd):
+    assert type(man) == MP_BASE_TYPE
+    return _normalize1(sign, man, exp, bc, prec, rnd)
+
+if STRICT:
+    normalize = strict_normalize
+    normalize1 = strict_normalize1
+else:
+    normalize = _normalize
+    normalize1 = _normalize1
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #

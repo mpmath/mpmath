@@ -10,9 +10,15 @@ python runtests.py -psyco
 python runtests.py -profile
   Generate profile stats (this is much slower)
 
+python runtests.py -nogmpy
+  Run tests without using GMPY even if it exists
+
+python runtests.py -strict
+  Enforce extra tests in normalize()
+
 """
 
-import sys
+import sys, os
 
 if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
@@ -23,6 +29,14 @@ profile = False
 if "-profile" in sys.argv:
     sys.argv.remove('-profile')
     profile = True
+
+if "-nogmpy" in sys.argv:
+    sys.argv.remove('-nogmpy')
+    os.environ['MPMATH_NOGMPY'] = 'Y'
+
+if "-strict" in sys.argv:
+    sys.argv.remove('-strict')
+    os.environ['MPMATH_STRICT'] = 'Y'
 
 def testit():
     if "-py" in sys.argv:
