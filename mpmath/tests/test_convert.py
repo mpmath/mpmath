@@ -59,6 +59,12 @@ def test_str_bugs():
     assert str(mpf('1e600')) == '1.0e+600'
     assert str(mpf('1e10000')) == '1.0e+10000'
 
+def test_str_prec0():
+    assert to_str(from_float(1.234), 0) == '.0e+0'
+    assert to_str(from_float(1e-15), 0) == '.0e-15'
+    assert to_str(from_float(1e+15), 0) == '.0e+15'
+    assert to_str(from_float(-1e-15), 0) == '-.0e-15'
+    assert to_str(from_float(-1e+15), 0) == '-.0e+15'
 
 def test_convert_rational():
     mp.dps = 15

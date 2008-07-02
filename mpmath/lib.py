@@ -1116,37 +1116,43 @@ def to_str(s, dps):
     # This sometimes kills some instances of "...00001"
     sign, digits, exponent = to_digits_exp(s, dps+3)
 
-    # Rounding up kills some instances of "...99999"
-    if len(digits) > dps and digits[dps] in '56789' and \
-        (dps < 500 or digits[dps-4:dps] == '9999'):
-        digits2 = str(int(digits[:dps]) + 1)
-        if len(digits2) > dps:
-            digits2 = digits2[:dps]
+    if not dps:
+        if digits[0] in '56789':
             exponent += 1
-        digits = digits2
-    else:
-        digits = digits[:dps]
+        digits = ".0"
 
-    # Prettify numbers close to unit magnitude
-    if -(dps//3) < exponent < dps:
-        if exponent < 0:
-            digits = ("0"*(-exponent)) + digits
-            split = 1
+    else:
+        # Rounding up kills some instances of "...99999"
+        if len(digits) > dps and digits[dps] in '56789' and \
+            (dps < 500 or digits[dps-4:dps] == '9999'):
+            digits2 = str(int(digits[:dps]) + 1)
+            if len(digits2) > dps:
+                digits2 = digits2[:dps]
+                exponent += 1
+            digits = digits2
         else:
-            split = exponent + 1
-        exponent = 0
-    else:
-        split = 1
+            digits = digits[:dps]
 
-    digits = (digits[:split] + "." + digits[split:])
+        # Prettify numbers close to unit magnitude
+        if -(dps//3) < exponent < dps:
+            if exponent < 0:
+                digits = ("0"*(-exponent)) + digits
+                split = 1
+            else:
+                split = exponent + 1
+            exponent = 0
+        else:
+            split = 1
 
-    # Clean up trailing zeros
-    digits = digits.rstrip('0')
-    if digits[-1] == ".":
-        digits += "0"
+        digits = (digits[:split] + "." + digits[split:])
 
-    if exponent == 0: return sign + digits
-    if exponent > 0: return sign + digits + "e+" + str(exponent)
+        # Clean up trailing zeros
+        digits = digits.rstrip('0')
+        if digits[-1] == ".":
+            digits += "0"
+
+    if exponent == 0 and dps: return sign + digits
+    if exponent >= 0: return sign + digits + "e+" + str(exponent)
     if exponent < 0: return sign + digits + "e" + str(exponent)
 
 def str_to_man_exp(x, base=10):
