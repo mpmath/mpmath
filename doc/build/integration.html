@@ -1,37 +1,43 @@
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Integration &mdash; mpmath Documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css">
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Integration &mdash; mpmath v0.8 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:   '',
-        VERSION:    '0.8'
+          URL_ROOT:   '',
+          VERSION:    '0.8',
+          COLLAPSE_MODINDEX: false,
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="contents" title="Global table of contents" href="contents.html">
-    <link rel="index" title="Global index" href="genindex.html">
-    <link rel="search" title="Search" href="search.html">
-    <link rel="top" title="mpmath Documentation" href="index.html">
-    <link rel="next" title="Summation" href="summation.html">
-    <link rel="prev" title="Interval arithmetic" href="intervals.html">
+    <link rel="contents" title="Global table of contents" href="contents.html" />
+    <link rel="index" title="Global index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="mpmath v0.8 documentation" href="index.html" />
+    <link rel="next" title="Summation" href="summation.html" />
+    <link rel="prev" title="Interval arithmetic" href="intervals.html" />
   </head>
   <body>
-
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
-        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
-          <li class="right"><a href="summation.html" title="Summation" accesskey="N">next</a> |</li>
-          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="P">previous</a> |</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="summation.html" title="Summation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intervals.html" title="Interval arithmetic"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
       </ul>
     </div>
@@ -41,9 +47,9 @@
           <div class="body">
             
   
-  <div class="section">
+  <div class="section" id="integration">
 <h1 id="integration">Integration<a class="headerlink" href="#integration" title="Permalink to this headline">¶</a></h1>
-<div class="section">
+<div class="section" id="tanh-sinh-quadrature-quadts">
 <h2 id="tanh-sinh-quadrature-quadts">Tanh-sinh quadrature (<tt class="docutils literal"><span class="pre">quadts</span></tt>)<a class="headerlink" href="#tanh-sinh-quadrature-quadts" title="Permalink to this headline">¶</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">quadts</span></tt> performs numerical integration (quadrature) using the tanh-sinh algorithm. The syntax for integrating a function <em>f</em> between the endpoints <em>a</em> and <em>b</em> is <tt class="docutils literal"><span class="pre">quadts(f,</span> <span class="pre">a,</span> <span class="pre">b)</span></tt>. For example:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -56,7 +62,7 @@
 <span class="gp">... </span><span class="c"># doctest:+ELLIPSIS</span>
 <span class="go">3.14159265358979323846264338327950288419716939937510582097...</span>
 </pre></div>
-<div class="section">
+<div class="section" id="neat-examples">
 <h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
 <p>Intervals can be infinite or half-infinite:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -81,14 +87,14 @@
 <span class="go">(0.498015668118356 - 0.154949828301811j)</span>
 </pre></div>
 </div>
-<div class="section">
+<div class="section" id="multiple-integrals">
 <h3 id="multiple-integrals">Multiple integrals<a class="headerlink" href="#multiple-integrals" title="Permalink to this headline">¶</a></h3>
 <p>It is possible to calculate double integrals with <tt class="docutils literal"><span class="pre">quadts</span></tt>. To do this, simply provide a two-argument function and, instead of two endpoints, provide two intervals. The first interval specifies the range for the <em>x</em> variable and the second interval specifies the range of the <em>y</em> variable:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">),</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">))</span>
 <span class="go">4.0</span>
 </pre></div>
-<p>Here are some more difficult examples taken from <a class="reference" href="http://mathworld.wolfram.com/DoubleIntegral.html">MathWorld</a> (all except the second contain corner singularities):</p>
+<p>Here are some more difficult examples taken from <a class="reference external" href="http://mathworld.wolfram.com/DoubleIntegral.html">MathWorld</a> (all except the second contain corner singularities):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">))</span>
@@ -123,7 +129,7 @@
 </pre></div>
 <p>While double integrals are reasonably fast, even a simple triple integral at very low precision is likely to take several seconds to evaluate (harder integrals may take minutes). A quadruple integral will require a whole lot of patience.</p>
 </div>
-<div class="section">
+<div class="section" id="error-detection">
 <h3 id="error-detection">Error detection<a class="headerlink" href="#error-detection" title="Permalink to this headline">¶</a></h3>
 <p>The tanh-sinh algorithm is not suitable for adaptive quadrature, and does not perform well if there are singularities between the endpoints or if the integrand is oscillatory (such integrals should manually be split into smaller pieces). If the <tt class="docutils literal"><span class="pre">error</span></tt> option is set, <tt class="docutils literal"><span class="pre">quadts</span></tt> will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass <tt class="docutils literal"><span class="pre">quadts</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
 <p>A simple example where the algorithm fails is the function f(<em>x</em>) = abs(sin(<em>x</em>)), which is not smooth at <em>x</em> = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, <tt class="docutils literal"><span class="pre">quadts</span></tt> gives a good estimate of the magnitude of the error:</p>
@@ -165,7 +171,7 @@
 </pre></div>
 <p>(It is possible that future improvements to the <tt class="docutils literal"><span class="pre">quadts</span></tt> implementation will make these particular examples work.)</p>
 </div>
-<div class="section">
+<div class="section" id="performance">
 <h3 id="performance">Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h3>
 <p>The tanh-sinh scheme is efficient enough that analytic 100-digit integrals often can often be evaluated in less than a second. The timings for <tt class="docutils literal"><span class="pre">quadts(lambda</span> <span class="pre">x:</span> <span class="pre">2*sqrt(1-x**2),</span> <span class="pre">-1,</span> <span class="pre">1)</span></tt> at various precision levels on the author&#8217;s computer is:</p>
 <table border="1" class="docutils">
@@ -196,11 +202,11 @@
 <p>The second integration at the same precision level is much faster. The reason for this is that the tanh-sinh algorithm must be initalized by computing a set of nodes, and this initalization if often more expensive than actually evaluating the integral. Mpmath automatically caches all computed nodes to make subsequent integrations faster, but the cache is lost when Python shuts down, so if you would frequently like to use mpmath to calculate 1000-digit integrals, you may want to save the nodes to a file. The nodes are stored in a dict <tt class="docutils literal"><span class="pre">TS_cache</span></tt> located in the <tt class="docutils literal"><span class="pre">mpmath.calculus</span></tt> module, which can be pickled if desired.</p>
 </div>
 </div>
-<div class="section">
+<div class="section" id="oscillatory-quadrature-quadosc">
 <h2 id="oscillatory-quadrature-quadosc">Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)<a class="headerlink" href="#oscillatory-quadrature-quadosc" title="Permalink to this headline">¶</a></h2>
 <p>It is common to encounter integrals with an integrand of the form <tt class="docutils literal"><span class="pre">f(x)</span> <span class="pre">=</span> <span class="pre">g(x)*sin(a*x+b)</span></tt>, where <tt class="docutils literal"><span class="pre">g(x)</span></tt> is a smoothly decaying function and the range of integration is the entire real line or half the real line. The tanh-sinh quadrature rule is practically useless for integrals of this kind unless <tt class="docutils literal"><span class="pre">g(x)</span></tt> decays exponentially.</p>
 <p>Various algorithms more appropriate for oscillatory integration are known, with varying degrees of sophistication. The function <tt class="docutils literal"><span class="pre">quadosc</span></tt> in mpmath uses a very simple strategy: it treats the integral as an infinite alternating series, where each term is the integral over a single half-period. This series will in general converge slowly, but can be accelerated using generic summation algorithms. An advantage of this method is that the oscillation need not be strictly periodic; it is sufficient that the zeros follow a &#8220;smooth&#8221; distribution.</p>
-<div class="section">
+<div class="section" id="specifying-the-rate-of-oscillation">
 <h3 id="specifying-the-rate-of-oscillation">Specifying the rate of oscillation<a class="headerlink" href="#specifying-the-rate-of-oscillation" title="Permalink to this headline">¶</a></h3>
 <p>The user must supply <tt class="docutils literal"><span class="pre">quadosc</span></tt> with details about the oscillation rate of <tt class="docutils literal"><span class="pre">f(x)</span></tt> via the <tt class="docutils literal"><span class="pre">period</span></tt> or <tt class="docutils literal"><span class="pre">zeros</span></tt> parameter.</p>
 <p>If <tt class="docutils literal"><span class="pre">f(x)</span></tt> behaves like a scaled sine or cosine, with a constant distance between each zero, it is sufficient to provide the period. For example, if <tt class="docutils literal"><span class="pre">f</span></tt> <tt class="docutils literal"><span class="pre">sin(3*x)</span></tt>, the period should be set to <tt class="docutils literal"><span class="pre">6*pi</span></tt>. Note that the period is defined as the distance between <em>two</em> consecutive zeros (one period of a sine wave consisting of both one positive and one negative &#8220;lobe&#8221;).</p>
@@ -213,7 +219,7 @@
 <p>The precise indexing of the zeros is not too significant; it is fine if the first positive zero occurs at <tt class="docutils literal"><span class="pre">zeros(-1)</span></tt> or <tt class="docutils literal"><span class="pre">zeros(2)</span></tt>, as long as the zeros are properly ordered.</p>
 <p>For a periodic function with period <tt class="docutils literal"><span class="pre">p</span></tt>, it is equivalent to pass <tt class="docutils literal"><span class="pre">period=p</span></tt> or <tt class="docutils literal"><span class="pre">zeros</span> <span class="pre">=</span> <span class="pre">lambda</span> <span class="pre">n:</span> <span class="pre">p*n/2</span></tt> as a parameter.</p>
 </div>
-<div class="section">
+<div class="section" id="examples-with-simple-periodic-integrands">
 <h3 id="examples-with-simple-periodic-integrands">Examples with simple periodic integrands<a class="headerlink" href="#examples-with-simple-periodic-integrands" title="Permalink to this headline">¶</a></h3>
 <p>The integral of the sinc function sin(x)/x is a perfect match for <tt class="docutils literal"><span class="pre">quadosc</span></tt>. In this case, both the alternating and nonalternating versions work well:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
@@ -239,7 +245,7 @@
 <span class="go">1.15572734979092171791009318331</span>
 </pre></div>
 </div>
-<div class="section">
+<div class="section" id="nonperiodic-integrands">
 <h3 id="nonperiodic-integrands">Nonperiodic integrands<a class="headerlink" href="#nonperiodic-integrands" title="Permalink to this headline">¶</a></h3>
 <p>Important examples of oscillatory integrals with a nonconstant rate of oscillation include those involving Bessel functions. We will illustrate with the J0 function, whose positive zeros occur roughly at 2.40, 5.52, 8.65, and so on. The zeros can be calculated to high accuracy by starting from a simple asymptotic approximation and calling the <tt class="docutils literal"><span class="pre">secant</span></tt> root-finder:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">j0zero</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
@@ -265,7 +271,7 @@
 <span class="go">0.626657068657750125603941321203</span>
 </pre></div>
 </div>
-<div class="section">
+<div class="section" id="nonalternating-integrands">
 <h3 id="nonalternating-integrands">Nonalternating integrands<a class="headerlink" href="#nonalternating-integrands" title="Permalink to this headline">¶</a></h3>
 <p>By default, <tt class="docutils literal"><span class="pre">quadosc</span></tt> rewrites the integral as an alternating series. If the option <tt class="docutils literal"><span class="pre">alt=0</span></tt> is passed, it instead rewrites the integral as a nonalternating series, with each term being the integral over a full period. This works better if the integrand is oscillatory but does not change signs:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
@@ -279,7 +285,7 @@
 <p>This integral can be evaluated exactly in terms of the cosine integral function, which shows that the last of these three values is correct.</p>
 </div>
 </div>
-<div class="section">
+<div class="section" id="solving-odes-odeint">
 <h2 id="solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)<a class="headerlink" href="#solving-odes-odeint" title="Permalink to this headline">¶</a></h2>
 <p>Systems of ordinary differential equations can be integrated using the <tt class="docutils literal"><span class="pre">odeint</span></tt> function, which takes as input:</p>
 <ul class="simple">
@@ -308,72 +314,70 @@
           </div>
         </div>
       </div>
-      <div class="sidebar">
-        <div class="sidebarwrapper">
-          
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
             <h3>Table Of Contents</h3>
             <ul>
-<li><a class="reference" href="">Integration</a><ul>
-<li><a class="reference" href="#tanh-sinh-quadrature-quadts">Tanh-sinh quadrature (<tt class="docutils literal"><span class="pre">quadts</span></tt>)</a><ul>
-<li><a class="reference" href="#neat-examples">Neat examples</a></li>
-<li><a class="reference" href="#multiple-integrals">Multiple integrals</a></li>
-<li><a class="reference" href="#error-detection">Error detection</a></li>
-<li><a class="reference" href="#performance">Performance</a></li>
+<li><a class="reference external" href="">Integration</a><ul>
+<li><a class="reference external" href="#tanh-sinh-quadrature-quadts">Tanh-sinh quadrature (<tt class="docutils literal"><span class="pre">quadts</span></tt>)</a><ul>
+<li><a class="reference external" href="#neat-examples">Neat examples</a></li>
+<li><a class="reference external" href="#multiple-integrals">Multiple integrals</a></li>
+<li><a class="reference external" href="#error-detection">Error detection</a></li>
+<li><a class="reference external" href="#performance">Performance</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#oscillatory-quadrature-quadosc">Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)</a><ul>
-<li><a class="reference" href="#specifying-the-rate-of-oscillation">Specifying the rate of oscillation</a></li>
-<li><a class="reference" href="#examples-with-simple-periodic-integrands">Examples with simple periodic integrands</a></li>
-<li><a class="reference" href="#nonperiodic-integrands">Nonperiodic integrands</a></li>
-<li><a class="reference" href="#nonalternating-integrands">Nonalternating integrands</a></li>
+<li><a class="reference external" href="#oscillatory-quadrature-quadosc">Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)</a><ul>
+<li><a class="reference external" href="#specifying-the-rate-of-oscillation">Specifying the rate of oscillation</a></li>
+<li><a class="reference external" href="#examples-with-simple-periodic-integrands">Examples with simple periodic integrands</a></li>
+<li><a class="reference external" href="#nonperiodic-integrands">Nonperiodic integrands</a></li>
+<li><a class="reference external" href="#nonalternating-integrands">Nonalternating integrands</a></li>
 </ul>
 </li>
-<li><a class="reference" href="#solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
+<li><a class="reference external" href="#solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
 
-          
             <h4>Previous topic</h4>
             <p class="topless"><a href="intervals.html" title="previous chapter">Interval arithmetic</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="summation.html" title="next chapter">Summation</a></p>
-          
             <h3>This Page</h3>
             <ul class="this-page-menu">
-            
               <li><a href="_sources/integration.txt">Show Source</a></li>
-            
             </ul>
-          
-          
-          
             <h3>Quick search</h3>
             <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18"> <input type="submit" value="Go">
-              <input type="hidden" name="check_keywords" value="yes">
-              <input type="hidden" name="area" value="default">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
             </form>
-            
-          
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
-        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
-          <li class="right"><a href="summation.html" title="Summation" accesskey="N">next</a> |</li>
-          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="P">previous</a> |</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="summation.html" title="Summation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intervals.html" title="Interval arithmetic"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 20, 2008.
+      Last updated on Jul 03, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

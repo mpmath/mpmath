@@ -38,7 +38,7 @@ pre {
 }
 
 td.linenos pre {
-    padding: 0;
+    padding: 0.5em 0;
     border: 0;
     background-color: transparent;
     color: #aaa;
@@ -56,7 +56,6 @@ cite, code, tt {
     font-family: 'Consolas', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 0.95em;
     letter-spacing: 0.01em;
-    font-style: normal;
 }
 
 hr {
@@ -99,6 +98,15 @@ a tt:hover {
     color: #2491CF;
 }
 
+.field-list ul {
+    margin: 0;
+    padding-left: 1em;
+}
+
+.field-list p {
+    margin: 0;
+}
+
 dl {
     margin-bottom: 15px;
 }
@@ -138,6 +146,10 @@ pre {
 pre a {
     color: inherit;
     text-decoration: underline;
+}
+
+.first {
+    margin-top: 0 !important;
 }
 
 div.document {
@@ -196,12 +208,11 @@ div.related ul li a:hover {
 
 div.body {
     margin: 0;
-    padding: 0;
+    padding: 0.5em 20px 20px 20px;
 }
 
 div.bodywrapper {
     margin: 0 240px 0 0;
-    padding: 0.5em 20px 20px 20px;
     border-right: 1px solid #ccc;
 }
 
@@ -209,7 +220,7 @@ div.body a {
     text-decoration: underline;
 }
 
-div.sidebar {
+div.sphinxsidebar {
     margin: 0;
     padding: 0.5em 15px 15px 0;
     width: 210px;
@@ -218,7 +229,7 @@ div.sidebar {
 /*    margin-left: -100%; */
 }
 
-div.sidebar h4, div.sidebar h3 {
+div.sphinxsidebar h4, div.sphinxsidebar h3 {
     margin: 1em 0 0.5em 0;
     font-size: 0.9em;
     padding: 0.1em 0 0.1em 0.5em;
@@ -227,7 +238,7 @@ div.sidebar h4, div.sidebar h3 {
     background-color: #AFC1C4;
 }
 
-div.sidebar ul {
+div.sphinxsidebar ul {
     padding-left: 1.5em;
     margin-top: 7px;
     list-style: none;
@@ -235,13 +246,17 @@ div.sidebar ul {
     line-height: 130%;
 }
 
-div.sidebar ul ul {
+div.sphinxsidebar ul ul {
     list-style: square;
     margin-left: 20px;
 }
 
 p {
     margin: 0.8em 0 0.5em 0;
+}
+
+p.rubric {
+    font-weight: bold;
 }
 
 h1 {
@@ -314,43 +329,29 @@ div.pagination {
     text-align: center;
 }
 
-p.noshell em {
-    color: #3ca8e7;
-    text-decoration: underline;
-    font-style: normal;
-}
-
-p.noshell:hover, div.nutshell {
-    background-color: white;
-}
-
-p.noshell {
-    cursor: pointer;
-}
-
-div.sidebar ul.toc {
+div.sphinxsidebar ul.toc {
     margin: 1em 0 1em 0;
     padding: 0 0 0 0.5em;
     list-style: none;
 }
 
-div.sidebar ul.toc li {
+div.sphinxsidebar ul.toc li {
     margin: 0.5em 0 0.5em 0;
     font-size: 0.9em;
     line-height: 130%;
 }
 
-div.sidebar ul.toc li p {
+div.sphinxsidebar ul.toc li p {
     margin: 0;
     padding: 0;
 }
 
-div.sidebar ul.toc ul {
+div.sphinxsidebar ul.toc ul {
     margin: 0.2em 0 0.2em 0;
     padding: 0 0 0 1.8em;
 }
 
-div.sidebar ul.toc ul li {
+div.sphinxsidebar ul.toc ul li {
     padding: 0;
 }
 

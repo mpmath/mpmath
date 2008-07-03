@@ -31,11 +31,11 @@ div.body {
     padding: 0 20px 30px 20px;
 }
 
-div.sidebarwrapper {
+div.sphinxsidebarwrapper {
     padding: 10px 5px 0 10px;
 }
 
-div.sidebar {
+div.sphinxsidebar {
     float: left;
     width: 230px;
     margin-left: -100%;
@@ -92,7 +92,7 @@ div.related a {
 }
 
 /* ::: TOC :::: */
-div.sidebar h3 {
+div.sphinxsidebar h3 {
     font-family: 'Trebuchet MS', sans-serif;
     color: white;
     font-size: 1.4em;
@@ -101,7 +101,7 @@ div.sidebar h3 {
     padding: 0;
 }
 
-div.sidebar h4 {
+div.sphinxsidebar h4 {
     font-family: 'Trebuchet MS', sans-serif;
     color: white;
     font-size: 1.3em;
@@ -110,41 +110,41 @@ div.sidebar h4 {
     padding: 0;
 }
 
-div.sidebar p {
+div.sphinxsidebar p {
     color: white;
 }
 
-div.sidebar p.topless {
+div.sphinxsidebar p.topless {
     margin: 5px 10px 10px 10px;
 }
 
-div.sidebar ul {
+div.sphinxsidebar ul {
     margin: 10px;
     padding: 0;
     list-style: none;
     color: white;
 }
 
-div.sidebar ul ul,
-div.sidebar ul.want-points {
+div.sphinxsidebar ul ul,
+div.sphinxsidebar ul.want-points {
     margin-left: 20px;
     list-style: square;
 }
 
-div.sidebar ul ul {
+div.sphinxsidebar ul ul {
     margin-top: 0;
     margin-bottom: 0;
 }
 
-div.sidebar a {
+div.sphinxsidebar a {
     color: #98dbcc;
 }
 
-div.sidebar form {
+div.sphinxsidebar form {
     margin-top: 10px;
 }
 
-div.sidebar input {
+div.sphinxsidebar input {
     border: 1px solid #98dbcc;
     font-family: sans-serif;
     font-size: 1em;
@@ -425,7 +425,7 @@ div#suggest-changes-box textarea {
 
 
 /* :::: PREVIEW :::: */
-div.preview { 
+div.preview {
     background-image: url(style/preview.png);
     padding: 0 20px 20px 20px;
     margin-bottom: 30px;
@@ -556,6 +556,10 @@ div.body p, div.body dd, div.body li {
     line-height: 130%;
 }
 
+div.body p.caption {
+    text-align: inherit;
+}
+
 div.body td {
     text-align: left;
 }
@@ -564,6 +568,14 @@ ul.fakelist {
     list-style: none;
     margin: 10px 0 10px 20px;
     padding: 0;
+}
+
+.field-list ul {
+    padding-left: 1em;
+}
+
+.first {
+    margin-top: 0 !important;
 }
 
 /* "Footnotes" heading */
@@ -657,6 +669,15 @@ table.footnote td, table.footnote th {
     border: 0 !important;
 }
 
+.field-list ul {
+    margin: 0;
+    padding-left: 1em;
+}
+
+.field-list p {
+    margin: 0;
+}
+
 dl {
     margin-bottom: 15px;
     clear: both;
@@ -702,10 +723,11 @@ pre {
     border: 1px solid #ac9;
     border-left: none;
     border-right: none;
+    overflow: auto;
 }
 
 td.linenos pre {
-    padding: 0;
+    padding: 5px 0px;
     border: 0;
     background-color: transparent;
     color: #aaa;
@@ -794,14 +816,14 @@ form.comment textarea {
 
 /* :::: PRINT :::: */
 @media print {
-    div.document, 
-    div.documentwrapper, 
+    div.document,
+    div.documentwrapper,
     div.bodywrapper {
         margin: 0;
         width : 100%;
     }
 
-    div.sidebar,
+    div.sphinxsidebar,
     div.related,
     div.footer,
     div#comments div.new-comment-box,

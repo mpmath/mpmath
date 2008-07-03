@@ -1,37 +1,43 @@
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Functions &mdash; mpmath Documentation</title>
-    <link rel="stylesheet" href="_static/default.css" type="text/css">
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Functions &mdash; mpmath v0.8 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:   '',
-        VERSION:    '0.8'
+          URL_ROOT:   '',
+          VERSION:    '0.8',
+          COLLAPSE_MODINDEX: false,
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="contents" title="Global table of contents" href="contents.html">
-    <link rel="index" title="Global index" href="genindex.html">
-    <link rel="search" title="Search" href="search.html">
-    <link rel="top" title="mpmath Documentation" href="index.html">
-    <link rel="next" title="Interval arithmetic" href="intervals.html">
-    <link rel="prev" title="Mpmath basics" href="basics.html">
+    <link rel="contents" title="Global table of contents" href="contents.html" />
+    <link rel="index" title="Global index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="mpmath v0.8 documentation" href="index.html" />
+    <link rel="next" title="Interval arithmetic" href="intervals.html" />
+    <link rel="prev" title="Mpmath basics" href="basics.html" />
   </head>
   <body>
-
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
-        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
-          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="N">next</a> |</li>
-          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="P">previous</a> |</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="intervals.html" title="Interval arithmetic"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="Mpmath basics"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
       </ul>
     </div>
@@ -41,10 +47,10 @@
           <div class="body">
             
   
-  <div class="section">
+  <div class="section" id="functions">
 <h1 id="functions">Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
 <p>Mpmath provides a rich collection of mathematical functions.</p>
-<div class="section">
+<div class="section" id="constants-pi-e-etc">
 <h2 id="constants-pi-e-etc">Constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">e</span></tt>, etc)<a class="headerlink" href="#constants-pi-e-etc" title="Permalink to this headline">¶</a></h2>
 <p>The predefined objects <tt class="docutils literal"><span class="pre">j</span></tt> (imaginary unit), <tt class="docutils literal"><span class="pre">inf</span></tt> (positive infinity) and <tt class="docutils literal"><span class="pre">nan</span></tt> (not-a-number) are shortcuts to <tt class="docutils literal"><span class="pre">mpc</span></tt> and <tt class="docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values.</p>
 <p>Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants.</p>
@@ -141,7 +147,7 @@
 </pre></div>
 <p>The time needed to compute many digits of the various constants differs greatly. On the author&#8217;s computer, the golden ratio can be evaluated to 100,000 digits in one second, while obtaining just 500 digits of Khinchin&#8217;s constant takes several seconds. However, mpmath caches computed values of constants so that subsequent calculations at the same or lower precision are instant. This important for general efficiency reasons since for example the value of pi is required internally by mpmath to compute trigonometric functions.</p>
 </div>
-<div class="section">
+<div class="section" id="elementary-functions-sqrt-exp-sin">
 <h2 id="elementary-functions-sqrt-exp-sin">Elementary functions (<tt class="docutils literal"><span class="pre">sqrt</span></tt>, <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, ...)<a class="headerlink" href="#elementary-functions-sqrt-exp-sin" title="Permalink to this headline">¶</a></h2>
 <p>Mpmath implements the standard functions available in Python&#8217;s <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules, for both real and complex numbers and with arbitrary precision. Many other named elementary functions are also available, including the reciprocal trigonometric and hyperbolic functions sec, csc, cot, sech, etc. Here are some simple evaluations using elementary functions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
@@ -302,7 +308,7 @@
 </tbody>
 </table>
 </div>
-<div class="section">
+<div class="section" id="nonelementary-functions">
 <h2 id="nonelementary-functions">Nonelementary functions<a class="headerlink" href="#nonelementary-functions" title="Permalink to this headline">¶</a></h2>
 <p>Various useful nonelementary functions that do not exist in the standard Python <tt class="docutils literal"><span class="pre">math</span></tt> library are available, such as factorials (with support for noninteger arguments):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
@@ -415,7 +421,7 @@
 </tbody>
 </table>
 </div>
-<div class="section">
+<div class="section" id="number-sequences">
 <h2 id="number-sequences">Number sequences<a class="headerlink" href="#number-sequences" title="Permalink to this headline">¶</a></h2>
 <p>For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch.</p>
 <p>The precision of each generated number will be the same as that of the first, regardless of whether the global working precision is changed subsequently.</p>
@@ -441,9 +447,9 @@
 </dd>
 </dl>
 </div>
-<div class="section">
+<div class="section" id="utility-functions">
 <h2 id="utility-functions">Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section">
+<div class="section" id="ranges">
 <h3 id="ranges">Ranges<a class="headerlink" href="#ranges" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">arange</span></tt>, with the same argument order as Python&#8217;s built-in <tt class="docutils literal"><span class="pre">range</span></tt> function, generates a range of floating-point numbers, not including the endpoint:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arange</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
@@ -451,7 +457,7 @@
 </pre></div>
 <p>All three arguments must currently be given.</p>
 </div>
-<div class="section">
+<div class="section" id="current-epsilon">
 <h3 id="current-epsilon">Current epsilon<a class="headerlink" href="#current-epsilon" title="Permalink to this headline">¶</a></h3>
 <p>The special number <tt class="docutils literal"><span class="pre">eps</span></tt> is defined as the difference between 1 and the smallest floating-point number after 1 that can be represented with the current working precision:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -489,7 +495,7 @@
 <span class="go">mpf(&#39;0.2500000000000000000000000000000000000000057&#39;)</span>
 </pre></div>
 </div>
-<div class="section">
+<div class="section" id="random-numbers">
 <h3 id="random-numbers">Random numbers<a class="headerlink" href="#random-numbers" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">rand()</span></tt> returns a random number chosen from the uniform distribution on the interval [0, 1). All bits up to the working precision are random (this is not true if generating a <tt class="docutils literal"><span class="pre">float</span></tt> directly with Python&#8217;s <tt class="docutils literal"><span class="pre">random</span></tt> module and then converting it into an <tt class="docutils literal"><span class="pre">mpf</span></tt>).</p>
 <p>The output might look like this:</p>
@@ -508,7 +514,7 @@
 <span class="go">0.353366977589549657670073479468</span>
 </pre></div>
 </div>
-<div class="section">
+<div class="section" id="polynomial-evaluation">
 <h3 id="polynomial-evaluation">Polynomial evaluation<a class="headerlink" href="#polynomial-evaluation" title="Permalink to this headline">¶</a></h3>
 <p>Polynomial functions can be evaluated using <tt class="docutils literal"><span class="pre">polyval</span></tt>, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates 2 + 5x + x^3 at x = 3.5:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
@@ -528,68 +534,66 @@
           </div>
         </div>
       </div>
-      <div class="sidebar">
-        <div class="sidebarwrapper">
-          
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
             <h3>Table Of Contents</h3>
             <ul>
-<li><a class="reference" href="">Functions</a><ul>
-<li><a class="reference" href="#constants-pi-e-etc">Constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">e</span></tt>, etc)</a></li>
-<li><a class="reference" href="#elementary-functions-sqrt-exp-sin">Elementary functions (<tt class="docutils literal"><span class="pre">sqrt</span></tt>, <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, ...)</a></li>
-<li><a class="reference" href="#nonelementary-functions">Nonelementary functions</a></li>
-<li><a class="reference" href="#number-sequences">Number sequences</a></li>
-<li><a class="reference" href="#utility-functions">Utility functions</a><ul>
-<li><a class="reference" href="#ranges">Ranges</a></li>
-<li><a class="reference" href="#current-epsilon">Current epsilon</a></li>
-<li><a class="reference" href="#random-numbers">Random numbers</a></li>
-<li><a class="reference" href="#polynomial-evaluation">Polynomial evaluation</a></li>
+<li><a class="reference external" href="">Functions</a><ul>
+<li><a class="reference external" href="#constants-pi-e-etc">Constants (<tt class="docutils literal"><span class="pre">pi</span></tt>, <tt class="docutils literal"><span class="pre">e</span></tt>, etc)</a></li>
+<li><a class="reference external" href="#elementary-functions-sqrt-exp-sin">Elementary functions (<tt class="docutils literal"><span class="pre">sqrt</span></tt>, <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, ...)</a></li>
+<li><a class="reference external" href="#nonelementary-functions">Nonelementary functions</a></li>
+<li><a class="reference external" href="#number-sequences">Number sequences</a></li>
+<li><a class="reference external" href="#utility-functions">Utility functions</a><ul>
+<li><a class="reference external" href="#ranges">Ranges</a></li>
+<li><a class="reference external" href="#current-epsilon">Current epsilon</a></li>
+<li><a class="reference external" href="#random-numbers">Random numbers</a></li>
+<li><a class="reference external" href="#polynomial-evaluation">Polynomial evaluation</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-          
             <h4>Previous topic</h4>
             <p class="topless"><a href="basics.html" title="previous chapter">Mpmath basics</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="intervals.html" title="next chapter">Interval arithmetic</a></p>
-          
             <h3>This Page</h3>
             <ul class="this-page-menu">
-            
               <li><a href="_sources/functions.txt">Show Source</a></li>
-            
             </ul>
-          
-          
-          
             <h3>Quick search</h3>
             <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18"> <input type="submit" value="Go">
-              <input type="hidden" name="check_keywords" value="yes">
-              <input type="hidden" name="area" value="default">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
             </form>
-            
-          
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-
     <div class="related">
       <h3>Navigation</h3>
       <ul>
-        <li class="right" style="margin-right: 10px"><a href="genindex.html" title="General Index" accesskey="I">index</a></li>
-        <li class="right"><a href="modindex.html" title="Global Module Index" accesskey="M">modules</a> |</li>
-          <li class="right"><a href="intervals.html" title="Interval arithmetic" accesskey="N">next</a> |</li>
-          <li class="right"><a href="basics.html" title="Mpmath basics" accesskey="P">previous</a> |</li>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="intervals.html" title="Interval arithmetic"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="basics.html" title="Mpmath basics"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.8 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Apr 20, 2008.
+      Last updated on Jul 03, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -4,15 +4,58 @@ Setting up mpmath
 Download and installation
 -------------------------
 
-If you have `setuptools <http://pypi.python.org/pypi/setuptools>`_ installed, you can download and install the latest release of mpmath in one step by running:
+Installer
+.........
 
-    ``python -m easy_install mpmath``
-
-Alternatively, setup files can be downloaded manually from the `mpmath download page <http://code.google.com/p/mpmath/downloads/list>`_ or the `Python Package Index <http://pypi.python.org/pypi/mpmath/>`_. If you are using Windows, you can pick the binary installer (mpmath-version.win32.exe). Otherwise, download the source package (available as both .zip and .tar.gz), extract it, open the extracted directory, and run
+The mpmath setup files can be downloaded from the `mpmath download page <http://code.google.com/p/mpmath/downloads/list>`_ or the `Python Package Index <http://pypi.python.org/pypi/mpmath/>`_. Download the source package (available as both .zip and .tar.gz), extract it, open the extracted directory, and run
 
     ``python setup.py install``
 
-Debian and Ubuntu users can apt-get mpmath. See `package information <http://packages.debian.org/python-mpmath>`_; please verify that you are getting the latest version.
+If you are using Windows, you can download the binary installer
+
+    ``mpmath-(version).win32.exe``
+
+from the mpmath website or the Python Package Index. Run the installer and follow the instructions.
+
+Using setuptools
+................
+
+If you have `setuptools <http://pypi.python.org/pypi/setuptools>`_ installed, you can download and install mpmath in one step by running:
+
+    ``easy_install mpmath``
+
+or
+
+    ``python -m easy_install mpmath``
+
+If you have an old version of mpmath installed already, you may have to pass ``easy_install`` the ``-U`` flag to force an upgrade.
+
+
+Debian/Ubuntu
+.............
+
+Debian and Ubuntu users can install mpmath with
+
+    ``sudo apt-get install python-mpmath``
+
+See `debian <http://packages.debian.org/python-mpmath>`_ and `ubuntu <https://launchpad.net/ubuntu/+source/mpmath>`_ package information; please verify that you are getting the latest version.
+
+OpenSUSE
+........
+
+Mpmath is provided in the "Science" repository for all recent versions of `openSUSE <http://www.opensuse.org/>`_. To add this repository to the YAST software management tool, see http://en.opensuse.org/Add_Package_Repositories_to_YaST and use one of the following repository URLs:
+
+  * http://download.opensuse.org/repositories/science/openSUSE_10.2/
+  * http://download.opensuse.org/repositories/science/openSUSE_10.3/
+  * http://download.opensuse.org/repositories/science/openSUSE_11.0/
+
+Current development version
+...........................
+
+See  http://code.google.com/p/mpmath/source/checkout for instructions on how to check out the mpmath Subversion repository. The source code can also be browsed online from the Google Code page.
+
+Checking that it works
+......................
 
 After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following::
 
@@ -28,7 +71,7 @@ After the setup has completed, you should be able to fire up the interactive Pyt
 Running tests
 -------------
 
-It is recommended that you run the mpmath unit tests to make sure everything works. The tests are located in the ``tests`` subdirectory of the main mpmath directory. They can be run via
+It is recommended that you run mpmath's full set of unit tests to make sure everything works. The tests are located in the ``tests`` subdirectory of the main mpmath directory. They can be run via
 
     ``python runtests.py``
 
@@ -38,17 +81,15 @@ The tests should finish in about a minute. If you have `psyco <http://psyco.sour
 
 which will cut the running time in half.
 
-By default, mpmath will use ` gmpy <http://code.google.com/p/gmpy/>`_ if version 1.03 or later is installed on your system. To run the tests with support for gmpy disabled, use
+If any test fails, please send a detailed bug report to the `mpmath issue tracker <http://code.google.com/p/sympy/issues/list>`_. The tests can also be run with `py.test <http://codespeak.net/py/dist/>`_. This will sometimes generate more useful information in case of a failure.
+
+*This currently only applies to the development version of mpmath*: By default, mpmath will use `gmpy <http://code.google.com/p/gmpy/>`_ if version 1.03 or later is installed on your system. To run the tests with support for gmpy disabled, use
 
     ``python runtests.py -nogmpy``
 
 To enable extra diagnostics, use
 
     ``python runtests.py -strict``
-
-If any test fails, please send a detailed bug report to the `mpmath issue tracker <http://code.google.com/p/sympy/issues/list>`_.
-
-The tests can also be run with `py.test <http://codespeak.net/py/dist/>`_. This will sometimes generate more useful information in case of a failure.
 
 Compiling the documentation
 ---------------------------
