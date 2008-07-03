@@ -151,6 +151,7 @@ def python_trailing(n):
     return t
 
 def gmpy_trailing(n):
+    """Count the number of trailing zero bits in abs(n) using gmpy."""
     if n: return MP_BASE(n).scan1()
     else: return 0
 
@@ -338,11 +339,18 @@ def _normalize1(sign, man, exp, bc, prec, rnd):
     return sign, man, exp, bc
 
 def strict_normalize(sign, man, exp, bc, prec, rnd):
+    """Additional checks on the components of an mpf. Enable tests by setting
+       the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MP_BASE_TYPE
+    assert bc == bitcount(man)
     return _normalize(sign, man, exp, bc, prec, rnd)
 
 def strict_normalize1(sign, man, exp, bc, prec, rnd):
+    """Additional checks on the components of an mpf. Enable tests by setting
+       the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MP_BASE_TYPE
+    assert bc == bitcount(man)
+    assert (not man) or (man & 1)
     return _normalize1(sign, man, exp, bc, prec, rnd)
 
 if STRICT:
@@ -1047,7 +1055,6 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     exact."""
     if n < 0:
         return "-" + numeral(-n, base, size, digits)
-    # Fast enough to do directly.
     # gmpy.digits() may cause a segmentation fault when trying to convert
     # extremely large values to a string. The size limit may need to be
     # adjusted on some platforms, but 1500000 works on Windows and Linux.
