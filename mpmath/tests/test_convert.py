@@ -36,6 +36,9 @@ def test_unicode():
     assert mpf(u'2.76') == 2.76
     assert mpf(u'inf') == inf
 
+def test_keep_zeros():
+    assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'
+
 def test_tight_string_conversion():
     mp.dps = 15
     # In an old version, '0.5' wasn't recognized as representing

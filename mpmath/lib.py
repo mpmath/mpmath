@@ -1133,7 +1133,7 @@ def to_digits_exp(s, dps):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def to_str(s, dps):
+def to_str(s, dps, strip_zeros=True):
     """Convert a raw mpf to a decimal floating-point literal with at
     most `dps` decimal digits in the mantissa (not counting extra zeros
     that may be inserted for visual purposes).
@@ -1183,10 +1183,11 @@ def to_str(s, dps):
 
         digits = (digits[:split] + "." + digits[split:])
 
-        # Clean up trailing zeros
-        digits = digits.rstrip('0')
-        if digits[-1] == ".":
-            digits += "0"
+        if strip_zeros:
+            # Clean up trailing zeros
+            digits = digits.rstrip('0')
+            if digits[-1] == ".":
+                digits += "0"
 
     if exponent == 0 and dps: return sign + digits
     if exponent >= 0: return sign + digits + "e+" + str(exponent)
