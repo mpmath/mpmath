@@ -381,6 +381,22 @@ def test_ldexp():
     assert ldexp(mpf(2.5), 2) == 10
     assert ldexp(mpf('inf'), 3) == mpf('inf')
 
+def test_frexp():
+    mp.dps = 15
+    assert frexp(0) == (0.0, 0)
+    assert frexp(9) == (0.5625, 4)
+    assert frexp(1) == (0.5, 1)
+    assert frexp(0.2) == (0.8, -2)
+    assert frexp(1000) == (0.9765625, 10)
+
+def test_aliases():
+    assert ln(7) == log(7)
+    assert log10(3.75) == log(3.75,10)
+    assert degrees(5.6) == 5.6 / degree
+    assert radians(5.6) == 5.6 * degree
+    assert power(-1,0.5) == j
+    assert modf(25,7) == 4.0 and isinstance(modf(25,7), mpf)
+
 def test_misc_bugs():
     # test that this doesn't raise an exception
     mp.dps = 1000

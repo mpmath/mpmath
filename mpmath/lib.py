@@ -778,11 +778,21 @@ def fmuli(s, n, prec, rnd=round_fast):
     return normalize(sign, man, exp, bc, prec, rnd)
 
 def fshift(s, n):
-    """Quickly multiply the raw mpf s by 2**n without rnd."""
+    """Quickly multiply the raw mpf s by 2**n without rounding."""
     sign, man, exp, bc = s
     if not man:
         return s
     return sign, man, exp+n, bc
+
+def mpf_frexp(x):
+    """Convert x = y*2**n to (y, n) with abs(y) in [0.5, 1) if nonzero"""
+    sign, man, exp, bc = x
+    if not man:
+        if x == fzero:
+            return (fzero, 0)
+        else:
+            raise ValueError
+    return fshift(x, -bc-exp), bc+exp
 
 def fdiv(s, t, prec, rnd=round_fast):
     """Floating-point division"""
