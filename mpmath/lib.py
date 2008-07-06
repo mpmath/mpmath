@@ -279,13 +279,13 @@ def _normalize(sign, man, exp, bc, prec, rnd):
         bc = prec
     # Strip trailing bits
     if not man & 1:
-        t = trailtable[man & 255]
+        t = trailtable[int(man & 255)]
         if not t:
             while not man & 255:
                 man >>= 8
                 exp += 8
                 bc -= 8
-            t = trailtable[man & 255]
+            t = trailtable[int(man & 255)]
         man >>= t
         exp += t
         bc -= t
@@ -320,13 +320,13 @@ def _normalize1(sign, man, exp, bc, prec, rnd):
     bc = prec
     # Strip trailing bits
     if not man & 1:
-        t = trailtable[man & 255]
+        t = trailtable[int(man & 255)]
         if not t:
             while not man & 255:
                 man >>= 8
                 exp += 8
                 bc -= 8
-            t = trailtable[man & 255]
+            t = trailtable[int(man & 255)]
         man >>= t
         exp += t
         bc -= t
@@ -342,6 +342,8 @@ def strict_normalize(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MP_BASE_TYPE
+    assert type(bc) in (int, long)
+    assert type(exp) in (int, long)
     assert bc == bitcount(man)
     return _normalize(sign, man, exp, bc, prec, rnd)
 
@@ -349,6 +351,8 @@ def strict_normalize1(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MP_BASE_TYPE
+    assert type(bc) in (int, long)
+    assert type(exp) in (int, long)
     assert bc == bitcount(man)
     assert (not man) or (man & 1)
     return _normalize1(sign, man, exp, bc, prec, rnd)
@@ -373,7 +377,7 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
         sign = 1
         man = -man
     if man < 1024:
-        bc = bctable[man]
+        bc = bctable[int(man)]
     else:
         bc = bitcount(man)
     if not prec:
@@ -694,8 +698,8 @@ def fadd(s, t, prec, rnd=round_fast):
             sbc += offset
             if tbc > sbc: bc = tbc - 4
             else:         bc = sbc - 4
-            if bc < 4:    bc = bctable[man]
-            else:         bc += bctable[man>>bc]
+            if bc < 4:    bc = bctable[int(man)]
+            else:         bc += bctable[int(man>>bc)]
             return normalize1(ssign, man, texp, bc, prec, rnd)
         else:
             if ssign: man = tman - (sman << offset)
@@ -712,8 +716,8 @@ def fadd(s, t, prec, rnd=round_fast):
             man = tman + sman
             if tbc > sbc: bc = tbc - 4
             else:         bc = sbc - 4
-            if bc < 4:    bc = bctable[man]
-            else:         bc += bctable[man>>bc]
+            if bc < 4:    bc = bctable[int(man)]
+            else:         bc += bctable[int(man>>bc)]
             return normalize(ssign, man, texp, bc, prec, rnd)
         else:
             if ssign: man = tman - sman
@@ -750,8 +754,8 @@ def fmul(s, t, prec=0, rnd=round_fast):
         if t == fzero: return fnan
         return {1:finf, -1:fninf}[fsign(s) * fsign(t)]
     bc = sbc + tbc - 4
-    if bc < 4: bc = bctable[man]
-    else:      bc += bctable[man>>bc]
+    if bc < 4: bc = bctable[int(man)]
+    else:      bc += bctable[int(man>>bc)]
     if prec:
         return normalize1(sign, man, sexp+texp, bc, prec, rnd)
     else:
@@ -770,11 +774,11 @@ def fmuli(s, n, prec, rnd=round_fast):
     man *= n
     # Generally n will be small
     if n < 1024:
-        bc += bctable[n] - 4
+        bc += bctable[int(n)] - 4
     else:
         bc += bitcount(n) - 4
-    if bc < 4: bc = bctable[man]
-    else:      bc += bctable[man>>bc]
+    if bc < 4: bc = bctable[int(man)]
+    else:      bc += bctable[int(man>>bc)]
     return normalize(sign, man, exp, bc, prec, rnd)
 
 def fshift(s, n):
@@ -837,8 +841,8 @@ def fdiv(s, t, prec, rnd=round_fast):
         quot = (quot << 5) + 1
         extra += 5
     bc = sbc+extra-tbc-4
-    if bc < 4: bc = bctable[quot]
-    else:      bc += bctable[quot>>bc]
+    if bc < 4: bc = bctable[int(quot)]
+    else:      bc += bctable[int(quot>>bc)]
     return normalize(sign, quot, sexp-texp-extra, bc, prec, rnd)
 
 def fdivi(n, t, prec, rnd=round_fast):
@@ -950,7 +954,7 @@ def fpowi(s, n, prec, rnd=round_fast):
         if man == 1:
             return (0, MP_ONE, exp+exp, 1)
         bc = bc + bc - 2
-        bc += bctable[man>>bc]
+        bc += bctable[int(man>>bc)]
         return normalize1(0, man, exp+exp, bc, prec, rnd)
     if n == -1: return fdiv(fone, s, prec, rnd)
     if n < 0:
@@ -981,7 +985,7 @@ def fpowi(s, n, prec, rnd=round_fast):
             pm = pm*man
             pe = pe+exp
             pbc += bc - 2
-            pbc = pbc + bctable[pm >> pbc]
+            pbc = pbc + bctable[int(pm >> pbc)]
             if pbc > workprec:
                 if rounds_down:
                     pm = pm >> (pbc-workprec)
@@ -995,7 +999,7 @@ def fpowi(s, n, prec, rnd=round_fast):
         man = man*man
         exp = exp+exp
         bc = bc + bc - 2
-        bc = bc + bctable[man >> bc]
+        bc = bc + bctable[int(man >> bc)]
         if bc > workprec:
             if rounds_down:
                 man = man >> (bc-workprec)
@@ -1820,8 +1824,8 @@ def fexp(x, prec, rnd=round_fast):
         else:
             n = 0
         man = exp_series2(t, wp, r)
-    bc = wp - 2 + bctable[man >> (wp - 2)]
-    return normalize(0, man, -wp+n, bc, prec, rnd)
+    bc = wp - 2 + bctable[int(man >> (wp - 2))]
+    return normalize(0, man, int(-wp+n), bc, prec, rnd)
 
 
 #----------------------------------------------------------------------------#
