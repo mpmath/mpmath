@@ -1488,6 +1488,60 @@ def fhypot(x, y, prec, rnd=round_fast):
     hypot2 = fadd(fmul(x,x), fmul(y,y), prec+4)
     return fsqrt(hypot2, prec, rnd)
 
+# fcbrt(s, prec, rnd) computes the real cubic root of a
+# positive mpf tuple s.
+# To compute the cubic root we start from a 50-bit estimate for r 
+# generated with ordinary floating-point arithmetic, and then refine
+# the value to full accuracy using the iteration
+
+#            1  /               y    \
+#   r     = --- | 2 * r   +  ------- |
+#    n+1     3  \      n     r_n*r_n /
+
+# which is simply Newton's method applied to the equation r**3 = y.
+# With giant_steps(start, prec+extra) = [p0,...,pm, prec+extra]
+# and y = man * 2**-shift  one has
+# (man * 2**exp)**(1/3) = 
+# y**(1/3) * 2**(start-prec/3) * 2**(p0-start) * ... * 2**(prec+extra-pm) *
+# 2**((exp+shift-2*prec)/3 -extra))
+# The last factor is accounted for in the last line of fcbrt.
+def cbrt_fixed(y, prec):
+    start = 50
+    r = MP_BASE( rshift(y, prec - 3*start)**(1.0/3))
+    extra = 10
+    prevp = start
+    for p in giant_steps(start, prec+extra):
+        r2 = rshift(r*r, 2*prevp - p)
+        B = lshift(y, 2*p-prec)//r2
+        r = (B + lshift(r, p-prevp+1))//3
+        prevp = p
+    return r
+
+def fcbrt(s, prec, rnd=round_fast):
+    sign, man, exp, bc = s
+    if not man:
+        return fzero
+    if sign:
+        raise ComplexResult("cubic root of a negative number")
+    # Convert to a fixed-point number with prec2 bits.
+    prec2 = prec + 12 - (prec%3)
+    # Mantissa may have more bits than we need. Trim it down.
+    shift = bc - prec2
+    # Adjust exponents to make prec2 and exp+shift multiples of 3.
+    sign1 = 0
+    es = exp+shift
+    if es < 0:
+      sign1 = 1
+      es = -es
+    if sign1:
+      shift += es%3
+    else:
+      shift -= es%3
+    man = rshift(man, shift)
+    man = cbrt_fixed(man, prec2)
+    extra = 10
+    return from_man_exp(man, ((exp+shift-2*prec2)//3) - extra, prec, rnd)
+
 
 ##############################################################################
 ##############################################################################

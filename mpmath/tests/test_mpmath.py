@@ -71,6 +71,7 @@ def test_exact_sqrts():
             assert sqrt(mpf((a*a, 2*i))) == mpf((a, i))
             assert sqrt(mpf((a*a, -2*i))) == mpf((a, -i))
 
+
 def test_sqrt_rounding():
     for i in [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15]:
         for dps in [7, 15, 83, 106, 2000]:
@@ -85,6 +86,15 @@ def test_sqrt_rounding():
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
 
+def test_exact_cbrt():
+    for i in range(0, 20000, 200):
+        assert cbrt(mpf(i*i*i)) == i
+    random.seed(1)
+    for prec in [100, 300, 1000, 10000]:
+        mp.dps = prec
+        A = random.randint(10**(prec//2-2), 10**(prec//2-1))
+        assert cbrt(mpf(A*A*A)) == A
+    mp.dps = 15
 
 
 #----------------------------------------------------------------------------
@@ -425,3 +435,11 @@ def test_arange():
     assert arange(0) == []
     assert arange(1000, -1) == []
     assert arange(-1.23, 3.21, -0.0000001) == []
+
+def test_float_cbrt():
+    mp.dps = 30
+    for a in arange(0,10,0.1):
+        assert cbrt(a*a*a).ae(a, eps)
+    assert cbrt(-1).ae(0.5 + j*sqrt(3)/2)
+    mp.dps = 15
+

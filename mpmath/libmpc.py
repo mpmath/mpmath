@@ -234,6 +234,15 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
             im = fneg(im)
     return re, im
 
+def mpc_cbrt((a, b), prec, rnd=round_fast):
+    if a > 0 and b == 0:
+        re = fcbrt(a, prec, rnd)
+        return (re, fzero)
+    f3 = from_int(3)
+    third = fdivi(1, f3, prec)
+    r = mpc_pow((a, b), (third, fzero), prec, rnd)
+    return r
+
 def mpc_exp((a, b), prec, rnd=round_fast):
     """
     Complex exponential function.

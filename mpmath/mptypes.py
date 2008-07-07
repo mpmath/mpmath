@@ -12,7 +12,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
-  "ln", "log10", "frexp", "radians", "degrees", "modf"]
+  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt"]
 
 from lib import *
 from libmpc import *
@@ -683,6 +683,7 @@ def altinvfunc(f, name, desc):
     return g
 
 sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root")
+cbrt = mpfunc('cbrt', fcbrt, mpc_cbrt, "principal cubic root")
 exp = mpfunc('exp', fexp, mpc_exp, "exponential function")
 ln = mpfunc('ln', flog, mpc_log, "natural logarithm")
 
