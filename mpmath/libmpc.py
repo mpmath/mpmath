@@ -234,14 +234,68 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
             im = fneg(im)
     return re, im
 
+def mpc_cbrt_fixed(a, b, prec):
+    # a, b signed integers at fixed precision prec
+    start = 50
+    a1 = int(rshift(a, prec - 3*start))
+    b1 = int(rshift(b, prec - 3*start))
+    try:
+        r = (a1 + 1j * b1)**(1.0/3)
+        re = MP_BASE(r.real)
+        im = MP_BASE(r.imag)
+    except OverflowError:
+        a1 = from_int(a1, start)
+        b1 = from_int(b1, start)
+        f3 = from_int(3)
+        third = fdivi(1, f3, start)
+        re, im = mpc_pow((a1, b1), (third, fzero), start)
+        re = to_int(re)
+        im = to_int(im)
+    extra = 10
+    prevp = start
+    for p in giant_steps(start, prec+extra):
+        re2 = rshift(re*re - im*im, 2*prevp - p)
+        im2 = rshift(re*im, 2*prevp - p - 1)
+        # B = y/r2 = y*(r2c)/(re2*re2c)
+        # B = lshift(y, 2*p-prec)//r2
+        r4 = (re2*re2 + im2*im2) >> p
+        ap = rshift(a, prec - p)
+        bp = rshift(b, prec - p)
+        # C = y * r2c
+        rec = (ap * re2 + bp * im2) >> p
+        imc = (-ap * im2 + bp * re2) >> p
+        reb = (rec << p) // r4
+        imb = (imc << p) // r4
+        # r = (B + lshift(r, p-prevp+1))//3
+        re = (reb + lshift(re, p-prevp+1))//3
+        im = (imb + lshift(im, p-prevp+1))//3
+        prevp = p
+    return re, im
+
 def mpc_cbrt((a, b), prec, rnd=round_fast):
-    if a > 0 and b == 0:
+    """
+    Complex cubic root.
+
+    Use Newton method as in the real case.
+    TODO: in mpc_cbrt_fixed the cubic root at starting precision
+    can involve an OverflowError exception, dealt using mpc_pow;
+    it should be possible to avoid it.
+    """
+    if a[0] == 0 and b == fzero:
         re = fcbrt(a, prec, rnd)
         return (re, fzero)
-    f3 = from_int(3)
-    third = fdivi(1, f3, prec)
-    r = mpc_pow((a, b), (third, fzero), prec, rnd)
-    return r
+    prec2 = prec + 10
+    asign, aman, aexp, abc = a
+    bsign, bman, bexp, bbc = b
+    shift = max(aexp, bexp)
+    shift -= shift%3
+    af = to_fixed(a, prec2 - shift)
+    bf = to_fixed(b, prec2 - shift)
+    re, im = mpc_cbrt_fixed(af, bf, prec2)
+    extra = 10
+    re = from_man_exp(re, -prec2-extra + shift//3, prec2, rnd)
+    im = from_man_exp(im, -prec2-extra + shift//3, prec2, rnd)
+    return re, im
 
 def mpc_exp((a, b), prec, rnd=round_fast):
     """
