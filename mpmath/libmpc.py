@@ -241,8 +241,13 @@ def mpc_nthroot_fixed(a, b, n, prec):
     b1 = int(rshift(b, prec - n*start))
     try:
         r = (a1 + 1j * b1)**(1.0/n)
-        re = MP_BASE(r.real)
-        im = MP_BASE(r.imag)
+        re = r.real
+        im = r.imag
+        # XXX: workaround bug in gmpy
+        if abs(re) < 0.1: re = 0
+        if abs(im) < 0.1: im = 0
+        re = MP_BASE(re)
+        im = MP_BASE(im)
     except OverflowError:
         a1 = from_int(a1, start)
         b1 = from_int(b1, start)
