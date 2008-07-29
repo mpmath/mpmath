@@ -12,7 +12,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
-  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt"]
+  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot"]
 
 from lib import *
 from libmpc import *
@@ -684,6 +684,23 @@ def altinvfunc(f, name, desc):
 
 sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root")
 cbrt = mpfunc('cbrt', fcbrt, mpc_cbrt, "principal cubic root")
+
+def nthroot(x, n):
+    """principal n-th root"""
+    prec, rnd = gp, gr
+    if not isinstance(x, mpnumeric):
+        x = convert_lossless(x)
+    if isinstance(x, mpf):
+        try:
+            return make_mpf(fnthroot(x._mpf_, n, prec, rnd))
+        except ComplexResult:
+            if mp.trap_complex:
+                raise
+            x = (x._mpf_, fzero)
+    else:
+        x = x._mpc_
+    return make_mpc(mpc_nthroot(x, n, prec, rnd))
+
 exp = mpfunc('exp', fexp, mpc_exp, "exponential function")
 ln = mpfunc('ln', flog, mpc_log, "natural logarithm")
 

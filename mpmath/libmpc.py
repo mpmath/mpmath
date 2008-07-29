@@ -234,68 +234,81 @@ def mpc_sqrt((a, b), prec, rnd=round_fast):
             im = fneg(im)
     return re, im
 
-def mpc_cbrt_fixed(a, b, prec):
+def mpc_nthroot_fixed(a, b, n, prec):
     # a, b signed integers at fixed precision prec
     start = 50
-    a1 = int(rshift(a, prec - 3*start))
-    b1 = int(rshift(b, prec - 3*start))
+    a1 = int(rshift(a, prec - n*start))
+    b1 = int(rshift(b, prec - n*start))
     try:
-        r = (a1 + 1j * b1)**(1.0/3)
+        r = (a1 + 1j * b1)**(1.0/n)
         re = MP_BASE(r.real)
         im = MP_BASE(r.imag)
     except OverflowError:
         a1 = from_int(a1, start)
         b1 = from_int(b1, start)
-        f3 = from_int(3)
-        third = fdivi(1, f3, start)
-        re, im = mpc_pow((a1, b1), (third, fzero), start)
+        fn = from_int(n)
+        nth = fdivi(1, fn, start)
+        re, im = mpc_pow((a1, b1), (nth, fzero), start)
         re = to_int(re)
         im = to_int(im)
     extra = 10
     prevp = start
+    extra1 = n
     for p in giant_steps(start, prec+extra):
-        re2 = rshift(re*re - im*im, 2*prevp - p)
-        im2 = rshift(re*im, 2*prevp - p - 1)
-        # B = y/r2 = y*(r2c)/(re2*re2c)
-        # B = lshift(y, 2*p-prec)//r2
-        r4 = (re2*re2 + im2*im2) >> p
+        # this is slow for large n, unlike int_pow_fixed
+        re2, im2 = complex_int_pow(re, im, n-1)
+        re2 = rshift(re2, (n-1)*prevp - p - extra1)
+        im2 = rshift(im2, (n-1)*prevp - p - extra1)
+        r4 = (re2*re2 + im2*im2) >> (p + extra1)
         ap = rshift(a, prec - p)
         bp = rshift(b, prec - p)
-        # C = y * r2c
         rec = (ap * re2 + bp * im2) >> p
         imc = (-ap * im2 + bp * re2) >> p
         reb = (rec << p) // r4
         imb = (imc << p) // r4
-        # r = (B + lshift(r, p-prevp+1))//3
-        re = (reb + lshift(re, p-prevp+1))//3
-        im = (imb + lshift(im, p-prevp+1))//3
+        re = (reb + (n-1)*lshift(re, p-prevp))//n
+        im = (imb + (n-1)*lshift(im, p-prevp))//n
         prevp = p
+    return re, im
+
+def mpc_nthroot((a, b), n, prec, rnd=round_fast):
+    """
+    Complex n-th root.
+
+    Use Newton method as in the real case when it is faster,
+    otherwise use z**(1/n)
+    """
+
+    if a[0] == 0 and b == fzero:
+        re = fnthroot(a, prec, rnd)
+        return (re, fzero)
+    if n < 0:
+        inverse = mpc_nthroot((a, b), -n, prec+5, reciprocal_rnd[rnd])
+        return mpc_div((fone, fzero), inverse, prec, rnd)
+    if n > 20:
+        fn = from_int(n)
+        prec2 = prec+10
+        nth = fdivi(1, fn, prec2)
+        re, im = mpc_pow((a, b), (nth, fzero), prec2, rnd)
+        re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
+        im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+        return re, im
+    prec2 = int(1.2 * (prec + 10))
+    asign, aman, aexp, abc = a
+    bsign, bman, bexp, bbc = b
+    af = to_fixed(a, prec2)
+    bf = to_fixed(b, prec2)
+    re, im = mpc_nthroot_fixed(af, bf, n, prec2)
+    extra = 10
+    re = from_man_exp(re, -prec2-extra, prec2, rnd)
+    im = from_man_exp(im, -prec2-extra, prec2, rnd)
     return re, im
 
 def mpc_cbrt((a, b), prec, rnd=round_fast):
     """
     Complex cubic root.
-
-    Use Newton method as in the real case.
-    TODO: in mpc_cbrt_fixed the cubic root at starting precision
-    can involve an OverflowError exception, dealt using mpc_pow;
-    it should be possible to avoid it.
     """
-    if a[0] == 0 and b == fzero:
-        re = fcbrt(a, prec, rnd)
-        return (re, fzero)
-    prec2 = prec + 10
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
-    shift = max(aexp, bexp)
-    shift -= shift%3
-    af = to_fixed(a, prec2 - shift)
-    bf = to_fixed(b, prec2 - shift)
-    re, im = mpc_cbrt_fixed(af, bf, prec2)
-    extra = 10
-    re = from_man_exp(re, -prec2-extra + shift//3, prec2, rnd)
-    im = from_man_exp(im, -prec2-extra + shift//3, prec2, rnd)
-    return re, im
+    return mpc_nthroot((a, b), 3, prec, rnd)
 
 def mpc_exp((a, b), prec, rnd=round_fast):
     """

@@ -7,6 +7,12 @@ import time
 import math
 import cmath
 
+def mpc_ae(a, b, eps=eps):
+    res = True
+    res = res and a.real.ae(b.real, eps)
+    res = res and a.imag.ae(b.imag, eps)
+    return res
+
 #----------------------------------------------------------------------------
 # Low-level tests
 #
@@ -80,6 +86,17 @@ def test_sqrt_rounding():
             assert (mpf(i)**0.5)**2 < i
             mp.rounding = 'up'
             assert (mpf(i)**0.5)**2 > i
+    random.seed(1234)
+    prec = 100
+    for rnd in ['nearest', 'up', 'down']:
+        mp.rounding = rnd
+        for i in range(100):
+            mp.prec = prec
+            a = rand()
+            mp.prec = 2*prec
+            b = a**2
+            mp.prec = prec
+            assert sqrt(b) == a
     mp.dps = 15
     mp.rounding = 'default'
         
@@ -260,15 +277,15 @@ def test_complex_powers():
 
 def test_complex_sqrt_accuracy():
     def test_mpc_sqrt(lst):
-      for a, b in lst:
-        z = mpc(a + j*b)
-        assert abs(sqrt(z*z) - z) <  10**-dps
-        z = mpc(-a + j*b)
-        assert abs(sqrt(z*z) + z) <  10**-dps
-        z = mpc(a - j*b)
-        assert abs(sqrt(z*z) - z) <  10**-dps
-        z = mpc(-a - j*b)
-        assert abs(sqrt(z*z) + z) <  10**-dps
+        for a, b in lst:
+            z = mpc(a + j*b)
+            assert mpc_ae(sqrt(z*z), z)
+            z = mpc(-a + j*b)
+            assert mpc_ae(sqrt(z*z), -z)
+            z = mpc(a - j*b)
+            assert mpc_ae(sqrt(z*z), z)
+            z = mpc(-a - j*b)
+            assert mpc_ae(sqrt(z*z), -z)
     random.seed(2)
     N = 10
     mp.dps = 30
@@ -449,5 +466,62 @@ def test_float_cbrt():
         r2 = pow(a, one_third)
         mp.dps -= 10
         assert r1.ae(r2, eps)
+    mp.dps = 100
+    for n in range(100, 301, 100):
+        w = 10**n + j*10**-3
+        z = w*w*w
+        r = cbrt(z)
+        assert mpc_ae(r, w, eps)
     mp.dps = 15
 
+def test_root():
+    mp.dps = 30
+    random.seed(1)
+    a = random.randint(0, 10000)
+    p = a*a*a
+    r = nthroot(mpf(p), 3)
+    assert r == a
+    for n in range(4, 10):
+        p = p*a
+        assert nthroot(mpf(p), n) == a
+    mp.dps = 40
+    for n in range(10, 5000, 100):
+        for a in [random.random()*10000, random.random()*10**100]:
+            r = nthroot(a, n)
+            r1 = pow(a, mpf(1)/n)
+            assert r.ae(r1)
+            r = nthroot(a, -n)
+            r1 = pow(a, -mpf(1)/n)
+            assert r.ae(r1)
+    # tests for nthroot rounding
+    for rnd in ['nearest', 'up', 'down']:
+        mp.rounding = rnd
+        for n in [-5, -3, 3, 5]:
+            prec = 50
+            for i in xrange(10):
+                mp.prec = prec
+                a = rand()
+                mp.prec = 2*prec
+                b = a**n
+                mp.prec = prec
+                r = nthroot(b, n)
+                assert r == a
+    mp.dps = 30
+    for n in range(3, 21):
+        a = (random.random() + j*random.random())
+        assert nthroot(a, n).ae(pow(a, mpf(1)/n))
+        assert mpc_ae(nthroot(a, n), pow(a, mpf(1)/n))
+        a = (random.random()*10**100 + j*random.random())
+        r = nthroot(a, n)
+        mp.dps += 4
+        r1 = pow(a, mpf(1)/n)
+        mp.dps -= 4
+        assert r.ae(r1)
+        assert mpc_ae(r, r1, eps)
+        r = nthroot(a, -n)
+        mp.dps += 4
+        r1 = pow(a, -mpf(1)/n)
+        mp.dps -= 4
+        assert r.ae(r1)
+        assert mpc_ae(r, r1, eps)
+    mp.dps = 15 
