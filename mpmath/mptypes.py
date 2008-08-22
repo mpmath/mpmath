@@ -12,7 +12,8 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
-  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot"]
+  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
+  "sign"]
 
 from lib import *
 from libmpc import *
@@ -764,6 +765,15 @@ def frexp(x):
     x = convert_lossless(x)
     y, n = mpf_frexp(x._mpf_)
     return make_mpf(y), n
+
+def sign(x):
+    """Return sign(x), defined as x/abs(x), or 0 for x = 0."""
+    x = convert_lossless(x)
+    if not x or isnan(x):
+        return x
+    if isinstance(x, mpf):
+        return cmp(x, 0)
+    return x / abs(x)
 
 @extraprec(5)
 def arg(x):

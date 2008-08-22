@@ -82,9 +82,9 @@ ften = (0, MP_FIVE, 1, 3)
 fhalf = (0, MP_ONE, -1, 1)
 
 # Arbitrary encoding for special numbers: zero mantissa, nonzero exponent
-fnan = (0, 0, -123, -1)
-finf = (0, 0, -456, -2)
-fninf = (1, 0, -789, -3)
+fnan = (0, MP_ZERO, -123, -1)
+finf = (0, MP_ZERO, -456, -2)
+fninf = (1, MP_ZERO, -789, -3)
 
 
 #----------------------------------------------------------------------------#
@@ -2451,12 +2451,25 @@ def fatan(x, prec, rnd=round_fast):
     sign, man, exp, bc = r
     return normalize(sign, man, exp, bc, prec, rnd)
 
+# TODO: cleanup the special cases
 def fatan2(y, x, prec, rnd=round_fast):
     xsign, xman, xexp, xbc = x
     ysign, yman, yexp, ybc = y
+    if not yman:
+        if y == fnan or x == fnan:
+            return fnan
+        if fsign(x) >= 0:
+            return fzero
+        return fpi(prec, rnd)
     if ysign:
         return fneg(fatan2(fneg(y), x, prec, rnd))
     if not xman:
+        if x == fnan:
+            return fnan
+        if x == finf:
+            return fzero
+        if x == fninf:
+            return fpi(prec, rnd)
         if not yman:
             return fzero
         return fshift(fpi(prec, rnd), -1)
