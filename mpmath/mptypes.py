@@ -193,6 +193,7 @@ def convert_lossless(x):
     if isinstance(x, basestring): return make_mpf(from_str(x, gp, gr))
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
+    if hasattr(x, '_mpmath_'): return convert_lossless(x._mpmath_(gp, gr))
     raise TypeError("cannot create mpf from " + repr(x))
 
 def mpf_convert_arg(x):
@@ -200,20 +201,35 @@ def mpf_convert_arg(x):
     if isinstance(x, float): return from_float(x)
     if isinstance(x, basestring): return from_str(x, gp, gr)
     if hasattr(x, '_mpf_'): return x._mpf_
+    if hasattr(x, '_mpmath_'):
+        t = convert_lossless(x._mpmath_(gp, gr))
+        if isinstance(t, mpf):
+            return t._mpf_
     raise TypeError("cannot create mpf from " + repr(x))
 
 def mpf_convert_rhs(x):
     if isinstance(x, int_types): return from_int(x)
     if isinstance(x, float): return from_float(x)
+    if isinstance(x, complex_types): return mpc(x)
     if hasattr(x, '_mpf_'): return x._mpf_
+    if hasattr(x, '_mpmath_'):
+        t = convert_lossless(x._mpmath_(gp, gr))
+        if isinstance(t, mpf):
+            return t._mpf_
+        return t
     return NotImplemented
 
 def mpf_convert_lhs(x):
-    if isinstance(x, complex_types): return mpc(x)
-    if isinstance(x, int_types): return make_mpf(from_int(x))
-    if isinstance(x, float): return make_mpf(from_float(x))
-    if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
-    return NotImplemented
+    x = mpf_convert_rhs(x)
+    if type(x) is tuple:
+        return make_mpf(x)
+    return x
+
+def mpc_convert_lhs(x):
+    try:
+        return convert_lossless(x)
+    except TypeError:
+        return NotImplemented
 
 new = object.__new__
 
@@ -272,12 +288,13 @@ class mpf(mpnumeric):
     def __eq__(s, t):
         if type(t) is mpf:
             return feq(s._mpf_, t._mpf_)
-        u = mpf_convert_rhs(t)
-        if u is NotImplemented:
-            if isinstance(t, complex_types):
-                return (not t.imag) and s == t.real
-            return u
-        return feq(s._mpf_, u)
+        t = mpf_convert_rhs(t)
+        if type(t) is tuple:
+            return feq(s._mpf_, t)
+        if t is NotImplemented:
+            return t
+        if isinstance(t, complex_types):
+            return (not t.imag) and s == t.real
 
     def __ne__(s, t):
         v = s.__eq__(t)
@@ -330,20 +347,6 @@ class mpf(mpnumeric):
                 return t
         return fge(s._mpf_, t)
 
-    def binop(s, t, f):
-        if isinstance(t, complex_types):
-            s = mpc(s)
-            if f is feq: return s == t
-            if f is fmul: return s * t
-            if f is fadd: return s + t
-            if f is fsub: return s - t
-            if f is fdiv: return s / t
-            raise ValueError("bad operation")
-        t = mpf_convert_rhs(t)
-        if t is NotImplemented:
-            return t
-        return make_mpf(f(s._mpf_, t, gp, gr))
-
     def __add__(s, t):
         r = new(mpf)
         sval = s._mpf_
@@ -354,9 +357,13 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fadd(sval, from_int(t), gp, gr)
                 return r
-            if isinstance(t, mpc):
-                return t + s
-            return s.binop(t, fadd)
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+            if type(t) is not tuple:
+                return mpc(s) + t
+            r._mpf_ = fadd(sval, t, gp, gr)
+            return r
 
     def __sub__(s, t):
         r = new(mpf)
@@ -368,8 +375,13 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fadd(sval, from_int(-t), gp, gr)
                 return r
-            # TODO  if isinstance(t, mpc)
-            return s.binop(t, fsub)
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+            if type(t) is not tuple:
+                return mpc(s) - t
+            r._mpf_ = fsub(sval, t, gp, gr)
+            return r
 
     def __mul__(s, t):
         r = new(mpf)
@@ -381,40 +393,46 @@ class mpf(mpnumeric):
             if isinstance(t, int_types):
                 r._mpf_ = fmuli(sval, t, gp, gr)
                 return r
-            if isinstance(t, mpc):
-                return t * s
-            return s.binop(t, fmul)
-
-    def __rmul__(s, t):
-        if isinstance(t, int_types):
-            r = new(mpf)
-            r._mpf_ = fmuli(s._mpf_, t, gp, gr)
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+            if type(t) is not tuple:
+                return mpc(s) * t
+            r._mpf_ = fmul(sval, t, gp, gr)
             return r
-        return s.binop(t, fmul)
 
     def __div__(s, t):
         if isinstance(t, mpf):
-            return make_mpf(fdiv(s._mpf_, t._mpf_, gp, gr))
-        return s.binop(t, fdiv)
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+            if isinstance(t, complex_types):
+                return mpc(s) / t
+        return make_mpf(fdiv(s._mpf_, t, gp, gr))
 
     def __mod__(s, t):
         if isinstance(t, mpf):
-            return make_mpf(fmod(s._mpf_, t._mpf_, gp, gr))
-        return s.binop(t, fmod)
+            t = t._mpf_
+        else:
+            t = mpf_convert_rhs(t)
+            if t is NotImplemented:
+                return t
+        return make_mpf(fmod(s._mpf_, t, gp, gr))
 
     def __pow__(s, t):
         if isinstance(t, int_types):
             return make_mpf(fpowi(s._mpf_, t, gp, gr))
         if not isinstance(t, mpf):
-            if isinstance(t, complex_types):
-                t = convert_lossless(t)
-                return make_mpc(mpc_pow((s._mpf_, fzero), t._mpc_, gp, gr))
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
+            if isinstance(t, complex_types):
+                t = convert_lossless(t)
+                return make_mpc(mpc_pow((s._mpf_, fzero), t._mpc_, gp, gr))
         else:
             t = t._mpf_
-
         try:
             return make_mpf(fpow(s._mpf_, t, gp, gr))
         except ComplexResult:
@@ -424,18 +442,45 @@ class mpf(mpnumeric):
 
     __radd__ = __add__
 
-    def __rsub__(s, t): return mpf_convert_lhs(t) - s
+    def __rmul__(s, t):
+        if isinstance(t, int_types):
+            r = new(mpf)
+            r._mpf_ = fmuli(s._mpf_, t, gp, gr)
+            return r
+        t = mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t * s
+
+    def __rsub__(s, t):
+        t = mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t - s
 
     def __rdiv__(s, t):
         if isinstance(t, int_types):
             return make_mpf(fdivi(t, s._mpf_, gp, gr))
-        return mpf_convert_lhs(t) / s
+        t = mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t / s
+
+    def __rpow__(s, t):
+        t = mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t ** s
+
+    def __rmod__(s, t):
+        t = mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t % s
 
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
 
-    def __rpow__(s, t): return mpf_convert_lhs(t) ** s
-    def __rmod__(s, t): return mpf_convert_lhs(t) % s
 
     def sqrt(s):
         return sqrt(s)
@@ -508,10 +553,16 @@ class mpc(mpnumeric):
         if not isinstance(t, mpc):
             if isinstance(t, str):
                 return False
-            t = mpc(t)
+            t = mpc_convert_lhs(t)
+            if t is NotImplemented:
+                return t
         return s.real == t.real and s.imag == t.imag
 
-    def __ne__(s, t): return not s.__eq__(t)
+    def __ne__(s, t):
+        b = s.__eq__(t)
+        if b is NotImplemented:
+            return b
+        return not b
 
     def _compare(*args):
         raise TypeError("no ordering relation is defined for complex numbers")
@@ -523,60 +574,80 @@ class mpc(mpnumeric):
 
     def __add__(s, t):
         if not isinstance(t, mpc):
-            try:
-                t = mpf(t)
+            t = mpc_convert_lhs(t)
+            if t is NotImplemented:
+                return t
+            if isinstance(t, mpf):
                 return make_mpc(mpc_add_mpf(s._mpc_, t._mpf_, gp, gr))
-            except:
-                t = mpc(t)
         return make_mpc(mpc_add(s._mpc_, t._mpc_, gp, gr))
 
     def __sub__(s, t):
         if not isinstance(t, mpc):
-            try:
-                t = mpf(t)
+            t = mpc_convert_lhs(t)
+            if t is NotImplemented:
+                return t
+            if isinstance(t, mpf):
                 return make_mpc(mpc_sub_mpf(s._mpc_, t._mpf_, gp, gr))
-            except:
-                t = mpc(t)
         return make_mpc(mpc_sub(s._mpc_, t._mpc_, gp, gr))
 
     def __mul__(s, t):
         if not isinstance(t, mpc):
             if isinstance(t, int_types):
                 return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
+            t = mpc_convert_lhs(t)
+            if t is NotImplemented:
+                return t
             if isinstance(t, mpf):
                 return make_mpc(mpc_mul_mpf(s._mpc_, t._mpf_, gp, gr))
             t = mpc(t)
         return make_mpc(mpc_mul(s._mpc_, t._mpc_, gp, gr))
 
-    def __rmul__(s, t):
-        if isinstance(t, int_types):
-            return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
-        if not isinstance(t, mpc):
-            t = mpc(t)
-        return make_mpc(mpc_mul(s._mpc_, t._mpc_, gp, gr))
-
     def __div__(s, t):
         if not isinstance(t, mpc):
-            try:
-                t = mpf(t)
+            t = mpc_convert_lhs(t)
+            if t is NotImplemented:
+                return t
+            if isinstance(t, mpf):
                 return make_mpc(mpc_div_mpf(s._mpc_, t._mpf_, gp, gr))
-            except:
-                t = mpc(t)
         return make_mpc(mpc_div(s._mpc_, t._mpc_, gp, gr))
 
     def __pow__(s, t):
         if isinstance(t, int_types):
             return make_mpc(mpc_pow_int(s._mpc_, t, gp, gr))
-        t = convert_lossless(t)
+        t = mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
         if isinstance(t, mpf):
             return make_mpc(mpc_pow_mpf(s._mpc_, t._mpf_, gp, gr))
         return make_mpc(mpc_pow(s._mpc_, t._mpc_, gp, gr))
 
     __radd__ = __add__
 
-    def __rsub__(s, t): return (-s) + t
-    def __rpow__(s, t): return convert_lossless(t) ** s
-    def __rdiv__(s, t): return mpc(t) / s
+    def __rsub__(s, t):
+        t = mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t - s
+
+    def __rmul__(s, t):
+        if isinstance(t, int_types):
+            return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
+        t = mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t * s
+
+    def __rdiv__(s, t):
+        t = mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t / s
+
+    def __rpow__(s, t):
+        t = mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t ** s
 
     __truediv__ = __div__
     __rtruediv__ = __rdiv__
