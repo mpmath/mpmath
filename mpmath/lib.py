@@ -224,9 +224,9 @@ def round_int(x, n, rnd):
 # which direction to round when rounding to nearest.
 class h_mask_big:
     def __getitem__(self, n):
-        return (1<<(n-1))-1
+        return (MP_ONE<<(n-1))-1
 
-h_mask_small = [0]+[((1<<(_-1))-1) for _ in range(1, 300)]
+h_mask_small = [0]+[((MP_ONE<<(_-1))-1) for _ in range(1, 300)]
 h_mask = [h_mask_big(), h_mask_small]
 
 # The >> operator rounds to floor. shifts_down[rnd][sign]
