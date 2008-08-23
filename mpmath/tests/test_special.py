@@ -89,3 +89,9 @@ def test_convert_special():
     assert not (mpf(3) > float_nan)
     assert not (mpf(3) <= float_nan)
     assert not (mpf(3) >= float_nan)
+
+def test_div_bug():
+    assert isnan(nan/1)
+    assert isnan(nan/2)
+    assert inf/2 == inf
+    assert (-inf)/2 == -inf

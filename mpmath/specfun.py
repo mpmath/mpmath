@@ -1120,6 +1120,8 @@ def erfi(z):
 @funcwrapper
 def ei(z):
     """Exponential integral, Ei(z)"""
+    if z == inf:
+        return z
     if z == -inf:
         return -mpf(0)
     v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \

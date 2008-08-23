@@ -802,9 +802,7 @@ def fdiv(s, t, prec, rnd=round_fast):
     """Floating-point division"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
-    if not sman or tman <= 1:
-        if tman == 1:
-            return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
+    if not sman or not tman:
         if s == fzero:
             if t == fzero: raise ZeroDivisionError
             if t == fnan: return fnan
@@ -822,6 +820,8 @@ def fdiv(s, t, prec, rnd=round_fast):
                 return fnan
             return {1:finf, -1:fninf}[fsign(s) * fsign(t)]
         return fzero
+    if tman == 1:
+        return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
     if ssign:
         sman = -sman
     if tsign:
