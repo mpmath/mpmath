@@ -60,6 +60,30 @@ def test_exp_integrals():
     assert fresnelc(z/3).ae(1.261581645990027372 + 0.417949198775061893j)
     assert airyai(z).ae(-0.0162552579839056062 - 0.0018045715700210556j)
     assert airybi(z).ae(-4.98856113282883371 + 2.08558537872180623j)
+    assert li(0) == 0.0
+    assert li(1) == -inf
+    assert li(inf) == inf
+    assert isinstance(li(0.7), mpf)
+    assert si(inf).ae(pi/2)
+    assert si(-inf).ae(-pi/2)
+    assert ci(inf) == 0
+    assert ci(0) == -inf
+    assert isinstance(ei(-0.7), mpf)
+    assert ei(inf) == inf
+    assert ei(-inf) == -0.0
+    assert airyai(inf) == 0
+    assert airybi(inf) == inf
+    assert airyai(-inf) == 0
+    assert airybi(-inf) == 0
+    assert fresnels(inf) == 0.5
+    assert fresnelc(inf) == 0.5
+    assert fresnels(-inf) == -0.5
+    assert fresnelc(-inf) == -0.5
+    assert shi(0) == 0
+    assert shi(inf) == inf
+    assert shi(-inf) == -inf
+    assert chi(0) == -inf
+    assert chi(inf) == inf
 
 def test_hyper_0f1():
     v = 8.63911136507950465
@@ -151,11 +175,16 @@ def test_incomplete_gamma():
     assert erf(pi).ae(0.99999112385363235839)
     assert erf(1j).ae(1.6504257587975428760j)
     assert erf(-1j).ae(-1.6504257587975428760j)
-    assert erfi(1/pi).ae(0.371682698493894314)
     assert isinstance(erf(1), mpf)
     assert isinstance(erf(-1), mpf)
     assert isinstance(erf(0), mpf)
     assert isinstance(erf(0j), mpc)
+    assert erf(inf) == 1
+    assert erf(-inf) == -1
+    assert erfi(0) == 0
+    assert erfi(1/pi).ae(0.371682698493894314)
+    assert erfi(inf) == inf
+    assert erfi(-inf) == -inf
 
 def test_gamma():
     mp.dps = 15

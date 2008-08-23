@@ -1106,6 +1106,10 @@ def upper_gamma(a,z):
 @funcwrapper
 def erf(z):
     """Error function, erf(z)"""
+    if z == inf:
+        return mpf(1)
+    if z == -inf:
+        return mpf(-1)
     return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), -z**2)
 
 @funcwrapper
@@ -1116,17 +1120,30 @@ def erfi(z):
 @funcwrapper
 def ei(z):
     """Exponential integral, Ei(z)"""
-    return z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
+    if z == -inf:
+        return -mpf(0)
+    v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
         (log(z)-log(1/z))/2 + euler
+    if isinstance(z, mpf) and z < 0:
+        return v.real
+    return v
 
 @funcwrapper
 def li(z):
     """Logarithmic integral, li(z)"""
+    if not z:
+        return z
+    if z == 1:
+        return -inf
     return ei(log(z))
 
 @funcwrapper
 def ci(z):
     """Cosine integral, Ci(z)"""
+    if z == inf:
+        return 1/z
+    if not z:
+        return -inf
     z2 = -(z/2)**2
     return euler + log(z) + \
         z2*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
@@ -1134,12 +1151,18 @@ def ci(z):
 @funcwrapper
 def si(z):
     """Sine integral, Si(z)"""
+    if z == inf:
+        return pi/2
+    if z == -inf:
+        return -pi/2
     z2 = -(z/2)**2
     return z*hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
 
 @funcwrapper
 def chi(z):
     """Hyperbolic cosine integral, Chi(z)"""
+    if not z:
+        return -inf
     z2 = (z/2)**2
     return euler + log(z) + \
         z2*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
@@ -1153,16 +1176,28 @@ def shi(z):
 @funcwrapper
 def fresnels(z):
     """Fresnel integral S, S(z)"""
+    if z == inf:
+        return mpf(0.5)
+    if z == -inf:
+        return mpf(-0.5)
     return pi*z**3/6*hypsum([[3,4]],[],[],[[3,2],[7,4]],[],[],-pi**2*z**4/16)
 
 @funcwrapper
 def fresnelc(z):
     """Fresnel integral C, C(z)"""
+    if z == inf:
+        return mpf(0.5)
+    if z == -inf:
+        return mpf(-0.5)
     return z*hypsum([[1,4]],[],[],[[1,2],[5,4]],[],[],-pi**2*z**4/16)
 
 @funcwrapper
 def airyai(z):
     """Airy function, Ai(z)"""
+    if z == inf:
+        return 1/z
+    if z == -inf:
+        return mpf(0)
     z3 = z**3 / 9
     a = sum_hyp0f1_rat((2,3), z3) / (cbrt(9) * gamma(mpf(2)/3))
     b = z * sum_hyp0f1_rat((4,3), z3) / (cbrt(3) * gamma(mpf(1)/3))
@@ -1171,6 +1206,10 @@ def airyai(z):
 @funcwrapper
 def airybi(z):
     """Airy function, Bi(z)"""
+    if z == inf:
+        return z
+    if z == -inf:
+        return mpf(0)
     z3 = z**3 / 9
     rt = nthroot(3, 6)
     a = sum_hyp0f1_rat((2,3), z3) / (rt * gamma(mpf(2)/3))
