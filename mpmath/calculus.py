@@ -204,14 +204,16 @@ def secant(f, x0, x1=None, maxsteps=20, verbose=False):
 
 def polyval(coeffs, x, derivative=False):
     """
-    Given coefficients [c0, c1, c2, ..., cn], evaluate
-    P(x) = c0 + c1*x + c2*x**2 + ... + cn*x**n.
+    Given coefficients [cn, ..., c2, c1, c0], evaluate
+    P(x) = cn*x**n + ... + c2*x**2 + c1*x + c0.
 
     If derivative=True is set, a tuple (P(x), P'(x)) is returned.
     """
-    p = mpnumeric(coeffs[-1])
+    if not coeffs:
+        return mpf(0)
+    p = mpnumeric(coeffs[0])
     q = mpf(0)
-    for c in coeffs[-2::-1]:
+    for c in coeffs[1:]:
         if derivative:
             q = p + x*q
         p = c + x*p
@@ -228,21 +230,22 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     With error=True, this function returns a tuple (roots, err) where roots
     is a list of complex numbers sorted by absolute value, and err is an
     estimate of the maximum error. The polynomial should be given as a list
-    of coefficients.
+    of coefficients, in the same format as accepted by polyval(). The
+    leading coefficient must be nonzero.
 
-        >>> nprint(polyroots([24,-14,-1,1]), 4)
+    These are the roots of x^3 - x^2 - 14*x + 24 and 4x^2 + 3x + 2:
+
+        >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]
-        >>> nprint(polyroots([2,3,4], error=True))
+        >>> nprint(polyroots([4,3,2], error=True))
         ([(-0.375 - 0.599479j), (-0.375 + 0.599479j)], 2.22045e-16)
 
     """
-
-
-    if len(coeffs) == 1:
-        if coeffs[0]:
-            return []
-        else:
-            raise ValueError,"tautology"
+    if len(coeffs) <= 1:
+        if not coeffs or not coeffs[0]:
+            raise ValueError("Input to polyroots must not be the zero polynomial")
+        # Constant polynomial with no roots
+        return []
 
     orig = mp.prec
     weps = +eps
@@ -250,7 +253,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         mp.prec += 10
         deg = len(coeffs) - 1
         # Must be monic
-        lead = convert_lossless(coeffs[-1])
+        lead = convert_lossless(coeffs[0])
         if lead == 1:
             coeffs = map(convert_lossless, coeffs)
         else:
@@ -892,6 +895,7 @@ def chebyfit(f,a,b,N,error=False):
             Tk = T.next()
             for i in range(len(Tk)):
                 d[i] += c[k]*Tk[i]
+        d = d[::-1]
         # Estimate maximum error
         err = mpf(0)
         for k in range(N):
@@ -1021,14 +1025,16 @@ def pslq(x, eps=None):
     return None
 
 def findpoly(x, n=1):
+    """Find an integer polynomial P of degree at most n such that
+    x is an approximate root of P."""
     if x == 0:
-        return [0, 1]
+        return [1, 0]
     xs = [mpf(1)]
     for i in range(1,n+1):
         xs.append(x**i)
         a = pslq(xs)
         if a is not None:
-            return a
+            return a[::-1]
 
 def fracgcd(p, q):
     x, y = p, q
