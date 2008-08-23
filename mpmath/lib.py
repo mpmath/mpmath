@@ -6,7 +6,7 @@ __docformat__ = 'plaintext'
 
 import math, os
 from bisect import bisect
-from random import randrange
+from random import getrandbits
 
 #----------------------------------------------------------------------------#
 # Support GMPY for high-speed large integer arithmetic.                      #
@@ -521,7 +521,7 @@ def to_fixed(s, prec):
 def frand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
-    return from_man_exp(randrange(0, 1<<prec), -prec, prec, round_floor)
+    return from_man_exp(getrandbits(prec), -prec, prec, round_floor)
 
 def feq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparion
