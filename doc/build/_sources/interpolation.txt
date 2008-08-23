@@ -13,7 +13,7 @@ Here we use it to generate a low-degree approximation of f(x) = cos(x), valid on
     >>> from mpmath import *
     >>> poly, err = chebyfit(cos, 1, 2, 5, error=True)
     >>> nprint(poly)
-    [0.949553, 0.174141, -0.732491, 0.146166, 2.91682e-3]
+    [2.91682e-3, 0.146166, -0.732491, 0.174141, 0.949553]
     >>> nprint(err, 12)
     1.61351758081e-5
 

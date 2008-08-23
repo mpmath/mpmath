@@ -68,6 +68,19 @@ After the setup has completed, you should be able to fire up the interactive Pyt
 
 *Note: if you have mpmath 0.6 or earlier installed, you may have to either first uninstall the old version, or manually delete the obsolete mpmath/lib directory. Otherwise this directory will be imported erroneously.*
 
+Using gmpy (optional)
+---------------------
+
+By default, mpmath uses Python integers internally. If `gmpy <http://code.google.com/p/gmpy/>`_ version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster at high precision (approximately above 100 digits).
+
+To verify that mpmath uses gmpy, check the internal MODE variable is not equal to 'python':
+
+    >>> import mpmath.lib
+    >>> mpmath.lib.MODE
+    'gmpy'
+
+The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable. Note that the mode cannot be switched during runtime; mpmath must be re-imported for this change to take effect.
+
 Running tests
 -------------
 
@@ -83,7 +96,7 @@ which will cut the running time in half.
 
 If any test fails, please send a detailed bug report to the `mpmath issue tracker <http://code.google.com/p/sympy/issues/list>`_. The tests can also be run with `py.test <http://codespeak.net/py/dist/>`_. This will sometimes generate more useful information in case of a failure.
 
-*This currently only applies to the development version of mpmath*: By default, mpmath will use `gmpy <http://code.google.com/p/gmpy/>`_ if version 1.03 or later is installed on your system. To run the tests with support for gmpy disabled, use
+To run the tests with support for gmpy disabled, use
 
     ``python runtests.py -nogmpy``
 

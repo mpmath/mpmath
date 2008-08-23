@@ -57,7 +57,7 @@
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
-<span class="go">[0.949553, 0.174141, -0.732491, 0.146166, 2.91682e-3]</span>
+<span class="go">[2.91682e-3, 0.146166, -0.732491, 0.174141, 0.949553]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mf">12</span><span class="p">)</span>
 <span class="go">1.61351758081e-5</span>
 </pre></div>
@@ -130,7 +130,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jul 05, 2008.
+      Last updated on Aug 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

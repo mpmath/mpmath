@@ -58,7 +58,7 @@ Finding all roots of a polynomial (``polyroots``)
 The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial. It will for example successfully compute the two real roots of 3x^2 - 7x + 2
 
     >>> mp.dps = 15
-    >>> for r in polyroots([2,-7,3]):
+    >>> for r in polyroots([3,-7,2]):
     ...     print r
     ...
     0.333333333333333
@@ -66,13 +66,13 @@ The function ``polyroots`` computes all *n* real or complex roots of an *n*-th d
 
 or the three roots of x^3 - x^2 - 14x + 24:
 
-    >>> polyroots([24,-14,-1,1])
+    >>> polyroots([1,-1,-14,24])
     [mpf('-4.0'), mpf('2.0'), mpf('3.0')]
 
 The following example computes all the 5th roots of unity; i.e. the roots of x^5 - 1:
 
     >>> mp.dps = 20
-    >>> for r in polyroots([-1, 0, 0, 0, 0, 1]):
+    >>> for r in polyroots([1, 0, 0, 0, 0, -1]):
     ...     print r
     ...
     1.0
@@ -119,7 +119,7 @@ An example of an extremely ill-conditioned polynomial is Wilkinson's polynomial 
     ...     1206647803780373360, -311333643161390640, 63030812099294896,
     ...     -10142299865511450, 1307535010540395, -135585182899530,
     ...     11310276995381, -756111184500, 40171771630, -1672280820, 53327946,
-    ...     -1256850, 20615, -210, 1]
+    ...     -1256850, 20615, -210, 1][::-1]
     ...
     >>> roots = polyroots(W)
     >>> for r in roots:

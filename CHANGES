@@ -1,5 +1,5 @@
 --0.9--
-Currently in SVN
+Released August 23, 2008
 
 * gmpy mpzs are used instead of python ints when available, for
   huge speedups at high precision (contributed by Case Van Horsen)
@@ -27,6 +27,7 @@ Currently in SVN
 * external classes can define a special method _mpmath_ to interact
   with mpmath numbers and functions
 * fixed some corner cases in atan2
+* faster rand()
 
 --0.8--
 Released April 20, 2008

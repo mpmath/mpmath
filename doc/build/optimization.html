@@ -96,19 +96,19 @@
 <h2 id="finding-all-roots-of-a-polynomial-polyroots">Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)<a class="headerlink" href="#finding-all-roots-of-a-polynomial-polyroots" title="Permalink to this headline">¶</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">polyroots</span></tt> computes all <em>n</em> real or complex roots of an <em>n</em>-th degree polynomial. It will for example successfully compute the two real roots of 3x^2 - 7x + 2</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">7</span><span class="p">,</span><span class="mf">3</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="o">-</span><span class="mf">7</span><span class="p">,</span><span class="mf">2</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
 <span class="gp">...</span>
 <span class="go">0.333333333333333</span>
 <span class="go">2.0</span>
 </pre></div>
 <p>or the three roots of x^3 - x^2 - 14x + 24:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyroots</span><span class="p">([</span><span class="mf">24</span><span class="p">,</span><span class="o">-</span><span class="mf">14</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">14</span><span class="p">,</span><span class="mf">24</span><span class="p">])</span>
 <span class="go">[mpf(&#39;-4.0&#39;), mpf(&#39;2.0&#39;), mpf(&#39;3.0&#39;)]</span>
 </pre></div>
 <p>The following example computes all the 5th roots of unity; i.e. the roots of x^5 - 1:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
@@ -150,7 +150,7 @@
 <span class="gp">... </span>    <span class="mf">1206647803780373360</span><span class="p">,</span> <span class="o">-</span><span class="mf">311333643161390640</span><span class="p">,</span> <span class="mf">63030812099294896</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="o">-</span><span class="mf">10142299865511450</span><span class="p">,</span> <span class="mf">1307535010540395</span><span class="p">,</span> <span class="o">-</span><span class="mf">135585182899530</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="mf">11310276995381</span><span class="p">,</span> <span class="o">-</span><span class="mf">756111184500</span><span class="p">,</span> <span class="mf">40171771630</span><span class="p">,</span> <span class="o">-</span><span class="mf">1672280820</span><span class="p">,</span> <span class="mf">53327946</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="o">-</span><span class="mf">1256850</span><span class="p">,</span> <span class="mf">20615</span><span class="p">,</span> <span class="o">-</span><span class="mf">210</span><span class="p">,</span> <span class="mf">1</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="o">-</span><span class="mf">1256850</span><span class="p">,</span> <span class="mf">20615</span><span class="p">,</span> <span class="o">-</span><span class="mf">210</span><span class="p">,</span> <span class="mf">1</span><span class="p">][::</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">roots</span> <span class="o">=</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
@@ -267,7 +267,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jul 05, 2008.
+      Last updated on Aug 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

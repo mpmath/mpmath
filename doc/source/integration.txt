@@ -31,7 +31,7 @@ Intervals can be infinite or half-infinite:
 Complex integrals are also supported. The next example computes Euler's constant gamma by integrating around the pole of the Riemann zeta function at *z* = 1::
 
     >>> print 1/(2*pi)*quadts(lambda x: zeta(exp(j*x)+1), 0, 2*pi)
-    (0.577215664901533 - 3.64632996762876e-23j)
+    (0.577215664901533 - 4.88811920958765e-23j)
 
 Functions with integral representations, such as the gamma function, can be implemented directly from the definition::
 
@@ -276,11 +276,11 @@ It returns the list of function values at each step. As a simple example, we can
     >>> t = arange(0, 1, 1e-4)
     >>> sol = odeint(lambda (x,y),t: (y,-x), (0, 1), t)
     >>> print sol[-1][0]
-    0.841416950370044847975007
+    0.8414169503700448479750065
     >>> print sin(t[-1])
     0.8414169503700448484253423
     >>> print sol[-1][1]
-    0.5403864502649686951810432
+    0.5403864502649686951810426
     >>> print cos(t[-1])
     0.5403864502649686944799696
 

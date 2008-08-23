@@ -171,7 +171,7 @@
 <p>On the other hand, <tt class="docutils literal"><span class="pre">identify</span></tt> can be used to simplify expressions that are too complicated for SymPy to deal with directly:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">sympify</span><span class="p">(</span><span class="s">&#39;-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sympify</span><span class="p">(</span><span class="n">identify</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evalf</span><span class="p">()),</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mf">0</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">sympify</span><span class="p">(</span><span class="n">identify</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="mf">30</span><span class="p">)),</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mf">0</span><span class="p">]))</span>
 <span class="go">        ___</span>
 <span class="go">      \/ 5</span>
 <span class="go">1/2 + -----</span>
@@ -184,15 +184,15 @@
 <p><tt class="docutils literal"><span class="pre">findpoly(x,n)</span></tt> returns a list of integer coefficients for a polynomial of degree at most n having x as a root. By default (degree n = 1), it simply finds a linear polynomial with a rational root:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="go">[7, -10]</span>
+<span class="go">[-10, 7]</span>
 </pre></div>
 <p>Numbers of the form <tt class="docutils literal"><span class="pre">m</span> <span class="pre">+</span> <span class="pre">n*sqrt(p)</span></tt> are solutions to quadratic equations:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="mf">2</span><span class="p">)</span>
-<span class="go">[-1, -2, 1]</span>
+<span class="go">[1, -2, -1]</span>
 </pre></div>
 <p>The following gives an algebraic approximation of pi (judging from the coefficients, pi is not very good at being an algebraic number):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
-<span class="go">[-457, -2658, -1734, 836]</span>
+<span class="go">[836, -1734, -2658, -457]</span>
 </pre></div>
 <p>The generated coefficient list is valid input to <tt class="docutils literal"><span class="pre">polyval</span></tt> and <tt class="docutils literal"><span class="pre">polyroots</span></tt>:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span><span class="mf">3</span><span class="p">),</span> <span class="n">pi</span><span class="p">)</span>
@@ -206,7 +206,7 @@
 <p>When identifying exact algebraic numbers, the precision must be set very high to avoid false solutions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
-<span class="go">[-8917, -1498, -6860, 2618]</span>
+<span class="go">[2618, -6860, -1498, -8917]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
 <span class="go">[1, 0, -10, 0, 1]</span>
@@ -298,7 +298,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jul 05, 2008.
+      Last updated on Aug 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

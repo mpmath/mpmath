@@ -1,4 +1,4 @@
-__version__ = '0.8-svn'
+__version__ = '0.9'
 
 import lib
 

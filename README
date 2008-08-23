@@ -28,6 +28,7 @@ see the CHANGES file.
 
 Release history:
 
+* Version 0.9 released on August 23, 2008
 * Version 0.8 released on April 20, 2008
 * Version 0.7 released on March 12, 2008
 * Version 0.6 released on January 13, 2008
@@ -57,6 +58,8 @@ Mpmath can also be installed using
 
 The latest development code is available from
 http://code.google.com/p/mpmath/source/checkout
+
+See the main documentation for more detailed instructions.
 
 2. Running tests
 ----------------

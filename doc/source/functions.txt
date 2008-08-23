@@ -107,36 +107,28 @@ An example with very high precision:
     46705057548209662896867568997817626620037806847842642167105610253517933039999796
     6863567179835779017033
 
-The Lambert W function is the inverse function of w*exp(w):
-
-    >>> mp.dps = 35
-    >>> w = lambertw(1)
-    >>> print w
-    0.56714329040978387299996866221035555
-    >>> print w*exp(w)
-    1.0
-
-The Lambert W function has infinitely many complex branches. By default, the principal branch (k = 0) is evaluated. You can choose a custom branch:
-
-    >>> w = lambertw(1, k=3)
-    >>> print w
-    (-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)
-    >>> print w*exp(w)
-    (1.0 - 9.9465893710591698326300157883907326e-38j)
-
 The list of available elementary functions (and related simple functions) is given in the following table.
 
 =====================   ==================================================================
 Function                Description
 =====================   ==================================================================
-``sqrt(x)``             Square root
-``hypot(x,y)``          Euclidean norm
+``sqrt(x)``             Square root, x^(1/2)
+``cbrt(x)``             Cube root, x^(1/3)
+``nthroot(x)``          Nth root, x^(1/n)
+``hypot(x,y)``          Euclidean norm, sqrt(x^2+y^2)
 ``exp(x)``              Exponential function
 ``log(x,b)``            Natural logarithm (optionally base-b logarithm)
+``ln(x)``               Natural logarithm
+``log10(x)``            Base-10 logarithm
 ``power(x,y)``          Power, ``x**y``
+``modf(x,y)``           Modulo, x mod y
+``ldexp(x,n)``          Fast calculation of ``x * 2**n``
+``frexp(x)``            Scales x to the range [0.5, 1), returning value and exponent
 ``floor(x)``            Floor function (round to integer in the direction of -inf)
 ``ceil(x)``             Ceiling function (round to integer in the direction of +inf)
 ``arg(z)``              Complex argument of z
+``degrees(x)``          Convert radians to degrees
+``radians(x)``          Convert degrees to radians
 ``cos(x)``              Cosine
 ``sin(x)``              Sine
 ``tan(x)``              Tangent
@@ -162,7 +154,6 @@ Function                Description
 ``asech(x)``            Inverse hyperbolic secant
 ``acsch(x)``            Inverse hyperbolic cosecant
 ``acoth(x)``            Inverse hyperbolic cotangent
-``lambertw(x,k)``       Lambert W function
 =====================   ==================================================================
 
 Nonelementary functions
@@ -186,6 +177,23 @@ The nonelementary functions can all be evaluated to high precision:
     61618134488095800072249215436991243117271403513444828929928306553194119494900584
     6834728102001723155155631593301614083021
 
+The Lambert W function is the inverse function of w*exp(w):
+
+    >>> mp.dps = 35
+    >>> w = lambertw(1)
+    >>> print w
+    0.56714329040978387299996866221035555
+    >>> print w*exp(w)
+    1.0
+
+The Lambert W function has infinitely many complex branches. By default, the principal branch (k = 0) is evaluated. You can choose a custom branch:
+
+    >>> w = lambertw(1, k=3)
+    >>> print w
+    (-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)
+    >>> print w*exp(w)
+    (1.0 - 9.9465893710591698326300157883907326e-38j)
+
 The function ``hyper`` sums a general hypergeometric series (this works only for argument where the series converges):
 
     >>> print hyper([1,2,3],[4,5,6], 1/pi)     # doctest:+SKIP
@@ -193,38 +201,64 @@ The function ``hyper`` sums a general hypergeometric series (this works only for
     76737176412753643360654694328402996208151824851693763066257492700066724382806555
     22803873785096931980990953468408484030225
 
-=====================   ==================================================================
-Function                Description
-=====================   ==================================================================
-``factorial(x)``        Factorial
-``gamma(x)``            Gamma function
-``binomial(x,y)``       Binomial coefficient
-``gammaprod(x,y)``      Gamma function product G(x[0])*G(x[1])... / (G(y[0])*G(y[1])...)
-``rf(x,n)``             Rising factorial (Pochhammer symbol), x^(n)
-``ff(x,n)``             Falling factorial, x_(n)
-``lower_gamma(a,x)``    Lower gamma function
-``upper_gamma(a,x)``    Upper gamma function
-``erf(x)``              Error function
-``zeta(x)``             Riemann zeta function
-``bernoulli(n)``        Bernoulli number, B_n
-``j0(x)``               Bessel function J_0(x)
-``j1(x)``               Bessel function J_1(x)
-``jn(n,x)``             Bessel function J_n(x)
-``ellipe(x)``           Complete elliptic integral E
-``ellipk(x)``           Complete elliptic integral K
-``agm(x,y)``            Arithmetic geometric mean
-``hyper(as,bs,z)``      Hypergeometric function PFQ
-``hyp0f1(a,z)``         Hypergeometric function 0F1
-``hyp1f1(a,b,z)``       Hypergeometric function 1F1
-``hyp2f1(a,b,c,z)``     Hypergeometric function 2F1
-``jacobi(n,a,b,x)``     Jacobi polynomial / Jacobi function
-``legendre(n,x)``       Legendre polynomial / Legendre function
-``chebyt(n,x)``         Chebyshev polynomial of the first kind, T_n(x)
-``chebyu(n,x)``         Chebyshev polynomial of the second kind, U_n(x)
-=====================   ==================================================================
+=========================== ==================================================================
+Function                    Description
+=========================== ==================================================================
+``lambertw(x,k)``           Lambert W function
+``factorial(x)``            Factorial
+``gamma(x)``                Gamma function
+``binomial(x,y)``           Binomial coefficient
+``gammaprod(x,y)``          Gamma function product G(x[0])*G(x[1])... / (G(y[0])*G(y[1])...)
+``rf(x,n)``                 Rising factorial (Pochhammer symbol), x^(n)
+``ff(x,n)``                 Falling factorial, x_(n)
+``lower_gamma(a,x)``        Lower incomplete gamma function
+``upper_gamma(a,x)``        Upper incomplete gamma function
+``erf(x)``                  Error function
+``erfi(x)``                 Imaginary error function
+``zeta(x)``                 Riemann zeta function
+``bernoulli(n)``            Bernoulli number, B_n
+``ei(x)``                   Exponential integral, Ei(x)
+``li(x)``                   Logarithmic integral, li(x)
+``ci(x)``                   Cosine integral, Ci(x)
+``si(x)``                   Sine integral, Si(x)
+``chi(x)``                  Hyperbolic cosine integral, Ci(x)
+``shi(x)``                  Hyperbolic sine integral, Si(x)
+``j0(x)``                   Bessel function J_0(x)
+``j1(x)``                   Bessel function J_1(x)
+``jn(n,x)``                 Bessel function J_n(x)
+``ellipe(x)``               Complete elliptic integral E
+``ellipk(x)``               Complete elliptic integral K
+``airyai(x)``               Airy function Ai(x)
+``airybi(x)``               Airy function Bi(x)
+``fresnels(x)``             Fresnel integral S(x)
+``fresnelc(x)``             Fresnel integral C(x)
+``agm(x,y)``                Arithmetic geometric mean
+``hyper(as,bs,z)``          Hypergeometric function PFQ
+``hyp0f1(a,z)``             Hypergeometric function 0F1
+``hyp1f1(a,b,z)``           Hypergeometric function 1F1
+``hyp2f1(a,b,c,z)``         Hypergeometric function 2F1
+``jacobi(n,a,b,x)``         Jacobi polynomial / Jacobi function
+``legendre(n,x)``           Legendre polynomial / Legendre function
+``chebyt(n,x)``             Chebyshev polynomial of the first kind, T_n(x)
+``chebyu(n,x)``             Chebyshev polynomial of the second kind, U_n(x)
+``jacobi_elliptic_xx(u,m)`` Jacobi elliptic functions, xx = cn, sn, dn
+``jacobi_theta_x(u,m)``     Jacobi theta functions, x = 1, 2, 3, 4
+
+=========================== ==================================================================
 
 Number sequences
 ----------------
+
+``arange``, with the same argument order as Python's built-in ``range`` function, generates a range of floating-point numbers, not including the endpoint:
+
+    >>> nprint(arange(0, 5, 0.5))
+    [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5]
+    >>> nprint(arange(pi))
+    [0.0, 1.0, 2.0, 3.0]
+    >>> nprint(arange(1.5, pi))
+    [1.5, 2.5]
+    >>> nprint(arange(1.5, pi, 0.4))
+    [1.5, 1.9, 2.3, 2.7, 3.1]
 
 For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch. 
 
@@ -251,16 +285,6 @@ The precision of each generated number will be the same as that of the first, re
 
 Utility functions
 -----------------
-
-Ranges
-......
-
-``arange``, with the same argument order as Python's built-in ``range`` function, generates a range of floating-point numbers, not including the endpoint:
-
-    >>> arange(0, 1, 0.25)
-    [mpf('0.0'), mpf('0.25'), mpf('0.5'), mpf('0.75')]
-
-All three arguments must currently be given.
 
 Current epsilon
 ...............
@@ -326,15 +350,15 @@ The output might look like this:
 Polynomial evaluation
 .....................
 
-Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates 2 + 5x + x^3 at x = 3.5:
+Polynomial functions can be evaluated using ``polyval``, which takes as input a list of coefficients and the desired evaluation point. The following example evaluates x^3 + 5x + 2 at x = 3.5:
 
     >>> mp.dps = 20
-    >>> polyval([2, 5, 0, 1], mpf('3.5'))
+    >>> polyval([1, 0, 5, 2], mpf('3.5'))
     mpf('62.375')
 
 With ``derivative=True``, both the polynomial and its derivative are evaluated at the same point:
 
-    >>> polyval([2, 5, 0, 1], mpf('3.5'), derivative=True)
+    >>> polyval([1, 0, 5, 2], mpf('3.5'), derivative=True)
     (mpf('62.375'), mpf('41.75'))
 
 The point and coefficients may be complex numbers.

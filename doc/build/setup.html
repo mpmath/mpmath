@@ -106,6 +106,16 @@
 <p><em>Note: if you have mpmath 0.6 or earlier installed, you may have to either first uninstall the old version, or manually delete the obsolete mpmath/lib directory. Otherwise this directory will be imported erroneously.</em></p>
 </div>
 </div>
+<div class="section" id="using-gmpy-optional">
+<h2 id="using-gmpy-optional">Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
+<p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster at high precision (approximately above 100 digits).</p>
+<p>To verify that mpmath uses gmpy, check the internal MODE variable is not equal to &#8216;python&#8217;:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.lib</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpmath</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">MODE</span>
+<span class="go">&#39;gmpy&#39;</span>
+</pre></div>
+<p>The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable. Note that the mode cannot be switched during runtime; mpmath must be re-imported for this change to take effect.</p>
+</div>
 <div class="section" id="running-tests">
 <h2 id="running-tests">Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
 <p>It is recommended that you run mpmath&#8217;s full set of unit tests to make sure everything works. The tests are located in the <tt class="docutils literal"><span class="pre">tests</span></tt> subdirectory of the main mpmath directory. They can be run via</p>
@@ -116,7 +126,7 @@
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">runtests.py</span> <span class="pre">-psyco</span></tt></blockquote>
 <p>which will cut the running time in half.</p>
 <p>If any test fails, please send a detailed bug report to the <a class="reference external" href="http://code.google.com/p/sympy/issues/list">mpmath issue tracker</a>. The tests can also be run with <a class="reference external" href="http://codespeak.net/py/dist/">py.test</a>. This will sometimes generate more useful information in case of a failure.</p>
-<p><em>This currently only applies to the development version of mpmath</em>: By default, mpmath will use <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> if version 1.03 or later is installed on your system. To run the tests with support for gmpy disabled, use</p>
+<p>To run the tests with support for gmpy disabled, use</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">runtests.py</span> <span class="pre">-nogmpy</span></tt></blockquote>
 <p>To enable extra diagnostics, use</p>
@@ -154,6 +164,7 @@
 <li><a class="reference external" href="#checking-that-it-works">Checking that it works</a></li>
 </ul>
 </li>
+<li><a class="reference external" href="#using-gmpy-optional">Using gmpy (optional)</a></li>
 <li><a class="reference external" href="#running-tests">Running tests</a></li>
 <li><a class="reference external" href="#compiling-the-documentation">Compiling the documentation</a></li>
 </ul>
@@ -198,7 +209,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jul 05, 2008.
+      Last updated on Aug 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

@@ -73,7 +73,7 @@
 </pre></div>
 <p>Complex integrals are also supported. The next example computes Euler&#8217;s constant gamma by integrating around the pole of the Riemann zeta function at <em>z</em> = 1:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">(0.577215664901533 - 3.64632996762876e-23j)</span>
+<span class="go">(0.577215664901533 - 4.88811920958765e-23j)</span>
 </pre></div>
 <p>Functions with integral representations, such as the gamma function, can be implemented directly from the definition:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
@@ -298,11 +298,11 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="p">),</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="mf">0</span><span class="p">]</span>
-<span class="go">0.841416950370044847975007</span>
+<span class="go">0.8414169503700448479750065</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">0.8414169503700448484253423</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="mf">1</span><span class="p">]</span>
-<span class="go">0.5403864502649686951810432</span>
+<span class="go">0.5403864502649686951810426</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">0.5403864502649686944799696</span>
 </pre></div>
@@ -376,7 +376,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jul 05, 2008.
+      Last updated on Aug 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
