@@ -1,3 +1,33 @@
+--0.9--
+Currently in SVN
+
+* gmpy mpzs are used instead of python ints when available, for
+  huge speedups at high precision (contributed by Case Van Horsen)
+* using binary splitting to compute pi and e near-optimally
+* mpmath includes __version__ information
+* arange behaves more like range (contributed by Vinzent Steinberg)
+* asymptotically faster trigonometric functions via Brent's trick
+  (contributed by Mario Pernici)
+* asymptotically faster inverse trigonometric functions via Newton's
+  method (contributed by Mario Pernici)
+* added Jacobi elliptic functions 1-4, sn, cn, dn (contributed by Mike
+  Taschuk)
+* polyval, polyroots and related functions now use the same order
+  for coefficients as scipy and matlab (i.e. the reverse order of what
+  was used previously in mpmath)
+* fixed polyroots for degree-0 polynomials (contributed by Nimish Telang)
+* added convenience functions (log10, degrees, radians, frexp, modf, ln,
+  arg, sign)
+* added fast cbrt and nthroot functions for computing nth roots
+  (contributed by (Mario Pernici)
+* added various exponential integrals (ei, li, si, ci, shi, chi, erfi)
+* added airy functions (airyai, airybi)
+* more __op__ and __rop__ methods return NotImplemented where
+  appropriate
+* external classes can define a special method _mpmath_ to interact
+  with mpmath numbers and functions
+* fixed some corner cases in atan2
+
 --0.8--
 Released April 20, 2008
 
