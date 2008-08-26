@@ -920,7 +920,26 @@ David Bailey, "The PSLQ Integer Relation Algorithm":
 http://www.cecm.sfu.ca/organics/papers/bailey/paper/html/node3.html
 
 The stopping criteria are NOT yet properly implemented.
+
+Note: now using fixed-point arithmetic for a ~7x speedup compared
+to the mpf version
 """
+
+from lib import to_fixed, from_man_exp, fsqrt, MODE
+from lib import sqrt_fixed as _sqrt_fixed
+
+# round to nearest integer (can be done more elegantly...)
+def round_fixed(x, prec):
+    return ((x + (1<<(prec-1))) >> prec) << prec
+
+# XXX. this is needed because the Python sqrt_fixed currently chokes on
+# x not ~= 1
+if MODE == 'python':
+    def sqrt_fixed(x, prec):
+        return to_fixed(fsqrt(from_man_exp(x, -prec, prec), prec), prec)
+else:
+    sqrt_fixed = _sqrt_fixed
+
 def pslq(x, eps=None):
     """
     Given a vector of real numbers x = [x1, x2, ..., xn], pslq(x) uses the
@@ -938,8 +957,11 @@ def pslq(x, eps=None):
         target = int(prec * 0.75)
     if eps is None:
         eps = mpf(2)**(-target)
-    x = [None] + x
-    g = sqrt(mpf(4)/3)
+    extra = 60
+    prec += extra
+    eps = to_fixed(eps._mpf_, prec)
+    x = [None] + [to_fixed(mpf(xk)._mpf_, prec) for xk in x]
+    g = sqrt_fixed((4<<prec)//3, prec)
     A = {}
     B = {}
     H = {}
@@ -947,35 +969,39 @@ def pslq(x, eps=None):
     # step 1
     for i in range(1, n+1):
         for j in range(1, n+1):
-            A[i,j] = B[i,j] = mpf(int(i == j))
-            H[i,j] = mpf(0)
+            A[i,j] = B[i,j] = (i==j) << prec
+            H[i,j] = 0
     # step 2
-    s = [None] + [mpf(0)] * n
+    s = [None] + [0] * n
     for k in range(1, n+1):
-        t = mpf(0)
+        t = 0
         for j in range(k, n+1):
-            t += x[j]**2
-        s[k] = sqrt(t)
+            t += (x[j]**2 >> prec)
+        s[k] = sqrt_fixed(t, prec)
     t = s[1]
     y = x[:]
     for k in range(1, n+1):
-        y[k] = x[k] / t
-        s[k] = s[k] / t
+        y[k] = (x[k] << prec) // t
+        s[k] = (s[k] << prec) // t
     # step 3
     for i in range(1, n+1):
-        for j in range(i+1, n): H[i,j] = mpf(0)
-        if i <= n-1: H[i,i] = s[i+1]/s[i]
-        for j in range(1, i): H[i,j] = -y[i]*y[j]/(s[j]*s[j+1])
+        for j in range(i+1, n):
+            H[i,j] = 0
+        if i <= n-1:
+            H[i,i] = (s[i+1] << prec) // s[i]
+        for j in range(1, i):
+            H[i,j] = ((-y[i]*y[j])<<prec)//(s[j]*s[j+1])
     # step 4
     for i in range(2, n+1):
         for j in range(i-1, 0, -1):
-            t = floor(H[i,j]/H[j,j] + 0.5)
-            y[j] = y[j] + t*y[i]
+            #t = floor(H[i,j]/H[j,j] + 0.5)
+            t = round_fixed((H[i,j] << prec)//H[j,j], prec)
+            y[j] = y[j] + (t*y[i] >> prec)
             for k in range(1, j+1):
-                H[i,k] = H[i,k] - t*H[j,k]
+                H[i,k] = H[i,k] - (t*H[j,k] >> prec)
             for k in range(1, n+1):
-                A[i,k] = A[i,k] - t*A[j,k]
-                B[k,j] = B[k,j] + t*B[k,i]
+                A[i,k] = A[i,k] - (t*A[j,k] >> prec)
+                B[k,j] = B[k,j] + (t*B[k,i] >> prec)
     # Main algorithm
     for REP in range(100):
         # step 1
@@ -983,7 +1009,7 @@ def pslq(x, eps=None):
         szmax = -1
         for i in range(1, n):
             h = H[i,i]
-            sz = sqrt(mpf(4)/3)**i * abs(h)
+            sz = (sqrt_fixed((4<<prec)//3, prec)**i * abs(h)) >> (prec*(i-1))
             if sz > szmax:
                 m = i
                 szmax = sz
@@ -995,34 +1021,38 @@ def pslq(x, eps=None):
         for i in range(1,n+1): B[i,m], B[i,m+1] = B[i,m+1], B[i,m]
         # step 3
         if m <= n - 2:
-            t0 = sqrt(H[m,m]**2 + H[m,m+1]**2)
-            t1 = H[m,m] / t0
-            t2 = H[m,m+1] / t0
+            t0 = sqrt_fixed((H[m,m]**2 + H[m,m+1]**2)>>prec, prec)
+            # XXX: this could be spurious, due to fixed-point arithmetic
+            if not t0:
+                break
+            t1 = (H[m,m] << prec) // t0
+            t2 = (H[m,m+1] << prec) // t0
             for i in range(m, n+1):
                 t3 = H[i,m]
                 t4 = H[i,m+1]
-                H[i,m] = t1*t3+t2*t4
-                H[i,m+1] = -t2*t3+t1*t4
+                H[i,m] = (t1*t3+t2*t4) >> prec
+                H[i,m+1] = (-t2*t3+t1*t4) >> prec
         # step 4
         for i in range(m+1, n+1):
             for j in range(min(i-1, m+1), 0, -1):
                 try:
-                    t = floor(H[i,j]/H[j,j] + 0.5)
+                    t = round_fixed((H[i,j] << prec)//H[j,j], prec)
                 # XXX
                 except ZeroDivisionError:
                     break
-                y[j] = y[j] + t*y[i]
+                y[j] = y[j] + ((t*y[i]) >> prec)
                 for k in range(1, j+1):
-                    H[i,k] = H[i,k] - t*H[j,k]
+                    H[i,k] = H[i,k] - (t*H[j,k] >> prec)
                 for k in range(1, n+1):
-                    A[i,k] = A[i,k] - t*A[j,k]
-                    B[k,j] = B[k,j] + t*B[k,i]
+                    A[i,k] = A[i,k] - (t*A[j,k] >> prec)
+                    B[k,j] = B[k,j] + (t*B[k,i] >> prec)
         for i in range(1, n+1):
             if abs(y[i]) < eps:
-                vec = [int(int(B[j,i])) for j in range(1,n+1)]
+                vec = [int(round_fixed(B[j,i], prec) >> prec) for j in range(1,n+1)]
                 if max(abs(v) for v in vec) < 10**6:
                     return vec
     return None
+
 
 def findpoly(x, n=1):
     """Find an integer polynomial P of degree at most n such that
