@@ -48,36 +48,47 @@ def catalan_fixed(prec):
         n += 1
     return s >> (20 + 6)
 
-# Euler's constant (gamma) is computed using the Brent-McMillan formula,
-# gamma ~= A(n)/B(n) - log(n), where
+"""
+Euler's constant (gamma) is computed using the Brent-McMillan formula,
+gamma ~= I(n)/J(n) - log(n), where
 
-#   A(n) = sum_{k=0,1,2,...} (n**k / k!)**2 * H(k)
-#   B(n) = sum_{k=0,1,2,...} (n**k / k!)**2
-#   H(k) = 1 + 1/2 + 1/3 + ... + 1/k
+   I(n) = sum_{k=0,1,2,...} (n**k / k!)**2 * H(k)
+   J(n) = sum_{k=0,1,2,...} (n**k / k!)**2
+   H(k) = 1 + 1/2 + 1/3 + ... + 1/k
 
-# The error is bounded by O(exp(-4n)). Choosing n to be a power
-# of two, 2**p, the logarithm becomes particularly easy to calculate.
+The error is bounded by O(exp(-4n)). Choosing n to be a power
+of two, 2**p, the logarithm becomes particularly easy to calculate.[1]
 
-# Reference:
-# Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
-# http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
+We use the formulation of Algorithm 3.9 in [2] to make the summation
+more efficient.
+
+Reference:
+[1] Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
+http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
+
+[2] Jonathan Borwein & David Bailey, Mathematics by Experiment,
+A K Peters, 2003
+"""
 
 @constant_memo
 def euler_fixed(prec):
-    prec += 30
+    extra = 30
+    prec += extra
     # choose p such that exp(-4*(2**p)) < 2**-n
     p = int(math.log((prec/4) * math.log(2), 2)) + 1
-    n = MP_ONE<<p
-    r = one = MP_ONE<<prec
-    H, A, B, npow, k, d = MP_ZERO, MP_ZERO, MP_ZERO, 1, 1, 1
-    while r:
-        A += (r * H) >> prec
-        B += r
-        r = r * (n*n) // (k*k)
-        H += one // k
+    n = 2**p
+    A = U = -p*log2_fixed(prec)
+    B = V = MP_ONE << prec
+    k = 1
+    while 1:
+        B = B*n**2//k**2
+        A = (A*n**2//k + B)//k
+        U += A
+        V += B
+        if max(abs(A), abs(B)) < 100:
+            break
         k += 1
-    S = ((A<<prec) // B) - p*log2_fixed(prec)
-    return S >> 30
+    return (U<<(prec-extra))//V
 
 # Khinchin's constant is relatively difficult to compute. Here
 # we use the rational zeta series
