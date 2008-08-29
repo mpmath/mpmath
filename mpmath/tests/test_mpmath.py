@@ -549,4 +549,20 @@ def test_root():
         mp.dps -= 4
         assert r.ae(r1)
         assert mpc_ae(r, r1, eps)
-    mp.dps = 15 
+    mp.dps = 15
+    assert nthroot(4, 1) == 4
+    assert nthroot(4, 0) == 1
+    assert nthroot(4, -1) == 0.25
+    assert nthroot(inf, 1) == inf
+    assert nthroot(inf, 2) == inf
+    assert nthroot(inf, 3) == inf
+    assert nthroot(inf, -1) == 0
+    assert nthroot(inf, -2) == 0
+    assert nthroot(inf, -3) == 0
+    assert nthroot(j, 1) == j
+    assert nthroot(j, 0) == 1
+    assert nthroot(j, -1) == -j
+    assert isnan(nthroot(nan, 1))
+    assert isnan(nthroot(nan, 0))
+    assert isnan(nthroot(nan, -1))
+    assert isnan(nthroot(inf, 0))

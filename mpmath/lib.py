@@ -1574,12 +1574,32 @@ def fnthroot(s, n, prec, rnd=round_fast):
     Use the Newton method when faster, otherwise use x**(1/n)
     """
     sign, man, exp, bc = s
-    if not man:
-        return fzero
     if sign:
-        raise ComplexResult("cubic root of a negative number")
+        raise ComplexResult("nth root of a negative number")
+    if not man:
+        if s == fnan:
+            return fnan
+        if s == fzero:
+            if n > 0:
+                return fzero
+            if n == 0:
+                return fone
+            return finf
+        # Infinity
+        if not n:
+            return fnan
+        if n < 0:
+            return fzero
+        return finf
     flag_inverse = False
-    if n < 0:
+    if n < 2:
+        if n == 0:
+            return fone
+        if n == 1:
+            return fpos(s, prec, rnd)
+        if n == -1:
+            return fdiv(fone, s, prec, rnd)
+        # n < 0
         rnd = reciprocal_rnd[rnd]
         flag_inverse = True
         extra_inverse = 5

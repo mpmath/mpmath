@@ -287,9 +287,15 @@ def mpc_nthroot((a, b), n, prec, rnd=round_fast):
     if a[0] == 0 and b == fzero:
         re = fnthroot(a, prec, rnd)
         return (re, fzero)
-    if n < 0:
+    if n < 2:
+        if n == 0:
+            return mpc_one
+        if n == 1:
+            return mpc_pos((a, b), prec, rnd)
+        if n == -1:
+            return mpc_div(mpc_one, (a, b), prec, rnd)
         inverse = mpc_nthroot((a, b), -n, prec+5, reciprocal_rnd[rnd])
-        return mpc_div((fone, fzero), inverse, prec, rnd)
+        return mpc_div(mpc_one, inverse, prec, rnd)
     if n > 20:
         fn = from_int(n)
         prec2 = prec+10
