@@ -56,13 +56,13 @@ else:
 def to_pickable(x):
     if MODE == 'gmpy':
         sign, man, exp, bc = x
-        return sign, long(man), exp, bc
+        return sign, hex(man)[2:], exp, bc
     else:
         return x
 
 def from_pickable(x):
     sign, man, exp, bc = x
-    return (sign, MP_BASE(man), exp, bc)
+    return (sign, MP_BASE(man, 16), exp, bc)
 
 class ComplexResult(ValueError):
     pass
