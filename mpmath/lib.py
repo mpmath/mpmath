@@ -52,13 +52,14 @@ if MODE == 'gmpy':
 else:
     int_types = (int, long)
 
-# XXX: mpz can't be pickled
+# We don't pickle tuples directly for the following reasons:
+#   1: pickle uses str() for ints, which is inefficient when they are large
+#   2: pickle doesn't work for gmpy mpzs
+# Both problems are solved by using hex()
+
 def to_pickable(x):
-    if MODE == 'gmpy':
-        sign, man, exp, bc = x
-        return sign, hex(man)[2:], exp, bc
-    else:
-        return x
+    sign, man, exp, bc = x
+    return sign, hex(man)[2:], exp, bc
 
 def from_pickable(x):
     sign, man, exp, bc = x
