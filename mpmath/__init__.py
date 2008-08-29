@@ -5,10 +5,12 @@ import lib
 from mptypes import *
 from intervals import mpi
 
-from calculus import diff, diffc, secant, polyval, polyroots, quadts, quadosc
+from calculus import diff, diffc, secant, polyval, polyroots, quadosc
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
 from calculus import odeint
 from calculus import pslq, identify, findpoly
+
+from quadrature import quad, quadgl, quadts, TanhSinh, GaussLegendre
 
 from specfun import lambertw
 from specfun import gamma, factorial, lower_gamma, upper_gamma, \
