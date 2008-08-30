@@ -13,7 +13,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
   "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
-  "sign"]
+  "sign", "plot"]
 
 from lib import *
 from libmpc import *
@@ -1012,3 +1012,76 @@ def nstr(x, n=6):
 def nprint(x, n=6):
     """Print the result of nstr(x, n)."""
     print nstr(x, n)
+
+plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
+
+def plot(f, interval, points=200):
+    """
+    Shows a simple 2D plot of a function or list of functions over
+    a given interval. Some examples:
+
+        plot(lambda x: exp(x)*li(x), [1, 4])
+        plot([cos, sin], [-4, 4])
+        plot([fresnels, fresnelc], [-4, 4])
+        plot([sqrt, cbrt], [-4, 4])
+        plot(lambda t: zeta(0.5+t*j), [-20, 20])
+        plot([floor, ceil, abs, sign], [-5, 5])
+
+    Points where the function raises a numerical exception or
+    returns an infinite value are removed from the graph.
+
+    For parts where the function assumes complex values, the
+    real part is plotted with dashes and the imaginary part
+    is plotted with dots.
+
+    NOTE: This function requires matplotlib (pylab).
+    """
+    import pylab
+    if not isinstance(f, (tuple, list)):
+        f = [f]
+    a, b = interval
+    colors = ['b', 'r', 'g', 'm', 'k']
+    for n, func in enumerate(f):
+        x = arange(a, b, (b-a)/float(points))
+        segments = []
+        segment = []
+        in_complex = False
+        for i in xrange(len(x)):
+            try:
+                v = func(x[i])
+                if isnan(v) or abs(v) == inf:
+                    raise ValueError
+                if isinstance(v, complex_types):
+                    re = float(v.real)
+                    im = float(v.imag)
+                    if not in_complex:
+                        in_complex = True
+                        segments.append(segment)
+                        segment = []
+                    segment.append((float(x[i]), re, im))
+                else:
+                    if in_complex:
+                        in_complex = False
+                        segments.append(segment)
+                        segment = []
+                    segment.append((float(x[i]), v))
+            except plot_ignore:
+                if segment:
+                    segments.append(segment)
+                segment = []
+        if segment:
+            segments.append(segment)
+        for segment in segments:
+            x = [s[0] for s in segment]
+            y = [s[1] for s in segment]
+            if not x:
+                continue
+            c = colors[n % len(colors)]
+            if len(segment[0]) == 3:
+                z = [s[2] for s in segment]
+                pylab.plot(x, y, '--'+c, linewidth=1.5)
+                pylab.plot(x, z, ':'+c, linewidth=1.5)
+            else:
+                pylab.plot(x, y, c, linewidth=1.5)
+    pylab.grid(True)
+    pylab.show()
