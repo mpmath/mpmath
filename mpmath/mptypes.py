@@ -13,7 +13,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
   "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
-  "sign", "plot"]
+  "sign", "plot", "isinf"]
 
 from lib import *
 from libmpc import *
@@ -505,6 +505,11 @@ def isnan(x):
     if not isinstance(x, mpf):
         return False
     return x._mpf_ == fnan
+
+def isinf(x):
+    if not isinstance(x, mpf):
+        return False
+    return x._mpf_ in (finf, fninf)
 
 class mpc(mpnumeric):
     """An mpc represents a complex number using a pair of mpf:s (one

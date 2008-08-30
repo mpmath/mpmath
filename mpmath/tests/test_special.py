@@ -56,6 +56,11 @@ def test_special():
     assert mpf('-inf') == -inf
     assert isnan(mpf('nan'))
 
+    assert isinf(inf)
+    assert isinf(-inf)
+    assert not isinf(mpf(0))
+    assert not isinf(nan)
+
 def test_special_powers():
     assert inf**3 == inf
     assert isnan(inf**0)

@@ -1230,14 +1230,6 @@ def airybi(z):
     return a + b
 
 @funcwrapper
-def ellipk(m):
-    """Complete elliptic integral of the first kind, K(m). Note that
-    the argument is the parameter m = k^2, not the modulus k."""
-    if m == 1:
-        return inf
-    return pi/2 * sum_hyp2f1_rat((1,2),(1,2),(1,1), m)
-
-@funcwrapper
 def ellipe(m):
     """Complete elliptic integral of the second kind, E(m). Note that
     the argument is the parameter m = k^2, not the modulus k."""
@@ -1245,10 +1237,30 @@ def ellipe(m):
         return m
     return pi/2 * sum_hyp2f1_rat((1,2),(-1,2),(1,1), m)
 
+@funcwrapper
+def ellipk(m):
+    """Complete elliptic integral of the first kind, K(m). Note that
+    the argument is the parameter m = k^2, not the modulus k."""
+    # Poor implementation:
+    # return pi/2 * sum_hyp2f1_rat((1,2),(1,2),(1,1), m)
+    if m == 1:
+        return inf
+    if isnan(m):
+        return m
+    if isinf(m):
+        return 1/m
+    s = sqrt(m)
+    a = (1-s)/(1+s)
+    v = pi/4*(1+a)/agm(1,a)
+    if isinstance(m, mpf) and m < 1:
+        return v.real
+    return v
+
 # TODO: for complex a, b handle the branch cut correctly
 @extraprec(15, normalize_output=True)
-def agm(a, b):
-    """Arithmetic-geometric mean of a and b."""
+def agm(a, b=1):
+    """Arithmetic-geometric mean of a and b. Can be called with
+    a single argument, computing agm(a,1) = agm(1,a)."""
     a = convert_lossless(a)
     b = convert_lossless(b)
     if not a or not b:

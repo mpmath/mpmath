@@ -25,16 +25,34 @@ def test_hyper_misc():
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
     assert hyp2f1((1,4),(1,2),(3,4),mpf(80)/81).ae(1.8)
     assert hyp2f1((2,3),(1,1),(3,2),(2+j)/3).ae(1.327531603558679093+0.439585080092769253j)
-    assert ellipk(0).ae(pi/2)
-    assert ellipk(0.5).ae(gamma(0.25)**2/(4*sqrt(pi)))
-    assert ellipk(1) == inf
-    assert ellipe(0).ae(pi/2)
-    assert ellipe(0.5).ae(pi**(mpf(3)/2)/gamma(0.25)**2 +gamma(0.25)**2/(8*sqrt(pi)))
-    assert ellipe(1) == 1
     mp.dps = 25
     v = mpc('1.2282306665029814734863026', '-0.1225033830118305184672133')
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
     mp.dps = 15
+
+def test_elliptic_integrals():
+    mp.dps = 15
+    assert ellipk(0).ae(pi/2)
+    assert ellipk(0.5).ae(gamma(0.25)**2/(4*sqrt(pi)))
+    assert ellipk(1) == inf
+    assert ellipk(-1).ae('1.3110287771460599052')
+    assert ellipk(-2).ae('1.1714200841467698589')
+    assert isinstance(ellipk(-2), mpf)
+    assert ellipk(-50).ae('0.47103424540873331679')
+    assert ellipk(fraction(99999,100000)).ae('7.1427724505817781901')
+    assert ellipk(fraction(100001,100000)).ae(mpc('7.1427417367963090109', '-1.5707923998261688019'))
+    assert ellipk(2).ae(mpc('1.3110287771460599052', '-1.3110287771460599052'))
+    assert ellipk(50).ae(mpc('0.22326753950210985451', '-0.47434723226254522087'))
+    assert ellipk(3+4j).ae(mpc('0.91119556380496500866', '0.63133428324134524388'))
+    assert ellipk(3-4j).ae(mpc('0.91119556380496500866', '-0.63133428324134524388'))
+    assert ellipk(-3+4j).ae(mpc('0.95357894880405122483', '0.23093044503746114444'))
+    assert ellipk(-3-4j).ae(mpc('0.95357894880405122483', '-0.23093044503746114444'))
+    assert isnan(ellipk(nan))
+    assert ellipk(inf) == 0
+    assert ellipk(-inf) == 0
+    assert ellipe(0).ae(pi/2)
+    assert ellipe(0.5).ae(pi**(mpf(3)/2)/gamma(0.25)**2 +gamma(0.25)**2/(8*sqrt(pi)))
+    assert ellipe(1) == 1
 
 def test_exp_integrals():
     mp.dps = 15
@@ -164,6 +182,7 @@ def test_agm():
     assert agm(1,2).ae(1.4567910310469068692)
     assert agm(1,3).ae(1.8636167832448965424)
     assert agm(1,j).ae(0.599070117367796104+0.599070117367796104j)
+    assert agm(2) == agm(1,2)
 
 def test_incomplete_gamma():
     mp.dps = 15
