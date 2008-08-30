@@ -187,6 +187,9 @@ def test_agm():
 def test_incomplete_gamma():
     mp.dps = 15
     assert upper_gamma(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)
+
+def test_erf():
+    mp.dps = 15
     assert erf(0) == 0
     assert erf(1).ae(0.84270079294971486934)
     assert erf(3+4j).ae(-120.186991395079444098 - 27.750337293623902498j)
@@ -204,6 +207,39 @@ def test_incomplete_gamma():
     assert erfi(1/pi).ae(0.371682698493894314)
     assert erfi(inf) == inf
     assert erfi(-inf) == -inf
+    assert erf(1+0j) == erf(1)
+    assert erfc(1+0j) == erfc(1)
+    assert erf(0.2+0.5j).ae(1 - erfc(0.2+0.5j))
+    assert erfc(0) == 1
+    assert erfc(1).ae(1-erf(1))
+    assert erfc(-1).ae(1-erf(-1))
+    assert erfc(1/pi).ae(1-erf(1/pi))
+    assert erfc(-10) == 2
+    assert erfc(-1000000) == 2
+    assert erfc(-inf) == 2
+    assert erfc(inf) == 0
+    assert isnan(erfc(nan))
+    assert (erfc(10**4)*mpf(10)**43429453).ae('3.63998738656420')
+    mp.dps = 50
+    # This one does not use the asymptotic series
+    assert (erfc(10)*10**45).ae('2.0884875837625447570007862949577886115608181193212')
+    # This one does
+    assert (erfc(50)*10**1088).ae('2.0709207788416560484484478751657887929322509209954')
+    mp.dps = 15
+
+def test_pdf():
+    mp.dps = 15
+    assert npdf(-inf) == 0
+    assert npdf(inf) == 0
+    assert npdf(5,0,2).ae(5+4,4,2)
+    assert quadts(lambda x: npdf(x,-0.5,0.8), [-inf, inf]) == 1
+    assert ncdf(0) == 0.5
+    assert ncdf(3,3) == 0.5
+    assert ncdf(-inf) == 0
+    assert ncdf(inf) == 1
+    assert ncdf(10) == 1
+    # Verify that this is computed accurately
+    assert (ncdf(-10)*10**24).ae(7.619853024160526)
 
 def test_gamma():
     mp.dps = 15

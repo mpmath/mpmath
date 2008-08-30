@@ -1178,7 +1178,7 @@ def to_str(s, dps, strip_zeros=True):
         # Prettify numbers close to unit magnitude
         if -(dps//3) < exponent < dps:
             if exponent < 0:
-                digits = ("0"*(-exponent)) + digits
+                digits = ("0"*int(-exponent)) + digits
                 split = 1
             else:
                 split = exponent + 1

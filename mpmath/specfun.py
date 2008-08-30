@@ -1114,19 +1114,140 @@ def upper_gamma(a,z):
     """Upper incomplete gamma function Gamma(a, z)"""
     return gamma(a) - lower_gamma(a, z)
 
+def mpf_erf(x, prec, rnd=round_fast):
+    sign, man, exp, bc = x
+    if not man:
+        if x == fzero: return fzero
+        if x == finf: return fone
+        if x== fninf: return fnone
+        return fnan
+    size = exp + bc
+    lg = math.log
+    # The approximation erf(x) = 1 is accurate to > x^2 * log(e,2) bits
+    if size > 3 and 2*(size-1) + 0.528766 > lg(prec,2):
+        # TODO: interval rounding
+        return [fone, fnone][sign]
+    # erf(x) ~ x close to 0
+    if size < -prec:
+        # TODO: interval rounding
+        return fdiv(fshift(x,1), fsqrt(fpi(prec+10), prec+10), prec, rnd)
+    wp = prec + abs(size) + 20
+    # Taylor series for erf, fixed-point summation
+    t = abs(to_fixed(x, wp))
+    t2 = (t*t) >> wp
+    s, term, k = t, 12345, 1
+    while term:
+        t = ((t * t2) >> wp) // k
+        term = t // (2*k+1)
+        if k & 1:
+            s -= term
+        else:
+            s += term
+        k += 1
+    s = (s << (wp+1)) // sqrt_fixed(pi_fixed(wp), wp)
+    if sign:
+        s = -s
+    # 1-wp multiplies by two
+    return from_man_exp(s, -wp, wp, rnd)
+
+# If possible, we use the asymptotic series for erfc.
+# This is an alternating divergent asymptotic series, so
+# the error is at most equal to the first omitted term.
+# Here we check if the smallest term is small enough
+# for a given x and precision
+def erfc_check_series(x, prec):
+    n = to_int(x)
+    if n**2 * 1.44 > prec:
+        return True
+    return False
+
+def mpf_erfc(x, prec, rnd=round_fast):
+    sign, man, exp, bc = x
+    if not man:
+        if x == fzero: return fone
+        if x == finf: return fzero
+        if x == fninf: return ftwo
+        return fnan
+    wp = prec + 20
+    regular_erf = sign or man+exp < 2
+    if regular_erf or not erfc_check_series(x, wp):
+        if regular_erf:
+            return fsub(fone, mpf_erf(x, prec+5), prec, rnd)
+        # 1-erf(x) ~ exp(-x^2), increase prec to deal with cancellation
+        n = to_int(x)
+        return fsub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
+    s = term = MP_ONE << wp
+    term_prev = 0
+    t = (2 * to_fixed(x, wp) ** 2) >> wp
+    k = 1
+    while 1:
+        term = ((term * (2*k - 1)) << wp) // t
+        if k > 4 and term > term_prev or not term:
+            break
+        if k & 1:
+            s -= term
+        else:
+            s += term
+        term_prev = term
+        #print k, to_str(from_man_exp(term, -wp, 50), 10)
+        k += 1
+    s = (s << wp) // sqrt_fixed(pi_fixed(wp), wp)
+    s = from_man_exp(s, -wp, wp)
+    z = fexp(fneg(fmul(x,x,wp),wp),wp)
+    y = fdiv(fmul(z, s, wp), x, prec, rnd)
+    return y
+
 @funcwrapper
 def erf(z):
     """Error function, erf(z)"""
-    if z == inf:
-        return mpf(1)
-    if z == -inf:
-        return mpf(-1)
-    return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), -z**2)
+    if z.imag:
+        # XXX: may have issues with accuracy for large complex z
+        return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), -z**2)
+    v = mpf_erf(z.real._mpf_, mp.prec, mp.rounding[0])
+    if isinstance(z, mpf):
+        return make_mpf(v)
+    else:
+        return make_mpc((v, fzero))
+
+@funcwrapper
+def erfc(z):
+    """Complementary error function, erfc(z) = 1-erf(z)"""
+    if z.imag:
+        # XXX: may have issues with accuracy for large complex z
+        return 1-erf(z)
+    v = mpf_erfc(z.real._mpf_, mp.prec, mp.rounding[0])
+    if isinstance(z, mpf):
+        return make_mpf(v)
+    else:
+        return make_mpc((v, fzero))
 
 @funcwrapper
 def erfi(z):
     """Imaginary error function, erfi(z)"""
     return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), z**2)
+
+@extraprec(10, normalize_output=True)
+def npdf(x, mu=0, sigma=1):
+    """
+    npdf(x, mu=0, sigma=1) -- probability density function of a
+    normal distribution with mean value mu and variance sigma^2.
+    """
+    x = convert_lossless(x)
+    mu = convert_lossless(mu)
+    sigma = convert_lossless(sigma)
+    return exp(-(x-mu)**2/(2*sigma**2)) / (sigma*sqrt(2*pi))
+
+@extraprec(10, normalize_output=True)
+def ncdf(x, mu=0, sigma=1):
+    """
+    ncdf(x, mu=0, sigma=1) -- cumulative distribution function of
+    a normal distribution with mean value mu and variance sigma^2.
+    """
+    a = (x-mu)/(sigma*sqrt(2))
+    if a < 0:
+        return erfc(-a)/2
+    else:
+        return (1+erf(a))/2
 
 @funcwrapper
 def ei(z):
