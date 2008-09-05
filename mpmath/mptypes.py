@@ -1020,7 +1020,7 @@ def nprint(x, n=6):
 
 plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
 
-def plot(f, interval, points=200):
+def plot(f, xlim=[-5,5], ylim=None, points=200, file=None):
     """
     Shows a simple 2D plot of a function or list of functions over
     a given interval. Some examples:
@@ -1044,7 +1044,7 @@ def plot(f, interval, points=200):
     import pylab
     if not isinstance(f, (tuple, list)):
         f = [f]
-    a, b = interval
+    a, b = xlim
     colors = ['b', 'r', 'g', 'm', 'k']
     for n, func in enumerate(f):
         x = arange(a, b, (b-a)/float(points))
@@ -1088,5 +1088,11 @@ def plot(f, interval, points=200):
                 pylab.plot(x, z, ':'+c, linewidth=1.5)
             else:
                 pylab.plot(x, y, c, linewidth=1.5)
+    pylab.xlim(xlim)
+    if ylim:
+        pylab.ylim(ylim)
     pylab.grid(True)
-    pylab.show()
+    if file:
+        pylab.savefig(file)
+    else:
+        pylab.show()
