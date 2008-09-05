@@ -7,6 +7,8 @@ from libmpc import *
 from mptypes import *
 from mptypes import constant
 
+from gammazeta import *
+
 __docformat__ = 'plaintext'
 
 #---------------------------------------------------------------------------#
@@ -48,48 +50,6 @@ def catalan_fixed(prec):
         n += 1
     return s >> (20 + 6)
 
-"""
-Euler's constant (gamma) is computed using the Brent-McMillan formula,
-gamma ~= I(n)/J(n) - log(n), where
-
-   I(n) = sum_{k=0,1,2,...} (n**k / k!)**2 * H(k)
-   J(n) = sum_{k=0,1,2,...} (n**k / k!)**2
-   H(k) = 1 + 1/2 + 1/3 + ... + 1/k
-
-The error is bounded by O(exp(-4n)). Choosing n to be a power
-of two, 2**p, the logarithm becomes particularly easy to calculate.[1]
-
-We use the formulation of Algorithm 3.9 in [2] to make the summation
-more efficient.
-
-Reference:
-[1] Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
-http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
-
-[2] Jonathan Borwein & David Bailey, Mathematics by Experiment,
-A K Peters, 2003
-"""
-
-@constant_memo
-def euler_fixed(prec):
-    extra = 30
-    prec += extra
-    # choose p such that exp(-4*(2**p)) < 2**-n
-    p = int(math.log((prec/4) * math.log(2), 2)) + 1
-    n = 2**p
-    A = U = -p*log2_fixed(prec)
-    B = V = MP_ONE << prec
-    k = 1
-    while 1:
-        B = B*n**2//k**2
-        A = (A*n**2//k + B)//k
-        U += A
-        V += B
-        if max(abs(A), abs(B)) < 100:
-            break
-        k += 1
-    return (U<<(prec-extra))//V
-
 # Khinchin's constant is relatively difficult to compute. Here
 # we use the rational zeta series
 
@@ -121,12 +81,11 @@ def khinchin_fixed(prec):
         mp.prec = int(prec + prec**0.5 + 15)
         s = mpf(0)
         t = one = mpf(1)
-        B = bernoulli_range()
         fac = mpf(4)
         pipow = twopi2 = (2*pi)**2
         n = 1
         while 1:
-            zeta2n = (-1)**(n+1) * B.next() * pipow / fac
+            zeta2n = (-1)**(n+1) * bernoulli(2*n) * pipow / fac
             term = ((zeta2n - 1) * t) / n
             # print n, nstr(term)
             if term < eps:
@@ -196,11 +155,11 @@ def glaisher_fixed(prec):
         # E-M step 3: endpoint correction term f(N)/2
         s += logN/(N**2 * 2)
         # E-M step 4: the series of derivatives
-        pN, a, b, j, B2k, fac, k = N**3, 1, -2, 3, bernoulli_range(), 2, 1
+        pN, a, b, j, fac, k = N**3, 1, -2, 3, 2, 1
         while 1:
             # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
             D = (a+b*logN)/pN
-            B = B2k.next()
+            B = bernoulli(2*k)
             term = B * D / fac
             if abs(term) < eps:
                 break
@@ -246,213 +205,14 @@ def mpf_phi(p, r): return fme(phi_fixed(p+10), -p-10, p, r)
 def mpf_khinchin(p, r): return fme(khinchin_fixed(p+10), -p-10, p, r)
 def mpf_glaisher(p, r): return fme(glaisher_fixed(p+10), -p-10, p, r)
 def mpf_apery(p, r): return fme(apery_fixed(p+10), -p-10, p, r)
-def mpf_euler(p, r): return fme(euler_fixed(p+10), -p-10, p, r)
 def mpf_catalan(p, r): return fme(catalan_fixed(p+10), -p-10, p, r)
 
 phi = constant(mpf_phi, "Golden ratio (phi)")
 catalan = constant(mpf_catalan, "Catalan's constant")
-euler = constant(mpf_euler, "Euler's constant (gamma)")
 khinchin = constant(mpf_khinchin, "Khinchin's constant")
 glaisher = constant(mpf_glaisher, "Glaisher's constant")
 apery = constant(mpf_apery, "Apery's constant")
 
-
-#----------------------------------------------------------------------
-# Factorial related functions
-#
-
-# For internal use
-def int_fac(n, memo={0:1, 1:1}):
-    """Return n factorial (for integers n >= 0 only)."""
-    f = memo.get(n)
-    if f:
-        return f
-    k = len(memo)
-    p = memo[k-1]
-    while k <= n:
-        p *= k
-        if k < 1024:
-            memo[k] = p
-        k += 1
-    return p
-
-if MODE == "gmpy":
-    int_fac = gmpy.fac
-
-"""
-We compute the gamma function using Spouge's approximation
-
-    x! = (x+a)**(x+1/2) * exp(-x-a) * [c_0 + S(x) + eps]
-
-where S(x) is the sum of c_k/(x+k) from k = 1 to a-1 and the coefficients
-are given by
-
-  c_0 = sqrt(2*pi)
-
-         (-1)**(k-1)
-  c_k =  ----------- (a-k)**(k-1/2) exp(-k+a),  k = 1,2,...,a-1
-          (k - 1)!
-
-Due to an inequality proved by Spouge, if we choose a = int(1.26*n), the
-error eps is less than 10**-n for any x in the right complex half-plane
-(assuming a > 2). In practice, it seems that a can be chosen quite a bit
-lower still (30-50%); this possibility should be investigated.
-
-Reference:
-John L. Spouge, "Computation of the gamma, digamma, and trigamma
-functions", SIAM Journal on Numerical Analysis 31 (1994), no. 3, 931-944.
-"""
-
-spouge_cache = {}
-
-def calc_spouge_coefficients(a, prec):
-    wp = prec + int(a*1.4)
-    c = [0] * a
-    # b = exp(a-1)
-    b = fexp(from_int(a-1), wp)
-    # e = exp(1)
-    e = fexp(fone, wp)
-    # sqrt(2*pi)
-    sq2pi = fsqrt(fshift(fpi(wp), 1), wp)
-    c[0] = to_fixed(sq2pi, prec)
-    for k in xrange(1, a):
-        # c[k] = ((-1)**(k-1) * (a-k)**k) * b / sqrt(a-k)
-        term = fmuli(b, ((-1)**(k-1) * (a-k)**k), wp)
-        term = fdiv(term, fsqrt(from_int(a-k), wp), wp)
-        c[k] = to_fixed(term, prec)
-        # b = b / (e * k)
-        b = fdiv(b, fmul(e, from_int(k), wp), wp)
-    return c
-
-# Cached lookup of coefficients
-def get_spouge_coefficients(prec):
-
-    # This exact precision has been used before
-    if prec in spouge_cache:
-        return spouge_cache[prec]
-
-    for p in spouge_cache:
-        if 0.8 <= float(p)/prec < 1:
-            return spouge_cache[p]
-
-    # Here we estimate the value of a based on Spouge's inequality for
-    # the relative error
-    a = max(3, int(0.39*prec))  # ~= 1.26*n
-
-    coefs = calc_spouge_coefficients(a, prec)
-    spouge_cache[prec] = (prec, a, coefs)
-    return spouge_cache[prec]
-
-def spouge_sum_real(x, prec, a, c):
-    x = to_fixed(x, prec)
-    s = c[0]
-    for k in xrange(1, a):
-        s += (c[k] << prec) // (x + (k << prec))
-    return from_man_exp(s, -prec, prec, round_floor)
-
-# Unused: for fast computation of gamma(p/q)
-def spouge_sum_rational(p, q, prec, a, c):
-    s = c[0]
-    for k in xrange(1, a):
-        s += c[k] * q // (p+q*k)
-    return from_man_exp(s, -prec, prec, round_floor)
-
-# For a complex number a + b*I, we have
-#
-#        c_k          (a+k)*c_k     b * c_k
-#  -------------  =   ---------  -  ------- * I
-#  (a + b*I) + k          M            M
-#
-#                 2    2      2   2              2
-#  where M = (a+k)  + b   = (a + b ) + (2*a*k + k )
-#
-def spouge_sum_complex(re, im, prec, a, c):
-    re = to_fixed(re, prec)
-    im = to_fixed(im, prec)
-    sre, sim = c[0], 0
-    mag = ((re**2)>>prec) + ((im**2)>>prec)
-    for k in xrange(1, a):
-        M = mag + re*(2*k) + ((k**2) << prec)
-        sre += (c[k] * (re + (k << prec))) // M
-        sim -= (c[k] * im) // M
-    re = from_man_exp(sre, -prec, prec, round_floor)
-    im = from_man_exp(sim, -prec, prec, round_floor)
-    return re, im
-
-def mpf_gamma(x, prec, rounding=round_fast, p1=1):
-    sign, man, exp, bc = x
-    if exp >= 0:
-        if sign or (p1 and not man):
-            raise ValueError("gamma function pole")
-        # A direct factorial is fastest
-        if exp + bc <= 10:
-            return from_int(int_fac((man<<exp)-p1), prec, rounding)
-    wp = prec + 15
-    if p1:
-        x = fsub(x, fone, wp)
-    # x < 0.25
-    if sign or exp+bc < -1:
-        # gamma = pi / (sin(pi*x) * gamma(1-x))
-        wp += 15
-        pi = fpi(wp)
-        pix = fmul(x, pi, wp)
-        t = fsin(pix, wp)
-        g = mpf_gamma(fsub(fone, x, wp), wp)
-        return fdiv(pix, fmul(t, g, wp), prec, rounding)
-    sprec, a, c = get_spouge_coefficients(wp)
-    s = spouge_sum_real(x, sprec, a, c)
-    # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    xpa = fadd(x, from_int(a), wp)
-    logxpa = flog(xpa, wp)
-    xph = fadd(x, fhalf, wp)
-    t = fsub(fmul(logxpa, xph, wp), xpa, wp)
-    t = fmul(fexp(t, wp), s, prec, rounding)
-    return t
-
-def mpc_gamma(x, prec, rounding=round_fast, p1=1):
-    re, im = x
-    if im == fzero:
-        return mpf_gamma(re, prec, rounding, p1), fzero
-    wp = prec + 25
-    sign, man, exp, bc = re
-    if p1:
-        re = fsub(re, fone, wp)
-        x = re, im
-    if sign or exp+bc < -1:
-        # Reflection formula
-        wp += 15
-        pi = fpi(wp), fzero
-        pix = mpc_mul(x, pi, wp)
-        t = mpc_sin(pix, wp)
-        u = mpc_sub(mpc_one, x, wp)
-        g = mpc_gamma(u, wp)
-        w = mpc_mul(t, g, wp)
-        return mpc_div(pix, w, wp)
-    sprec, a, c = get_spouge_coefficients(wp)
-    s = spouge_sum_complex(re, im, sprec, a, c)
-    # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    repa = fadd(re, from_int(a), wp)
-    logxpa = mpc_log((repa, im), wp)
-    reph = fadd(re, fhalf, wp)
-    t = mpc_sub(mpc_mul(logxpa, (reph, im), wp), (repa, im), wp)
-    t = mpc_mul(mpc_exp(t, wp), s, prec, rounding)
-    return t
-
-def gamma(x):
-    x = convert_lossless(x)
-    prec = mp.prec
-    if isinstance(x, mpf):
-        return make_mpf(mpf_gamma(x._mpf_, prec, round_nearest, 1))
-    else:
-        return make_mpc(mpc_gamma(x._mpc_, prec, round_nearest, 1))
-
-def factorial(x):
-    x = convert_lossless(x)
-    prec = mp.prec
-    if isinstance(x, mpf):
-        return make_mpf(mpf_gamma(x._mpf_, prec, round_nearest, 0))
-    else:
-        return make_mpc(mpc_gamma(x._mpc_, prec, round_nearest, 0))
 
 def isnpint(x):
     if not x:
@@ -512,161 +272,6 @@ def rf(x, n):
 def ff(x, n):
     """Falling factorial, x_(n)"""
     return gammaprod([x+1], [x-n+1])
-
-
-
-#---------------------------------------------------------------------------#
-#                                                                           #
-#                         Riemann zeta function                             #
-#                                                                           #
-#---------------------------------------------------------------------------#
-
-"""
-We use zeta(s) = eta(s) * (1 - 2**(1-s)) and Borwein's approximation
-                  n-1
-                  ___       k
-             -1  \      (-1)  (d_k - d_n)
-  eta(s) ~= ----  )     ------------------
-             d_n /___              s
-                 k = 0      (k + 1)
-where
-             k
-             ___                i
-            \     (n + i - 1)! 4
-  d_k  =  n  )    ---------------.
-            /___   (n - i)! (2i)!
-            i = 0
-
-If s = a + b*I, the absolute error for eta(s) is bounded by
-
-    3 (1 + 2|b|)
-    ------------ * exp(|b| pi/2)
-               n
-    (3+sqrt(8))
-
-Disregarding the linear term, we have approximately,
-
-  log(err) ~= log(exp(1.58*|b|)) - log(5.8**n)
-  log(err) ~= 1.58*|b| - log(5.8)*n
-  log(err) ~= 1.58*|b| - 1.76*n
-  log2(err) ~= 2.28*|b| - 2.54*n
-
-So for p bits, we should choose n > (p + 2.28*|b|) / 2.54.
-
-Reference:
-Peter Borwein, "An Efficient Algorithm for the Riemann Zeta Function"
-http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps
-
-http://en.wikipedia.org/wiki/Dirichlet_eta_function
-"""
-
-d_cache = {}
-
-def zeta_coefs(n):
-    if n in d_cache:
-        return d_cache[n]
-    ds = [MP_ZERO] * (n+1)
-    d = MP_ONE
-    s = ds[0] = MP_ONE
-    for i in range(1, n+1):
-        d = d * 4 * (n+i-1) * (n-i+1)
-        d //= ((2*i) * ((2*i)-1))
-        s += d
-        ds[i] = s
-    d_cache[n] = ds
-    return ds
-
-# Integer logarithms
-_log_cache = {}
-
-def _logk(k):
-    p = mp.prec
-    if k in _log_cache and _log_cache[k][0] >= p:
-        return +_log_cache[k][1]
-    else:
-        x = log(k)
-        _log_cache[k] = (p, x)
-        return x
-
-@extraprec(10, normalize_output=True)
-def zeta(s):
-    """Returns the Riemann zeta function of s."""
-    s = convert_lossless(s)
-    if s.real < 0:
-        # Reflection formula (XXX: gets bad around the zeros)
-        return 2**s * pi**(s-1) * sin(pi*s/2) * gamma(1-s) * zeta(1-s)
-    else:
-        p = mp.prec
-        n = int((p + 2.28*abs(float(mpc(s).imag)))/2.54) + 3
-        d = zeta_coefs(n)
-        if isinstance(s, mpf) and s == int(s):
-            sint = int(s)
-            t = 0
-            for k in range(n):
-                t += (((-1)**k * (d[k] - d[n])) << p) // (k+1)**sint
-            return (mpf((t, -p)) / -d[n]) / (1 - mpf(2)**(1-sint))
-        else:
-            t = mpf(0)
-            for k in range(n):
-                t += (-1)**k * mpf(d[k]-d[n]) * exp(-_logk(k+1)*s)
-            return (t / -d[n]) / (mpf(1) - exp(log(2)*(1-s)))
-
-
-@extraprec(5, normalize_output=True)
-def bernoulli(n):
-    """nth Bernoulli number, B_n"""
-    if n == 1:
-        return mpf(-0.5)
-    if n & 1:
-        return mpf(0)
-    m = n // 2
-    return (-1)**(m-1) * 2 * factorial(n) / (2*pi)**n * zeta(n)
-
-# For sequential computation of Bernoulli numbers, we use Ramanujan's formula
-
-#                            / n + 3 \
-#   B   =  (A(n) - S(n))  /  |       |
-#    n                       \   n   /
-
-# where A(n) = (n+3)/3 when n = 0 or 2 (mod 6), A(n) = -(n+3)/6
-# when n = 4 (mod 6), and
-
-#          [n/6]
-#           ___
-#          \      /  n + 3  \
-#   S(n) =  )     |         | * B
-#          /___   \ n - 6*k /    n-6*k
-#          k = 1
-
-def bernoulli_range():
-    """Generates B(2), B(4), B(6), ..."""
-    oprec = mp.prec
-    rounding = mp.rounding[0]
-    prec = oprec + 30
-    computed = {0:fone}
-    m, bin1, bin = 2, MP_ONE, MP_BASE(10)
-    f3 = from_int(3)
-    f6 = from_int(6)
-    while 1:
-        case = m % 6
-        s = fzero
-        if m < 6: a = MP_ZERO
-        else:     a = bin1
-        for j in xrange(1, m//6+1):
-            s = fadd(s, fmuli(computed[m-6*j], a, prec), prec)
-            # Inner binomial coefficient
-            j6 = 6*j
-            a *= ((m-5-j6)*(m-4-j6)*(m-3-j6)*(m-2-j6)*(m-1-j6)*(m-j6))
-            a //= ((4+j6)*(5+j6)*(6+j6)*(7+j6)*(8+j6)*(9+j6))
-        if case == 0: b = fdivi(m+3, f3, prec)
-        if case == 2: b = fdivi(m+3, f3, prec)
-        if case == 4: b = fdivi(-m-3, f6, prec)
-        b = fdiv(fsub(b, s, prec), from_int(bin), prec)
-        computed[m] = b
-        yield make_mpf(fpos(b, oprec, rounding))
-        m += 2
-        bin = bin * ((m+2)*(m+3)) // (m*(m-1))
-        if m > 6: bin1 = bin1 * ((2+m)*(3+m)) // ((m-7)*(m-6))
 
 
 #---------------------------------------------------------------------------#
@@ -1549,7 +1154,7 @@ def j1(x):
 #                                                                           #
 #---------------------------------------------------------------------------#
 
-
+# TODO: remove this; use log_int_fixed internally instead
 def log_range():
     """Generate log(2), log(3), log(4), ..."""
     prec = mp.prec + 20

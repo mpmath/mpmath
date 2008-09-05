@@ -12,7 +12,7 @@ etc
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from specfun import factorial, bernoulli_range
+from specfun import factorial, bernoulli
 
 from quadrature import quadgl, quadts
 
@@ -471,7 +471,6 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
     prev = 0
     if verbose:
         print "Summing tail"
-    B = bernoulli_range()
     fac = 2
     while 1:
         if infinite:
@@ -479,7 +478,7 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
         else:
             D = fderiv(a+N, 2*k-1) - fderiv(b, 2*k-1)
         # B(2*k) / fac(2*k)
-        term = B.next() / fac * D
+        term = bernoulli(2*k) / fac * D
         mag = abs(term)
         if verbose:
             print "term", k, "magnitude =", nstr(mag)
