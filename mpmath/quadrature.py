@@ -366,7 +366,7 @@ def quad(rule, f, *points, **kwargs):
     dim = len(points)
     orig = prec = mp.prec
     epsilon = eps/8
-    m = rule.guess_level(prec)
+    m = kwargs.get('maxlevel') or rule.guess_level(prec)
     try:
         mp.prec += 20
         if dim == 1:
