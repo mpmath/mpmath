@@ -326,3 +326,11 @@ def test_gamma_huge_7():
     y = gamma(a)
     assert str(y.real) == "2.0"
     assert str(y.imag) == "2.1673536534260596065418805612488708028522563689298e-1000"
+
+def test_stieltjes():
+    mp.dps = 15
+    assert stieltjes(0).ae(+euler)
+    mp.dps = 25
+    assert stieltjes(2).ae('-0.009690363192872318484530386035')
+    mp.dps = 15
+    assert stieltjes(2).ae(-0.009690363192872318484530386035)

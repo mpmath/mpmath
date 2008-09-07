@@ -63,8 +63,6 @@ def euler_fixed(prec):
 def mpf_euler(p, r):
     return from_man_exp(euler_fixed(p+10), -p-10, p, r)
 
-euler = constant(mpf_euler, "Euler's constant (gamma)")
-
 mpc_half = (fhalf, fzero)
 
 # Note: computation of cos(pi*x) and sin(pi*x) is needed by
@@ -1014,6 +1012,8 @@ def mpc_zeta(s, prec, rnd):
 #                                                                       #
 #-----------------------------------------------------------------------#
 
+euler = constant(mpf_euler, "Euler's constant (gamma)")
+
 cospi = mpfunc('cospi', mpf_cos_pi, mpc_cos_pi, 'computes cos(pi*x) accurately')
 sinpi = mpfunc('sinpi', mpf_sin_pi, mpc_sin_pi, 'computes sin(pi*x) accurately')
 
@@ -1063,3 +1063,32 @@ harmonic = mpfunc('harmonic', mpf_harmonic, mpc_harmonic, "nth harmonic number")
 def bernoulli(n):
     """nth Bernoulli number, B_n"""
     return make_mpf(mpf_bernoulli(int(n), mp.prec, mp.rounding[0]))
+
+stieltjes_cache = {}
+
+def stieltjes(n):
+    """Computes the nth Stieltjes constant."""
+    from mptypes import exp, log, pi, j
+    from quadrature import quadgl
+    n = int(n)
+    if n == 0:
+        return +euler
+    if n < 0:
+        raise ValueError("Stieltjes constants defined for n >= 0")
+    if n in stieltjes_cache:
+        prec, s = stieltjes_cache[n]
+        if prec >= mp.prec:
+            return +s
+    def f(x):
+        r = exp(pi*j*x)
+        return (zeta(r+1) / r**n).real
+    orig = mp.prec
+    try:
+        p = int(log(factorial(n), 2) + 35)
+        mp.prec += p
+        u = quadgl(f, [-1, 1])
+        v = mpf(-1)**n * factorial(n) * u / 2
+    finally:
+        mp.prec = orig
+    stieltjes_cache[n] = (mp.prec, v)
+    return +v

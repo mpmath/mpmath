@@ -14,7 +14,7 @@ from quadrature import quad, quadgl, quadts, TanhSinh, GaussLegendre
 
 from gammazeta import gamma, factorial, fac, bernoulli, bernfrac, psi, polygamma, \
     psi0, digamma, psi1, trigamma, psi2, tetragamma, psi3, pentagamma, \
-    harmonic, euler, zeta
+    harmonic, euler, zeta, stieltjes
 
 from specfun import lambertw
 from specfun import lower_gamma, upper_gamma, gammaprod, binomial, rf, ff
