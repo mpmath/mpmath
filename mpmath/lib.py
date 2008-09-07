@@ -2297,7 +2297,7 @@ def fsin(x, prec, rnd=round_fast):
     return cos_sin(x, prec, rnd, 1)
 
 def ftan(x, prec, rnd=round_fast):
-    c, s = cos_sin(x, prec+6)
+    c, s = cos_sin(x, prec+20)
     return fdiv(s, c, prec, rnd)
 
 
@@ -2316,7 +2316,7 @@ def sinh_taylor(x, prec):
         k += 2
     return s
 
-def cosh_sinh(x, prec, rnd=round_fast):
+def cosh_sinh(x, prec, rnd=round_fast, tanh=0):
     """Simultaneously compute (cosh(x), sinh(x)) for real x"""
     sign, man, exp, bc = x
     if (not man) and exp:
@@ -2328,7 +2328,7 @@ def cosh_sinh(x, prec, rnd=round_fast):
         man = -man
 
     high_bit = exp + bc
-    prec2 = prec + 6
+    prec2 = prec + 20
 
     if high_bit < -3:
         # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
@@ -2346,9 +2346,14 @@ def cosh_sinh(x, prec, rnd=round_fast):
     # and note that the exponential only needs to be computed once.
     ep = fexp(x, prec2)
     em = fdiv(fone, ep, prec2)
-    ch = fshift(fadd(ep, em, prec, rnd), -1)
-    sh = fshift(fsub(ep, em, prec, rnd), -1)
-    return ch, sh
+    if tanh:
+        ch = fadd(ep, em, prec2, rnd)
+        sh = fsub(ep, em, prec2, rnd)
+        return fdiv(sh, ch, prec, rnd)
+    else:
+        ch = fshift(fadd(ep, em, prec, rnd), -1)
+        sh = fshift(fsub(ep, em, prec, rnd), -1)
+        return ch, sh
 
 def fcosh(x, prec, rnd=round_fast):
     """Compute cosh(x) for a real argument x"""
@@ -2360,8 +2365,7 @@ def fsinh(x, prec, rnd=round_fast):
 
 def ftanh(x, prec, rnd=round_fast):
     """Compute tanh(x) for a real argument x"""
-    ch, sh = cosh_sinh(x, prec+6)
-    return fdiv(sh, ch, prec, rnd)
+    return cosh_sinh(x, prec, rnd, tanh=1)
 
 
 #----------------------------------------------------------------------
