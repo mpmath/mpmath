@@ -291,7 +291,10 @@ def list_primes(n):
 def bernfrac(n):
     """
     Computes integers (p,q) such that p/q = B_n exactly, where
-    B_n denotes the nth Bernoulli numbers.
+    B_n denotes the nth Bernoulli number.
+
+    Use bernoulli(n) to get a floating-point approximation
+    instead of the exact fraction (much faster for large n).
     """
     n = int(n)
     if n < 3:
