@@ -16,10 +16,12 @@ python runtests.py -nogmpy
 python runtests.py -strict
   Enforce extra tests in normalize()
 
+python runtests.py -local
+  Insert '../..' at the beginning of sys.path to use local mpmath
+
 """
 
 import sys, os
-sys.path.insert(0, '../..')
 
 if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
@@ -38,6 +40,10 @@ if "-nogmpy" in sys.argv:
 if "-strict" in sys.argv:
     sys.argv.remove('-strict')
     os.environ['MPMATH_STRICT'] = 'Y'
+
+if "-local" in sys.argv:
+    sys.argv.remove('-local')
+    sys.path.insert(0, '../..')
 
 def testit():
     if "-py" in sys.argv:
