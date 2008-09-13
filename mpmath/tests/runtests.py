@@ -19,6 +19,7 @@ python runtests.py -strict
 """
 
 import sys, os
+sys.path.insert(0, '../..')
 
 if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
