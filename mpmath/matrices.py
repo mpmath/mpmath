@@ -410,7 +410,17 @@ def mnorm_oo(A):
     m, n = A.rows, A.cols
     return max((sum((abs(A[i,j]) for j in xrange(n))) for i in xrange(m)))
 
-def norm_p(x, p):
+def mnorm_F(A):
+    """
+    Calculate the Frobenius norm (root of sum of squares) of a matrix.
+
+    It can be useful for estimating the spectral norm (which is difficult to
+    calculate):
+    mnorm_F(A) / sqrt(rank(A)) <= mnorm_2(A) <= mnorm_F(A)
+    """
+    return norm_p(A, 2)
+
+def norm_p(x, p=2):
     """
     Calculate the p-norm of a vector.
     0 < p <= oo

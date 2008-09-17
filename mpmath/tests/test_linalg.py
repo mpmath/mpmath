@@ -4,7 +4,8 @@
 
 from __future__ import division
 
-from mpmath.matrices import matrix, norm_p, mnorm_1, randmatrix, eye
+from mpmath.matrices import matrix, norm_p, mnorm_1, mnorm_oo, mnorm_F, \
+    randmatrix, eye, zeros
 from mpmath.linalg import * # TODO: absolute imports
 from mpmath import mpf, mp
 
@@ -141,6 +142,12 @@ def test_det():
     assert det(A5) == 1
     assert round(det(A6)) == 78356463
     assert det(zeros(3)) == 0
+
+def test_cond():
+    A = matrix([[1.2969, 0.8648], [0.2161, 0.1441]])
+    assert cond(A, mnorm_1) == mpf('327065209.73817754')
+    assert cond(A, mnorm_oo) == mpf('327065209.73817748')
+    assert cond(A, mnorm_F) == mpf('249729266.80008656')
 
 def test_precision():
     mp.dps = 50

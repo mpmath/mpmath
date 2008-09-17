@@ -29,7 +29,8 @@ from elliptic import jacobi_theta_1, jacobi_theta_2, jacobi_theta_3, \
     jacobi_theta_4, jacobi_elliptic_sn, jacobi_elliptic_cn, jacobi_elliptic_dn
 
 from matrices import matrix, eye, diag, zeros, ones, randmatrix, mnorm_1, \
-    mnorm_oo, norm_p
+    mnorm_oo, mnorm_F, norm_p
 
-from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det
+from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
+    cond
 

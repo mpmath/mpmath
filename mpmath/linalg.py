@@ -3,7 +3,6 @@
 # *cache LU decompositon
 # *test unitvector
 # *iterative solving
-# *condition numbers
 # *iterative improving of solution
 
 from __future__ import division
@@ -290,3 +289,21 @@ def det(A):
     for i in xrange(A.rows):
         z *= R[i,i]
     return z
+
+def cond(A, norm=mnorm_1):
+    """
+    Calculate the condition number of a matrix using a specified matrix norm.
+
+    The condition number estimates the sensitivity of a matrix to errors.
+    Example: small input errors for ill-conditionded coefficient matrices
+    alter the solution of the system dramatically.
+
+    For ill-conditioned matrices it's recommended to use qr_solve() instead
+    of lu_solve(). This does not help with input errors however, it just avoids
+    to add additional errors.
+
+    Definition:    cond(A) = ||A|| * ||A**-1||
+    """
+    return norm(A) * norm(inverse(A))
+
+

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
-    norm_p, zeros, ones, randmatrix, extend
+    mnorm_F, norm_p, zeros, ones, randmatrix, extend
 from mpmath.linalg import inverse
-from mpmath import inf, mpf
+from mpmath import inf, mpf, sqrt
 try:
     import numpy
 except ImportError:
@@ -93,6 +93,7 @@ def test_norms():
     A = matrix([[1, -2], [-3, -1], [2, 1]])
     assert mnorm_1(A) == 6
     assert mnorm_oo(A) == 4
+    assert mnorm_F(A) == sqrt(20)
     # vector norms
     x = [1, -2, 7, -12]
     assert norm_p(x, 1) == 22
