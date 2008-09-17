@@ -4,6 +4,9 @@ from __future__ import division
 
 from mptypes import *
 
+rowsep = '\n'
+colsep = '  '
+
 class matrix(object):
     """
     Numerical matrix.
@@ -61,14 +64,23 @@ class matrix(object):
             raise TypeError('could not interpret given arguments')
 
     def __str__(self):
-        s = ""
-        for i in xrange(self.__rows):
-            s += '['
-            for j in xrange(self.__cols):
-                s += '%15.8g ' % self[(i, j)]
-            s.rstrip()
-            s += "]\n"
-        return s
+        # Build table of string representations of the elements
+        res = []
+        # Track per-column max lengths for pretty alignment
+        maxlen = [0] * self.cols
+        for i in range(self.rows):
+            res.append([])
+            for j in range(self.cols):
+                string = str(self[i,j])
+                res[-1].append(string)
+                maxlen[j] = max(len(string), maxlen[j])
+        # Patch strings together
+        for i, row in enumerate(res):
+            for j, elem in enumerate(row):
+                # Pad each element up to maxlen so the columns line up
+                row[j] = elem.rjust(maxlen[j])
+            res[i] = "[" + colsep.join(row) + "]"
+        return rowsep.join(res)
 
     def _toliststr(self):
         s = '['
@@ -278,6 +290,8 @@ class matrix(object):
         new = matrix(self.__rows, self.__cols)
         new.__data = self.__data.copy()
         return new
+
+    __copy__ = copy
 
 def eye(n):
     """
