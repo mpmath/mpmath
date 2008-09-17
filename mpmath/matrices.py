@@ -55,6 +55,7 @@ class matrix(object):
             self.__data = A._matrix__data
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
+            self.force_type = A.force_type
         elif hasattr(args[0], 'tolist'):
             A = matrix(args[0].tolist())
             self.__data = A._matrix__data
@@ -293,31 +294,31 @@ class matrix(object):
     T = property(transpose)
 
     def copy(self):
-        new = matrix(self.__rows, self.__cols)
+        new = matrix(self.__rows, self.__cols, force_type=self.force_type)
         new.__data = self.__data.copy()
         return new
 
     __copy__ = copy
 
-def eye(n):
+def eye(n, **kwargs):
     """
     Create square identity matrix n x n.
     """
-    A = matrix(n)
+    A = matrix(n, **kwargs)
     for i in xrange(n):
         A[i,i] = 1
     return A
 
-def diag(diagonal):
+def diag(diagonal, **kwargs):
     """
     Create square diagonal matrix using given list.
     """
-    A = matrix(len(diagonal))
+    A = matrix(len(diagonal), **kwargs)
     for i in xrange(len(diagonal)):
         A[i,i] = diagonal[i]
     return A
 
-def zeros(*args):
+def zeros(*args, **kwargs):
     """
     Create matrix m x n filled with zeros.
     One given dimension will create square matrix n x n.
@@ -329,13 +330,13 @@ def zeros(*args):
         n = args[1]
     else:
         raise TypeError('zeros expected at most 2 arguments, got %i' % len(args))
-    A = matrix(m, n)
+    A = matrix(m, n, **kwargs)
     for i in xrange(m):
         for j in xrange(n):
             A[i,j] = 0
     return A
 
-def ones(*args):
+def ones(*args, **kwargs):
     """
     Create matrix m x n filled with ones.
     One given dimension will create square matrix n x n.
@@ -347,13 +348,13 @@ def ones(*args):
         n = args[1]
     else:
         raise TypeError('ones expected at most 2 arguments, got %i' % len(args))
-    A = matrix(m, n)
+    A = matrix(m, n, **kwargs)
     for i in xrange(m):
         for j in xrange(n):
             A[i,j] = 1
     return A
 
-def randmatrix(m, n=None, min=0, max=1):
+def randmatrix(m, n=None, min=0, max=1, **kwargs):
     """
     Create a random m x n matrix.
 
@@ -362,7 +363,7 @@ def randmatrix(m, n=None, min=0, max=1):
     """
     if not n:
         n = m
-    A = matrix(m, n)
+    A = matrix(m, n, **kwargs)
     for i in xrange(m):
         for j in xrange(n):
             A[i,j] = rand() * (max - min) + min
