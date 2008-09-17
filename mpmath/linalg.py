@@ -71,7 +71,7 @@ def U_solve(U, y):
     return x
 
 @extraprec(10)
-def lu_solve(A, b):
+def lu_solve(A, b, **kwargs):
     """
     Ax = b => x
 
@@ -82,7 +82,7 @@ def lu_solve(A, b):
     conditioned system.
     """
     # do not overwrite A nor b
-    A, b = matrix(A).copy(), matrix(b).copy()
+    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
     if A.rows < A.cols:
         raise ValueError('cannot solve underdetermined system')
     if A.rows > A.cols:
@@ -107,7 +107,7 @@ def unitvector(n, i):
     return [0]*(i-1) + [1] + [0]*(n-i)
 
 @extraprec(10)
-def inverse(A):
+def inverse(A, **kwargs):
     """
     Calculate the inverse of a matrix.
 
@@ -115,7 +115,7 @@ def inverse(A):
     solve(A, b) instead, it's about 3 times more efficient.
     """
     # do not overwrite A
-    A = matrix(A).copy()
+    A = matrix(A, **kwargs).copy()
     n = A.rows
     # get LU factorisation
     A, p = LU_decomp(A)
@@ -132,7 +132,7 @@ def inverse(A):
         for j in xrange(n):
             row.append(cols[j][i])
         inv.append(row)
-    return matrix(inv)
+    return matrix(inv, **kwargs)
 
 def householder(A):
     """
@@ -181,7 +181,7 @@ def householder(A):
         r = [0]*m
     return A, p, x, r
 
-def residual(A, x, b):
+def residual(A, x, b, **kwargs):
     """
     Calculate the residual of a solution to a linear equation system.
 
@@ -190,13 +190,13 @@ def residual(A, x, b):
     oldprec = mp.prec
     try:
         mp.prec *= 2
-        A, x, b = matrix(A), matrix(x), matrix(b)
+        A, x, b = matrix(A, **kwargs), matrix(x, **kwargs), matrix(b, **kwargs)
         return A*x - b
     finally:
         mp.prec = oldprec
 
 @extraprec(10)
-def qr_solve(A, b, norm=lambda x: norm_p(x, 2)):
+def qr_solve(A, b, norm=lambda x: norm_p(x, 2), **kwargs):
     """
     Ax = b => x, ||Ax - b||
 
@@ -207,7 +207,7 @@ def qr_solve(A, b, norm=lambda x: norm_p(x, 2)):
     efficient.
     """
     # do not overwrite A nor b
-    A, b = matrix(A).copy(), matrix(b).copy()
+    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
     if A.rows < A.cols:
         raise ValueError('cannot solve underdetermined system')
     H, p, x, r = householder(extend(A, b))
@@ -215,7 +215,7 @@ def qr_solve(A, b, norm=lambda x: norm_p(x, 2)):
     # calculate residual "manually" for determined systems
     if res == 0:
         res = norm(residual(A, x, b))
-    return matrix(x), res
+    return matrix(x, **kwargs), res
 
 def cholesky(A):
     """
@@ -243,7 +243,7 @@ def cholesky(A):
     return L
 
 @extraprec(10)
-def cholesky_solve(A, b):
+def cholesky_solve(A, b, **kwargs):
     """
     Ax = b => x
 
@@ -256,7 +256,7 @@ def cholesky_solve(A, b):
     * differential equations
     """
     # do not overwrite A nor b
-    A, b = matrix(A).copy(), matrix(b).copy()
+    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
     if A.rows !=  A.cols:
         raise ValueError('can only solve determined system')
     # Cholesky factorization
