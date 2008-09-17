@@ -63,7 +63,7 @@ class matrix(object):
         else:
             raise TypeError('could not interpret given arguments')
 
-    def __str__(self):
+    def __nstr__(self, n=None):
         # Build table of string representations of the elements
         res = []
         # Track per-column max lengths for pretty alignment
@@ -71,7 +71,10 @@ class matrix(object):
         for i in range(self.rows):
             res.append([])
             for j in range(self.cols):
-                string = str(self[i,j])
+                if n:
+                    string = nstr(self[i,j], n)
+                else:
+                    string = str(self[i,j])
                 res[-1].append(string)
                 maxlen[j] = max(len(string), maxlen[j])
         # Patch strings together
@@ -81,6 +84,9 @@ class matrix(object):
                 row[j] = elem.rjust(maxlen[j])
             res[i] = "[" + colsep.join(row) + "]"
         return rowsep.join(res)
+
+    def __str__(self):
+        return self.__nstr__()
 
     def _toliststr(self):
         s = '['

@@ -1012,6 +1012,9 @@ def nstr(x, n=6):
         return "(" + complex_to_str(x._mpc_[0], x._mpc_[1], n)  + ")"
     if isinstance(x, basestring):
         return repr(x)
+    from matrices import matrix
+    if isinstance(x, matrix):
+        return x.__nstr__(n)
     return str(x)
 
 def nprint(x, n=6):
