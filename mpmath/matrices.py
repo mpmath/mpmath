@@ -58,11 +58,11 @@ class matrix(object):
             # only copy force_type when not specified
             if not 'force_type' in kwargs:
                 self.force_type = A.force_type
-            else:
+            elif force_type:
                 # apply specified force_type
                 for i in xrange(A.__cols):
                     for j in xrange(A.__rows):
-                        A[i,j] = force_type(A[i,j])
+                        A[i,j] = self.force_type(A[i,j])
         elif hasattr(args[0], 'tolist'):
             A = matrix(args[0].tolist())
             self.__data = A._matrix__data

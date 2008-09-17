@@ -150,10 +150,14 @@ def householder(A):
             s += (A[i,j])**2
         if not abs(s) > eps:
             raise ValueError('matrix is numerically singular')
-        if A[j,j] < 0:
+        try:
+            # this fails for complex numbers
+            if A[j,j] < 0:
+                p.append(sqrt(s))
+            else:
+                p.append(-sqrt(s))
+        except TypeError:
             p.append(sqrt(s))
-        else:
-            p.append(-sqrt(s))
         kappa = s - p[j] * A[j,j]
         A[j,j] -= p[j]
         for k in xrange(j+1, n):
