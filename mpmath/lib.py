@@ -2050,7 +2050,7 @@ def flog(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if not man:
         if x == fzero:
-            return fnan
+            return fninf
         if x == finf:
             return finf
         return fnan
