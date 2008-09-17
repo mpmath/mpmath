@@ -33,7 +33,7 @@ def LU_decomp(A):
         # swap rows according to p
         swap_row(A, j, p[j])
         if abs(A[j,j]) < tol:
-            raise ValueError('matrix is numerically singular')
+            raise ZeroDivisionError('matrix is numerically singular')
         # calculate elimination factors and add rows
         for i in xrange(j + 1, n):
             A[i,j] /= A[j,j]
@@ -279,7 +279,10 @@ def det(A):
     # do not overwrite A
     A = matrix(A).copy()
     # use LU factorization to calculate determinant
-    R, p = LU_decomp(A)
+    try:
+        R, p = LU_decomp(A)
+    except ZeroDivisionError:
+        return 0
     z = 1
     for i, e in enumerate(p):
         if i != e:

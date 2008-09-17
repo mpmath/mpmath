@@ -140,6 +140,7 @@ def test_det():
     assert round(det(A4)) == 4591017
     assert det(A5) == 1
     assert round(det(A6)) == 78356463
+    assert det(zeros(3)) == 0
 
 def test_precision():
     mp.dps = 50
