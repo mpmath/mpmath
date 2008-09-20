@@ -3,7 +3,6 @@ __version__ = '0.9'
 import lib
 
 from mptypes import *
-from intervals import mpi
 
 from calculus import diff, diffc, secant, polyval, polyroots, quadosc
 from calculus import sumem, chebyfit, sumsh, sumrich, limit

@@ -320,7 +320,7 @@ def hypsum(ar, af, ac, br, bf, bc, x):
     have_complex = ac or bc
 
     prec = mp.prec
-    rnd = mp.rounding[0]
+    rnd = round_nearest
     wp = prec + 25
 
     if isinstance(x, mpf):
@@ -450,7 +450,7 @@ def hypsum(ar, af, ac, br, bf, bc, x):
 def sum_hyp0f1_rat((bp, bq), x):
     """Sum 0F1 for rational a. x must be mpf or mpc."""
     prec = mp.prec
-    rnd = mp.rounding[0]
+    rnd = round_nearest
     wp = prec + 25
     if isinstance(x, mpf):
         x = to_fixed(x._mpf_, wp)
@@ -487,7 +487,7 @@ def sum_hyp0f1_rat((bp, bq), x):
 def sum_hyp1f1_rat((ap, aq), (bp, bq), x):
     """Sum 1F1 for rational a, b. x must be mpf or mpc."""
     prec = mp.prec
-    rnd = mp.rounding[0]
+    rnd = round_nearest
     wp = prec + 25
     if isinstance(x, mpf):
         x = to_fixed(x._mpf_, wp)
@@ -523,7 +523,7 @@ def sum_hyp1f1_rat((ap, aq), (bp, bq), x):
 def sum_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x):
     """Sum 2F1 for rational a, b, c. x must be mpf or mpc"""
     prec = mp.prec
-    rnd = mp.rounding[0]
+    rnd = round_nearest
     wp = prec + 25
     if isinstance(x, mpf):
         x = to_fixed(x._mpf_, wp)
@@ -693,7 +693,6 @@ def hyp2f1(a,b,c,z):
 def funcwrapper(f):
     def g(z):
         orig = mp.prec
-        rnd = mp.rounding[0]
         try:
             z = convert_lossless(z)
             mp.prec = orig + 10
@@ -808,7 +807,7 @@ def erf(z):
     if z.imag:
         # XXX: may have issues with accuracy for large complex z
         return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), -z**2)
-    v = mpf_erf(z.real._mpf_, mp.prec, mp.rounding[0])
+    v = mpf_erf(z.real._mpf_, *prec_rounding)
     if isinstance(z, mpf):
         return make_mpf(v)
     else:
@@ -820,7 +819,7 @@ def erfc(z):
     if z.imag:
         # XXX: may have issues with accuracy for large complex z
         return 1-erf(z)
-    v = mpf_erfc(z.real._mpf_, mp.prec, mp.rounding[0])
+    v = mpf_erfc(z.real._mpf_, *prec_rounding)
     if isinstance(z, mpf):
         return make_mpf(v)
     else:

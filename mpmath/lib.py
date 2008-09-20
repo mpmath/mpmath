@@ -4,53 +4,12 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 
 __docformat__ = 'plaintext'
 
-import math, os
+import math
+
 from bisect import bisect
 from random import getrandbits
 
-#----------------------------------------------------------------------------#
-# Support GMPY for high-speed large integer arithmetic.                      #
-#                                                                            #
-# To allow an external module to handle arithmetic, we need to make sure     #
-# that all high-precision variables are declared of the correct type. MP_BASE#
-# is the constructor for the high-precision type. It defaults to Python's    #
-# long type but can be assinged another type, typically gmpy.mpz.            #
-#                                                                            #
-# MP_BASE must be used for the mantissa component of an mpf and must be used #
-# for internal fixed-point operations.                                       #
-#                                                                            #
-# Side-effects                                                               #
-# 1) "is" cannot be used to test for special values. Must use "==".          #
-# 2) There are bugs in GMPY prior to v1.02 so we must use v1.03 or later.    #
-#----------------------------------------------------------------------------#
-
-MODE = 'python'
-MP_BASE = long
-if not os.environ.has_key('MPMATH_NOGMPY'):
-    try:
-        import gmpy
-        if gmpy.version() >= '1.03':
-            MODE = 'gmpy'
-            MP_BASE = gmpy.mpz
-    except:
-        pass
-
-if os.environ.has_key('MPMATH_STRICT'):
-    STRICT = True
-else:
-    STRICT = False
-
-MP_BASE_TYPE = type(MP_BASE(0))
-MP_ZERO = MP_BASE(0)
-MP_ONE = MP_BASE(1)
-MP_TWO = MP_BASE(2)
-MP_THREE = MP_BASE(3)
-MP_FIVE = MP_BASE(5)
-
-if MODE == 'gmpy':
-    int_types = (int, long, MP_BASE_TYPE)
-else:
-    int_types = (int, long)
+from settings import *
 
 # We don't pickle tuples directly for the following reasons:
 #   1: pickle uses str() for ints, which is inefficient when they are large
@@ -91,25 +50,6 @@ fninf = (1, MP_ZERO, -789, -3)
 #----------------------------------------------------------------------------#
 #           Various utilities related to precision and bit-fiddling          #
 #----------------------------------------------------------------------------#
-
-def prec_to_dps(n):
-    """Return number of accurate decimals that can be represented
-    with a precision of n bits."""
-    return max(1, int(round(int(n)/3.3219280948873626)-1))
-
-def dps_to_prec(n):
-    """Return the number of bits required to represent n decimals
-    accurately."""
-    return max(1, int(round((int(n)+1)*3.3219280948873626)))
-
-def repr_dps(n):
-    """Return the number of decimal digits required to represent
-    a number with n-bit precision so that it can be uniquely
-    reconstructed from the representation."""
-    dps = prec_to_dps(n)
-    if dps == 15:
-        return 17
-    return dps + 3
 
 def giant_steps(start, target):
     """Return a list of integers ~= [start, 2*start, ..., target/2,
@@ -187,14 +127,6 @@ bctable = map(bitcount, range(1024))
 #                                  Rounding                                  #
 #----------------------------------------------------------------------------#
 
-# All supported rounding modes
-round_nearest = intern('n')
-round_floor = intern('f')
-round_ceiling = intern('c')
-round_up = intern('u')
-round_down = intern('d')
-
-round_fast = round_down
 
 # This function can be used to round a mantissa generally. However,
 # we will try to do most rounding inline for efficiency.
@@ -233,7 +165,8 @@ h_mask = [h_mask_big(), h_mask_small]
 # The >> operator rounds to floor. shifts_down[rnd][sign]
 # tells whether this is the right direction to use, or if the
 # number should be negated before shifting
-shifts_down = {'f':(1,0), 'c':(0,1), 'd':(1,1), 'u':(0,0)}
+shifts_down = {round_floor:(1,0), round_ceiling:(0,1),
+    round_down:(1,1), round_up:(0,0)}
 
 
 #----------------------------------------------------------------------------#

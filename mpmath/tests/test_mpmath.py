@@ -20,13 +20,11 @@ def mpc_ae(a, b, eps=eps):
 # Advanced rounding test
 def test_add_rounding():
     mp.dps = 15
-    mp.rounding = 'up'
-    assert (mpf(1) + 1e-50) - 1 == 2.2204460492503131e-16
-    assert mpf(1) - 1e-50 == 1.0
-    mp.rounding = 'down'
-    assert 1 - (mpf(1) - 1e-50) == 1.1102230246251565e-16
-    assert mpf(1) + 1e-50 == 1.0
-    mp.rounding = 'default'
+    a = from_float(1e-50)
+    assert fsub(fadd(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
+    assert fsub(fone, a, 53, round_up) == fone
+    assert fsub(fone, fsub(fone, a, 53, round_down), 53, round_down) == from_float(1.1102230246251565e-16)
+    assert fadd(fone, a, 53, round_down) == fone
 
 def test_almost_equal():
     assert mpf(1.2).ae(mpf(1.20000001), 1e-7)
@@ -40,26 +38,26 @@ def test_almost_equal():
 
 # Test that integer arithmetic is exact
 def test_aintegers():
+    # XXX: re-fix this so that all operations are tested with all rounding modes
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
       for rounding in ['down', 'up', 'floor', 'ceiling', 'nearest']:
-        mp.rounding = rounding
         mp.dps = prec
         M = 10**(prec-2)
         M2 = 10**(prec//2-2)
         for i in range(10):
             a = random.randint(-M, M)
             b = random.randint(-M, M)
-            assert mpf(a) == a
-            assert int(mpf(a)) == a
-            assert int(mpf(str(a))) == a
+            assert mpf(a, rounding=rounding) == a
+            assert int(mpf(a, rounding=rounding)) == a
+            assert int(mpf(str(a), rounding=rounding)) == a
             assert mpf(a) + mpf(b) == a + b
             assert mpf(a) - mpf(b) == a - b
             assert -mpf(a) == -a
             a = random.randint(-M2, M2)
             b = random.randint(-M2, M2)
             assert mpf(a) * mpf(b) == a*b
-    mp.rounding = 'default'
+            assert fmul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
     mp.dps = 15
 
 def test_exact_sqrts():
@@ -80,26 +78,22 @@ def test_exact_sqrts():
 
 def test_sqrt_rounding():
     for i in [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15]:
+        i = from_int(i)
         for dps in [7, 15, 83, 106, 2000]:
             mp.dps = dps
-            mp.rounding = 'down'
-            assert (mpf(i)**0.5)**2 < i
-            mp.rounding = 'up'
-            assert (mpf(i)**0.5)**2 > i
+            a = fpowi(fsqrt(i, mp.prec, round_down), 2, mp.prec, round_down)
+            b = fpowi(fsqrt(i, mp.prec, round_up), 2, mp.prec, round_up)
+            assert flt(a, i)
+            assert fgt(b, i)
     random.seed(1234)
     prec = 100
-    for rnd in ['nearest', 'up', 'down']:
-        mp.rounding = rnd
+    for rnd in [round_down, round_nearest, round_ceiling]:
         for i in range(100):
-            mp.prec = prec
-            a = rand()
-            mp.prec = 2*prec
-            b = a**2
-            mp.prec = prec
-            assert sqrt(b) == a
+            a = frand(prec)
+            b = fmul(a, a)
+            assert fsqrt(b, prec, rnd) == a
     mp.dps = 15
-    mp.rounding = 'default'
-        
+
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
 
@@ -518,6 +512,7 @@ def test_root():
             r = nthroot(a, -n)
             r1 = pow(a, -mpf(1)/n)
             assert r.ae(r1)
+    # XXX: this is broken right now
     # tests for nthroot rounding
     for rnd in ['nearest', 'up', 'down']:
         mp.rounding = rnd

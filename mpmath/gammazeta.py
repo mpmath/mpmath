@@ -1032,9 +1032,9 @@ def psi(m, z):
     z = convert_lossless(z)
     m = int(m)
     if isinstance(z, mpf):
-        return make_mpf(mpf_psi(m, z._mpf_, mp.prec, mp.rounding[0]))
+        return make_mpf(mpf_psi(m, z._mpf_, *prec_rounding))
     else:
-        return make_mpc(mpc_psi(m, z._mpc_, mp.prec, mp.rounding[0]))
+        return make_mpc(mpc_psi(m, z._mpc_, *prec_rounding))
 
 def psi0(z):
     """Shortcut for psi(0,z) (the digamma function)"""
@@ -1062,7 +1062,7 @@ harmonic = mpfunc('harmonic', mpf_harmonic, mpc_harmonic, "nth harmonic number")
 
 def bernoulli(n):
     """nth Bernoulli number, B_n"""
-    return make_mpf(mpf_bernoulli(int(n), mp.prec, mp.rounding[0]))
+    return make_mpf(mpf_bernoulli(int(n), *prec_rounding))
 
 stieltjes_cache = {}
 

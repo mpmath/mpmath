@@ -13,161 +13,11 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
   "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
-  "sign", "plot", "isinf"]
+  "sign", "plot", "isinf", "mpi"]
 
 from lib import *
 from libmpc import *
-
-rounding_table = {
-  'floor' : round_floor,
-  'ceiling' : round_ceiling,
-  'down' : round_down,
-  'up' : round_up,
-  'nearest' : round_nearest,
-  'default' : round_nearest
-}
-
-reverse_rounding_table = {
-  round_floor : 'floor',
-  round_ceiling : 'ceiling',
-  round_down : 'down',
-  round_up : 'up',
-  round_nearest : 'nearest'
-}
-
-class Context(object):
-
-    __slots__ = ['trap_complex']
-
-    def __repr__(self):
-        lines = ["Mpmath settings:",
-            ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
-            ("  mp.dps = %s" % self.dps).ljust(30) + "[default: 15]",
-            ("  mp.rounding = '%s'" % self.rounding).ljust(30) + "[default: 'nearest']",
-            ("  mp.trap_complex = %s" % self.trap_complex).ljust(30) + "[default: False]",
-        ]
-        return "\n".join(lines)
-
-    def default(self):
-        global gp, gd, gr
-        gp = 53
-        gd = 15
-        gr = round_nearest
-        self.trap_complex = False
-
-    def set_prec(self, n):
-        global gp, gd
-        gp = max(1, int(n))
-        gd = prec_to_dps(n)
-
-    def set_dps(self, n):
-        global gp, gd
-        gp = dps_to_prec(n)
-        gd = max(1, int(n))
-
-    def set_rounding(self, s):
-        global gr
-        try:
-            gr = rounding_table[s]
-        except KeyError:
-            raise ValueError(("unknown rounding mode: %s.\n" % s) +
-                "Value must be one of: %r" % rounding_table.keys())
-
-    prec = property(lambda self: gp, set_prec)
-    dps = property(lambda self: gd, set_dps)
-    rounding = property(lambda self: reverse_rounding_table[gr], set_rounding)
-
-mp = Context()
-mp.default()
-
-
-class PrecisionManager:
-
-    def __init__(self, precfun, dpsfun, normalize_output=False):
-        self.precfun = precfun
-        self.dpsfun = dpsfun
-        self.normalize_output = normalize_output
-
-    def __call__(self, f):
-        def g(*args, **kwargs):
-            orig = mp.prec
-            try:
-                if self.precfun:
-                    mp.prec = self.precfun(mp.prec)
-                else:
-                    mp.dps = self.dpsfun(mp.dps)
-                if self.normalize_output:
-                    v = f(*args, **kwargs)
-                    if type(v) is tuple:
-                        return tuple([+a for a in v])
-                    return +v
-                else:
-                    return f(*args, **kwargs)
-            finally:
-                mp.prec = orig
-        g.__name__ = f.__name__
-        g.__doc__ = f.__doc__
-        return g
-
-    def __enter__(self):
-        self.origp = mp.prec
-        if self.precfun:
-            mp.prec = self.precfun(mp.prec)
-        else:
-            mp.dps = self.dpsfun(mp.dps)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        mp.prec = self.origp
-        return False
-
-def extraprec(n, normalize_output=False):
-    """
-    The block
-
-        with extraprec(n):
-            <code>
-
-    increases the precision n bits, executes <code>, and then
-    restores the precision.
-
-    extraprec(n)(f) returns a decorated version of the function f
-    that increases the working precision by n bits before execution,
-    and restores the parent precision afterwards. With
-    normalize_output=True, it rounds the return value to the parent
-    precision.
-    """
-    return PrecisionManager(lambda p: p + n, None, normalize_output)
-
-def extradps(n, normalize_output=False):
-    """
-    This function is analogous to extraprec (see documentation)
-    but changes the decimal precision instead of the number of bits.
-    """
-    return PrecisionManager(None, lambda d: d + n, normalize_output)
-
-def workprec(n, normalize_output=False):
-    """
-    The block
-
-        with workprec(n):
-            <code>
-
-    sets the precision to n bits, executes <code>, and then restores
-    the precision.
-
-    workprec(n)(f) returns a decorated version of the function f
-    that sets the precision to n bits before execution,
-    and restores the precision afterwards. With normalize_output=True,
-    it rounds the return value to the parent precision.
-    """
-    return PrecisionManager(lambda p: n, None, normalize_output)
-
-def workdps(n, normalize_output=False):
-    """
-    This function is analogous to workprec (see documentation)
-    but changes the decimal precision instead of the number of bits.
-    """
-    return PrecisionManager(None, lambda d: n, normalize_output)
+from libmpi import *
 
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
@@ -190,19 +40,20 @@ def convert_lossless(x):
     if isinstance(x, int_types): return make_mpf(from_int(x))
     if isinstance(x, float): return make_mpf(from_float(x))
     if isinstance(x, complex): return mpc(x)
-    if isinstance(x, basestring): return make_mpf(from_str(x, gp, gr))
+    if isinstance(x, basestring): return make_mpf(from_str(x, *prec_rounding))
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
-    if hasattr(x, '_mpmath_'): return convert_lossless(x._mpmath_(gp, gr))
+    if hasattr(x, '_mpmath_'): return convert_lossless(x._mpmath_(*prec_rounding))
     raise TypeError("cannot create mpf from " + repr(x))
 
-def mpf_convert_arg(x):
+def mpf_convert_arg(x, prec, rounding):
     if isinstance(x, int_types): return from_int(x)
     if isinstance(x, float): return from_float(x)
-    if isinstance(x, basestring): return from_str(x, gp, gr)
+    if isinstance(x, basestring): return from_str(x, prec, rounding)
+    if isinstance(x, constant): return x.func(prec, rounding)
     if hasattr(x, '_mpf_'): return x._mpf_
     if hasattr(x, '_mpmath_'):
-        t = convert_lossless(x._mpmath_(gp, gr))
+        t = convert_lossless(x._mpmath_(prec, rounding))
         if isinstance(t, mpf):
             return t._mpf_
     raise TypeError("cannot create mpf from " + repr(x))
@@ -213,7 +64,7 @@ def mpf_convert_rhs(x):
     if isinstance(x, complex_types): return mpc(x)
     if hasattr(x, '_mpf_'): return x._mpf_
     if hasattr(x, '_mpmath_'):
-        t = convert_lossless(x._mpmath_(gp, gr))
+        t = convert_lossless(x._mpmath_(*prec_rounding))
         if isinstance(t, mpf):
             return t._mpf_
         return t
@@ -240,24 +91,30 @@ class mpf(mpnumeric):
 
     __slots__ = ['_mpf_']
 
-    def __new__(cls, val=fzero):
+    def __new__(cls, val=fzero, **kwargs):
         """A new mpf can be created from a Python float, an int, a
         or a decimal string representing a number in floating-point
         format."""
+        prec, rounding = prec_rounding
+        if kwargs:
+            prec = kwargs.get('prec', prec)
+            if 'dps' in kwargs:
+                prec = dps_to_prec(kwargs['dps'])
+            rounding = kwargs.get('rounding', rounding)
         if type(val) is cls:
             sign, man, exp, bc = val._mpf_
             if (not man) and exp:
                 return val
-            return make_mpf(normalize(sign, man, exp, bc, gp, gr))
+            return make_mpf(normalize(sign, man, exp, bc, prec, rounding))
         elif type(val) is tuple:
             if len(val) == 2:
-                return make_mpf(from_man_exp(val[0], val[1], gp, gr))
+                return make_mpf(from_man_exp(val[0], val[1], prec, rounding))
             if len(val) == 4:
                 sign, man, exp, bc = val
-                return make_mpf(normalize(sign, MP_BASE(man), exp, bc, gp, gr))
+                return make_mpf(normalize(sign, MP_BASE(man), exp, bc, prec, rounding))
             raise ValueError
         else:
-            return make_mpf(fpos(mpf_convert_arg(val), gp, gr))
+            return make_mpf(fpos(mpf_convert_arg(val, prec, rounding), prec, rounding))
 
     man_exp = property(lambda self: self._mpf_[1:3])
     man = property(lambda self: self._mpf_[1])
@@ -270,8 +127,8 @@ class mpf(mpnumeric):
     def __getstate__(self): return to_pickable(self._mpf_)
     def __setstate__(self, val): self._mpf_ = from_pickable(val)
 
-    def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, repr_dps(gp))
-    def __str__(s): return to_str(s._mpf_, gd)
+    def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, repr_dps(mp.prec))
+    def __str__(s): return to_str(s._mpf_, mp.dps)
     def __hash__(s): return fhash(s._mpf_)
     def __int__(s): return long(to_int(s._mpf_))
     __long__ = __int__
@@ -281,9 +138,9 @@ class mpf(mpnumeric):
     def __nonzero__(s):
         return s._mpf_ != fzero
 
-    def __abs__(s): return make_mpf(fabs(s._mpf_, gp, gr))
-    def __pos__(s): return make_mpf(fpos(s._mpf_, gp, gr))
-    def __neg__(s): return make_mpf(fneg(s._mpf_, gp, gr))
+    def __abs__(s): return make_mpf(fabs(s._mpf_, *prec_rounding))
+    def __pos__(s): return make_mpf(fpos(s._mpf_, *prec_rounding))
+    def __neg__(s): return make_mpf(fneg(s._mpf_, *prec_rounding))
 
     def __eq__(s, t):
         if type(t) is mpf:
@@ -350,58 +207,62 @@ class mpf(mpnumeric):
     def __add__(s, t):
         r = new(mpf)
         sval = s._mpf_
+        prec, rounding = prec_rounding
         try:
-            r._mpf_ = fadd(sval, t._mpf_, gp, gr)
+            r._mpf_ = fadd(sval, t._mpf_, prec, rounding)
             return r
         except:
             if isinstance(t, int_types):
-                r._mpf_ = fadd(sval, from_int(t), gp, gr)
+                r._mpf_ = fadd(sval, from_int(t), prec, rounding)
                 return r
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
             if type(t) is not tuple:
                 return mpc(s) + t
-            r._mpf_ = fadd(sval, t, gp, gr)
+            r._mpf_ = fadd(sval, t, prec, rounding)
             return r
 
     def __sub__(s, t):
         r = new(mpf)
         sval = s._mpf_
+        prec, rounding = prec_rounding
         try:
-            r._mpf_ = fsub(sval, t._mpf_, gp, gr)
+            r._mpf_ = fsub(sval, t._mpf_, prec, rounding)
             return r
         except:
             if isinstance(t, int_types):
-                r._mpf_ = fadd(sval, from_int(-t), gp, gr)
+                r._mpf_ = fadd(sval, from_int(-t), prec, rounding)
                 return r
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
             if type(t) is not tuple:
                 return mpc(s) - t
-            r._mpf_ = fsub(sval, t, gp, gr)
+            r._mpf_ = fsub(sval, t, prec, rounding)
             return r
 
     def __mul__(s, t):
         r = new(mpf)
         sval = s._mpf_
+        prec, rounding = prec_rounding
         try:
-            r._mpf_ = fmul(sval, t._mpf_, gp, gr)
+            r._mpf_ = fmul(sval, t._mpf_, prec, rounding)
             return r
         except:
             if isinstance(t, int_types):
-                r._mpf_ = fmuli(sval, t, gp, gr)
+                r._mpf_ = fmuli(sval, t, prec, rounding)
                 return r
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
             if type(t) is not tuple:
                 return mpc(s) * t
-            r._mpf_ = fmul(sval, t, gp, gr)
+            r._mpf_ = fmul(sval, t, prec, rounding)
             return r
 
     def __div__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, mpf):
             t = t._mpf_
         else:
@@ -410,42 +271,45 @@ class mpf(mpnumeric):
                 return t
             if isinstance(t, complex_types):
                 return mpc(s) / t
-        return make_mpf(fdiv(s._mpf_, t, gp, gr))
+        return make_mpf(fdiv(s._mpf_, t, prec, rounding))
 
     def __mod__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, mpf):
             t = t._mpf_
         else:
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
-        return make_mpf(fmod(s._mpf_, t, gp, gr))
+        return make_mpf(fmod(s._mpf_, t, prec, rounding))
 
     def __pow__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, int_types):
-            return make_mpf(fpowi(s._mpf_, t, gp, gr))
+            return make_mpf(fpowi(s._mpf_, t, prec, rounding))
         if not isinstance(t, mpf):
             t = mpf_convert_rhs(t)
             if t is NotImplemented:
                 return t
             if isinstance(t, complex_types):
                 t = convert_lossless(t)
-                return make_mpc(mpc_pow((s._mpf_, fzero), t._mpc_, gp, gr))
+                return make_mpc(mpc_pow((s._mpf_, fzero), t._mpc_, prec, rounding))
         else:
             t = t._mpf_
         try:
-            return make_mpf(fpow(s._mpf_, t, gp, gr))
+            return make_mpf(fpow(s._mpf_, t, prec, rounding))
         except ComplexResult:
             if mp.trap_complex:
                 raise
-            return make_mpc(mpc_pow((s._mpf_, fzero), (t, fzero), gp, gr))
+            return make_mpc(mpc_pow((s._mpf_, fzero), (t, fzero), prec, rounding))
 
     __radd__ = __add__
 
     def __rmul__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, int_types):
             r = new(mpf)
-            r._mpf_ = fmuli(s._mpf_, t, gp, gr)
+            r._mpf_ = fmuli(s._mpf_, t, prec, rounding)
             return r
         t = mpf_convert_lhs(t)
         if t is NotImplemented:
@@ -459,8 +323,9 @@ class mpf(mpnumeric):
         return t - s
 
     def __rdiv__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, int_types):
-            return make_mpf(fdivi(t, s._mpf_, gp, gr))
+            return make_mpf(fdivi(t, s._mpf_, prec, rounding))
         t = mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -545,11 +410,11 @@ class mpc(mpnumeric):
         return "mpc(real=%s, imag=%s)" % (r, i)
 
     def __str__(s):
-        return "(%s)" % complex_to_str(s.real._mpf_, s.imag._mpf_, gd)
+        return "(%s)" % complex_to_str(s.real._mpf_, s.imag._mpf_, mp.dps)
 
     def __complex__(s): return complex(float(s.real), float(s.imag))
     def __pos__(s): return mpc(s.real, s.imag)
-    def __abs__(s): return make_mpf(mpc_abs(s._mpc_, gp, gr))
+    def __abs__(s): return make_mpf(mpc_abs(s._mpc_, *prec_rounding))
     def __neg__(s): return mpc(-s.real, -s.imag)
     def __nonzero__(s): return bool(s.real) or bool(s.imag)
     def conjugate(s): return mpc(s.real, -s.imag)
@@ -578,53 +443,58 @@ class mpc(mpnumeric):
     __ge__ = _compare
 
     def __add__(s, t):
+        prec, rounding = prec_rounding
         if not isinstance(t, mpc):
             t = mpc_convert_lhs(t)
             if t is NotImplemented:
                 return t
             if isinstance(t, mpf):
-                return make_mpc(mpc_add_mpf(s._mpc_, t._mpf_, gp, gr))
-        return make_mpc(mpc_add(s._mpc_, t._mpc_, gp, gr))
+                return make_mpc(mpc_add_mpf(s._mpc_, t._mpf_, prec, rounding))
+        return make_mpc(mpc_add(s._mpc_, t._mpc_, prec, rounding))
 
     def __sub__(s, t):
+        prec, rounding = prec_rounding
         if not isinstance(t, mpc):
             t = mpc_convert_lhs(t)
             if t is NotImplemented:
                 return t
             if isinstance(t, mpf):
-                return make_mpc(mpc_sub_mpf(s._mpc_, t._mpf_, gp, gr))
-        return make_mpc(mpc_sub(s._mpc_, t._mpc_, gp, gr))
+                return make_mpc(mpc_sub_mpf(s._mpc_, t._mpf_, prec, rounding))
+        return make_mpc(mpc_sub(s._mpc_, t._mpc_, prec, rounding))
 
     def __mul__(s, t):
+        prec, rounding = prec_rounding
         if not isinstance(t, mpc):
             if isinstance(t, int_types):
-                return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
+                return make_mpc(mpc_mul_int(s._mpc_, t, prec, rounding))
             t = mpc_convert_lhs(t)
             if t is NotImplemented:
                 return t
             if isinstance(t, mpf):
-                return make_mpc(mpc_mul_mpf(s._mpc_, t._mpf_, gp, gr))
+                return make_mpc(mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding))
             t = mpc(t)
-        return make_mpc(mpc_mul(s._mpc_, t._mpc_, gp, gr))
+        return make_mpc(mpc_mul(s._mpc_, t._mpc_, prec, rounding))
 
     def __div__(s, t):
+        prec, rounding = prec_rounding
         if not isinstance(t, mpc):
             t = mpc_convert_lhs(t)
             if t is NotImplemented:
                 return t
             if isinstance(t, mpf):
-                return make_mpc(mpc_div_mpf(s._mpc_, t._mpf_, gp, gr))
-        return make_mpc(mpc_div(s._mpc_, t._mpc_, gp, gr))
+                return make_mpc(mpc_div_mpf(s._mpc_, t._mpf_, prec, rounding))
+        return make_mpc(mpc_div(s._mpc_, t._mpc_, prec, rounding))
 
     def __pow__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, int_types):
-            return make_mpc(mpc_pow_int(s._mpc_, t, gp, gr))
+            return make_mpc(mpc_pow_int(s._mpc_, t, prec, rounding))
         t = mpc_convert_lhs(t)
         if t is NotImplemented:
             return t
         if isinstance(t, mpf):
-            return make_mpc(mpc_pow_mpf(s._mpc_, t._mpf_, gp, gr))
-        return make_mpc(mpc_pow(s._mpc_, t._mpc_, gp, gr))
+            return make_mpc(mpc_pow_mpf(s._mpc_, t._mpf_, prec, rounding))
+        return make_mpc(mpc_pow(s._mpc_, t._mpc_, prec, rounding))
 
     __radd__ = __add__
 
@@ -635,8 +505,9 @@ class mpc(mpnumeric):
         return t - s
 
     def __rmul__(s, t):
+        prec, rounding = prec_rounding
         if isinstance(t, int_types):
-            return make_mpc(mpc_mul_int(s._mpc_, t, gp, gr))
+            return make_mpc(mpc_mul_int(s._mpc_, t, prec, rounding))
         t = mpc_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -685,7 +556,8 @@ class constant(mpf):
 
     @property
     def _mpf_(self):
-        return self.func(gp, gr)
+        prec, rounding = prec_rounding
+        return self.func(prec, rounding)
 
     def __repr__(self):
         return "<%s: %s~>" % (self.name, nstr(self))
@@ -716,21 +588,138 @@ def fraction(p, q):
     return constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
         '%s/%s' % (p, q))
 
-def mpfunc(name, real_f, complex_f, doc):
-    def f(x):
-        prec, rnd = gp, gr
+
+class mpi(mpnumeric):
+    """Interval arithmetic class. Precision is controlled by mp.prec."""
+
+    def __new__(cls, a, b=None):
+        if isinstance(a, mpi):
+            return a
+        if b is None:
+            b = a
+        a = mpf(a, rounding=round_floor)
+        b = mpf(b, rounding=round_ceiling)
+        if isnan(a) or isnan(b):
+            a, b = -inf, inf
+        assert a <= b, "endpoints must be properly ordered"
+        return make_mpi((a._mpf_, b._mpf_))
+
+    @property
+    def a(self):
+        return make_mpf(self._val[0])
+
+    @property
+    def b(self):
+        return make_mpf(self._val[1])
+
+    @property
+    def mid(self):
+        return make_mpf(mpi_mid(self._val, mp.prec))
+
+    @property
+    def delta(self):
+        return make_mpf(mpi_delta(self._val, mp.prec))
+
+    def __contains__(self, t):
+        t = mpi(t)
+        return (self.a <= t.a) and (t.b <= self.b)
+
+    def __repr__(self):
+        return mpi_str(self._val, mp.prec)
+
+    __str__ = __repr__
+
+    def __eq__(self, other):
+        if not isinstance(other, mpi):
+            try:
+                other = mpi(other)
+            except:
+                return NotImplemented
+        return (self.a == other.a) and (self.b == other.b)
+
+    def __abs__(self):
+        return make_mpi(mpi_abs(self._val, mp.prec))
+
+    def __pos__(self):
+        return make_mpi(mpi_pos(self._val, mp.prec))
+
+    def __neg__(self):
+        return make_mpi(mpi_neg(self._val, mp.prec))
+
+    def __add__(self, other):
+        if not isinstance(other, mpi):
+            other = mpi(other)
+        return make_mpi(mpi_add(self._val, other._val, mp.prec))
+
+    def __sub__(self, other):
+        if not isinstance(other, mpi):
+            other = mpi(other)
+        return make_mpi(mpi_sub(self._val, other._val, mp.prec))
+
+    def __mul__(self, other):
+        if not isinstance(other, mpi):
+            other = mpi(other)
+        return make_mpi(mpi_mul(self._val, other._val, mp.prec))
+
+    def __div__(self, other):
+        if not isinstance(other, mpi):
+            other = mpi(other)
+        return make_mpi(mpi_div(self._val, other._val, mp.prec))
+
+    def __pow__(self, other):
+        if isinstance(other, (int, long)):
+            return make_mpi(mpi_pow_int(self._val, int(other), mp.prec))
+        if not isinstance(other, mpi):
+            other = mpi(other)
+        return make_mpi(mpi_pow(self._val, other._val, mp.prec))
+
+
+    def __rsub__(s, t):
+        return mpi(t) - s
+
+    def __rdiv__(s, t):
+        return mpi(t) / s
+
+    def __rpow__(s, t):
+        return mpi(t) ** s
+
+    __radd__ = __add__
+    __rmul__ = __mul__
+    __truediv__ = __div__
+    __rtruediv__ = __rdiv__
+    __floordiv__ = __div__
+    __rfloordiv__ = __rdiv__
+
+def make_mpi(val, cls=mpi, new=object.__new__):
+    a = new(cls)
+    a._val = val
+    return a
+
+
+def mpfunc(name, real_f, complex_f, doc, interval_f=None):
+    def f(x, **kwargs):
         if not isinstance(x, mpnumeric):
             x = convert_lossless(x)
+        prec, rounding = prec_rounding
+        if kwargs:
+            prec = kwargs.get('prec', prec)
+            if 'dps' in kwargs:
+                prec = dps_to_prec(kwargs['dps'])
+            rounding = kwargs.get('rounding', rounding)
         if isinstance(x, mpf):
             try:
-                return make_mpf(real_f(x._mpf_, prec, rnd))
+                return make_mpf(real_f(x._mpf_, prec, rounding))
             except ComplexResult:
+                # Handle propagation to complex
                 if mp.trap_complex:
                     raise
-                x = (x._mpf_, fzero)
-        else:
-            x = x._mpc_
-        return make_mpc(complex_f(x, prec, rnd))
+                return make_mpc(complex_f((x._mpf_, fzero), prec, rounding))
+        elif isinstance(x, mpc):
+            return make_mpc(complex_f(x._mpc_, prec, rounding))
+        elif isinstance(x, mpi):
+            if interval_f:
+                return make_mpi(interval_f(x._val, prec))
+        raise NotImplementedError("%s of a %s" % (name, type(x)))
     f.__name__ = name
     f.__doc__ = "Returns the %s of x" % doc
     return f
@@ -759,27 +748,26 @@ def altinvfunc(f, name, desc):
     g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
     return g
 
-sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root")
+sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root", mpi_sqrt)
 cbrt = mpfunc('cbrt', fcbrt, mpc_cbrt, "principal cubic root")
 
 def nthroot(x, n):
     """principal n-th root"""
-    prec, rnd = gp, gr
     if not isinstance(x, mpnumeric):
         x = convert_lossless(x)
     if isinstance(x, mpf):
         try:
-            return make_mpf(fnthroot(x._mpf_, n, prec, rnd))
+            return make_mpf(fnthroot(x._mpf_, n, *prec_rounding))
         except ComplexResult:
             if mp.trap_complex:
                 raise
             x = (x._mpf_, fzero)
     else:
         x = x._mpc_
-    return make_mpc(mpc_nthroot(x, n, prec, rnd))
+    return make_mpc(mpc_nthroot(x, n, *prec_rounding))
 
-exp = mpfunc('exp', fexp, mpc_exp, "exponential function")
-ln = mpfunc('ln', flog, mpc_log, "natural logarithm")
+exp = mpfunc('exp', fexp, mpc_exp, "exponential function", mpi_exp)
+ln = mpfunc('ln', flog, mpc_log, "natural logarithm", mpi_log)
 
 cos = mpfunc('cos', fcos, mpc_cos, "cosine")
 sin = mpfunc('sin', fsin, mpc_sin, "sine")
@@ -814,21 +802,21 @@ def hypot(x, y):
     must be real."""
     x = convert_lossless(x)
     y = convert_lossless(y)
-    return make_mpf(fhypot(x._mpf_, y._mpf_, gp, gr))
+    return make_mpf(fhypot(x._mpf_, y._mpf_, *prec_rounding))
 
 def floor(x):
     """Computes the floor function of x. Note: returns an mpf, not a
     Python int. If x is larger than the precision, it will be rounded,
     not necessarily in the floor direction."""
     x = convert_lossless(x)
-    return make_mpf(ffloor(x._mpf_, gp, gr))
+    return make_mpf(ffloor(x._mpf_, *prec_rounding))
 
 def ceil(x):
     """Computes the ceiling function of x. Note: returns an mpf, not a
     Python int. If x is larger than the precision, it will be rounded,
     not necessarily in the ceiling direction."""
     x = convert_lossless(x)
-    return make_mpf(fceil(x._mpf_, gp, gr))
+    return make_mpf(fceil(x._mpf_, *prec_rounding))
 
 def ldexp(x, n):
     """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
@@ -902,7 +890,7 @@ def atan2(y,x):
     the signs of y and x. (Defined for real x and y only.)"""
     x = convert_lossless(x)
     y = convert_lossless(y)
-    return make_mpf(fatan2(y._mpf_, x._mpf_, gp, gr))
+    return make_mpf(fatan2(y._mpf_, x._mpf_, *prec_rounding))
 
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""
@@ -970,7 +958,7 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
     """
     t = convert_lossless(t)
     if abs_eps is None and rel_eps is None:
-        rel_eps = abs_eps = make_mpf((0, 1, -gp+4, 1))
+        rel_eps = abs_eps = make_mpf((0, 1, -mp.prec+4, 1))
     if abs_eps is None:
         abs_eps = rel_eps
     elif rel_eps is None:

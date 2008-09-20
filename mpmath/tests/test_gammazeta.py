@@ -1,4 +1,5 @@
 from mpmath import *
+from mpmath.settings import round_up
 
 def test_bernoulli():
     assert bernfrac(0) == (1,1)
@@ -136,10 +137,8 @@ def test_zeta_huge():
     v = zeta(33000)
     mp.dps = 15
     assert str(v-1) == '1.02363019598118e-9934'
-    mp.rounding = 'up'
-    assert zeta(pi*1000) > 1
-    assert zeta(3000) > 1
-    mp.rounding = 'default'
+    assert zeta(pi*1000, rounding=round_up) > 1
+    assert zeta(3000, rounding=round_up) > 1
     assert zeta(pi*1000) == 1
     assert zeta(3000) == 1
 

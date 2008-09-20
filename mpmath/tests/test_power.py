@@ -63,6 +63,9 @@ def test_pow_epsilon_rounding():
     rounding should be done strictly away from 1.
     """
 
+    def powr(x, n, r):
+        return make_mpf(fpowi(x._mpf_, n, mp.prec, r))
+
     for (inprec, outprec) in [(100, 20), (5000, 3000)]:
 
         mp.prec = inprec
@@ -73,81 +76,80 @@ def test_pow_epsilon_rounding():
         neg09999 = -pos09999
 
         mp.prec = outprec
-        mp.rounding = 'up'
-        assert pos10001**5 > 1
-        assert pos09999**5 == 1
-        assert neg10001**5 < -1
-        assert neg09999**5 == -1
-        assert pos10001**6 > 1
-        assert pos09999**6 == 1
-        assert neg10001**6 > 1
-        assert neg09999**6 == 1
+        r = round_up
+        assert powr(pos10001, 5, r) > 1
+        assert powr(pos09999, 5, r) == 1
+        assert powr(neg10001, 5, r) < -1
+        assert powr(neg09999, 5, r) == -1
+        assert powr(pos10001, 6, r) > 1
+        assert powr(pos09999, 6, r) == 1
+        assert powr(neg10001, 6, r) > 1
+        assert powr(neg09999, 6, r) == 1
 
-        assert pos10001**-5 == 1
-        assert pos09999**-5 > 1
-        assert neg10001**-5 == -1
-        assert neg09999**-5 < -1
-        assert pos10001**-6 == 1
-        assert pos09999**-6 > 1
-        assert neg10001**-6 == 1
-        assert neg09999**-6 > 1
+        assert powr(pos10001, -5, r) == 1
+        assert powr(pos09999, -5, r) > 1
+        assert powr(neg10001, -5, r) == -1
+        assert powr(neg09999, -5, r) < -1
+        assert powr(pos10001, -6, r) == 1
+        assert powr(pos09999, -6, r) > 1
+        assert powr(neg10001, -6, r) == 1
+        assert powr(neg09999, -6, r) > 1
 
-        mp.rounding = 'down'
-        assert pos10001**5 == 1
-        assert pos09999**5 < 1
-        assert neg10001**5 == -1
-        assert neg09999**5 > -1
-        assert pos10001**6 == 1
-        assert pos09999**6 < 1
-        assert neg10001**6 == 1
-        assert neg09999**6 < 1
+        r = round_down
+        assert powr(pos10001, 5, r) == 1
+        assert powr(pos09999, 5, r) < 1
+        assert powr(neg10001, 5, r) == -1
+        assert powr(neg09999, 5, r) > -1
+        assert powr(pos10001, 6, r) == 1
+        assert powr(pos09999, 6, r) < 1
+        assert powr(neg10001, 6, r) == 1
+        assert powr(neg09999, 6, r) < 1
 
-        assert pos10001**-5 < 1
-        assert pos09999**-5 == 1
-        assert neg10001**-5 > -1
-        assert neg09999**-5 == -1
-        assert pos10001**-6 < 1
-        assert pos09999**-6 == 1
-        assert neg10001**-6 < 1
-        assert neg09999**-6 == 1
+        assert powr(pos10001, -5, r) < 1
+        assert powr(pos09999, -5, r) == 1
+        assert powr(neg10001, -5, r) > -1
+        assert powr(neg09999, -5, r) == -1
+        assert powr(pos10001, -6, r) < 1
+        assert powr(pos09999, -6, r) == 1
+        assert powr(neg10001, -6, r) < 1
+        assert powr(neg09999, -6, r) == 1
 
-        mp.rounding = 'ceiling'
-        assert pos10001**5 > 1
-        assert pos09999**5 == 1
-        assert neg10001**5 == -1
-        assert neg09999**5 > -1
-        assert pos10001**6 > 1
-        assert pos09999**6 == 1
-        assert neg10001**6 > 1
-        assert neg09999**6 == 1
+        r = round_ceiling
+        assert powr(pos10001, 5, r) > 1
+        assert powr(pos09999, 5, r) == 1
+        assert powr(neg10001, 5, r) == -1
+        assert powr(neg09999, 5, r) > -1
+        assert powr(pos10001, 6, r) > 1
+        assert powr(pos09999, 6, r) == 1
+        assert powr(neg10001, 6, r) > 1
+        assert powr(neg09999, 6, r) == 1
 
-        assert pos10001**-5 == 1
-        assert pos09999**-5 > 1
-        assert neg10001**-5 > -1
-        assert neg09999**-5 == -1
-        assert pos10001**-6 == 1
-        assert pos09999**-6 > 1
-        assert neg10001**-6 == 1
-        assert neg09999**-6 > 1
+        assert powr(pos10001, -5, r) == 1
+        assert powr(pos09999, -5, r) > 1
+        assert powr(neg10001, -5, r) > -1
+        assert powr(neg09999, -5, r) == -1
+        assert powr(pos10001, -6, r) == 1
+        assert powr(pos09999, -6, r) > 1
+        assert powr(neg10001, -6, r) == 1
+        assert powr(neg09999, -6, r) > 1
 
-        mp.rounding = 'floor'
-        assert pos10001**5 == 1
-        assert pos09999**5 < 1
-        assert neg10001**5 < -1
-        assert neg09999**5 == -1
-        assert pos10001**6 == 1
-        assert pos09999**6 < 1
-        assert neg10001**6 == 1
-        assert neg09999**6 < 1
+        r = round_floor
+        assert powr(pos10001, 5, r) == 1
+        assert powr(pos09999, 5, r) < 1
+        assert powr(neg10001, 5, r) < -1
+        assert powr(neg09999, 5, r) == -1
+        assert powr(pos10001, 6, r) == 1
+        assert powr(pos09999, 6, r) < 1
+        assert powr(neg10001, 6, r) == 1
+        assert powr(neg09999, 6, r) < 1
 
-        assert pos10001**-5 < 1
-        assert pos09999**-5 == 1
-        assert neg10001**-5 == -1
-        assert neg09999**-5 < -1
-        assert pos10001**-6 < 1
-        assert pos09999**-6 == 1
-        assert neg10001**-6 < 1
-        assert neg09999**-6 == 1
+        assert powr(pos10001, -5, r) < 1
+        assert powr(pos09999, -5, r) == 1
+        assert powr(neg10001, -5, r) == -1
+        assert powr(neg09999, -5, r) < -1
+        assert powr(pos10001, -6, r) < 1
+        assert powr(pos09999, -6, r) == 1
+        assert powr(neg10001, -6, r) < 1
+        assert powr(neg09999, -6, r) == 1
 
-    mp.rounding = 'default'
     mp.dps = 15
