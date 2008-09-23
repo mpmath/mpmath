@@ -5,7 +5,7 @@ Miscellaneous special functions
 from lib import *
 from libmpc import *
 from mptypes import *
-from mptypes import constant
+from mptypes import constant, funcwrapper
 
 from gammazeta import *
 
@@ -690,30 +690,13 @@ def hyp2f1(a,b,c,z):
     information."""
     return hyper([a,b], [c], z)
 
-def funcwrapper(f):
-    def g(z):
-        orig = mp.prec
-        try:
-            z = convert_lossless(z)
-            mp.prec = orig + 10
-            v = f(z)
-        finally:
-            mp.prec = orig
-        return +v
-    g.__name__ = f.__name__
-    g.__doc__ = f.__doc__
-    return g
-
-@extraprec(20, normalize_output=True)
+@funcwrapper
 def lower_gamma(a,z):
     """Lower incomplete gamma function gamma(a, z)"""
-    z = convert_lossless(z)
-    if not isinstance(a, (int, long)):
-        a = convert_lossless(a)
     # XXX: may need more precision
     return hyp1f1(1, 1+a, z) * z**a * exp(-z) / a
 
-@extraprec(20, normalize_output=True)
+@funcwrapper
 def upper_gamma(a,z):
     """Upper incomplete gamma function Gamma(a, z)"""
     return gamma(a) - lower_gamma(a, z)
@@ -830,18 +813,16 @@ def erfi(z):
     """Imaginary error function, erfi(z)"""
     return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), z**2)
 
-@extraprec(10, normalize_output=True)
+@funcwrapper
 def npdf(x, mu=0, sigma=1):
     """
     npdf(x, mu=0, sigma=1) -- probability density function of a
     normal distribution with mean value mu and variance sigma^2.
     """
-    x = convert_lossless(x)
-    mu = convert_lossless(mu)
     sigma = convert_lossless(sigma)
     return exp(-(x-mu)**2/(2*sigma**2)) / (sigma*sqrt(2*pi))
 
-@extraprec(10, normalize_output=True)
+@funcwrapper
 def ncdf(x, mu=0, sigma=1):
     """
     ncdf(x, mu=0, sigma=1) -- cumulative distribution function of
@@ -982,12 +963,10 @@ def ellipk(m):
     return v
 
 # TODO: for complex a, b handle the branch cut correctly
-@extraprec(15, normalize_output=True)
+@funcwrapper
 def agm(a, b=1):
     """Arithmetic-geometric mean of a and b. Can be called with
     a single argument, computing agm(a,1) = agm(1,a)."""
-    a = convert_lossless(a)
-    b = convert_lossless(b)
     if not a or not b:
         return a*b
     weps = eps * 16
@@ -996,56 +975,32 @@ def agm(a, b=1):
         a, b = (a+b)*half, (a*b)**half
     return a
 
+@funcwrapper
 def jacobi(n, a, b, x):
     """Jacobi polynomial P_n^(a,b)(x)."""
-    orig = mp.prec
-    try:
-        mp.prec = orig + 15
-        x = convert_lossless(x)
-        v = binomial(n+a,n) * hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
-    finally:
-        mp.prec = orig
-    return +v
+    return binomial(n+a,n) * hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
 
+@funcwrapper
 def legendre(n, x):
     """Legendre polynomial P_n(x)."""
-    orig = mp.prec
-    try:
-        mp.prec = orig + 15
-        x = convert_lossless(x)
-        if not isinstance(n, (int, long)):
-            n = convert_lossless(n)
-        if x == -1:
-            # TODO: hyp2f1 should handle this
-            if x == int(x):
-                return (-1)**(n + (n>=0)) * mpf(-1)
-            return inf
-        v = hyp2f1(-n,n+1,1,(1-x)/2)
-    finally:
-        mp.prec = orig
-    return +v
+    if isint(n):
+        n = int(n)
+    if x == -1:
+        # TODO: hyp2f1 should handle this
+        if x == int(x):
+            return (-1)**(n + (n>=0)) * mpf(-1)
+        return inf
+    return hyp2f1(-n,n+1,1,(1-x)/2)
 
+@funcwrapper
 def chebyt(n, x):
     """Chebyshev polynomial of the first kind T_n(x)."""
-    orig = mp.prec
-    try:
-        mp.prec = orig + 15
-        x = convert_lossless(x)
-        v = hyp2f1(-n,n,0.5,(1-x)/2)
-    finally:
-        mp.prec = orig
-    return +v
+    return hyp2f1(-n,n,0.5,(1-x)/2)
 
+@funcwrapper
 def chebyu(n, x):
     """Chebyshev polynomial of the second kind U_n(x)."""
-    orig = mp.prec
-    try:
-        mp.prec = orig + 15
-        x = convert_lossless(x)
-        v = (n+1) * hyp2f1(-n,n+2,1.5,(1-x)/2)
-    finally:
-        mp.prec = orig
-    return +v
+    return (n+1) * hyp2f1(-n, n+2, 1.5, (1-x)/2)
 
 # A Bessel function of the first kind of integer order, J_n(x), is
 # given by the power series
@@ -1125,15 +1080,14 @@ def mpc_jn_series(n, z, prec):
     im = from_man_exp(sim, -prec, origprec, round_nearest)
     return make_mpc((re, im))
 
+@funcwrapper
 def jv(v, x):
     """Bessel function J_v(x)."""
-    prec = mp.prec
-    x = convert_lossless(x)
-    if isinstance(v, int_types):
+    if isint(v):
         if isinstance(x, mpf):
-            return mpf_jn_series(v, x._mpf_, prec)
+            return mpf_jn_series(int(v), x._mpf_, mp.prec)
         if isinstance(x, mpc):
-            return mpc_jn_series(v, (x.real._mpf_, x.imag._mpf_), prec)
+            return mpc_jn_series(int(v), (x.real._mpf_, x.imag._mpf_), mp.prec)
     hx = x/2
     return hx**v * hyp0f1(v+1, -hx**2) / factorial(v)
 
@@ -1173,7 +1127,7 @@ def log_range():
         L += 2*s//(2*p+1)
         p += 1
 
-@extraprec(30, normalize_output=True)
+@funcwrapper
 def lambertw(z, k=0, approx=None):
     """
     lambertw(z,k) gives the kth branch of the Lambert W function W(z),
@@ -1193,9 +1147,9 @@ def lambertw(z, k=0, approx=None):
     TODO: use a series expansion when extremely close to the branch point
     at -1/e and make sure that the proper branch is chosen there
     """
-    z = convert_lossless(z)
     if isnan(z):
         return z
+    mp.prec += 20
     # We must be extremely careful near the singularities at -1/e and 0
     u = exp(-1)
     if abs(z) <= u:
