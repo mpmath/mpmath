@@ -58,7 +58,7 @@ class matrix(object):
             # only copy force_type when not specified
             if not 'force_type' in kwargs:
                 self.force_type = A.force_type
-            elif force_type:
+            elif self.force_type:
                 # apply specified force_type
                 for i in xrange(A.__cols):
                     for j in xrange(A.__rows):
