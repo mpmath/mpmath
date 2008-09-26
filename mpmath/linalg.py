@@ -134,13 +134,6 @@ def inverse(A, **kwargs):
         inv.append(row)
     return matrix(inv, **kwargs)
 
-def sign(z):
-    """
-    Calculate the sign of a complex number.
-    """
-    # TODO: optimze for reals?
-    return z / abs(z) if z != 0 else 0
-
 def householder(A):
     """
     (A|b) -> H, p, x, res
