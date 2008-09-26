@@ -18,6 +18,10 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 2*sqrt(1-x*x), [-1, 1]), pi)
     mp.dps = 15
 
+def test_quad_symmetry():
+    assert quadts(sin, [-1, 1]) == 0
+    assert quadgl(sin, [-1, 1]) == 0
+
 def test_complex_integration():
     assert quadts(lambda x: x, [0, 1+j]).ae(j)
 

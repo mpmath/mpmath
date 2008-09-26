@@ -1,7 +1,11 @@
 from mptypes import (mp, mpf, convert_lossless, inf, exp, log,
-    ldexp, eps, pi, nstr)
+    ldexp, eps, pi, nstr, make_mpf)
+from lib import fneg
 
 import math
+
+def NEG(x):
+    return make_mpf(fneg(x._mpf_))
 
 def transform(f, a, b):
     """
@@ -178,7 +182,7 @@ class TanhSinh(Quadrature):
         else:
             S = mpf(0)
         for x, w in cls.get_nodes(prec, level, verbose=False):
-            S += w*(f(-x) + f(x))
+            S += w*(f(NEG(x)) + f(x))
         return h*S
 
     @classmethod
@@ -316,7 +320,7 @@ class GaussLegendre(Quadrature):
     def sum_next(cls, prec, level, previous, f, verbose=False):
         s = mpf(0)
         for x, w in cls.get_nodes(prec, level, verbose):
-            s += w * (f(-x) + f(x))
+            s += w * (f(NEG(x)) + f(x))
         return s
 
 
