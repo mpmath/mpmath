@@ -2019,41 +2019,6 @@ def flog(x, prec, rnd=round_fast):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-# We compute sin(x) around 0 from its Taylor series, and cos(x) around 0
-# from sqrt(1-sin(x)**2). This way we can simultaneously compute sin and
-# cos, which are often needed together (e.g. for the tangent function or
-# the complex exponential), with little extra cost compared to computing
-# just one of them. The main reason for computing sin first (and not sin
-# from cos) is to obtain high relative accuracy for x extremely close to
-# 0, where the operation sqrt(1-cos(x)**2) can cause huge cancellations.
-
-# For any value of x, we can reduce it to the interval A = [-pi/4, pi/4]
-# (where the Taylor series converges quickly) by translations, changing
-# signs, and switching the roles of cos and sin:
-
-#    A : sin(x) = sin(x)           cos(x) = cos(x)
-#    B : sin(x) = cos(x-pi/2)      cos(x) = -sin(x-pi/2)
-#    C : sin(x) = -sin(x-pi)       cos(x) = -cos(x-pi)
-#    D : sin(x) = -cos(x-3*pi/2)   cos(x) = sin(x-3*pi/2)
-
-# |     A      |      B     |      C     |     D     |
-# v            v            v            v           v
-#
-#    1 |  ____   ..........                            ____
-#      |      _..          ..                        __
-#      |      . __           .                     __
-#      |    ..    _           ..                  _
-#      |   .       __           .               __
-# -----| -.----------_-----------.-------------_-----------
-#      | .            _           ..          _           .
-#      |               __           .       __           .
-#      |                 _           ..    _           ..
-#      |                  __           . __           .
-#      |                    __         _..          ..
-#   -1 |                      _________   ..........
-#       0                       pi                     2*pi
-
-
 def sin_taylor(x, prec):
     x = MP_BASE(x)
     x2 = (x*x) >> prec
@@ -2095,148 +2060,251 @@ def expi_series(x, prec, r):
       c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
     return c, s
 
-
-# TODO: what we really want is the general version of Ziv's algorithm
-def clamp1(x, prec, rnd):
-    """Ensure that cos and sin values round away from -1 and 1 when
-    using directed rnd."""
-    if rnd is round_nearest or x[1] != 1:
-        return x
-    if rnd in (round_down, round_floor):
-        if x == fone: return (0, (1<<prec)-1, -prec, prec)
-    if rnd in (round_down, round_ceiling):
-        if x == fnone: return (1, (1<<prec)-1, -prec, prec)
-    return x
-
-def cos_sin(x, prec, rnd=round_fast, nt=2):
-    """Simultaneously compute (cos(x), sin(x)) for real x
-    for nt=2; for nt=0 (1) compute only cos (sin)
+def reduce_angle(x, prec):
     """
+    Let x be a nonzero, finite mpf value defining angle (measured in
+    radians). Then reduce_trig(x, prec) returns (y, swaps, n) where:
 
+      y = (man, wp) is the reduced angle as a scaled fixed-point
+        number with precision wp, i.e. a floating-point number with
+        exponent -wp. The mantissa is positive and has width ~equal
+        to the input prec.
+
+      swaps = (swap_cos_sin, cos_sign, sin_sign)
+        Flags indicating the swaps that need to be applied
+        to (cos(y), sin(y)) to obtain (cos(x), sin(x))
+
+      n is an integer giving the original quadrant of x
+
+    Calculation of the quadrant
+    ===========================
+
+    The integer n indices the quadrant of x. That is:
+
+        ...
+        -pi     <   x  < -pi/2     n = -2
+        -pi/2   <   x  <  0        n = -1
+        0       <   x  <  pi/2     n = 0
+        pi/2    <   x  <  pi       n = 1
+        pi      <   x  <  3*pi/2   n = 2
+        3*pi/2  <   x  <  2*pi     n = 3
+        2*pi    <   x  <  5*pi/2   n = 4
+        ...
+
+    Note that n does not wrap around. A quadrant index normalized to
+    lie in [0, 1, 2, 3] can be found easily later on by computing
+    n % 4. Keeping the extended information in n is crucial for
+    interval arithmetic, as it allows one to distinguish between
+    whether two points of a sine wave lie next to each other on
+    a monotonic segment or are actually separated by a full
+    period (or several periods).
+
+    Note also that because is x is guaranteed to be rational, and
+    all roots of the sine/cosine are irrational, all inequalities are
+    strict. That is, we can always compute the correct quadrant.
+    Care is required to do ensure that this is done right.
+
+    Swaps
+    =====
+
+    The number y is a reduction of x to the first quadrant. This is
+    essentially x mod pi/2. In fact, we reduce y further, to the first
+    octant, by computing pi/2-x if x > pi/4.
+
+    Due to the translation and mirror symmetries of trigonometric
+    functions, this allows us to compute sin(x) or cos(x) by computing
+    +/-sin(y) or +/-cos(y). The point, of course, is that if x
+    is large, the Taylor series for y converges much more quickly
+    than the one for x.
+
+    """
     sign, man, exp, bc = x
+    magnitude = abs(exp + bc)
+
+    swap_cos_sin = 0
+    cos_sign = 0
+    sin_sign = 0
 
     if not man:
-        if exp:
-            c, s = (fnan, fnan)
-        else:
-            c, s = fone, fzero
-        if   nt == 2:  return c, s
-        elif nt == 0: return c
-        else: return s
+        return (0, 0), (swap_cos_sin, cos_sign, sin_sign), 0
 
-    magnitude = bc + exp
-    abs_mag = abs(magnitude)
+    # Here we have abs(x) < 0.5. In this case no reduction is necessary.
+    # TODO: could also handle abs(x) < 1
+    if exp + bc < 0:
+        # Quadrant is 0 or -1
+        n = -sign
+        swaps = (0, 0, sign)
+        fixed_exp = exp + bc - prec
+        delta = fixed_exp - exp
+        if delta < 0:
+            man <<= (-delta)
+        elif delta > 0:
+            man >>= delta
+        y = (man, -fixed_exp)
+        return y, swaps, n
 
-    # Very close to 0
-    if magnitude < -prec:
-        # Essentially exact
-        if rnd is round_nearest:
-            c, s = fone, fpos(x, prec, rnd)
-            if   nt == 2: return c, s
-            elif nt == 0: return c
-            else: return s
-        # Magic for interval arithmetic
-        # cos(x) lies between 1 and 1-eps(1)/2
-        if rnd in (round_up, round_ceiling):
-            c = fone
-        else:
-            c = (0, (1<<prec)-1, -prec, prec)
-        # sin(x) lies between x and x-eps(x)/2
-        if rnd in (round_up, [round_ceiling, round_floor][sign]):
-            s = fpos(x, prec, rnd)
-        elif sign:
-            s = fadd(x, (0, 1, magnitude-prec-4, 1), prec, rnd)
-        else:
-            s = fadd(x, (1, 1, magnitude-prec-4, 1), prec, rnd)
-        if   nt == 2: return c, s
-        elif nt == 0: return c
-        else:         return s
-
-    wp = wp1 = prec + 22
-
+    i = 0
     while 1:
-        # Reduce modulo pi/4
-        rp = wp + abs_mag
-        a = to_fixed(x, rp)
-        pi = pi_fixed(rp)
-        pi4 = pi >> 2
-        pi2 = pi >> 1
-        n, rx = divmod(a+pi4, pi2)
-        rx -= pi4
-        rx >>= abs_mag
-
-        # If we're close to a root, we have to increase the
-        # fixed-point precision to obtain full relative accuracy
-        if abs(rx >> (wp1 - 8)) < 10:
-            wp += wp1 - bitcount(abs(rx))
+        cancellation_prec = 20 * 2**i
+        wp = prec + magnitude + cancellation_prec
+        pi1 = pi_fixed(wp)
+        pi2 = pi1 >> 1
+        pi4 = pi1 >> 2
+        # Find nearest multiple
+        n, y = divmod(to_fixed(x, wp), pi2)
+        # Interchange cos/sin ?
+        if y > pi4:
+            swap_cos_sin = 1
+            y = pi2 - y
         else:
-            break
+            swap_cos_sin = 0
+        # Now, the catch is that x might be extremely close to a
+        # multiple of pi/2. This means accuracy is lost, and we may
+        # even end up in the wrong quadrant, which is bad news
+        # for interval arithmetic. This effect manifests by the
+        # fixed-point value of y becoming small.  This is easy to check for.
+        if y >> (prec + magnitude - 10):
+            n = int(n)
+            swap_cos_sin ^= (n % 2)
+            cos_sign = (n % 4) in (1, 2)
+            sin_sign = (n % 4) in (2, 3)
+            return (y >> magnitude, wp - magnitude), \
+                (swap_cos_sin, cos_sign, sin_sign), n
+        i += 1
 
-    case = n % 4
+def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
+    """
+    Simultaneous computation of cos and sin (internal function).
+    """
+    y, wp = y
+    swap_cos_sin, cos_sign, sin_sign = swaps
+
+    if swap_cos_sin:
+        which = -which
+    # XXX: assumes no swaps
+    if not y:
+        return fone, fzero
+
+    # Tiny nonzero argument
+    if wp > prec*2 + 30:
+        y = from_man_exp(y, -wp)
+
+        # For tiny arguments, rounding to nearest is trivial
+        if cos_rnd == sin_rnd == round_nearest:
+            cos, sin = fone, fpos(y, prec, round_nearest)
+            if swap_cos_sin:
+                cos, sin = sin, cos
+            if cos_sign: cos = fneg(cos)
+            if sin_sign: sin = fneg(sin)
+            return cos, sin
+
+        # Directed rounding
+        one_minus_eps = fsub(fone, fshift(fone, -prec-5), prec, round_down)
+        y_plus_eps = fadd(y, fshift(y, -prec-5), prec, round_up)
+        y_minus_eps = fsub(y, fshift(y, -prec-5), prec, round_down)
+
+        if swap_cos_sin:
+            cos_rnd, sin_rnd = sin_rnd, cos_rnd
+            cos_sign, sin_sign = sin_sign, cos_sign
+
+        if cos_sign:
+            cos = [fneg(one_minus_eps), fnone]\
+                [cos_rnd in (round_floor, round_up)]
+        else:
+            cos = [one_minus_eps, fone]\
+                [cos_rnd in (round_ceiling, round_up)]
+        if sin_sign:
+            sin = [fneg(y_minus_eps), fneg(y_plus_eps)]\
+                [sin_rnd in (round_floor, round_up)]
+        else:
+            sin = [y_minus_eps, y_plus_eps]\
+                [sin_rnd in (round_ceiling, round_up)]
+
+        if swap_cos_sin:
+            cos, sin = sin, cos
+
+        return cos, sin
+
+    # Use standard Taylor series
     if prec < 600:
-        if nt == 2:
-            one = 1 << wp
-            s = sin_taylor(rx, wp)
-            c = sqrt_fixed(one - ((s*s)>>wp), wp)
-            if   case == 1: c, s = -s, c
-            elif case == 2: s, c = -s, -c
-            elif case == 3: c, s = s, -c
-            c = clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
-            s = clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
-            return c, s
-        elif nt == 0:
-            if   case == 0: c = cos_taylor(rx, wp)
-            elif case == 1: c = -sin_taylor(rx, wp)
-            elif case == 2: c = -cos_taylor(rx, wp)
-            elif case == 3: c = sin_taylor(rx, wp)
-            return clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
-        else:
-            if   case == 0: s = sin_taylor(rx, wp)
-            elif case == 1: s = cos_taylor(rx, wp)
-            elif case == 2: s = -sin_taylor(rx, wp)
-            elif case == 3: s = -cos_taylor(rx, wp)
-            return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
+        if which == 0:
+            sin = sin_taylor(y, wp)
+            # only need to evaluate one of the series
+            cos = sqrt_fixed((1<<wp) - ((sin*sin)>>wp), wp)
+        elif which == 1:
+            sin = 0
+            cos = cos_taylor(y, wp)
+        elif which == -1:
+            sin = sin_taylor(y, wp)
+            cos = 0
+    # Use exp(i*x) with Brent's trick 
     else:
-        #Use Brent's trick for large precision,
-        # see documentation to exp_series
-        wp0 = wp
-        wp += abs_mag
         r = int(0.137 * prec**0.579)
-        wp += r + 20
-        rx <<= (wp-wp0)
-        rc, rs = expi_series(rx, wp, r)
-        if nt == 2:
-            one = 1 << wp
-            s = rs
-            c = rc
-            if   case == 1: c, s = -s, c
-            elif case == 2: s, c = -s, -c
-            elif case == 3: c, s = s, -c
-            c = clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
-            s = clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
-            return c, s
-        elif nt == 0:
-            if   case == 0: c = rc
-            elif case == 1: c = -rs
-            elif case == 2: c = -rc
-            elif case == 3: c = rs
-            return clamp1(from_man_exp(c, -wp, prec, rnd), prec, rnd)
+        ep = r+20
+        cos, sin = expi_series(y<<ep, wp+ep, r)
+        cos >>= ep
+        sin >>= ep
+
+    if swap_cos_sin:
+        cos, sin = sin, cos
+
+    # Round and set correct signs
+    ONE = MP_ONE << wp
+    if cos_sign:
+        if cos_rnd != round_nearest:
+            cos += (-1)**(cos_rnd in (round_ceiling, round_down))
+        cos = -min(ONE, cos)
+    else:
+        if cos_rnd != round_nearest:
+            cos += (-1)**(cos_rnd in (round_ceiling, round_up))
+        cos = min(ONE, cos)
+
+    if sin_sign:
+        if sin_rnd != round_nearest:
+            sin += (-1)**(sin_rnd in (round_ceiling, round_down))
+        sin = -min(ONE, sin)
+    else:
+        if sin_rnd != round_nearest:
+            sin += (-1)**(sin_rnd in (round_ceiling, round_up))
+        sin = min(ONE, sin)
+
+    cos = from_man_exp(cos, -wp, prec, cos_rnd)
+    sin = from_man_exp(sin, -wp, prec, sin_rnd)
+
+    return cos, sin
+
+def cos_sin(x, prec, rnd=round_fast, which=0):
+    """
+    Computes (cos(x), sin(x)). The parameter 'which' can disable
+    evaluation of either cos or sin:
+
+        0 -- return (cos(x), sin(x), n)
+        1 -- return (cos(x), -,      n)
+       -1 -- return (-,      sin(x), n)
+
+    If only one function is wanted, this is slightly
+    faster at low precision.
+    """
+    sign, man, exp, bc = x
+    # Exact (or special) cases
+    if not man:
+        if exp:
+            return (fnan, fnan)
         else:
-            if   case == 0: s = rs
-            elif case == 1: s = rc
-            elif case == 2: s = -rs
-            elif case == 3: s = -rc
-            return clamp1(from_man_exp(s, -wp, prec, rnd), prec, rnd)
+            return (fone, fzero)
+    y, swaps, n = reduce_angle(x, prec+10)
+    return calc_cos_sin(which, y, swaps, prec, rnd, rnd)
 
 def fcos(x, prec, rnd=round_fast):
-    return cos_sin(x, prec, rnd, 0)
+    return cos_sin(x, prec, rnd, 1)[0]
 
 def fsin(x, prec, rnd=round_fast):
-    return cos_sin(x, prec, rnd, 1)
+    return cos_sin(x, prec, rnd, -1)[1]
 
 def ftan(x, prec, rnd=round_fast):
     c, s = cos_sin(x, prec+20)
     return fdiv(s, c, prec, rnd)
+
 
 
 #----------------------------------------------------------------------

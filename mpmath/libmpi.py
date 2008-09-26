@@ -1,11 +1,12 @@
 from lib import (
     round_down, round_up, round_floor, round_ceiling, round_nearest,
     ComplexResult,
-    fnan, finf, fninf, fzero, fhalf, fone,
+    fnan, finf, fninf, fzero, fhalf, fone, fnone,
     fsign, flt, fle, fgt, fge, feq, fcmp, ffloor, from_int, to_int,
     to_str, prec_to_dps,
     fabs, fneg, fpos, fadd, fsub, fmul, fdiv, fshift, fpowi,
-    flog, fexp, fsqrt)
+    flog, fexp, fsqrt,
+    reduce_angle, calc_cos_sin)
 
 def mpi_str(s, prec):
     sa, sb = s
@@ -270,3 +271,69 @@ def mpi_pow(s, t, prec):
     u = mpi_log(s, prec + 20)
     v = mpi_mul(u, t, prec + 20)
     return mpi_exp(v, prec)
+
+def MIN(x, y):
+    if fle(x, y):
+        return x
+    return y
+
+def MAX(x, y):
+    if fge(x, y):
+        return x
+    return y
+
+def mpi_cos_sin(x, prec):
+    a, b = x
+    # Guaranteed to contain both -1 and 1
+    if finf in (a, b) or fninf in (a, b):
+        return (fnone, fone), (fnone, fone)
+    y, yswaps, yn = reduce_angle(a, prec+20)
+    z, zswaps, zn = reduce_angle(b, prec+20)
+    # Guaranteed to contain both -1 and 1
+    if zn - yn >= 4:
+        return (fnone, fone), (fnone, fone)
+    # Both points in the same quadrant -- cos and sin both strictly monotonous
+    if yn == zn:
+        m = yn % 4
+        if m == 0:
+            cb, sa = calc_cos_sin(0, y, yswaps, prec, round_ceiling, round_floor)
+            ca, sb = calc_cos_sin(0, z, zswaps, prec, round_floor, round_ceiling)
+        if m == 1:
+            cb, sb = calc_cos_sin(0, y, yswaps, prec, round_ceiling, round_ceiling)
+            ca, sa = calc_cos_sin(0, z, zswaps, prec, round_floor, round_ceiling)
+        if m == 2:
+            ca, sb = calc_cos_sin(0, y, yswaps, prec, round_floor, round_ceiling)
+            cb, sa = calc_cos_sin(0, z, zswaps, prec, round_ceiling, round_floor)
+        if m == 3:
+            ca, sa = calc_cos_sin(0, y, yswaps, prec, round_floor, round_floor)
+            cb, sb = calc_cos_sin(0, z, zswaps, prec, round_ceiling, round_ceiling)
+        return (ca, cb), (sa, sb)
+    # Intervals spanning multiple quadrants
+    yn %= 4
+    zn %= 4
+    case = (yn, zn)
+    if case == (0, 1):
+        cb, sy = calc_cos_sin(0, y, yswaps, prec, round_ceiling, round_floor)
+        ca, sz = calc_cos_sin(0, z, zswaps, prec, round_floor, round_floor)
+        return (ca, cb), (MIN(sy, sz), fone)
+    if case == (3, 0):
+        cy, sa = calc_cos_sin(0, y, yswaps, prec, round_floor, round_floor)
+        cz, sb = calc_cos_sin(0, z, zswaps, prec, round_floor, round_ceiling)
+        return (MIN(cy, cz), fone), (sa, sb)
+
+
+    raise NotImplementedError("cos/sin spanning multiple quadrants")
+
+def mpi_cos(x, prec):
+    return mpi_cos_sin(x, prec)[0]
+
+def mpi_sin(x, prec):
+    return mpi_cos_sin(x, prec)[1]
+
+def mpi_tan(x, prec):
+    cos, sin = mpi_cos_sin(x, prec+20)
+    return mpi_div(sin, cos, prec)
+
+def mpi_cot(x, prec):
+    cos, sin = mpi_cos_sin(x, prec+20)
+    return mpi_div(cos, sin, prec)

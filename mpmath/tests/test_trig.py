@@ -34,12 +34,12 @@ def test_trig_near_zero():
     assert sin(a, rounding=round_nearest) == a
     assert sin(a, rounding=round_down) < a
     assert sin(a, rounding=round_floor) < a
-    assert sin(a, rounding=round_up) == a
-    assert sin(a, rounding=round_ceiling) == a
+    assert sin(a, rounding=round_up) >= a
+    assert sin(a, rounding=round_ceiling) >= a
     assert sin(b, rounding=round_nearest) == b
     assert sin(b, rounding=round_down) > b
-    assert sin(b, rounding=round_floor) == b
-    assert sin(b, rounding=round_up) == b
+    assert sin(b, rounding=round_floor) <= b
+    assert sin(b, rounding=round_up) <= b
     assert sin(b, rounding=round_ceiling) > b
 
     assert cos(a, rounding=round_nearest) == 1
