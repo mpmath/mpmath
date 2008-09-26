@@ -137,6 +137,11 @@ def inverse(A, **kwargs):
 def householder(A):
     """
     (A|b) -> H, p, x, res
+
+    (A|b) is the coefficient matrix with left hand side of an optionally
+    overdetermined linear equation system.
+    H and p contain all information about the transformation matrices.
+    x is the solution, res the residual.
     """
     assert isinstance(A, matrix)
     m = A.rows
