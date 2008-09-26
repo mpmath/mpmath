@@ -19,6 +19,9 @@ python runtests.py -strict
 python runtests.py -local
   Insert '../..' at the beginning of sys.path to use local mpmath
 
+Additional arguments are used to filter the tests to run. Only files that have
+one of the arguments in their name are executed.
+
 """
 
 import sys, os
@@ -55,8 +58,17 @@ def testit():
         import os.path
         from time import clock
         modules = []
+        args = sys.argv[1:]
         for f in glob.glob("test*.py"):
             name = os.path.splitext(os.path.basename(f))[0]
+            if args:
+                ok = False
+                for arg in args:
+                    if arg in name:
+                        ok = True
+                        break
+                if not ok:
+                    continue
             module = __import__(name)
             priority = module.__dict__.get('priority', 100)
             if priority == 666:
