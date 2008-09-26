@@ -7,7 +7,7 @@ from __future__ import division
 from mpmath.matrices import matrix, norm_p, mnorm_1, mnorm_oo, mnorm_F, \
     randmatrix, eye, zeros
 from mpmath.linalg import * # TODO: absolute imports
-from mpmath import mpf, mp
+from mpmath.mptypes import *
 
 A1 = matrix([[3, 1, 6],
              [2, 1, 3],
@@ -58,6 +58,11 @@ A9 = matrix([[ 4,  2, -2],
              [ 2,  5, -4],
              [-2, -4, 5.5]])
 b9 = [10, 16, -15.5]
+
+A10 = matrix([[1.0 + 1.0j, 2.0, 2.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]])
+b10 = [1.0, 1.0 + 1.0j, 1.0]
 
 
 def test_LU_decomp():
@@ -127,6 +132,8 @@ def test_solve():
     assert norm_p(residual(A6, qr_solve(A6, b6)[0], b6), inf) < 1.e-10
     assert norm_p(residual(A7, qr_solve(A7, b7)[0], b7), inf) < 1.5
     assert norm_p(residual(A8, qr_solve(A8, b8)[0], b8), 2) <= 4.3
+    assert norm_p(residual(A10, lu_solve(A10, b10), b10), 2) < 1.e-10
+    assert norm_p(residual(A10, qr_solve(A10, b10)[0], b10), 2) < 1.e-10
 
 def test_cholesky():
     A9.force_type = float
@@ -149,7 +156,8 @@ def test_cond():
     assert cond(A, mnorm_oo) == mpf('327065209.73817748')
     assert cond(A, mnorm_F) == mpf('249729266.80008656')
 
+@extradps(50)
 def test_precision():
-    mp.dps = 50
     A = randmatrix(10, 10)
     assert mnorm_1(inverse(inverse(A)) - A) < 1.e-45
+

@@ -134,6 +134,13 @@ def inverse(A, **kwargs):
         inv.append(row)
     return matrix(inv, **kwargs)
 
+def sign(z):
+    """
+    Calculate the sign of a complex number.
+    """
+    # TODO: optimze for reals?
+    return z / abs(z) if z != 0 else 0
+
 def householder(A):
     """
     (A|b) -> H, p, x, res
@@ -155,14 +162,7 @@ def householder(A):
             s += (A[i,j])**2
         if not abs(s) > eps:
             raise ValueError('matrix is numerically singular')
-        try:
-            # this fails for complex numbers
-            if A[j,j] < 0:
-                p.append(sqrt(s))
-            else:
-                p.append(-sqrt(s))
-        except TypeError:
-            p.append(sqrt(s))
+        p.append(-sign(A[j,j]) * sqrt(s))
         kappa = s - p[j] * A[j,j]
         A[j,j] -= p[j]
         for k in xrange(j+1, n):
