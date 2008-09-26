@@ -872,7 +872,7 @@ def rand():
 from operator import gt, lt
 
 def arange(*args):
-    """arange([a,] b[, dt]) -> list [a, a + dt, a + 2*dt, ..., b]"""
+    """arange([a,] b[, dt]) -> list [a, a + dt, a + 2*dt, ..., x] with x < b"""
     if not len(args) <= 3:
         raise TypeError('arange expected at most 3 arguments, got %i'
                         % len(args))
@@ -908,7 +908,6 @@ def arange(*args):
     while 1:
         t = a + dt*i
         i += 1
-        ##print i, t, op(t, b)
         if op(t, b):
             result.append(t)
         else:
