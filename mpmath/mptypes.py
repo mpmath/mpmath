@@ -15,7 +15,8 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
   "sign", "plot", "isinf", "mpi", "isint"]
 
-from lib import *
+from libelefun import *
+from libmpf import *
 from libmpc import *
 from libmpi import *
 

@@ -1,7 +1,5 @@
 __version__ = '0.9'
 
-import lib
-
 from mptypes import *
 
 from calculus import diff, diffc, secant, polyval, polyroots, quadosc

@@ -1,4 +1,4 @@
-from mpmath.lib import *
+from mpmath.libmpf import *
 from mpmath import mpf
 
 from random import randint, choice, seed

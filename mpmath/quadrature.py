@@ -1,6 +1,6 @@
 from mptypes import (mp, mpf, convert_lossless, inf, exp, log,
     ldexp, eps, pi, nstr, make_mpf)
-from lib import mpf_neg
+from libmpf import mpf_neg
 
 import math
 

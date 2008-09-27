@@ -1,6 +1,7 @@
 # TODO: there are too many tests in this file. they should be separated.
 
-from mpmath.lib import *
+from mpmath.libmpf import *
+from mpmath.libelefun import *
 from mpmath import *
 import random
 import time

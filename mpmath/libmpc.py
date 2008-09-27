@@ -2,7 +2,8 @@
 Low-level functions for complex arithmetic.
 """
 
-from lib import *
+from libmpf import *
+from libelefun import *
 
 # An mpc value is a (real, imag) tuple
 mpc_one = fone, fzero

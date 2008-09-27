@@ -1,6 +1,6 @@
 import random
 from mpmath import *
-from mpmath.lib import *
+from mpmath.libmpf import *
 
 
 def test_basic_string():

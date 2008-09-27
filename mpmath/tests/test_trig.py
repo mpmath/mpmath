@@ -1,5 +1,5 @@
 from mpmath import *
-from mpmath.lib import *
+from mpmath.libmpf import *
 
 def test_trig_misc_hard():
     mp.prec = 150

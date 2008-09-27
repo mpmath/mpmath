@@ -2,7 +2,7 @@
 Miscellaneous special functions
 """
 
-from lib import *
+from libmpf import *
 from libmpc import *
 from mptypes import *
 from mptypes import constant, funcwrapper

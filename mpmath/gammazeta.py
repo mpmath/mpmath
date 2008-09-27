@@ -12,7 +12,8 @@ This module implements gamma- and zeta-related functions:
 -----------------------------------------------------------------------
 """
 
-from lib import *
+from libmpf import *
+from libelefun import *
 from libmpc import *
 
 from mptypes import (mp, mpfunc, constant, mpf, make_mpf, make_mpc,
