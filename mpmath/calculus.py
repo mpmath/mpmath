@@ -654,7 +654,7 @@ Note: now using fixed-point arithmetic for a ~7x speedup compared
 to the mpf version
 """
 
-from lib import to_fixed, from_man_exp, fsqrt, MODE
+from lib import to_fixed, from_man_exp, mpf_sqrt, MODE
 from lib import sqrt_fixed as _sqrt_fixed
 
 # round to nearest integer (can be done more elegantly...)
@@ -665,7 +665,7 @@ def round_fixed(x, prec):
 # x not ~= 1
 if MODE == 'python':
     def sqrt_fixed(x, prec):
-        return to_fixed(fsqrt(from_man_exp(x, -prec, prec), prec), prec)
+        return to_fixed(mpf_sqrt(from_man_exp(x, -prec, prec), prec), prec)
 else:
     sqrt_fixed = _sqrt_fixed
 

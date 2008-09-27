@@ -1,11 +1,11 @@
 from mptypes import (mp, mpf, convert_lossless, inf, exp, log,
     ldexp, eps, pi, nstr, make_mpf)
-from lib import fneg
+from lib import mpf_neg
 
 import math
 
 def NEG(x):
-    return make_mpf(fneg(x._mpf_))
+    return make_mpf(mpf_neg(x._mpf_))
 
 def transform(f, a, b):
     """

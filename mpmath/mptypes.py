@@ -124,7 +124,7 @@ class mpf(mpnumeric):
                 return make_mpf(normalize(sign, MP_BASE(man), exp, bc, prec, rounding))
             raise ValueError
         else:
-            return make_mpf(fpos(mpf_convert_arg(val, prec, rounding), prec, rounding))
+            return make_mpf(mpf_pos(mpf_convert_arg(val, prec, rounding), prec, rounding))
 
     man_exp = property(lambda self: self._mpf_[1:3])
     man = property(lambda self: self._mpf_[1])
@@ -139,15 +139,15 @@ class mpf(mpnumeric):
 
     def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, repr_dps(mp.prec))
     def __str__(s): return to_str(s._mpf_, mp.dps)
-    def __hash__(s): return fhash(s._mpf_)
+    def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __long__(s): return long(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_)
     def __complex__(s): return complex(float(s))
     def __nonzero__(s): return s._mpf_ != fzero
-    def __abs__(s): return make_mpf(fabs(s._mpf_, *prec_rounding))
-    def __pos__(s): return make_mpf(fpos(s._mpf_, *prec_rounding))
-    def __neg__(s): return make_mpf(fneg(s._mpf_, *prec_rounding))
+    def __abs__(s): return make_mpf(mpf_abs(s._mpf_, *prec_rounding))
+    def __pos__(s): return make_mpf(mpf_pos(s._mpf_, *prec_rounding))
+    def __neg__(s): return make_mpf(mpf_neg(s._mpf_, *prec_rounding))
 
     def _cmp(s, t, func):
         if hasattr(t, '_mpf_'):
@@ -158,11 +158,11 @@ class mpf(mpnumeric):
                 return t
         return func(s._mpf_, t)
 
-    def __cmp__(s, t): return s._cmp(t, fcmp)
-    def __lt__(s, t): return s._cmp(t, flt)
-    def __gt__(s, t): return s._cmp(t, fgt)
-    def __le__(s, t): return s._cmp(t, fle)
-    def __ge__(s, t): return s._cmp(t, fge)
+    def __cmp__(s, t): return s._cmp(t, mpf_cmp)
+    def __lt__(s, t): return s._cmp(t, mpf_lt)
+    def __gt__(s, t): return s._cmp(t, mpf_gt)
+    def __le__(s, t): return s._cmp(t, mpf_le)
+    def __ge__(s, t): return s._cmp(t, mpf_ge)
 
     def __ne__(s, t):
         v = s.__eq__(t)
@@ -173,7 +173,7 @@ class mpf(mpnumeric):
     def __rsub__(s, t):
         prec, rounding = prec_rounding
         if type(t) in int_types:
-            return make_mpf(fsub(from_int(t), s._mpf_, prec, rounding))
+            return make_mpf(mpf_sub(from_int(t), s._mpf_, prec, rounding))
         t = mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -182,7 +182,7 @@ class mpf(mpnumeric):
     def __rdiv__(s, t):
         prec, rounding = prec_rounding
         if isinstance(t, int_types):
-            return make_mpf(fdivi(t, s._mpf_, prec, rounding))
+            return make_mpf(mpf_rdiv_int(t, s._mpf_, prec, rounding))
         t = mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -243,7 +243,7 @@ return_mpc = "; obj = new(mpc); obj._mpc_ = val; return obj"
 
 mpf_pow_same = """
         try:
-            val = fpow(sval, tval, prec, rounding) %s
+            val = mpf_pow(sval, tval, prec, rounding) %s
         except ComplexResult:
             if mp.trap_complex:
                 raise
@@ -261,38 +261,38 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     return np[name]
 
 mpf.__eq__ = binary_op('__eq__',
-    'return feq(sval, tval)',
-    'return feq(sval, from_int(other))',
-    'return (tval[1] == fzero) and feq(tval[0], sval)')
+    'return mpf_eq(sval, tval)',
+    'return mpf_eq(sval, from_int(other))',
+    'return (tval[1] == fzero) and mpf_eq(tval[0], sval)')
 
 mpf.__add__ = binary_op('__add__',
-    'val = fadd(sval, tval, prec, rounding)' + return_mpf,
-    'val = fadd(sval, from_int(other), prec, rounding)' + return_mpf,
+    'val = mpf_add(sval, tval, prec, rounding)' + return_mpf,
+    'val = mpf_add(sval, from_int(other), prec, rounding)' + return_mpf,
     'val = mpc_add_mpf(tval, sval, prec, rounding)' + return_mpc)
 
 mpf.__sub__ = binary_op('__sub__',
-    'val = fsub(sval, tval, prec, rounding)' + return_mpf,
-    'val = fsub(sval, from_int(other), prec, rounding)' + return_mpf,
+    'val = mpf_sub(sval, tval, prec, rounding)' + return_mpf,
+    'val = mpf_sub(sval, from_int(other), prec, rounding)' + return_mpf,
     'val = mpc_sub((sval, fzero), tval, prec, rounding)' + return_mpc)
 
 mpf.__mul__ = binary_op('__mul__',
-    'val = fmul(sval, tval, prec, rounding)' + return_mpf,
-    'val = fmuli(sval, other, prec, rounding)' + return_mpf,
+    'val = mpf_mul(sval, tval, prec, rounding)' + return_mpf,
+    'val = mpf_mul_int(sval, other, prec, rounding)' + return_mpf,
     'val = mpc_mul_mpf(tval, sval, prec, rounding)' + return_mpc)
 
 mpf.__div__ = binary_op('__div__',
-    'val = fdiv(sval, tval, prec, rounding)' + return_mpf,
-    'val = fdiv(sval, from_int(other), prec, rounding)' + return_mpf,
+    'val = mpf_div(sval, tval, prec, rounding)' + return_mpf,
+    'val = mpf_div(sval, from_int(other), prec, rounding)' + return_mpf,
     'val = mpc_div((sval, fzero), tval, prec, rounding)' + return_mpc)
 
 mpf.__mod__ = binary_op('__mod__',
-    'val = fmod(sval, tval, prec, rounding)' + return_mpf,
-    'val = fmod(sval, from_int(other), prec, rounding)' + return_mpf,
+    'val = mpf_mod(sval, tval, prec, rounding)' + return_mpf,
+    'val = mpf_mod(sval, from_int(other), prec, rounding)' + return_mpf,
     'raise NotImplementedError("complex modulo")')
 
 mpf.__pow__ = binary_op('__pow__',
     mpf_pow_same,
-    'val = fpowi(sval, other, prec, rounding)' + return_mpf,
+    'val = mpf_pow_int(sval, other, prec, rounding)' + return_mpf,
     'val = mpc_pow((sval, fzero), tval, prec, rounding)' + return_mpc)
 
 mpf.__radd__ = mpf.__add__
@@ -629,11 +629,11 @@ class constant(mpf):
     def __repr__(self):
         return "<%s: %s~>" % (self.name, nstr(self))
 
-pi = constant(fpi, "pi")
-degree = constant(fdegree, "degree")
-e = constant(fe, "e")
-ln2 = constant(flog2, "log 2")
-ln10 = constant(flog10, "log 10")
+pi = constant(mpf_pi, "pi")
+degree = constant(mpf_degree, "degree")
+e = constant(mpf_e, "e")
+ln2 = constant(mpf_log2, "log 2")
+ln10 = constant(mpf_log10, "log 10")
 eps = constant(lambda p, r: (0, MP_ONE, -p+1, 1), "epsilon of working precision")
 
 def fraction(p, q):
@@ -724,24 +724,24 @@ def altinvfunc(f, name, desc):
     g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
     return g
 
-sqrt = mpfunc('sqrt', fsqrt, mpc_sqrt, "principal square root", mpi_sqrt)
-cbrt = mpfunc('cbrt', fcbrt, mpc_cbrt, "principal cubic root")
-exp = mpfunc('exp', fexp, mpc_exp, "exponential function", mpi_exp)
-ln = mpfunc('ln', flog, mpc_log, "natural logarithm", mpi_log)
+sqrt = mpfunc('sqrt', mpf_sqrt, mpc_sqrt, "principal square root", mpi_sqrt)
+cbrt = mpfunc('cbrt', mpf_cbrt, mpc_cbrt, "principal cubic root")
+exp = mpfunc('exp', mpf_exp, mpc_exp, "exponential function", mpi_exp)
+ln = mpfunc('ln', mpf_log, mpc_log, "natural logarithm", mpi_log)
 
-cos = mpfunc('cos', fcos, mpc_cos, "cosine", mpi_cos)
-sin = mpfunc('sin', fsin, mpc_sin, "sine", mpi_sin)
-tan = mpfunc('tan', ftan, mpc_tan, "tangent", mpi_tan)
-cosh = mpfunc('cosh', fcosh, mpc_cosh, "hyperbolic cosine")
-sinh = mpfunc('sinh', fsinh, mpc_sinh, "hyperbolic sine")
-tanh = mpfunc('tanh', ftanh, mpc_tanh, "hyperbolic tangent")
+cos = mpfunc('cos', mpf_cos, mpc_cos, "cosine", mpi_cos)
+sin = mpfunc('sin', mpf_sin, mpc_sin, "sine", mpi_sin)
+tan = mpfunc('tan', mpf_tan, mpc_tan, "tangent", mpi_tan)
+cosh = mpfunc('cosh', mpf_cosh, mpc_cosh, "hyperbolic cosine")
+sinh = mpfunc('sinh', mpf_sinh, mpc_sinh, "hyperbolic sine")
+tanh = mpfunc('tanh', mpf_tanh, mpc_tanh, "hyperbolic tangent")
 
-acos = mpfunc('acos', facos, mpc_acos, "inverse cosine")
-asin = mpfunc('asin', fasin, mpc_asin, "inverse sine")
-atan = mpfunc('atan', fatan, mpc_atan, "inverse tangent")
-asinh = mpfunc('asinh', fasinh, mpc_asinh, "inverse hyperbolic sine")
-acosh = mpfunc('acosh', facosh, mpc_acosh, "inverse hyperbolic cosine")
-atanh = mpfunc('atanh', fatanh, mpc_atanh, "inverse hyperbolic tangent")
+acos = mpfunc('acos', mpf_acos, mpc_acos, "inverse cosine")
+asin = mpfunc('asin', mpf_asin, mpc_asin, "inverse sine")
+atan = mpfunc('atan', mpf_atan, mpc_atan, "inverse tangent")
+asinh = mpfunc('asinh', mpf_asinh, mpc_asinh, "inverse hyperbolic sine")
+acosh = mpfunc('acosh', mpf_acosh, mpc_acosh, "inverse hyperbolic cosine")
+atanh = mpfunc('atanh', mpf_atanh, mpc_atanh, "inverse hyperbolic tangent")
 
 sec = altfunc(cos, 'sec', 'secant')
 csc = altfunc(sin, 'csc', 'cosecant')
@@ -763,7 +763,7 @@ def nthroot(x, n):
     n = int(n)
     if isinstance(x, mpf):
         try:
-            return make_mpf(fnthroot(x._mpf_, n, *prec_rounding))
+            return make_mpf(mpf_nthroot(x._mpf_, n, *prec_rounding))
         except ComplexResult:
             if mp.trap_complex:
                 raise
@@ -777,26 +777,26 @@ def hypot(x, y):
     must be real."""
     x = convert_lossless(x)
     y = convert_lossless(y)
-    return make_mpf(fhypot(x._mpf_, y._mpf_, *prec_rounding))
+    return make_mpf(mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
 
 def floor(x):
     """Computes the floor function of x. Note: returns an mpf, not a
     Python int. If x is larger than the precision, it will be rounded,
     not necessarily in the floor direction."""
     x = convert_lossless(x)
-    return make_mpf(ffloor(x._mpf_, *prec_rounding))
+    return make_mpf(mpf_floor(x._mpf_, *prec_rounding))
 
 def ceil(x):
     """Computes the ceiling function of x. Note: returns an mpf, not a
     Python int. If x is larger than the precision, it will be rounded,
     not necessarily in the ceiling direction."""
     x = convert_lossless(x)
-    return make_mpf(fceil(x._mpf_, *prec_rounding))
+    return make_mpf(mpf_ceil(x._mpf_, *prec_rounding))
 
 def ldexp(x, n):
     """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
     x = convert_lossless(x)
-    return make_mpf(fshift(x._mpf_, n))
+    return make_mpf(mpf_shift(x._mpf_, n))
 
 def frexp(x):
     """Convert x to a scaled number y in the range [0.5, 1). Returns
@@ -863,11 +863,11 @@ def atan2(y,x):
     the signs of y and x. (Defined for real x and y only.)"""
     x = convert_lossless(x)
     y = convert_lossless(y)
-    return make_mpf(fatan2(y._mpf_, x._mpf_, *prec_rounding))
+    return make_mpf(mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
 
 def rand():
     """Return an mpf chosen randomly from [0, 1)."""
-    return make_mpf(frand(mp.prec))
+    return make_mpf(mpf_rand(mp.prec))
 
 from operator import gt, lt
 

@@ -717,7 +717,7 @@ def mpf_erf(x, prec, rnd=round_fast):
     # erf(x) ~ x close to 0
     if size < -prec:
         # TODO: interval rounding
-        return fdiv(fshift(x,1), fsqrt(fpi(prec+10), prec+10), prec, rnd)
+        return mpf_div(mpf_shift(x,1), mpf_sqrt(mpf_pi(prec+10), prec+10), prec, rnd)
     wp = prec + abs(size) + 20
     # Taylor series for erf, fixed-point summation
     t = abs(to_fixed(x, wp))
@@ -759,10 +759,10 @@ def mpf_erfc(x, prec, rnd=round_fast):
     regular_erf = sign or man+exp < 2
     if regular_erf or not erfc_check_series(x, wp):
         if regular_erf:
-            return fsub(fone, mpf_erf(x, prec+5), prec, rnd)
+            return mpf_sub(fone, mpf_erf(x, prec+5), prec, rnd)
         # 1-erf(x) ~ exp(-x^2), increase prec to deal with cancellation
         n = to_int(x)
-        return fsub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
+        return mpf_sub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
     s = term = MP_ONE << wp
     term_prev = 0
     t = (2 * to_fixed(x, wp) ** 2) >> wp
@@ -780,8 +780,8 @@ def mpf_erfc(x, prec, rnd=round_fast):
         k += 1
     s = (s << wp) // sqrt_fixed(pi_fixed(wp), wp)
     s = from_man_exp(s, -wp, wp)
-    z = fexp(fneg(fmul(x,x,wp),wp),wp)
-    y = fdiv(fmul(z, s, wp), x, prec, rnd)
+    z = mpf_exp(mpf_neg(mpf_mul(x,x,wp),wp),wp)
+    y = mpf_div(mpf_mul(z, s, wp), x, prec, rnd)
     return y
 
 @funcwrapper

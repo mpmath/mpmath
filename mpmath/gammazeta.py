@@ -87,18 +87,18 @@ def mpf_cos_sin_pi(x, prec, rnd=round_fast):
     # Close to 0 ?
     size = exp + bc
     if size < -(prec+5):
-        return (fone, fmul(x, fpi(wp), prec, rnd))
+        return (fone, mpf_mul(x, mpf_pi(wp), prec, rnd))
     if sign:
         man = -man
     # Subtract nearest integer (= modulo pi)
     nint = ((man >> (-exp-1)) + 1) >> 1
     man = man - (nint << (-exp))
     x = from_man_exp(man, exp, prec)
-    x = fmul(x, fpi(prec), prec)
+    x = mpf_mul(x, mpf_pi(prec), prec)
     # Shifted an odd multiple of pi ?
     if nint & 1:
         c, s = cos_sin(x, prec, negative_rnd[rnd])
-        return fneg(c), fneg(s)
+        return mpf_neg(c), mpf_neg(s)
     else:
         return cos_sin(x, prec, rnd)
 
@@ -109,25 +109,25 @@ def mpf_sin_pi(x, prec, rnd=round_fast):
     return mpf_cos_sin_pi(x, prec, rnd)[1]
 
 def mpc_cos_pi((a, b), prec, rnd=round_fast):
-    b = fmul(b, fpi(prec+5), prec+5)
+    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
     if a == fzero:
-        return fcosh(b, prec, rnd), fzero
+        return mpf_cosh(b, prec, rnd), fzero
     wp = prec + 6
     c, s = mpf_cos_sin_pi(a, wp)
     ch, sh = cosh_sinh(b, wp)
-    re = fmul(c, ch, prec, rnd)
-    im = fmul(s, sh, prec, rnd)
-    return re, fneg(im)
+    re = mpf_mul(c, ch, prec, rnd)
+    im = mpf_mul(s, sh, prec, rnd)
+    return re, mpf_neg(im)
 
 def mpc_sin_pi((a, b), prec, rnd=round_fast):
-    b = fmul(b, fpi(prec+5), prec+5)
+    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
     if a == fzero:
-        return fzero, fsinh(b, prec, rnd)
+        return fzero, mpf_sinh(b, prec, rnd)
     wp = prec + 6
     c, s = mpf_cos_sin_pi(a, wp)
     ch, sh = cosh_sinh(b, wp)
-    re = fmul(s, ch, prec, rnd)
-    im = fmul(c, sh, prec, rnd)
+    re = mpf_mul(s, ch, prec, rnd)
+    im = mpf_mul(c, sh, prec, rnd)
     return re, im
 
 #-----------------------------------------------------------------------#
@@ -206,7 +206,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n == 0:
             return fone
         if n == 1:
-            return fneg(fhalf)
+            return mpf_neg(fhalf)
     if n & 1:
         return fzero
     wp = prec + 30
@@ -220,7 +220,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n in numbers:
             if not rnd:
                 return numbers[n]
-            return fpos(numbers[n], prec, rnd)
+            return mpf_pos(numbers[n], prec, rnd)
         m, bin, bin1 = state
         if n - m > 10:
             return mpf_bernoulli_huge(n, prec, rnd)
@@ -251,11 +251,11 @@ def mpf_bernoulli(n, prec, rnd=None):
             j6 = 6*j
             a *= ((m-5-j6)*(m-4-j6)*(m-3-j6)*(m-2-j6)*(m-1-j6)*(m-j6))
             a //= ((4+j6)*(5+j6)*(6+j6)*(7+j6)*(8+j6)*(9+j6))
-        if case == 0: b = fdivi(m+3, f3, wp)
-        if case == 2: b = fdivi(m+3, f3, wp)
-        if case == 4: b = fdivi(-m-3, f6, wp)
+        if case == 0: b = mpf_rdiv_int(m+3, f3, wp)
+        if case == 2: b = mpf_rdiv_int(m+3, f3, wp)
+        if case == 4: b = mpf_rdiv_int(-m-3, f6, wp)
         s = from_man_exp(s, sexp, wp)
-        b = fdiv(fsub(b, s, wp), from_int(bin), wp)
+        b = mpf_div(mpf_sub(b, s, wp), from_int(bin), wp)
         numbers[m] = b
         m += 2
         # Update outer binomial coefficient
@@ -269,12 +269,12 @@ def mpf_bernoulli_huge(n, prec, rnd=None):
     wp = prec + 10
     piprec = wp + int(math.log(n,2))
     v = mpf_gamma_int(n-1, wp)
-    v = fmul(v, mpf_zeta_int(n, wp), wp)
-    v = fmul(v, fpowi(fpi(piprec), -n, wp))
-    v = fshift(v, 1-n)
+    v = mpf_mul(v, mpf_zeta_int(n, wp), wp)
+    v = mpf_mul(v, mpf_pow_int(mpf_pi(piprec), -n, wp))
+    v = mpf_shift(v, 1-n)
     if not n & 3:
-        v = fneg(v)
-    return fpos(v, prec, rnd or round_fast)
+        v = mpf_neg(v)
+    return mpf_pos(v, prec, rnd or round_fast)
 
 def list_primes(n):
     n = n + 1
@@ -305,7 +305,7 @@ def bernfrac(n):
             q *= k
     prec = bernoulli_size(n) + int(math.log(q,2)) + 20
     b = mpf_bernoulli(n, prec)
-    p = fmul(b, from_int(q))
+    p = mpf_mul(b, from_int(q))
     pint = to_int(p, round_nearest)
     return (pint, q)
 
@@ -351,19 +351,19 @@ def calc_spouge_coefficients(a, prec):
     wp = prec + int(a*1.4)
     c = [0] * a
     # b = exp(a-1)
-    b = fexp(from_int(a-1), wp)
+    b = mpf_exp(from_int(a-1), wp)
     # e = exp(1)
-    e = fexp(fone, wp)
+    e = mpf_exp(fone, wp)
     # sqrt(2*pi)
-    sq2pi = fsqrt(fshift(fpi(wp), 1), wp)
+    sq2pi = mpf_sqrt(mpf_shift(mpf_pi(wp), 1), wp)
     c[0] = to_fixed(sq2pi, prec)
     for k in xrange(1, a):
         # c[k] = ((-1)**(k-1) * (a-k)**k) * b / sqrt(a-k)
-        term = fmuli(b, ((-1)**(k-1) * (a-k)**k), wp)
-        term = fdiv(term, fsqrt(from_int(a-k), wp), wp)
+        term = mpf_mul_int(b, ((-1)**(k-1) * (a-k)**k), wp)
+        term = mpf_div(term, mpf_sqrt(from_int(a-k), wp), wp)
         c[k] = to_fixed(term, prec)
         # b = b / (e * k)
-        b = fdiv(b, fmul(e, from_int(k), wp), wp)
+        b = mpf_div(b, mpf_mul(e, from_int(k), wp), wp)
     return c
 
 # Cached lookup of coefficients
@@ -462,23 +462,23 @@ def mpf_gamma(x, prec, rounding=round_fast, p1=1):
     reflect = sign or exp+bc < -1
     if p1:
         # Should be done exactly!
-        x = fsub(x, fone, bc-exp+2)
+        x = mpf_sub(x, fone, bc-exp+2)
     # x < 0.25
     if reflect:
         # gamma = pi / (sin(pi*x) * gamma(1-x))
         wp += 15
-        pix = fmul(x, fpi(wp), wp)
+        pix = mpf_mul(x, mpf_pi(wp), wp)
         t = mpf_sin_pi(x, wp)
-        g = mpf_gamma(fsub(fone, x, wp), wp)
-        return fdiv(pix, fmul(t, g, wp), prec, rounding)
+        g = mpf_gamma(mpf_sub(fone, x, wp), wp)
+        return mpf_div(pix, mpf_mul(t, g, wp), prec, rounding)
     sprec, a, c = get_spouge_coefficients(wp)
     s = spouge_sum_real(x, sprec, a, c)
     # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    xpa = fadd(x, from_int(a), wp)
-    logxpa = flog(xpa, wp)
-    xph = fadd(x, fhalf, wp)
-    t = fsub(fmul(logxpa, xph, wp), xpa, wp)
-    t = fmul(fexp(t, wp), s, prec, rounding)
+    xpa = mpf_add(x, from_int(a), wp)
+    logxpa = mpf_log(xpa, wp)
+    xph = mpf_add(x, fhalf, wp)
+    t = mpf_sub(mpf_mul(logxpa, xph, wp), xpa, wp)
+    t = mpf_mul(mpf_exp(t, wp), s, prec, rounding)
     return t
 
 def mpc_gamma(x, prec, rounding=round_fast, p1=1):
@@ -496,12 +496,12 @@ def mpc_gamma(x, prec, rounding=round_fast, p1=1):
     if p1:
         # Should be done exactly!
         re_orig = re
-        re = fsub(re, fone, bc+abs(exp)+2)
+        re = mpf_sub(re, fone, bc+abs(exp)+2)
         x = re, im
     if reflect:
         # Reflection formula
         wp += 15
-        pi = fpi(wp), fzero
+        pi = mpf_pi(wp), fzero
         pix = mpc_mul(x, pi, wp)
         t = mpc_sin_pi(x, wp)
         u = mpc_sub(mpc_one, x, wp)
@@ -513,14 +513,14 @@ def mpc_gamma(x, prec, rounding=round_fast, p1=1):
     if iexp+ibc < -wp:
         a = mpf_gamma(re_orig, wp)
         b = mpf_psi0(re_orig, wp)
-        gamma_diff = fdiv(a, b, wp)
-        return fpos(a, prec, rounding), fmul(gamma_diff, im, prec, rounding)
+        gamma_diff = mpf_div(a, b, wp)
+        return mpf_pos(a, prec, rounding), mpf_mul(gamma_diff, im, prec, rounding)
     sprec, a, c = get_spouge_coefficients(wp)
     s = spouge_sum_complex(re, im, sprec, a, c)
     # gamma = exp(log(x+a)*(x+0.5) - xpa) * s
-    repa = fadd(re, from_int(a), wp)
+    repa = mpf_add(re, from_int(a), wp)
     logxpa = mpc_log((repa, im), wp)
-    reph = fadd(re, fhalf, wp)
+    reph = mpf_add(re, fhalf, wp)
     t = mpc_sub(mpc_mul(logxpa, (reph, im), wp), (repa, im), wp)
     t = mpc_mul(mpc_exp(t, wp), s, prec, rounding)
     return t
@@ -599,8 +599,8 @@ algorithm.)
 def mpf_harmonic(x, prec, rnd):
     if x in (fzero, fnan, finf):
         return x
-    a = mpf_psi0(fadd(fone, x, prec+5), prec)
-    return fadd(a, mpf_euler(prec+5, rnd), prec, rnd)
+    a = mpf_psi0(mpf_add(fone, x, prec+5), prec)
+    return mpf_add(a, mpf_euler(prec+5, rnd), prec, rnd)
 
 def mpc_harmonic(z, prec, rnd):
     if z[1] == fzero:
@@ -623,12 +623,12 @@ def mpf_psi0(x, prec, rnd=round_fast):
     # Reflection formula
     if sign and exp+bc > 3:
         c, s = mpf_cos_sin_pi(x, wp)
-        q = fmul(fdiv(c, s, wp), fpi(wp), wp)
-        p = mpf_psi0(fsub(fone, x, wp), wp)
-        return fsub(p, q, prec, rnd)
+        q = mpf_mul(mpf_div(c, s, wp), mpf_pi(wp), wp)
+        p = mpf_psi0(mpf_sub(fone, x, wp), wp)
+        return mpf_sub(p, q, prec, rnd)
     # The logarithmic term is accurate enough
     if (not sign) and bc + exp > wp:
-        return flog(fsub(x, fone, wp), prec, rnd)
+        return mpf_log(mpf_sub(x, fone, wp), prec, rnd)
     # Initial recurrence to obtain a large enough x
     m = to_int(x)
     n = int(0.11*wp) + 2
@@ -641,7 +641,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
             x += one
     x -= one
     # Logarithmic term
-    s += to_fixed(flog(from_man_exp(x, -wp, wp), wp), wp)
+    s += to_fixed(mpf_log(from_man_exp(x, -wp, wp), wp), wp)
     # Endpoint term in Euler-Maclaurin expansion
     s += (one << wp) // (2*x)
     # Euler-Maclaurin remainder sum
@@ -678,7 +678,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     if sign and exp+bc > 3:
         c = mpc_cos_pi(z, wp)
         s = mpc_sin_pi(z, wp)
-        q = mpc_mul(mpc_div(c, s, wp), (fpi(wp), fzero), wp)
+        q = mpc_mul(mpc_div(c, s, wp), (mpf_pi(wp), fzero), wp)
         p = mpc_psi0(mpc_sub(mpc_one, z, wp), wp)
         return mpc_sub(p, q, prec, rnd)
     # Just the logarithmic term
@@ -701,14 +701,14 @@ def mpc_psi0(z, prec, rnd=round_fast):
     t = mpc_one
     prev = mpc_zero
     k = 1
-    eps = fshift(fone, -wp+2)
+    eps = mpf_shift(fone, -wp+2)
     while 1:
         t = mpc_mul(t, z2, wp)
         bern = mpf_bernoulli(2*k, wp)
         term = mpc_div((bern, fzero), mpc_mul_int(t, 2*k, wp), wp)
         s = mpc_sub(s, term, wp)
         szterm = mpc_abs(term, 10)
-        if k > 2 and fle(szterm, eps):
+        if k > 2 and mpf_le(szterm, eps):
             break
         prev = term
         k += 1
@@ -762,16 +762,16 @@ def mpc_psi(m, z, prec, rnd=round_fast):
     # not the absolute error, because psi^(m)(z) might be tiny
     magn = mpc_abs(s, 10)
     magn = magn[2]+magn[3]
-    eps = fshift(fone, magn-wp+2)
+    eps = mpf_shift(fone, magn-wp+2)
     while 1:
         zm = mpc_mul(zm, z2, wp)
         bern = mpf_bernoulli(2*k, wp)
-        scal = fmuli(bern, a, wp)
-        scal = fdiv(scal, from_int(b), wp)
+        scal = mpf_mul_int(bern, a, wp)
+        scal = mpf_div(scal, from_int(b), wp)
         term = mpc_mul_mpf(zm, scal, wp)
         s = mpc_add(s, term, wp)
         szterm = mpc_abs(term, 10)
-        if k > 2 and fle(szterm, eps):
+        if k > 2 and mpf_le(szterm, eps):
             break
         #print k, to_str(szterm, 10), to_str(eps, 10)
         a *= (m+2*k)*(m+2*k+1)
@@ -780,7 +780,7 @@ def mpc_psi(m, z, prec, rnd=round_fast):
     # Scale and sign factor
     v = mpc_mul_mpf(s, mpf_gamma(from_int(m+1), wp), prec, rnd)
     if not (m & 1):
-        v = fneg(v[0]), fneg(v[1])
+        v = mpf_neg(v[0]), mpf_neg(v[1])
     return v
 
 
@@ -881,11 +881,11 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     if s < 2:
         if s == 1:
             raise ValueError("zeta(1) pole")
-        return fdiv(mpf_bernoulli(-s+1, wp), from_int(s-1), prec, rnd)
+        return mpf_div(mpf_bernoulli(-s+1, wp), from_int(s-1), prec, rnd)
     # 2^-s term vanishes?
     if s >= wp:
         if rnd in (round_up, round_ceiling):
-            return fadd(fone, fshift(fone,-wp-10), prec, rnd)
+            return mpf_add(fone, mpf_shift(fone,-wp-10), prec, rnd)
         return fone
     # 5^-s term vanishes?
     elif s >= wp*0.431:
@@ -907,9 +907,9 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
                     powprec = int(wp - s*math.log(k,2))
                     if powprec < 2:
                         break
-                    a = fsub(fone, fpowi(from_int(k), -s, powprec), wp)
-                    t = fmul(t, a, wp)
-                return fdiv(fone, t, wp)
+                    a = mpf_sub(fone, mpf_pow_int(from_int(k), -s, powprec), wp)
+                    t = mpf_mul(t, a, wp)
+                return mpf_div(fone, t, wp)
     # Use Borwein's algorithm
     n = int(wp/2.54 + 5)
     d = borwein_coefficients(n)
@@ -925,7 +925,7 @@ def mpf_zeta(s, prec, rnd=round_fast):
     sign, man, exp, bc = s
     if not man:
         if s == fzero:
-            return fneg(fhalf)
+            return mpf_neg(fhalf)
         if s == finf:
             return fone
         return fnan
@@ -933,21 +933,21 @@ def mpf_zeta(s, prec, rnd=round_fast):
     # First term vanishes?
     if (not sign) and (exp + bc > (math.log(wp,2) + 2)):
         if rnd in (round_up, round_ceiling):
-            return fadd(fone, fshift(fone,-wp-10), prec, rnd)
+            return mpf_add(fone, mpf_shift(fone,-wp-10), prec, rnd)
         return fone
     elif exp >= 0:
         return mpf_zeta_int(to_int(s), prec, rnd)
     # Less than 0.5?
     if sign or (exp+bc) < 0:
         # XXX: -1 should be done exactly
-        y = fsub(fone, s, 10*wp)
+        y = mpf_sub(fone, s, 10*wp)
         a = mpf_gamma(y, wp)
         b = mpf_zeta(y, wp)
-        c = mpf_sin_pi(fshift(s, -1), wp)
+        c = mpf_sin_pi(mpf_shift(s, -1), wp)
         wp2 = wp + (exp+bc)
-        pi = fpi(wp+wp2)
-        d = fdiv(fpow(fshift(pi, 1), s, wp2), pi, wp2)
-        return fmul(a,fmul(b,fmul(c,d,wp),wp),prec,rnd)
+        pi = mpf_pi(wp+wp2)
+        d = mpf_div(mpf_pow(mpf_shift(pi, 1), s, wp2), pi, wp2)
+        return mpf_mul(a,mpf_mul(b,mpf_mul(c,d,wp),wp),prec,rnd)
     t = MP_ZERO
     #wp += 16 - (prec & 15)
     # Use Borwein's algorithm
@@ -957,7 +957,7 @@ def mpf_zeta(s, prec, rnd=round_fast):
     sf = to_fixed(s, wp)
     for k in xrange(n):
         u = from_man_exp(-sf*log_int_fixed(k+1, wp), -2*wp, wp)
-        esign, eman, eexp, ebc = fexp(u, wp)
+        esign, eman, eexp, ebc = mpf_exp(u, wp)
         offset = eexp + wp
         if offset >= 0:
             w = ((d[k] - d[n]) * eman) << offset
@@ -969,8 +969,8 @@ def mpf_zeta(s, prec, rnd=round_fast):
             t += w
     t = t // (-d[n])
     t = from_man_exp(t, -wp, wp)
-    q = fsub(fone, fpow(ftwo, fsub(fone, s, wp), wp), wp)
-    return fdiv(t, q, prec, rnd)
+    q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
+    return mpf_div(t, q, prec, rnd)
 
 def mpc_zeta(s, prec, rnd):
     re, im = s
@@ -991,7 +991,7 @@ def mpc_zeta(s, prec, rnd):
         if critical_line:
             w = one_2wp // sqrt_fixed((k+1) << wp, wp)
         else:
-            w = to_fixed(fexp(from_man_exp(-ref*log, -2*wp), wp), wp)
+            w = to_fixed(mpf_exp(from_man_exp(-ref*log, -2*wp), wp), wp)
         if k & 1:
             w *= (d[n] - d[k])
         else:

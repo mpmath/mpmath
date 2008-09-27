@@ -21,10 +21,10 @@ def mpc_ae(a, b, eps=eps):
 def test_add_rounding():
     mp.dps = 15
     a = from_float(1e-50)
-    assert fsub(fadd(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
-    assert fsub(fone, a, 53, round_up) == fone
-    assert fsub(fone, fsub(fone, a, 53, round_down), 53, round_down) == from_float(1.1102230246251565e-16)
-    assert fadd(fone, a, 53, round_down) == fone
+    assert mpf_sub(mpf_add(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
+    assert mpf_sub(fone, a, 53, round_up) == fone
+    assert mpf_sub(fone, mpf_sub(fone, a, 53, round_down), 53, round_down) == from_float(1.1102230246251565e-16)
+    assert mpf_add(fone, a, 53, round_down) == fone
 
 def test_almost_equal():
     assert mpf(1.2).ae(mpf(1.20000001), 1e-7)
@@ -57,7 +57,7 @@ def test_aintegers():
             a = random.randint(-M2, M2)
             b = random.randint(-M2, M2)
             assert mpf(a) * mpf(b) == a*b
-            assert fmul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
+            assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
     mp.dps = 15
 
 def test_exact_sqrts():
@@ -81,17 +81,17 @@ def test_sqrt_rounding():
         i = from_int(i)
         for dps in [7, 15, 83, 106, 2000]:
             mp.dps = dps
-            a = fpowi(fsqrt(i, mp.prec, round_down), 2, mp.prec, round_down)
-            b = fpowi(fsqrt(i, mp.prec, round_up), 2, mp.prec, round_up)
-            assert flt(a, i)
-            assert fgt(b, i)
+            a = mpf_pow_int(mpf_sqrt(i, mp.prec, round_down), 2, mp.prec, round_down)
+            b = mpf_pow_int(mpf_sqrt(i, mp.prec, round_up), 2, mp.prec, round_up)
+            assert mpf_lt(a, i)
+            assert mpf_gt(b, i)
     random.seed(1234)
     prec = 100
     for rnd in [round_down, round_nearest, round_ceiling]:
         for i in range(100):
-            a = frand(prec)
-            b = fmul(a, a)
-            assert fsqrt(b, prec, rnd) == a
+            a = mpf_rand(prec)
+            b = mpf_mul(a, a)
+            assert mpf_sqrt(b, prec, rnd) == a
     mp.dps = 15
 
 def test_odd_int_bug():

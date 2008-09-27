@@ -184,7 +184,6 @@ def test_interval_cos_sin():
     w = 4*10**50 + mpf(0.5)
     for p in [15, 40, 80]:
         mp.dps = p
-        print p
         assert 0 in sin(4*mpi(pi))
         assert 0 in sin(4*10**50*mpi(pi))
         assert 0 in cos((4+0.5)*mpi(pi))
