@@ -726,18 +726,14 @@ def reduce_angle(x, prec):
 
     """
     sign, man, exp, bc = x
-    magnitude = abs(exp + bc)
-
-    swap_cos_sin = 0
-    cos_sign = 0
-    sin_sign = 0
+    magnitude = exp + bc
 
     if not man:
-        return (0, 0), (swap_cos_sin, cos_sign, sin_sign), 0
+        return (0, 0), (0, 0, 0), 0
 
     # Here we have abs(x) < 0.5. In this case no reduction is necessary.
     # TODO: could also handle abs(x) < 1
-    if exp + bc < 0:
+    if magnitude < 0:
         # Quadrant is 0 or -1
         n = -sign
         swaps = (0, 0, sign)
@@ -753,7 +749,7 @@ def reduce_angle(x, prec):
     i = 0
     while 1:
         cancellation_prec = 20 * 2**i
-        wp = prec + magnitude + cancellation_prec
+        wp = prec + abs(magnitude) + cancellation_prec
         pi1 = pi_fixed(wp)
         pi2 = pi1 >> 1
         pi4 = pi1 >> 2
@@ -772,12 +768,11 @@ def reduce_angle(x, prec):
         # fixed-point value of y becoming small.  This is easy to check for.
         if y >> (prec + magnitude - 10):
             n = int(n)
-            swap_cos_sin ^= (n % 2)
-            cos_sign = (n % 4) in (1, 2)
-            sin_sign = (n % 4) in (2, 3)
-            return (y >> magnitude, wp - magnitude), \
-                (swap_cos_sin, cos_sign, sin_sign), n
+            swaps = swap_table[swap_cos_sin^(n%2)][n%4]
+            return (y>>magnitude, wp-magnitude), swaps, n
         i += 1
+
+swap_table = ((0,0,0),(0,1,0),(0,1,1),(0,0,1)), ((1,0,0),(1,1,0),(1,1,1),(1,0,1))
 
 def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
     """
@@ -787,7 +782,10 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
     swap_cos_sin, cos_sign, sin_sign = swaps
 
     if swap_cos_sin:
-        which = -which
+        which_compute = -which
+    else:
+        which_compute = which
+
     # XXX: assumes no swaps
     if not y:
         return fone, fzero
@@ -834,14 +832,14 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
 
     # Use standard Taylor series
     if prec < 600:
-        if which == 0:
+        if which_compute == 0:
             sin = sin_taylor(y, wp)
             # only need to evaluate one of the series
             cos = sqrt_fixed((1<<wp) - ((sin*sin)>>wp), wp)
-        elif which == 1:
+        elif which_compute == 1:
             sin = 0
             cos = cos_taylor(y, wp)
-        elif which == -1:
+        elif which_compute == -1:
             sin = sin_taylor(y, wp)
             cos = 0
     # Use exp(i*x) with Brent's trick 
@@ -855,28 +853,27 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
     if swap_cos_sin:
         cos, sin = sin, cos
 
-    # Round and set correct signs
-    ONE = MP_ONE << wp
-    if cos_sign:
-        if cos_rnd != round_nearest:
+    if cos_rnd is not round_nearest:
+        # Round and set correct signs
+        # XXX: this logic needs a second look
+        ONE = MP_ONE << wp
+        if cos_sign:
             cos += (-1)**(cos_rnd in (round_ceiling, round_down))
-        cos = -min(ONE, cos)
-    else:
-        if cos_rnd != round_nearest:
+            cos = min(ONE, cos)
+        else:
             cos += (-1)**(cos_rnd in (round_ceiling, round_up))
-        cos = min(ONE, cos)
-
-    if sin_sign:
-        if sin_rnd != round_nearest:
+            cos = min(ONE, cos)
+        if sin_sign:
             sin += (-1)**(sin_rnd in (round_ceiling, round_down))
-        sin = -min(ONE, sin)
-    else:
-        if sin_rnd != round_nearest:
+            sin = min(ONE, sin)
+        else:
             sin += (-1)**(sin_rnd in (round_ceiling, round_up))
-        sin = min(ONE, sin)
+            sin = min(ONE, sin)
 
-    cos = from_man_exp(cos, -wp, prec, cos_rnd)
-    sin = from_man_exp(sin, -wp, prec, sin_rnd)
+    if which != -1:
+        cos = normalize(cos_sign, cos, -wp, bitcount(cos), prec, cos_rnd)
+    if which != 1:
+        sin = normalize(sin_sign, sin, -wp, bitcount(sin), prec, sin_rnd)
 
     return cos, sin
 
