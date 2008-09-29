@@ -882,6 +882,8 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     if s < 2:
         if s == 1:
             raise ValueError("zeta(1) pole")
+        if not s:
+            return mpf_neg(fhalf)
         return mpf_div(mpf_bernoulli(-s+1, wp), from_int(s-1), prec, rnd)
     # 2^-s term vanishes?
     if s >= wp:

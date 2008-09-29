@@ -1,6 +1,12 @@
 from mpmath import *
 from mpmath.settings import round_up
 
+from mpmath.libmpf import from_float
+from mpmath.gammazeta import mpf_zeta_int
+
+def test_zeta_int_bug():
+    assert mpf_zeta_int(0, 10) == from_float(-0.5)
+
 def test_bernoulli():
     assert bernfrac(0) == (1,1)
     assert bernfrac(1) == (-1,2)
