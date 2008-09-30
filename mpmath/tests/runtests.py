@@ -46,9 +46,15 @@ if "-strict" in sys.argv:
 
 if "-local" in sys.argv:
     sys.argv.remove('-local')
-    sys.path.insert(0, '../..')
+    directory = '../..'
+else:
+    directory = ''
 
-def testit():
+# TODO: make it possible to run it from another directory
+def testit(directory=''):
+    """Run all tests while importing from directory."""
+    if directory:
+        sys.path.insert(1, directory)
     if "-py" in sys.argv:
         sys.argv.remove('-py')
         import py
@@ -61,6 +67,7 @@ def testit():
         args = sys.argv[1:]
         for f in glob.glob("test*.py"):
             name = os.path.splitext(os.path.basename(f))[0]
+            print name
             if args:
                 ok = False
                 for arg in args:
@@ -90,8 +97,10 @@ def testit():
         print
         print "finished tests in", ("%.2f" % (tend-tstart)), "seconds"
 
-if profile:
-    import cProfile
-    cProfile.run("testit()", sort=2)
-else:
-    testit()
+if __name__ == '__main__':
+    if profile:
+        import cProfile
+        cProfile.run("testit(%s)" % directory, sort=2)
+    else:
+        testit(directory)
+
