@@ -46,11 +46,11 @@ if "-strict" in sys.argv:
 
 if "-local" in sys.argv:
     sys.argv.remove('-local')
-    directory = '../..'
+    directory = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),
+                                             '../..'))
 else:
     directory = ''
 
-# TODO: make it possible to run it from another directory
 def testit(directory=''):
     """Run all tests while importing from directory."""
     if directory:
@@ -65,7 +65,11 @@ def testit(directory=''):
         from time import clock
         modules = []
         args = sys.argv[1:]
-        for f in glob.glob("test*.py"):
+        pattern = os.path.dirname(sys.argv[0])
+        if pattern:
+            pattern += '/'
+        pattern += 'test*.py'
+        for f in glob.glob(pattern):
             name = os.path.splitext(os.path.basename(f))[0]
             if args:
                 ok = False
