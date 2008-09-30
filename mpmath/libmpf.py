@@ -46,6 +46,7 @@ fnan = (0, MP_ZERO, -123, -1)
 finf = (0, MP_ZERO, -456, -2)
 fninf = (1, MP_ZERO, -789, -3)
 
+math_float_inf = 1e1000
 
 #----------------------------------------------------------------------------#
 #           Various utilities related to precision and bit-fiddling          #
@@ -392,12 +393,16 @@ def from_float(x, prec=53, rnd=round_fast):
     # frexp only raises an exception for nan on some platforms
     if x != x:
         return fnan
+    # in Python2.5 math.frexp gives an exception for float infinity
+    # in Python2.6 it returns (float infinity, 0)
     try:
         m, e = math.frexp(x)
     except:
-        if x == 1e1000: return finf
-        if x == -1e1000: return fninf
+        if x == math_float_inf: return finf
+        if x == -math_float_inf: return fninf
         return fnan
+    if x == math_float_inf: return finf
+    if x == -math_float_inf: return fninf
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
 def to_float(s):

@@ -4,8 +4,11 @@ from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
     mnorm_F, norm_p, zeros, ones, randmatrix, extend
 from mpmath.linalg import inverse
 from mpmath import inf, mpf, sqrt
+
+with_numpy = False
 try:
     import numpy
+    with_numpy = True
 except ImportError:
     pass
 
@@ -120,8 +123,9 @@ def test_matrix_copy():
     B[0,0] = 0
     assert A != B
 
-def test_matrix_numpy():
-    l = [[1, 2], [3, 4], [5, 6]]
-    a = numpy.matrix(l)
-    assert matrix(l) == matrix(a)
+if with_numpy:
+    def test_matrix_numpy():
+        l = [[1, 2], [3, 4], [5, 6]]
+        a = numpy.matrix(l)
+        assert matrix(l) == matrix(a)
 
