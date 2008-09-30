@@ -67,7 +67,6 @@ def testit(directory=''):
         args = sys.argv[1:]
         for f in glob.glob("test*.py"):
             name = os.path.splitext(os.path.basename(f))[0]
-            print name
             if args:
                 ok = False
                 for arg in args:
