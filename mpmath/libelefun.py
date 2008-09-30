@@ -545,30 +545,61 @@ def mpf_exp(x, prec, rnd=round_fast):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
-# The basic strategy for computing log(x) is to set r = log(x) and use
-# Newton's method to solve the equation exp(r) = x.
-# To obtain the Newton method one solves exp(r+h) = x, expanding in h
-# which is supposed to be small; one has
-# h = log(x * exp(-r)), which can be expanded in powers of
-# s = (x * exp(-r) - 1) : h = s - s*s/2 + s**3/3 + ...
-# The first order approximation is Newton method, the second order is
-# Halley method. We use the second order approximation.
-# We set the initial value r_0 to math.log(x) and then iterate
-# r_{n+1} = (r_n + exp(-r_n) - 1) - (r_n + exp(-r_n) - 1)/2
-# until convergence. As with square roots, we increase the working
-# precision dynamically during the process so that only one full-precision
-# evaluation of exp is required.
+"""
+The basic idea for evaluating log for an arbitrary floating-point number
+is to write x = t * 2**n (note that n is just the exponent) and compute
+log(x) = n*log(2) + log(t). Of course, log(2) is cached.
 
-# log(x) is small for most inputs, so the r values can safely be
-# computed using fixed-point arithmetic. However, when x has a very
-# large or small exponent, we can improve performance through the
-# normalization log(t * 2**n) = log(t) + n*log(2), choosing n such
-# that 0.5 <= t <= 1 (for example).
+Here n should be chosen to make t ~= 1. This allows us to settle for a
+suitable fixed-point approximation close to 1. In particular, we choose
+the normalization 0.5 <= t < 2 and use one of two algorithms:
 
-# There are some caveats: if x is extremely close to 1, the working
-# precision must be increased to maintain high relative precision in the
-# output (alternatively, the series approximation for log(1+x) could
-# be used in that case).
+1. For arbitrary precision, we set r = log(t) and use Newton's method
+   to solve exp(r) = t. To obtain the Newton method one solves
+   exp(r+h) = t, expanding in h which is supposed to be small; one has
+   h = log(t * exp(-r)), which can be expanded in powers of
+   s = (t * exp(-r) - 1) : h = s - s*s/2 + s**3/3 + ...
+
+   The first order approximation is Newton method, the second order is
+   Halley's method. We use the second order approximation.
+
+   We set the initial value r_0 to math.log(t) and then iterate
+
+      r_{n+1} = (r_n + exp(-r_n) - 1) - (r_n + exp(-r_n) - 1)/2
+
+   until convergence. As with square roots, we increase the working
+   precision dynamically during the process so that only one
+   full-precision evaluation of exp is required.
+
+2. For low precision, we use Taylor series. Unfortunately, the Taylor
+   series for log(1+x) converges very slowly unless |x| << 1. We could use
+   the "inverse" of Brent's trick for exp, but this would involve computing
+   compound square roots (as opposed to repeated squaring), which is
+   expensive.
+
+   So instead we use the following trick: up to a fixed precision, we
+   precompute log(k/2^N) for N ~= 8-10. This can be done using standard
+   arbitrary-precision Newton's method above (and on the fly as each value
+   of k is needed). Now, for a given t, we round t to the nearest N-bit
+   number to find a cached log value. Then we use the Taylor series
+
+                          b     b^2     b^3
+     log(a+b) = log(a) + --- - ----- + ----- - ... 
+                          a    2 a^2   3 a^3
+
+   where of course a is the cached k/2^N value (t rounded)
+   and b is the difference between t and t rounded.
+
+   On [1/2, 3/2], this gives a series that converges at least N bits per
+   term, as opposed to 1 bit per term in the worst case for the direct
+   series of log(1+x).
+
+There are some further caveats: if x is extremely close to 1,
+the working precision must be increased. We ignore this problem in
+log_newton and log_taylor and instead handle it as needed in
+mpf_log.
+
+"""
 
 # This function performs the Newton iteration using fixed-point
 # arithmetic. x is assumed to have magnitude ~= 1
@@ -590,34 +621,128 @@ def log_newton(x, prec):
         prevp = p
     return r >> extra
 
+if MODE == 'gmpy':
+    LOG_TAYLOR_PREC = 360
+else:
+    LOG_TAYLOR_PREC = 170
+
+LOG_TAYLOR_WP = LOG_TAYLOR_PREC + 20
+LOG_TAYLOR_SHIFT = 9   # steps of size 2^-N
+
+log_taylor_cache = {}
+
+def log_taylor(x, prec):
+    n = (x >> (prec-LOG_TAYLOR_SHIFT))
+    if n in log_taylor_cache:
+        a, log_a = log_taylor_cache[n]
+    else:
+        a = n << (LOG_TAYLOR_WP - LOG_TAYLOR_SHIFT)
+        log_a = log_newton(a, LOG_TAYLOR_WP)
+        log_taylor_cache[n] = (a, log_a)
+    dprec = (LOG_TAYLOR_WP - prec)
+    a >>= dprec
+    log_a >>= dprec
+    d = a - x
+    u = ((-d) << prec) // a
+    s = MP_ZERO
+    k = 1
+    while u:
+        s += u // k
+        u *= d
+        u //= a
+        k += 1
+    return log_a + s
+
 def mpf_log(x, prec, rnd=round_fast):
-    """Compute the natural logarithm of a positive raw mpf x."""
+    """
+    Compute the natural logarithm of the mpf value x. If x is negative,
+    ComplexResult is raised.
+    """
     sign, man, exp, bc = x
     if not man:
-        if x == fzero:
-            return fninf
-        if x == finf:
-            return finf
-        return fnan
+        if x == fzero: return fninf
+        if x == finf: return finf
+        if x == fnan: return fnan
     if sign:
         raise ComplexResult("logarithm of a negative number")
-    if x == fone:
-        return fzero
-    bc_plus_exp = bc + exp
-    # Estimated precision needed for log(t) + n*log(2)
-    prec2 = prec + int(math.log(1+abs(bc_plus_exp), 2)) + 15
-    # Watch out for the case when x is very close to 1
-    if -1 < bc_plus_exp < 2:
-        near_one = mpf_abs(mpf_sub(x, fone, 53), 53)
-        if near_one == 0:
+
+    # log(2^n)
+    if man == 1:
+        if not exp:
             return fzero
-        # estimate how close
-        prec2 += -(near_one[2]) - bitcount(abs(near_one[1]))
-    # Separate mantissa and exponent, calculate, join parts
-    t = rshift(man, bc-prec2)
-    l = log_newton(t, prec2)
-    a = bc_plus_exp * log2_fixed(prec2)
-    return from_man_exp(l+a, -prec2, prec, rnd)
+        return from_man_exp(exp*log2_fixed(prec+20), -prec-20, prec, rnd)
+
+    # Assume 20 bits to be sufficient for cancelling rounding errors
+    wp = prec + 20
+    mag = bc + exp
+
+    # Already on the standard interval, (0.5, 1)
+    if not mag:
+        t = rshift(man, bc-wp)
+        log2n = 0
+        # Watch out for "x = 0.9999"
+        # Proceed only if 1-x lost at most 15 bits of accuracy
+        res = (MP_ONE << wp) - t
+        if not (res >> (wp - 15)):
+            # Find out extra precision needed
+            delta = mpf_sub(x, fone, 10)
+            delta_bits = -(delta[2] + delta[3])
+            # O(x^2) term vanishes relatively
+            if delta_bits > wp + 10:
+                xm1 = mpf_sub(x, fone, prec, rnd)
+                if rnd in (round_floor, round_up):
+                    # Perturb by O(x^2) for interval rounding
+                    eps = mpf_shift(fone, -2*delta_bits)
+                    return mpf_sub(xm1, eps, prec, rnd)
+                else:
+                    return xm1
+            else:
+                wp += delta_bits
+                t = rshift(man, bc-wp)
+
+    # Already on the standard interval, (1, 2)
+    elif mag == 1:
+        t = rshift(man, bc-wp-1)
+        log2n = 0
+        # Watch out for "x = 1.0001"
+        # Similar to above; note that we flip signs
+        # to obtain a positive residual, ensuring that
+        # the following shift rounds down
+        res = t - (MP_ONE << wp)
+        if not (res >> (wp - 15)):
+            # Find out extra precision needed
+            delta = mpf_sub(x, fone, 10)
+            delta_bits = -(delta[2] + delta[3])
+            # O(x^2) term vanishes relatively
+            if delta_bits > wp + 10:
+                xm1 = mpf_sub(x, fone, prec, rnd)
+                if rnd in (round_floor, round_down):
+                    # Perturb by O(x^2) for interval rounding
+                    eps = mpf_shift(fone, -2*delta_bits)
+                    return mpf_sub(xm1, eps, prec, rnd)
+                else:
+                    return xm1
+            else:
+                wp += delta_bits
+                t = rshift(man, bc-wp-1)
+
+    # Rescale
+    else:
+        # Estimated precision needed for n*log(2) to
+        # be accurate relatively
+        wp += int(math.log(1+abs(mag),2))
+        log2n = mag * log2_fixed(wp)
+        # Rescaled argument as a fixed-point number
+        t = rshift(man, bc-wp)
+
+    # Use the faster method
+    if wp < LOG_TAYLOR_PREC:
+        a = log_taylor(t, wp)
+    else:
+        a = log_newton(t, wp)
+
+    return from_man_exp(a + log2n, -wp, prec, rnd)
+
 
 
 #----------------------------------------------------------------------------#

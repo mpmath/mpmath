@@ -824,7 +824,6 @@ def arg(x):
     x = mpc(x)
     return atan2(x.imag, x.real)
 
-@funcwrapper
 def log(x, b=None):
     """Returns the base-b logarithm of x. If b is unspecified, return
     the natural (base-e) logarithm. log(x, b) is defined as
@@ -835,7 +834,8 @@ def log(x, b=None):
     for which Im(log(x)) = -pi < arg(x) <= pi. """
     if b is None:
         return ln(x)
-    return ln(x) / ln(b)
+    wp = mp.prec + 20
+    return ln(x, prec=wp) / ln(b, prec=wp)
 
 def log10(x):
     """Base-10 logarithm. Equivalent to log(x,10)."""
