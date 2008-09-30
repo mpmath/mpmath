@@ -612,9 +612,14 @@ def log_newton(x, prec):
     for p in giant_steps2(40, prec+extra):
         rb = lshift(r, p-prevp)
         # Parameters for exponential series
-        r = int(2 * p**0.4)
+        if p < 300:
+            r = int(2 * p**0.4)
+            exp_func = exp_series
+        else:
+            r = int(0.7 * p**0.5)
+            exp_func = exp_series2
         exp_extra = r + 10
-        e = exp_series((-rb) << exp_extra, p + exp_extra, r)
+        e = exp_func((-rb) << exp_extra, p + exp_extra, r)
         s = ((rshift(x, prec-p)*e)>>(p + exp_extra)) - (1 << p)
         s1 = -((s*s)>>(p+1))
         r = rb + s + s1
