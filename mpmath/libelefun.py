@@ -627,34 +627,41 @@ def log_newton(x, prec):
     return r >> extra
 
 if MODE == 'gmpy':
-    LOG_TAYLOR_PREC = 360
+    LOG_TAYLOR_PREC = 700
 else:
-    LOG_TAYLOR_PREC = 170
+    LOG_TAYLOR_PREC = 450
 
 LOG_TAYLOR_WP = LOG_TAYLOR_PREC + 20
 LOG_TAYLOR_SHIFT = 9   # steps of size 2^-N
 
 log_taylor_cache = {}
 
+def log_taylor_get_cached(n, prec):
+    # Taylor series with caching wins up to huge precisions
+    # To avoid unnecessary precomputation at low precision, we 
+    # do it in steps
+    # Round to next power of 2
+    prec2 = (1<<(bitcount(prec-1))) + 20
+    dprec = prec2 - prec
+    if (n, prec2) in log_taylor_cache:
+        a, atan_a = log_taylor_cache[n, prec2]
+    else:
+        a = n << (prec2 - LOG_TAYLOR_SHIFT)
+        atan_a = log_newton(a, prec2)
+        log_taylor_cache[n, prec2] = (a, atan_a)
+    return (a >> dprec), (atan_a >> dprec)
+
 def log_taylor(x, prec):
     n = (x >> (prec-LOG_TAYLOR_SHIFT))
-    if n in log_taylor_cache:
-        a, log_a = log_taylor_cache[n]
-    else:
-        a = n << (LOG_TAYLOR_WP - LOG_TAYLOR_SHIFT)
-        log_a = log_newton(a, LOG_TAYLOR_WP)
-        log_taylor_cache[n] = (a, log_a)
-    dprec = (LOG_TAYLOR_WP - prec)
-    a >>= dprec
-    log_a >>= dprec
+    a, log_a = log_taylor_get_cached(n, prec)
     d = a - x
     u = ((-d) << prec) // a
+    w = (d << prec) // a
     s = MP_ZERO
     k = 1
     while u:
         s += u // k
-        u *= d
-        u //= a
+        u = (u * w) >> prec
         k += 1
     return log_a + s
 
@@ -1112,109 +1119,101 @@ def mpf_tanh(x, prec, rnd=round_fast):
 # Inverse tangent
 #
 
-"""
-Near x = 0, use atan(x) = x - x**3/3 + x**5/5 - ...
-Near x = 1, use atan(x) = y/x * (1 + 2/3*y + 2*4/3/5*y**2 + ...)
-where y = x**2/(1+x**2).
-At high precision use the Newton method  for 1.0/8 <= x < 256
+def atan_newton(x, prec):
+    if prec >= 100:
+        r = math.atan((x>>(prec-53))/2.0**53)
+    else:
+        r = math.atan(x/2.0**prec)
+    prevp = 50
+    r = int(r * 2.0**53) >> (53-prevp)
+    extra_p = 100
+    for p in giant_steps(prevp, prec):
+        s = int(0.137 * p**0.579)
+        p += s + 50
+        r = r << (p-prevp)
+        cos, sin = expi_series(r, p, s)
+        tan = (sin << p) // cos
+        a = ((tan - rshift(x, prec-p)) << p) // ((MP_ONE<<p) + ((tan**2)>>p))
+        r = r - a
+        prevp = p
+    return rshift(r, prevp-prec)
 
-TODO: see if one can improve the case x < 1.0/8;
-      write a fixed-point function atan_newton
-"""
 
-def atan_taylor(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
-    assert not sign
-    # Increase absolute precision when extremely close to 0
-    diff = -(bc + exp)
-    prec2 = prec
-    if diff > 10:
-        if 3*diff - 4 > prec:  # x**3 term vanishes; atan(x) ~x
-            return from_man_exp(man, exp, prec, rnd)
-        prec2 = prec + diff
-    prec2 += 15  # XXX: better estimate for number of guard bits
-    x = to_fixed(x, prec2)
-    x2 = (x*x)>>prec2; one = 1<<prec2; s=a=x
-    for n in xrange(1, 1000000):
-        a = (a*x2) >> prec2
-        s += a // ((-1)**n * (n+n+1))
-        if -100 < a < 100:
-            break
-    return from_man_exp(s, -prec2, prec, rnd)
+ATAN_TAYLOR_PREC = 3000
+ATAN_TAYLOR_SHIFT = 7   # steps of size 2^-N
 
-def atan_euler(x, prec, rnd=round_fast):
-    prec2 = prec + 15
-    x = to_fixed(x, prec2)
-    one = 1<<prec2; x2 = (x*x)>>prec2; y=(x2<<prec2)//(one+x2)
-    s = a = one
-    for n in xrange(1, 1000000):
-        a = ((a*y)>>prec2) * (2*n) // (2*n+1)
-        if a < 100:
-            break
-        s += a
-    return from_man_exp(y*s//x, -prec2, prec, rnd)
+atan_taylor_cache = {}
 
-_cutoff_1 = (0, MP_FIVE, -3, 3)   # ~0.6
-_cutoff_2 = (0, MP_THREE, -1, 2)   # 1.5
+def atan_taylor_get_cached(n, prec):
+    # Taylor series with caching wins up to huge precisions
+    # To avoid unnecessary precomputation at low precision, we 
+    # do it in steps
+    # Round to next power of 2
+    prec2 = (1<<(bitcount(prec-1))) + 20
+    dprec = prec2 - prec
+    if (n, prec2) in atan_taylor_cache:
+        a, atan_a = atan_taylor_cache[n, prec2]
+    else:
+        a = n << (prec2 - ATAN_TAYLOR_SHIFT)
+        atan_a = atan_newton(a, prec2)
+        atan_taylor_cache[n, prec2] = (a, atan_a)
+    return (a >> dprec), (atan_a >> dprec)
+
+def atan_taylor(x, prec):
+    n = (x >> (prec-ATAN_TAYLOR_SHIFT))
+    a, atan_a = atan_taylor_get_cached(n, prec)
+    d = x - a
+    s = u = (d << prec) // ((a**2 >> prec) + (a*d >> prec) + (MP_ONE << prec))
+    u2 = (u**2 >> prec)
+    k = 1
+    while u:
+        u = (u * u2) >> prec
+        k += 2
+        if k & 2:
+            s -= u // k
+        else:
+            s += u // k
+    return atan_a + s
+
+def atan_inf(sign, prec, rnd):
+    if not sign:
+        return mpf_shift(mpf_pi(prec, rnd), -1)
+    return mpf_neg(mpf_shift(mpf_pi(prec, negative_rnd[rnd]), -1))
 
 def mpf_atan(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if not man:
         if x == fzero: return fzero
-        if x == finf: return mpf_shift(mpf_pi(prec), -1)
-        if x == fninf: return mpf_neg(mpf_shift(mpf_pi(prec), -1))
+        if x == finf: return atan_inf(0, prec, rnd)
+        if x == fninf: return atan_inf(1, prec, rnd)
         return fnan
-    flag_nr = True
-    if prec < 400:
-        flag_nr = False
+    mag = exp + bc
+    # Essentially infinity
+    if mag > prec+20:
+        return atan_inf(sign, prec, rnd)
+    # Essentially ~ x
+    if -mag > prec+20:
+        # TODO: interval perturbation
+        return mpf_pos(x, prec, rnd)
+    wp = prec + 30 + abs(mag)
+    # For large x, use atan(x) = pi/2 - atan(1/x)
+    if mag >= 2:
+        x = mpf_rdiv_int(1, x, wp)
+        reciprocal = True
     else:
-        ebc = exp + bc
-    # the Newton method is used if flag_nr = True; otherwise one of the
-    # two series is used.
-    # This selection is based on a benchmark.
-        if ebc < -2 or ebc > 8:
-            flag_nr = False
-        elif ebc == -2:
-            if prec < 1500:
-                flag_nr = False
-        elif ebc <= 0:
-            if prec < 600:
-                flag_nr = False
-        else:
-            if prec < 400*ebc:
-                flag_nr = False
-    if not flag_nr:
-        if sign:
-            return mpf_neg(mpf_atan(mpf_neg(x), prec, rnd))
-        if mpf_cmp(x, _cutoff_1) < 0:
-            return atan_taylor(x, prec, rnd)
-        if mpf_cmp(x, _cutoff_2) < 0:
-            return atan_euler(x, prec, rnd)
-        # For large x, use atan(x) = pi/2 - atan(1/x)
-        if x[2] > 10*prec:
-            pi = mpf_pi(prec, rnd)
-            pihalf = mpf_shift(pi, -1)
-        else:
-            pi = mpf_pi(prec+4)
-            pihalf = mpf_shift(pi, -1)
-        t = mpf_atan(mpf_div(fone, x, prec+4), prec+4)
-        return mpf_sub(pihalf, t, prec, rnd)
-    # use Newton's method
-    extra = 10
-    extra_p = 100
-    prec2 = prec + extra
-    r = math.atan(to_float(x))
-    r = from_float(r, 50, rnd)
-    for p in giant_steps(50, prec2):
-        wp = p + extra_p
-        t = mpf_tan(r, wp, rnd)
-        tmp1 = mpf_sub(x, t, wp, rnd)
-        tmp2 = mpf_mul(t, t, wp, rnd)
-        tmp2 = mpf_add(fone, tmp2, wp, rnd)
-        tmp1 = mpf_div(tmp1, tmp2, wp, rnd)
-        r = mpf_add(r, tmp1, wp, rnd)
-    sign, man, exp, bc = r
-    return normalize(sign, man, exp, bc, prec, rnd)
+        reciprocal = False
+    t = to_fixed(x, wp)
+    if sign:
+        t = -t
+    if wp < ATAN_TAYLOR_PREC:
+        a = atan_taylor(t, wp)
+    else:
+        a = atan_newton(t, wp)
+    if reciprocal:
+        a = ((pi_fixed(wp)>>1)+1) - a
+    if sign:
+        a = -a
+    return from_man_exp(a, -wp, prec, rnd)
 
 # TODO: cleanup the special cases
 def mpf_atan2(y, x, prec, rnd=round_fast):
