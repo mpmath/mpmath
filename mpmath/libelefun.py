@@ -507,17 +507,20 @@ def mpf_exp(x, prec, rnd=round_fast):
     # size of n and the precision.
     if prec > 600 and exp >= 0:
         return mpf_pow_int(mpf_e(prec+10), (-1)**sign *(man<<exp), prec, rnd)
+    mag = bc+exp
+    if mag < -prec-10:
+        return mpf_perturb(fone, sign, prec, rnd)
     # extra precision needs to be similar in magnitude to log_2(|x|)
     # for the modulo reduction, plus r for the error from squaring r times
-    wp = prec + max(0, bc+exp)
+    wp = prec + max(0, mag)
     if wp < 300:
         r = int(2*wp**0.4)
-        if bc+exp < 0:
-            r = max(1, r + bc + exp)
+        if mag < 0:
+            r = max(1, r + mag)
         wp += r + 20
         t = to_fixed(x, wp)
         # abs(x) > 1?
-        if exp+bc > 1:
+        if mag > 1:
             lg2 = log2_fixed(wp)
             n, t = divmod(t, lg2)
         else:
@@ -525,11 +528,11 @@ def mpf_exp(x, prec, rnd=round_fast):
         man = exp_series(t, wp, r)
     else:
         r = int(0.7 * wp**0.5)
-        if bc+exp < 0:
-            r = max(1, r + bc + exp)
+        if mag < 0:
+            r = max(1, r + mag)
         wp += r + 20
         t = to_fixed(x, wp)
-        if exp+bc > 1:
+        if mag > 1:
             lg2 = log2_fixed(wp)
             n, t = divmod(t, lg2)
         else:
@@ -702,12 +705,7 @@ def mpf_log(x, prec, rnd=round_fast):
             # O(x^2) term vanishes relatively
             if delta_bits > wp + 10:
                 xm1 = mpf_sub(x, fone, prec, rnd)
-                if rnd in (round_floor, round_up):
-                    # Perturb by O(x^2) for interval rounding
-                    eps = mpf_shift(fone, -2*delta_bits)
-                    return mpf_sub(xm1, eps, prec, rnd)
-                else:
-                    return xm1
+                return mpf_perturb(xm1, 1, prec, rnd)
             else:
                 wp += delta_bits
                 t = rshift(man, bc-wp)
@@ -728,12 +726,7 @@ def mpf_log(x, prec, rnd=round_fast):
             # O(x^2) term vanishes relatively
             if delta_bits > wp + 10:
                 xm1 = mpf_sub(x, fone, prec, rnd)
-                if rnd in (round_floor, round_down):
-                    # Perturb by O(x^2) for interval rounding
-                    eps = mpf_shift(fone, -2*delta_bits)
-                    return mpf_sub(xm1, eps, prec, rnd)
-                else:
-                    return xm1
+                return mpf_perturb(xm1, 1, prec, rnd)
             else:
                 wp += delta_bits
                 t = rshift(man, bc-wp-1)
@@ -931,40 +924,17 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
     if wp > prec*2 + 30:
         y = from_man_exp(y, -wp)
 
-        # For tiny arguments, rounding to nearest is trivial
-        if cos_rnd == sin_rnd == round_nearest:
-            cos, sin = fone, mpf_pos(y, prec, round_nearest)
-            if swap_cos_sin:
-                cos, sin = sin, cos
-            if cos_sign: cos = mpf_neg(cos)
-            if sin_sign: sin = mpf_neg(sin)
-            return cos, sin
-
-        # Directed rounding
-        one_minus_eps = mpf_sub(fone, mpf_shift(fone, -prec-5), prec, round_down)
-        y_plus_eps = mpf_add(y, mpf_shift(y, -prec-5), prec, round_up)
-        y_minus_eps = mpf_sub(y, mpf_shift(y, -prec-5), prec, round_down)
-
         if swap_cos_sin:
             cos_rnd, sin_rnd = sin_rnd, cos_rnd
             cos_sign, sin_sign = sin_sign, cos_sign
 
-        if cos_sign:
-            cos = [mpf_neg(one_minus_eps), fnone]\
-                [cos_rnd in (round_floor, round_up)]
-        else:
-            cos = [one_minus_eps, fone]\
-                [cos_rnd in (round_ceiling, round_up)]
-        if sin_sign:
-            sin = [mpf_neg(y_minus_eps), mpf_neg(y_plus_eps)]\
-                [sin_rnd in (round_floor, round_up)]
-        else:
-            sin = [y_minus_eps, y_plus_eps]\
-                [sin_rnd in (round_ceiling, round_up)]
+        if cos_sign: cos = mpf_perturb(fnone, 0, prec, cos_rnd)
+        else:        cos = mpf_perturb(fone, 1, prec, cos_rnd)
+        if sin_sign: sin = mpf_perturb(mpf_neg(y), 0, prec, sin_rnd)
+        else:        sin = mpf_perturb(y, 1, prec, sin_rnd)
 
         if swap_cos_sin:
             cos, sin = sin, cos
-
         return cos, sin
 
     # Use standard Taylor series
@@ -1074,18 +1044,19 @@ def cosh_sinh(x, prec, rnd=round_fast, tanh=0):
     if sign:
         man = -man
 
-    high_bit = exp + bc
+    mag = exp + bc
     prec2 = prec + 20
 
-    if high_bit < -3:
+    if mag < -3:
         # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
-        # TODO: support directed rounding
-        if high_bit < -prec-2:
-            return (fone, mpf_pos(x, prec, rnd))
+        if mag < -prec-2:
+            cosh = mpf_perturb(fone, 0, prec, rnd)
+            sinh = mpf_perturb(x, sign, prec, rnd)
+            return cosh, sinh
 
         # Avoid cancellation when computing sinh
         # TODO: might be faster to use sinh series directly
-        prec2 += (-high_bit) + 4
+        prec2 += (-mag) + 4
 
     # In the general case, we use
     #    cosh(x) = (exp(x) + exp(-x))/2
@@ -1193,8 +1164,7 @@ def mpf_atan(x, prec, rnd=round_fast):
         return atan_inf(sign, prec, rnd)
     # Essentially ~ x
     if -mag > prec+20:
-        # TODO: interval perturbation
-        return mpf_pos(x, prec, rnd)
+        return mpf_perturb(x, 1-sign, prec, rnd)
     wp = prec + 30 + abs(mag)
     # For large x, use atan(x) = pi/2 - atan(1/x)
     if mag >= 2:
