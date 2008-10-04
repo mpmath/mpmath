@@ -8,6 +8,7 @@
 from __future__ import division
 
 from mptypes import *
+from functions import sqrt, sign
 from matrices import matrix, swap_row, extend, mnorm_1, norm_p
 from copy import copy
 

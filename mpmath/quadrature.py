@@ -1,5 +1,8 @@
-from mptypes import (mp, mpf, convert_lossless, inf, exp, log,
-    ldexp, eps, pi, nstr, make_mpf)
+from mptypes import (mp, mpf, convert_lossless, inf,
+   eps, nstr, make_mpf)
+
+from functions import pi, exp, log, ldexp
+
 from libmpf import mpf_neg
 
 import math

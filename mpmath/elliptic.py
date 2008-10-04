@@ -18,7 +18,7 @@
 import sys
 
 from mptypes import *
-from specfun import ellipk
+from functions import *
 
 def calculate_nome(k):
     """

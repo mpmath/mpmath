@@ -4,16 +4,11 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
-__all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
-  "j", "sqrt", "hypot", "exp", "log", "cos", "sin", "tan", "atan", "atan2",
-  "power", "asin", "acos", "sinh", "cosh", "tanh", "asinh", "acosh", "atanh",
-  "arg", "degree", "rand", "inf", "nan", "floor", "ceil", "isnan", "almosteq",
-  "ldexp", "fraction", "nstr", "nprint", "mp", "extraprec",
+__all__ = ["mpnumeric", "mpf", "mpc",
+  "j", "inf", "nan", "isnan", "almosteq",
+  "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
-  "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
-  "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
-  "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
-  "sign", "plot", "isinf", "mpi", "isint", "phi"]
+  "make_mpc", "arange", "plot", "isinf", "mpi", "isint", "rand"]
 
 from libelefun import *
 from libmpf import *
@@ -202,6 +197,7 @@ class mpf(mpnumeric):
         return t % s
 
     def sqrt(s):
+        from functions import sqrt
         return sqrt(s)
 
     def ae(s, t, rel_eps=None, abs_eps=None):
@@ -587,6 +583,40 @@ ninf = make_mpf(fninf)
 nan = make_mpf(fnan)
 j = mpc(0,1)
 
+class constant(mpf):
+    """Represents a mathematical constant with dynamic precision.
+    When printed or used in an arithmetic operation, a constant
+    is converted to a regular mpf at the working precision. A
+    regular mpf can also be obtained using the operation +x."""
+
+    def __new__(cls, func, name):
+        a = object.__new__(cls)
+        a.name = name
+        a.func = func
+        return a
+
+    def __call__(self, prec=None, dps=None, rounding=None):
+        if not prec: prec = prec_rounding[0]
+        if not rounding: rounding = prec_rounding[1]
+        if dps: prec = dps_to_prec(prec)
+        return make_mpf(self.func(prec, rounding))
+
+    @property
+    def _mpf_(self):
+        prec, rounding = prec_rounding
+        return self.func(prec, rounding)
+
+    def __repr__(self):
+        return "<%s: %s~>" % (self.name, nstr(self))
+
+eps = constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
+    "epsilon of working precision")
+
+
+def rand():
+    """Return an mpf chosen randomly from [0, 1)."""
+    return make_mpf(mpf_rand(mp.prec))
+
 def isnan(x):
     if not isinstance(x, mpf):
         return False
@@ -610,34 +640,6 @@ def isint(x):
         return x == int(x)
     return False
 
-class constant(mpf):
-    """Represents a mathematical constant with dynamic precision.
-    When printed or used in an arithmetic operation, a constant
-    is converted to a regular mpf at the working precision. A
-    regular mpf can also be obtained using the operation +x."""
-
-    def __new__(cls, func, name):
-        a = object.__new__(cls)
-        a.name = name
-        a.func = func
-        return a
-
-    @property
-    def _mpf_(self):
-        prec, rounding = prec_rounding
-        return self.func(prec, rounding)
-
-    def __repr__(self):
-        return "<%s: %s~>" % (self.name, nstr(self))
-
-pi = constant(mpf_pi, "pi")
-degree = constant(mpf_degree, "degree")
-e = constant(mpf_e, "e")
-ln2 = constant(mpf_ln2, "ln(2)")
-ln10 = constant(mpf_ln10, "ln(10)")
-phi = constant(mpf_phi, "Golden ratio (phi)")
-eps = constant(lambda p, r: (0, MP_ONE, -p+1, 1), "epsilon of working precision")
-
 def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.
     The value is updated with the precision.
@@ -656,220 +658,6 @@ def fraction(p, q):
     """
     return constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
         '%s/%s' % (p, q))
-
-
-
-def funcwrapper(f):
-    def g(*args, **kwargs):
-        orig = mp.prec
-        try:
-            args = [convert_lossless(z) for z in args]
-            mp.prec = orig + 10
-            v = f(*args, **kwargs)
-        finally:
-            mp.prec = orig
-        return +v
-    g.__name__ = f.__name__
-    g.__doc__ = f.__doc__
-    return g
-
-def mpfunc(name, real_f, complex_f, doc, interval_f=None):
-    def f(x, **kwargs):
-        if not isinstance(x, mpnumeric):
-            x = convert_lossless(x)
-        prec, rounding = prec_rounding
-        if kwargs:
-            prec = kwargs.get('prec', prec)
-            if 'dps' in kwargs:
-                prec = dps_to_prec(kwargs['dps'])
-            rounding = kwargs.get('rounding', rounding)
-        if isinstance(x, mpf):
-            try:
-                return make_mpf(real_f(x._mpf_, prec, rounding))
-            except ComplexResult:
-                # Handle propagation to complex
-                if mp.trap_complex:
-                    raise
-                return make_mpc(complex_f((x._mpf_, fzero), prec, rounding))
-        elif isinstance(x, mpc):
-            return make_mpc(complex_f(x._mpc_, prec, rounding))
-        elif isinstance(x, mpi):
-            if interval_f:
-                return make_mpi(interval_f(x._val, prec))
-        raise NotImplementedError("%s of a %s" % (name, type(x)))
-
-    f.__name__ = name
-    f.__doc__ = "Returns the %s of x" % doc
-    return f
-
-def altfunc(f, name, desc):
-    def g(x):
-        orig = mp.prec
-        try:
-            mp.prec = orig + 10
-            return one/f(x)
-        finally:
-            mp.prec = orig
-    g.__name__ = name
-    g.__doc__ = "Returns the %s of x, 1/%s(x)" % (desc, f.__name__)
-    return g
-
-def altinvfunc(f, name, desc):
-    def g(x):
-        orig = mp.prec
-        try:
-            mp.prec = orig + 10
-            return f(one/x)
-        finally:
-            mp.prec = orig
-    g.__name__ = name
-    g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
-    return g
-
-sqrt = mpfunc('sqrt', mpf_sqrt, mpc_sqrt, "principal square root", mpi_sqrt)
-cbrt = mpfunc('cbrt', mpf_cbrt, mpc_cbrt, "principal cubic root")
-exp = mpfunc('exp', mpf_exp, mpc_exp, "exponential function", mpi_exp)
-ln = mpfunc('ln', mpf_log, mpc_log, "natural logarithm", mpi_log)
-
-cos = mpfunc('cos', mpf_cos, mpc_cos, "cosine", mpi_cos)
-sin = mpfunc('sin', mpf_sin, mpc_sin, "sine", mpi_sin)
-tan = mpfunc('tan', mpf_tan, mpc_tan, "tangent", mpi_tan)
-cosh = mpfunc('cosh', mpf_cosh, mpc_cosh, "hyperbolic cosine")
-sinh = mpfunc('sinh', mpf_sinh, mpc_sinh, "hyperbolic sine")
-tanh = mpfunc('tanh', mpf_tanh, mpc_tanh, "hyperbolic tangent")
-
-acos = mpfunc('acos', mpf_acos, mpc_acos, "inverse cosine")
-asin = mpfunc('asin', mpf_asin, mpc_asin, "inverse sine")
-atan = mpfunc('atan', mpf_atan, mpc_atan, "inverse tangent")
-asinh = mpfunc('asinh', mpf_asinh, mpc_asinh, "inverse hyperbolic sine")
-acosh = mpfunc('acosh', mpf_acosh, mpc_acosh, "inverse hyperbolic cosine")
-atanh = mpfunc('atanh', mpf_atanh, mpc_atanh, "inverse hyperbolic tangent")
-
-sec = altfunc(cos, 'sec', 'secant')
-csc = altfunc(sin, 'csc', 'cosecant')
-cot = altfunc(tan, 'cot', 'cotangent')
-sech = altfunc(cosh, 'sech', 'hyperbolic secant')
-csch = altfunc(sinh, 'csch', 'hyperbolic cosecant')
-coth = altfunc(tanh, 'coth', 'hyperbolic cotangent')
-
-asec = altinvfunc(acos, 'asec', 'secant')
-acsc = altinvfunc(asin, 'acsc', 'cosecant')
-acot = altinvfunc(atan, 'acot', 'cotangent')
-asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
-acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
-acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
-
-@funcwrapper
-def nthroot(x, n):
-    """principal n-th root"""
-    n = int(n)
-    if isinstance(x, mpf):
-        try:
-            return make_mpf(mpf_nthroot(x._mpf_, n, *prec_rounding))
-        except ComplexResult:
-            if mp.trap_complex:
-                raise
-            x = (x._mpf_, fzero)
-    else:
-        x = x._mpc_
-    return make_mpc(mpc_nthroot(x, n, *prec_rounding))
-
-def hypot(x, y):
-    """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
-    must be real."""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
-    return make_mpf(mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
-
-def floor(x):
-    """Computes the floor function of x. Note: returns an mpf, not a
-    Python int. If x is larger than the precision, it will be rounded,
-    not necessarily in the floor direction."""
-    x = convert_lossless(x)
-    return make_mpf(mpf_floor(x._mpf_, *prec_rounding))
-
-def ceil(x):
-    """Computes the ceiling function of x. Note: returns an mpf, not a
-    Python int. If x is larger than the precision, it will be rounded,
-    not necessarily in the ceiling direction."""
-    x = convert_lossless(x)
-    return make_mpf(mpf_ceil(x._mpf_, *prec_rounding))
-
-def ldexp(x, n):
-    """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
-    x = convert_lossless(x)
-    return make_mpf(mpf_shift(x._mpf_, n))
-
-def frexp(x):
-    """Convert x to a scaled number y in the range [0.5, 1). Returns
-    (y, n) such that x = y * 2**n. No rounding is performed."""
-    x = convert_lossless(x)
-    y, n = mpf_frexp(x._mpf_)
-    return make_mpf(y), n
-
-def sign(x):
-    """Return sign(x), defined as x/abs(x), or 0 for x = 0."""
-    x = convert_lossless(x)
-    if not x or isnan(x):
-        return x
-    if isinstance(x, mpf):
-        return cmp(x, 0)
-    return x / abs(x)
-
-@extraprec(5)
-def arg(x):
-    """Returns the complex argument (phase) of x. The returned value is
-    an mpf instance. The argument is here defined to satisfy
-    -pi < arg(x) <= pi. On the negative real half-axis, it is taken to
-    be +pi."""
-    x = mpc(x)
-    return atan2(x.imag, x.real)
-
-def log(x, b=None):
-    """Returns the base-b logarithm of x. If b is unspecified, return
-    the natural (base-e) logarithm. log(x, b) is defined as
-    log(x)/log(b). log(0) raises ValueError.
-
-    The natural logarithm is real if x > 0 and complex if x < 0 or if x
-    is complex. The principal branch of the complex logarithm is chosen,
-    for which Im(log(x)) = -pi < arg(x) <= pi. """
-    if b is None:
-        return ln(x)
-    wp = mp.prec + 20
-    return ln(x, prec=wp) / ln(b, prec=wp)
-
-def log10(x):
-    """Base-10 logarithm. Equivalent to log(x,10)."""
-    return log(x, 10)
-
-def power(x, y):
-    """Converts x and y to mpf or mpc and returns x**y = exp(y*log(x))."""
-    return convert_lossless(x) ** convert_lossless(y)
-
-def modf(x,y):
-    """Converts x and y to mpf or mpc and returns x % y"""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
-    return x % y
-
-def degrees(x):
-    """Convert x given in radians to degrees"""
-    return x / degree
-
-def radians(x):
-    """Convert x given in degrees to radians"""
-    return x * degree
-
-def atan2(y,x):
-    """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
-    the signs of y and x. (Defined for real x and y only.)"""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
-    return make_mpf(mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
-
-def rand():
-    """Return an mpf chosen randomly from [0, 1)."""
-    return make_mpf(mpf_rand(mp.prec))
 
 from operator import gt, lt
 

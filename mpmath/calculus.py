@@ -12,7 +12,7 @@ etc
 __docformat__ = 'plaintext'
 
 from mptypes import *
-from specfun import factorial, bernoulli
+from functions import *
 
 from quadrature import quadgl, quadts
 

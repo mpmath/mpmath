@@ -17,10 +17,6 @@ from libmpf import *
 from libelefun import *
 from libmpc import *
 
-from mptypes import (mp, mpfunc, constant, mpf, make_mpf, make_mpc,
-    convert_lossless)
-
-
 # Catalan's constant is computed using Lupas's rapidly convergent series
 # (listed on http://mathworld.wolfram.com/CatalansConstant.html)
 #            oo
@@ -1048,7 +1044,9 @@ def borwein_coefficients(n):
     return ds
 
 def mpf_zeta_int(s, prec, rnd=round_fast):
-    """Computation of zeta(s) for an integer s"""
+    """
+    Optimized computation of zeta(s) for an integer s.
+    """
     wp = prec + 20
     s = int(s)
     if s < 2:
@@ -1059,9 +1057,7 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
         return mpf_div(mpf_bernoulli(-s+1, wp), from_int(s-1), prec, rnd)
     # 2^-s term vanishes?
     if s >= wp:
-        if rnd in (round_up, round_ceiling):
-            return mpf_add(fone, mpf_shift(fone,-wp-10), prec, rnd)
-        return fone
+        return mpf_perturb(fone, 0, prec, rnd)
     # 5^-s term vanishes?
     elif s >= wp*0.431:
         t = one = 1 << wp
@@ -1180,95 +1176,3 @@ def mpc_zeta(s, prec, rnd):
     tim = from_man_exp(tim, -wp, wp)
     q = mpc_sub(mpc_one, mpc_pow(mpc_two, mpc_sub(mpc_one, s, wp), wp), wp)
     return mpc_div((tre, tim), q, prec, rnd)
-
-#-----------------------------------------------------------------------#
-#                                                                       #
-#                               Wrappers                                #
-#                                                                       #
-#-----------------------------------------------------------------------#
-
-
-euler = constant(mpf_euler, "Euler's constant (gamma)")
-catalan = constant(mpf_catalan, "Catalan's constant")
-khinchin = constant(mpf_khinchin, "Khinchin's constant")
-glaisher = constant(mpf_glaisher, "Glaisher's constant")
-apery = constant(mpf_apery, "Apery's constant")
-
-cospi = mpfunc('cospi', mpf_cos_pi, mpc_cos_pi, 'computes cos(pi*x) accurately')
-sinpi = mpfunc('sinpi', mpf_sin_pi, mpc_sin_pi, 'computes sin(pi*x) accurately')
-
-gamma = mpfunc('gamma', mpf_gamma, mpc_gamma, "gamma function")
-fac = factorial = mpfunc('factorial', mpf_factorial, mpc_factorial, "factorial")
-zeta = mpfunc('zeta', mpf_zeta, mpc_zeta, 'Riemann zeta function')
-
-def psi(m, z):
-    """
-    Gives the polygamma function of order m of z, psi^(m)(z). Special
-    cases are the digamma function (psi0), trigamma function (psi1),
-    tetragamma (psi2) and pentagamma (psi4) functions.
-
-    The parameter m should be a nonnegative integer.
-    """
-    z = convert_lossless(z)
-    m = int(m)
-    if isinstance(z, mpf):
-        return make_mpf(mpf_psi(m, z._mpf_, *prec_rounding))
-    else:
-        return make_mpc(mpc_psi(m, z._mpc_, *prec_rounding))
-
-def psi0(z):
-    """Shortcut for psi(0,z) (the digamma function)"""
-    return psi(0, z)
-
-def psi1(z):
-    """Shortcut for psi(1,z) (the trigamma function)"""
-    return psi(1, z)
-
-def psi2(z):
-    """Shortcut for psi(2,z) (the tetragamma function)"""
-    return psi(2, z)
-
-def psi3(z):
-    """Shortcut for psi(3,z) (the pentagamma function)"""
-    return psi(3, z)
-
-polygamma = psi
-digamma = psi0
-trigamma = psi1
-tetragamma = psi2
-pentagamma = psi3
-
-harmonic = mpfunc('harmonic', mpf_harmonic, mpc_harmonic, "nth harmonic number")
-
-def bernoulli(n):
-    """nth Bernoulli number, B_n"""
-    return make_mpf(mpf_bernoulli(int(n), *prec_rounding))
-
-stieltjes_cache = {}
-
-def stieltjes(n):
-    """Computes the nth Stieltjes constant."""
-    from mptypes import exp, log, pi, j
-    from quadrature import quadgl
-    n = int(n)
-    if n == 0:
-        return +euler
-    if n < 0:
-        raise ValueError("Stieltjes constants defined for n >= 0")
-    if n in stieltjes_cache:
-        prec, s = stieltjes_cache[n]
-        if prec >= mp.prec:
-            return +s
-    def f(x):
-        r = exp(pi*j*x)
-        return (zeta(r+1) / r**n).real
-    orig = mp.prec
-    try:
-        p = int(log(factorial(n), 2) + 35)
-        mp.prec += p
-        u = quadgl(f, [-1, 1])
-        v = mpf(-1)**n * factorial(n) * u / 2
-    finally:
-        mp.prec = orig
-    stieltjes_cache[n] = (mp.prec, v)
-    return +v

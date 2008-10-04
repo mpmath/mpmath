@@ -3,6 +3,7 @@
 from __future__ import division
 
 from mptypes import *
+from functions import nthroot, sqrt
 
 rowsep = '\n'
 colsep = '  '

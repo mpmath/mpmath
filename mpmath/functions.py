@@ -1,18 +1,345 @@
 """
-Miscellaneous special functions
+This module defines most special functions and mathematical constants
+provided by mpmath. [Exception: elliptic functions are currently
+in elliptic.py]
+
+Most of the actual computational code is located in the lib* modules
+(libelefun, libhyper, ...); this module simply wraps this code to
+handle precision management in a user friendly way, provide type
+conversions, etc.
+
+In addition, this module defines a number of functions that would
+be inconvenient to define in the lib* modules, due to requiring
+high level operations (e.g. numerical quadrature) for the computation,
+or the need to support multiple arguments of mixed types.
+
 """
 
-from libmpf import *
-from libmpc import *
-from mptypes import *
-from mptypes import constant, funcwrapper
-
+import libmpf
+import libelefun
+import libmpc
+import libmpi
+import gammazeta
 import libhyper
 
+from mptypes import \
+(
+    mpnumeric, convert_lossless,
+    mpf, make_mpf,
+    mpc, make_mpc,
+    mpi, make_mpi,
+    constant,
+    prec_rounding, mp,
+    extraprec,
+    zero, one, inf, ninf, nan, j, isnan, isinf, isint, eps,
+    ComplexResult,
+)
 
-from gammazeta import *
+# Mathematical constants
+pi = constant(libelefun.mpf_pi, "pi")
+degree = constant(libelefun.mpf_degree, "degree")
+e = constant(libelefun.mpf_e, "e")
+ln2 = constant(libelefun.mpf_ln2, "ln(2)")
+ln10 = constant(libelefun.mpf_ln10, "ln(10)")
+phi = constant(libelefun.mpf_phi, "Golden ratio (phi)")
+euler = constant(gammazeta.mpf_euler, "Euler's constant (gamma)")
+catalan = constant(gammazeta.mpf_catalan, "Catalan's constant")
+khinchin = constant(gammazeta.mpf_khinchin, "Khinchin's constant")
+glaisher = constant(gammazeta.mpf_glaisher, "Glaisher's constant")
+apery = constant(gammazeta.mpf_apery, "Apery's constant")
 
-__docformat__ = 'plaintext'
+def funcwrapper(f):
+    def g(*args, **kwargs):
+        orig = mp.prec
+        try:
+            args = [convert_lossless(z) for z in args]
+            mp.prec = orig + 10
+            v = f(*args, **kwargs)
+        finally:
+            mp.prec = orig
+        return +v
+    g.__name__ = f.__name__
+    g.__doc__ = f.__doc__
+    return g
+
+def mpfunc(name, real_f, complex_f, doc, interval_f=None):
+    def f(x, **kwargs):
+        if not isinstance(x, mpnumeric):
+            x = convert_lossless(x)
+        prec, rounding = prec_rounding
+        if kwargs:
+            prec = kwargs.get('prec', prec)
+            if 'dps' in kwargs:
+                prec = dps_to_prec(kwargs['dps'])
+            rounding = kwargs.get('rounding', rounding)
+        if isinstance(x, mpf):
+            try:
+                return make_mpf(real_f(x._mpf_, prec, rounding))
+            except ComplexResult:
+                # Handle propagation to complex
+                if mp.trap_complex:
+                    raise
+                return make_mpc(complex_f((x._mpf_, libmpf.fzero), prec, rounding))
+        elif isinstance(x, mpc):
+            return make_mpc(complex_f(x._mpc_, prec, rounding))
+        elif isinstance(x, mpi):
+            if interval_f:
+                return make_mpi(interval_f(x._val, prec))
+        raise NotImplementedError("%s of a %s" % (name, type(x)))
+
+    f.__name__ = name
+    f.__doc__ = "Returns the %s of x" % doc
+    return f
+
+def altfunc(f, name, desc):
+    def g(x):
+        orig = mp.prec
+        try:
+            mp.prec = orig + 10
+            return one/f(x)
+        finally:
+            mp.prec = orig
+    g.__name__ = name
+    g.__doc__ = "Returns the %s of x, 1/%s(x)" % (desc, f.__name__)
+    return g
+
+def altinvfunc(f, name, desc):
+    def g(x):
+        orig = mp.prec
+        try:
+            mp.prec = orig + 10
+            return f(one/x)
+        finally:
+            mp.prec = orig
+    g.__name__ = name
+    g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
+    return g
+
+sqrt = mpfunc('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, "principal square root", libmpi.mpi_sqrt)
+cbrt = mpfunc('cbrt', libelefun.mpf_cbrt, libmpc.mpc_cbrt, "principal cubic root")
+exp = mpfunc('exp', libelefun.mpf_exp, libmpc.mpc_exp, "exponential function", libmpi.mpi_exp)
+ln = mpfunc('ln', libelefun.mpf_log, libmpc.mpc_log, "natural logarithm", libmpi.mpi_log)
+
+cos = mpfunc('cos', libelefun.mpf_cos, libmpc.mpc_cos, "cosine", libmpi.mpi_cos)
+sin = mpfunc('sin', libelefun.mpf_sin, libmpc.mpc_sin, "sine", libmpi.mpi_sin)
+tan = mpfunc('tan', libelefun.mpf_tan, libmpc.mpc_tan, "tangent", libmpi.mpi_tan)
+cosh = mpfunc('cosh', libelefun.mpf_cosh, libmpc.mpc_cosh, "hyperbolic cosine")
+sinh = mpfunc('sinh', libelefun.mpf_sinh, libmpc.mpc_sinh, "hyperbolic sine")
+tanh = mpfunc('tanh', libelefun.mpf_tanh, libmpc.mpc_tanh, "hyperbolic tangent")
+
+acos = mpfunc('acos', libelefun.mpf_acos, libmpc.mpc_acos, "inverse cosine")
+asin = mpfunc('asin', libelefun.mpf_asin, libmpc.mpc_asin, "inverse sine")
+atan = mpfunc('atan', libelefun.mpf_atan, libmpc.mpc_atan, "inverse tangent")
+asinh = mpfunc('asinh', libelefun.mpf_asinh, libmpc.mpc_asinh, "inverse hyperbolic sine")
+acosh = mpfunc('acosh', libelefun.mpf_acosh, libmpc.mpc_acosh, "inverse hyperbolic cosine")
+atanh = mpfunc('atanh', libelefun.mpf_atanh, libmpc.mpc_atanh, "inverse hyperbolic tangent")
+
+sec = altfunc(cos, 'sec', 'secant')
+csc = altfunc(sin, 'csc', 'cosecant')
+cot = altfunc(tan, 'cot', 'cotangent')
+sech = altfunc(cosh, 'sech', 'hyperbolic secant')
+csch = altfunc(sinh, 'csch', 'hyperbolic cosecant')
+coth = altfunc(tanh, 'coth', 'hyperbolic cotangent')
+
+asec = altinvfunc(acos, 'asec', 'secant')
+acsc = altinvfunc(asin, 'acsc', 'cosecant')
+acot = altinvfunc(atan, 'acot', 'cotangent')
+asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
+acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
+acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
+
+
+
+
+@funcwrapper
+def nthroot(x, n):
+    """principal n-th root"""
+    n = int(n)
+    if isinstance(x, mpf):
+        try:
+            return make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *prec_rounding))
+        except ComplexResult:
+            if mp.trap_complex:
+                raise
+            x = (x._mpf_, libmpf.fzero)
+    else:
+        x = x._mpc_
+    return make_mpc(libmpc.mpc_nthroot(x, n, *prec_rounding))
+
+def hypot(x, y):
+    """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
+    must be real."""
+    x = convert_lossless(x)
+    y = convert_lossless(y)
+    return make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
+
+def floor(x):
+    """Computes the floor function of x. Note: returns an mpf, not a
+    Python int. If x is larger than the precision, it will be rounded,
+    not necessarily in the floor direction."""
+    x = convert_lossless(x)
+    return make_mpf(libmpf.mpf_floor(x._mpf_, *prec_rounding))
+
+def ceil(x):
+    """Computes the ceiling function of x. Note: returns an mpf, not a
+    Python int. If x is larger than the precision, it will be rounded,
+    not necessarily in the ceiling direction."""
+    x = convert_lossless(x)
+    return make_mpf(libmpf.mpf_ceil(x._mpf_, *prec_rounding))
+
+def ldexp(x, n):
+    """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
+    x = convert_lossless(x)
+    return make_mpf(libmpf.mpf_shift(x._mpf_, n))
+
+def frexp(x):
+    """Convert x to a scaled number y in the range [0.5, 1). Returns
+    (y, n) such that x = y * 2**n. No rounding is performed."""
+    x = convert_lossless(x)
+    y, n = libmpf.mpf_frexp(x._mpf_)
+    return make_mpf(y), n
+
+def sign(x):
+    """Return sign(x), defined as x/abs(x), or 0 for x = 0."""
+    x = convert_lossless(x)
+    if not x or isnan(x):
+        return x
+    if isinstance(x, mpf):
+        return cmp(x, 0)
+    return x / abs(x)
+
+@extraprec(5)
+def arg(x):
+    """Returns the complex argument (phase) of x. The returned value is
+    an mpf instance. The argument is here defined to satisfy
+    -pi < arg(x) <= pi. On the negative real half-axis, it is taken to
+    be +pi."""
+    x = mpc(x)
+    return atan2(x.imag, x.real)
+
+def log(x, b=None):
+    """Returns the base-b logarithm of x. If b is unspecified, return
+    the natural (base-e) logarithm. log(x, b) is defined as
+    log(x)/log(b). log(0) raises ValueError.
+
+    The natural logarithm is real if x > 0 and complex if x < 0 or if x
+    is complex. The principal branch of the complex logarithm is chosen,
+    for which Im(log(x)) = -pi < arg(x) <= pi. """
+    if b is None:
+        return ln(x)
+    wp = mp.prec + 20
+    return ln(x, prec=wp) / ln(b, prec=wp)
+
+def log10(x):
+    """Base-10 logarithm. Equivalent to log(x,10)."""
+    return log(x, 10)
+
+def power(x, y):
+    """Converts x and y to mpf or mpc and returns x**y = exp(y*log(x))."""
+    return convert_lossless(x) ** convert_lossless(y)
+
+def modf(x,y):
+    """Converts x and y to mpf or mpc and returns x % y"""
+    x = convert_lossless(x)
+    y = convert_lossless(y)
+    return x % y
+
+def degrees(x):
+    """Convert x given in radians to degrees"""
+    return x / degree
+
+def radians(x):
+    """Convert x given in degrees to radians"""
+    return x * degree
+
+def atan2(y,x):
+    """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
+    the signs of y and x. (Defined for real x and y only.)"""
+    x = convert_lossless(x)
+    y = convert_lossless(y)
+    return make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
+
+
+cospi = mpfunc('cospi', gammazeta.mpf_cos_pi, gammazeta.mpc_cos_pi, 'computes cos(pi*x) accurately')
+sinpi = mpfunc('sinpi', gammazeta.mpf_sin_pi, gammazeta.mpc_sin_pi, 'computes sin(pi*x) accurately')
+
+zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
+gamma = mpfunc('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, "gamma function")
+factorial = mpfunc('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, "factorial")
+fac = factorial
+
+def psi(m, z):
+    """
+    Gives the polygamma function of order m of z, psi^(m)(z). Special
+    cases are the digamma function (psi0), trigamma function (psi1),
+    tetragamma (psi2) and pentagamma (psi4) functions.
+
+    The parameter m should be a nonnegative integer.
+    """
+    z = convert_lossless(z)
+    m = int(m)
+    if isinstance(z, mpf):
+        return make_mpf(gammazeta.mpf_psi(m, z._mpf_, *prec_rounding))
+    else:
+        return make_mpc(gammazeta.mpc_psi(m, z._mpc_, *prec_rounding))
+
+def psi0(z):
+    """Shortcut for psi(0,z) (the digamma function)"""
+    return psi(0, z)
+
+def psi1(z):
+    """Shortcut for psi(1,z) (the trigamma function)"""
+    return psi(1, z)
+
+def psi2(z):
+    """Shortcut for psi(2,z) (the tetragamma function)"""
+    return psi(2, z)
+
+def psi3(z):
+    """Shortcut for psi(3,z) (the pentagamma function)"""
+    return psi(3, z)
+
+polygamma = psi
+digamma = psi0
+trigamma = psi1
+tetragamma = psi2
+pentagamma = psi3
+
+harmonic = mpfunc('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic, "nth harmonic number")
+
+def bernoulli(n):
+    """nth Bernoulli number, B_n"""
+    return make_mpf(gammazeta.mpf_bernoulli(int(n), *prec_rounding))
+
+bernfrac = gammazeta.bernfrac
+
+stieltjes_cache = {}
+
+def stieltjes(n):
+    """Computes the nth Stieltjes constant."""
+    n = int(n)
+    if n == 0:
+        return +euler
+    if n < 0:
+        raise ValueError("Stieltjes constants defined for n >= 0")
+    if n in stieltjes_cache:
+        prec, s = stieltjes_cache[n]
+        if prec >= mp.prec:
+            return +s
+    from quadrature import quadgl
+    def f(x):
+        r = exp(pi*j*x)
+        return (zeta(r+1) / r**n).real
+    orig = mp.prec
+    try:
+        p = int(log(factorial(n), 2) + 35)
+        mp.prec += p
+        u = quadgl(f, [-1, 1])
+        v = mpf(-1)**n * factorial(n) * u / 2
+    finally:
+        mp.prec = orig
+    stieltjes_cache[n] = (mp.prec, v)
+    return +v
 
 def isnpint(x):
     if not x:
@@ -126,7 +453,7 @@ def hypsum(ar, af, ac, br, bf, bc, x):
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
         else:
-            re, im = x._mpf_, fzero
+            re, im = x._mpf_, libmpf.fzero
         v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
         return make_mpc(v)
 
@@ -481,12 +808,6 @@ def j0(x):
 def j1(x):
     """Bessel function J_1(x)."""
     return jv(1, x)
-
-#---------------------------------------------------------------------------#
-#                                                                           #
-#                               Miscellaneous                               #
-#                                                                           #
-#---------------------------------------------------------------------------#
 
 @funcwrapper
 def lambertw(z, k=0, approx=None):
