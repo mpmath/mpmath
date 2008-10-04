@@ -143,65 +143,57 @@ def khinchin_fixed(prec):
 # for general evaluation of zeta(s) or zeta'(s); this should be
 # looked into.
 
-# TODO: remove this; use log_int_fixed internally instead
-def log_range():
-    """Generate log(2), log(3), log(4), ..."""
-    prec = mp.prec + 20
-    one = 1 << prec
-    L = log2_fixed(prec)
-    p = 2
-    while 1:
-        yield mpf((L, -prec))
-        s = 0
-        u = one
-        k = 1
-        a = (2*p+1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p+1)
-        p += 1
-
 @constant_memo
 def glaisher_fixed(prec):
-    orig = mp.prec
-    try:
-        dps = mp.dps
-        mp.prec = prec + 30
-        N = int(1.0*dps + 5)
-        logs = log_range()
-        s = mpf(0)
-        # E-M step 1: sum log(k)/k**2 for k = 2..N-1
-        for n in range(2, N):
-            # print n, N
-            logn = logs.next()
-            s += logn / n**2
-        logN = logs.next()
-        # E-M step 2: integral of log(x)/x**2 from N to inf
-        s += (1+logN)/N
-        # E-M step 3: endpoint correction term f(N)/2
-        s += logN/(N**2 * 2)
-        # E-M step 4: the series of derivatives
-        pN, a, b, j, fac, k = N**3, 1, -2, 3, 2, 1
-        while 1:
-            # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
-            D = (a+b*logN)/pN
-            B = bernoulli(2*k)
-            term = B * D / fac
-            if abs(term) < eps:
-                break
-            # print k, nstr(term)
-            s -= term
-            # Advance derivative twice
-            a, b, pN, j = b-a*j, -j*b, pN*N, j+1
-            a, b, pN, j = b-a*j, -j*b, pN*N, j+1
-            k += 1
-            fac *= (2*k) * (2*k-1)
-        A = exp((6*s/pi**2 + log(2*pi) + euler)/12)
-        return to_fixed(A._mpf_, prec)
-    finally:
-        mp.prec = orig
+    wp = prec + 30
+    # Number of direct terms to sum before applying the Euler-Maclaurin
+    # formula to the tail. TODO: choose more intelligently
+    N = int(0.33*prec + 5)
+    ONE = MP_ONE << wp
+    # Euler-Maclaurin, step 1: sum log(k)/k**2 for k from 2 to N-1
+    s = MP_ZERO
+    for k in range(2, N):
+        #print k, N
+        s += log_int_fixed(k, wp) // k**2
+    logN = log_int_fixed(N, wp)
+    # E-M step 2: integral of log(x)/x**2 from N to inf
+    s += (ONE + logN) // N
+    # E-M step 3: endpoint correction term f(N)/2
+    s += logN // (N**2 * 2)
+    # E-M step 4: the series of derivatives
+    pN = N**3
+    a = 1
+    b = -2
+    j = 3
+    fac = from_int(2)
+    k = 1
+    while 1:
+        # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
+        D = ((a << wp) + b*logN) // pN
+        D = from_man_exp(D, -wp)
+        B = mpf_bernoulli(2*k, wp)
+        term = mpf_mul(B, D, wp)
+        term = mpf_div(term, fac, wp)
+        term = to_fixed(term, wp)
+        if abs(term) < 100:
+            break
+        #if not k % 100:
+        #    print k, nstr(ln(term))
+        s -= term
+        # Advance derivative twice
+        a, b, pN, j = b-a*j, -j*b, pN*N, j+1
+        a, b, pN, j = b-a*j, -j*b, pN*N, j+1
+        k += 1
+        fac = mpf_mul_int(fac, (2*k)*(2*k-1), wp)
+    # A = exp((6*s/pi**2 + log(2*pi) + euler)/12)
+    pi = pi_fixed(wp)
+    s *= 6
+    s = (s << wp) // (pi**2 >> wp)
+    s += euler_fixed(wp)
+    s += to_fixed(mpf_log(from_man_exp(2*pi, -wp), wp), wp)
+    s //= 12
+    A = mpf_exp(from_man_exp(s, -wp), wp)
+    return to_fixed(A, prec)
 
 # Apery's constant can be computed using the very rapidly convergent
 # series
