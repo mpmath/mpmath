@@ -7,6 +7,9 @@ from libmpc import *
 from mptypes import *
 from mptypes import constant, funcwrapper
 
+import libhyper
+
+
 from gammazeta import *
 
 __docformat__ = 'plaintext'
@@ -134,6 +137,26 @@ def khinchin_fixed(prec):
 # This algorithm could possibly be turned into a faster algorithm
 # for general evaluation of zeta(s) or zeta'(s); this should be
 # looked into.
+
+# TODO: remove this; use log_int_fixed internally instead
+def log_range():
+    """Generate log(2), log(3), log(4), ..."""
+    prec = mp.prec + 20
+    one = 1 << prec
+    L = log2_fixed(prec)
+    p = 2
+    while 1:
+        yield mpf((L, -prec))
+        s = 0
+        u = one
+        k = 1
+        a = (2*p+1)**2
+        while u:
+            s += u // k
+            u //= a
+            k += 2
+        L += 2*s//(2*p+1)
+        p += 1
 
 @constant_memo
 def glaisher_fixed(prec):
@@ -280,294 +303,6 @@ def ff(x, n):
 #                                                                           #
 #---------------------------------------------------------------------------#
 
-import operator
-
-"""
-TODO:
-  * By counting the number of multiplications vs divisions,
-    the bit size of p can be kept around wp instead of growing
-    it to n*wp for some (possibly large) n
-
-  * Due to roundoff error, the series may fail to converge
-    when x is negative and the convergence is slow.
-
-"""
-
-def hypsum(ar, af, ac, br, bf, bc, x):
-    """
-    Generic hypergeometric summation. This function computes:
-
-            1   a_1 a_2 ...     1  (a_1 + 1) (a_2 + 1) ...  2
-        1 + --  ----------- x + -- ----------------------- x  + ...
-            1!  b_1 b_2 ...     2! (b_1 + 1) (b_2 + 1) ...
-
-    The a_i and b_i sequences are separated by type:
-
-    ar - list of a_i rationals [p,q]
-    af - list of a_i mpf value tuples
-    ac - list of a_i mpc value tuples
-    br - list of b_i rationals [p,q]
-    bf - list of b_i mpf value tuples
-    bc - list of b_i mpc value tuples
-
-    Note: the rational coefficients will be updated in-place and must
-    hence be mutable (lists rather than tuples).
-
-    x must be an mpf or mpc instance.
-    """
-
-    have_float = af or bf
-    have_complex = ac or bc
-
-    prec = mp.prec
-    rnd = round_nearest
-    wp = prec + 25
-
-    if isinstance(x, mpf):
-        x = to_fixed(x._mpf_, wp)
-        y = MP_ZERO
-    else:
-        have_complex = 1
-        x, y = x._mpc_
-        x = to_fixed(x, wp)
-        y = to_fixed(y, wp)
-
-    sre = pre = one = MP_ONE << wp
-    sim = pim = MP_ZERO
-
-    n = 1
-
-    # Need to shift down by wp once for each fixed-point multiply
-    # At minimum, we multiply by once by x each step
-    shift = 1
-
-    # Fixed-point real coefficients
-    if have_float:
-        len_af = len(af)
-        len_bf = len(bf)
-        range_af = range(len_af)
-        range_bf = range(len_bf)
-        for i in range_af: af[i] = to_fixed(af[i], wp)
-        for i in range_bf: bf[i] = to_fixed(bf[i], wp)
-        shift += len_af
-
-    if have_complex:
-        len_ac = len(ac)
-        len_bc = len(bc)
-        range_ac = range(len_ac)
-        range_bc = range(len_bc)
-        for i in range_ac: ac[i] = [to_fixed(ac[i][0], wp), to_fixed(ac[i][1], wp)]
-        for i in range_bc: bc[i] = [to_fixed(bc[i][0], wp), to_fixed(bc[i][1], wp)]
-        shift += len_ac
-
-    aqs = [a[1] for a in ar]
-    bqs = [b[1] for b in br]
-    aqprod = reduce(operator.mul, aqs, 1)
-    bqprod = reduce(operator.mul, bqs, 1)
-
-    assert shift >= 0
-
-    while 1:
-        # Integer and rational part of product
-        mul = bqprod
-        div = n * aqprod
-        for ap, aq in ar: mul *= ap
-        for bp, bq in br: div *= bp
-
-        if have_complex:
-            # Multiply by rational factors
-            pre *= mul
-            pim *= mul
-            # Multiply by z
-            pre, pim = pre*x - pim*y, pim*x + pre*y
-            # Multiply by real factors
-            for a in af:
-                pre *= a
-                pim *= a
-            # Multiply by complex factors
-            for are, aim in ac:
-                pre, pim = pre*are - pim*aim, pim*are + pre*aim
-            # Divide by rational factors
-            pre //= div
-            pim //= div
-            # Divide by real factors
-            for b in bf:
-                pre = (pre << wp) // b
-                pim = (pim << wp) // b
-            # Divide by complex factors
-            for bre, bim in bc:
-                mag = bre*bre + bim*bim
-                re = pre*bre + pim*bim
-                im = pim*bre - pre*bim
-                pre = (re << wp) // mag
-                pim = (im << wp) // mag
-        elif have_float:
-            # Multiply and divide by real and rational factors, and x
-            for a in af: pre *= a
-            for b in bf:
-                pre = (pre << wp) // b
-            pre = (pre * (mul * x)) // div
-
-        else:
-            # Multiply and divide by rational factors and x
-            pre = (pre * (mul * x)) // div
-
-        pre >>= (wp*shift)
-        sre += pre
-
-        if have_complex:
-            pim >>= (wp*shift)
-            sim += pim
-            if (-100 < pre < 100) and (-100 < pim < 100):
-                break
-        else:
-            if -100 < pre < 100:
-                break
-
-        # Add 1 to all as and bs
-        n += 1
-        for ap_aq in ar: ap_aq[0] += ap_aq[1]
-        for bp_bq in br: bp_bq[0] += bp_bq[1]
-        if have_float:
-            for i in range_af: af[i] += one
-            for i in range_bf: bf[i] += one
-        if have_complex:
-            for i in range_ac: ac[i][0] += one
-            for i in range_bc: bc[i][0] += one
-
-    re = from_man_exp(sre, -wp, prec, rnd)
-    if have_complex:
-        return make_mpc((re, from_man_exp(sim, -wp, prec, rnd)))
-    else:
-        return make_mpf(re)
-
-
-#---------------------------------------------------------------------------#
-#   Special-case implementation for rational parameters. These are          #
-#   about 2x faster at low precision                                        #
-#---------------------------------------------------------------------------#
-
-def sum_hyp0f1_rat((bp, bq), x):
-    """Sum 0F1 for rational a. x must be mpf or mpc."""
-    prec = mp.prec
-    rnd = round_nearest
-    wp = prec + 25
-    if isinstance(x, mpf):
-        x = to_fixed(x._mpf_, wp)
-        s = p = MP_ONE << wp
-        n = 1
-        while 1:
-            p = (p * (bq*x) // (n*bp)) >> wp
-            if -100 < p < 100:
-                break
-            s += p; n += 1; bp += bq
-        return make_mpf(from_man_exp(s, -wp, prec, rnd))
-    else:
-        wp = prec + 25
-        zre, zim = x._mpc_
-        zre = to_fixed(zre, wp)
-        zim = to_fixed(zim, wp)
-        sre = pre = MP_ONE << wp
-        sim = pim = MP_ZERO
-        n = 1
-        while 1:
-            r1 = bq
-            r2 = n*bp
-            pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-            pre = ((pre * r1) // r2) >> wp
-            pim = ((pim * r1) // r2) >> wp
-            if -100 < pre < 100 and -100 < pim < 100:
-                break
-            sre += pre; sim += pim; n += 1; bp += bq
-        re = from_man_exp(sre, -wp, prec, rnd)
-        im = from_man_exp(sim, -wp, prec, rnd)
-        return make_mpc((re, im))
-
-
-def sum_hyp1f1_rat((ap, aq), (bp, bq), x):
-    """Sum 1F1 for rational a, b. x must be mpf or mpc."""
-    prec = mp.prec
-    rnd = round_nearest
-    wp = prec + 25
-    if isinstance(x, mpf):
-        x = to_fixed(x._mpf_, wp)
-        s = p = MP_ONE << wp
-        n = 1
-        while 1:
-            p = (p * (ap*bq*x) // (n*aq*bp)) >> wp
-            if -100 < p < 100:
-                break
-            s += p; n += 1; ap += aq; bp += bq
-        return make_mpf(from_man_exp(s, -wp, prec, rnd))
-    else:
-        wp = prec + 25
-        zre, zim = x._mpc_
-        zre = to_fixed(zre, wp)
-        zim = to_fixed(zim, wp)
-        sre = pre = MP_ONE << wp
-        sim = pim = MP_ZERO
-        n = 1
-        while 1:
-            r1 = ap*bq
-            r2 = n*aq*bp
-            pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-            pre = ((pre * r1) // r2) >> wp
-            pim = ((pim * r1) // r2) >> wp
-            if -100 < pre < 100 and -100 < pim < 100:
-                break
-            sre += pre; sim += pim; n += 1; ap += aq; bp += bq
-        re = from_man_exp(sre, -wp, prec, rnd)
-        im = from_man_exp(sim, -wp, prec, rnd)
-        return make_mpc((re, im))
-
-def sum_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x):
-    """Sum 2F1 for rational a, b, c. x must be mpf or mpc"""
-    prec = mp.prec
-    rnd = round_nearest
-    wp = prec + 25
-    if isinstance(x, mpf):
-        x = to_fixed(x._mpf_, wp)
-        s = p = MP_ONE << wp
-        n = 1
-        while 1:
-            p = (p * (ap*bp*cq*x) // (n*aq*bq*cp)) >> wp
-            if -100 < p < 100:
-                break
-            s += p; n += 1; ap += aq; bp += bq; cp += cq
-        return make_mpf(from_man_exp(s, -wp, prec, rnd))
-    else:
-        wp = prec + 25
-        zre, zim = x._mpc_
-        zre = to_fixed(zre, wp)
-        zim = to_fixed(zim, wp)
-        sre = pre = MP_ONE << wp
-        sim = pim = MP_ZERO
-        n = 1
-        while 1:
-            r1 = ap*bp*cq
-            r2 = n*aq*bq*cp
-            pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-            pre = ((pre * r1) // r2) >> wp
-            pim = ((pim * r1) // r2) >> wp
-            if -100 < pre < 100 and -100 < pim < 100:
-                break
-            sre += pre; sim += pim; n += 1; ap += aq; bp += bq; cp += cq
-        re = from_man_exp(sre, -wp, prec, rnd)
-        im = from_man_exp(sim, -wp, prec, rnd)
-        return make_mpc((re, im))
-
-def parse_param(x):
-    if isinstance(x, tuple):
-        p, q = x
-        return [[p, q]], [], []
-    if isinstance(x, (int, long)):
-        return [[x, 1]], [], []
-    x = convert_lossless(x)
-    if isinstance(x, mpf):
-        return [], [x._mpf_], []
-    if isinstance(x, mpc):
-        return [], [], [x._mpc_]
-
 class _mpq(tuple):
     @property
     def _mpf_(self):
@@ -585,15 +320,41 @@ class _mpq(tuple):
             return _mpq((a*d-b*c, b*d))
         return NotImplemented
 
-_1 = _mpq((1,1))
-_0 = _mpq((0,1))
+mpq_1 = _mpq((1,1))
+mpq_0 = _mpq((0,1))
+
+def parse_param(x):
+    if isinstance(x, tuple):
+        p, q = x
+        return [[p, q]], [], []
+    if isinstance(x, (int, long)):
+        return [[x, 1]], [], []
+    x = convert_lossless(x)
+    if isinstance(x, mpf):
+        return [], [x._mpf_], []
+    if isinstance(x, mpc):
+        return [], [], [x._mpc_]
 
 def _as_num(x):
     if isinstance(x, list):
         return _mpq(x)
     return x
 
+def hypsum(ar, af, ac, br, bf, bc, x):
+    prec, rnd = prec_rounding
+    if hasattr(x, "_mpf_") and not (ac or bc):
+        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, x._mpf_, None, prec, rnd)
+        return make_mpf(v)
+    else:
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+        else:
+            re, im = x._mpf_, fzero
+        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
+        return make_mpc(v)
+
 def eval_hyp2f1(a,b,c,z):
+    prec, rnd = prec_rounding
     ar, af, ac = parse_param(a)
     br, bf, bc = parse_param(b)
     cr, cf, cc = parse_param(c)
@@ -603,6 +364,7 @@ def eval_hyp2f1(a,b,c,z):
         # return infinity instead
         print "Warning: 2F1 might not converge for |z| = 1"
     if absz <= 1:
+        # All rational
         if ar and br and cr:
             return sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
         return hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
@@ -613,18 +375,40 @@ def eval_hyp2f1(a,b,c,z):
     orig = mp.prec
     try:
         mp.prec = orig + 15
-        h1 = eval_hyp2f1(a, _1-c+a, _1-b+a, 1/z)
-        h2 = eval_hyp2f1(b, _1-c+b, _1-a+b, 1/z)
+        h1 = eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
+        h2 = eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
         #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
         #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
         f1 = gammaprod([c,b-a],[b,c-a])
         f2 = gammaprod([c,a-b],[a,c-b])
-        s1 = f1 * (-z)**(_0-a) * h1
-        s2 = f2 * (-z)**(_0-b) * h2
+        s1 = f1 * (-z)**(mpq_0-a) * h1
+        s2 = f2 * (-z)**(mpq_0-b) * h2
         v = s1 + s2
     finally:
         mp.prec = orig
     return +v
+
+def sum_hyp0f1_rat(a, z):
+    prec, rnd = prec_rounding
+    if hasattr(z, "_mpf_"):
+        return make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
+    else:
+        return make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
+
+def sum_hyp1f1_rat(a, b, z):
+    prec, rnd = prec_rounding
+    if hasattr(z, "_mpf_"):
+        return make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
+    else:
+        return make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
+
+def sum_hyp2f1_rat(a, b, c, z):
+    prec, rnd = prec_rounding
+    if hasattr(z, "_mpf_"):
+        return make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
+    else:
+        return make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
+
 
 #---------------------------------------------------------------------------#
 #                      And now the user-friendly versions                   #
@@ -658,7 +442,7 @@ def hyper(a_s, b_s, z):
             return sum_hyp1f1_rat(a, b, z)
         return hypsum(ar, af, ac, br, bf, bc, z)
     if degree == (2, 1):
-        return eval_hyp2f1(a_s[0],a_s[1],b_s[0],z)
+        return eval_hyp2f1(a_s[0], a_s[1], b_s[0], z)
     ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
     for a in a_s:
         r, f, c = parse_param(a)
@@ -701,112 +485,10 @@ def upper_gamma(a,z):
     """Upper incomplete gamma function Gamma(a, z)"""
     return gamma(a) - lower_gamma(a, z)
 
-def mpf_erf(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
-    if not man:
-        if x == fzero: return fzero
-        if x == finf: return fone
-        if x== fninf: return fnone
-        return fnan
-    size = exp + bc
-    lg = math.log
-    # The approximation erf(x) = 1 is accurate to > x^2 * log(e,2) bits
-    if size > 3 and 2*(size-1) + 0.528766 > lg(prec,2):
-        # TODO: interval rounding
-        return [fone, fnone][sign]
-    # erf(x) ~ x close to 0
-    if size < -prec:
-        # TODO: interval rounding
-        return mpf_div(mpf_shift(x,1), mpf_sqrt(mpf_pi(prec+10), prec+10), prec, rnd)
-    wp = prec + abs(size) + 20
-    # Taylor series for erf, fixed-point summation
-    t = abs(to_fixed(x, wp))
-    t2 = (t*t) >> wp
-    s, term, k = t, 12345, 1
-    while term:
-        t = ((t * t2) >> wp) // k
-        term = t // (2*k+1)
-        if k & 1:
-            s -= term
-        else:
-            s += term
-        k += 1
-    s = (s << (wp+1)) // sqrt_fixed(pi_fixed(wp), wp)
-    if sign:
-        s = -s
-    # 1-wp multiplies by two
-    return from_man_exp(s, -wp, wp, rnd)
-
-# If possible, we use the asymptotic series for erfc.
-# This is an alternating divergent asymptotic series, so
-# the error is at most equal to the first omitted term.
-# Here we check if the smallest term is small enough
-# for a given x and precision
-def erfc_check_series(x, prec):
-    n = to_int(x)
-    if n**2 * 1.44 > prec:
-        return True
-    return False
-
-def mpf_erfc(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
-    if not man:
-        if x == fzero: return fone
-        if x == finf: return fzero
-        if x == fninf: return ftwo
-        return fnan
-    wp = prec + 20
-    regular_erf = sign or man+exp < 2
-    if regular_erf or not erfc_check_series(x, wp):
-        if regular_erf:
-            return mpf_sub(fone, mpf_erf(x, prec+5), prec, rnd)
-        # 1-erf(x) ~ exp(-x^2), increase prec to deal with cancellation
-        n = to_int(x)
-        return mpf_sub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
-    s = term = MP_ONE << wp
-    term_prev = 0
-    t = (2 * to_fixed(x, wp) ** 2) >> wp
-    k = 1
-    while 1:
-        term = ((term * (2*k - 1)) << wp) // t
-        if k > 4 and term > term_prev or not term:
-            break
-        if k & 1:
-            s -= term
-        else:
-            s += term
-        term_prev = term
-        #print k, to_str(from_man_exp(term, -wp, 50), 10)
-        k += 1
-    s = (s << wp) // sqrt_fixed(pi_fixed(wp), wp)
-    s = from_man_exp(s, -wp, wp)
-    z = mpf_exp(mpf_neg(mpf_mul(x,x,wp),wp),wp)
-    y = mpf_div(mpf_mul(z, s, wp), x, prec, rnd)
-    return y
-
-@funcwrapper
-def erf(z):
-    """Error function, erf(z)"""
-    if z.imag:
-        # XXX: may have issues with accuracy for large complex z
-        return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), -z**2)
-    v = mpf_erf(z.real._mpf_, *prec_rounding)
-    if isinstance(z, mpf):
-        return make_mpf(v)
-    else:
-        return make_mpc((v, fzero))
-
-@funcwrapper
-def erfc(z):
-    """Complementary error function, erfc(z) = 1-erf(z)"""
-    if z.imag:
-        # XXX: may have issues with accuracy for large complex z
-        return 1-erf(z)
-    v = mpf_erfc(z.real._mpf_, *prec_rounding)
-    if isinstance(z, mpf):
-        return make_mpf(v)
-    else:
-        return make_mpc((v, fzero))
+erf = mpfunc("erf", libhyper.mpf_erf, libhyper.mpc_erf,
+    "Error function, erf(z)")
+erfc = mpfunc("erfc", libhyper.mpf_erfc, libhyper.mpc_erfc,
+    "Complementary error function, erfc(z) = 1-erf(z)")
 
 @funcwrapper
 def erfi(z):
@@ -1002,92 +684,14 @@ def chebyu(n, x):
     """Chebyshev polynomial of the second kind U_n(x)."""
     return (n+1) * hyp2f1(-n, n+2, 1.5, (1-x)/2)
 
-# A Bessel function of the first kind of integer order, J_n(x), is
-# given by the power series
-
-#             oo
-#             ___         k         2 k + n
-#            \        (-1)     / x \
-#    J_n(x) = )    ----------- | - |
-#            /___  k! (k + n)! \ 2 /
-#            k = 0
-
-# Simplifying the quotient between two successive terms gives the
-# ratio x^2 / (-4*k*(k+n)). Hence, we only need one full-precision
-# multiplication and one division by a small integer per term.
-# The complex version is very similar, the only difference being
-# that the multiplication is actually 4 multiplies.
-
-# In the general case, we have
-# J_v(x) = (x/2)**v / v! * 0F1(v+1, (-1/4)*z**2)
-
-# TODO: for extremely large x, we could use an asymptotic
-# trigonometric approximation.
-
-# TODO: recompute at higher precision if the fixed-point mantissa
-# is very small
-
-def mpf_jn_series(n, x, prec):
-    negate = n < 0 and n & 1
-    n = abs(n)
-    origprec = prec
-    prec += 20 + bitcount(abs(n))
-    x = to_fixed(x, prec)
-    x2 = (x**2) >> prec
-    if not n:
-        s = t = MP_ONE << prec
-    else:
-        s = t = (x**n // int_fac(n)) >> ((n-1)*prec + n)
-    k = 1
-    while t:
-        t = ((t * x2) // (-4*k*(k+n))) >> prec
-        s += t
-        k += 1
-    if negate:
-        s = -s
-    return make_mpf(from_man_exp(s, -prec, origprec, round_nearest))
-
-def mpc_jn_series(n, z, prec):
-    negate = n < 0 and n & 1
-    n = abs(n)
-    origprec = prec
-    prec += 20 + bitcount(abs(n))
-    zre, zim = z
-    zre = to_fixed(zre, prec)
-    zim = to_fixed(zim, prec)
-    z2re = (zre**2 - zim**2) >> prec
-    z2im = (zre*zim) >> (prec-1)
-    if not n:
-        sre = tre = MP_ONE << prec
-        sim = tim = MP_ZERO
-    else:
-        re, im = complex_int_pow(zre, zim, n)
-        sre = tre = (re // int_fac(n)) >> ((n-1)*prec + n)
-        sim = tim = (im // int_fac(n)) >> ((n-1)*prec + n)
-    k = 1
-    while abs(tre) + abs(tim) > 3:
-        p = -4*k*(k+n)
-        tre, tim = tre*z2re - tim*z2im, tim*z2re + tre*z2im
-        tre = (tre // p) >> prec
-        tim = (tim // p) >> prec
-        sre += tre
-        sim += tim
-        k += 1
-    if negate:
-        sre = -sre
-        sim = -sim
-    re = from_man_exp(sre, -prec, origprec, round_nearest)
-    im = from_man_exp(sim, -prec, origprec, round_nearest)
-    return make_mpc((re, im))
-
 @funcwrapper
 def jv(v, x):
     """Bessel function J_v(x)."""
     if isint(v):
         if isinstance(x, mpf):
-            return mpf_jn_series(int(v), x._mpf_, mp.prec)
+            return make_mpf(libhyper.mpf_besseljn(int(v), x._mpf_, mp.prec))
         if isinstance(x, mpc):
-            return mpc_jn_series(int(v), (x.real._mpf_, x.imag._mpf_), mp.prec)
+            return make_mpc(libhyper.mpc_besseljn(int(v), x._mpc_, mp.prec))
     hx = x/2
     return hx**v * hyp0f1(v+1, -hx**2) / factorial(v)
 
@@ -1106,26 +710,6 @@ def j1(x):
 #                               Miscellaneous                               #
 #                                                                           #
 #---------------------------------------------------------------------------#
-
-# TODO: remove this; use log_int_fixed internally instead
-def log_range():
-    """Generate log(2), log(3), log(4), ..."""
-    prec = mp.prec + 20
-    one = 1 << prec
-    L = log2_fixed(prec)
-    p = 2
-    while 1:
-        yield mpf((L, -prec))
-        s = 0
-        u = one
-        k = 1
-        a = (2*p+1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p+1)
-        p += 1
 
 @funcwrapper
 def lambertw(z, k=0, approx=None):
