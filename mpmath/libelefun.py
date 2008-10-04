@@ -27,12 +27,12 @@ def constant_memo(f):
     """
     f.memo_prec = -1
     f.memo_val = None
-    def g(prec):
+    def g(prec, **kwargs):
         if prec == f.memo_prec:
             return f.memo_val
         if prec < f.memo_prec:
             return f.memo_val >> (f.memo_prec-prec)
-        f.memo_val = f(prec)
+        f.memo_val = f(prec, **kwargs)
         f.memo_prec = prec
         return f.memo_val
     g.__name__ = f.__name__

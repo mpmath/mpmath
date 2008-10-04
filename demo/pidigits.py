@@ -10,9 +10,8 @@ import sys
 import math
 from time import clock
 
-from mpmath.lib import bin_to_radix, numeral, pi_agm, pi_chudnovsky
-
-calculate_pi = pi_chudnovsky
+from mpmath.libmpf import bin_to_radix, numeral
+from mpmath.libelefun import pi_fixed
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns
@@ -42,7 +41,7 @@ def calculateit(base, n, tofile):
 
     print "Step 1 of 2: calculating binary value..."
     t = clock()
-    a = calculate_pi(prec, verbose=True, verbose_base=base)
+    a = pi_fixed(prec, verbose=True, verbose_base=base)
     step1_time = clock() - t
 
     print "Step 2 of 2: converting to specified base..."
