@@ -10,7 +10,7 @@ Run with:
 """
 
 from mpmath import *
-from mpmath.lib import *
+from mpmath.libmpf import to_fixed, bin_to_radix
 
 dps = 100
 mp.dps = dps + 10
@@ -100,5 +100,5 @@ print pr(secant(lambda x: exp(cos(x))-x, 1))
 print
 
 print "C22: J = integral(sin(sin(sin(x)))), x=0..1"
-print pr(quadts(lambda x: sin(sin(sin(x))), 0, 1))
+print pr(quadts(lambda x: sin(sin(sin(x))), [0, 1]))
 print
