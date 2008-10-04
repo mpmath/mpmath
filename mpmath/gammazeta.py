@@ -427,7 +427,7 @@ def mpf_gamma_int(n, prec, rounding=round_fast):
         return from_int(int_fac(n+1), prec, rounding)
     # XXX: choose the cutoff less arbitrarily
     size = int(n*math.log(n,2))
-    if prec > size/10.0:
+    if prec > size/20.0:
         return from_int(int_fac(n+1), prec, rounding)
     return mpf_gamma(from_int(n), prec, rounding)
 

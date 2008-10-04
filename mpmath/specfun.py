@@ -79,28 +79,33 @@ def catalan_fixed(prec):
 
 @constant_memo
 def khinchin_fixed(prec):
-    orig = mp.prec
-    try:
-        mp.prec = int(prec + prec**0.5 + 15)
-        s = mpf(0)
-        t = one = mpf(1)
-        fac = mpf(4)
-        pipow = twopi2 = (2*pi)**2
-        n = 1
-        while 1:
-            zeta2n = (-1)**(n+1) * bernoulli(2*n) * pipow / fac
-            term = ((zeta2n - 1) * t) / n
-            # print n, nstr(term)
-            if term < eps:
-                break
-            s += term
-            t += (one/(2*n+1) - one/(2*n))
-            n += 1
-            fac *= (2*n)*(2*n-1)
-            pipow *= twopi2
-        return to_fixed(exp(s/ln2)._mpf_, prec)
-    finally:
-        mp.prec = orig
+    wp = int(prec + prec**0.5 + 15)
+    s = MP_ZERO
+    fac = from_int(4)
+    t = ONE = MP_ONE << wp
+    pi = mpf_pi(wp)
+    pipow = twopi2 = mpf_shift(mpf_mul(pi, pi, wp), 2)
+    n = 1
+    while 1:
+        zeta2n = mpf_abs(mpf_bernoulli(2*n, wp))
+        zeta2n = mpf_mul(zeta2n, pipow, wp)
+        zeta2n = mpf_div(zeta2n, fac, wp)
+        zeta2n = to_fixed(zeta2n, wp)
+        term = (((zeta2n - ONE) * t) // n) >> wp
+        if term < 100:
+            break
+        #if not n % 100:
+        #    print n, nstr(ln(term))
+        s += term
+        t += ONE//(2*n+1) - ONE//(2*n)
+        n += 1
+        fac = mpf_mul_int(fac, (2*n)*(2*n-1), wp)
+        pipow = mpf_mul(pipow, twopi2, wp)
+    s = (s << wp) // log2_fixed(wp)
+    K = mpf_exp(from_man_exp(s, -wp), wp)
+    K = to_fixed(K, prec)
+    return K
+
 
 # Glaisher's constant is defined as A = exp(1/2 - zeta'(-1)).
 # One way to compute it would be to perform direct numerical
