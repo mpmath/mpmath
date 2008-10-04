@@ -125,6 +125,11 @@ def test_householder():
            0.00058653999999999998]
     assert norm_p(matrix(residuals) - matrix(refres), inf) < 1.e-13
 
+def test_factorization():
+    A = randmatrix(5)
+    P, L, U = lu(A)
+    assert mnorm_1(P*A - L*U) < 1.e-15
+
 def test_solve():
     assert norm_p(residual(A6, lu_solve(A6, b6), b6), inf) < 1.e-10
     assert norm_p(residual(A7, lu_solve(A7, b7), b7), inf) < 1.5

@@ -9,7 +9,7 @@ from __future__ import division
 
 from mptypes import *
 from functions import sqrt, sign
-from matrices import matrix, swap_row, extend, mnorm_1, norm_p
+from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p
 from copy import copy
 
 def LU_decomp(A):
@@ -99,6 +99,38 @@ def lu_solve(A, b, **kwargs):
         b = L_solve(A, b, p)
         x = U_solve(A, b)
         return x
+
+def lu(A):
+    """
+    A -> P, L, U
+
+    LU factorisation of a square matrix A. L is the lower, U the upper part.
+    P is the permutation matrix indicating the row swaps.
+
+    P*A = L*U
+
+    If you need efficiency, use the low-level method LU_decomp instead, it's 
+    much more memory efficient.
+    """
+    # get factorization
+    A, p = LU_decomp(A.copy())
+    n = A.rows
+    L = matrix(n)
+    U = matrix(n)
+    for i in xrange(n):
+        for j in xrange(n):
+            if i > j:
+                L[i,j] = A[i,j]
+            elif i == j:
+                L[i,j] = 1
+                U[i,j] = A[i,j]
+            else:
+                U[i,j] = A[i,j]
+    # calculate permutation matrix
+    P = eye(n)
+    for k in xrange(len(p)):
+        swap_row(P, k, p[k])
+    return P, L, U
 
 def unitvector(n, i):
     """

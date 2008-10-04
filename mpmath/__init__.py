@@ -16,5 +16,5 @@ from identification import pslq, identify, findpoly
 from matrices import matrix, eye, diag, zeros, ones, randmatrix, mnorm_1, \
     mnorm_oo, mnorm_F, norm_p
 from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
-    cond
+    cond, lu
 
