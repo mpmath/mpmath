@@ -2,7 +2,7 @@
 Plotting (requires matplotlib)
 """
 
-from mptypes import inf, isnan, arange, complex_types
+from mptypes import mpc, inf, isnan, arange, complex_types
 from functions import sqrt, arg
 
 from colorsys import hsv_to_rgb, hls_to_rgb
@@ -131,7 +131,7 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
     w = pylab.zeros((N, M, 3))
     for n in xrange(N):
         for m in xrange(M):
-            z = x[m] + y[n]*1j
+            z = mpc(x[m], y[n])
             try:
                 v = color(f(z))
             except plot_ignore:
