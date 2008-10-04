@@ -1054,14 +1054,14 @@ def to_digits_exp(s, dps):
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
     if abs(exp_from_1) > 3500:
-        from libelefun import mpf_log2, mpf_log10
+        from libelefun import mpf_ln2, mpf_ln10
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(abs(exp)) + 5
         tmp = from_int(exp)
-        tmp = mpf_mul(tmp, mpf_log2(expprec))
-        tmp = mpf_div(tmp, mpf_log10(expprec), expprec)
+        tmp = mpf_mul(tmp, mpf_ln2(expprec))
+        tmp = mpf_div(tmp, mpf_ln10(expprec), expprec)
         b = to_int(tmp)
         s = mpf_div(s, mpf_pow_int(ften, b, bitprec), bitprec)
         _sign, man, exp, bc = s

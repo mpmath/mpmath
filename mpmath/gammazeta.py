@@ -8,6 +8,7 @@ This module implements gamma- and zeta-related functions:
 * Polygamma functions
 * Harmonic numbers
 * The Riemann zeta function
+* Constants related to these functions
 
 -----------------------------------------------------------------------
 """
@@ -18,6 +19,196 @@ from libmpc import *
 
 from mptypes import (mp, mpfunc, constant, mpf, make_mpf, make_mpc,
     convert_lossless)
+
+
+# Catalan's constant is computed using Lupas's rapidly convergent series
+# (listed on http://mathworld.wolfram.com/CatalansConstant.html)
+#            oo
+#            ___       n-1  8n     2                   3    2
+#        1  \      (-1)    2   (40n  - 24n + 3) [(2n)!] (n!)
+#  K =  ---  )     -----------------------------------------
+#       64  /___               3               2
+#                             n  (2n-1) [(4n)!]
+#           n = 1
+
+@constant_memo
+def catalan_fixed(prec):
+    prec = prec + 20
+    a = one = MP_ONE << prec
+    s, t, n = 0, 1, 1
+    while t:
+        a *= 32 * n**3 * (2*n-1)
+        a //= (3-16*n+16*n**2)**2
+        t = a * (-1)**(n-1) * (40*n**2-24*n+3) // (n**3 * (2*n-1))
+        s += t
+        n += 1
+    return s >> (20 + 6)
+
+# Khinchin's constant is relatively difficult to compute. Here
+# we use the rational zeta series
+
+#                    oo                2*n-1
+#                   ___                ___
+#                   \   ` zeta(2*n)-1  \   ` (-1)^(k+1)
+#  log(K)*log(2) =   )    ------------  )    ----------
+#                   /___.      n       /___.      k
+#                   n = 1              k = 1
+
+# which adds half a digit per term. The essential trick for achieving
+# reasonable efficiency is to recycle both the values of the zeta
+# function (essentially Bernoulli numbers) and the partial terms of
+# the inner sum.
+
+# An alternative might be to use K = 2*exp[1/log(2) X] where
+
+#      / 1     1       [ pi*x*(1-x^2) ]
+#  X = |    ------ log [ ------------ ].
+#      / 0  x(1+x)     [  sin(pi*x)   ]
+
+# and integrate numerically. In practice, this seems to be slightly
+# slower than the zeta series at high precision.
+
+@constant_memo
+def khinchin_fixed(prec):
+    wp = int(prec + prec**0.5 + 15)
+    s = MP_ZERO
+    fac = from_int(4)
+    t = ONE = MP_ONE << wp
+    pi = mpf_pi(wp)
+    pipow = twopi2 = mpf_shift(mpf_mul(pi, pi, wp), 2)
+    n = 1
+    while 1:
+        zeta2n = mpf_abs(mpf_bernoulli(2*n, wp))
+        zeta2n = mpf_mul(zeta2n, pipow, wp)
+        zeta2n = mpf_div(zeta2n, fac, wp)
+        zeta2n = to_fixed(zeta2n, wp)
+        term = (((zeta2n - ONE) * t) // n) >> wp
+        if term < 100:
+            break
+        #if not n % 100:
+        #    print n, nstr(ln(term))
+        s += term
+        t += ONE//(2*n+1) - ONE//(2*n)
+        n += 1
+        fac = mpf_mul_int(fac, (2*n)*(2*n-1), wp)
+        pipow = mpf_mul(pipow, twopi2, wp)
+    s = (s << wp) // ln2_fixed(wp)
+    K = mpf_exp(from_man_exp(s, -wp), wp)
+    K = to_fixed(K, prec)
+    return K
+
+
+# Glaisher's constant is defined as A = exp(1/2 - zeta'(-1)).
+# One way to compute it would be to perform direct numerical
+# differentiation, but computing arbitrary Riemann zeta function
+# values at high precision is expensive. We instead use the formula
+
+#     A = exp((6 (-zeta'(2))/pi^2 + log 2 pi + gamma)/12)
+
+# and compute zeta'(2) from the series representation
+
+#              oo
+#              ___
+#             \     log k
+#  -zeta'(2) = )    -----
+#             /___     2
+#                    k
+#            k = 2
+
+# This series converges exceptionally slowly, but can be accelerated
+# using Euler-Maclaurin formula. The important insight is that the
+# E-M integral can be done in closed form and that the high order
+# are given by
+
+#    n  /       \
+#   d   | log x |   a + b log x
+#   --- | ----- | = -----------
+#     n |   2   |      2 + n
+#   dx  \  x    /     x
+
+# where a and b are integers given by a simple recurrence. Note
+# that just one logarithm is needed. However, lots of integer
+# logarithms are required for the initial summation.
+
+# This algorithm could possibly be turned into a faster algorithm
+# for general evaluation of zeta(s) or zeta'(s); this should be
+# looked into.
+
+@constant_memo
+def glaisher_fixed(prec):
+    wp = prec + 30
+    # Number of direct terms to sum before applying the Euler-Maclaurin
+    # formula to the tail. TODO: choose more intelligently
+    N = int(0.33*prec + 5)
+    ONE = MP_ONE << wp
+    # Euler-Maclaurin, step 1: sum log(k)/k**2 for k from 2 to N-1
+    s = MP_ZERO
+    for k in range(2, N):
+        #print k, N
+        s += log_int_fixed(k, wp) // k**2
+    logN = log_int_fixed(N, wp)
+    # E-M step 2: integral of log(x)/x**2 from N to inf
+    s += (ONE + logN) // N
+    # E-M step 3: endpoint correction term f(N)/2
+    s += logN // (N**2 * 2)
+    # E-M step 4: the series of derivatives
+    pN = N**3
+    a = 1
+    b = -2
+    j = 3
+    fac = from_int(2)
+    k = 1
+    while 1:
+        # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
+        D = ((a << wp) + b*logN) // pN
+        D = from_man_exp(D, -wp)
+        B = mpf_bernoulli(2*k, wp)
+        term = mpf_mul(B, D, wp)
+        term = mpf_div(term, fac, wp)
+        term = to_fixed(term, wp)
+        if abs(term) < 100:
+            break
+        #if not k % 100:
+        #    print k, nstr(ln(term))
+        s -= term
+        # Advance derivative twice
+        a, b, pN, j = b-a*j, -j*b, pN*N, j+1
+        a, b, pN, j = b-a*j, -j*b, pN*N, j+1
+        k += 1
+        fac = mpf_mul_int(fac, (2*k)*(2*k-1), wp)
+    # A = exp((6*s/pi**2 + log(2*pi) + euler)/12)
+    pi = pi_fixed(wp)
+    s *= 6
+    s = (s << wp) // (pi**2 >> wp)
+    s += euler_fixed(wp)
+    s += to_fixed(mpf_log(from_man_exp(2*pi, -wp), wp), wp)
+    s //= 12
+    A = mpf_exp(from_man_exp(s, -wp), wp)
+    return to_fixed(A, prec)
+
+# Apery's constant can be computed using the very rapidly convergent
+# series
+#              oo
+#              ___              2                      10
+#             \         n  205 n  + 250 n + 77     (n!)
+#  zeta(3) =   )    (-1)   -------------------  ----------
+#             /___               64                      5
+#             n = 0                             ((2n+1)!)
+
+@constant_memo
+def apery_fixed(prec):
+    prec += 20
+    d = MP_ONE << prec
+    term = MP_BASE(77) << prec
+    n = 1
+    s = MP_ZERO
+    while term:
+        s += term
+        d *= (n**10)
+        d //= (((2*n+1)**5) * (2*n)**5)
+        term = (-1)**n * (205*(n**2) + 250*n + 77) * d
+        n += 1
+    return s >> (20 + 6)
 
 """
 Euler's constant (gamma) is computed using the Brent-McMillan formula,
@@ -48,7 +239,7 @@ def euler_fixed(prec):
     # choose p such that exp(-4*(2**p)) < 2**-n
     p = int(math.log((prec/4) * math.log(2), 2)) + 1
     n = 2**p
-    A = U = -p*log2_fixed(prec)
+    A = U = -p*ln2_fixed(prec)
     B = V = MP_ONE << prec
     k = 1
     while 1:
@@ -61,8 +252,13 @@ def euler_fixed(prec):
         k += 1
     return (U<<(prec-extra))//V
 
-def mpf_euler(p, r):
-    return from_man_exp(euler_fixed(p+10), -p-10, p, r)
+mpf_euler = def_mpf_constant(euler_fixed)
+mpf_apery = def_mpf_constant(apery_fixed)
+mpf_khinchin = def_mpf_constant(khinchin_fixed)
+mpf_glaisher = def_mpf_constant(glaisher_fixed)
+mpf_catalan = def_mpf_constant(catalan_fixed)
+
+
 
 mpc_half = (fhalf, fzero)
 
@@ -833,33 +1029,9 @@ http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps
 http://en.wikipedia.org/wiki/Dirichlet_eta_function
 """
 
-log_int_cache = {}
 borwein_cache = {}
 
-def log_int_fixed(n, prec):
-    if n < 2:
-        return MP_ZERO
-    cache = log_int_cache.get(prec)
-    if cache and (n in cache):
-        return cache[n]
-    if cache:
-        L = cache[max(cache)]
-    else:
-        cache = log_int_cache[prec] = {}
-        L = cache[2] = log2_fixed(prec)
-    one = MP_ONE << prec
-    for p in xrange(max(cache)+1, n+1):
-        s = 0
-        u = one
-        k = 1
-        a = (2*p-1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p-1)
-        cache[p] = L
-    return cache[n]
+
 
 def borwein_coefficients(n):
     if n in borwein_cache:
@@ -1015,7 +1187,12 @@ def mpc_zeta(s, prec, rnd):
 #                                                                       #
 #-----------------------------------------------------------------------#
 
+
 euler = constant(mpf_euler, "Euler's constant (gamma)")
+catalan = constant(mpf_catalan, "Catalan's constant")
+khinchin = constant(mpf_khinchin, "Khinchin's constant")
+glaisher = constant(mpf_glaisher, "Glaisher's constant")
+apery = constant(mpf_apery, "Apery's constant")
 
 cospi = mpfunc('cospi', mpf_cos_pi, mpc_cos_pi, 'computes cos(pi*x) accurately')
 sinpi = mpfunc('sinpi', mpf_sin_pi, mpc_sin_pi, 'computes sin(pi*x) accurately')

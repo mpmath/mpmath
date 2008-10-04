@@ -9,12 +9,238 @@ see libmpc and libmpi.
 
 """
 
-
 from libmpf import *
 
+
+#----------------------------------------------------------------------------#
+#                                                                            #
+#                   Elementary mathematical constants                        #
+#                                                                            #
+#----------------------------------------------------------------------------#
+
+def constant_memo(f):
+    """
+    Decorator for caching computed values of mathematical
+    constants. This decorator should be applied to a
+    function taking a single argument prec as input and
+    returning a fixed-point value with the given precision.
+    """
+    f.memo_prec = -1
+    f.memo_val = None
+    def g(prec):
+        if prec == f.memo_prec:
+            return f.memo_val
+        if prec < f.memo_prec:
+            return f.memo_val >> (f.memo_prec-prec)
+        f.memo_val = f(prec)
+        f.memo_prec = prec
+        return f.memo_val
+    g.__name__ = f.__name__
+    g.__doc__ = f.__doc__
+    return g
+
+def def_mpf_constant(fixed):
+    """
+    Create a function that computes the mpf value for a mathematical
+    constant, given a function that computes the fixed-point value.
+
+    Assumptions: the constant is positive and has magnitude ~= 1;
+    the fixed-point function rounds to floor.
+    """
+    def f(prec, rnd=round_fast):
+        wp = prec + 20
+        v = fixed(wp)
+        if rnd in (round_up, round_ceiling):
+            v += 1
+        return normalize(0, v, -wp, bitcount(v), prec, rnd)
+    f.__doc__ = fixed.__doc__
+    return f
+
+def acot_fixed(n, prec, hyperbolic):
+    """
+    Compute acot of an integer using fixed-point arithmetic. With
+    hyperbolic=True, compute acoth. The standard Taylor series
+    is used.
+    """
+    n = MP_BASE(n)
+    s = t = (MP_ONE << prec) // n  # 1 / n
+    k = 3
+    while 1:
+        # Repeatedly divide by k * n**2, and add
+        t //= (n*n)
+        term = t // k
+        if not term:
+            break
+        # Alternate signs
+        if hyperbolic or not k & 2:
+            s += term
+        else:
+            s -= term
+        k += 2
+    return s
+
+def machin(coefs, prec, hyperbolic=False):
+    """
+    Evaluate a Machin-like formula, i.e., a linear combination of
+    acot(n) or acoth(n) for specific integer values of n, using fixed-
+    point arithmetic. The input should be a list [(c, n), ...], giving
+    c*acot[h](n) + ...
+    """
+    extraprec = 10
+    s = MP_ZERO
+    for a, b in coefs:
+        s += MP_BASE(a) * acot_fixed(MP_BASE(b), prec+extraprec, hyperbolic)
+    return (s >> extraprec)
+
+# Logarithms of integers are needed for various computations involving
+# logarithms, powers, radix conversion, etc
+
+@constant_memo
+def ln2_fixed(prec):
+    """
+    Computes ln(2). This is done with a hyperbolic Machin-type formula.
+    """
+    return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
+
+@constant_memo
+def ln10_fixed(prec):
+    """
+    Computes ln(10). This is done with a hyperbolic Machin-type formula.
+    """
+    return machin([(46, 31), (34, 49), (20, 161)], prec, True)
+
+"""
+For computation of pi, we use the Chudnovsky series:
+
+             oo
+             ___        k
+      1     \       (-1)  (6 k)! (A + B k)
+    ----- =  )     -----------------------
+    12 pi   /___               3  3k+3/2
+                    (3 k)! (k!)  C
+            k = 0
+
+where A, B, and C are certain integer constants. This series adds roughly
+14 digits per term. Note that C^(3/2) can be extracted so that the
+series contains only rational terms. This makes binary splitting very
+efficient.
+
+The recurrence formulas for the binary splitting were taken from
+ftp://ftp.gmplib.org/pub/src/gmp-chudnovsky.c
+
+Previously, Machin's formula was used at low precision and the AGM iteration
+was used at high precision. However, the Chudnovsky series is essentially as
+fast as the Machin formula at low precision and in practice about 3x faster
+than the AGM at high precision (despite theoretically having a worse
+asymptotic complexity), so there is no reason not to use it in all cases.
+
+"""
+
+# Constants in Chudnovsky's series
+CHUD_A = MP_BASE(13591409)
+CHUD_B = MP_BASE(545140134)
+CHUD_C = MP_BASE(640320)
+CHUD_D = MP_BASE(12)
+
+def bs_chudnovsky(a, b, level, verbose):
+    """
+    Computes the sum from a to b of the series in the Chudnovsky
+    formula. Returns g, p, q where p/q is the sum as an exact
+    fraction and g is a temporary value used to save work
+    for recursive calls.
+    """
+    if b-a == 1:
+        g = MP_BASE((6*b-5)*(2*b-1)*(6*b-1))
+        p = b**3 * CHUD_C**3 // 24
+        q = (-1)**b * g * (CHUD_A+CHUD_B*b)
+    else:
+        if verbose and level < 4:
+            print "  binary splitting", a, b
+        mid = (a+b)//2
+        g1, p1, q1 = bs_chudnovsky(a, mid, level+1, verbose)
+        g2, p2, q2 = bs_chudnovsky(mid, b, level+1, verbose)
+        p = p1*p2
+        g = g1*g2
+        q = q1*p2 + q2*g1
+    return g, p, q
+
+@constant_memo
+def pi_fixed(prec, verbose=False, verbose_base=None):
+    """
+    Compute floor(pi * 2**prec) as a big integer.
+
+    This is done using Chudnovsky's series (see comments in
+    libelefun.py for details).
+    """
+    # The Chudnovsky series gives 14.18 digits per term
+    N = int(prec/3.3219280948/14.181647462 + 2)
+    if verbose:
+        print "binary splitting with N =", N
+    g, p, q = bs_chudnovsky(0, N, 0, verbose)
+    sqrtC = sqrt_fixed(CHUD_C<<prec, prec)
+    v = p*CHUD_C*sqrtC//((q+CHUD_A*p)*CHUD_D)
+    return v
+
+def degree_fixed(prec):
+    return pi_fixed(prec)//180
+
+def bspe(a, b):
+    """
+    Sum series for exp(1)-1 between a, b, returning the result
+    as an exact fraction (p, q).
+    """
+    if b-a == 1:
+        return MP_ONE, MP_BASE(b)
+    m = (a+b)//2
+    p1, q1 = bspe(a, m)
+    p2, q2 = bspe(m, b)
+    return p1*q2+p2, q1*q2
+
+@constant_memo
+def e_fixed(prec):
+    """
+    Computes exp(1). This is done using the ordinary Taylor series for
+    exp, with binary splitting. For a description of the algorithm,
+    see:
+
+        http://numbers.computation.free.fr/Constants/
+            Algorithms/splitting.html
+    """
+    # Slight overestimate of N needed for 1/N! < 2**(-prec)
+    # This could be tightened for large N.
+    N = int(1.1*prec/math.log(prec) + 20)
+    p, q = bspe(0,N)
+    return ((p+q)<<prec)//q
+
+@constant_memo
+def phi_fixed(prec):
+    """
+    Computes the golden ratio, (1+sqrt(5))/2
+    """
+    prec += 10
+    sqrt = [sqrt_fixed2, sqrt_fixed][prec < 20000]
+    a = sqrt(MP_FIVE<<prec, prec) + (MP_ONE << prec)
+    return a >> 11
+
+mpf_phi    = def_mpf_constant(phi_fixed)
+mpf_pi     = def_mpf_constant(pi_fixed)
+mpf_e      = def_mpf_constant(e_fixed)
+mpf_degree = def_mpf_constant(degree_fixed)
+mpf_ln2    = def_mpf_constant(ln2_fixed)
+mpf_ln10   = def_mpf_constant(ln10_fixed)
+
+
+#----------------------------------------------------------------------------#
+#                                                                            #
+#                                    Powers                                  #
+#                                                                            #
+#----------------------------------------------------------------------------#
+
 def mpf_pow(s, t, prec, rnd=round_fast):
-    """Compute s**t. Raises ComplexResult if s is negative and t is
-    fractional."""
+    """
+    Compute s**t. Raises ComplexResult if s is negative and t is
+    fractional.
+    """
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ssign and texp < 0:
@@ -35,7 +261,6 @@ def mpf_pow(s, t, prec, rnd=round_fast):
     # TODO: handle rnd direction of the logarithm carefully
     c = mpf_log(s, prec+10, rnd)
     return mpf_exp(mpf_mul(t, c), prec, rnd)
-
 
 def int_pow_fixed(y, n, prec):
     """n-th power of a fixed point number with precision prec
@@ -200,226 +425,6 @@ def mpf_cbrt(s, prec, rnd=round_fast):
     """cubic root of a positive number"""
     return mpf_nthroot(s, 3, prec, rnd)
 
-##############################################################################
-##############################################################################
-
-#----------------------------------------------------------------------------#
-#                           Mathematical constants                           #
-#----------------------------------------------------------------------------#
-
-def constant_memo(f):
-    """Cache computed values of mathematical constants"""
-    f.memo_prec = -1
-    f.memo_val = None
-    def g(prec):
-        if prec == f.memo_prec:
-            return f.memo_val
-        if prec < f.memo_prec:
-            return f.memo_val >> (f.memo_prec-prec)
-        f.memo_val = f(prec)
-        f.memo_prec = prec
-        return f.memo_val
-    g.__name__ = f.__name__
-    g.__doc__ = f.__doc__
-    return g
-
-def acot(n, prec, hyperbolic):
-    """Compute acot of an integer using fixed-point arithmetic. With
-    hyperbolic=True, compute acoth. The standard Taylor series
-    is used."""
-    n = MP_BASE(n)
-    s = t = (MP_ONE << prec) // n  # 1 / n
-    k = 3
-    while 1:
-        # Repeatedly divide by k * n**2, and add
-        t //= (n*n)
-        term = t // k
-        if not term:
-            break
-        # Alternate signs
-        if hyperbolic or not k & 2:
-            s += term
-        else:
-            s -= term
-        k += 2
-    return s
-
-def machin(coefs, prec, hyperbolic=False):
-    """Evaluate a Machin-like formula, i.e., a linear combination of
-    acot(n) or acoth(n) for specific integer values of n, using fixed-
-    point arithmetic. The input should be a list [(c, n), ...], giving
-    c*acot[h](n) + ..."""
-    extraprec = 10
-    s = MP_ZERO
-    for a, b in coefs:
-        s += MP_BASE(a) * acot(MP_BASE(b), prec+extraprec, hyperbolic)
-    return (s >> extraprec)
-
-#----------------------------------------------------------------------------
-# Pi
-
-def agm_status(prec, step, adiff, verbose_base):
-    logdiff = bitcount(adiff) * math.log(2,verbose_base)
-    digits = int(prec/math.log(verbose_base,2) - logdiff)
-    print "  iteration", step, ("(accuracy ~= %i base-%i digits)" % \
-       (digits, verbose_base))
-
-def pi_agm(prec, verbose=False, verbose_base=10):
-    """
-    Compute floor(pi * 2**prec) as a big integer using the Brent-
-    Salamin algorithm based on the arithmetic-geometric mean.
-
-    See for example Wikipedia (http://en.wikipedia.org/wiki/Brent-
-    Salamin_algorithm) or "Pi and the AGM" by Jonathan and Peter
-    Borwein (Wiley, 1987). The algorithm (as stated in the Wikipedia
-    article) consists of setting
-
-      a_0 = 1
-      b_0 = 1/sqrt(2)
-      t_0 = 1/4
-      p_0 = 1
-
-    and computing
-
-      a_{n+1} = (a_n + b_n)/2
-      b_{n+1} = sqrt(a_n * b_n)
-      t_{n+1} = t_n - p_n*(a_n - a_{n+1})**2
-      p_{n+1} = 2*p_n
-
-    for n = 0, 1, 2, 3, ..., after which the approximation is given by
-    pi ~= (a_n + b_n)**2 / (4*t_n). Each step roughly doubles the
-    number of correct digits.
-    """
-    extraprec = 50
-    prec += extraprec
-
-    # Initialial values. a, b and t are fixed-point numbers
-    a = MP_ONE << prec
-    b = sqrt_fixed2(a >> 1, prec)
-    t = a >> 2
-    p = 1
-
-    step = 1
-    while 1:
-        an = (a + b) >> 1
-        adiff = a - an
-        if verbose:
-            agm_status(prec, step, adiff, verbose_base)
-        # No change in a
-        if p > 16 and abs(adiff) < 1000:
-            break
-        prod = (a * b) >> prec
-        b = sqrt_fixed2(prod, prec)
-        t = t - p*((adiff**2) >> prec)
-        p = 2*p
-        a = an
-        step += 1
-    if verbose:
-        print "  final division"
-    pi = ((((a+b)**2) >> 2) // t)
-    return pi >> extraprec
-
-# Chudnovsky's series for pi, with binary splitting
-# The formulas are given in ftp://ftp.gmplib.org/pub/src/gmp-chudnovsky.c
-
-# Constants in Chudnovsky's series
-CHUD_A = MP_BASE(13591409)
-CHUD_B = MP_BASE(545140134)
-CHUD_C = MP_BASE(640320)
-CHUD_D = MP_BASE(12)
-
-def bs_chudnovsky(a,b,level,verbose):
-    if b-a == 1:
-        g = MP_BASE((6*b-5)*(2*b-1)*(6*b-1))
-        p = b**3 * CHUD_C**3 // 24
-        q = (-1)**b * g * (CHUD_A+CHUD_B*b)
-    else:
-        if verbose and level < 4:
-            print "  binary splitting", a, b
-        mid = (a+b)//2
-        g1, p1, q1 = bs_chudnovsky(a,mid,level+1,verbose)
-        g2, p2, q2 = bs_chudnovsky(mid,b,level+1,verbose)
-        p = p1*p2
-        g = g1*g2
-        q = q1*p2 + q2*g1
-    return g, p, q
-
-def pi_chudnovsky(prec, verbose=False, verbose_base=None):
-    """
-    Calculate floor(pi * 2**prec) using Chudnovsky's algorithm.
-    """
-    # The Chudnovsky series gives 14.18 digits per term
-    N = int(prec/3.3219280948/14.181647462 + 2)
-    if verbose:
-        print "binary splitting with N =", N
-    g, p, q = bs_chudnovsky(0,N,0,verbose)
-    sqrtC = sqrt_fixed(CHUD_C<<prec, prec)
-    v = p*CHUD_C*sqrtC//((q+CHUD_A*p)*CHUD_D)
-    return v
-
-@constant_memo
-def pi_fixed(prec):
-    """
-    Compute floor(pi * 2**prec) as a big integer.
-    """
-    #if prec < 2000:
-    #    return machin([(16, 5), (-4, 239)], prec)
-    #return pi_agm(prec)
-    return pi_chudnovsky(prec)
-
-def mpf_pi(prec, rnd=round_fast):
-    """Compute a floating-point approximation of pi"""
-    return from_man_exp(pi_fixed(prec+10), -prec-10, prec, rnd)
-
-def mpf_degree(prec, rnd=round_fast):
-    """Compute 1 degree = pi / 180."""
-    return from_man_exp(pi_fixed(prec+10)//180, -prec-10, prec, rnd)
-
-#----------------------------------------------------------------------------
-# Logarithms of integers are needed for various computations involving
-# logarithms, powers, radix conversion, etc
-@constant_memo
-def log2_fixed(prec):
-    return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
-
-def mpf_log2(prec, rnd=round_fast):
-    return from_man_exp(log2_fixed(prec+5), -prec-5, prec, rnd)
-
-@constant_memo
-def log10_fixed(prec):
-    return machin([(46, 31), (34, 49), (20, 161)], prec, True)
-
-def mpf_log10(prec, rnd=round_fast):
-    return from_man_exp(log10_fixed(prec+5), -prec-5, prec, rnd)
-
-#----------------------------------------------------------------------------
-# exp(1) is computed from the Taylor series for exp, using binary splitting.
-
-# See http://numbers.computation.free.fr/Constants/Algorithms/splitting.html
-# for an explanation of this algorithm
-
-def bspe(a,b):
-    if b-a == 1:
-        return MP_ONE, MP_BASE(b)
-    m = (a+b)//2
-    p1, q1 = bspe(a,m)
-    p2, q2 = bspe(m,b)
-    return p1*q2+p2, q1*q2
-
-@constant_memo
-def e_fixed(prec):
-    # Slight overestimate of N needed for 1/N! < 2**(-prec)
-    # This could be tightened for large N.
-    N = int(1.1*prec/math.log(prec) + 20)
-    p, q = bspe(0,N)
-    return ((p+q)<<prec)//q
-
-def mpf_e(prec, rnd=round_fast):
-    return from_man_exp(e_fixed(prec+15), -prec-15, prec, rnd)
-
-
-##############################################################################
-##############################################################################
 
 #----------------------------------------------------------------------------#
 #                                                                            #
@@ -521,7 +526,7 @@ def mpf_exp(x, prec, rnd=round_fast):
         t = to_fixed(x, wp)
         # abs(x) > 1?
         if mag > 1:
-            lg2 = log2_fixed(wp)
+            lg2 = ln2_fixed(wp)
             n, t = divmod(t, lg2)
         else:
             n = 0
@@ -533,7 +538,7 @@ def mpf_exp(x, prec, rnd=round_fast):
         wp += r + 20
         t = to_fixed(x, wp)
         if mag > 1:
-            lg2 = log2_fixed(wp)
+            lg2 = ln2_fixed(wp)
             n, t = divmod(t, lg2)
         else:
             n = 0
@@ -547,6 +552,38 @@ def mpf_exp(x, prec, rnd=round_fast):
 #                                Logarithms                                  #
 #                                                                            #
 #----------------------------------------------------------------------------#
+
+# Fast sequential integer logarithms are required for various series
+# computations related to zeta functions, so we cache them
+
+log_int_cache = {}
+
+def log_int_fixed(n, prec):
+    if n < 2:
+        return MP_ZERO
+    cache = log_int_cache.get(prec)
+    if cache and (n in cache):
+        return cache[n]
+    if cache:
+        L = cache[max(cache)]
+    else:
+        cache = log_int_cache[prec] = {}
+        L = cache[2] = ln2_fixed(prec)
+    one = MP_ONE << prec
+    for p in xrange(max(cache)+1, n+1):
+        s = 0
+        u = one
+        k = 1
+        a = (2*p-1)**2
+        while u:
+            s += u // k
+            u //= a
+            k += 2
+        L += 2*s//(2*p-1)
+        cache[p] = L
+    return cache[n]
+
+
 
 """
 The basic idea for evaluating log for an arbitrary floating-point number
@@ -685,7 +722,7 @@ def mpf_log(x, prec, rnd=round_fast):
     if man == 1:
         if not exp:
             return fzero
-        return from_man_exp(exp*log2_fixed(prec+20), -prec-20, prec, rnd)
+        return from_man_exp(exp*ln2_fixed(prec+20), -prec-20, prec, rnd)
 
     # Assume 20 bits to be sufficient for cancelling rounding errors
     wp = prec + 20
@@ -736,7 +773,7 @@ def mpf_log(x, prec, rnd=round_fast):
         # Estimated precision needed for n*log(2) to
         # be accurate relatively
         wp += int(math.log(1+abs(mag),2))
-        log2n = mag * log2_fixed(wp)
+        log2n = mag * ln2_fixed(wp)
         # Rescaled argument as a fixed-point number
         t = rshift(man, bc-wp)
 

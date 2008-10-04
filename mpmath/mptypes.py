@@ -13,7 +13,7 @@ __all__ = ["mpnumeric", "mpf", "mpc", "pi", "e", "ln2", "ln10",
   "make_mpc", "sec", "csc", "cot", "sech", "csch", "coth",
   "asec", "acsc", "acot", "asech", "acsch", "acoth", "arange",
   "ln", "log10", "frexp", "radians", "degrees", "modf", "cbrt", "nthroot",
-  "sign", "plot", "isinf", "mpi", "isint"]
+  "sign", "plot", "isinf", "mpi", "isint", "phi"]
 
 from libelefun import *
 from libmpf import *
@@ -633,8 +633,9 @@ class constant(mpf):
 pi = constant(mpf_pi, "pi")
 degree = constant(mpf_degree, "degree")
 e = constant(mpf_e, "e")
-ln2 = constant(mpf_log2, "log 2")
-ln10 = constant(mpf_log10, "log 10")
+ln2 = constant(mpf_ln2, "ln(2)")
+ln10 = constant(mpf_ln10, "ln(10)")
+phi = constant(mpf_phi, "Golden ratio (phi)")
 eps = constant(lambda p, r: (0, MP_ONE, -p+1, 1), "epsilon of working precision")
 
 def fraction(p, q):
