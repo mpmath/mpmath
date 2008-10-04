@@ -289,7 +289,7 @@ def mpc_nthroot((a, b), n, prec, rnd=round_fast):
     """
 
     if a[0] == 0 and b == fzero:
-        re = mpf_nthroot(a, prec, rnd)
+        re = mpf_nthroot(a, n, prec, rnd)
         return (re, fzero)
     if n < 2:
         if n == 0:

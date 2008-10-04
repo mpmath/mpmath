@@ -18,3 +18,4 @@ from matrices import matrix, eye, diag, zeros, ones, randmatrix, mnorm_1, \
 from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
     cond, lu
 
+from visualization import plot, cplot
