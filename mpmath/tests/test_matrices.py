@@ -61,6 +61,10 @@ def test_matrix_basic():
         assert False
     except ValueError:
         pass
+    A9 = randmatrix(3)
+    A10 = matrix(A9)
+    A9[0,0] = -100
+    assert A9 != A10
 
 def test_matrix_power():
     A = matrix([[1, 2], [3, 4]])

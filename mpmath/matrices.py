@@ -51,8 +51,7 @@ class matrix(object):
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], matrix):
-            # TODO: copy or not?
-            A = args[0]
+            A = args[0].copy()
             self.__data = A._matrix__data
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
