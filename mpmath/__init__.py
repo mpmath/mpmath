@@ -19,3 +19,15 @@ from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
     cond, lu
 
 from visualization import plot, cplot
+
+# be careful when changin this name, don't use test*!
+def runtests():
+    """
+    Run all mpmath tests and print output.
+    """
+    import os.path
+    from inspect import getsourcefile
+    import tests.runtests as tests
+    testdir = os.path.dirname(os.path.abspath(getsourcefile(tests)))
+    importdir = os.path.abspath(testdir + '/../..')
+    tests.testit(importdir, testdir)

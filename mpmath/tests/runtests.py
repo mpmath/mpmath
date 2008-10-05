@@ -46,15 +46,20 @@ if "-strict" in sys.argv:
 
 if "-local" in sys.argv:
     sys.argv.remove('-local')
-    directory = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),
+    importdir = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),
                                              '../..'))
 else:
-    directory = ''
+    importdir = ''
 
-def testit(directory=''):
-    """Run all tests while importing from directory."""
-    if directory:
-        sys.path.insert(1, directory)
+# TODO: add a flag for this
+testdir = ''
+
+def testit(importdir='', testdir=''):
+    """Run all tests in testdir while importing from importdir."""
+    if importdir:
+        sys.path.insert(1, importdir)
+    if testdir:
+        sys.path.insert(1, testdir)
     if "-py" in sys.argv:
         sys.argv.remove('-py')
         import py
@@ -65,10 +70,15 @@ def testit(directory=''):
         from time import clock
         modules = []
         args = sys.argv[1:]
-        pattern = os.path.dirname(sys.argv[0])
+        # search for tests in directory of this file if not otherwise specified
+        if not testdir:
+            pattern = os.path.dirname(sys.argv[0])
+        else:
+            pattern = testdir
         if pattern:
             pattern += '/'
         pattern += 'test*.py'
+        # look for tests (respecting specified filter)
         for f in glob.glob(pattern):
             name = os.path.splitext(os.path.basename(f))[0]
             if args:
@@ -85,6 +95,7 @@ def testit(directory=''):
                 modules = [[priority, name, module]]
                 break
             modules.append([priority, name, module])
+        # execute tests
         modules.sort()
         tstart = clock()
         for priority, name, module in modules:
@@ -99,11 +110,14 @@ def testit(directory=''):
         tend = clock()
         print
         print "finished tests in", ("%.2f" % (tend-tstart)), "seconds"
+        # clean sys.path
+        sys.path.remove(importdir)
+        sys.path.remove(testdir)
 
 if __name__ == '__main__':
     if profile:
         import cProfile
-        cProfile.run("testit(%s)" % directory, sort=2)
+        cProfile.run("testit(%s, %s)" % (importdir, testdir), sort=2)
     else:
-        testit(directory)
+        testit(importdir, testdir)
 
