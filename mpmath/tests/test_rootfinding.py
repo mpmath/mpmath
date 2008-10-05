@@ -8,11 +8,18 @@ def test_findroot():
     assert findroot(sin, mpf(3)).ae(pi)
     assert findroot(sin, (mpf(3), mpf(3.14))).ae(pi)
     assert findroot(lambda x: x*x+1, mpc(2+2j)).ae(1j)
-    # test all solvers
+    # test all solvers with 1 starting point
     f = lambda x: cos(x)
-    for solver in [Secant]:
+    for solver in [Secant, MNewton, Muller]:
         x = findroot(f, 2., solver=solver)
         assert abs(f(x)) < eps
+    # test all solvers with interval of 2 points
+    # FIXME: Illinois, Pegasus, Anderson, Ridder
+    for solver in [Secant, Muller, Bisection]:
+        x = findroot(f, (1., 2.), solver=solver)
+        assert abs(f(x)) < eps
+
+# TODO: test MNewton, Muller
 
 def test_multiplicity():
     for i in xrange(1, 5):
