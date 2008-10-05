@@ -66,22 +66,26 @@ b10 = [1.0, 1.0 + 1.0j, 1.0]
 
 
 def test_LU_decomp():
-    A = A3
+    A = A3.copy()
     b = b3
-    LU, p = LU_decomp(A)
+    A, p = LU_decomp(A)
     y = L_solve(A, b, p)
     x = U_solve(A, y)
     assert p == [2, 1, 2, 3]
     assert [round(i, 14) for i in x] == [3.78953107960742, 2.9989094874591098,
             -0.081788440567070006, 3.8713195201744801, 2.9171210468920399]
-    A = A4
+    A = A4.copy()
     b = b4
-    LU, p = LU_decomp(A)
+    A, p = LU_decomp(A)
     y = L_solve(A, b, p)
     x = U_solve(A, y)
     assert p == [0, 3, 4, 3]
     assert [round(i, 14) for i in x] == [2.6383625899619201, 2.6643834462368399,
             0.79208015947958998, -2.5088376454101899, -1.0567657691375001]
+    A = randmatrix(3)
+    bak = A.copy()
+    LU_decomp(A, overwrite=1)
+    assert A != bak
 
 def test_inverse():
     for A in [A1, A2, A5]:
@@ -149,8 +153,8 @@ def test_cholesky():
 def test_det():
     assert det(A1) == 1
     assert round(det(A2), 14) == 8
-    assert round(det(A3), 2) == -3615.70
-    assert round(det(A4)) == 4591017
+    assert round(det(A3)) == 1834
+    assert round(det(A4)) == 4443376
     assert det(A5) == 1
     assert round(det(A6)) == 78356463
     assert det(zeros(3)) == 0
@@ -167,7 +171,8 @@ def test_precision():
     assert mnorm_1(inverse(inverse(A)) - A) < 1.e-45
 
 def test_interval_matrix():
-    a = matrix([['0.1','0.3','1.0'],['7.1','5.5','4.8'],['3.2','4.4','5.6']], force_type=mpi)
+    a = matrix([['0.1','0.3','1.0'],['7.1','5.5','4.8'],['3.2','4.4','5.6']],
+               force_type=mpi)
     b = matrix(['4','0.6','0.5'], force_type=mpi)
     c = lu_solve(a, b)
     assert c[0].delta < 1e-13
@@ -176,3 +181,12 @@ def test_interval_matrix():
     assert 5.25823271130625686059275 in c[0]
     assert -13.155049396267837541163 in c[1]
     assert 7.42069154774972557628979 in c[2]
+
+def test_LU_cache():
+    A = randmatrix(3)
+    LU = LU_decomp(A)
+    assert A._LU == LU_decomp(A)
+    A[0,0] = -1000
+    assert A._LU is None
+
+

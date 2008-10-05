@@ -12,21 +12,30 @@ from functions import sqrt, sign
 from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p
 from copy import copy
 
-def LU_decomp(A):
+def LU_decomp(A, overwrite=False):
     """
     LU-factorization of a n*n matrix using the Gauss algorithm.
     Returns L and U in one matrix and the pivot indices.
+
+    Use overwrite to specify whether A will be overwritten with L and U.
     """
     if not A.rows == A.cols:
         raise ValueError('need n*n matrix')
-    tol = absmin(mnorm_1(A) * eps) # each pivot element has to be bigger than this
+    # get from cache if possilbe
+    if isinstance(A, matrix) and A._LU:
+        return A._LU
+    if not overwrite:
+        orig = A
+        A = A.copy()
+    tol = absmin(mnorm_1(A) * eps) # each pivot element has to be bigger
     n = A.rows
     p = [None]*(n - 1)
     for j in xrange(n - 1):
         # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
         biggest = 0
         for k in xrange(j, n):
-            current = 1/sum([absmin(A[k,l]) for l in xrange(j, n)]) * absmin(A[k,j])
+            current = 1/sum([absmin(A[k,l]) for l in xrange(j, n)]) \
+                      * absmin(A[k,j])
             if current > biggest: # TODO: what if equal?
                 biggest = current
                 p[j] = k
@@ -39,6 +48,9 @@ def LU_decomp(A):
             A[i,j] /= A[j,j]
             for k in xrange(j + 1, n):
                 A[i,k] -= A[i,j]*A[j,k]
+    # cache decomposition
+    if not overwrite and isinstance(orig, matrix):
+        orig._LU = (A, p)
     return A, p
 
 def L_solve(L, b, p=None):

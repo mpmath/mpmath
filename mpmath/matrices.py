@@ -18,10 +18,14 @@ class matrix(object):
 
     By default, only mpf is used to store the data. You can specify another type
     using force_type=type. It's possible to specify None.
+    Make sure force_type(force_type()) is fast.
     """
 
     def __init__(self, *args, **kwargs):
         self.__data = {}
+        # LU decompostion cache, this is useful when solving the same system multiple
+        # times, when calculating the inverse and when calculating the determinant
+        self._LU = None
         if 'force_type' in kwargs:
             self.force_type = kwargs['force_type']
         else:
@@ -155,6 +159,9 @@ class matrix(object):
             self.__data[key] = value
         elif key in self.__data:
             del self.__data[key]
+        # TODO: maybe do this better, if the performance impact is significant
+        if self._LU:
+            self._LU = None
 
     def __iter__(self):
         for i in xrange(self.__rows):
