@@ -54,7 +54,7 @@ class Secant():
 class MNewton():
     """
     1d-solver generating pairs of approximative root and error.
-    
+
     Needs starting point x0 close to the root.
     Uses modified Newton's method that converges fast regardless of the
     multiplicity of the root.
@@ -183,11 +183,11 @@ class Muller():
             self.x1 = x0[1]
             self.x2 = x0[2]
         else:
-            raise ValueError('expected 1, 2 or 3 starting points, got %i' 
+            raise ValueError('expected 1, 2 or 3 starting points, got %i'
                              % len(x0))
         self.f = f
         self.verbose = kwargs['verbose']
-    
+
     def __iter__(self):
         f = self.f
         x0 = self.x0
@@ -452,7 +452,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
     else:
         maxsteps = iterations.maxsteps
     if tol is None:
-        if isinstance(x0[0], float):
+        if isinstance(x0[0], (complex, float)):
             tol = 2**(-52)
         else:
             tol = eps
