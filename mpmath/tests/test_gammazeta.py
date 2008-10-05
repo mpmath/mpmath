@@ -168,7 +168,7 @@ def test_polygamma():
     assert psi0(-pi+1).ae(7.5676424992016996)
     assert psi0(pi+j).ae(1.04224048313859376 + 0.35853686544063749j)
     assert psi0(-pi-j).ae(1.3404026194821986 - 2.8824392476809402j)
-    assert secant(psi0, 1).ae(1.4616321449683622)
+    assert findroot(psi0, 1).ae(1.4616321449683622)
     assert psi0(inf) == inf
     assert psi1(inf) == 0
     assert psi2(inf) == 0
