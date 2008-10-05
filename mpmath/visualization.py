@@ -91,7 +91,7 @@ def default_color_function(z):
     a = (float(arg(z)) + pi) / (2*pi)
     a = (a + 0.5) % 1.0
     b = 1.0 - float(1/(1.0+abs(z)**0.3))
-    return hls_to_rgb(a, b, 1.0)
+    return hls_to_rgb(a, b, 0.8)
 
 def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
     verbose=False, file=None):
