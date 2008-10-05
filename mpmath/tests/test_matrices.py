@@ -3,7 +3,7 @@
 from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
     mnorm_F, norm_p, zeros, ones, randmatrix, extend
 from mpmath.linalg import inverse
-from mpmath import inf, mpf, sqrt
+from mpmath import inf, mpf, sqrt, mpi
 
 with_numpy = False
 try:
@@ -65,6 +65,9 @@ def test_matrix_basic():
     A10 = matrix(A9)
     A9[0,0] = -100
     assert A9 != A10
+    A11 = matrix(randmatrix(2, 3), force_type=mpi)
+    for a in A11:
+        assert isinstance(a, mpi)
 
 def test_matrix_power():
     A = matrix([[1, 2], [3, 4]])

@@ -60,8 +60,8 @@ class matrix(object):
                 self.force_type = A.force_type
             elif self.force_type:
                 # apply specified force_type
-                for i in xrange(A.__cols):
-                    for j in xrange(A.__rows):
+                for i in xrange(A.__rows):
+                    for j in xrange(A.__cols):
                         A[i,j] = self.force_type(A[i,j])
         elif hasattr(args[0], 'tolist'):
             A = matrix(args[0].tolist())
