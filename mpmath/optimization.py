@@ -424,7 +424,7 @@ def Ridder():
 # INTERFACES #
 ##############
 
-@extraprec(10)
+@extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
     """
     Find a root of f using x0 as starting point or interval.
@@ -444,18 +444,17 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
     kwargs['verbose'] = verbose
     if 'd1f' in kwargs:
         kwargs['df'] = kwargs['d1f']
-    if not isinstance(x0, (list, tuple)):
-        x0 = (x0,)
+    if isinstance(x0, (list, tuple)):
+        x0 = [convert_lossless(x) for x in x0]
+    else:
+        x0 = [convert_lossless(x0)]
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
         maxsteps = kwargs['maxsteps']
     else:
         maxsteps = iterations.maxsteps
     if tol is None:
-        if isinstance(x0[0], (complex, float)):
-            tol = 2**(-52)
-        else:
-            tol = eps
+        tol = eps * 2**10
     kwargs['tol'] = tol
     i = 0
     for x, error in iterations:
