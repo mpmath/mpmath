@@ -9,7 +9,7 @@ __all__ = ["mpnumeric", "mpf", "mpc",
   "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
   "make_mpc", "arange", "isinf", "mpi", "isint", "rand",
-  "absmin", "absmax"]
+  "absmin", "absmax", "AS_POINTS"]
 
 from libelefun import *
 from libmpf import *
@@ -664,6 +664,11 @@ def absmax(x):
     if isinstance(x, mpi):
         return abs(x).b
     return abs(x)
+
+def AS_POINTS(x):
+    if isinstance(x, mpi):
+        return [x.a, x.b]
+    return x
 
 def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.

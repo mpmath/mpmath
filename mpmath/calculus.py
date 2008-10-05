@@ -294,29 +294,30 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     else:
         return [+r for r in roots]
 
-def quadosc(f, a, b, period=None, zeros=None, alt=1):
+def quadosc(f, interval, period=None, zeros=None, alt=1):
     """
-    Integrates f(x) from a to b where a or b is infinite and f is
-    a slowly decaying oscillatory function. The zeros of f must be
-    provided, either by specifying a period (suitable when f contains
-    a pure sine or cosine factor) or providing a function that
-    returns the nth zero (suitable when the oscillation is not
+    Integrates f(x) over interval = [a, b] where at least one of a and
+    b is infinite and f is a slowly decaying oscillatory function. The
+    zeros of f must be provided, either by specifying a period (suitable
+    when f contains a pure sine or cosine factor) or providing a function
+    that returns the nth zero (suitable when the oscillation is not
     strictly periodic).
     """
+    a, b = AS_POINTS(interval)
     a = convert_lossless(a)
     b = convert_lossless(b)
     if period is None and zeros is None:
         raise ValueError( \
             "either the period or zeros keyword parameter must be specified")
     if a == -inf and b == inf:
-        s1 = quadosc(f, a, 0, zeros=zeros, period=period, alt=alt)
-        s2 = quadosc(f, 0, b, zeros=zeros, period=period, alt=alt)
+        s1 = quadosc(f, [a, 0], zeros=zeros, period=period, alt=alt)
+        s2 = quadosc(f, [0, b], zeros=zeros, period=period, alt=alt)
         return s1 + s2
     if a == -inf:
         if zeros:
-            return quadosc(lambda x:f(-x),-b,-a, lambda n: zeros(-n), alt=alt)
+            return quadosc(lambda x:f(-x), [-b,-a], lambda n: zeros(-n), alt=alt)
         else:
-            return quadosc(lambda x:f(-x),-b,-a, period=period, alt=alt)
+            return quadosc(lambda x:f(-x), [-b,-a], period=period, alt=alt)
     if b != inf:
         raise ValueError("quadosc requires an infinite integration interval")
     if not zeros:
@@ -329,10 +330,10 @@ def quadosc(f, a, b, period=None, zeros=None, alt=1):
         raise ValueError("zeros do not appear to be correctly indexed")
     if alt == 0:
         s = quadgl(f, [a, zeros(n+1)])
-        s += sumrich(lambda k: quadgl(f, [zeros(2*k), zeros(2*k+2)]), n, inf)
+        s += sumrich(lambda k: quadgl(f, [zeros(2*k), zeros(2*k+2)]), [n, inf])
     else:
         s = quadgl(f, [a, zeros(n)])
-        s += sumsh(lambda k: quadgl(f, [zeros(k), zeros(k+1)]), n, inf)
+        s += sumsh(lambda k: quadgl(f, [zeros(k), zeros(k+1)]), [n, inf])
     return s
 
 
@@ -343,10 +344,13 @@ def quadosc(f, a, b, period=None, zeros=None, alt=1):
 #                               Numerical summation                          #
 #----------------------------------------------------------------------------#
 
-def sumrich(f, a, b, n=None, N=None):
-    """Sum f(k) for k = a..b using Richardson extrapolation. This
-    function is essentially equivalent to using limit() on the
-    sequence of partial sums."""
+def sumrich(f, interval, n=None, N=None):
+    """
+    Sum f(k) for k = a, a+1, ..., b where [a, b] = interval,
+    using Richardson extrapolation. This function is essentially
+    equivalent to using limit() on the sequence of partial sums.
+    """
+    a, b = AS_POINTS(interval)
     assert b == inf
     if not n: n = 3 + int(mp.dps * 0.5)
     if not N: N = 2*n
@@ -363,13 +367,16 @@ def sumrich(f, a, b, n=None, N=None):
         mp.prec = orig
     return +s
 
-def sumsh(f, a, b, n=None, m=None):
-    """Sum f(k) for k = a..b using an n-term Shanks
-    transformation. With m > 1, the Shanks transformation is applied
-    recursively m times.
+def sumsh(f, interval, n=None, m=None):
+    """
+    Sum f(k) for k = a, a+1, ..., b where [a, b] = interval,
+    using an n-term Shanks transformation. With m > 1, the Shanks
+    transformation is applied recursively m times.
 
     Shanks summation often works well for slowly convergent and/or
-    alternating Taylor series."""
+    alternating Taylor series.
+    """
+    a, b = AS_POINTS(interval)
     assert b == inf
     if not n: n = 5 + int(mp.dps * 1.2)
     if not m: m = 2 + n//3
@@ -387,19 +394,20 @@ def sumsh(f, a, b, n=None, m=None):
     return +s
 
 @extraprec(15, normalize_output=True)
-def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
+def sumem(f, interval, N=None, integral=None, fderiv=None, error=False,
     verbose=False):
     """
-    Calculate the sum of f(n) for n = a..b using Euler-Maclaurin
-    summation. This algorithm is efficient for slowly convergent
-    nonoscillatory sums; the essential condition is that f must be
-    analytic. The method relies on approximating the sum by an
-    integral, so f must be smooth and well-behaved enough to be
-    integrated numerically.
+    Sum f(k) for k = a, a+1, ..., b where [a, b] = interval,
+    using Euler-Maclaurin summation. This algorithm is efficient
+    for slowly convergent nonoscillatory sums; the essential condition
+    is that f must be analytic. The method relies on approximating the
+    sum by an integral, so f must be smooth and well-behaved enough
+    to be integrated numerically.
 
-    A tuple (s, err) is returned where s is the calculated sum and err
-    is the estimated magnitude of the error. With verbose=True,
-    detailed information about progress and errors is printed.
+    With error=True, a tuple (s, err) is returned where s is the
+    calculated sum and err is the estimated magnitude of the error.
+    With verbose=True, detailed information about progress and errors
+    is printed.
 
         >>> mp.dps = 15
         >>> s, err = sumem(lambda n: 1/n**2, 1, inf, error=True)
@@ -435,6 +443,7 @@ def sumem(f, a=0, b=inf, N=None, integral=None, fderiv=None, error=False,
     at infinity. It is assumed that a is finite, so doubly
     infinite sums cannot be evaluated directly.
     """
+    a, b = AS_POINTS(interval)
     if N is None:
         N = 3*mp.dps + 20
     a, b, N = mpf(a), mpf(b), mpf(N)
@@ -608,10 +617,13 @@ def chebT(a=1, b=0):
         for i, c in enumerate(Tb): Tmp[i] -= c
         Ta, Tb = Tmp, Ta
 
-def chebyfit(f,a,b,N,error=False):
-    """Chebyshev approximation: returns coefficients of a degree N-1
+def chebyfit(f, interval, N, error=False):
+    """
+    Chebyshev approximation: returns coefficients of a degree N-1
     polynomial that approximates f on the interval [a, b]. With error=True,
-    also returns an estimate of the maximum error."""
+    also returns an estimate of the maximum error.
+    """
+    a, b = AS_POINTS(interval)
     orig = mp.prec
     try:
         mp.prec = orig + int(N**0.5) + 20

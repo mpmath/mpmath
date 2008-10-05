@@ -1,5 +1,5 @@
 from mptypes import (mp, mpf, convert_lossless, inf,
-   eps, nstr, make_mpf)
+   eps, nstr, make_mpf, AS_POINTS)
 
 from functions import pi, exp, log, ldexp
 
@@ -327,26 +327,27 @@ class GaussLegendre(Quadrature):
         return s
 
 
-def quad(rule, f, *points, **kwargs):
+def quad(f, *points, **kwargs):
     """
     Computes a single, double or triple integral over a given
-    interval, rectangle, or box, using the given quadrature rule:
+    interval, rectangle, or box.
 
-        quad(rule, f(x), [x1, x2])
-        quad(rule, f(x,y), [x1, x2], [y1, y2])
-        quad(rule, f(x,y,z), [x1, x2], [y1, y2], [z1, z2])
+        quad(f(x), [x1, x2])
+        quad(f(x,y), [x1, x2], [y1, y2])
+        quad(f(x,y,z), [x1, x2], [y1, y2], [z1, z2])
 
-    For example:
+    By default, tanh-sinh quadrature is used. A custom method
+    can be specified via the 'method' keyword argument. Basic examples:
 
         >>> from mpmath import *
-        >>> print quad(TanhSinh, lambda x: exp(-x**2), [0, inf])
+        >>> print quad(lambda x: exp(-x**2), [0, inf])
         0.886226925452758
         >>> f = lambda x, y: exp(x*sin(y))
-        >>> print quad(GaussLegendre, f, [0, 1], [0, pi])
+        >>> print quad(f, [0, 1], [0, pi])
         4.47046663466179
 
     The functions quadgl(...) and quadts(...) act as shortcuts for
-    quad(GaussLegendre, ...) and quad(TanhSinh, ...).
+    quad(..., method=GaussLegendre) and quad(..., method=TanhSinh).
 
     An interval may contain more than two points. In this case, the
     integration is split into subintervals, between each pair of
@@ -369,11 +370,13 @@ def quad(rule, f, *points, **kwargs):
                         error
 
     """
+    rule = kwargs.get('method', TanhSinh)
     verbose = kwargs.get('verbose')
     dim = len(points)
     orig = prec = mp.prec
     epsilon = eps/8
     m = kwargs.get('maxlevel') or rule.guess_level(prec)
+    points = [AS_POINTS(p) for p in points]
     try:
         mp.prec += 20
         if dim == 1:
@@ -406,7 +409,7 @@ def quadts(*args, **kwargs):
 
     is simply a shortcut for:
 
-        quad(TanhSinh, func, *points, ...)
+        quad(func, *points, ..., method=TanhSinh)
 
     For example, a single integral and a double integral:
 
@@ -419,7 +422,8 @@ def quadts(*args, **kwargs):
     See documentation for TanhSinh for algorithmic information about
     tanh-sinh quadrature.
     """
-    return quad(TanhSinh, *args, **kwargs)
+    kwargs['method'] = TanhSinh
+    return quad(*args, **kwargs)
 
 def quadgl(*args, **kwargs):
     """
@@ -429,7 +433,7 @@ def quadgl(*args, **kwargs):
 
     is simply a shortcut for:
 
-        quad(GaussLegendre, func, *points, ...)
+        quad(func, *points, ..., method=TanhSinh)
 
     For example, a single integral and a double integral:
 
@@ -442,5 +446,6 @@ def quadgl(*args, **kwargs):
     See documentation for TanhSinh for algorithmic information about
     tanh-sinh quadrature.
     """
-    return quad(GaussLegendre, *args, **kwargs)
+    kwargs['method'] = GaussLegendre
+    return quad(*args, **kwargs)
 

@@ -27,8 +27,8 @@ def test_complex_integration():
 
 def test_quadosc():
     mp.dps = 15
-    assert quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=0).ae(pi/2)
-    assert quadosc(lambda x: sin(x)/x, 0, inf, period=2*pi, alt=1).ae(pi/2)
+    assert quadosc(lambda x: sin(x)/x, [0, inf], period=2*pi, alt=0).ae(pi/2)
+    assert quadosc(lambda x: sin(x)/x, [0, inf], period=2*pi, alt=1).ae(pi/2)
 
 # Double integrals
 def test_double_trivial():

@@ -3,7 +3,7 @@ from mpmath import *
 def test_approximation():
     mp.dps = 15
     f = lambda x: cos(2-2*x)/x
-    p, err = chebyfit(f, 2, 4, 8, error=True)
+    p, err = chebyfit(f, [2, 4], 8, error=True)
     assert err < 1e-5
     for i in range(10):
         x = 2 + i/5.
