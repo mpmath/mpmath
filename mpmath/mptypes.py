@@ -8,7 +8,8 @@ __all__ = ["mpnumeric", "mpf", "mpc",
   "j", "inf", "nan", "isnan", "almosteq",
   "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
-  "make_mpc", "arange", "isinf", "mpi", "isint", "rand"]
+  "make_mpc", "arange", "isinf", "mpi", "isint", "rand",
+  "absmin", "absmax"]
 
 from libelefun import *
 from libmpf import *
@@ -492,6 +493,14 @@ class mpi(mpnumeric):
     def delta(self):
         return make_mpf(mpi_delta(self._val, mp.prec))
 
+    def _compare(*args):
+        raise TypeError("no ordering relation is defined for intervals")
+
+    __gt__ = _compare
+    __le__ = _compare
+    __gt__ = _compare
+    __ge__ = _compare
+
     def __contains__(self, t):
         t = mpi(t)
         return (self.a <= t.a) and (t.b <= self.b)
@@ -639,6 +648,22 @@ def isint(x):
             return False
         return x == int(x)
     return False
+
+def absmin(x):
+    """
+    Returns abs(x).a for an interval, or abs(x) for anything else.
+    """
+    if isinstance(x, mpi):
+        return abs(x).a
+    return abs(x)
+
+def absmax(x):
+    """
+    Returns abs(x).b for an interval, or abs(x) for anything else.
+    """
+    if isinstance(x, mpi):
+        return abs(x).b
+    return abs(x)
 
 def fraction(p, q):
     """Given Python integers p, q, return a lazy mpf with value p/q.

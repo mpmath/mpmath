@@ -19,20 +19,20 @@ def LU_decomp(A):
     """
     if not A.rows == A.cols:
         raise ValueError('need n*n matrix')
-    tol = mnorm_1(A) * eps # each pivot element has to be bigger than this
+    tol = absmin(mnorm_1(A) * eps) # each pivot element has to be bigger than this
     n = A.rows
     p = [None]*(n - 1)
     for j in xrange(n - 1):
         # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
         biggest = 0
         for k in xrange(j, n):
-            current = 1/sum([abs(A[k,l]) for l in xrange(j, n)]) * abs(A[k,j])
+            current = 1/sum([absmin(A[k,l]) for l in xrange(j, n)]) * absmin(A[k,j])
             if current > biggest: # TODO: what if equal?
                 biggest = current
                 p[j] = k
         # swap rows according to p
         swap_row(A, j, p[j])
-        if abs(A[j,j]) < tol:
+        if absmin(A[j,j]) < tol:
             raise ZeroDivisionError('matrix is numerically singular')
         # calculate elimination factors and add rows
         for i in xrange(j + 1, n):

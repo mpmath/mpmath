@@ -409,7 +409,7 @@ def mnorm_1(A):
     """
     assert isinstance(A, matrix)
     m, n = A.rows, A.cols
-    return max((sum((abs(A[i,j]) for i in xrange(m))) for j in xrange(n)))
+    return max((sum((absmax(A[i,j]) for i in xrange(m))) for j in xrange(n)))
 
 def mnorm_oo(A):
     """
@@ -417,7 +417,7 @@ def mnorm_oo(A):
     """
     assert isinstance(A, matrix)
     m, n = A.rows, A.cols
-    return max((sum((abs(A[i,j]) for j in xrange(n))) for i in xrange(m)))
+    return max((sum((absmax(A[i,j]) for j in xrange(n))) for i in xrange(m)))
 
 def mnorm_F(A):
     """
@@ -437,7 +437,7 @@ def norm_p(x, p=2):
     Note: you may want to use float('inf') or mpmath's equivalent to specify oo.
     """
     if p == inf:
-        return max((abs(i) for i in x))
+        return max((absmax(i) for i in x))
     elif p > 1:
         return nthroot(sum((abs(i)**p for i in x)), p)
     elif p == 1:
