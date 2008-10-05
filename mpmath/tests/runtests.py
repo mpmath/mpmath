@@ -111,8 +111,10 @@ def testit(importdir='', testdir=''):
         print
         print "finished tests in", ("%.2f" % (tend-tstart)), "seconds"
         # clean sys.path
-        sys.path.remove(importdir)
-        sys.path.remove(testdir)
+        if importdir:
+            sys.path.remove(importdir)
+        if testdir:
+            sys.path.remove(testdir)
 
 if __name__ == '__main__':
     if profile:
