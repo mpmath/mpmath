@@ -14,8 +14,9 @@ def test_findroot():
         x = findroot(f, 2., solver=solver)
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
-    # FIXME: Illinois, Pegasus, Anderson, Ridder
-    for solver in [Secant, Muller, Bisection]:
+    # FIXME: 
+    for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
+                   Ridder]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
 

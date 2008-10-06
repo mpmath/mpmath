@@ -277,8 +277,7 @@ def _getm(method):
         raise ValueError, "method '%s' not recognized" % method
     return getm
 
-# FIXME: "TypeError: Illinois() takes no arguments (3 given)"
-def Illinois():
+class Illinois():
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -306,12 +305,15 @@ def Illinois():
         self.a = x0[0]
         self.b = x0[1]
         self.f = f
+        self.tol = kwargs['tol']
         self.verbose = kwargs['verbose']
-        self.getm = _getm(method)
+        self.method = kwargs.get('method', 'illinois')
+        self.getm = _getm(self.method)
         if self.verbose:
-            print 'using %s method' % method
+            print 'using %s method' % self.method
 
     def __iter__(self):
+        method = self.method
         f = self.f
         a = self.a
         b = self.b
@@ -323,9 +325,9 @@ def Illinois():
             s = (fb - fa) / l
             z = a - fa/s
             fz = f(z)
-            if abs(fz) < tol:
+            if abs(fz) < self.tol:
                 # TODO: better condition (when f is very flat)
-                if verbose:
+                if self.verbose:
                     print 'canceled with z =', z
                 yield z, l
                 break
@@ -339,7 +341,7 @@ def Illinois():
                 b = z
                 fb = fz
                 fa = m*fa # scale down to ensure convergence
-            if verbose and m and not method == 'illinois':
+            if self.verbose and m and not method == 'illinois':
                 print 'm:', m
             yield (a + b)/2, abs(l)
 
@@ -364,7 +366,7 @@ def Anderson(*args, **kwargs):
     return Illinois(*args, **kwargs)
 
 # TODO: check whether it's possible to combine it with Illinois stuff
-def Ridder():
+class Ridder():
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -444,6 +446,9 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
     kwargs['verbose'] = verbose
     if 'd1f' in kwargs:
         kwargs['df'] = kwargs['d1f']
+    if tol is None:
+        tol = eps * 2**10
+    kwargs['tol'] = tol
     if isinstance(x0, (list, tuple)):
         x0 = [convert_lossless(x) for x in x0]
     else:
@@ -453,9 +458,6 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
         maxsteps = kwargs['maxsteps']
     else:
         maxsteps = iterations.maxsteps
-    if tol is None:
-        tol = eps * 2**10
-    kwargs['tol'] = tol
     i = 0
     for x, error in iterations:
         if verbose:
@@ -470,24 +472,6 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
                          'Try another starting point or tweak arguments.'
                          % (abs(f(x)), tol))
     return x
-
-def _getm(method):
-    """
-    Returns a function to calculate m for Illinois-like methods.
-    """
-    if method == 'illinois':
-        def getm(fz, fb):
-            return 0.5
-    elif method == 'pegasus':
-        def getm(fz, fb):
-            return fb/(fb + fz)
-    elif method == 'anderson':
-        def getm(fz, fb):
-            m = 1 - fz/fb
-            return m if m > 0 else 0.5
-    else:
-        raise ValueError, "method '%s' not recognized" % method
-    return getm
 
 def multiplicity(f, root, tol=eps, maxsteps=10, **kwargs):
     """
