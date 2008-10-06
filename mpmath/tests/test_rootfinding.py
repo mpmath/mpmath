@@ -10,17 +10,24 @@ def test_findroot():
     assert findroot(lambda x: x*x+1, mpc(2+2j)).ae(1j)
     # test all solvers with 1 starting point
     f = lambda x: cos(x)
-    for solver in [Secant, MNewton, Muller]:
+    for solver in [Secant, MNewton, Muller, ANewton]:
         x = findroot(f, 2., solver=solver)
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
-    # FIXME: 
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
                    Ridder]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
 
-# TODO: test MNewton, Muller
+def test_anewton():
+    f = lambda x: (x - 2)**100
+    x = findroot(f, 1., solver=ANewton)
+    assert abs(f(x)) < eps
+
+def test_muller():
+    f = lambda x: (2 + x)**3 + 2
+    x = findroot(f, 1., solver=Muller)
+    assert abs(f(x)) < eps
 
 def test_multiplicity():
     for i in xrange(1, 5):

@@ -420,11 +420,66 @@ class Ridder():
             error = abs(x1 - x2)
             yield (x1 + x2)/2, error
 
-# TODO: add Brent, ANewton, Steffensen
+class ANewton():
+    """
+    EXPERIMENTAL 1d-solver generating pairs of approximative root and error.
 
-##############
-# INTERFACES #
-##############
+    Uses Newton's method modified to use Steffensens method when convergence is
+    slow. (I. e. for multiple roots.)
+    """
+    maxsteps = 20
+
+    def __init__(self, f, x0, **kwargs):
+        if not len(x0) == 1:
+            raise ValueError('expected 1 starting point, got %i' * len(x0))
+        self.x0 = x0[0]
+        self.f = f
+        if not 'df' in kwargs:
+            def df(x):
+                return diff(f, x)
+        else:
+            df = kwargs['df']
+        self.df = df
+        def phi(x):
+            return x - f(x) / df(x)
+        self.phi = phi
+        self.verbose = kwargs['verbose']
+
+    def __iter__(self):
+        x0 = self.x0
+        f = self.f
+        df = self.df
+        phi = self.phi
+        error = 0
+        counter = 0
+        while True:
+            prevx = x0
+            try:
+                x0 = phi(x0)
+            except ZeroDivisionError:
+                if self.verbose:
+                    'ZeroDivisionError: canceled with x =', x0
+                break
+            preverror = error
+            error = abs(prevx - x0)
+            # TODO: decide not to use convergence acceleration
+            if error and abs(error - preverror) / error < 1:
+                if self.verbose:
+                    print 'converging slowly'
+                counter += 1
+            if counter >= 3:
+                # accelerate convergence
+                phi = steffensen(phi)
+                counter = 0
+                if self.verbose:
+                    print 'accelerating convergence'
+            yield x0, error
+
+# TODO: add Brent
+
+#############
+# UTILITIES #
+#############
 
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
@@ -491,3 +546,21 @@ def multiplicity(f, root, tol=eps, maxsteps=10, **kwargs):
         if not abs(df(root)) < tol:
             break
     return i
+
+def steffensen(f):
+    """
+    linear convergent function -> quadratic convergent function
+
+    Steffensen's method for quadratic convergence of a linear converging
+    sequence.
+    Don not use it for higher rates of convergence.
+    It may even work for divergent sequences.
+
+    Definition:
+    F(x) = (x*f(f(x)) - f(x)**2) / (f(f(x)) - 2*f(x) + x)
+    """
+    def F(x):
+        fx = f(x)
+        ffx = f(fx)
+        return (x*ffx - fx**2) / (ffx - 2*fx + x)
+    return F
