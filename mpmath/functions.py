@@ -852,6 +852,8 @@ def lambertw(z, k=0, approx=None):
             # gets better for large |k|; need to check that this always
             # works for k ~= -1, 0, 1.
             if k: w += k * 2*pi*j
+    elif k == 0 and z.imag and abs(z) <= 0.6:
+        w = z
     else:
         if z == inf: return z
         if z == -inf: return nan
