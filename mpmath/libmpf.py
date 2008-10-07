@@ -1401,7 +1401,7 @@ def mpf_sqrt(s, prec, rnd=round_fast):
     if sign:
         raise ComplexResult("square root of a negative number")
     if not man:
-        return fzero
+        return s
 
     # Convert to a fixed-point number with prec2 bits. Adjust
     # exponents to be even so that they can be divided in half

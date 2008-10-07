@@ -82,6 +82,8 @@ def test_functions_special():
     assert isnan(sin(nan))
     assert atan(inf).ae(pi/2)
     assert atan(-inf).ae(-pi/2)
+    assert isnan(sqrt(nan))
+    assert sqrt(inf) == inf
 
 def test_convert_special():
     float_inf = 1e1000
