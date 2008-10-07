@@ -2,14 +2,15 @@
 Plotting (requires matplotlib)
 """
 
-from mptypes import mpc, inf, isnan, arange, complex_types
+from mptypes import mpc, inf, isnan, isinf, arange, complex_types
 from functions import sqrt, arg
 
 from colorsys import hsv_to_rgb, hls_to_rgb
 
 plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
 
-def plot(f, xlim=[-5,5], ylim=None, points=200, file=None):
+def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
+    singularities=[]):
     """
     Shows a simple 2D plot of a function or list of functions over
     a given interval. Some examples:
@@ -31,6 +32,7 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None):
     NOTE: This function requires matplotlib (pylab).
     """
     import pylab
+    pylab.clf()
     if not isinstance(f, (tuple, list)):
         f = [f]
     a, b = xlim
@@ -42,6 +44,10 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None):
         in_complex = False
         for i in xrange(len(x)):
             try:
+                if i != 0:
+                    for sing in singularities:
+                        if x[i-1] <= sing and x[i] >= sing:
+                            raise ValueError
                 v = func(x[i])
                 if isnan(v) or abs(v) == inf:
                     raise ValueError
@@ -73,20 +79,26 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None):
             c = colors[n % len(colors)]
             if len(segment[0]) == 3:
                 z = [s[2] for s in segment]
-                pylab.plot(x, y, '--'+c, linewidth=1.5)
-                pylab.plot(x, z, ':'+c, linewidth=1.5)
+                pylab.plot(x, y, '--'+c, linewidth=3)
+                pylab.plot(x, z, ':'+c, linewidth=3)
             else:
-                pylab.plot(x, y, c, linewidth=1.5)
+                pylab.plot(x, y, c, linewidth=3)
     pylab.xlim(xlim)
     if ylim:
         pylab.ylim(ylim)
+    pylab.xlabel('x')
+    pylab.ylabel('f(x)')
     pylab.grid(True)
     if file:
-        pylab.savefig(file)
+        pylab.savefig(file, dpi=dpi)
     else:
         pylab.show()
 
 def default_color_function(z):
+    if isinf(z):
+        return (1.0, 1.0, 1.0)
+    if isnan(z):
+        return (0.5, 0.5, 0.5)
     pi = 3.1415926535898
     a = (float(arg(z)) + pi) / (2*pi)
     a = (a + 0.5) % 1.0
@@ -94,7 +106,7 @@ def default_color_function(z):
     return hls_to_rgb(a, b, 0.8)
 
 def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
-    verbose=False, file=None):
+    verbose=False, file=None, dpi=None):
     """
     Plots the given complex-valued function over a rectangular part
     of the complex plane given by the pairs of intervals re and im.
@@ -116,6 +128,7 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
     option is useful to display progress.
     """
     import pylab
+    pylab.clf()
     rea, reb = re
     ima, imb = im
     dre = reb - rea
@@ -135,12 +148,14 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
             try:
                 v = color(f(z))
             except plot_ignore:
-                v = (0.0, 0.0, 0.0)
+                v = (0.5, 0.5, 0.5)
             w[n,m] = v
         if verbose:
             print n, "of", N
     pylab.imshow(w, extent=(rea, reb, ima, imb), origin='lower')
+    pylab.xlabel('Re(z)')
+    pylab.ylabel('Im(z)')
     if file:
-        pylab.savefig(file)
+        pylab.savefig(file, dpi=dpi)
     else:
         pylab.show()
