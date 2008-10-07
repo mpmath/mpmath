@@ -148,8 +148,15 @@ asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
 acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
 acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
+floor = mpfunc('floor', libelefun.mpf_floor, libmpc.mpc_floor, "")
+floor.__doc__ = """Computes the floor function of x. Note: returns a floating-point
+number, not a Python int. If x is larger than the precision, it will be rounded,
+not necessarily in the floor direction."""
 
-
+ceil = mpfunc('ceil', libelefun.mpf_ceil, libmpc.mpc_ceil, "")
+ceil.__doc__ = """Computes the ceiling function of x. Note: returns a floating-point
+number, not a Python int. If x is larger than the precision, it will be rounded,
+not necessarily in the floor direction."""
 
 @funcwrapper
 def nthroot(x, n):
@@ -172,20 +179,6 @@ def hypot(x, y):
     x = convert_lossless(x)
     y = convert_lossless(y)
     return make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
-
-def floor(x):
-    """Computes the floor function of x. Note: returns an mpf, not a
-    Python int. If x is larger than the precision, it will be rounded,
-    not necessarily in the floor direction."""
-    x = convert_lossless(x)
-    return make_mpf(libmpf.mpf_floor(x._mpf_, *prec_rounding))
-
-def ceil(x):
-    """Computes the ceiling function of x. Note: returns an mpf, not a
-    Python int. If x is larger than the precision, it will be rounded,
-    not necessarily in the ceiling direction."""
-    x = convert_lossless(x)
-    return make_mpf(libmpf.mpf_ceil(x._mpf_, *prec_rounding))
 
 def ldexp(x, n):
     """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""

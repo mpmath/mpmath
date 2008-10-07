@@ -47,6 +47,12 @@ def mpc_arg((a, b), prec, rnd=round_fast):
     """Argument of a complex number. Returns an mpf value."""
     return mpf_atan2(b, a, prec, rnd)
 
+def mpc_floor((a, b), prec, rnd=round_fast):
+    return mpf_floor(a, prec, rnd), mpf_floor(b, prec, rnd)
+
+def mpc_ceil((a, b), prec, rnd=round_fast):
+    return mpf_ceil(a, prec, rnd), mpf_ceil(b, prec, rnd)
+
 def mpc_mul((a, b), (c, d), prec, rnd=round_fast):
     """Complex multiplication.
 
