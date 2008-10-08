@@ -481,6 +481,11 @@ class ANewton():
 # UTILITIES #
 #############
 
+str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
+              'muller':Muller, 'bisect':Bisection, 'illinois':Illinois,
+              'pegasus':Pegasus, 'anderson':Anderson, 'ridder':Ridder,
+              'anewton':ANewton}
+
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False,
              force_type=convert_lossless, eps=eps, **kwargs):
@@ -500,7 +505,15 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
     maxsteps : after how many steps the solver will cancel
     df : first derivative of f (used by some solvers)
     d2f : second derivative of f (used by some solvers)
+
+    solver has to be callable with (f, x0, **kwargs) and return an generator
+    yielding pairs of approximative solution and estimated error.
+    You can use the following string aliases:
+    'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
+    'ridder', 'anewton'
+    See mpmath.optimization for their documentation.
     """
+    # initialize arguments
     if not force_type:
         force_type = lambda x: x
     elif force_type == float or force_type == complex:
@@ -515,6 +528,12 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
         x0 = [force_type(x) for x in x0]
     else:
         x0 = [force_type(x0)]
+    if isinstance(solver, str):
+        try:
+            solver = str2solver[solver]
+        except KeyError:
+            raise ValueError('could not recognize solver')
+    # use solver
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
         maxsteps = kwargs['maxsteps']
