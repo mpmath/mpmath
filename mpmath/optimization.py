@@ -482,7 +482,8 @@ class ANewton():
 #############
 
 @extraprec(20)
-def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
+def findroot(f, x0, solver=Secant, tol=None, verbose=False,
+             force_type=convert_lossless, eps=eps, **kwargs):
     """
     Find a root of f using x0 as starting point or interval.
 
@@ -493,11 +494,17 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
     x0 : starting point, several starting points or interval (depends on solver)
     tol : the returned solution has an error smaller than this
     verbose : print additional information for each iteration if true
+    force_type : use specified type constructor on starting points
+    eps : machine espilon of used type
     solver : a generator for f and x0 returning approximative solution and error
     maxsteps : after how many steps the solver will cancel
     df : first derivative of f (used by some solvers)
     d2f : second derivative of f (used by some solvers)
     """
+    if not force_type:
+        force_type = lambda x: x
+    elif force_type == float or force_type == complex:
+        eps = 2**(-52)
     kwargs['verbose'] = verbose
     if 'd1f' in kwargs:
         kwargs['df'] = kwargs['d1f']
@@ -505,9 +512,9 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
         tol = eps * 2**10
     kwargs['tol'] = tol
     if isinstance(x0, (list, tuple)):
-        x0 = [convert_lossless(x) for x in x0]
+        x0 = [force_type(x) for x in x0]
     else:
-        x0 = [convert_lossless(x0)]
+        x0 = [force_type(x0)]
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
         maxsteps = kwargs['maxsteps']
@@ -521,7 +528,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, **kwargs):
         i += 1
         if error < tol or i >= maxsteps:
             break
-    if abs(f(x)) > tol:
+    if abs(f(x)) > tol: # TODO: better condition?
         raise ValueError('Could not find root within given tolerance.'
                          '(%g > %g)\n'
                          'Try another starting point or tweak arguments.'

@@ -18,6 +18,11 @@ def test_findroot():
                    Ridder]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
+    # test types
+    f = lambda x: (x - 2)**2
+    assert isinstance(findroot(f, 1, force_type=mpf, tol=1e-10), mpf)
+    assert isinstance(findroot(f, 1., force_type=None, eps=2**(-52)), float)
+    assert isinstance(findroot(f, 1, force_type=complex), complex)
 
 def test_anewton():
     f = lambda x: (x - 2)**100
