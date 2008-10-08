@@ -21,8 +21,8 @@ def test_findroot():
     # test types
     f = lambda x: (x - 2)**2
     assert isinstance(findroot(f, 1, force_type=mpf, tol=1e-10), mpf)
-    assert isinstance(findroot(f, 1., force_type=None, eps=2**(-52)), float)
-    assert isinstance(findroot(f, 1, force_type=complex), complex)
+    assert isinstance(findroot(f, 1., force_type=None, tol=1e-10), float)
+    assert isinstance(findroot(f, 1, force_type=complex, tol=1e-10), complex)
 
 def test_anewton():
     f = lambda x: (x - 2)**100

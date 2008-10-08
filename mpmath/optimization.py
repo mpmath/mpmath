@@ -488,7 +488,7 @@ str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
 
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False,
-             force_type=convert_lossless, eps=eps, **kwargs):
+             force_type=convert_lossless, **kwargs):
     """
     Find a root of f using x0 as starting point or interval.
 
@@ -500,7 +500,6 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
     tol : the returned solution has an error smaller than this
     verbose : print additional information for each iteration if true
     force_type : use specified type constructor on starting points
-    eps : machine espilon of used type
     solver : a generator for f and x0 returning approximative solution and error
     maxsteps : after how many steps the solver will cancel
     df : first derivative of f (used by some solvers)
@@ -516,8 +515,8 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
     # initialize arguments
     if not force_type:
         force_type = lambda x: x
-    elif force_type == float or force_type == complex:
-        eps = 2**(-52)
+    elif not tol and (force_type == float or force_type == complex):
+        tol = 2**(-52) # TODO: consider a less strict value
     kwargs['verbose'] = verbose
     if 'd1f' in kwargs:
         kwargs['df'] = kwargs['d1f']
