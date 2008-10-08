@@ -1,0 +1,126 @@
+Matrices
+========
+
+Creating Matrices
+-----------------
+
+Basic Methods
+.............
+
+Matrices in mpmath are implemented using dictionaries. Only non-zero values are
+stored, so it's cheap to represent sparse matrices.
+
+The most basic way to create one is to use the ``matrix`` class directly. You
+can create an empty specifying the dimensions:
+
+    >>> matrix(2)
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+    >>> matrix(2, 3)
+    matrix(
+    [[mpf('0.0'), mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0'), mpf('0.0')]])
+
+Calling it with one dimension it will create a square matrix.
+
+Internally ``convert_lossless`` is used every time an element is set. This is
+done using the syntax A[row,column], counting from 0.
+
+    >>> A = matrix(2)
+    >>> A[1,1] = 1 + 1j
+    >>> A
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpc(real='1.0', imag='1.0')]])
+
+You can use the keyword ``force_type`` to change the function which is called on
+every new element.
+
+    >>> matrix(2, 5, force_type=int)
+    matrix(
+    [[0, 0, 0, 0, 0],
+     [0, 0, 0, 0, 0]])
+
+A more comfortable way to create a matrix lets you use nested lists:
+
+    >>> matrix([[1, 2], [3, 4]])
+    matrix(
+    [[mpf('1.0'), mpf('2.0')],
+     [mpf('3.0'), mpf('4.0')]])
+
+If you want to preserve the type of the elements you can use
+``force_type=None``.
+
+    >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
+    matrix(
+    [[1, 2.5],
+     [1j, mpf('2.0')]])
+
+Advanced Methods
+................
+
+Maybe you wish to use more advance methods to create a matrix:
+
+    >>> zeros(2)
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+    >>> ones(2)
+    matrix(
+    [[mpf('1.0'), mpf('1.0')],
+     [mpf('1.0'), mpf('1.0')]])
+    >>> diag([1, 2, 3])
+    matrix(
+    [[mpf('1.0'), mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('2.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0'), mpf('3.0')]])
+    >>> eye(2)
+    matrix(
+    [[mpf('1.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('1.0')]])
+
+You can even create random matrices.
+
+    >>> randmatrix(2) # doctest:+SKIP
+    matrix(
+    [[mpf('0.53491598236191806'), mpf('0.57195669543302752')],
+     [mpf('0.85589992269513615'), mpf('0.82444367501382143')]])
+
+Vectors
+.......
+
+For vectors there are some things which make life easier. A column vector can
+be created using a flat list, a row vectors using a almost flat nested list:
+
+    >>> matrix([1, 2, 3])
+    matrix(
+    [[mpf('1.0')],
+     [mpf('2.0')],
+     [mpf('3.0')]])
+    >>> matrix([[1, 2, 3]])
+    matrix(
+    [[mpf('1.0'), mpf('2.0'), mpf('3.0')]])
+
+Optionally vectors can be accessed like lists.
+
+    >>> x = matrix([1, 2, 3])
+    >>> x[1]
+    mpf('2.0')
+    >>> x[1,0]
+    mpf('2.0')
+
+
+Matrix Operations
+----------------
+
+Other
+-----
+
+Printing
+........
+
+Conversion
+..........
+
+
