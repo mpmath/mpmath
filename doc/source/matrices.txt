@@ -225,7 +225,7 @@ Like you probably expected, matrices can be printed.
 
 Use ``nstr`` or ``nprint`` to specify the number of digits to print.
 
-    >>> nprint(randmatrix(5), 3)
+    >>> nprint(randmatrix(5), 3) # doctest:+SKIP
     [2.07e-1  1.66e-1  5.06e-1  1.89e-1  8.29e-1]
     [6.62e-1  6.55e-1  4.47e-1  4.82e-1  2.06e-2]
     [4.33e-1  7.75e-1  6.93e-2  2.86e-1  5.71e-1]
@@ -250,7 +250,7 @@ As matrices are mutable, you will need to copy them sometimes:
     [[mpf('0.0'), mpf('0.0')],
      [mpf('0.0'), mpf('0.0')]])
 
-Finally it's possible to convert a matrix to a nested list. This is very usefule,
+Finally it's possible to convert a matrix to a nested list. This is very useful,
 as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
 support this format.
 
