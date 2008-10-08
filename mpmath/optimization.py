@@ -42,10 +42,10 @@ class Secant():
         while True:
             f1 = f(x1)
             l = x1 - x0
-            if l == 0:
+            if not l:
                 break
             s = (f1 - f0) / l
-            if s == 0:
+            if not s:
                 break
             x0, x1 = x1, x1 - f1/s
             f0 = f1
@@ -510,7 +510,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
     yielding pairs of approximative solution and estimated error.
     You can use the following string aliases:
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
-    'ridder', 'anewton'
+    'ridder', 'anewton', 'bisect'
     See mpmath.optimization for their documentation.
     """
     # initialize arguments
