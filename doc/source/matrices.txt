@@ -24,6 +24,28 @@ can create an empty specifying the dimensions:
 
 Calling it with one dimension it will create a square matrix.
 
+To access the dimensions of a matrix, use the ``rows`` or ``cols`` keyword.
+
+    >>> A = matrix(3, 2)
+    >>> A
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+    >>> A.rows
+    3
+    >>> A.cols
+    2
+
+You can even change the dimension, new elements will be 0. If the new dimension
+is smaller than before, the concerning elements are discarded.
+
+    >>> A.rows = 2
+    >>> A
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+
 Internally ``convert_lossless`` is used every time an element is set. This is
 done using the syntax A[row,column], counting from 0.
 
@@ -60,7 +82,7 @@ If you want to preserve the type of the elements you can use
 Advanced Methods
 ................
 
-Maybe you wish to use more advance methods to create a matrix:
+Maybe you wish to use more advanced methods to create a matrix:
 
     >>> zeros(2)
     matrix(
@@ -70,12 +92,12 @@ Maybe you wish to use more advance methods to create a matrix:
     matrix(
     [[mpf('1.0'), mpf('1.0')],
      [mpf('1.0'), mpf('1.0')]])
-    >>> diag([1, 2, 3])
+    >>> diag([1, 2, 3]) # diagonal matrix
     matrix(
     [[mpf('1.0'), mpf('0.0'), mpf('0.0')],
      [mpf('0.0'), mpf('2.0'), mpf('0.0')],
      [mpf('0.0'), mpf('0.0'), mpf('3.0')]])
-    >>> eye(2)
+    >>> eye(2) # identity matrix
     matrix(
     [[mpf('1.0'), mpf('0.0')],
      [mpf('0.0'), mpf('1.0')]])
@@ -112,15 +134,127 @@ Optionally vectors can be accessed like lists.
 
 
 Matrix Operations
-----------------
+-----------------
+
+You can add and substract matrices of compatible dimensions.
+
+    >>> A = matrix([[1, 2], [3, 4]])
+    >>> B = matrix([[-2, 4], [5, 9]])
+    >>> A + B
+    matrix(
+    [[mpf('-1.0'), mpf('6.0')],
+     [mpf('8.0'), mpf('13.0')]])
+    >>> A - B
+    matrix(
+    [[mpf('3.0'), mpf('-2.0')],
+     [mpf('-2.0'), mpf('-5.0')]])
+    >>> A + ones(3) # doctest:+ELLIPSIS
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "...", line 238, in __add__
+        raise ValueError('incompatible dimensions for addition')
+    ValueError: incompatible dimensions for addition
+
+It's possible to multiply or add matrices and scalars. In the latter case the
+operation will be done element-wise.
+
+    >>> A * 2
+    matrix(
+    [[mpf('2.0'), mpf('4.0')],
+     [mpf('6.0'), mpf('8.0')]])
+    >>> A / 4
+    matrix(
+    [[mpf('0.25'), mpf('0.5')],
+     [mpf('0.75'), mpf('1.0')]])
+    >>> A - 1
+    matrix(
+    [[mpf('0.0'), mpf('1.0')],
+     [mpf('2.0'), mpf('3.0')]])
+
+Of course you can perform matrix multiplication, if the dimensions are
+compatible.
+
+    >>> A * B
+    matrix(
+    [[mpf('8.0'), mpf('22.0')],
+     [mpf('14.0'), mpf('48.0')]])
+    >>> matrix([[1, 2, 3]]) * matrix([[-6], [7], [-2]])
+    matrix(
+    [[mpf('2.0')]])
+
+You can raise powers of square matrices.
+
+    >>> A**2
+    matrix(
+    [[mpf('7.0'), mpf('10.0')],
+     [mpf('15.0'), mpf('22.0')]])
+
+Negative powers will calculate the inverse.
+
+    >>> A**-1
+    matrix(
+    [[mpf('-2.0'), mpf('1.0')],
+     [mpf('1.5'), mpf('-0.5')]])
+    >>> A * A**-1
+    matrix(
+    [[mpf('1.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('1.0')]])
+
+Matrix transposition is pretty straight-forward:
+
+    >>> A = ones(2, 3)
+    >>> A
+    matrix(
+    [[mpf('1.0'), mpf('1.0'), mpf('1.0')],
+     [mpf('1.0'), mpf('1.0'), mpf('1.0')]])
+    >>> A.T
+    matrix(
+    [[mpf('1.0'), mpf('1.0')],
+     [mpf('1.0'), mpf('1.0')],
+     [mpf('1.0'), mpf('1.0')]])
 
 Other
 -----
 
-Printing
-........
+Like you probably expected, matrices can be printed.
 
-Conversion
-..........
+    >>> print randmatrix(3) # doctest:+SKIP
+    [ 0.782963853573023  0.802057689719883  0.427895717335467]
+    [0.0541876859348597  0.708243266653103  0.615134039977379]
+    [ 0.856151514955773  0.544759264818486  0.686210904770947]
+
+Use ``nstr`` or ``nprint`` to specify the number of digits to print.
+
+    >>> nprint(randmatrix(5), 3)
+    [2.07e-1  1.66e-1  5.06e-1  1.89e-1  8.29e-1]
+    [6.62e-1  6.55e-1  4.47e-1  4.82e-1  2.06e-2]
+    [4.33e-1  7.75e-1  6.93e-2  2.86e-1  5.71e-1]
+    [1.01e-1  2.53e-1  6.13e-1  3.32e-1  2.59e-1]
+    [1.56e-1  7.27e-2  6.05e-1  6.67e-2  2.79e-1]
+
+As matrices are mutable, you will need to copy them sometimes:
+
+    >>> A = matrix(2)
+    >>> A
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+    >>> B = A.copy()
+    >>> B[0,0] = 1
+    >>> B
+    matrix(
+    [[mpf('1.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+    >>> A
+    matrix(
+    [[mpf('0.0'), mpf('0.0')],
+     [mpf('0.0'), mpf('0.0')]])
+
+Finally it's possible to convert a matrix to a nested list. This is very usefule,
+as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
+support this format.
+
+    >>> B.tolist()
+    [[mpf('1.0'), mpf('0.0')], [mpf('0.0'), mpf('0.0')]]
 
 
