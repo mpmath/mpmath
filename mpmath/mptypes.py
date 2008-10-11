@@ -11,13 +11,33 @@ __all__ = ["mpnumeric", "mpf", "mpc",
   "make_mpc", "arange", "linspace", "isinf", "mpi", "isint", "rand",
   "absmin", "absmax", "AS_POINTS"]
 
-from settings import (mp, prec_rounding, extraprec, extradps, workprec, workdps,
-    int_types, repr_dps)
+from settings import (MP_BASE, MP_ONE, mp, prec_rounding, extraprec, extradps,
+    workprec, workdps, int_types, repr_dps, round_floor, round_ceiling)
 
-from libelefun import *
-from libmpf import *
-from libmpc import *
-from libmpi import *
+from libmpf import (\
+    ComplexResult, to_pickable, from_pickable, normalize,
+    from_int, from_float, from_str, to_int, to_float, to_str,
+    from_rational, from_man_exp,
+    fone, fzero, finf, fninf, fnan,
+    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
+    mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
+    mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
+    mpf_hash, mpf_rand
+)
+
+from libmpc import (\
+    complex_to_str,
+    mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
+    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int
+)
+
+from libelefun import mpf_pow
+
+from libmpi import (\
+    mpi_mid, mpi_delta, mpi_str,
+    mpi_abs, mpi_pos, mpi_neg, mpi_add, mpi_sub,
+    mpi_mul, mpi_div, mpi_pow_int, mpi_pow
+)
 
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
