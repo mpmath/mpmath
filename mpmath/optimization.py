@@ -487,7 +487,7 @@ str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
               'anewton':ANewton}
 
 @extraprec(20)
-def findroot(f, x0, solver=Secant, tol=None, verbose=False,
+def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
              force_type=convert_lossless, **kwargs):
     """
     Find a root of f using x0 as starting point or interval.
@@ -499,6 +499,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False,
     x0 : starting point, several starting points or interval (depends on solver)
     tol : the returned solution has an error smaller than this
     verbose : print additional information for each iteration if true
+    verify : verify the solution and raise a ValueError if abs(f(x)) > tol
     force_type : use specified type constructor on starting points
     solver : a generator for f and x0 returning approximative solution and error
     maxsteps : after how many steps the solver will cancel
