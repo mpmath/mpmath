@@ -22,8 +22,7 @@ import libmpi
 import gammazeta
 import libhyper
 
-from mptypes import \
-(
+from mptypes import (\
     mpnumeric, convert_lossless,
     mpf, make_mpf,
     mpc, make_mpc,
@@ -298,7 +297,8 @@ trigamma = psi1
 tetragamma = psi2
 pentagamma = psi3
 
-harmonic = mpfunc('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic, "nth harmonic number")
+harmonic = mpfunc('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic,
+    "nth harmonic number")
 
 def bernoulli(n):
     """nth Bernoulli number, B_n"""
