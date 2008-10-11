@@ -8,7 +8,7 @@ __all__ = ["mpnumeric", "mpf", "mpc",
   "j", "inf", "nan", "isnan", "almosteq",
   "fraction", "nstr", "nprint", "mp", "extraprec",
   "extradps", "workprec", "workdps", "eps", "convert_lossless", "make_mpf",
-  "make_mpc", "arange", "isinf", "mpi", "isint", "rand",
+  "make_mpc", "arange", "linspace", "isinf", "mpi", "isint", "rand",
   "absmin", "absmax", "AS_POINTS"]
 
 from libelefun import *
@@ -733,6 +733,37 @@ def arange(*args):
         else:
             break
     return result
+
+def linspace(*args, **kwargs):
+    """
+    linspace(a, b, n, [endpoint=False]) -> n evenly spaced samples from a to b
+
+    Instead of a, b you can specify an mpi interval.
+    """
+    if len(args) == 3:
+        a = mpf(args[0])
+        b = mpf(args[1])
+        n = int(args[2])
+    elif len(args) == 2:
+        assert isinstance(args[0], mpi)
+        a = args[0].a
+        b = args[0].b
+        n = int(args[1])
+    else:
+        raise TypeError('linspace expected 2 or 3 arguments, got %i' \
+                        % len(args))
+    if n < 1:
+        raise ValueError('n must be greater than 0')
+    if not 'endpoint' in kwargs or kwargs['endpoint']:
+        if n == 1:
+            return [mpf(a)]
+        step = (b - a) / mpf(n - 1)
+        y = [i*step + a for i in xrange(n)]
+        y[-1] = b
+    else:
+        step = (b - a) / mpf(n)
+        y = [i*step + a for i in xrange(n)]
+    return y
 
 def almosteq(s, t, rel_eps=None, abs_eps=None):
     """

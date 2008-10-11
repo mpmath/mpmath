@@ -473,6 +473,14 @@ def test_arange():
     assert arange(1000, -1) == []
     assert arange(-1.23, 3.21, -0.0000001) == []
 
+def test_linspace():
+    assert linspace(2, 9, 7) == [mpf('2.0'), mpf('3.166666666666667'),
+        mpf('4.3333333333333339'), mpf('5.5'), mpf('6.666666666666667'),
+        mpf('7.8333333333333339'), mpf('9.0')] == linspace(mpi(2, 9), 7)
+    assert linspace(2, 9, 7, endpoint=0) == [mpf('2.0'), mpf('3.0'), mpf('4.0'),
+        mpf('5.0'), mpf('6.0'), mpf('7.0'), mpf('8.0')]
+    assert linspace(2, 7, 1) == [mpf(2)]
+
 def test_float_cbrt():
     mp.dps = 30
     for a in arange(0,10,0.1):
