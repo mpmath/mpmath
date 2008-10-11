@@ -17,8 +17,8 @@
 """
 import sys
 
-from mptypes import *
-from functions import *
+from mptypes import (mpf, convert_lossless, eps)
+from functions import (pi, sqrt, cos, sin, exp, ellipk, sech)
 
 def calculate_nome(k):
     """
@@ -42,7 +42,7 @@ def calculate_nome(k):
         return one
     else:
         kprimesquared = one - k**2
-        kprime = kprimesquared.sqrt()
+        kprime = sqrt(kprimesquared)
         top = ellipk(kprimesquared)
         bottom = ellipk(k**2)
 
@@ -126,7 +126,7 @@ def jacobi_theta_1(z, m, verbose=False):
     m = convert_lossless(m)
     z = convert_lossless(z)
 
-    k = m.sqrt()
+    k = sqrt(m)
     q = calculate_nome(k)
 
     if verbose:
@@ -199,7 +199,7 @@ def jacobi_theta_2(z, m, verbose=False):
     m = convert_lossless(m)
     z = convert_lossless(z)
 
-    k = m.sqrt()
+    k = sqrt(m)
     q = calculate_nome(k)
 
     if verbose:
@@ -282,7 +282,7 @@ def jacobi_theta_3(z, m):
     m = convert_lossless(m)
     z = convert_lossless(z)
 
-    k = m.sqrt()
+    k = sqrt(m)
     q = calculate_nome(k)
 
     if abs(q) >= mpf('1'):
@@ -343,7 +343,7 @@ def jacobi_theta_4(z, m):
     m = convert_lossless(m)
     z = convert_lossless(z)
 
-    k = m.sqrt()
+    k = sqrt(m)
     q = calculate_nome(k)
 
     if abs(q) >= mpf('1'):
@@ -425,7 +425,7 @@ def jacobi_elliptic_sn(u, m, verbose=False):
     if u == zero and m == 0:
         return zero
     else:
-        q = calculate_nome(m.sqrt())
+        q = calculate_nome(sqrt(m))
 
         v3 = jacobi_theta_3(zero, q)
         v2 = jacobi_theta_2(zero, q)        # mathworld says v4
@@ -462,7 +462,7 @@ def jacobi_elliptic_sn(u, m, verbose=False):
             print >> sys.stderr, '\nsn: special case, m == 1'
         return tanh(u)
     else:
-        k = m.sqrt()                        # convert m to k
+        k = sqrt(m)                        # convert m to k
         q = calculate_nome(k)
         v = (pi * u) / (two*ellipk(k**2))
 
@@ -493,7 +493,7 @@ def jacobi_elliptic_sn(u, m, verbose=False):
 
         term = term + one
 
-    answer = (two*pi) / (m.sqrt() * ellipk(k**2)) * sum
+    answer = (two*pi) / (sqrt(m) * ellipk(k**2)) * sum
 
     return answer
 
@@ -524,10 +524,10 @@ def jacobi_elliptic_cn(u, m, verbose=False):
             print >> sys.stderr, 'cn: special case, m == 1'
         return sech(u)
     else:
-        k = m.sqrt()                        # convert m to k
+        k = sqrt(m)                        # convert m to k
         q = calculate_nome(k)
         kprimesquared = one - k**2
-        kprime = kprimesquared.sqrt()
+        kprime = sqrt(kprimesquared)
         v = (pi * u) / (two*ellipk(k**2))
 
     sum = zero
@@ -554,7 +554,7 @@ def jacobi_elliptic_cn(u, m, verbose=False):
 
         term = term + one
 
-    answer = (two*pi) / (m.sqrt() * ellipk(k**2)) * sum
+    answer = (two*pi) / (sqrt(m) * ellipk(k**2)) * sum
 
     return answer
 
@@ -581,7 +581,7 @@ def jacobi_elliptic_dn(u, m, verbose=False):
     elif m == one:          # dn collapses to sech(u)
         return sech(u)
     else:
-        k = m.sqrt()                        # convert m to k
+        k = sqrt(m)                        # convert m to k
         q = calculate_nome(k)
         v = (pi * u) / (two*ellipk(k**2))
 

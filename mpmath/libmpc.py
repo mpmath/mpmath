@@ -9,6 +9,7 @@ from libelefun import *
 mpc_one = fone, fzero
 mpc_zero = fzero, fzero
 mpc_two = ftwo, fzero
+mpc_half = (fhalf, fzero)
 
 def complex_to_str(re, im, dps):
     rs = to_str(re, dps)

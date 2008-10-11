@@ -45,6 +45,9 @@ def repr_dps(n):
 # 2) There are bugs in GMPY prior to v1.02 so we must use v1.03 or later.    #
 #----------------------------------------------------------------------------#
 
+# So we can import it from this module
+gmpy = None
+
 MODE = 'python'
 MP_BASE = long
 if not os.environ.has_key('MPMATH_NOGMPY'):

@@ -11,8 +11,10 @@ etc
 
 __docformat__ = 'plaintext'
 
-from mptypes import *
-from functions import *
+from settings import (mp, extraprec)
+from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
+    AS_POINTS, arange)
+from functions import (ldexp, factorial, exp, cos, pi, bernoulli)
 
 from quadrature import quadgl, quadts
 

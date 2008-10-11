@@ -13,9 +13,41 @@ This module implements gamma- and zeta-related functions:
 -----------------------------------------------------------------------
 """
 
-from libmpf import *
-from libelefun import *
-from libmpc import *
+import math
+
+from settings import (\
+    MP_BASE, MP_ZERO, MP_ONE, MP_THREE, MODE, gmpy,
+    round_floor, round_ceiling, round_down, round_up,
+    round_nearest, round_fast
+)
+
+from libmpf import (\
+    lshift, sqrt_fixed,
+    fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
+    from_int, to_int, to_fixed, from_man_exp,
+    mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
+    mpf_mul, mpf_mul_int, mpf_div, mpf_sqrt, mpf_pow_int,
+    mpf_rdiv_int,
+    mpf_perturb, mpf_le, mpf_shift,
+    negative_rnd, reciprocal_rnd,
+)
+
+from libelefun import (\
+    constant_memo,
+    def_mpf_constant,
+    mpf_pi, pi_fixed, ln2_fixed, log_int_fixed,
+    mpf_exp, mpf_log, mpf_pow,
+    cos_sin, cosh_sinh
+)
+
+from libmpc import (\
+    mpc_zero, mpc_one, mpc_half, mpc_two,
+    mpc_abs,
+    mpc_add, mpc_sub, mpc_mul, mpc_div,
+    mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf,
+    mpc_mul_int, mpc_pow_int,
+    mpc_log, mpc_exp, mpc_pow
+)
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
 # (listed on http://mathworld.wolfram.com/CatalansConstant.html)
@@ -256,7 +288,7 @@ mpf_catalan = def_mpf_constant(catalan_fixed)
 
 
 
-mpc_half = (fhalf, fzero)
+
 
 # Note: computation of cos(pi*x) and sin(pi*x) is needed by
 # reflection formulas for gamma, polygamma, zeta, etc
