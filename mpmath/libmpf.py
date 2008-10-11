@@ -9,7 +9,11 @@ import math
 from bisect import bisect
 from random import getrandbits
 
-from settings import *
+from settings import (\
+    MP_BASE, MP_ZERO, MP_ONE, MP_TWO, MP_FIVE, MODE, STRICT, gmpy,
+    round_floor, round_ceiling, round_down, round_up,
+    round_nearest, round_fast,
+)
 
 # We don't pickle tuples directly for the following reasons:
 #   1: pickle uses str() for ints, which is inefficient when they are large

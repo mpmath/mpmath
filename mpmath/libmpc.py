@@ -2,8 +2,27 @@
 Low-level functions for complex arithmetic.
 """
 
-from libmpf import *
-from libelefun import *
+from settings import (\
+    MP_BASE, MP_ZERO, MP_ONE, MP_TWO,
+    round_floor, round_ceiling, round_down, round_up,
+    round_nearest, round_fast
+)
+
+from libmpf import (\
+    bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
+    to_str, to_fixed, from_man_exp, from_float, from_int, to_int,
+    fzero, fone, ftwo, fhalf, finf, fninf, fnan,
+    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
+    mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
+    mpf_rdiv_int, mpf_floor, mpf_ceil
+)
+
+from libelefun import (\
+    mpf_pi, mpf_exp, mpf_log, cos_sin, cosh_sinh, mpf_tan,
+    mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
+    mpf_asin, mpf_acos, mpf_acosh
+)
+
 
 # An mpc value is a (real, imag) tuple
 mpc_one = fone, fzero

@@ -11,6 +11,9 @@ __all__ = ["mpnumeric", "mpf", "mpc",
   "make_mpc", "arange", "linspace", "isinf", "mpi", "isint", "rand",
   "absmin", "absmax", "AS_POINTS"]
 
+from settings import (mp, prec_rounding, extraprec, extradps, workprec, workdps,
+    int_types, repr_dps)
+
 from libelefun import *
 from libmpf import *
 from libmpc import *

@@ -1,12 +1,23 @@
-from libmpf import (
+"""
+Computational functions for interval arithmetic.
+
+"""
+
+from settings import (\
     round_down, round_up, round_floor, round_ceiling, round_nearest,
+    prec_to_dps)
+
+from libmpf import (\
     ComplexResult,
     fnan, finf, fninf, fzero, fhalf, fone, fnone,
-    mpf_sign, mpf_lt, mpf_le, mpf_gt, mpf_ge, mpf_eq, mpf_cmp, mpf_floor, from_int, to_int,
-    to_str, prec_to_dps,
-    mpf_abs, mpf_neg, mpf_pos, mpf_add, mpf_sub, mpf_mul, mpf_div, mpf_shift, mpf_pow_int)
+    mpf_sign, mpf_lt, mpf_le, mpf_gt, mpf_ge, mpf_eq, mpf_cmp,
+    mpf_floor, from_int, to_int, to_str,
+    mpf_abs, mpf_neg, mpf_pos, mpf_add, mpf_sub, mpf_mul,
+    mpf_div, mpf_shift, mpf_pow_int)
 
-from libelefun import mpf_log, mpf_exp, mpf_sqrt, reduce_angle, calc_cos_sin
+from libelefun import (\
+    mpf_log, mpf_exp, mpf_sqrt, reduce_angle, calc_cos_sin
+)
 
 def mpi_str(s, prec):
     sa, sb = s
