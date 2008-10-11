@@ -148,12 +148,12 @@ asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
 acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
 acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
-floor = mpfunc('floor', libelefun.mpf_floor, libmpc.mpc_floor, "")
+floor = mpfunc('floor', libmpf.mpf_floor, libmpc.mpc_floor, "")
 floor.__doc__ = """Computes the floor function of x. Note: returns a floating-point
 number, not a Python int. If x is larger than the precision, it will be rounded,
 not necessarily in the floor direction."""
 
-ceil = mpfunc('ceil', libelefun.mpf_ceil, libmpc.mpc_ceil, "")
+ceil = mpfunc('ceil', libmpf.mpf_ceil, libmpc.mpc_ceil, "")
 ceil.__doc__ = """Computes the ceiling function of x. Note: returns a floating-point
 number, not a Python int. If x is larger than the precision, it will be rounded,
 not necessarily in the floor direction."""

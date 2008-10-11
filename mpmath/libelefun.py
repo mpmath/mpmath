@@ -9,7 +9,26 @@ see libmpc and libmpi.
 
 """
 
-from libmpf import *
+import math
+
+from settings import (\
+    MP_BASE, MP_ZERO, MP_ONE, MP_FIVE, MODE,
+    round_floor, round_ceiling, round_down, round_up,
+    round_nearest, round_fast,
+)
+
+from libmpf import (\
+    ComplexResult,
+    bitcount, bctable, lshift, rshift, giant_steps, giant_steps2,
+    sqrt_fixed, sqrt_fixed2,
+    from_int, to_int, from_man_exp, to_fixed,
+    normalize,
+    fzero, fone, fnone, fhalf, finf, fninf, fnan,
+    mpf_cmp, mpf_sign,
+    mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_div, mpf_shift,
+    mpf_rdiv_int, mpf_pow_int, mpf_sqrt,
+    reciprocal_rnd, negative_rnd, mpf_perturb
+)
 
 
 #----------------------------------------------------------------------------#
@@ -251,11 +270,13 @@ def mpf_pow(s, t, prec, rnd=round_fast):
     if texp == -1:
         if tman == 1:
             if tsign:
-                return mpf_div(fone, mpf_sqrt(s, prec+10, reciprocal_rnd[rnd]), prec, rnd)
+                return mpf_div(fone, mpf_sqrt(s, prec+10,
+                    reciprocal_rnd[rnd]), prec, rnd)
             return mpf_sqrt(s, prec, rnd)
         else:
             if tsign:
-                return mpf_pow_int(mpf_sqrt(s, prec+10, reciprocal_rnd[rnd]), -tman, prec, rnd)
+                return mpf_pow_int(mpf_sqrt(s, prec+10,
+                    reciprocal_rnd[rnd]), -tman, prec, rnd)
             return mpf_pow_int(mpf_sqrt(s, prec+10, rnd), tman, prec, rnd)
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
