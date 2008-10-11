@@ -113,8 +113,8 @@ class matrix(object):
             for j in xrange(self.__cols):
                 if not avoid_type:
                     a = repr(self[i,j])
-                elif isinstance(self[i,j], (mpf, mpc)):
-                    a = str(self[i,j])
+                elif isinstance(self[i,j], mpf): #TODO: for mpc too
+                    a = "'" + str(self[i,j]) + "'"
                 s += a + ', '
             s = s[:-2]
             s += '],\n '
