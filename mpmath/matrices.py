@@ -23,8 +23,9 @@ class matrix(object):
 
     def __init__(self, *args, **kwargs):
         self.__data = {}
-        # LU decompostion cache, this is useful when solving the same system multiple
-        # times, when calculating the inverse and when calculating the determinant
+        # LU decompostion cache, this is useful when solving the same system
+        # multiple times, when calculating the inverse and when calculating the
+        # determinant
         self._LU = None
         if 'force_type' in kwargs:
             self.force_type = kwargs['force_type']
@@ -100,12 +101,21 @@ class matrix(object):
     def __str__(self):
         return self.__nstr__()
 
-    def _toliststr(self):
+    def _toliststr(self, avoid_type=False):
+        """
+        Create a list string from a matrix.
+
+        If avoid_type: avoid multiple 'mpf's.
+        """
         s = '['
         for i in xrange(self.__rows):
             s += '['
             for j in xrange(self.__cols):
-                s += repr(self[i,j]) + ', '
+                if not avoid_type:
+                    a = repr(self[i,j])
+                elif isinstance(self[i,j], (mpf, mpc)):
+                    a = str(self[i,j])
+                s += a + ', '
             s = s[:-2]
             s += '],\n '
         s = s[:-3]
@@ -120,7 +130,7 @@ class matrix(object):
 
     def __repr__(self):
         s = 'matrix(\n'
-        s += self._toliststr() + ')'
+        s += self._toliststr(avoid_type=True) + ')'
         return s
 
     def __getitem__(self, key):
