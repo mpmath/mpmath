@@ -547,8 +547,8 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         i += 1
         if error < tol or i >= maxsteps:
             break
-    if abs(f(x)) > tol: # TODO: better condition?
-        raise ValueError('Could not find root within given tolerance.'
+    if verify and abs(f(x)) > tol: # TODO: better condition?
+        raise ValueError('Could not find root within given tolerance. '
                          '(%g > %g)\n'
                          'Try another starting point or tweak arguments.'
                          % (abs(f(x)), tol))
