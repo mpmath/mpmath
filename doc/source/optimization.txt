@@ -2,7 +2,7 @@ Optimization
 ============
 
 Root-finding with the secant method (``findroot``)
-------------------------------------------------
+--------------------------------------------------
 
 The function ``findroot`` locates a root of a given function using the secant method by default. A simple example use of the secant method is to compute pi as the root of sin(*x*) closest to *x* = 3::
 
@@ -62,7 +62,7 @@ Multiple roots
 For multiple roots all methods of the Newtonian family (including secant) converge slowly. Consider this example:
 
     >>> f = lambda x: (x - 1)**99
-    >>> findroot(f, .9, verify=False)
+    >>> findroot(f, 0.9, verify=False)
     mpf('0.91807354244492868')
 
 Even for a very close starting point the secant method converges very slowly. Use ``verbose=True`` to illustrate this.
@@ -71,6 +71,8 @@ It's possible to modify Newton's method to make it converge regardless of the ro
 
     >>> findroot(f, -10, solver='mnewton')
     mpf('1.0')
+
+This variant uses the first and second derivative of the function, which is not very efficient.
 
 Alternatively you can use an experimental Newtonian solver that keeps track of the speed of convergence and accelerates it using Steffensen's method if necessary.
 
@@ -99,7 +101,7 @@ It's possible to determine the multiplicity of a root using derivatives. You can
     >>> multiplicity(lambda x: sin(x) - 1, pi/2)
     2
 
-This will calculate the derivatives numerically if you do not specify them, this can be quite inefficient. Due to this, ``multiplicity`` cancels after 10 derivatives by default.
+This will calculate the derivatives numerically if you do not specify them, this can be quite inefficient. Due to this, ``multiplicity`` cancels after evaluating 10 derivatives by default.
 
 
 Accelerated convergence
@@ -107,7 +109,9 @@ Accelerated convergence
 
 You can use Steffensen's method to accelerate a fixpoint iteration of linear (or less) convergence.
 
-x* is a fixpoint of the iteration x_{k+1} = phi(x_k) if x* = phi(x*). For phi(x) = x**2 there are two fixpoints: 0 and 1. Let's try Steffensen's method:
+x* is a fixpoint of the iteration x_{k+1} = phi(x_k) if x* = phi(x*). For phi(x) = x**2 there are two fixpoints: 0 and 1. 
+
+Let's try Steffensen's method:
 
     >>> f = lambda x: x**2
     >>> from mpmath.optimization import steffensen
