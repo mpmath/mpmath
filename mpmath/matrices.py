@@ -2,7 +2,7 @@
 
 from __future__ import division
 
-from mptypes import *
+from mptypes import (convert_lossless, absmax, mpf, mpc, rand, inf)
 from functions import nthroot, sqrt
 
 rowsep = '\n'

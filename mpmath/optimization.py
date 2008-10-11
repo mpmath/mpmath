@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-from mptypes import *
+from mptypes import convert_lossless, extraprec, eps
 from calculus import diff, diffc
 from functions import sqrt, sign
 

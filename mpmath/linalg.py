@@ -7,7 +7,7 @@
 
 from __future__ import division
 
-from mptypes import *
+from mptypes import extraprec, absmin, mp, eps
 from functions import sqrt, sign
 from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p
 from copy import copy
