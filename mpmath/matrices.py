@@ -163,9 +163,9 @@ class matrix(object):
                 raise IndexError('insufficient indices for matrix')
         if key[0] >= self.__rows or key[1] >= self.__cols:
             raise IndexError('matrix index out of range')
-        if value != 0: # only store non-zeros
-            if self.force_type: # and not isinstance(value, self.force_type):
-                value = self.force_type(value)
+        if self.force_type: # and not isinstance(value, self.force_type):
+            value = self.force_type(value)
+        if value: # only store non-zeros
             self.__data[key] = value
         elif key in self.__data:
             del self.__data[key]
