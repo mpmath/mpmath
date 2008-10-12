@@ -95,7 +95,14 @@ Trigonometric functions can be evaluated at degree angles using the ``degree`` c
     >>> print cos(45*degree)
     0.707106781186548
 
-An example with very high precision:
+The functions cospi and sinpi allow accurate evaluation at multiples of pi:
+
+    >>> print sin(3*pi)
+    3.67394039744206e-16
+    >>> print sinpi(3)
+    0.0
+
+An example function evaluation with very high precision:
 
     >>> mp.dps = 500
     >>> print tanh(pi)     # doctest:+SKIP
@@ -192,14 +199,13 @@ The Lambert W function has infinitely many complex branches. By default, the pri
     >>> print w
     (-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)
     >>> print w*exp(w)
-    (1.0 - 9.9465893710591698326300157883907326e-38j)
+    (1.0 + 3.5075477124212226194278700785075126e-36j)
 
 The function ``hyper`` sums a general hypergeometric series (this works only for argument where the series converges):
 
-    >>> print hyper([1,2,3],[4,5,6], 1/pi)     # doctest:+SKIP
-    1.016210574248696702302096161058517020553783149632248720837030993406388717433423
-    76737176412753643360654694328402996208151824851693763066257492700066724382806555
-    22803873785096931980990953468408484030225
+    >>> mp.dps = 50
+    >>> print hyper([1,2,3],[4,5,6], 1/pi)
+    1.0162105742486967023020961610585170205537831496322
 
 =========================== ==================================================================
 Function                    Description
@@ -213,10 +219,16 @@ Function                    Description
 ``ff(x,n)``                 Falling factorial, x_(n)
 ``lower_gamma(a,x)``        Lower incomplete gamma function
 ``upper_gamma(a,x)``        Upper incomplete gamma function
+``psi(n,x)``                Polygamma function of order n
+``stieltjes(n)``            Nth Stieltjes constant
 ``erf(x)``                  Error function
+``erfc(x)``                 Complementary error function
 ``erfi(x)``                 Imaginary error function
+``npdf(x, mu, sigma)``      Normal probability density function
+``ncdf(x, mu, sigma)``      Normal cumulative distribution function
 ``zeta(x)``                 Riemann zeta function
 ``bernoulli(n)``            Bernoulli number, B_n
+``bernfrac(n)``             Bernoulli number as an exact fraction
 ``ei(x)``                   Exponential integral, Ei(x)
 ``li(x)``                   Logarithmic integral, li(x)
 ``ci(x)``                   Cosine integral, Ci(x)
@@ -260,28 +272,6 @@ Number sequences
     >>> nprint(arange(1.5, pi, 0.4))
     [1.5, 1.9, 2.3, 2.7, 3.1]
 
-For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch. 
-
-The precision of each generated number will be the same as that of the first, regardless of whether the global working precision is changed subsequently.
-
-``bernoulli_range``
-    Generates the Bernoulli numbers with positive even index: 1/6, -1/30, 1/42, ...
-
-    >>> mp.dps = 15
-    >>> b = bernoulli_range()
-    >>> print b.next()
-    0.166666666666667
-    >>> print b.next()
-    -0.0333333333333333
-
-``log_range``
-    Generates the nonzero integer logarithms: log(2), log(3), log(4), ...
-
-    >>> l = log_range()
-    >>> print l.next()
-    0.693147180559945
-    >>> print l.next()
-    1.09861228866811
 
 Utility functions
 -----------------
