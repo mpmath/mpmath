@@ -9,7 +9,7 @@ from functions import sqrt, sign
 # 1D-SOLVERS #
 ##############
 
-class Secant():
+class Secant:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -51,7 +51,7 @@ class Secant():
             f0 = f1
             yield x1, abs(l)
 
-class MNewton():
+class MNewton:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -102,7 +102,7 @@ class MNewton():
             error = abs(x - prevx)
             yield x, error
 
-class Halley():
+class Halley:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -152,7 +152,7 @@ class Halley():
             error = abs(x - prevx)
             yield x, error
 
-class Muller():
+class Muller:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -225,7 +225,7 @@ class Muller():
             yield x2, error
 
 # TODO: consider raising a ValueError when there's no sign change in a and b
-class Bisection():
+class Bisection:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -279,7 +279,7 @@ def _getm(method):
         raise ValueError, "method '%s' not recognized" % method
     return getm
 
-class Illinois():
+class Illinois:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -368,7 +368,7 @@ def Anderson(*args, **kwargs):
     return Illinois(*args, **kwargs)
 
 # TODO: check whether it's possible to combine it with Illinois stuff
-class Ridder():
+class Ridder:
     """
     1d-solver generating pairs of approximative root and error.
 
@@ -422,7 +422,7 @@ class Ridder():
             error = abs(x1 - x2)
             yield (x1 + x2)/2, error
 
-class ANewton():
+class ANewton:
     """
     EXPERIMENTAL 1d-solver generating pairs of approximative root and error.
 
