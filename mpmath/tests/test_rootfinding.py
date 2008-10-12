@@ -24,6 +24,11 @@ def test_findroot():
     assert isinstance(findroot(f, 1., force_type=None, tol=1e-10), float)
     assert isinstance(findroot(f, 1, force_type=complex, tol=1e-10), complex)
 
+def test_mnewton():
+    f = lambda x: polyval([1,3,3,1],x)
+    x = findroot(f, -0.9, solver='mnewton')
+    assert abs(f(x)) < eps
+
 def test_anewton():
     f = lambda x: (x - 2)**100
     x = findroot(f, 1., solver=ANewton)

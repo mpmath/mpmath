@@ -228,6 +228,17 @@ def householder(A):
         r = [0]*m
     return A, p, x, r
 
+def qr(A):
+    """
+    A -> Q, R
+
+    QR factorisation of a square matrix A using Householder decomposition.
+    Q is orthogonal, this leads to very few numerical errors.
+
+    A = Q*R
+    """
+    H, p, x, res = householder(A)
+
 def residual(A, x, b, **kwargs):
     """
     Calculate the residual of a solution to a linear equation system.

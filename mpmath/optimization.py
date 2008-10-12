@@ -93,6 +93,8 @@ class MNewton():
         while True:
             prevx = x
             fx = f(x)
+            if fx == 0:
+		break
             dfx = df(x)
             d2fx = d2f(x)
             # x = x - F(x)/F'(x) with F(x) = f(x)/f'(x)
