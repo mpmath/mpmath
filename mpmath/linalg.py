@@ -1,6 +1,5 @@
 # TODO:
-# *implement high-level qr() and lu()
-# *cache LU decompositon
+# *implement high-level qr()
 # *test unitvector
 # *iterative solving
 # *iterative improving of solution
@@ -228,16 +227,17 @@ def householder(A):
         r = [0]*m
     return A, p, x, r
 
-def qr(A):
-    """
-    A -> Q, R
-
-    QR factorisation of a square matrix A using Householder decomposition.
-    Q is orthogonal, this leads to very few numerical errors.
-
-    A = Q*R
-    """
-    H, p, x, res = householder(A)
+#def qr(A):
+#    """
+#    A -> Q, R
+#
+#    QR factorisation of a square matrix A using Householder decomposition.
+#    Q is orthogonal, this leads to very few numerical errors.
+#
+#    A = Q*R
+#    """
+#    H, p, x, res = householder(A)
+# TODO: implement this
 
 def residual(A, x, b, **kwargs):
     """
