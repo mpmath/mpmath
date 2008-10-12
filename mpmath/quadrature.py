@@ -347,7 +347,7 @@ def quad(f, *points, **kwargs):
         4.47046663466179
 
     The functions quadgl(...) and quadts(...) act as shortcuts for
-    quad(..., method=GaussLegendre) and quad(..., method=TanhSinh).
+    quad(..., method='gauss-legendre') and quad(..., method='tanh-sinh').
 
     An interval may contain more than two points. In this case, the
     integration is split into subintervals, between each pair of
@@ -371,6 +371,8 @@ def quad(f, *points, **kwargs):
 
     """
     rule = kwargs.get('method', TanhSinh)
+    if type(rule) is str:
+        rule = {'tanh-sinh':TanhSinh, 'gauss-legendre':GaussLegendre}[rule]
     verbose = kwargs.get('verbose')
     dim = len(points)
     orig = prec = mp.prec
