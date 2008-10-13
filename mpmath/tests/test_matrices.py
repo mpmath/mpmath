@@ -37,6 +37,8 @@ def test_matrix_basic():
     A6 = matrix(l)
     assert A6.tolist() == l
     assert A6 == eval(repr(A6))
+    A6 = matrix(A6, force_type=float) 
+    assert A6 == eval(repr(A6))
     assert A3 * 10 == 10 * A3 == A6
     assert A2.rows == 3
     assert A2.cols == 2
