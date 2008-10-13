@@ -213,6 +213,105 @@ Matrix transposition is pretty straight-forward:
      ['1.0', '1.0'],
      ['1.0', '1.0']])
 
+
+Norms
+.....
+
+Sometimes you need to know how "large" a matrix or vector is. Due to their
+multidimensional nature it's not possible to compare them, but there are
+several functions to map a matrix or a vector to a positive real number, the
+so called norms.
+
+For vectors the p-norm is intended, usually the 1-, the 2- and the oo-norm are
+used.
+
+    >>> x = matrix([-10, 2, 100])
+    >>> norm_p(x, 1)
+    mpf('112.0')
+    >>> norm(x, 2)
+    >>> norm_p(x, 2)
+    mpf('100.5186549850325')
+    >>> norm_p(x, inf)
+    mpf('100.0')
+
+Please note that the 2-norm is the most used one, though it's more expensive
+to calculate then the 1- or oo-norm.
+
+It's possible to generalize some vector norms to matrix norm.
+
+    >>> A = matrix([[1, -1000], [100, 50]])
+    >>> mnorm_1(A)
+    mpf('1050.0')
+    >>> mnorm_oo(A)
+    mpf('1001.0')
+    >>> mnorm_F(A)
+    mpf('1006.2310867787777')
+
+The last norm (the "Frobenius-norm") is an approximation for the 2-norm, which
+is hard to calculate and not available. The Frobenius-norm lacks some
+mathematical properties you might expect from a norm.
+
+Linear Algebra
+--------------
+
+Linear Equations
+................
+
+Basic linear algebra is implemented, you can for example solve the linear
+equation system
+
+      x + 2*y = -10
+    3*x + 4*y =  10
+
+using ``lu_solve``:
+
+    >>> A = matrix([[1, 2], [3, 4]])
+    >>> b = matrix([-10, 10])
+    >>> x = lu_solve(A, b)
+    >>> x
+    matrix(
+    [['30.0'],
+     ['-20.0']])
+
+If you don trust, use ``residual`` to calculate the residual ||A*x-b||.
+
+    >>> residual(A, x, b)
+    matrix(
+    [['3.46944695195361e-18'],
+     ['3.46944695195361e-18']])
+    >>> str(eps)
+    '2.22044604925031e-16'
+
+As you can see, the solution is quite accurate. The error is caused by the
+inaccuracy of the internal floating point arithmetic. Though, it's even smaller
+than the current machine epsilon, which basically means you can trust the
+result.
+
+If you need more speed, use NumPy. Or choose a faster data type using the
+keyword ``force_type``:
+
+    >>> lu_solve(A, b, force_type=float)
+    matrix(
+    [[29.999999999999996],
+     [-19.999999999999996]])
+
+``lu_solve`` accepts overdetermined systems. It's usually not possible to solve
+such systems, so the residual is minimized instead. Internally this is done
+using the Method of Least Squares and Cholesky decomposition. This means
+that that ``lu_solve`` will square the errors. If you can't afford this, use
+``qr_solve`` instead. It is twice as slow but more accurate, and t calculates
+the residual automatically.
+
+    >>> ...(Hilbert matrices and condition numbers)
+
+
+...(inverse)
+
+Matrix factorization
+....................
+
+
+
 Other
 -----
 
