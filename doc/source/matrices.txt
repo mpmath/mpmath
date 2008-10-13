@@ -15,12 +15,12 @@ can create an empty specifying the dimensions:
 
     >>> matrix(2)
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
     >>> matrix(2, 3)
     matrix(
-    [[mpf('0.0'), mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0', '0.0'],
+     ['0.0', '0.0', '0.0']])
 
 Calling it with one dimension it will create a square matrix.
 
@@ -29,9 +29,9 @@ To access the dimensions of a matrix, use the ``rows`` or ``cols`` keyword.
     >>> A = matrix(3, 2)
     >>> A
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0'],
+     ['0.0', '0.0']])
     >>> A.rows
     3
     >>> A.cols
@@ -43,8 +43,8 @@ is smaller than before, the concerning elements are discarded.
     >>> A.rows = 2
     >>> A
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
 
 Internally ``convert_lossless`` is used every time an element is set. This is
 done using the syntax A[row,column], counting from 0.
@@ -53,8 +53,8 @@ done using the syntax A[row,column], counting from 0.
     >>> A[1,1] = 1 + 1j
     >>> A
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpc(real='1.0', imag='1.0')]])
+    [['0.0', '0.0'],
+     ['0.0', mpc(real='1.0', imag='1.0')]])
 
 You can use the keyword ``force_type`` to change the function which is called on
 every new element.
@@ -68,8 +68,8 @@ A more comfortable way to create a matrix lets you use nested lists:
 
     >>> matrix([[1, 2], [3, 4]])
     matrix(
-    [[mpf('1.0'), mpf('2.0')],
-     [mpf('3.0'), mpf('4.0')]])
+    [['1.0', '2.0'],
+     ['3.0', '4.0']])
 
 If you want to preserve the type of the elements you can use
 ``force_type=None``.
@@ -86,28 +86,28 @@ Maybe you wish to use more advanced methods to create a matrix:
 
     >>> zeros(2)
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
     >>> ones(2)
     matrix(
-    [[mpf('1.0'), mpf('1.0')],
-     [mpf('1.0'), mpf('1.0')]])
+    [['1.0', '1.0'],
+     ['1.0', '1.0']])
     >>> diag([1, 2, 3]) # diagonal matrix
     matrix(
-    [[mpf('1.0'), mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('2.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0'), mpf('3.0')]])
+    [['1.0', '0.0', '0.0'],
+     ['0.0', '2.0', '0.0'],
+     ['0.0', '0.0', '3.0']])
     >>> eye(2) # identity matrix
     matrix(
-    [[mpf('1.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('1.0')]])
+    [['1.0', '0.0'],
+     ['0.0', '1.0']])
 
 You can even create random matrices.
 
     >>> randmatrix(2) # doctest:+SKIP
     matrix(
-    [[mpf('0.53491598236191806'), mpf('0.57195669543302752')],
-     [mpf('0.85589992269513615'), mpf('0.82444367501382143')]])
+    [['0.53491598236191806', '0.57195669543302752'],
+     ['0.85589992269513615', '0.82444367501382143']])
 
 Vectors
 .......
@@ -117,12 +117,12 @@ be created using a flat list, a row vectors using a almost flat nested list:
 
     >>> matrix([1, 2, 3])
     matrix(
-    [[mpf('1.0')],
-     [mpf('2.0')],
-     [mpf('3.0')]])
+    [['1.0'],
+     ['2.0'],
+     ['3.0']])
     >>> matrix([[1, 2, 3]])
     matrix(
-    [[mpf('1.0'), mpf('2.0'), mpf('3.0')]])
+    [['1.0', '2.0', '3.0']])
 
 Optionally vectors can be accessed like lists.
 
@@ -142,12 +142,12 @@ You can add and substract matrices of compatible dimensions.
     >>> B = matrix([[-2, 4], [5, 9]])
     >>> A + B
     matrix(
-    [[mpf('-1.0'), mpf('6.0')],
-     [mpf('8.0'), mpf('13.0')]])
+    [['-1.0', '6.0'],
+     ['8.0', '13.0']])
     >>> A - B
     matrix(
-    [[mpf('3.0'), mpf('-2.0')],
-     [mpf('-2.0'), mpf('-5.0')]])
+    [['3.0', '-2.0'],
+     ['-2.0', '-5.0']])
     >>> A + ones(3) # doctest:+ELLIPSIS
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -160,58 +160,58 @@ operation will be done element-wise.
 
     >>> A * 2
     matrix(
-    [[mpf('2.0'), mpf('4.0')],
-     [mpf('6.0'), mpf('8.0')]])
+    [['2.0', '4.0'],
+     ['6.0', '8.0']])
     >>> A / 4
     matrix(
-    [[mpf('0.25'), mpf('0.5')],
-     [mpf('0.75'), mpf('1.0')]])
+    [['0.25', '0.5'],
+     ['0.75', '1.0']])
     >>> A - 1
     matrix(
-    [[mpf('0.0'), mpf('1.0')],
-     [mpf('2.0'), mpf('3.0')]])
+    [['0.0', '1.0'],
+     ['2.0', '3.0']])
 
 Of course you can perform matrix multiplication, if the dimensions are
 compatible.
 
     >>> A * B
     matrix(
-    [[mpf('8.0'), mpf('22.0')],
-     [mpf('14.0'), mpf('48.0')]])
+    [['8.0', '22.0'],
+     ['14.0', '48.0']])
     >>> matrix([[1, 2, 3]]) * matrix([[-6], [7], [-2]])
     matrix(
-    [[mpf('2.0')]])
+    [['2.0']])
 
 You can raise powers of square matrices.
 
     >>> A**2
     matrix(
-    [[mpf('7.0'), mpf('10.0')],
-     [mpf('15.0'), mpf('22.0')]])
+    [['7.0', '10.0'],
+     ['15.0', '22.0']])
 
 Negative powers will calculate the inverse.
 
     >>> A**-1
     matrix(
-    [[mpf('-2.0'), mpf('1.0')],
-     [mpf('1.5'), mpf('-0.5')]])
+    [['-2.0', '1.0'],
+     ['1.5', '-0.5']])
     >>> A * A**-1
     matrix(
-    [[mpf('1.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('1.0')]])
+    [['1.0', '0.0'],
+     ['0.0', '1.0']])
 
 Matrix transposition is pretty straight-forward:
 
     >>> A = ones(2, 3)
     >>> A
     matrix(
-    [[mpf('1.0'), mpf('1.0'), mpf('1.0')],
-     [mpf('1.0'), mpf('1.0'), mpf('1.0')]])
+    [['1.0', '1.0', '1.0'],
+     ['1.0', '1.0', '1.0']])
     >>> A.T
     matrix(
-    [[mpf('1.0'), mpf('1.0')],
-     [mpf('1.0'), mpf('1.0')],
-     [mpf('1.0'), mpf('1.0')]])
+    [['1.0', '1.0'],
+     ['1.0', '1.0'],
+     ['1.0', '1.0']])
 
 Other
 -----
@@ -237,18 +237,18 @@ As matrices are mutable, you will need to copy them sometimes:
     >>> A = matrix(2)
     >>> A
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
     >>> B = A.copy()
     >>> B[0,0] = 1
     >>> B
     matrix(
-    [[mpf('1.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['1.0', '0.0'],
+     ['0.0', '0.0']])
     >>> A
     matrix(
-    [[mpf('0.0'), mpf('0.0')],
-     [mpf('0.0'), mpf('0.0')]])
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
 
 Finally it's possible to convert a matrix to a nested list. This is very useful,
 as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
