@@ -13,7 +13,7 @@ __docformat__ = 'plaintext'
 
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
-    AS_POINTS, arange)
+    AS_POINTS, arange, nstr)
 from functions import (ldexp, factorial, exp, cos, pi, bernoulli)
 
 from quadrature import quadgl, quadts
