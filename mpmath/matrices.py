@@ -115,6 +115,8 @@ class matrix(object):
                     a = repr(self[i,j])
                 else:  #TODO: for mpc too
                     a = "'" + str(self[i,j]) + "'"
+                else:
+                    a = repr(self[i,j])
                 s += a + ', '
             s = s[:-2]
             s += '],\n '
