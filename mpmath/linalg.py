@@ -59,6 +59,7 @@ def L_solve(L, b, p=None):
     L.rows == L.cols, 'need n*n matrix'
     n = L.rows
     assert len(b) == n
+    b = copy(b)
     if p: # swap b according to p
         for k in xrange(0, len(p)):
             swap_row(b, k, p[k])
