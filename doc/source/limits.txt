@@ -48,7 +48,7 @@ Computing the constant factor in Stirling's formula, without and with accelerati
     >>> # only good to ~7 digits, despite computing (10**6)! which has
     >>> # over 5 million digits when written out exactly
     >>> print f(10**6)
-    2.5066284835166987585628174193828898874378396032067
+    2.5066284835166987585628174193828898874378396079338
     >>> # fast and fully accurate
     >>> print limit(f, inf)
     2.5066282746310005024157652848110452530069867406099

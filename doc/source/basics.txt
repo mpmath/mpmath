@@ -153,3 +153,22 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
     mpf('10.8999999999999999999999999999997')
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
+
+Plotting
+--------
+
+If `matplotlib <http://matplotlib.sourceforge.net/>`_ is available, the functions ``plot`` and ``cplot`` in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.
+
+For example, to plot the exponential function::
+
+    plot(exp)
+
+To plot both sine and cosine over the interval [-4, 4]::
+
+    plot([cos, sin], [-4, 4])
+
+To plot the function f(z) = exp(1/z) in a part of the complex plane::
+
+    cplot(lambda z: exp(1/z), [-2, 2], [-2, 2])
+
+See ``help(plot)`` and ``help(cplot)`` for details.

@@ -13,6 +13,8 @@ stored, so it is cheap to represent sparse matrices.
 The most basic way to create one is to use the ``matrix`` class directly. You
 can create an empty matrix specifying the dimensions::
 
+    >>> from mpmath import *
+    >>> mp.dps = 15
     >>> matrix(2)
     matrix(
     [['0.0', '0.0'],
@@ -78,7 +80,7 @@ If you want to preserve the type of the elements you can use
     >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
     matrix(
     [[1, 2.5],
-     [1j, mpf('2.0')]])
+     [1j, '2.0']])
 
 Advanced methods
 ................
@@ -274,7 +276,6 @@ used.
     >>> x = matrix([-10, 2, 100])
     >>> norm_p(x, 1)
     mpf('112.0')
-    >>> norm(x, 2)
     >>> norm_p(x, 2)
     mpf('100.5186549850325')
     >>> norm_p(x, inf)
