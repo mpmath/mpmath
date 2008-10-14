@@ -26,9 +26,9 @@ Both algorithms have the property that doubling the number of evaluation points 
 
 At high precision, computing the nodes and weights for the integration can be expensive (more expensive than computing the function values). To make repeated integrations fast, mpmath caches computed nodes.
 
-The advantages of the tanh-sinh algorithm are that it tends to handle endpoint singularities well, and that the nodes are cheap to compute. For these reasons, it is used by ``quad`` as the default algorithm.
+The advantages of the tanh-sinh algorithm are that it tends to handle endpoint singularities well, and that the nodes are cheap to compute on the first run. For these reasons, it is used by ``quad`` as the default algorithm.
 
-Gauss-Legendre quadrature often requires fewer function evaluations, and is therefore faster, but the algorithm does not handle endpoint singularities well and the nodes are more expensive to compute. Gauss-Legendre quadrature is therefore a better choice if the integrand is smooth and repeated integrations are required.
+Gauss-Legendre quadrature often requires fewer function evaluations, and is therefore often faster for repeated use, but the algorithm does not handle endpoint singularities well and the nodes are more expensive to compute. Gauss-Legendre quadrature might be a better choice if the integrand is smooth and repeated integrations are required.
 
 Neat examples
 .............

@@ -62,7 +62,7 @@ Division is generally not an exact operation in floating-point arithmetic. Using
 
 The same goes for computing square roots::
 
-    >>> (mpi(2) ** 0.5) ** 2
+    >>> sqrt(mpi(2)) ** 2
     [1.9999999999999995559, 2.0000000000000004441]
 
 By design, interval arithmetic propagates errors, no matter how tiny, that would get rounded off in normal floating-point arithmetic::
@@ -70,7 +70,7 @@ By design, interval arithmetic propagates errors, no matter how tiny, that would
     >>> mpi(1) + mpi('1e-10000')
     [1.0, 1.000000000000000222]
 
-Interval arithmetic uses the same precision as the ``mpf`` class; if ``mp.dps = 50`` is set, all interval operations will be carried out with 50-digit precision. Of course, interval arithmetic is guaranteed to give correct bounds at any precision, but a higher precision makes the intervals narrower and hence more accurate::
+Interval arithmetic uses the same precision as the ``mpf`` class; if ``mp.dps = 50`` is set, all interval operations will be carried out with 50-digit precision. Of course, interval arithmetic is guaranteed to give correct bounds at any precision (in the absence of bugs!), but a higher precision makes the intervals narrower and hence more accurate::
 
     >>> mp.dps = 5
     >>> mpi(pi)
@@ -79,7 +79,38 @@ Interval arithmetic uses the same precision as the ``mpf`` class; if ``mp.dps = 
     >>> mpi(pi)  # doctest: +ELLIPSIS
     [3.14159265358979...793333, 3.14159265358979...797277]
 
-It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators ``+, -, *, /``, as well as integer powers should work correctly. It is not currently possible to use functions like ``sin`` or ``log`` with interval arguments. You can convert mathematical constants to intervals (as in the previous example) and compute fractional powers, but this is not currently guaranteed to give correct results (although it most likely will).
+It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators ``+, -, *, /, **`` should work correctly. It is also possible to call the functions ``exp``, ``log``, ``sin``, ``cos`` and ``tan`` with interval arguments. Here are some examples:
+
+    >>> mp.dps = 15
+    >>> mpi(0.5, 1.5) ** mpi(0.5, 1.5)
+    [0.35355339059327373086, 1.837117307087383633]
+    >>> exp(mpi(0))
+    [1.0, 1.0]
+    >>> exp(mpi(-inf, inf))
+    [0.0, +inf]
+    >>>
+    >>> exp(mpi(-inf, 0))
+    [0.0, 1.0]
+    >>> exp(mpi(0, inf))
+    [1.0, +inf]
+    >>> exp(mpi(0, 1))
+    [1.0, 2.7182818284590455349]
+    >>>
+    >>> log(mpi(1))
+    [0.0, 0.0]
+    >>> log(mpi(0,1))
+    [-inf, 0.0]
+    >>> log(mpi(0,inf))
+    [-inf, +inf]
+    >>> log(mpi(2))
+    [0.69314718055994528623, 0.69314718055994539725]
+    >>>
+    >>> sin(mpi(100, inf))
+    [-1.0, 1.0]
+    >>> cos(mpi('-0.1', '0.1'))
+    [0.99500416527802570954, 1.0]
+
+Interval support will be added to more functions in the future.
 
 Establishing inequalities
 -------------------------
@@ -92,13 +123,18 @@ Interval arithmetic can be used to establish inequalities such as ``exp(pi*sqrt(
 
 The answer should be True, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep ``mp.dps = 25``, but it is honest enough to admit it::
 
-    >>> mpi(e) ** (mpi(pi) * mpi(163)**0.5) - (640320**3 + 744)
+    >>> exp(pi * sqrt(mpi(163))) - (640320**3 + 744)
     ... # doctest: +ELLIPSIS
-    [-0.000000793..., 0.000000946...]
+    [-0.0000003576..., 0.00000029429...]
 
 There is both a negative and a positive endpoint, so we cannot tell for certain whether the true difference is on one side or the other of zero. The solution is to increase the precision until the answer is strictly one-signed::
 
     >>> mp.dps = 35
-    >>> mpi(e) ** (mpi(pi) * mpi(163)**0.5) - (640320**3 + 744)
+    >>> exp(pi * sqrt(mpi(163))) - (640320**3 + 744)
     ... # doctest: +ELLIPSIS
-    [-7.499745...e-13, -7.498606...-13]
+    [-7.499493...e-13, -7.499237...e-13]
+
+Linear algebra
+--------------
+
+Intervals may be used in matrices. See the matrix documentation page for details.

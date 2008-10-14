@@ -1,17 +1,17 @@
 Matrices
 ========
 
-Creating Matrices
+Creating matrices
 -----------------
 
-Basic Methods
+Basic methods
 .............
 
 Matrices in mpmath are implemented using dictionaries. Only non-zero values are
-stored, so it's cheap to represent sparse matrices.
+stored, so it is cheap to represent sparse matrices.
 
 The most basic way to create one is to use the ``matrix`` class directly. You
-can create an empty specifying the dimensions:
+can create an empty matrix specifying the dimensions::
 
     >>> matrix(2)
     matrix(
@@ -22,9 +22,9 @@ can create an empty specifying the dimensions:
     [['0.0', '0.0', '0.0'],
      ['0.0', '0.0', '0.0']])
 
-Calling it with one dimension it will create a square matrix.
+Calling ``matrix`` with one dimension will create a square matrix.
 
-To access the dimensions of a matrix, use the ``rows`` or ``cols`` keyword.
+To access the dimensions of a matrix, use the ``rows`` or ``cols`` keyword::
 
     >>> A = matrix(3, 2)
     >>> A
@@ -37,8 +37,9 @@ To access the dimensions of a matrix, use the ``rows`` or ``cols`` keyword.
     >>> A.cols
     2
 
-You can even change the dimension, new elements will be 0. If the new dimension
-is smaller than before, the concerning elements are discarded.
+You can also change the dimension of an existing matrix. This will set the
+new elements to 0. If the new dimension is smaller than before, the
+concerning elements are discarded::
 
     >>> A.rows = 2
     >>> A
@@ -47,7 +48,7 @@ is smaller than before, the concerning elements are discarded.
      ['0.0', '0.0']])
 
 Internally ``convert_lossless`` is used every time an element is set. This is
-done using the syntax A[row,column], counting from 0.
+done using the syntax A[row,column], counting from 0::
 
     >>> A = matrix(2)
     >>> A[1,1] = 1 + 1j
@@ -57,14 +58,14 @@ done using the syntax A[row,column], counting from 0.
      ['0.0', mpc(real='1.0', imag='1.0')]])
 
 You can use the keyword ``force_type`` to change the function which is called on
-every new element.
+every new element::
 
     >>> matrix(2, 5, force_type=int)
     matrix(
     [[0, 0, 0, 0, 0],
      [0, 0, 0, 0, 0]])
 
-A more comfortable way to create a matrix lets you use nested lists:
+A more comfortable way to create a matrix lets you use nested lists::
 
     >>> matrix([[1, 2], [3, 4]])
     matrix(
@@ -72,17 +73,17 @@ A more comfortable way to create a matrix lets you use nested lists:
      ['3.0', '4.0']])
 
 If you want to preserve the type of the elements you can use
-``force_type=None``.
+``force_type=None``::
 
     >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
     matrix(
     [[1, 2.5],
      [1j, mpf('2.0')]])
 
-Advanced Methods
+Advanced methods
 ................
 
-Maybe you wish to use more advanced methods to create a matrix:
+Convenient functions are available for creating various standard matrices::
 
     >>> zeros(2)
     matrix(
@@ -102,7 +103,7 @@ Maybe you wish to use more advanced methods to create a matrix:
     [['1.0', '0.0'],
      ['0.0', '1.0']])
 
-You can even create random matrices.
+You can even create random matrices::
 
     >>> randmatrix(2) # doctest:+SKIP
     matrix(
@@ -112,8 +113,9 @@ You can even create random matrices.
 Vectors
 .......
 
+Vectors may also be represented by the ``matrix`` class (with rows = 1 or cols = 1).
 For vectors there are some things which make life easier. A column vector can
-be created using a flat list, a row vectors using a almost flat nested list:
+be created using a flat list, a row vectors using an almost flat nested list::
 
     >>> matrix([1, 2, 3])
     matrix(
@@ -124,7 +126,7 @@ be created using a flat list, a row vectors using a almost flat nested list:
     matrix(
     [['1.0', '2.0', '3.0']])
 
-Optionally vectors can be accessed like lists.
+Optionally vectors can be accessed like lists, using only a single index::
 
     >>> x = matrix([1, 2, 3])
     >>> x[1]
@@ -133,10 +135,10 @@ Optionally vectors can be accessed like lists.
     mpf('2.0')
 
 
-Matrix Operations
+Matrix operations
 -----------------
 
-You can add and substract matrices of compatible dimensions.
+You can add and substract matrices of compatible dimensions::
 
     >>> A = matrix([[1, 2], [3, 4]])
     >>> B = matrix([[-2, 4], [5, 9]])
@@ -155,8 +157,8 @@ You can add and substract matrices of compatible dimensions.
         raise ValueError('incompatible dimensions for addition')
     ValueError: incompatible dimensions for addition
 
-It's possible to multiply or add matrices and scalars. In the latter case the
-operation will be done element-wise.
+It is possible to multiply or add matrices and scalars. In the latter case the
+operation will be done element-wise::
 
     >>> A * 2
     matrix(
@@ -172,7 +174,7 @@ operation will be done element-wise.
      ['2.0', '3.0']])
 
 Of course you can perform matrix multiplication, if the dimensions are
-compatible.
+compatible::
 
     >>> A * B
     matrix(
@@ -182,14 +184,14 @@ compatible.
     matrix(
     [['2.0']])
 
-You can raise powers of square matrices.
+You can raise powers of square matrices::
 
     >>> A**2
     matrix(
     [['7.0', '10.0'],
      ['15.0', '22.0']])
 
-Negative powers will calculate the inverse.
+Negative powers will calculate the inverse::
 
     >>> A**-1
     matrix(
@@ -200,7 +202,7 @@ Negative powers will calculate the inverse.
     [['1.0', '0.0'],
      ['0.0', '1.0']])
 
-Matrix transposition is pretty straight-forward:
+Matrix transposition is straightforward::
 
     >>> A = ones(2, 3)
     >>> A
@@ -234,10 +236,10 @@ used.
     >>> norm_p(x, inf)
     mpf('100.0')
 
-Please note that the 2-norm is the most used one, though it's more expensive
-to calculate then the 1- or oo-norm.
+Please note that the 2-norm is the most used one, though it is more expensive
+to calculate than the 1- or oo-norm.
 
-It's possible to generalize some vector norms to matrix norm.
+It is possible to generalize some vector norms to matrix norm::
 
     >>> A = matrix([[1, -1000], [100, 50]])
     >>> mnorm_1(A)
@@ -251,19 +253,19 @@ The last norm (the "Frobenius-norm") is an approximation for the 2-norm, which
 is hard to calculate and not available. The Frobenius-norm lacks some
 mathematical properties you might expect from a norm.
 
-Linear Algebra
+Linear algebra
 --------------
 
-Linear Equations
+Linear equations
 ................
 
-Basic linear algebra is implemented, you can for example solve the linear
+Basic linear algebra is implemented; you can for example solve the linear
 equation system
 
       x + 2*y = -10
     3*x + 4*y =  10
 
-using ``lu_solve``:
+using ``lu_solve``::
 
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
@@ -273,7 +275,7 @@ using ``lu_solve``:
     [['30.0'],
      ['-20.0']])
 
-If you don trust, use ``residual`` to calculate the residual ||A*x-b||.
+If you don't trust the result, use ``residual`` to calculate the residual ||A*x-b||::
 
     >>> residual(A, x, b)
     matrix(
@@ -288,41 +290,80 @@ than the current machine epsilon, which basically means you can trust the
 result.
 
 If you need more speed, use NumPy. Or choose a faster data type using the
-keyword ``force_type``:
+keyword ``force_type``::
 
     >>> lu_solve(A, b, force_type=float)
     matrix(
     [[29.999999999999996],
      [-19.999999999999996]])
 
-``lu_solve`` accepts overdetermined systems. It's usually not possible to solve
+``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
 such systems, so the residual is minimized instead. Internally this is done
-using the Method of Least Squares and Cholesky decomposition. This means
+using Cholesky decomposition to compute a least squares approximation. This means
 that that ``lu_solve`` will square the errors. If you can't afford this, use
 ``qr_solve`` instead. It is twice as slow but more accurate, and t calculates
 the residual automatically.
 
-    >>> ...(Hilbert matrices and condition numbers)
-
-
-...(inverse)
 
 Matrix factorization
 ....................
+
+The function ``lu`` computes an explicit LU factorization of a matrix::
+
+    >>> P, L, U = lu(matrix([[1,2,3],[4,5,6],[7,8,9]]))
+    >>> print P
+    [0.0  0.0  1.0]
+    [0.0  1.0  0.0]
+    [1.0  0.0  0.0]
+    >>> print L
+    [              1.0  0.0  0.0]
+    [0.571428571428571  1.0  0.0]
+    [0.142857142857143  2.0  1.0]
+    >>> print U
+    [7.0                8.0                9.0]
+    [0.0  0.428571428571429  0.857142857142858]
+    [0.0                0.0                0.0]
+    >>> print P*L*U
+    [1.0  2.0  3.0]
+    [4.0  5.0  6.0]
+    [7.0  8.0  9.0]
+
+Interval matrices
+-----------------
+
+Matrices may contain interval elements. This allows one to perform
+basic linear algebra operations such as matrix multiplication
+and equation solving with rigorous error bounds::
+
+    >>> a = matrix([['0.1','0.3','1.0'],
+    ...             ['7.1','5.5','4.8'],
+    ...             ['3.2','4.4','5.6']], force_type=mpi)
+    >>>
+    >>> b = matrix(['4','0.6','0.5'], force_type=mpi)
+    >>> c = lu_solve(a, b)
+    >>> c
+    matrix(
+    [[[5.2582327113062393041, 5.2582327113062749951]],
+     [[-13.155049396267856583, -13.155049396267821167]],
+     [[7.4206915477497212555, 7.4206915477497310922]]])
+    >>> print a*c
+    [  [3.9999999999999866773, 4.0000000000000133227]]
+    [[0.59999999999972430942, 0.60000000000027142733]]
+    [[0.49999999999982236432, 0.50000000000018474111]]
 
 
 
 Other
 -----
 
-Like you probably expected, matrices can be printed.
+Like you probably expected, matrices can be printed::
 
     >>> print randmatrix(3) # doctest:+SKIP
     [ 0.782963853573023  0.802057689719883  0.427895717335467]
     [0.0541876859348597  0.708243266653103  0.615134039977379]
     [ 0.856151514955773  0.544759264818486  0.686210904770947]
 
-Use ``nstr`` or ``nprint`` to specify the number of digits to print.
+Use ``nstr`` or ``nprint`` to specify the number of digits to print::
 
     >>> nprint(randmatrix(5), 3) # doctest:+SKIP
     [2.07e-1  1.66e-1  5.06e-1  1.89e-1  8.29e-1]
@@ -331,7 +372,7 @@ Use ``nstr`` or ``nprint`` to specify the number of digits to print.
     [1.01e-1  2.53e-1  6.13e-1  3.32e-1  2.59e-1]
     [1.56e-1  7.27e-2  6.05e-1  6.67e-2  2.79e-1]
 
-As matrices are mutable, you will need to copy them sometimes:
+As matrices are mutable, you will need to copy them sometimes::
 
     >>> A = matrix(2)
     >>> A
@@ -349,9 +390,9 @@ As matrices are mutable, you will need to copy them sometimes:
     [['0.0', '0.0'],
      ['0.0', '0.0']])
 
-Finally it's possible to convert a matrix to a nested list. This is very useful,
+Finally, it is possible to convert a matrix to a nested list. This is very useful,
 as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
-support this format.
+support this format::
 
     >>> B.tolist()
     [[mpf('1.0'), mpf('0.0')], [mpf('0.0'), mpf('0.0')]]
