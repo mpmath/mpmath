@@ -96,7 +96,7 @@ print pr(catalan)
 print
 
 print "C21: Equation exp(cos(x)) = x"
-print pr(secant(lambda x: exp(cos(x))-x, 1))
+print pr(findroot(lambda x: exp(cos(x))-x, 1))
 print
 
 print "C22: J = integral(sin(sin(sin(x)))), x=0..1"
