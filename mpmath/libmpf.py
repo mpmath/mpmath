@@ -51,7 +51,8 @@ fnan = (0, MP_ZERO, -123, -1)
 finf = (0, MP_ZERO, -456, -2)
 fninf = (1, MP_ZERO, -789, -3)
 
-math_float_inf = 1e1000
+# Was 1e1000; this is broken in Python 2.4
+math_float_inf = 1e300 * 1e300
 
 #----------------------------------------------------------------------------#
 #           Various utilities related to precision and bit-fiddling          #

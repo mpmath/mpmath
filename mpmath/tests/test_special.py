@@ -86,8 +86,8 @@ def test_functions_special():
     assert sqrt(inf) == inf
 
 def test_convert_special():
-    float_inf = 1e1000
-    float_ninf = -1e1000
+    float_inf = 1e300 * 1e300
+    float_ninf = -float_inf
     float_nan = float_inf/float_ninf
     assert mpf(3) * float_inf == inf
     assert mpf(3) * float_ninf == -inf
