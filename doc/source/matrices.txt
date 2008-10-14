@@ -134,6 +134,50 @@ Optionally vectors can be accessed like lists, using only a single index::
     >>> x[1,0]
     mpf('2.0')
 
+Other
+.....
+
+Like you probably expected, matrices can be printed::
+
+    >>> print randmatrix(3) # doctest:+SKIP
+    [ 0.782963853573023  0.802057689719883  0.427895717335467]
+    [0.0541876859348597  0.708243266653103  0.615134039977379]
+    [ 0.856151514955773  0.544759264818486  0.686210904770947]
+
+Use ``nstr`` or ``nprint`` to specify the number of digits to print::
+
+    >>> nprint(randmatrix(5), 3) # doctest:+SKIP
+    [2.07e-1  1.66e-1  5.06e-1  1.89e-1  8.29e-1]
+    [6.62e-1  6.55e-1  4.47e-1  4.82e-1  2.06e-2]
+    [4.33e-1  7.75e-1  6.93e-2  2.86e-1  5.71e-1]
+    [1.01e-1  2.53e-1  6.13e-1  3.32e-1  2.59e-1]
+    [1.56e-1  7.27e-2  6.05e-1  6.67e-2  2.79e-1]
+
+As matrices are mutable, you will need to copy them sometimes::
+
+    >>> A = matrix(2)
+    >>> A
+    matrix(
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
+    >>> B = A.copy()
+    >>> B[0,0] = 1
+    >>> B
+    matrix(
+    [['1.0', '0.0'],
+     ['0.0', '0.0']])
+    >>> A
+    matrix(
+    [['0.0', '0.0'],
+     ['0.0', '0.0']])
+
+Finally, it is possible to convert a matrix to a nested list. This is very useful,
+as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
+support this format::
+
+    >>> B.tolist()
+    [[mpf('1.0'), mpf('0.0')], [mpf('0.0'), mpf('0.0')]]
+
 
 Matrix operations
 -----------------
@@ -260,7 +304,7 @@ Linear equations
 ................
 
 Basic linear algebra is implemented; you can for example solve the linear
-equation system
+equation system::
 
       x + 2*y = -10
     3*x + 4*y =  10
@@ -351,50 +395,5 @@ and equation solving with rigorous error bounds::
     [[0.59999999999972430942, 0.60000000000027142733]]
     [[0.49999999999982236432, 0.50000000000018474111]]
 
-
-
-Other
------
-
-Like you probably expected, matrices can be printed::
-
-    >>> print randmatrix(3) # doctest:+SKIP
-    [ 0.782963853573023  0.802057689719883  0.427895717335467]
-    [0.0541876859348597  0.708243266653103  0.615134039977379]
-    [ 0.856151514955773  0.544759264818486  0.686210904770947]
-
-Use ``nstr`` or ``nprint`` to specify the number of digits to print::
-
-    >>> nprint(randmatrix(5), 3) # doctest:+SKIP
-    [2.07e-1  1.66e-1  5.06e-1  1.89e-1  8.29e-1]
-    [6.62e-1  6.55e-1  4.47e-1  4.82e-1  2.06e-2]
-    [4.33e-1  7.75e-1  6.93e-2  2.86e-1  5.71e-1]
-    [1.01e-1  2.53e-1  6.13e-1  3.32e-1  2.59e-1]
-    [1.56e-1  7.27e-2  6.05e-1  6.67e-2  2.79e-1]
-
-As matrices are mutable, you will need to copy them sometimes::
-
-    >>> A = matrix(2)
-    >>> A
-    matrix(
-    [['0.0', '0.0'],
-     ['0.0', '0.0']])
-    >>> B = A.copy()
-    >>> B[0,0] = 1
-    >>> B
-    matrix(
-    [['1.0', '0.0'],
-     ['0.0', '0.0']])
-    >>> A
-    matrix(
-    [['0.0', '0.0'],
-     ['0.0', '0.0']])
-
-Finally, it is possible to convert a matrix to a nested list. This is very useful,
-as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
-support this format::
-
-    >>> B.tolist()
-    [[mpf('1.0'), mpf('0.0')], [mpf('0.0'), mpf('0.0')]]
 
 

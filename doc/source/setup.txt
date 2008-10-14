@@ -75,8 +75,8 @@ By default, mpmath uses Python integers internally. If `gmpy <http://code.google
 
 To verify that mpmath uses gmpy, check the internal MODE variable is not equal to 'python':
 
-    >>> import mpmath.lib
-    >>> mpmath.lib.MODE
+    >>> import mpmath.settings
+    >>> mpmath.settings.MODE
     'gmpy'
 
 The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable. Note that the mode cannot be switched during runtime; mpmath must be re-imported for this change to take effect.
@@ -84,7 +84,12 @@ The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable.
 Running tests
 -------------
 
-It is recommended that you run mpmath's full set of unit tests to make sure everything works. The tests are located in the ``tests`` subdirectory of the main mpmath directory. They can be run via
+It is recommended that you run mpmath's full set of unit tests to make sure everything works. The tests are located in the ``tests`` subdirectory of the main mpmath directory. They can be run in the interactive interpreter using the ``runtests()`` function::
+
+    import mpmath
+    mpmath.runtests()
+
+Alternatively, they can be run from the ``tests`` directory via
 
     ``python runtests.py``
 

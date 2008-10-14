@@ -21,10 +21,10 @@ Since the Richardson and Shanks methods are based purely on extrapolation from a
 Euler-Maclaurin summation (``sumem``)
 -------------------------------------
 
-``sumem(f, a, b)`` calculates the sum of f(n) for n = a...b using Euler-Maclaurin summation, which approximates the sum by the integral of f(x) from a to b and then uses derivatives of f(x) to approximate the error. As an example, we can sum the Basel series:
+``sumem(f, [a, b])`` calculates the sum of f(n) for n = a...b using Euler-Maclaurin summation, which approximates the sum by the integral of f(x) from a to b and then uses derivatives of f(x) to approximate the error. As an example, we can sum the Basel series:
 
     >>> mp.dps = 15
-    >>> print sumem(lambda n: 1/n**2, 1, inf)
+    >>> print sumem(lambda n: 1/n**2, [1, inf])
     1.64493406684823
     >>> print pi**2 / 6
     1.64493406684823
@@ -34,7 +34,7 @@ The method relies on approximating the sum by an integral, so f(x) must be smoot
     >>> f = lambda n: 1/n**2
     >>> fp = lambda x, n: (-1)**n * factorial(n+1) * x**(-2-n)
     >>> mp.dps = 50
-    >>> print sumem(lambda n: 1/n**2, 1, inf, fderiv=fp)
+    >>> print sumem(lambda n: 1/n**2, [1, inf], fderiv=fp)
     1.6449340668482264364724151666460251892189499012068
     >>> print pi**2 / 6
     1.6449340668482264364724151666460251892189499012068
@@ -51,7 +51,7 @@ Richardson summation (``sumrich``)
 Richardson extrapolation is an alternative to the Euler-Maclaurin summation that avoids the expensive computation of higher derivatives. The following computation is almost instantaneous:
 
     >>> mp.dps = 200
-    >>> print sumrich(lambda n: 1/n**2, 1, inf)    # doctest: +SKIP
+    >>> print sumrich(lambda n: 1/n**2, [1, inf])    # doctest: +SKIP
     1.644934066848226436472415166646025189218949901206798437735558229370007470403200
     87383362890061975870530400431896233719067962872468700500778793510294633086627683
     17333093677626050952510068721400547968116
@@ -63,7 +63,7 @@ Richardson extrapolation is an alternative to the Euler-Maclaurin summation that
 Generally, the algorithm tends to works well when the summand is a rational function:
 
     >>> mp.dps = 50
-    >>> print sumrich(lambda n: (n + 3)/(n**3 + n**2), 1, inf)
+    >>> print sumrich(lambda n: (n + 3)/(n**3 + n**2), [1, inf])
     2.9348022005446793094172454999380755676568497036204
     >>> print pi**2/2 - 2
     2.9348022005446793094172454999380755676568497036204
@@ -71,7 +71,7 @@ Generally, the algorithm tends to works well when the summand is a rational func
 However, with a slight change to the summand, ``sumrich`` might turn out not to provide a useful acceleration:
 
     >>> mp.dps = 15
-    >>> print sumrich(lambda n: 1/n**2.5, 1, inf)
+    >>> print sumrich(lambda n: 1/n**2.5, [1, inf])
     1.34151163359885
     >>> print zeta(2.5)
     1.34148725725092
@@ -84,7 +84,7 @@ The Shanks transformation is especially useful for accelerating the convergence 
 The Maclaurin series for log(1+x), for example, converges very slowly for x close in magnitude to 1. With ``sumsh``, we can quickly sum it at x = 1:
 
     >>> mp.dps = 40
-    >>> print sumsh(lambda n: (-1)**(n+1) / n, 1, inf)
+    >>> print sumsh(lambda n: (-1)**(n+1) / n, [1, inf])
     0.6931471805599453094172321214581765680755
     >>> print log(2)
     0.6931471805599453094172321214581765680755
@@ -92,27 +92,27 @@ The Maclaurin series for log(1+x), for example, converges very slowly for x clos
 A related sum is Leibniz slowly convergent series for pi:
 
     >>> mp.dps = 50
-    >>> print 4 * sumsh(lambda n: (-1)**n / (2*n+1), 0, inf)
+    >>> print 4 * sumsh(lambda n: (-1)**n / (2*n+1), [0, inf])
     3.1415926535897932384626433832795028841971693993751
 
 In fact, the Shanks transformation can even sometimes be used to sum *divergent* alternating series, such as the Maclaurin series for log(1+x) outside its region of convergence:
 
     >>> mp.dps = 15
-    >>> print sumsh(lambda n: (-1)**(n+1) / n * 9**n, 1, inf)
+    >>> print sumsh(lambda n: (-1)**(n+1) / n * 9**n, [1, inf])
     2.30289174139398
     >>> print log(10)
     2.30258509299405
 
 Here are some additional examples of divergent series for which ``sumsh`` does find the appropriate values:
 
-    >>> print sumsh(lambda n: (-1)**n, 0, inf)
+    >>> print sumsh(lambda n: (-1)**n, [0, inf])
     0.5
-    >>> print sumsh(lambda n: n * (-1)**n, 0, inf)
+    >>> print sumsh(lambda n: n * (-1)**n, [0, inf])
     -0.25
 
 In general, ``sumsh`` is capable of summing divergent geometric series (even nonalternating ones). The general formula for the sum of a^n for n from 0 to infinity is 1/(1-a), and the Shanks transformation does give the expected -1/6 if we put a = 7:
 
-    >>> print sumsh(lambda n: 7**n, 0, inf)
+    >>> print sumsh(lambda n: 7**n, [0, inf])
     -0.166666666666667
 
 The Shanks method is based on extrapolating from a table of n terms. To be effective, this method is applied recursively m times. Custom values for n and m can optionally be passed to ``sumsh`` as keyword arguments to improve the performance or accuracy.
@@ -123,54 +123,49 @@ Comparison
 Let us try applying each method to the Basel series:
 
     >>> mp.dps = 15
-    >>> print sumem(lambda n: 1/n**2, 1, inf)
+    >>> print sumem(lambda n: 1/n**2, [1, inf])
     1.64493406684823
-    >>> print sumrich(lambda n: 1/n**2, 1, inf)
+    >>> print sumrich(lambda n: 1/n**2, [1, inf])
     1.64493406684823
-    >>> print sumsh(lambda n: 1/n**2, 1, inf)
+    >>> print sumsh(lambda n: 1/n**2, [1, inf])
     1.64277092999229
 
 The Shanks transformation is not useful at all here. If we instead consider the *alternating* Basel series, only the Shanks transformation is good:
 
-    >>> print sumem(lambda n: (-1)**(n+1) / n**2, 1, inf)
-    (0.822148701224003 - 0.000683411047277414j)
-    >>> print sumrich(lambda n: (-1)**(n+1) / n**2, 1, inf)
+    >>> print sumem(lambda n: (-1)**(n+1) / n**2, [1, inf])
+    (0.821775404517919 - 0.000522432330925574j)
+    >>> print sumrich(lambda n: (-1)**(n+1) / n**2, [1, inf])
     243859856691.745
-    >>> print sumsh(lambda n: (-1)**(n+1) / n**2, 1, inf)
+    >>> print sumsh(lambda n: (-1)**(n+1) / n**2, [1, inf])
     0.822467033424113
     >>> print pi**2 / 12
     0.822467033424113
 
 The Euler-Maclaurin method is capable of providing an error estimate in this case:
 
-    >>> sumem(lambda n: (-1)**(n+1) / n**2, 1, inf, error=True)[1]
-    mpf('0.0017926587291892238')
+    >>> sumem(lambda n: (-1)**(n+1) / n**2, [1, inf], error=True)[1]
+    mpf('0.10793987520461149')
 
 Here is an example for which all three algorithms give different answers.
 
     >>> mp.dps = 15
-    >>> print sumem(lambda n: sqrt(n) / n**2, 1, inf)
-    2.6123753486854
-    >>> print sumrich(lambda n: sqrt(n) / n**2, 1, inf)
+    >>> print sumem(lambda n: sqrt(n) / n**2, [1, inf])
+    2.61237534868143
+    >>> print sumrich(lambda n: sqrt(n) / n**2, [1, inf])
     2.55616488912461
-    >>> print sumsh(lambda n: sqrt(n) / n**2, 1, inf)
+    >>> print sumsh(lambda n: sqrt(n) / n**2, [1, inf])
     2.58951117865808
 
-The Euler-Maclaurin algorithm should have no problem with a smooth summand like this, so it is likely that this series has the wrong rate of convergence for either the Richardson or Shanks transformations to be effective. Re-computing at higher precision shows that the value obtained with the Euler-Maclaurin method is indeed (nearly) correct:
+The series has the exact value:
 
     >>> mp.dps = 25
-    >>> print sumem(lambda n: sqrt(n)/n**2, 1, inf)
-    2.612375348685488342465765
-
-In fact, the series has the exact value:
-
     >>> print zeta(1.5)
     2.612375348685488343348568
 
-If the series is turned into its alternating equivalent, the Shanks method again becomes effective, however:
+If the series is turned into its alternating counterpart, the Shanks method again becomes effective, however:
 
     >>> mp.dps = 20
-    >>> print sumsh(lambda n: (-1)**(n+1) * sqrt(n) / n**2, 1, inf)
+    >>> print sumsh(lambda n: (-1)**(n+1) * sqrt(n) / n**2, [1, inf])
     0.76514702462540794537
 
 The series can be summed analytically to:

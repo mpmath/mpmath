@@ -34,26 +34,25 @@ The secant method can also be used as an optimization algorithm, by passing it a
     >>> print findroot(lambda x: diff(gamma, x), 1)
     1.4616321449683623413
 
-Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value::
+Finally, a useful application is to compute inverse functions, such as the Lambert W function which is the inverse of *w* exp(*w*), given the first term of the solution's asymptotic expansion as the initial value. In basic cases, this gives identical results to mpmath's builtin ``lambertw`` function::
 
     >>> def lambert(x):
     ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
     ...
     >>> mp.dps = 15
-    >>> print lambert(1)
-    0.567143290409784
-    >>> print lambert(1000)
-    5.2496028524016
+    >>> print lambert(1), lambertw(1)
+    0.567143290409784 0.567143290409784
+    >>> print lambert(1000), lambert(1000)
+    5.2496028524016 5.2496028524016
 
 Options
 .......
 
 Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point ``x0``; the solver automatically sets the second point (somewhat arbitrarily) to ``x0 + 1/4``. Manually providing also the second point can help in some cases if ``secant`` fails to converge. If you provide more than one point, be sure to use a tuple (or a list).
 
-By default, ``findroot`` performs a maximum of 30 steps (when using the secant method), which can be increased or decreased using the ``maxsteps`` keyword argument. You can pass ``findroot`` the option ``verbose=True`` to show detailed progress.
-The keyword ``tol`` specifies the maximal tolerated error for the solution. The solver will iterate until the error is smaller or ``maxsteps`` is reached.
+By default, ``findroot`` performs a maximum of 30 steps (when using the secant method), which can be increased or decreased using the ``maxsteps`` keyword argument. You can pass ``findroot`` the option ``verbose=True`` to show detailed progress. The keyword ``tol`` specifies the maximal tolerated error for the solution. The solver will iterate until the error is smaller or ``maxsteps`` is reached.
 
-Usually the secant method will just work, but you can use other solvers if it fails. This is done using the ``solver`` keyword. A solver is a class that can be called with ``(f, x0, **kwargs)`` and returns an iterator yielding tuple consisting of approximative solution and estimated error. So you can implement your own solver, but there are already many available in mpmath, see the ``mpmath.optimzation``.
+Usually the secant method will just work, but you can use other solvers if it fails. This is done using the ``solver`` keyword. A solver is a class that can be called with ``(f, x0, **kwargs)`` and returns an iterator yielding tuple consisting of approximative solution and estimated error. So you can implement your own solver, but there are already many available in mpmath; see the ``mpmath.optimzation`` module.
 
 
 Multiple roots
@@ -173,7 +172,7 @@ For complex roots it's recommended to use Muller's method as it converges even f
 Finding all roots of a polynomial (``polyroots``)
 -------------------------------------------------
 
-The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial. It will for example successfully compute the two real roots of 3x^2 - 7x + 2
+The function ``polyroots`` computes all *n* real or complex roots of an *n*-th degree polynomial. It will for example successfully compute the two real roots of 3x^2 - 7x + 2::
 
     >>> mp.dps = 15
     >>> for r in polyroots([3,-7,2]):
@@ -182,12 +181,12 @@ The function ``polyroots`` computes all *n* real or complex roots of an *n*-th d
     0.333333333333333
     2.0
 
-or the three roots of x^3 - x^2 - 14x + 24:
+or the three roots of x^3 - x^2 - 14x + 24::
 
     >>> polyroots([1,-1,-14,24])
     [mpf('-4.0'), mpf('2.0'), mpf('3.0')]
 
-The following example computes all the 5th roots of unity; i.e. the roots of x^5 - 1:
+The following example computes all the 5th roots of unity; i.e. the roots of x^5 - 1::
 
     >>> mp.dps = 20
     >>> for r in polyroots([1, 0, 0, 0, 0, -1]):
@@ -201,7 +200,7 @@ The following example computes all the 5th roots of unity; i.e. the roots of x^5
 
 Although all roots are internally calculated using complex arithmetic, any root found to have an imaginary part smaller than the estimated numerical error is truncated to a real number. Real roots are placed first in the returned list, sorted by value. The remaining complex numbers are sorted by real their parts so that conjugate roots end up next to each other.
 
-Provided there are no repeated roots, ``polyroots`` can typically compute all roots with high precision:
+Provided there are no repeated roots, ``polyroots`` can typically compute all roots with high precision::
 
     >>> mp.dps = 70
     >>> for r in polyroots([1, 0, -10, 0, 1]):
@@ -220,7 +219,7 @@ Provided there are no repeated roots, ``polyroots`` can typically compute all ro
 Ill-conditioned polynomials
 ...........................
 
-If a root with multiplicity M is present, it can typically only be computed accurately to dps/M digits (an sometimes less, due to slow convergence). For example, a triple root can be expected to be computed to roughly 5 accurate digits at standard 15-digit precision:
+If a root with multiplicity M is present, it can typically only be computed accurately to dps/M digits (an sometimes less, due to slow convergence). For example, a triple root can be expected to be computed to roughly 5 accurate digits at standard 15-digit precision::
 
     >>> mp.dps = 15
     >>> for r in polyroots([1,3,3,1]):
@@ -229,6 +228,14 @@ If a root with multiplicity M is present, it can typically only be computed accu
     (-1.00000007263211 - 1.9031226565599e-7j)
     (-0.999999852005337 + 2.06642147088233e-7j)
     (-1.00000162463939 - 1.50181300875847e-6j)
+
+In these cases the modified Newton method is useful to refine the roots to high accuracy:
+
+    >>> for r in polyroots([1,3,3,1]):
+    ...     print findroot(f, r, solver='mnewton')
+    (1.0 - 7.03088244829023e-27j)
+    (1.0 - 3.64100428305643e-28j)
+    (1.0 - 4.32024952621333e-26j)
 
 An example of an extremely ill-conditioned polynomial is Wilkinson's polynomial which has roots at the integers 1 through 20.
 
