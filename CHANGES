@@ -1,3 +1,96 @@
+--0.10--
+Released ...
+
+Interface / general:
+* Mpmath now works with Python 2.6
+* Implemented function plotting via 'plot' and 'cplot' (requires
+  matplotlib)
+* Removed global rounding mode (always rounding to nearest by default)
+* Instead added 'prec', 'dps', 'rounding' keyword arguments to
+  standard functions, for optional fine-grained control over precision
+  and rounding
+* Implemented isinf, isnan, isint, utility functions
+* A large number of internal functions were moved and/or renamed to
+  improve consistency. This particularly affects low-level mpf
+  functions (lib.fadd -> libmpf.mpf_add, etc).
+* Syntax for some operations was changed (see details below)
+* The test runner (runtests.py) was updated to support running
+  isolated tests and to allow a local import of mpmath
+* Unit tests can now be run with import mpmath; mpmath.runtests()
+* Implicit imports are no longer used internally in the main codebase.
+  (This will hopefully make the source easier to read, and can catch
+  installation problems more cleanly.)
+
+Added linear algebra functions (contributed by Vinzent Steinberg):
+* Provided a matrix class
+* Computation of powers, inverses, determinants
+* Linear system solving using LU, QR and Cholesky
+* Vector and matrix norms
+* Calculation of condition numbers
+
+Improvements to interval arithmetic:
+* Fixed rounding direction for negative numbers and related
+  spurious bugs
+* Fix interval exponentiation (all cases should work now)
+* Basic interval arithmetic is up to 10x faster
+* sqrt, exp, log, sin, cos and a few other functions
+  accept interval arguments
+* Intervals supported in matrices
+
+Changes to root-finding code:
+* secant renamed to findroot
+* findroot was made more general; many useful alternative root-finding
+  algorithms were implemented (contributed by Vinzent Steinberg)
+
+Improvements to special functions:
+* Implemented polygamma functions
+* Implemented harmonic numbers
+* Implemented Stieltjes constants
+* Made gamma more accurate for huge arguments and/or precision
+* Made zeta more accurate in various cases
+* Made zeta typically 2-5x faster
+* Much more efficient computation of zeta for huge s (zeta(s) ~= 1)
+* Optimized numerical calculation of Bernoulli numbers
+* Fast exact calculation of huge Bernoulli numbers via zeta and the
+  von Staudt-Clausen theorem
+* Using AGM to compute ellipk, which is much faster and works
+  in the entire complex plane
+* Allow single-argument form agm(x) = agm(1,x)
+* Faster and more accurate computation of erf
+* Added fast and accurate implementation of erfc
+* Normal probability functions npdf, ncdf
+* Fixed directed rounding in corner cases for various functions
+
+Improvements to numerical integration:
+* Changed syntax for integration (quad(f, [a, b], options)
+* Implemented Gauss-Legendre quadrature
+* Direct support for triple integrals (quad(f, X, Y, Z))
+* Interval can be a list of several points, to split integration
+  into subintervals
+* Oscillatory quadrature uses Gauss-Legendre instead of tanh-sinh,
+  since this is typically faster
+* Fixed minor rounding bug in tanh-sinh quadrature not giving
+  complete symmetry in the nodes
+* Implemented quadrature rules in classes for improved extensibility
+
+Various speed improvements:
+* Up to 3x faster computation of log(x) at low precision, due to using
+  Taylor series with argument reduction and partial caching
+* About 2x faster log(x) at very high precision due to more efficient
+  computation of exp in the Newton iteration
+* Up to 10x faster computation of atan(x) at low to medium precision,
+  due to using Taylor series with argument reduction and partial caching
+* Faster pickling due to using hex() instead of long()
+* Optimized code for Khinchin's constant (2.5x faster at 1000 digits)
+* Optimized code for Glaisher's constant (1.5x faster at 1000 digits)
+* Faster algorithm for Euler's constant (10x faster at 10000 digits)
+* Rewrote PSLQ to use fixed-point arithmetic, giving a ~7x speedup
+  in pslq, findpoly and identify
+
+Miscellaneous bugfixes:
+* Fixed nthroot for n = -1, 0, 1
+* Fixed inf/2**n and nan/2**n returning zero
+
 --0.9--
 Released August 23, 2008
 

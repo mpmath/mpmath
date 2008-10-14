@@ -4,7 +4,7 @@ mpmath
 A Python library for arbitrary-precision floating-point arithmetic.
 
 Website: http://code.google.com/p/mpmath
-Author: Fredrik Johansson <fredrik.johansson@gmail.com>
+Main author: Fredrik Johansson <fredrik.johansson@gmail.com>
 
 Mpmath is free software released under the New BSD License (see the
 LICENSE file for details)
@@ -28,6 +28,7 @@ see the CHANGES file.
 
 Release history:
 
+* Version 0.10 released on ...
 * Version 0.9 released on August 23, 2008
 * Version 0.8 released on April 20, 2008
 * Version 0.7 released on March 12, 2008
@@ -41,8 +42,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires a recent version of Python. It has been tested with
-Python 2.5 and should work with Python 2.4.
+Mpmath requires a recent version of Python. It should work with
+Python 2.4, 2.5 and 2.6.
 
 The latest release of mpmath can be downloaded from the mpmath
 website. It should also be available in the Python Package Index at

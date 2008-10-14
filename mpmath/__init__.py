@@ -1,4 +1,4 @@
-__version__ = '0.9'
+__version__ = '0.10'
 
 from mptypes import (\
     mpnumeric, mpf, mpc, mpi, convert_lossless,
