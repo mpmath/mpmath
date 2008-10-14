@@ -273,7 +273,10 @@ def _getm(method):
     elif method == 'anderson':
         def getm(fz, fb):
             m = 1 - fz/fb
-            return m if m > 0 else 0.5
+            if m > 0:
+                return m
+            else:
+                return 0.5
     else:
         raise ValueError, "method '%s' not recognized" % method
     return getm
