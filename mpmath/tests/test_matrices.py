@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
     mnorm_F, norm_p, zeros, ones, randmatrix, extend
 from mpmath.linalg import inverse

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 from mptypes import convert_lossless, extraprec, eps
