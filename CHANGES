@@ -1,5 +1,5 @@
 --0.10--
-Released ...
+Released October 15, 2008
 
 Interface / general:
 * Mpmath now works with Python 2.6
@@ -62,7 +62,7 @@ Improvements to special functions:
 * Fixed directed rounding in corner cases for various functions
 
 Improvements to numerical integration:
-* Changed syntax for integration (quad(f, [a, b], options)
+* Changed syntax for integration (quad(f, [a, b], options))
 * Implemented Gauss-Legendre quadrature
 * Direct support for triple integrals (quad(f, X, Y, Z))
 * Interval can be a list of several points, to split integration
