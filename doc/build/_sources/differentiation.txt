@@ -29,9 +29,9 @@ Although the finite difference approximation can be applied recursively to compu
 
     >>> mp.dps = 15
     >>> print diffc(sin, 0, 13)
-    (0.9999987024793 - 6.23819166183936e-13j)
+    (0.999998700563927 + 5.15875386126152e-12j)
 
 The accuracy can be improved by increasing the radius of the integration contour (provided that the function is well-behaved within this region)::
 
     >>> print diffc(sin, 0, 13, radius=5)
-    (1.0 + 1.44139403318761e-23j)
+    (1.0 + 2.73247829986796e-24j)

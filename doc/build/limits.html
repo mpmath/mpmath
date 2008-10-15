@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Limits &mdash; mpmath v0.9 documentation</title>
+    <title>Limits &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
     <link rel="next" title="Interpolation" href="interpolation.html" />
     <link rel="prev" title="Optimization" href="optimization.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="optimization.html" title="Optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -56,7 +56,6 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span> <span class="o">=</span> <span class="n">factorial</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
@@ -88,7 +87,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># only good to ~7 digits, despite computing (10**6)! which has</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># over 5 million digits when written out exactly</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">6</span><span class="p">)</span>
-<span class="go">2.5066284835166987585628174193828898874378396032067</span>
+<span class="go">2.5066284835166987585628174193828898874378396079338</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># fast and fully accurate</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">2.5066282746310005024157652848110452530069867406099</span>
@@ -158,12 +157,12 @@
         <li class="right" >
           <a href="optimization.html" title="Optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

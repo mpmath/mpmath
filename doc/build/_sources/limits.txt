@@ -10,7 +10,6 @@ Numerical limits of functions and sequences can be computed with ``limit``, whic
     >>> mp.dps = 50
     >>> print limit(lambda n: (1+1/n)**n, inf)
     2.7182818284590452353602874713526624977572470937
-    >>> fac = factorial
     >>> print limit(lambda n: 2**(4*n+1)*fac(n)**4/(2*n+1)/fac(2*n)**2, inf)
     3.1415926535897932384626433832795028841971693993751
 
@@ -49,7 +48,7 @@ Computing the constant factor in Stirling's formula, without and with accelerati
     >>> # only good to ~7 digits, despite computing (10**6)! which has
     >>> # over 5 million digits when written out exactly
     >>> print f(10**6)
-    2.5066284835166987585628174193828898874378396032067
+    2.5066284835166987585628174193828898874378396079338
     >>> # fast and fully accurate
     >>> print limit(f, inf)
     2.5066282746310005024157652848110452530069867406099

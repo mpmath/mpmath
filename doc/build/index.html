@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Welcome to mpmath&#8217;s documentation! &mdash; mpmath v0.9 documentation</title>
+    <title>Welcome to mpmath&#8217;s documentation! &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="" />
+    <link rel="top" title="mpmath v0.10 documentation" href="" />
     <link rel="next" title="Setting up mpmath" href="setup.html" />
   </head>
   <body>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="N">next</a> |</li>
-        <li><a href="">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -46,7 +46,7 @@
   <div class="section" id="welcome-to-mpmath-s-documentation">
 <h1 id="welcome-to-mpmath-s-documentation">Welcome to mpmath&#8217;s documentation!<a class="headerlink" href="#welcome-to-mpmath-s-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Mpmath is a Python library for arbitrary-precision floating-point arithmetic. These pages documents mpmath&#8217;s main features, with extensive use of examples that can be run in the interactive Python interpreter.</p>
-<p>The features shown apply for version 0.9 of mpmath.</p>
+<p>The features shown apply for version 0.10 of mpmath.</p>
 <p>For general information about mpmath, see the main page <a class="reference external" href="http://code.google.com/p/mpmath/">http://code.google.com/p/mpmath/</a></p>
 <p>Contents:</p>
 <ul>
@@ -63,6 +63,7 @@
 <li><a class="reference external" href="basics.html#mpmath-numbers">Mpmath numbers</a></li>
 <li><a class="reference external" href="basics.html#setting-the-precision">Setting the precision</a></li>
 <li><a class="reference external" href="basics.html#providing-correct-input">Providing correct input</a></li>
+<li><a class="reference external" href="basics.html#plotting">Plotting</a></li>
 </ul>
 </li>
 </ul>
@@ -79,12 +80,22 @@
 <ul>
 <li><a class="reference external" href="intervals.html">Interval arithmetic</a><ul>
 <li><a class="reference external" href="intervals.html#establishing-inequalities">Establishing inequalities</a></li>
+<li><a class="reference external" href="intervals.html#linear-algebra">Linear algebra</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><a class="reference external" href="matrices.html">Matrices</a><ul>
+<li><a class="reference external" href="matrices.html#creating-matrices">Creating matrices</a></li>
+<li><a class="reference external" href="matrices.html#matrix-operations">Matrix operations</a></li>
+<li><a class="reference external" href="matrices.html#linear-algebra">Linear algebra</a></li>
+<li><a class="reference external" href="matrices.html#interval-matrices">Interval matrices</a></li>
 </ul>
 </li>
 </ul>
 <ul>
 <li><a class="reference external" href="integration.html">Integration</a><ul>
-<li><a class="reference external" href="integration.html#tanh-sinh-quadrature-quadts">Tanh-sinh quadrature (<tt class="docutils literal"><span class="pre">quadts</span></tt>)</a></li>
+<li><a class="reference external" href="integration.html#basic-numerical-integration-quad">Basic numerical integration (<tt class="docutils literal"><span class="pre">quad</span></tt>)</a></li>
 <li><a class="reference external" href="integration.html#oscillatory-quadrature-quadosc">Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)</a></li>
 <li><a class="reference external" href="integration.html#solving-odes-odeint">Solving ODEs (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
 </ul>
@@ -108,7 +119,10 @@
 </ul>
 <ul>
 <li><a class="reference external" href="optimization.html">Optimization</a><ul>
-<li><a class="reference external" href="optimization.html#root-finding-with-the-secant-method-secant">Root-finding with the secant method (<tt class="docutils literal"><span class="pre">secant</span></tt>)</a></li>
+<li><a class="reference external" href="optimization.html#root-finding-with-the-secant-method-findroot">Root-finding with the secant method (<tt class="docutils literal"><span class="pre">findroot</span></tt>)</a></li>
+<li><a class="reference external" href="optimization.html#multiple-roots">Multiple roots</a></li>
+<li><a class="reference external" href="optimization.html#accelerated-convergence">Accelerated convergence</a></li>
+<li><a class="reference external" href="optimization.html#complex-roots">Complex roots</a></li>
 <li><a class="reference external" href="optimization.html#finding-all-roots-of-a-polynomial-polyroots">Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)</a></li>
 </ul>
 </li>
@@ -183,12 +197,12 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="N">next</a> |</li>
-        <li><a href="">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

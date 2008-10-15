@@ -39,11 +39,11 @@ With psyco (0.0036 seconds)::
 With psyco and low-level functions (0.0017 seconds)::
 
     >>> import psyco; psyco.full()
-    >>> from mpmath.lib import from_int, from_float, fadd, round_nearest
+    >>> from mpmath.libmpf import from_int, from_float, mpf_add, round_nearest
     >>> x = from_int(1)
     >>> one_tenth = from_float(0.1)
     >>> for i in range(1000):
-    ...     x = fadd(x, one_tenth, 53, round_nearest)
+    ...     x = mpf_add(x, one_tenth, 53, round_nearest)
 
 The last version is 16.5 times faster than the first (however, this example is extreme; the gain will usually be smaller in realistic calculations).
 

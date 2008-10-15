@@ -93,7 +93,7 @@ There are several different strategies for rounding a too large mantissa or a re
   | Nearest   | To nearest; to the nearest even number on a tie         |
   +-----------+---------------------------------------------------------+
 
-The first four modes are called *directed* rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method.
+The first four modes are called *directed* rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method. Directed rounding is currently only available via interval arithmetic or via the interface in the ``libmpf`` module.
 
 The arithmetic operations ``+``, ``-``, ``*`` and ``/`` acting on real floating-point numbers always round their results *correctly* in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don't round to a number farther away than necessary. Exponentiation by an integer *n* preserves directions but may round too far if either the mantissa or *n* is very large.
 

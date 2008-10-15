@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Speed tricks &mdash; mpmath v0.9 documentation</title>
+    <title>Speed tricks &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
     <link rel="prev" title="Technical details" href="technical.html" />
   </head>
   <body>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -75,11 +75,11 @@
 </pre></div>
 <p>With psyco and low-level functions (0.0017 seconds):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath.lib</span> <span class="k">import</span> <span class="n">from_int</span><span class="p">,</span> <span class="n">from_float</span><span class="p">,</span> <span class="n">fadd</span><span class="p">,</span> <span class="n">round_nearest</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath.libmpf</span> <span class="k">import</span> <span class="n">from_int</span><span class="p">,</span> <span class="n">from_float</span><span class="p">,</span> <span class="n">mpf_add</span><span class="p">,</span> <span class="n">round_nearest</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">from_int</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">from_float</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">x</span> <span class="o">=</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">one_tenth</span><span class="p">,</span> <span class="mf">53</span><span class="p">,</span> <span class="n">round_nearest</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">x</span> <span class="o">=</span> <span class="n">mpf_add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">one_tenth</span><span class="p">,</span> <span class="mf">53</span><span class="p">,</span> <span class="n">round_nearest</span><span class="p">)</span>
 </pre></div>
 <p>The last version is 16.5 times faster than the first (however, this example is extreme; the gain will usually be smaller in realistic calculations).</p>
 <p>Many calculations can be done with ordinary floating-point arithmetic, and only in special cases require multiprecision arithmetic (for example to avoid overflows in corner cases). In these situations, it may be possible to write code that uses fast regular floats by default, and automatically (or manually) falls backs to mpmath only when needed. Python&#8217;s dynamic namespaces and ability to compile code on the fly are helpful. Here is a simple (probably not failsafe) example:</p>
@@ -142,12 +142,12 @@
         <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

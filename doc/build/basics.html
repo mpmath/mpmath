@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Mpmath basics &mdash; mpmath v0.9 documentation</title>
+    <title>Mpmath basics &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
     <link rel="next" title="Functions" href="functions.html" />
     <link rel="prev" title="Setting up mpmath" href="setup.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -95,11 +95,9 @@
 <span class="go">Mpmath settings:</span>
 <span class="go">  mp.prec = 53                [default: 53]</span>
 <span class="go">  mp.dps = 15                 [default: 15]</span>
-<span class="go">  mp.rounding = &#39;nearest&#39;     [default: &#39;nearest&#39;]</span>
 <span class="go">  mp.trap_complex = False     [default: False]</span>
 </pre></div>
 <p>The term <strong>prec</strong> denotes the binary precision (measured in bits) while <strong>dps</strong> (short for <em>decimal places</em>) is the decimal precision. Binary and decimal precision are related roughly according to the formula <tt class="docutils literal"><span class="pre">prec</span> <span class="pre">=</span> <span class="pre">3.33*dps</span></tt>. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).</p>
-<p>The valid rounding modes are <tt class="docutils literal"><span class="pre">&quot;nearest&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;up&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;down&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;floor&quot;</span></tt>, and <tt class="docutils literal"><span class="pre">&quot;ceiling&quot;</span></tt>. The default rounding mode (round to nearest) is the best setting for most purposes.</p>
 <p>Changing either precision property of the <tt class="docutils literal"><span class="pre">mp</span></tt> object automatically updates the other; usually you just want to change the <tt class="docutils literal"><span class="pre">dps</span></tt> value:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span>
@@ -184,6 +182,20 @@
 </pre></div>
 <p>(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)</p>
 </div>
+<div class="section" id="plotting">
+<h2 id="plotting">Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
+<p>If <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a> is available, the functions <tt class="docutils literal"><span class="pre">plot</span></tt> and <tt class="docutils literal"><span class="pre">cplot</span></tt> in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.</p>
+<p>For example, to plot the exponential function:</p>
+<div class="highlight"><pre><span class="n">plot</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+</pre></div>
+<p>To plot both sine and cosine over the interval [-4, 4]:</p>
+<div class="highlight"><pre><span class="n">plot</span><span class="p">([</span><span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+</pre></div>
+<p>To plot the function f(z) = exp(1/z) in a part of the complex plane:</p>
+<div class="highlight"><pre><span class="n">cplot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">z</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="p">])</span>
+</pre></div>
+<p>See <tt class="docutils literal"><span class="pre">help(plot)</span></tt> and <tt class="docutils literal"><span class="pre">help(cplot)</span></tt> for details.</p>
+</div>
 </div>
 
 
@@ -201,6 +213,7 @@
 </ul>
 </li>
 <li><a class="reference external" href="#providing-correct-input">Providing correct input</a></li>
+<li><a class="reference external" href="#plotting">Plotting</a></li>
 </ul>
 </li>
 </ul>
@@ -238,12 +251,12 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

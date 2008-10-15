@@ -54,12 +54,9 @@ Mpmath uses a global working precision; it does not keep track of the precision 
     Mpmath settings:
       mp.prec = 53                [default: 53]
       mp.dps = 15                 [default: 15]
-      mp.rounding = 'nearest'     [default: 'nearest']
       mp.trap_complex = False     [default: False]
 
 The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
-
-The valid rounding modes are ``"nearest"``, ``"up"``, ``"down"``, ``"floor"``, and ``"ceiling"``. The default rounding mode (round to nearest) is the best setting for most purposes.
 
 Changing either precision property of the ``mp`` object automatically updates the other; usually you just want to change the ``dps`` value:
 
@@ -156,3 +153,22 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
     mpf('10.8999999999999999999999999999997')
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
+
+Plotting
+--------
+
+If `matplotlib <http://matplotlib.sourceforge.net/>`_ is available, the functions ``plot`` and ``cplot`` in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.
+
+For example, to plot the exponential function::
+
+    plot(exp)
+
+To plot both sine and cosine over the interval [-4, 4]::
+
+    plot([cos, sin], [-4, 4])
+
+To plot the function f(z) = exp(1/z) in a part of the complex plane::
+
+    cplot(lambda z: exp(1/z), [-2, 2], [-2, 2])
+
+See ``help(plot)`` and ``help(cplot)`` for details.

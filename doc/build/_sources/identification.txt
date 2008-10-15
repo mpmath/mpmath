@@ -166,19 +166,18 @@ Numbers of the form ``m + n*sqrt(p)`` are solutions to quadratic equations:
 The following gives an algebraic approximation of pi (judging from the coefficients, pi is not very good at being an algebraic number):
 
     >>> findpoly(pi, 3)
-    [836, -1734, -2658, -457]
+    [-83137, 198261, 197674]
 
 The generated coefficient list is valid input to ``polyval`` and ``polyroots``:
 
     >>> polyval(findpoly(pi,3), pi)
-    mpf('3.205968823749572e-11')
+    mpf('5.8207660913467407e-11')
     >>> for r in polyroots(findpoly(pi, 3)):
     ...     print r
-    -0.866652458240562
-    -0.200777515923391
+    -0.756842181477497
     3.14159265358979
 
-When identifying exact algebraic numbers, the precision must be set very high to avoid false solutions:
+When identifying exact algebraic numbers of high degree, the precision must be set very high to avoid false solutions:
 
     >>> mp.dps = 50
     >>> findpoly(sqrt(2)+sqrt(3), 4)

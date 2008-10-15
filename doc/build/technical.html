@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Technical details &mdash; mpmath v0.9 documentation</title>
+    <title>Technical details &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
     <link rel="next" title="Speed tricks" href="speedtricks.html" />
     <link rel="prev" title="Number identification" href="identification.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -158,7 +158,7 @@
 </tbody>
 </table>
 </blockquote>
-<p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method.</p>
+<p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method. Directed rounding is currently only available via interval arithmetic or via the interface in the <tt class="docutils literal"><span class="pre">libmpf</span></tt> module.</p>
 <p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don&#8217;t round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
 <p>Evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
 <p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^(-100) and smaller than 10^100), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
@@ -235,12 +235,12 @@
         <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

@@ -2,13 +2,13 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Functions &mdash; mpmath v0.9 documentation</title>
+    <title>Functions &mdash; mpmath v0.10 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:   '',
-          VERSION:    '0.9',
+          VERSION:    '0.10',
           COLLAPSE_MODINDEX: false
       };
     </script>
@@ -18,7 +18,7 @@
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
     <link rel="next" title="Interval arithmetic" href="intervals.html" />
     <link rel="prev" title="Mpmath basics" href="basics.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -165,7 +165,13 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">45</span><span class="o">*</span><span class="n">degree</span><span class="p">)</span>
 <span class="go">0.707106781186548</span>
 </pre></div>
-<p>An example with very high precision:</p>
+<p>The functions cospi and sinpi allow accurate evaluation at multiples of pi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">3.67394039744206e-16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+<p>An example function evaluation with very high precision:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">500</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tanh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>     <span class="c"># doctest:+SKIP</span>
 <span class="go">0.996272076220749944264690580012536711896899190804587614362612415978541298982821</span>
@@ -348,13 +354,12 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>
 <span class="go">(-2.8535817554090378072068187234910812 + 17.113535539412145912607826671159289j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-<span class="go">(1.0 - 9.9465893710591698326300157883907326e-38j)</span>
+<span class="go">(1.0 + 3.5075477124212226194278700785075126e-36j)</span>
 </pre></div>
 <p>The function <tt class="docutils literal"><span class="pre">hyper</span></tt> sums a general hypergeometric series (this works only for argument where the series converges):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">],</span> <span class="mf">1</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span>     <span class="c"># doctest:+SKIP</span>
-<span class="go">1.016210574248696702302096161058517020553783149632248720837030993406388717433423</span>
-<span class="go">76737176412753643360654694328402996208151824851693763066257492700066724382806555</span>
-<span class="go">22803873785096931980990953468408484030225</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">],</span> <span class="mf">1</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">1.0162105742486967023020961610585170205537831496322</span>
 </pre></div>
 <table border="1" class="docutils">
 <colgroup>
@@ -394,17 +399,35 @@
 <tr><td><tt class="docutils literal"><span class="pre">upper_gamma(a,x)</span></tt></td>
 <td>Upper incomplete gamma function</td>
 </tr>
+<tr><td><tt class="docutils literal"><span class="pre">psi(n,x)</span></tt></td>
+<td>Polygamma function of order n</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">stieltjes(n)</span></tt></td>
+<td>Nth Stieltjes constant</td>
+</tr>
 <tr><td><tt class="docutils literal"><span class="pre">erf(x)</span></tt></td>
 <td>Error function</td>
 </tr>
+<tr><td><tt class="docutils literal"><span class="pre">erfc(x)</span></tt></td>
+<td>Complementary error function</td>
+</tr>
 <tr><td><tt class="docutils literal"><span class="pre">erfi(x)</span></tt></td>
 <td>Imaginary error function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">npdf(x,</span> <span class="pre">mu,</span> <span class="pre">sigma)</span></tt></td>
+<td>Normal probability density function</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">ncdf(x,</span> <span class="pre">mu,</span> <span class="pre">sigma)</span></tt></td>
+<td>Normal cumulative distribution function</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">zeta(x)</span></tt></td>
 <td>Riemann zeta function</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">bernoulli(n)</span></tt></td>
 <td>Bernoulli number, B_n</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">bernfrac(n)</span></tt></td>
+<td>Bernoulli number as an exact fraction</td>
 </tr>
 <tr><td><tt class="docutils literal"><span class="pre">ei(x)</span></tt></td>
 <td>Exponential integral, Ei(x)</td>
@@ -499,29 +522,6 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">))</span>
 <span class="go">[1.5, 1.9, 2.3, 2.7, 3.1]</span>
 </pre></div>
-<p>For some functions, one is often interested in computing the sequence of values f(1), f(2), f(3), ... perhaps up to some unknown bound. Mpmath implements a few such sequences as generators. Use of these generators is generally much more efficient than computing each value from scratch.</p>
-<p>The precision of each generated number will be the same as that of the first, regardless of whether the global working precision is changed subsequently.</p>
-<dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">bernoulli_range</span></tt></dt>
-<dd><p class="first">Generates the Bernoulli numbers with positive even index: 1/6, -1/30, 1/42, ...</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">bernoulli_range</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">b</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="go">0.166666666666667</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">b</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="go">-0.0333333333333333</span>
-</pre></div>
-</dd>
-<dt><tt class="docutils literal"><span class="pre">log_range</span></tt></dt>
-<dd><p class="first">Generates the nonzero integer logarithms: log(2), log(3), log(4), ...</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">log_range</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">l</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="go">0.693147180559945</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">l</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-<span class="go">1.09861228866811</span>
-</pre></div>
-</dd>
-</dl>
 </div>
 <div class="section" id="utility-functions">
 <h2 id="utility-functions">Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
@@ -654,12 +654,12 @@
         <li class="right" >
           <a href="basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Aug 23, 2008.
+      Last updated on Oct 14, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
