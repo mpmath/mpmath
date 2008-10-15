@@ -346,7 +346,7 @@ keyword ``force_type``::
 such systems, so the residual is minimized instead. Internally this is done
 using Cholesky decomposition to compute a least squares approximation. This means
 that that ``lu_solve`` will square the errors. If you can't afford this, use
-``qr_solve`` instead. It is twice as slow but more accurate, and t calculates
+``qr_solve`` instead. It is twice as slow but more accurate, and it calculates
 the residual automatically.
 
 
@@ -355,21 +355,21 @@ Matrix factorization
 
 The function ``lu`` computes an explicit LU factorization of a matrix::
 
-    >>> P, L, U = lu(matrix([[1,2,3],[4,5,6],[7,8,9]]))
+    >>> P, L, U = lu(matrix([[0,2,3],[4,5,6],[7,8,9]]))
     >>> print P
     [0.0  0.0  1.0]
-    [0.0  1.0  0.0]
     [1.0  0.0  0.0]
+    [0.0  1.0  0.0]
     >>> print L
-    [              1.0  0.0  0.0]
-    [0.571428571428571  1.0  0.0]
-    [0.142857142857143  2.0  1.0]
+    [              1.0                0.0  0.0]
+    [              0.0                1.0  0.0]
+    [0.571428571428571  0.214285714285714  1.0]
     >>> print U
-    [7.0                8.0                9.0]
-    [0.0  0.428571428571429  0.857142857142858]
-    [0.0                0.0                0.0]
+    [7.0  8.0                9.0]
+    [0.0  2.0                3.0]
+    [0.0  0.0  0.214285714285714]
     >>> print P.T*L*U
-    [1.0  2.0  3.0]
+    [0.0  2.0  3.0]
     [4.0  5.0  6.0]
     [7.0  8.0  9.0]
 
