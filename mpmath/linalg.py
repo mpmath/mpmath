@@ -11,7 +11,7 @@ from functions import sqrt, sign
 from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p
 from copy import copy
 
-def LU_decomp(A, overwrite=False):
+def LU_decomp(A, overwrite=False, use_cache=True):
     """
     LU-factorization of a n*n matrix using the Gauss algorithm.
     Returns L and U in one matrix and the pivot indices.
@@ -20,8 +20,8 @@ def LU_decomp(A, overwrite=False):
     """
     if not A.rows == A.cols:
         raise ValueError('need n*n matrix')
-    # get from cache if possilbe
-    if isinstance(A, matrix) and A._LU:
+    # get from cache if possible
+    if use_cache and isinstance(A, matrix) and A._LU:
         return A._LU
     if not overwrite:
         orig = A
@@ -112,6 +112,23 @@ def lu_solve(A, b, **kwargs):
         x = U_solve(A, b)
         return x
 
+def improve_solution(A, x, b, maxsteps=1):
+    """
+    Improve a solution to a linear equation system iteratively.
+
+    This re-uses the LU decomposition and is thus cheap.
+    Usually 3 up to 4 iterations are giving the maximal improvement.
+    """
+    assert A.rows == A.cols, 'need n*n matrix' # TODO: really?
+    for _ in xrange(maxsteps):
+        r = residual(A, x, b)
+        if norm_p(r, 2) < 10*eps:
+            break
+        # this uses cached LU decomposition and is thus cheap
+        dx = lu_solve(A, -r)
+        x += dx
+    return x
+
 def lu(A):
     """
     A -> P, L, U
@@ -121,7 +138,7 @@ def lu(A):
 
     P*A = L*U
 
-    If you need efficiency, use the low-level method LU_decomp instead, it's 
+    If you need efficiency, use the low-level method LU_decomp instead, it's
     much more memory efficient.
     """
     # get factorization
@@ -364,5 +381,6 @@ def cond(A, norm=mnorm_1):
     Definition:    cond(A) = ||A|| * ||A**-1||
     """
     return norm(A) * norm(inverse(A))
+
 
 
