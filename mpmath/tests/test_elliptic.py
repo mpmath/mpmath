@@ -2,7 +2,7 @@
     Limited tests of the elliptic functions module.  A full suite of
     extensive testing can be found in elliptic_torture_tests.py
 
-    Author: M.T. Taschuk
+    Author of the first version: M.T. Taschuk
 
     References:
 
@@ -18,6 +18,14 @@ import unittest
 #import mpmath.mptypes      # switch to this once integrated with mpmath
 import mpmath
 import random
+from mpmath.mptypes import (mpc, eps, j)
+
+def mpc_ae(a, b, eps=eps):
+    res = True
+    res = res and a.real.ae(b.real, eps)
+    res = res and a.imag.ae(b.imag, eps)
+    return res
+
 
 from mpmath.elliptic import *
 
@@ -177,6 +185,69 @@ class precisemathTests(unittest.TestCase):
         q = mpmath.mpf('0.1')
         value = jacobi_theta_4(z, q)
         self.assertTrue(isinstance(value, mpmath.mpf))
+
+    def test_JacobiTheta_complex(self):
+        mp.dps = 30
+        z = mpf(1)/4 + j/8
+        q = mpf(1)/3 + j/7
+        #N[EllipticTheta[1, 1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('0.31618034835986160705729105731678285') + \
+              mpf('0.07542013825835103435142515194358975') * j
+        r = jacobi_theta(1, z, q)
+        self.assertTrue(mpc_ae(r, res))
+    
+        #N[EllipticTheta[2, 1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('1.6530986428239765928634711417951828') + \
+              mpf('0.2015344864707197230526742145361455') * j
+        r = jacobi_theta(2, z, q)
+        self.assertTrue(mpc_ae(r, res))
+    
+        #N[EllipticTheta[3, 1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('1.6520564411784228184326012700348340') + \
+              mpf('0.1998129119671271328684690067401823') * j
+        r = jacobi_theta(3, z, q)
+        self.assertTrue(mpc_ae(r, res))
+    
+        #N[EllipticTheta[4, 1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('0.37619082382228348252047624089973824') - \
+              mpf('0.15623022130983652972686227200681074') * j
+        r = jacobi_theta(4, z, q)
+        self.assertTrue(mpc_ae(r, res))
+    
+        # check that the two representations of the theta function
+        # are consistent with each other
+        m = mpf(1)/3 + j/5
+        q = calculate_nome(sqrt(m))
+        r1 = jacobi_theta_1(z, m)
+        r2 = jacobi_theta(1, z, q)
+        self.assertTrue(mpc_ae(r1, r2))
+        r1 = jacobi_theta_2(z, m)
+        r2 = jacobi_theta(2, z, q)
+        self.assertTrue(mpc_ae(r1, r2))
+        r1 = jacobi_theta_3(z, m)
+        r2 = jacobi_theta(3, z, q)
+        self.assertTrue(mpc_ae(r1, r2))
+        r1 = jacobi_theta_4(z, m)
+        r2 = jacobi_theta(4, z, q)
+        self.assertTrue(mpc_ae(r1, r2))
+
+        # check some theta function identities
+        theta = jacobi_theta
+        mp.dos = 100
+        z = mpf(1)/4 + j/8
+        q = mpf(1)/3 + j/7
+        mp.dps += 10
+        a = [0,0,theta(2, 0, q), theta(3, 0, q), theta(4, 0, q)]
+        t = [0, theta(1, z, q), theta(2, z, q), theta(3, z, q), theta(4, z, q)]
+        r = [(t[2]*a[4])**2 - (t[4]*a[2])**2 + (t[1] *a[3])**2,
+            (t[3]*a[4])**2 - (t[4]*a[3])**2 + (t[1] *a[2])**2,
+            (t[1]*a[4])**2 - (t[3]*a[2])**2 + (t[2] *a[3])**2,
+            (t[4]*a[4])**2 - (t[3]*a[3])**2 + (t[2] *a[2])**2,
+            a[2]**4 + a[4]**4 - a[3]**4]
+        mp.dps -= 10
+        for x in r:
+            self.assertTrue(mpc_ae(x, mpc(0)))
+
 
     def testJacobiEllipticSn(self):
         """
@@ -349,6 +420,30 @@ class precisemathTests(unittest.TestCase):
             print >> sys.stderr, 'Equality (~ zero): %e' % equality
             self.assertEquals(False, True)
 
+    def test_JacobiElliptic_complex(self):
+        mp.dps = 30
+        # N[JacobiSN[1/4 + I/8, 1/3 + I/7], 35] in Mathematica
+        res = mpf('0.2495674401066275492326652143537') + \
+              mpf('0.12017344422863833381301051702823') * j
+        u = mpf(1)/4 + j/8
+        m = mpf(1)/3 + j/7
+        r = jacobi_elliptic_sn(u, m)
+        self.assertTrue(mpc_ae(r, res))
+    
+        #N[JacobiCN[1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('0.9762691700944007312693721148331') - \
+              mpf('0.0307203994181623243583169154824')*j
+        r = jacobi_elliptic_cn(u, m)
+        #assert r.real.ae(res.real)
+        #assert r.imag.ae(res.imag)
+        self.assertTrue(mpc_ae(r, res))
+    
+        #N[JacobiDN[1/4 + I/8, 1/3 + I/7], 35]
+        res = mpf('0.99639490163039577560547478589753039') - \
+              mpf('0.01346296520008176393432491077244994')*j
+        r = jacobi_elliptic_dn(u, m)
+        self.assertTrue(mpc_ae(r, res))
+
 def test_elliptic_functions():
     t = precisemathTests()
     t.testCalculateNome()
@@ -356,9 +451,11 @@ def test_elliptic_functions():
     t.testJacobiTheta2()
     t.testJacobiTheta3()
     t.testJacobiTheta4()
+    t.test_JacobiTheta_complex()
     t.testJacobiEllipticSn()
     t.testJacobiEllipticCn()
     t.testJacobiEllipticDn()
+    t.test_JacobiElliptic_complex()
 
 if __name__ == '__main__':          # if run as script, run tests
     #test_elliptic_functions()
