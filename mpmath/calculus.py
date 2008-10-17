@@ -255,10 +255,7 @@ def taylor(f, x, n, **options):
         12.1824939607035
 
     """
-    c = []
-    for i in xrange(n+1):
-        c.append(diff(f, x, i, **options) / factorial(i))
-    return c
+    return [diff(f, x, i, **options) / factorial(i) for i in xrange(n+1)]
 
 
 #----------------------------------------------------------------------------#
