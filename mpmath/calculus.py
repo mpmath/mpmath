@@ -84,7 +84,7 @@ def limit(f, x, direction=-1, n=None, N=None):
 
 def diff(f, x, n=1, method='step', scale=1, direction=0):
     """
-    Numerically computes the derivative of f'(x). Optionally, computes
+    Numerically compute the derivative of f(x). Optionally, compute
     the nth derivative f^(n)(x), for any order n. Basic examples:
 
         >>> print diff(lambda x: x**2 + x, 1.0)
