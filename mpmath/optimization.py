@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from mptypes import convert_lossless, extraprec, eps
-from calculus import diff, diffc
+from calculus import diff
 from functions import sqrt, sign
 
 ##############
@@ -572,7 +572,7 @@ def multiplicity(f, root, tol=eps, maxsteps=10, **kwargs):
         if dfstr in kwargs:
             df = kwargs[dfstr]
         else:
-            df = lambda x: diffc(f, x, i)
+            df = lambda x: diff(f, x, i)
         if not abs(df(root)) < tol:
             break
     return i

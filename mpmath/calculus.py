@@ -13,8 +13,8 @@ __docformat__ = 'plaintext'
 
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
-    AS_POINTS, arange, nstr)
-from functions import (ldexp, factorial, exp, cos, pi, bernoulli)
+    AS_POINTS, arange, nstr, nprint)
+from functions import (ldexp, factorial, exp, cos, pi, bernoulli, sign)
 
 from quadrature import quadgl, quadts
 
@@ -82,67 +82,183 @@ def limit(f, x, direction=-1, n=None, N=None):
 #                                Differentiation                             #
 #----------------------------------------------------------------------------#
 
-def diff(f, x, direction=0):
+def diff(f, x, n=1, method='step', scale=1, direction=0):
     """
-    Compute f'(x) using a simple finite difference approximation.
+    Numerically computes the derivative of f'(x). Optionally, computes
+    the nth derivative f^(n)(x), for any order n. Basic examples:
 
-    With direction = 0, use the central difference f(x-h), f(x+h)
-    With direction = 1, use the forward difference f(x), f(x+h)
-    With direction = -1, use the backward difference f(x-h), f(x)
-
-        >>> print diff(cos, 1)
-        -0.841470984807897
-        >>> print diff(abs, 0, 0)
+        >>> print diff(lambda x: x**2 + x, 1.0)
+        3.0
+        >>> print diff(lambda x: x**2 + x, 1.0, 2)
+        2.0
+        >>> print diff(lambda x: x**2 + x, 1.0, 3)
         0.0
-        >>> print diff(abs, 0, 1)
+
+    The exponential function is invariant under differentiation:
+
+        >>> nprint([diff(exp, 3, n) for n in range(5)])
+        [20.0855, 20.0855, 20.0855, 20.0855, 20.0855]
+
+    Method
+    ------
+
+    method = 'step':
+
+    By default, the derivative is computed using a finite difference
+    approximation, with a small step h. This requires n+1 function
+    evaluations and must be performed at (n+1) times the target
+    precison. Accordingly, f must support fast evaluation at high
+    precision.
+
+    method = 'quad':
+
+    Alternatively, the derivative can be computed using complex
+    numerical integration. This requires a larger number of function
+    evaluations, but the advantage is that not much extra precision
+    is required. For high order derivatives, this method may thus
+    be faster if f is very expensive to evaluate at high precision.
+
+    With method='quad', n may be any complex number, not necessarily
+    an integer. This allows fractional derivatives to be computed.
+
+    Scale
+    -----
+
+    The scale option specifies the scale of variation of f. The step
+    size in the finite difference is taken to be approximately
+    eps*scale. Thus, for example if f(x) = cos(1000*x), the scale
+    should be set to 1/1000 and if f(x) = cos(x/1000), the scale
+    should be 1000. By default, scale = 1.
+
+    (In practice, the default scale will work even for cos(1000*x) or
+    cos(x/1000). Changing this parameter is a good idea if the scale
+    is something *preposterous*.)
+
+    If numerical integration is used, the radius of integration is
+    taken to be equal to scale/2. Note that f must not have any
+    singularities within the circle of radius scale/2 centered around
+    x. If possible, a larger scale value is preferable because it
+    typically makes the integration faster and more accurate.
+
+    Direction
+    ---------
+
+    By default, diff uses a central difference approximation.
+    This corresponds to direction=0. Alternatively, it can compute a
+    left difference (direction=-1) or right difference (direction=1).
+    This is useful for computing left- or right-sided derivatives
+    of nonsmooth functions:
+
+        >>> print diff(abs, 0, direction=0)
+        0.0
+        >>> print diff(abs, 0, direction=1)
         1.0
-        >>> print diff(abs, 0, -1)
+        >>> print diff(abs, 0, direction=-1)
         -1.0
 
-    The step size is taken similar to the epsilon of the precision.
-    To eliminate cancellation errors, diff temporarily doubles the
-    working precision while calculating the function values.
+    More generally, if the direction is nonzero, a right difference
+    is computed where the step size is multiplied by sign(direction).
+    For example, with direction=+j, the derivative from the positive
+    imaginary direction will be computed.
+
+    This option only makes sense with method='step'. If integration
+    is used, it is assumed that f is analytic, implying that the
+    derivative is the same in all directions.
+
     """
-    prec = mp.prec
-    extra = 5
-    h = ldexp(1, -prec-extra)
+    if n == 0:
+        return f(x)
+    orig = mp.prec
     try:
-        mp.prec = 2*(prec+extra)
-        if   direction == 0:  return (f(x+h) - f(x-h)) * ldexp(1, prec+extra-1)
-        elif direction == 1:  return (f(x+h) - f(x)) * ldexp(1, prec+extra)
-        elif direction == -1: return (f(x) - f(x-h)) * ldexp(1, prec+extra)
+        if method == 'step':
+            mp.prec = (orig+20) * (n+1)
+            h = ldexp(scale, -orig-10)
+            v = mpf(0)
+            # Applying the finite difference formula recursively n times,
+            # we get a step sum weighted by a row of binomial coefficients
+            # Directed: steps x, x+h, ... x+n*h
+            if direction:
+                h *= sign(direction)
+                steps = xrange(0, n+1)
+                norm = h**n
+            # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
+            else:
+                steps = xrange(-n, n+1, 2)
+                norm = (2*h)**n
+            # Initial binomial coefficient is 1 or -1
+            b = (-1) ** (n & 1)
+            k = 1
+            for i in steps:
+                v += b * f(x+i*h)
+                # Binomial recurrence
+                b = (b * (n-k+1)) // (-k)
+                k += 1
+            v = v / norm
+        elif method == 'quad':
+            mp.prec += 10
+            radius = mpf(scale)/2
+            def g(t):
+                rei = radius*exp(j*t)
+                z = x + rei
+                return f(z) / rei**n
+            d = quadts(g, [0, 2*pi])
+            v = d * factorial(n) / (2*pi)
         else:
-            raise ValueError("invalid difference direction: %r" % direction)
+            raise ValueError("unknown method: %r" % method)
     finally:
-        mp.prec = prec
+        mp.prec = orig
+    return +v
 
-def diffc(f, x, n=1, radius=mpf(0.5)):
+def diffun(f, n=1, **options):
     """
-    Compute an approximation of the nth derivative of f at the point x
-    using the Cauchy integral formula. This only works for analytic
-    functions. A circular path with the given radius is used.
+    Given a function f, returns a function g(x) that evaluates the nth
+    derivative f^(n)(x).
 
-    diffc increases the working precision slightly to avoid simple
-    rounding errors. Note that, especially for large n, differentiation
-    is extremely ill-conditioned, so this precaution does not
-    guarantee a correct result. (Provided there are no singularities
-    in the way, increasing the radius may help.)
+        >>> cos2 = diffun(sin)
+        >>> sin2 = diffun(sin, 4)
+        >>> print cos(1.3), cos2(1.3)
+        0.267498828624587 0.267498828624587
+        >>> print sin(1.3), sin2(1.3)
+        0.963558185417193 0.963558185417193
 
-    The returned value will be a complex number; a large imaginary part
-    for a derivative that should be real may indicate a large numerical
-    error.
+    The function f must support arbitrary precision evaluation.
+    See diff() for additional details and supported keyword options.
     """
-    prec = mp.prec
-    try:
-        mp.prec += 10
-        def g(t):
-            rei = radius*exp(j*t)
-            z = x + rei
-            return f(z) / rei**n
-        d = quadts(g, [0, 2*pi])
-        return d * factorial(n) / (2*pi)
-    finally:
-        mp.prec = prec
+    if n == 0:
+        return f
+    def g(x):
+        return diff(f, x, n, **options)
+    return g
+
+def taylor(f, x, n, **options):
+    """
+    Produce a degree-n Taylor polynomial around the point x of the
+    given function f. The coefficients are returned as a list.
+
+        >>> nprint(taylor(sin, 0, 5))
+        [0.0, 1.0, 0.0, -0.166667, 1.08755e-55, 8.33333e-3]
+
+    The coefficients are computed using high-order numerical
+    differentiation. The function must be possible to evaluate
+    to arbitrary precision. See diff() for additional details and
+    supported keyword options.
+
+    Note that to evaluate the Taylor polynomial as an approximation
+    of f, e.g. with polyval, the coefficients must be reversed, and
+    the point of the Taylor expansion must be subtracted from
+    the argument:
+
+        >>> p = taylor(exp, 2.0, 10)
+        >>> print polyval(p[::-1], 2.5 - 2.0)
+        12.1824939606092
+        >>> print exp(2.5)
+        12.1824939607035
+
+    """
+    c = []
+    for i in xrange(n+1):
+        c.append(diff(f, x, i, **options) / factorial(i))
+    return c
 
 
 #----------------------------------------------------------------------------#
@@ -477,7 +593,7 @@ def sumem(f, interval, N=None, integral=None, fderiv=None, error=False,
         C = (f(a+N) + f(b)) / 2
     # Default (inefficient) approach for derivatives
     if not fderiv:
-        fderiv = lambda x, n: diffc(f, x, n, radius=N*0.75)
+        fderiv = lambda x, n: diff(f, x, n)
     k = 1
     prev = 0
     if verbose:
