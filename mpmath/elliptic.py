@@ -71,63 +71,63 @@ def _jacobi_theta2(z, q):
     extra1 = 10
     extra2 = 20
     if z == zero:
-      	if isinstance(q, mpf):
-	    wp = mp.prec + extra1
-	    x = to_fixed(q._mpf_, wp)
-	    x2 = (x*x) >> wp
-	    a = b = x2
-            s = x2
-	    while(a):
-	      	b = (b*x2) >> wp
-		a = (a*b) >> wp
-		s += a
-	    s = (1 << (wp+1)) + (s << 1)
-	    s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
-	else:
+        if isinstance(q, mpf):
             wp = mp.prec + extra1
-	    xre, xim = q._mpc_
-	    xre = to_fixed(xre, wp)
-	    xim = to_fixed(xim, wp)
-	    x2re = (xre*xre - xim*xim) >> wp
-	    x2im = (xre*xim) >> (wp - 1)
-	    are = bre = x2re
-	    aim = bim = x2im
+            x = to_fixed(q._mpf_, wp)
+            x2 = (x*x) >> wp
+            a = b = x2
+            s = x2
+            while(a):
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                s += a
+            s = (1 << (wp+1)) + (s << 1)
+            s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
+        else:
+            wp = mp.prec + extra1
+            xre, xim = q._mpc_
+            xre = to_fixed(xre, wp)
+            xim = to_fixed(xim, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = x2re
+            aim = bim = x2im
             sre = (1<<wp) + are
             sim = aim
-	    while (are or aim):
-	        bre, bim = (bre * x2re - bim * x2im) >> wp, \
-		           (bre * x2im + bim * x2re) >> wp
-	        are, aim = (are * bre - aim * bim) >> wp,   \
-		           (are * bim + aim * bre) >> wp
-		sre += are
-		sim += aim
-	    sre = (sre << 1)
-	    sim = (sim << 1)
-	    sre = from_man_exp(sre, -wp, mp.prec, 'n')
-	    sim = from_man_exp(sim, -wp, mp.prec, 'n')
-	    s = mpc(sre, sim)
+            while (are or aim):
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                sre += are
+                sim += aim
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = from_man_exp(sre, -wp, mp.prec, 'n')
+            sim = from_man_exp(sim, -wp, mp.prec, 'n')
+            s = mpc(sre, sim)
     else:
-      	if isinstance(q, mpf) and isinstance(z, mpf):
-	    wp = mp.prec + extra1
-	    x = to_fixed(q._mpf_, wp)
-	    x2 = (x*x) >> wp
+        if isinstance(q, mpf) and isinstance(z, mpf):
+            wp = mp.prec + extra1
+            x = to_fixed(q._mpf_, wp)
+            x2 = (x*x) >> wp
             a = b = x2
-	    c1, s1 = cos_sin(z._mpf_, wp)
-	    cn = c1 = to_fixed(c1, wp)
-	    sn = s1 = to_fixed(s1, wp)
+            c1, s1 = cos_sin(z._mpf_, wp)
+            cn = c1 = to_fixed(c1, wp)
+            sn = s1 = to_fixed(s1, wp)
             c2 = (c1*c1 - s1*s1) >> wp
             s2 = (c1 * s1) >> (wp - 1)
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
-	    s = c1 + ((a * cn) >> wp)
+            s = c1 + ((a * cn) >> wp)
             while a:
-	        b = (b*x2) >> wp
-		a = (a*b) >> wp
-		cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
                 s += (a * cn) >> wp
-	    s = (s << 1)
+            s = (s << 1)
             s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
             s *= nthroot(q, 4)
-	    return s
+            return s
         # case z real, q complex
         elif isinstance(z, mpf):
             wp = mp.prec + extra2
@@ -167,7 +167,7 @@ def _jacobi_theta2(z, q):
             x2 = (x*x) >> wp
             a = b = x2
             prec0 = mp.prec
-	    mp.prec = wp
+            mp.prec = wp
             c1 = cos(z)
             s1 = sin(z)
             mp.prec = prec0
@@ -212,21 +212,21 @@ def _jacobi_theta2(z, q):
             sim = from_man_exp(sim, -wp, mp.prec, 'n')
             s = mpc(sre, sim)
         # case z and q complex
-	else:
-	    wp = mp.prec + extra2
-	    xre, xim = q._mpc_
-	    xre = to_fixed(xre, wp)
-	    xim = to_fixed(xim, wp)
-	    x2re = (xre*xre - xim*xim) >> wp
-	    x2im = (xre*xim) >> (wp - 1)
-	    are = bre = x2re
-	    aim = bim = x2im
-	    prec0 = mp.prec
-	    mp.prec = wp
-	    # cos(2*z), siz(2*z) with z complex
-	    c1 = cos(z)
-	    s1 = sin(z)
-	    mp.prec = prec0
+        else:
+            wp = mp.prec + extra2
+            xre, xim = q._mpc_
+            xre = to_fixed(xre, wp)
+            xim = to_fixed(xim, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = x2re
+            aim = bim = x2im
+            prec0 = mp.prec
+            mp.prec = wp
+            # cos(2*z), siz(2*z) with z complex
+            c1 = cos(z)
+            s1 = sin(z)
+            mp.prec = prec0
             cnre = c1re = to_fixed(c1.real._mpf_, wp)
             cnim = c1im = to_fixed(c1.imag._mpf_, wp)
             snre = s1re = to_fixed(s1.real._mpf_, wp)
@@ -246,90 +246,89 @@ def _jacobi_theta2(z, q):
             sre = c1re + ((are * cnre - aim * cnim) >> wp)
             sim = c1im + ((are * cnim + aim * cnre) >> wp) 
             while (are or aim):
-	        bre, bim = (bre * x2re - bim * x2im) >> wp, \
-		           (bre * x2im + bim * x2re) >> wp
-	        are, aim = (are * bre - aim * bim) >> wp,   \
-		           (are * bim + aim * bre) >> wp
-	        #cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                #cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
                 t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
-		t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
-		t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
-		t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
-		cnre = t1
-		cnim = t2
-		snre = t3
-		snim = t4
-		sre += ((are * cnre - aim * cnim) >> wp)
-		sim += ((aim * cnre + are * cnim) >> wp)
-	    sre = (sre << 1)
-	    sim = (sim << 1)
-	    sre = from_man_exp(sre, -wp, mp.prec, 'n')
-	    sim = from_man_exp(sim, -wp, mp.prec, 'n')
-	    s = mpc(sre, sim)
+                t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+                t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+                t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                sre += ((are * cnre - aim * cnim) >> wp)
+                sim += ((aim * cnre + are * cnim) >> wp)
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = from_man_exp(sre, -wp, mp.prec, 'n')
+            sim = from_man_exp(sim, -wp, mp.prec, 'n')
+            s = mpc(sre, sim)
     s *= nthroot(q, 4)
     return s
 
 def _jacobi_theta3(z, q):
     extra1 = 10
     extra2 = 20
-
     if z == zero:
-      	if isinstance(q, mpf):
-	    wp = mp.prec + extra1
-	    x = to_fixed(q._mpf_, wp)
-	    s = x
-	    a = b = x
-	    x2 = (x*x) >> wp
-	    while(a):
-	      	b = (b*x2) >> wp
-		a = (a*b) >> wp
-		s += a
-	    s = (1 << wp) + (s << 1)
-	    s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
-	    return s
-	else:
+        if isinstance(q, mpf):
             wp = mp.prec + extra1
-	    xre, xim = q._mpc_
-	    xre = to_fixed(xre, wp)
-	    xim = to_fixed(xim, wp)
-	    x2re = (xre*xre - xim*xim) >> wp
-	    x2im = (xre*xim) >> (wp - 1)
-	    sre = are = bre = xre
-	    sim = aim = bim = xim
-	    while (are or aim):
-	        bre, bim = (bre * x2re - bim * x2im) >> wp, \
-		           (bre * x2im + bim * x2re) >> wp
-	        are, aim = (are * bre - aim * bim) >> wp,   \
-		           (are * bim + aim * bre) >> wp
-		sre += are
-		sim += aim
-	    sre = (1 << wp) + (sre << 1)
-	    sim = (sim << 1)
-	    sre = from_man_exp(sre, -wp, mp.prec, 'n')
-	    sim = from_man_exp(sim, -wp, mp.prec, 'n')
-	    s = mpc(sre, sim)
-	    return s
-    else:
-      	if isinstance(q, mpf) and isinstance(z, mpf):
-	    s = MP_ZERO
-	    wp = mp.prec + extra1
-	    x = to_fixed(q._mpf_, wp)
+            x = to_fixed(q._mpf_, wp)
+            s = x
             a = b = x
-	    x2 = (x*x) >> wp
-	    c1, s1 = cos_sin(mpf_shift(z._mpf_, 1), wp)
-	    c1 = to_fixed(c1, wp)
-	    s1 = to_fixed(s1, wp)
-	    cn = c1
-	    sn = s1
-	    s += (a * cn) >> wp
-            while a:
-	        b = (b*x2) >> wp
-		a = (a*b) >> wp
-		cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
-                s += (a * cn) >> wp
-	    s = (1 << wp) + (s << 1)
+            x2 = (x*x) >> wp
+            while(a):
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                s += a
+            s = (1 << wp) + (s << 1)
             s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
-	    return s
+            return s
+        else:
+            wp = mp.prec + extra1
+            xre, xim = q._mpc_
+            xre = to_fixed(xre, wp)
+            xim = to_fixed(xim, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            sre = are = bre = xre
+            sim = aim = bim = xim
+            while (are or aim):
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                sre += are
+                sim += aim
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = from_man_exp(sre, -wp, mp.prec, 'n')
+            sim = from_man_exp(sim, -wp, mp.prec, 'n')
+            s = mpc(sre, sim)
+            return s
+    else:
+        if isinstance(q, mpf) and isinstance(z, mpf):
+            s = MP_ZERO
+            wp = mp.prec + extra1
+            x = to_fixed(q._mpf_, wp)
+            a = b = x
+            x2 = (x*x) >> wp
+            c1, s1 = cos_sin(mpf_shift(z._mpf_, 1), wp)
+            c1 = to_fixed(c1, wp)
+            s1 = to_fixed(s1, wp)
+            cn = c1
+            sn = s1
+            s += (a * cn) >> wp
+            while a:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+                s += (a * cn) >> wp
+            s = (1 << wp) + (s << 1)
+            s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
+            return s
         # case z real, q complex
         elif isinstance(z, mpf):
             wp = mp.prec + extra2
@@ -369,7 +368,7 @@ def _jacobi_theta3(z, q):
             a = b = x
             x2 = (x*x) >> wp
             prec0 = mp.prec
-	    mp.prec = wp
+            mp.prec = wp
             c1 = cos(2*z)
             s1 = sin(2*z)
             mp.prec = prec0
@@ -399,48 +398,48 @@ def _jacobi_theta3(z, q):
             s = mpc(sre, sim)
             return s
         # case z and q complex
-	else:
-	    wp = mp.prec + extra2
-	    xre, xim = q._mpc_
-	    xre = to_fixed(xre, wp)
-	    xim = to_fixed(xim, wp)
-	    x2re = (xre*xre - xim*xim) >> wp
-	    x2im = (xre*xim) >> (wp - 1)
-	    are = bre = xre
-	    aim = bim = xim
-	    prec0 = mp.prec
-	    mp.prec = wp
-	    # cos(2*z), sin(2*z) with z complex
-	    c1 = cos(2*z)
-	    s1 = sin(2*z)
-	    mp.prec = prec0
-	    cnre = c1re = to_fixed(c1.real._mpf_, wp)
-	    cnim = c1im = to_fixed(c1.imag._mpf_, wp)
-	    snre = s1re = to_fixed(s1.real._mpf_, wp)
-	    snim = s1im = to_fixed(s1.imag._mpf_, wp)
-	    sre = (are * cnre - aim * cnim) >> wp
-	    sim = (aim * cnre + are * cnim) >> wp
+        else:
+            wp = mp.prec + extra2
+            xre, xim = q._mpc_
+            xre = to_fixed(xre, wp)
+            xim = to_fixed(xim, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = xre
+            aim = bim = xim
+            prec0 = mp.prec
+            mp.prec = wp
+            # cos(2*z), sin(2*z) with z complex
+            c1 = cos(2*z)
+            s1 = sin(2*z)
+            mp.prec = prec0
+            cnre = c1re = to_fixed(c1.real._mpf_, wp)
+            cnim = c1im = to_fixed(c1.imag._mpf_, wp)
+            snre = s1re = to_fixed(s1.real._mpf_, wp)
+            snim = s1im = to_fixed(s1.imag._mpf_, wp)
+            sre = (are * cnre - aim * cnim) >> wp
+            sim = (aim * cnre + are * cnim) >> wp
             while (are or aim):
-	        bre, bim = (bre * x2re - bim * x2im) >> wp, \
-		           (bre * x2im + bim * x2re) >> wp
-	        are, aim = (are * bre - aim * bim) >> wp,   \
-		           (are * bim + aim * bre) >> wp
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
                 t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
-		t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
-		t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
-		t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
-		cnre = t1
-		cnim = t2
-		snre = t3
-		snim = t4
-		sre += (are * cnre - aim * cnim) >> wp
-		sim += (aim * cnre + are * cnim) >> wp
-	    sre = (1 << wp) + (sre << 1)
-	    sim = (sim << 1)
-	    sre = from_man_exp(sre, -wp, mp.prec, 'n')
-	    sim = from_man_exp(sim, -wp, mp.prec, 'n')
-	    s = mpc(sre, sim)
-	    return s
+                t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
+                t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
+                t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                sre += (are * cnre - aim * cnim) >> wp
+                sim += (aim * cnre + are * cnim) >> wp
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = from_man_exp(sre, -wp, mp.prec, 'n')
+            sim = from_man_exp(sim, -wp, mp.prec, 'n')
+            s = mpc(sre, sim)
+            return s
 
 # The Jacobi theta functions are presented here in two forms; 
 # in the first form

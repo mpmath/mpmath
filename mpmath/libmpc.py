@@ -20,7 +20,7 @@ from libmpf import (\
 from libelefun import (\
     mpf_pi, mpf_exp, mpf_log, cos_sin, cosh_sinh, mpf_tan,
     mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
-    mpf_asin, mpf_acos, mpf_acosh
+    mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot
 )
 
 
