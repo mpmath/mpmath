@@ -123,6 +123,7 @@ def test_zeta():
     assert zeta(-3).ae(mpf(1)/120)
     assert zeta(-4) == 0
     assert zeta(-100) == 0
+    assert isnan(zeta(nan))
     # Zeros in the critical strip
     assert zeta(mpc(0.5, 14.1347251417346937904)).ae(0)
     assert zeta(mpc(0.5, 21.0220396387715549926)).ae(0)
@@ -131,7 +132,8 @@ def test_zeta():
     im = '236.5242296658162058024755079556629786895294952121891237'
     assert zeta(mpc(0.5, im)).ae(0, 1e-46)
     mp.dps = 15
-    assert isnan(zeta(nan))
+    # Complex reflection formula
+    assert (zeta(-60+3j) / 10**34).ae(8.6270183987866146+15.337398548226238j)
 
 def test_zeta_huge():
     mp.dps = 15

@@ -28,7 +28,7 @@ from libmpf import (\
     mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
     mpf_mul, mpf_mul_int, mpf_div, mpf_sqrt, mpf_pow_int,
     mpf_rdiv_int,
-    mpf_perturb, mpf_le, mpf_shift,
+    mpf_perturb, mpf_le, mpf_lt, mpf_shift,
     negative_rnd, reciprocal_rnd,
 )
 
@@ -42,7 +42,7 @@ from libelefun import (\
 
 from libmpc import (\
     mpc_zero, mpc_one, mpc_half, mpc_two,
-    mpc_abs,
+    mpc_abs, mpc_shift,
     mpc_add, mpc_sub, mpc_mul, mpc_div,
     mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf,
     mpc_mul_int, mpc_pow_int,
@@ -1140,8 +1140,11 @@ def mpf_zeta(s, prec, rnd=round_fast):
         return fone
     elif exp >= 0:
         return mpf_zeta_int(to_int(s), prec, rnd)
-    # Less than 0.5?
-    if sign or (exp+bc) < 0:
+    # Negative: use the reflection formula
+    # Borwein only proves the accuracy bound for x >= 1/2. However, based on
+    # tests, the accuracy without reflection is quite good even some distance
+    # to the left of 1/2. XXX: verify this.
+    if sign:
         # XXX: -1 should be done exactly
         y = mpf_sub(fone, s, 10*wp)
         a = mpf_gamma(y, wp)
@@ -1175,9 +1178,29 @@ def mpf_zeta(s, prec, rnd=round_fast):
     q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
     return mpf_div(t, q, prec, rnd)
 
-def mpc_zeta(s, prec, rnd):
+def mpc_zeta(s, prec, rnd=round_fast):
     re, im = s
+    if im == fzero:
+        return mpf_zeta(re, prec, rnd), fzero
     wp = prec + 20
+    # Reflection formula. To be rigorous, we should reflect to the left of
+    # re = 1/2 (see comments for mpf_zeta), but this leads to unnecessary
+    # slowdown for interesting values of s
+    if mpf_lt(re, fzero):
+        # XXX: -1 should be done exactly
+        y = mpc_sub(mpc_one, s, 10*wp)
+        a = mpc_gamma(y, wp)
+        b = mpc_zeta(y, wp)
+        c = mpc_sin_pi(mpc_shift(s, -1), wp)
+        rsign, rman, rexp, rbc = re
+        isign, iman, iexp, ibc = im
+        mag = max(rexp+rbc, iexp+ibc)
+        wp2 = wp + mag
+        pi = mpf_pi(wp+wp2)
+        pi2 = (mpf_shift(pi, 1), fzero)
+        d = mpc_div(mpc_pow(pi2, s, wp2), (pi, fzero), wp2)
+        return mpc_mul(a,mpc_mul(b,mpc_mul(c,d,wp),wp),prec,rnd)
+
     n = int(wp/2.54 + 5)
     n += int(0.9*abs(to_int(im)))
     d = borwein_coefficients(n)
