@@ -119,7 +119,7 @@ def testit(importdir='', testdir=''):
 if __name__ == '__main__':
     if profile:
         import cProfile
-        cProfile.run("testit(%s, %s)" % (importdir, testdir), sort=2)
+        cProfile.run("testit('%s', '%s')" % (importdir, testdir), sort=2)
     else:
         testit(importdir, testdir)
 
