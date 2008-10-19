@@ -7,7 +7,7 @@ __docformat__ = 'plaintext'
 from settings import (MP_BASE, MP_ONE, mp, prec_rounding, extraprec, extradps,
     workprec, workdps, int_types, repr_dps, round_floor, round_ceiling)
 
-from libmpf import (\
+from libmpf import (
     ComplexResult, to_pickable, from_pickable, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
@@ -18,7 +18,7 @@ from libmpf import (\
     mpf_hash, mpf_rand
 )
 
-from libmpc import (\
+from libmpc import (
     complex_to_str,
     mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
     mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int
@@ -26,7 +26,7 @@ from libmpc import (\
 
 from libelefun import mpf_pow
 
-from libmpi import (\
+from libmpi import (
     mpi_mid, mpi_delta, mpi_str,
     mpi_abs, mpi_pos, mpi_neg, mpi_add, mpi_sub,
     mpi_mul, mpi_div, mpi_pow_int, mpi_pow
@@ -53,10 +53,23 @@ def convert_lossless(x, strings=True):
     if isinstance(x, int_types): return make_mpf(from_int(x))
     if isinstance(x, float): return make_mpf(from_float(x))
     if isinstance(x, complex): return mpc(x)
-    if strings and isinstance(x, basestring): return make_mpf(from_str(x, *prec_rounding))
+    if strings and isinstance(x, basestring):
+        try:
+            return make_mpf(from_str(x, *prec_rounding))
+        except Exception, e:
+            if '/' in x:
+                fract = x.split('/')
+                assert len(fract) == 2
+                return convert_lossless(fract[0]) / convert_lossless(fract[1])
+            if 'j' in x.lower():
+                s = x.lower().lstrip('(').rstrip(')').split('+')
+                return mpc(convert_lossless(s[0]),
+                           convert_lossless(s[1].rstrip('j')))
+            raise e
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
-    if hasattr(x, '_mpmath_'): return convert_lossless(x._mpmath_(*prec_rounding))
+    if hasattr(x, '_mpmath_'):
+        return convert_lossless(x._mpmath_(*prec_rounding))
     raise TypeError("cannot create mpf from " + repr(x))
 
 def try_convert_mpf_value(x, prec, rounding):

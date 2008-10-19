@@ -153,3 +153,8 @@ def test_conversion_methods():
     assert z.__rdiv__(a) is NotImplemented
     assert z.__pow__(a) is NotImplemented
     assert z.__rpow__(a) is NotImplemented
+
+def test_convert_lossless():
+    assert convert_lossless('1/2') == 0.5
+    assert convert_lossless('(1.0+1.0j)') == mpc(1, 1)
+
