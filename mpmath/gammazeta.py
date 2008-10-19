@@ -24,7 +24,7 @@ from settings import (\
 from libmpf import (\
     lshift, sqrt_fixed,
     fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
-    from_int, to_int, to_fixed, from_man_exp,
+    from_int, to_int, to_fixed, from_man_exp, from_rational,
     mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
     mpf_mul, mpf_mul_int, mpf_div, mpf_sqrt, mpf_pow_int,
     mpf_rdiv_int,
@@ -113,8 +113,8 @@ def khinchin_fixed(prec):
         term = (((zeta2n - ONE) * t) // n) >> wp
         if term < 100:
             break
-        #if not n % 100:
-        #    print n, nstr(ln(term))
+        #if not n % 10:
+        #    print n, math.log(int(abs(term)))
         s += term
         t += ONE//(2*n+1) - ONE//(2*n)
         n += 1
@@ -175,6 +175,7 @@ def glaisher_fixed(prec):
         #print k, N
         s += log_int_fixed(k, wp) // k**2
     logN = log_int_fixed(N, wp)
+    #logN = to_fixed(mpf_log(from_int(N), wp+20), wp)
     # E-M step 2: integral of log(x)/x**2 from N to inf
     s += (ONE + logN) // N
     # E-M step 3: endpoint correction term f(N)/2
@@ -196,8 +197,8 @@ def glaisher_fixed(prec):
         term = to_fixed(term, wp)
         if abs(term) < 100:
             break
-        #if not k % 100:
-        #    print k, nstr(ln(term))
+        #if not k % 10:
+        #    print k, math.log(int(abs(term)), 10)
         s -= term
         # Advance derivative twice
         a, b, pN, j = b-a*j, -j*b, pN*N, j+1
@@ -423,6 +424,8 @@ def bernoulli_size(n):
     lgn = math.log(n,2)
     return int(2.326 + 0.5*lgn + n*(lgn - 4.094))
 
+BERNOULLI_PREC_CUTOFF = bernoulli_size(MAX_BERNOULLI_CACHE)
+
 def mpf_bernoulli(n, prec, rnd=None):
     """Computation of Bernoulli numbers (numerically)"""
     if n < 2:
@@ -432,11 +435,19 @@ def mpf_bernoulli(n, prec, rnd=None):
             return fone
         if n == 1:
             return mpf_neg(fhalf)
+    # For odd n > 1, the Bernoulli numbers are zero
     if n & 1:
         return fzero
-    wp = prec + 30
+    # If precision is extremely high, we can save time by computing
+    # the Bernoulli number at a lower precision that is sufficient to
+    # obtain the exact fraction, round to the exact fraction, and
+    # convert the fraction back to an mpf value at the original precision
+    if prec > BERNOULLI_PREC_CUTOFF and prec > bernoulli_size(n)*1.1 + 1000:
+        p, q = bernfrac(n)
+        return from_rational(p, q, prec, rnd or round_floor)
     if n > MAX_BERNOULLI_CACHE:
         return mpf_bernoulli_huge(n, prec, rnd)
+    wp = prec + 30
     # Reuse nearby precisions
     wp += 32 - (prec & 31)
     cached = bernoulli_cache.get(wp)
@@ -493,7 +504,7 @@ def mpf_bernoulli(n, prec, rnd=None):
 def mpf_bernoulli_huge(n, prec, rnd=None):
     wp = prec + 10
     piprec = wp + int(math.log(n,2))
-    v = mpf_gamma_int(n-1, wp)
+    v = mpf_gamma_int(n+1, wp)
     v = mpf_mul(v, mpf_zeta_int(n, wp), wp)
     v = mpf_mul(v, mpf_pow_int(mpf_pi(piprec), -n, wp))
     v = mpf_shift(v, 1-n)
@@ -648,11 +659,11 @@ def spouge_sum_complex(re, im, prec, a, c):
 # back here
 def mpf_gamma_int(n, prec, rounding=round_fast):
     if n < 1000:
-        return from_int(int_fac(n+1), prec, rounding)
+        return from_int(int_fac(n-1), prec, rounding)
     # XXX: choose the cutoff less arbitrarily
     size = int(n*math.log(n,2))
     if prec > size/20.0:
-        return from_int(int_fac(n+1), prec, rounding)
+        return from_int(int_fac(n-1), prec, rounding)
     return mpf_gamma(from_int(n), prec, rounding)
 
 def mpf_factorial(x, prec, rounding=round_fast):
