@@ -2,7 +2,6 @@
 # *implement high-level qr()
 # *test unitvector
 # *iterative solving
-# *iterative improving of solution
 
 from __future__ import division
 

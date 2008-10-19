@@ -378,6 +378,22 @@ def ones(*args, **kwargs):
             A[i,j] = 1
     return A
 
+def hilbert(m, n=None):
+    """
+    Create (pseudo) hilbert matrix m x n.
+    One given dimension will create hilbert matrix n x n.
+
+    The matrix is very ill-conditioned and symmetric, positive definit if
+    square.
+    """
+    if n is None:
+        n = m
+    A = matrix(m, n)
+    for i in xrange(m):
+        for j in xrange(n):
+            A[i,j] = 1./ (i + j + 1)
+    return A
+
 def randmatrix(m, n=None, min=0, max=1, **kwargs):
     """
     Create a random m x n matrix.

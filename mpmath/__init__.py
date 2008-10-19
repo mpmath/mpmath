@@ -1,6 +1,6 @@
 __version__ = '0.10'
 
-from mptypes import (\
+from mptypes import (
     mpnumeric, mpf, mpc, mpi, convert_lossless,
     make_mpf, make_mpc, make_mpi,
     mp, extraprec, extradps, workprec, workdps,
@@ -9,7 +9,7 @@ from mptypes import (\
     arange, linspace, rand, absmin, absmax
 )
 
-from functions import (\
+from functions import (
     pi, degree, e, ln2, ln10, phi, euler,
     catalan, khinchin, glaisher, apery,
     sqrt, cbrt, exp, ln, log, log10, power,
@@ -46,8 +46,8 @@ from quadrature import quad, quadgl, quadts, TanhSinh, GaussLegendre
 
 from identification import pslq, identify, findpoly
 
-from matrices import matrix, eye, diag, zeros, ones, randmatrix, mnorm_1, \
-    mnorm_oo, mnorm_F, norm_p
+from matrices import matrix, eye, diag, zeros, ones, hilbert, randmatrix, \
+    mnorm_1, mnorm_oo, mnorm_F, norm_p
 from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
     cond, lu
 
