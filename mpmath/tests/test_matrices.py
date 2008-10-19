@@ -1,5 +1,5 @@
 from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
-    mnorm_F, norm_p, zeros, ones, randmatrix, extend
+    mnorm_F, norm_p, zeros, ones, hilbert, randmatrix, extend
 from mpmath.linalg import inverse
 from mpmath import inf, mpf, sqrt, mpi, nstr
 
@@ -35,7 +35,7 @@ def test_matrix_basic():
     A6 = matrix(l)
     assert A6.tolist() == l
     assert A6 == eval(repr(A6))
-    A6 = matrix(A6, force_type=float) 
+    A6 = matrix(A6, force_type=float)
     assert A6 == eval(repr(A6))
     assert A3 * 10 == 10 * A3 == A6
     assert A2.rows == 3
@@ -98,6 +98,10 @@ def test_matrix_creation():
     for a in A2:
         assert a == 0
     assert randmatrix(10) != randmatrix(10)
+    one = mpf(1)
+    assert hilbert(3) == matrix([[one, one/2, one/3],
+                                 [one/2, one/3, one/4],
+                                 [one/3, one/4, one/5]])
 
 def test_norms():
     # matrix norms
