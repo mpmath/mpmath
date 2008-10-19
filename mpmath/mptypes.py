@@ -4,6 +4,8 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
+import re
+
 from settings import (MP_BASE, MP_ONE, mp, prec_rounding, extraprec, extradps,
     workprec, workdps, int_types, repr_dps, round_floor, round_ceiling)
 
@@ -43,6 +45,9 @@ class mpnumeric(object):
         if isinstance(val, complex): return mpc(val)
         return mpf(val)
 
+get_complex = re.compile(r'\(?([\+\-]?[0-9e\.]*)([\+\-]?[0-9e\.]*)\)?')
+# TODO: fix 1j, add tests
+
 def convert_lossless(x, strings=True):
     """Attempt to convert x to an mpf or mpc losslessly. If x is an
     mpf or mpc, return it unchanged. If x is an int, create an mpf with
@@ -62,9 +67,9 @@ def convert_lossless(x, strings=True):
                 assert len(fract) == 2
                 return convert_lossless(fract[0]) / convert_lossless(fract[1])
             if 'j' in x.lower():
-                s = x.lower().lstrip('(').rstrip(')').split('+')
-                return mpc(convert_lossless(s[0]),
-                           convert_lossless(s[1].rstrip('j')))
+                match = get_complex.match(x)
+                return mpc(convert_lossless(match.group(1)),
+                           convert_lossless(match.group(2).rstrip('j')))
             raise e
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
