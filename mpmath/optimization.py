@@ -326,6 +326,8 @@ class Illinois:
         m = None
         while True:
             l = b - a
+            if l == 0:
+                break
             s = (fb - fa) / l
             z = a - fa/s
             fz = f(z)
@@ -341,7 +343,7 @@ class Illinois:
                 b = z
                 fb = fz
             else: # root in [a, z]
-                m = getm(fz, fb)
+                m = self.getm(fz, fb)
                 b = z
                 fb = fz
                 fa = m*fa # scale down to ensure convergence

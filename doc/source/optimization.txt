@@ -55,6 +55,46 @@ By default, ``findroot`` performs a maximum of 30 steps (when using the secant m
 Usually the secant method will just work, but you can use other solvers if it fails. This is done using the ``solver`` keyword. A solver is a class that can be called with ``(f, x0, **kwargs)`` and returns an iterator yielding tuple consisting of approximative solution and estimated error. So you can implement your own solver, but there are already many available in mpmath; see the ``mpmath.optimzation`` module.
 
 
+Intersection methods
+--------------------
+
+When you need to find a root in a known interval, it's highly recommended to
+use an intersection-based solver like ``'anderson'`` or ``'ridder'``.
+Usually the converge faster and more reliable. They have however problems with
+multiple roots and usually need a sign change to find a root.
+
+    >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
+    mpf('0.0')
+
+Be careful with symmetric functions::
+
+    >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "mpmath/settings.py", line 135, in g
+        return f(*args, **kwargs)
+      File "mpmath/optimization.py", line 551, in findroot
+        for x, error in iterations:
+      File "mpmath/optimization.py", line 332, in __iter__
+        z = a - fa/s
+      File "<string>", line 8, in __div__
+      File ".../libmpf.py", line 761, in mpf_div
+        raise ZeroDivisionError
+    ZeroDivisionError
+
+It fails even for better starting points, because there is no sign change::
+
+    >>> findroot(lambda x: x**2, (-1, .5), solver='anderson')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "mpmath/settings.py", line 135, in g
+        return f(*args, **kwargs)
+      File "mpmath/optimization.py", line 562, in findroot
+        % (abs(f(x)), tol))
+    ValueError: Could not find root within given tolerance. (1 > 2.1684e-19)
+    Try another starting point or tweak arguments.
+
+
 Multiple roots
 --------------
 
