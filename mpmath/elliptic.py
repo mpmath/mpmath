@@ -300,7 +300,7 @@ def _djacobi_theta2(z, q):
             a = (a*b) >> wp
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
             s += (a * sn * n) >> wp
-	    n += 2
+        n += 2
         s = -(s << 1)
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
         s *= nthroot(q, 4)
@@ -333,7 +333,7 @@ def _djacobi_theta2(z, q):
 
             sre += ((are * sn * n) >> wp)
             sim += ((aim * sn * n) >> wp)
-	    n += 2
+        n += 2
         sre = -(sre << 1)
         sim = -(sim << 1)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -643,13 +643,13 @@ def _djacobi_theta3(z, q):
         cn = c1
         sn = s1
         s += (a * sn) >> wp
-	n = 2
+        n = 2
         while a:
             b = (b*x2) >> wp
             a = (a*b) >> wp
             cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
             s += (a * sn * n) >> wp
-	    n += 1
+        n += 1
         s = -(s << 2)
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
         return s
@@ -670,7 +670,7 @@ def _djacobi_theta3(z, q):
         sn = s1
         sre = (are * sn) >> wp
         sim = (aim * sn) >> wp
-	n = 2
+        n = 2
         while (are or aim):
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
@@ -680,7 +680,7 @@ def _djacobi_theta3(z, q):
 
             sre += (are * sn * n) >> wp
             sim += (aim * sn * n) >> wp
-	    n += 1
+        n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -704,7 +704,7 @@ def _djacobi_theta3(z, q):
         snim = s1im = to_fixed(s1.imag._mpf_, wp)
         sre = (a * snre) >> wp
         sim = (a * snim) >> wp
-	n = 2
+        n = 2
         while (a):
             b = (b*x2) >> wp
             a = (a*b) >> wp
@@ -718,7 +718,7 @@ def _djacobi_theta3(z, q):
             snim = t4
             sre += (a * snre * n) >> wp
             sim += (a * snim * n) >> wp
-	    n += 1
+        n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -747,7 +747,7 @@ def _djacobi_theta3(z, q):
         snim = s1im = to_fixed(s1.imag._mpf_, wp)
         sre = (are * snre - aim * snim) >> wp
         sim = (aim * snre + are * snim) >> wp
-	n = 2
+        n = 2
         while (are or aim):
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
@@ -763,7 +763,7 @@ def _djacobi_theta3(z, q):
             snim = t4
             sre += ((are * snre - aim * snim) * n) >> wp
             sim += ((aim * snre + are * snim) * n) >> wp
-	    n += 1
+        n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -934,7 +934,7 @@ def jsn(u, m):
         return tanh(u)
     else:
         extra = 10
-	try:
+    try:
             mp.prec += extra
             q = calculate_nome(sqrt(m))
     
@@ -945,10 +945,10 @@ def jsn(u, m):
             v4 = jtheta(4, arg1, q)
     
             sn = (v3/v2)*(v1/v4)
-	finally:
+    finally:
             mp.prec -= extra
 
-        return sn
+    return sn
 
 
 def jcn(u, m):
@@ -963,7 +963,7 @@ def jcn(u, m):
         return sech(u)
     else:
         extra = 10
-	try:
+    try:
             mp.prec += extra
             q = calculate_nome(sqrt(m))
     
@@ -977,9 +977,9 @@ def jcn(u, m):
             v4 = jtheta(4, arg1, q)
     
             cn = (v04/v2)*(v1/v4)
-        finally:
-	    mp.prec -= extra
-        return cn
+    finally:
+        mp.prec -= extra
+    return cn
 
 
 def jdn(u, m):
@@ -994,7 +994,7 @@ def jdn(u, m):
         return sech(u)
     else:
         extra = 10
-	try:
+    try:
             mp.prec += extra
             q = calculate_nome(sqrt(m))
     
@@ -1008,9 +1008,9 @@ def jdn(u, m):
             v4 = jtheta(4, arg1, q)
     
             cn = (v04/v3)*(v1/v4)
-        finally:
-	    mp.prec -= extra
-        return cn
+    finally:
+        mp.prec -= extra
+    return cn
 
 jacobi_elliptic_sn = jsn
 jacobi_elliptic_cn = jcn
