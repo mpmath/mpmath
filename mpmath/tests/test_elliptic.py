@@ -103,6 +103,30 @@ def test_jtheta():
 	result = jtheta(2, z2, q)
         assert(result.ae(0))
 
+def test_jtheta_boundary():
+    # see issue 39
+    mp.dps = 30
+    mp.dps += 30
+    q = mpf(6)/10 - one/10**6 - mpf(8)/10 * j
+    mp.dps -= 30
+    # Mathematica run first
+    # N[EllipticTheta[3, 1, 6/10 - 10^-6 - 8/10*I], 2000]
+    # then it works:
+    # N[EllipticTheta[3, 1, 6/10 - 10^-6 - 8/10*I], 30]
+    res = mpf('32.0031009628901652627099524264') + \
+          mpf('16.6153027998236087899308935624') * j
+    result = jtheta(3, 1, q)
+    # check that for abs(q) > Q_LIM a ValueError exception is raised
+    mp.dps += 30
+    q = mpf(6)/10 - one/10**7 - mpf(8)/10 * j
+    mp.dps -= 30
+    try:
+        result = jtheta(3, 1, q)
+    except ValueError:
+        pass
+    else:
+        assert(False)
+
 def test_jtheta_identities():
     """
     Tests the some of the jacobi identidies found in Abramowitz,

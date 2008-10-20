@@ -22,6 +22,11 @@ from functions import (pi, sqrt, cos, sin, exp, tanh, ellipk, sech, nthroot)
 from libmpf import to_fixed, MP_ZERO, mpf_shift, from_man_exp
 from mpmath.libelefun import cos_sin
 
+# The series for the Jacobi theta functions converge for |q| < 1;
+# in the current implementation they throw a ValueError for
+# abs(q) > Q_LIM
+Q_LIM = 1 - 10**-7
+
 def calculate_nome(k):
     """
     Calculate the nome, q, from the value for k.
@@ -67,9 +72,10 @@ def calculate_k(q):
     m = v2**2/v3**2
     return m
 
+
 def _jacobi_theta2(z, q):
-    if abs(q) >= 1:
-        raise ValueError
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     if z == zero:
@@ -447,8 +453,8 @@ def _djacobi_theta2(z, q):
     return s
 
 def _jacobi_theta3(z, q):
-    if abs(q) >= 1:
-        raise ValueError
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     if z == zero:
