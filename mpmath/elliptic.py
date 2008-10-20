@@ -300,7 +300,7 @@ def _djacobi_theta2(z, q):
             a = (a*b) >> wp
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
             s += (a * sn * n) >> wp
-        n += 2
+            n += 2
         s = -(s << 1)
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
         s *= nthroot(q, 4)
@@ -333,7 +333,7 @@ def _djacobi_theta2(z, q):
 
             sre += ((are * sn * n) >> wp)
             sim += ((aim * sn * n) >> wp)
-        n += 2
+            n += 2
         sre = -(sre << 1)
         sim = -(sim << 1)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -649,7 +649,7 @@ def _djacobi_theta3(z, q):
             a = (a*b) >> wp
             cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
             s += (a * sn * n) >> wp
-        n += 1
+            n += 1
         s = -(s << 2)
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
         return s
@@ -680,7 +680,7 @@ def _djacobi_theta3(z, q):
 
             sre += (are * sn * n) >> wp
             sim += (aim * sn * n) >> wp
-        n += 1
+            n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -718,7 +718,7 @@ def _djacobi_theta3(z, q):
             snim = t4
             sre += (a * snre * n) >> wp
             sim += (a * snim * n) >> wp
-        n += 1
+            n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -763,7 +763,7 @@ def _djacobi_theta3(z, q):
             snim = t4
             sre += ((are * snre - aim * snim) * n) >> wp
             sim += ((aim * snre + are * snim) * n) >> wp
-        n += 1
+            n += 1
         sre = -(sre << 2)
         sim = -(sim << 2)
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
