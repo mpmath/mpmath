@@ -36,8 +36,7 @@ from functions import (
     lambertw
 )
 
-from elliptic import jacobi_theta_1, jacobi_theta_2, jacobi_theta_3, \
-    jacobi_theta_4, jacobi_elliptic_sn, jacobi_elliptic_cn, jacobi_elliptic_dn
+from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
 from calculus import diff, diffun, taylor, polyval, polyroots, quadosc
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
