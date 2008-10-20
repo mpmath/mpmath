@@ -45,8 +45,9 @@ class mpnumeric(object):
         if isinstance(val, complex): return mpc(val)
         return mpf(val)
 
-get_complex = re.compile(r'\(?([\+\-]?[0-9e\.]*)([\+\-]?[0-9e\.]*)\)?')
-# TODO: fix 1j, add tests
+get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
+                         r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
+# TODO: add tests
 
 def convert_lossless(x, strings=True):
     """Attempt to convert x to an mpf or mpc losslessly. If x is an
@@ -67,9 +68,14 @@ def convert_lossless(x, strings=True):
                 assert len(fract) == 2
                 return convert_lossless(fract[0]) / convert_lossless(fract[1])
             if 'j' in x.lower():
+                x = x.lower().replace(' ', '')
                 match = get_complex.match(x)
-                return mpc(convert_lossless(match.group(1)),
-                           convert_lossless(match.group(2).rstrip('j')))
+                re = match.group('re')
+                if not re:
+                    re = 0
+                im = match.group('im').rstrip('j')
+                return mpc(convert_lossless(re),
+                           convert_lossless(im))
             raise e
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)

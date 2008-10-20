@@ -157,4 +157,6 @@ def test_conversion_methods():
 def test_convert_lossless():
     assert convert_lossless('1/2') == 0.5
     assert convert_lossless('(1.0+1.0j)') == mpc(1, 1)
+    assert convert_lossless('(1.2e-10 - 3.4e5j)') == mpc('1.2e-10', '-3.4e5')
+    assert convert_lossless('1j') == mpc(1j)
 
