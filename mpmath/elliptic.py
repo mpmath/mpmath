@@ -198,7 +198,7 @@ def _jacobi_theta2(z, q):
             cnim = t2
             snre = t3
             snim = t4
-            
+
             sre = c1re + ((a * cnre) >> wp)
             sim = c1im + ((a * cnim) >> wp)
             while (a):
@@ -252,7 +252,7 @@ def _jacobi_theta2(z, q):
             snre = t3
             snim = t4
             sre = c1re + ((are * cnre - aim * cnim) >> wp)
-            sim = c1im + ((are * cnim + aim * cnre) >> wp) 
+            sim = c1im + ((are * cnim + aim * cnre) >> wp)
             while (are or aim):
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
@@ -278,8 +278,8 @@ def _jacobi_theta2(z, q):
     return s
 
 def _djacobi_theta2(z, q):
-    if abs(q) >= 1:
-        raise ValueError
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     if isinstance(q, mpf) and isinstance(z, mpf):
@@ -369,7 +369,7 @@ def _djacobi_theta2(z, q):
         cnim = t2
         snre = t3
         snim = t4
-        
+
         sre = s1re + ((a * snre * 3) >> wp)
         sim = s1im + ((a * snim * 3) >> wp)
         n = 5
@@ -425,7 +425,7 @@ def _djacobi_theta2(z, q):
         snre = t3
         snim = t4
         sre = s1re + (((are * snre - aim * snim) * 3) >> wp)
-        sim = s1im + (((are * snim + aim * snre)* 3) >> wp) 
+        sim = s1im + (((are * snim + aim * snre)* 3) >> wp)
         n = 5
         while (are or aim):
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
@@ -627,8 +627,8 @@ def _jacobi_theta3(z, q):
             return s
 
 def _djacobi_theta3(z, q):
-    if abs(q) >= 1:
-        raise ValueError
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     if isinstance(q, mpf) and isinstance(z, mpf):
@@ -774,12 +774,12 @@ def _djacobi_theta3(z, q):
 def jtheta(n, z, q):
     """
     Jacobi theta functions as functions of the nome q
-    n = 1,2,3,4 
+    n = 1,2,3,4
     z complex number
     q complex number in the unit disk
-    theta(1, z, q) = 
+    theta(1, z, q) =
       2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
-    theta(2, z, q) = 
+    theta(2, z, q) =
       2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
     theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
     theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
@@ -808,14 +808,14 @@ def jtheta(n, z, q):
 def djtheta(n, z, q):
     """
     derivative of the Jacobi theta functions as functions of the nome q
-    n = 1,2,3,4 
+    n = 1,2,3,4
     z complex number
     q complex number in the unit disk
-    djtheta(1, z, q) = 
-      2 * q**1/4 * Sum((-)**n * q**(n*n + n) * 
+    djtheta(1, z, q) =
+      2 * q**1/4 * Sum((-)**n * q**(n*n + n) *
       (2*n + 1) * cos((2*n + 1)*z), n=0, inf)
-    djtheta(2, z, q) = 
-      -2 * q**1/4 * Sum(q**(n*n + n) * 
+    djtheta(2, z, q) =
+      -2 * q**1/4 * Sum(q**(n*n + n) *
       (2*n + 1) * cos((2*n + 1)*z), n=0, inf)
     djtheta(3, z, q) = -2 * Sum(q**(n**2) * 2 * n * sin(2*n*z), n=1, inf)
     djtheta(4, z, q) = -2 * Sum((-q)**(n**2) * 2 * n * sin(2*n*z), n=1, inf)
@@ -843,9 +843,9 @@ def djtheta(n, z, q):
 
 def jacobi_theta_1(z, m):
     """
-    The jacobi theta function 1 is defined by the series 
+    The jacobi theta function 1 is defined by the series
     expansion found in Abramowitz & Stegun [4]
-    theta1(z, q) = 
+    theta1(z, q) =
     2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
@@ -866,7 +866,7 @@ def jacobi_theta_2(z, m):
     """
     The jacobi theta function 2 is defined by the series
     expansion found in Abramowitz & Stegun [4].
-    theta2(z, q) = 
+    theta2(z, q) =
     2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
@@ -935,18 +935,18 @@ def jsn(u, m):
     else:
         extra = 10
     try:
-            mp.prec += extra
-            q = calculate_nome(sqrt(m))
-    
-            v3 = jtheta(3, zero, q)
-            v2 = jtheta(2, zero, q)        # mathworld says v4
-            arg1 = u / (v3*v3)
-            v1 = jtheta(1, arg1, q)
-            v4 = jtheta(4, arg1, q)
-    
-            sn = (v3/v2)*(v1/v4)
+        mp.prec += extra
+        q = calculate_nome(sqrt(m))
+
+        v3 = jtheta(3, zero, q)
+        v2 = jtheta(2, zero, q)        # mathworld says v4
+        arg1 = u / (v3*v3)
+        v1 = jtheta(1, arg1, q)
+        v4 = jtheta(4, arg1, q)
+
+        sn = (v3/v2)*(v1/v4)
     finally:
-            mp.prec -= extra
+        mp.prec -= extra
 
     return sn
 
@@ -964,19 +964,19 @@ def jcn(u, m):
     else:
         extra = 10
     try:
-            mp.prec += extra
-            q = calculate_nome(sqrt(m))
-    
-            v3 = jtheta(3, zero, q)
-            v2 = jtheta(2, zero, q)
-            v04 = jtheta(4, zero, q)
-    
-            arg1 = u / (v3*v3)
-    
-            v1 = jtheta(2, arg1, q)
-            v4 = jtheta(4, arg1, q)
-    
-            cn = (v04/v2)*(v1/v4)
+        mp.prec += extra
+        q = calculate_nome(sqrt(m))
+
+        v3 = jtheta(3, zero, q)
+        v2 = jtheta(2, zero, q)
+        v04 = jtheta(4, zero, q)
+
+        arg1 = u / (v3*v3)
+
+        v1 = jtheta(2, arg1, q)
+        v4 = jtheta(4, arg1, q)
+
+        cn = (v04/v2)*(v1/v4)
     finally:
         mp.prec -= extra
     return cn
@@ -995,19 +995,19 @@ def jdn(u, m):
     else:
         extra = 10
     try:
-            mp.prec += extra
-            q = calculate_nome(sqrt(m))
-    
-            v3 = jtheta(3, zero, q)
-            v2 = jtheta(2, zero, q)
-            v04 = jtheta(4, zero, q)
-    
-            arg1 = u / (v3*v3)
-    
-            v1 = jtheta(3, arg1, q)
-            v4 = jtheta(4, arg1, q)
-    
-            cn = (v04/v3)*(v1/v4)
+        mp.prec += extra
+        q = calculate_nome(sqrt(m))
+
+        v3 = jtheta(3, zero, q)
+        v2 = jtheta(2, zero, q)
+        v04 = jtheta(4, zero, q)
+
+        arg1 = u / (v3*v3)
+
+        v1 = jtheta(3, arg1, q)
+        v4 = jtheta(4, arg1, q)
+
+        cn = (v04/v3)*(v1/v4)
     finally:
         mp.prec -= extra
     return cn

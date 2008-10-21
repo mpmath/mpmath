@@ -37,11 +37,11 @@ def test_calculate_nome():
              (mpf(2)/10, mpf('0.01394285727531826872146409')),
              (mpf(3)/10, mpf('0.02227743615715350822901627')),
              (mpf(4)/10, mpf('0.03188334731336317755064299')),
-	     (mpf(5)/10, mpf('0.04321391826377224977441774')),
-	     (mpf(6)/10, mpf('0.05702025781460967637754953')),
-	     (mpf(7)/10, mpf('0.07468994353717944761143751')),
-	     (mpf(8)/10, mpf('0.09927369733882489703607378')),
-	     (mpf(9)/10, mpf('0.1401731269542615524091055')),
+             (mpf(5)/10, mpf('0.04321391826377224977441774')),
+             (mpf(6)/10, mpf('0.05702025781460967637754953')),
+             (mpf(7)/10, mpf('0.07468994353717944761143751')),
+             (mpf(8)/10, mpf('0.09927369733882489703607378')),
+             (mpf(9)/10, mpf('0.1401731269542615524091055')),
              (mpf(9)/10, mpf('0.1401731269542615524091055'))]
 
     for i in math1:
@@ -59,13 +59,13 @@ def test_jtheta():
 
     for q in [one, mpf(2)]:
         for n in range(1,5):
-	    raised = True
-	    try:
-	        r = jtheta(n, z, q)
-	    except:
-	        pass
-	    else:
-	        raised = False
+            raised = True
+            try:
+                r = jtheta(n, z, q)
+            except:
+                pass
+            else:
+                raised = False
             assert(raised)
 
     z = one/10
@@ -98,9 +98,9 @@ def test_jtheta():
     for i in range(10):
         qstring = str(random.random())
         q = mpf(qstring)
-	result = jtheta(1, z1, q)
-	assert(result.ae(0))
-	result = jtheta(2, z2, q)
+        result = jtheta(1, z1, q)
+        assert(result.ae(0))
+        result = jtheta(2, z2, q)
         assert(result.ae(0))
 
 def test_jtheta_boundary():
@@ -137,18 +137,18 @@ def test_jtheta_identities():
 
     for i in range(10):
         qstring = str(random.random())
-	q = mpf(qstring)
+        q = mpf(qstring)
 
-	zstring = str(10*random.random())
-	z = mpf(zstring)
+        zstring = str(10*random.random())
+        z = mpf(zstring)
         # Abramowitz 16.28.1
         # v_1(z, q)**2 * v_4(0, q)**2 =   v_3(z, q)**2 * v_2(0, q)**2
         #                               - v_2(z, q)**2 * v_3(0, q)**2
-	term1 = (jtheta(1, z, q)**2) * (jtheta(4, zero, q)**2)
-	term2 = (jtheta(3, z, q)**2) * (jtheta(2, zero, q)**2)
-	term3 = (jtheta(2, z, q)**2) * (jtheta(3, zero, q)**2)
-	equality = term1 - term2 + term3
-	assert(equality.ae(0, eps1))
+        term1 = (jtheta(1, z, q)**2) * (jtheta(4, zero, q)**2)
+        term2 = (jtheta(3, z, q)**2) * (jtheta(2, zero, q)**2)
+        term3 = (jtheta(2, z, q)**2) * (jtheta(3, zero, q)**2)
+        equality = term1 - term2 + term3
+        assert(equality.ae(0, eps1))
         
         zstring = str(100*random.random())
         z = mpf(zstring)
@@ -159,7 +159,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, z, q)**2) * (jtheta(2, zero, q)**2)
         term3 = (jtheta(1, z, q)**2) * (jtheta(3, zero, q)**2)
         equality = term1 - term2 + term3
-	assert(equality.ae(0, eps1))
+        assert(equality.ae(0, eps1))
 
         # Abramowitz 16.28.3
         # v_3(z, q)**2 * v_4(0, q)**2 =   v_4(z, q)**2 * v_3(0, q)**2
@@ -168,7 +168,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, z, q)**2) * (jtheta(3, zero, q)**2)
         term3 = (jtheta(1, z, q)**2) * (jtheta(2, zero, q)**2)
         equality = term1 - term2 + term3
-	assert(equality.ae(0, eps1))
+        assert(equality.ae(0, eps1))
 
         # Abramowitz 16.28.4
         # v_4(z, q)**2 * v_4(0, q)**2 =   v_3(z, q)**2 * v_3(0, q)**2
@@ -177,7 +177,7 @@ def test_jtheta_identities():
         term2 = (jtheta(3, z, q)**2) * (jtheta(3, zero, q)**2)
         term3 = (jtheta(2, z, q)**2) * (jtheta(2, zero, q)**2)
         equality = term1 - term2 + term3
-	assert(equality.ae(0, eps1))
+        assert(equality.ae(0, eps1))
 
         # Abramowitz 16.28.5
         # v_2(0, q)**4 + v_4(0, q)**4 == v_3(0, q)**4
@@ -185,7 +185,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, zero, q))**4
         term3 = (jtheta(3, zero, q))**4
         equality = term1 + term2 - term3
-	assert(equality.ae(0, eps1))
+        assert(equality.ae(0, eps1))
 
 def test_jtheta_complex():
     mp.dps = 30
@@ -238,13 +238,13 @@ def test_djtheta():
     q = one/8 + j/5
     # Mathematica N[EllipticThetaPrime[1, 1/7 + I/3, 1/8 + I/5], 35]
     res = mpf('1.5555195883277196036090928995803201') - \
-	  mpf('0.02439761276895463494054149673076275') * j
+          mpf('0.02439761276895463494054149673076275') * j
     result = djtheta(1, z, q)
     assert(mpc_ae(result, res))
 
     # Mathematica N[EllipticThetaPrime[2, 1/7 + I/3, 1/8 + I/5], 35]
     res = mpf('0.19825296689470982332701283509685662') - \
-	  mpf('0.46038135182282106983251742935250009') * j
+          mpf('0.46038135182282106983251742935250009') * j
     result = djtheta(2, z, q)
     assert(mpc_ae(result, res))
 
@@ -381,7 +381,7 @@ def test_sn_cn_dn_identities():
         z = mpf(zstring)
 
         # MathWorld
-	# sn(z, q)**2 + cn(z, q)**2 == 1 
+        # sn(z, q)**2 + cn(z, q)**2 == 1 
         term1 = jsn(z, q)**2
         term2 = jcn(z, q)**2
         equality = one - term1 - term2
@@ -417,10 +417,10 @@ def test_sn_cn_dn_identities():
         assert(equality.ae(0))
 
         K = ellipk(k**2)
-	# Abramowitz Table 16.5
-	# sn(K, m) = 1; K is K(k), first complete elliptic integral
-	r = jsn(K, m)
-	assert(r.ae(one))
+        # Abramowitz Table 16.5
+        # sn(K, m) = 1; K is K(k), first complete elliptic integral
+        r = jsn(K, m)
+        assert(r.ae(one))
 
         # Abramowitz Table 16.5
         # cn(K, q) = 0; K is K(k), first complete elliptic integral
@@ -429,7 +429,7 @@ def test_sn_cn_dn_identities():
 
         # Abramowitz Table 16.6.3
         # dn(z, 0) = 1, m == 0
-	z = m
+        z = m
         value = jdn(z, zero)
         assert(value.ae(one))
 
