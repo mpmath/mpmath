@@ -697,7 +697,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     i = 0
     for x, error in iterations:
         if verbose:
-            print 'x:', x
+            print 'x:    ', x
             print 'error:', error
         i += 1
         if error < tol or i >= maxsteps:
