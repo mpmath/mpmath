@@ -1,3 +1,103 @@
+"""
+Linear algebra
+--------------
+
+Linear equations
+................
+
+Basic linear algebra is implemented; you can for example solve the linear
+equation system::
+
+      x + 2*y = -10
+    3*x + 4*y =  10
+
+using ``lu_solve``::
+
+    >>> A = matrix([[1, 2], [3, 4]])
+    >>> b = matrix([-10, 10])
+    >>> x = lu_solve(A, b)
+    >>> x
+    matrix(
+    [['30.0'],
+     ['-20.0']])
+
+If you don't trust the result, use ``residual`` to calculate the residual ||A*x-b||::
+
+    >>> residual(A, x, b)
+    matrix(
+    [['3.46944695195361e-18'],
+     ['3.46944695195361e-18']])
+    >>> str(eps)
+    '2.22044604925031e-16'
+
+As you can see, the solution is quite accurate. The error is caused by the
+inaccuracy of the internal floating point arithmetic. Though, it's even smaller
+than the current machine epsilon, which basically means you can trust the
+result.
+
+If you need more speed, use NumPy. Or choose a faster data type using the
+keyword ``force_type``::
+
+    >>> lu_solve(A, b, force_type=float)
+    matrix(
+    [[29.999999999999996],
+     [-19.999999999999996]])
+
+``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
+such systems, so the residual is minimized instead. Internally this is done
+using Cholesky decomposition to compute a least squares approximation. This means
+that that ``lu_solve`` will square the errors. If you can't afford this, use
+``qr_solve`` instead. It is twice as slow but more accurate, and it calculates
+the residual automatically.
+
+
+Matrix factorization
+....................
+
+The function ``lu`` computes an explicit LU factorization of a matrix::
+
+    >>> P, L, U = lu(matrix([[0,2,3],[4,5,6],[7,8,9]]))
+    >>> print P
+    [0.0  0.0  1.0]
+    [1.0  0.0  0.0]
+    [0.0  1.0  0.0]
+    >>> print L
+    [              1.0                0.0  0.0]
+    [              0.0                1.0  0.0]
+    [0.571428571428571  0.214285714285714  1.0]
+    >>> print U
+    [7.0  8.0                9.0]
+    [0.0  2.0                3.0]
+    [0.0  0.0  0.214285714285714]
+    >>> print P.T*L*U
+    [0.0  2.0  3.0]
+    [4.0  5.0  6.0]
+    [7.0  8.0  9.0]
+
+Interval matrices
+-----------------
+
+Matrices may contain interval elements. This allows one to perform
+basic linear algebra operations such as matrix multiplication
+and equation solving with rigorous error bounds::
+
+    >>> a = matrix([['0.1','0.3','1.0'],
+    ...             ['7.1','5.5','4.8'],
+    ...             ['3.2','4.4','5.6']], force_type=mpi)
+    >>>
+    >>> b = matrix(['4','0.6','0.5'], force_type=mpi)
+    >>> c = lu_solve(a, b)
+    >>> c
+    matrix(
+    [[[5.2582327113062393041, 5.2582327113062749951]],
+     [[-13.155049396267856583, -13.155049396267821167]],
+     [[7.4206915477497212555, 7.4206915477497310922]]])
+    >>> print a*c
+    [  [3.9999999999999866773, 4.0000000000000133227]]
+    [[0.59999999999972430942, 0.60000000000027142733]]
+    [[0.49999999999982236432, 0.50000000000018474111]]
+"""
+
 # TODO:
 # *implement high-level qr()
 # *test unitvector
