@@ -121,7 +121,7 @@ class Halley:
 
     def __init__(self, f, x0, **kwargs):
         if not len(x0) == 1:
-            raise ValueError('expected 1 starting point, got %i' * len(x0))
+            raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
         if not 'df' in kwargs:
