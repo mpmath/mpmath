@@ -60,12 +60,8 @@ def calculate_k(q):
     Calculates the value of k for a particular nome, q,
     using jacobi theta functions.
     """
-    #zero = mpf('0')
-    #one = mpf('1')
 
     q = convert_lossless(q)
-    #if q > one or q < zero:
-    #    raise ValueError
 
     v2 = jacobi_theta(2, 0, q)
     v3 = jacobi_theta(3, 0, q)
@@ -78,6 +74,11 @@ def _jacobi_theta2(z, q):
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
+    # the loops below break when the fixed precision quantities
+    # a and b go to zero;
+    # right shifting small negative numbers by wp one obtains -1, not zero,
+    # so the condition a**2 + b**2 > MIN is used to break the loops.
+    MIN = 2
     if z == zero:
         if isinstance(q, mpf):
             wp = mp.prec + extra1
@@ -85,7 +86,7 @@ def _jacobi_theta2(z, q):
             x2 = (x*x) >> wp
             a = b = x2
             s = x2
-            while(a):
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 s += a
@@ -102,7 +103,7 @@ def _jacobi_theta2(z, q):
             aim = bim = x2im
             sre = (1<<wp) + are
             sim = aim
-            while (are or aim):
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -127,7 +128,7 @@ def _jacobi_theta2(z, q):
             s2 = (c1 * s1) >> (wp - 1)
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
             s = c1 + ((a * cn) >> wp)
-            while a:
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
@@ -154,7 +155,7 @@ def _jacobi_theta2(z, q):
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
             sre = c1 + ((are * cn) >> wp)
             sim = ((aim * cn) >> wp)
-            while (are or aim):
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -201,7 +202,7 @@ def _jacobi_theta2(z, q):
 
             sre = c1re + ((a * cnre) >> wp)
             sim = c1im + ((a * cnim) >> wp)
-            while (a):
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
@@ -231,7 +232,7 @@ def _jacobi_theta2(z, q):
             aim = bim = x2im
             prec0 = mp.prec
             mp.prec = wp
-            # cos(2*z), siz(2*z) with z complex
+            # cos(z), siz(z) with z complex
             c1 = cos(z)
             s1 = sin(z)
             mp.prec = prec0
@@ -251,9 +252,20 @@ def _jacobi_theta2(z, q):
             cnim = t2
             snre = t3
             snim = t4
+            n = 1
+            termre = c1re
+            termim = c1im
             sre = c1re + ((are * cnre - aim * cnim) >> wp)
             sim = c1im + ((are * cnim + aim * cnre) >> wp)
-            while (are or aim):
+
+            n = 3
+            termre = ((are * cnre - aim * cnim) >> wp)
+            termim = ((are * cnim + aim * cnre) >> wp)
+            sre = c1re + ((are * cnre - aim * cnim) >> wp)
+            sim = c1im + ((are * cnim + aim * cnre) >> wp)
+
+            n = 5
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -267,8 +279,11 @@ def _jacobi_theta2(z, q):
                 cnim = t2
                 snre = t3
                 snim = t4
+                termre = ((are * cnre - aim * cnim) >> wp)
+                termim = ((aim * cnre + are * cnim) >> wp)
                 sre += ((are * cnre - aim * cnim) >> wp)
                 sim += ((aim * cnre + are * cnim) >> wp)
+                n += 2
             sre = (sre << 1)
             sim = (sim << 1)
             sre = from_man_exp(sre, -wp, mp.prec, 'n')
@@ -277,9 +292,10 @@ def _jacobi_theta2(z, q):
     s *= nthroot(q, 4)
     return s
 
-def _djacobi_theta2(z, q):
+def _djacobi_theta2(z, q, nd):
     if abs(q) > Q_LIM:
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
+    MIN = 2
     extra1 = 10
     extra2 = 20
     if isinstance(q, mpf) and isinstance(z, mpf):
@@ -293,18 +309,22 @@ def _djacobi_theta2(z, q):
         c2 = (c1*c1 - s1*s1) >> wp
         s2 = (c1 * s1) >> (wp - 1)
         cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
-        s = s1 + ((a * sn * 3) >> wp)
-        n = 5
-        while a:
+        if (nd&1):
+            s = s1 + ((a * sn * 3**nd) >> wp)
+        else:
+            s = c1 + ((a * cn * 3**nd) >> wp)
+        n = 2
+        while abs(a) > MIN:
             b = (b*x2) >> wp
             a = (a*b) >> wp
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
-            s += (a * sn * n) >> wp
-            n += 2
+            if nd&1:
+                s += (a * sn * (2*n+1)**nd) >> wp
+            else:
+                s += (a * cn * (2*n+1)**nd) >> wp
+            n += 1
         s = -(s << 1)
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
-        s *= nthroot(q, 4)
-        return s
         # case z real, q complex
     elif isinstance(z, mpf):
         wp = mp.prec + extra2
@@ -321,18 +341,26 @@ def _djacobi_theta2(z, q):
         c2 = (c1*c1 - s1*s1) >> wp
         s2 = (c1 * s1) >> (wp - 1)
         cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
-        sre = s1 + ((are * sn * 3) >> wp)
-        sim = ((aim * sn * 3) >> wp)
+        if (nd&1):
+            sre = s1 + ((are * sn * 3**nd) >> wp)
+            sim = ((aim * sn * 3**nd) >> wp)
+        else:
+            sre = c1 + ((are * cn * 3**nd) >> wp)
+            sim = ((aim * cn * 3**nd) >> wp)
         n = 5
-        while (are or aim):
+        while are**2 + aim**2 > MIN:
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
             are, aim = (are * bre - aim * bim) >> wp,   \
                        (are * bim + aim * bre) >> wp
             cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
 
-            sre += ((are * sn * n) >> wp)
-            sim += ((aim * sn * n) >> wp)
+            if (nd&1):
+                sre += ((are * sn * n**nd) >> wp)
+                sim += ((aim * sn * n**nd) >> wp)
+            else:
+                sre += ((are * cn * n**nd) >> wp)
+                sim += ((aim * cn * n**nd) >> wp)
             n += 2
         sre = -(sre << 1)
         sim = -(sim << 1)
@@ -370,10 +398,14 @@ def _djacobi_theta2(z, q):
         snre = t3
         snim = t4
 
-        sre = s1re + ((a * snre * 3) >> wp)
-        sim = s1im + ((a * snim * 3) >> wp)
+        if (nd&1):
+            sre = s1re + ((a * snre * 3**nd) >> wp)
+            sim = s1im + ((a * snim * 3**nd) >> wp)
+        else:
+            sre = c1re + ((a * cnre * 3**nd) >> wp)
+            sim = c1im + ((a * cnim * 3**nd) >> wp)
         n = 5
-        while (a):
+        while abs(a) > MIN:
             b = (b*x2) >> wp
             a = (a*b) >> wp
             t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
@@ -384,8 +416,12 @@ def _djacobi_theta2(z, q):
             cnim = t2
             snre = t3
             snim = t4
-            sre += ((a * snre * n) >> wp)
-            sim += ((a * snim * n) >> wp)
+            if (nd&1):
+                sre += ((a * snre * n**nd) >> wp)
+                sim += ((a * snim * n**nd) >> wp)
+            else:
+                sre += ((a * cnre * n**nd) >> wp)
+                sim += ((a * cnim * n**nd) >> wp)
             n += 2
         sre = -(sre << 1)
         sim = -(sim << 1)
@@ -424,10 +460,14 @@ def _djacobi_theta2(z, q):
         cnim = t2
         snre = t3
         snim = t4
-        sre = s1re + (((are * snre - aim * snim) * 3) >> wp)
-        sim = s1im + (((are * snim + aim * snre)* 3) >> wp)
+        if (nd&1):
+            sre = s1re + (((are * snre - aim * snim) * 3**nd) >> wp)
+            sim = s1im + (((are * snim + aim * snre)* 3**nd) >> wp)
+        else:
+            sre = c1re + (((are * cnre - aim * cnim) * 3**nd) >> wp)
+            sim = c1im + (((are * cnim + aim * cnre)* 3**nd) >> wp)
         n = 5
-        while (are or aim):
+        while are**2 + aim**2 > MIN:
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
             are, aim = (are * bre - aim * bim) >> wp,   \
@@ -441,8 +481,12 @@ def _djacobi_theta2(z, q):
             cnim = t2
             snre = t3
             snim = t4
-            sre += (((are * snre - aim * snim) * n) >> wp)
-            sim += (((aim * snre + are * snim) * n) >> wp)
+            if (nd&1):
+                sre += (((are * snre - aim * snim) * n**nd) >> wp)
+                sim += (((aim * snre + are * snim) * n**nd) >> wp)
+            else:
+                sre += (((are * cnre - aim * cnim) * n**nd) >> wp)
+                sim += (((aim * cnre + are * cnim) * n**nd) >> wp)
             n += 2
         sre = -(sre << 1)
         sim = -(sim << 1)
@@ -450,13 +494,17 @@ def _djacobi_theta2(z, q):
         sim = from_man_exp(sim, -wp, mp.prec, 'n')
         s = mpc(sre, sim)
     s *= nthroot(q, 4)
-    return s
+    if (nd&1):
+        return (-1)**(nd//2) * s
+    else:
+        return (-1)**(1 + nd//2) * s
 
 def _jacobi_theta3(z, q):
     if abs(q) > Q_LIM:
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
+    MIN = 2
     if z == zero:
         if isinstance(q, mpf):
             wp = mp.prec + extra1
@@ -464,7 +512,7 @@ def _jacobi_theta3(z, q):
             s = x
             a = b = x
             x2 = (x*x) >> wp
-            while(a):
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 s += a
@@ -480,7 +528,7 @@ def _jacobi_theta3(z, q):
             x2im = (xre*xim) >> (wp - 1)
             sre = are = bre = xre
             sim = aim = bim = xim
-            while (are or aim):
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -506,7 +554,7 @@ def _jacobi_theta3(z, q):
             cn = c1
             sn = s1
             s += (a * cn) >> wp
-            while a:
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
@@ -531,7 +579,7 @@ def _jacobi_theta3(z, q):
             sn = s1
             sre = (are * cn) >> wp
             sim = (aim * cn) >> wp
-            while (are or aim):
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -563,7 +611,7 @@ def _jacobi_theta3(z, q):
             snim = s1im = to_fixed(s1.imag._mpf_, wp)
             sre = (a * cnre) >> wp
             sim = (a * cnim) >> wp
-            while (a):
+            while abs(a) > MIN:
                 b = (b*x2) >> wp
                 a = (a*b) >> wp
                 t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
@@ -604,7 +652,7 @@ def _jacobi_theta3(z, q):
             snim = s1im = to_fixed(s1.imag._mpf_, wp)
             sre = (are * cnre - aim * cnim) >> wp
             sim = (aim * cnre + are * cnim) >> wp
-            while (are or aim):
+            while are**2 + aim**2 > MIN:
                 bre, bim = (bre * x2re - bim * x2im) >> wp, \
                            (bre * x2im + bim * x2re) >> wp
                 are, aim = (are * bre - aim * bim) >> wp,   \
@@ -626,9 +674,11 @@ def _jacobi_theta3(z, q):
             s = mpc(sre, sim)
             return s
 
-def _djacobi_theta3(z, q):
+def _djacobi_theta3(z, q, nd):
+    """nd=1,2,3 order of the derivative with respect to z"""
     if abs(q) > Q_LIM:
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
+    MIN = 2
     extra1 = 10
     extra2 = 20
     if isinstance(q, mpf) and isinstance(z, mpf):
@@ -642,17 +692,22 @@ def _djacobi_theta3(z, q):
         s1 = to_fixed(s1, wp)
         cn = c1
         sn = s1
-        s += (a * sn) >> wp
+        if (nd&1):
+            s += (a * sn) >> wp
+        else:
+            s += (a * cn) >> wp
         n = 2
-        while a:
+        while abs(a) > MIN:
             b = (b*x2) >> wp
             a = (a*b) >> wp
             cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
-            s += (a * sn * n) >> wp
+            if nd&1:
+                s += (a * sn * n**nd) >> wp
+            else:
+                s += (a * cn * n**nd) >> wp
             n += 1
-        s = -(s << 2)
+        s = -(s << (nd+1))
         s = mpf(from_man_exp(s, -wp, mp.prec, 'n'))
-        return s
     # case z real, q complex
     elif isinstance(z, mpf):
         wp = mp.prec + extra2
@@ -668,25 +723,31 @@ def _djacobi_theta3(z, q):
         s1 = to_fixed(s1, wp)
         cn = c1
         sn = s1
-        sre = (are * sn) >> wp
-        sim = (aim * sn) >> wp
+        if (nd&1):
+            sre = (are * sn) >> wp
+            sim = (aim * sn) >> wp
+        else:
+            sre = (are * cn) >> wp
+            sim = (aim * cn) >> wp
         n = 2
-        while (are or aim):
+        while are**2 + aim**2 > MIN:
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
             are, aim = (are * bre - aim * bim) >> wp,   \
                        (are * bim + aim * bre) >> wp
             cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
-
-            sre += (are * sn * n) >> wp
-            sim += (aim * sn * n) >> wp
+            if nd&1:
+                sre += (are * sn * n**nd) >> wp
+                sim += (aim * sn * n**nd) >> wp
+            else:
+                sre += (are * cn * n**nd) >> wp
+                sim += (aim * cn * n**nd) >> wp
             n += 1
-        sre = -(sre << 2)
-        sim = -(sim << 2)
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
         sim = from_man_exp(sim, -wp, mp.prec, 'n')
         s = mpc(sre, sim)
-        return s
     #case z complex, q real
     elif isinstance(q, mpf):
         wp = mp.prec + extra2
@@ -702,10 +763,14 @@ def _djacobi_theta3(z, q):
         cnim = c1im = to_fixed(c1.imag._mpf_, wp)
         snre = s1re = to_fixed(s1.real._mpf_, wp)
         snim = s1im = to_fixed(s1.imag._mpf_, wp)
-        sre = (a * snre) >> wp
-        sim = (a * snim) >> wp
+        if (nd&1):
+            sre = (a * snre) >> wp
+            sim = (a * snim) >> wp
+        else:
+            sre = (a * cnre) >> wp
+            sim = (a * cnim) >> wp
         n = 2
-        while (a):
+        while abs(a) > MIN:
             b = (b*x2) >> wp
             a = (a*b) >> wp
             t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
@@ -716,15 +781,18 @@ def _djacobi_theta3(z, q):
             cnim = t2
             snre = t3
             snim = t4
-            sre += (a * snre * n) >> wp
-            sim += (a * snim * n) >> wp
+            if (nd&1):
+                sre += (a * snre * n**nd) >> wp
+                sim += (a * snim * n**nd) >> wp
+            else:
+                sre += (a * cnre * n**nd) >> wp
+                sim += (a * cnim * n**nd) >> wp
             n += 1
-        sre = -(sre << 2)
-        sim = -(sim << 2)
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
         sim = from_man_exp(sim, -wp, mp.prec, 'n')
         s = mpc(sre, sim)
-        return s
     # case z and q complex
     else:
         wp = mp.prec + extra2
@@ -745,10 +813,14 @@ def _djacobi_theta3(z, q):
         cnim = c1im = to_fixed(c1.imag._mpf_, wp)
         snre = s1re = to_fixed(s1.real._mpf_, wp)
         snim = s1im = to_fixed(s1.imag._mpf_, wp)
-        sre = (are * snre - aim * snim) >> wp
-        sim = (aim * snre + are * snim) >> wp
+        if (nd&1):
+            sre = (are * snre - aim * snim) >> wp
+            sim = (aim * snre + are * snim) >> wp
+        else:
+            sre = (are * cnre - aim * cnim) >> wp
+            sim = (aim * cnre + are * cnim) >> wp
         n = 2
-        while (are or aim):
+        while are**2 + aim**2 > MIN:
             bre, bim = (bre * x2re - bim * x2im) >> wp, \
                        (bre * x2im + bim * x2re) >> wp
             are, aim = (are * bre - aim * bim) >> wp,   \
@@ -761,15 +833,22 @@ def _djacobi_theta3(z, q):
             cnim = t2
             snre = t3
             snim = t4
-            sre += ((are * snre - aim * snim) * n) >> wp
-            sim += ((aim * snre + are * snim) * n) >> wp
+            if(nd&1):
+                sre += ((are * snre - aim * snim) * n**nd) >> wp
+                sim += ((aim * snre + are * snim) * n**nd) >> wp
+            else:
+                sre += ((are * cnre - aim * cnim) * n**nd) >> wp
+                sim += ((aim * cnre + are * cnim) * n**nd) >> wp
             n += 1
-        sre = -(sre << 2)
-        sim = -(sim << 2)
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
         sre = from_man_exp(sre, -wp, mp.prec, 'n')
         sim = from_man_exp(sim, -wp, mp.prec, 'n')
         s = mpc(sre, sim)
-        return s
+    if (nd&1):
+        return (-1)**(nd//2) * s
+    else:
+        return (-1)**(1 + nd//2) * s
 
 def jtheta(n, z, q):
     """
@@ -777,20 +856,12 @@ def jtheta(n, z, q):
     n = 1,2,3,4
     z complex number
     q complex number in the unit disk
-
-    Definitions::
-
-        theta(1, z, q) =
-          2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
-
-        theta(2, z, q) =
-            2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
-
-        theta(3, z, q) = 
-            1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
-
-        theta(4, z, q) =
-            1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
+    theta(1, z, q) =
+      2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
+    theta(2, z, q) =
+      2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
+    theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
+    theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
     """
     z = convert_lossless(z)
     q = convert_lossless(q)
@@ -813,27 +884,14 @@ def jtheta(n, z, q):
         mp.prec = prec0
     return res
 
-def djtheta(n, z, q):
+def djtheta(n, z, q, nd=1):
     """
-    Derivative of the Jacobi theta functions as functions of the nome q
-
+    ndth derivative of the Jacobi theta functions jtheta(n, z, q)
+    with respect to z
     n = 1,2,3,4
     z complex number
     q complex number in the unit disk
-
-    Definitions::
-
-        djtheta(1, z, q) =
-            2 * q**1/4 * Sum((-)**n * q**(n*n + n) *
-            (2*n+1)*cos((2*n + 1)*z), n=0, inf)
-
-        djtheta(2, z, q) =
-            -2 * q**1/4 * Sum(q**(n*n + n) *
-            (2*n+1)*cos((2*n + 1)*z), n=0, inf)
-    
-        djtheta(3, z, q) = -2 * Sum(q**(n**2) * 2*n*sin(2*n*z), n=1, inf)
-
-        djtheta(4, z, q) = -2 * Sum((-q)**(n**2) * 2*n*sin(2*n*z), n=1, inf)
+    nd >= 1
     """
     z = convert_lossless(z)
     q = convert_lossless(q)
@@ -843,13 +901,13 @@ def djtheta(n, z, q):
     try:
         mp.prec += extra
         if n == 1:
-            res = _djacobi_theta2(z - pi/2, q)
+            res = _djacobi_theta2(z - pi/2, q, nd)
         elif n == 2:
-            res = _djacobi_theta2(z, q)
+            res = _djacobi_theta2(z, q, nd)
         elif n == 3:
-            res = _djacobi_theta3(z, q)
+            res = _djacobi_theta3(z, q, nd)
         elif n == 4:
-            res = _djacobi_theta3(z, -q)
+            res = _djacobi_theta3(z, -q, nd)
         else:
             raise ValueError
     finally:

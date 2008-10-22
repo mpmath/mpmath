@@ -18,6 +18,7 @@ import random
 from mpmath.mptypes import (mpc, mp, eps, j, zero, one)
 from mpmath.elliptic import *
 from mpmath.functions import ldexp
+from mpmath.calculus import diff
 
 def mpc_ae(a, b, eps=eps):
     res = True
@@ -103,8 +104,9 @@ def test_jtheta():
         result = jtheta(2, z2, q)
         assert(result.ae(0))
 
-def test_jtheta_boundary():
-    # see issue 39
+def test_jtheta_issue39():
+    # near the circle of covergence |q| = 1 the convergence slows
+    # down; for |q| > Q_LIM the theta functions raise ValueError
     mp.dps = 30
     mp.dps += 30
     q = mpf(6)/10 - one/10**6 - mpf(8)/10 * j
@@ -126,6 +128,18 @@ def test_jtheta_boundary():
         pass
     else:
         assert(False)
+
+    # bug reported in issue39
+    mp.dps = 100
+    z = (1+j)/3
+    q = mpf(368983957219251)/10**15 + mpf(636363636363636)/10**15 * j
+    # Mathematica N[EllipticTheta[1, z, q], 35]
+    res = mpf('2.4439389177990737589761828991467471') + \
+          mpf('0.5446453005688226915290954851851490') *j
+    mp.dps = 30
+    result = jtheta(1, z, q)
+    assert(result.ae(res))
+
 
 def test_jtheta_identities():
     """
@@ -262,10 +276,32 @@ def test_djtheta():
 
     for i in range(10):
         q = (one*random.random() + j*random.random())/2
-        # identity
+        # identity in Wittaker, Watson &21.41
         a = djtheta(1, 0, q)
         b = jtheta(2, 0, q)*jtheta(3, 0, q)*jtheta(4, 0, q)
         assert(a.ae(b))
+
+    # test higher derivatives
+    mp.dps = 20
+    for q,z in [(one/3, one/5), (one/3 + j/8, one/5),
+        (one/3, one/5 + j/8), (one/3 + j/7, one/5 + j/8)]:
+        for n in [1, 2, 3, 4]:
+            r = djtheta(n, z, q, nd=2)
+            r1 = diff(lambda zz: jtheta(n, zz, q), z, n=2)
+            assert r.ae(r1)
+            r = djtheta(n, z, q, nd=3)
+            r1 = diff(lambda zz: jtheta(n, zz, q), z, n=3)
+            assert r.ae(r1)
+    
+    # identity in Wittaker, Watson &21.41
+    q = one/3
+    z = zero
+    a = [0]*5
+    a[1] = djtheta(1, z, q, 3)/djtheta(1, z, q)
+    for n in [2,3,4]:
+        a[n] = djtheta(n, z, q, 2)/jtheta(n, z, q)
+    equality = a[2] + a[3] + a[4] - a[1]
+    assert(equality.ae(0))
 
 def test_jsn():
     """
@@ -371,10 +407,11 @@ def test_jdn():
 def test_sn_cn_dn_identities():
     """
     Tests the some of the jacobi elliptic function identidies found
-    on Mathworld.  Havne't found in Abramowitz.  
+    on Mathworld.  Havn't found in Abramowitz.  
     """
     mp.dps = 100
-    for i in range(10):
+    N = 5
+    for i in range(N):
         qstring = str(random.random())
         q = mpf(qstring)
         zstring = str(100*random.random())
@@ -389,7 +426,7 @@ def test_sn_cn_dn_identities():
 
     # MathWorld
     # k**2 * sn(z, m)**2 + dn(z, m)**2 == 1
-    for i in range(10):
+    for i in range(N):
         mstring = str(random.random())
         m = mpf(qstring)
         k = m.sqrt()
@@ -401,7 +438,7 @@ def test_sn_cn_dn_identities():
         assert(equality.ae(0))
 
 
-    for i in range(10):
+    for i in range(N):
         mstring = str(random.random())
         m = mpf(mstring)
         k = m.sqrt()
