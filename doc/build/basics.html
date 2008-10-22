@@ -2,24 +2,24 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Mpmath basics &mdash; mpmath v0.10 documentation</title>
+    <title>Mpmath basics &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
-    <link rel="next" title="Functions" href="functions.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
+    <link rel="next" title="Mathematical functions" href="functions.html" />
     <link rel="prev" title="Setting up mpmath" href="setup.html" />
   </head>
   <body>
@@ -33,12 +33,12 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="functions.html" title="Functions"
+          <a href="functions.html" title="Mathematical functions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,12 +48,12 @@
             
   
   <div class="section" id="mpmath-basics">
-<h1 id="mpmath-basics">Mpmath basics<a class="headerlink" href="#mpmath-basics" title="Permalink to this headline">¶</a></h1>
+<h1>Mpmath basics<a class="headerlink" href="#mpmath-basics" title="Permalink to this headline">¶</a></h1>
 <p>In all interactive code examples that follow, it will be assumed that the main contents of the <tt class="docutils literal"><span class="pre">mpmath</span></tt> package have been imported with &#8220;<tt class="docutils literal"><span class="pre">import</span> <span class="pre">*</span></tt>&#8220;.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 </pre></div>
 <div class="section" id="mpmath-numbers">
-<h2 id="mpmath-numbers">Mpmath numbers<a class="headerlink" href="#mpmath-numbers" title="Permalink to this headline">¶</a></h2>
+<h2>Mpmath numbers<a class="headerlink" href="#mpmath-numbers" title="Permalink to this headline">¶</a></h2>
 <p>Mpmath provides two main numerical types: <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt>. The <tt class="docutils literal"><span class="pre">mpf</span></tt> type is analogous to Python&#8217;s built-in <tt class="docutils literal"><span class="pre">float</span></tt>. It holds a real number or one of the special values <tt class="docutils literal"><span class="pre">inf</span></tt> (positive infinity), <tt class="docutils literal"><span class="pre">-inf</span></tt> (negative infinity) and <tt class="docutils literal"><span class="pre">nan</span></tt> (not-a-number, indicating an indeterminate result). You can create <tt class="docutils literal"><span class="pre">mpf</span></tt> instances from strings, integers, floats, and other <tt class="docutils literal"><span class="pre">mpf</span></tt> instances:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
 <span class="go">mpf(&#39;4.0&#39;)</span>
@@ -89,7 +89,7 @@
 </pre></div>
 </div>
 <div class="section" id="setting-the-precision">
-<h2 id="setting-the-precision">Setting the precision<a class="headerlink" href="#setting-the-precision" title="Permalink to this headline">¶</a></h2>
+<h2>Setting the precision<a class="headerlink" href="#setting-the-precision" title="Permalink to this headline">¶</a></h2>
 <p>Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling <tt class="docutils literal"><span class="pre">mpf()</span></tt> rounds the result to the current working precision. The working precision is controlled by a special object called <tt class="docutils literal"><span class="pre">mp</span></tt>, which has the following default state:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span>
 <span class="go">Mpmath settings:</span>
@@ -140,7 +140,7 @@
 </pre></div>
 <p>The (binary) exponent is stored exactly and is independent of the precision.</p>
 <div class="section" id="temporarily-changing-the-precision">
-<h3 id="temporarily-changing-the-precision">Temporarily changing the precision<a class="headerlink" href="#temporarily-changing-the-precision" title="Permalink to this headline">¶</a></h3>
+<h3>Temporarily changing the precision<a class="headerlink" href="#temporarily-changing-the-precision" title="Permalink to this headline">¶</a></h3>
 <p>It is often useful to change the precision during only part of a calculation. A way to temporarily increase the precision and then restore it is as follows:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">prec</span> <span class="o">+=</span> <span class="mf">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># do_something()</span>
@@ -170,7 +170,7 @@
 </div>
 </div>
 <div class="section" id="providing-correct-input">
-<h2 id="providing-correct-input">Providing correct input<a class="headerlink" href="#providing-correct-input" title="Permalink to this headline">¶</a></h2>
+<h2>Providing correct input<a class="headerlink" href="#providing-correct-input" title="Permalink to this headline">¶</a></h2>
 <p>Note that when creating a new <tt class="docutils literal"><span class="pre">mpf</span></tt>, the value will at most be as accurate as the input. <em>Be careful when mixing mpmath numbers with Python floats</em>. When working at high precision, fractional <tt class="docutils literal"><span class="pre">mpf</span></tt> values should be created from strings or integers:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">10.9</span><span class="p">)</span>   <span class="c"># bad</span>
@@ -183,7 +183,7 @@
 <p>(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)</p>
 </div>
 <div class="section" id="plotting">
-<h2 id="plotting">Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
 <p>If <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a> is available, the functions <tt class="docutils literal"><span class="pre">plot</span></tt> and <tt class="docutils literal"><span class="pre">cplot</span></tt> in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.</p>
 <p>For example, to plot the exponential function:</p>
 <div class="highlight"><pre><span class="n">plot</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
@@ -221,7 +221,7 @@
             <h4>Previous topic</h4>
             <p class="topless"><a href="setup.html" title="previous chapter">Setting up mpmath</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="functions.html" title="next chapter">Functions</a></p>
+            <p class="topless"><a href="functions.html" title="next chapter">Mathematical functions</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/basics.txt">Show Source</a></li>
@@ -246,17 +246,17 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="functions.html" title="Functions"
+          <a href="functions.html" title="Mathematical functions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

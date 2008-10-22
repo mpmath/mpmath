@@ -2,25 +2,25 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Interval arithmetic &mdash; mpmath v0.10 documentation</title>
+    <title>Interval arithmetic &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Matrices" href="matrices.html" />
-    <link rel="prev" title="Functions" href="functions.html" />
+    <link rel="prev" title="Mathematical functions" href="functions.html" />
   </head>
   <body>
     <div class="related">
@@ -36,9 +36,9 @@
           <a href="matrices.html" title="Matrices"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="functions.html" title="Functions"
+          <a href="functions.html" title="Mathematical functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,7 +48,7 @@
             
   
   <div class="section" id="interval-arithmetic">
-<h1 id="interval-arithmetic">Interval arithmetic<a class="headerlink" href="#interval-arithmetic" title="Permalink to this headline">¶</a></h1>
+<h1>Interval arithmetic<a class="headerlink" href="#interval-arithmetic" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">mpi</span></tt> type holds an interval defined by a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.</p>
 <p>You can create an <tt class="docutils literal"><span class="pre">mpi</span></tt> from a number (treated as a zero-width interval) or a pair of numbers. Strings are treated as exact decimal numbers (note that a Python float like 0.1 generally does not represent the same number as its literal; use <tt class="docutils literal"><span class="pre">'0.1'</span></tt> instead):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -148,7 +148,7 @@
 </pre></div>
 <p>Interval support will be added to more functions in the future.</p>
 <div class="section" id="establishing-inequalities">
-<h2 id="establishing-inequalities">Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
+<h2>Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
 <p>Interval arithmetic can be used to establish inequalities such as <tt class="docutils literal"><span class="pre">exp(pi*sqrt(163))</span> <span class="pre">&lt;</span> <span class="pre">640320**3</span> <span class="pre">+</span> <span class="pre">744</span></tt>. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
@@ -167,7 +167,7 @@
 </pre></div>
 </div>
 <div class="section" id="linear-algebra">
-<h2 id="linear-algebra">Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
+<h2>Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
 <p>Intervals may be used in matrices. See the matrix documentation page for details.</p>
 </div>
 </div>
@@ -188,7 +188,7 @@
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="functions.html" title="previous chapter">Functions</a></p>
+            <p class="topless"><a href="functions.html" title="previous chapter">Mathematical functions</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="matrices.html" title="next chapter">Matrices</a></p>
             <h3>This Page</h3>
@@ -218,14 +218,14 @@
           <a href="matrices.html" title="Matrices"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="functions.html" title="Functions"
+          <a href="functions.html" title="Mathematical functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

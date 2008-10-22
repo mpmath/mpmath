@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Setting up mpmath &mdash; mpmath v0.10 documentation</title>
+    <title>Setting up mpmath &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Mpmath basics" href="basics.html" />
     <link rel="prev" title="Welcome to mpmath&#8217;s documentation!" href="index.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to mpmath&#8217;s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,11 +48,11 @@
             
   
   <div class="section" id="setting-up-mpmath">
-<h1 id="setting-up-mpmath">Setting up mpmath<a class="headerlink" href="#setting-up-mpmath" title="Permalink to this headline">¶</a></h1>
+<h1>Setting up mpmath<a class="headerlink" href="#setting-up-mpmath" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="download-and-installation">
-<h2 id="download-and-installation">Download and installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h2>
+<h2>Download and installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="installer">
-<h3 id="installer">Installer<a class="headerlink" href="#installer" title="Permalink to this headline">¶</a></h3>
+<h3>Installer<a class="headerlink" href="#installer" title="Permalink to this headline">¶</a></h3>
 <p>The mpmath setup files can be downloaded from the <a class="reference external" href="http://code.google.com/p/mpmath/downloads/list">mpmath download page</a> or the <a class="reference external" href="http://pypi.python.org/pypi/mpmath/">Python Package Index</a>. Download the source package (available as both .zip and .tar.gz), extract it, open the extracted directory, and run</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt></blockquote>
@@ -62,7 +62,7 @@
 <p>from the mpmath website or the Python Package Index. Run the installer and follow the instructions.</p>
 </div>
 <div class="section" id="using-setuptools">
-<h3 id="using-setuptools">Using setuptools<a class="headerlink" href="#using-setuptools" title="Permalink to this headline">¶</a></h3>
+<h3>Using setuptools<a class="headerlink" href="#using-setuptools" title="Permalink to this headline">¶</a></h3>
 <p>If you have <a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a> installed, you can download and install mpmath in one step by running:</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">easy_install</span> <span class="pre">mpmath</span></tt></blockquote>
@@ -72,14 +72,14 @@
 <p>If you have an old version of mpmath installed already, you may have to pass <tt class="docutils literal"><span class="pre">easy_install</span></tt> the <tt class="docutils literal"><span class="pre">-U</span></tt> flag to force an upgrade.</p>
 </div>
 <div class="section" id="debian-ubuntu">
-<h3 id="debian-ubuntu">Debian/Ubuntu<a class="headerlink" href="#debian-ubuntu" title="Permalink to this headline">¶</a></h3>
+<h3>Debian/Ubuntu<a class="headerlink" href="#debian-ubuntu" title="Permalink to this headline">¶</a></h3>
 <p>Debian and Ubuntu users can install mpmath with</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python-mpmath</span></tt></blockquote>
 <p>See <a class="reference external" href="http://packages.debian.org/python-mpmath">debian</a> and <a class="reference external" href="https://launchpad.net/ubuntu/+source/mpmath">ubuntu</a> package information; please verify that you are getting the latest version.</p>
 </div>
 <div class="section" id="opensuse">
-<h3 id="opensuse">OpenSUSE<a class="headerlink" href="#opensuse" title="Permalink to this headline">¶</a></h3>
+<h3>OpenSUSE<a class="headerlink" href="#opensuse" title="Permalink to this headline">¶</a></h3>
 <p>Mpmath is provided in the &#8220;Science&#8221; repository for all recent versions of <a class="reference external" href="http://www.opensuse.org/">openSUSE</a>. To add this repository to the YAST software management tool, see <a class="reference external" href="http://en.opensuse.org/Add_Package_Repositories_to_YaST">http://en.opensuse.org/Add_Package_Repositories_to_YaST</a> and use one of the following repository URLs:</p>
 <blockquote>
 <ul class="simple">
@@ -90,11 +90,11 @@
 </blockquote>
 </div>
 <div class="section" id="current-development-version">
-<h3 id="current-development-version">Current development version<a class="headerlink" href="#current-development-version" title="Permalink to this headline">¶</a></h3>
+<h3>Current development version<a class="headerlink" href="#current-development-version" title="Permalink to this headline">¶</a></h3>
 <p>See  <a class="reference external" href="http://code.google.com/p/mpmath/source/checkout">http://code.google.com/p/mpmath/source/checkout</a> for instructions on how to check out the mpmath Subversion repository. The source code can also be browsed online from the Google Code page.</p>
 </div>
 <div class="section" id="checking-that-it-works">
-<h3 id="checking-that-it-works">Checking that it works<a class="headerlink" href="#checking-that-it-works" title="Permalink to this headline">¶</a></h3>
+<h3>Checking that it works<a class="headerlink" href="#checking-that-it-works" title="Permalink to this headline">¶</a></h3>
 <p>After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
@@ -107,7 +107,7 @@
 </div>
 </div>
 <div class="section" id="using-gmpy-optional">
-<h2 id="using-gmpy-optional">Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
+<h2>Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
 <p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster at high precision (approximately above 100 digits).</p>
 <p>To verify that mpmath uses gmpy, check the internal MODE variable is not equal to &#8216;python&#8217;:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.settings</span>
@@ -117,7 +117,7 @@
 <p>The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable. Note that the mode cannot be switched during runtime; mpmath must be re-imported for this change to take effect.</p>
 </div>
 <div class="section" id="running-tests">
-<h2 id="running-tests">Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
 <p>It is recommended that you run mpmath&#8217;s full set of unit tests to make sure everything works. The tests are located in the <tt class="docutils literal"><span class="pre">tests</span></tt> subdirectory of the main mpmath directory. They can be run in the interactive interpreter using the <tt class="docutils literal"><span class="pre">runtests()</span></tt> function:</p>
 <div class="highlight"><pre><span class="k">import</span> <span class="nn">mpmath</span>
 <span class="n">mpmath</span><span class="o">.</span><span class="n">runtests</span><span class="p">()</span>
@@ -138,7 +138,7 @@
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">runtests.py</span> <span class="pre">-strict</span></tt></blockquote>
 </div>
 <div class="section" id="compiling-the-documentation">
-<h2 id="compiling-the-documentation">Compiling the documentation<a class="headerlink" href="#compiling-the-documentation" title="Permalink to this headline">¶</a></h2>
+<h2>Compiling the documentation<a class="headerlink" href="#compiling-the-documentation" title="Permalink to this headline">¶</a></h2>
 <p>If you downloaded the source package, the text source for these documentation pages is included in the <tt class="docutils literal"><span class="pre">doc</span></tt> directory. The documentation can be compiled to pretty HTML using <a class="reference external" href="http://sphinx.pocoo.org/">Sphinx</a>. Go to the <tt class="docutils literal"><span class="pre">doc</span></tt> directory and run</p>
 <blockquote>
 <tt class="docutils literal"><span class="pre">python</span> <span class="pre">build.py</span></tt></blockquote>
@@ -208,12 +208,12 @@
         <li class="right" >
           <a href="index.html" title="Welcome to mpmath&#8217;s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

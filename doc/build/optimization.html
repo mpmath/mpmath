@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Optimization &mdash; mpmath v0.10 documentation</title>
+    <title>Optimization &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Limits" href="limits.html" />
     <link rel="prev" title="Differentiation" href="differentiation.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,9 +48,9 @@
             
   
   <div class="section" id="optimization">
-<h1 id="optimization">Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h1>
+<h1>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="root-finding-with-the-secant-method-findroot">
-<h2 id="root-finding-with-the-secant-method-findroot">Root-finding with the secant method (<tt class="docutils literal"><span class="pre">findroot</span></tt>)<a class="headerlink" href="#root-finding-with-the-secant-method-findroot" title="Permalink to this headline">¶</a></h2>
+<h2>Root-finding with the secant method (<tt class="docutils literal"><span class="pre">findroot</span></tt>)<a class="headerlink" href="#root-finding-with-the-secant-method-findroot" title="Permalink to this headline">¶</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">findroot</span></tt> locates a root of a given function using the secant method by default. A simple example use of the secant method is to compute pi as the root of sin(<em>x</em>) closest to <em>x</em> = 3:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
@@ -64,7 +64,7 @@
 </pre></div>
 <p>A good initial guess for the location of the root is required for the method to be effective, so it is somewhat more appropriate to think of the secant method as a root-polishing method than a root-finding method. When the rough location of the root is known, the secant method can be used to refine it to very high precision in only a few steps. If the root is a first-order root, only roughly log(prec) iterations are required. (The secant method is far less efficient for multiple roots.) It may be worthwhile to compute the initial approximation to a root using a machine precision solver (for example using one of SciPy&#8217;s many solvers), and then refining it to high precision using mpmath&#8217;s <tt class="docutils literal"><span class="pre">findroot</span></tt> method.</p>
 <div class="section" id="neat-examples">
-<h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
+<h3>Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
 <p>A nice application is to compute nontrivial roots of the Riemann zeta function with many digits (good initial values are needed for convergence):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">)</span>
@@ -87,14 +87,50 @@
 </pre></div>
 </div>
 <div class="section" id="options">
-<h3 id="options">Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
 <p>Strictly speaking, the secant method requires two initial values. By default, you only have to provide the first point <tt class="docutils literal"><span class="pre">x0</span></tt>; the solver automatically sets the second point (somewhat arbitrarily) to <tt class="docutils literal"><span class="pre">x0</span> <span class="pre">+</span> <span class="pre">1/4</span></tt>. Manually providing also the second point can help in some cases if <tt class="docutils literal"><span class="pre">secant</span></tt> fails to converge. If you provide more than one point, be sure to use a tuple (or a list).</p>
 <p>By default, <tt class="docutils literal"><span class="pre">findroot</span></tt> performs a maximum of 30 steps (when using the secant method), which can be increased or decreased using the <tt class="docutils literal"><span class="pre">maxsteps</span></tt> keyword argument. You can pass <tt class="docutils literal"><span class="pre">findroot</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress. The keyword <tt class="docutils literal"><span class="pre">tol</span></tt> specifies the maximal tolerated error for the solution. The solver will iterate until the error is smaller or <tt class="docutils literal"><span class="pre">maxsteps</span></tt> is reached.</p>
 <p>Usually the secant method will just work, but you can use other solvers if it fails. This is done using the <tt class="docutils literal"><span class="pre">solver</span></tt> keyword. A solver is a class that can be called with <tt class="docutils literal"><span class="pre">(f,</span> <span class="pre">x0,</span> <span class="pre">**kwargs)</span></tt> and returns an iterator yielding tuple consisting of approximative solution and estimated error. So you can implement your own solver, but there are already many available in mpmath; see the <tt class="docutils literal"><span class="pre">mpmath.optimzation</span></tt> module.</p>
 </div>
 </div>
+<div class="section" id="intersection-methods">
+<h2>Intersection methods<a class="headerlink" href="#intersection-methods" title="Permalink to this headline">¶</a></h2>
+<p>When you need to find a root in a known interval, it&#8217;s highly recommended to
+use an intersection-based solver like <tt class="docutils literal"><span class="pre">'anderson'</span></tt> or <tt class="docutils literal"><span class="pre">'ridder'</span></tt>.
+Usually the converge faster and more reliable. They have however problems with
+multiple roots and usually need a sign change to find a root.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;anderson&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.0&#39;)</span>
+</pre></div>
+<p>Be careful with symmetric functions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;anderson&#39;</span><span class="p">)</span> <span class="c">#doctest:+ELLIPSIS</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
+  File <span class="nb">&quot;mpmath/settings.py&quot;</span>, line <span class="m">135</span>, in <span class="n-Identifier">g</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  File <span class="nb">&quot;mpmath/optimization.py&quot;</span>, line <span class="m">551</span>, in <span class="n-Identifier">findroot</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">iterations</span><span class="p">:</span>
+  File <span class="nb">&quot;mpmath/optimization.py&quot;</span>, line <span class="m">332</span>, in <span class="n-Identifier">__iter__</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">fa</span><span class="o">/</span><span class="n">s</span>
+  File <span class="nb">&quot;&lt;string&gt;&quot;</span>, line <span class="m">8</span>, in <span class="n-Identifier">__div__</span>
+  File <span class="nb">&quot;.../libmpf.py&quot;</span>, line <span class="m">761</span>, in <span class="n-Identifier">mpf_div</span>
+    <span class="k">raise</span> <span class="ne">ZeroDivisionError</span>
+<span class="nc">ZeroDivisionError</span>
+</pre></div>
+<p>It fails even for better starting points, because there is no sign change:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="o">.</span><span class="mf">5</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;anderson&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
+  File <span class="nb">&quot;mpmath/settings.py&quot;</span>, line <span class="m">135</span>, in <span class="n-Identifier">g</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  File <span class="nb">&quot;mpmath/optimization.py&quot;</span>, line <span class="m">562</span>, in <span class="n-Identifier">findroot</span>
+    <span class="o">%</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">tol</span><span class="p">))</span>
+<span class="nc">ValueError</span>: <span class="n-Identifier">Could not find root within given tolerance. (1 &gt; 2.1684e-19)</span>
+<span class="go">Try another starting point or tweak arguments.</span>
+</pre></div>
+</div>
 <div class="section" id="multiple-roots">
-<h2 id="multiple-roots">Multiple roots<a class="headerlink" href="#multiple-roots" title="Permalink to this headline">¶</a></h2>
+<h2>Multiple roots<a class="headerlink" href="#multiple-roots" title="Permalink to this headline">¶</a></h2>
 <p>For multiple roots all methods of the Newtonian family (including secant) converge slowly. Consider this example:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">99</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -134,7 +170,7 @@
 <p>This will calculate the derivatives numerically if you do not specify them, this can be quite inefficient. Due to this, <tt class="docutils literal"><span class="pre">multiplicity</span></tt> cancels after evaluating 10 derivatives by default.</p>
 </div>
 <div class="section" id="accelerated-convergence">
-<h2 id="accelerated-convergence">Accelerated convergence<a class="headerlink" href="#accelerated-convergence" title="Permalink to this headline">¶</a></h2>
+<h2>Accelerated convergence<a class="headerlink" href="#accelerated-convergence" title="Permalink to this headline">¶</a></h2>
 <p>You can use Steffensen&#8217;s method to accelerate a fixpoint iteration of linear (or less) convergence.</p>
 <p>x* is a fixpoint of the iteration x_{k+1} = phi(x_k) if x* = phi(x*). For phi(x) = x**2 there are two fixpoints: 0 and 1.</p>
 <p>Let&#8217;s try Steffensen&#8217;s method:</p>
@@ -187,14 +223,14 @@
 <p>Unmodified, the iteration converges only towards 0. Modified it converges not only much faster, it converges even to the repelling fixpoint 1.</p>
 </div>
 <div class="section" id="complex-roots">
-<h2 id="complex-roots">Complex roots<a class="headerlink" href="#complex-roots" title="Permalink to this headline">¶</a></h2>
+<h2>Complex roots<a class="headerlink" href="#complex-roots" title="Permalink to this headline">¶</a></h2>
 <p>For complex roots it&#8217;s recommended to use Muller&#8217;s method as it converges even for real starting points very fast.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">4</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;muller&#39;</span><span class="p">)</span>
 <span class="go">mpc(real=&#39;0.72713608449119684&#39;, imag=&#39;0.93409928946052944&#39;)</span>
 </pre></div>
 </div>
 <div class="section" id="finding-all-roots-of-a-polynomial-polyroots">
-<h2 id="finding-all-roots-of-a-polynomial-polyroots">Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)<a class="headerlink" href="#finding-all-roots-of-a-polynomial-polyroots" title="Permalink to this headline">¶</a></h2>
+<h2>Finding all roots of a polynomial (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)<a class="headerlink" href="#finding-all-roots-of-a-polynomial-polyroots" title="Permalink to this headline">¶</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">polyroots</span></tt> computes all <em>n</em> real or complex roots of an <em>n</em>-th degree polynomial. It will for example successfully compute the two real roots of 3x^2 - 7x + 2:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="o">-</span><span class="mf">7</span><span class="p">,</span><span class="mf">2</span><span class="p">]):</span>
@@ -235,7 +271,7 @@
 <span class="go">0.3178372451957822447257576172961742883731333784334325548791272414612005</span>
 </pre></div>
 <div class="section" id="ill-conditioned-polynomials">
-<h3 id="ill-conditioned-polynomials">Ill-conditioned polynomials<a class="headerlink" href="#ill-conditioned-polynomials" title="Permalink to this headline">¶</a></h3>
+<h3>Ill-conditioned polynomials<a class="headerlink" href="#ill-conditioned-polynomials" title="Permalink to this headline">¶</a></h3>
 <p>If a root with multiplicity M is present, it can typically only be computed accurately to dps/M digits (an sometimes less, due to slow convergence). For example, a triple root can be expected to be computed to roughly 5 accurate digits at standard 15-digit precision:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">1</span><span class="p">]</span>
@@ -336,6 +372,7 @@
 <li><a class="reference external" href="#options">Options</a></li>
 </ul>
 </li>
+<li><a class="reference external" href="#intersection-methods">Intersection methods</a></li>
 <li><a class="reference external" href="#multiple-roots">Multiple roots</a></li>
 <li><a class="reference external" href="#accelerated-convergence">Accelerated convergence</a></li>
 <li><a class="reference external" href="#complex-roots">Complex roots</a></li>
@@ -380,12 +417,12 @@
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

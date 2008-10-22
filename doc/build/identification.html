@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Number identification &mdash; mpmath v0.10 documentation</title>
+    <title>Number identification &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Technical details" href="technical.html" />
     <link rel="prev" title="Interpolation" href="interpolation.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="interpolation.html" title="Interpolation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,13 +48,13 @@
             
   
   <div class="section" id="number-identification">
-<h1 id="number-identification">Number identification<a class="headerlink" href="#number-identification" title="Permalink to this headline">¶</a></h1>
+<h1>Number identification<a class="headerlink" href="#number-identification" title="Permalink to this headline">¶</a></h1>
 <p>Almost all function in mpmath are concerned with producing approximations from exact mathematical formulas. It is also useful to consider the inverse problem: given only a decimal approximation for a number, such as 0.7320508075688772935274463, is it possible to find an exact formula?</p>
 <p>Subject to certain restrictions, such &#8220;reverse engineering&#8221; is indeed possible thanks to the existence of <em>integer relation algorithms</em>. Mpmath implements the PSLQ algorithm (developed by H. Ferguson), which is perhaps the best known integer relation algorithm.</p>
 <p>Automated number recognition based on PSLQ does have limited power. Any occurring transcendental constants (pi, e, etc) must be guessed by the user, and the relation between those constants in the formula must be linear (such as x = 3*pi + 4*e). More complex formulas can be found by combining PSLQ with functional transformations; however, this is only feasible to a limited extent since the computation time grows exponentially with the number of operations that need to be combined.</p>
 <p>The number identification facilities in mpmath are inspired by the <a class="reference external" href="http://oldweb.cecm.sfu.ca/projects/ISC/ISCmain.html">Inverse Symbolic Calculator</a> (ISC). The ISC is more powerful than mpmath, as it uses a lookup table of millions of precomputed constants (thereby mitigating the problem with exponential complexity).</p>
 <div class="section" id="constant-recognition-identify">
-<h2 id="constant-recognition-identify">Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)<a class="headerlink" href="#constant-recognition-identify" title="Permalink to this headline">¶</a></h2>
+<h2>Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)<a class="headerlink" href="#constant-recognition-identify" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">identify(x,</span> <span class="pre">constants=[])</span></tt> attempts to find a formula that expresses <tt class="docutils literal"><span class="pre">x</span></tt> in terms of the given base constants. It searches for matching formulas of the following types:</p>
 <ol class="arabic simple">
 <li>Fractions</li>
@@ -65,7 +65,7 @@
 </ol>
 <p>The constants should be specified as strings representing valid mpmath expressions.</p>
 <div class="section" id="simple-examples">
-<h3 id="simple-examples">Simple examples<a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h3>
+<h3>Simple examples<a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h3>
 <p>Here is one (carefully prepared) example of each type of formula listed above:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
@@ -87,7 +87,7 @@
 </pre></div>
 </div>
 <div class="section" id="things-to-consider">
-<h3 id="things-to-consider">Things to consider<a class="headerlink" href="#things-to-consider" title="Permalink to this headline">¶</a></h3>
+<h3>Things to consider<a class="headerlink" href="#things-to-consider" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>The input <tt class="docutils literal"><span class="pre">x</span></tt> must be a real number. All base constants must be positive real numbers and must not be rationals or rational linear combinations of each other.</li>
 <li>The worst-case computation time grows quickly with the number of base constants. Already with 3 or 4 base constants, <tt class="docutils literal"><span class="pre">identify</span></tt> may require several seconds to finish; perhaps a minute in the worst case. To search for relations among a larger number of constants, you should consider using <tt class="docutils literal"><span class="pre">pslq()</span></tt> directly (see below).</li>
@@ -97,7 +97,7 @@
 </ul>
 </div>
 <div class="section" id="finding-many-solutions">
-<h3 id="finding-many-solutions">Finding many solutions<a class="headerlink" href="#finding-many-solutions" title="Permalink to this headline">¶</a></h3>
+<h3>Finding many solutions<a class="headerlink" href="#finding-many-solutions" title="Permalink to this headline">¶</a></h3>
 <p>By default, <tt class="docutils literal"><span class="pre">identify</span></tt> stops as soon as it finds a match. With <tt class="docutils literal"><span class="pre">full=True</span></tt>, it will continue applying transformations, and return a list of all matches:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">identify</span><span class="p">(</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">s</span>
@@ -112,7 +112,7 @@
 <p>Note that the formulas are sorted by length. Consequentially, the first one in the list will often be the mathematically simplest one. The first formula in the list is <em>not</em> necessarily the same one as the formula returned by <tt class="docutils literal"><span class="pre">identify</span></tt> with <tt class="docutils literal"><span class="pre">full=False</span></tt>.</p>
 </div>
 <div class="section" id="finding-approximate-solutions">
-<h3 id="finding-approximate-solutions">Finding approximate solutions<a class="headerlink" href="#finding-approximate-solutions" title="Permalink to this headline">¶</a></h3>
+<h3>Finding approximate solutions<a class="headerlink" href="#finding-approximate-solutions" title="Permalink to this headline">¶</a></h3>
 <p>The <tt class="docutils literal"><span class="pre">tolerance</span></tt> setting can be changed in order to find approximate matches. We can for example try to generate approximations for pi:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
@@ -150,7 +150,7 @@
 </pre></div>
 </div>
 <div class="section" id="neat-examples">
-<h3 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
+<h3>Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
 <p>Many transcendental functions can be evaluated in terms of common mathematical constants at special points. Examples include the gamma function at half-integers, its derivative at positive integers, and the Riemann zeta function at even integers:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;pi&#39;</span><span class="p">])</span>
@@ -180,7 +180,7 @@
 </div>
 </div>
 <div class="section" id="algebraic-identification-findpoly">
-<h2 id="algebraic-identification-findpoly">Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)<a class="headerlink" href="#algebraic-identification-findpoly" title="Permalink to this headline">¶</a></h2>
+<h2>Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)<a class="headerlink" href="#algebraic-identification-findpoly" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">findpoly(x,n)</span></tt> returns a list of integer coefficients for a polynomial of degree at most n having x as a root. By default (degree n = 1), it simply finds a linear polynomial with a rational root:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
@@ -212,7 +212,7 @@
 </pre></div>
 </div>
 <div class="section" id="integer-relations-pslq">
-<h2 id="integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
+<h2>Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">pslq([x1,x2,...,xn])</span></tt> returns a list of integers <tt class="docutils literal"><span class="pre">[c1,c2,...,cn]</span></tt> such that c1*x1 + x2*x2 + ... + cn*xn = 0 approximately. In other words, it determines whether x1, x2, ..., xn, with coefficients allowed by the working precision, are linearly dependent over the rational numbers. It returns <tt class="xref docutils literal"><span class="pre">None</span></tt> on failure.</p>
 <p>We can use it to verify Takano&#8217;s Machin-like formula, which expresses pi using inverse cotangent values as pi/4 = 12*acot(49)+32*acot(57)-5*acot(239)+12*acot(110443):</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
@@ -292,12 +292,12 @@
         <li class="right" >
           <a href="interpolation.html" title="Interpolation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

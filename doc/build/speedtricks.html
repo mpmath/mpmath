@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Speed tricks &mdash; mpmath v0.10 documentation</title>
+    <title>Speed tricks &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="prev" title="Technical details" href="technical.html" />
   </head>
   <body>
@@ -34,7 +34,7 @@
         <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -44,7 +44,7 @@
             
   
   <div class="section" id="speed-tricks">
-<h1 id="speed-tricks">Speed tricks<a class="headerlink" href="#speed-tricks" title="Permalink to this headline">¶</a></h1>
+<h1>Speed tricks<a class="headerlink" href="#speed-tricks" title="Permalink to this headline">¶</a></h1>
 <p>There are a few tricks that can significantly speed up mpmath code at low to medium precision (up a hundred digits or so):</p>
 <ul class="simple">
 <li>Repeated type conversions from floats, strings and integers are expensive (exceptions: <tt class="docutils literal"><span class="pre">n/x</span></tt>, <tt class="docutils literal"><span class="pre">n*x</span></tt> and <tt class="docutils literal"><span class="pre">x**n</span></tt> are fast when <tt class="docutils literal"><span class="pre">n</span></tt> is an <tt class="docutils literal"><span class="pre">int</span></tt> and <tt class="docutils literal"><span class="pre">x</span></tt> is an <tt class="docutils literal"><span class="pre">mpf</span></tt>). Numerical constants that are used repeatedly, such as in the body of a function passed to <tt class="docutils literal"><span class="pre">quadts</span></tt>, should be pre-converted to <tt class="docutils literal"><span class="pre">mpf</span></tt> instances.</li>
@@ -142,12 +142,12 @@
         <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

@@ -34,18 +34,148 @@ from mptypes import (\
     ComplexResult,
 )
 
+class _pi(constant):
+    """
+    Pi, roughly equal to 3.141592654, represents the area of the unit
+    circle, the half-period of trigonometric functions, and many other
+    things in mathematics.
+
+    Mpmath can evaluate pi to arbitrary precision:
+
+        >>> mp.dps = 50
+        >>> print pi
+        3.1415926535897932384626433832795028841971693993751
+
+    This shows digits 99991-100000 of pi:
+
+        >>> mp.dps = 100000
+        >>> str(pi)[-10:]
+        '5549362464'
+
+    **Possible issues**
+
+    :data:`pi` always rounds to the nearest floating-point
+    number when used. This means that exact mathematical identities
+    involving pi will generally not be preserved in floating-point
+    arithmetic. In particular, multiples of :data:`pi` (except for 
+    the trivial case ``0*pi``) are `not` the exact roots of
+    :func:`sin`, but differ roughly by the current epsilon:
+
+        >>> mp.dps = 15
+        >>> sin(pi)
+        mpf('1.2246467991473532e-16')
+
+    One solution is to use the :func:`sinpi` function instead:
+
+        >>> sinpi(1)
+        mpf('0.0')
+
+    See the documentation of trigonometric functions for additional
+    details.
+    """
+
+
+class _degree(constant): pass
+
+class _e(constant):
+    """
+    The transcendental number e = 2.718281828... is the base of the
+    natural logarithm :func:`ln` and of the exponential function,
+    :func:`exp`.
+
+    Mpmath can be evaluate e to arbitrary precision:
+
+        >>> mp.dps = 50
+        >>> print e
+        2.7182818284590452353602874713526624977572470937
+
+    This shows digits 99991-100000 of e:
+
+        >>> mp.dps = 100000
+        >>> str(e)[-10:]
+        '2100427165'
+
+    **Possible issues**
+
+    :data:`e` always rounds to the nearest floating-point number
+    when used, and mathematical identities involving e may not
+    hold in floating-point arithmetic. For example, ``ln(e)``
+    might not evaluate exactly to 1.
+
+    In particular, don't use ``e**x`` to compute the exponential
+    function. Use ``exp(x)`` instead; this is both faster and more
+    accurate.
+
+    """
+    pass
+
+
+class _ln2(constant): pass
+
+class _ln10(constant): pass
+
+class _phi(constant): pass
+
+class _euler(constant): pass
+
+class _catalan(constant): pass
+
+class _khinchin(constant): pass
+
+class _glaisher(constant):
+    """
+    Glaisher's constant A, also known as the Glaisher-Kinkelin constant,
+    is a number approximately equal to 1.282427129 that sometimes
+    appears in formulas related to gamma and zeta functions.
+
+    Mpmath can evaluate Glaisher's constant to arbitrary precision:
+
+        >>> mp.dps = 50
+        >>> print glaisher
+        1.282427129100622636875342568869791727767688927325
+
+    Glaisher's constant is defined in terms of the derivative of the
+    Riemann zeta function. We can verify that the value computed by
+    :data:`glaisher` is correct using mpmath's facilities for numerical
+    differentiation and arbitrary evaluation of the zeta function:
+
+        >>> print exp(mpf(1)/12 - diff(zeta, -1))
+        1.282427129100622636875342568869791727767688927325
+
+    Here is an example of an integral that can be evaluated in
+    terms of Glaisher's constant:
+
+        >>> mp.dps = 15
+        >>> print quad(lambda x: log(gamma(x)), [1, 1.5])
+        -0.0428537406502909
+        >>> print -0.5 - 7*log(2)/24 + log(pi)/4 + 3*log(glaisher)/2
+        -0.042853740650291
+
+    Mpmath computes Glaisher's constant by applying Euler-Maclaurin
+    summation to a slowly convergent series. The implementation is
+    reasonably efficient up to about 10,000 digits. See the source
+    code for additional details.
+
+    References:
+    http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
+
+    """
+
+class _apery(constant): pass
+
 # Mathematical constants
-pi = constant(libelefun.mpf_pi, "pi")
-degree = constant(libelefun.mpf_degree, "degree")
-e = constant(libelefun.mpf_e, "e")
-ln2 = constant(libelefun.mpf_ln2, "ln(2)")
-ln10 = constant(libelefun.mpf_ln10, "ln(10)")
-phi = constant(libelefun.mpf_phi, "Golden ratio (phi)")
-euler = constant(gammazeta.mpf_euler, "Euler's constant (gamma)")
-catalan = constant(gammazeta.mpf_catalan, "Catalan's constant")
-khinchin = constant(gammazeta.mpf_khinchin, "Khinchin's constant")
-glaisher = constant(gammazeta.mpf_glaisher, "Glaisher's constant")
-apery = constant(gammazeta.mpf_apery, "Apery's constant")
+pi = _pi(libelefun.mpf_pi, "pi")
+degree = _degree(libelefun.mpf_degree, "degree")
+e = _e(libelefun.mpf_e, "e")
+ln2 = _ln2(libelefun.mpf_ln2, "ln(2)")
+ln10 = _ln10(libelefun.mpf_ln10, "ln(10)")
+phi = _phi(libelefun.mpf_phi, "Golden ratio (phi)")
+euler = _euler(gammazeta.mpf_euler, "Euler's constant (gamma)")
+catalan = _catalan(gammazeta.mpf_catalan, "Catalan's constant")
+khinchin = _khinchin(gammazeta.mpf_khinchin, "Khinchin's constant")
+glaisher = _glaisher(gammazeta.mpf_glaisher, "Glaisher's constant")
+apery = _apery(gammazeta.mpf_apery, "Apery's constant")
+
 
 def funcwrapper(f):
     def g(*args, **kwargs):
@@ -256,6 +386,51 @@ cospi = mpfunc('cospi', gammazeta.mpf_cos_pi, gammazeta.mpc_cos_pi, 'computes co
 sinpi = mpfunc('sinpi', gammazeta.mpf_sin_pi, gammazeta.mpc_sin_pi, 'computes sin(pi*x) accurately')
 
 zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
+
+zeta.__doc__ = """
+    Computes the Riemann zeta function, zeta(s). The Riemann zeta
+    function is defined for Re(s) > 1 by::
+
+                         -s     -s     -s
+        zeta(s) = 1  +  2   +  3   +  4   + ...
+
+    and for Re(s) <= 1 by analytic continuation. It has a pole
+    at s = 1.
+
+    **Examples**
+
+    For large positive s, zeta(s) rapidly approaches 1::
+
+        >>> print zeta(30)
+        1.00000000093133
+        >>> print zeta(100)
+        1.0
+        >>> print zeta(inf)
+        1.0
+
+    The following series converges and in fact has a simple
+    closed form value::
+
+        >>> print sumsh(lambda k: zeta(k) - 1, [2, inf])
+        1.0
+
+    **Algorithm**
+
+    The primary algorithm is Borwein's algorithm for the Dirichlet
+    eta function. Three separate implementations are used: for general
+    real arguments, general complex arguments, and for integers. The
+    reflection formula is applied to arguments in the negative
+    half-plane. For very large real arguments, either direct
+    summation or the Euler prime product is used.
+
+    **References**
+
+    * http://mathworld.wolfram.com/RiemannZetaFunction.html
+
+    * http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
+
+"""
+
 gamma = mpfunc('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, "gamma function")
 factorial = mpfunc('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, "factorial")
 fac = factorial
@@ -300,8 +475,129 @@ pentagamma = psi3
 harmonic = mpfunc('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic,
     "nth harmonic number")
 
+harmonic.__doc__ = """
+    If `n` is an integer, harmonic(`n`) gives a floating-point
+    approximation of the `n`-th harmonic number
+    H(`n`) = 1 + 1/2 + 1/3 + ... + 1/`n`::
+
+        >>> mp.dps = 15    
+        >>> for n in range(8):
+        ...     print n, harmonic(n)
+        ...
+        0 0.0
+        1 1.0
+        2 1.5
+        3 1.83333333333333
+        4 2.08333333333333
+        5 2.28333333333333
+        6 2.45
+        7 2.59285714285714
+
+    The infinite harmonic series 1 + 1/2 + 1/3 + ... diverges::
+
+        >>> print harmonic(inf)
+        +inf
+
+    :func:`harmonic` is evaluated using the digamma function rather
+    than by summing the harmonic series term by term. It can therefore
+    be computed quickly for arbitrarily large `n`, and even for
+    nonintegral arguments::
+
+        >>> print harmonic(10**100)
+        230.835724964306
+        >>> print harmonic(0.5)
+        0.613705638880109
+        >>> print harmonic(3+4j)
+        (2.24757548223494 + 0.850502209186044j)
+
+    :func:`harmonic` supports arbitrary precision evaluation::
+
+        >>> mp.dps = 50
+        >>> print harmonic(11)
+        3.0198773448773448773448773448773448773448773448773
+        >>> print harmonic(pi)
+        1.8727388590273302654363491032336134987519132374152
+
+    The harmonic series diverges, but at a glacial pace. It is possible
+    to calculate the exact number of terms required before the sum
+    exceeds a given amount, say 100::
+
+        >>> mp.dps = 50
+        >>> v = 10**findroot(lambda x: harmonic(10**x) - 100, 10)
+        >>> print v
+        15092688622113788323693563264538101449859496.864101
+        >>> v = int(ceil(v))
+        >>> print v
+        15092688622113788323693563264538101449859497
+        >>> print harmonic(v-1)
+        99.999999999999999999999999999999999999999999942747
+        >>> print harmonic(v)
+        100.000000000000000000000000000000000000000000009
+
+    """
+
 def bernoulli(n):
-    """nth Bernoulli number, B_n"""
+    """
+    Computes the nth Bernoulli number, B(n), for any integer n >= 0.
+
+    The Bernoulli numbers are rational numbers, but this function
+    returns a floating-point approximation. To obtain an exact
+    fraction, use :func:`bernfrac` instead.
+
+    **Examples**
+
+    Numerical values of the first few Bernoulli numbers::
+
+        >>> mp.dps = 15
+        >>> for n in range(15):
+        ...     print n, bernoulli(n)
+        ...
+        0 1.0
+        1 -0.5
+        2 0.166666666666667
+        3 0.0
+        4 -0.0333333333333333
+        5 0.0
+        6 0.0238095238095238
+        7 0.0
+        8 -0.0333333333333333
+        9 0.0
+        10 0.0757575757575758
+        11 0.0
+        12 -0.253113553113553
+        13 0.0
+        14 1.16666666666667
+
+    Bernoulli numbers can be approximated with arbitrary precision::
+
+        >>> mp.dps = 50
+        >>> print bernoulli(100)
+        -2.8382249570693706959264156336481764738284680928013e+78
+
+    Arbitrarily large n are supported::
+
+        >>> mp.dps = 15
+        >>> print bernoulli(10**20 + 2)
+        3.09136296657021e+1876752564973863312327
+
+    The Bernoulli numbers are related to the Riemann zeta function
+    at integer values::
+
+        >>> print -bernoulli(8) * (2*pi)**8 / (2*fac(8))
+        1.00407735619794
+        >>> print zeta(8)
+        1.00407735619794
+
+    **Algorithm**
+
+    For small n (n < 3000) :func:`bernoulli` uses a recurrence
+    formula due to Ramanujan. All results in this range are cached,
+    so sequential computation of small Bernoulli numbers is
+    guaranteed to be fast.
+
+    For larger n, B(n) is evaluated in terms of the Riemann zeta
+    function.
+    """
     return make_mpf(gammazeta.mpf_bernoulli(int(n), *prec_rounding))
 
 bernfrac = gammazeta.bernfrac
@@ -309,7 +605,59 @@ bernfrac = gammazeta.bernfrac
 stieltjes_cache = {}
 
 def stieltjes(n):
-    """Computes the nth Stieltjes constant."""
+    """
+    For a nonnegative integer `n`, stieltjes(`n`) computes the
+    nth Stieltjes constant, defined as the nth coefficient
+    in the Laurent series expansion of the Riemann zeta function
+    around the pole at s = 1::
+
+                            oo
+                            ___     n
+                    1      \    (-1)                n
+        zeta(s) = ----- +   )   ----- (gamma ) (s-1)
+                  s - 1    /___  n!         n
+                           n = 0
+
+    Here gamma_n is the nth Stieltjes constant.
+
+    **Examples**
+
+    The zeroth Stieltjes constant is just Euler's constant::
+
+        >>> mp.dps = 15
+        >>> print stieltjes(0)
+        0.577215664901533
+
+    Some more values are::
+
+        >>> print stieltjes(1)
+        -0.0728158454836767
+        >>> print stieltjes(10)
+        0.000205332814909065
+        >>> print stieltjes(30)
+        0.00355772885557316
+
+    :func:`stieltjes` supports arbitrary precision evaluation,
+    and caches computed results::
+
+        >>> mp.dps = 50
+        >>> print stieltjes(2)
+        -0.0096903631928723184845303860352125293590658061013408
+
+    **Algorithm**
+
+    The calculation is done using numerical
+    integration of the Riemann zeta function. The method should
+    work for any `n` and dps, but soon becomes quite slow in
+    practice. The code has been tested with n = 50 and dps = 100;
+    that computation took about 2 minutes.
+
+    **References**
+
+    * http://mathworld.wolfram.com/StieltjesConstants.html
+    * http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
+
+    """
     n = int(n)
     if n == 0:
         return +euler
@@ -345,14 +693,48 @@ def isnpint(x):
 
 def gammaprod(a, b):
     """
-    Computes the product / quotient of gamma functions
+    Given iterables `a` and `b`, ``gammaprod(a, b)`` computes the
+    product / quotient of gamma functions::
 
-        G(a_0) G(a_1) ... G(a_p)
-        ------------------------
-        G(b_0) G(b_1) ... G(a_q)
+        gamma(a[0]) * gamma(a[1]) * ... * gamma(a[p])
+        ---------------------------------------------
+        gamma(b[0]) * gamma(b[1]) * ... * gamma(b[q])
 
-    with proper cancellation of poles (interpreting the expression as a
-    limit). Returns +inf if the limit diverges.
+    **Handling of poles**
+
+    Unlike direct calls to :func:`gamma`, :func:`gammaprod` considers
+    the entire product as a limit and evaluates this limit properly if
+    any of the numerator or denominator arguments are nonpositive
+    integers such that poles of the gamma function are encountered.
+
+    In particular:
+
+    * If there are equally many poles in the numerator and the
+      denominator, the limit is a rational number times the remaining,
+      regular part of the product.
+
+    * If there are more poles in the numerator, :func:`gammaprod`
+      returns ``+inf``.
+
+    * If there are more poles in the denominator, :func:`gammaprod`
+      returns zero (``0``).
+
+    **Examples**
+
+    1/gamma(x) evaluated at x = 0::
+
+        >>> gammaprod([], [0])
+        mpf('0.0')
+
+    A limit::
+
+        >>> gammaprod([-4], [-3])
+        mpf('-0.25')
+        >>> limit(lambda x: gamma(x-1)/gamma(x), -3, direction=1)
+        mpf('-0.25')
+        >>> limit(lambda x: gamma(x-1)/gamma(x), -3, direction=-1)
+        mpf('-0.25')
+
     """
     a = [convert_lossless(x) for x in a]
     b = [convert_lossless(x) for x in b]
@@ -380,6 +762,12 @@ def gammaprod(a, b):
     finally:
         mp.prec = orig
     return +p
+
+def beta(x, y):
+    """Beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y)"""
+    x = convert_lossless(x)
+    y = convert_lossless(y)
+    return gammaprod([x, y], [x+y])
 
 def binomial(n, k):
     """Binomial coefficient, C(n,k) = n!/(k!*(n-k)!)."""
@@ -513,7 +901,7 @@ def sum_hyp2f1_rat(a, b, c, z):
 
 def hyper(a_s, b_s, z):
     """
-    Hypergeometric function pFq,
+    Hypergeometric function pFq::
 
           [ a_1, a_2, ..., a_p |    ]
       pFq [                    |  z ]
@@ -597,6 +985,18 @@ def npdf(x, mu=0, sigma=1):
     """
     npdf(x, mu=0, sigma=1) -- probability density function of a
     normal distribution with mean value mu and variance sigma^2.
+
+    Elementary properties of the probability distribution can
+    be verified using numerical integration::
+
+        >>> mp.dps = 15
+        >>> print quad(npdf, [-inf, inf])
+        1.0
+        >>> print quad(lambda x: npdf(x, 3), [3, inf])
+        0.5
+        >>> print quad(lambda x: npdf(x, 3, 2), [3, inf])
+        0.5
+
     """
     sigma = convert_lossless(sigma)
     return exp(-(x-mu)**2/(2*sigma**2)) / (sigma*sqrt(2*pi))

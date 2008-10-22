@@ -524,11 +524,72 @@ def list_primes(n):
 
 def bernfrac(n):
     """
-    Computes integers (p,q) such that p/q = B_n exactly, where
-    B_n denotes the nth Bernoulli number.
+    Returns a tuple of integers (p, q) such that p/q = B(n) exactly,
+    where B(n) denotes the nth Bernoulli number. The fraction is
+    always reduced to lowest terms. Note that for n > 1 and n odd,
+    B(n) = 0, and (0, 1) is returned.
 
-    Use bernoulli(n) to get a floating-point approximation
-    instead of the exact fraction (much faster for large n).
+    **Examples**
+
+    The first few Bernoulli numbers are exactly::
+
+        >>> for n in range(15):
+        ...     p, q = bernfrac(n)
+        ...     print n, "%s/%s" % (p, q)
+        ...
+        0 1/1
+        1 -1/2
+        2 1/6
+        3 0/1
+        4 -1/30
+        5 0/1
+        6 1/42
+        7 0/1
+        8 -1/30
+        9 0/1
+        10 5/66
+        11 0/1
+        12 -691/2730
+        13 0/1
+        14 7/6
+
+    This function works for arbitrarily large n::
+
+        >>> p, q = bernfrac(10**4)
+        >>> print q
+        2338224387510
+        >>> print len(str(p))
+        27692
+        >>> mp.dps = 15
+        >>> print mpf(p) / q
+        -9.04942396360948e+27677
+        >>> print bernoulli(10**4)
+        -9.04942396360948e+27677
+
+    Note: :func:`bernoulli` computes a floating-point approximation
+    directly, without computing the exact fraction first.
+    This is much faster for large n.
+
+    **Algorithm**
+
+    :func:`bernfrac` works by computing the value of B(n) numerically
+    and then using the von Staudt-Clausen theorem to reconstruct
+    the exact fraction. For large n, this is significantly faster than
+    computing B(1), B(2), ..., B(n) recursively with exact arithmetic.
+    The implementation has been tested for B(10**n) up to n = 6.
+
+    In practice, :func:`bernfrac` appears to be about three times
+    slower than the specialized program calcbn.exe (see The Bernoulli
+    Number Page).
+
+    **References**
+
+    * von Staudt-Clausen Theorem
+      http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
+
+    * The Bernoulli Number Page
+      http://www.bernoulli.org/
+
     """
     n = int(n)
     if n < 3:

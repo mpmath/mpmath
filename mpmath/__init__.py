@@ -1,4 +1,4 @@
-__version__ = '0.10'
+__version__ = '0.10-svn'
 
 from mptypes import (
     mpnumeric, mpf, mpc, mpi, convert_lossless,
@@ -22,7 +22,7 @@ from functions import (
     nthroot, hypot, modf,
     ldexp, frexp, sign, arg,
     degrees, radians, atan2,
-    zeta, gamma, factorial, fac,
+    zeta, gamma, factorial, fac, beta,
     psi, psi0, psi1, psi2, psi3,
     polygamma, digamma, trigamma, tetragamma, pentagamma,
     harmonic, bernoulli, bernfrac, stieltjes,

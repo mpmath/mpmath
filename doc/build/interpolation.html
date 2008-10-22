@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Interpolation &mdash; mpmath v0.10 documentation</title>
+    <title>Interpolation &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Limits" href="limits.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="limits.html" title="Limits"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,9 +48,9 @@
             
   
   <div class="section" id="interpolation">
-<h1 id="interpolation">Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this headline">¶</a></h1>
+<h1>Interpolation<a class="headerlink" href="#interpolation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="chebyshev-approximation-chebyfit">
-<h2 id="chebyshev-approximation-chebyfit">Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)<a class="headerlink" href="#chebyshev-approximation-chebyfit" title="Permalink to this headline">¶</a></h2>
+<h2>Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)<a class="headerlink" href="#chebyshev-approximation-chebyfit" title="Permalink to this headline">¶</a></h2>
 <p>Chebyshev approximation is very useful if one needs repeated evaluation of an expensive function, such as function defined implicitly by an integral or a differential equation. (In particular, it provides the opportunity to turn a slow mpmath function into a fast machine-precision version of the same.)</p>
 <p><tt class="docutils literal"><span class="pre">chebyfit(f,</span> <span class="pre">[a,</span> <span class="pre">b],</span> <span class="pre">N)</span></tt> generates a polynomial of degree N-1 that approximates f on the finite interval [a, b] and returns a list containing the polynomial coefficients. With <tt class="docutils literal"><span class="pre">error=True</span></tt>, it also returns a number estimating the maximum error on the interval.</p>
 <p>Here we use it to generate a low-degree approximation of f(x) = cos(x), valid on the interval [1, 2]:</p>
@@ -125,12 +125,12 @@
         <li class="right" >
           <a href="limits.html" title="Limits"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

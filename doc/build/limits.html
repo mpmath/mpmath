@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Limits &mdash; mpmath v0.10 documentation</title>
+    <title>Limits &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Interpolation" href="interpolation.html" />
     <link rel="prev" title="Optimization" href="optimization.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="optimization.html" title="Optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,9 +48,9 @@
             
   
   <div class="section" id="limits">
-<h1 id="limits">Limits<a class="headerlink" href="#limits" title="Permalink to this headline">¶</a></h1>
+<h1>Limits<a class="headerlink" href="#limits" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="richardson-extrapolation-limit">
-<h2 id="richardson-extrapolation-limit">Richardson extrapolation (<tt class="docutils literal"><span class="pre">limit</span></tt>)<a class="headerlink" href="#richardson-extrapolation-limit" title="Permalink to this headline">¶</a></h2>
+<h2>Richardson extrapolation (<tt class="docutils literal"><span class="pre">limit</span></tt>)<a class="headerlink" href="#richardson-extrapolation-limit" title="Permalink to this headline">¶</a></h2>
 <p>Numerical limits of functions and sequences can be computed with <tt class="docutils literal"><span class="pre">limit</span></tt>, which attempts to use Richardson extrapolation to accelerate their convergence. Here is one limit representation for e and one for pi:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
@@ -80,7 +80,7 @@
 <p>The value returned by <tt class="docutils literal"><span class="pre">limit</span></tt> is also likely to be misleading if the real limit is divergent. Currently, <tt class="docutils literal"><span class="pre">limit</span></tt> provides no way to automatically estimate the error, so it must be used with care (trial and error often works).</p>
 </div>
 <div class="section" id="neat-examples">
-<h2 id="neat-examples">Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h2>
+<h2>Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h2>
 <p>Computing the constant factor in Stirling&#8217;s formula, without and with acceleration:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">e</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
@@ -157,12 +157,12 @@
         <li class="right" >
           <a href="optimization.html" title="Optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 14, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

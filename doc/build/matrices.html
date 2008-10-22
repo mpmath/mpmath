@@ -2,23 +2,23 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Matrices &mdash; mpmath v0.10 documentation</title>
+    <title>Matrices &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:   '',
-          VERSION:    '0.10',
-          COLLAPSE_MODINDEX: false
+          URL_ROOT:    '',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/interface.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="contents" title="Global table of contents" href="contents.html" />
     <link rel="index" title="Global index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Integration" href="integration.html" />
     <link rel="prev" title="Interval arithmetic" href="intervals.html" />
   </head>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -48,11 +48,11 @@
             
   
   <div class="section" id="matrices">
-<h1 id="matrices">Matrices<a class="headerlink" href="#matrices" title="Permalink to this headline">¶</a></h1>
+<h1>Matrices<a class="headerlink" href="#matrices" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="creating-matrices">
-<h2 id="creating-matrices">Creating matrices<a class="headerlink" href="#creating-matrices" title="Permalink to this headline">¶</a></h2>
+<h2>Creating matrices<a class="headerlink" href="#creating-matrices" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="basic-methods">
-<h3 id="basic-methods">Basic methods<a class="headerlink" href="#basic-methods" title="Permalink to this headline">¶</a></h3>
+<h3>Basic methods<a class="headerlink" href="#basic-methods" title="Permalink to this headline">¶</a></h3>
 <p>Matrices in mpmath are implemented using dictionaries. Only non-zero values are
 stored, so it is cheap to represent sparse matrices.</p>
 <p>The most basic way to create one is to use the <tt class="docutils literal"><span class="pre">matrix</span></tt> class directly. You
@@ -121,7 +121,7 @@ every new element:</p>
 </pre></div>
 </div>
 <div class="section" id="advanced-methods">
-<h3 id="advanced-methods">Advanced methods<a class="headerlink" href="#advanced-methods" title="Permalink to this headline">¶</a></h3>
+<h3>Advanced methods<a class="headerlink" href="#advanced-methods" title="Permalink to this headline">¶</a></h3>
 <p>Convenient functions are available for creating various standard matrices:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeros</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">matrix(</span>
@@ -149,7 +149,7 @@ every new element:</p>
 </pre></div>
 </div>
 <div class="section" id="vectors">
-<h3 id="vectors">Vectors<a class="headerlink" href="#vectors" title="Permalink to this headline">¶</a></h3>
+<h3>Vectors<a class="headerlink" href="#vectors" title="Permalink to this headline">¶</a></h3>
 <p>Vectors may also be represented by the <tt class="docutils literal"><span class="pre">matrix</span></tt> class (with rows = 1 or cols = 1).
 For vectors there are some things which make life easier. A column vector can
 be created using a flat list, a row vectors using an almost flat nested list:</p>
@@ -171,7 +171,7 @@ be created using a flat list, a row vectors using an almost flat nested list:</p
 </pre></div>
 </div>
 <div class="section" id="other">
-<h3 id="other">Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
 <p>Like you probably expected, matrices can be printed:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">randmatrix</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="c"># doctest:+SKIP</span>
 <span class="go">[ 0.782963853573023  0.802057689719883  0.427895717335467]</span>
@@ -212,7 +212,7 @@ support this format:</p>
 </div>
 </div>
 <div class="section" id="matrix-operations">
-<h2 id="matrix-operations">Matrix operations<a class="headerlink" href="#matrix-operations" title="Permalink to this headline">¶</a></h2>
+<h2>Matrix operations<a class="headerlink" href="#matrix-operations" title="Permalink to this headline">¶</a></h2>
 <p>You can add and substract matrices of compatible dimensions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">5</span><span class="p">,</span> <span class="mf">9</span><span class="p">]])</span>
@@ -285,7 +285,7 @@ compatible:</p>
 <span class="go"> [&#39;1.0&#39;, &#39;1.0&#39;]])</span>
 </pre></div>
 <div class="section" id="norms">
-<h3 id="norms">Norms<a class="headerlink" href="#norms" title="Permalink to this headline">¶</a></h3>
+<h3>Norms<a class="headerlink" href="#norms" title="Permalink to this headline">¶</a></h3>
 <p>Sometimes you need to know how &#8220;large&#8221; a matrix or vector is. Due to their
 multidimensional nature it&#8217;s not possible to compare them, but there are
 several functions to map a matrix or a vector to a positive real number, the
@@ -317,9 +317,9 @@ mathematical properties you might expect from a norm.</p>
 </div>
 </div>
 <div class="section" id="linear-algebra">
-<h2 id="linear-algebra">Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
+<h2>Linear algebra<a class="headerlink" href="#linear-algebra" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="linear-equations">
-<h3 id="linear-equations">Linear equations<a class="headerlink" href="#linear-equations" title="Permalink to this headline">¶</a></h3>
+<h3>Linear equations<a class="headerlink" href="#linear-equations" title="Permalink to this headline">¶</a></h3>
 <p>Basic linear algebra is implemented; you can for example solve the linear
 equation system:</p>
 <pre>  x + 2*y = -10
@@ -356,34 +356,34 @@ keyword <tt class="docutils literal"><span class="pre">force_type</span></tt>:</
 such systems, so the residual is minimized instead. Internally this is done
 using Cholesky decomposition to compute a least squares approximation. This means
 that that <tt class="docutils literal"><span class="pre">lu_solve</span></tt> will square the errors. If you can&#8217;t afford this, use
-<tt class="docutils literal"><span class="pre">qr_solve</span></tt> instead. It is twice as slow but more accurate, and t calculates
+<tt class="docutils literal"><span class="pre">qr_solve</span></tt> instead. It is twice as slow but more accurate, and it calculates
 the residual automatically.</p>
 </div>
 <div class="section" id="matrix-factorization">
-<h3 id="matrix-factorization">Matrix factorization<a class="headerlink" href="#matrix-factorization" title="Permalink to this headline">¶</a></h3>
+<h3>Matrix factorization<a class="headerlink" href="#matrix-factorization" title="Permalink to this headline">¶</a></h3>
 <p>The function <tt class="docutils literal"><span class="pre">lu</span></tt> computes an explicit LU factorization of a matrix:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">U</span> <span class="o">=</span> <span class="n">lu</span><span class="p">(</span><span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">],[</span><span class="mf">7</span><span class="p">,</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">]]))</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">U</span> <span class="o">=</span> <span class="n">lu</span><span class="p">(</span><span class="n">matrix</span><span class="p">([[</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">],[</span><span class="mf">7</span><span class="p">,</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">]]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">P</span>
 <span class="go">[0.0  0.0  1.0]</span>
-<span class="go">[0.0  1.0  0.0]</span>
 <span class="go">[1.0  0.0  0.0]</span>
+<span class="go">[0.0  1.0  0.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">L</span>
-<span class="go">[              1.0  0.0  0.0]</span>
-<span class="go">[0.571428571428571  1.0  0.0]</span>
-<span class="go">[0.142857142857143  2.0  1.0]</span>
+<span class="go">[              1.0                0.0  0.0]</span>
+<span class="go">[              0.0                1.0  0.0]</span>
+<span class="go">[0.571428571428571  0.214285714285714  1.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">U</span>
-<span class="go">[7.0                8.0                9.0]</span>
-<span class="go">[0.0  0.428571428571429  0.857142857142858]</span>
-<span class="go">[0.0                0.0                0.0]</span>
+<span class="go">[7.0  8.0                9.0]</span>
+<span class="go">[0.0  2.0                3.0]</span>
+<span class="go">[0.0  0.0  0.214285714285714]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">P</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">L</span><span class="o">*</span><span class="n">U</span>
-<span class="go">[1.0  2.0  3.0]</span>
+<span class="go">[0.0  2.0  3.0]</span>
 <span class="go">[4.0  5.0  6.0]</span>
 <span class="go">[7.0  8.0  9.0]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="interval-matrices">
-<h2 id="interval-matrices">Interval matrices<a class="headerlink" href="#interval-matrices" title="Permalink to this headline">¶</a></h2>
+<h2>Interval matrices<a class="headerlink" href="#interval-matrices" title="Permalink to this headline">¶</a></h2>
 <p>Matrices may contain interval elements. This allows one to perform
 basic linear algebra operations such as matrix multiplication
 and equation solving with rigorous error bounds:</p>
@@ -469,12 +469,12 @@ and equation solving with rigorous error bounds:</p>
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 15, 2008.
+      Last updated on Oct 22, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
