@@ -399,6 +399,40 @@ zeta.__doc__ = """
 
     **Examples**
 
+    Some exact values of the zeta function are::
+
+        >>> print zeta(2)
+        1.64493406684823
+        >>> print pi**2 / 6
+        1.64493406684823
+        >>> print zeta(0)
+        -0.5
+        >>> print zeta(-1)
+        -0.0833333333333333
+        >>> print zeta(-2)
+        0.0
+
+    :func:`zeta` supports arbitrary precision evaluation and
+    complex arguments::
+
+        >>> mp.dps = 50
+        >>> print zeta(pi)
+        1.1762417383825827588721504519380520911697389900217
+        >>> print zeta(1+2j)  # doctest: +NORMALIZE_WHITESPACE
+        (0.5981655697623817367034568491742186771747764868876 -
+        0.35185474521784529049653859679690026505229177886045j)
+
+    The Riemann zeta function has so-called nontrivial zeros on
+    the critical line s = 1/2 + j*t::
+
+        >>> mp.dps = 15
+        >>> print findroot(zeta, 0.5+14j)
+        (0.5 + 14.1347251417347j)
+        >>> print findroot(zeta, 0.5+21j)
+        (0.5 + 21.0220396387716j)
+        >>> print findroot(zeta, 0.5+25j)
+        (0.5 + 25.0108575801457j)
+
     For large positive s, zeta(s) rapidly approaches 1::
 
         >>> print zeta(30)
@@ -422,6 +456,9 @@ zeta.__doc__ = """
     reflection formula is applied to arguments in the negative
     half-plane. For very large real arguments, either direct
     summation or the Euler prime product is used.
+
+    It should be noted that computation of zeta(s) gets very slow
+    when s is far away from the real axis.
 
     **References**
 
@@ -636,6 +673,11 @@ def stieltjes(n):
         0.000205332814909065
         >>> print stieltjes(30)
         0.00355772885557316
+
+    An alternative way to compute gamma_1::
+
+        >>> print diff(extradps(25)(lambda x: 1/(x-1) - zeta(x)), 1)
+        -0.0728158454836767
 
     :func:`stieltjes` supports arbitrary precision evaluation,
     and caches computed results::
@@ -1015,11 +1057,103 @@ def ncdf(x, mu=0, sigma=1):
 
 @funcwrapper
 def ei(z):
-    """Exponential integral, Ei(z)"""
+    """
+    Computes the exponential integral, Ei(z). The exponential
+    integral is defined as the following integral (which,
+    at t = 0, must be interpreted as a Cauchy principal value)::
+
+                z
+                 -    t
+                |    e
+       Ei(z) =  |   ---- dt
+                |    t
+               -
+               -oo
+
+    For real z, it can be thought of as behaving roughly
+    like Ei(z) ~= exp(z) + log(abs(z)).
+
+    This function should not be confused with the family of
+    related functions denoted by E1, E2, ... which are also
+    called exponential integrals.
+
+    **Basic examples**
+
+    Some basic values and limits are::
+
+        >>> mp.dps = 15
+        >>> print ei(0)
+        -inf
+        >>> print ei(1)
+        1.89511781635594
+        >>> print ei(inf)
+        +inf
+        >>> print ei(-inf)
+        0.0
+
+    For z < 0, the defining integral can be evaluated
+    numerically as a reference::
+
+        >>> print ei(-4)
+        -0.00377935240984891
+        >>> print quad(lambda t: exp(t)/t, [-inf, -4])
+        -0.00377935240984891
+
+    :func:`ei` supports complex arguments and arbitrary
+    precision evaluation::
+
+        >>> mp.dps = 50
+        >>> mp.dps = 50
+        >>> print ei(pi)
+        10.928374389331410348638445906907535171566338835056
+        >>> mp.dps = 25
+        >>> print ei(3+4j)
+        (-4.154091651642689822535359 + 4.294418620024357476985535j)
+
+    **Related functions**
+
+    The exponential integral is closely related to the logarithmic
+    integral. See :func:`li` for additional information.
+
+    The exponential integral is related to the hyperbolic
+    and trigonometric integrals (see :func:`chi`, :func:`shi`,
+    :func:`ci`, :func:`si`) similarly to how the ordinary
+    exponential function is related to the hyperbolic and
+    trigonometric functions::
+
+        >>> mp.dps = 15
+        >>> print ei(3)
+        9.93383257062542
+        >>> print chi(3) + shi(3)
+        9.93383257062542
+        >>> print ci(3j) - j*si(3j) - pi*j/2
+        (9.93383257062542 + 0.0j)
+
+    Beware that logarithmic corrections, as in the last example
+    above, are required to obtain the correct branch in general.
+    For details, see [1].
+
+    The exponential integral is also a special case of the
+    hypergeometric function 2F2::
+
+        >>> z = 0.6
+        >>> print z*hyper([1,1],[2,2],z) + (ln(z)-ln(1/z))/2 + euler
+        0.769881289937359
+        >>> print ei(z)
+        0.769881289937359
+
+    **References**
+
+    [1] Relations between Ei and other functions,
+        http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
+
+    """
     if z == inf:
         return z
     if z == -inf:
         return -mpf(0)
+    if not z:
+        return -inf
     v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
         (log(z)-log(1/z))/2 + euler
     if isinstance(z, mpf) and z < 0:
@@ -1028,7 +1162,74 @@ def ei(z):
 
 @funcwrapper
 def li(z):
-    """Logarithmic integral, li(z)"""
+    """
+    Computes the Logarithmic integral, li(z).
+
+    The logarithmic integral is defined as the integral from 0 to z
+    of 1/ln(t). It has a singularity at z = 1.
+
+    Note that there is a second logarithmic integral defined by
+    Li(z) = integral from 2 to z of 1/ln(t). This "offset
+    logarithmic integral" can be computed as Li(z) = li(z) - li(2).
+
+    **Examples**
+
+    Some basic values and limits::
+
+        >>> mp.dps = 30
+        >>> print li(0)
+        0.0
+        >>> print li(1)
+        -inf
+        >>> print li(1)
+        -inf
+        >>> print li(2)
+        1.04516378011749278484458888919
+        >>> print findroot(li, 2)
+        1.45136923488338105028396848589
+        >>> print li(inf)
+        +inf
+
+    The logarithmic integral can be evaluated for arbitrary
+    complex arguments::
+
+        >>> mp.dps = 20
+        >>> print li(3+4j)
+        (3.1343755504645775265 + 2.6769247817778742392j)
+
+    The logarithmic integral is related to the exponential integral::
+
+        >>> print ei(log(3))
+        2.1635885946671919729
+        >>> print li(3)
+        2.1635885946671919729
+
+    The logarithmic integral grows like O(x/ln(x))::
+
+        >>> mp.dps = 15
+        >>> x = 10**100
+        >>> print x/log(x)
+        4.34294481903252e+97
+        >>> print li(x)
+        4.3619719871407e+97
+
+    The prime number theorem states that the number of primes less
+    than x is asymptotic to li(x). For example, it is known that
+    there are exactly 1,925,320,391,606,803,968,923 prime numbers
+    less than 10^23. The logarithmic integral provides a very
+    accurate estimate::
+
+        >>> print li(2) + li(10**23)
+        1.92532039161405e+21
+
+    A definite integral is::
+
+        >>> print quad(li, [0, 1])
+        -0.693147180559945
+        >>> print -ln(2)
+        -0.693147180559945
+
+    """
     if not z:
         return z
     if z == 1:
@@ -1205,14 +1406,125 @@ def j1(x):
 @funcwrapper
 def lambertw(z, k=0, approx=None):
     """
-    lambertw(z,k) gives the kth branch of the Lambert W function W(z),
-    defined as the kth solution of z = W(z)*exp(W(z)).
+    The Lambert W function W(z) is defined as the inverse function
+    of w*exp(w). In other words, the value of W(z) is such that
+    z = W(z)*exp(W(z)) for any complex number z.
 
-    lambertw(z) == lambertw(z, k=0) gives the principal branch
-    value (0th branch solution), which is real for z > -1/e .
+    The Lambert W function is a multivalued function with infinitely
+    many branches. Each branch gives a separate solution of the
+    equation w*exp(w). All branches are supported by :func:`lambertw`:
 
-    The k = -1 branch is real for -1/e < z < 0. All branches except
+    * ``lambertw(z)`` gives the principal solution (branch 0)
+
+    * ``lambertw(z, k)`` gives the solution on branch k
+
+    The Lambert W function has two partially real branches: the
+    principal branch (k = 0) is real for real z > -1/e, and the
+    k = -1 branch is real for -1/e < z < 0. All branches except
     k = 0 have a logarithmic singularity at 0.
+
+    **Basic examples**
+
+    The Lambert W equation is the inverse of w*exp(w)::
+
+        >>> mp.dps = 35
+        >>> w = lambertw(1)
+        >>> print w
+        0.56714329040978387299996866221035555
+        >>> print w*exp(w)
+        1.0
+
+    Any branch gives a valid inverse::
+
+        >>> w = lambertw(1, k=3)
+        >>> print w    # doctest: +NORMALIZE_WHITESPACE
+        (-2.8535817554090378072068187234910812 + 
+          17.113535539412145912607826671159289j)
+        >>> print w*exp(w)
+        (1.0 + 3.5075477124212226194278700785075126e-36j)
+
+    **Applications to equation-solving**
+
+    The Lambert W function can give the value of the infinite power
+    tower z^(z^(z^(...)))::
+
+        >>> def tower(z, n):
+        ...     if n == 0:
+        ...         return z
+        ...     return z ** tower(z, n-1)
+        ...
+        >>> tower(0.5, 100)
+        0.641185744504986
+        >>> mp.dps = 50
+        >>> print -lambertw(-log(0.5))/log(0.5)
+        0.6411857445049859844862004821148236665628209571911
+
+    **Properties**
+
+    The Lambert W function grows roughly like the natural logarithm
+    for large arguments::
+
+        >>> mp.dps = 15
+        >>> print lambertw(1000)
+        5.2496028524016
+        >>> print log(1000)
+        6.90775527898214
+        >>> print lambertw(10**100)
+        224.843106445119
+        >>> print log(10**100)
+        230.258509299405
+
+    The principal branch of the Lambert W function has a rational
+    Taylor series expansion around 0::
+
+        >>> nprint(taylor(lambertw, 0, 6), 10)
+        [0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]
+
+    Some special values and limits are::
+
+        >>> mp.dps = 15
+        >>> print lambertw(0)
+        0.0
+        >>> print lambertw(1)
+        0.567143290409784
+        >>> print lambertw(e)
+        1.0
+        >>> print lambertw(inf)
+        +inf
+        >>> print lambertw(0, k=-1)
+        -inf
+        >>> print lambertw(0, k=3)
+        -inf
+        >>> print lambertw(inf, k=3)
+        +inf
+
+    The k = 0 and k = -1 branches join at z = -1/e where W(z) = -1
+    for both branches. Since -1/e can only be represented approximately
+    with mpmath numbers, evaluating the Lambert W function at this point
+    only gives -1 approximately::
+
+        >>> mp.dps = 25
+        >>> print lambertw(-1/e, 0)
+        -0.999999999999837133022867
+        >>> print lambertw(-1/e, -1)
+        -1.00000000000016286697718
+
+    If -1/e happens to round in the negative direction, there might be
+    a small imaginary part::
+
+        >>> print lambertw(-1/e)
+        (-1.0 + 8.22007971511612e-9j)
+
+    **Possible issues**
+
+    The evaluation can become inaccurate very close to the branch point
+    at -1/e. In some corner cases, :func:`lambertw` might currently
+    fail to converge, or can end up on the wrong branch.
+
+    **Algorithm**
+
+    Halley's iteration is used to invert w*exp(w), using a first-order
+    asymptotic approximation (O(log(w)) or O(w)) as the initial estimate.
 
     The definition, implementation and choice of branches is based
     on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5

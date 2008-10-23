@@ -294,12 +294,108 @@ for which Im(log(x)) = -pi &lt; arg(x) &lt;= pi.</p>
 <dl class="function">
 <dt id="mpmath.functions.lambertw">
 <!--[mpmath.functions.lambertw]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">lambertw</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.lambertw" title="Permalink to this definition">¶</a></dt>
-<dd><p>lambertw(z,k) gives the kth branch of the Lambert W function W(z),
-defined as the kth solution of z = W(z)*exp(W(z)).</p>
-<p>lambertw(z) == lambertw(z, k=0) gives the principal branch
-value (0th branch solution), which is real for z &gt; -1/e .</p>
-<p>The k = -1 branch is real for -1/e &lt; z &lt; 0. All branches except
+<dd><p>The Lambert W function W(z) is defined as the inverse function
+of w*exp(w). In other words, the value of W(z) is such that
+z = W(z)*exp(W(z)) for any complex number z.</p>
+<p>The Lambert W function is a multivalued function with infinitely
+many branches. Each branch gives a separate solution of the
+equation w*exp(w). All branches are supported by <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">lambertw(z)</span></tt> gives the principal solution (branch 0)</li>
+<li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch k</li>
+</ul>
+<p>The Lambert W function has two partially real branches: the
+principal branch (k = 0) is real for real z &gt; -1/e, and the
+k = -1 branch is real for -1/e &lt; z &lt; 0. All branches except
 k = 0 have a logarithmic singularity at 0.</p>
+<p><strong>Basic examples</strong></p>
+<p>The Lambert W equation is the inverse of w*exp(w):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>
+<span class="go">0.56714329040978387299996866221035555</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+<p>Any branch gives a valid inverse:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>    <span class="c"># doctest: +NORMALIZE_WHITESPACE</span>
+<span class="go">(-2.8535817554090378072068187234910812 + </span>
+<span class="go">  17.113535539412145912607826671159289j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">(1.0 + 3.5075477124212226194278700785075126e-36j)</span>
+</pre></div>
+<p><strong>Applications to equation-solving</strong></p>
+<p>The Lambert W function can give the value of the infinite power
+tower z^(z^(z^(...))):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">z</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">z</span> <span class="o">**</span> <span class="n">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tower</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">100</span><span class="p">)</span>
+<span class="go">0.641185744504986</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.6411857445049859844862004821148236665628209571911</span>
+</pre></div>
+<p><strong>Properties</strong></p>
+<p>The Lambert W function grows roughly like the natural logarithm
+for large arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">5.2496028524016</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">6.90775527898214</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">224.843106445119</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">230.258509299405</span>
+</pre></div>
+<p>The principal branch of the Lambert W function has a rational
+Taylor series expansion around 0:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">[0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]</span>
+</pre></div>
+<p>Some special values and limits are:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.567143290409784</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">+inf</span>
+</pre></div>
+<p>The k = 0 and k = -1 branches join at z = -1/e where W(z) = -1
+for both branches. Since -1/e can only be represented approximately
+with mpmath numbers, evaluating the Lambert W function at this point
+only gives -1 approximately:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">-0.999999999999837133022867</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-1.00000000000016286697718</span>
+</pre></div>
+<p>If -1/e happens to round in the negative direction, there might be
+a small imaginary part:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
+<span class="go">(-1.0 + 8.22007971511612e-9j)</span>
+</pre></div>
+<p><strong>Possible issues</strong></p>
+<p>The evaluation can become inaccurate very close to the branch point
+at -1/e. In some corner cases, <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt> might currently
+fail to converge, or can end up on the wrong branch.</p>
+<p><strong>Algorithm</strong></p>
+<p>Halley&#8217;s iteration is used to invert w*exp(w), using a first-order
+asymptotic approximation (O(log(w)) or O(w)) as the initial estimate.</p>
 <p>The definition, implementation and choice of branches is based
 on Corless et al, &#8220;On the Lambert W function&#8221;, Adv. Comp. Math. 5
 (1996) 329-359, available online here:
@@ -494,12 +590,140 @@ a normal distribution with mean value mu and variance sigma^2.</dd></dl>
 <dl class="function">
 <dt id="mpmath.functions.ei">
 <!--[mpmath.functions.ei]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ei</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ei" title="Permalink to this definition">¶</a></dt>
-<dd>Exponential integral, Ei(z)</dd></dl>
+<dd><p>Computes the exponential integral, Ei(z). The exponential
+integral is defined as the following integral (which,
+at t = 0, must be interpreted as a Cauchy principal value):</p>
+<pre>         z
+          -    t
+         |    e
+Ei(z) =  |   ---- dt
+         |    t
+        -
+        -oo</pre>
+<p>This function should not be confused with the family of
+related functions denoted by E1, E2, ... which are also
+called exponential integrals.</p>
+<p><strong>Basic examples</strong></p>
+<p>Some basic values and limits are:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.89511781635594</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+</pre></div>
+<p>For z &lt; 0, the defining integral can be evaluated
+numerically as a reference:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="o">-</span><span class="mf">4</span><span class="p">)</span>
+<span class="go">-0.00377935240984891</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">t</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">4</span><span class="p">])</span>
+<span class="go">-0.00377935240984891</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">ei()</span></tt> supports complex arguments and arbitrary
+precision evaluation:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">10.928374389331410348638445906907535171566338835056</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-4.154091651642689822535359 + 4.294418620024357476985535j)</span>
+</pre></div>
+<p><strong>Related functions</strong></p>
+<p>The exponential integral is closely related to the logarithmic
+integral. See <tt class="xref docutils literal"><span class="pre">li()</span></tt> for additional information.</p>
+<p>The exponential integral is related to the hyperbolic
+and trigonometric integrals (see <tt class="xref docutils literal"><span class="pre">chi()</span></tt>, <tt class="xref docutils literal"><span class="pre">shi()</span></tt>,
+<tt class="xref docutils literal"><span class="pre">ci()</span></tt>, <tt class="xref docutils literal"><span class="pre">si()</span></tt>) similarly to how the ordinary
+exponential function is related to the hyperbolic and
+trigonometric functions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">9.93383257062542</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chi</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">shi</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">9.93383257062542</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="n">j</span><span class="o">*</span><span class="n">si</span><span class="p">(</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="n">pi</span><span class="o">*</span><span class="n">j</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">(9.93383257062542 + 0.0j)</span>
+</pre></div>
+<p>Beware that logarithmic corrections, as in the last example
+above, are required to obtain the correct branch in general.
+For details, see [1].</p>
+<p>The exponential integral is also a special case of the
+hypergeometric function 2F2:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">z</span><span class="o">*</span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">2</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">ln</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">-</span><span class="n">ln</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">z</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span> <span class="o">+</span> <span class="n">euler</span>
+<span class="go">0.769881289937359</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="go">0.769881289937359</span>
+</pre></div>
+<p><strong>References</strong></p>
+<dl class="docutils">
+<dt>[1] Relations between Ei and other functions,</dt>
+<dd><a class="reference external" href="http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/">http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/</a></dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.li">
 <!--[mpmath.functions.li]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">li</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.li" title="Permalink to this definition">¶</a></dt>
-<dd>Logarithmic integral, li(z)</dd></dl>
+<dd><p>Computes the Logarithmic integral, li(z).</p>
+<p>The logarithmic integral is defined as the integral from 0 to z
+of 1/ln(t). It has a singularity at z = 1.</p>
+<p>Note that there is a second logarithmic integral defined by
+Li(z) = integral from 2 to z of 1/ln(t). This &#8220;offset
+logarithmic integral&#8221; can be computed as Li(z) = li(z) - li(2).</p>
+<p><strong>Examples</strong></p>
+<p>Some basic values and limits:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">1.04516378011749278484458888919</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">li</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">1.45136923488338105028396848589</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+</pre></div>
+<p>The logarithmic integral can be evaluated for arbitrary
+complex arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(3.1343755504645775265 + 2.6769247817778742392j)</span>
+</pre></div>
+<p>The logarithmic integral is related to the exponential integral:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="go">2.1635885946671919729</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">2.1635885946671919729</span>
+</pre></div>
+<p>The logarithmic integral grows like O(x/ln(x)):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span><span class="o">**</span><span class="mf">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">4.34294481903252e+97</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">4.3619719871407e+97</span>
+</pre></div>
+<p>The prime number theorem states that the number of primes less
+than x is asymptotic to li(x). For example, it is known that
+there are exactly 1,925,320,391,606,803,968,923 prime numbers
+less than 10^23. The logarithmic integral provides a very
+accurate estimate:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">li</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">23</span><span class="p">)</span>
+<span class="go">1.92532039161405e+21</span>
+</pre></div>
+<p>A definite integral is:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">li</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">-0.693147180559945</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">ln</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">-0.693147180559945</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.ci">
@@ -710,6 +934,37 @@ zeta(s) = 1  +  2   +  3   +  4   + ...</pre>
 <p>and for Re(s) &lt;= 1 by analytic continuation. It has a pole
 at s = 1.</p>
 <p><strong>Examples</strong></p>
+<p>Some exact values of the zeta function are:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">1.64493406684823</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">6</span>
+<span class="go">1.64493406684823</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">-0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-0.0833333333333333</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">zeta()</span></tt> supports arbitrary precision evaluation and
+complex arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">1.1762417383825827588721504519380520911697389900217</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>  <span class="c"># doctest: +NORMALIZE_WHITESPACE</span>
+<span class="go">(0.5981655697623817367034568491742186771747764868876 -</span>
+<span class="go">0.35185474521784529049653859679690026505229177886045j)</span>
+</pre></div>
+<p>The Riemann zeta function has so-called nontrivial zeros on
+the critical line s = 1/2 + j*t:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.5 + 14.1347251417347j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">21</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.5 + 21.0220396387716j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">25</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.5 + 25.0108575801457j)</span>
+</pre></div>
 <p>For large positive s, zeta(s) rapidly approaches 1:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">1.00000000093133</span>
@@ -730,6 +985,8 @@ real arguments, general complex arguments, and for integers. The
 reflection formula is applied to arguments in the negative
 half-plane. For very large real arguments, either direct
 summation or the Euler prime product is used.</p>
+<p>It should be noted that computation of zeta(s) gets very slow
+when s is far away from the real axis.</p>
 <p><strong>References</strong></p>
 <ul class="simple">
 <li><a class="reference external" href="http://mathworld.wolfram.com/RiemannZetaFunction.html">http://mathworld.wolfram.com/RiemannZetaFunction.html</a></li>
@@ -882,6 +1139,10 @@ zeta(s) = ----- +   )   ----- (gamma ) (s-1)
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">0.00355772885557316</span>
 </pre></div>
+<p>An alternative way to compute gamma_1:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">extradps</span><span class="p">(</span><span class="mf">25</span><span class="p">)(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">-0.0728158454836767</span>
+</pre></div>
 <p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> supports arbitrary precision evaluation,
 and caches computed results:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
@@ -984,40 +1245,27 @@ the argument is the parameter m = k^2, not the modulus k.</dd></dl>
 n = 1,2,3,4
 z complex number
 q complex number in the unit disk</p>
-<p>Definitions:</p>
+<p>Definition:</p>
 <pre>theta(1, z, q) =
   2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
 
 theta(2, z, q) =
-    2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
+  2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
 
-theta(3, z, q) = 
-    1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
+theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
 
-theta(4, z, q) =
-    1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)</pre>
+theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)</pre>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.djtheta">
-<!--[mpmath.elliptic.djtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">djtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.djtheta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Derivative of the Jacobi theta functions as functions of the nome q</p>
-<p>n = 1,2,3,4
+<!--[mpmath.elliptic.djtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">djtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em>, <em>nd=1</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.djtheta" title="Permalink to this definition">¶</a></dt>
+<dd>ndth derivative of the Jacobi theta functions jtheta(n, z, q)
+with respect to z
+n = 1,2,3,4
 z complex number
-q complex number in the unit disk</p>
-<p>Definitions:</p>
-<pre>djtheta(1, z, q) =
-    2 * q**1/4 * Sum((-)**n * q**(n*n + n) *
-    (2*n+1)*cos((2*n + 1)*z), n=0, inf)
-
-djtheta(2, z, q) =
-    -2 * q**1/4 * Sum(q**(n*n + n) *
-    (2*n+1)*cos((2*n + 1)*z), n=0, inf)
-
-djtheta(3, z, q) = -2 * Sum(q**(n**2) * 2*n*sin(2*n*z), n=1, inf)
-
-djtheta(4, z, q) = -2 * Sum((-q)**(n**2) * 2*n*sin(2*n*z), n=1, inf)</pre>
-</dd></dl>
+q complex number in the unit disk
+nd &gt;= 1</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.jsn">
@@ -1105,7 +1353,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 22, 2008.
+      Last updated on Oct 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

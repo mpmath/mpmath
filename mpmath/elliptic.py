@@ -856,12 +856,18 @@ def jtheta(n, z, q):
     n = 1,2,3,4
     z complex number
     q complex number in the unit disk
-    theta(1, z, q) =
-      2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
-    theta(2, z, q) =
-      2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
-    theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
-    theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
+
+    Definition::
+
+        theta(1, z, q) =
+          2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
+
+        theta(2, z, q) =
+          2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
+
+        theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
+
+        theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
     """
     z = convert_lossless(z)
     q = convert_lossless(q)
