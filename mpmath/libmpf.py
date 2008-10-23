@@ -646,10 +646,10 @@ def mpf_add(s, t, prec, rnd=round_fast):
         if ssign == tsign:
             man = tman + (sman << offset)
             sbc += offset
-            if tbc > sbc: bc = tbc - 4
-            else:         bc = sbc - 4
-            if bc < 4:    bc = bctable[int(man)]
-            else:         bc += bctable[int(man>>bc)]
+            if tbc > sbc:
+                bc = tbc + int(man>>tbc)
+            else:
+                bc = sbc + int(man>>sbc)
             return normalize1(ssign, man, texp, bc, prec, rnd)
         else:
             if ssign: man = tman - (sman << offset)
@@ -664,10 +664,10 @@ def mpf_add(s, t, prec, rnd=round_fast):
     else:
         if ssign == tsign:
             man = tman + sman
-            if tbc > sbc: bc = tbc - 4
-            else:         bc = sbc - 4
-            if bc < 4:    bc = bctable[int(man)]
-            else:         bc += bctable[int(man>>bc)]
+            if tbc > sbc:
+                bc = tbc + int(man>>tbc)
+            else:
+                bc = sbc + int(man>>sbc)
             return normalize(ssign, man, texp, bc, prec, rnd)
         else:
             if ssign: man = tman - sman
@@ -694,22 +694,21 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     tsign, tman, texp, tbc = t
     sign = ssign ^ tsign
     man = sman*tman
-    if not man:
-        s_special = (not sman) and sexp
-        t_special = (not tman) and texp
-        if not s_special and not t_special:
-            return fzero
-        if fnan in (s, t): return fnan
-        if (not tman) and texp: s, t = t, s
-        if t == fzero: return fnan
-        return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
-    bc = sbc + tbc - 4
-    if bc < 4: bc = bctable[int(man)]
-    else:      bc += bctable[int(man>>bc)]
-    if prec:
-        return normalize1(sign, man, sexp+texp, bc, prec, rnd)
-    else:
-        return (sign, man, sexp+texp, bc)
+    if man:
+        bc = sbc + tbc - 1
+        bc += int(man>>bc)
+        if prec:
+            return normalize1(sign, man, sexp+texp, bc, prec, rnd)
+        else:
+            return (sign, man, sexp+texp, bc)
+    s_special = (not sman) and sexp
+    t_special = (not tman) and texp
+    if not s_special and not t_special:
+        return fzero
+    if fnan in (s, t): return fnan
+    if (not tman) and texp: s, t = t, s
+    if t == fzero: return fnan
+    return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
 
 def mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
@@ -724,11 +723,10 @@ def mpf_mul_int(s, n, prec, rnd=round_fast):
     man *= n
     # Generally n will be small
     if n < 1024:
-        bc += bctable[int(n)] - 4
+        bc += bctable[int(n)] - 1
     else:
-        bc += bitcount(n) - 4
-    if bc < 4: bc = bctable[int(man)]
-    else:      bc += bctable[int(man>>bc)]
+        bc += bitcount(n) - 1
+    bc += int(man>>bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
 def mpf_shift(s, n):
