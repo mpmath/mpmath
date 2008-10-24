@@ -77,7 +77,8 @@
 circle, the half-period of trigonometric functions, and many other
 things in mathematics.</p>
 <p>Mpmath can evaluate pi to arbitrary precision:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
@@ -168,7 +169,8 @@ accurate.</p>
 is a number approximately equal to 1.282427129 that sometimes
 appears in formulas related to gamma and zeta functions.</p>
 <p>Mpmath can evaluate Glaisher&#8217;s constant to arbitrary precision:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">glaisher</span>
 <span class="go">1.282427129100622636875342568869791727767688927325</span>
 </pre></div>
@@ -242,17 +244,87 @@ be +pi.</dd></dl>
 <dl class="function">
 <dt id="mpmath.functions.sqrt">
 <!--[mpmath.functions.sqrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sqrt" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the principal square root of x</dd></dl>
+<dd><p>sqrt(x) computes the principal square root of x. For positive
+real numbers, this is simply the  positive square root. For
+arbitrary complex numbers, the principal square root is
+defined to satisfy sqrt(x) = exp(ln(x)/2).</p>
+<p>For all mpmath numbers x, calling sqrt(x) is equivalent to
+performing x**0.5.</p>
+<p><strong>Examples</strong></p>
+<p>Basic examples and limits:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">3.16227766016838</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mf">4</span><span class="p">)</span>
+<span class="go">(0.0 + 2.0j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(1.09868411346781 + 0.455089860562227j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+</pre></div>
+<p>Square root evaluation is fast at huge precision:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;9329332814&#39;</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> supports interval arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">16</span><span class="p">,</span> <span class="mf">100</span><span class="p">))</span>
+<span class="go">[4.0, 10.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="go">[1.4142135623730949234, 1.4142135623730951455]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">2</span>
+<span class="go">[1.9999999999999995559, 2.0000000000000004441]</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.cbrt">
 <!--[mpmath.functions.cbrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cbrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cbrt" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the principal cubic root of x</dd></dl>
+<dd><p>cbrt(x) computes the cube root of x. This function is faster and
+more accurate than raising to a floating-point fraction:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">125</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;4.9999999999999991&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cbrt</span><span class="p">(</span><span class="mf">125</span><span class="p">)</span>
+<span class="go">mpf(&#39;5.0&#39;)</span>
+</pre></div>
+<p>Every nonzero complex number has three cube roots. This function
+returns the cube root defined by exp(ln(x)/3) where the principal
+branch of the natural logarithm is used. Note that this does not
+give a real cube root for negative real numbers:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cbrt</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">(0.5 + 0.866025403784439j)</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.nthroot">
 <!--[mpmath.functions.nthroot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">nthroot</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.nthroot" title="Permalink to this definition">¶</a></dt>
-<dd>principal n-th root</dd></dl>
+<dd><p>nthroot(x, n) computes the principal nth root of x, x^(1/n). Here
+n must be an integer, and can be negative [x^(-1/n) is 1/(x^(1/n))].
+For n = 2 or n = 3, this function is equivalent to calling
+<tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> or <tt class="xref docutils literal"><span class="pre">cbrt()</span></tt>. In general, nthroot(x, n) is defined
+to compute exp(ln(x)/n).</p>
+<p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> is implemented to use Newton&#8217;s method for small n.
+At high precision, this makes x^(1/n) not much more expensive than
+the regular exponentiation, x^n. For very large n, it falls back to
+use the exponential function.</p>
+<p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> is faster and more accurate than raising to a
+floating-point fraction:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">16807</span> <span class="o">**</span> <span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">mpf(&#39;7.0000000000000009&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mf">16807</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="go">mpf(&#39;7.0&#39;)</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.hypot">
@@ -310,7 +382,8 @@ k = -1 branch is real for -1/e &lt; z &lt; 0. All branches except
 k = 0 have a logarithmic singularity at 0.</p>
 <p><strong>Basic examples</strong></p>
 <p>The Lambert W equation is the inverse of w*exp(w):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>
 <span class="go">0.56714329040978387299996866221035555</span>
@@ -386,7 +459,8 @@ only gives -1 approximately:</p>
 </pre></div>
 <p>If -1/e happens to round in the negative direction, there might be
 a small imaginary part:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
 <span class="go">(-1.0 + 8.22007971511612e-9j)</span>
 </pre></div>
 <p><strong>Possible issues</strong></p>
@@ -552,17 +626,122 @@ the signs of y and x. (Defined for real x and y only.)</dd></dl>
 <dl class="function">
 <dt id="mpmath.functions.erf">
 <!--[mpmath.functions.erf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">erf</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.erf" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the Error function, erf(z) of x</dd></dl>
+<dd><p>Computes the error function, erf(z). The error function is
+the antiderivative of the Gaussian function exp(-t^2). More
+precisely:</p>
+<pre>                z
+                 -
+           2    |          2
+erf(z) = -----  |   exp( -t ) dt
+           1/2  |
+         pi    -
+                0</pre>
+<p><strong>Basic examples</strong></p>
+<p>Simple values and limits include:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.842700792949715</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-0.842700792949715</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-1.0</span>
+</pre></div>
+<p>For large real z, erf(z) approaches 1 very rapidly:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.999977909503001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">0.999999999998463</span>
+</pre></div>
+<p>The error function is an odd function:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">erf</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">))</span>
+<span class="go">[0.0, 1.12838, 0.0, -0.376126, 0.0, 0.112838]</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">erf()</span></tt> implements arbitrary-precision evaluation and
+supports complex numbers:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.52049987781304653768274665389196452873645157575796</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(1.316151281697947644880271 + 0.1904534692378346862841089j)</span>
+</pre></div>
+<p><strong>Related functions</strong></p>
+<p>See also <tt class="xref docutils literal"><span class="pre">erfc()</span></tt>, which is more accurate for large z,
+and <tt class="xref docutils literal"><span class="pre">erfi()</span></tt> which gives the antiderivative of exp(t^2).</p>
+<p>The Fresnel integrals <tt class="xref docutils literal"><span class="pre">fresnels()</span></tt> and <tt class="xref docutils literal"><span class="pre">fresnelc()</span></tt>
+are also related to the error function.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.erfc">
 <!--[mpmath.functions.erfc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">erfc</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.erfc" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the Complementary error function, erfc(z) = 1-erf(z) of x</dd></dl>
+<dd><p>Computes the complementary error function, erfc(z) = 1-erf(z).
+This function avoids cancellation that occurs when naively
+computing the complementary error function as 1-erf(z):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span> <span class="o">-</span> <span class="n">erf</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfc</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">2.08848758376254e-45</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">erfc()</span></tt> works accurately even for ludicrously large
+arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfc</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">4.3504398860243e-43429448190325182776</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.erfi">
 <!--[mpmath.functions.erfi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">erfi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.erfi" title="Permalink to this definition">¶</a></dt>
-<dd>Imaginary error function, erfi(z)</dd></dl>
+<dd><p>Computes the imaginary error function, erfi(z). The imaginary
+error function is defined in analogy with the error function,
+but with a positive sign in the integrand:</p>
+<pre>                z
+                 -
+           2    |         2
+erf(z) = -----  |   exp( t ) dt
+           1/2  |
+         pi    -
+                0</pre>
+<p>Whereas the error function rapidly converges to 1 as z grows,
+the imaginary error function rapidly diverges to infinity.
+The functions are related as erfi(z) = -j*erf(z*j).</p>
+<p><strong>Examples</strong></p>
+<p>Basic values and limits:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.65042575879754</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-1.65042575879754</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-inf</span>
+</pre></div>
+<p>Note the symmetry between erf and erfi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.0 + 0.999977909503001j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.999977909503001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.536643565778565 - 5.04914370344703j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfi</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-5.04914370344703 - 0.536643565778565j)</span>
+</pre></div>
+<p><strong>Possible issues</strong></p>
+<p>The current implementation of <tt class="xref docutils literal"><span class="pre">erfi()</span></tt> is much less efficient
+and accurate than the one for erf.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.npdf">
@@ -571,7 +750,8 @@ the signs of y and x. (Defined for real x and y only.)</dd></dl>
 normal distribution with mean value mu and variance sigma^2.</p>
 <p>Elementary properties of the probability distribution can
 be verified using numerical integration:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">npdf</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">npdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
@@ -579,13 +759,39 @@ be verified using numerical integration:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">npdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.5</span>
 </pre></div>
+<p>See also <tt class="xref docutils literal"><span class="pre">ncdf()</span></tt>, which gives the cumulative
+distribution.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.ncdf">
 <!--[mpmath.functions.ncdf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ncdf</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ncdf" title="Permalink to this definition">¶</a></dt>
-<dd>ncdf(x, mu=0, sigma=1) &#8211; cumulative distribution function of
-a normal distribution with mean value mu and variance sigma^2.</dd></dl>
+<dd><p>ncdf(x, mu=0, sigma=1) &#8211; cumulative distribution function of
+a normal distribution with mean value mu and variance sigma^2.</p>
+<p>See also <tt class="xref docutils literal"><span class="pre">npdf()</span></tt>, which gives the probability density.</p>
+<p>Elementary properties include:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ncdf</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ncdf</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ncdf</span><span class="p">(</span><span class="o">+</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+<p>The cumulative distribution is the integral of the density
+function having identical mu and sigma:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">ncdf</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">0.053990966513188</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">npdf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.053990966513188</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ncdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">0.107981933026376</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">npdf</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.107981933026376</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.ei">
@@ -600,18 +806,23 @@ Ei(z) =  |   ---- dt
          |    t
         -
         -oo</pre>
+<p>For real z, it can be thought of as behaving roughly
+like Ei(z) ~= exp(z) + log(abs(z)).</p>
 <p>This function should not be confused with the family of
 related functions denoted by E1, E2, ... which are also
 called exponential integrals.</p>
 <p><strong>Basic examples</strong></p>
 <p>Some basic values and limits are:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">-inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">1.89511781635594</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ei</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
 </pre></div>
 <p>For z &lt; 0, the defining integral can be evaluated
 numerically as a reference:</p>
@@ -659,8 +870,10 @@ hypergeometric function 2F2:</p>
 </pre></div>
 <p><strong>References</strong></p>
 <dl class="docutils">
-<dt>[1] Relations between Ei and other functions,</dt>
+<dt>[1] Relations between Ei and other functions:</dt>
 <dd><a class="reference external" href="http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/">http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/</a></dd>
+<dt>[2] Abramowitz &amp; Stegun, section 5:</dt>
+<dd><a class="reference external" href="http://www.math.sfu.ca/~cbm/aands/page_228.htm">http://www.math.sfu.ca/~cbm/aands/page_228.htm</a></dd>
 </dl>
 </dd></dl>
 
@@ -675,7 +888,8 @@ Li(z) = integral from 2 to z of 1/ln(t). This &#8220;offset
 logarithmic integral&#8221; can be computed as Li(z) = li(z) - li(2).</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -712,7 +926,7 @@ complex arguments:</p>
 <p>The prime number theorem states that the number of primes less
 than x is asymptotic to li(x). For example, it is known that
 there are exactly 1,925,320,391,606,803,968,923 prime numbers
-less than 10^23. The logarithmic integral provides a very
+less than 10^23 [1]. The logarithmic integral provides a very
 accurate estimate:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">li</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">li</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">23</span><span class="p">)</span>
 <span class="go">1.92532039161405e+21</span>
@@ -723,6 +937,9 @@ accurate estimate:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">ln</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">-0.693147180559945</span>
 </pre></div>
+<p><strong>References</strong></p>
+<p>[1] <a class="reference external" href="http://mathworld.wolfram.com/PrimeCountingFunction.html">http://mathworld.wolfram.com/PrimeCountingFunction.html</a></p>
+<p>[2] <a class="reference external" href="http://mathworld.wolfram.com/LogarithmicIntegral.html">http://mathworld.wolfram.com/LogarithmicIntegral.html</a></p>
 </dd></dl>
 
 <dl class="function">
@@ -821,7 +1038,9 @@ returns zero (<tt class="docutils literal"><span class="pre">0</span></tt>).</li
 </ul>
 <p><strong>Examples</strong></p>
 <p>1/gamma(x) evaluated at x = 0:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([],</span> <span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([],</span> <span class="p">[</span><span class="mf">0</span><span class="p">])</span>
 <span class="go">mpf(&#39;0.0&#39;)</span>
 </pre></div>
 <p>A limit:</p>
@@ -869,7 +1088,8 @@ tetragamma (psi2) and pentagamma (psi4) functions.</p>
 <dd><p>If <cite>n</cite> is an integer, harmonic(<cite>n</cite>) gives a floating-point
 approximation of the <cite>n</cite>-th harmonic number
 H(<cite>n</cite>) = 1 + 1/2 + 1/3 + ... + 1/<cite>n</cite>:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>    
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>    
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">8</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -935,7 +1155,9 @@ zeta(s) = 1  +  2   +  3   +  4   + ...</pre>
 at s = 1.</p>
 <p><strong>Examples</strong></p>
 <p>Some exact values of the zeta function are:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">1.64493406684823</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">6</span>
 <span class="go">1.64493406684823</span>
@@ -1003,7 +1225,8 @@ returns a floating-point approximation. To obtain an exact
 fraction, use <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> instead.</p>
 <p><strong>Examples</strong></p>
 <p>Numerical values of the first few Bernoulli numbers:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">15</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -1034,7 +1257,7 @@ fraction, use <tt class="xref docutils literal"><span class="pre">bernfrac()</sp
 <span class="go">3.09136296657021e+1876752564973863312327</span>
 </pre></div>
 <p>The Bernoulli numbers are related to the Riemann zeta function
-at integer values:</p>
+at integer arguments:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">bernoulli</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mf">8</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="mf">8</span><span class="p">))</span>
 <span class="go">1.00407735619794</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span>
@@ -1095,20 +1318,19 @@ directly, without computing the exact fraction first.
 This is much faster for large n.</p>
 <p><strong>Algorithm</strong></p>
 <p><tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> works by computing the value of B(n) numerically
-and then using the von Staudt-Clausen theorem to reconstruct
+and then using the von Staudt-Clausen theorem [1] to reconstruct
 the exact fraction. For large n, this is significantly faster than
 computing B(1), B(2), ..., B(n) recursively with exact arithmetic.
 The implementation has been tested for B(10**n) up to n = 6.</p>
 <p>In practice, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> appears to be about three times
-slower than the specialized program calcbn.exe (see The Bernoulli
-Number Page).</p>
+slower than the specialized program calcbn.exe [2]</p>
 <p><strong>References</strong></p>
-<ul class="simple">
-<li>von Staudt-Clausen Theorem
-<a class="reference external" href="http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html">http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html</a></li>
-<li>The Bernoulli Number Page
-<a class="reference external" href="http://www.bernoulli.org/">http://www.bernoulli.org/</a></li>
-</ul>
+<dl class="docutils">
+<dt>[1] MathWorld, von Staudt-Clausen Theorem:</dt>
+<dd><a class="reference external" href="http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html">http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html</a></dd>
+<dt>[2] The Bernoulli Number Page:</dt>
+<dd><a class="reference external" href="http://www.bernoulli.org/">http://www.bernoulli.org/</a></dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -1127,7 +1349,8 @@ zeta(s) = ----- +   )   ----- (gamma ) (s-1)
 <p>Here gamma_n is the nth Stieltjes constant.</p>
 <p><strong>Examples</strong></p>
 <p>The zeroth Stieltjes constant is just Euler&#8217;s constant:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.577215664901533</span>
 </pre></div>
@@ -1223,8 +1446,23 @@ information.</dd></dl>
 <dl class="function">
 <dt id="mpmath.functions.agm">
 <!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
-<dd>Arithmetic-geometric mean of a and b. Can be called with
-a single argument, computing agm(a,1) = agm(1,a).</dd></dl>
+<dd><p>agm(a, b) computes the arithmetic-geometric mean of a and b,
+defined as the limit of the iteration a, b = (a+b)/2, sqrt(a*b).</p>
+<p>This function can be called with a single argument, computing
+agm(a,1) = agm(1,a).</p>
+<p><strong>Examples</strong></p>
+<p>A formula for gamma(1/4):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">3.62560990822191</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)))</span>
+<span class="go">3.62560990822191</span>
+</pre></div>
+<p><strong>Possible issues</strong></p>
+<p><tt class="xref docutils literal"><span class="pre">agm()</span></tt> may not give an appropriate branch for complex
+arguments a and b.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.ellipe">
@@ -1353,7 +1591,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 23, 2008.
+      Last updated on Oct 24, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

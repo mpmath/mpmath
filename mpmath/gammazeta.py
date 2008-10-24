@@ -573,22 +573,21 @@ def bernfrac(n):
     **Algorithm**
 
     :func:`bernfrac` works by computing the value of B(n) numerically
-    and then using the von Staudt-Clausen theorem to reconstruct
+    and then using the von Staudt-Clausen theorem [1] to reconstruct
     the exact fraction. For large n, this is significantly faster than
     computing B(1), B(2), ..., B(n) recursively with exact arithmetic.
     The implementation has been tested for B(10**n) up to n = 6.
 
     In practice, :func:`bernfrac` appears to be about three times
-    slower than the specialized program calcbn.exe (see The Bernoulli
-    Number Page).
+    slower than the specialized program calcbn.exe [2]
 
     **References**
 
-    * von Staudt-Clausen Theorem
-      http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
+    [1] MathWorld, von Staudt-Clausen Theorem:
+        http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
 
-    * The Bernoulli Number Page
-      http://www.bernoulli.org/
+    [2] The Bernoulli Number Page:
+        http://www.bernoulli.org/
 
     """
     n = int(n)

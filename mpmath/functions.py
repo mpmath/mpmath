@@ -42,6 +42,7 @@ class _pi(constant):
 
     Mpmath can evaluate pi to arbitrary precision:
 
+        >>> from mpmath import *
         >>> mp.dps = 50
         >>> print pi
         3.1415926535897932384626433832795028841971693993751
@@ -130,6 +131,7 @@ class _glaisher(constant):
 
     Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
+        >>> from mpmath import *
         >>> mp.dps = 50
         >>> print glaisher
         1.282427129100622636875342568869791727767688927325
@@ -245,7 +247,73 @@ def altinvfunc(f, name, desc):
     return g
 
 sqrt = mpfunc('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, "principal square root", libmpi.mpi_sqrt)
+sqrt.__doc__ = """
+sqrt(x) computes the principal square root of x. For positive
+real numbers, this is simply the  positive square root. For
+arbitrary complex numbers, the principal square root is
+defined to satisfy sqrt(x) = exp(ln(x)/2).
+
+For all mpmath numbers x, calling sqrt(x) is equivalent to
+performing x**0.5.
+
+**Examples**
+
+Basic examples and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print sqrt(10)
+    3.16227766016838
+    >>> print sqrt(100)
+    10.0
+    >>> print sqrt(-4)
+    (0.0 + 2.0j)
+    >>> print sqrt(1+1j)
+    (1.09868411346781 + 0.455089860562227j)
+    >>> print sqrt(inf)
+    +inf
+
+Square root evaluation is fast at huge precision::
+
+    >>> mp.dps = 50000
+    >>> a = sqrt(3)
+    >>> str(a)[-10:]
+    '9329332814'
+
+:func:`sqrt` supports interval arguments::
+
+    >>> mp.dps = 15
+    >>> print sqrt(mpi(16, 100))
+    [4.0, 10.0]
+    >>> print sqrt(mpi(2))
+    [1.4142135623730949234, 1.4142135623730951455]
+    >>> print sqrt(mpi(2)) ** 2
+    [1.9999999999999995559, 2.0000000000000004441]
+
+"""
+
 cbrt = mpfunc('cbrt', libelefun.mpf_cbrt, libmpc.mpc_cbrt, "principal cubic root")
+cbrt.__doc__ = """
+cbrt(x) computes the cube root of x. This function is faster and
+more accurate than raising to a floating-point fraction::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> 125**(mpf(1)/3)
+    mpf('4.9999999999999991')
+    >>> cbrt(125)
+    mpf('5.0')
+
+Every nonzero complex number has three cube roots. This function
+returns the cube root defined by exp(ln(x)/3) where the principal
+branch of the natural logarithm is used. Note that this does not
+give a real cube root for negative real numbers::
+
+    >>> print cbrt(-1)
+    (0.5 + 0.866025403784439j)
+
+"""
+
 exp = mpfunc('exp', libelefun.mpf_exp, libmpc.mpc_exp, "exponential function", libmpi.mpi_exp)
 ln = mpfunc('ln', libelefun.mpf_log, libmpc.mpc_log, "natural logarithm", libmpi.mpi_log)
 
@@ -289,7 +357,29 @@ not necessarily in the floor direction."""
 
 @funcwrapper
 def nthroot(x, n):
-    """principal n-th root"""
+    """
+    nthroot(x, n) computes the principal nth root of x, x^(1/n). Here
+    n must be an integer, and can be negative [x^(-1/n) is 1/(x^(1/n))].
+    For n = 2 or n = 3, this function is equivalent to calling
+    :func:`sqrt` or :func:`cbrt`. In general, nthroot(x, n) is defined
+    to compute exp(ln(x)/n).
+
+    :func:`nthroot` is implemented to use Newton's method for small n.
+    At high precision, this makes x^(1/n) not much more expensive than
+    the regular exponentiation, x^n. For very large n, it falls back to
+    use the exponential function.
+
+    :func:`nthroot` is faster and more accurate than raising to a
+    floating-point fraction::
+    
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> 16807 ** (mpf(1)/5)
+        mpf('7.0000000000000009')
+        >>> nthroot(16807, 5)
+        mpf('7.0')
+
+    """
     n = int(n)
     if isinstance(x, mpf):
         try:
@@ -401,6 +491,8 @@ zeta.__doc__ = """
 
     Some exact values of the zeta function are::
 
+        >>> from mpmath import *
+        >>> mp.dps = 15
         >>> print zeta(2)
         1.64493406684823
         >>> print pi**2 / 6
@@ -517,6 +609,7 @@ harmonic.__doc__ = """
     approximation of the `n`-th harmonic number
     H(`n`) = 1 + 1/2 + 1/3 + ... + 1/`n`::
 
+        >>> from mpmath import *
         >>> mp.dps = 15    
         >>> for n in range(8):
         ...     print n, harmonic(n)
@@ -585,6 +678,7 @@ def bernoulli(n):
 
     Numerical values of the first few Bernoulli numbers::
 
+        >>> from mpmath import *
         >>> mp.dps = 15
         >>> for n in range(15):
         ...     print n, bernoulli(n)
@@ -618,7 +712,7 @@ def bernoulli(n):
         3.09136296657021e+1876752564973863312327
 
     The Bernoulli numbers are related to the Riemann zeta function
-    at integer values::
+    at integer arguments::
 
         >>> print -bernoulli(8) * (2*pi)**8 / (2*fac(8))
         1.00407735619794
@@ -661,6 +755,7 @@ def stieltjes(n):
 
     The zeroth Stieltjes constant is just Euler's constant::
 
+        >>> from mpmath import *
         >>> mp.dps = 15
         >>> print stieltjes(0)
         0.577215664901533
@@ -765,6 +860,8 @@ def gammaprod(a, b):
 
     1/gamma(x) evaluated at x = 0::
 
+        >>> from mpmath import *
+        >>> mp.dps = 15
         >>> gammaprod([], [0])
         mpf('0.0')
 
@@ -1014,12 +1111,145 @@ def upper_gamma(a,z):
 
 erf = mpfunc("erf", libhyper.mpf_erf, libhyper.mpc_erf,
     "Error function, erf(z)")
+
+erf.__doc__ = """
+Computes the error function, erf(z). The error function is
+the antiderivative of the Gaussian function exp(-t^2). More
+precisely::
+
+                   z
+                    -
+              2    |          2
+   erf(z) = -----  |   exp( -t ) dt
+              1/2  |
+            pi    -
+                   0
+
+**Basic examples**
+
+Simple values and limits include::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print erf(0)
+    0.0
+    >>> print erf(1)
+    0.842700792949715
+    >>> print erf(-1)
+    -0.842700792949715
+    >>> print erf(inf)
+    1.0
+    >>> print erf(-inf)
+    -1.0
+
+For large real z, erf(z) approaches 1 very rapidly::
+
+    >>> print erf(3)
+    0.999977909503001
+    >>> print erf(5)
+    0.999999999998463
+
+The error function is an odd function::
+
+    >>> nprint(taylor(erf, 0, 5))
+    [0.0, 1.12838, 0.0, -0.376126, 0.0, 0.112838]
+
+:func:`erf` implements arbitrary-precision evaluation and
+supports complex numbers::
+
+    >>> mp.dps = 50
+    >>> print erf(0.5)
+    0.52049987781304653768274665389196452873645157575796
+    >>> mp.dps = 25
+    >>> print erf(1+j)
+    (1.316151281697947644880271 + 0.1904534692378346862841089j)
+
+**Related functions**
+
+See also :func:`erfc`, which is more accurate for large z,
+and :func:`erfi` which gives the antiderivative of exp(t^2).
+
+The Fresnel integrals :func:`fresnels` and :func:`fresnelc`
+are also related to the error function.
+"""
+
+
 erfc = mpfunc("erfc", libhyper.mpf_erfc, libhyper.mpc_erfc,
     "Complementary error function, erfc(z) = 1-erf(z)")
 
+erfc.__doc__ = """
+Computes the complementary error function, erfc(z) = 1-erf(z).
+This function avoids cancellation that occurs when naively
+computing the complementary error function as 1-erf(z)::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print 1 - erf(10)
+    0.0
+    >>> print erfc(10)
+    2.08848758376254e-45
+
+:func:`erfc` works accurately even for ludicrously large
+arguments::
+
+    >>> print erfc(10**10)
+    4.3504398860243e-43429448190325182776
+
+"""
+
 @funcwrapper
 def erfi(z):
-    """Imaginary error function, erfi(z)"""
+    """
+    Computes the imaginary error function, erfi(z). The imaginary
+    error function is defined in analogy with the error function,
+    but with a positive sign in the integrand::
+
+                       z
+                        -
+                  2    |         2
+       erf(z) = -----  |   exp( t ) dt
+                  1/2  |
+                pi    -
+                       0
+
+    Whereas the error function rapidly converges to 1 as z grows,
+    the imaginary error function rapidly diverges to infinity.
+    The functions are related as erfi(z) = -j*erf(z*j).
+
+    **Examples**
+
+    Basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print erfi(0)
+        0.0
+        >>> print erfi(1)
+        1.65042575879754
+        >>> print erfi(-1)
+        -1.65042575879754
+        >>> print erfi(inf)
+        +inf
+        >>> print erfi(-inf)
+        -inf
+
+    Note the symmetry between erf and erfi::
+
+        >>> print erfi(3j)
+        (0.0 + 0.999977909503001j)
+        >>> print erf(3)
+        0.999977909503001
+        >>> print erf(1+2j)
+        (-0.536643565778565 - 5.04914370344703j)
+        >>> print erfi(2+1j)
+        (-5.04914370344703 - 0.536643565778565j)
+
+    **Possible issues**
+
+    The current implementation of :func:`erfi` is much less efficient
+    and accurate than the one for erf.
+
+    """
     return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), z**2)
 
 @funcwrapper
@@ -1031,6 +1261,7 @@ def npdf(x, mu=0, sigma=1):
     Elementary properties of the probability distribution can
     be verified using numerical integration::
 
+        >>> from mpmath import *
         >>> mp.dps = 15
         >>> print quad(npdf, [-inf, inf])
         1.0
@@ -1039,6 +1270,8 @@ def npdf(x, mu=0, sigma=1):
         >>> print quad(lambda x: npdf(x, 3, 2), [3, inf])
         0.5
 
+    See also :func:`ncdf`, which gives the cumulative
+    distribution.
     """
     sigma = convert_lossless(sigma)
     return exp(-(x-mu)**2/(2*sigma**2)) / (sigma*sqrt(2*pi))
@@ -1048,6 +1281,33 @@ def ncdf(x, mu=0, sigma=1):
     """
     ncdf(x, mu=0, sigma=1) -- cumulative distribution function of
     a normal distribution with mean value mu and variance sigma^2.
+
+    See also :func:`npdf`, which gives the probability density.
+
+    Elementary properties include::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print ncdf(pi, mu=pi)
+        0.5
+        >>> print ncdf(-inf)
+        0.0
+        >>> print ncdf(+inf)
+        1.0
+
+    The cumulative distribution is the integral of the density
+    function having identical mu and sigma::
+
+        >>> mp.dps = 15
+        >>> print diff(ncdf, 2)
+        0.053990966513188
+        >>> print npdf(2)
+        0.053990966513188
+        >>> print diff(lambda x: ncdf(x, 1, 0.5), 0)
+        0.107981933026376
+        >>> print npdf(0, 1, 0.5)
+        0.107981933026376
+
     """
     a = (x-mu)/(sigma*sqrt(2))
     if a < 0:
@@ -1081,6 +1341,7 @@ def ei(z):
 
     Some basic values and limits are::
 
+        >>> from mpmath import *
         >>> mp.dps = 15
         >>> print ei(0)
         -inf
@@ -1144,8 +1405,11 @@ def ei(z):
 
     **References**
 
-    [1] Relations between Ei and other functions,
+    [1] Relations between Ei and other functions:
         http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
+
+    [2] Abramowitz & Stegun, section 5:
+        http://www.math.sfu.ca/~cbm/aands/page_228.htm
 
     """
     if z == inf:
@@ -1176,6 +1440,7 @@ def li(z):
 
     Some basic values and limits::
 
+        >>> from mpmath import *
         >>> mp.dps = 30
         >>> print li(0)
         0.0
@@ -1216,7 +1481,7 @@ def li(z):
     The prime number theorem states that the number of primes less
     than x is asymptotic to li(x). For example, it is known that
     there are exactly 1,925,320,391,606,803,968,923 prime numbers
-    less than 10^23. The logarithmic integral provides a very
+    less than 10^23 [1]. The logarithmic integral provides a very
     accurate estimate::
 
         >>> print li(2) + li(10**23)
@@ -1228,6 +1493,12 @@ def li(z):
         -0.693147180559945
         >>> print -ln(2)
         -0.693147180559945
+
+    **References**
+
+    [1] http://mathworld.wolfram.com/PrimeCountingFunction.html
+
+    [2] http://mathworld.wolfram.com/LogarithmicIntegral.html
 
     """
     if not z:
@@ -1342,11 +1613,32 @@ def ellipk(m):
         return v.real
     return v
 
-# TODO: for complex a, b handle the branch cut correctly
 @funcwrapper
 def agm(a, b=1):
-    """Arithmetic-geometric mean of a and b. Can be called with
-    a single argument, computing agm(a,1) = agm(1,a)."""
+    """
+    agm(a, b) computes the arithmetic-geometric mean of a and b,
+    defined as the limit of the iteration a, b = (a+b)/2, sqrt(a*b).
+
+    This function can be called with a single argument, computing
+    agm(a,1) = agm(1,a).
+
+    **Examples**
+
+    A formula for gamma(1/4)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print gamma(0.25)
+        3.62560990822191
+        >>> print sqrt(2*sqrt(2*pi**3)/agm(1,sqrt(2)))
+        3.62560990822191
+
+    **Possible issues**
+
+    :func:`agm` may not give an appropriate branch for complex
+    arguments a and b.
+
+    """
     if not a or not b:
         return a*b
     weps = eps * 16
@@ -1427,6 +1719,7 @@ def lambertw(z, k=0, approx=None):
 
     The Lambert W equation is the inverse of w*exp(w)::
 
+        >>> from mpmath import *
         >>> mp.dps = 35
         >>> w = lambertw(1)
         >>> print w
@@ -1512,6 +1805,7 @@ def lambertw(z, k=0, approx=None):
     If -1/e happens to round in the negative direction, there might be
     a small imaginary part::
 
+        >>> mp.dps = 15
         >>> print lambertw(-1/e)
         (-1.0 + 8.22007971511612e-9j)
 
@@ -1579,3 +1873,7 @@ def lambertw(z, k=0, approx=None):
             w = wn
     print "Warning: Lambert W iteration failed to converge:", z
     return wn
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
