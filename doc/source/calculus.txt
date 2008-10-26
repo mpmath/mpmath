@@ -1,21 +1,18 @@
 Numerical calculus
 ==================
 
-Limits and extrapolation
-------------------------
+Numerical summation and products
+--------------------------------
+
+.. autofunction:: mpmath.calculus.nsum
+.. autofunction:: mpmath.calculus.nprod
+
+Low-level extrapolation
+-----------------------
 
 Mpmath implements efficient algorithms for acceleration of slowly
 convergent sequences, and in particular for the summation of
 infinite series.
-
-Numerical summation
-...................
-
-.. autofunction:: mpmath.calculus.nsum
-
-
-Low-level extrapolation
-.......................
 
 The following functions provide a direct interface to the
 extrapolation algorithms used by higher level functions

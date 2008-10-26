@@ -38,7 +38,7 @@ from functions import (
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
-from calculus import richardson, shanks, nsum
+from calculus import richardson, shanks, nsum, nprod
 
 from calculus import diff, diffun, taylor, polyval, polyroots, quadosc
 from calculus import sumem, chebyfit, sumsh, sumrich, limit

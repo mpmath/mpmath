@@ -14,7 +14,7 @@ __docformat__ = 'plaintext'
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
-from functions import (ldexp, factorial, exp, cos, pi, bernoulli, sign)
+from functions import (ldexp, factorial, exp, ln, cos, pi, bernoulli, sign)
 
 from quadrature import quadgl, quadts
 
@@ -549,6 +549,113 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
     if verbose:
         print "Warning: failed to converge to target accuracy"
     return partial_sums[-1]
+
+def nprod(f, interval, **kwargs):
+    """
+    Computes the product of f(k) for k = a, a+1, a+2, ..., b where
+    [a, b] = interval, a = -inf and/or b = +inf.
+
+    This function is essentially equivalent to applying :func:`nsum`
+    to the logarithm of the product (which, of course, becomes a
+    series). All keyword arguments passed to :func:`nprod` are
+    forwarded verbatim to :func:`nsum`.
+
+    **Examples**
+
+    A large number of infinite products have known exact values,
+    and can therefore be used as a reference. Most of the following
+    examples are taken from MathWorld [1].
+
+    First, here are a few infinite products with simple values::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print 2*nprod(lambda k: (4*k**2)/(4*k**2-1), [1, inf])
+        3.14159265358979
+        >>> print nprod(lambda k: (1+1/k)**2/(1+2/k), [1, inf])
+        2.0
+        >>> print nprod(lambda k: (k**3-1)/(k**3+1), [2, inf])
+        0.666666666666667
+        >>> print nprod(lambda k: (1-1/k**2), [2, inf])
+        0.5
+
+    Next, several more infinite products with more complicated
+    values::
+
+        >>> print nprod(lambda k: exp(1/k**2), [1, inf])
+        5.18066831789712
+        >>> print exp(pi**2/6)
+        5.18066831789712
+
+        >>> print nprod(lambda k: (k**2-1)/(k**2+1), [2, inf])
+        0.272029054982133
+        >>> print pi*csch(pi)
+        0.272029054982133
+
+        >>> print nprod(lambda k: (k**4-1)/(k**4+1), [2, inf])
+        0.8480540493529
+        >>> print pi*sinh(pi)/(cosh(sqrt(2)*pi)-cos(sqrt(2)*pi))
+        0.8480540493529
+
+        >>> print nprod(lambda k: (1+1/k+1/k**2)**2/(1+2/k+3/k**2), [1, inf])
+        1.84893618285824
+        >>> print 3*sqrt(2)*cosh(pi*sqrt(3)/2)**2*csch(pi*sqrt(2))/pi
+        1.84893618285824
+
+        >>> print nprod(lambda k: (1-1/k**4), [2, inf])
+        0.919019477593744
+        >>> print sinh(pi)/(4*pi)
+        0.919019477593744
+
+        >>> print nprod(lambda k: (1-1/k**6), [2, inf])
+        0.982684277742192
+        >>> print (1+cosh(pi*sqrt(3)))/(12*pi**2)
+        0.982684277742192
+
+        >>> print nprod(lambda k: (1+1/k**2), [2, inf])
+        1.83803895518749
+        >>> print sinh(pi)/(2*pi)
+        1.83803895518749
+
+        >>> print nprod(lambda n: (1+1/n)**n * exp(1/(2*n)-1), [1, inf])
+        1.44725592689037
+        >>> print exp(1+euler/2)/sqrt(2*pi)
+        1.44725592689037
+
+    The following two products are equivalent and can be evaluated in
+    terms of a Jacobi theta function. Pi can be replaced by any value
+    (as long as convergence is preserved)::
+
+        >>> print nprod(lambda k: (1-pi**-k)/(1+pi**-k), [1, inf])
+        0.383845120748167
+        >>> print nprod(lambda k: tanh(k*log(pi)/2), [1, inf])
+        0.383845120748167
+        >>> print jtheta(4,0,1/pi)
+        0.383845120748167
+
+    This product does not have a known closed form value::
+
+        >>> print nprod(lambda k: (1-1/2**k), [1, inf])
+        0.288788095086602
+
+    **References**
+
+    1. E. W. Weisstein, "Infinite Product",
+       http://mathworld.wolfram.com/InfiniteProduct.html,
+       MathWorld
+
+    """
+    orig = mp.prec
+    try:
+        # TODO: we are evaluating log(1+eps) -> eps, which is
+        # inaccurate. This currently works because nsum greatly
+        # increases the working precision. But we should be
+        # more intelligent and handle the precision here.
+        mp.prec += 10
+        v = nsum(lambda n: ln(f(n)), interval, **kwargs)
+    finally:
+        mp.prec = orig
+    return +exp(v)
 
 #----------------------------------------------------------------------------#
 #                       General extrapolation methods                        #
