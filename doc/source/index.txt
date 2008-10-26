@@ -19,6 +19,7 @@ Contents:
    setup.txt
    basics.txt
    functions.txt
+   calculus.txt
    intervals.txt
    matrices.txt
    integration.txt
