@@ -35,14 +35,14 @@ from libmpf import (\
 from libelefun import (\
     constant_memo,
     def_mpf_constant,
-    mpf_pi, pi_fixed, ln2_fixed, log_int_fixed,
+    mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
     mpf_exp, mpf_log, mpf_pow,
     cos_sin, cosh_sinh
 )
 
 from libmpc import (\
     mpc_zero, mpc_one, mpc_half, mpc_two,
-    mpc_abs, mpc_shift,
+    mpc_abs, mpc_shift, mpc_pos,
     mpc_add, mpc_sub, mpc_mul, mpc_div,
     mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf,
     mpc_mul_int, mpc_pow_int,
@@ -1195,27 +1195,40 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     t = (t << wp) // ((1 << wp) - (1 << (wp+1-s)))
     return from_man_exp(t, -wp-wp, prec, rnd)
 
-def mpf_zeta(s, prec, rnd=round_fast):
+def mpf_zeta(s, prec, rnd=round_fast, alt=0):
     sign, man, exp, bc = s
     if not man:
         if s == fzero:
-            return mpf_neg(fhalf)
+            if alt:
+                return fhalf
+            else:
+                return mpf_neg(fhalf)
         if s == finf:
             return fone
         return fnan
     wp = prec + 20
     # First term vanishes?
     if (not sign) and (exp + bc > (math.log(wp,2) + 2)):
-        if rnd in (round_up, round_ceiling):
-            return mpf_add(fone, mpf_shift(fone,-wp-10), prec, rnd)
-        return fone
+        return mpf_perturb(fone, alt, prec, rnd)
+    # Optimize for integer arguments
     elif exp >= 0:
-        return mpf_zeta_int(to_int(s), prec, rnd)
+        if alt:
+            if s == fone:
+                return mpf_ln2(prec, rnd)
+            z = mpf_zeta_int(to_int(s), wp, negative_rnd[rnd])
+            q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
+            return mpf_mul(z, q, prec, rnd)
+        else:
+            return mpf_zeta_int(to_int(s), prec, rnd)
     # Negative: use the reflection formula
     # Borwein only proves the accuracy bound for x >= 1/2. However, based on
     # tests, the accuracy without reflection is quite good even some distance
     # to the left of 1/2. XXX: verify this.
     if sign:
+        # XXX: could use the separate refl. formula for Dirichlet eta
+        if alt:
+            q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
+            return mpf_mul(mpf_zeta(s, wp), q, prec, rnd)
         # XXX: -1 should be done exactly
         y = mpf_sub(fone, s, 10*wp)
         a = mpf_gamma(y, wp)
@@ -1246,18 +1259,26 @@ def mpf_zeta(s, prec, rnd=round_fast):
             t += w
     t = t // (-d[n])
     t = from_man_exp(t, -wp, wp)
-    q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
-    return mpf_div(t, q, prec, rnd)
+    if alt:
+        return mpf_pos(t, prec, rnd)
+    else:
+        q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
+        return mpf_div(t, q, prec, rnd)
 
-def mpc_zeta(s, prec, rnd=round_fast):
+def mpc_zeta(s, prec, rnd=round_fast, alt=0):
     re, im = s
     if im == fzero:
-        return mpf_zeta(re, prec, rnd), fzero
+        return mpf_zeta(re, prec, rnd, alt), fzero
     wp = prec + 20
     # Reflection formula. To be rigorous, we should reflect to the left of
     # re = 1/2 (see comments for mpf_zeta), but this leads to unnecessary
     # slowdown for interesting values of s
     if mpf_lt(re, fzero):
+        # XXX: could use the separate refl. formula for Dirichlet eta
+        if alt:
+            q = mpc_sub(mpc_one, mpc_pow(mpc_two, mpc_sub(mpc_one, s, wp),
+                wp), wp)
+            return mpc_mul(mpc_zeta(s, wp), q, prec, rnd)
         # XXX: -1 should be done exactly
         y = mpc_sub(mpc_one, s, 10*wp)
         a = mpc_gamma(y, wp)
@@ -1271,7 +1292,6 @@ def mpc_zeta(s, prec, rnd=round_fast):
         pi2 = (mpf_shift(pi, 1), fzero)
         d = mpc_div(mpc_pow(pi2, s, wp2), (pi, fzero), wp2)
         return mpc_mul(a,mpc_mul(b,mpc_mul(c,d,wp),wp),prec,rnd)
-
     n = int(wp/2.54 + 5)
     n += int(0.9*abs(to_int(im)))
     d = borwein_coefficients(n)
@@ -1300,5 +1320,14 @@ def mpc_zeta(s, prec, rnd=round_fast):
     tim //= (-d[n])
     tre = from_man_exp(tre, -wp, wp)
     tim = from_man_exp(tim, -wp, wp)
-    q = mpc_sub(mpc_one, mpc_pow(mpc_two, mpc_sub(mpc_one, s, wp), wp), wp)
-    return mpc_div((tre, tim), q, prec, rnd)
+    if alt:
+        return mpc_pos((tre, tim), prec, rnd)
+    else:
+        q = mpc_sub(mpc_one, mpc_pow(mpc_two, mpc_sub(mpc_one, s, wp), wp), wp)
+        return mpc_div((tre, tim), q, prec, rnd)
+
+def mpf_altzeta(s, prec, rnd=round_fast):
+    return mpf_zeta(s, prec, rnd, 1)
+
+def mpc_altzeta(s, prec, rnd=round_fast):
+    return mpc_zeta(s, prec, rnd, 1)

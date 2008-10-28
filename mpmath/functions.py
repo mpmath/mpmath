@@ -476,6 +476,7 @@ cospi = mpfunc('cospi', gammazeta.mpf_cos_pi, gammazeta.mpc_cos_pi, 'computes co
 sinpi = mpfunc('sinpi', gammazeta.mpf_sin_pi, gammazeta.mpc_sin_pi, 'computes sin(pi*x) accurately')
 
 zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
+altzeta = mpfunc('zeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta, 'Dirichlet eta function')
 
 zeta.__doc__ = """
     Computes the Riemann zeta function, zeta(s). The Riemann zeta
@@ -557,6 +558,78 @@ zeta.__doc__ = """
     * http://mathworld.wolfram.com/RiemannZetaFunction.html
 
     * http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
+"""
+
+altzeta.__doc__ = """
+    Computes the Dirichlet eta function, eta(s), also known as the
+    alternating zeta function. This function is defined in analogy
+    with the Riemann zeta function as providing the sum of the
+    alternating series::
+
+                        -s     -s     -s
+        eta(s) = 1  -  2   +  3   -  4   + ...
+
+    Note that eta(1) = log(2) is the alternating harmonic series.
+    The eta function unlike the Riemann zeta function is an entire
+    function, having a finite value for all complex s.
+
+    The alternating and non-alternating zeta functions are related
+    via the simple formula::
+
+        eta(s) = (1-2^(1-s)) * zeta(s)
+
+    This formula can be used to define eta(s) for Re(s) <= 0,
+    where the series diverges.
+
+    **Examples**
+
+    Some special values are::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print altzeta(1)
+        0.693147180559945
+        >>> print altzeta(0)
+        0.5
+        >>> print altzeta(-1)
+        0.25
+        >>> print altzeta(-2)
+        0.0
+
+    An example of a sum that can be computed more accurately and
+    efficiently via :func:`altzeta` than via numerical summation::
+
+        >>> sum(-(-1)**n / n**2.5 for n in range(1, 100))
+        0.86720495150398402
+        >>> print altzeta(2.5)
+        0.867199889012184
+
+    At positive even integers, the Dirichlet eta function
+    evaluates to a rational multiple of a power of pi::
+
+        >>> print altzeta(2)
+        0.822467033424113
+        >>> print pi**2/12
+        0.822467033424113
+
+    Like the Riemann zeta function, eta(s), approaches 1
+    as s approaches positive infinity, although it does
+    so from below rather than from above::
+
+        >>> print altzeta(30)
+        0.999999999068682
+        >>> print altzeta(inf)
+        1.0
+        >>> altzeta(1000, rounding='d')
+        mpf('0.99999999999999989')
+        >>> altzeta(1000, rounding='u')
+        mpf('1.0')
+
+    **References**
+
+    1. http://mathworld.wolfram.com/DirichletEtaFunction.html
+
+    2. http://en.wikipedia.org/wiki/Dirichlet_eta_function
 
 """
 
