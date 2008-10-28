@@ -143,6 +143,7 @@ Riemann zeta function, Bernoulli numbers and related
 ----------------------------------------------------
 
 .. autofunction:: mpmath.functions.zeta
+.. autofunction:: mpmath.functions.altzeta
 .. autofunction:: mpmath.functions.bernoulli
 .. autofunction:: mpmath.functions.bernfrac
 .. autofunction:: mpmath.functions.stieltjes

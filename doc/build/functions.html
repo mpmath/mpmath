@@ -1217,6 +1217,70 @@ when s is far away from the real axis.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="mpmath.functions.altzeta">
+<!--[mpmath.functions.altzeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">altzeta</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.altzeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Dirichlet eta function, eta(s), also known as the
+alternating zeta function. This function is defined in analogy
+with the Riemann zeta function as providing the sum of the
+alternating series:</p>
+<pre>                -s     -s     -s
+eta(s) = 1  -  2   +  3   -  4   + ...</pre>
+<p>Note that eta(1) = log(2) is the alternating harmonic series.
+The eta function unlike the Riemann zeta function is an entire
+function, having a finite value for all complex s.</p>
+<p>The alternating and non-alternating zeta functions are related
+via the simple formula:</p>
+<div class="highlight"><pre><span class="n">eta</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="o">^</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">s</span><span class="p">))</span> <span class="o">*</span> <span class="n">zeta</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+<p>This formula can be used to define eta(s) for Re(s) &lt;= 0,
+where the series diverges.</p>
+<p><strong>Examples</strong></p>
+<p>Some special values are:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.693147180559945</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+<p>An example of a sum that can be computed more accurately and
+efficiently via <tt class="xref docutils literal"><span class="pre">altzeta()</span></tt> than via numerical summation:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mf">2.5</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">100</span><span class="p">))</span>
+<span class="go">0.86720495150398402</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="go">0.867199889012184</span>
+</pre></div>
+<p>At positive even integers, the Dirichlet eta function
+evaluates to a rational multiple of a power of pi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.822467033424113</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">12</span>
+<span class="go">0.822467033424113</span>
+</pre></div>
+<p>Like the Riemann zeta function, eta(s), approaches 1
+as s approaches positive infinity, although it does
+so from below rather than from above:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>
+<span class="go">0.999999999068682</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">altzeta</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.99999999999999989&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;1.0&#39;)</span>
+</pre></div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://mathworld.wolfram.com/DirichletEtaFunction.html">http://mathworld.wolfram.com/DirichletEtaFunction.html</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Dirichlet_eta_function">http://en.wikipedia.org/wiki/Dirichlet_eta_function</a></li>
+</ol>
+</dd></dl>
+
+<dl class="function">
 <dt id="mpmath.functions.bernoulli">
 <!--[mpmath.functions.bernoulli]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bernoulli</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.bernoulli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the nth Bernoulli number, B(n), for any integer n &gt;= 0.</p>
@@ -1591,7 +1655,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 26, 2008.
+      Last updated on Oct 28, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
