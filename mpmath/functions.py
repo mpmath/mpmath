@@ -856,11 +856,14 @@ def stieltjes(n):
 
     **Algorithm**
 
-    The calculation is done using numerical
-    integration of the Riemann zeta function. The method should
-    work for any `n` and dps, but soon becomes quite slow in
-    practice. The code has been tested with n = 50 and dps = 100;
-    that computation took about 2 minutes.
+    The calculation is done using numerical differentiation
+    for very small n (currently n = 1-3).
+
+    For larger n, integration of the Riemann zeta function is
+    used. The method should work for any `n` and dps, but soon
+    becomes quite slow in practice. The code has been tested
+    with n = 50 and dps = 100; that computation took about
+    2 minutes.
 
     **References**
 
@@ -877,16 +880,40 @@ def stieltjes(n):
         prec, s = stieltjes_cache[n]
         if prec >= mp.prec:
             return +s
-    from quadrature import quadgl
-    def f(x):
-        r = exp(pi*j*x)
-        return (zeta(r+1) / r**n).real
     orig = mp.prec
     try:
-        p = int(log(factorial(n), 2) + 35)
-        mp.prec += p
-        u = quadgl(f, [-1, 1])
-        v = mpf(-1)**n * factorial(n) * u / 2
+        if n <= 3:
+            from calculus import diff
+            # The Stieltjes constants appear as derivatives of the Dirichlet
+            # eta function at s = 1 (although a lot of cruft needs to be
+            # included in the formulas). The following special cases were
+            # derived using Mathematica.
+            #
+            # It is possible that a simple recursion formula could be
+            # determined. However, this would not necessarily be worthwhile.
+            #
+            # Note that the nth derivative requires (n+1)*prec, so this
+            # is only faster than the integration method for really small n
+            # anyway.
+            if n == 1:
+                v = -(diff(altzeta, 1, 2, direction=1)*3 + 3*euler*log(2)**2-\
+                    log(2)**3) / (3*log(4))
+            if n == 2:
+                v = (diff(altzeta, 1, 3, direction=1) - euler*log(2)**3 + \
+                    log(2)**4/4 - 3*log(2)**2*stieltjes(1))/log(8)
+            if n == 3:
+                v = -(diff(altzeta, 1, 4, direction=1) + euler*log(2)**4 - \
+                    log(2)**5/5 + 4*log(2)**3*stieltjes(1) + 6*log(2)**2* \
+                    stieltjes(2)) / (4*log(2))
+        else:
+            from quadrature import quadgl
+            def f(x):
+                r = exp(pi*j*x)
+                return (zeta(r+1) / r**n).real
+            p = int(log(factorial(n), 2) + 35)
+            mp.prec += p
+            u = quadgl(f, [-1, 1])
+            v = mpf(-1)**n * factorial(n) * u / 2
     finally:
         mp.prec = orig
     stieltjes_cache[n] = (mp.prec, v)
