@@ -15,6 +15,7 @@ from settings import (mp, extraprec)
 from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
 from functions import (ldexp, factorial, exp, ln, cos, pi, bernoulli, sign)
+from gammazeta import int_fac
 
 from quadrature import quadgl, quadts
 
@@ -92,7 +93,7 @@ def richardson(seq):
     # The general weight is c[k] = (N+k)**N * (-1)**(k+N) / k! / (N-k)!
     # To avoid repeated factorials, we simplify the quotient
     # of successive weights to obtain a recurrence relation
-    c = (-1)**N * N**N / factorial(N)
+    c = (-1)**N * N**N / mpf(int_fac(N))
     maxc = 1
     for k in xrange(N+1):
         s += c * seq[N+k]
