@@ -336,8 +336,8 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
 
     :func:`nsum` handles sums of complex numbers::
 
-        >>> print nsum(lambda k: (0.5+0.75j)**k, [0, inf])
-        (0.615384755788335 + 0.923077053091299j)
+        >>> print nsum(lambda k: (0.5+0.25j)**k, [0, inf])
+        (1.6 + 0.8j)
 
     The following sum converges very rapidly, so it is most
     efficient to sum it by disabling convergence acceleration::
