@@ -619,3 +619,14 @@ def test_integer_parts():
     assert ceil(3.2) == 4
     assert floor(3.2+5j) == 3+5j
     assert ceil(3.2+5j) == 4+5j
+
+def test_complex_parts():
+    assert fabs('3') == 3
+    assert fabs(3+4j) == 5
+    assert re(3) == 3
+    assert re(1+4j) == 1
+    assert im(3) == 0
+    assert im(1+4j) == 4
+    assert conj(3) == 3
+    assert conj(3+4j) == 3-4j
+    assert mpf(3).conjugate() == 3

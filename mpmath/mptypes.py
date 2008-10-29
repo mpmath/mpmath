@@ -171,6 +171,8 @@ class mpf(mpnumeric):
     real = property(lambda self: self)
     imag = property(lambda self: zero)
 
+    conjugate = lambda self: self
+
     def __getstate__(self): return to_pickable(self._mpf_)
     def __setstate__(self, val): self._mpf_ = from_pickable(val)
 

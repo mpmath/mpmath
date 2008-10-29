@@ -18,7 +18,7 @@ from functions import (
     sec, csc, cot, sech, csch, coth,
     asec, acsc, acot, asech, acsch, acoth,
     cospi, sinpi,
-    floor, ceil,
+    fabs, re, im, conj, floor, ceil,
     nthroot, hypot, modf,
     ldexp, frexp, sign, arg,
     degrees, radians, atan2,

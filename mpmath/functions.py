@@ -429,6 +429,58 @@ def arg(x):
     x = mpc(x)
     return atan2(x.imag, x.real)
 
+def fabs(x):
+    """
+    Returns the absolute value of x converted to a mpmath number::
+
+        >>> from mpmath import *
+        >>> fabs(3)
+        mpf('3.0')
+        >>> fabs(3+4j)
+        mpf('5.0')
+
+    """
+    return abs(convert_lossless(x))
+
+def re(x):
+    """
+    Returns the real part of x converted to a mpmath number::
+
+        >>> from mpmath import *
+        >>> re(3)
+        mpf('3.0')
+        >>> re(-1+4j)
+        mpf('-1.0')
+
+    """
+    return convert_lossless(x).real
+
+def im(x):
+    """
+    Returns the imaginary part of x converted to a mpmath number::
+
+        >>> from mpmath import *
+        >>> im(3)
+        mpf('0.0')
+        >>> im(-1+4j)
+        mpf('4.0')
+
+    """
+    return convert_lossless(x).imag
+
+def conj(x):
+    """
+    Returns the complex conjugate of x converted to a mpmath number::
+
+        >>> from mpmath import *
+        >>> conj(3)
+        mpf('3.0')
+        >>> conj(-1+4j)
+        mpc(real='-1.0', imag='-4.0')
+
+    """
+    return convert_lossless(x).conjugate()
+
 def log(x, b=None):
     """Returns the base-b logarithm of x. If b is unspecified, return
     the natural (base-e) logarithm. log(x, b) is defined as
