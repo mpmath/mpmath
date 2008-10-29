@@ -334,6 +334,11 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
         >>> print nsum(lambda k: 1/(1+k**2), [-inf, inf])
         3.15334809493716
 
+    :func:`nsum` handles sums of complex numbers::
+
+        >>> print nsum(lambda k: (0.5+0.75j)**k, [0, inf])
+        (0.615384755788335 + 0.923077053091299j)
+
     The following sum converges very rapidly, so it is most
     efficient to sum it by disabling convergence acceleration::
 
@@ -526,7 +531,7 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
                     est1 = row[-1]
                     error = 0
                 else:
-                    est1, maxc, est2 = row[-1], row[-2], row[-3]
+                    est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
                     error = abs(est1-est2)
                 if verbose:
                     print "Shanks transformation error: %s" % nstr(error)
