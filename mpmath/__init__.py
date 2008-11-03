@@ -28,7 +28,7 @@ from functions import (
     harmonic, bernoulli, bernfrac, stieltjes,
     lower_gamma, upper_gamma, gammaprod, binomial, rf, ff,
     hyper, hyp0f1, hyp1f1, hyp2f1,
-    erf, erfc, erfi, npdf, ncdf,
+    erf, erfc, erfi, erfinv, npdf, ncdf,
     ei, li, ci, si, chi, shi,
     fresnels, fresnelc, airyai, airybi,
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,

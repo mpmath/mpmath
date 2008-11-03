@@ -1405,6 +1405,79 @@ def erfi(z):
     return (2/sqrt(pi)*z) * sum_hyp1f1_rat((1,2),(3,2), z**2)
 
 @funcwrapper
+def erfinv(x):
+    """
+    Computes the inverse error function, satisfying erf(erfinv(x)) =
+    erfinv(erf(x)) = x. This function is defined only for -1 <= x <= 1.
+
+    **Examples**
+
+    Special values include::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print erfinv(0)
+        0.0
+        >>> print erfinv(1)
+        +inf
+        >>> print erfinv(-1)
+        -inf
+
+    The domain is limited to the standard interval::
+
+        >>> erfinv(2)
+        Traceback (most recent call last):
+          ...
+        ValueError: erfinv(x) is defined only for -1 <= x <= 1
+
+    It is simple to check that :func:`erfinv` computes inverse values of
+    :func:`erf` as promised::
+
+        >>> print erf(erfinv(0.75))
+        0.75
+        >>> print erf(erfinv(-0.995))
+        -0.995
+
+    :func:`erfinv` supports arbitrary-precision evaluation::
+
+        >>> mp.dps = 50
+        >>> erf(3)
+        mpf('0.99997790950300141455862722387041767962015229291260075')
+        >>> erfinv(_)
+        mpf('3.0')
+
+    A definite integral involving the inverse error function::
+
+        >>> mp.dps = 15
+        >>> print quad(erfinv, [0, 1])
+        0.564189583547756
+        >>> print 1/sqrt(pi)
+        0.564189583547756
+
+    The inverse error function can be used to generate random numbers
+    with a Gaussian distribution (although this is a relatively
+    inefficient algorithm)::
+
+        >>> nprint([erfinv(2*rand()-1) for n in range(6)]) # doctest: +SKIP
+        [-0.586747, 1.10233, -0.376796, 0.926037, -0.708142, -0.732012]
+
+    """
+    if x.imag or (x < -1) or (x > 1):
+        raise ValueError("erfinv(x) is defined only for -1 <= x <= 1")
+    if isnan(x): return x
+    if not x: return x
+    if x == 1: return inf
+    if x == -1: return -inf
+    if abs(x) < 0.9:
+        a = 0.53728*x**3 + 0.813198*x
+    else:
+        # An asymptotic formula
+        u = log(2/pi/(abs(x)-1)**2)
+        a = sign(x) * sqrt(u - log(u))/sqrt(2)
+    from optimization import findroot
+    return findroot(lambda t: erf(t)-x, a)
+
+@funcwrapper
 def npdf(x, mu=0, sigma=1):
     """
     npdf(x, mu=0, sigma=1) -- probability density function of a
