@@ -111,6 +111,23 @@ def test_gamma_quotients():
     assert binomial(-1,0) == 1
     assert binomial(-2,-4) == 3
     assert binomial(4.5, 1.5) == 6.5625
+    assert beta(1,1) == 1
+    assert beta(0,0) == inf
+    assert beta(3,0) == inf
+    assert beta(-1,-1) == inf
+    assert beta(1.5,1).ae(2/3.)
+    assert beta(1.5,2.5).ae(pi/16)
+    assert (10**15*beta(10,100)).ae(2.3455339739604649879)
+    assert beta(inf,inf) == 0
+    assert isnan(beta(-inf,inf))
+    assert isnan(beta(-3,inf))
+    assert isnan(beta(0,inf))
+    assert beta(inf,0.5) == beta(0.5,inf) == 0
+    assert beta(inf,-1.5) == inf
+    assert beta(inf,-0.5) == -inf
+    assert beta(1+2j,-1-j/2).ae(1.16396542451069943086+0.08511695947832914640j)
+    assert beta(-0.5,0.5) == 0
+    assert beta(-3,3).ae(-1/3.)
 
 def test_zeta():
     mp.dps = 15

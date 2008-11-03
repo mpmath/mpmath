@@ -1055,9 +1055,89 @@ def gammaprod(a, b):
     return +p
 
 def beta(x, y):
-    """Beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y)"""
+    """
+    Computes the beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y).
+    The beta function is also commonly defined by the integral
+    representation::
+
+                 1
+                  -
+                 |   x-1     y-1
+        B(x,y) = |  t   (1-t)    dt
+                 |
+                -
+                 0
+
+    **Examples**
+
+    For integer and half-integer arguments where all three gamma
+    functions are finite, the beta function becomes either rational
+    number or a rational multiple of pi::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print beta(5, 2)
+        0.0333333333333333
+        >>> print beta(1.5, 2)
+        0.266666666666667
+        >>> print 16*beta(2.5, 1.5)
+        3.14159265358979
+
+    Where appropriate, :func:`beta` evaluates limits. A pole
+    of the beta function is taken to result in ``+inf``::
+
+        >>> print beta(-0.5, 0.5)
+        0.0
+        >>> print beta(-3, 3)
+        -0.333333333333333
+        >>> print beta(-2, 3)
+        +inf
+        >>> print beta(inf, 1)
+        0.0
+        >>> print beta(inf, 0)
+        nan
+
+    :func:`beta` supports complex numbers and arbitrary precision
+    evaluation::
+
+        >>> print beta(1, 2+j)
+        (0.4 - 0.2j)
+        >>> mp.dps = 25
+        >>> print beta(j,0.5)
+        (1.079424249270925780135675 - 1.410032405664160838288752j)
+        >>> mp.dps = 50
+        >>> print beta(pi, e)
+        0.037890298781212201348153837138927165984170287886464
+
+    Various integrals can be computed by means of the
+    beta function::
+
+        >>> mp.dps = 15
+        >>> print quad(lambda t: t**2.5*(1-t)**2, [0, 1])
+        0.0230880230880231
+        >>> print beta(3.5, 3)
+        0.0230880230880231
+        >>> print quad(lambda t: sin(t)**4 * sqrt(cos(t)), [0, pi/2])
+        0.319504062596158
+        >>> print beta(2.5, 0.75)/2
+        0.319504062596158
+
+    """
     x = convert_lossless(x)
     y = convert_lossless(y)
+    if isinf(y):
+        x, y = y, x
+    if isinf(x):
+        if x == inf and not y.imag:
+            if y == -inf:
+                return nan
+            if y > 0:
+                return zero
+            if isint(y):
+                return nan
+            if y < 0:
+                return sign(gamma(y)) * inf
+        return nan
     return gammaprod([x, y], [x+y])
 
 def binomial(n, k):
