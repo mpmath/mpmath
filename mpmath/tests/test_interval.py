@@ -56,6 +56,7 @@ def test_interval_mul():
     assert mpi(-inf, 0) * mpi(0, 1) == mpi(-inf, 0)
     assert mpi(-inf, 0) * mpi(0, 0) * mpi(-inf, 0)
     assert mpi(-inf, 0) * mpi(-inf, inf) == mpi(-inf, inf)
+    assert mpi(-5,0)*mpi(-32,28) == mpi(-140,160)
     # Should be undefined?
     assert mpi(inf, inf) * 0 == mpi(-inf, inf)
     assert mpi(-inf, -inf) * 0 == mpi(-inf, inf)
