@@ -40,7 +40,7 @@ from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
 from calculus import richardson, shanks, nsum, nprod
 
-from calculus import diff, diffun, taylor, polyval, polyroots, quadosc
+from calculus import diff, diffun, taylor, pade, polyval, polyroots, quadosc
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
 from calculus import odeint
 from quadrature import quad, quadgl, quadts, TanhSinh, GaussLegendre

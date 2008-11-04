@@ -18,6 +18,8 @@ from functions import (ldexp, factorial, exp, ln, cos, pi, bernoulli, sign)
 from gammazeta import int_fac
 
 from quadrature import quadgl, quadts
+from matrices import matrix
+from linalg import lu_solve
 
 def richardson(seq):
     """
@@ -917,6 +919,51 @@ def taylor(f, x, n, **options):
     """
     return [diff(f, x, i, **options) / factorial(i) for i in xrange(n+1)]
 
+def pade(a, L, M):
+    """
+    Produce the polynomials coefficients p, q from the taylor 
+    coefficients a; p has L+1 coefficients, q has M+1 coefficients,
+    with q[0] = 1; a must provide L+M+1 Taylor coefficients.
+    Defining P = sum(p[i]*x**i, 0, L), Q = sum(q[i]*x**i, 0, M), 
+    A = sum(a[i]*x**i, 0,L+M)
+    A(x)*Q(x) = P(x) + O(x**(L+M+1))
+    P(x)/Q(x) can provide a good approximation to an analytic function
+    beyond the radius of convergence of its Taylor series (example
+    from G.A. Baker 'Essential od Pade Approximants' Academic Press, Ch.1A)
+    >>> from mpmath import *
+    >>> one = mpf(1)
+    >>> def f(x):
+    ...   return sqrt((one + 2*x)/(one + x))
+    ...
+    >>> a = taylor(f, 0, 6)
+    >>> p, q = pade(a, 3, 3)
+    >>> x = 10
+    >>> polyval(p[::-1], x)/polyval(q[::-1], x)
+    mpf('1.3816910556680551')
+    >>> f(x)
+    mpf('1.3816985594155149')
+    """
+    assert(len(a) >= L+M+1)
+
+    if M == 0:
+        if L == 0:
+            return [mpf(1)], [mpf(1)]
+        else:
+            return a[:L+1], [mpf(1)]
+    A = matrix(M)
+    for j in range(M):
+        for i in range(min(M, L+j+1)):
+            A[j, i] = a[L+j-i]
+    v = -matrix(a[(L+1):(L+M+1)])
+    x = lu_solve(A, v)
+    q = [mpf(1)] + list(x)
+    p = [0]*(L+1)
+    for i in range(L+1):
+        s = a[i]
+        for j in range(1, min(M,i) + 1):
+            s += q[j]*a[i-j]
+        p[i] = s
+    return p, q
 
 #----------------------------------------------------------------------------#
 #                           Generic root-finding                             #
