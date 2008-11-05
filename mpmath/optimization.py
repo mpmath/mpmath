@@ -514,7 +514,8 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     d2f : second derivative of f (used by some solvers)
 
     solver has to be callable with (f, x0, **kwargs) and return an generator
-    yielding pairs of approximative solution and estimated error.
+    yielding pairs of approximative solution and estimated error (which is
+    expected to be positive).
     You can use the following string aliases:
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
     'ridder', 'anewton', 'bisect'
@@ -700,7 +701,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
             print 'x:    ', x
             print 'error:', error
         i += 1
-        if error < tol or i >= maxsteps:
+        if error < tol * max(1, abs(x)) or i >= maxsteps:
             break
     if verify and abs(f(x))**2 > tol: # TODO: better condition?
         raise ValueError('Could not find root within given tolerance. '
