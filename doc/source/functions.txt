@@ -3,6 +3,8 @@ Mathematical functions
 
 Mpmath implements the standard functions from Python's ``math`` and ``cmath`` modules, for both real and complex numbers and with arbitrary precision. Many other functions are also available in mpmath, including commonly-used variants of standard functions (such as the alternative trigonometric functions sec, csc, cot), but also a large number of "special functions" such as the gamma function, the Riemann zeta function, error functions, Bessel functions, etc.
 
+.. contents::
+
 Constants
 ---------
 
@@ -40,6 +42,10 @@ Mpmath supports arbitrary-precision computation of various common (and less comm
 Number parts
 ------------
 
+.. autofunction:: mpmath.functions.fabs
+.. autofunction:: mpmath.functions.re
+.. autofunction:: mpmath.functions.im
+.. autofunction:: mpmath.functions.conj
 .. autofunction:: mpmath.functions.floor
 .. autofunction:: mpmath.functions.ceil
 .. autofunction:: mpmath.functions.arg
@@ -106,6 +112,7 @@ Exponential integrals
 .. autofunction:: mpmath.functions.erf
 .. autofunction:: mpmath.functions.erfc
 .. autofunction:: mpmath.functions.erfi
+.. autofunction:: mpmath.functions.erfinv
 .. autofunction:: mpmath.functions.npdf
 .. autofunction:: mpmath.functions.ncdf
 .. autofunction:: mpmath.functions.ei

@@ -48,10 +48,29 @@
             
   
   <div class="section" id="mathematical-functions">
-<h1>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id1">Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></a></h1>
 <p>Mpmath implements the standard functions from Python&#8217;s <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules, for both real and complex numbers and with arbitrary precision. Many other functions are also available in mpmath, including commonly-used variants of standard functions (such as the alternative trigonometric functions sec, csc, cot), but also a large number of &#8220;special functions&#8221; such as the gamma function, the Riemann zeta function, error functions, Bessel functions, etc.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#mathematical-functions" id="id1">Mathematical functions</a><ul>
+<li><a class="reference internal" href="#constants" id="id2">Constants</a></li>
+<li><a class="reference internal" href="#number-parts" id="id3">Number parts</a></li>
+<li><a class="reference internal" href="#powers-and-logarithms" id="id4">Powers and logarithms</a></li>
+<li><a class="reference internal" href="#trigonometric-functions" id="id5">Trigonometric functions</a></li>
+<li><a class="reference internal" href="#hyperbolic-functions" id="id6">Hyperbolic functions</a></li>
+<li><a class="reference internal" href="#exponential-integrals" id="id7">Exponential integrals</a></li>
+<li><a class="reference internal" href="#bessel-and-related-functions" id="id8">Bessel and related functions</a></li>
+<li><a class="reference internal" href="#gamma-and-related-functions" id="id9">Gamma and related functions</a></li>
+<li><a class="reference internal" href="#riemann-zeta-function-bernoulli-numbers-and-related" id="id10">Riemann zeta function, Bernoulli numbers and related</a></li>
+<li><a class="reference internal" href="#hypergeometric-functions" id="id11">Hypergeometric functions</a></li>
+<li><a class="reference internal" href="#elliptic-functions" id="id12">Elliptic functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="constants">
-<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></a></h2>
 <p>The predefined objects <tt class="xref docutils literal"><span class="pre">j</span></tt> (imaginary unit), <tt class="xref docutils literal"><span class="pre">inf</span></tt> (positive infinity) and <tt class="xref docutils literal"><span class="pre">nan</span></tt> (not-a-number) are shortcuts to <tt class="xref docutils literal"><span class="pre">mpc</span></tt> and <tt class="xref docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values.</p>
 <p>Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants. These constants are implemented as lazy objects that can be computed with any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular <tt class="docutils literal"><span class="pre">mpf</span></tt> using the unary <tt class="docutils literal"><span class="pre">+</span></tt> operator:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -199,7 +218,55 @@ code for additional details.</p>
 
 </div>
 <div class="section" id="number-parts">
-<h2>Number parts<a class="headerlink" href="#number-parts" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Number parts<a class="headerlink" href="#number-parts" title="Permalink to this headline">¶</a></a></h2>
+<dl class="function">
+<dt id="mpmath.functions.fabs">
+<!--[mpmath.functions.fabs]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fabs</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fabs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the absolute value of x converted to a mpmath number:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fabs</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fabs</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">mpf(&#39;5.0&#39;)</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.re">
+<!--[mpmath.functions.re]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">re</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.re" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the real part of x converted to a mpmath number:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">mpf(&#39;-1.0&#39;)</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.im">
+<!--[mpmath.functions.im]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">im</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.im" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the imaginary part of x converted to a mpmath number:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">mpf(&#39;4.0&#39;)</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.conj">
+<!--[mpmath.functions.conj]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">conj</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.conj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the complex conjugate of x converted to a mpmath number:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conj</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conj</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;-1.0&#39;, imag=&#39;-4.0&#39;)</span>
+</pre></div>
+</dd></dl>
+
 <dl class="function">
 <dt id="mpmath.functions.floor">
 <!--[mpmath.functions.floor]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">floor</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.floor" title="Permalink to this definition">¶</a></dt>
@@ -240,7 +307,7 @@ be +pi.</dd></dl>
 
 </div>
 <div class="section" id="powers-and-logarithms">
-<h2>Powers and logarithms<a class="headerlink" href="#powers-and-logarithms" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Powers and logarithms<a class="headerlink" href="#powers-and-logarithms" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.sqrt">
 <!--[mpmath.functions.sqrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sqrt" title="Permalink to this definition">¶</a></dt>
@@ -480,7 +547,7 @@ at -1/e and make sure that the proper branch is chosen there</p>
 
 </div>
 <div class="section" id="trigonometric-functions">
-<h2>Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.degrees">
 <!--[mpmath.functions.degrees]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">degrees</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.degrees" title="Permalink to this definition">¶</a></dt>
@@ -559,7 +626,7 @@ the signs of y and x. (Defined for real x and y only.)</dd></dl>
 
 </div>
 <div class="section" id="hyperbolic-functions">
-<h2>Hyperbolic functions<a class="headerlink" href="#hyperbolic-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">Hyperbolic functions<a class="headerlink" href="#hyperbolic-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.cosh">
 <!--[mpmath.functions.cosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cosh" title="Permalink to this definition">¶</a></dt>
@@ -622,7 +689,7 @@ the signs of y and x. (Defined for real x and y only.)</dd></dl>
 
 </div>
 <div class="section" id="exponential-integrals">
-<h2>Exponential integrals<a class="headerlink" href="#exponential-integrals" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Exponential integrals<a class="headerlink" href="#exponential-integrals" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.erf">
 <!--[mpmath.functions.erf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">erf</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.erf" title="Permalink to this definition">¶</a></dt>
@@ -741,6 +808,57 @@ The functions are related as erfi(z) = -j*erf(z*j).</p>
 <p><strong>Possible issues</strong></p>
 <p>The current implementation of <tt class="xref docutils literal"><span class="pre">erfi()</span></tt> is much less efficient
 and accurate than the one for erf.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.erfinv">
+<!--[mpmath.functions.erfinv]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">erfinv</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.erfinv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the inverse error function, satisfying erf(erfinv(x)) =
+erfinv(erf(x)) = x. This function is defined only for -1 &lt;= x &lt;= 1.</p>
+<p><strong>Examples</strong></p>
+<p>Special values include:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfinv</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfinv</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erfinv</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-inf</span>
+</pre></div>
+<p>The domain is limited to the standard interval:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">erfinv</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ValueError</span>: <span class="n-Identifier">erfinv(x) is defined only for -1 &lt;= x &lt;= 1</span>
+</pre></div>
+<p>It is simple to check that <tt class="xref docutils literal"><span class="pre">erfinv()</span></tt> computes inverse values of
+<tt class="xref docutils literal"><span class="pre">erf()</span></tt> as promised:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="n">erfinv</span><span class="p">(</span><span class="mf">0.75</span><span class="p">))</span>
+<span class="go">0.75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">erf</span><span class="p">(</span><span class="n">erfinv</span><span class="p">(</span><span class="o">-</span><span class="mf">0.995</span><span class="p">))</span>
+<span class="go">-0.995</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">erfinv()</span></tt> supports arbitrary-precision evaluation:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">erf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.99997790950300141455862722387041767962015229291260075&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">erfinv</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.0&#39;)</span>
+</pre></div>
+<p>A definite integral involving the inverse error function:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">erfinv</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.564189583547756</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.564189583547756</span>
+</pre></div>
+<p>The inverse error function can be used to generate random numbers
+with a Gaussian distribution (although this is a relatively
+inefficient algorithm):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">erfinv</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">rand</span><span class="p">()</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">)])</span> <span class="c"># doctest: +SKIP</span>
+<span class="go">[-0.586747, 1.10233, -0.376796, 0.926037, -0.708142, -0.732012]</span>
+</pre></div>
 </dd></dl>
 
 <dl class="function">
@@ -974,7 +1092,7 @@ accurate estimate:</p>
 
 </div>
 <div class="section" id="bessel-and-related-functions">
-<h2>Bessel and related functions<a class="headerlink" href="#bessel-and-related-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Bessel and related functions<a class="headerlink" href="#bessel-and-related-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.jv">
 <!--[mpmath.functions.jv]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jv</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.jv" title="Permalink to this definition">¶</a></dt>
@@ -992,7 +1110,7 @@ accurate estimate:</p>
 
 </div>
 <div class="section" id="gamma-and-related-functions">
-<h2>Gamma and related functions<a class="headerlink" href="#gamma-and-related-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Gamma and related functions<a class="headerlink" href="#gamma-and-related-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.gamma">
 <!--[mpmath.functions.gamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">gamma</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.gamma" title="Permalink to this definition">¶</a></dt>
@@ -1001,7 +1119,66 @@ accurate estimate:</p>
 <dl class="function">
 <dt id="mpmath.functions.beta">
 <!--[mpmath.functions.beta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">beta</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.beta" title="Permalink to this definition">¶</a></dt>
-<dd>Beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y)</dd></dl>
+<dd><p>Computes the beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y).
+The beta function is also commonly defined by the integral
+representation:</p>
+<pre>         1
+          -
+         |   x-1     y-1
+B(x,y) = |  t   (1-t)    dt
+         |
+        -
+         0</pre>
+<p><strong>Examples</strong></p>
+<p>For integer and half-integer arguments where all three gamma
+functions are finite, the beta function becomes either rational
+number or a rational multiple of pi:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">0.0333333333333333</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">0.266666666666667</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">16</span><span class="o">*</span><span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="go">3.14159265358979</span>
+</pre></div>
+<p>Where appropriate, <tt class="xref docutils literal"><span class="pre">beta()</span></tt> evaluates limits. A pole
+of the beta function is taken to result in <tt class="docutils literal"><span class="pre">+inf</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">-0.333333333333333</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">nan</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">beta()</span></tt> supports complex numbers and arbitrary precision
+evaluation:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.4 - 0.2j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">(1.079424249270925780135675 - 1.410032405664160838288752j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+<span class="go">0.037890298781212201348153837138927165984170287886464</span>
+</pre></div>
+<p>Various integrals can be computed by means of the
+beta function:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mf">2.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.0230880230880231</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">0.0230880230880231</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="go">0.319504062596158</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">0.319504062596158</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.factorial">
@@ -1143,7 +1320,7 @@ exceeds a given amount, say 100:</p>
 
 </div>
 <div class="section" id="riemann-zeta-function-bernoulli-numbers-and-related">
-<h2>Riemann zeta function, Bernoulli numbers and related<a class="headerlink" href="#riemann-zeta-function-bernoulli-numbers-and-related" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Riemann zeta function, Bernoulli numbers and related<a class="headerlink" href="#riemann-zeta-function-bernoulli-numbers-and-related" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.zeta">
 <!--[mpmath.functions.zeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">zeta</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.zeta" title="Permalink to this definition">¶</a></dt>
@@ -1437,11 +1614,13 @@ and caches computed results:</p>
 <span class="go">-0.0096903631928723184845303860352125293590658061013408</span>
 </pre></div>
 <p><strong>Algorithm</strong></p>
-<p>The calculation is done using numerical
-integration of the Riemann zeta function. The method should
-work for any <cite>n</cite> and dps, but soon becomes quite slow in
-practice. The code has been tested with n = 50 and dps = 100;
-that computation took about 2 minutes.</p>
+<p>The calculation is done using numerical differentiation
+for very small n (currently n = 1-3).</p>
+<p>For larger n, integration of the Riemann zeta function is
+used. The method should work for any <cite>n</cite> and dps, but soon
+becomes quite slow in practice. The code has been tested
+with n = 50 and dps = 100; that computation took about
+2 minutes.</p>
 <p><strong>References</strong></p>
 <ul class="simple">
 <li><a class="reference external" href="http://mathworld.wolfram.com/StieltjesConstants.html">http://mathworld.wolfram.com/StieltjesConstants.html</a></li>
@@ -1451,7 +1630,7 @@ that computation took about 2 minutes.</p>
 
 </div>
 <div class="section" id="hypergeometric-functions">
-<h2>Hypergeometric functions<a class="headerlink" href="#hypergeometric-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Hypergeometric functions<a class="headerlink" href="#hypergeometric-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.hyper">
 <!--[mpmath.functions.hyper]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyper" title="Permalink to this definition">¶</a></dt>
@@ -1506,7 +1685,7 @@ information.</dd></dl>
 
 </div>
 <div class="section" id="elliptic-functions">
-<h2>Elliptic functions<a class="headerlink" href="#elliptic-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">Elliptic functions<a class="headerlink" href="#elliptic-functions" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.agm">
 <!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
@@ -1655,7 +1834,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Oct 28, 2008.
+      Last updated on Nov 06, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

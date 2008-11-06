@@ -33,6 +33,7 @@ Derivatives
 .. autofunction:: mpmath.calculus.diff
 .. autofunction:: mpmath.calculus.diffun
 .. autofunction:: mpmath.calculus.taylor
+.. autofunction:: mpmath.calculus.pade
 
 Polynomials
 -----------

@@ -921,27 +921,36 @@ def taylor(f, x, n, **options):
 
 def pade(a, L, M):
     """
-    Produce the polynomials coefficients p, q from the taylor 
+    Produce the polynomials coefficients p, q from the Taylor 
     coefficients a; p has L+1 coefficients, q has M+1 coefficients,
     with q[0] = 1; a must provide L+M+1 Taylor coefficients.
-    Defining P = sum(p[i]*x**i, 0, L), Q = sum(q[i]*x**i, 0, M), 
-    A = sum(a[i]*x**i, 0,L+M)
-    A(x)*Q(x) = P(x) + O(x**(L+M+1))
+
+    Defining::
+
+        P = sum(p[i]*x**i, 0, L), Q = sum(q[i]*x**i, 0, M), 
+
+        A = sum(a[i]*x**i, 0,L+M),
+
+        A(x)*Q(x) = P(x) + O(x**(L+M+1))
+
     P(x)/Q(x) can provide a good approximation to an analytic function
     beyond the radius of convergence of its Taylor series (example
-    from G.A. Baker 'Essential od Pade Approximants' Academic Press, Ch.1A)
-    >>> from mpmath import *
-    >>> one = mpf(1)
-    >>> def f(x):
-    ...   return sqrt((one + 2*x)/(one + x))
-    ...
-    >>> a = taylor(f, 0, 6)
-    >>> p, q = pade(a, 3, 3)
-    >>> x = 10
-    >>> polyval(p[::-1], x)/polyval(q[::-1], x)
-    mpf('1.3816910556680551')
-    >>> f(x)
-    mpf('1.3816985594155149')
+    from G.A. Baker 'Essentials of Pade Approximants' Academic Press,
+    Ch.1A)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> one = mpf(1)
+        >>> def f(x):
+        ...   return sqrt((one + 2*x)/(one + x))
+        ...
+        >>> a = taylor(f, 0, 6)
+        >>> p, q = pade(a, 3, 3)
+        >>> x = 10
+        >>> polyval(p[::-1], x)/polyval(q[::-1], x)
+        mpf('1.3816910556680551')
+        >>> f(x)
+        mpf('1.3816985594155149')
     """
     assert(len(a) >= L+M+1)
 
