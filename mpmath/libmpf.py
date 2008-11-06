@@ -609,18 +609,20 @@ def mpf_add(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
 
-    if not sman or not tman:
-        if ((not sman) and sexp) or ((not tman) and texp):
-            either = s, t
-            if fnan in either: return fnan
-            if finf in either and fninf in either: return fnan
-            if finf in either: return finf
-            return fninf
-        # Check if one operand is zero. Zero always has exp = 0; if the
-        # other operand has a huge exponent, its mantissa will unnecessarily
-        # be shifted into something huge if we don't check for this case.
-        if not tman: return normalize1(ssign, sman, sexp, sbc, prec, rnd)
-        if not sman: return normalize1(tsign, tman, texp, tbc, prec, rnd)
+    if not sman:
+        if sexp:
+            if s == t or tman or not texp:
+                return s
+            return fnan
+        if tman:
+            return normalize1(tsign, tman, texp, tbc, prec, rnd)
+        return t
+    if not tman:
+        if texp:
+            return t
+        if sman:
+            return normalize1(ssign, sman, sexp, sbc, prec, rnd)
+        return s
 
     # More generally, if one number is huge and the other is small,
     # and in particular, if their mantissas don't overlap at all at
@@ -683,10 +685,10 @@ def mpf_add(s, t, prec, rnd=round_fast):
 def mpf_sub(s, t, prec, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of mpf_add that changes the sign of t."""
-    sign, man, exp, bc = t
-    if (not man) and exp:
-        return mpf_add(s, mpf_neg(t, prec, rnd), prec, rnd)
-    return mpf_add(s, (1-sign, man, exp, bc), prec, rnd)
+    if t[1]:
+        sign, man, exp, bc = t
+        return mpf_add(s, (1-sign, man, exp, bc), prec, rnd)
+    return mpf_add(s, mpf_neg(t), prec, rnd)
 
 def mpf_mul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
