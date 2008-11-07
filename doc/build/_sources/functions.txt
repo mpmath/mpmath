@@ -65,6 +65,7 @@ Powers and logarithms
 .. autofunction:: mpmath.functions.log
 .. autofunction:: mpmath.functions.log10
 .. autofunction:: mpmath.functions.power
+.. autofunction:: mpmath.functions.fibonacci
 .. autofunction:: mpmath.functions.lambertw
 
 Trigonometric functions
@@ -79,6 +80,11 @@ Trigonometric functions
 .. autofunction:: mpmath.functions.sec
 .. autofunction:: mpmath.functions.csc
 .. autofunction:: mpmath.functions.cot
+
+.. autofunction:: mpmath.functions.cospi
+.. autofunction:: mpmath.functions.sinpi
+.. autofunction:: mpmath.functions.sinc
+.. autofunction:: mpmath.functions.sincpi
 
 .. autofunction:: mpmath.functions.acos
 .. autofunction:: mpmath.functions.asin

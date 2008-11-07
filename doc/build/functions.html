@@ -431,6 +431,117 @@ for which Im(log(x)) = -pi &lt; arg(x) &lt;= pi.</p>
 <dd>Converts x and y to mpf or mpc and returns x**y = exp(y*log(x)).</dd></dl>
 
 <dl class="function">
+<dt id="mpmath.functions.fibonacci">
+<!--[mpmath.functions.fibonacci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fibonacci</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fibonacci" title="Permalink to this definition">¶</a></dt>
+<dd><p>fibonacci(n) computes the nth Fibonacci number F(n). The Fibonacci
+numbers are defined by F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2).
+This definition is extended to arbitrary real and complex arguments
+using the formula:</p>
+<pre>          z                  -z
+       phi  - cos(z*pi) * phi
+F(z) = ------------------------
+               sqrt(5)</pre>
+<p><tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> also uses this formula to compute F(n) for extremely
+large n, where calculating the exact integer would be wasteful.</p>
+<p>For convenience, <tt class="xref docutils literal"><span class="pre">fib()</span></tt> is available as an alias for
+<tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>.</p>
+<p><strong>Basic examples</strong></p>
+<p>Some small Fibonacci numbers are:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+<span class="gp">...</span>
+<span class="go">0.0 1.0 1.0 2.0 3.0 5.0 8.0 13.0 21.0 34.0</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mf">50</span><span class="p">)</span>
+<span class="go">12586269025.0</span>
+</pre></div>
+<p>The recurrence for F(n) extends backwards to negative n:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">),</span>
+<span class="gp">...</span>
+<span class="go">0.0 1.0 -1.0 2.0 -3.0 5.0 -8.0 13.0 -21.0 34.0</span>
+</pre></div>
+<p>Large Fibonacci numbers will be computed approximately unless
+the precision is set high enough:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="mf">200</span><span class="p">)</span>
+<span class="go">2.8057117299251e+41</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">45</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="mf">200</span><span class="p">)</span>
+<span class="go">280571172992510140037611932413038677189525.0</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> can compute approximate Fibonacci numbers
+of stupendous size:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">25</span><span class="p">)</span>
+<span class="go">3.49052338550226e+2089876402499787337692720</span>
+</pre></div>
+<p><strong>Real and complex arguments</strong></p>
+<p>The extended Fibonacci function is an analytic function. The
+property F(z) = F(z-1) + F(z-2) holds for arbitrary z:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">2.1170270579161</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">2.1170270579161</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-5248.51130728372 - 14195.962288353j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-5248.51130728372 - 14195.962288353j)</span>
+</pre></div>
+<p>The Fibonacci function has infinitely many roots on the
+negative half-real axis. The first root is at 0, the second is
+close to -0.18, and then there are infinitely many roots that
+asymptotically approach -n+1/2:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="go">-0.183802359692956</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">-1.57077646820395</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">17</span><span class="p">)</span>
+<span class="go">-16.4999999596115</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">24</span><span class="p">)</span>
+<span class="go">-23.5000000000479</span>
+</pre></div>
+<p><strong>Mathematical relationships</strong></p>
+<p>For large n, F(n+1)/F(n) approaches the golden ratio:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mf">101</span><span class="p">)</span><span class="o">/</span><span class="n">fibonacci</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">1.6180339887498948482045868343656381177203127439638</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">phi</span>
+<span class="go">1.6180339887498948482045868343656381177203091798058</span>
+</pre></div>
+<p>The sum of reciprocal Fibonacci numbers converges to an irrational
+number for which no closed form expression is known:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">3.35988566624318</span>
+</pre></div>
+<p>Amazingly, however, the sum of odd-index reciprocal Fibonacci
+numbers can be expressed in terms of a Jacobi theta function:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fib</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">1.82451515740692</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span><span class="o">*</span><span class="n">jtheta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">,(</span><span class="mf">3</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">5</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">4</span>
+<span class="go">1.82451515740692</span>
+</pre></div>
+<p>Some related sums can be done in closed form:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">fib</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">1.11803398874989</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">phi</span> <span class="o">-</span> <span class="mf">0.5</span>
+<span class="go">1.11803398874989</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">0.618033988749895</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">phi</span><span class="o">-</span><span class="mf">1</span>
+<span class="go">0.618033988749895</span>
+</pre></div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://mathworld.wolfram.com/FibonacciNumber.html">http://mathworld.wolfram.com/FibonacciNumber.html</a></li>
+</ol>
+</dd></dl>
+
+<dl class="function">
 <dt id="mpmath.functions.lambertw">
 <!--[mpmath.functions.lambertw]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">lambertw</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.lambertw" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Lambert W function W(z) is defined as the inverse function
@@ -587,6 +698,75 @@ at -1/e and make sure that the proper branch is chosen there</p>
 <dt id="mpmath.functions.cot">
 <!--[mpmath.functions.cot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cot</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.cot" title="Permalink to this definition">¶</a></dt>
 <dd>Returns the cotangent of x, 1/tan(x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.cospi">
+<!--[mpmath.functions.cospi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cospi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cospi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes cos(pi*x), more accurately than the expression <tt class="docutils literal"><span class="pre">cos(pi*x)</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">1.0 0.999999999997493</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">0.0 1.59960492420134e-6</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sinpi">
+<!--[mpmath.functions.sinpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinpi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes sin(pi*x), more accurately than the expression <tt class="docutils literal"><span class="pre">sin(pi*x)</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">0.0 -2.23936276195592e-6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">1.0 0.999999999998721</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sinc">
+<!--[mpmath.functions.sinc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinc" title="Permalink to this definition">¶</a></dt>
+<dd><p>sinc(x) computes the unnormalized sinc function, defined as
+sinc(x) = sin(x)/x and with the singularity at x = 0 removed
+so that sinc(0) = 1. See <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> for the normalized
+sinc function.</p>
+<p>Simple values and limits include:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.841470984807897</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+<p>The integral of the sinc function is the sine integral Si:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sinc</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.946083070367183</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.946083070367183</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sincpi">
+<!--[mpmath.functions.sincpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sincpi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sincpi" title="Permalink to this definition">¶</a></dt>
+<dd><p>sincpi(x) computes the normalized sinc function, sinc(pi*x)/(pi*x).
+This normalization entails that the function integrates
+to unity over the entire real line:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">sincpi</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+<p>Like, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> is evaluated accurately
+at its roots:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sincpi</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.acos">
@@ -1834,7 +2014,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 06, 2008.
+      Last updated on Nov 07, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 
