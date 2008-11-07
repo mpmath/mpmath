@@ -345,6 +345,31 @@ asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
 acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
 acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
+cospi = mpfunc('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, "")
+sinpi = mpfunc('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, "")
+
+sinpi.__doc__ = """
+Computes sin(pi*x), more accurately than the expression ``sin(pi*x)``::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print sinpi(10**10), sin(pi*(10**10))
+    0.0 -2.23936276195592e-6
+    >>> print sinpi(10**10+0.5), sin(pi*(10**10+0.5))
+    1.0 0.999999999998721
+"""
+
+cospi.__doc__ = """
+Computes cos(pi*x), more accurately than the expression ``cos(pi*x)``::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print cospi(10**10), cos(pi*(10**10))
+    1.0 0.999999999997493
+    >>> print cospi(10**10+0.5), cos(pi*(10**10+0.5))
+    0.0 1.59960492420134e-6
+"""
+
 floor = mpfunc('floor', libmpf.mpf_floor, libmpc.mpc_floor, "")
 floor.__doc__ = """Computes the floor function of x. Note: returns a floating-point
 number, not a Python int. If x is larger than the precision, it will be rounded,
@@ -523,9 +548,6 @@ def atan2(y,x):
     y = mpmathify(y)
     return make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
 
-
-cospi = mpfunc('cospi', gammazeta.mpf_cos_pi, gammazeta.mpc_cos_pi, 'computes cos(pi*x) accurately')
-sinpi = mpfunc('sinpi', gammazeta.mpf_sin_pi, gammazeta.mpc_sin_pi, 'computes sin(pi*x) accurately')
 
 zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
 altzeta = mpfunc('zeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta, 'Dirichlet eta function')

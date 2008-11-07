@@ -36,8 +36,8 @@ from libelefun import (\
     constant_memo,
     def_mpf_constant,
     mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
-    mpf_exp, mpf_log, mpf_pow,
-    cos_sin, cosh_sinh
+    mpf_exp, mpf_log, mpf_pow, mpf_cosh,
+    cos_sin, cosh_sinh, mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi,
 )
 
 from libmpc import (\
@@ -46,7 +46,8 @@ from libmpc import (\
     mpc_add, mpc_sub, mpc_mul, mpc_div,
     mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf,
     mpc_mul_int, mpc_pow_int,
-    mpc_log, mpc_exp, mpc_pow
+    mpc_log, mpc_exp, mpc_pow,
+    mpc_cos_pi, mpc_sin_pi,
 )
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
@@ -287,74 +288,6 @@ mpf_khinchin = def_mpf_constant(khinchin_fixed)
 mpf_glaisher = def_mpf_constant(glaisher_fixed)
 mpf_catalan = def_mpf_constant(catalan_fixed)
 
-
-
-
-
-# Note: computation of cos(pi*x) and sin(pi*x) is needed by
-# reflection formulas for gamma, polygamma, zeta, etc
-
-def mpf_cos_sin_pi(x, prec, rnd=round_fast):
-    """Accurate computation of (cos(pi*x), sin(pi*x))
-    for x close to an integer"""
-    sign, man, exp, bc = x
-    if not man:
-        return cos_sin(x, prec, rnd)
-    # Exactly an integer or half-integer?
-    if exp >= -1:
-        if exp == -1:
-            c = fzero
-            s = (fone, fnone)[bool(man & 2) ^ sign]
-        elif exp == 0:
-            c, s = (fnone, fzero)
-        else:
-            c, s = (fone, fzero)
-        return c, s
-    # Close to 0 ?
-    size = exp + bc
-    if size < -(prec+5):
-        return (fone, mpf_mul(x, mpf_pi(wp), prec, rnd))
-    if sign:
-        man = -man
-    # Subtract nearest integer (= modulo pi)
-    nint = ((man >> (-exp-1)) + 1) >> 1
-    man = man - (nint << (-exp))
-    x = from_man_exp(man, exp, prec)
-    x = mpf_mul(x, mpf_pi(prec), prec)
-    # Shifted an odd multiple of pi ?
-    if nint & 1:
-        c, s = cos_sin(x, prec, negative_rnd[rnd])
-        return mpf_neg(c), mpf_neg(s)
-    else:
-        return cos_sin(x, prec, rnd)
-
-def mpf_cos_pi(x, prec, rnd=round_fast):
-    return mpf_cos_sin_pi(x, prec, rnd)[0]
-
-def mpf_sin_pi(x, prec, rnd=round_fast):
-    return mpf_cos_sin_pi(x, prec, rnd)[1]
-
-def mpc_cos_pi((a, b), prec, rnd=round_fast):
-    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
-    if a == fzero:
-        return mpf_cosh(b, prec, rnd), fzero
-    wp = prec + 6
-    c, s = mpf_cos_sin_pi(a, wp)
-    ch, sh = cosh_sinh(b, wp)
-    re = mpf_mul(c, ch, prec, rnd)
-    im = mpf_mul(s, sh, prec, rnd)
-    return re, mpf_neg(im)
-
-def mpc_sin_pi((a, b), prec, rnd=round_fast):
-    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
-    if a == fzero:
-        return fzero, mpf_sinh(b, prec, rnd)
-    wp = prec + 6
-    c, s = mpf_cos_sin_pi(a, wp)
-    ch, sh = cosh_sinh(b, wp)
-    re = mpf_mul(s, ch, prec, rnd)
-    im = mpf_mul(c, sh, prec, rnd)
-    return re, im
 
 #-----------------------------------------------------------------------#
 #                                                                       #

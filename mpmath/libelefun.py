@@ -1074,6 +1074,58 @@ def mpf_tan(x, prec, rnd=round_fast):
     c, s = cos_sin(x, prec+20)
     return mpf_div(s, c, prec, rnd)
 
+# Accurate computation of cos(pi*x) and sin(pi*x) is needed by
+# reflection formulas for gamma, polygamma, zeta, etc
+
+def mpf_cos_sin_pi(x, prec, rnd=round_fast):
+    """Accurate computation of (cos(pi*x), sin(pi*x))
+    for x close to an integer"""
+    sign, man, exp, bc = x
+    if not man:
+        return cos_sin(x, prec, rnd)
+    # Exactly an integer or half-integer?
+    if exp >= -1:
+        if exp == -1:
+            c = fzero
+            s = (fone, fnone)[bool(man & 2) ^ sign]
+        elif exp == 0:
+            c, s = (fnone, fzero)
+        else:
+            c, s = (fone, fzero)
+        return c, s
+    # Close to 0 ?
+    size = exp + bc
+    if size < -(prec+5):
+        return (fone, mpf_mul(x, mpf_pi(wp), prec, rnd))
+    if sign:
+        man = -man
+    # Subtract nearest half-integer (= modulo pi/2)
+    nhint = ((man >> (-exp-2)) + 1) >> 1
+    man = man - (nhint << (-exp-1))
+    x = from_man_exp(man, exp, prec)
+    x = mpf_mul(x, mpf_pi(prec), prec)
+    # XXX: with some more work, could call calc_cos_sin,
+    # to save some time and to get rounding right
+    case = nhint % 4
+    if case == 0:
+        c, s = cos_sin(x, prec, rnd)
+    elif case == 1:
+        s, c = cos_sin(x, prec, rnd)
+        c = mpf_neg(c)
+    elif case == 2:
+        c, s = cos_sin(x, prec, rnd)
+        c = mpf_neg(c)
+        s = mpf_neg(s)
+    else:
+        s, c = cos_sin(x, prec, rnd)
+        s = mpf_neg(s)
+    return c, s
+
+def mpf_cos_pi(x, prec, rnd=round_fast):
+    return mpf_cos_sin_pi(x, prec, rnd)[0]
+
+def mpf_sin_pi(x, prec, rnd=round_fast):
+    return mpf_cos_sin_pi(x, prec, rnd)[1]
 
 
 #----------------------------------------------------------------------

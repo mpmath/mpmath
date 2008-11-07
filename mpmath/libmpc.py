@@ -19,6 +19,7 @@ from libmpf import (\
 
 from libelefun import (\
     mpf_pi, mpf_exp, mpf_log, cos_sin, cosh_sinh, mpf_tan,
+    mpf_cos_sin_pi,
     mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
     mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot
 )
@@ -425,6 +426,28 @@ def mpc_tan(z, prec, rnd=round_fast):
     mag = mpf_add(c, ch, wp)
     re = mpf_div(s, mag, prec, rnd)
     im = mpf_div(sh, mag, prec, rnd)
+    return re, im
+
+def mpc_cos_pi((a, b), prec, rnd=round_fast):
+    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
+    if a == fzero:
+        return mpf_cosh(b, prec, rnd), fzero
+    wp = prec + 6
+    c, s = mpf_cos_sin_pi(a, wp)
+    ch, sh = cosh_sinh(b, wp)
+    re = mpf_mul(c, ch, prec, rnd)
+    im = mpf_mul(s, sh, prec, rnd)
+    return re, mpf_neg(im)
+
+def mpc_sin_pi((a, b), prec, rnd=round_fast):
+    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
+    if a == fzero:
+        return fzero, mpf_sinh(b, prec, rnd)
+    wp = prec + 6
+    c, s = mpf_cos_sin_pi(a, wp)
+    ch, sh = cosh_sinh(b, wp)
+    re = mpf_mul(s, ch, prec, rnd)
+    im = mpf_mul(c, sh, prec, rnd)
     return re, im
 
 def mpc_cosh((a, b), prec, rnd=round_fast):
