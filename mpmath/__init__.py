@@ -22,6 +22,7 @@ from functions import (
     nthroot, hypot, modf,
     ldexp, frexp, sign, arg,
     degrees, radians, atan2,
+    fib, fibonacci,
     zeta, altzeta, gamma, factorial, fac, beta,
     psi, psi0, psi1, psi2, psi3,
     polygamma, digamma, trigamma, tetragamma, pentagamma,

@@ -605,6 +605,134 @@ def atan2(y,x):
     return make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
 
 
+fib = fibonacci = mpfunc('fibonacci', libelefun.mpf_fibonacci, libmpc.mpc_fibonacci, "")
+
+fibonacci.__doc__ = """
+fibonacci(n) computes the nth Fibonacci number F(n). The Fibonacci
+numbers are defined by F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2).
+This definition is extended to arbitrary real and complex arguments
+using the formula::
+
+              z                  -z
+           phi  - cos(z*pi) * phi
+    F(z) = ------------------------
+                   sqrt(5)
+
+:func:`fibonacci` also uses this formula to compute F(n) for extremely
+large n, where calculating the exact integer would be wasteful.
+
+For convenience, :func:`fib` is available as an alias for
+:func:`fibonacci`.
+
+**Basic examples**
+
+Some small Fibonacci numbers are::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> for i in range(10):
+    ...     print fibonacci(i),
+    ...
+    0.0 1.0 1.0 2.0 3.0 5.0 8.0 13.0 21.0 34.0
+
+    >>> print fibonacci(50)
+    12586269025.0
+
+The recurrence for F(n) extends backwards to negative n::
+
+    >>> for i in range(10):
+    ...     print fibonacci(-i),
+    ...
+    0.0 1.0 -1.0 2.0 -3.0 5.0 -8.0 13.0 -21.0 34.0
+
+Large Fibonacci numbers will be computed approximately unless
+the precision is set high enough::
+
+    >>> print fib(200)
+    2.8057117299251e+41
+    >>> mp.dps = 45
+    >>> print fib(200)
+    280571172992510140037611932413038677189525.0
+
+:func:`fibonacci` can compute approximate Fibonacci numbers
+of stupendous size::
+
+    >>> mp.dps = 15
+    >>> print fibonacci(10**25)
+    3.49052338550226e+2089876402499787337692720
+
+**Real and complex arguments**
+
+The extended Fibonacci function is an analytic function. The
+property F(z) = F(z-1) + F(z-2) holds for arbitrary z::
+
+    >>> mp.dps = 15
+    >>> print fib(pi)
+    2.1170270579161
+    >>> print fib(pi-1) + fib(pi-2)
+    2.1170270579161
+    >>> print fib(3+4j)
+    (-5248.51130728372 - 14195.962288353j)
+    >>> print fib(2+4j) + fib(1+4j)
+    (-5248.51130728372 - 14195.962288353j)
+
+The Fibonacci function has infinitely many roots on the
+negative half-real axis. The first root is at 0, the second is
+close to -0.18, and then there are infinitely many roots that
+asymptotically approach -n+1/2::
+
+    >>> print findroot(fib, -0.2)
+    -0.183802359692956
+    >>> print findroot(fib, -2)
+    -1.57077646820395
+    >>> print findroot(fib, -17)
+    -16.4999999596115
+    >>> print findroot(fib, -24)
+    -23.5000000000479
+
+**Mathematical relationships**
+
+For large n, F(n+1)/F(n) approaches the golden ratio::
+
+    >>> mp.dps = 50
+    >>> print fibonacci(101)/fibonacci(100)
+    1.6180339887498948482045868343656381177203127439638
+    >>> print phi
+    1.6180339887498948482045868343656381177203091798058
+
+The sum of reciprocal Fibonacci numbers converges to an irrational
+number for which no closed form expression is known::
+
+    >>> mp.dps = 15
+    >>> print nsum(lambda n: 1/fib(n), [1, inf])
+    3.35988566624318
+
+Amazingly, however, the sum of odd-index reciprocal Fibonacci
+numbers can be expressed in terms of a Jacobi theta function::
+
+    >>> print nsum(lambda n: 1/fib(2*n+1), [0, inf])
+    1.82451515740692
+    >>> print sqrt(5)*jtheta(2,0,(3-sqrt(5))/2)**2/4
+    1.82451515740692
+
+Some related sums can be done in closed form::
+
+    >>> print nsum(lambda k: 1/(1+fib(2*k+1)), [0, inf])
+    1.11803398874989
+    >>> print phi - 0.5
+    1.11803398874989
+    >>> f = lambda k:(-1)**(k+1) / sum(fib(n)**2 for n in range(1,k+1))
+    >>> print nsum(f, [1, inf])
+    0.618033988749895
+    >>> print phi-1
+    0.618033988749895
+
+**References**
+
+1. http://mathworld.wolfram.com/FibonacciNumber.html
+"""
+
+
 zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
 altzeta = mpfunc('zeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta, 'Dirichlet eta function')
 

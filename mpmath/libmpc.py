@@ -11,7 +11,7 @@ from settings import (\
 from libmpf import (\
     bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
     to_str, to_fixed, from_man_exp, from_float, from_int, to_int,
-    fzero, fone, ftwo, fhalf, finf, fninf, fnan,
+    fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
     mpf_rdiv_int, mpf_floor, mpf_ceil
@@ -19,9 +19,9 @@ from libmpf import (\
 
 from libelefun import (\
     mpf_pi, mpf_exp, mpf_log, cos_sin, cosh_sinh, mpf_tan,
-    mpf_cos_sin_pi,
+    mpf_cos_sin_pi, mpf_phi,
     mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
-    mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot
+    mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot, mpf_fibonacci
 )
 
 
@@ -646,3 +646,18 @@ def mpc_atanh(z, prec, rnd=round_fast):
     a = mpc_log(a, wp)
     b = mpc_log(b, wp)
     return mpc_shift(mpc_sub(a, b, wp), -1)
+
+def mpc_fibonacci(z, prec, rnd=round_fast):
+    re, im = z
+    if im == fzero:
+        return (mpf_fibonacci(re, prec, rnd), fzero)
+    size = max(abs(re[2]+re[3]), abs(re[2]+re[3]))
+    wp = prec + size + 20
+    a = mpf_phi(wp)
+    b = mpf_add(mpf_shift(a, 1), fnone, wp)
+    u = mpc_pow((a, fzero), z, wp)
+    v = mpc_cos_pi(z, wp)
+    v = mpc_div(v, u, wp)
+    u = mpc_sub(u, v, wp)
+    u = mpc_div_mpf(u, b, prec, rnd)
+    return u

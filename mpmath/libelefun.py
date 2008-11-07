@@ -1400,3 +1400,51 @@ def mpf_atanh(x, prec, rnd=round_fast):
     b = mpf_sub(fone, x, wp)
     return mpf_shift(mpf_log(mpf_div(a, b, wp), prec, rnd), -1)
 
+
+def ifib(n, _cache={}):
+    """Computes the nth Fibonacci number as an integer, for
+    integer n."""
+    if n < 0:
+        return (-1)**(-n+1) * ifib(-n)
+    if n in _cache:
+        return _cache[n]
+    m = n
+    # Use Dijkstra's logarithmic algorithm
+    # The following implementation is basically equivalent to
+    # http://en.literateprograms.org/Fibonacci_numbers_(Scheme)
+    a, b, p, q = MP_ONE, MP_ZERO, MP_ZERO, MP_ONE
+    while n:
+        if n & 1:
+            aq = a*q
+            a, b = b*q+aq+a*p, b*p+aq
+            n -= 1
+        else:
+            qq = q*q
+            p, q = p*p+qq, qq+2*p*q
+            n >>= 1
+    if m < 250:
+        _cache[m] = b
+    return b
+
+def mpf_fibonacci(x, prec, rnd=round_fast):
+    sign, man, exp, bc = x
+    if not man:
+        if x == fninf:
+            return fnan
+        return x
+    # F(2^n) ~= 2^(2^n)
+    size = abs(exp+bc)
+    if exp >= 0:
+        # Exact
+        if size < 10 or size <= bitcount(prec):
+            return from_int(ifib(to_int(x)), prec, rnd)
+    # Use the modified Binet formula
+    wp = prec + size + 20
+    a = mpf_phi(wp)
+    b = mpf_add(mpf_shift(a, 1), fnone, wp)
+    u = mpf_pow(a, x, wp)
+    v = mpf_cos_pi(x, wp)
+    v = mpf_div(v, u, wp)
+    u = mpf_sub(u, v, wp)
+    u = mpf_div(u, b, prec, rnd)
+    return u

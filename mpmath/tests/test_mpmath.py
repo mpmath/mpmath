@@ -693,3 +693,18 @@ def test_sinc():
     assert sinc(2+3j).ae(0.4463290318402435457-2.7539470277436474940j)
     assert sincpi(2) == 0
     assert sincpi(1.5).ae(-0.212206590789193781)
+
+def test_fibonacci():
+    mp.dps = 15
+    assert [fibonacci(n) for n in range(-5, 10)] == \
+        [5, -3, 2, -1, 1, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+    assert fib(2.5).ae(1.4893065462657091)
+    assert fib(3+4j).ae(-5248.51130728372 - 14195.962288353j)
+    assert fib(1000).ae(4.3466557686937455e+208)
+    assert str(fib(10**100)) == '6.24499112864607e+2089876402499787337692720892375554168224592399182109535392875613974104853496745963277658556235103534'
+    mp.dps = 2100
+    a = fib(10000)
+    assert a % 10**10 == 9947366875
+    mp.dps = 15
+    assert fibonacci(inf) == inf
+    assert fib(3+0j) == 2
