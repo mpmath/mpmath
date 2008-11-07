@@ -1,4 +1,4 @@
-from mptypes import (mp, mpf, convert_lossless, inf,
+from mptypes import (mp, mpf, mpmathify, inf,
    eps, nstr, make_mpf, AS_POINTS)
 
 from functions import pi, exp, log, ldexp
@@ -19,8 +19,8 @@ def transform(f, a, b):
     of variables. If at least one point is infinite, the substitution
     t = 1/x is used.
     """
-    a = convert_lossless(a)
-    b = convert_lossless(b)
+    a = mpmathify(a)
+    b = mpmathify(b)
     if (a, b) == (-1, 1):
         return f
     one = mpf(1)

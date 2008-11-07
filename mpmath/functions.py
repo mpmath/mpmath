@@ -23,7 +23,7 @@ import gammazeta
 import libhyper
 
 from mptypes import (\
-    mpnumeric, convert_lossless,
+    mpnumeric, mpmathify,
     mpf, make_mpf,
     mpc, make_mpc,
     mpi, make_mpi,
@@ -183,7 +183,7 @@ def funcwrapper(f):
     def g(*args, **kwargs):
         orig = mp.prec
         try:
-            args = [convert_lossless(z) for z in args]
+            args = [mpmathify(z) for z in args]
             mp.prec = orig + 10
             v = f(*args, **kwargs)
         finally:
@@ -196,7 +196,7 @@ def funcwrapper(f):
 def mpfunc(name, real_f, complex_f, doc, interval_f=None):
     def f(x, **kwargs):
         if not isinstance(x, mpnumeric):
-            x = convert_lossless(x)
+            x = mpmathify(x)
         prec, rounding = prec_rounding
         if kwargs:
             prec = kwargs.get('prec', prec)
@@ -395,25 +395,25 @@ def nthroot(x, n):
 def hypot(x, y):
     """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
     must be real."""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
+    x = mpmathify(x)
+    y = mpmathify(y)
     return make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
 
 def ldexp(x, n):
     """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
-    x = convert_lossless(x)
+    x = mpmathify(x)
     return make_mpf(libmpf.mpf_shift(x._mpf_, n))
 
 def frexp(x):
     """Convert x to a scaled number y in the range [0.5, 1). Returns
     (y, n) such that x = y * 2**n. No rounding is performed."""
-    x = convert_lossless(x)
+    x = mpmathify(x)
     y, n = libmpf.mpf_frexp(x._mpf_)
     return make_mpf(y), n
 
 def sign(x):
     """Return sign(x), defined as x/abs(x), or 0 for x = 0."""
-    x = convert_lossless(x)
+    x = mpmathify(x)
     if not x or isnan(x):
         return x
     if isinstance(x, mpf):
@@ -440,7 +440,7 @@ def fabs(x):
         mpf('5.0')
 
     """
-    return abs(convert_lossless(x))
+    return abs(mpmathify(x))
 
 def re(x):
     """
@@ -453,7 +453,7 @@ def re(x):
         mpf('-1.0')
 
     """
-    return convert_lossless(x).real
+    return mpmathify(x).real
 
 def im(x):
     """
@@ -466,7 +466,7 @@ def im(x):
         mpf('4.0')
 
     """
-    return convert_lossless(x).imag
+    return mpmathify(x).imag
 
 def conj(x):
     """
@@ -479,7 +479,7 @@ def conj(x):
         mpc(real='-1.0', imag='-4.0')
 
     """
-    return convert_lossless(x).conjugate()
+    return mpmathify(x).conjugate()
 
 def log(x, b=None):
     """Returns the base-b logarithm of x. If b is unspecified, return
@@ -500,12 +500,12 @@ def log10(x):
 
 def power(x, y):
     """Converts x and y to mpf or mpc and returns x**y = exp(y*log(x))."""
-    return convert_lossless(x) ** convert_lossless(y)
+    return mpmathify(x) ** mpmathify(y)
 
 def modf(x,y):
     """Converts x and y to mpf or mpc and returns x % y"""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
+    x = mpmathify(x)
+    y = mpmathify(y)
     return x % y
 
 def degrees(x):
@@ -519,8 +519,8 @@ def radians(x):
 def atan2(y,x):
     """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
     the signs of y and x. (Defined for real x and y only.)"""
-    x = convert_lossless(x)
-    y = convert_lossless(y)
+    x = mpmathify(x)
+    y = mpmathify(y)
     return make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
 
 
@@ -697,7 +697,7 @@ def psi(m, z):
 
     The parameter m should be a nonnegative integer.
     """
-    z = convert_lossless(z)
+    z = mpmathify(z)
     m = int(m)
     if isinstance(z, mpf):
         return make_mpf(gammazeta.mpf_psi(m, z._mpf_, *prec_rounding))
@@ -1027,8 +1027,8 @@ def gammaprod(a, b):
         mpf('-0.25')
 
     """
-    a = [convert_lossless(x) for x in a]
-    b = [convert_lossless(x) for x in b]
+    a = [mpmathify(x) for x in a]
+    b = [mpmathify(x) for x in b]
     poles_num = []
     poles_den = []
     regular_num = []
@@ -1123,8 +1123,8 @@ def beta(x, y):
         0.319504062596158
 
     """
-    x = convert_lossless(x)
-    y = convert_lossless(y)
+    x = mpmathify(x)
+    y = mpmathify(y)
     if isinf(y):
         x, y = y, x
     if isinf(x):
@@ -1185,7 +1185,7 @@ def parse_param(x):
         return [[p, q]], [], []
     if isinstance(x, (int, long)):
         return [[x, 1]], [], []
-    x = convert_lossless(x)
+    x = mpmathify(x)
     if isinstance(x, mpf):
         return [], [x._mpf_], []
     if isinstance(x, mpc):
@@ -1225,9 +1225,9 @@ def eval_hyp2f1(a,b,c,z):
             return sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
         return hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
     # Use 1/z transformation
-    a = (ar and _as_num(ar[0])) or convert_lossless(a)
-    b = (br and _as_num(br[0])) or convert_lossless(b)
-    c = (cr and _as_num(cr[0])) or convert_lossless(c)
+    a = (ar and _as_num(ar[0])) or mpmathify(a)
+    b = (br and _as_num(br[0])) or mpmathify(b)
+    c = (cr and _as_num(cr[0])) or mpmathify(c)
     orig = mp.prec
     try:
         mp.prec = orig + 15
@@ -1283,7 +1283,7 @@ def hyper(a_s, b_s, z):
     """
     p = len(a_s)
     q = len(b_s)
-    z = convert_lossless(z)
+    z = mpmathify(z)
     degree = p, q
     if degree == (0, 1):
         br, bf, bc = parse_param(b_s[0])
@@ -1578,7 +1578,7 @@ def npdf(x, mu=0, sigma=1):
     See also :func:`ncdf`, which gives the cumulative
     distribution.
     """
-    sigma = convert_lossless(sigma)
+    sigma = mpmathify(sigma)
     return exp(-(x-mu)**2/(2*sigma**2)) / (sigma*sqrt(2*pi))
 
 @funcwrapper

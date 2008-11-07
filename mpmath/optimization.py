@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from mptypes import convert_lossless, extraprec, eps
+from mptypes import mpmathify, extraprec, eps
 from calculus import diff
 from functions import sqrt, sign
 
@@ -494,7 +494,7 @@ str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
 
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
-             force_type=convert_lossless, **kwargs):
+             force_type=mpmathify, **kwargs):
     """
     Find a root of f using x0 as starting point or interval.
 

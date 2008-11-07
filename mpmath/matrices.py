@@ -2,7 +2,7 @@
 
 from __future__ import division
 
-from mptypes import (convert_lossless, absmax, mpf, mpc, rand, inf, nstr)
+from mptypes import (mpmathify, absmax, mpf, mpc, rand, inf, nstr)
 from functions import nthroot, sqrt
 
 rowsep = '\n'
@@ -65,7 +65,7 @@ class matrix(object):
         [['0.0', '0.0'],
         ['0.0', '0.0']])
 
-    Internally ``convert_lossless`` is used every time an element is set. This
+    Internally ``mpmathify`` is used every time an element is set. This
     is done using the syntax A[row,column], counting from 0:
 
         >>> A = matrix(2)
@@ -297,7 +297,7 @@ class matrix(object):
         if 'force_type' in kwargs:
             self.force_type = kwargs['force_type']
         else:
-            self.force_type = convert_lossless
+            self.force_type = mpmathify
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix

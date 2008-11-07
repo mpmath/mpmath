@@ -12,7 +12,7 @@ etc
 __docformat__ = 'plaintext'
 
 from settings import (mp, extraprec)
-from mptypes import (mpnumeric, convert_lossless, mpf, mpc, j, inf, eps,
+from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
 from functions import (ldexp, factorial, exp, ln, cos, pi, bernoulli, sign)
 from gammazeta import int_fac
@@ -1160,9 +1160,9 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         mp.prec += 10
         deg = len(coeffs) - 1
         # Must be monic
-        lead = convert_lossless(coeffs[0])
+        lead = mpmathify(coeffs[0])
         if lead == 1:
-            coeffs = map(convert_lossless, coeffs)
+            coeffs = map(mpmathify, coeffs)
         else:
             coeffs = [c/lead for c in coeffs]
         f = lambda x: polyval(coeffs, x)
@@ -1211,8 +1211,8 @@ def quadosc(f, interval, period=None, zeros=None, alt=1):
     strictly periodic).
     """
     a, b = AS_POINTS(interval)
-    a = convert_lossless(a)
-    b = convert_lossless(b)
+    a = mpmathify(a)
+    b = mpmathify(b)
     if period is None and zeros is None:
         raise ValueError( \
             "either the period or zeros keyword parameter must be specified")

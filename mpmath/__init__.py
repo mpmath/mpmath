@@ -1,7 +1,7 @@
 __version__ = '0.10-svn'
 
 from mptypes import (
-    mpnumeric, mpf, mpc, mpi, convert_lossless,
+    mpnumeric, mpf, mpc, mpi, mpmathify,
     make_mpf, make_mpc, make_mpi,
     mp, extraprec, extradps, workprec, workdps,
     eps, j, inf, nan, isnan, isinf, isint,

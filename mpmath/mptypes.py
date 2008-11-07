@@ -49,7 +49,7 @@ get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
                          r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
 # TODO: add tests
 
-def convert_lossless(x, strings=True):
+def mpmathify(x, strings=True):
     """Attempt to convert x to an mpf or mpc losslessly. If x is an
     mpf or mpc, return it unchanged. If x is an int, create an mpf with
     sufficient precision to represent it exactly. If x is a str, just
@@ -66,7 +66,7 @@ def convert_lossless(x, strings=True):
             if '/' in x:
                 fract = x.split('/')
                 assert len(fract) == 2
-                return convert_lossless(fract[0]) / convert_lossless(fract[1])
+                return mpmathify(fract[0]) / mpmathify(fract[1])
             if 'j' in x.lower():
                 x = x.lower().replace(' ', '')
                 match = get_complex.match(x)
@@ -74,20 +74,20 @@ def convert_lossless(x, strings=True):
                 if not re:
                     re = 0
                 im = match.group('im').rstrip('j')
-                return mpc(convert_lossless(re),
-                           convert_lossless(im))
+                return mpc(mpmathify(re),
+                           mpmathify(im))
             raise e
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
     if hasattr(x, '_mpmath_'):
-        return convert_lossless(x._mpmath_(*prec_rounding))
+        return mpmathify(x._mpmath_(*prec_rounding))
     raise TypeError("cannot create mpf from " + repr(x))
 
 def try_convert_mpf_value(x, prec, rounding):
     if isinstance(x, float): return from_float(x)
     if hasattr(x, '_mpf_'): return x._mpf_
     if hasattr(x, '_mpmath_'):
-        t = convert_lossless(x._mpmath_(prec, rounding))
+        t = mpmathify(x._mpmath_(prec, rounding))
         if isinstance(t, mpf):
             return t._mpf_
     return NotImplemented
@@ -99,7 +99,7 @@ def mpf_convert_arg(x, prec, rounding):
     if isinstance(x, constant): return x.func(prec, rounding)
     if hasattr(x, '_mpf_'): return x._mpf_
     if hasattr(x, '_mpmath_'):
-        t = convert_lossless(x._mpmath_(prec, rounding))
+        t = mpmathify(x._mpmath_(prec, rounding))
         if isinstance(t, mpf):
             return t._mpf_
     raise TypeError("cannot create mpf from " + repr(x))
@@ -110,7 +110,7 @@ def mpf_convert_rhs(x):
     if isinstance(x, complex_types): return mpc(x)
     if hasattr(x, '_mpf_'): return x._mpf_
     if hasattr(x, '_mpmath_'):
-        t = convert_lossless(x._mpmath_(*prec_rounding))
+        t = mpmathify(x._mpmath_(*prec_rounding))
         if isinstance(t, mpf):
             return t._mpf_
         return t
@@ -124,7 +124,7 @@ def mpf_convert_lhs(x):
 
 def mpc_convert_lhs(x):
     try:
-        return convert_lossless(x)
+        return mpmathify(x)
     except TypeError:
         return NotImplemented
 
@@ -272,7 +272,7 @@ def %NAME%(self, other):
     if isinstance(other, mpnumeric):
         return NotImplemented
     try:
-        other = convert_lossless(other, strings=False)
+        other = mpmathify(other, strings=False)
     except TypeError:
         return NotImplemented
     return self.%NAME%(other)
@@ -682,7 +682,7 @@ def isint(x):
     if isinstance(x, int_types):
         return True
     try:
-        x = convert_lossless(x)
+        x = mpmathify(x)
     except:
         return False
     if isinstance(x, mpf):
@@ -821,7 +821,7 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
     If none is given, both epsilons are set to 2**(-prec+m) where
     prec is the current working precision and m is a small integer.
     """
-    t = convert_lossless(t)
+    t = mpmathify(t)
     if abs_eps is None and rel_eps is None:
         rel_eps = abs_eps = make_mpf((0, 1, -mp.prec+4, 1))
     if abs_eps is None:

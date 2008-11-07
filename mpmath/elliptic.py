@@ -17,7 +17,7 @@
 """
 import sys
 
-from mptypes import (mpf, mpc, mp, convert_lossless, eps, one, zero)
+from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero)
 from functions import (pi, sqrt, cos, sin, exp, tanh, ellipk, sech, nthroot)
 from libmpf import to_fixed, MP_ZERO, mpf_shift, from_man_exp
 from mpmath.libelefun import cos_sin
@@ -35,7 +35,7 @@ def calculate_nome(k):
 
     k**2 = m;   m is used in Abramowitz
     """
-    k = convert_lossless(k)
+    k = mpmathify(k)
 
     if abs(k) > one:             # range error
         raise ValueError
@@ -61,7 +61,7 @@ def calculate_k(q):
     using jacobi theta functions.
     """
 
-    q = convert_lossless(q)
+    q = mpmathify(q)
 
     v2 = jacobi_theta(2, 0, q)
     v3 = jacobi_theta(3, 0, q)
@@ -869,8 +869,8 @@ def jtheta(n, z, q):
 
         theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
     """
-    z = convert_lossless(z)
-    q = convert_lossless(q)
+    z = mpmathify(z)
+    q = mpmathify(q)
 
     extra = 10
     prec0 = mp.prec
@@ -899,8 +899,8 @@ def djtheta(n, z, q, nd=1):
     q complex number in the unit disk
     nd >= 1
     """
-    z = convert_lossless(z)
-    q = convert_lossless(q)
+    z = mpmathify(z)
+    q = mpmathify(q)
 
     extra = 10
     prec0 = mp.prec
@@ -929,8 +929,8 @@ def jacobi_theta_1(z, m):
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
     """
-    m = convert_lossless(m)
-    z = convert_lossless(z)
+    m = mpmathify(m)
+    z = mpmathify(z)
 
     k = sqrt(m)
     q = calculate_nome(k)
@@ -950,8 +950,8 @@ def jacobi_theta_2(z, m):
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
     """
-    m = convert_lossless(m)
-    z = convert_lossless(z)
+    m = mpmathify(m)
+    z = mpmathify(z)
 
     k = sqrt(m)
     q = calculate_nome(k)
@@ -969,8 +969,8 @@ def jacobi_theta_3(z, m):
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
     """
-    m = convert_lossless(m)
-    z = convert_lossless(z)
+    m = mpmathify(m)
+    z = mpmathify(z)
 
     k = sqrt(m)
     q = calculate_nome(k)
@@ -988,8 +988,8 @@ def jacobi_theta_4(z, m):
     The nome q is computed from the parameter m
     z is any complex number, q is a complex number in the unit circle
     """
-    m = convert_lossless(m)
-    z = convert_lossless(z)
+    m = mpmathify(m)
+    z = mpmathify(z)
 
     k = sqrt(m)
     q = calculate_nome(k)
