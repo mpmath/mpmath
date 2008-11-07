@@ -370,6 +370,62 @@ Computes cos(pi*x), more accurately than the expression ``cos(pi*x)``::
     0.0 1.59960492420134e-6
 """
 
+@funcwrapper
+def sinc(x):
+    """
+    sinc(x) computes the unnormalized sinc function, defined as
+    sinc(x) = sin(x)/x and with the singularity at x = 0 removed
+    so that sinc(0) = 1. See :func:`sincpi` for the normalized
+    sinc function.
+
+    Simple values and limits include::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print sinc(0)
+        1.0
+        >>> print sinc(1)
+        0.841470984807897
+        >>> print sinc(inf)
+        0.0
+
+    The integral of the sinc function is the sine integral Si::
+
+        >>> print quad(sinc, [0, 1])
+        0.946083070367183
+        >>> print si(1)
+        0.946083070367183
+    """
+    if isinf(x):
+        return 1/x
+    if not x:
+        return x+1
+    return sin(x)/x
+
+@funcwrapper
+def sincpi(x):
+    """
+    sincpi(x) computes the normalized sinc function, sinc(pi*x)/(pi*x).
+    This normalization entails that the function integrates
+    to unity over the entire real line::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print quadosc(sincpi, [-inf, inf], period=2.0)
+        1.0
+
+    Like, :func:`sinpi`, :func:`sincpi` is evaluated accurately
+    at its roots::
+
+        >>> print sincpi(10)
+        0.0
+    """
+    if isinf(x):
+        return 1/x
+    if not x:
+        return x+1
+    return sinpi(x)/(pi*x)
+
 floor = mpfunc('floor', libmpf.mpf_floor, libmpc.mpc_floor, "")
 floor.__doc__ = """Computes the floor function of x. Note: returns a floating-point
 number, not a Python int. If x is larger than the precision, it will be rounded,

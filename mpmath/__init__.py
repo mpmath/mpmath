@@ -17,7 +17,7 @@ from functions import (
     acos, asin, atan, asinh, acosh, atanh,
     sec, csc, cot, sech, csch, coth,
     asec, acsc, acot, asech, acsch, acoth,
-    cospi, sinpi,
+    cospi, sinpi, sinc, sincpi,
     fabs, re, im, conj, floor, ceil,
     nthroot, hypot, modf,
     ldexp, frexp, sign, arg,

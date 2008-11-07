@@ -680,3 +680,16 @@ def test_cospi_sinpi():
     assert -1 < cospi(x6, rounding='d') < -0.999
     assert -1 < sinpi(x7, rounding='d') < -0.999
     assert -1 < sinpi(x8, rounding='d') < -0.999
+    assert (sinpi(1e-15)*M).ae(pi)
+    assert (sinpi(-1e-15)*M).ae(-pi)
+    assert cospi(1e-15) == 1
+    assert cospi(1e-15, rounding='d') < 1
+
+def test_sinc():
+    assert sinc(0) == sincpi(0) == 1
+    assert sinc(inf) == sincpi(inf) == 0
+    assert sinc(-inf) == sincpi(-inf) == 0
+    assert sinc(2).ae(0.45464871341284084770)
+    assert sinc(2+3j).ae(0.4463290318402435457-2.7539470277436474940j)
+    assert sincpi(2) == 0
+    assert sincpi(1.5).ae(-0.212206590789193781)

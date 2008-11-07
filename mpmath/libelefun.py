@@ -1096,7 +1096,9 @@ def mpf_cos_sin_pi(x, prec, rnd=round_fast):
     # Close to 0 ?
     size = exp + bc
     if size < -(prec+5):
-        return (fone, mpf_mul(x, mpf_pi(wp), prec, rnd))
+        c = mpf_perturb(fone, 1, prec, rnd)
+        s = mpf_perturb(mpf_mul(x, mpf_pi(prec)), sign, prec, rnd)
+        return c, s
     if sign:
         man = -man
     # Subtract nearest half-integer (= modulo pi/2)
