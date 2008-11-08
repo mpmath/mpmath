@@ -50,6 +50,8 @@ def test_calculate_nome():
         q = calculate_nome(sqrt(m))
         assert q.ae(i[1])
 
+    mp.dps = 15
+
 def test_jtheta():
     mp.dps = 25
 
@@ -103,6 +105,8 @@ def test_jtheta():
         assert(result.ae(0))
         result = jtheta(2, z2, q)
         assert(result.ae(0))
+    mp.dps = 15
+
 
 def test_jtheta_issue39():
     # near the circle of covergence |q| = 1 the convergence slows
@@ -139,6 +143,7 @@ def test_jtheta_issue39():
     mp.dps = 30
     result = jtheta(1, z, q)
     assert(result.ae(res))
+    mp.dps = 15
 
 
 def test_jtheta_identities():
@@ -200,6 +205,7 @@ def test_jtheta_identities():
         term3 = (jtheta(3, zero, q))**4
         equality = term1 + term2 - term3
         assert(equality.ae(0, eps1))
+    mp.dps = 15
 
 def test_jtheta_complex():
     mp.dps = 30
@@ -244,6 +250,7 @@ def test_jtheta_complex():
     mp.dps -= 10
     for x in r:
         assert(mpc_ae(x, mpc(0)))
+    mp.dps = 15
 
 def test_djtheta():
     mp.dps = 30
@@ -302,6 +309,7 @@ def test_djtheta():
         a[n] = djtheta(n, z, q, 2)/jtheta(n, z, q)
     equality = a[2] + a[3] + a[4] - a[1]
     assert(equality.ae(0))
+    mp.dps = 15
 
 def test_jsn():
     """
@@ -346,6 +354,7 @@ def test_jsn():
     res = mpf('0.09981686718599080096451168')
     result = jsn(arg, arg)
     assert(result.ae(res))
+    mp.dps = 15
 
 def test_jcn():
     """
@@ -382,6 +391,7 @@ def test_jcn():
     res = mpf('0.9950058256237368748520459')
     result = jcn(arg, arg)
     assert(result.ae(res))
+    mp.dps = 15
 
 def test_jdn():
     """
@@ -403,6 +413,8 @@ def test_jdn():
     arg = one/10
     result = jdn(arg, arg)
     assert(result.ae(res))
+    mp.dps = 15
+
 
 def test_sn_cn_dn_identities():
     """
@@ -470,6 +482,8 @@ def test_sn_cn_dn_identities():
         value = jdn(z, zero)
         assert(value.ae(one))
 
+    mp.dps = 15
+
 def test_sn_cn_dn_complex():
     mp.dps = 30
     # N[JacobiSN[1/4 + I/8, 1/3 + I/7], 35] in Mathematica
@@ -493,4 +507,4 @@ def test_sn_cn_dn_complex():
           mpf('0.01346296520008176393432491077244994')*j
     r = jdn(u, m)
     assert(mpc_ae(r, res))
-
+    mp.dps = 15
