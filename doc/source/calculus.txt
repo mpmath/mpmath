@@ -41,3 +41,9 @@ Polynomials
 .. autofunction:: mpmath.calculus.polyval
 .. autofunction:: mpmath.calculus.polyroots
 .. autofunction:: mpmath.calculus.chebyfit
+
+Fourier series
+--------------
+
+.. autofunction:: mpmath.calculus.fourier
+.. autofunction:: mpmath.calculus.fourierval

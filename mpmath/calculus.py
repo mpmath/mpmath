@@ -14,7 +14,8 @@ __docformat__ = 'plaintext'
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
-from functions import (ldexp, factorial, exp, ln, cos, pi, bernoulli, sign)
+from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
+    sign)
 from gammazeta import int_fac
 
 from quadrature import quadgl, quadts
@@ -1624,6 +1625,115 @@ def chebyfit(f, interval, N, error=False):
             return d, +err
         else:
             return d
+
+def fourier(f, interval, N):
+    """
+    Computes the Fourier series of degree N of the given function
+    on the interval [a, b]. More precisely, :func:`fourier` returns
+    two lists (c, s) of coefficients (the cosine series and sine
+    series, respectively), such that::
+
+                   N
+                  ___
+                 \\
+        f(x) ~=   )    c[k]*cos(n*m) + s[k]*sin(n*m)
+                 /___
+                 n = 0
+
+    where m = 2*pi/(b-a).
+
+    Note that many texts define the first coefficient as 2*c[0] instead
+    of c[0]. The easiest way to evaluate the computed series correctly
+    is to pass it to :func:`fourierval`.
+
+    **Examples**
+
+    The function f(x) = x has a simple Fourier series on the standard
+    interval [-pi, pi]. The cosine coefficients are all zero (because
+    the function has odd symmetry), and the sine coefficients are
+    rational numbers::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> c, s = fourier(lambda x: x, [-pi, pi], 5)
+        >>> nprint(c)
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        >>> nprint(s)
+        [0.0, 2.0, -1.0, 0.666667, -0.5, 0.4]
+
+    This computes a Fourier series of a nonsymmetric function on
+    a nonstandard interval::
+
+        >>> I = [-1, 1.5]
+        >>> f = lambda x: x**2 - 4*x + 1
+        >>> cs = fourier(f, I, 4)
+        >>> nprint(cs[0])
+        [0.583333, 1.12479, -1.27552, 0.904708, -0.441296]
+        >>> nprint(cs[1])
+        [0.0, -2.6255, 0.580905, 0.219974, -0.540057]
+
+    It is instructive to plot a function along with its truncated
+    Fourier series::
+
+        >>> plot([f, lambda x: fourierval(cs, I, x)], I) #doctest: +SKIP
+
+    Fourier series generally converge slowly (and may not converge
+    pointwise). For example, if f(x) = cosh(x), a 10-term Fourier
+    series gives an L^2 error corresponding to 2-digit accuracy::
+
+        >>> I = [-1, 1]
+        >>> cs = fourier(cosh, I, 9)
+        >>> g = lambda x: (cosh(x) - fourierval(cs, I, x))**2
+        >>> nprint(sqrt(quad(g, I)))
+        4.67963e-3
+
+    :func:`fourier` uses numerical quadrature. For nonsmooth functions,
+    the accuracy (and speed) can be improved by including all singular
+    points in the interval specification::
+
+        >>> nprint(fourier(abs, [-1, 1], 0), 10)
+        ([0.5000441648], [0.0])
+        >>> nprint(fourier(abs, [-1, 0, 1], 0), 10)
+        ([0.5], [0.0])
+
+    """
+    interval = AS_POINTS(interval)
+    a = interval[0]
+    b = interval[-1]
+    L = b-a
+    cos_series = []
+    sin_series = []
+    cutoff = eps*10
+    for n in xrange(N+1):
+        m = 2*n*pi/L
+        an = 2*quadgl(lambda t: f(t)*cos(m*t), interval)/L
+        bn = 2*quadgl(lambda t: f(t)*sin(m*t), interval)/L
+        if n == 0:
+            an /= 2
+        if abs(an) < cutoff: an = mpf(0)
+        if abs(bn) < cutoff: bn = mpf(0)
+        cos_series.append(an)
+        sin_series.append(bn)
+    return cos_series, sin_series
+
+def fourierval(series, interval, x):
+    """
+    Evaluates a Fourier series (in the format computed by
+    by :func:`fourier` for the given interval) at the point x.
+
+    The series should be a pair (c, s) where c is the
+    cosine series and s is the sine series. The two lists
+    need not have the same length.
+    """
+    cs, ss = series
+    ab = AS_POINTS(interval)
+    a = interval[0]
+    b = interval[-1]
+    m = 2*pi/(ab[-1]-ab[0])
+    s = mpf(0)
+    s += sum(cs[n]*cos(m*n*x) for n in xrange(len(cs)) if cs[n])
+    s += sum(ss[n]*sin(m*n*x) for n in xrange(len(ss)) if ss[n])
+    return s
 
 if __name__ == '__main__':
     import doctest

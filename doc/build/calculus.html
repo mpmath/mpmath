@@ -817,6 +817,82 @@ segments.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="fourier-series">
+<h2>Fourier series<a class="headerlink" href="#fourier-series" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.fourier">
+<!--[mpmath.calculus.fourier]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fourier</tt><big>(</big><em>f</em>, <em>interval</em>, <em>N</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fourier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Fourier series of degree N of the given function
+on the interval [a, b]. More precisely, <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> returns
+two lists (c, s) of coefficients (the cosine series and sine
+series, respectively), such that:</p>
+<pre>           N
+          ___
+         \
+f(x) ~=   )    c[k]*cos(n*m) + s[k]*sin(n*m)
+         /___
+         n = 0</pre>
+<p>where m = 2*pi/(b-a).</p>
+<p>Note that many texts define the first coefficient as 2*c[0] instead
+of c[0]. The easiest way to evaluate the computed series correctly
+is to pass it to <tt class="xref docutils literal"><span class="pre">fourierval()</span></tt>.</p>
+<p><strong>Examples</strong></p>
+<p>The function f(x) = x has a simple Fourier series on the standard
+interval [-pi, pi]. The cosine coefficients are all zero (because
+the function has odd symmetry), and the sine coefficients are
+rational numbers:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="go">[0.0, 2.0, -1.0, 0.666667, -0.5, 0.4]</span>
+</pre></div>
+<p>This computes a Fourier series of a nonsymmetric function on
+a nonstandard interval:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">4</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<span class="go">[0.583333, 1.12479, -1.27552, 0.904708, -0.441296]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>
+<span class="go">[0.0, -2.6255, 0.580905, 0.219974, -0.540057]</span>
+</pre></div>
+<p>It is instructive to plot a function along with its truncated
+Fourier series:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">)],</span> <span class="n">I</span><span class="p">)</span> <span class="c">#doctest: +SKIP</span>
+</pre></div>
+<p>Fourier series generally converge slowly (and may not converge
+pointwise). For example, if f(x) = cosh(x), a 10-term Fourier
+series gives an L^2 error corresponding to 2-digit accuracy:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mf">9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">I</span><span class="p">)))</span>
+<span class="go">4.67963e-3</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">fourier()</span></tt> uses numerical quadrature. For nonsmooth functions,
+the accuracy (and speed) can be improved by including all singular
+points in the interval specification:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="mf">0</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">([0.5000441648], [0.0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="mf">0</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">([0.5], [0.0])</span>
+</pre></div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.calculus.fourierval">
+<!--[mpmath.calculus.fourierval]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fourierval</tt><big>(</big><em>series</em>, <em>interval</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fourierval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates a Fourier series (in the format computed by
+by <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> for the given interval) at the point x.</p>
+<p>The series should be a pair (c, s) where c is the
+cosine series and s is the sine series. The two lists
+need not have the same length.</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -832,6 +908,7 @@ segments.</p>
 <li><a class="reference external" href="#low-level-extrapolation">Low-level extrapolation</a></li>
 <li><a class="reference external" href="#derivatives">Derivatives</a></li>
 <li><a class="reference external" href="#polynomials">Polynomials</a></li>
+<li><a class="reference external" href="#fourier-series">Fourier series</a></li>
 </ul>
 </li>
 </ul>
