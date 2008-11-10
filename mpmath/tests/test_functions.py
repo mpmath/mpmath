@@ -503,6 +503,12 @@ def test_root():
     assert isnan(nthroot(nan, -1))
     assert isnan(nthroot(inf, 0))
 
+def test_issue_96():
+    mp.dps = 20
+    r = nthroot(-1e-20, 4)
+    assert r.ae(mpf(10)**(-5) * (1 + j) * 2**(-0.5))
+
+
 def test_perturbation_rounding():
     mp.dps = 100
     a = pi/10**50
