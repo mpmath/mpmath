@@ -591,6 +591,12 @@ class matrix(object):
 
     __copy__ = copy
 
+    def column(self, n):
+        m = matrix(self.rows, 1)
+        for i in range(self.rows):
+            m[i] = self[i,n]
+        return m
+
 def eye(n, **kwargs):
     """
     Create square identity matrix n x n.

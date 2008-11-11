@@ -332,7 +332,7 @@ def mpc_nthroot((a, b), n, prec, rnd=round_fast):
         asign, aman, aexp, abc = a
         bsign, bman, bexp, bbc = b
         pf = mpc_abs((a,b), prec)
-        if pf[-2] + pf[-1] > -prec/4:
+        if pf[-2] + pf[-1] > -prec/4  and pf[-2] + pf[-1] < prec:
             af = to_fixed(a, prec2)
             bf = to_fixed(b, prec2)
             re, im = mpc_nthroot_fixed(af, bf, n, prec2)

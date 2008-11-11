@@ -105,9 +105,9 @@ and equation solving with rigorous error bounds::
 
 from __future__ import division
 
-from mptypes import extraprec, absmin, mp, eps
-from functions import sqrt, sign
-from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p
+from mptypes import extraprec, absmin, mp, eps, mpf
+from functions import sqrt, sign, log, factorial
+from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p, mnorm_oo
 from copy import copy
 
 def LU_decomp(A, overwrite=False, use_cache=True):
@@ -482,4 +482,55 @@ def cond(A, norm=mnorm_1):
     return norm(A) * norm(inverse(A))
 
 
-
+def lu_solve_mat(a, b):
+    """solve a * x = b  where a and b are matrices"""
+    r = matrix(a.rows, b.cols)
+    for i in range(b.cols):
+        c = lu_solve(a, b.column(i))
+        for j in range(len(c)):
+            r[j, i] = c[j]
+    return r
+  
+def exp_pade(a):
+    """exponential of a matrix using Pade approximants
+       
+       See G. H. Golub, C. F. van Loan 'Matrix Computations', 
+         third Ed., page 572
+  
+       TODO:
+         - find a good estimate for q
+         - reduce the number of matrix multiplications to improve
+           performance
+    """
+    def eps_pade(p):
+        return mpf(2)**(3-2*p) * factorial(p)**2/(factorial(2*p)**2 * (2*p + 1))
+    q = 4
+    extraq = 8
+    while 1:
+        if eps_pade(q) < eps:
+            break
+        q += 1
+    q += extraq
+    j = max(1, int(log(mnorm_oo(a),2)))
+    extra = q
+    mp.dps += extra
+    try:
+        a = a/2**j
+        na = a.rows
+        den = eye(na)
+        num = eye(na)
+        x = eye(na)
+        c = mpf(1)
+        for k in range(1, q+1):
+            c *= mpf(q - k + 1)/((2*q - k + 1) * k)
+            x = a*x
+            cx = c*x
+            num += cx
+            den += (-1)**k * cx
+        f = lu_solve_mat(den, num)
+        for k in range(j):
+            f = f*f
+    finally:
+        mp.dps -= extra
+    return f
+  
