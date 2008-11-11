@@ -507,7 +507,8 @@ def test_issue_96():
     mp.dps = 20
     r = nthroot(-1e-20, 4)
     assert r.ae(mpf(10)**(-5) * (1 + j) * 2**(-0.5))
-
+    # Check that this doesn't take eternity to compute
+    assert nthroot('-1e100000000', 4).ae((1+j)*mpf('1e25000000')/sqrt(2))
 
 def test_perturbation_rounding():
     mp.dps = 100
