@@ -1536,16 +1536,123 @@ def hyp2f1(a,b,c,z):
     information."""
     return hyper([a,b], [c], z)
 
-@funcwrapper
-def lower_gamma(a,z):
-    """Lower incomplete gamma function gamma(a, z)"""
-    # XXX: may need more precision
-    return hyp1f1(1, 1+a, z) * z**a * exp(-z) / a
+def _lower_gamma(z, b):
+    return hyp1f1(1, 1+z, b) * b**z * exp(-b) / z
+
+def _check_pos(x):
+    return isinstance(x, mpf) and x > 0
 
 @funcwrapper
-def upper_gamma(a,z):
-    """Upper incomplete gamma function Gamma(a, z)"""
-    return gamma(a) - lower_gamma(a, z)
+def gammainc(z, a=0, b=inf, regularized=False):
+    """
+    ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
+    gamma function with integration limits [a, b]::
+
+                            b
+                             -
+                            |   z-1  -t
+        gammainc(z, a, b) = |  t    e  dt
+                            |
+                           -
+                            a
+
+    The generalized incomplete gamma function reduces to the
+    following special cases when one or both endpoints are fixed:
+
+    * With a=0 and b=inf, it is simply the standard ("complete")
+      gamma function
+    * With b=inf, it becomes the "upper" incomplete gamma function
+    * With a=0, it becomes the "lower" incomplete gamma function
+
+    In standard mathematical notation, the upper gamma function
+    given by ``gammainc(z,a)`` is denoted by "G(z,a)" and the
+    lower gamma function ``gammainc(z,0,b)`` is denoted by "g(z,b)"
+    (here "G" and "g" should be read as the upper- and lowercase
+    Greek letters.) However, some authors reverse the order of
+    the arguments, so care is necessary.
+
+    Of course, we have gammainc(z,0,x) + gammainc(z,x) = gamma(z)
+    for all z and x.
+
+    Given the keyword option ``regularized=True``, :func:`gammainc`
+    computes the "regularized" incomplete gamma function
+    gammainc(z,a,b)/gamma(z).
+
+    **Examples**
+
+    We can compare with numerical quadrature to verify that
+    :func:`gammainc` computes the integral in the definition::
+
+        >>> from mpmath import *
+        >>> mp.dps = 20
+        >>> print gammainc(2+3j, 4, 10)
+        (0.009772126686277051606 - 0.077063730631298989245j)
+        >>> print quad(lambda t: t**(2+3j-1) * exp(-t), [4, 10])
+        (0.009772126686277051606 - 0.077063730631298989245j)
+
+    The incomplete gamma functions satisfy simple recurrence
+    relations::
+
+        >>> mp.dps = 15
+        >>> z = 3.5
+        >>> a = 2
+        >>> print gammainc(z+1, a), z*gammainc(z,a) + a**z*exp(-a)
+        10.6013029693353 10.6013029693353
+        >>> print gammainc(z+1,0,a), z*gammainc(z,0,a) - a**z*exp(-a)
+        1.03042542723211 1.03042542723211
+
+    If z is an integer, the recurrence reduces the incomplete gamma
+    function to P(a)*exp(-a) + Q(b)*exp(-b) where P and Q
+    are polynomials::
+
+        >>> mp.dps = 15
+        >>> print gammainc(1, 2), exp(-2)
+        0.135335283236613 0.135335283236613
+        >>> mp.dps = 50
+        >>> identify(gammainc(6, 1, 2), ['exp(-1)', 'exp(-2)'])
+        '(326*exp(-1) + (-872)*exp(-2))'
+
+    The incomplete gamma functions reduce to functions such as
+    the exponential integral Ei and the error function for special
+    arguments::
+
+        >>> mp.dps = 15
+        >>> print gammainc(0, 4), -ei(-4)
+        0.00377935240984891 0.00377935240984891
+        >>> print gammainc(0.5, 0, 2), sqrt(pi)*erf(sqrt(2))
+        1.6918067329452 1.6918067329452
+
+    """
+    if b == inf:
+        if a == 0:
+            v = gamma(z)
+        else:
+            if z == 0:
+                # Reduces to exponential integral. Mind branch cuts.
+                if _check_pos(a):
+                    return -ei(-a)
+                else:
+                    return -ei(-a) + (log(-a)-log(-1/a))/2-log(a)
+            # XXX: avoid poles
+            v = gamma(z) - _lower_gamma(z, a)
+    elif a == 0:
+        v = _lower_gamma(z, b)
+    else:
+        if z == 0:
+            # Reduces to exponential integral
+            if _check_pos(a) and _check_pos(b):
+                return ei(-b) - ei(-a)
+            else:
+                return ei(-b)-ei(-a) + \
+                    (log(-a)-log(-1/a))/2-log(a) + \
+                    (log(-1/b)-log(-b))/2+log(b)
+        # XXX: avoid poles
+        v = _lower_gamma(z, b) - _lower_gamma(z, a)
+    if regularized:
+        return v / gamma(z)
+    else:
+        return v
+
 
 erf = mpfunc("erf", libhyper.mpf_erf, libhyper.mpc_erf,
     "Error function, erf(z)")

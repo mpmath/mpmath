@@ -186,7 +186,15 @@ def test_agm():
 
 def test_incomplete_gamma():
     mp.dps = 15
-    assert upper_gamma(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)
+    assert gammainc(2,5).ae(6*exp(-5))
+    assert gammainc(2,0,5).ae(1-6*exp(-5))
+    assert gammainc(2,3,5).ae(-6*exp(-5)+4*exp(-3))
+    assert gammainc(-2.5,-0.5).ae(-0.9453087204829418812-5.3164237738936178621j)
+    assert gammainc(0,2,4).ae(0.045121158298212213088)
+    assert gammainc(0,3).ae(0.013048381094197037413)
+    assert gammainc(0,2+j,1-j).ae(0.00910653685850304839-0.22378752918074432574j)
+    assert gammainc(0,1-j).ae(0.00028162445198141833+0.17932453503935894015j)
+    assert gammainc(3,4,5,True).ae(0.11345128607046320253)
 
 def test_erf():
     mp.dps = 15

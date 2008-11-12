@@ -27,7 +27,7 @@ from functions import (
     psi, psi0, psi1, psi2, psi3,
     polygamma, digamma, trigamma, tetragamma, pentagamma,
     harmonic, bernoulli, bernfrac, stieltjes,
-    lower_gamma, upper_gamma, gammaprod, binomial, rf, ff,
+    gammainc, gammaprod, binomial, rf, ff,
     hyper, hyp0f1, hyp1f1, hyp2f1,
     erf, erfc, erfi, erfinv, npdf, ncdf,
     ei, li, ci, si, chi, shi,
