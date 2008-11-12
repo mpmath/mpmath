@@ -1902,31 +1902,141 @@ the argument is the parameter m = k^2, not the modulus k.</dd></dl>
 <dl class="function">
 <dt id="mpmath.elliptic.jtheta">
 <!--[mpmath.elliptic.jtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">jtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.jtheta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Jacobi theta functions as functions of the nome q
-n = 1,2,3,4
-z complex number
-q complex number in the unit disk</p>
-<p>Definition:</p>
-<pre>theta(1, z, q) =
-  2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
+<dd><p>Computes the Jacobi theta function theta(n, z, q), where
+n = 1, 2, 3 or 4. The theta functions are functions of two
+variables:</p>
+<ul class="simple">
+<li>z is the <em>argument</em>, an arbitrary real or complex number</li>
+<li>q is the <em>nome</em>, which must be a real or complex number
+in the unit disk (i.e. abs(q) &lt; 1)</li>
+</ul>
+<p>One also commonly encounters the notation theta(n, z, tau) in the
+literature. The variable tau is called the <em>parameter</em> and can
+be converted to a nome using the formula <tt class="docutils literal"><span class="pre">q</span> <span class="pre">=</span> <span class="pre">exp(j*pi*tau)</span></tt>.
+Note the condition abs(q) &lt; 1 requires imag(tau) &gt; 0; i.e.
+Jacobi theta functions are defined for tau in the upper half
+plane.</p>
+<p>Other notations are also in use. For example, some authors use
+the single-argument form theta(n, x). Depending on context, this
+can mean <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">0,</span> <span class="pre">x)</span></tt>, <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">x,</span> <span class="pre">q)</span></tt>, or possibly
+something else. Needless to say, it is a good idea to cross-check
+the definitions when working with theta functions.</p>
+<p><strong>Definition</strong></p>
+<p>The four Jacobi theta functions as implemented by <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt>
+are defined by the following infinite series:</p>
+<pre>                       oo
+                       ___           2
+                  1/4 \         n  (n  + n)
+theta(1,z,q) = 2 q     )    (-1)  q         sin((2n+1) z)
+                      /___
+                      n = 0
 
-theta(2, z, q) =
-  2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
+                       oo
+                       ___     2
+                  1/4 \      (n  + n)
+theta(2,z,q) = 2 q     )    q         cos((2n+1) z)
+                      /___
+                      n = 0
 
-theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
+                       oo
+                       ___     2
+                      \      (n )
+theta(3,z,q) = 1 +  2  )    q     cos(2n z)
+                      /___
+                      n = 1
 
-theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)</pre>
+                       oo
+                       ___        2
+                      \         (n )
+theta(4,z,q) = 1 +  2  )    (-q)     cos(2n z)
+                      /___
+                      n = 1</pre>
+<p>For abs(q) &lt;&lt; 1, these series converge very quickly, so the
+Jacobi theta functions can efficiently be evaluated to high
+precision.</p>
+<p><strong>Examples and basic properties</strong></p>
+<p>Considered as functions of z, the Jacobi theta functions may be
+viewed as generalizations of the ordinary trigonometric functions
+cos and sin. They are periodic functions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1</span><span class="o">/</span><span class="mf">5.</span><span class="p">)</span>
+<span class="go">0.117756191842059</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="o">/</span><span class="mf">5.</span><span class="p">)</span>
+<span class="go">0.117756191842059</span>
+</pre></div>
+<p>Indeed, the series defining the theta functions are essentially
+trigonometric Fourier series. The coefficients can be retrieved
+using <tt class="xref docutils literal"><span class="pre">fourier()</span></tt>:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mf">4</span><span class="p">))</span>
+<span class="go">([0.0, 1.68179, 0.0, 0.420448, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0])</span>
+</pre></div>
+<p>The Jacobi theta functions are also so-called quasiperiodic
+functions of z and tau, meaning that for fixed tau, theta(z, q)
+and theta(z+tau*pi, q) are the same except for an exponential
+factor:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">0.3</span><span class="o">*</span><span class="n">j</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">tau</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+<span class="go">(-0.682420280786035 + 1.5266839997214j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="n">q</span> <span class="o">*</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+<span class="go">(-0.682420280786035 + 1.5266839997214j)</span>
+</pre></div>
+<p>The Jacobi theta functions satisfy a huge number of other
+functional equations, such as the following identity (valid for
+any q):</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span>
+<span class="go">6.82374408935276</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span> <span class="o">+</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span>
+<span class="go">6.82374408935276</span>
+</pre></div>
+<p>Extensive listings of identities satisfied by the Jacobi theta
+functions can be found in standard reference works.</p>
+<p>The Jacobi theta functions are related to the gamma function
+for special arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">))</span>
+<span class="go">1.08643481121331</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">3</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span>
+<span class="go">1.08643481121331</span>
+</pre></div>
+<p><tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> supports arbitrary precision evaluation and complex
+arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">2.0549510717571539127004115835148878097035750653737</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">(7.180331760146805926357227 - 1.634292858119162417301859j)</span>
+</pre></div>
+<p><strong>Possible issues</strong></p>
+<p>For abs(q) &gt;= 1 or imag(tau) &lt;= 0, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
+<tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised abs(q) extremely
+close to 1 (or equivalently tau very close to 0), since the
+series would converge too slowly:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">,</span> <span class="mf">0.99999999</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">j</span><span class="p">))</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ValueError</span>: <span class="n-Identifier">abs(q) &gt; Q_LIM = 1.000000</span>
+</pre></div>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.djtheta">
 <!--[mpmath.elliptic.djtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">djtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em>, <em>nd=1</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.djtheta" title="Permalink to this definition">¶</a></dt>
-<dd>ndth derivative of the Jacobi theta functions jtheta(n, z, q)
-with respect to z
-n = 1,2,3,4
-z complex number
-q complex number in the unit disk
-nd &gt;= 1</dd></dl>
+<dd><p>For an integer nd &gt;= 1, computes the nd:th derivative with respect
+to z of the Jacobi theta function <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">z,</span> <span class="pre">q)</span></tt>. For
+example:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">djtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+<span class="go">-0.795947847483158</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="mf">7</span><span class="p">)</span>
+<span class="go">-0.795947847483158</span>
+</pre></div>
+<p>For additional details, see <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt>.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.jsn">
@@ -2014,7 +2124,7 @@ u is any complex number, m must be in the unit disk</dd></dl>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 10, 2008.
+      Last updated on Nov 12, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
     </div>
 

@@ -851,23 +851,142 @@ def _djacobi_theta3(z, q, nd):
         return (-1)**(1 + nd//2) * s
 
 def jtheta(n, z, q):
-    """
-    Jacobi theta functions as functions of the nome q
-    n = 1,2,3,4
-    z complex number
-    q complex number in the unit disk
+    r"""
+    Computes the Jacobi theta function theta(n, z, q), where
+    n = 1, 2, 3 or 4. The theta functions are functions of two
+    variables:
 
-    Definition::
+    - z is the *argument*, an arbitrary real or complex number
 
-        theta(1, z, q) =
-          2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
+    - q is the *nome*, which must be a real or complex number
+      in the unit disk (i.e. abs(q) < 1)
 
-        theta(2, z, q) =
-          2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
+    One also commonly encounters the notation theta(n, z, tau) in the
+    literature. The variable tau is called the *parameter* and can
+    be converted to a nome using the formula ``q = exp(j*pi*tau)``.
+    Note the condition abs(q) < 1 requires imag(tau) > 0; i.e.
+    Jacobi theta functions are defined for tau in the upper half
+    plane.
 
-        theta(3, z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
+    Other notations are also in use. For example, some authors use
+    the single-argument form theta(n, x). Depending on context, this
+    can mean ``jtheta(n, 0, x)``, ``jtheta(n, x, q)``, or possibly
+    something else. Needless to say, it is a good idea to cross-check
+    the definitions when working with theta functions.
 
-        theta(4, z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
+    **Definition**
+
+    The four Jacobi theta functions as implemented by :func:`jtheta`
+    are defined by the following infinite series::
+
+                               oo
+                               ___           2
+                          1/4 \         n  (n  + n)
+        theta(1,z,q) = 2 q     )    (-1)  q         sin((2n+1) z)
+                              /___
+                              n = 0
+
+                               oo
+                               ___     2
+                          1/4 \      (n  + n)
+        theta(2,z,q) = 2 q     )    q         cos((2n+1) z)
+                              /___
+                              n = 0
+
+                               oo
+                               ___     2
+                              \      (n )
+        theta(3,z,q) = 1 +  2  )    q     cos(2n z)
+                              /___
+                              n = 1
+
+                               oo
+                               ___        2
+                              \         (n )
+        theta(4,z,q) = 1 +  2  )    (-q)     cos(2n z)
+                              /___
+                              n = 1
+
+    For abs(q) << 1, these series converge very quickly, so the
+    Jacobi theta functions can efficiently be evaluated to high
+    precision.
+
+    **Examples and basic properties**
+
+    Considered as functions of z, the Jacobi theta functions may be
+    viewed as generalizations of the ordinary trigonometric functions
+    cos and sin. They are periodic functions::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print jtheta(1, 0.1, 1/5.)
+        0.117756191842059
+        >>> print jtheta(1, 0.1 + 2*pi, 1/5.)
+        0.117756191842059
+
+    Indeed, the series defining the theta functions are essentially
+    trigonometric Fourier series. The coefficients can be retrieved
+    using :func:`fourier`::
+
+        >>> nprint(fourier(lambda x: jtheta(2, x, 0.5), [-pi, pi], 4))
+        ([0.0, 1.68179, 0.0, 0.420448, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0])
+
+    The Jacobi theta functions are also so-called quasiperiodic
+    functions of z and tau, meaning that for fixed tau, theta(z, q)
+    and theta(z+tau*pi, q) are the same except for an exponential
+    factor::
+
+        >>> tau = 0.3*j
+        >>> q = exp(pi*j*tau)
+        >>> z = 10
+        >>> print jtheta(4, z+tau*pi, q)
+        (-0.682420280786035 + 1.5266839997214j)
+        >>> print -exp(-2*j*z)/q * jtheta(4, z, q)
+        (-0.682420280786035 + 1.5266839997214j)
+
+    The Jacobi theta functions satisfy a huge number of other
+    functional equations, such as the following identity (valid for
+    any q)::
+
+        >>> q = 0.3
+        >>> print jtheta(3,0,q)**4
+        6.82374408935276
+        >>> print jtheta(2,0,q)**4 + jtheta(4,0,q)**4
+        6.82374408935276
+
+    Extensive listings of identities satisfied by the Jacobi theta
+    functions can be found in standard reference works.
+
+    The Jacobi theta functions are related to the gamma function
+    for special arguments::
+
+        >>> print jtheta(3, 0, exp(-pi))
+        1.08643481121331
+        >>> print pi**(1/4.) / gamma(3/4.)
+        1.08643481121331
+
+    :func:`jtheta` supports arbitrary precision evaluation and complex
+    arguments::
+
+        >>> mp.dps = 50
+        >>> print jtheta(4, sqrt(2), 0.5)
+        2.0549510717571539127004115835148878097035750653737
+        >>> mp.dps = 25
+        >>> print jtheta(4, 1+2j, (1+j)/5)
+        (7.180331760146805926357227 - 1.634292858119162417301859j)
+
+    **Possible issues**
+
+    For abs(q) >= 1 or imag(tau) <= 0, :func:`jtheta` raises
+    ``ValueError``. This exception is also raised abs(q) extremely
+    close to 1 (or equivalently tau very close to 0), since the
+    series would converge too slowly::
+
+        >>> jtheta(1, 10, 0.99999999 * exp(0.5*j))
+        Traceback (most recent call last):
+          ...
+        ValueError: abs(q) > Q_LIM = 1.000000
+
     """
     z = mpmathify(z)
     q = mpmathify(q)
@@ -892,13 +1011,20 @@ def jtheta(n, z, q):
 
 def djtheta(n, z, q, nd=1):
     """
-    ndth derivative of the Jacobi theta functions jtheta(n, z, q)
-    with respect to z
-    n = 1,2,3,4
-    z complex number
-    q complex number in the unit disk
-    nd >= 1
+    For an integer nd >= 1, computes the nd:th derivative with respect
+    to z of the Jacobi theta function ``jtheta(n, z, q)``. For
+    example::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print djtheta(3, 7, 0.2)
+        -0.795947847483158
+        >>> print diff(lambda x: jtheta(3, x, 0.2), 7)
+        -0.795947847483158
+
+    For additional details, see :func:`jtheta`.
     """
+
     z = mpmathify(z)
     q = mpmathify(q)
 
@@ -919,87 +1045,6 @@ def djtheta(n, z, q, nd=1):
     finally:
         mp.prec = prec0
     return res
-
-def jacobi_theta_1(z, m):
-    """
-    The jacobi theta function 1 is defined by the series
-    expansion found in Abramowitz & Stegun [4]
-    theta1(z, q) =
-    2 * q**1/4 * Sum((-)**n * q**(n*n + n) * sin((2*n + 1)*z), n=0, inf)
-    The nome q is computed from the parameter m
-    z is any complex number, q is a complex number in the unit circle
-    """
-    m = mpmathify(m)
-    z = mpmathify(z)
-
-    k = sqrt(m)
-    q = calculate_nome(k)
-
-    if abs(q) >= 1:
-        raise ValueError
-
-    res = _jacobi_theta2(z - pi/2, q)
-    return res
-
-def jacobi_theta_2(z, m):
-    """
-    The jacobi theta function 2 is defined by the series
-    expansion found in Abramowitz & Stegun [4].
-    theta2(z, q) =
-    2 * q**1/4 * Sum(q**(n*n + n) * cos((2*n + 1)*z), n=0, inf)
-    The nome q is computed from the parameter m
-    z is any complex number, q is a complex number in the unit circle
-    """
-    m = mpmathify(m)
-    z = mpmathify(z)
-
-    k = sqrt(m)
-    q = calculate_nome(k)
-
-    if abs(q) >= 1:
-        raise ValueError
-
-    return _jacobi_theta2(z, q)
-
-def jacobi_theta_3(z, m):
-    """
-    The jacobi theta function 3 is defined by the series expansion
-    found in Abramowitz & Stegun [4]
-    theta3(z, q) = 1 + 2 * Sum(q**(n**2) * cos(2*n*z), n=1, inf)
-    The nome q is computed from the parameter m
-    z is any complex number, q is a complex number in the unit circle
-    """
-    m = mpmathify(m)
-    z = mpmathify(z)
-
-    k = sqrt(m)
-    q = calculate_nome(k)
-
-    if abs(q) >= 1:
-        raise ValueError
-
-    return _jacobi_theta3(z, q)
-
-def jacobi_theta_4(z, m):
-    """
-    The jacobi theta function 4 is defined by the series expansion
-    found in Abramowitz & Stegun [4]
-    theta4(z, q) = 1 + 2 * Sum((-q)**(n**2) * cos(2*n*z), n=1, inf)
-    The nome q is computed from the parameter m
-    z is any complex number, q is a complex number in the unit circle
-    """
-    m = mpmathify(m)
-    z = mpmathify(z)
-
-    k = sqrt(m)
-    q = calculate_nome(k)
-
-    if abs(q) >= 1:
-        raise ValueError
-
-    res = _jacobi_theta3(z, -q)
-    return res
-
 
 def jsn(u, m):
     """
@@ -1094,3 +1139,7 @@ def jdn(u, m):
 jacobi_elliptic_sn = jsn
 jacobi_elliptic_cn = jcn
 jacobi_elliptic_dn = jdn
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
