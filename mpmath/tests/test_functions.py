@@ -504,11 +504,17 @@ def test_root():
     assert isnan(nthroot(inf, 0))
 
 def test_issue_96():
-    mp.dps = 20
-    r = nthroot(mpf(-1e-20), 4)
-    assert r.ae(mpf(10)**(-5) * (1 + j) * mpf(2)**(-0.5))
+    for dps in [20, 80]:
+        mp.dps = dps
+        r = nthroot(mpf('-1e-20'), 4)
+        assert r.ae(mpf(10)**(-5) * (1 + j) * mpf(2)**(-0.5))
+    mp.dps = 80
+    assert nthroot('-1e-3', 4).ae(mpf(10)**(-3./4) * (1 + j)/sqrt(2))
+    assert nthroot('-1e-6', 4).ae((1 + j)/(10 * sqrt(20)))
     # Check that this doesn't take eternity to compute
+    mp.dps = 20
     assert nthroot('-1e100000000', 4).ae((1+j)*mpf('1e25000000')/sqrt(2))
+    mp.dps = 15
 
 def test_perturbation_rounding():
     mp.dps = 100
