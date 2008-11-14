@@ -141,14 +141,13 @@ Gamma and related functions
 ---------------------------
 
 .. autofunction:: mpmath.functions.gamma
+.. autofunction:: mpmath.functions.gammainc
 .. autofunction:: mpmath.functions.beta
 .. autofunction:: mpmath.functions.factorial
 .. autofunction:: mpmath.functions.binomial
 .. autofunction:: mpmath.functions.gammaprod
 .. autofunction:: mpmath.functions.rf
 .. autofunction:: mpmath.functions.ff
-.. autofunction:: mpmath.functions.lower_gamma
-.. autofunction:: mpmath.functions.upper_gamma
 .. autofunction:: mpmath.functions.psi
 .. autofunction:: mpmath.functions.harmonic
 

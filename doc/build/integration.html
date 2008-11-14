@@ -2,6 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Integration &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,8 +16,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="contents" title="Global table of contents" href="contents.html" />
-    <link rel="index" title="Global index" href="genindex.html" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Summation" href="summation.html" />
@@ -29,9 +29,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
         <li class="right" >
           <a href="summation.html" title="Summation"
              accesskey="N">next</a> |</li>
@@ -52,16 +49,18 @@
 <div class="section" id="basic-numerical-integration-quad">
 <h2>Basic numerical integration (<tt class="docutils literal"><span class="pre">quad</span></tt>)<a class="headerlink" href="#basic-numerical-integration-quad" title="Permalink to this headline">¶</a></h2>
 <p>The function <tt class="docutils literal"><span class="pre">quad</span></tt> performs numerical integration (quadrature). The syntax for integrating a function <em>f</em> between the endpoints <em>a</em> and <em>b</em> is <tt class="docutils literal"><span class="pre">quad(f,</span> <span class="pre">[a,</span> <span class="pre">b])</span></tt>. For example:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
 <span class="go">2.0</span>
 </pre></div>
+</div>
 <p>Integrals can typically be evaluated to arbitrary precision. For example, <tt class="docutils literal"><span class="pre">quad</span></tt> can easily calculate 50 digits of pi by integrating the area under the half circle arc <tt class="docutils literal"><span class="pre">x^2</span> <span class="pre">+</span> <span class="pre">y^2</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">(y</span> <span class="pre">&gt;</span> <span class="pre">0)</span></tt>:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
+</div>
 <div class="section" id="algorithms">
 <h3>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">¶</a></h3>
 <p>Mpmath presently implements two integration algorithms: tanh-sinh quadrature and Gauss-Legendre quadrature. These can be selected using <tt class="docutils literal"><span class="pre">method='tanh-sinh'</span></tt> or <tt class="docutils literal"><span class="pre">method='gauss-legendre'</span></tt>. The functions <tt class="docutils literal"><span class="pre">quadts</span></tt> and <tt class="docutils literal"><span class="pre">quadgl</span></tt> are also available as shortcuts.</p>
@@ -73,18 +72,20 @@
 <div class="section" id="neat-examples">
 <h3>Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h3>
 <p>Intervals can be infinite or half-infinite:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">3.14159265358979</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span><span class="o">**</span><span class="mf">2</span>
 <span class="go">3.14159265358979</span>
 </pre></div>
+</div>
 <p>Complex integrals are also supported. The next example computes Euler&#8217;s constant gamma by integrating around the pole of the Riemann zeta function at <em>z</em> = 1:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
 <span class="go">(0.577215664901533 - 1.04534339656676e-23j)</span>
 </pre></div>
+</div>
 <p>Functions with integral representations, such as the gamma function, can be implemented directly from the definition:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">Gamma</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Gamma</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -95,15 +96,17 @@
 <span class="go">(0.498015668118356 - 0.154949828301811j)</span>
 </pre></div>
 </div>
+</div>
 <div class="section" id="multiple-integrals">
 <h3>Multiple integrals<a class="headerlink" href="#multiple-integrals" title="Permalink to this headline">¶</a></h3>
 <p>It is possible to calculate double integrals with <tt class="docutils literal"><span class="pre">quad</span></tt>. To do this, simply provide a two-argument function and two intervals. The first interval specifies the range for the <em>x</em> variable and the second interval specifies the range of the <em>y</em> variable:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
 <span class="go">4.0</span>
 </pre></div>
+</div>
 <p>Here are some more difficult examples taken from <a class="reference external" href="http://mathworld.wolfram.com/DoubleIntegral.html">MathWorld</a> (all except the second contain corner singularities):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.577215664901532860606512090082</span>
@@ -127,13 +130,15 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">6</span>
 <span class="go">1.64493406684822643647241516665</span>
 </pre></div>
+</div>
 <p>Triple integrals are also supported:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadgl</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">z</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">])</span>
 <span class="go">0.101366277027041</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">/</span><span class="mf">4</span>
 <span class="go">0.101366277027041</span>
 </pre></div>
+</div>
 <p>There is currently no direct support for computing quadruple or higher dimensional integrals; if desired, this can be done easily by passing a function that calls <tt class="docutils literal"><span class="pre">quad</span></tt> recursively. While double integrals are reasonably fast, even a simple triple integral at very low precision is likely to take several seconds to evaluate. (This is one application where Gaussian quadrature is often superior.) A quadruple integral will require a whole lot of patience.</p>
 </div>
 <div class="section" id="error-detection">
@@ -142,44 +147,51 @@
 <p>Problematic integrals can sometimes be evaluated by manually splitting them into smaller pieces.</p>
 <p>If the <tt class="docutils literal"><span class="pre">error</span></tt> option is set, <tt class="docutils literal"><span class="pre">quad</span></tt> will return an error estimate along with the result; although this estimate is not always correct, it can be useful for debugging. You can also pass <tt class="docutils literal"><span class="pre">quad</span></tt> the option <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to show detailed progress.</p>
 <p>A simple example where both algorithms fail is the function f(<em>x</em>) = abs(sin(<em>x</em>)), which is not smooth at <em>x</em> = pi. In this case, a close value is calculated, but the result is nowhere near the target accuracy; however, <tt class="docutils literal"><span class="pre">quad</span></tt> gives a good estimate of the magnitude of the error:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quadgl</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">(mpf(&#39;4.0008720436680933&#39;), mpf(&#39;0.001&#39;))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">(mpf(&#39;3.9990089417677899&#39;), mpf(&#39;0.001&#39;))</span>
 </pre></div>
+</div>
 <p>This highly oscillatory integral should be pi/2 = 1.57:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">(mpf(&#39;0.90019013929034331&#39;), mpf(&#39;1.0&#39;))</span>
 </pre></div>
+</div>
 <p>The next integral should be approximately 0.627 but <tt class="docutils literal"><span class="pre">quadts</span></tt> generates complete nonsense both in the result and the error estimate (the error estimate is somewhat arbitrarily capped at 1.0):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">(mpf(&#39;7.0886401859297505e+18&#39;), mpf(&#39;1.0&#39;))</span>
 </pre></div>
+</div>
 <p>However, oscillation is not a problem if suppressed by sufficiently fast (preferrably exponential) decay. This integral is exactly 1/2:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.5</span>
 </pre></div>
+</div>
 <p>Another illustrative example is the following double integral, which <tt class="docutils literal"><span class="pre">quadts</span></tt> will process for several seconds before returning a value with very low accuracy:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quadts</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">(mpf(&#39;0.38259743528830825&#39;), mpf(&#39;1.0e-6&#39;))</span>
 </pre></div>
+</div>
 <p>The problem is due to the non-analytic behavior of the function at the midpoint (1/2, 1/2). We can do much better by splitting the area into four pieces (because of the symmetry, we only need to evaluate one of them):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">4</span><span class="o">*</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.382597858232106</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">asinh</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">6</span>
 <span class="go">0.382597858232106</span>
 </pre></div>
+</div>
 <p>The value agrees with the known answer and the running time in this case is less than a second on the author&#8217;s computer.</p>
 <p>Even for analytic integrals on finite intervals, there is no guarantee that <tt class="docutils literal"><span class="pre">quad</span></tt> will be successful. A few examples of integrals for which <tt class="docutils literal"><span class="pre">quad</span></tt> currently fails to reach full accuracy are:</p>
-<div class="highlight"><pre><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
 <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">atan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">((</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span><span class="p">)</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 </pre></div>
+</div>
 <p>(It is possible that future improvements to the <tt class="docutils literal"><span class="pre">quad</span></tt> implementation will make these particular examples work.)</p>
 </div>
 </div>
@@ -203,59 +215,69 @@
 <div class="section" id="examples-with-simple-periodic-integrands">
 <h3>Examples with simple periodic integrands<a class="headerlink" href="#examples-with-simple-periodic-integrands" title="Permalink to this headline">¶</a></h3>
 <p>The integral of the sinc function sin(x)/x is a perfect match for <tt class="docutils literal"><span class="pre">quadosc</span></tt>. In this case, both the alternating and nonalternating versions work well:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.57079632679489661923132169164</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span>
 <span class="go">1.57079632679489661923132169164</span>
 </pre></div>
+</div>
 <p>Here with <tt class="docutils literal"><span class="pre">zeros</span></tt> instead of <tt class="docutils literal"><span class="pre">period</span></tt>:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.57079632679489661923132169164</span>
 </pre></div>
+</div>
 <p>In the following integral, the period is different, and the first zero is not located at zero (this does not pose a problem):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="mf">4</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">6</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="mf">4</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">6</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.260725538961809481605366600383</span>
 </pre></div>
+</div>
 <p>The next example involves one of the author&#8217;s favorite integrals. The example demonstrates that the integration can be done over the entire real line:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.15572734979092171791009318331</span>
 </pre></div>
+</div>
 <p>The integral has the following neat value:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="n">e</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="n">e</span>
 <span class="go">1.15572734979092171791009318331</span>
 </pre></div>
+</div>
 </div>
 <div class="section" id="nonperiodic-integrands">
 <h3>Nonperiodic integrands<a class="headerlink" href="#nonperiodic-integrands" title="Permalink to this headline">¶</a></h3>
 <p>Important examples of oscillatory integrals with a nonconstant rate of oscillation include those involving Bessel functions. We will illustrate with the J0 function, whose positive zeros occur roughly at 2.40, 5.52, 8.65, and so on. The zeros can be calculated to high accuracy by starting from a simple asymptotic approximation and calling <tt class="docutils literal"><span class="pre">findroot</span></tt>:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">j0zero</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">j0zero</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">findroot</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mf">0.25</span><span class="p">))</span>
 <span class="gp">...</span>
 </pre></div>
+</div>
 <p>By definition, the J0 function is normalized so that its integral from 0 to infinity is 1. This should now be easy to verify:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">)</span>
 <span class="go">1.0</span>
 </pre></div>
+</div>
 <p>We can also try a non-pure Bessel integral:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">j0</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">j0</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">)</span>
 <span class="go">0.754610025770972</span>
 </pre></div>
+</div>
 <p>Finally, let us consider the integral of sin(x^2) from 0 to infinity (the Fresnel sine integral). Trying to calculate this integral to high accuracy with a generic adaptive quadrature algorithm is a waste of time, and numerical integration based on Fourier analysis does not work either since the integrand is not periodic. But it is easy to locate the zeros, and this is sufficient information for <tt class="docutils literal"><span class="pre">quadosc</span></tt>:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
 <span class="go">0.626657068657750125603941321203</span>
 </pre></div>
+</div>
 <p>The analytical value of the Fresnel integral is:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">8</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">8</span><span class="p">)</span>
 <span class="go">0.626657068657750125603941321203</span>
 </pre></div>
+</div>
 </div>
 <div class="section" id="nonalternating-integrands">
 <h3>Nonalternating integrands<a class="headerlink" href="#nonalternating-integrands" title="Permalink to this headline">¶</a></h3>
 <p>By default, <tt class="docutils literal"><span class="pre">quadosc</span></tt> rewrites the integral as an alternating series. If the option <tt class="docutils literal"><span class="pre">alt=0</span></tt> is passed, it instead rewrites the integral as a nonalternating series, with each term being the integral over a full period. This works better if the integrand is oscillatory but does not change signs:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadts</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.286529507455656027135662</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
@@ -263,10 +285,12 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">1.286529535596167393119348</span>
 </pre></div>
+</div>
 <p>This integral can be evaluated exactly in terms of the cosine integral function, which shows that the last of these three values is correct:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">6</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">6</span>
 <span class="go">1.286529535596167393119348</span>
 </pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="solving-odes-odeint">
@@ -278,7 +302,7 @@
 <li>A vector of positions/time values to step between</li>
 </ul>
 <p>It returns the list of function values at each step. As a simple example, we can consider the system x&#8217;&#8217; + x = 0. By introducing the variables x = x, y = x&#8217;, this second-order differential equation can be rewritten as the first-order system x&#8217; = y, y&#8217; = -x. The analytic solutions with initial values x = 0, y = 1 are of course sin(t) and cos(t):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sol</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="p">),</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sol</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="mf">0</span><span class="p">]</span>
@@ -290,6 +314,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">0.5403864502649686944799696</span>
 </pre></div>
+</div>
 <p>When integrating from 0 to 1, the result with a step size of 1e-4 is in this case accurate to about 18 digits. Currently, <tt class="docutils literal"><span class="pre">odeint</span></tt> uses a simple implementation the fourth-order Runge-Kutta algorithm, with which one must unfortunately set an impractically small step size to obtain much higher precision.</p>
 </div>
 </div>
@@ -300,7 +325,7 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3>Table Of Contents</h3>
+            <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Integration</a><ul>
 <li><a class="reference external" href="#basic-numerical-integration-quad">Basic numerical integration (<tt class="docutils literal"><span class="pre">quad</span></tt>)</a><ul>
@@ -330,7 +355,7 @@
             <ul class="this-page-menu">
               <li><a href="_sources/integration.txt">Show Source</a></li>
             </ul>
-            <h3>Quick search</h3>
+          <h3>Quick search</h3>
             <form class="search" action="search.html" method="get">
               <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
               <input type="hidden" name="check_keywords" value="yes" />
@@ -347,9 +372,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
-        <li class="right" >
           <a href="summation.html" title="Summation"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -360,8 +382,8 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 12, 2008.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+      Last updated on Nov 14, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

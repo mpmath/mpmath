@@ -2,6 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Speed tricks &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,8 +16,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="contents" title="Global table of contents" href="contents.html" />
-    <link rel="index" title="Global index" href="genindex.html" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="prev" title="Technical details" href="technical.html" />
@@ -28,9 +28,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
         <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
@@ -54,36 +51,40 @@
 </ul>
 <p>Here follows a simple example demonstrating some of these optimizations.</p>
 <p>Original algorithm (0.028 seconds):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="mf">0.1</span>
 </pre></div>
+</div>
 <p>Preconverting the float constant (0.0080 seconds):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="n">one_tenth</span>
 </pre></div>
+</div>
 <p>With psyco (0.0036 seconds):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">x</span> <span class="o">+=</span> <span class="n">one_tenth</span>
 </pre></div>
+</div>
 <p>With psyco and low-level functions (0.0017 seconds):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">psyco</span><span class="p">;</span> <span class="n">psyco</span><span class="o">.</span><span class="n">full</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath.libmpf</span> <span class="k">import</span> <span class="n">from_int</span><span class="p">,</span> <span class="n">from_float</span><span class="p">,</span> <span class="n">mpf_add</span><span class="p">,</span> <span class="n">round_nearest</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">from_int</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">one_tenth</span> <span class="o">=</span> <span class="n">from_float</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">x</span> <span class="o">=</span> <span class="n">mpf_add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">one_tenth</span><span class="p">,</span> <span class="mf">53</span><span class="p">,</span> <span class="n">round_nearest</span><span class="p">)</span>
 </pre></div>
+</div>
 <p>The last version is 16.5 times faster than the first (however, this example is extreme; the gain will usually be smaller in realistic calculations).</p>
 <p>Many calculations can be done with ordinary floating-point arithmetic, and only in special cases require multiprecision arithmetic (for example to avoid overflows in corner cases). In these situations, it may be possible to write code that uses fast regular floats by default, and automatically (or manually) falls backs to mpmath only when needed. Python&#8217;s dynamic namespaces and ability to compile code on the fly are helpful. Here is a simple (probably not failsafe) example:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">math</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">math</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">evalmath</span><span class="p">(</span><span class="n">expr</span><span class="p">):</span>
@@ -107,6 +108,7 @@
 <span class="go">1.0</span>
 </pre></div>
 </div>
+</div>
 
 
           </div>
@@ -120,7 +122,7 @@
             <ul class="this-page-menu">
               <li><a href="_sources/speedtricks.txt">Show Source</a></li>
             </ul>
-            <h3>Quick search</h3>
+          <h3>Quick search</h3>
             <form class="search" action="search.html" method="get">
               <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
               <input type="hidden" name="check_keywords" value="yes" />
@@ -137,9 +139,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
-        <li class="right" >
           <a href="technical.html" title="Technical details"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
@@ -147,8 +146,8 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 12, 2008.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+      Last updated on Nov 14, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

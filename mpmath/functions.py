@@ -247,14 +247,15 @@ def altinvfunc(f, name, desc):
     return g
 
 sqrt = mpfunc('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, "principal square root", libmpi.mpi_sqrt)
-sqrt.__doc__ = """
-sqrt(x) computes the principal square root of x. For positive
+sqrt.__doc__ = r"""
+``sqrt(x)`` computes the principal square root of *x*. For positive
 real numbers, this is simply the  positive square root. For
 arbitrary complex numbers, the principal square root is
-defined to satisfy sqrt(x) = exp(ln(x)/2).
+defined to satisfy :math:`\sqrt x = \exp(\log(x)/2)`. It
+thus has a branch cut along the negative half real axis.
 
-For all mpmath numbers x, calling sqrt(x) is equivalent to
-performing x**0.5.
+For all mpmath numbers *x*, calling ``sqrt(x)`` is equivalent to
+performing ``x**0.5``.
 
 **Examples**
 
@@ -294,8 +295,9 @@ Square root evaluation is fast at huge precision::
 
 cbrt = mpfunc('cbrt', libelefun.mpf_cbrt, libmpc.mpc_cbrt, "principal cubic root")
 cbrt.__doc__ = """
-cbrt(x) computes the cube root of x. This function is faster and
-more accurate than raising to a floating-point fraction::
+``cbrt(x)`` computes the cube root of *x*, :math:`x^{1/3}`. This
+function is faster and more accurate than raising to a floating-point
+fraction::
 
     >>> from mpmath import *
     >>> mp.dps = 15
@@ -305,9 +307,9 @@ more accurate than raising to a floating-point fraction::
     mpf('5.0')
 
 Every nonzero complex number has three cube roots. This function
-returns the cube root defined by exp(ln(x)/3) where the principal
-branch of the natural logarithm is used. Note that this does not
-give a real cube root for negative real numbers::
+returns the cube root defined by :math:`\exp(\log(x)/3)` where the
+principal branch of the natural logarithm is used. Note that this
+does not give a real cube root for negative real numbers::
 
     >>> print cbrt(-1)
     (0.5 + 0.866025403784439j)
@@ -349,7 +351,8 @@ cospi = mpfunc('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, "")
 sinpi = mpfunc('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, "")
 
 sinpi.__doc__ = """
-Computes sin(pi*x), more accurately than the expression ``sin(pi*x)``::
+Computes :math:`\sin(\pi x)`, more accurately than the expression
+``sin(pi*x)``::
 
     >>> from mpmath import *
     >>> mp.dps = 15
@@ -360,7 +363,8 @@ Computes sin(pi*x), more accurately than the expression ``sin(pi*x)``::
 """
 
 cospi.__doc__ = """
-Computes cos(pi*x), more accurately than the expression ``cos(pi*x)``::
+Computes :math:`\cos(\pi x)`, more accurately than the expression
+``cos(pi*x)``::
 
     >>> from mpmath import *
     >>> mp.dps = 15
@@ -372,11 +376,17 @@ Computes cos(pi*x), more accurately than the expression ``cos(pi*x)``::
 
 @funcwrapper
 def sinc(x):
-    """
-    sinc(x) computes the unnormalized sinc function, defined as
-    sinc(x) = sin(x)/x and with the singularity at x = 0 removed
-    so that sinc(0) = 1. See :func:`sincpi` for the normalized
-    sinc function.
+    r"""
+    ``sinc(x)`` computes the unnormalized sinc function, defined as
+
+    .. math ::
+
+        \mathrm{sinc}(x) = \begin{cases}
+            \sin(x)/x, & \mbox{if } x \ne 0 \\
+            1,         & \mbox{if } x = 0.
+        \end{cases}
+
+    See :func:`sincpi` for the normalized sinc function.
 
     Simple values and limits include::
 
@@ -404,9 +414,20 @@ def sinc(x):
 
 @funcwrapper
 def sincpi(x):
-    """
-    sincpi(x) computes the normalized sinc function, sinc(pi*x)/(pi*x).
-    This normalization entails that the function integrates
+    r"""
+    ``sincpi(x)`` computes the normalized sinc function, defined as
+
+    .. math ::
+
+        \mathrm{sinc}_{\pi}(x) = \begin{cases}
+            \sin(\pi x)/(\pi x), & \mbox{if } x \ne 0 \\
+            1,                   & \mbox{if } x = 0.
+        \end{cases}
+
+    Equivalently, we have
+    :math:`\mathrm{sinc}_{\pi}(x) = \mathrm{sinc}(\pi x)`.
+
+    The normalization entails that the function integrates
     to unity over the entire real line::
 
         >>> from mpmath import *
@@ -1544,39 +1565,41 @@ def _check_pos(x):
 
 @funcwrapper
 def gammainc(z, a=0, b=inf, regularized=False):
-    """
+    r"""
     ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
-    gamma function with integration limits [a, b]::
+    gamma function with integration limits :math:`[a, b]`:
 
-                            b
-                             -
-                            |   z-1  -t
-        gammainc(z, a, b) = |  t    e  dt
-                            |
-                           -
-                            a
+    .. math ::
+
+      \Gamma(z,a,b) = \int_a^b t^{z-1} e^{-t} \, dt
 
     The generalized incomplete gamma function reduces to the
     following special cases when one or both endpoints are fixed:
 
-    * With a=0 and b=inf, it is simply the standard ("complete")
-      gamma function
-    * With b=inf, it becomes the "upper" incomplete gamma function
-    * With a=0, it becomes the "lower" incomplete gamma function
+    * :math:`\Gamma(z,0,\infty)` is the standard ("complete")
+      gamma function, :math:`\Gamma(z)` (available directly
+      as the mpmath function :func:`gamma`)
+    * :math:`\Gamma(z,a,\infty)` is the "upper" incomplete gamma
+      function, :math:`\Gamma(z,a)`
+    * :math:`\Gamma(z,0,b)` is the "lower" incomplete gamma
+      function, :math:`\gamma(z,b)`.
 
-    In standard mathematical notation, the upper gamma function
-    given by ``gammainc(z,a)`` is denoted by "G(z,a)" and the
-    lower gamma function ``gammainc(z,0,b)`` is denoted by "g(z,b)"
-    (here "G" and "g" should be read as the upper- and lowercase
-    Greek letters.) However, some authors reverse the order of
-    the arguments, so care is necessary.
+    Of course, we have
+    :math:`\Gamma(z,0,x) + \Gamma(z,x,\infty) = \Gamma(z)`
+    for all *z* and *x*.
 
-    Of course, we have gammainc(z,0,x) + gammainc(z,x) = gamma(z)
-    for all z and x.
+    Note however that some authors reverse the order of the
+    arguments when defining the lower and upper incomplete
+    gamma function, so one should be careful to get the correct
+    definition.
 
-    Given the keyword option ``regularized=True``, :func:`gammainc`
-    computes the "regularized" incomplete gamma function
-    gammainc(z,a,b)/gamma(z).
+    If also given the keyword argument ``regularized=True``,
+    :func:`gammainc` computes the "regularized" incomplete gamma
+    function
+
+    .. math ::
+
+      P(z,a,b) = \frac{\Gamma(z,a,b)}{\Gamma(z)}
 
     **Examples**
 
@@ -1602,8 +1625,8 @@ def gammainc(z, a=0, b=inf, regularized=False):
         1.03042542723211 1.03042542723211
 
     If z is an integer, the recurrence reduces the incomplete gamma
-    function to P(a)*exp(-a) + Q(b)*exp(-b) where P and Q
-    are polynomials::
+    function to :math:`P(a) \exp(-a) + Q(b) \exp(-b)` where *P* and
+    *Q* are polynomials::
 
         >>> mp.dps = 15
         >>> print gammainc(1, 2), exp(-2)
@@ -1657,18 +1680,14 @@ def gammainc(z, a=0, b=inf, regularized=False):
 erf = mpfunc("erf", libhyper.mpf_erf, libhyper.mpc_erf,
     "Error function, erf(z)")
 
-erf.__doc__ = """
-Computes the error function, erf(z). The error function is
-the antiderivative of the Gaussian function exp(-t^2). More
-precisely::
+erf.__doc__ = r"""
+Computes the error function, :math:`\mathrm{erf}(x)`. The error
+function is the normalized antiderivative of the Gaussian function
+:math:`\exp(-t^2)`. More precisely,
 
-                   z
-                    -
-              2    |          2
-   erf(z) = -----  |   exp( -t ) dt
-              1/2  |
-            pi    -
-                   0
+.. math::
+
+  \mathrm{erf}(x) = \frac{2}{\sqrt \pi} \int_0^x \exp(-t^2) \,dt
 
 **Basic examples**
 
@@ -1687,7 +1706,8 @@ Simple values and limits include::
     >>> print erf(-inf)
     -1.0
 
-For large real z, erf(z) approaches 1 very rapidly::
+For large real *x*, :math:`\mathrm{erf}(x)` approaches 1 very
+rapidly::
 
     >>> print erf(3)
     0.999977909503001
@@ -1711,8 +1731,9 @@ supports complex numbers::
 
 **Related functions**
 
-See also :func:`erfc`, which is more accurate for large z,
-and :func:`erfi` which gives the antiderivative of exp(t^2).
+See also :func:`erfc`, which is more accurate for large *z*,
+and :func:`erfi` which gives the antiderivative of
+:math:`\exp(t^2)`.
 
 The Fresnel integrals :func:`fresnels` and :func:`fresnelc`
 are also related to the error function.
@@ -1722,10 +1743,11 @@ are also related to the error function.
 erfc = mpfunc("erfc", libhyper.mpf_erfc, libhyper.mpc_erfc,
     "Complementary error function, erfc(z) = 1-erf(z)")
 
-erfc.__doc__ = """
-Computes the complementary error function, erfc(z) = 1-erf(z).
+erfc.__doc__ = r"""
+Computes the complementary error function,
+:math:`\mathrm{erfc}(x) = 1-\mathrm{erf}(x)`.
 This function avoids cancellation that occurs when naively
-computing the complementary error function as 1-erf(z)::
+computing the complementary error function as ``1-erf(x)``::
 
     >>> from mpmath import *
     >>> mp.dps = 15
@@ -1744,22 +1766,20 @@ arguments::
 
 @funcwrapper
 def erfi(z):
-    """
-    Computes the imaginary error function, erfi(z). The imaginary
-    error function is defined in analogy with the error function,
-    but with a positive sign in the integrand::
+    r"""
+    Computes the imaginary error function, :math:`\mathrm{erfi}(z)`.
+    The imaginary error function is defined in analogy with the
+    error function, but with a positive sign in the integrand:
 
-                       z
-                        -
-                  2    |         2
-       erf(z) = -----  |   exp( t ) dt
-                  1/2  |
-                pi    -
-                       0
+    .. math ::
 
-    Whereas the error function rapidly converges to 1 as z grows,
+      \mathrm{erfi}(x) = \frac{2}{\sqrt \pi} \int_0^x \exp(t^2) \,dt
+
+    Whereas the error function rapidly converges to 1 as *x* grows,
     the imaginary error function rapidly diverges to infinity.
-    The functions are related as erfi(z) = -j*erf(z*j).
+    The functions are related as
+    :math:`\mathrm{erfi}(x) = -i \mathrm{erf}(ix)` for all complex
+    numbers *x*.
 
     **Examples**
 
@@ -1799,9 +1819,15 @@ def erfi(z):
 
 @funcwrapper
 def erfinv(x):
-    """
-    Computes the inverse error function, satisfying erf(erfinv(x)) =
-    erfinv(erf(x)) = x. This function is defined only for -1 <= x <= 1.
+    r"""
+    Computes the inverse error function, satisfying
+
+    .. math ::
+
+        \mathrm{erf}(\mathrm{erfinv}(x)) =
+        \mathrm{erfinv}(\mathrm{erf}(x)) = x.
+
+    This function is defined only for :math:`-1 \le x \le 1`.
 
     **Examples**
 
@@ -1872,9 +1898,10 @@ def erfinv(x):
 
 @funcwrapper
 def npdf(x, mu=0, sigma=1):
-    """
-    npdf(x, mu=0, sigma=1) -- probability density function of a
-    normal distribution with mean value mu and variance sigma^2.
+    r"""
+    ``npdf(x, mu=0, sigma=1)`` evaluates the probability density
+    function of a normal distribution with mean value :math:`\mu`
+    and variance :math:`\sigma^2`.
 
     Elementary properties of the probability distribution can
     be verified using numerical integration::
@@ -1896,9 +1923,10 @@ def npdf(x, mu=0, sigma=1):
 
 @funcwrapper
 def ncdf(x, mu=0, sigma=1):
-    """
-    ncdf(x, mu=0, sigma=1) -- cumulative distribution function of
-    a normal distribution with mean value mu and variance sigma^2.
+    r"""
+    ``ncdf(x, mu=0, sigma=1)`` evaluates the cumulative distribution
+    function of a normal distribution with mean value :math:`\mu`
+    and variance :math:`\sigma^2`.
 
     See also :func:`npdf`, which gives the probability density.
 
@@ -1935,25 +1963,25 @@ def ncdf(x, mu=0, sigma=1):
 
 @funcwrapper
 def ei(z):
-    """
-    Computes the exponential integral, Ei(z). The exponential
-    integral is defined as the following integral (which,
-    at t = 0, must be interpreted as a Cauchy principal value)::
+    r"""
+    Computes the exponential integral or Ei-function,
+    :math:`\mathrm{Ei}(x)`. The exponential integral is
+    defined as
 
-                z
-                 -    t
-                |    e
-       Ei(z) =  |   ---- dt
-                |    t
-               -
-               -oo
+    .. math ::
 
-    For real z, it can be thought of as behaving roughly
-    like Ei(z) ~= exp(z) + log(abs(z)).
+      \mathrm{Ei}(x) = \int_{-\infty }^x \frac{e^t}{t} \, dt
+
+    When the integration range includes :math:`t = 0`, the
+    exponential integral is interpreted as providing the
+    Cauchy principal value.
+
+    For real *x*, the Ei-function behaves roughly like
+    :math:`\mathrm{Ei}(x) \approx \exp(x) + \log(|x|)`.
 
     This function should not be confused with the family of
-    related functions denoted by E1, E2, ... which are also
-    called exponential integrals.
+    related functions denoted by :math:`E_n` which are also
+    called "exponential integrals".
 
     **Basic examples**
 
@@ -1970,7 +1998,7 @@ def ei(z):
         >>> print ei(-inf)
         0.0
 
-    For z < 0, the defining integral can be evaluated
+    For :math:`x < 0`, the defining integral can be evaluated
     numerically as a reference::
 
         >>> print ei(-4)
@@ -2013,7 +2041,7 @@ def ei(z):
     For details, see [1].
 
     The exponential integral is also a special case of the
-    hypergeometric function 2F2::
+    hypergeometric function :math:`\,_2F_2`::
 
         >>> z = 0.6
         >>> print z*hyper([1,1],[2,2],z) + (ln(z)-ln(1/z))/2 + euler
@@ -2023,11 +2051,11 @@ def ei(z):
 
     **References**
 
-    [1] Relations between Ei and other functions:
-        http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
+    1. Relations between Ei and other functions:
+       http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
 
-    [2] Abramowitz & Stegun, section 5:
-        http://www.math.sfu.ca/~cbm/aands/page_228.htm
+    2. Abramowitz & Stegun, section 5:
+       http://www.math.sfu.ca/~cbm/aands/page_228.htm
 
     """
     if z == inf:
@@ -2044,15 +2072,26 @@ def ei(z):
 
 @funcwrapper
 def li(z):
-    """
-    Computes the Logarithmic integral, li(z).
+    r"""
+    Computes the logarithmic integral or li-function
+    :math:`\mathrm{li}(x)`, defined by
 
-    The logarithmic integral is defined as the integral from 0 to z
-    of 1/ln(t). It has a singularity at z = 1.
+    .. math ::
 
-    Note that there is a second logarithmic integral defined by
-    Li(z) = integral from 2 to z of 1/ln(t). This "offset
-    logarithmic integral" can be computed as Li(z) = li(z) - li(2).
+        \mathrm{li}(x) = \int_0^x \frac{1}{\log t} \, dt
+
+    The logarithmic integral has a singularity at :math:`x = 1`.
+
+    Note that there is a second logarithmic integral, the Li
+    function, defined by
+
+    .. math ::
+
+        \mathrm{Li}(x) = \int_2^x \frac{1}{\log t} \, dt
+
+    This "offset logarithmic integral" can be computed via
+    :func:`li` using the simple identity
+    :math:`\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)`.
 
     **Examples**
 
@@ -2087,7 +2126,7 @@ def li(z):
         >>> print li(3)
         2.1635885946671919729
 
-    The logarithmic integral grows like O(x/ln(x))::
+    The logarithmic integral grows like :math:`O(x/\log(x))`::
 
         >>> mp.dps = 15
         >>> x = 10**100
@@ -2097,10 +2136,10 @@ def li(z):
         4.3619719871407e+97
 
     The prime number theorem states that the number of primes less
-    than x is asymptotic to li(x). For example, it is known that
-    there are exactly 1,925,320,391,606,803,968,923 prime numbers
-    less than 10^23 [1]. The logarithmic integral provides a very
-    accurate estimate::
+    than *x* is asymptotic to :math:`\mathrm{li}(x)`. For example,
+    it is known that there are exactly 1,925,320,391,606,803,968,923
+    prime numbers less than 10^23 [1]. The logarithmic integral
+    provides a very accurate estimate::
 
         >>> print li(2) + li(10**23)
         1.92532039161405e+21
@@ -2114,9 +2153,9 @@ def li(z):
 
     **References**
 
-    [1] http://mathworld.wolfram.com/PrimeCountingFunction.html
+    1. http://mathworld.wolfram.com/PrimeCountingFunction.html
 
-    [2] http://mathworld.wolfram.com/LogarithmicIntegral.html
+    2. http://mathworld.wolfram.com/LogarithmicIntegral.html
 
     """
     if not z:

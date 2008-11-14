@@ -63,7 +63,6 @@ div.related {
     background-color: #133f52;
     color: #fff;
     width: 100%;
-    height: 30px;
     line-height: 30px;
     font-size: 90%;
 }
@@ -99,6 +98,10 @@ div.sphinxsidebar h3 {
     font-weight: normal;
     margin: 0;
     padding: 0;
+}
+
+div.sphinxsidebar h3 a {
+    color: white;
 }
 
 div.sphinxsidebar h4 {
@@ -584,12 +587,27 @@ p.rubric {
     font-weight: bold;
 }
 
+/* Sidebars */
+
+div.sidebar {
+    margin: 0 0 0.5em 1em;
+    border: 1px solid #ddb;
+    padding: 7px 7px 0 7px;
+    background-color: #ffe;
+    width: 40%;
+    float: right;
+}
+
+p.sidebar-title {
+    font-weight: bold;
+}
+
 /* "Topics" */
 
 div.topic {
     background-color: #eee;
     border: 1px solid #ccc;
-    padding: 0 7px 0 7px;
+    padding: 7px 7px 0 7px;
     margin: 10px 0 10px 0;
 }
 
@@ -615,7 +633,7 @@ div.admonition dl {
     margin-bottom: 0;
 }
 
-div.admonition p {
+div.admonition p.admonition-title + p {
     display: inline;
 }
 
@@ -812,6 +830,18 @@ form.comment textarea {
     background-color: #fda;
     padding: 5px;
     border: 3px solid red;
+}
+
+div.math {
+    text-align: center;
+}
+
+span.eqno {
+    float: right;
+}
+
+img.logo {
+    border: 0;
 }
 
 /* :::: PRINT :::: */

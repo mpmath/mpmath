@@ -2,6 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
     <title>Limits &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,8 +16,7 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="contents" title="Global table of contents" href="contents.html" />
-    <link rel="index" title="Global index" href="genindex.html" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Interpolation" href="interpolation.html" />
@@ -29,9 +29,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
         <li class="right" >
           <a href="interpolation.html" title="Interpolation"
              accesskey="N">next</a> |</li>
@@ -52,37 +49,41 @@
 <div class="section" id="richardson-extrapolation-limit">
 <h2>Richardson extrapolation (<tt class="docutils literal"><span class="pre">limit</span></tt>)<a class="headerlink" href="#richardson-extrapolation-limit" title="Permalink to this headline">¶</a></h2>
 <p>Numerical limits of functions and sequences can be computed with <tt class="docutils literal"><span class="pre">limit</span></tt>, which attempts to use Richardson extrapolation to accelerate their convergence. Here is one limit representation for e and one for pi:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
+</div>
 <p>Richardson extrapolation works well here, as both results are accurate to full precision. For comparison, plugging in a large n value directly gives only a few correct digits:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">6</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">e</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
 <span class="go">1.35914e-6</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">pi</span> <span class="o">-</span> <span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">7.85398e-7</span>
 </pre></div>
+</div>
 <p>Here is a simple limit of a function at a finite point (x = 1):</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">4</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">4</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">1.3333333333333333333333333333333333333333333333333</span>
 </pre></div>
+</div>
 <p>As for <tt class="docutils literal"><span class="pre">diff</span></tt>, the optional <tt class="docutils literal"><span class="pre">direction</span></tt> keyword argument can be used to specify the direction from which to approach x. By default (<tt class="docutils literal"><span class="pre">direction</span> <span class="pre">=</span> <span class="pre">-1</span></tt>) the point is approached from above.</p>
 <p>Richardson extrapolation is not a universal solution. Here is one limit for which it does not work so well:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span> <span class="o">-</span> <span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">),</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">0.999906468619675</span>
 </pre></div>
+</div>
 <p>Indeed, this limit converges so quickly that acceleration is unnecessary; when applied, it almost does more harm than good.</p>
 <p>The value returned by <tt class="docutils literal"><span class="pre">limit</span></tt> is also likely to be misleading if the real limit is divergent. Currently, <tt class="docutils literal"><span class="pre">limit</span></tt> provides no way to automatically estimate the error, so it must be used with care (trial and error often works).</p>
 </div>
 <div class="section" id="neat-examples">
 <h2>Neat examples<a class="headerlink" href="#neat-examples" title="Permalink to this headline">¶</a></h2>
 <p>Computing the constant factor in Stirling&#8217;s formula, without and with acceleration:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">e</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># only good to ~7 digits, despite computing (10**6)! which has</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># over 5 million digits when written out exactly</span>
@@ -94,8 +95,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">2.5066282746310005024157652848110452530069867406099</span>
 </pre></div>
+</div>
 <p>Calculating Euler&#8217;s constant from its definition as the limiting difference between the harmonic series and the natural logarithm:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">n</span><span class="p">)])</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c"># this is agonizingly slow and only gives 5 digits</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">5</span><span class="p">)</span>
@@ -108,6 +110,7 @@
 </pre></div>
 </div>
 </div>
+</div>
 
 
           </div>
@@ -115,7 +118,7 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3>Table Of Contents</h3>
+            <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Limits</a><ul>
 <li><a class="reference external" href="#richardson-extrapolation-limit">Richardson extrapolation (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
@@ -132,7 +135,7 @@
             <ul class="this-page-menu">
               <li><a href="_sources/limits.txt">Show Source</a></li>
             </ul>
-            <h3>Quick search</h3>
+          <h3>Quick search</h3>
             <form class="search" action="search.html" method="get">
               <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
               <input type="hidden" name="check_keywords" value="yes" />
@@ -149,9 +152,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
-        <li class="right" >
           <a href="interpolation.html" title="Interpolation"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -162,8 +162,8 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 12, 2008.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+      Last updated on Nov 14, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->
