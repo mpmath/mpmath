@@ -507,23 +507,98 @@ at <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="
 <dl class="function">
 <dt id="mpmath.functions.agm">
 <!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
-<dd><p>agm(a, b) computes the arithmetic-geometric mean of a and b,
-defined as the limit of the iteration a, b = (a+b)/2, sqrt(a*b).</p>
-<p>This function can be called with a single argument, computing
-agm(a,1) = agm(1,a).</p>
+<dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and
+<img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, defined as the limit of the following iteration:</p>
+<div class="math">
+<p><img src="../_images/math/8a1590a455bc984da91424d957f5f94dff23cac2.png" alt="a_0 = a
+
+b_0 = b
+
+a_{n+1} = \frac{a_n+b_n}{2}
+
+b_{n+1} = \sqrt{a_n b_n}" />
+</div></p><p>This function can be called with a single argument, computing
+<img src="../_images/math/123faed9086f29247221027e0b0abe89def0c6c5.png" alt="\mathrm{agm}(a,1) = \mathrm{agm}(1,a)" />.</p>
 <p><strong>Examples</strong></p>
-<p>A formula for gamma(1/4):</p>
+<p>It is a well-known theorem that the geometric mean of
+two distinct positive numbers is less than the arithmetic
+mean. It follows that the arithmetic-geometric mean lies
+between the two means:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
+<span class="go">3.46410161513775</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="go">3.48202767635957</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">3.5</span>
+</pre></div>
+</div>
+<p>The arithmetic-geometric mean is scale-invariant:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">*</span><span class="n">e</span><span class="p">,</span> <span class="mf">10</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">29.261085515723</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">10</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+<span class="go">29.261085515723</span>
+</pre></div>
+</div>
+<p>As an order-of-magnitude estimate, <img src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x" />
+for large <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">643448704.760133</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
+<span class="go">1.34814309345871e+48</span>
+</pre></div>
+</div>
+<p>The arithmetic-geometric mean can also be computed for complex
+numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(2.51055133276184 + 0.547394054060638j)</span>
+</pre></div>
+</div>
+<p>The AGM iteration converges very quickly (each step doubles
+the number of correct digits), so <tt class="xref docutils literal"><span class="pre">agm()</span></tt> supports efficient
+high-precision evaluation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;1679581912&#39;</span>
+</pre></div>
+</div>
+<p><strong>Mathematical relations</strong></p>
+<p>The arithmetic-geometric mean may be used to evaluate the
+following two parametric definite integrals:</p>
+<div class="math">
+<p><img src="../_images/math/a176929675b1657b4fa9a9bab0d781828f64072c.png" alt="I_1 = \int_0^{\infty}
+  \frac{1}{\sqrt{(x^2+a^2)(x^2+b^2)}} \,dx
+
+I_2 = \int_0^{\pi/2}
+  \frac{1}{\sqrt{a^2 \cos^2(x) + b^2 \sin^2(x)}} \,dx" />
+</div></p><p>We have:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">a</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">b</span><span class="o">**</span><span class="mf">2</span><span class="p">))</span><span class="o">**-</span><span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">0.451115405388492</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="go">0.451115405388492</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+<span class="go">0.451115405388492</span>
+</pre></div>
+</div>
+<p>A formula for <img src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">3.62560990822191</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)))</span>
 <span class="go">3.62560990822191</span>
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">agm()</span></tt> may not give an appropriate branch for complex
-arguments a and b.</p>
+<p>The branch cut chosen for complex <img src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and <img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is somewhat
+arbitrary.</p>
 </dd></dl>
 
 </div>

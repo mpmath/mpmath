@@ -862,4 +862,13 @@ img.logo {
     }
 }
 
-img { vertical-align: middle; }
+/* inline formulas */
+p img { vertical-align: middle; }
+
+/* center display formulas */
+div.math img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+

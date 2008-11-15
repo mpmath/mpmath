@@ -2495,19 +2495,100 @@ def ellipk(m):
 
 @funcwrapper
 def agm(a, b=1):
-    """
-    agm(a, b) computes the arithmetic-geometric mean of a and b,
-    defined as the limit of the iteration a, b = (a+b)/2, sqrt(a*b).
+    r"""
+    ``agm(a, b)`` computes the arithmetic-geometric mean of `a` and
+    `b`, defined as the limit of the following iteration:
+
+    .. math ::
+
+        a_0 = a
+
+        b_0 = b
+
+        a_{n+1} = \frac{a_n+b_n}{2}
+
+        b_{n+1} = \sqrt{a_n b_n}
 
     This function can be called with a single argument, computing
-    agm(a,1) = agm(1,a).
+    `\mathrm{agm}(a,1) = \mathrm{agm}(1,a)`.
 
     **Examples**
 
-    A formula for gamma(1/4)::
+    It is a well-known theorem that the geometric mean of
+    two distinct positive numbers is less than the arithmetic
+    mean. It follows that the arithmetic-geometric mean lies
+    between the two means::
 
         >>> from mpmath import *
         >>> mp.dps = 15
+        >>> a = mpf(3)
+        >>> b = mpf(4)
+        >>> print sqrt(a*b)
+        3.46410161513775
+        >>> print agm(a,b)
+        3.48202767635957
+        >>> print (a+b)/2
+        3.5
+
+    The arithmetic-geometric mean is scale-invariant::
+
+        >>> print agm(10*e, 10*pi)
+        29.261085515723
+        >>> print 10*agm(e, pi)
+        29.261085515723
+
+    As an order-of-magnitude estimate, `\mathrm{agm}(1,x) \approx x`
+    for large `x`::
+
+        >>> print agm(10**10)
+        643448704.760133
+        >>> print agm(10**50)
+        1.34814309345871e+48
+
+    The arithmetic-geometric mean can also be computed for complex
+    numbers::
+
+        >>> print agm(3, 2+j)
+        (2.51055133276184 + 0.547394054060638j)
+
+    The AGM iteration converges very quickly (each step doubles
+    the number of correct digits), so :func:`agm` supports efficient
+    high-precision evaluation::
+
+        >>> mp.dps = 10000
+        >>> a = agm(1,2)
+        >>> str(a)[-10:]
+        '1679581912'
+
+    **Mathematical relations**
+
+    The arithmetic-geometric mean may be used to evaluate the
+    following two parametric definite integrals:
+
+    .. math ::
+
+      I_1 = \int_0^{\infty}
+        \frac{1}{\sqrt{(x^2+a^2)(x^2+b^2)}} \,dx
+
+      I_2 = \int_0^{\pi/2}
+        \frac{1}{\sqrt{a^2 \cos^2(x) + b^2 \sin^2(x)}} \,dx
+
+    We have::
+
+        >>> mp.dps = 15
+        >>> a = 3
+        >>> b = 4
+        >>> f1 = lambda x: ((x**2+a**2)*(x**2+b**2))**-0.5
+        >>> f2 = lambda x: ((a*cos(x))**2 + (b*sin(x))**2)**-0.5
+        >>> print quad(f1, [0, inf])
+        0.451115405388492
+        >>> print quad(f2, [0, pi/2])
+        0.451115405388492
+        >>> print pi/(2*agm(a,b))
+        0.451115405388492
+
+    A formula for `\Gamma(1/4)`::
+
         >>> print gamma(0.25)
         3.62560990822191
         >>> print sqrt(2*sqrt(2*pi**3)/agm(1,sqrt(2)))
@@ -2515,13 +2596,13 @@ def agm(a, b=1):
 
     **Possible issues**
 
-    :func:`agm` may not give an appropriate branch for complex
-    arguments a and b.
+    The branch cut chosen for complex `a` and `b` is somewhat
+    arbitrary.
 
     """
     if not a or not b:
         return a*b
-    weps = eps * 16
+    weps = eps * 16 * max(abs(a), abs(b))
     half = mpf(0.5)
     while abs(a-b) > weps:
         a, b = (a+b)*half, (a*b)**half
@@ -2529,17 +2610,221 @@ def agm(a, b=1):
 
 @funcwrapper
 def jacobi(n, a, b, x):
-    """Jacobi polynomial P_n^(a,b)(x)."""
+    r"""
+    ``jacobi(n, a, b, x)`` evaluates the Jacobi polynomial
+    `P_n^{(a,b)}(x)`. The Jacobi polynomials are a special
+    case of the hypergeometric function `\,_2F_1` given by:
+
+    .. math ::
+
+        P_n^{(a,b)}(x) = {n+a \choose n}
+          \,_2F_1\left(-n,1+a+b+n,a+1,\frac{1-x}{2}\right).
+
+    Note that definition generalizes to non-integral values
+    of `n`. When `n` is an integer, the hypergeometric series
+    terminates after a finite number of terms, giving
+    a polynomial in `x`.
+
+    **Evaluation of Jacobi polynomials**
+
+    A special evaluation is `P_n^{(a,b)}(1) = {n+a \choose n}`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print jacobi(4, 0.5, 0.25, 1)
+        2.4609375
+        >>> print binomial(4+0.5, 4)
+        2.4609375
+
+    A Jacobi polynomial of degree `n` is equal to its
+    Taylor polynomial of degree `n`. The explicit
+    coefficients of Jacobi polynomials can therefore
+    be recovered easily using :func:`taylor`::
+
+        >>> nprint(taylor(lambda x: jacobi(0,1,2,x), 0, 0))
+        [1.0]
+        >>> nprint(taylor(lambda x: jacobi(1,1,2,x), 0, 1))
+        [-0.5, 2.5]
+        >>> nprint(taylor(lambda x: jacobi(2,1,2,x), 0, 2))
+        [-0.75, -1.5, 5.25]
+        >>> nprint(taylor(lambda x: jacobi(3,1,2,x), 0, 3))
+        [0.5, -3.5, -3.5, 10.5]
+        >>> nprint(taylor(lambda x: jacobi(4,1,2,x), 0, 4))
+        [0.625, 2.5, -11.25, -7.5, 20.625]
+
+    For nonintegral `n`, the Jacobi "polynomial" is no longer
+    a polynomial::
+
+        >>> nprint(taylor(lambda x: jacobi(0.5,1,2,x), 0, 4))
+        [0.309983, 1.84119, -1.26933, 1.26699, -1.34808]
+
+    **Orthogonality**
+
+    The Jacobi polynomials are orthogonal on the interval
+    `[-1, 1]` with respect to the weight function
+    `w(x) = (1-x)^a (1+x)^b`. That is,
+    `w(x) P_n^{(a,b)}(x) P_m^{(a,b)}(x)` integrates to
+    zero if `m \ne n` and to a nonzero number if `m = n`.
+
+    The orthogonality is easy to verify using numerical
+    quadrature::
+
+        >>> P = jacobi
+        >>> f = lambda x: (1-x)**a * (1+x)**b * P(m,a,b,x) * P(n,a,b,x)
+        >>> a = 2
+        >>> b = 3
+        >>> m, n = 3, 4
+        >>> nprint(quad(f, [-1, 1]), 1)
+        4.0e-23
+        >>> m, n = 4, 4
+        >>> print quad(f, [-1, 1])
+        1.9047619047619
+
+    **Differential equation**
+
+    The Jacobi polynomials are solutions of the differential
+    equation
+
+    .. math ::
+
+      (1-x^2) y'' + (b-a-(a+b+2)x) y' + n (n+a+b+1) y = 0.
+
+    We can verify that :func:`jacobi` approximately satisfies
+    this equation::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> a = 2.5
+        >>> b = 4
+        >>> n = 3
+        >>> y = lambda x: jacobi(n,a,b,x)
+        >>> x = pi
+        >>> A0 = n*(n+a+b+1)*y(x)
+        >>> A1 = (b-a-(a+b+2)*x)*diff(y,x)
+        >>> A2 = (1-x**2)*diff(y,x,2)
+        >>> nprint(A2 + A1 + A0, 1)
+        4.0e-12
+
+    The difference of order `10^{-12}` is as close to zero as
+    it could be at 15-digit working precision, since the terms
+    are large::
+
+        >>> print A0, A1, A2
+        26560.2328981879 -21503.7641037294 -5056.46879445852
+
+    """
     return binomial(n+a,n) * hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
 
 @funcwrapper
 def legendre(n, x):
-    """Legendre polynomial P_n(x)."""
+    r"""
+    ``legendre(n, x)`` evaluates the Legendre polynomial `P_n(x)`.
+    The Legendre polynomials are given by the formula
+
+    .. math ::
+
+        P_n(x) = \frac{1}{2^n n!} \frac{d^n}{dx^n} (x^2 -1)^n.
+
+    Alternatively, they can be computed recursively using
+
+    .. math ::
+
+        P_0(x) = 1
+
+        P_1(x) = x
+
+        (n+1) P_{n+1}(x) = (2n+1) x P_n(x) - n P_{n-1}(x).
+
+    A third definition is in terms of the hypergeometric function
+    `\,_2F_1`, whereby they can be generalized to arbitrary `n`:
+
+    .. math ::
+
+        P_n(x) = \,_2F_1\left(-n, n+1, 1, \frac{1-x}{2}\right)
+
+    **Basic evaluation**
+
+    The Legendre polynomials assume fixed values at the points
+    `x = -1` and `x = 1`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> nprint([legendre(n, 1) for n in range(6)])
+        [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        >>> nprint([legendre(n, -1) for n in range(6)])
+        [1.0, -1.0, 1.0, -1.0, 1.0, -1.0]
+
+    The coefficients of Legendre polynomials can be recovered
+    using degree-`n` Taylor expansion::
+
+        >>> P = legendre
+        >>> nprint(taylor(lambda x: P(0, x), 0, 0))
+        [1.0]
+        >>> nprint(taylor(lambda x: P(1, x), 0, 1))
+        [0.0, 1.0]
+        >>> nprint(taylor(lambda x: P(2, x), 0, 2))
+        [-0.5, 0.0, 1.5]
+        >>> nprint(taylor(lambda x: P(3, x), 0, 3))
+        [0.0, -1.5, 0.0, 2.5]
+        >>> nprint(taylor(lambda x: P(4, x), 0, 4))
+        [0.375, 0.0, -3.75, 0.0, 4.375]
+
+    The roots of Legendre polynomials are located symmetrically
+    on the interval `[-1, 1]`::
+
+        >>> nprint(polyroots(taylor(lambda x: P(0, x), 0, 0)[::-1]))
+        []
+        >>> nprint(polyroots(taylor(lambda x: P(1, x), 0, 1)[::-1]))
+        [0.0]
+        >>> nprint(polyroots(taylor(lambda x: P(2, x), 0, 2)[::-1]))
+        [-0.57735, 0.57735]
+        >>> nprint(polyroots(taylor(lambda x: P(3, x), 0, 3)[::-1]))
+        [-0.774597, 0.0, 0.774597]
+        >>> nprint(polyroots(taylor(lambda x: P(4, x), 0, 4)[::-1]))
+        [-0.861136, -0.339981, 0.339981, 0.861136]
+
+    An example of an evaluation for arbitrary `n`::
+
+        >>> print legendre(0.75, 2+4j)
+        (1.94952805264875 + 2.1071073099422j)
+
+    **Orthogonality**
+
+    The Legendre polynomials are orthogonal on `[-1, 1]` with respect
+    to the trivial weight `w(x) = 1`. That is, `P_m(x) P_n(x)`
+    integrates to zero if `m \ne n` and to `2/(2n+1)` if `m = n`::
+
+        >>> m, n = 3, 4
+        >>> print quad(lambda x: legendre(m,x)*legendre(n,x), [-1, 1])
+        0.0
+        >>> m, n = 4, 4
+        >>> print quad(lambda x: legendre(m,x)*legendre(n,x), [-1, 1])
+        0.222222222222222
+
+    **Differential equation**
+
+    The Legendre polynomials satisfy the differential equation
+
+    .. math ::
+
+        ((1-x^2) y')' + n(n+1) y' = 0.
+
+    We can verify this numerically::
+
+        >>> n = 3.6
+        >>> x = 0.73
+        >>> P = legendre
+        >>> A = diff(lambda t: (1-t**2)*diff(lambda u: P(n,u), t), x)
+        >>> B = n*(n+1)*P(n,x)
+        >>> nprint(A+B,1)
+        9.0e-16
+
+    """
     if isint(n):
         n = int(n)
     if x == -1:
         # TODO: hyp2f1 should handle this
-        if x == int(x):
+        if n == int(n):
             return (-1)**(n + (n>=0)) * mpf(-1)
         return inf
     return hyp2f1(-n,n+1,1,(1-x)/2)
