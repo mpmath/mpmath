@@ -148,7 +148,7 @@ Accelerated convergence
 
 You can use Steffensen's method to accelerate a fixpoint iteration of linear (or less) convergence.
 
-x* is a fixpoint of the iteration x_{k+1} = phi(x_k) if x* = phi(x*). For phi(x) = x**2 there are two fixpoints: 0 and 1. 
+:math:`x_*` is a fixpoint of the iteration :math:`x_{k+1} = \phi(x_k)` if :math:`x_* = \phi(x_*)`. For :math:`\phi(x) = x^2` there are two fixpoints: 0 and 1.
 
 Let's try Steffensen's method:
 

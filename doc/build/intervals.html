@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Interval arithmetic &mdash; mpmath v0.10-svn documentation</title>
+    <title>Interval arithmetic &mdash; mpmath v0.9 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.9',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
     <link rel="next" title="Matrices" href="matrices.html" />
     <link rel="prev" title="Numerical calculus" href="calculus.html" />
   </head>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="calculus.html" title="Numerical calculus"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -49,10 +49,10 @@
 <p>The <tt class="docutils literal"><span class="pre">mpi</span></tt> type holds an interval defined by a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.</p>
 <p>You can create an <tt class="docutils literal"><span class="pre">mpi</span></tt> from a number (treated as a zero-width interval) or a pair of numbers. Strings are treated as exact decimal numbers (note that a Python float like 0.1 generally does not represent the same number as its literal; use <tt class="docutils literal"><span class="pre">'0.1'</span></tt> instead):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">[3.0, 3.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">[2.0, 3.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c"># probably not what you want</span>
 <span class="go">[0.10000000000000000555, 0.10000000000000000555]</span>
@@ -62,18 +62,18 @@
 </div>
 <p>The fact that <tt class="docutils literal"><span class="pre">'0.1'</span></tt> results in an interval of nonzero width proves that 1/10 cannot be represented using binary floating-point numbers at this precision level (in fact, it cannot be represented exactly at any precision).</p>
 <p>Some basic examples of interval arithmetic operations are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="go">[1.0, 2.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
 <span class="go">[4.0, 7.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span> <span class="o">*</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">*</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">[4.0, 6.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 <span class="go">[-20.0, 20.0]</span>
 </pre></div>
 </div>
 <p>Intervals have the properties <tt class="docutils literal"><span class="pre">.a</span></tt>, <tt class="docutils literal"><span class="pre">.b</span></tt> (endpoints), <tt class="docutils literal"><span class="pre">.mid</span></tt>, and <tt class="docutils literal"><span class="pre">.delta</span></tt> (width):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">a</span>
 <span class="go">mpf(&#39;2.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">b</span>
@@ -85,69 +85,69 @@
 </pre></div>
 </div>
 <p>Intervals may be infinite or half-infinite:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">[0.0, 0.5]</span>
 </pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">in</span></tt> operator tests whether a number or interval is contained in another interval:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">3</span> <span class="ow">in</span> <span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span> <span class="ow">in</span> <span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
 <p>Division is generally not an exact operation in floating-point arithmetic. Using interval arithmetic, we can track both the error from the division and the error that propagates if we follow up with the inverse operation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">[0.33333333333333331483, 0.33333333333333337034]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">mpi</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="go">[2.9999999999999995559, 3.0000000000000004441]</span>
 </pre></div>
 </div>
 <p>The same goes for computing square roots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">2</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="go">[1.9999999999999995559, 2.0000000000000004441]</span>
 </pre></div>
 </div>
 <p>By design, interval arithmetic propagates errors, no matter how tiny, that would get rounded off in normal floating-point arithmetic:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">mpi</span><span class="p">(</span><span class="s">&#39;1e-10000&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">mpi</span><span class="p">(</span><span class="s">&#39;1e-10000&#39;</span><span class="p">)</span>
 <span class="go">[1.0, 1.000000000000000222]</span>
 </pre></div>
 </div>
 <p>Interval arithmetic uses the same precision as the <tt class="docutils literal"><span class="pre">mpf</span></tt> class; if <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">50</span></tt> is set, all interval operations will be carried out with 50-digit precision. Of course, interval arithmetic is guaranteed to give correct bounds at any precision (in the absence of bugs!), but a higher precision makes the intervals narrower and hence more accurate:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">5</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">[3.141590118, 3.141593933]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>  <span class="c"># doctest: +ELLIPSIS</span>
 <span class="go">[3.14159265358979...793333, 3.14159265358979...797277]</span>
 </pre></div>
 </div>
 <p>It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators <tt class="docutils literal"><span class="pre">+,</span> <span class="pre">-,</span> <span class="pre">*,</span> <span class="pre">/,</span> <span class="pre">**</span></tt> should work correctly. It is also possible to call the functions <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">log</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, <tt class="docutils literal"><span class="pre">cos</span></tt> and <tt class="docutils literal"><span class="pre">tan</span></tt> with interval arguments. Here are some examples:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span> <span class="o">**</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
 <span class="go">[0.35355339059327373086, 1.837117307087383633]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 <span class="go">[1.0, 1.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
 <span class="go">[0.0, +inf]</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <span class="go">[0.0, 1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
 <span class="go">[1.0, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="go">[1.0, 2.7182818284590455349]</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">[0.0, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">[-inf, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">inf</span><span class="p">))</span>
 <span class="go">[-inf, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 <span class="go">[0.69314718055994528623, 0.69314718055994539725]</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">100</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
 <span class="go">[-1.0, 1.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="s">&#39;-0.1&#39;</span><span class="p">,</span> <span class="s">&#39;0.1&#39;</span><span class="p">))</span>
 <span class="go">[0.99500416527802570954, 1.0]</span>
@@ -157,20 +157,20 @@
 <div class="section" id="establishing-inequalities">
 <h2>Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
 <p>Interval arithmetic can be used to establish inequalities such as <tt class="docutils literal"><span class="pre">exp(pi*sqrt(163))</span> <span class="pre">&lt;</span> <span class="pre">640320**3</span> <span class="pre">+</span> <span class="pre">744</span></tt>. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">640320</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">744</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
 <p>The answer should be True, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">25</span></tt>, but it is honest enough to admit it:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">163</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">163</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">640320</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">744</span><span class="p">)</span>
 <span class="gp">... </span><span class="c"># doctest: +ELLIPSIS</span>
 <span class="go">[-0.0000003576..., 0.00000029429...]</span>
 </pre></div>
 </div>
 <p>There is both a negative and a positive endpoint, so we cannot tell for certain whether the true difference is on one side or the other of zero. The solution is to increase the precision until the answer is strictly one-signed:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">163</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mi">163</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">640320</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">744</span><span class="p">)</span>
 <span class="gp">... </span><span class="c"># doctest: +ELLIPSIS</span>
 <span class="go">[-7.499493...e-13, -7.499237...e-13]</span>
 </pre></div>
@@ -227,7 +227,7 @@
         <li class="right" >
           <a href="calculus.html" title="Numerical calculus"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
@@ -235,16 +235,5 @@
       Last updated on Nov 15, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
-
-<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-if ((""+document.location).match("google"))
-{
-    _uacct = "UA-2697185-2";
-    urchinTracker();
-}
-</script>
   </body>
 </html>

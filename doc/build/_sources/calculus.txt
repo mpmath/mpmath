@@ -1,0 +1,49 @@
+Numerical calculus
+==================
+
+Numerical summation and products
+--------------------------------
+
+.. autofunction:: mpmath.calculus.nsum
+.. autofunction:: mpmath.calculus.nprod
+
+Low-level extrapolation
+-----------------------
+
+Mpmath implements efficient algorithms for acceleration of slowly
+convergent sequences, and in particular for the summation of
+infinite series.
+
+The following functions provide a direct interface to the
+extrapolation algorithms used by higher level functions
+such as :func:`nsum`. :func:`nsum` essentially works by
+repeatedly calling the following functions with an increasing
+number of terms until the extrapolated sum is accurate enough.
+The following functions may be useful to call directly if the
+precise number of terms needed to achieve a desired accuracy is
+known in advance, or if one wishes to study the convergence
+properties of the algorithms.
+
+.. autofunction:: mpmath.calculus.richardson
+.. autofunction:: mpmath.calculus.shanks
+
+Derivatives
+-----------
+
+.. autofunction:: mpmath.calculus.diff
+.. autofunction:: mpmath.calculus.diffun
+.. autofunction:: mpmath.calculus.taylor
+.. autofunction:: mpmath.calculus.pade
+
+Polynomials
+-----------
+
+.. autofunction:: mpmath.calculus.polyval
+.. autofunction:: mpmath.calculus.polyroots
+.. autofunction:: mpmath.calculus.chebyfit
+
+Fourier series
+--------------
+
+.. autofunction:: mpmath.calculus.fourier
+.. autofunction:: mpmath.calculus.fourierval

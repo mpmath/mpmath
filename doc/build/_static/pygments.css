@@ -20,7 +20,7 @@
 .kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
 .kp { color: #007020 } /* Keyword.Pseudo */
 .kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
-.kt { color: #902000 } /* Keyword.Type */
+.kt { color: #007020; font-weight: bold } /* Keyword.Type */
 .m { color: #208050 } /* Literal.Number */
 .s { color: #4070a0 } /* Literal.String */
 .na { color: #4070a0 } /* Name.Attribute */
