@@ -1,8 +1,8 @@
 Hyperbolic functions
 --------------------
 
-Hyperbolic functions (:func:`cosh`, :func:`sinh`, :func:`sech`, :func:`csch`, :func:`coth`)
-...........................................................................................
+Hyperbolic functions (:func:`cosh`, :func:`sinh`, :func:`tanh`, :func:`sech`, :func:`csch`, :func:`coth`)
+.........................................................................................................
 
 .. autofunction:: mpmath.functions.cosh
 .. autofunction:: mpmath.functions.sinh
@@ -11,8 +11,8 @@ Hyperbolic functions (:func:`cosh`, :func:`sinh`, :func:`sech`, :func:`csch`, :f
 .. autofunction:: mpmath.functions.csch
 .. autofunction:: mpmath.functions.coth
 
-Inverse hyperbolic functions (:func:`acosh`, :func:`asinh`, :func:`asech`, :func:`acsch`, :func:`acoth`)
-........................................................................................................
+Inverse hyperbolic functions (:func:`acosh`, :func:`asinh`, :func:`atanh`, :func:`asech`, :func:`acsch`, :func:`acoth`)
+.......................................................................................................................
 
 .. autofunction:: mpmath.functions.acosh
 .. autofunction:: mpmath.functions.asinh

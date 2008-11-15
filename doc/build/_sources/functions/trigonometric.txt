@@ -7,8 +7,8 @@ Degree-radian conversion (:func:`degrees`, :func:`radians`)
 .. autofunction:: mpmath.functions.degrees
 .. autofunction:: mpmath.functions.radians
 
-Trigonometric functions (:func:`cos`, :func:`sin`, :func:`sec`, :func:`csc`, :func:`cot`)
-.........................................................................................
+Trigonometric functions (:func:`cos`, :func:`sin`, :func:`tan`, :func:`sec`, :func:`csc`, :func:`cot`)
+......................................................................................................
 
 .. autofunction:: mpmath.functions.cos
 .. autofunction:: mpmath.functions.sin
@@ -23,8 +23,8 @@ Trigonometric functions with modified argument (:func:`cospi`, :func:`sinpi`)
 .. autofunction:: mpmath.functions.cospi
 .. autofunction:: mpmath.functions.sinpi
 
-Inverse trigonometric functions (:func:`acos`, :func:`asin`, :func:`asec`, :func:`acsc`, :func:`acot`)
-......................................................................................................
+Inverse trigonometric functions (:func:`acos`, :func:`asin`, :func:`atan`, :func:`asec`, :func:`acsc`, :func:`acot`)
+....................................................................................................................
 
 .. autofunction:: mpmath.functions.acos
 .. autofunction:: mpmath.functions.asin
