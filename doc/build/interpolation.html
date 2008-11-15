@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Interpolation &mdash; mpmath v0.9 documentation</title>
+    <title>Interpolation &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.9',
+          VERSION:     '0.10-svn',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Limits" href="limits.html" />
   </head>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="limits.html" title="Limits"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -52,23 +52,23 @@
 <p><tt class="docutils literal"><span class="pre">chebyfit(f,</span> <span class="pre">[a,</span> <span class="pre">b],</span> <span class="pre">N)</span></tt> generates a polynomial of degree N-1 that approximates f on the finite interval [a, b] and returns a list containing the polynomial coefficients. With <tt class="docutils literal"><span class="pre">error=True</span></tt>, it also returns a number estimating the maximum error on the interval.</p>
 <p>Here we use it to generate a low-degree approximation of f(x) = cos(x), valid on the interval [1, 2]:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
 <span class="go">[2.91682e-3, 0.146166, -0.732491, 0.174141, 0.949553]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mf">12</span><span class="p">)</span>
 <span class="go">1.61351758081e-5</span>
 </pre></div>
 </div>
 <p>The polynomial can be evaluated using <tt class="docutils literal"><span class="pre">polyval</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">),</span> <span class="mf">12</span><span class="p">)</span>
 <span class="go">-0.0291858904138</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1.6</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1.6</span><span class="p">),</span> <span class="mf">12</span><span class="p">)</span>
 <span class="go">-0.0291995223013</span>
 </pre></div>
 </div>
 <p>Sampling the true error at 1000 points shows that the error estimate automatically generated by <tt class="docutils literal"><span class="pre">chebyfit</span></tt> is remarkably good:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="n">error</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">n</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)]),</span> <span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="n">error</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">n</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">)]),</span> <span class="mf">12</span><span class="p">)</span>
 <span class="go">1.61349954245e-5</span>
 </pre></div>
 </div>
@@ -122,7 +122,7 @@
         <li class="right" >
           <a href="limits.html" title="Limits"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">

@@ -1,0 +1,37 @@
+Powers and logarithms
+---------------------
+
+Roots (:func:`sqrt`, :func:`cbrt`, :func:`nthroot`)
+...................................................
+
+.. autofunction:: mpmath.functions.sqrt
+.. autofunction:: mpmath.functions.cbrt
+.. autofunction:: mpmath.functions.nthroot
+
+Exponentiation (:func:`exp`, :func:`power`)
+...........................................
+
+.. autofunction:: mpmath.functions.exp
+.. autofunction:: mpmath.functions.power
+
+Logarithms (:func:`log`, :func:`ln`, :func:`log10`)
+...................................................
+
+.. autofunction:: mpmath.functions.log
+.. autofunction:: mpmath.functions.ln
+.. autofunction:: mpmath.functions.log10
+
+Fibonacci numbers (:func:`fibonacci`/:func:`fib`)
+...................................................
+
+.. autofunction:: mpmath.functions.fibonacci
+
+Lambert W function (:func:`lambertw`)
+...................................................
+
+.. autofunction:: mpmath.functions.lambertw
+
+Arithmetic-geometric mean (:func:`agm`)
+.......................................
+
+.. autofunction:: mpmath.functions.agm

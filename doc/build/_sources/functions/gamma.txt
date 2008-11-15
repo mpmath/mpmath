@@ -1,0 +1,68 @@
+Gamma functions and exponential integrals
+-----------------------------------------
+
+Gamma and factorial (:func:`gamma`, :func:`factorial`/:func:`fac`)
+..................................................................
+
+.. autofunction:: mpmath.functions.gamma
+.. autofunction:: mpmath.functions.factorial
+
+Incomplete gamma functions (:func:`gammainc`)
+.............................................
+
+.. autofunction:: mpmath.functions.gammainc
+
+Polygamma functions (:func:`psi`, :func:`digamma`, :func:`trigamma`, :func:`harmonic`)
+......................................................................................
+
+.. autofunction:: mpmath.functions.psi
+.. autofunction:: mpmath.functions.digamma
+.. autofunction:: mpmath.functions.trigamma
+.. autofunction:: mpmath.functions.harmonic
+
+Gamma function products (:func:`gammaprod`, :func:`beta`, :func:`binomial`, :func:`rf`, :func:`ff`)
+...................................................................................................
+
+.. autofunction:: mpmath.functions.gammaprod
+.. autofunction:: mpmath.functions.binomial
+.. autofunction:: mpmath.functions.rf
+.. autofunction:: mpmath.functions.ff
+.. autofunction:: mpmath.functions.beta
+
+Exponential and logarithmic integrals (:func:`ei`, :func:`li`)
+..............................................................
+
+.. autofunction:: mpmath.functions.ei
+.. autofunction:: mpmath.functions.li
+
+Trigonometric integrals (:func:`ci`, :func:`si`)
+................................................
+
+.. autofunction:: mpmath.functions.ci
+.. autofunction:: mpmath.functions.si
+
+Hyperbolic integrals (:func:`chi`, :func:`shi`)
+................................................
+
+.. autofunction:: mpmath.functions.chi
+.. autofunction:: mpmath.functions.shi
+
+Error functions (:func:`erf`, :func:`erfc`, :func:`erfi`, :func:`erfinv`)
+.........................................................................
+
+.. autofunction:: mpmath.functions.erf
+.. autofunction:: mpmath.functions.erfc
+.. autofunction:: mpmath.functions.erfi
+.. autofunction:: mpmath.functions.erfinv
+
+The normal distribution (:func:`npdf`, :func:`ncdf`)
+....................................................
+
+.. autofunction:: mpmath.functions.npdf
+.. autofunction:: mpmath.functions.ncdf
+
+Fresnel integrals (:func:`fresnels`, :func:`fresnelc`)
+......................................................
+
+.. autofunction:: mpmath.functions.fresnels
+.. autofunction:: mpmath.functions.fresnelc

@@ -1,0 +1,22 @@
+Hyperbolic functions
+--------------------
+
+Hyperbolic functions (:func:`cosh`, :func:`sinh`, :func:`sech`, :func:`csch`, :func:`coth`)
+...........................................................................................
+
+.. autofunction:: mpmath.functions.cosh
+.. autofunction:: mpmath.functions.sinh
+.. autofunction:: mpmath.functions.tanh
+.. autofunction:: mpmath.functions.sech
+.. autofunction:: mpmath.functions.csch
+.. autofunction:: mpmath.functions.coth
+
+Inverse hyperbolic functions (:func:`acosh`, :func:`asinh`, :func:`asech`, :func:`acsch`, :func:`acoth`)
+........................................................................................................
+
+.. autofunction:: mpmath.functions.acosh
+.. autofunction:: mpmath.functions.asinh
+.. autofunction:: mpmath.functions.atanh
+.. autofunction:: mpmath.functions.asech
+.. autofunction:: mpmath.functions.acsch
+.. autofunction:: mpmath.functions.acoth

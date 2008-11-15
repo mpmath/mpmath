@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hyperbolic functions &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Mathematical functions" href="index.html" />
+    <link rel="next" title="Gamma functions and exponential integrals" href="gamma.html" />
+    <link rel="prev" title="Trigonometric functions" href="trigonometric.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gamma.html" title="Gamma functions and exponential integrals"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="trigonometric.html" title="Trigonometric functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="hyperbolic-functions">
+<h1>Hyperbolic functions<a class="headerlink" href="#hyperbolic-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="hyperbolic-functions-cosh-sinh-sech-csch-coth">
+<h2>Hyperbolic functions (<tt class="xref docutils literal"><span class="pre">cosh()</span></tt>, <tt class="xref docutils literal"><span class="pre">sinh()</span></tt>, <tt class="xref docutils literal"><span class="pre">sech()</span></tt>, <tt class="xref docutils literal"><span class="pre">csch()</span></tt>, <tt class="xref docutils literal"><span class="pre">coth()</span></tt>)<a class="headerlink" href="#hyperbolic-functions-cosh-sinh-sech-csch-coth" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.cosh">
+<!--[mpmath.functions.cosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cosh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic cosine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sinh">
+<!--[mpmath.functions.sinh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic sine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.tanh">
+<!--[mpmath.functions.tanh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">tanh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.tanh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic tangent of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sech">
+<!--[mpmath.functions.sech]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sech</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sech" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic secant of x, 1/cosh(x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.csch">
+<!--[mpmath.functions.csch]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">csch</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.csch" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic cosecant of x, 1/sinh(x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.coth">
+<!--[mpmath.functions.coth]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">coth</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.coth" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the hyperbolic cotangent of x, 1/tanh(x)</dd></dl>
+
+</div>
+<div class="section" id="inverse-hyperbolic-functions-acosh-asinh-asech-acsch-acoth">
+<h2>Inverse hyperbolic functions (<tt class="xref docutils literal"><span class="pre">acosh()</span></tt>, <tt class="xref docutils literal"><span class="pre">asinh()</span></tt>, <tt class="xref docutils literal"><span class="pre">asech()</span></tt>, <tt class="xref docutils literal"><span class="pre">acsch()</span></tt>, <tt class="xref docutils literal"><span class="pre">acoth()</span></tt>)<a class="headerlink" href="#inverse-hyperbolic-functions-acosh-asinh-asech-acsch-acoth" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.acosh">
+<!--[mpmath.functions.acosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.acosh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic cosine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.asinh">
+<!--[mpmath.functions.asinh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asinh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.asinh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic sine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.atanh">
+<!--[mpmath.functions.atanh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atanh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.atanh" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic tangent of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.asech">
+<!--[mpmath.functions.asech]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asech</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.asech" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic secant of x, acosh(1/x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.acsch">
+<!--[mpmath.functions.acsch]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acsch</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acsch" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic cosecant of x, asinh(1/x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.acoth">
+<!--[mpmath.functions.acoth]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acoth</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acoth" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse hyperbolic cotangent of x, atanh(1/x)</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Hyperbolic functions</a><ul>
+<li><a class="reference external" href="#hyperbolic-functions-cosh-sinh-sech-csch-coth">Hyperbolic functions (<tt class="docutils literal"><span class="pre">cosh()</span></tt>, <tt class="docutils literal"><span class="pre">sinh()</span></tt>, <tt class="docutils literal"><span class="pre">sech()</span></tt>, <tt class="docutils literal"><span class="pre">csch()</span></tt>, <tt class="docutils literal"><span class="pre">coth()</span></tt>)</a></li>
+<li><a class="reference external" href="#inverse-hyperbolic-functions-acosh-asinh-asech-acsch-acoth">Inverse hyperbolic functions (<tt class="docutils literal"><span class="pre">acosh()</span></tt>, <tt class="docutils literal"><span class="pre">asinh()</span></tt>, <tt class="docutils literal"><span class="pre">asech()</span></tt>, <tt class="docutils literal"><span class="pre">acsch()</span></tt>, <tt class="docutils literal"><span class="pre">acoth()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="trigonometric.html" title="previous chapter">Trigonometric functions</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="gamma.html" title="next chapter">Gamma functions and exponential integrals</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/hyperbolic.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gamma.html" title="Gamma functions and exponential integrals"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="trigonometric.html" title="Trigonometric functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 15, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+  </body>
+</html>

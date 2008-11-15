@@ -1,0 +1,40 @@
+Trigonometric functions
+-----------------------
+
+Degree-radian conversion (:func:`degrees`, :func:`radians`)
+...........................................................
+
+.. autofunction:: mpmath.functions.degrees
+.. autofunction:: mpmath.functions.radians
+
+Trigonometric functions (:func:`cos`, :func:`sin`, :func:`sec`, :func:`csc`, :func:`cot`)
+.........................................................................................
+
+.. autofunction:: mpmath.functions.cos
+.. autofunction:: mpmath.functions.sin
+.. autofunction:: mpmath.functions.tan
+.. autofunction:: mpmath.functions.sec
+.. autofunction:: mpmath.functions.csc
+.. autofunction:: mpmath.functions.cot
+
+Trigonometric functions with modified argument (:func:`cospi`, :func:`sinpi`)
+.............................................................................
+
+.. autofunction:: mpmath.functions.cospi
+.. autofunction:: mpmath.functions.sinpi
+
+Inverse trigonometric functions (:func:`acos`, :func:`asin`, :func:`asec`, :func:`acsc`, :func:`acot`)
+......................................................................................................
+
+.. autofunction:: mpmath.functions.acos
+.. autofunction:: mpmath.functions.asin
+.. autofunction:: mpmath.functions.atan
+.. autofunction:: mpmath.functions.asec
+.. autofunction:: mpmath.functions.acsc
+.. autofunction:: mpmath.functions.acot
+
+Sinc function (:func:`sinc`, :func:`sincpi`)
+............................................
+
+.. autofunction:: mpmath.functions.sinc
+.. autofunction:: mpmath.functions.sincpi

@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hypergeometric functions, Bessel/Airy, orthogonal polynomials &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Mathematical functions" href="index.html" />
+    <link rel="next" title="Elliptic functions" href="elliptic.html" />
+    <link rel="prev" title="Gamma functions and exponential integrals" href="gamma.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="elliptic.html" title="Elliptic functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gamma.html" title="Gamma functions and exponential integrals"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="hypergeometric-functions-bessel-airy-orthogonal-polynomials">
+<h1>Hypergeometric functions, Bessel/Airy, orthogonal polynomials<a class="headerlink" href="#hypergeometric-functions-bessel-airy-orthogonal-polynomials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bessel-functions-jv-j0-j1">
+<h2>Bessel functions (<tt class="xref docutils literal"><span class="pre">jv()</span></tt>, <tt class="xref docutils literal"><span class="pre">j0()</span></tt>, <tt class="xref docutils literal"><span class="pre">j1()</span></tt>)<a class="headerlink" href="#bessel-functions-jv-j0-j1" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.jv">
+<!--[mpmath.functions.jv]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jv</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.jv" title="Permalink to this definition">¶</a></dt>
+<dd>Bessel function J_v(x).</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.j0">
+<!--[mpmath.functions.j0]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">j0</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.j0" title="Permalink to this definition">¶</a></dt>
+<dd>Bessel function J_0(x).</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.j1">
+<!--[mpmath.functions.j1]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">j1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.j1" title="Permalink to this definition">¶</a></dt>
+<dd>Bessel function J_1(x).</dd></dl>
+
+</div>
+<div class="section" id="airy-functions-airyai-airybi">
+<h2>Airy functions (<tt class="xref docutils literal"><span class="pre">airyai()</span></tt>, <tt class="xref docutils literal"><span class="pre">airybi()</span></tt>)<a class="headerlink" href="#airy-functions-airyai-airybi" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.airyai">
+<!--[mpmath.functions.airyai]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airyai</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.airyai" title="Permalink to this definition">¶</a></dt>
+<dd>Airy function, Ai(z)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.airybi">
+<!--[mpmath.functions.airybi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airybi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.airybi" title="Permalink to this definition">¶</a></dt>
+<dd>Airy function, Bi(z)</dd></dl>
+
+</div>
+<div class="section" id="orthogonal-polynomials-jacobi-legendre-chebyt-chebyu">
+<h2>Orthogonal polynomials (<tt class="xref docutils literal"><span class="pre">jacobi()</span></tt>, <tt class="xref docutils literal"><span class="pre">legendre()</span></tt>, <tt class="xref docutils literal"><span class="pre">chebyt()</span></tt>, <tt class="xref docutils literal"><span class="pre">chebyu()</span></tt>)<a class="headerlink" href="#orthogonal-polynomials-jacobi-legendre-chebyt-chebyu" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.jacobi">
+<!--[mpmath.functions.jacobi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jacobi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.jacobi" title="Permalink to this definition">¶</a></dt>
+<dd>Jacobi polynomial P_n^(a,b)(x).</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.legendre">
+<!--[mpmath.functions.legendre]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legendre</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.legendre" title="Permalink to this definition">¶</a></dt>
+<dd>Legendre polynomial P_n(x).</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.chebyt">
+<!--[mpmath.functions.chebyt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyt</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyt" title="Permalink to this definition">¶</a></dt>
+<dd>Chebyshev polynomial of the first kind T_n(x).</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.chebyu">
+<!--[mpmath.functions.chebyu]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyu</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyu" title="Permalink to this definition">¶</a></dt>
+<dd>Chebyshev polynomial of the second kind U_n(x).</dd></dl>
+
+</div>
+<div class="section" id="generic-hypergeometric-series-hyper-hyp0f1-hyp1f1-hyp2f1">
+<h2>Generic hypergeometric series (<tt class="xref docutils literal"><span class="pre">hyper()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp0f1()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp1f1()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt>)<a class="headerlink" href="#generic-hypergeometric-series-hyper-hyp0f1-hyp1f1-hyp2f1" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.hyper">
+<!--[mpmath.functions.hyper]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hypergeometric function pFq:</p>
+<div class="highlight-python"><pre>    [ a_1, a_2, ..., a_p |    ]
+pFq [                    |  z ]
+    [ b_1, b_2, ..., b_q |    ]</pre>
+</div>
+<p>The parameter lists a_s and b_s may contain real or complex numbers.
+Exact rational parameters can be given as tuples (p, q).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.hyp0f1">
+<!--[mpmath.functions.hyp0f1]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyp0f1</tt><big>(</big><em>a</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyp0f1" title="Permalink to this definition">¶</a></dt>
+<dd>Hypergeometric function 0F1. hyp0f1(a,z) is equivalent
+to hyper([], [a], z); see documentation for hyper() for more
+information.</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.hyp1f1">
+<!--[mpmath.functions.hyp1f1]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyp1f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyp1f1" title="Permalink to this definition">¶</a></dt>
+<dd>Hypergeometric function 1F1. hyp1f1(a,b,z) is equivalent
+to hyper([a], [b], z); see documentation for hyper() for more
+information.</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.hyp2f1">
+<!--[mpmath.functions.hyp2f1]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyp2f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>c</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyp2f1" title="Permalink to this definition">¶</a></dt>
+<dd>Hypergeometric function 2F1. hyp2f1(a,b,c,z) is equivalent
+to hyper([a,b], [c], z); see documentation for hyper() for more
+information.</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Hypergeometric functions, Bessel/Airy, orthogonal polynomials</a><ul>
+<li><a class="reference external" href="#bessel-functions-jv-j0-j1">Bessel functions (<tt class="docutils literal"><span class="pre">jv()</span></tt>, <tt class="docutils literal"><span class="pre">j0()</span></tt>, <tt class="docutils literal"><span class="pre">j1()</span></tt>)</a></li>
+<li><a class="reference external" href="#airy-functions-airyai-airybi">Airy functions (<tt class="docutils literal"><span class="pre">airyai()</span></tt>, <tt class="docutils literal"><span class="pre">airybi()</span></tt>)</a></li>
+<li><a class="reference external" href="#orthogonal-polynomials-jacobi-legendre-chebyt-chebyu">Orthogonal polynomials (<tt class="docutils literal"><span class="pre">jacobi()</span></tt>, <tt class="docutils literal"><span class="pre">legendre()</span></tt>, <tt class="docutils literal"><span class="pre">chebyt()</span></tt>, <tt class="docutils literal"><span class="pre">chebyu()</span></tt>)</a></li>
+<li><a class="reference external" href="#generic-hypergeometric-series-hyper-hyp0f1-hyp1f1-hyp2f1">Generic hypergeometric series (<tt class="docutils literal"><span class="pre">hyper()</span></tt>, <tt class="docutils literal"><span class="pre">hyp0f1()</span></tt>, <tt class="docutils literal"><span class="pre">hyp1f1()</span></tt>, <tt class="docutils literal"><span class="pre">hyp2f1()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="gamma.html" title="previous chapter">Gamma functions and exponential integrals</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="elliptic.html" title="next chapter">Elliptic functions</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/hypergeometric.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="elliptic.html" title="Elliptic functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gamma.html" title="Gamma functions and exponential integrals"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 15, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+  </body>
+</html>

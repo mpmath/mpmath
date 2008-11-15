@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Trigonometric functions &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Mathematical functions" href="index.html" />
+    <link rel="next" title="Hyperbolic functions" href="hyperbolic.html" />
+    <link rel="prev" title="Powers and logarithms" href="powers.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="hyperbolic.html" title="Hyperbolic functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="powers.html" title="Powers and logarithms"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="trigonometric-functions">
+<h1>Trigonometric functions<a class="headerlink" href="#trigonometric-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="degree-radian-conversion-degrees-radians">
+<h2>Degree-radian conversion (<tt class="xref docutils literal"><span class="pre">degrees()</span></tt>, <tt class="xref docutils literal"><span class="pre">radians()</span></tt>)<a class="headerlink" href="#degree-radian-conversion-degrees-radians" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.degrees">
+<!--[mpmath.functions.degrees]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">degrees</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.degrees" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the radian angle <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a degree angle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">degrees</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">60.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.radians">
+<!--[mpmath.functions.radians]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">radians</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.radians" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the degree angle <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to radians:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">radians</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>
+<span class="go">1.0471975511966</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="trigonometric-functions-cos-sin-sec-csc-cot">
+<h2>Trigonometric functions (<tt class="xref docutils literal"><span class="pre">cos()</span></tt>, <tt class="xref docutils literal"><span class="pre">sin()</span></tt>, <tt class="xref docutils literal"><span class="pre">sec()</span></tt>, <tt class="xref docutils literal"><span class="pre">csc()</span></tt>, <tt class="xref docutils literal"><span class="pre">cot()</span></tt>)<a class="headerlink" href="#trigonometric-functions-cos-sin-sec-csc-cot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.cos">
+<!--[mpmath.functions.cos]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cos</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cos" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the cosine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sin">
+<!--[mpmath.functions.sin]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sin</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sin" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the sine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.tan">
+<!--[mpmath.functions.tan]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">tan</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.tan" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the tangent of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sec">
+<!--[mpmath.functions.sec]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sec</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sec" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the secant of x, 1/cos(x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.csc">
+<!--[mpmath.functions.csc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">csc</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.csc" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the cosecant of x, 1/sin(x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.cot">
+<!--[mpmath.functions.cot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cot</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.cot" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the cotangent of x, 1/tan(x)</dd></dl>
+
+</div>
+<div class="section" id="trigonometric-functions-with-modified-argument-cospi-sinpi">
+<h2>Trigonometric functions with modified argument (<tt class="xref docutils literal"><span class="pre">cospi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>)<a class="headerlink" href="#trigonometric-functions-with-modified-argument-cospi-sinpi" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.cospi">
+<!--[mpmath.functions.cospi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cospi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cospi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <img src="../_images/math/d49c1e556b2fd2cb785ca3fe0d14d1247707b79a.png" alt="\cos(\pi x)" />, more accurately than the expression
+<tt class="docutils literal"><span class="pre">cos(pi*x)</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">1.0 0.999999999997493</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">0.0 1.59960492420134e-6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sinpi">
+<!--[mpmath.functions.sinpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinpi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <img src="../_images/math/61395a5902d5ef1f78b3dc6e004e7856f9e45c71.png" alt="\sin(\pi x)" />, more accurately than the expression
+<tt class="docutils literal"><span class="pre">sin(pi*x)</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">0.0 -2.23936276195592e-6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">1.0 0.999999999998721</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="inverse-trigonometric-functions-acos-asin-asec-acsc-acot">
+<h2>Inverse trigonometric functions (<tt class="xref docutils literal"><span class="pre">acos()</span></tt>, <tt class="xref docutils literal"><span class="pre">asin()</span></tt>, <tt class="xref docutils literal"><span class="pre">asec()</span></tt>, <tt class="xref docutils literal"><span class="pre">acsc()</span></tt>, <tt class="xref docutils literal"><span class="pre">acot()</span></tt>)<a class="headerlink" href="#inverse-trigonometric-functions-acos-asin-asec-acsc-acot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.acos">
+<!--[mpmath.functions.acos]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acos</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.acos" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse cosine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.asin">
+<!--[mpmath.functions.asin]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asin</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.asin" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse sine of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.atan">
+<!--[mpmath.functions.atan]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atan</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.atan" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse tangent of x</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.asec">
+<!--[mpmath.functions.asec]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asec</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.asec" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse secant of x, acos(1/x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.acsc">
+<!--[mpmath.functions.acsc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acsc</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acsc" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse cosecant of x, asin(1/x)</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.acot">
+<!--[mpmath.functions.acot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acot</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acot" title="Permalink to this definition">¶</a></dt>
+<dd>Returns the inverse cotangent of x, atan(1/x)</dd></dl>
+
+</div>
+<div class="section" id="sinc-function-sinc-sincpi">
+<h2>Sinc function (<tt class="xref docutils literal"><span class="pre">sinc()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt>)<a class="headerlink" href="#sinc-function-sinc-sincpi" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.functions.sinc">
+<!--[mpmath.functions.sinc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinc" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">sinc(x)</span></tt> computes the unnormalized sinc function, defined as</p>
+<div class="math">
+<p><img src="../_images/math/e7315df78c4286c99d922173f9185c3e050193a2.png" alt="\mathrm{sinc}(x) = \begin{cases}
+    \sin(x)/x, &amp; \mbox{if } x \ne 0 \\
+    1,         &amp; \mbox{if } x = 0.
+\end{cases}" />
+</div></p><p>See <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> for the normalized sinc function.</p>
+<p>Simple values and limits include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.841470984807897</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>The integral of the sinc function is the sine integral Si:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sinc</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.946083070367183</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.946083070367183</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.sincpi">
+<!--[mpmath.functions.sincpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sincpi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sincpi" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">sincpi(x)</span></tt> computes the normalized sinc function, defined as</p>
+<div class="math">
+<p><img src="../_images/math/32eb18f6e7c15d7073009f205d58061ccaae9e06.png" alt="\mathrm{sinc}_{\pi}(x) = \begin{cases}
+    \sin(\pi x)/(\pi x), &amp; \mbox{if } x \ne 0 \\
+    1,                   &amp; \mbox{if } x = 0.
+\end{cases}" />
+</div></p><p>Equivalently, we have
+<img src="../_images/math/2ef0be79204eb80d936b974993f0e84ec0c5d8e8.png" alt="\mathrm{sinc}_{\pi}(x) = \mathrm{sinc}(\pi x)" />.</p>
+<p>The normalization entails that the function integrates
+to unity over the entire real line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">sincpi</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>Like, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> is evaluated accurately
+at its roots:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sincpi</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Trigonometric functions</a><ul>
+<li><a class="reference external" href="#degree-radian-conversion-degrees-radians">Degree-radian conversion (<tt class="docutils literal"><span class="pre">degrees()</span></tt>, <tt class="docutils literal"><span class="pre">radians()</span></tt>)</a></li>
+<li><a class="reference external" href="#trigonometric-functions-cos-sin-sec-csc-cot">Trigonometric functions (<tt class="docutils literal"><span class="pre">cos()</span></tt>, <tt class="docutils literal"><span class="pre">sin()</span></tt>, <tt class="docutils literal"><span class="pre">sec()</span></tt>, <tt class="docutils literal"><span class="pre">csc()</span></tt>, <tt class="docutils literal"><span class="pre">cot()</span></tt>)</a></li>
+<li><a class="reference external" href="#trigonometric-functions-with-modified-argument-cospi-sinpi">Trigonometric functions with modified argument (<tt class="docutils literal"><span class="pre">cospi()</span></tt>, <tt class="docutils literal"><span class="pre">sinpi()</span></tt>)</a></li>
+<li><a class="reference external" href="#inverse-trigonometric-functions-acos-asin-asec-acsc-acot">Inverse trigonometric functions (<tt class="docutils literal"><span class="pre">acos()</span></tt>, <tt class="docutils literal"><span class="pre">asin()</span></tt>, <tt class="docutils literal"><span class="pre">asec()</span></tt>, <tt class="docutils literal"><span class="pre">acsc()</span></tt>, <tt class="docutils literal"><span class="pre">acot()</span></tt>)</a></li>
+<li><a class="reference external" href="#sinc-function-sinc-sincpi">Sinc function (<tt class="docutils literal"><span class="pre">sinc()</span></tt>, <tt class="docutils literal"><span class="pre">sincpi()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="powers.html" title="previous chapter">Powers and logarithms</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="hyperbolic.html" title="next chapter">Hyperbolic functions</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/trigonometric.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="hyperbolic.html" title="Hyperbolic functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="powers.html" title="Powers and logarithms"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 15, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+  </body>
+</html>

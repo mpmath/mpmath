@@ -1,0 +1,31 @@
+Hypergeometric functions, Bessel/Airy, orthogonal polynomials
+-------------------------------------------------------------
+
+Bessel functions (:func:`jv`, :func:`j0`, :func:`j1`)
+.....................................................
+
+.. autofunction:: mpmath.functions.jv
+.. autofunction:: mpmath.functions.j0
+.. autofunction:: mpmath.functions.j1
+
+Airy functions (:func:`airyai`, :func:`airybi`)
+...............................................
+
+.. autofunction:: mpmath.functions.airyai
+.. autofunction:: mpmath.functions.airybi
+
+Orthogonal polynomials (:func:`jacobi`, :func:`legendre`, :func:`chebyt`, :func:`chebyu`)
+.........................................................................................
+
+.. autofunction:: mpmath.functions.jacobi
+.. autofunction:: mpmath.functions.legendre
+.. autofunction:: mpmath.functions.chebyt
+.. autofunction:: mpmath.functions.chebyu
+
+Generic hypergeometric series (:func:`hyper`, :func:`hyp0f1`, :func:`hyp1f1`, :func:`hyp2f1`)
+.............................................................................................
+
+.. autofunction:: mpmath.functions.hyper
+.. autofunction:: mpmath.functions.hyp0f1
+.. autofunction:: mpmath.functions.hyp1f1
+.. autofunction:: mpmath.functions.hyp2f1

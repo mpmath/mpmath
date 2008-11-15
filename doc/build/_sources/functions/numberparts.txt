@@ -1,0 +1,39 @@
+Number parts
+------------
+
+Complex components (:func:`fabs`, :func:`re`, :func:`im`, :func:`arg`)
+......................................................................
+
+.. autofunction:: mpmath.functions.fabs
+.. autofunction:: mpmath.functions.re
+.. autofunction:: mpmath.functions.im
+.. autofunction:: mpmath.functions.arg
+
+Complex conjugate (:func:`conj`)
+....................................
+
+.. autofunction:: mpmath.functions.conj
+
+Floor and ceiling functions (:func:`floor`, :func:`ceil`)
+.........................................................
+
+.. autofunction:: mpmath.functions.floor
+.. autofunction:: mpmath.functions.ceil
+
+Modulo (:func:`modf`)
+....................................
+
+.. autofunction:: mpmath.functions.modf
+
+Exponent decomposition (:func:`ldexp`, :func:`frexp`)
+.....................................................
+
+.. autofunction:: mpmath.functions.ldexp
+.. autofunction:: mpmath.functions.frexp
+
+Vector components (:func:`hypot`, :func:`atan2`)
+................................................
+
+
+.. autofunction:: mpmath.functions.hypot
+.. autofunction:: mpmath.functions.atan2

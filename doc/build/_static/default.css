@@ -861,3 +861,5 @@ img.logo {
         display: none;
     }
 }
+
+img { vertical-align: middle; }

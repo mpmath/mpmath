@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mathematical functions &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="next" title="Mathematical constants" href="constants.html" />
+    <link rel="prev" title="Mpmath basics" href="../basics.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="constants.html" title="Mathematical constants"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../basics.html" title="Mpmath basics"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="mathematical-functions">
+<h1>Mathematical functions<a class="headerlink" href="#mathematical-functions" title="Permalink to this headline">¶</a></h1>
+<p>Mpmath implements the standard functions from Python&#8217;s <tt class="docutils literal"><span class="pre">math</span></tt> and <tt class="docutils literal"><span class="pre">cmath</span></tt> modules, for both real and complex numbers and with arbitrary precision. Many other functions are also available in mpmath, including commonly-used variants of standard functions (such as the alternative trigonometric functions sec, csc, cot), but also a large number of &#8220;special functions&#8221; such as the gamma function, the Riemann zeta function, error functions, Bessel functions, etc.</p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="constants.html">Mathematical constants</a><ul>
+<li class="toctree-l2"><a class="reference external" href="constants.html#exact-constants">Exact constants</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#pi-pi">Pi (<tt class="docutils literal"><span class="pre">pi</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#degree-degree">Degree (<tt class="docutils literal"><span class="pre">degree</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#base-of-the-natural-logarithm-e">Base of the natural logarithm (<tt class="docutils literal"><span class="pre">e</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#golden-ratio-phi">Golden ratio (<tt class="docutils literal"><span class="pre">phi</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#euler-s-constant-euler">Euler&#8217;s constant (<tt class="docutils literal"><span class="pre">euler</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#catalan-s-constant-catalan">Catalan&#8217;s constant (<tt class="docutils literal"><span class="pre">catalan</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#apery-s-constant-apery">Apery&#8217;s constant (<tt class="docutils literal"><span class="pre">apery</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#khinchin-s-constant-khinchin">Khinchin&#8217;s constant (<tt class="docutils literal"><span class="pre">khinchin</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#glaisher-s-constant-glaisher">Glaisher&#8217;s constant (<tt class="docutils literal"><span class="pre">glaisher</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="numberparts.html">Number parts</a><ul>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#complex-components-fabs-re-im-arg">Complex components (<tt class="docutils literal"><span class="pre">fabs()</span></tt>, <tt class="docutils literal"><span class="pre">re()</span></tt>, <tt class="docutils literal"><span class="pre">im()</span></tt>, <tt class="docutils literal"><span class="pre">arg()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#complex-conjugate-conj">Complex conjugate (<tt class="docutils literal"><span class="pre">conj()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#floor-and-ceiling-functions-floor-ceil">Floor and ceiling functions (<tt class="docutils literal"><span class="pre">floor()</span></tt>, <tt class="docutils literal"><span class="pre">ceil()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#modulo-modf">Modulo (<tt class="docutils literal"><span class="pre">modf()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#exponent-decomposition-ldexp-frexp">Exponent decomposition (<tt class="docutils literal"><span class="pre">ldexp()</span></tt>, <tt class="docutils literal"><span class="pre">frexp()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="numberparts.html#vector-components-hypot-atan2">Vector components (<tt class="docutils literal"><span class="pre">hypot()</span></tt>, <tt class="docutils literal"><span class="pre">atan2()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="powers.html">Powers and logarithms</a><ul>
+<li class="toctree-l2"><a class="reference external" href="powers.html#roots-sqrt-cbrt-nthroot">Roots (<tt class="docutils literal"><span class="pre">sqrt()</span></tt>, <tt class="docutils literal"><span class="pre">cbrt()</span></tt>, <tt class="docutils literal"><span class="pre">nthroot()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="powers.html#exponentiation-exp-power">Exponentiation (<tt class="docutils literal"><span class="pre">exp()</span></tt>, <tt class="docutils literal"><span class="pre">power()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="powers.html#logarithms-log-ln-log10">Logarithms (<tt class="docutils literal"><span class="pre">log()</span></tt>, <tt class="docutils literal"><span class="pre">ln()</span></tt>, <tt class="docutils literal"><span class="pre">log10()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="powers.html#fibonacci-numbers-fibonacci-fib">Fibonacci numbers (<tt class="docutils literal"><span class="pre">fibonacci()</span></tt>/<tt class="docutils literal"><span class="pre">fib()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="powers.html#lambert-w-function-lambertw">Lambert W function (<tt class="docutils literal"><span class="pre">lambertw()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="powers.html#arithmetic-geometric-mean-agm">Arithmetic-geometric mean (<tt class="docutils literal"><span class="pre">agm()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="trigonometric.html">Trigonometric functions</a><ul>
+<li class="toctree-l2"><a class="reference external" href="trigonometric.html#degree-radian-conversion-degrees-radians">Degree-radian conversion (<tt class="docutils literal"><span class="pre">degrees()</span></tt>, <tt class="docutils literal"><span class="pre">radians()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="trigonometric.html#trigonometric-functions-cos-sin-sec-csc-cot">Trigonometric functions (<tt class="docutils literal"><span class="pre">cos()</span></tt>, <tt class="docutils literal"><span class="pre">sin()</span></tt>, <tt class="docutils literal"><span class="pre">sec()</span></tt>, <tt class="docutils literal"><span class="pre">csc()</span></tt>, <tt class="docutils literal"><span class="pre">cot()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="trigonometric.html#trigonometric-functions-with-modified-argument-cospi-sinpi">Trigonometric functions with modified argument (<tt class="docutils literal"><span class="pre">cospi()</span></tt>, <tt class="docutils literal"><span class="pre">sinpi()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="trigonometric.html#inverse-trigonometric-functions-acos-asin-asec-acsc-acot">Inverse trigonometric functions (<tt class="docutils literal"><span class="pre">acos()</span></tt>, <tt class="docutils literal"><span class="pre">asin()</span></tt>, <tt class="docutils literal"><span class="pre">asec()</span></tt>, <tt class="docutils literal"><span class="pre">acsc()</span></tt>, <tt class="docutils literal"><span class="pre">acot()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="trigonometric.html#sinc-function-sinc-sincpi">Sinc function (<tt class="docutils literal"><span class="pre">sinc()</span></tt>, <tt class="docutils literal"><span class="pre">sincpi()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="hyperbolic.html">Hyperbolic functions</a><ul>
+<li class="toctree-l2"><a class="reference external" href="hyperbolic.html#hyperbolic-functions-cosh-sinh-sech-csch-coth">Hyperbolic functions (<tt class="docutils literal"><span class="pre">cosh()</span></tt>, <tt class="docutils literal"><span class="pre">sinh()</span></tt>, <tt class="docutils literal"><span class="pre">sech()</span></tt>, <tt class="docutils literal"><span class="pre">csch()</span></tt>, <tt class="docutils literal"><span class="pre">coth()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="hyperbolic.html#inverse-hyperbolic-functions-acosh-asinh-asech-acsch-acoth">Inverse hyperbolic functions (<tt class="docutils literal"><span class="pre">acosh()</span></tt>, <tt class="docutils literal"><span class="pre">asinh()</span></tt>, <tt class="docutils literal"><span class="pre">asech()</span></tt>, <tt class="docutils literal"><span class="pre">acsch()</span></tt>, <tt class="docutils literal"><span class="pre">acoth()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="gamma.html">Gamma functions and exponential integrals</a><ul>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#gamma-and-factorial-gamma-factorial-fac">Gamma and factorial (<tt class="docutils literal"><span class="pre">gamma()</span></tt>, <tt class="docutils literal"><span class="pre">factorial()</span></tt>/<tt class="docutils literal"><span class="pre">fac()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#incomplete-gamma-functions-gammainc">Incomplete gamma functions (<tt class="docutils literal"><span class="pre">gammainc()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#polygamma-functions-psi-digamma-trigamma-harmonic">Polygamma functions (<tt class="docutils literal"><span class="pre">psi()</span></tt>, <tt class="docutils literal"><span class="pre">digamma()</span></tt>, <tt class="docutils literal"><span class="pre">trigamma()</span></tt>, <tt class="docutils literal"><span class="pre">harmonic()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#gamma-function-products-gammaprod-beta-binomial-rf-ff">Gamma function products (<tt class="docutils literal"><span class="pre">gammaprod()</span></tt>, <tt class="docutils literal"><span class="pre">beta()</span></tt>, <tt class="docutils literal"><span class="pre">binomial()</span></tt>, <tt class="docutils literal"><span class="pre">rf()</span></tt>, <tt class="docutils literal"><span class="pre">ff()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#exponential-and-logarithmic-integrals-ei-li">Exponential and logarithmic integrals (<tt class="docutils literal"><span class="pre">ei()</span></tt>, <tt class="docutils literal"><span class="pre">li()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#trigonometric-integrals-ci-si">Trigonometric integrals (<tt class="docutils literal"><span class="pre">ci()</span></tt>, <tt class="docutils literal"><span class="pre">si()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#hyperbolic-integrals-chi-shi">Hyperbolic integrals (<tt class="docutils literal"><span class="pre">chi()</span></tt>, <tt class="docutils literal"><span class="pre">shi()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#error-functions-erf-erfc-erfi-erfinv">Error functions (<tt class="docutils literal"><span class="pre">erf()</span></tt>, <tt class="docutils literal"><span class="pre">erfc()</span></tt>, <tt class="docutils literal"><span class="pre">erfi()</span></tt>, <tt class="docutils literal"><span class="pre">erfinv()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#the-normal-distribution-npdf-ncdf">The normal distribution (<tt class="docutils literal"><span class="pre">npdf()</span></tt>, <tt class="docutils literal"><span class="pre">ncdf()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#fresnel-integrals-fresnels-fresnelc">Fresnel integrals (<tt class="docutils literal"><span class="pre">fresnels()</span></tt>, <tt class="docutils literal"><span class="pre">fresnelc()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="hypergeometric.html">Hypergeometric functions, Bessel/Airy, orthogonal polynomials</a><ul>
+<li class="toctree-l2"><a class="reference external" href="hypergeometric.html#bessel-functions-jv-j0-j1">Bessel functions (<tt class="docutils literal"><span class="pre">jv()</span></tt>, <tt class="docutils literal"><span class="pre">j0()</span></tt>, <tt class="docutils literal"><span class="pre">j1()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="hypergeometric.html#airy-functions-airyai-airybi">Airy functions (<tt class="docutils literal"><span class="pre">airyai()</span></tt>, <tt class="docutils literal"><span class="pre">airybi()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="hypergeometric.html#orthogonal-polynomials-jacobi-legendre-chebyt-chebyu">Orthogonal polynomials (<tt class="docutils literal"><span class="pre">jacobi()</span></tt>, <tt class="docutils literal"><span class="pre">legendre()</span></tt>, <tt class="docutils literal"><span class="pre">chebyt()</span></tt>, <tt class="docutils literal"><span class="pre">chebyu()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="hypergeometric.html#generic-hypergeometric-series-hyper-hyp0f1-hyp1f1-hyp2f1">Generic hypergeometric series (<tt class="docutils literal"><span class="pre">hyper()</span></tt>, <tt class="docutils literal"><span class="pre">hyp0f1()</span></tt>, <tt class="docutils literal"><span class="pre">hyp1f1()</span></tt>, <tt class="docutils literal"><span class="pre">hyp2f1()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="elliptic.html">Elliptic functions</a><ul>
+<li class="toctree-l2"><a class="reference external" href="elliptic.html#elliptic-integrals-ellipe-ellipk">Elliptic integrals (<tt class="docutils literal"><span class="pre">ellipe()</span></tt>, <tt class="docutils literal"><span class="pre">ellipk()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="elliptic.html#jacobi-theta-functions-jtheta-djtheta">Jacobi theta functions (<tt class="docutils literal"><span class="pre">jtheta()</span></tt>, <tt class="docutils literal"><span class="pre">djtheta()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="elliptic.html#jacobi-elliptic-functions-jsn-jcn-jdn">Jacobi elliptic functions (<tt class="docutils literal"><span class="pre">jsn()</span></tt>, <tt class="docutils literal"><span class="pre">jcn()</span></tt>, <tt class="docutils literal"><span class="pre">jdn()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="zeta.html">Zeta functions</a><ul>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-zeta-function-zeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#dirichlet-eta-function-altzeta">Dirichlet eta function (<tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#bernoulli-numbers-bernoulli-bernfrac">Bernoulli numbers (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#stieltjes-constants-stieltjes">Stieltjes constants (<tt class="docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="../basics.html" title="previous chapter">Mpmath basics</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="constants.html" title="next chapter">Mathematical constants</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/index.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="constants.html" title="Mathematical constants"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../basics.html" title="Mpmath basics"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 15, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+  </body>
+</html>

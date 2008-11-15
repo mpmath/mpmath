@@ -1,0 +1,14 @@
+Elementary functions
+--------------------
+
+.. contents::
+
+Square root (:func:`sqrt`)
+..........................
+
+.. autofunction:: mpmath.functions.sqrt
+
+Exponential function (:func:`exp`)
+..................................
+
+.. autofunction:: mpmath.functions.exp

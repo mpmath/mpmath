@@ -17,15 +17,16 @@ tag = "Generate pageview statistics"
 import os
 import os.path
 
-path = "build"
+paths = ["build", "build/functions"]
 
-for fname in os.listdir(path):
-    if fname.endswith(".html"):
-        f = open(os.path.join(path, fname), "r+w")
-        if script not in f.read():
-            f.seek(0)
-            lines = f.readlines()
-            lines.insert(lines.index("  </body>\n"), script)
-            f.seek(0)
-            f.write("".join(lines))
-            print "modified", fname
+for path in paths:
+    for fname in os.listdir(path):
+        if fname.endswith(".html"):
+            f = open(os.path.join(path, fname), "r+w")
+            if script not in f.read():
+                f.seek(0)
+                lines = f.readlines()
+                lines.insert(lines.index("  </body>\n"), script)
+                f.seek(0)
+                f.write("".join(lines))
+                print "modified", fname

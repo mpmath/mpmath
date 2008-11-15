@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mathematical constants &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Mathematical functions" href="index.html" />
+    <link rel="next" title="Number parts" href="numberparts.html" />
+    <link rel="prev" title="Mathematical functions" href="index.html" />
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="numberparts.html" title="Number parts"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Mathematical functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="mathematical-constants">
+<h1>Mathematical constants<a class="headerlink" href="#mathematical-constants" title="Permalink to this headline">¶</a></h1>
+<p>Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants. These constants are implemented as lazy objects that can be computed with any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular <tt class="docutils literal"><span class="pre">mpf</span></tt> using the unary <tt class="docutils literal"><span class="pre">+</span></tt> operator:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span>
+<span class="go">&lt;pi: 3.14159~&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="go">mpf(&#39;6.2831853071795862&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
+<span class="go">mpf(&#39;3.1415926535897931&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">40</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span>
+<span class="go">&lt;pi: 3.14159~&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="go">mpf(&#39;6.283185307179586476925286766559005768394338&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
+<span class="go">mpf(&#39;3.141592653589793238462643383279502884197169&#39;)</span>
+</pre></div>
+</div>
+<div class="section" id="exact-constants">
+<h2>Exact constants<a class="headerlink" href="#exact-constants" title="Permalink to this headline">¶</a></h2>
+<p>The predefined objects <tt class="xref docutils literal"><span class="pre">j</span></tt> (imaginary unit), <tt class="xref docutils literal"><span class="pre">inf</span></tt> (positive infinity) and <tt class="xref docutils literal"><span class="pre">nan</span></tt> (not-a-number) are shortcuts to <tt class="xref docutils literal"><span class="pre">mpc</span></tt> and <tt class="xref docutils literal"><span class="pre">mpf</span></tt> instances with these fixed values.</p>
+</div>
+<div class="section" id="pi-pi">
+<h2>Pi (<tt class="docutils literal"><span class="pre">pi</span></tt>)<a class="headerlink" href="#pi-pi" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.pi">
+<!--[mpmath.functions.pi]--><tt class="descclassname">functions.</tt><tt class="descname">pi</tt><a class="headerlink" href="#mpmath.functions.pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><img src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />, roughly equal to 3.141592654, represents the area of the unit
+circle, the half-period of trigonometric functions, and many other
+things in mathematics.</p>
+<p>Mpmath can evaluate <img src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> to arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span>
+<span class="go">3.1415926535897932384626433832795028841971693993751</span>
+</pre></div>
+</div>
+<p>This shows digits 99991-100000 of <img src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">pi</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;5549362464&#39;</span>
+</pre></div>
+</div>
+<p><strong>Possible issues</strong></p>
+<p><tt class="xref docutils literal"><span class="pre">pi</span></tt> always rounds to the nearest floating-point
+number when used. This means that exact mathematical identities
+involving <img src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> will generally not be preserved in floating-point
+arithmetic. In particular, multiples of <tt class="xref docutils literal"><span class="pre">pi</span></tt> (except for 
+the trivial case <tt class="docutils literal"><span class="pre">0*pi</span></tt>) are <em>not</em> the exact roots of
+<tt class="xref docutils literal"><span class="pre">sin()</span></tt>, but differ roughly by the current epsilon:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">mpf(&#39;1.2246467991473532e-16&#39;)</span>
+</pre></div>
+</div>
+<p>One solution is to use the <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt> function instead:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sinpi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.0&#39;)</span>
+</pre></div>
+</div>
+<p>See the documentation of trigonometric functions for additional
+details.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="degree-degree">
+<h2>Degree (<tt class="docutils literal"><span class="pre">degree</span></tt>)<a class="headerlink" href="#degree-degree" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.degree">
+<!--[mpmath.functions.degree]--><tt class="descclassname">functions.</tt><tt class="descname">degree</tt><a class="headerlink" href="#mpmath.functions.degree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="base-of-the-natural-logarithm-e">
+<h2>Base of the natural logarithm (<tt class="docutils literal"><span class="pre">e</span></tt>)<a class="headerlink" href="#base-of-the-natural-logarithm-e" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.e">
+<!--[mpmath.functions.e]--><tt class="descclassname">functions.</tt><tt class="descname">e</tt><a class="headerlink" href="#mpmath.functions.e" title="Permalink to this definition">¶</a></dt>
+<dd><p>The transcendental number <img src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> = 2.718281828... is the base of the
+natural logarithm (<tt class="xref docutils literal"><span class="pre">ln()</span></tt>) and of the exponential function
+(<tt class="xref docutils literal"><span class="pre">exp()</span></tt>).</p>
+<p>Mpmath can be evaluate <img src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> to arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">e</span>
+<span class="go">2.7182818284590452353602874713526624977572470937</span>
+</pre></div>
+</div>
+<p>This shows digits 99991-100000 of <img src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;2100427165&#39;</span>
+</pre></div>
+</div>
+<p><strong>Possible issues</strong></p>
+<p><tt class="xref docutils literal"><span class="pre">e</span></tt> always rounds to the nearest floating-point number
+when used, and mathematical identities involving <img src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> may not
+hold in floating-point arithmetic. For example, <tt class="docutils literal"><span class="pre">ln(e)</span></tt>
+might not evaluate exactly to 1.</p>
+<p>In particular, don&#8217;t use <tt class="docutils literal"><span class="pre">e**x</span></tt> to compute the exponential
+function. Use <tt class="docutils literal"><span class="pre">exp(x)</span></tt> instead; this is both faster and more
+accurate.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="golden-ratio-phi">
+<h2>Golden ratio (<tt class="docutils literal"><span class="pre">phi</span></tt>)<a class="headerlink" href="#golden-ratio-phi" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.phi">
+<!--[mpmath.functions.phi]--><tt class="descclassname">functions.</tt><tt class="descname">phi</tt><a class="headerlink" href="#mpmath.functions.phi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="euler-s-constant-euler">
+<h2>Euler&#8217;s constant (<tt class="docutils literal"><span class="pre">euler</span></tt>)<a class="headerlink" href="#euler-s-constant-euler" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.euler">
+<!--[mpmath.functions.euler]--><tt class="descclassname">functions.</tt><tt class="descname">euler</tt><a class="headerlink" href="#mpmath.functions.euler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="catalan-s-constant-catalan">
+<h2>Catalan&#8217;s constant (<tt class="docutils literal"><span class="pre">catalan</span></tt>)<a class="headerlink" href="#catalan-s-constant-catalan" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.catalan">
+<!--[mpmath.functions.catalan]--><tt class="descclassname">functions.</tt><tt class="descname">catalan</tt><a class="headerlink" href="#mpmath.functions.catalan" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="apery-s-constant-apery">
+<h2>Apery&#8217;s constant (<tt class="docutils literal"><span class="pre">apery</span></tt>)<a class="headerlink" href="#apery-s-constant-apery" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.apery">
+<!--[mpmath.functions.apery]--><tt class="descclassname">functions.</tt><tt class="descname">apery</tt><a class="headerlink" href="#mpmath.functions.apery" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="khinchin-s-constant-khinchin">
+<h2>Khinchin&#8217;s constant (<tt class="docutils literal"><span class="pre">khinchin</span></tt>)<a class="headerlink" href="#khinchin-s-constant-khinchin" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.khinchin">
+<!--[mpmath.functions.khinchin]--><tt class="descclassname">functions.</tt><tt class="descname">khinchin</tt><a class="headerlink" href="#mpmath.functions.khinchin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="glaisher-s-constant-glaisher">
+<h2>Glaisher&#8217;s constant (<tt class="docutils literal"><span class="pre">glaisher</span></tt>)<a class="headerlink" href="#glaisher-s-constant-glaisher" title="Permalink to this headline">¶</a></h2>
+<dl class="attribute">
+<dt id="mpmath.functions.glaisher">
+<!--[mpmath.functions.glaisher]--><tt class="descclassname">functions.</tt><tt class="descname">glaisher</tt><a class="headerlink" href="#mpmath.functions.glaisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Glaisher&#8217;s constant <img src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, also known as the Glaisher-Kinkelin
+constant, is a number approximately equal to 1.282427129 that
+sometimes appears in formulas related to gamma and zeta functions.</p>
+<p>It is defined as <img src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))" />. Here <img src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)" />
+denotes the derivative of the Riemann zeta function (see
+<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>).</p>
+<p>Mpmath can evaluate Glaisher&#8217;s constant to arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">glaisher</span>
+<span class="go">1.282427129100622636875342568869791727767688927325</span>
+</pre></div>
+</div>
+<p>We can verify that the value computed by <tt class="xref docutils literal"><span class="pre">glaisher</span></tt> is
+correct using mpmath&#8217;s facilities for numerical
+differentiation and arbitrary evaluation of the zeta function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span> <span class="o">-</span> <span class="n">diff</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">))</span>
+<span class="go">1.282427129100622636875342568869791727767688927325</span>
+</pre></div>
+</div>
+<p>Here is an example of an integral that can be evaluated in
+terms of Glaisher&#8217;s constant:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+<span class="go">-0.0428537406502909</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">-</span> <span class="mf">7</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">24</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">4</span> <span class="o">+</span> <span class="mf">3</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">glaisher</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">-0.042853740650291</span>
+</pre></div>
+</div>
+<p>Mpmath computes Glaisher&#8217;s constant by applying Euler-Maclaurin
+summation to a slowly convergent series. The implementation is
+reasonably efficient up to about 10,000 digits. See the source
+code for additional details.</p>
+<p>References:
+<a class="reference external" href="http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html">http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html</a></p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Mathematical constants</a><ul>
+<li><a class="reference external" href="#exact-constants">Exact constants</a></li>
+<li><a class="reference external" href="#pi-pi">Pi (<tt class="docutils literal"><span class="pre">pi</span></tt>)</a></li>
+<li><a class="reference external" href="#degree-degree">Degree (<tt class="docutils literal"><span class="pre">degree</span></tt>)</a></li>
+<li><a class="reference external" href="#base-of-the-natural-logarithm-e">Base of the natural logarithm (<tt class="docutils literal"><span class="pre">e</span></tt>)</a></li>
+<li><a class="reference external" href="#golden-ratio-phi">Golden ratio (<tt class="docutils literal"><span class="pre">phi</span></tt>)</a></li>
+<li><a class="reference external" href="#euler-s-constant-euler">Euler&#8217;s constant (<tt class="docutils literal"><span class="pre">euler</span></tt>)</a></li>
+<li><a class="reference external" href="#catalan-s-constant-catalan">Catalan&#8217;s constant (<tt class="docutils literal"><span class="pre">catalan</span></tt>)</a></li>
+<li><a class="reference external" href="#apery-s-constant-apery">Apery&#8217;s constant (<tt class="docutils literal"><span class="pre">apery</span></tt>)</a></li>
+<li><a class="reference external" href="#khinchin-s-constant-khinchin">Khinchin&#8217;s constant (<tt class="docutils literal"><span class="pre">khinchin</span></tt>)</a></li>
+<li><a class="reference external" href="#glaisher-s-constant-glaisher">Glaisher&#8217;s constant (<tt class="docutils literal"><span class="pre">glaisher</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html" title="previous chapter">Mathematical functions</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="numberparts.html" title="next chapter">Number parts</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/constants.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="numberparts.html" title="Number parts"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Mathematical functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 15, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+  </body>
+</html>

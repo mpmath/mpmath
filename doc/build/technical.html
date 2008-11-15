@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Technical details &mdash; mpmath v0.9 documentation</title>
+    <title>Technical details &mdash; mpmath v0.10-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.9',
+          VERSION:     '0.10-svn',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.9 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
     <link rel="next" title="Speed tricks" href="speedtricks.html" />
     <link rel="prev" title="Number identification" href="identification.html" />
   </head>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="document">
@@ -103,15 +103,15 @@
 <p>Decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers 0.1, 0.01, 0.001 has an exact representation as a binary floating-point number. Although mpmath can approximate decimal fractions with any accuracy, it does not solve this problem for all uses; users who need <em>exact</em> decimal fractions should look at the <tt class="docutils literal"><span class="pre">decimal</span></tt> module in Python&#8217;s standard library (or perhaps use fractions, which are much faster).</p>
 <p>With <tt class="docutils literal"><span class="pre">prec</span></tt> bits of precision, an arbitrary number can be approximated to within 2^(-prec). With <tt class="docutils literal"><span class="pre">dps</span></tt> decimal digits, the corresponding error is 10^(-dps). The equivalent values for <tt class="docutils literal"><span class="pre">prec</span></tt> and <tt class="docutils literal"><span class="pre">dps</span></tt> are therefore related proportionally via the factor C = log(10)/log(2), or roughly 3.32. For example, the standard (binary) precision in mpmath is 53 bits, which corresponds to a decimal precision of 15.95 digits.</p>
 <p>More precisely, mpmath uses the following formulas to translate between <tt class="docutils literal"><span class="pre">prec</span></tt> and <tt class="docutils literal"><span class="pre">dps</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">dps</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">/</span> <span class="n">C</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dps</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">/</span> <span class="n">C</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)))</span>
 
-<span class="n">prec</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span><span class="p">)))</span>
+<span class="n">prec</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span><span class="p">)))</span>
 </pre></div>
 </div>
 <p>Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This is done to hide minor rounding errors and artifacts resulting from binary-decimal conversion. As a result, mpmath interprets 53 bits as giving 15 digits of decimal precision, not 16.</p>
 <p>The <tt class="docutils literal"><span class="pre">dps</span></tt> value controls the number of digits to display when printing numbers with <tt class="docutils literal"><span class="pre">str</span></tt>, while the decimal precision used by <tt class="docutils literal"><span class="pre">repr</span></tt> is set two or three digits higher. For example, with 15 dps we have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">&#39;3.14159265358979&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="o">+</span><span class="n">pi</span><span class="p">)</span>
@@ -233,7 +233,7 @@
         <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.9 documentation</a> &raquo;</li>
+        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
       </ul>
     </div>
     <div class="footer">
