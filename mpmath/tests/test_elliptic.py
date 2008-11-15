@@ -143,7 +143,27 @@ def test_jtheta_issue39():
     mp.dps = 30
     result = jtheta(1, z, q)
     assert(result.ae(res))
+    mp.dps = 80
+    z = 3 + 4*j
+    q = 0.5 + 0.5*j
+    r1 = jtheta(1, z, q)
     mp.dps = 15
+    r2 = jtheta(1, z, q)
+    assert r1.ae(r2)
+    mp.dps = 80
+    z = 3 + j
+    q1 = exp(j*3)
+    # longer test
+    # for n in range(1, 6)
+    for n in range(1, 2):
+        mp.dps = 80
+        q = q1*(1 - mpf(1)/10**n)
+        r1 = jtheta(1, z, q)
+        mp.dps = 15
+        r2 = jtheta(1, z, q)
+    assert r1.ae(r2)
+    mp.dps = 15
+
 
 
 def test_jtheta_identities():

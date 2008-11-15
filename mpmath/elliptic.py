@@ -17,8 +17,9 @@
 """
 import sys
 
-from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero)
-from functions import (pi, sqrt, cos, sin, exp, tanh, ellipk, sech, nthroot)
+from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero, j)
+from functions import (pi, sqrt, cos, sin, exp, log, tanh, ellipk,
+                       sech, nthroot)
 from libmpf import to_fixed, MP_ZERO, mpf_shift, from_man_exp
 from mpmath.libelefun import cos_sin
 
@@ -70,8 +71,6 @@ def calculate_k(q):
 
 
 def _jacobi_theta2(z, q):
-    if abs(q) > Q_LIM:
-        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     # the loops below break when the fixed precision quantities
@@ -293,8 +292,6 @@ def _jacobi_theta2(z, q):
     return s
 
 def _djacobi_theta2(z, q, nd):
-    if abs(q) > Q_LIM:
-        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     MIN = 2
     extra1 = 10
     extra2 = 20
@@ -500,8 +497,6 @@ def _djacobi_theta2(z, q, nd):
         return (-1)**(1 + nd//2) * s
 
 def _jacobi_theta3(z, q):
-    if abs(q) > Q_LIM:
-        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra1 = 10
     extra2 = 20
     MIN = 2
@@ -676,8 +671,6 @@ def _jacobi_theta3(z, q):
 
 def _djacobi_theta3(z, q, nd):
     """nd=1,2,3 order of the derivative with respect to z"""
-    if abs(q) > Q_LIM:
-        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     MIN = 2
     extra1 = 10
     extra2 = 20
@@ -850,6 +843,159 @@ def _djacobi_theta3(z, q, nd):
     else:
         return (-1)**(1 + nd//2) * s
 
+def _jacobi_theta2a(z, q):
+    """
+    case z.imag != 0
+    theta(2, z, q) =
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=-inf, inf)
+    max term for minimum (2*n+1)*log(q).real - 2* z.imag
+    n0 = int(z.imag/log(q).real - 1/2)
+    theta(2, z, q) =
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=n0, inf) +
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n, n0-1, -inf)
+    """
+    n = n0 = int(z.imag/log(q).real - 1/2)
+    e2 = exp(2*j*z)
+    e = e0 = exp(j*(2*n + 1)*z)
+    a = q**(n*n + n)
+    # leading term
+    term = a * e
+    s = term
+    eps1 = eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = exp(-2*j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    s = s * nthroot(q, 4)
+    return s
+
+def _jacobi_theta3a(z, q):
+    """
+    case z.imag != 0
+    theta3(z, q) = Sum(q**(n*n) * exp(j*2*n*z), n, -inf, inf)
+    max term for n*abs(log(q).real) + z.imag ~= 0
+    n0 = int(- z.imag/abs(log(q).real))
+    """
+    n = n0 = int(- z.imag/abs(log(q).real))
+    e2 = exp(2*j*z)
+    e = e0 = exp(j*2*n*z)
+    s = term = q**(n*n) * e
+    eps1 = eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = q**(n*n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = exp(-2*j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = q**(n*n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    return s
+
+def _djacobi_theta2a(z, q, nd):
+    """
+    case z.imag != 0
+    dtheta(2, z, q, nd) =
+    j* q**1/4 * Sum(q**(n*n + n) * (2*n+1)*exp(j*(2*n + 1)*z), n=-inf, inf)
+    max term for (2*n0+1)*log(q).real - 2* z.imag ~= 0
+    n0 = int(z.imag/log(q).real - 1/2)
+    """
+    n = n0 = int(z.imag/log(q).real - 1/2)
+    e2 = exp(2*j*z)
+    e = e0 = exp(j*(2*n + 1)*z)
+    a = q**(n*n + n)
+    # leading term
+    term = (2*n+1)**nd * a * e
+    s = term
+    eps1 = eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = (2*n+1)**nd * q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = exp(-2*j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = (2*n+1)**nd * q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    return j**nd * s * nthroot(q, 4)
+
+def _djacobi_theta3a(z, q, nd):
+    """
+    case z.imag != 0
+    djtheta3(z, q, nd) = (2*j)**nd *
+      Sum(q**(n*n) * n**nd * exp(j*2*n*z), n, -inf, inf)
+    max term for minimum n*abs(log(q).real) + z.imag
+    """
+    n = n0 = int(-z.imag/abs(log(q).real))
+    e2 = exp(2*j*z)
+    e = e0 = exp(j*2*n*z)
+    a = q**(n*n) * e
+    s = term = n**nd * a
+    if n != 0:
+        eps1 = eps*abs(term)
+    else:
+        eps1 = eps*abs(a)
+    while 1:
+        n += 1
+        e = e * e2
+        a = q**(n*n) * e
+        term = n**nd * a
+        if n != 0:
+            aterm = abs(term)
+        else:
+            aterm = abs(a)
+        if aterm < eps1:
+            break
+        s += term
+    e = e0
+    e2 = exp(-2*j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        a = q**(n*n) * e
+        term = n**nd * a
+        if n != 0:
+            aterm = abs(term)
+        else:
+            aterm = abs(a)
+        if aterm < eps1:
+            break
+        s += term
+    return (2*j)**nd * s
+
+
+
+
 def jtheta(n, z, q):
     r"""
     Computes the Jacobi theta function `\vartheta_n(z, q)`, where
@@ -973,22 +1119,61 @@ def jtheta(n, z, q):
           ...
         ValueError: abs(q) > Q_LIM = 1.000000
 
+    Implementation note
+    If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
+    are used,
+    which compute the series starting from n=0 using fixed precision
+    numbers;
+    otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
+    the series starting from n=n0, which is the largest term.
+
+    TODO write _jacobi_theta2a and _jacobi_theta3a using fixed precision.
+
     """
     z = mpmathify(z)
     q = mpmathify(q)
 
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
+
     extra = 10
+    cz = 0.5
+    extra2 = 50
     prec0 = mp.prec
     try:
         mp.prec += extra
         if n == 1:
-            res = _jacobi_theta2(z - pi/2, q)
+            if abs(z.imag) < cz * abs(log(q).real):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _jacobi_theta2(z - pi/2, q)
+            else:
+                mp.dps += 10
+                res = _jacobi_theta2a(z - pi/2, q)
         elif n == 2:
-            res = _jacobi_theta2(z, q)
+            if abs(z.imag) < cz * abs(log(q)):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _jacobi_theta2(z, q)
+            else:
+                mp.dps += 10
+                res = _jacobi_theta2a(z, q)
         elif n == 3:
-            res = _jacobi_theta3(z, q)
+            if abs(z.imag) < cz* abs(log(q)):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _jacobi_theta3(z, q)
+            else:
+                mp.dps += 10
+                res = _jacobi_theta3a(z, q)
         elif n == 4:
-            res = _jacobi_theta3(z, -q)
+            if abs(z.imag) < cz * abs(log(q)):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _jacobi_theta3(z, -q)
+            else:
+                mp.dps += 10
+                res = _jacobi_theta3a(z, -q)
         else:
             raise ValueError
     finally:
@@ -1013,18 +1198,44 @@ def djtheta(n, z, q, nd=1):
     z = mpmathify(z)
     q = mpmathify(q)
 
+    if abs(q) > Q_LIM:
+        raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra = 10
+    cz = 0.5
+    extra2 = 50
     prec0 = mp.prec
     try:
         mp.prec += extra
         if n == 1:
-            res = _djacobi_theta2(z - pi/2, q, nd)
+            if abs(z.imag) < cz * abs(log(q).real):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _djacobi_theta2(z - pi/2, q, nd)
+            else:
+                mp.dps += 10
+                res = _djacobi_theta2a(z - pi/2, q, nd)
         elif n == 2:
-            res = _djacobi_theta2(z, q, nd)
+            if abs(z.imag) < cz * abs(log(q).real):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _djacobi_theta2(z, q, nd)
+            else:
+                mp.dps += 10
+                res = _djacobi_theta2a(z, q, nd)
         elif n == 3:
-            res = _djacobi_theta3(z, q, nd)
+            if abs(z.imag) < cz * abs(log(q).real):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _djacobi_theta3(z, q, nd)
+            else:
+                res = _djacobi_theta3a(z, q, nd)
         elif n == 4:
-            res = _djacobi_theta3(z, -q, nd)
+            if abs(z.imag) < cz * abs(log(q).real):
+                if abs(z.imag) != 0:
+                    mp.dps += extra2
+                res = _djacobi_theta3(z, -q, nd)
+            else:
+                res = _djacobi_theta3a(z, -q, nd)
         else:
             raise ValueError
     finally:
