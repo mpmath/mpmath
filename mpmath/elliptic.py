@@ -852,68 +852,54 @@ def _djacobi_theta3(z, q, nd):
 
 def jtheta(n, z, q):
     r"""
-    Computes the Jacobi theta function theta(n, z, q), where
-    n = 1, 2, 3 or 4. The theta functions are functions of two
+    Computes the Jacobi theta function `\vartheta_n(z, q)`, where
+    `n = 1, 2, 3, 4`. The theta functions are functions of two
     variables:
 
-    - z is the *argument*, an arbitrary real or complex number
+    * `z` is the *argument*, an arbitrary real or complex number
 
-    - q is the *nome*, which must be a real or complex number
-      in the unit disk (i.e. abs(q) < 1)
+    * `q` is the *nome*, which must be a real or complex number
+      in the unit disk (i.e. `|q| < 1`)
 
-    One also commonly encounters the notation theta(n, z, tau) in the
-    literature. The variable tau is called the *parameter* and can
-    be converted to a nome using the formula ``q = exp(j*pi*tau)``.
-    Note the condition abs(q) < 1 requires imag(tau) > 0; i.e.
-    Jacobi theta functions are defined for tau in the upper half
-    plane.
+    One also commonly encounters the notation `\vartheta_n(z, \tau)`
+    in the literature. The variable `\tau` is called the *parameter*
+    and can be converted to a nome using the formula
+    `q = \exp(i \pi \tau)`. Note the condition `|q| < 1` requires
+    `\Im(\tau) > 0`; i.e. Jacobi theta functions are defined for
+    `\tau` in the upper half plane.
 
     Other notations are also in use. For example, some authors use
-    the single-argument form theta(n, x). Depending on context, this
-    can mean ``jtheta(n, 0, x)``, ``jtheta(n, x, q)``, or possibly
+    the single-argument form `\vartheta_n(x)`. Depending on context,
+    this can mean ``jtheta(n, 0, x)``, ``jtheta(n, x, q)``, or possibly
     something else. Needless to say, it is a good idea to cross-check
     the definitions when working with theta functions.
 
     **Definition**
 
     The four Jacobi theta functions as implemented by :func:`jtheta`
-    are defined by the following infinite series::
+    are defined by the following infinite series:
 
-                               oo
-                               ___           2
-                          1/4 \         n  (n  + n)
-        theta(1,z,q) = 2 q     )    (-1)  q         sin((2n+1) z)
-                              /___
-                              n = 0
+    .. math ::
 
-                               oo
-                               ___     2
-                          1/4 \      (n  + n)
-        theta(2,z,q) = 2 q     )    q         cos((2n+1) z)
-                              /___
-                              n = 0
+      \vartheta_1(z,q) = 2 q^{1/4} \sum_{n=0}^{\infty}
+        (-1)^n q^{n^2+n\,} \sin((2n+1)z)
 
-                               oo
-                               ___     2
-                              \      (n )
-        theta(3,z,q) = 1 +  2  )    q     cos(2n z)
-                              /___
-                              n = 1
+      \vartheta_2(z,q) = 2 q^{1/4} \sum_{n=0}^{\infty}
+        q^{n^{2\,} + n} \cos((2n+1)z)
 
-                               oo
-                               ___        2
-                              \         (n )
-        theta(4,z,q) = 1 +  2  )    (-q)     cos(2n z)
-                              /___
-                              n = 1
+      \vartheta_3(z,q) = 1 + 2 \sum_{n=0}^{\infty}
+        q^{n^2\,} \cos(2 n z)
 
-    For abs(q) << 1, these series converge very quickly, so the
+      \vartheta_4(z,q) = 1 + 2 \sum_{n=0}^{\infty}
+        (-q)^{n^2\,} \cos(2 n z)
+
+    For `|q| \ll 1`, these series converge very quickly, so the
     Jacobi theta functions can efficiently be evaluated to high
     precision.
 
     **Examples and basic properties**
 
-    Considered as functions of z, the Jacobi theta functions may be
+    Considered as functions of `z`, the Jacobi theta functions may be
     viewed as generalizations of the ordinary trigonometric functions
     cos and sin. They are periodic functions::
 
@@ -932,9 +918,9 @@ def jtheta(n, z, q):
         ([0.0, 1.68179, 0.0, 0.420448, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0])
 
     The Jacobi theta functions are also so-called quasiperiodic
-    functions of z and tau, meaning that for fixed tau, theta(z, q)
-    and theta(z+tau*pi, q) are the same except for an exponential
-    factor::
+    functions of `z` and `\tau`, meaning that for fixed `\tau`,
+    `\vartheta_n(z, q)` and `\vartheta_n(z+\pi \tau, q)` are the same
+    except for an exponential factor::
 
         >>> tau = 0.3*j
         >>> q = exp(pi*j*tau)
@@ -946,7 +932,7 @@ def jtheta(n, z, q):
 
     The Jacobi theta functions satisfy a huge number of other
     functional equations, such as the following identity (valid for
-    any q)::
+    any `q`)::
 
         >>> q = 0.3
         >>> print jtheta(3,0,q)**4
@@ -977,9 +963,9 @@ def jtheta(n, z, q):
 
     **Possible issues**
 
-    For abs(q) >= 1 or imag(tau) <= 0, :func:`jtheta` raises
-    ``ValueError``. This exception is also raised abs(q) extremely
-    close to 1 (or equivalently tau very close to 0), since the
+    For `|q| \ge 1` or `\Im(\tau) \le 0`, :func:`jtheta` raises
+    ``ValueError``. This exception is also raised for `|q|` extremely
+    close to 1 (or equivalently `\tau` very close to 0), since the
     series would converge too slowly::
 
         >>> jtheta(1, 10, 0.99999999 * exp(0.5*j))
@@ -1010,10 +996,9 @@ def jtheta(n, z, q):
     return res
 
 def djtheta(n, z, q, nd=1):
-    """
-    For an integer nd >= 1, computes the nd:th derivative with respect
-    to z of the Jacobi theta function ``jtheta(n, z, q)``. For
-    example::
+    r"""
+    For an integer `nd \ge 1`, computes the `nd`:th derivative with
+    respect to `z` of the Jacobi theta function `\vartheta_n(z,q)`::
 
         >>> from mpmath import *
         >>> mp.dps = 15

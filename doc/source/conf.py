@@ -23,7 +23,6 @@ import sys
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.pngmath']
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
 
@@ -133,4 +132,5 @@ htmlhelp_basename = 'mpmathdoc'
 # If false, no module index is generated.
 #latex_use_modindex = True
 
-pngmath_dvipng_args = ['-gamma 1.5', '-D 120']
+default_role = 'math'
+pngmath_dvipng_args = ['-gamma 1.5', '-D 110']

@@ -35,19 +35,19 @@ from mptypes import (\
 )
 
 class _pi(constant):
-    """
-    Pi, roughly equal to 3.141592654, represents the area of the unit
+    r"""
+    `\pi`, roughly equal to 3.141592654, represents the area of the unit
     circle, the half-period of trigonometric functions, and many other
     things in mathematics.
 
-    Mpmath can evaluate pi to arbitrary precision:
+    Mpmath can evaluate `\pi` to arbitrary precision:
 
         >>> from mpmath import *
         >>> mp.dps = 50
         >>> print pi
         3.1415926535897932384626433832795028841971693993751
 
-    This shows digits 99991-100000 of pi:
+    This shows digits 99991-100000 of `\pi`:
 
         >>> mp.dps = 100000
         >>> str(pi)[-10:]
@@ -57,9 +57,9 @@ class _pi(constant):
 
     :data:`pi` always rounds to the nearest floating-point
     number when used. This means that exact mathematical identities
-    involving pi will generally not be preserved in floating-point
+    involving `\pi` will generally not be preserved in floating-point
     arithmetic. In particular, multiples of :data:`pi` (except for 
-    the trivial case ``0*pi``) are `not` the exact roots of
+    the trivial case ``0*pi``) are *not* the exact roots of
     :func:`sin`, but differ roughly by the current epsilon:
 
         >>> mp.dps = 15
@@ -80,17 +80,17 @@ class _degree(constant): pass
 
 class _e(constant):
     """
-    The transcendental number e = 2.718281828... is the base of the
-    natural logarithm :func:`ln` and of the exponential function,
-    :func:`exp`.
+    The transcendental number `e` = 2.718281828... is the base of the
+    natural logarithm (:func:`ln`) and of the exponential function
+    (:func:`exp`).
 
-    Mpmath can be evaluate e to arbitrary precision:
+    Mpmath can be evaluate `e` to arbitrary precision:
 
         >>> mp.dps = 50
         >>> print e
         2.7182818284590452353602874713526624977572470937
 
-    This shows digits 99991-100000 of e:
+    This shows digits 99991-100000 of `e`:
 
         >>> mp.dps = 100000
         >>> str(e)[-10:]
@@ -99,14 +99,13 @@ class _e(constant):
     **Possible issues**
 
     :data:`e` always rounds to the nearest floating-point number
-    when used, and mathematical identities involving e may not
+    when used, and mathematical identities involving `e` may not
     hold in floating-point arithmetic. For example, ``ln(e)``
     might not evaluate exactly to 1.
 
     In particular, don't use ``e**x`` to compute the exponential
     function. Use ``exp(x)`` instead; this is both faster and more
     accurate.
-
     """
     pass
 
@@ -125,9 +124,13 @@ class _khinchin(constant): pass
 
 class _glaisher(constant):
     """
-    Glaisher's constant A, also known as the Glaisher-Kinkelin constant,
-    is a number approximately equal to 1.282427129 that sometimes
-    appears in formulas related to gamma and zeta functions.
+    Glaisher's constant `A`, also known as the Glaisher-Kinkelin
+    constant, is a number approximately equal to 1.282427129 that
+    sometimes appears in formulas related to gamma and zeta functions.
+
+    It is defined as `A = \exp(1/12-\zeta'(-1))`. Here `\zeta'(s)`
+    denotes the derivative of the Riemann zeta function (see
+    :func:`zeta`).
 
     Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
@@ -136,9 +139,8 @@ class _glaisher(constant):
         >>> print glaisher
         1.282427129100622636875342568869791727767688927325
 
-    Glaisher's constant is defined in terms of the derivative of the
-    Riemann zeta function. We can verify that the value computed by
-    :data:`glaisher` is correct using mpmath's facilities for numerical
+    We can verify that the value computed by :data:`glaisher` is
+    correct using mpmath's facilities for numerical
     differentiation and arbitrary evaluation of the zeta function:
 
         >>> print exp(mpf(1)/12 - diff(zeta, -1))
@@ -248,13 +250,13 @@ def altinvfunc(f, name, desc):
 
 sqrt = mpfunc('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, "principal square root", libmpi.mpi_sqrt)
 sqrt.__doc__ = r"""
-``sqrt(x)`` computes the principal square root of *x*. For positive
-real numbers, this is simply the  positive square root. For
-arbitrary complex numbers, the principal square root is
-defined to satisfy :math:`\sqrt x = \exp(\log(x)/2)`. It
-thus has a branch cut along the negative half real axis.
+``sqrt(x)`` computes the principal square root of `x`, `\sqrt x`.
+For positive real numbers, the principal root is simply the
+positive square root. For arbitrary complex numbers, the principal
+square root is defined to satisfy `\sqrt x = \exp(\log(x)/2)`.
+The function thus has a branch cut along the negative half real axis.
 
-For all mpmath numbers *x*, calling ``sqrt(x)`` is equivalent to
+For all mpmath numbers ``x``, calling ``sqrt(x)`` is equivalent to
 performing ``x**0.5``.
 
 **Examples**
@@ -295,7 +297,7 @@ Square root evaluation is fast at huge precision::
 
 cbrt = mpfunc('cbrt', libelefun.mpf_cbrt, libmpc.mpc_cbrt, "principal cubic root")
 cbrt.__doc__ = """
-``cbrt(x)`` computes the cube root of *x*, :math:`x^{1/3}`. This
+``cbrt(x)`` computes the cube root of `x`, `x^{1/3}`. This
 function is faster and more accurate than raising to a floating-point
 fraction::
 
@@ -307,7 +309,7 @@ fraction::
     mpf('5.0')
 
 Every nonzero complex number has three cube roots. This function
-returns the cube root defined by :math:`\exp(\log(x)/3)` where the
+returns the cube root defined by `\exp(\log(x)/3)` where the
 principal branch of the natural logarithm is used. Note that this
 does not give a real cube root for negative real numbers::
 
@@ -318,6 +320,9 @@ does not give a real cube root for negative real numbers::
 
 exp = mpfunc('exp', libelefun.mpf_exp, libmpc.mpc_exp, "exponential function", libmpi.mpi_exp)
 ln = mpfunc('ln', libelefun.mpf_log, libmpc.mpc_log, "natural logarithm", libmpi.mpi_log)
+
+ln.__doc__ = r"""Computes the natural logarithm of `x`, `\ln x`.
+See :func:`log` for additional documentation."""
 
 cos = mpfunc('cos', libelefun.mpf_cos, libmpc.mpc_cos, "cosine", libmpi.mpi_cos)
 sin = mpfunc('sin', libelefun.mpf_sin, libmpc.mpc_sin, "sine", libmpi.mpi_sin)
@@ -351,7 +356,7 @@ cospi = mpfunc('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, "")
 sinpi = mpfunc('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, "")
 
 sinpi.__doc__ = """
-Computes :math:`\sin(\pi x)`, more accurately than the expression
+Computes `\sin(\pi x)`, more accurately than the expression
 ``sin(pi*x)``::
 
     >>> from mpmath import *
@@ -363,7 +368,7 @@ Computes :math:`\sin(\pi x)`, more accurately than the expression
 """
 
 cospi.__doc__ = """
-Computes :math:`\cos(\pi x)`, more accurately than the expression
+Computes `\cos(\pi x)`, more accurately than the expression
 ``cos(pi*x)``::
 
     >>> from mpmath import *
@@ -425,7 +430,7 @@ def sincpi(x):
         \end{cases}
 
     Equivalently, we have
-    :math:`\mathrm{sinc}_{\pi}(x) = \mathrm{sinc}(\pi x)`.
+    `\mathrm{sinc}_{\pi}(x) = \mathrm{sinc}(\pi x)`.
 
     The normalization entails that the function integrates
     to unity over the entire real line::
@@ -448,28 +453,50 @@ def sincpi(x):
     return sinpi(x)/(pi*x)
 
 floor = mpfunc('floor', libmpf.mpf_floor, libmpc.mpc_floor, "")
-floor.__doc__ = """Computes the floor function of x. Note: returns a floating-point
-number, not a Python int. If x is larger than the precision, it will be rounded,
-not necessarily in the floor direction."""
+floor.__doc__ = r"""
+Computes the floor of `x`, `\lfloor x \rfloor`, defined as
+the largest integer less than or equal to `x`::
+
+    >>> from mpmath import *
+    >>> print floor(3.5)
+    3.0
+
+Note: :func:`floor` returns a floating-point number, not a
+Python ``int``. If `\lfloor x \rfloor` is too large to be
+represented exactly at the present working precision, the
+result will be rounded, not necessarily in the floor
+direction."""
 
 ceil = mpfunc('ceil', libmpf.mpf_ceil, libmpc.mpc_ceil, "")
-ceil.__doc__ = """Computes the ceiling function of x. Note: returns a floating-point
-number, not a Python int. If x is larger than the precision, it will be rounded,
-not necessarily in the floor direction."""
+ceil.__doc__ = r"""
+Computes the ceiling of `x`, `\lceil x \rceil`, defined as
+the smallest integer greater than or equal to `x`::
+
+    >>> from mpmath import *
+    >>> print ceil(3.5)
+    4.0
+
+Note: :func:`ceil` returns a floating-point number, not a
+Python ``int``. If `\lceil x \rceil` is too large to be
+represented exactly at the present working precision, the
+result will be rounded, not necessarily in the ceiling
+direction."""
 
 @funcwrapper
 def nthroot(x, n):
-    """
-    nthroot(x, n) computes the principal nth root of x, x^(1/n). Here
-    n must be an integer, and can be negative [x^(-1/n) is 1/(x^(1/n))].
-    For n = 2 or n = 3, this function is equivalent to calling
-    :func:`sqrt` or :func:`cbrt`. In general, nthroot(x, n) is defined
-    to compute exp(ln(x)/n).
+    r"""
+    ``nthroot(x, n)`` computes the principal `n`-th root of `x`,
+    `x^{1/n}`. Here `n` must be an integer, and can be negative
+    (`x^{-1/n}` is `1/x^{1/n}`).
 
-    :func:`nthroot` is implemented to use Newton's method for small n.
-    At high precision, this makes x^(1/n) not much more expensive than
-    the regular exponentiation, x^n. For very large n, it falls back to
-    use the exponential function.
+    For `n = 2` or `n = 3`, using this function is equivalent to
+    calling :func:`sqrt` or :func:`cbrt`. In general,
+    ``nthroot(x, n)`` is defined to compute `\exp(\log(x)/n)`.
+
+    :func:`nthroot` is implemented to use Newton's method for small
+    `n`. At high precision, this makes `x^{1/n}` not much more
+    expensive than the regular exponentiation, `x^n`. For very large
+    `n`, :func:`nthroot` falls back to use the exponential function.
 
     :func:`nthroot` is faster and more accurate than raising to a
     floating-point fraction::
@@ -495,48 +522,111 @@ def nthroot(x, n):
     return make_mpc(libmpc.mpc_nthroot(x, n, *prec_rounding))
 
 def hypot(x, y):
-    """Returns the Euclidean distance sqrt(x*x + y*y). Both x and y
-    must be real."""
+    r"""
+    Computes the Euclidean norm of the vector `(x, y)`, equal
+    to `\sqrt{x^2 + y^2}`. Both `x` and `y` must be real."""
     x = mpmathify(x)
     y = mpmathify(y)
     return make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *prec_rounding))
 
 def ldexp(x, n):
-    """Calculate mpf(x) * 2**n efficiently. No rounding is performed."""
+    r"""
+    Computes `x 2^n` efficiently. No rounding is performed.
+    The argument `x` must be a real floating-point number (or
+    possible to convert into one) and `n` must be a Python ``int``.
+
+        >>> from mpmath import *
+        >>> ldexp(1, 10)
+        mpf('1024.0')
+        >>> ldexp(1, -3)
+        mpf('0.125')
+
+    """
     x = mpmathify(x)
     return make_mpf(libmpf.mpf_shift(x._mpf_, n))
 
 def frexp(x):
-    """Convert x to a scaled number y in the range [0.5, 1). Returns
-    (y, n) such that x = y * 2**n. No rounding is performed."""
+    r"""
+    Given a real number `x`, returns `(y, n)` with `y \in [0.5, 1)`,
+    `n` a Python integer, and such that `x = y 2^n`. No rounding is
+    performed.
+
+        >>> from mpmath import *
+        >>> frexp(7.5)
+        (mpf('0.9375'), 3)
+
+    """
     x = mpmathify(x)
     y, n = libmpf.mpf_frexp(x._mpf_)
     return make_mpf(y), n
 
 def sign(x):
-    """Return sign(x), defined as x/abs(x), or 0 for x = 0."""
+    r"""
+    Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
+    (with the special case `\sign(0) = 0`)::
+
+        >>> from mpmath import *
+        >>> sign(10)
+        mpf('1.0')
+        >>> sign(-10)
+        mpf('-1.0')
+        >>> sign(0)
+        mpf('0.0')
+
+    Note that the sign function is also defined for complex numbers,
+    for which it gives the projection onto the unit circle::
+
+        >>> mp.dps = 15
+        >>> print sign(1+j)
+        (0.707106781186547 + 0.707106781186547j)
+
+    """
     x = mpmathify(x)
     if not x or isnan(x):
         return x
     if isinstance(x, mpf):
-        return cmp(x, 0)
+        return mpf(cmp(x, 0))
     return x / abs(x)
 
 @extraprec(5)
 def arg(x):
-    """Returns the complex argument (phase) of x. The returned value is
-    an mpf instance. The argument is here defined to satisfy
-    -pi < arg(x) <= pi. On the negative real half-axis, it is taken to
-    be +pi."""
+    r"""
+    Computes the complex argument (phase) of `x`, defined as the
+    signed angle between the positive real axis and `x` in the
+    complex plane::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print arg(3)
+        0.0
+        >>> print arg(3+3j)
+        0.785398163397448
+        >>> print arg(3j)
+        1.5707963267949
+        >>> print arg(-3)
+        3.14159265358979
+        >>> print arg(-3j)
+        -1.5707963267949
+
+    The angle is defined to satisfy `-\pi < \arg(x) \le \pi` and
+    with the sign convention that a nonnegative imaginary part
+    results in a nonnegative argument.
+
+    The value returned by :func:`arg` is an ``mpf`` instance.
+    """
     x = mpc(x)
     return atan2(x.imag, x.real)
 
 def fabs(x):
-    """
-    Returns the absolute value of x converted to a mpmath number::
+    r"""
+    Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
+    :func:`fabs` converts non-mpmath numbers (such as ``int``)
+    into mpmath numbers::
 
         >>> from mpmath import *
         >>> fabs(3)
+        mpf('3.0')
+        >>> fabs(-3)
         mpf('3.0')
         >>> fabs(3+4j)
         mpf('5.0')
@@ -545,8 +635,9 @@ def fabs(x):
     return abs(mpmathify(x))
 
 def re(x):
-    """
-    Returns the real part of x converted to a mpmath number::
+    r"""
+    Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
+    :func:`re` converts `x` to a mpmath number::
 
         >>> from mpmath import *
         >>> re(3)
@@ -558,8 +649,9 @@ def re(x):
     return mpmathify(x).real
 
 def im(x):
-    """
-    Returns the imaginary part of x converted to a mpmath number::
+    r"""
+    Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
+    :func:`im` converts `x` to a mpmath number::
 
         >>> from mpmath import *
         >>> im(3)
@@ -571,8 +663,9 @@ def im(x):
     return mpmathify(x).imag
 
 def conj(x):
-    """
-    Returns the complex conjugate of x converted to a mpmath number::
+    r"""
+    Returns the complex conjugate of `x`, `\overline{x}`. Unlike
+    ``x.conjugate()``, :func:`im` converts `x` to a mpmath number::
 
         >>> from mpmath import *
         >>> conj(3)
@@ -584,43 +677,169 @@ def conj(x):
     return mpmathify(x).conjugate()
 
 def log(x, b=None):
-    """Returns the base-b logarithm of x. If b is unspecified, return
-    the natural (base-e) logarithm. log(x, b) is defined as
-    log(x)/log(b). log(0) raises ValueError.
+    r"""
+    Computes the base-`b` logarithm of `x`, `\log_b(x)`. If `b` is
+    unspecified, :func:`log` computes the natural (base `e`) logarithm
+    and is equivalent to :func:`ln`. In general, the base `b` logarithm
+    is defined in terms of the natural logarithm as
+    `\log_b(x) = \ln(x)/\ln(b)`.
 
-    The natural logarithm is real if x > 0 and complex if x < 0 or if x
-    is complex. The principal branch of the complex logarithm is chosen,
-    for which Im(log(x)) = -pi < arg(x) <= pi. """
+    By convention, we take `\log(0) = -\infty`.
+
+    The natural logarithm is real if `x > 0` and complex if `x < 0` or if
+    `x` is complex. The principal branch of the complex logarithm is
+    used, meaning that `\Im(\ln(x)) = -\pi < \arg(x) \le \pi`.
+
+    **Examples**
+
+    Some basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print log(1)
+        0.0
+        >>> print log(2)
+        0.693147180559945
+        >>> print log(1000,10)
+        3.0
+        >>> print log(4, 16)
+        0.5
+        >>> print log(j)
+        (0.0 + 1.5707963267949j)
+        >>> print log(-1)
+        (0.0 + 3.14159265358979j)
+        >>> print log(0)
+        -inf
+        >>> print log(inf)
+        +inf
+
+    The natural logarithm is the antiderivative of `1/x`::
+
+        >>> print quad(lambda x: 1/x, [1, 5])
+        1.6094379124341
+        >>> print log(5)
+        1.6094379124341
+        >>> print diff(log, 10)
+        0.1
+
+    The Taylor series expansion of the natural logarithm around
+    `x = 1` has coefficients `(-1)^{n+1}/n`::
+
+        >>> nprint(taylor(log, 1, 7))
+        [0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]
+
+    :func:`log` supports arbitrary precision evaluation::
+
+        >>> mp.dps = 50
+        >>> print log(pi)
+        1.1447298858494001741434273513530587116472948129153
+        >>> print log(pi, pi**3)
+        0.33333333333333333333333333333333333333333333333333
+        >>> mp.dps = 25
+        >>> print log(3+4j)
+        (1.609437912434100374600759 + 0.9272952180016122324285125j)
+
+    """
     if b is None:
         return ln(x)
     wp = mp.prec + 20
     return ln(x, prec=wp) / ln(b, prec=wp)
 
 def log10(x):
-    """Base-10 logarithm. Equivalent to log(x,10)."""
+    r"""
+    Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
+    is equivalent to ``log(x, 10)``.
+    """
     return log(x, 10)
 
 def power(x, y):
-    """Converts x and y to mpf or mpc and returns x**y = exp(y*log(x))."""
+    r"""
+    Converts `x` and `y` to mpmath numbers and evaluates
+    `x^y = \exp(y \log(x))`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 30
+        >>> print power(2, 0.5)
+        1.41421356237309504880168872421
+
+    This shows the leading few digits of a large Mersenne prime
+    (performing the exact calculation ``2**43112609-1`` and
+    displaying the result in Python would be very slow)::
+
+        >>> print power(2, 43112609)-1
+        3.16470269330255923143453723949e+12978188
+
+    """
     return mpmathify(x) ** mpmathify(y)
 
 def modf(x,y):
-    """Converts x and y to mpf or mpc and returns x % y"""
+    r"""
+    Converts `x` and `y` to mpmath numbers and returns `x \mod y`.
+    For mpmath numbers, this is equivalent to ``x % y``.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print modf(100, pi)
+        2.61062773871641
+
+    You can use :func:`modf` to compute fractional parts of numbers::
+
+        >>> print modf(10.25, 1)
+        0.25
+
+    """
     x = mpmathify(x)
     y = mpmathify(y)
     return x % y
 
 def degrees(x):
-    """Convert x given in radians to degrees"""
+    r"""
+    Converts the radian angle `x` to a degree angle::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print degrees(pi/3)
+        60.0
+    """
     return x / degree
 
 def radians(x):
-    """Convert x given in degrees to radians"""
+    r"""
+    Converts the degree angle `x` to radians::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print radians(60)
+        1.0471975511966
+    """
     return x * degree
 
-def atan2(y,x):
-    """atan2(y, x) has the same magnitude as atan(y/x) but accounts for
-    the signs of y and x. (Defined for real x and y only.)"""
+def atan2(y, x):
+    r"""
+    Computes the two-argument arctangent, `\mathrm{atan2}(y, x)`,
+    giving the signed angle between the positive `x`-axis and the
+    point `(x, y)` in the 2D plane. This function is defined for
+    real `x` and `y` only.
+
+    The two-argument arctangent essentially computes
+    `\mathrm{atan}(y/x)`, but accounts for the signs of both
+    `x` and `y` to give the angle for the correct quadrant. The
+    following examples illustrate the difference::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print atan2(1,1), atan(1/1.)
+        0.785398163397448 0.785398163397448
+        >>> print atan2(1,-1), atan(1/-1.)
+        2.35619449019234 -0.785398163397448
+        >>> print atan2(-1,1), atan(-1/1.)
+        -0.785398163397448 -0.785398163397448
+        >>> print atan2(-1,-1), atan(-1/-1.)
+        -2.35619449019234 0.785398163397448
+
+    The angle convention is the same as that used for the complex
+    argument; see :func:`arg`.
+    """
     x = mpmathify(x)
     y = mpmathify(y)
     return make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *prec_rounding))
@@ -628,19 +847,20 @@ def atan2(y,x):
 
 fib = fibonacci = mpfunc('fibonacci', libelefun.mpf_fibonacci, libmpc.mpc_fibonacci, "")
 
-fibonacci.__doc__ = """
-fibonacci(n) computes the nth Fibonacci number F(n). The Fibonacci
-numbers are defined by F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2).
-This definition is extended to arbitrary real and complex arguments
-using the formula::
+fibonacci.__doc__ = r"""
+``fibonacci(n)`` computes the `n`-th Fibonacci number, `F(n)`. The
+Fibonacci numbers are defined by the recurrence `F(n) = F(n-1) + F(n-2)`
+with the initial values `F(0) = 0`, `F(1) = 1`. :func:`fibonacci`
+extends this definition to arbitrary real and complex arguments
+using the formula
 
-              z                  -z
-           phi  - cos(z*pi) * phi
-    F(z) = ------------------------
-                   sqrt(5)
+.. math ::
 
-:func:`fibonacci` also uses this formula to compute F(n) for extremely
-large n, where calculating the exact integer would be wasteful.
+  F(z) = \frac{\phi^z - \cos(\pi z) \phi^{-z}}{\sqrt 5}
+
+where `\phi` is the golden ratio. :func:`fibonacci` also uses this
+continuous formula to compute `F(n)` for extremely large `n`, where
+calculating the exact integer would be wasteful.
 
 For convenience, :func:`fib` is available as an alias for
 :func:`fibonacci`.
@@ -659,7 +879,7 @@ Some small Fibonacci numbers are::
     >>> print fibonacci(50)
     12586269025.0
 
-The recurrence for F(n) extends backwards to negative n::
+The recurrence for `F(n)` extends backwards to negative `n`::
 
     >>> for i in range(10):
     ...     print fibonacci(-i),
@@ -685,7 +905,7 @@ of stupendous size::
 **Real and complex arguments**
 
 The extended Fibonacci function is an analytic function. The
-property F(z) = F(z-1) + F(z-2) holds for arbitrary z::
+property `F(z) = F(z-1) + F(z-2)` holds for arbitrary `z`::
 
     >>> mp.dps = 15
     >>> print fib(pi)
@@ -700,7 +920,7 @@ property F(z) = F(z-1) + F(z-2) holds for arbitrary z::
 The Fibonacci function has infinitely many roots on the
 negative half-real axis. The first root is at 0, the second is
 close to -0.18, and then there are infinitely many roots that
-asymptotically approach -n+1/2::
+asymptotically approach `-n+1/2`::
 
     >>> print findroot(fib, -0.2)
     -0.183802359692956
@@ -713,7 +933,7 @@ asymptotically approach -n+1/2::
 
 **Mathematical relationships**
 
-For large n, F(n+1)/F(n) approaches the golden ratio::
+For large `n`, `F(n+1)/F(n)` approaches the golden ratio::
 
     >>> mp.dps = 50
     >>> print fibonacci(101)/fibonacci(100)
@@ -757,15 +977,16 @@ Some related sums can be done in closed form::
 zeta = mpfunc('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, 'Riemann zeta function')
 altzeta = mpfunc('zeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta, 'Dirichlet eta function')
 
-zeta.__doc__ = """
-    Computes the Riemann zeta function, zeta(s). The Riemann zeta
-    function is defined for Re(s) > 1 by::
+zeta.__doc__ = r"""
+    ``zeta(s)`` computes the Riemann zeta function, `\zeta(s)`.
+    The Riemann zeta function is defined for `\Re(s) > 1` by
 
-                         -s     -s     -s
-        zeta(s) = 1  +  2   +  3   +  4   + ...
+    .. math ::
 
-    and for Re(s) <= 1 by analytic continuation. It has a pole
-    at s = 1.
+      \zeta(s) = 1+\frac{1}{2^s}+\frac{1}{3^s}+\frac{1}{4^s}+\ldots
+
+    and for `\Re(s) \le 1` by analytic continuation. It has a pole
+    at `s = 1`.
 
     **Examples**
 
@@ -795,7 +1016,7 @@ zeta.__doc__ = """
         0.35185474521784529049653859679690026505229177886045j)
 
     The Riemann zeta function has so-called nontrivial zeros on
-    the critical line s = 1/2 + j*t::
+    the critical line `s = 1/2 + it`::
 
         >>> mp.dps = 15
         >>> print findroot(zeta, 0.5+14j)
@@ -805,7 +1026,7 @@ zeta.__doc__ = """
         >>> print findroot(zeta, 0.5+25j)
         (0.5 + 25.0108575801457j)
 
-    For large positive s, zeta(s) rapidly approaches 1::
+    For large positive `s`, `\zeta(s)` rapidly approaches 1::
 
         >>> print zeta(30)
         1.00000000093133
@@ -817,7 +1038,7 @@ zeta.__doc__ = """
     The following series converges and in fact has a simple
     closed form value::
 
-        >>> print sumsh(lambda k: zeta(k) - 1, [2, inf])
+        >>> print nsum(lambda k: zeta(k)-1, [2, inf])
         1.0
 
     **Algorithm**
@@ -829,35 +1050,38 @@ zeta.__doc__ = """
     half-plane. For very large real arguments, either direct
     summation or the Euler prime product is used.
 
-    It should be noted that computation of zeta(s) gets very slow
-    when s is far away from the real axis.
+    It should be noted that computation of `\zeta(s)` gets very slow
+    when `s` is far away from the real axis.
 
     **References**
 
-    * http://mathworld.wolfram.com/RiemannZetaFunction.html
+    1. http://mathworld.wolfram.com/RiemannZetaFunction.html
 
-    * http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
+    2. http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
 """
 
-altzeta.__doc__ = """
-    Computes the Dirichlet eta function, eta(s), also known as the
+altzeta.__doc__ = r"""
+    Computes the Dirichlet eta function, `\eta(s)`, also known as the
     alternating zeta function. This function is defined in analogy
     with the Riemann zeta function as providing the sum of the
-    alternating series::
+    alternating series
 
-                        -s     -s     -s
-        eta(s) = 1  -  2   +  3   -  4   + ...
+    .. math ::
 
-    Note that eta(1) = log(2) is the alternating harmonic series.
+        \eta(s) = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots
+
+    Note that `\eta(1) = \log(2)` is the alternating harmonic series.
     The eta function unlike the Riemann zeta function is an entire
-    function, having a finite value for all complex s.
+    function, having a finite value for all complex `s`.
 
     The alternating and non-alternating zeta functions are related
-    via the simple formula::
+    via the simple formula
 
-        eta(s) = (1-2^(1-s)) * zeta(s)
+    .. math ::
 
-    This formula can be used to define eta(s) for Re(s) <= 0,
+        \eta(s) = (1 - 2^{1-s}) \zeta(s).
+
+    This formula can be used to define `\eta(s)` for `\Re(s) \le 0`,
     where the series diverges.
 
     **Examples**
@@ -884,15 +1108,15 @@ altzeta.__doc__ = """
         0.867199889012184
 
     At positive even integers, the Dirichlet eta function
-    evaluates to a rational multiple of a power of pi::
+    evaluates to a rational multiple of a power of `\pi`::
 
         >>> print altzeta(2)
         0.822467033424113
         >>> print pi**2/12
         0.822467033424113
 
-    Like the Riemann zeta function, eta(s), approaches 1
-    as s approaches positive infinity, although it does
+    Like the Riemann zeta function, `\eta(s)`, approaches 1
+    as `s` approaches positive infinity, although it does
     so from below rather than from above::
 
         >>> print altzeta(30)
@@ -956,10 +1180,15 @@ pentagamma = psi3
 harmonic = mpfunc('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic,
     "nth harmonic number")
 
-harmonic.__doc__ = """
-    If `n` is an integer, harmonic(`n`) gives a floating-point
-    approximation of the `n`-th harmonic number
-    H(`n`) = 1 + 1/2 + 1/3 + ... + 1/`n`::
+harmonic.__doc__ = r"""
+    If `n` is an integer, ``harmonic(n)`` gives a floating-point
+    approximation of the `n`-th harmonic number `H(n)`, defined as
+
+    .. math ::
+
+        H(n) = 1 + \frac{1}{2} + \frac{1}{3} + \ldots + \frac{1}{n}
+
+    The firrst few harmonic numbers are::
 
         >>> from mpmath import *
         >>> mp.dps = 15    
@@ -975,7 +1204,7 @@ harmonic.__doc__ = """
         6 2.45
         7 2.59285714285714
 
-    The infinite harmonic series 1 + 1/2 + 1/3 + ... diverges::
+    The infinite harmonic series `1 + 1/2 + 1/3 + \ldots` diverges::
 
         >>> print harmonic(inf)
         +inf
@@ -1019,8 +1248,8 @@ harmonic.__doc__ = """
     """
 
 def bernoulli(n):
-    """
-    Computes the nth Bernoulli number, B(n), for any integer n >= 0.
+    r"""
+    Computes the nth Bernoulli number, `B_n`, for any integer `n \ge 0`.
 
     The Bernoulli numbers are rational numbers, but this function
     returns a floating-point approximation. To obtain an exact
@@ -1057,7 +1286,7 @@ def bernoulli(n):
         >>> print bernoulli(100)
         -2.8382249570693706959264156336481764738284680928013e+78
 
-    Arbitrarily large n are supported::
+    Arbitrarily large `n` are supported::
 
         >>> mp.dps = 15
         >>> print bernoulli(10**20 + 2)
@@ -1073,12 +1302,12 @@ def bernoulli(n):
 
     **Algorithm**
 
-    For small n (n < 3000) :func:`bernoulli` uses a recurrence
+    For small `n` (`n < 3000`) :func:`bernoulli` uses a recurrence
     formula due to Ramanujan. All results in this range are cached,
     so sequential computation of small Bernoulli numbers is
     guaranteed to be fast.
 
-    For larger n, B(n) is evaluated in terms of the Riemann zeta
+    For larger `n`, `B_n` is evaluated in terms of the Riemann zeta
     function.
     """
     return make_mpf(gammazeta.mpf_bernoulli(int(n), *prec_rounding))
@@ -1088,24 +1317,21 @@ bernfrac = gammazeta.bernfrac
 stieltjes_cache = {}
 
 def stieltjes(n):
-    """
-    For a nonnegative integer `n`, stieltjes(`n`) computes the
-    nth Stieltjes constant, defined as the nth coefficient
-    in the Laurent series expansion of the Riemann zeta function
-    around the pole at s = 1::
+    r"""
+    For a nonnegative integer `n`, ``stieltjes(n)`` computes the
+    `n`-th Stieltjes constant `\gamma_n`, defined as the
+    `n`-th coefficient in the Laurent series expansion of the
+    Riemann zeta function around the pole at `s = 1`. That is,
+    we have:
 
-                            oo
-                            ___     n
-                    1      \    (-1)                n
-        zeta(s) = ----- +   )   ----- (gamma ) (s-1)
-                  s - 1    /___  n!         n
-                           n = 0
+    .. math ::
 
-    Here gamma_n is the nth Stieltjes constant.
+      \zeta(s) = \frac{1}{s-1} \sum_{n=0}^{\infty}
+          \frac{(-1)^n}{n!} \gamma_n (s-1)^n
 
     **Examples**
 
-    The zeroth Stieltjes constant is just Euler's constant::
+    The zeroth Stieltjes constant is just Euler's constant `\gamma`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -1121,7 +1347,7 @@ def stieltjes(n):
         >>> print stieltjes(30)
         0.00355772885557316
 
-    An alternative way to compute gamma_1::
+    An alternative way to compute `\gamma_1`::
 
         >>> print diff(extradps(25)(lambda x: 1/(x-1) - zeta(x)), 1)
         -0.0728158454836767
@@ -1136,18 +1362,19 @@ def stieltjes(n):
     **Algorithm**
 
     The calculation is done using numerical differentiation
-    for very small n (currently n = 1-3).
+    for very small `n` (currently `n = 1,2,3`).
 
-    For larger n, integration of the Riemann zeta function is
-    used. The method should work for any `n` and dps, but soon
-    becomes quite slow in practice. The code has been tested
-    with n = 50 and dps = 100; that computation took about
-    2 minutes.
+    For larger `n`, integration of the Riemann zeta function is
+    used. The method should work for any `n` and precision, but
+    soon becomes quite slow in practice. The code has been tested
+    with `n = 50` and 100 digit precision; that computation took
+    about 2 minutes.
 
     **References**
 
-    * http://mathworld.wolfram.com/StieltjesConstants.html
-    * http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
+    1. http://mathworld.wolfram.com/StieltjesConstants.html
+
+    2. http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
 
     """
     n = int(n)
@@ -1208,13 +1435,14 @@ def isnpint(x):
         return not x.imag and isnpint(x.real)
 
 def gammaprod(a, b):
-    """
+    r"""
     Given iterables `a` and `b`, ``gammaprod(a, b)`` computes the
-    product / quotient of gamma functions::
+    product / quotient of gamma functions:
 
-        gamma(a[0]) * gamma(a[1]) * ... * gamma(a[p])
-        ---------------------------------------------
-        gamma(b[0]) * gamma(b[1]) * ... * gamma(b[q])
+    .. math ::
+
+        \frac{\Gamma(a_0) \Gamma(a_1) \cdots \Gamma(a_p)}
+             {\Gamma(b_0) \Gamma(b_1) \cdots \Gamma(b_q)}
 
     **Handling of poles**
 
@@ -1233,11 +1461,11 @@ def gammaprod(a, b):
       returns ``+inf``.
 
     * If there are more poles in the denominator, :func:`gammaprod`
-      returns zero (``0``).
+      returns 0.
 
     **Examples**
 
-    1/gamma(x) evaluated at x = 0::
+    The reciprocal gamma function `1/\Gamma(x)` evaluated at `x = 0`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -1282,24 +1510,21 @@ def gammaprod(a, b):
     return +p
 
 def beta(x, y):
-    """
-    Computes the beta function, B(x,y) = gamma(x)*gamma(y)/gamma(x+y).
+    r"""
+    Computes the beta function,
+    `B(x,y) = \Gamma(x) \Gamma(y) / \Gamma(x+y)`.
     The beta function is also commonly defined by the integral
-    representation::
+    representation
 
-                 1
-                  -
-                 |   x-1     y-1
-        B(x,y) = |  t   (1-t)    dt
-                 |
-                -
-                 0
+    .. math ::
+
+      B(x,y) = \int_0^1 t^{x-1} (1-t)^{y-1} \, dt
 
     **Examples**
 
     For integer and half-integer arguments where all three gamma
     functions are finite, the beta function becomes either rational
-    number or a rational multiple of pi::
+    number or a rational multiple of `\pi`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -1567,7 +1792,7 @@ def _check_pos(x):
 def gammainc(z, a=0, b=inf, regularized=False):
     r"""
     ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
-    gamma function with integration limits :math:`[a, b]`:
+    gamma function with integration limits `[a, b]`:
 
     .. math ::
 
@@ -1576,17 +1801,17 @@ def gammainc(z, a=0, b=inf, regularized=False):
     The generalized incomplete gamma function reduces to the
     following special cases when one or both endpoints are fixed:
 
-    * :math:`\Gamma(z,0,\infty)` is the standard ("complete")
-      gamma function, :math:`\Gamma(z)` (available directly
+    * `\Gamma(z,0,\infty)` is the standard ("complete")
+      gamma function, `\Gamma(z)` (available directly
       as the mpmath function :func:`gamma`)
-    * :math:`\Gamma(z,a,\infty)` is the "upper" incomplete gamma
-      function, :math:`\Gamma(z,a)`
-    * :math:`\Gamma(z,0,b)` is the "lower" incomplete gamma
-      function, :math:`\gamma(z,b)`.
+    * `\Gamma(z,a,\infty)` is the "upper" incomplete gamma
+      function, `\Gamma(z,a)`
+    * `\Gamma(z,0,b)` is the "lower" incomplete gamma
+      function, `\gamma(z,b)`.
 
     Of course, we have
-    :math:`\Gamma(z,0,x) + \Gamma(z,x,\infty) = \Gamma(z)`
-    for all *z* and *x*.
+    `\Gamma(z,0,x) + \Gamma(z,x,\infty) = \Gamma(z)`
+    for all `z` and `x`.
 
     Note however that some authors reverse the order of the
     arguments when defining the lower and upper incomplete
@@ -1599,7 +1824,7 @@ def gammainc(z, a=0, b=inf, regularized=False):
 
     .. math ::
 
-      P(z,a,b) = \frac{\Gamma(z,a,b)}{\Gamma(z)}
+      P(z,a,b) = \frac{\Gamma(z,a,b)}{\Gamma(z)}.
 
     **Examples**
 
@@ -1624,9 +1849,9 @@ def gammainc(z, a=0, b=inf, regularized=False):
         >>> print gammainc(z+1,0,a), z*gammainc(z,0,a) - a**z*exp(-a)
         1.03042542723211 1.03042542723211
 
-    If z is an integer, the recurrence reduces the incomplete gamma
-    function to :math:`P(a) \exp(-a) + Q(b) \exp(-b)` where *P* and
-    *Q* are polynomials::
+    If `z` is an integer, the recurrence reduces the incomplete gamma
+    function to `P(a) \exp(-a) + Q(b) \exp(-b)` where `P` and
+    `Q` are polynomials::
 
         >>> mp.dps = 15
         >>> print gammainc(1, 2), exp(-2)
@@ -1681,9 +1906,9 @@ erf = mpfunc("erf", libhyper.mpf_erf, libhyper.mpc_erf,
     "Error function, erf(z)")
 
 erf.__doc__ = r"""
-Computes the error function, :math:`\mathrm{erf}(x)`. The error
+Computes the error function, `\mathrm{erf}(x)`. The error
 function is the normalized antiderivative of the Gaussian function
-:math:`\exp(-t^2)`. More precisely,
+`\exp(-t^2)`. More precisely,
 
 .. math::
 
@@ -1706,7 +1931,7 @@ Simple values and limits include::
     >>> print erf(-inf)
     -1.0
 
-For large real *x*, :math:`\mathrm{erf}(x)` approaches 1 very
+For large real `x`, `\mathrm{erf}(x)` approaches 1 very
 rapidly::
 
     >>> print erf(3)
@@ -1731,9 +1956,9 @@ supports complex numbers::
 
 **Related functions**
 
-See also :func:`erfc`, which is more accurate for large *z*,
+See also :func:`erfc`, which is more accurate for large `x`,
 and :func:`erfi` which gives the antiderivative of
-:math:`\exp(t^2)`.
+`\exp(t^2)`.
 
 The Fresnel integrals :func:`fresnels` and :func:`fresnelc`
 are also related to the error function.
@@ -1745,7 +1970,7 @@ erfc = mpfunc("erfc", libhyper.mpf_erfc, libhyper.mpc_erfc,
 
 erfc.__doc__ = r"""
 Computes the complementary error function,
-:math:`\mathrm{erfc}(x) = 1-\mathrm{erf}(x)`.
+`\mathrm{erfc}(x) = 1-\mathrm{erf}(x)`.
 This function avoids cancellation that occurs when naively
 computing the complementary error function as ``1-erf(x)``::
 
@@ -1767,7 +1992,7 @@ arguments::
 @funcwrapper
 def erfi(z):
     r"""
-    Computes the imaginary error function, :math:`\mathrm{erfi}(z)`.
+    Computes the imaginary error function, `\mathrm{erfi}(x)`.
     The imaginary error function is defined in analogy with the
     error function, but with a positive sign in the integrand:
 
@@ -1775,11 +2000,11 @@ def erfi(z):
 
       \mathrm{erfi}(x) = \frac{2}{\sqrt \pi} \int_0^x \exp(t^2) \,dt
 
-    Whereas the error function rapidly converges to 1 as *x* grows,
+    Whereas the error function rapidly converges to 1 as `x` grows,
     the imaginary error function rapidly diverges to infinity.
     The functions are related as
-    :math:`\mathrm{erfi}(x) = -i \mathrm{erf}(ix)` for all complex
-    numbers *x*.
+    `\mathrm{erfi}(x) = -i\,\mathrm{erf}(ix)` for all complex
+    numbers `x`.
 
     **Examples**
 
@@ -1827,7 +2052,7 @@ def erfinv(x):
         \mathrm{erf}(\mathrm{erfinv}(x)) =
         \mathrm{erfinv}(\mathrm{erf}(x)) = x.
 
-    This function is defined only for :math:`-1 \le x \le 1`.
+    This function is defined only for `-1 \le x \le 1`.
 
     **Examples**
 
@@ -1900,8 +2125,8 @@ def erfinv(x):
 def npdf(x, mu=0, sigma=1):
     r"""
     ``npdf(x, mu=0, sigma=1)`` evaluates the probability density
-    function of a normal distribution with mean value :math:`\mu`
-    and variance :math:`\sigma^2`.
+    function of a normal distribution with mean value `\mu`
+    and variance `\sigma^2`.
 
     Elementary properties of the probability distribution can
     be verified using numerical integration::
@@ -1925,8 +2150,8 @@ def npdf(x, mu=0, sigma=1):
 def ncdf(x, mu=0, sigma=1):
     r"""
     ``ncdf(x, mu=0, sigma=1)`` evaluates the cumulative distribution
-    function of a normal distribution with mean value :math:`\mu`
-    and variance :math:`\sigma^2`.
+    function of a normal distribution with mean value `mu`
+    and variance `\sigma^2`.
 
     See also :func:`npdf`, which gives the probability density.
 
@@ -1964,24 +2189,22 @@ def ncdf(x, mu=0, sigma=1):
 @funcwrapper
 def ei(z):
     r"""
-    Computes the exponential integral or Ei-function,
-    :math:`\mathrm{Ei}(x)`. The exponential integral is
-    defined as
+    Computes the exponential integral or Ei-function, `\mathrm{Ei}(x)`.
+    The exponential integral is defined as
 
     .. math ::
 
-      \mathrm{Ei}(x) = \int_{-\infty }^x \frac{e^t}{t} \, dt
+      \mathrm{Ei}(x) = \int_{-\infty\,}^x \frac{e^t}{t} \, dt.
 
-    When the integration range includes :math:`t = 0`, the
-    exponential integral is interpreted as providing the
-    Cauchy principal value.
+    When the integration range includes `t = 0`, the exponential
+    integral is interpreted as providing the Cauchy principal value.
 
-    For real *x*, the Ei-function behaves roughly like
-    :math:`\mathrm{Ei}(x) \approx \exp(x) + \log(|x|)`.
+    For real `x`, the Ei-function behaves roughly like
+    `\mathrm{Ei}(x) \approx \exp(x) + \log(|x|)`.
 
-    This function should not be confused with the family of
-    related functions denoted by :math:`E_n` which are also
-    called "exponential integrals".
+    This function should not be confused with the family of related
+    functions denoted by `E_n` which are also called "exponential
+    integrals".
 
     **Basic examples**
 
@@ -1998,7 +2221,7 @@ def ei(z):
         >>> print ei(-inf)
         0.0
 
-    For :math:`x < 0`, the defining integral can be evaluated
+    For `x < 0`, the defining integral can be evaluated
     numerically as a reference::
 
         >>> print ei(-4)
@@ -2041,7 +2264,7 @@ def ei(z):
     For details, see [1].
 
     The exponential integral is also a special case of the
-    hypergeometric function :math:`\,_2F_2`::
+    hypergeometric function `\,_2F_2`::
 
         >>> z = 0.6
         >>> print z*hyper([1,1],[2,2],z) + (ln(z)-ln(1/z))/2 + euler
@@ -2074,13 +2297,13 @@ def ei(z):
 def li(z):
     r"""
     Computes the logarithmic integral or li-function
-    :math:`\mathrm{li}(x)`, defined by
+    `\mathrm{li}(x)`, defined by
 
     .. math ::
 
         \mathrm{li}(x) = \int_0^x \frac{1}{\log t} \, dt
 
-    The logarithmic integral has a singularity at :math:`x = 1`.
+    The logarithmic integral has a singularity at `x = 1`.
 
     Note that there is a second logarithmic integral, the Li
     function, defined by
@@ -2091,7 +2314,7 @@ def li(z):
 
     This "offset logarithmic integral" can be computed via
     :func:`li` using the simple identity
-    :math:`\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)`.
+    `\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)`.
 
     **Examples**
 
@@ -2126,7 +2349,7 @@ def li(z):
         >>> print li(3)
         2.1635885946671919729
 
-    The logarithmic integral grows like :math:`O(x/\log(x))`::
+    The logarithmic integral grows like `O(x/\log(x))`::
 
         >>> mp.dps = 15
         >>> x = 10**100
@@ -2136,7 +2359,7 @@ def li(z):
         4.3619719871407e+97
 
     The prime number theorem states that the number of primes less
-    than *x* is asymptotic to :math:`\mathrm{li}(x)`. For example,
+    than `x` is asymptotic to `\mathrm{li}(x)`. For example,
     it is known that there are exactly 1,925,320,391,606,803,968,923
     prime numbers less than 10^23 [1]. The logarithmic integral
     provides a very accurate estimate::
@@ -2354,27 +2577,28 @@ def j1(x):
 
 @funcwrapper
 def lambertw(z, k=0, approx=None):
-    """
-    The Lambert W function W(z) is defined as the inverse function
-    of w*exp(w). In other words, the value of W(z) is such that
-    z = W(z)*exp(W(z)) for any complex number z.
+    r"""
+    The Lambert W function `W(z)` is defined as the inverse function
+    of `w \exp(w)`. In other words, the value of `W(z)` is such that
+    `z = W(z) \exp(W(z))` for any complex number `z`.
 
     The Lambert W function is a multivalued function with infinitely
     many branches. Each branch gives a separate solution of the
-    equation w*exp(w). All branches are supported by :func:`lambertw`:
+    equation `w \exp(w)`. All branches are supported by
+    :func:`lambertw`:
 
     * ``lambertw(z)`` gives the principal solution (branch 0)
 
-    * ``lambertw(z, k)`` gives the solution on branch k
+    * ``lambertw(z, k)`` gives the solution on branch `k`
 
     The Lambert W function has two partially real branches: the
-    principal branch (k = 0) is real for real z > -1/e, and the
-    k = -1 branch is real for -1/e < z < 0. All branches except
-    k = 0 have a logarithmic singularity at 0.
+    principal branch (`k = 0`) is real for real `z > -1/e`, and the
+    `k = -1` branch is real for `-1/e < z < 0`. All branches except
+    `k = 0` have a logarithmic singularity at `z = 0`.
 
     **Basic examples**
 
-    The Lambert W equation is the inverse of w*exp(w)::
+    The Lambert W equation is the inverse of `w \exp(w)`::
 
         >>> from mpmath import *
         >>> mp.dps = 35
@@ -2396,7 +2620,7 @@ def lambertw(z, k=0, approx=None):
     **Applications to equation-solving**
 
     The Lambert W function can give the value of the infinite power
-    tower z^(z^(z^(...)))::
+    tower `z^{z^{z^{\ldots}}}`::
 
         >>> def tower(z, n):
         ...     if n == 0:
@@ -2425,7 +2649,7 @@ def lambertw(z, k=0, approx=None):
         230.258509299405
 
     The principal branch of the Lambert W function has a rational
-    Taylor series expansion around 0::
+    Taylor series expansion around `z = 0`::
 
         >>> nprint(taylor(lambertw, 0, 6), 10)
         [0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]
@@ -2448,10 +2672,10 @@ def lambertw(z, k=0, approx=None):
         >>> print lambertw(inf, k=3)
         +inf
 
-    The k = 0 and k = -1 branches join at z = -1/e where W(z) = -1
-    for both branches. Since -1/e can only be represented approximately
-    with mpmath numbers, evaluating the Lambert W function at this point
-    only gives -1 approximately::
+    The `k = 0` and `k = -1` branches join at `z = -1/e` where
+    `W(z) = -1` for both branches. Since `-1/e` can only be represented
+    approximately with mpmath numbers, evaluating the Lambert W function
+    at this point only gives `-1` approximately::
 
         >>> mp.dps = 25
         >>> print lambertw(-1/e, 0)
@@ -2459,7 +2683,7 @@ def lambertw(z, k=0, approx=None):
         >>> print lambertw(-1/e, -1)
         -1.00000000000016286697718
 
-    If -1/e happens to round in the negative direction, there might be
+    If `-1/e` happens to round in the negative direction, there might be
     a small imaginary part::
 
         >>> mp.dps = 15
@@ -2469,13 +2693,14 @@ def lambertw(z, k=0, approx=None):
     **Possible issues**
 
     The evaluation can become inaccurate very close to the branch point
-    at -1/e. In some corner cases, :func:`lambertw` might currently
+    at `-1/e`. In some corner cases, :func:`lambertw` might currently
     fail to converge, or can end up on the wrong branch.
 
     **Algorithm**
 
-    Halley's iteration is used to invert w*exp(w), using a first-order
-    asymptotic approximation (O(log(w)) or O(w)) as the initial estimate.
+    Halley's iteration is used to invert `w \exp(w)`, using a first-order
+    asymptotic approximation (`O(\log(w))` or `O(w)`) as the initial
+    estimate.
 
     The definition, implementation and choice of branches is based
     on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5
@@ -2483,7 +2708,7 @@ def lambertw(z, k=0, approx=None):
     http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
 
     TODO: use a series expansion when extremely close to the branch point
-    at -1/e and make sure that the proper branch is chosen there
+    at `-1/e` and make sure that the proper branch is chosen there
     """
     if isnan(z):
         return z

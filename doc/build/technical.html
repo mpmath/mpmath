@@ -85,7 +85,7 @@
 </blockquote>
 <p>The representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that <tt class="docutils literal"><span class="pre">man</span></tt> is an odd number, with the exception of zero which is always taken to have <tt class="docutils literal"><span class="pre">man</span> <span class="pre">=</span> <span class="pre">exp</span> <span class="pre">=</span> <span class="pre">0</span></tt>. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)</p>
 <p>Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: (m*2^e) * (n*2^f) = (m*n) * 2^(e+f). Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.</p>
-<p>More technically, mpmath represents a floating-point number as a 4-tuple <tt class="docutils literal"><span class="pre">(sign,</span> <span class="pre">man,</span> <span class="pre">exp,</span> <span class="pre">bc)</span></tt> where <cite>sign</cite> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <tt class="docutils literal"><span class="pre">bc</span></tt> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
+<p>More technically, mpmath represents a floating-point number as a 4-tuple <tt class="docutils literal"><span class="pre">(sign,</span> <span class="pre">man,</span> <span class="pre">exp,</span> <span class="pre">bc)</span></tt> where <img src="_images/math/aa1cc54f7e3278ef2cfec9886514fa54fcb0b766.png" alt="sign" /> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <tt class="docutils literal"><span class="pre">bc</span></tt> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
 <p>The special numbers <tt class="docutils literal"><span class="pre">+inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> are represented internally by a zero mantissa and a nonzero exponent.</p>
 <p>For further details on how the arithmetic is implemented, refer to the mpmath source code. The basic arithmetic operations are found in the <tt class="docutils literal"><span class="pre">lib.py</span></tt> module; many functions there are commented extensively.</p>
 </div>
@@ -238,7 +238,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 14, 2008.
+      Last updated on Nov 15, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

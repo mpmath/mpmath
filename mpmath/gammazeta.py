@@ -456,11 +456,11 @@ def list_primes(n):
     return [p for p in sieve if p]
 
 def bernfrac(n):
-    """
-    Returns a tuple of integers (p, q) such that p/q = B(n) exactly,
-    where B(n) denotes the nth Bernoulli number. The fraction is
-    always reduced to lowest terms. Note that for n > 1 and n odd,
-    B(n) = 0, and (0, 1) is returned.
+    r"""
+    Returns a tuple of integers `(p, q)` such that `p/q = B_n` exactly,
+    where `B_n` denotes the `n`-th Bernoulli number. The fraction is
+    always reduced to lowest terms. Note that for `n > 1` and `n` odd,
+    `B_n = 0`, and `(0, 1)` is returned.
 
     **Examples**
 
@@ -486,7 +486,7 @@ def bernfrac(n):
         13 0/1
         14 7/6
 
-    This function works for arbitrarily large n::
+    This function works for arbitrarily large `n`::
 
         >>> p, q = bernfrac(10**4)
         >>> print q
@@ -501,26 +501,26 @@ def bernfrac(n):
 
     Note: :func:`bernoulli` computes a floating-point approximation
     directly, without computing the exact fraction first.
-    This is much faster for large n.
+    This is much faster for large `n`.
 
     **Algorithm**
 
-    :func:`bernfrac` works by computing the value of B(n) numerically
+    :func:`bernfrac` works by computing the value of `B_n` numerically
     and then using the von Staudt-Clausen theorem [1] to reconstruct
-    the exact fraction. For large n, this is significantly faster than
-    computing B(1), B(2), ..., B(n) recursively with exact arithmetic.
-    The implementation has been tested for B(10**n) up to n = 6.
+    the exact fraction. For large `n`, this is significantly faster than
+    computing `B_1, B_2, \ldots, B_2` recursively with exact arithmetic.
+    The implementation has been tested for `n = 10^m` up to `m = 6`.
 
     In practice, :func:`bernfrac` appears to be about three times
     slower than the specialized program calcbn.exe [2]
 
     **References**
 
-    [1] MathWorld, von Staudt-Clausen Theorem:
-        http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
+    1. MathWorld, von Staudt-Clausen Theorem:
+       http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
 
-    [2] The Bernoulli Number Page:
-        http://www.bernoulli.org/
+    2. The Bernoulli Number Page:
+       http://www.bernoulli.org/
 
     """
     n = int(n)
