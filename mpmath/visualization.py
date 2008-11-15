@@ -49,7 +49,7 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
                         if x[i-1] <= sing and x[i] >= sing:
                             raise ValueError
                 v = func(x[i])
-                if isnan(v) or abs(v) == inf:
+                if isnan(v) or abs(v) > 1e300:
                     raise ValueError
                 if isinstance(v, complex_types):
                     re = float(v.real)

@@ -411,25 +411,41 @@ def from_float(x, prec=53, rnd=round_fast):
     if x == -math_float_inf: return fninf
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
-def to_float(s):
-    """Convert a raw mpf to a Python float. The result is exact if the
-    bitcount of s is <= 53 and no underflow/overflow occurs. An
-    OverflowError is raised if the number is too large to be
-    represented as a regular float."""
+def to_float(s, strict=False):
+    """
+    Convert a raw mpf to a Python float. The result is exact if the
+    bitcount of s is <= 53 and no underflow/overflow occurs.
+
+    If the number is too large or too small to represent as a regular
+    float, it will be converted to inf or 0.0. Setting strict=True
+    forces an OverflowError to be raised instead.
+    """
     sign, man, exp, bc = s
     if not man:
         if s == fzero: return 0.0
-        if s == finf: return 1e1000
-        if s == fninf: return -1e1000
-        return 1e1000/1e1000
+        if s == finf: return math_float_inf
+        if s == fninf: return -math_float_inf
+        return math_float_inf/math_float_inf
     if sign:
         man = -man
-    if bc < 100:
-        return math.ldexp(man, exp)
-    # Try resizing the mantissa. Overflow may still happen here.
-    n = bc - 53
-    m = man >> n
-    return math.ldexp(m, exp + n)
+    try:
+        if bc < 100:
+            return math.ldexp(man, exp)
+        # Try resizing the mantissa. Overflow may still happen here.
+        n = bc - 53
+        m = man >> n
+        return math.ldexp(m, exp + n)
+    except OverflowError:
+        if strict:
+            raise
+        # Overflow to infinity
+        if exp + bc > 0:
+            if sign:
+                return -math_float_inf
+            else:
+                return math_float_inf
+        # Underflow to zero
+        return 0.0
 
 def from_rational(p, q, prec, rnd=round_fast):
     """Create a raw mpf from a rational number p/q, rnd if
