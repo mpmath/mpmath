@@ -1723,15 +1723,50 @@ def sum_hyp2f1_rat(a, b, c, z):
 #---------------------------------------------------------------------------#
 
 def hyper(a_s, b_s, z):
-    """
-    Hypergeometric function pFq::
+    r"""
+    Evaluates the generalized hypergeometric function
 
-          [ a_1, a_2, ..., a_p |    ]
-      pFq [                    |  z ]
-          [ b_1, b_2, ..., b_q |    ]
+    .. math ::
 
-    The parameter lists a_s and b_s may contain real or complex numbers.
-    Exact rational parameters can be given as tuples (p, q).
+        \,_pF_q(a_1,\ldots,a_p; b_1,\ldots,b_q; z) =
+        \sum_{n=0}^\infty \frac{(a_1)_n (a_2)_n \ldots (a_p)_n}
+           {(b_1)_n(b_2)_n\ldots(b_q)_n} \frac{z^n}{n!}
+
+    where `(x)_n` denotes the rising factorial (see :func:`rf`).
+
+    The parameters lists ``a_s`` and ``b_s`` may contain integers,
+    real numbers, complex numbers, as well as exact fractions given in
+    the form of tuples `(p, q)`. :func:`hyper` is optimized to handle
+    integers and fractions more efficiently than arbitrary
+    floating-point parameters (since rational parameters are by
+    far the most common).
+
+    **Examples**
+
+    We can compare the output of :func:`hyper` with :func:`nsum`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> a,b,c,d = 2,3,4,5
+        >>> x = 0.25
+        >>> print hyper([a,b],[c,d],x)
+        1.078903941164934876086237
+        >>> fn = lambda n: rf(a,n)*rf(b,n)/rf(c,n)/rf(d,n)*x**n/fac(n)
+        >>> print nsum(fn, [0, inf])
+        1.078903941164934876086237
+
+    The parameters can be any combination of integers, fractions,
+    floats and complex numbers::
+
+        >>> a, b, c, d, e = 1, (-1,2), pi, 3+4j, (2,3)
+        >>> x = 0.2j
+        >>> print hyper([a,b],[c,d,e],x)
+        (0.9923571616434024810831887 - 0.005753848733883879742993122j)
+        >>> b, e = -0.5, mpf(2)/3
+        >>> fn = lambda n: rf(a,n)*rf(b,n)/rf(c,n)/rf(d,n)/rf(e,n)*x**n/fac(n)
+        >>> print nsum(fn, [0, inf])
+        (0.9923571616434024810831887 - 0.005753848733883879742993122j)
+
     """
     p = len(a_s)
     q = len(b_s)
@@ -1765,20 +1800,20 @@ def hyper(a_s, b_s, z):
     return hypsum(ars, afs, acs, brs, bfs, bcs, z)
 
 def hyp0f1(a, z):
-    """Hypergeometric function 0F1. hyp0f1(a,z) is equivalent
-    to hyper([], [a], z); see documentation for hyper() for more
+    r"""Hypergeometric function `\,_0F_1`. ``hyp0f1(a,z)`` is equivalent
+    to ``hyper([],[a],z)``; see documentation for :func:`hyper` for more
     information."""
     return hyper([], [a], z)
 
 def hyp1f1(a,b,z):
-    """Hypergeometric function 1F1. hyp1f1(a,b,z) is equivalent
-    to hyper([a], [b], z); see documentation for hyper() for more
+    r"""Hypergeometric function `\,_1F_1`. ``hyp1f1(a,b,z)`` is equivalent
+    to ``hyper([a],[b],z)``; see documentation for :func:`hyper` for more
     information."""
     return hyper([a], [b], z)
 
 def hyp2f1(a,b,c,z):
-    """Hypergeometric function 2F1. hyp2f1(a,b,c,z) is equivalent
-    to hyper([a,b], [c], z); see documentation for hyper() for more
+    r"""Hypergeometric function `\,_2F_1`. ``hyp2f1(a,b,c,z)`` is equivalent
+    to ``hyper([a,b],[c],z)``; see documentation for :func:`hyper` for more
     information."""
     return hyper([a,b], [c], z)
 
@@ -2443,7 +2478,41 @@ def fresnelc(z):
 
 @funcwrapper
 def airyai(z):
-    """Airy function, Ai(z)"""
+    r"""
+    Computes the Airy function `\mathrm{Ai}(x)`, which is
+    a solution of the Airy differential equation `y''-xy=0`.
+    The Ai-function behaves roughly like a slowly decaying
+    sine wave for `x < 0` and like a decreasing exponential for
+    `x > 0`.
+
+    The first negative root is::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print findroot(airyai, -2)
+        -2.33810741045977
+
+    We can verify the differential equation::
+
+        >>> for x in [-3.4, 0, 2.5, 1+2j]:
+        ...     nprint(diff(airyai, x, 2) - x*airyai(x), 1)
+        ...
+        0.0
+        1.0e-29
+        0.0
+        (0.0 + 0.0j)
+
+    The Airy functions are a special case of Bessel functions.
+    For `x < 0`, we have::
+
+        >>> x = 3
+        >>> print airyai(-x)
+        -0.378814293677658
+        >>> p = 2*(x**1.5)/3
+        >>> print sqrt(x)*(jv(1/3.,p) + jv(-1/3.,p))/3
+        -0.378814293677658
+
+    """
     if z == inf:
         return 1/z
     if z == -inf:
@@ -2455,7 +2524,40 @@ def airyai(z):
 
 @funcwrapper
 def airybi(z):
-    """Airy function, Bi(z)"""
+    r"""
+    Computes the Airy function `\mathrm{Bi}(x)`, which is
+    a solution of the Airy differential equation `y''-xy=0`.
+    The Bi-function behaves roughly like a slowly decaying
+    sine wave for `x < 0` and like an increasing exponential
+    for `x > 0`.
+
+    The first negative root is::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print findroot(airybi, -1)
+        -1.17371322270913
+
+    We can verify the differential equation::
+
+        >>> for x in [-3.4, 0, 2.5, 1+2j]:
+        ...     nprint(diff(airybi, x, 2) - x*airybi(x), 1)
+        ...
+        0.0
+        3.0e-29
+        0.0
+        (-3.0e-17 + 0.0j)
+
+    The Airy functions are a special case of Bessel functions.
+    For `x < 0`, we have::
+
+        >>> x = 3
+        >>> print airybi(-x)
+        -0.198289626374927
+        >>> p = 2*(x**1.5)/3
+        >>> print sqrt(x/3)*(jv(-1/3.,p) - jv(1/3.,p))
+        -0.198289626374926
+    """
     if z == inf:
         return z
     if z == -inf:
@@ -2620,7 +2722,7 @@ def jacobi(n, a, b, x):
         P_n^{(a,b)}(x) = {n+a \choose n}
           \,_2F_1\left(-n,1+a+b+n,a+1,\frac{1-x}{2}\right).
 
-    Note that definition generalizes to non-integral values
+    Note that this definition generalizes to nonintegral values
     of `n`. When `n` is an integer, the hypergeometric series
     terminates after a finite number of terms, giving
     a polynomial in `x`.
@@ -2641,15 +2743,13 @@ def jacobi(n, a, b, x):
     coefficients of Jacobi polynomials can therefore
     be recovered easily using :func:`taylor`::
 
-        >>> nprint(taylor(lambda x: jacobi(0,1,2,x), 0, 0))
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: jacobi(n,1,2,x), 0, n))
+        ...
         [1.0]
-        >>> nprint(taylor(lambda x: jacobi(1,1,2,x), 0, 1))
         [-0.5, 2.5]
-        >>> nprint(taylor(lambda x: jacobi(2,1,2,x), 0, 2))
         [-0.75, -1.5, 5.25]
-        >>> nprint(taylor(lambda x: jacobi(3,1,2,x), 0, 3))
         [0.5, -3.5, -3.5, 10.5]
-        >>> nprint(taylor(lambda x: jacobi(4,1,2,x), 0, 4))
         [0.625, 2.5, -11.25, -7.5, 20.625]
 
     For nonintegral `n`, the Jacobi "polynomial" is no longer
@@ -2757,30 +2857,25 @@ def legendre(n, x):
     The coefficients of Legendre polynomials can be recovered
     using degree-`n` Taylor expansion::
 
-        >>> P = legendre
-        >>> nprint(taylor(lambda x: P(0, x), 0, 0))
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: legendre(n, x), 0, n))
+        ...
         [1.0]
-        >>> nprint(taylor(lambda x: P(1, x), 0, 1))
         [0.0, 1.0]
-        >>> nprint(taylor(lambda x: P(2, x), 0, 2))
         [-0.5, 0.0, 1.5]
-        >>> nprint(taylor(lambda x: P(3, x), 0, 3))
         [0.0, -1.5, 0.0, 2.5]
-        >>> nprint(taylor(lambda x: P(4, x), 0, 4))
         [0.375, 0.0, -3.75, 0.0, 4.375]
 
     The roots of Legendre polynomials are located symmetrically
     on the interval `[-1, 1]`::
 
-        >>> nprint(polyroots(taylor(lambda x: P(0, x), 0, 0)[::-1]))
+        >>> for n in range(5):
+        ...     nprint(polyroots(taylor(lambda x: legendre(n, x), 0, n)[::-1]))
+        ...
         []
-        >>> nprint(polyroots(taylor(lambda x: P(1, x), 0, 1)[::-1]))
         [0.0]
-        >>> nprint(polyroots(taylor(lambda x: P(2, x), 0, 2)[::-1]))
         [-0.57735, 0.57735]
-        >>> nprint(polyroots(taylor(lambda x: P(3, x), 0, 3)[::-1]))
         [-0.774597, 0.0, 0.774597]
-        >>> nprint(polyroots(taylor(lambda x: P(4, x), 0, 4)[::-1]))
         [-0.861136, -0.339981, 0.339981, 0.861136]
 
     An example of an evaluation for arbitrary `n`::
@@ -2831,33 +2926,200 @@ def legendre(n, x):
 
 @funcwrapper
 def chebyt(n, x):
-    """Chebyshev polynomial of the first kind T_n(x)."""
+    r"""
+    ``chebyt(n, x)`` evaluates the Chebyshev polynomial of the first
+    kind `T_n(x)`, defined by the identity
+
+    .. math ::
+
+        T_n(\cos x) = \cos(n x).
+
+    The Chebyshev polynomials of the first kind are a special
+    case of the Jacobi polynomials, and by extension of the
+    hypergeometric function `\,_2F_1`. They can thus also be
+    evaluated for nonintegral `n`.
+
+    **Basic evaluation**
+
+    The coefficients of the `n`-th polynoimal can be recovered
+    using using degree-`n` Taylor expansion::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: chebyt(n, x), 0, n))
+        ...
+        [1.0]
+        [0.0, 1.0]
+        [-1.0, 0.0, 2.0]
+        [0.0, -3.0, 0.0, 4.0]
+        [1.0, 0.0, -8.0, 0.0, 8.0]
+
+    **Orthogonality**
+
+    The Chebyshev polynomials of the first kind are orthogonal
+    on the interval `[-1, 1]` with respect to the weight
+    function `w(x) = 1/\sqrt{1-x^2}`::
+
+        >>> f = lambda x: chebyt(m,x)*chebyt(n,x)/sqrt(1-x**2)
+        >>> m, n = 3, 4
+        >>> nprint(quad(f, [-1, 1]),1)
+        -7.0e-28
+        >>> m, n = 4, 4
+        >>> print quad(f, [-1, 1])
+        1.57079632596448
+
+    """
     return hyp2f1(-n,n,0.5,(1-x)/2)
 
 @funcwrapper
 def chebyu(n, x):
-    """Chebyshev polynomial of the second kind U_n(x)."""
+    r"""
+    ``chebyu(n, x)`` evaluates the Chebyshev polynomial of the second
+    kind `U_n(x)`, defined by the identity
+
+    .. math ::
+
+        U_n(\cos x) = \frac{\sin((n+1)x)}{\sin(x)}.
+
+    The Chebyshev polynomials of the second kind are a special
+    case of the Jacobi polynomials, and by extension of the
+    hypergeometric function `\,_2F_1`. They can thus also be
+    evaluated for nonintegral `n`.
+
+    **Basic evaluation**
+
+    The coefficients of the `n`-th polynoimal can be recovered
+    using using degree-`n` Taylor expansion::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: chebyu(n, x), 0, n))
+        ...
+        [1.0]
+        [0.0, 2.0]
+        [-1.0, 0.0, 4.0]
+        [0.0, -4.0, 0.0, 8.0]
+        [1.0, 0.0, -12.0, 0.0, 16.0]
+
+    **Orthogonality**
+
+    The Chebyshev polynomials of the second kind are orthogonal
+    on the interval `[-1, 1]` with respect to the weight
+    function `w(x) = \sqrt{1-x^2}`::
+
+        >>> f = lambda x: chebyu(m,x)*chebyu(n,x)*sqrt(1-x**2)
+        >>> m, n = 3, 4
+        >>> print quad(f, [-1, 1])
+        0.0
+        >>> m, n = 4, 4
+        >>> print quad(f, [-1, 1])
+        1.5707963267949
+
+    """
     return (n+1) * hyp2f1(-n, n+2, 1.5, (1-x)/2)
 
 @funcwrapper
 def jv(v, x):
-    """Bessel function J_v(x)."""
+    r"""
+    ``jv(n,x)`` computes the Bessel function of the first kind
+    `J_n(x)`. Bessel functions of the first kind are defined as
+    solutions of the differential equation
+
+    .. math ::
+
+        x^2 y'' + x y' + (x^2 - n^2) y = 0
+
+    which is Laplace's equation in cylindrical coordinates. This
+    equation has two solutions for given `n`, where the
+    `J_n`-function is the solution that is nonsingular at `x = 0`.
+    For positive integer `n`, `J_n(x)` behaves roughly like
+    a sine (odd `n`) or cosine (even `n`) multiplied by
+    a magnitude factor that decays slowly as `x \to \pm\infty`.
+
+    Generally, `J_n` is a special case of the hypergeometric
+    function `\,_0F_1`:
+
+    .. math ::
+
+        J_n(x) = \frac{x^n}{2^n \Gamma(n+1)}
+                 \,_0F_1\left(n+1,-\frac{x^2}{4}\right)
+
+    **Examples**
+
+    Evaluation is supported for arbitrary arguments, and at
+    arbitrary precision::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print jv(2, 1000)
+        -0.024777229528606
+        >>> print jv(4, 0.75)
+        0.000801070086542314
+        >>> print jv(2, 1000j)
+        (-2.48071721019185e+432 + 0.0j)
+        >>> mp.dps = 25
+        >>> print jv(0.75j, 3+4j)
+        (-2.778118364828153309919653 - 1.5863603889018621585533j)
+        >>> mp.dps = 50
+        >>> print jv(1, pi)
+        0.28461534317975275734531059968613140570981118184947
+
+    The Bessel functions of the first kind satisfy simple
+    symmetries around `x = 0`::
+
+        >>> mp.dps = 15
+        >>> nprint([jv(n,0) for n in range(5)])
+        [1.0, 0.0, 0.0, 0.0, 0.0]
+        >>> nprint([jv(n,pi) for n in range(5)])
+        [-0.304242, 0.284615, 0.485434, 0.333458, 0.151425]
+        >>> nprint([jv(n,-pi) for n in range(5)])
+        [-0.304242, -0.284615, 0.485434, -0.333458, 0.151425]
+
+    Roots of Bessel functions are often used::
+
+        >>> nprint([findroot(j0, k) for k in [2, 5, 8, 11, 14]])
+        [2.40483, 5.52008, 8.65373, 11.7915, 14.9309]
+        >>> nprint([findroot(j1, k) for k in [3, 7, 10, 13, 16]])
+        [3.83171, 7.01559, 10.1735, 13.3237, 16.4706]
+
+    The roots are not periodic, but the distance between successive
+    roots asymptotically approaches `2 \pi`. Bessel functions of
+    the first kind have the following normalization::
+
+        >>> print quadosc(j0, [0, inf], period=2*pi)
+        1.0
+        >>> print quadosc(j1, [0, inf], period=2*pi)
+        1.0
+
+    For `n = 1/2` or `n = -1/2`, the Bessel function reduces to a
+    trigonometric function::
+
+        >>> x = 10
+        >>> print jv(0.5, x), sqrt(2/(pi*x))*sin(x)
+        -0.13726373575505 -0.13726373575505
+        >>> print jv(-0.5, x), sqrt(2/(pi*x))*cos(x)
+        -0.211708866331398 -0.211708866331398
+
+    """
     if isint(v):
+        v = int(v)
         if isinstance(x, mpf):
-            return make_mpf(libhyper.mpf_besseljn(int(v), x._mpf_, mp.prec))
+            return make_mpf(libhyper.mpf_besseljn(v, x._mpf_, mp.prec))
         if isinstance(x, mpc):
-            return make_mpc(libhyper.mpc_besseljn(int(v), x._mpc_, mp.prec))
+            return make_mpc(libhyper.mpc_besseljn(v, x._mpc_, mp.prec))
     hx = x/2
     return hx**v * hyp0f1(v+1, -hx**2) / factorial(v)
 
 jn = jv
 
 def j0(x):
-    """Bessel function J_0(x)."""
+    """Computes the Bessel function `J_0(x)`. See :func:`jv`."""
     return jv(0, x)
 
 def j1(x):
-    """Bessel function J_1(x)."""
+    """Computes the Bessel function `J_1(x)`.  See :func:`jv`."""
     return jv(1, x)
 
 @funcwrapper
