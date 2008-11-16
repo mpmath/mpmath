@@ -1143,37 +1143,45 @@ def jtheta(n, z, q):
     try:
         mp.prec += extra
         if n == 1:
-            if abs(z.imag) < cz * abs(log(q).real):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _jacobi_theta2(z - pi/2, q)
+                else:
+                    mp.dps += 10
+                    res = _jacobi_theta2a(z - pi/2, q)
+            else:
                 res = _jacobi_theta2(z - pi/2, q)
-            else:
-                mp.dps += 10
-                res = _jacobi_theta2a(z - pi/2, q)
         elif n == 2:
-            if abs(z.imag) < cz * abs(log(q)):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _jacobi_theta2(z, q)
+                else:
+                    mp.dps += 10
+                    res = _jacobi_theta2a(z, q)
+            else:
                 res = _jacobi_theta2(z, q)
-            else:
-                mp.dps += 10
-                res = _jacobi_theta2a(z, q)
         elif n == 3:
-            if abs(z.imag) < cz* abs(log(q)):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _jacobi_theta3(z, q)
+                else:
+                    mp.dps += 10
+                    res = _jacobi_theta3a(z, q)
+            else:
                 res = _jacobi_theta3(z, q)
-            else:
-                mp.dps += 10
-                res = _jacobi_theta3a(z, q)
         elif n == 4:
-            if abs(z.imag) < cz * abs(log(q)):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
-                res = _jacobi_theta3(z, -q)
+                    res = _jacobi_theta3(z, -q)
+                else:
+                    mp.dps += 10
+                    res = _jacobi_theta3a(z, -q)
             else:
-                mp.dps += 10
-                res = _jacobi_theta3a(z, -q)
+                res = _jacobi_theta3(z, -q)
         else:
             raise ValueError
     finally:
@@ -1207,35 +1215,45 @@ def djtheta(n, z, q, nd=1):
     try:
         mp.prec += extra
         if n == 1:
-            if abs(z.imag) < cz * abs(log(q).real):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _djacobi_theta2(z - pi/2, q, nd)
+                else:
+                    mp.dps += 10
+                    res = _djacobi_theta2a(z - pi/2, q, nd)
+            else:
                 res = _djacobi_theta2(z - pi/2, q, nd)
-            else:
-                mp.dps += 10
-                res = _djacobi_theta2a(z - pi/2, q, nd)
         elif n == 2:
-            if abs(z.imag) < cz * abs(log(q).real):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _djacobi_theta2(z, q, nd)
+                else:
+                    mp.dps += 10
+                    res = _djacobi_theta2a(z, q, nd)
+            else:
                 res = _djacobi_theta2(z, q, nd)
-            else:
-                mp.dps += 10
-                res = _djacobi_theta2a(z, q, nd)
         elif n == 3:
-            if abs(z.imag) < cz * abs(log(q).real):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
+                    res = _djacobi_theta3(z, q, nd)
+                else:
+                    mp.dps += 10
+                    res = _djacobi_theta3a(z, q, nd)
+            else:
                 res = _djacobi_theta3(z, q, nd)
-            else:
-                res = _djacobi_theta3a(z, q, nd)
         elif n == 4:
-            if abs(z.imag) < cz * abs(log(q).real):
-                if abs(z.imag) != 0:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(log(q).real):
                     mp.dps += extra2
-                res = _djacobi_theta3(z, -q, nd)
+                    res = _djacobi_theta3(z, -q, nd)
+                else:
+                    mp.dps += 10
+                    res = _djacobi_theta3a(z, -q, nd)
             else:
-                res = _djacobi_theta3a(z, -q, nd)
+                res = _djacobi_theta3(z, -q, nd)
         else:
             raise ValueError
     finally:
