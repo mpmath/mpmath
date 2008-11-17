@@ -270,6 +270,21 @@ def test_areal_inverses():
         assert atanh(mpf(x)).ae(cmath.atanh(x).real)
         assert isinstance(atanh(mpf(x)), mpf)
 
+def test_invhyperb_inaccuracy():
+    mp.dps = 15
+    assert (asinh(1e-5)*10**5).ae(0.99999999998333333)
+    assert (asinh(1e-10)*10**10).ae(1)
+    assert (asinh(1e-50)*10**50).ae(1)
+    assert (asinh(-1e-5)*10**5).ae(-0.99999999998333333)
+    assert (asinh(-1e-10)*10**10).ae(-1)
+    assert (asinh(-1e-50)*10**50).ae(-1)
+    assert asinh(10**20).ae(46.744849040440862)
+    assert asinh(-10**20).ae(-46.744849040440862)
+    assert (tanh(1e-10)*10**10).ae(1)
+    assert (tanh(-1e-10)*10**10).ae(-1)
+    assert (atanh(1e-10)*10**10).ae(1)
+    assert (atanh(-1e-10)*10**10).ae(-1)
+
 def test_complex_functions():
     for x in (range(10) + range(-10,0)):
         for y in (range(10) + range(-10,0)):
@@ -533,12 +548,19 @@ def test_perturbation_rounding():
     assert cos(b, rounding='c') == 1
     assert cos(a, rounding='f') < 1
     assert cos(b, rounding='f') < 1
-    for f in [sin, atan]:
+    for f in [sin, atan, asinh, tanh]:
         assert f(a) == +a
         assert f(a, rounding='c') > a
         assert f(a, rounding='f') < a
         assert f(b) == +b
         assert f(b, rounding='c') > b
+        assert f(b, rounding='f') < b
+    for f in [asin, tan, sinh, atanh]:
+        assert f(a) == +a
+        assert f(b) == +b
+        assert f(a, rounding='c') > a
+        assert f(b, rounding='c') > b
+        assert f(a, rounding='f') < a
         assert f(b, rounding='f') < b
     assert ln(c) == +a
     assert ln(d) == +b
@@ -552,12 +574,6 @@ def test_perturbation_rounding():
     assert cosh(b, rounding='c') > 1
     assert cosh(a, rounding='f') == 1
     assert cosh(b, rounding='f') == 1
-    assert sinh(a) == +a
-    assert sinh(b) == +b
-    assert sinh(a, rounding='c') > a
-    assert sinh(b, rounding='c') > b
-    assert sinh(a, rounding='f') < a
-    assert sinh(b, rounding='f') < b
 
 def test_integer_parts():
     assert floor(3.2) == 3

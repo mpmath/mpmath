@@ -24,7 +24,7 @@ from libmpf import (\
     from_int, to_int, from_man_exp, to_fixed,
     normalize,
     fzero, fone, fnone, fhalf, finf, fninf, fnan,
-    mpf_cmp, mpf_sign,
+    mpf_cmp, mpf_sign, mpf_abs,
     mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_div, mpf_shift,
     mpf_rdiv_int, mpf_pow_int, mpf_sqrt,
     reciprocal_rnd, negative_rnd, mpf_perturb
@@ -1162,6 +1162,8 @@ def cosh_sinh(x, prec, rnd=round_fast, tanh=0):
     if mag < -3:
         # Extremely close to 0, sinh(x) ~= x and cosh(x) ~= 1
         if mag < -prec-2:
+            if tanh:
+                return mpf_perturb(x, 1-sign, prec, rnd)
             cosh = mpf_perturb(fone, 0, prec, rnd)
             sinh = mpf_perturb(x, sign, prec, rnd)
             return cosh, sinh
@@ -1376,10 +1378,21 @@ def mpf_acos(x, prec, rnd=round_fast):
     return mpf_shift(mpf_atan(c, prec, rnd), 1)
 
 def mpf_asinh(x, prec, rnd=round_fast):
+    wp = prec + 20
+    sign, man, exp, bc = x
+    mag = exp+bc
+    if mag < -8:
+        if mag < -wp:
+            return mpf_perturb(x, 1-sign, prec, rnd)
+        wp += (-mag)
     # asinh(x) = log(x+sqrt(x**2+1))
-    wp = prec + 15
-    q = mpf_sqrt(mpf_add(mpf_mul(x,x), fone, wp), wp)
-    return mpf_log(mpf_add(x, q, wp), prec, rnd)
+    # use reflection symmetry to avoid cancellation
+    q = mpf_sqrt(mpf_add(mpf_mul(x, x), fone, wp), wp)
+    q = mpf_add(mpf_abs(x), q, wp)
+    if sign:
+        return mpf_neg(mpf_log(q, prec, negative_rnd[rnd]))
+    else:
+        return mpf_log(q, prec, rnd)
 
 def mpf_acosh(x, prec, rnd=round_fast):
     # acosh(x) = log(x+sqrt(x**2-1))
@@ -1396,6 +1409,10 @@ def mpf_atanh(x, prec, rnd=round_fast):
     if mag > 0:
         raise ComplexResult("atanh(x) is real only for -1 < x < 1")
     wp = prec + 15
+    if mag < -8:
+        if mag < -wp:
+            return mpf_perturb(x, sign, prec, rnd)
+        wp += (-mag)
     a = mpf_add(x, fone, wp)
     b = mpf_sub(fone, x, wp)
     return mpf_shift(mpf_log(mpf_div(a, b, wp), prec, rnd), -1)
