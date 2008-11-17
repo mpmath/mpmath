@@ -103,6 +103,11 @@ def test_exp_integrals():
     assert chi(0) == -inf
     assert chi(inf) == inf
 
+def test_airy():
+    mp.dps = 15
+    assert (airyai(10)*10**10).ae(1.1047532552898687)
+    assert (airybi(10)/10**9).ae(0.45564115354822515)
+
 def test_hyper_0f1():
     v = 8.63911136507950465
     assert hyper([],[(1,3)],1.5).ae(v)

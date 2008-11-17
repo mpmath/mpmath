@@ -2485,22 +2485,55 @@ def airyai(z):
     sine wave for `x < 0` and like a decreasing exponential for
     `x > 0`.
 
-    The first negative root is::
+    Limits and values include::
 
         >>> from mpmath import *
         >>> mp.dps = 15
+        >>> print airyai(0), 1/(3**(2/3.)*gamma(2/3.))
+        0.355028053887817 0.355028053887817
+        >>> print airyai(1)
+        0.135292416312881
+        >>> print airyai(-1)
+        0.535560883292352
+        >>> print airyai(inf)
+        0.0
+        >>> print airyai(-inf)
+        0.0
+
+    :func:`airyai` uses a series expansion around `x = 0`,
+    so it is slow for extremely large arguments. Here are
+    some evaluations for moderately large arguments::
+
+        >>> print airyai(-100)
+        0.176753393239553
+        >>> print airyai(100)
+        2.63448215208818e-291
+        >>> print airyai(50+50j)
+        (-5.31790195707456e-68 - 1.16358800377071e-67j)
+        >>> print airyai(-50+50j)
+        (1.04124253736317e+158 + 3.3475255449236e+157j)
+
+    The first negative root is::
+
         >>> print findroot(airyai, -2)
         -2.33810741045977
 
     We can verify the differential equation::
 
         >>> for x in [-3.4, 0, 2.5, 1+2j]:
-        ...     nprint(diff(airyai, x, 2) - x*airyai(x), 1)
+        ...     print abs(diff(airyai, x, 2) - x*airyai(x)) < eps
         ...
-        0.0
-        1.0e-29
-        0.0
-        (0.0 + 0.0j)
+        True
+        True
+        True
+        True
+
+    The Taylor series expansion around `x = 0` starts with
+    the following coefficients (note that every third term
+    is zero)::
+
+        >>> nprint([(abs(c)>eps) and c or 0 for c in taylor(airyai, 0, 5)])
+        [0.355028, -0.258819, 0, 5.91713e-2, -2.15683e-2, 0]
 
     The Airy functions are a special case of Bessel functions.
     For `x < 0`, we have::
@@ -2513,10 +2546,12 @@ def airyai(z):
         -0.378814293677658
 
     """
-    if z == inf:
+    if z == inf or z == -inf:
         return 1/z
-    if z == -inf:
-        return mpf(0)
+    if z.real > 2:
+        # cancellation: both terms are ~ 2^(z^1.5),
+        # result is ~ 2^(-z^1.5), so need ~2*z^1.5 extra bits
+        mp.prec += 2*int(z.real**1.5)
     z3 = z**3 / 9
     a = sum_hyp0f1_rat((2,3), z3) / (cbrt(9) * gamma(mpf(2)/3))
     b = z * sum_hyp0f1_rat((4,3), z3) / (cbrt(3) * gamma(mpf(1)/3))
@@ -2531,22 +2566,55 @@ def airybi(z):
     sine wave for `x < 0` and like an increasing exponential
     for `x > 0`.
 
-    The first negative root is::
+    Limits and values include::
 
         >>> from mpmath import *
         >>> mp.dps = 15
+        >>> print airybi(0), 1/(3**(1/6.)*gamma(2/3.))
+        0.614926627446001 0.614926627446001
+        >>> print airybi(1)
+        1.20742359495287
+        >>> print airybi(-1)
+        0.103997389496945
+        >>> print airybi(inf)
+        +inf
+        >>> print airybi(-inf)
+        0.0
+
+    :func:`airyai` uses a series expansion around `x = 0`,
+    so it is slow for extremely large arguments. Here are
+    some evaluations for moderately large arguments::
+
+        >>> print airybi(-100)
+        0.0242738876801601
+        >>> print airybi(100)
+        6.0412239966702e+288
+        >>> print airybi(50+50j)
+        (-5.32207626732144e+63 + 1.47845029116524e+65j)
+        >>> print airybi(-50+50j)
+        (-3.3475255449236e+157 + 1.04124253736317e+158j)
+
+    The first negative root is::
+
         >>> print findroot(airybi, -1)
         -1.17371322270913
 
     We can verify the differential equation::
 
         >>> for x in [-3.4, 0, 2.5, 1+2j]:
-        ...     nprint(diff(airybi, x, 2) - x*airybi(x), 1)
+        ...     print abs(diff(airybi, x, 2) - x*airybi(x)) < eps
         ...
-        0.0
-        3.0e-29
-        0.0
-        (-3.0e-17 + 0.0j)
+        True
+        True
+        True
+        True
+
+    The Taylor series expansion around `x = 0` starts with
+    the following coefficients (note that every third term
+    is zero)::
+
+        >>> nprint([(abs(c)>eps) and c or 0 for c in taylor(airybi, 0, 5)])
+        [0.614927, 0.448288, 0, 0.102488, 3.73574e-2, 0]
 
     The Airy functions are a special case of Bessel functions.
     For `x < 0`, we have::
@@ -2561,7 +2629,7 @@ def airybi(z):
     if z == inf:
         return z
     if z == -inf:
-        return mpf(0)
+        return 1/z
     z3 = z**3 / 9
     rt = nthroot(3, 6)
     a = sum_hyp0f1_rat((2,3), z3) / (rt * gamma(mpf(2)/3))
