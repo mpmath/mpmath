@@ -873,3 +873,35 @@ def nstr(x, n=6):
 def nprint(x, n=6):
     """Print the result of nstr(x, n)."""
     print nstr(x, n)
+
+def chop(x, tol=None):
+    """
+    Chops off small real or imaginary parts, or converts
+    number close to zero to exact zeros. The input can be a
+    single number or an iterable::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> chop(5+1e-10j, tol=1e-9)
+        mpf('5.0')
+        >>> nprint(chop([1.0, 1e-20, 3+1e-18j, -4, 2]))
+        [1.0, 0.0, 3.0, -4.0, 2.0]
+
+    The tolerance defaults to ``100*eps``.
+    """
+    if tol is None:
+        tol = 100*eps
+    try:
+        x = mpmathify(x)
+        absx = abs(x)
+        if abs(x) < tol:
+            return zero
+        if isinstance(x, mpc):
+            if abs(x.imag) < min(tol, absx*tol):
+                return x.real
+            if abs(x.real) < min(tol, absx*tol):
+                return mpc(0, x.imag)
+    except TypeError:
+        if hasattr(x, "__iter__"):
+            return [chop(a) for a in x]
+    return x

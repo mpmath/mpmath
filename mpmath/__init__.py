@@ -6,7 +6,8 @@ from mptypes import (
     mp, extraprec, extradps, workprec, workdps,
     eps, j, inf, nan, isnan, isinf, isint,
     nstr, nprint, fraction, almosteq,
-    arange, linspace, rand, absmin, absmax
+    arange, linspace, rand, absmin, absmax,
+    chop
 )
 
 from functions import (
@@ -41,7 +42,8 @@ from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
 from calculus import richardson, shanks, nsum, nprod
 
-from calculus import diff, diffun, taylor, pade, polyval, polyroots, quadosc
+from calculus import diff, diffun, diffs, taylor, pade
+from calculus import polyval, polyroots, quadosc
 from calculus import fourier, fourierval
 from calculus import sumem, chebyfit, sumsh, sumrich, limit
 from calculus import odeint

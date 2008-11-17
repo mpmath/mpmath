@@ -1976,7 +1976,7 @@ rapidly::
 
 The error function is an odd function::
 
-    >>> nprint(taylor(erf, 0, 5))
+    >>> nprint(chop(taylor(erf, 0, 5)))
     [0.0, 1.12838, 0.0, -0.376126, 0.0, 0.112838]
 
 :func:`erf` implements arbitrary-precision evaluation and
@@ -2532,8 +2532,8 @@ def airyai(z):
     the following coefficients (note that every third term
     is zero)::
 
-        >>> nprint([(abs(c)>eps) and c or 0 for c in taylor(airyai, 0, 5)])
-        [0.355028, -0.258819, 0, 5.91713e-2, -2.15683e-2, 0]
+        >>> nprint(chop(taylor(airyai, 0, 5)))
+        [0.355028, -0.258819, 0.0, 5.91713e-2, -2.15683e-2, 0.0]
 
     The Airy functions are a special case of Bessel functions.
     For `x < 0`, we have::
@@ -2613,8 +2613,8 @@ def airybi(z):
     the following coefficients (note that every third term
     is zero)::
 
-        >>> nprint([(abs(c)>eps) and c or 0 for c in taylor(airybi, 0, 5)])
-        [0.614927, 0.448288, 0, 0.102488, 3.73574e-2, 0]
+        >>> nprint(chop(taylor(airybi, 0, 5)))
+        [0.614927, 0.448288, 0.0, 0.102488, 3.73574e-2, 0.0]
 
     The Airy functions are a special case of Bessel functions.
     For `x < 0`, we have::
@@ -2926,7 +2926,7 @@ def legendre(n, x):
     using degree-`n` Taylor expansion::
 
         >>> for n in range(5):
-        ...     nprint(taylor(lambda x: legendre(n, x), 0, n))
+        ...     nprint(chop(taylor(lambda x: legendre(n, x), 0, n)))
         ...
         [1.0]
         [0.0, 1.0]
@@ -3015,7 +3015,7 @@ def chebyt(n, x):
         >>> from mpmath import *
         >>> mp.dps = 15
         >>> for n in range(5):
-        ...     nprint(taylor(lambda x: chebyt(n, x), 0, n))
+        ...     nprint(chop(taylor(lambda x: chebyt(n, x), 0, n)))
         ...
         [1.0]
         [0.0, 1.0]
@@ -3063,7 +3063,7 @@ def chebyu(n, x):
         >>> from mpmath import *
         >>> mp.dps = 15
         >>> for n in range(5):
-        ...     nprint(taylor(lambda x: chebyu(n, x), 0, n))
+        ...     nprint(chop(taylor(lambda x: chebyu(n, x), 0, n)))
         ...
         [1.0]
         [0.0, 2.0]
@@ -3099,12 +3099,13 @@ def jv(v, x):
 
         x^2 y'' + x y' + (x^2 - n^2) y = 0
 
-    which is Laplace's equation in cylindrical coordinates. This
+    which appears, among other things, when solving the radial
+    part of Laplace's equation in cylindrical coordinates. This
     equation has two solutions for given `n`, where the
     `J_n`-function is the solution that is nonsingular at `x = 0`.
-    For positive integer `n`, `J_n(x)` behaves roughly like
-    a sine (odd `n`) or cosine (even `n`) multiplied by
-    a magnitude factor that decays slowly as `x \to \pm\infty`.
+    For positive integer `n`, `J_n(x)` behaves roughly like a sine
+    (odd `n`) or cosine (even `n`) multiplied by a magnitude factor
+    that decays slowly as `x \to \pm\infty`.
 
     Generally, `J_n` is a special case of the hypergeometric
     function `\,_0F_1`:

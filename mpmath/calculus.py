@@ -730,8 +730,24 @@ def limit(f, x, direction=-1, n=None, N=None):
 #                                Differentiation                             #
 #----------------------------------------------------------------------------#
 
-def diff(f, x, n=1, method='step', scale=1, direction=0):
+def difference_delta(s, n):
+    r"""
+    Given a sequence `(s_k)` containing at least `n+1` items, returns the
+    `n`-th forward difference,
+
+    .. math ::
+
+        \Delta^n = \sum_{k=0}^{\infty} (-1)^{k+n} {n \choose k} s_k.
     """
+    d = mpf(0)
+    b = (-1) ** (n & 1)
+    for k in xrange(n+1):
+        d += b * s[k]
+        b = (b * (k-n)) // (k+1)
+    return d
+
+def diff(f, x, n=1, method='step', scale=1, direction=0):
+    r"""
     Numerically computes the derivative of f(x). Optionally, computes
     the nth derivative f^(n)(x), for any order n.
 
@@ -831,26 +847,18 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
         if method == 'step':
             mp.prec = (orig+20) * (n+1)
             h = ldexp(scale, -orig-10)
-            v = mpf(0)
             # Applying the finite difference formula recursively n times,
             # we get a step sum weighted by a row of binomial coefficients
             # Directed: steps x, x+h, ... x+n*h
             if direction:
                 h *= sign(direction)
-                steps = xrange(0, n+1)
+                steps = xrange(n+1)
                 norm = h**n
             # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
             else:
                 steps = xrange(-n, n+1, 2)
                 norm = (2*h)**n
-            # Initial binomial coefficient is 1 or -1
-            b = (-1) ** (n & 1)
-            k = 1
-            for i in steps:
-                v += b * f(x+i*h)
-                # Binomial recurrence
-                b = (b * (n-k+1)) // (-k)
-                k += 1
+            v = difference_delta([f(x+k*h) for k in steps], n)
             v = v / norm
         elif method == 'quad':
             mp.prec += 10
@@ -866,6 +874,45 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
     finally:
         mp.prec = orig
     return +v
+
+def diffs(f, x, n, method='step', scale=1, direction=0):
+    r"""
+    Returns the sequence of derivatives
+
+    .. math ::
+
+        f(x), f'(x), f''(x), \ldots, f^{(n)}(x)
+
+    as a list. With ``method='step'``, :func:`diffs` uses only about
+    `n` function evaluations, rather than the roughly `n^2`
+    evaluations required if one calls :func:`diff` `n` separate times.
+
+    **Examples**
+
+        >>> nprint(diffs(cos, 1, 5))
+        [0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]
+
+    """
+    if method != 'step':
+        return [diff(f, x, k) for k in xrange(n+1)]
+    v = [f(x)]
+    orig = mp.prec
+    try:
+        mp.prec = (orig+20) * (n+1)
+        h = ldexp(scale, -orig-10)
+        if direction:
+            h *= sign(direction)
+            y = [f(x+h*k) for k in xrange(n+1)]
+            hnorm = h
+        else:
+            y = [f(x+h*k) for k in xrange(-n, n+1, 2)]
+            hnorm = 2*h
+        for k in xrange(1, n+1):
+            d = difference_delta(y, k) / hnorm**k
+            v.append(d)
+    finally:
+        mp.prec = orig
+    return [+d for d in v]
 
 def diffun(f, n=1, **options):
     """
@@ -898,8 +945,8 @@ def taylor(f, x, n, **options):
 
         >>> from mpmath import *
         >>> mp.dps = 15
-        >>> nprint(taylor(sin, 0, 5))
-        [0.0, 1.0, 0.0, -0.166667, 1.08755e-55, 8.33333e-3]
+        >>> nprint(chop(taylor(sin, 0, 5)))
+        [0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3]
 
     The coefficients are computed using high-order numerical
     differentiation. The function must be possible to evaluate
@@ -918,7 +965,8 @@ def taylor(f, x, n, **options):
         12.1824939607035
 
     """
-    return [diff(f, x, i, **options) / factorial(i) for i in xrange(n+1)]
+    d = diffs(f, x, n, **options)
+    return [d[i]/factorial(i) for i in xrange(n+1)]
 
 def pade(a, L, M):
     """
