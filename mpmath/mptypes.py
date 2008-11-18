@@ -903,5 +903,5 @@ def chop(x, tol=None):
                 return mpc(0, x.imag)
     except TypeError:
         if hasattr(x, "__iter__"):
-            return [chop(a) for a in x]
+            return [chop(a, tol) for a in x]
     return x
