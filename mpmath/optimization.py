@@ -537,7 +537,7 @@ class MDNewton:
             def J(*x):
                 return jacobian(f, x)
             self.J = J
-        self.norm = kwargs.get('norm', lambda x: norm_p(x, float('inf')))
+        self.norm = kwargs.get('norm', lambda x: norm_p(x, float(mpf('inf'))))
         self.verbose = kwargs['verbose']
 
     def __iter__(self):
