@@ -5,6 +5,7 @@ from calculus import diff
 from functions import sqrt, sign
 from matrices import matrix, norm_p
 from linalg import lu_solve
+from copy import copy
 
 ##############
 # 1D-SOLVERS #
@@ -513,6 +514,7 @@ def jacobian(f, x):
 
 one = mpf(1)
 
+# TODO: support force_type
 class MDNewton:
     """
     Find the root of a vector function numerically using Newton's method.
@@ -522,6 +524,10 @@ class MDNewton:
     J is a function returning the jacobian matrix for a point.
 
     Supports overdetermined systems.
+
+    Use the 'norm' keyword to specify which norm to use. Defaults to max-norm.
+    The function to calculate the Jacobian matrix can be given using the
+    keyword 'J'. Otherwise it will be calculated numerically.
     """
     maxsteps = 10
 
@@ -537,7 +543,7 @@ class MDNewton:
             def J(*x):
                 return jacobian(f, x)
             self.J = J
-        self.norm = kwargs.get('norm', lambda x: norm_p(x, mpf('inf')))
+        self.norm = kwargs['norm']
         self.verbose = kwargs['verbose']
 
     def __iter__(self):
@@ -584,7 +590,7 @@ class MDNewton:
 str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
               'muller':Muller, 'bisect':Bisection, 'illinois':Illinois,
               'pegasus':Pegasus, 'anderson':Anderson, 'ridder':Ridder,
-              'anewton':ANewton}
+              'anewton':ANewton, 'mdnewton':MDNewton}
 
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
@@ -592,7 +598,10 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     """
     Find a root of f using x0 as starting point or interval.
 
-    If not abs(f(root)) < tol an exception is raised.
+    If not abs(f(root))**2 < tol an exception is raised.
+
+    Multidimensional overdetermined systems are supported.
+    You can specify them using a function or a list of functions.
 
     Arguments:
 
@@ -606,6 +615,9 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     maxsteps : after how many steps the solver will cancel
     df : first derivative of f (used by some solvers)
     d2f : second derivative of f (used by some solvers)
+    multidimensional : force multidimensional solving
+    J : Jacobian matrix of f (used by multidimensional solvers)
+    norm : used vector norm (used by multidimensional solvers)
 
     solver has to be callable with (f, x0, **kwargs) and return an generator
     yielding pairs of approximative solution and estimated error (which is
@@ -767,7 +779,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     if not force_type:
         force_type = lambda x: x
     elif not tol and (force_type == float or force_type == complex):
-        tol = 2**(-52) # TODO: consider a less strict value
+        tol = 2**(-42)
     kwargs['verbose'] = verbose
     if 'd1f' in kwargs:
         kwargs['df'] = kwargs['d1f']
@@ -783,6 +795,29 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
             solver = str2solver[solver]
         except KeyError:
             raise ValueError('could not recognize solver')
+    # accept list of functions
+    if isinstance(f, (list, tuple)):
+        f2 = copy(f)
+        def tmp(*args):
+            return [fn(*args) for fn in f2]
+        f = tmp
+    if 'multidimensional' in kwargs:
+        multidimensional = kwargs['multidimensional']
+    else:
+        try:
+           multidimensional = isinstance(f(*x0), (list, tuple, matrix))
+        except TypeError:
+            multidimensional = False
+    if multidimensional:
+        # only one multidimensional solver available at the moment
+        solver = MDNewton
+        if not 'norm' in kwargs:
+            norm = lambda x: norm_p(x, mpf('inf'))
+            kwargs['norm'] = norm
+        else:
+            norm = kwargs['norm']
+    else:
+        norm = abs
     # use solver
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
@@ -795,13 +830,17 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
             print 'x:    ', x
             print 'error:', error
         i += 1
-        if error < tol * max(1, abs(x)) or i >= maxsteps:
+        if error < tol * max(1, norm(x)) or i >= maxsteps:
             break
-    if verify and abs(f(x))**2 > tol: # TODO: better condition?
+    if not isinstance(x, (list, tuple, matrix)):
+        xl = [x]
+    else:
+        xl = x
+    if verify and norm(f(*xl))**2 > tol: # TODO: better condition?
         raise ValueError('Could not find root within given tolerance. '
                          '(%g > %g)\n'
                          'Try another starting point or tweak arguments.'
-                         % (abs(f(x)), tol))
+                         % (norm(f(*xl))**2, tol))
     return x
 
 def multiplicity(f, root, tol=eps, maxsteps=10, **kwargs):
@@ -847,7 +886,7 @@ def steffensen(f):
     (or less) convergence.
 
     x* is a fixpoint of the iteration x_{k+1} = phi(x_k) if x* = phi(x*). For
-    phi(x) = x**2 there are two fixpoints: 0 and 1. 
+    phi(x) = x**2 there are two fixpoints: 0 and 1.
 
     Let's try Steffensen's method:
 

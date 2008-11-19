@@ -48,8 +48,18 @@ def test_multidimensional():
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
     assert mnorm_1(jacobian(f, (1,-2)) - matrix([[6,8],[0,-2]])) < 1.e-7
-    for x, error in MDNewton(f, (1,-2), verbose=0):
+    for x, error in MDNewton(f, (1,-2), verbose=0,
+                             norm=lambda x: norm_p(x, inf)):
         pass
     assert norm_p(f(*x), 2) < 1e-14
+    # The Chinese mathematician Zhu Shijie was the very first to solve this
+    # nonlinear system 700 years ago
+    f1 = lambda x, y: -x + 2*y
+    f2 = lambda x, y: (x**2 + x*(y**2 - 2) - 4*y)  /  (x + 4)
+    f3 = lambda x, y: sqrt(x**2 + y**2)
+    f = [f1, f2, f3]
+    x = findroot(f, (-10, 10))
+    assert norm_p(x, 2) < 1e-14
+
 
 
