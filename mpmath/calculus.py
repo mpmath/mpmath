@@ -9,6 +9,8 @@ High-level, mostly calculus-oriented functions.
 etc
 """
 
+from itertools import izip
+
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
@@ -16,18 +18,18 @@ from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign)
 from gammazeta import int_fac
 
-from quadrature import quadgl, quadts
+from quadrature import quad, quadgl, quadts
 from matrices import matrix
 from linalg import lu_solve
 
 def richardson(seq):
-    """
-    Given a list ``seq`` of the first N elements of a slowly convergent
-    infinite sequence, :func:`richardson` computes the N-term
+    r"""
+    Given a list ``seq`` of the first `N` elements of a slowly convergent
+    infinite sequence, :func:`richardson` computes the `N`-term
     Richardson extrapolate for the limit.
 
-    :func:`richardson` returns (v, c) where v is the estimated
-    limit and c is the magnitude of the largest weight used during the
+    :func:`richardson` returns `(v, c)` where `v` is the estimated
+    limit and `c` is the magnitude of the largest weight used during the
     computation. The weight provides an estimate of the precision
     lost to cancellation. Due to cancellation effects, the sequence must
     be typically be computed at a much higher precision than the target
@@ -35,24 +37,24 @@ def richardson(seq):
 
     **Applicability and issues**
 
-    The N-step Richardson extrapolation algorithm used by
+    The `N`-step Richardson extrapolation algorithm used by
     :func:`richardson` is described in [1].
 
     Richardson extrapolation only works for a specific type of sequence,
-    namely one converging like partial sums of P(1)/Q(1) + P(2)/Q(2) +
-    ... where P and Q are polynomials. When the sequence does not
-    convergence at such a rate, :func:`richardson` generally produces
-    garbage.
+    namely one converging like partial sums of
+    `P(1)/Q(1) + P(2)/Q(2) + \ldots` where `P` and `Q` are polynomials.
+    When the sequence does not convergence at such a rate
+    :func:`richardson` generally produces garbage.
 
-    Richardson extrapolation has the advantage of being fast: the N-term
-    extrapolate requires only O(N) arithmetic operations, and usually
-    produces an estimate that is accurate to O(N) digits. Contrast with
+    Richardson extrapolation has the advantage of being fast: the `N`-term
+    extrapolate requires only `O(N)` arithmetic operations, and usually
+    produces an estimate that is accurate to `O(N)` digits. Contrast with
     the Shanks transformation (see :func:`shanks`), which requires
-    O(N^2) operations.
+    `O(N^2)` operations.
 
     :func:`richardson` is unable to produce an estimate for the
     approximation error. One way to estimate the error is to perform
-    two extrapolations with slightly different N and comparing the
+    two extrapolations with slightly different `N` and comparing the
     results.
 
     Richardson extrapolation does not work for oscillating sequences.
@@ -62,7 +64,7 @@ def richardson(seq):
 
     **Example**
 
-    Applying Richardson extrapolation to the Leibniz series for pi::
+    Applying Richardson extrapolation to the Leibniz series for `\pi`::
 
         >>> from mpmath import *
         >>> mp.dps = 30
@@ -104,10 +106,10 @@ def richardson(seq):
     return s, maxc
 
 def shanks(seq, table=None):
-    """
-    Given a list ``seq`` of the first N elements of a slowly convergent
-    infinite sequence, :func:`shanks` computes the iterated Shanks
-    transformation S(seq), S(S(seq)), ..., S^(N/2)(seq). The Shanks
+    r"""
+    Given a list ``seq`` of the first `N` elements of a slowly
+    convergent infinite sequence `(A_k)`, :func:`shanks` computes the iterated
+    Shanks transformation `S(A), S(S(A)), \ldots, S^{N/2}(A)`. The Shanks
     transformation often provides strong convergence acceleration,
     especially if the sequence is oscillating.
 
@@ -141,31 +143,27 @@ def shanks(seq, table=None):
     **The Shanks transformation**
 
     The Shanks transformation is defined as follows (see [2]): given
-    the input sequence (A[0], A[1], ...), the transformed sequence is
-    given by::
+    the input sequence `(A_0, A_1, \ldots)`, the transformed sequence is
+    given by
 
-                   A[n+1]*A[n-1] - A[n]^2
-        S(A[n]) = ------------------------
-                  A[n+1] + A[n-1] - 2*A[n]
+    .. math ::
 
-    The Shanks transformation gives the exact limit A in a single
-    step if A[n] = A + a*q^n. Note in particular that it extrapolates
-    the exact sum of a geometric series in a single step.
+        S(A_k) = \frac{A_{k+1}A_{k-1}-A_k^2}{A_{k+1}+A_{k-1}-2 A_k}
+
+    The Shanks transformation gives the exact limit `A_{\infty}` in a
+    single step if `A_k = A + a q^k`. Note in particular that it
+    extrapolates the exact sum of a geometric series in a single step.
 
     Applying the Shanks transformation once often improves convergence
     substantially for an arbitrary sequence, but the optimal effect is
-    obtained by applying it iteratively: S(S(A[n])), S(S(S(A[n]))), ...
+    obtained by applying it iteratively:
+    `S(S(A_k)), S(S(S(A_k))), \ldots`.
 
     Wynn's epsilon algorithm provides an efficient way to generate
     the table of iterated Shanks transformations. It reduces the
     computation of each element to essentially a single division, at
     the cost of requiring dummy elements in the table. See [1] for
     details.
-
-    A nice feature of the Shanks transformation is that it at
-    worst offers no convergence improvement and returns a sequence
-    converging roughly as slowly as the original sequence. Contrast
-    this with Richardson extrapolation, which at worst returns garbage.
 
     Due to cancellation effects, the sequence must be typically be
     computed at a much higher precision than the target accuracy
@@ -180,7 +178,7 @@ def shanks(seq, table=None):
     **Examples**
 
     We illustrate by applying Shanks transformation to the Leibniz
-    series for pi::
+    series for `\pi`::
 
         >>> from mpmath import *
         >>> mp.dps = 50
@@ -265,12 +263,211 @@ def shanks(seq, table=None):
         table.append(row)
     return table
 
-def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
+def sumem(f, interval, tol=None, reject=10, integral=None,
+    adiffs=None, bdiffs=None, verbose=False, error=False):
+    r"""
+    Uses the Euler-Maclaurin formula to compute an approximation accurate
+    to within ``tol`` (which defaults to the present epsilon) of the sum
+
+    .. math ::
+
+        S = \sum_{k=a}^b f(k)
+
+    where `(a,b)` are given by ``interval`` and `a` or `b` may be
+    infinite. The approximation is
+
+    .. math ::
+
+        S \sim \int_a^b f(x) \,dx + \frac{f(a)+f(b)}{2} + 
+        \sum_{k=1}^{\infty} \frac{B_{2k}}{(2k)!}
+        \left(f^{(2k-1)}(b)-f^{(2k-1)}(a)\right).
+
+    The last sum in the Euler-Maclaurin formula is not generally
+    convergent (a notable exception is if `f` is a polynomial, in
+    which case Euler-Maclaurin actually gives an exact result).
+
+    The summation is stopped as soon as the quotient between two
+    consecutive terms falls below *reject*. That is, by default
+    (*reject* = 10), the summation is continued as long as each
+    term adds at least one decimal.
+
+    Although not convergent, convergence to a given tolerance can
+    often be "forced" if `b = \infty` by summing up to `a+N` and then
+    applying the Euler-Maclaurin formula to the sum over the range
+    `(a+N+1, \ldots, \infty)`. This procedure is implemented by
+    :func:`nsum`.
+
+    By default numerical quadrature and differentiation is used.
+    If the symbolic values of the integral and endpoint derivatives
+    are known, it is more efficient to pass the value of the
+    integral explicitly as ``integral`` and the derivatives
+    explicitly as ``adiffs`` and ``bdiffs``. The derivatives
+    should be given as iterables that yield
+    `f(a), f'(a), f''(a), \ldots` (and the equivalent for `b`).
+
+    **Examples**
+
+    Summation of an infinite series, with automatic and symbolic
+    integral and derivative values (the second should be much faster)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print sumem(lambda n: 1/n**2, [32, inf])
+        0.03174336652030209012658168043874142714132886413417
+        >>> I = mpf(1)/32
+        >>> D = adiffs=((-1)**n*fac(n+1)*32**(-2-n) for n in xrange(999))
+        >>> print sumem(lambda n: 1/n**2, [32, inf], integral=I, adiffs=D)
+        0.03174336652030209012658168043874142714132886413417
+
+    An exact evaluation of a finite polynomial sum::
+
+        >>> print sumem(lambda n: n**5-12*n**2+3*n, [-100000, 200000])
+        10500155000624963999742499550000.0
+        >>> print sum(n**5-12*n**2+3*n for n in xrange(-100000, 200001))
+        10500155000624963999742499550000
+
     """
-    Computes the sum of f(k) for k = a, a+1, a+2, ..., b where
-    [a, b] = interval, a = -inf and/or b = +inf. Two simple examples of
-    infinite series that can be summed by :func:`nsum`, where the
-    first converges rapidly and the second converges slowly, are::
+    tol = tol or +eps
+    interval = AS_POINTS(interval)
+    a = mpmathify(interval[0])
+    b = mpmathify(interval[-1])
+    err = mpf(0)
+    prev = 0
+    M = 10000
+    if a == -inf: adiffs = (0 for n in xrange(M))
+    else:         adiffs = adiffs or diffs(f, a)
+    if b == inf:  bdiffs = (0 for n in xrange(M))
+    else:         bdiffs = bdiffs or diffs(f, b)
+    orig = mp.prec
+    #verbose = 1
+    try:
+        mp.prec += 10
+        s = mpf(0)
+        for k, (da, db) in enumerate(izip(adiffs, bdiffs)):
+            if k & 1:
+                term = (db-da) * bernoulli(k+1) / factorial(k+1)
+                mag = abs(term)
+                if verbose:
+                    print "term", k, "magnitude =", nstr(mag)
+                if k > 4 and mag < tol:
+                    s += term
+                    break
+                elif k > 4 and abs(prev) / mag < reject:
+                    if verbose:
+                        print "Failed to converge"
+                    err += mag
+                    break
+                else:
+                    s += term
+                prev = term
+        # Endpoint correction
+        if a != -inf: s += f(a)/2
+        if b != inf: s += f(b)/2
+        # Tail integral
+        if verbose:
+            print "Integrating f(x) from x = %s to %s" % (nstr(a), nstr(b))
+        if integral:
+            s += integral
+        else:
+            integral, ierr = quad(f, interval, error=True)
+            if verbose:
+                print "Integration error:", ierr
+            s += integral
+            err += ierr
+    finally:
+        mp.prec = orig
+    if error:
+        return s, err
+    else:
+        return s
+
+class LimitExtrapolation(object):
+
+    def __init__(self, partial, emfun, minterms, tol, method, verbose):
+        self.partial = partial
+        self.emfun = emfun
+        self.minterms = minterms
+        self.tol = tol
+        self.verbose = verbose
+        if method in ('d', 'direct'):
+            self.TRY_RICHARDSON = self.TRY_SHANKS = \
+                self.TRY_EULER_MACLAURIN = False
+        else:
+            self.TRY_RICHARDSON = ('r' in method) or ('richardson' in method)
+            self.TRY_SHANKS = ('s' in method) or ('shanks' in method)
+            self.TRY_EULER_MACLAURIN = ('e' in method) or \
+                ('euler-maclaurin' in method)
+        self.last_richardson_value = 0
+        self.shanks_table = []
+
+    def guess(self, index):
+        partial = self.partial
+        error = abs(partial[-1] - partial[-2])
+        # Direct summation error
+        if self.verbose:
+            print "Direct summation error: %s" % nstr(error)
+        if error <= self.tol:
+            return partial[-1], True
+        # Don't try extrapolation yet
+        if index < self.minterms:
+            return partial[-1], False
+        if self.TRY_RICHARDSON:
+            value, maxc = richardson(partial)
+            # Convergence
+            error = abs(value - self.last_richardson_value)
+            if self.verbose:
+                print "Richardson extrapolation error: %s" % nstr(error)
+            # Convergence
+            if error <= self.tol:
+                return value, True
+            self.last_richardson_value = value
+            # Unreliable due to cancellation
+            if eps*maxc > self.tol:
+                if self.verbose:
+                    print "Ran out of precision for Richardson extrapolation"
+                self.TRY_RICHARDSON = False
+        if self.TRY_SHANKS:
+            self.shanks_table = shanks(partial, self.shanks_table)
+            row = self.shanks_table[-1]
+            if len(row) == 2:
+                est1 = row[-1]
+                error = 0
+            else:
+                est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
+                error = abs(est1-est2)
+            if self.verbose:
+                print "Shanks transformation error: %s" % nstr(error)
+            if error <= self.tol:
+                return est1, True
+            if eps*maxc > self.tol:
+                if verbose:
+                    print "Ran out of precision for Shanks transformation"
+                self.TRY_SHANKS = False
+        if self.TRY_EULER_MACLAURIN:
+            if mpc(sign(partial[-1]) / sign(partial[-2])).ae(-1):
+                if verbose:
+                    print ("NOT using Euler-Maclaurin: the series appears"
+                        " to be alternating, so numerical\n quadrature"
+                        " will most likely fail")
+                self.TRY_EULER_MACLAURIN = False
+            else:
+                value, error = self.emfun(index)
+                if self.verbose:
+                    print "Euler-Maclaurin error: %s" % nstr(error)
+                if error <= self.tol:
+                    return partial[-1]+value, True
+        return partial[-1], False
+
+def nsum(f, interval, **kwargs):
+    r"""
+    Computes the sum
+
+    .. math :: S = \sum_{k=a}^b f(k)
+
+    where `(a, b)` = *interval*, and where `a = -\infty` and/or
+    `b = \infty`. Two examples of infinite series that can be
+    summed by :func:`nsum`, where the first converges rapidly and the
+    second converges slowly, are::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -281,51 +478,64 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
 
     When possible, :func:`nsum` applies convergence acceleration to
     accurately estimate the sums of slowly convergent series.
-    :func:`nsum` cancels after at most ``maxterms`` terms; this
-    value defaults to dps*10.
+
+    **Keyword arguments**
+
+    *tol*:
+        Desired maximum final error. Defaults roughly to the
+        epsilon of the working precision.
+    *maxterms*:
+        The summation is cancelled after at most this many terms
+        (default = dps*10).
+    *minterms*:
+        At least this many terms are summed before extrapolation
+        is attempted.
+    *method*:
+        Which summation algorithm to use (described below).
+    *verbose*:
+        Print details about progress.
 
     **Methods**
 
     Unfortunately, an algorithm that can efficiently sum any infinite
     series does not exist. :func:`nsum` implements several different
-    algorithms that each work well in different cases. The ``method``
-    keyword argument selects a method:
+    algorithms that each work well in different cases. The *method*
+    keyword argument selects a method.
 
-    ``'hybrid'`` (default):
-        Switches between all of the following methods until one of
-        them signals that it has reached the target accuracy.
-        This is quite reliable and fairly efficient at low precision.
-        For very high precision summation, or if the summation needs
-        to be fast (for example if multiple sums need to be evaluated),
-        it is a good idea to investigate which method works best and
-        only use that.
+    The default method is ``'r+s'``, i.e. both Richardson extrapolation
+    and Shanks transformation is attempted. A slower method that
+    handles more cases is ``'r+s+e'``. For very high precision
+    summation, or if the summation needs to be fast (for example if
+    multiple sums need to be evaluated), it is a good idea to
+    investigate which one method works best and only use that.
 
-    ``'richardson'``:
+    ``'richardson'`` / ``'r'``:
         Uses Richardson extrapolation. Provides useful extrapolation
-        when f(k) ~ P(k)/Q(k) or when f(k) ~ (-1)^k * P(k)/Q(k) for
-        polynomials P and Q. See :func:`richardson` for additional
-        information.
+        when `f(k) \sim P(k)/Q(k)` or when `f(k) \sim (-1)^k P(k)/Q(k)`
+        for polynomials `P` and `Q`. See :func:`richardson` for
+        additional information.
 
-    ``'shanks'``:
+    ``'shanks'`` / ``'s'``:
         Uses Shanks transformation. Typically provides useful
-        extrapolation when f(k) ~ c^k or when successive terms
+        extrapolation when `f(k) \sim c^k` or when successive terms
         alternate signs. Is able to sum some divergent series.
         See :func:`shanks` for additional information.
 
-    ``'euler-maclaurin'`` (NOT IMPLEMENTED):
+    ``'euler-maclaurin'`` / ``'e'``:
         Uses the Euler-Maclaurin summation formula to approximate
         the remainder sum by an integral. This requires high-order
         numerical derivatives and numerical integration. The advantage
         of this algorithm is that it works regardless of the
-        decay rate of f, as long as the 
+        decay rate of `f`, as long as `f` is sufficiently smooth.
+        See :func:`sumem` for additional information.
 
-    ``'direct'``:
+    ``'direct'`` / ``'d'``:
         Does not perform any extrapolation. This can be used
         (and should only be used for) rapidly convergent series.
         The summation automatically stops when the terms
         decrease below the target tolerance.
 
-    **Examples**
+    **Basic examples**
 
     Summation of a series going to negative infinity and a doubly
     infinite series::
@@ -350,6 +560,8 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
         >>> abs(a-b) < mpf('1e-998')
         True
 
+    **Examples with Richardson extrapolation**
+
     Richardson extrapolation works well for sums over rational
     functions, as well as their alternating counterparts::
 
@@ -372,15 +584,17 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
         >>> print -3*zeta(3)/4
         -0.90154267736969571404980362113358749307373971925538
 
+    **Examples with Shanks transformation**
+
     The Shanks transformation works well for geometric series
     and typically provides excellent acceleration for Taylor
     series near the border of their disk of convergence.
-    Here we apply it to a series for log(2), which can be
-    seen as the Taylor series for log(1+x) with x = 1::
+    Here we apply it to a series for `\log(2)`, which can be
+    seen as the Taylor series for `\log(1+x)` with `x = 1`::
 
         >>> print nsum(lambda k: -(-1)**k/k, [1, inf],
         ...     method='shanks')
-        0.69314718055994530941723212145817656807550013436026
+        0.69314718055994530941723212145817656807550013436025
         >>> print log(2)
         0.69314718055994530941723212145817656807550013436025
 
@@ -390,10 +604,62 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
         ...     method='shanks')
         200.0
 
-    In fact, the Shanks transformation is able to sum
-    *divergent* series of the above type. Here we apply it
-    to log(1+x) far outside the region of convergence::
+    Finally, Shanks' method works very well for alternating series
+    where `f(k) = (-1)^k g(k)`, and often does so regardless of
+    the exact decay rate of `g(k)`::
 
+        >>> mp.dps = 15
+        >>> print nsum(lambda k: (-1)**(k+1) / k**1.5, [1, inf],
+        ...     method='shanks')
+        0.765147024625408
+        >>> print (2-sqrt(2))*zeta(1.5)/2
+        0.765147024625408
+
+    The following slowly convergent alternating series has no known
+    closed-form value. Evaluating the sum a second time at higher
+    precision indicates that the value is probably correct::
+
+        >>> print nsum(lambda k: (-1)**k / log(k), [2, inf],
+        ...     method='shanks')
+        0.924299897222939
+        >>> mp.dps = 30
+        >>> print nsum(lambda k: (-1)**k / log(k), [2, inf],
+        ...     method='shanks')
+        0.92429989722293885595957018136
+
+    **Examples with Euler-Maclaurin summation**
+
+    The sum in the following example has the wrong rate of convergence
+    for either Richardson or Shanks to be effective.
+
+        >>> f = lambda k: log(k)/k**2.5
+        >>> mp.dps = 15
+        >>> print nsum(f, [1, inf], method='euler-maclaurin')
+        0.38734195032621
+        >>> print -diff(zeta, 2.5)
+        0.38734195032621
+
+    Increasing ``minterms`` improves speed at higher precision::
+
+        >>> mp.dps = 50
+        >>> print nsum(f, [1, inf], method='euler-maclaurin', minterms=250)
+        0.38734195032620997271199237593105101319948228874688
+        >>> print -diff(zeta, 2.5)
+        0.38734195032620997271199237593105101319948228874688
+
+    **Divergent series**
+
+    The Shanks transformation is able to sum some *divergent*
+    series. In particular, it is often able to sum Taylor series
+    beyond their radius of convergence (this is due to a relation
+    between the Shanks transformation and Pade approximations;
+    see :func:`pade` for an alternative way to evaluate divergent
+    Taylor series).
+
+    Here we apply it to `\log(1+x)` far outside the region of
+    convergence::
+
+        >>> mp.dps = 50
         >>> print nsum(lambda k: -(-9)**k/k, [1, inf],
         ...     method='shanks')
         2.3025850929940456840179914546843642076011014886288
@@ -428,139 +694,72 @@ def nsum(f, interval, maxterms=None, method='hybrid', verbose=False):
         6.0 -0.2 -0.2
         7.0 -0.166666666666667 -0.166666666666667
 
-    Finally, Shanks' method works very well for alternating series
-    where f(k) = (-1)^k * g(k), and often does so regardless of
-    the exact decay rate of g(k)::
-
-        >>> mp.dps = 15
-        >>> print nsum(lambda k: (-1)**(k+1) / k**1.5, [1, inf],
-        ...     method='shanks')
-        0.765147024625408
-        >>> print (2-sqrt(2))*zeta(1.5)/2
-        0.765147024625408
-
-    The following slowly convergent alternating series has no known
-    closed-form value. Evaluating the sum a second time at higher
-    precision indicates that the value is probably correct::
-
-        >>> print nsum(lambda k: (-1)**k / log(k), [2, inf],
-        ...     method='shanks')
-        0.924299897222939
-        >>> mp.dps = 30
-        >>> print nsum(lambda k: (-1)**k / log(k), [2, inf],
-        ...     method='shanks')
-        0.92429989722293885595957018136
-
     """
     a, b = AS_POINTS(interval)
     if a == -inf:
         if b == inf:
-            return f(0) + nsum(lambda k: f(-k) + f(k), [1, inf], maxterms,
-                method, verbose)
-        return nsum(f, [-b, inf], maxterms, method, verbose)
+            return f(0) + nsum(lambda k: f(-k) + f(k), [1, inf], **kwargs)
+        return nsum(f, [-b, inf], **kwargs)
     elif b != inf:
         raise NotImplementedError("finite sums")
 
-    # Miscellaneous initialization
-    tol = eps / 2**10
-    maxterms = maxterms or mp.dps*10
-    TERMS_PER_ITERATION = 10
-    total_terms = 0
-    k = int(a)
-    s = mpf(0)
-    partial_sums = []
-    term, last_term = 0, 0
+    tol = kwargs.get('tol', eps/2**10)
+    verbose = kwargs.get('verbose', False)
+    maxterms = kwargs.get('maxterms', mp.dps*10)
+    minterms = kwargs.get('minterms', 10)
+    method = kwargs.get('method', 'r+s').split('+')
 
-    # Setup data for extrapolation
-    TRY_RICHARDSON = method in ('hybrid', 'richardson')
-    TRY_SHANKS = method in ('hybrid', 'shanks')
-    TRY_EULER_MACLAURIN = method in ('hybrid', 'euler-maclaurin')
-    last_richardson_value = 0
-    shanks_table = []
+    TERMS_PER_ITERATION = 10
+    a = int(a)
+    maxterm = a + (maxterms or mp.dps*10)
+    minterms = minterms + a
+
+    partial_sums = [f(mpf(a))]
+    b = a+1
 
     orig = mp.prec
+
+    def emfun(endpoint):
+        workprec = mp.prec
+        mp.prec = orig + 10
+        a = sumem(f, [endpoint, inf], tol, error=1)
+        mp.prec = workprec
+        return a
+
+    ex = LimitExtrapolation(partial_sums, emfun, minterms, tol, method, verbose)
+
     try:
         # Extra precision is required for extrapolation
-        if TRY_RICHARDSON or TRY_SHANKS:
+        if ex.TRY_RICHARDSON or ex.TRY_SHANKS:
             mp.prec *= 4
         else:
             mp.prec += 30
-
         while 1:
-            if total_terms >= maxterms:
+            a, b = b, min(maxterm, a+TERMS_PER_ITERATION)
+            if verbose:
+                print "-"*50, "\nSumming from", a, "to", b
+            for k in xrange(a, b):
+                partial_sums.append(partial_sums[-1] + f(mpf(k)))
+            best, ok = ex.guess(b)
+            if ok:
                 break
-
-            # Update the direct summation
-            if verbose:
-                print "-"*50
-                print "Summing from", k, "to", k+TERMS_PER_ITERATION
-            for i in xrange(TERMS_PER_ITERATION):
-                term, last_term = f(mpf(k)), term
-                s += term
-                partial_sums.append(s)
-                k += 1
-                total_terms += 1
-                if total_terms >= maxterms:
-                    break
-            error = abs(term - last_term)
-            if verbose:
-                print "Direct summation error: %s" % nstr(error)
-            if error <= tol:
-                return partial_sums[-1]
-
-            # Everything below here will *not* be executed with method='direct'
-            if TRY_RICHARDSON:
-                richardson_value, maxc = richardson(partial_sums)
-                # Convergence
-                error = abs(richardson_value - last_richardson_value)
+            if b >= maxterm:
                 if verbose:
-                    print "Richardson extrapolation error: %s" % nstr(error)
-                # Convergence
-                if error <= tol:
-                    return richardson_value
-                last_richardson_value = richardson_value
-                # Unreliable due to cancellation
-                if eps*maxc > tol:
-                    if verbose:
-                        print "Ran out of precision for Richardson " \
-                            "extrapolation"
-                    TRY_RICHARDSON = False
-            if TRY_SHANKS:
-                shanks_table = shanks(partial_sums, shanks_table)
-                row = shanks_table[-1]
-                if len(row) == 2:
-                    est1 = row[-1]
-                    error = 0
-                else:
-                    est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
-                    error = abs(est1-est2)
-                if verbose:
-                    print "Shanks transformation error: %s" % nstr(error)
-                if error <= tol:
-                    return est1
-                if eps*maxc > tol:
-                    if verbose:
-                        print "Ran out of precision for Shanks transformation"
-                    TRY_SHANKS = False
-            if TRY_EULER_MACLAURIN:
-                # TODO
-                if mpc(sign(term) / sign(last_term)).ae(-1):
-                    if verbose:
-                        print ("NOT using Euler-Maclaurin: the series appears"
-                            " to be alternating, so numerical\n quadrature"
-                            " will most likely fail")
-                    TRY_EULER_MACLAURIN = False
+                    print "Warning: failed to converge to target accuracy"
+                break
             TERMS_PER_ITERATION += 10
     finally:
         mp.prec = orig
-    if verbose:
-        print "Warning: failed to converge to target accuracy"
-    return partial_sums[-1]
+    return +best
 
 def nprod(f, interval, **kwargs):
     """
-    Computes the product of f(k) for k = a, a+1, a+2, ..., b where
-    [a, b] = interval, a = -inf and/or b = +inf.
+    Computes the product
+
+    .. math :: P = \prod_{k=a}^b f(k)
+
+    where `(a, b)` = ``interval``, and where `a = -\infty` and/or
+    `b = \infty`. 
 
     This function is essentially equivalent to applying :func:`nsum`
     to the logarithm of the product (which, of course, becomes a
@@ -1389,7 +1588,7 @@ def sumsh(f, interval, n=None, m=None):
     return +s
 
 @extraprec(15, normalize_output=True)
-def sumem(f, interval, N=None, integral=None, fderiv=None, error=False,
+def sumemx(f, interval, N=None, integral=None, fderiv=None, error=False,
     verbose=False):
     """
     Sum f(k) for k = a, a+1, ..., b where [a, b] = interval,
