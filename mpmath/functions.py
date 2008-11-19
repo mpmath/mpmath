@@ -3009,7 +3009,7 @@ def chebyt(n, x):
 
     **Basic evaluation**
 
-    The coefficients of the `n`-th polynoimal can be recovered
+    The coefficients of the `n`-th polynomial can be recovered
     using using degree-`n` Taylor expansion::
 
         >>> from mpmath import *
@@ -3057,7 +3057,7 @@ def chebyu(n, x):
 
     **Basic evaluation**
 
-    The coefficients of the `n`-th polynoimal can be recovered
+    The coefficients of the `n`-th polynomial can be recovered
     using using degree-`n` Taylor expansion::
 
         >>> from mpmath import *

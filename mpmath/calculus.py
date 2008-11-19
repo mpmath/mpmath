@@ -9,8 +9,6 @@ High-level, mostly calculus-oriented functions.
 etc
 """
 
-__docformat__ = 'plaintext'
-
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint)
@@ -875,44 +873,86 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
         mp.prec = orig
     return +v
 
-def diffs(f, x, n, method='step', scale=1, direction=0):
+def diffs(f, x, n=inf, method='step', scale=1, direction=0):
     r"""
-    Returns the sequence of derivatives
+    Returns a generator that yields the sequence of derivatives
 
     .. math ::
 
-        f(x), f'(x), f''(x), \ldots, f^{(n)}(x)
+        f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots
 
-    as a list. With ``method='step'``, :func:`diffs` uses only about
-    `n` function evaluations, rather than the roughly `n^2`
-    evaluations required if one calls :func:`diff` `n` separate times.
+    With ``method='step'``, :func:`diffs` uses only `O(k)`
+    function evaluations to generate the first `k` derivatives,
+    rather than the roughly `O(k^2)` evaluations
+    required if one calls :func:`diff` `k` separate times.
+
+    With `n \lt \inft`, the generator stops as soon as the
+    `n`-th derivative has been generated. If the exact number of
+    needed derivatives is known in advance, this is further
+    slightly more efficient.
 
     **Examples**
 
-        >>> nprint(diffs(cos, 1, 5))
+        >>> nprint(list(diffs(cos, 1, 5)))
         [0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]
+        >>> for i, d in zip(range(6), diffs(cos, 1)): print i, d
+        ...
+        0 0.54030230586814
+        1 -0.841470984807897
+        2 -0.54030230586814
+        3 0.841470984807897
+        4 0.54030230586814
+        5 -0.841470984807897
 
     """
     if method != 'step':
-        return [diff(f, x, k) for k in xrange(n+1)]
-    v = [f(x)]
-    orig = mp.prec
-    try:
-        mp.prec = (orig+20) * (n+1)
-        h = ldexp(scale, -orig-10)
-        if direction:
-            h *= sign(direction)
-            y = [f(x+h*k) for k in xrange(n+1)]
-            hnorm = h
-        else:
-            y = [f(x+h*k) for k in xrange(-n, n+1, 2)]
-            hnorm = 2*h
-        for k in xrange(1, n+1):
-            d = difference_delta(y, k) / hnorm**k
-            v.append(d)
-    finally:
-        mp.prec = orig
-    return [+d for d in v]
+        k = 0
+        while k < n:
+            yield diff(f, x, k)
+            k += 1
+        return
+
+    targetprec = mp.prec
+
+    def getvalues(m):
+        callprec = mp.prec
+        try:
+            mp.prec = workprec = (targetprec+20) * (m+1)
+            h = ldexp(scale, -targetprec-10)
+            if direction:
+                h *= sign(direction)
+                y = [f(x+h*k) for k in xrange(m+1)]
+                hnorm = h
+            else:
+                y = [f(x+h*k) for k in xrange(-m, m+1, 2)]
+                hnorm = 2*h
+            return y, hnorm, workprec
+        finally:
+            mp.prec = callprec
+
+    yield f(x)
+    if n < 1:
+        return
+
+    if n is inf:
+        A, B = 1, 2
+    else:
+        A, B = 1, n+1
+
+    while 1:
+        y, hnorm, workprec = getvalues(B)
+        for k in xrange(A, B):
+            try:
+                callprec = mp.prec
+                mp.prec = workprec
+                d = difference_delta(y, k) / hnorm**k
+            finally:
+                mp.prec = callprec
+            yield +d
+            if k >= n:
+                return
+        A, B = B, int(A*1.4+1)
+        B = min(B, n)
 
 def diffun(f, n=1, **options):
     """
@@ -965,8 +1005,7 @@ def taylor(f, x, n, **options):
         12.1824939607035
 
     """
-    d = diffs(f, x, n, **options)
-    return [d[i]/factorial(i) for i in xrange(n+1)]
+    return [d/factorial(i) for i, d in enumerate(diffs(f, x, n, **options))]
 
 def pade(a, L, M):
     """
