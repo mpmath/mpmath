@@ -1,8 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-from mptypes import mpmathify, extraprec, eps
+from mptypes import mpmathify, extraprec, eps, mpf
 from calculus import diff
 from functions import sqrt, sign
+from matrices import matrix, norm_p
+from linalg import lu_solve
 
 ##############
 # 1D-SOLVERS #
@@ -389,7 +391,7 @@ class Ridder:
 
     http://en.wikipedia.org/wiki/Ridders%27_method
     """
-    maxsteps=30
+    maxsteps = 30
 
     def __init__(self, f, x0, **kwargs):
         self.f = f
@@ -482,6 +484,98 @@ class ANewton:
             yield x0, error
 
 # TODO: add Brent
+
+############################
+# MULTIDIMENSIONAL SOLVERS #
+############################
+
+def jacobian(f, x):
+    """
+    Calculate the Jacobian matrix of a function at the point x0.
+
+    This is the first derivative of a vectorial function:
+
+        f : R^m -> R^n with m >= n
+    """
+    x = matrix(x)
+    h = sqrt(eps)
+    fx = matrix(f(*x))
+    m = len(fx)
+    n = len(x)
+    J = matrix(m, n)
+    for j in xrange(n):
+        xj = x.copy()
+        xj[j] += h
+        Jj = (matrix(f(*xj)) - fx) / h
+        for i in xrange(m):
+            J[i,j] = Jj[i]
+    return J
+
+one = mpf(1)
+
+class MDNewton:
+    """
+    Find the root of a vector function numerically using Newton's method.
+
+    f is a vector function representing a nonlinear equation system.
+    x0 is the starting point close to the root.
+    J is a function returning the jacobian matrix for a point.
+
+    Supports overdetermined systems.
+    """
+    maxsteps = 10
+
+    def __init__(self, f, x0, **kwargs):
+        self.f = f
+        if isinstance(x0, (tuple, list)):
+            x0 = matrix(x0)
+        assert x0.cols == 1, 'need a vector'
+        self.x0 = x0
+        if 'J' in kwargs:
+            self.J = kwarks['J']
+        else:
+            def J(*x):
+                return jacobian(f, x)
+            self.J = J
+        self.norm = kwargs.get('norm', lambda x: norm_p(x, float('inf')))
+        self.verbose = kwargs['verbose']
+
+    def __iter__(self):
+        f = self.f
+        x0 = self.x0
+        norm = self.norm
+        J = self.J
+        fx = matrix(f(*x0))
+        fxnorm = norm(fx)
+        cancel = False
+        while not cancel:
+            # get direction of descent
+            fxn = -fx
+            Jx = J(*x0)
+            s = lu_solve(Jx, fxn)
+            if self.verbose:
+                print 'Jx:'
+                print Jx
+                print 's:', s
+            # damping step size TODO: better strategy (hard task)
+            l = one
+            x1 = x0 + s
+            while True:
+                if x1 == x0:
+                    if self.verbose:
+                        print "canceled, won't get more excact"
+                    cancel = True
+                    break
+                fx = matrix(f(*x1))
+                newnorm = norm(fx)
+                if newnorm < fxnorm:
+                    # new x accepted
+                    fxnorm = newnorm
+                    x0 = x1
+                    break
+                l /= 2
+                x1 = x0 + l*s
+            yield (x0, fxnorm)
 
 #############
 # UTILITIES #

@@ -43,3 +43,13 @@ def test_multiplicity():
     for i in xrange(1, 5):
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
     assert multiplicity(lambda x: x**2, 1) == 0
+
+def test_multidimensional():
+    def f(*x):
+        return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
+    assert mnorm_1(jacobian(f, (1,-2)) - matrix([[6,8],[0,-2]])) < 1.e-7
+    for x, error in MDNewton(f, (1,-2), verbose=0):
+        pass
+    assert norm_p(f(*x), 2) < 1e-14
+
+
