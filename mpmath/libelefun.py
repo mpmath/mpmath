@@ -419,12 +419,12 @@ def mpf_nthroot(s, n, prec, rnd=round_fast):
     sign1 = 0
     es = exp+shift
     if es < 0:
-      sign1 = 1
-      es = -es
+        sign1 = 1
+        es = -es
     if sign1:
-      shift += es%n
+        shift += es%n
     else:
-      shift -= es%n
+        shift -= es%n
     man = rshift(man, shift)
     extra = 10
     exp1 = ((exp+shift-(n-1)*prec2)//n) - extra
@@ -715,15 +715,19 @@ def log_taylor_get_cached(n, prec):
 def log_taylor(x, prec):
     n = (x >> (prec-LOG_TAYLOR_SHIFT))
     a, log_a = log_taylor_get_cached(n, prec)
-    d = a - x
-    u = ((-d) << prec) // a
-    w = (d << prec) // a
+    u = ((x - a) << prec) // a
+    # to compute log(1 + u) use the identity
+    # log(z) = 2 * Sum( ((z-1)/(z+1))**(2*n+1)/(2*n+1), n, 0, inf)
+    # see http://en.wikipedia.org/wiki/Logarithm
+    v = (u << prec) // ((MP_ONE << (prec+1)) + u)
+    v2 = (v * v) >> prec
     s = MP_ZERO
     k = 1
-    while u:
-        s += u // k
-        u = (u * w) >> prec
-        k += 1
+    while v:
+        s += v // k
+        v = (v * v2) >> prec
+        k += 2
+    s <<= 1
     return log_a + s
 
 def mpf_log(x, prec, rnd=round_fast):
@@ -852,7 +856,7 @@ def expi_series(x, prec, r):
     c = sqrt_fixed(one - ((s*s)>>prec), prec)
     # Calculate (c + j*s)**(2**r) by repeated squaring
     for j in range(r):
-      c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
+        c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
     return c, s
 
 def reduce_angle(x, prec):
