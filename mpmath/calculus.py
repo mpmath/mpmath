@@ -13,7 +13,7 @@ from itertools import izip
 
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
-    AS_POINTS, arange, nstr, nprint)
+    AS_POINTS, arange, nstr, nprint, isinf)
 from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign)
 from gammazeta import int_fac
@@ -105,7 +105,7 @@ def richardson(seq):
         c /= ((1+k)*mpf(k+N)**N)
     return s, maxc
 
-def shanks(seq, table=None):
+def shanks(seq, table=None, randomized=False):
     r"""
     Given a list ``seq`` of the first `N` elements of a slowly
     convergent infinite sequence `(A_k)`, :func:`shanks` computes the iterated
@@ -165,15 +165,19 @@ def shanks(seq, table=None):
     the cost of requiring dummy elements in the table. See [1] for
     details.
 
+    **Precision issues**
+
     Due to cancellation effects, the sequence must be typically be
     computed at a much higher precision than the target accuracy
     of the extrapolation.
 
     If the Shanks transformation converges to the exact limit (such
     as if the sequence is a geometric series), then a division by
-    zero occurs. Currently, :func:`shanks` handles this case by
+    zero occurs. By default, :func:`shanks` handles this case by
     terminating the iteration and returning the table it has
-    generated so far.
+    generated so far. With *randomized=True*, it will instead
+    replace the zero by a pseudorandom number close to zero.
+    (TODO: find a better solution to this problem.)
 
     **Examples**
 
@@ -242,24 +246,29 @@ def shanks(seq, table=None):
     if STOP & 1:
         STOP -= 1
     one = mpf(1)
+    if randomized:
+        from random import Random
+        rnd = Random()
+        rnd.seed(START)
     for i in xrange(START, STOP):
         row = []
         for j in xrange(i+1):
             if j == 0:
-                a, b = 0, (seq[i+1] - seq[i])
+                a, b = 0, seq[i+1]-seq[i]
             else:
                 if j == 1:
                     a = seq[i]
                 else:
                     a = table[i-1][j-2]
                 b = row[j-1] - table[i-1][j-1]
-            if b:
-                row.append(a + one/b)
-            else:
-                if i & 1:
+            if not b:
+                if randomized:
+                    b = rnd.getrandbits(10)*eps
+                elif i & 1:
                     return table[:-1]
                 else:
                     return table
+            row.append(a + one/b)
         table.append(row)
     return table
 
@@ -381,82 +390,120 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
     else:
         return s
 
-class LimitExtrapolation(object):
+def adaptive_extrapolation(update, emfun, kwargs):
+    option = kwargs.get
+    tol = option('tol', eps/2**10)
+    verbose = option('verbose', False)
+    maxterms = option('maxterms', mp.dps*10)
+    method = option('method', 'r+s').split('+')
+    skip = option('skip', 0)
+    steps = iter(option('steps', xrange(10, 10**9, 10)))
+    #steps = (10 for i in xrange(1000))
+    if method in ('d', 'direct'):
+        TRY_RICHARDSON = self.TRY_SHANKS = \
+            TRY_EULER_MACLAURIN = False
+    else:
+        TRY_RICHARDSON = ('r' in method) or ('richardson' in method)
+        TRY_SHANKS = ('s' in method) or ('shanks' in method)
+        TRY_EULER_MACLAURIN = ('e' in method) or \
+            ('euler-maclaurin' in method)
 
-    def __init__(self, partial, emfun, minterms, tol, method, verbose):
-        self.partial = partial
-        self.emfun = emfun
-        self.minterms = minterms
-        self.tol = tol
-        self.verbose = verbose
-        if method in ('d', 'direct'):
-            self.TRY_RICHARDSON = self.TRY_SHANKS = \
-                self.TRY_EULER_MACLAURIN = False
+    last_richardson_value = 0
+    shanks_table = []
+    index = 0
+    step = 10
+    partial = []
+    best = mpf(0)
+    orig = mp.prec
+    try:
+        if TRY_RICHARDSON or TRY_SHANKS:
+            mp.prec *= 4
         else:
-            self.TRY_RICHARDSON = ('r' in method) or ('richardson' in method)
-            self.TRY_SHANKS = ('s' in method) or ('shanks' in method)
-            self.TRY_EULER_MACLAURIN = ('e' in method) or \
-                ('euler-maclaurin' in method)
-        self.last_richardson_value = 0
-        self.shanks_table = []
+            mp.prec += 30
+        while 1:
+            if index >= maxterms:
+                break
 
-    def guess(self, index):
-        partial = self.partial
-        error = abs(partial[-1] - partial[-2])
-        # Direct summation error
-        if self.verbose:
-            print "Direct summation error: %s" % nstr(error)
-        if error <= self.tol:
-            return partial[-1], True
-        # Don't try extrapolation yet
-        if index < self.minterms:
-            return partial[-1], False
-        if self.TRY_RICHARDSON:
-            value, maxc = richardson(partial)
-            # Convergence
-            error = abs(value - self.last_richardson_value)
-            if self.verbose:
-                print "Richardson extrapolation error: %s" % nstr(error)
-            # Convergence
-            if error <= self.tol:
-                return value, True
-            self.last_richardson_value = value
-            # Unreliable due to cancellation
-            if eps*maxc > self.tol:
-                if self.verbose:
-                    print "Ran out of precision for Richardson extrapolation"
-                self.TRY_RICHARDSON = False
-        if self.TRY_SHANKS:
-            self.shanks_table = shanks(partial, self.shanks_table)
-            row = self.shanks_table[-1]
-            if len(row) == 2:
-                est1 = row[-1]
-                error = 0
-            else:
-                est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
-                error = abs(est1-est2)
-            if self.verbose:
-                print "Shanks transformation error: %s" % nstr(error)
-            if error <= self.tol:
-                return est1, True
-            if eps*maxc > self.tol:
+            # Get new batch of terms
+            try:
+                step = steps.next()
+            except StopIteration:
+                pass
+            if verbose:
+                print "-"*70
+                print "Adding terms #%i-#%i" % (index, index+step)
+            update(partial, xrange(index, index+step))
+            index += step
+
+            # Check direct error
+            best = partial[-1]
+            error = abs(best - partial[-2])
+            if verbose:
+                print "Direct error: %s" % nstr(error)
+            if error <= tol:
+                return best
+
+            # Check each extrapolation method
+            if TRY_RICHARDSON:
+                value, maxc = richardson(partial)
+                # Convergence
+                richardson_error = abs(value - last_richardson_value)
                 if verbose:
-                    print "Ran out of precision for Shanks transformation"
-                self.TRY_SHANKS = False
-        if self.TRY_EULER_MACLAURIN:
-            if mpc(sign(partial[-1]) / sign(partial[-2])).ae(-1):
+                    print "Richardson error: %s" % \
+                        nstr(richardson_error)
+                # Convergence
+                if richardson_error <= tol:
+                    return value
+                last_richardson_value = value
+                # Unreliable due to cancellation
+                if eps*maxc > tol:
+                    if verbose:
+                        print "Ran out of precision for Richardson"
+                    TRY_RICHARDSON = False
+                if richardson_error < error:
+                    error = richardson_error
+                    best = value
+            if TRY_SHANKS:
+                shanks_table = shanks(partial, shanks_table, randomized=True)
+                row = shanks_table[-1]
+                if len(row) == 2:
+                    est1 = row[-1]
+                    shanks_error = 0
+                else:
+                    est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
+                    shanks_error = abs(est1-est2)
                 if verbose:
-                    print ("NOT using Euler-Maclaurin: the series appears"
-                        " to be alternating, so numerical\n quadrature"
-                        " will most likely fail")
-                self.TRY_EULER_MACLAURIN = False
-            else:
-                value, error = self.emfun(index)
-                if self.verbose:
-                    print "Euler-Maclaurin error: %s" % nstr(error)
-                if error <= self.tol:
-                    return partial[-1]+value, True
-        return partial[-1], False
+                    print "Shanks error: %s" % nstr(shanks_error)
+                if shanks_error <= tol:
+                    return est1
+                if eps*maxc > tol:
+                    if verbose:
+                        print "Ran out of precision for Shanks"
+                    TRY_SHANKS = False
+                if shanks_error < error:
+                    error = shanks_error
+                    best = est1
+            if TRY_EULER_MACLAURIN:
+                if mpc(sign(partial[-1]) / sign(partial[-2])).ae(-1):
+                    if verbose:
+                        print ("NOT using Euler-Maclaurin: the series appears"
+                            " to be alternating, so numerical\n quadrature"
+                            " will most likely fail")
+                    TRY_EULER_MACLAURIN = False
+                else:
+                    value, em_error = emfun(index+1, tol)
+                    value += partial[-1]
+                    if verbose:
+                        print "Euler-Maclaurin error: %s" % nstr(em_error)
+                    if em_error <= tol:
+                        return value
+                    if em_error < error:
+                        best = value
+    finally:
+        mp.prec = orig
+    if verbose:
+        print "Warning: failed to converge to target accuracy"
+    return best
 
 def nsum(f, interval, **kwargs):
     r"""
@@ -479,20 +526,29 @@ def nsum(f, interval, **kwargs):
     When possible, :func:`nsum` applies convergence acceleration to
     accurately estimate the sums of slowly convergent series.
 
-    **Keyword arguments**
+    **Options**
 
-    *tol*:
+    *tol*
         Desired maximum final error. Defaults roughly to the
         epsilon of the working precision.
-    *maxterms*:
-        The summation is cancelled after at most this many terms
-        (default = dps*10).
-    *minterms*:
-        At least this many terms are summed before extrapolation
-        is attempted.
-    *method*:
+
+    *method*
         Which summation algorithm to use (described below).
-    *verbose*:
+        Default: ``'richardson+shanks'``.
+
+    *maxterms*
+        Cancel after at most this many terms. Default: 10*dps.
+
+    *steps*
+        An iterable giving the number of terms to add between
+        each extrapolation attempt. The default sequence is
+        [10, 20, 30, 40, ...]. For example, if you know that
+        approximately 100 terms will be required, efficiency might be
+        improved by setting this to [100, 10]. Then the first
+        extrapolation will be performed after 100 terms, the second
+        after 110, etc.
+
+    *verbose*
         Print details about progress.
 
     **Methods**
@@ -639,10 +695,10 @@ def nsum(f, interval, **kwargs):
         >>> print -diff(zeta, 2.5)
         0.38734195032621
 
-    Increasing ``minterms`` improves speed at higher precision::
+    Increasing ``steps`` improves speed at higher precision::
 
         >>> mp.dps = 50
-        >>> print nsum(f, [1, inf], method='euler-maclaurin', minterms=250)
+        >>> print nsum(f, [1, inf], method='euler-maclaurin', steps=[250])
         0.38734195032620997271199237593105101319948228874688
         >>> print -diff(zeta, 2.5)
         0.38734195032620997271199237593105101319948228874688
@@ -703,54 +759,27 @@ def nsum(f, interval, **kwargs):
     elif b != inf:
         raise NotImplementedError("finite sums")
 
-    tol = kwargs.get('tol', eps/2**10)
-    verbose = kwargs.get('verbose', False)
-    maxterms = kwargs.get('maxterms', mp.dps*10)
-    minterms = kwargs.get('minterms', 10)
-    method = kwargs.get('method', 'r+s').split('+')
-
-    TERMS_PER_ITERATION = 10
     a = int(a)
-    maxterm = a + (maxterms or mp.dps*10)
-    minterms = minterms + a
 
-    partial_sums = [f(mpf(a))]
-    b = a+1
-
-    orig = mp.prec
-
-    def emfun(endpoint):
-        workprec = mp.prec
-        mp.prec = orig + 10
-        a = sumem(f, [endpoint, inf], tol, error=1)
-        mp.prec = workprec
-        return a
-
-    ex = LimitExtrapolation(partial_sums, emfun, minterms, tol, method, verbose)
-
-    try:
-        # Extra precision is required for extrapolation
-        if ex.TRY_RICHARDSON or ex.TRY_SHANKS:
-            mp.prec *= 4
+    def update(partial_sums, indices):
+        if partial_sums:
+            psum = partial_sums[-1]
         else:
-            mp.prec += 30
-        while 1:
-            a, b = b, min(maxterm, a+TERMS_PER_ITERATION)
-            if verbose:
-                print "-"*50, "\nSumming from", a, "to", b
-            for k in xrange(a, b):
-                partial_sums.append(partial_sums[-1] + f(mpf(k)))
-            best, ok = ex.guess(b)
-            if ok:
-                break
-            if b >= maxterm:
-                if verbose:
-                    print "Warning: failed to converge to target accuracy"
-                break
-            TERMS_PER_ITERATION += 10
-    finally:
-        mp.prec = orig
-    return +best
+            psum = mpf(0)
+        for k in indices:
+            psum = psum + f(a + mpf(k))
+            partial_sums.append(psum)
+
+    prec = mp.prec
+
+    def emfun(point, tol):
+        workprec = mp.prec
+        mp.prec = prec + 10
+        v = sumem(f, [point, inf], tol, error=1)
+        mp.prec = workprec
+        return v
+
+    return +adaptive_extrapolation(update, emfun, kwargs)
 
 def nprod(f, interval, **kwargs):
     """
@@ -758,7 +787,7 @@ def nprod(f, interval, **kwargs):
 
     .. math :: P = \prod_{k=a}^b f(k)
 
-    where `(a, b)` = ``interval``, and where `a = -\infty` and/or
+    where `(a, b)` = *interval*, and where `a = -\infty` and/or
     `b = \infty`. 
 
     This function is essentially equivalent to applying :func:`nsum`
@@ -863,64 +892,120 @@ def nprod(f, interval, **kwargs):
         mp.prec = orig
     return +exp(v)
 
-#----------------------------------------------------------------------------#
-#                       General extrapolation methods                        #
-#----------------------------------------------------------------------------#
+def limit(f, x, direction=1, exp=False, **kwargs):
+    r"""
+    Computes an estimate of the limit
 
-def richardson_extrapolation(f, n, N):
-    if not callable(f):
-        g = f; f = lambda k: g.__getitem__(int(k))
-    orig = mp.prec
-    try:
-        mp.prec = 2*orig
-        s = mpf(0)
-        for j in range(0, N+1):
-            c = (n+j)**N * (-1)**(j+N) / (factorial(j) * factorial(N-j))
-            s += c * f(mpf(n+j))
-    finally:
-        mp.prec = orig
-    return +s
+    .. math ::
 
-def shanks_extrapolation(f, n, m=1):
-    if not callable(f):
-        g = f; f = lambda k: g.__getitem__(int(k))
-    orig = mp.prec
-    try:
-        mp.prec = 2*orig
-        table = [f(mpf(j)) for j in range(n+m+2)]
-        table2 = table[:]
-        for i in range(1, m+1):
-            for j in range(i, n+m+1):
-                x, y, z = table[j-1], table[j], table[j+1]
-                try:
-                    table2[j] = (z*x - y**2) / (z + x - 2*y)
-                except ZeroDivisionError:
-                    return table2[j-1]
-            table = table2[:]
-    finally:
-        mp.prec = orig
-    return +table[n]
+        \lim_{t \to x} f(t)
 
-def limit(f, x, direction=-1, n=None, N=None):
-    """Compute lim of f(t) as t -> x using Richardson extrapolation.
-    For infinite x, the function values [f(n), ... f(n+N)] are used.
-    For finite x, [f(x-direction/n)), ... f(x-direction/(n+N))] are
-    used. If x is inf, f can be also be a precomputed sequence
-    with a __getitem__ method."""
-    if callable(f):
-        if not n: n = 3 + int(mp.dps * 0.5)
-        if not N: N = 2*n
+    where `x` may be finite or infinite.
+
+    For finite `x`, :func:`limit` evaluates `f(x + d/n)` for
+    consecutive integer values of `n`, where the approach direction
+    `d` may be specified using the *direction* keyword argument.
+    For infinite `x`, :func:`limit` evaluates values of
+    `f(\mathrm{sign}(x) \cdot n)`.
+
+    If the approach to the limit is not sufficiently fast to give
+    an accurate estimate directly, :func:`limit` attempts to find
+    the limit using Richardson extrapolation or the Shanks
+    transformation. You can select between these methods using
+    the *method* keyword (see documentation of :func:`nsum` for
+    more information).
+
+    **Options**
+
+    The following options are available with essentially the
+    same meaning as for :func:`nsum`: *tol*, *method*, *maxterms*,
+    *steps*, *verbose*.
+
+    If the option *exp=True* is set, `f` will be
+    sampled at exponentially spaced points `n = 2^1, 2^2, 2^3, \ldots`
+    instead of the linearly spaced points `n = 1, 2, 3, \ldots`.
+    This can sometimes improve the rate of convergence so that
+    :func:`limit` may return a more accurate answer (and faster).
+    However, do note that this can only be used if `f`
+    supports fast and accurate evaluation for arguments that
+    are extremely close to the limit point (or if infinite,
+    very large arguments).
+
+    **Examples**
+
+    A basic evaluation of a removable singularity::
+
+        >>> from mpmath import *
+        >>> mp.dps = 30
+        >>> print limit(lambda x: (x-sin(x))/x**3, 0)
+        0.166666666666666666666666666667
+
+    Computing the exponential function using its limit definition::
+
+        >>> print limit(lambda n: (1+3/n)**n, inf)
+        20.0855369231876677409285296546
+        >>> print exp(3)
+        20.0855369231876677409285296546
+
+    A limit for `\pi`::
+
+        >>> f = lambda n: 2**(4*n+1)*fac(n)**4/(2*n+1)/fac(2*n)**2
+        >>> print limit(f, inf)
+        3.14159265358979323846264338328
+
+    Calculating the coefficient in Stirling's formula::
+
+        >>> print limit(lambda n: fac(n) / (sqrt(n)*(n/e)**n), inf)
+        2.50662827463100050241576528481
+        >>> print sqrt(2*pi)
+        2.50662827463100050241576528481
+
+    Evaluating Euler's constant `\gamma` using the limit representation
+
+    .. math ::
+
+        \gamma = \lim_{n \rightarrow \infty } \left[ \left( 
+        \sum_{k=1}^n \frac{1}{k} \right) - \log(n) \right]
+
+    (which converges notoriously slowly)::
+
+        >>> f = lambda n: sum([mpf(1)/k for k in range(1,n+1)]) - log(n)
+        >>> print limit(f, inf)
+        0.577215664901532860606512090082
+        >>> print euler
+        0.577215664901532860606512090082
+
+    With default settings, the following limit converges too slowly
+    to be evaluated accurately. Changing to exponential sampling
+    however gives a perfect result::
+
+        >>> f = lambda x: sqrt(x**3+x**2)/(sqrt(x**3)+x)
+        >>> print limit(f, inf)
+        0.992518488562331431132360378669
+        >>> print limit(f, inf, exp=True)
+        1.0
+
+    """
+
+    if isinf(x):
+        direction = sign(x)
+        g = lambda k: f(mpf(k+1)*direction)
     else:
-        # If a sequence, take as many terms are are available
-        g = f; f = lambda k: g.__getitem__(int(k))
-        if not N: N = len(g)-1
-        if not n: n = 0
-    if   x == inf:  return richardson_extrapolation(lambda k: f(mpf(k)), n, N)
-    elif x == -inf: return richardson_extrapolation(lambda k: f(mpf(-k)), n, N)
-    direction *= mpf(1)
-    def g(k):
-        return f(x - direction/(1+k))
-    return richardson_extrapolation(g, n, N)
+        direction *= mpf(1)
+        g = lambda k: f(x + direction/(k+1))
+    if exp:
+        h = g
+        g = lambda k: h(2**k)
+
+    def update(values, indices):
+        for k in indices:
+            values.append(g(k+1))
+
+    # XXX: steps used by nsum don't work well
+    if not 'steps' in kwargs:
+        kwargs['steps'] = [10]
+
+    return +adaptive_extrapolation(update, None, kwargs)
 
 
 #----------------------------------------------------------------------------#
@@ -1524,10 +1609,10 @@ def quadosc(f, interval, period=None, zeros=None, alt=1):
         raise ValueError("zeros do not appear to be correctly indexed")
     if alt == 0:
         s = quadgl(f, [a, zeros(n+1)])
-        s += sumrich(lambda k: quadgl(f, [zeros(2*k), zeros(2*k+2)]), [n, inf])
+        s += nsum(lambda k: quadgl(f, [zeros(2*k), zeros(2*k+2)]), [n, inf])
     else:
         s = quadgl(f, [a, zeros(n)])
-        s += sumsh(lambda k: quadgl(f, [zeros(k), zeros(k+1)]), [n, inf])
+        s += nsum(lambda k: quadgl(f, [zeros(k), zeros(k+1)]), [n, inf])
     return s
 
 

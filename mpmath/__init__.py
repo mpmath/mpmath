@@ -45,7 +45,7 @@ from calculus import richardson, shanks, nsum, nprod
 from calculus import diff, diffun, diffs, taylor, pade
 from calculus import polyval, polyroots, quadosc
 from calculus import fourier, fourierval
-from calculus import sumem, chebyfit, sumsh, sumrich, limit
+from calculus import sumem, chebyfit, limit
 from calculus import odeint
 from quadrature import quad, quadgl, quadts, TanhSinh, GaussLegendre
 
