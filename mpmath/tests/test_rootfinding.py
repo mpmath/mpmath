@@ -61,5 +61,9 @@ def test_multidimensional():
     x = findroot(f, (-10, 10))
     assert norm_p(x, 2) < 1e-14
 
+def test_trivial():
+    assert findroot(lambda x: 0, 1) == 1
+    assert findroot(lambda x: x, 0) == 0
+    #assert findroot(lambda x, y: x + y, (1, -1)) == (1, -1)
 
 

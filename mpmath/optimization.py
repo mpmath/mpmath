@@ -801,13 +801,15 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         def tmp(*args):
             return [fn(*args) for fn in f2]
         f = tmp
+    # detect multidimensional functions
+    try:
+        fx = f(*x0)
+        multidimensional = isinstance(fx, (list, tuple, matrix))
+    except TypeError:
+        fx = f(x0[0])
+        multidimensional = False
     if 'multidimensional' in kwargs:
         multidimensional = kwargs['multidimensional']
-    else:
-        try:
-           multidimensional = isinstance(f(*x0), (list, tuple, matrix))
-        except TypeError:
-            multidimensional = False
     if multidimensional:
         # only one multidimensional solver available at the moment
         solver = MDNewton
@@ -818,6 +820,9 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
             norm = kwargs['norm']
     else:
         norm = abs
+    # happily return starting point if it's a root
+    if norm(fx) == 0:
+        return matrix(x0) if multidimensional else x0[0]
     # use solver
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
