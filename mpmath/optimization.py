@@ -603,23 +603,36 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     Multidimensional overdetermined systems are supported.
     You can specify them using a function or a list of functions.
 
-    Arguments:
+    **Arguments**
 
-    f : one dimensional function
-    x0 : starting point, several starting points or interval (depends on solver)
-    tol : the returned solution has an error smaller than this
-    verbose : print additional information for each iteration if true
-    verify : verify the solution and raise a ValueError if abs(f(x)) > tol
-    force_type : use specified type constructor on starting points
-    solver : a generator for f and x0 returning approximative solution and error
-    maxsteps : after how many steps the solver will cancel
-    df : first derivative of f (used by some solvers)
-    d2f : second derivative of f (used by some solvers)
-    multidimensional : force multidimensional solving
-    J : Jacobian matrix of f (used by multidimensional solvers)
-    norm : used vector norm (used by multidimensional solvers)
+    *f*
+        one dimensional function
+    *x0*
+        starting point, several starting points or interval (depends on solver)
+    *tol*
+        the returned solution has an error smaller than this
+    *verbose*
+        print additional information for each iteration if true
+    *verify*
+        verify the solution and raise a ValueError if abs(f(x)) > tol
+    *force_type*
+        use specified type constructor on starting points
+    *solver*
+        a generator for f and x0 returning approximative solution and error
+    *maxsteps*
+        after how many steps the solver will cancel
+    *df*
+        first derivative of f (used by some solvers)
+    *d2f*
+        second derivative of f (used by some solvers)
+    *multidimensional*
+        force multidimensional solving
+    *J*
+        Jacobian matrix of f (used by multidimensional solvers)
+    *norm*
+        used vector norm (used by multidimensional solvers)
 
-    solver has to be callable with (f, x0, **kwargs) and return an generator
+    solver has to be callable with ``(f, x0, **kwargs)`` and return an generator
     yielding pairs of approximative solution and estimated error (which is
     expected to be positive).
     You can use the following string aliases:
@@ -627,153 +640,134 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     'ridder', 'anewton', 'bisect'
     See mpmath.optimization for their documentation.
 
-
-    Examples
-    ........
+    **Examples**
 
     The function ``findroot`` locates a root of a given function using the
     secant method by default. A simple example use of the secant method is to
-    compute pi as the root of sin(*x*) closest to *x* = 3:
+    compute pi as the root of sin(*x*) closest to *x* = 3::
 
-    >>> from mpmath import *
-    >>> mp.dps = 30
-    >>> print findroot(sin, 3)
-    3.14159265358979323846264338328
+        >>> from mpmath import *
+        >>> mp.dps = 30
+        >>> print findroot(sin, 3)
+        3.14159265358979323846264338328
 
     The secant method can be used to find complex roots of analytic functions,
     although it must in that case generally be given a nonreal starting value
-    (or else it will never leave the real line):
+    (or else it will never leave the real line)::
 
-    >>> mp.dps = 15
-    >>> print findroot(lambda x: x**3 + 2*x + 1, j)
-    (0.226698825758202 + 1.46771150871022j)
+        >>> mp.dps = 15
+        >>> print findroot(lambda x: x**3 + 2*x + 1, j)
+        (0.226698825758202 + 1.46771150871022j)
 
     A nice application is to compute nontrivial roots of the Riemann zeta
-    function with many digits (good initial values are needed for convergence):
+    function with many digits (good initial values are needed for convergence)::
 
-    >>> mp.dps = 30
-    >>> print findroot(zeta, 0.5+14j)
-    (0.5 + 14.1347251417346937904572519836j)
+        >>> mp.dps = 30
+        >>> print findroot(zeta, 0.5+14j)
+        (0.5 + 14.1347251417346937904572519836j)
 
     The secant method can also be used as an optimization algorithm, by passing
     it a derivative of a function. The following example locates the positive
-    minimum of the gamma function:
+    minimum of the gamma function::
 
-    >>> mp.dps = 20
-    >>> print findroot(lambda x: diff(gamma, x), 1)
-    1.4616321449683623413
+        >>> mp.dps = 20
+        >>> print findroot(lambda x: diff(gamma, x), 1)
+        1.4616321449683623413
 
     Finally, a useful application is to compute inverse functions, such as the
     Lambert W function which is the inverse of *w* exp(*w*), given the first
     term of the solution's asymptotic expansion as the initial value. In basic
     cases, this gives identical results to mpmath's builtin ``lambertw``
-    function:
+    function::
 
-    >>> def lambert(x):
-    ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
-    ...
-    >>> mp.dps = 15
-    >>> print lambert(1), lambertw(1)
-    0.567143290409784 0.567143290409784
-    >>> print lambert(1000), lambert(1000)
-    5.2496028524016 5.2496028524016
+        >>> def lambert(x):
+        ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
+        ...
+        >>> mp.dps = 15
+        >>> print lambert(1), lambertw(1)
+        0.567143290409784 0.567143290409784
+        >>> print lambert(1000), lambert(1000)
+        5.2496028524016 5.2496028524016
 
-
-    Multiple roots
-    --------------
+    **Multiple roots**
 
     For multiple roots all methods of the Newtonian family (including secant)
-    converge slowly. Consider this example:
+    converge slowly. Consider this example::
 
-    >>> f = lambda x: (x - 1)**99
-    >>> findroot(f, 0.9, verify=False)
-    mpf('0.91807354244492868')
+        >>> f = lambda x: (x - 1)**99
+        >>> findroot(f, 0.9, verify=False)
+        mpf('0.91807354244492868')
 
     Even for a very close starting point the secant method converges very
     slowly. Use ``verbose=True`` to illustrate this.
 
     It's possible to modify Newton's method to make it converge regardless of
-    the root's multiplicity.
+    the root's multiplicity::
 
-    >>> findroot(f, -10, solver='mnewton')
-    mpf('1.0')
+        >>> findroot(f, -10, solver='mnewton')
+        mpf('1.0')
 
     This variant uses the first and second derivative of the function, which is
     not very efficient.
 
     Alternatively you can use an experimental Newtonian solver that keeps track
     of the speed of convergence and accelerates it using Steffensen's method if
-    necessary.
+    necessary::
 
-    >>> findroot(f, -10, solver='anewton', verbose=True)
-    x: -9.88888888888888888889
-    error: 0.111111111111111111111
-    converging slowly
-    x: -9.77890011223344556678
-    error: 0.10998877665544332211
-    converging slowly
-    x: -9.67002233332199662166
-    error: 0.108877778911448945119
-    converging slowly
-    accelerating convergence
-    x: -9.5622443299551077669
-    error: 0.107778003366888854764
-    converging slowly
-    x: 0.99999999999999999214
-    error: 10.562244329955107759
-    x: 1.0
-    error: 7.8598304758094664213e-18
-    mpf('1.0')
+        >>> findroot(f, -10, solver='anewton', verbose=True)
+        x: -9.88888888888888888889
+        error: 0.111111111111111111111
+        converging slowly
+        x: -9.77890011223344556678
+        error: 0.10998877665544332211
+        converging slowly
+        x: -9.67002233332199662166
+        error: 0.108877778911448945119
+        converging slowly
+        accelerating convergence
+        x: -9.5622443299551077669
+        error: 0.107778003366888854764
+        converging slowly
+        x: 0.99999999999999999214
+        error: 10.562244329955107759
+        x: 1.0
+        error: 7.8598304758094664213e-18
+        mpf('1.0')
 
 
-    Complex roots
-    -------------
+    **Complex roots**
 
     For complex roots it's recommended to use Muller's method as it converges
-    even for real starting points very fast.
+    even for real starting points very fast::
 
-    >>> findroot(lambda x: x**4 + x + 1, (0, 1, 2), solver='muller')
-    mpc(real='0.72713608449119684', imag='0.93409928946052944')
+        >>> findroot(lambda x: x**4 + x + 1, (0, 1, 2), solver='muller')
+        mpc(real='0.72713608449119684', imag='0.93409928946052944')
 
-
-    Intersection methods
-    --------------------
+    **Intersection methods**
 
     When you need to find a root in a known interval, it's highly recommended to
     use an intersection-based solver like ``'anderson'`` or ``'ridder'``.
     Usually the converge faster and more reliable. They have however problems
-    with multiple roots and usually need a sign change to find a root.
+    with multiple roots and usually need a sign change to find a root::
 
-    >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
-    mpf('0.0')
+        >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
+        mpf('0.0')
 
-    Be careful with symmetric functions:
+    Be careful with symmetric functions::
 
-    >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "mpmath/settings.py", line 135, in g
-        return f(*args, **kwargs)
-      File "mpmath/optimization.py", line 551, in findroot
-        for x, error in iterations:
-      File "mpmath/optimization.py", line 332, in __iter__
-        z = a - fa/s
-      File "<string>", line 8, in __div__
-      File ".../libmpf.py", line 761, in mpf_div
-        raise ZeroDivisionError
-    ZeroDivisionError
+        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
+        Traceback (most recent call last):
+          ...
+        ZeroDivisionError
 
-    It fails even for better starting points, because there is no sign change:
+    It fails even for better starting points, because there is no sign change::
 
-    >>> findroot(lambda x: x**2, (-1, .5), solver='anderson')
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "mpmath/settings.py", line 135, in g
-        return f(*args, **kwargs)
-      File "mpmath/optimization.py", line 562, in findroot
-        % (abs(f(x)), tol))
-    ValueError: Could not find root within given tolerance. (1 > 2.1684e-19)
-    Try another starting point or tweak arguments.
+        >>> findroot(lambda x: x**2, (-1, .5), solver='anderson')
+        Traceback (most recent call last):
+          ...
+        ValueError: Could not find root within given tolerance. (1 > 2.1684e-19)
+        Try another starting point or tweak arguments.
+
     """
     # initialize arguments
     if not force_type:
