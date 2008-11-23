@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Polynomials &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Numerical calculus" href="index.html" />
+    <link rel="next" title="Optimization" href="optimization.html" />
+    <link rel="prev" title="Numerical calculus" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="optimization.html" title="Optimization"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Numerical calculus"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="polynomials">
+<h1>Polynomials<a class="headerlink" href="#polynomials" title="Permalink to this headline">¶</a></h1>
+<p>See also <tt class="xref docutils literal"><span class="pre">taylor()</span></tt> and <tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt> for
+approximation of functions by polynomials.</p>
+<div class="section" id="polynomial-evaluation-polyval">
+<h2>Polynomial evaluation (<tt class="docutils literal"><span class="pre">polyval</span></tt>)<a class="headerlink" href="#polynomial-evaluation-polyval" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.polyval">
+<!--[mpmath.calculus.polyval]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">polyval</tt><big>(</big><em>coeffs</em>, <em>x</em>, <em>derivative=False</em><big>)</big><a class="headerlink" href="#mpmath.calculus.polyval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given coefficients [cn, ..., c2, c1, c0], evaluate
+P(x) = cn*x**n + ... + c2*x**2 + c1*x + c0.</p>
+<p>If derivative=True is set, a tuple (P(x), P&#8217;(x)) is returned.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="polynomial-roots-polyroots">
+<h2>Polynomial roots (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)<a class="headerlink" href="#polynomial-roots-polyroots" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.polyroots">
+<!--[mpmath.calculus.polyroots]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">polyroots</tt><big>(</big><em>coeffs</em>, <em>maxsteps=50</em>, <em>cleanup=True</em>, <em>extraprec=10</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#mpmath.calculus.polyroots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes all roots (real or complex) of a given polynomial. The roots are
+returned as a sorted list, where real roots appear first followed by
+complex conjugate roots as adjacent elements. The polynomial should be
+given as a list of coefficients, in the format used by <tt class="xref docutils literal"><span class="pre">polyval()</span></tt>.
+The leading coefficient must be nonzero.</p>
+<p>With <tt class="docutils literal"><span class="pre">error=True</span></tt>, <tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> returns a tuple (roots, err) where
+err is an estimate of the maximum error among the computed roots.</p>
+<p><strong>Examples</strong></p>
+<p>Finding the three real roots of x^3 - x^2 - 14*x + 24:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">14</span><span class="p">,</span><span class="mf">24</span><span class="p">]),</span> <span class="mf">4</span><span class="p">)</span>
+<span class="go">[-4.0, 2.0, 3.0]</span>
+</pre></div>
+</div>
+<p>Finding the two complex conjugate roots of 4x^2 + 3x + 2, with an
+error estimate:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">roots</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">...</span>
+<span class="go">(-0.375 - 0.59947894041409j)</span>
+<span class="go">(-0.375 + 0.59947894041409j)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">err</span>
+<span class="go">2.22044604925031e-16</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<span class="go">(2.22044604925031e-16 + 0.0j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>
+<span class="go">(2.22044604925031e-16 + 0.0j)</span>
+</pre></div>
+</div>
+<p>The following example computes all the 5th roots of unity; that is,
+the roots of x^5 - 1:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">...</span>
+<span class="go">1.0</span>
+<span class="go">(-0.8090169943749474241 + 0.58778525229247312917j)</span>
+<span class="go">(-0.8090169943749474241 - 0.58778525229247312917j)</span>
+<span class="go">(0.3090169943749474241 + 0.95105651629515357212j)</span>
+<span class="go">(0.3090169943749474241 - 0.95105651629515357212j)</span>
+</pre></div>
+</div>
+<p><strong>Precision and conditioning</strong></p>
+<p>Provided there are no repeated roots, <tt class="docutils literal"><span class="pre">polyroots</span></tt> can typically
+compute all roots of an arbitrary polynomial to high precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">60</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">...</span>
+<span class="go">-3.14626436994197234232913506571557044551247712918732870123249</span>
+<span class="go">-0.317837245195782244725757617296174288373133378433432554879127</span>
+<span class="go">0.317837245195782244725757617296174288373133378433432554879127</span>
+<span class="go">3.14626436994197234232913506571557044551247712918732870123249</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">3.14626436994197234232913506571557044551247712918732870123249</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.317837245195782244725757617296174288373133378433432554879127</span>
+</pre></div>
+</div>
+<p><strong>Algorithm</strong></p>
+<p><tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> implements the Durand-Kerner method [1], which
+uses complex arithmetic to locate all roots simultaneously.
+The Durand-Kerner method can be viewed as approximately performing
+simultaneous Newton iteration for all the roots. In particular,
+the convergence to simple roots is quadratic, just like Newton&#8217;s
+method.</p>
+<p>Although all roots are internally calculated using complex arithmetic,
+any root found to have an imaginary part smaller than the estimated
+numerical error is truncated to a real number. Real roots are placed
+first in the returned list, sorted by value. The remaining complex
+roots are sorted by real their parts so that conjugate roots end up
+next to each other.</p>
+<p><strong>References</strong></p>
+<blockquote>
+[1] <a class="reference external" href="http://en.wikipedia.org/wiki/Durand-Kerner_method">http://en.wikipedia.org/wiki/Durand-Kerner_method</a></blockquote>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Polynomials</a><ul>
+<li><a class="reference external" href="#polynomial-evaluation-polyval">Polynomial evaluation (<tt class="docutils literal"><span class="pre">polyval</span></tt>)</a></li>
+<li><a class="reference external" href="#polynomial-roots-polyroots">Polynomial roots (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html" title="previous chapter">Numerical calculus</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="optimization.html" title="next chapter">Optimization</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/calculus/polynomials.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="optimization.html" title="Optimization"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Numerical calculus"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 23, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
+  </body>
+</html>

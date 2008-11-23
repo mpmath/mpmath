@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Differentiation &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="up" title="Numerical calculus" href="index.html" />
+    <link rel="next" title="Numerical integration (quadrature)" href="integration.html" />
+    <link rel="prev" title="Sums, products, limits and extrapolation" href="sums_limits.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="integration.html" title="Numerical integration (quadrature)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sums_limits.html" title="Sums, products, limits and extrapolation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="differentiation">
+<h1>Differentiation<a class="headerlink" href="#differentiation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="numerical-derivatives-diff-diffs">
+<h2>Numerical derivatives (<tt class="docutils literal"><span class="pre">diff</span></tt>, <tt class="docutils literal"><span class="pre">diffs</span></tt>)<a class="headerlink" href="#numerical-derivatives-diff-diffs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.diff">
+<!--[mpmath.calculus.diff]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">diff</tt><big>(</big><em>f</em>, <em>x</em>, <em>n=1</em>, <em>method='step'</em>, <em>scale=1</em>, <em>direction=0</em><big>)</big><a class="headerlink" href="#mpmath.calculus.diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numerically computes the derivative of f(x). Optionally, computes
+the nth derivative f^(n)(x), for any order n.</p>
+<p><strong>Basic examples</strong></p>
+<p>Derivatives of a simple function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="go">3.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>The exponential function is invariant under differentiation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">diff</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">)])</span>
+<span class="go">[20.0855, 20.0855, 20.0855, 20.0855, 20.0855]</span>
+</pre></div>
+</div>
+<p><strong>Method</strong></p>
+<p>One of two differentiation algorithms can be chosen with the
+<tt class="docutils literal"><span class="pre">method</span></tt> keyword argument. The two options are <tt class="docutils literal"><span class="pre">'step'</span></tt>,
+and <tt class="docutils literal"><span class="pre">'quad'</span></tt>. The default method is <tt class="docutils literal"><span class="pre">'step'</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">'step'</span></tt>:</p>
+<blockquote>
+The derivative is computed using a finite difference
+approximation, with a small step h. This requires n+1 function
+evaluations and must be performed at (n+1) times the target
+precison. Accordingly, f must support fast evaluation at high
+precision.</blockquote>
+<p><tt class="docutils literal"><span class="pre">'quad'</span></tt>:</p>
+<blockquote>
+The derivative is computed using complex
+numerical integration. This requires a larger number of function
+evaluations, but the advantage is that not much extra precision
+is required. For high order derivatives, this method may thus
+be faster if f is very expensive to evaluate at high precision.</blockquote>
+<p>With <tt class="docutils literal"><span class="pre">'quad'</span></tt> the result is likely to have a small imaginary
+component even if the derivative is actually real:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;quad&#39;</span><span class="p">)</span>
+<span class="go">(0.5 - 1.2908503133698e-26j)</span>
+</pre></div>
+</div>
+<p><strong>Scale</strong></p>
+<p>The scale option specifies the scale of variation of f. The step
+size in the finite difference is taken to be approximately
+eps*scale. Thus, for example if f(x) = cos(1000*x), the scale
+should be set to 1/1000 and if f(x) = cos(x/1000), the scale
+should be 1000. By default, scale = 1.</p>
+<p>(In practice, the default scale will work even for cos(1000*x) or
+cos(x/1000). Changing this parameter is a good idea if the scale
+is something <em>preposterous</em>.)</p>
+<p>If numerical integration is used, the radius of integration is
+taken to be equal to scale/2. Note that f must not have any
+singularities within the circle of radius scale/2 centered around
+x. If possible, a larger scale value is preferable because it
+typically makes the integration faster and more accurate.</p>
+<p><strong>Direction</strong></p>
+<p>By default, <tt class="xref docutils literal"><span class="pre">diff()</span></tt> uses a central difference approximation.
+This corresponds to direction=0. Alternatively, it can compute a
+left difference (direction=-1) or right difference (direction=1).
+This is useful for computing left- or right-sided derivatives
+of nonsmooth functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-1.0</span>
+</pre></div>
+</div>
+<p>More generally, if the direction is nonzero, a right difference
+is computed where the step size is multiplied by sign(direction).
+For example, with direction=+j, the derivative from the positive
+imaginary direction will be computed.</p>
+<p>This option only makes sense with method=&#8217;step&#8217;. If integration
+is used, it is assumed that f is analytic, implying that the
+derivative is the same in all directions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.calculus.diffs">
+<!--[mpmath.calculus.diffs]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">diffs</tt><big>(</big><em>f</em>, <em>x</em>, <em>n=mpf('+inf')</em>, <em>method='step'</em>, <em>scale=1</em>, <em>direction=0</em><big>)</big><a class="headerlink" href="#mpmath.calculus.diffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator that yields the sequence of derivatives</p>
+<div class="math">
+<p><img src="../_images/math/3c0032274f8c788ae74a9e8bc21d0f3584b7d55c.png" alt="f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots" />
+</div></p><p>With <tt class="docutils literal"><span class="pre">method='step'</span></tt>, <tt class="xref docutils literal"><span class="pre">diffs()</span></tt> uses only <img class="math" src="../_images/math/5a1380a26be4f09590e6a602879375d89631623a.png" alt="O(k)" />
+function evaluations to generate the first <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> derivatives,
+rather than the roughly <img class="math" src="../_images/math/7997d6cebe4296b1ac5139dce990c5eff08ec23b.png" alt="O(k^2)" /> evaluations
+required if one calls <tt class="xref docutils literal"><span class="pre">diff()</span></tt> <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> separate times.</p>
+<p>With <img class="math" src="../_images/math/2d8bddb244f84c26228b4846d5c63730b5f3d9d5.png" alt="n &lt; \infty" />, the generator stops as soon as the
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th derivative has been generated. If the exact number of
+needed derivatives is known in advance, this is further
+slightly more efficient.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<span class="go">[0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">),</span> <span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">)):</span> <span class="k">print</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span>
+<span class="gp">...</span>
+<span class="go">0 0.54030230586814</span>
+<span class="go">1 -0.841470984807897</span>
+<span class="go">2 -0.54030230586814</span>
+<span class="go">3 0.841470984807897</span>
+<span class="go">4 0.54030230586814</span>
+<span class="go">5 -0.841470984807897</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Differentiation</a><ul>
+<li><a class="reference external" href="#numerical-derivatives-diff-diffs">Numerical derivatives (<tt class="docutils literal"><span class="pre">diff</span></tt>, <tt class="docutils literal"><span class="pre">diffs</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="sums_limits.html" title="previous chapter">Sums, products, limits and extrapolation</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="integration.html" title="next chapter">Numerical integration (quadrature)</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/calculus/differentiation.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="integration.html" title="Numerical integration (quadrature)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sums_limits.html" title="Sums, products, limits and extrapolation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 23, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
+  </body>
+</html>

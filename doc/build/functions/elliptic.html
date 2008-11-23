@@ -21,7 +21,7 @@
     <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Zeta functions" href="zeta.html" />
-    <link rel="prev" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials" href="hypergeometric.html" />
+    <link rel="prev" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials" href="hypergeometric.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +37,9 @@
           <a href="hypergeometric.html" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
-    </div>
+    </div>  
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
@@ -79,22 +79,22 @@ the argument is the parameter m = k^2, not the modulus k.</dd></dl>
 <dl class="function">
 <dt id="mpmath.elliptic.jtheta">
 <!--[mpmath.elliptic.jtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">jtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.jtheta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Jacobi theta function <img src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" />, where
-<img src="../_images/math/2ccb96c3451d351085035d873b42734c582c37c6.png" alt="n = 1, 2, 3, 4" />. The theta functions are functions of two
+<dd><p>Computes the Jacobi theta function <img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" />, where
+<img class="math" src="../_images/math/2ccb96c3451d351085035d873b42734c582c37c6.png" alt="n = 1, 2, 3, 4" />. The theta functions are functions of two
 variables:</p>
 <ul class="simple">
-<li><img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> is the <em>argument</em>, an arbitrary real or complex number</li>
-<li><img src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> is the <em>nome</em>, which must be a real or complex number
-in the unit disk (i.e. <img src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" />)</li>
+<li><img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> is the <em>argument</em>, an arbitrary real or complex number</li>
+<li><img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> is the <em>nome</em>, which must be a real or complex number
+in the unit disk (i.e. <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" />)</li>
 </ul>
-<p>One also commonly encounters the notation <img src="../_images/math/7f80346c0a66bc91693a27639c24a978fda6aaf8.png" alt="\vartheta_n(z, \tau)" />
-in the literature. The variable <img src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> is called the <em>parameter</em>
+<p>One also commonly encounters the notation <img class="math" src="../_images/math/7f80346c0a66bc91693a27639c24a978fda6aaf8.png" alt="\vartheta_n(z, \tau)" />
+in the literature. The variable <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> is called the <em>parameter</em>
 and can be converted to a nome using the formula
-<img src="../_images/math/a9e6f652e2d3b5ae86ac7120ab4b5868ec37efd7.png" alt="q = \exp(i \pi \tau)" />. Note the condition <img src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" /> requires
-<img src="../_images/math/033de4fe9bd4f4731fbab45fa896c1f65a50f7de.png" alt="\Im(\tau) &gt; 0" />; i.e. Jacobi theta functions are defined for
-<img src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> in the upper half plane.</p>
+<img class="math" src="../_images/math/a9e6f652e2d3b5ae86ac7120ab4b5868ec37efd7.png" alt="q = \exp(i \pi \tau)" />. Note the condition <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" /> requires
+<img class="math" src="../_images/math/033de4fe9bd4f4731fbab45fa896c1f65a50f7de.png" alt="\Im(\tau) &gt; 0" />; i.e. Jacobi theta functions are defined for
+<img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> in the upper half plane.</p>
 <p>Other notations are also in use. For example, some authors use
-the single-argument form <img src="../_images/math/824dca2fa320bae0792d12fd5bd29be4797fdebd.png" alt="\vartheta_n(x)" />. Depending on context,
+the single-argument form <img class="math" src="../_images/math/824dca2fa320bae0792d12fd5bd29be4797fdebd.png" alt="\vartheta_n(x)" />. Depending on context,
 this can mean <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">0,</span> <span class="pre">x)</span></tt>, <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">x,</span> <span class="pre">q)</span></tt>, or possibly
 something else. Needless to say, it is a good idea to cross-check
 the definitions when working with theta functions.</p>
@@ -113,11 +113,11 @@ are defined by the following infinite series:</p>
 
 \vartheta_4(z,q) = 1 + 2 \sum_{n=0}^{\infty}
   (-q)^{n^2\,} \cos(2 n z)" />
-</div></p><p>For <img src="../_images/math/90857d9871b7c3fa3da5e460b4dcf28e15010383.png" alt="|q| \ll 1" />, these series converge very quickly, so the
+</div></p><p>For <img class="math" src="../_images/math/90857d9871b7c3fa3da5e460b4dcf28e15010383.png" alt="|q| \ll 1" />, these series converge very quickly, so the
 Jacobi theta functions can efficiently be evaluated to high
 precision.</p>
 <p><strong>Examples and basic properties</strong></p>
-<p>Considered as functions of <img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, the Jacobi theta functions may be
+<p>Considered as functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, the Jacobi theta functions may be
 viewed as generalizations of the ordinary trigonometric functions
 cos and sin. They are periodic functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -136,8 +136,8 @@ using <tt class="xref docutils literal"><span class="pre">fourier()</span></tt>:
 </pre></div>
 </div>
 <p>The Jacobi theta functions are also so-called quasiperiodic
-functions of <img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> and <img src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />, meaning that for fixed <img src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />,
-<img src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" /> and <img src="../_images/math/8033b3c805ad08f4434c5ce0f3a1e63e8e319a8d.png" alt="\vartheta_n(z+\pi \tau, q)" /> are the same
+functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> and <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />, meaning that for fixed <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />,
+<img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" /> and <img class="math" src="../_images/math/8033b3c805ad08f4434c5ce0f3a1e63e8e319a8d.png" alt="\vartheta_n(z+\pi \tau, q)" /> are the same
 except for an exponential factor:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">0.3</span><span class="o">*</span><span class="n">j</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">tau</span><span class="p">)</span>
@@ -150,7 +150,7 @@ except for an exponential factor:</p>
 </div>
 <p>The Jacobi theta functions satisfy a huge number of other
 functional equations, such as the following identity (valid for
-any <img src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" />):</p>
+any <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" />):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">0.3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span>
 <span class="go">6.82374408935276</span>
@@ -175,13 +175,13 @@ arguments:</p>
 <span class="go">2.0549510717571539127004115835148878097035750653737</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="mf">5</span><span class="p">)</span>
-<span class="go">(7.180331760146805926357227 - 1.634292858119162417301859j)</span>
+<span class="go">(7.180331760146805926356634 - 1.634292858119162417301683j)</span>
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p>For <img src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1" /> or <img src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0" />, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
-<tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised for <img src="../_images/math/f3e0d75c3450ca8f389d08d904ed1fc695734539.png" alt="|q|" /> extremely
-close to 1 (or equivalently <img src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> very close to 0), since the
+<p>For <img class="math" src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1" /> or <img class="math" src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0" />, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
+<tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised for <img class="math" src="../_images/math/f3e0d75c3450ca8f389d08d904ed1fc695734539.png" alt="|q|" /> extremely
+close to 1 (or equivalently <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> very close to 0), since the
 series would converge too slowly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">,</span> <span class="mf">0.99999999</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">j</span><span class="p">))</span>
 <span class="gt">Traceback (most recent call last):</span>
@@ -189,13 +189,21 @@ series would converge too slowly:</p>
 <span class="nc">ValueError</span>: <span class="n-Identifier">abs(q) &gt; Q_LIM = 1.000000</span>
 </pre></div>
 </div>
+<p>Implementation note
+If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
+are used,
+which compute the series starting from n=0 using fixed precision
+numbers;
+otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
+the series starting from n=n0, which is the largest term.</p>
+<p>TODO write _jacobi_theta2a and _jacobi_theta3a using fixed precision.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.djtheta">
 <!--[mpmath.elliptic.djtheta]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">djtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em>, <em>nd=1</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.djtheta" title="Permalink to this definition">¶</a></dt>
-<dd><p>For an integer <img src="../_images/math/9a92ea6e07906749a1450f2ca0a6aa314892ae04.png" alt="nd \ge 1" />, computes the <img src="../_images/math/56d18fe37d0a4ef803d3c18da7382c157b40696f.png" alt="nd" />:th derivative with
-respect to <img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> of the Jacobi theta function <img src="../_images/math/67def3b3e0850232194a10e194d3be36d30874e4.png" alt="\vartheta_n(z,q)" />:</p>
+<dd><p>For an integer <img class="math" src="../_images/math/9a92ea6e07906749a1450f2ca0a6aa314892ae04.png" alt="nd \ge 1" />, computes the <img class="math" src="../_images/math/56d18fe37d0a4ef803d3c18da7382c157b40696f.png" alt="nd" />:th derivative with
+respect to <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> of the Jacobi theta function <img class="math" src="../_images/math/67def3b3e0850232194a10e194d3be36d30874e4.png" alt="\vartheta_n(z,q)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">djtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
@@ -281,12 +289,12 @@ u is any complex number, m must be in the unit disk</dd></dl>
           <a href="hypergeometric.html" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 15, 2008.
+      Last updated on Nov 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

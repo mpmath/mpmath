@@ -17,7 +17,7 @@ tag = "Generate pageview statistics"
 import os
 import os.path
 
-paths = ["build", "build/functions"]
+paths = ["build", "build/functions", "build/calculus"]
 
 for path in paths:
     for fname in os.listdir(path):

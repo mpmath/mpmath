@@ -21,7 +21,7 @@
     <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Trigonometric functions" href="trigonometric.html" />
-    <link rel="prev" title="Number parts" href="numberparts.html" />
+    <link rel="prev" title="Number parts" href="numberparts.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +37,9 @@
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
-    </div>
+    </div>  
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
@@ -53,10 +53,10 @@
 <dl class="function">
 <dt id="mpmath.functions.sqrt">
 <!--[mpmath.functions.sqrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sqrt" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> computes the principal square root of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x" />.
+<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> computes the principal square root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x" />.
 For positive real numbers, the principal root is simply the
 positive square root. For arbitrary complex numbers, the principal
-square root is defined to satisfy <img src="../_images/math/c029e0366a469e4e92b174d25c5c98bec0c787e6.png" alt="\sqrt x = \exp(\log(x)/2)" />.
+square root is defined to satisfy <img class="math" src="../_images/math/c029e0366a469e4e92b174d25c5c98bec0c787e6.png" alt="\sqrt x = \exp(\log(x)/2)" />.
 The function thus has a branch cut along the negative half real axis.</p>
 <p>For all mpmath numbers <tt class="docutils literal"><span class="pre">x</span></tt>, calling <tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> is equivalent to
 performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p>
@@ -98,7 +98,7 @@ performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p
 <dl class="function">
 <dt id="mpmath.functions.cbrt">
 <!--[mpmath.functions.cbrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cbrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cbrt" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">cbrt(x)</span></tt> computes the cube root of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img src="../_images/math/211fe368f21e7e87a497012b64962b2dae135c3d.png" alt="x^{1/3}" />. This
+<dd><p><tt class="docutils literal"><span class="pre">cbrt(x)</span></tt> computes the cube root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/211fe368f21e7e87a497012b64962b2dae135c3d.png" alt="x^{1/3}" />. This
 function is faster and more accurate than raising to a floating-point
 fraction:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -110,7 +110,7 @@ fraction:</p>
 </pre></div>
 </div>
 <p>Every nonzero complex number has three cube roots. This function
-returns the cube root defined by <img src="../_images/math/595023734d9ab251444ec4facc4d0b56b2d169cd.png" alt="\exp(\log(x)/3)" /> where the
+returns the cube root defined by <img class="math" src="../_images/math/595023734d9ab251444ec4facc4d0b56b2d169cd.png" alt="\exp(\log(x)/3)" /> where the
 principal branch of the natural logarithm is used. Note that this
 does not give a real cube root for negative real numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cbrt</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
@@ -122,16 +122,16 @@ does not give a real cube root for negative real numbers:</p>
 <dl class="function">
 <dt id="mpmath.functions.nthroot">
 <!--[mpmath.functions.nthroot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">nthroot</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.nthroot" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">nthroot(x,</span> <span class="pre">n)</span></tt> computes the principal <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
-<img src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" />. Here <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> must be an integer, and can be negative
-(<img src="../_images/math/43577a4bb6fed57fefa828236669f403761e5ecc.png" alt="x^{-1/n}" /> is <img src="../_images/math/6a9b9a4c4eae23d6ade48ceb41e518b1ad02e63f.png" alt="1/x^{1/n}" />).</p>
-<p>For <img src="../_images/math/598a16d4b7dde3dec3a390109882d54bb0308ea5.png" alt="n = 2" /> or <img src="../_images/math/8c342b01f0cdef0f23d11a2bc9c5aa67f6d83ccb.png" alt="n = 3" />, using this function is equivalent to
+<dd><p><tt class="docutils literal"><span class="pre">nthroot(x,</span> <span class="pre">n)</span></tt> computes the principal <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
+<img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" />. Here <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> must be an integer, and can be negative
+(<img class="math" src="../_images/math/43577a4bb6fed57fefa828236669f403761e5ecc.png" alt="x^{-1/n}" /> is <img class="math" src="../_images/math/6a9b9a4c4eae23d6ade48ceb41e518b1ad02e63f.png" alt="1/x^{1/n}" />).</p>
+<p>For <img class="math" src="../_images/math/598a16d4b7dde3dec3a390109882d54bb0308ea5.png" alt="n = 2" /> or <img class="math" src="../_images/math/8c342b01f0cdef0f23d11a2bc9c5aa67f6d83ccb.png" alt="n = 3" />, using this function is equivalent to
 calling <tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> or <tt class="xref docutils literal"><span class="pre">cbrt()</span></tt>. In general,
-<tt class="docutils literal"><span class="pre">nthroot(x,</span> <span class="pre">n)</span></tt> is defined to compute <img src="../_images/math/d6baffc3886d98921b6cea85497fa832a78f6759.png" alt="\exp(\log(x)/n)" />.</p>
+<tt class="docutils literal"><span class="pre">nthroot(x,</span> <span class="pre">n)</span></tt> is defined to compute <img class="math" src="../_images/math/d6baffc3886d98921b6cea85497fa832a78f6759.png" alt="\exp(\log(x)/n)" />.</p>
 <p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> is implemented to use Newton&#8217;s method for small
-<img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. At high precision, this makes <img src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" /> not much more
-expensive than the regular exponentiation, <img src="../_images/math/8c72f3acf1f7744cfe76edaf47e45d62432cf28b.png" alt="x^n" />. For very large
-<img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. At high precision, this makes <img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" /> not much more
+expensive than the regular exponentiation, <img class="math" src="../_images/math/8c72f3acf1f7744cfe76edaf47e45d62432cf28b.png" alt="x^n" />. For very large
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
 <p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> is faster and more accurate than raising to a
 floating-point fraction:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -155,8 +155,8 @@ floating-point fraction:</p>
 <dl class="function">
 <dt id="mpmath.functions.power">
 <!--[mpmath.functions.power]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">power</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.power" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to mpmath numbers and evaluates
-<img src="../_images/math/4c4a6df8d2bc2bfb583c11bc20504938026f6aa8.png" alt="x^y = \exp(y \log(x))" />:</p>
+<dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to mpmath numbers and evaluates
+<img class="math" src="../_images/math/4c4a6df8d2bc2bfb583c11bc20504938026f6aa8.png" alt="x^y = \exp(y \log(x))" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -178,15 +178,15 @@ displaying the result in Python would be very slow):</p>
 <dl class="function">
 <dt id="mpmath.functions.log">
 <!--[mpmath.functions.log]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">log</tt><big>(</big><em>x</em>, <em>b=None</em><big>)</big><a class="headerlink" href="#mpmath.functions.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the base-<img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)" />. If <img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is
-unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />) logarithm
-and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm
+<dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)" />. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is
+unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />) logarithm
+and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm
 is defined in terms of the natural logarithm as
-<img src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)" />.</p>
-<p>By convention, we take <img src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty" />.</p>
-<p>The natural logarithm is real if <img src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> and complex if <img src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> or if
-<img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is complex. The principal branch of the complex logarithm is
-used, meaning that <img src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi" />.</p>
+<img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)" />.</p>
+<p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty" />.</p>
+<p>The natural logarithm is real if <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> and complex if <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> or if
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is complex. The principal branch of the complex logarithm is
+used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi" />.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -209,7 +209,7 @@ used, meaning that <img src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd40
 <span class="go">+inf</span>
 </pre></div>
 </div>
-<p>The natural logarithm is the antiderivative of <img src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x" />:</p>
+<p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
 <span class="go">1.6094379124341</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
@@ -219,7 +219,7 @@ used, meaning that <img src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd40
 </pre></div>
 </div>
 <p>The Taylor series expansion of the natural logarithm around
-<img src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> has coefficients <img src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n" />:</p>
+<img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">7</span><span class="p">))</span>
 <span class="go">[0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]</span>
 </pre></div>
@@ -240,13 +240,13 @@ used, meaning that <img src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd40
 <dl class="function">
 <dt id="mpmath.functions.ln">
 <!--[mpmath.functions.ln]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ln</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ln" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the natural logarithm of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img src="../_images/math/30ce9b86d76868e8ba156e7a5efab18bff2f6e7c.png" alt="\ln x" />.
+<dd>Computes the natural logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/30ce9b86d76868e8ba156e7a5efab18bff2f6e7c.png" alt="\ln x" />.
 See <tt class="xref docutils literal"><span class="pre">log()</span></tt> for additional documentation.</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.log10">
 <!--[mpmath.functions.log10]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">log10</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.log10" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the base-10 logarithm of <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)" />. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
+<dd>Computes the base-10 logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)" />. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
 is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <span class="pre">10)</span></tt>.</dd></dl>
 
 </div>
@@ -255,15 +255,15 @@ is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <s
 <dl class="function">
 <dt id="mpmath.functions.fibonacci">
 <!--[mpmath.functions.fibonacci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fibonacci</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fibonacci" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">fibonacci(n)</span></tt> computes the <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Fibonacci number, <img src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" />. The
-Fibonacci numbers are defined by the recurrence <img src="../_images/math/3c80df4dced24d2e083ecaf5eba04730e2abd010.png" alt="F(n) = F(n-1) + F(n-2)" />
-with the initial values <img src="../_images/math/e1676ed7f6f03f442bbb3620cc13f1d86a018db0.png" alt="F(0) = 0" />, <img src="../_images/math/0faeea7ef7f0f0e89604b913937e23bd424c7035.png" alt="F(1) = 1" />. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>
+<dd><p><tt class="docutils literal"><span class="pre">fibonacci(n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Fibonacci number, <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" />. The
+Fibonacci numbers are defined by the recurrence <img class="math" src="../_images/math/3c80df4dced24d2e083ecaf5eba04730e2abd010.png" alt="F(n) = F(n-1) + F(n-2)" />
+with the initial values <img class="math" src="../_images/math/e1676ed7f6f03f442bbb3620cc13f1d86a018db0.png" alt="F(0) = 0" />, <img class="math" src="../_images/math/0faeea7ef7f0f0e89604b913937e23bd424c7035.png" alt="F(1) = 1" />. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>
 extends this definition to arbitrary real and complex arguments
 using the formula</p>
 <div class="math">
 <p><img src="../_images/math/bf1d4599e53249947baa0f7b49dd66f187d02ac2.png" alt="F(z) = \frac{\phi^z - \cos(\pi z) \phi^{-z}}{\sqrt 5}" />
-</div></p><p>where <img src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi" /> is the golden ratio. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> also uses this
-continuous formula to compute <img src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> for extremely large <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, where
+</div></p><p>where <img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi" /> is the golden ratio. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> also uses this
+continuous formula to compute <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> for extremely large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, where
 calculating the exact integer would be wasteful.</p>
 <p>For convenience, <tt class="xref docutils literal"><span class="pre">fib()</span></tt> is available as an alias for
 <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>.</p>
@@ -280,7 +280,7 @@ calculating the exact integer would be wasteful.</p>
 <span class="go">12586269025.0</span>
 </pre></div>
 </div>
-<p>The recurrence for <img src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> extends backwards to negative <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<p>The recurrence for <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> extends backwards to negative <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">),</span>
 <span class="gp">...</span>
@@ -305,7 +305,7 @@ of stupendous size:</p>
 </div>
 <p><strong>Real and complex arguments</strong></p>
 <p>The extended Fibonacci function is an analytic function. The
-property <img src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88fc5b3eff.png" alt="F(z) = F(z-1) + F(z-2)" /> holds for arbitrary <img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+property <img class="math" src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88fc5b3eff.png" alt="F(z) = F(z-1) + F(z-2)" /> holds for arbitrary <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fib</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">2.1170270579161</span>
@@ -320,7 +320,7 @@ property <img src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88fc5b3eff.png"
 <p>The Fibonacci function has infinitely many roots on the
 negative half-real axis. The first root is at 0, the second is
 close to -0.18, and then there are infinitely many roots that
-asymptotically approach <img src="../_images/math/7894a934b6faeaabe216e25c212c048c59c74aa7.png" alt="-n+1/2" />:</p>
+asymptotically approach <img class="math" src="../_images/math/7894a934b6faeaabe216e25c212c048c59c74aa7.png" alt="-n+1/2" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="go">-0.183802359692956</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">2</span><span class="p">)</span>
@@ -332,7 +332,7 @@ asymptotically approach <img src="../_images/math/7894a934b6faeaabe216e25c212c04
 </pre></div>
 </div>
 <p><strong>Mathematical relationships</strong></p>
-<p>For large <img src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img src="../_images/math/faca141ea81723e491a81891dda2e718140eaa17.png" alt="F(n+1)/F(n)" /> approaches the golden ratio:</p>
+<p>For large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img class="math" src="../_images/math/faca141ea81723e491a81891dda2e718140eaa17.png" alt="F(n+1)/F(n)" /> approaches the golden ratio:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mf">101</span><span class="p">)</span><span class="o">/</span><span class="n">fibonacci</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">1.6180339887498948482045868343656381177203127439638</span>
@@ -379,23 +379,23 @@ numbers can be expressed in terms of a Jacobi theta function:</p>
 <dl class="function">
 <dt id="mpmath.functions.lambertw">
 <!--[mpmath.functions.lambertw]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">lambertw</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.lambertw" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Lambert W function <img src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is defined as the inverse function
-of <img src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. In other words, the value of <img src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is such that
-<img src="../_images/math/453b5e9b62a3f5ffa964b35fe3d393cfcd78c6c0.png" alt="z = W(z) \exp(W(z))" /> for any complex number <img src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
+<dd><p>The Lambert W function <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is defined as the inverse function
+of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. In other words, the value of <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is such that
+<img class="math" src="../_images/math/453b5e9b62a3f5ffa964b35fe3d393cfcd78c6c0.png" alt="z = W(z) \exp(W(z))" /> for any complex number <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
 <p>The Lambert W function is a multivalued function with infinitely
 many branches. Each branch gives a separate solution of the
-equation <img src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. All branches are supported by
+equation <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. All branches are supported by
 <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt>:</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">lambertw(z)</span></tt> gives the principal solution (branch 0)</li>
-<li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch <img src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /></li>
+<li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /></li>
 </ul>
 <p>The Lambert W function has two partially real branches: the
-principal branch (<img src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" />) is real for real <img src="../_images/math/371d182c625a220a79513c1dcaef4adba922738f.png" alt="z &gt; -1/e" />, and the
-<img src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branch is real for <img src="../_images/math/638a0971d2f3dc23d1dcb42c54cfa5b3daa4376c.png" alt="-1/e &lt; z &lt; 0" />. All branches except
-<img src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> have a logarithmic singularity at <img src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />.</p>
+principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" />) is real for real <img class="math" src="../_images/math/371d182c625a220a79513c1dcaef4adba922738f.png" alt="z &gt; -1/e" />, and the
+<img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branch is real for <img class="math" src="../_images/math/638a0971d2f3dc23d1dcb42c54cfa5b3daa4376c.png" alt="-1/e &lt; z &lt; 0" />. All branches except
+<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> have a logarithmic singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />.</p>
 <p><strong>Basic examples</strong></p>
-<p>The Lambert W equation is the inverse of <img src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />:</p>
+<p>The Lambert W equation is the inverse of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -416,7 +416,7 @@ principal branch (<img src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a
 </div>
 <p><strong>Applications to equation-solving</strong></p>
 <p>The Lambert W function can give the value of the infinite power
-tower <img src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc4970f.png" alt="z^{z^{z^{\ldots}}}" />:</p>
+tower <img class="math" src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc4970f.png" alt="z^{z^{z^{\ldots}}}" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">z</span>
@@ -444,7 +444,7 @@ for large arguments:</p>
 </pre></div>
 </div>
 <p>The principal branch of the Lambert W function has a rational
-Taylor series expansion around <img src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
+Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">[0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]</span>
 </pre></div>
@@ -467,10 +467,10 @@ Taylor series expansion around <img src="../_images/math/aa9f0d97d2f39f78f05e05d
 <span class="go">+inf</span>
 </pre></div>
 </div>
-<p>The <img src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> and <img src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branches join at <img src="../_images/math/b87eeae0e16a9f455c33ea11b80738764425b62d.png" alt="z = -1/e" /> where
-<img src="../_images/math/c8f915f0cf1bd473190da32d8ffebe485b7761ae.png" alt="W(z) = -1" /> for both branches. Since <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> can only be represented
+<p>The <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> and <img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branches join at <img class="math" src="../_images/math/b87eeae0e16a9f455c33ea11b80738764425b62d.png" alt="z = -1/e" /> where
+<img class="math" src="../_images/math/c8f915f0cf1bd473190da32d8ffebe485b7761ae.png" alt="W(z) = -1" /> for both branches. Since <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> can only be represented
 approximately with mpmath numbers, evaluating the Lambert W function
-at this point only gives <img src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1" /> approximately:</p>
+at this point only gives <img class="math" src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1" /> approximately:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
 <span class="go">-0.999999999999837133022867</span>
@@ -478,7 +478,7 @@ at this point only gives <img src="../_images/math/bae5aba07d37ff6ff813107e76260
 <span class="go">-1.00000000000016286697718</span>
 </pre></div>
 </div>
-<p>If <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> happens to round in the negative direction, there might be
+<p>If <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> happens to round in the negative direction, there might be
 a small imaginary part:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
@@ -487,18 +487,18 @@ a small imaginary part:</p>
 </div>
 <p><strong>Possible issues</strong></p>
 <p>The evaluation can become inaccurate very close to the branch point
-at <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" />. In some corner cases, <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt> might currently
+at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" />. In some corner cases, <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt> might currently
 fail to converge, or can end up on the wrong branch.</p>
 <p><strong>Algorithm</strong></p>
-<p>Halley&#8217;s iteration is used to invert <img src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />, using a first-order
-asymptotic approximation (<img src="../_images/math/ccca6529a839f6e1a7fb9817199765fbb6deabf4.png" alt="O(\log(w))" /> or <img src="../_images/math/4631f2d763a4acbfccb2f2aa2f91f4be9850958c.png" alt="O(w)" />) as the initial
+<p>Halley&#8217;s iteration is used to invert <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />, using a first-order
+asymptotic approximation (<img class="math" src="../_images/math/ccca6529a839f6e1a7fb9817199765fbb6deabf4.png" alt="O(\log(w))" /> or <img class="math" src="../_images/math/4631f2d763a4acbfccb2f2aa2f91f4be9850958c.png" alt="O(w)" />) as the initial
 estimate.</p>
 <p>The definition, implementation and choice of branches is based
 on Corless et al, &#8220;On the Lambert W function&#8221;, Adv. Comp. Math. 5
 (1996) 329-359, available online here:
 <a class="reference external" href="http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf">http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf</a></p>
 <p>TODO: use a series expansion when extremely close to the branch point
-at <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> and make sure that the proper branch is chosen there</p>
+at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> and make sure that the proper branch is chosen there</p>
 </dd></dl>
 
 </div>
@@ -507,8 +507,8 @@ at <img src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="
 <dl class="function">
 <dt id="mpmath.functions.agm">
 <!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and
-<img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, defined as the limit of the following iteration:</p>
+<dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and
+<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, defined as the limit of the following iteration:</p>
 <div class="math">
 <p><img src="../_images/math/8a1590a455bc984da91424d957f5f94dff23cac2.png" alt="a_0 = a
 
@@ -518,7 +518,7 @@ a_{n+1} = \frac{a_n+b_n}{2}
 
 b_{n+1} = \sqrt{a_n b_n}" />
 </div></p><p>This function can be called with a single argument, computing
-<img src="../_images/math/123faed9086f29247221027e0b0abe89def0c6c5.png" alt="\mathrm{agm}(a,1) = \mathrm{agm}(1,a)" />.</p>
+<img class="math" src="../_images/math/123faed9086f29247221027e0b0abe89def0c6c5.png" alt="\mathrm{agm}(a,1) = \mathrm{agm}(1,a)" />.</p>
 <p><strong>Examples</strong></p>
 <p>It is a well-known theorem that the geometric mean of
 two distinct positive numbers is less than the arithmetic
@@ -543,8 +543,8 @@ between the two means:</p>
 <span class="go">29.261085515723</span>
 </pre></div>
 </div>
-<p>As an order-of-magnitude estimate, <img src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x" />
-for large <img src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<p>As an order-of-magnitude estimate, <img class="math" src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x" />
+for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">643448704.760133</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
@@ -589,7 +589,7 @@ I_2 = \int_0^{\pi/2}
 <span class="go">0.451115405388492</span>
 </pre></div>
 </div>
-<p>A formula for <img src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)" />:</p>
+<p>A formula for <img class="math" src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">3.62560990822191</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)))</span>
@@ -597,7 +597,7 @@ I_2 = \int_0^{\pi/2}
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p>The branch cut chosen for complex <img src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and <img src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is somewhat
+<p>The branch cut chosen for complex <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is somewhat
 arbitrary.</p>
 </dd></dl>
 
@@ -654,12 +654,12 @@ arbitrary.</p>
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 15, 2008.
+      Last updated on Nov 23, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

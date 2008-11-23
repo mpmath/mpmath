@@ -19,15 +19,9 @@ Contents:
    setup.txt
    basics.txt
    functions/index.txt
-   calculus.txt
+   calculus/index.txt
    intervals.txt
    matrices.txt
-   integration.txt
-   summation.txt
-   differentiation.txt
-   optimization.txt
-   limits.txt
-   interpolation.txt
    identification.txt
    technical.txt
    speedtricks.txt

@@ -832,7 +832,11 @@ form.comment textarea {
     border: 3px solid red;
 }
 
-div.math {
+img.math {
+    vertical-align: middle;
+}
+
+div.math p {
     text-align: center;
 }
 
@@ -861,14 +865,3 @@ img.logo {
         display: none;
     }
 }
-
-/* inline formulas */
-p img { vertical-align: middle; }
-
-/* center display formulas */
-div.math img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-

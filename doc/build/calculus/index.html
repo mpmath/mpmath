@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Numerical calculus &mdash; mpmath v0.10-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.10-svn',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="next" title="Polynomials" href="polynomials.html" />
+    <link rel="prev" title="Zeta functions" href="../functions/zeta.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="polynomials.html" title="Polynomials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../functions/zeta.html" title="Zeta functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="numerical-calculus">
+<h1>Numerical calculus<a class="headerlink" href="#numerical-calculus" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="polynomials.html">Polynomials</a><ul>
+<li class="toctree-l2"><a class="reference external" href="polynomials.html#polynomial-evaluation-polyval">Polynomial evaluation (<tt class="docutils literal"><span class="pre">polyval</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="polynomials.html#polynomial-roots-polyroots">Polynomial roots (<tt class="docutils literal"><span class="pre">polyroots</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="optimization.html">Optimization</a><ul>
+<li class="toctree-l2"><a class="reference external" href="optimization.html#root-finding-findroot">Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="optimization.html#minimization-and-maximization-findmin-findmax">Minimization and maximization (<tt class="docutils literal"><span class="pre">findmin</span></tt>, <tt class="docutils literal"><span class="pre">findmax</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="sums_limits.html">Sums, products, limits and extrapolation</a><ul>
+<li class="toctree-l2"><a class="reference external" href="sums_limits.html#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="sums_limits.html#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="sums_limits.html#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="sums_limits.html#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="differentiation.html">Differentiation</a><ul>
+<li class="toctree-l2"><a class="reference external" href="differentiation.html#numerical-derivatives-diff-diffs">Numerical derivatives (<tt class="docutils literal"><span class="pre">diff</span></tt>, <tt class="docutils literal"><span class="pre">diffs</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="integration.html">Numerical integration (quadrature)</a><ul>
+<li class="toctree-l2"><a class="reference external" href="integration.html#standard-quadrature-quad">Standard quadrature (<tt class="docutils literal"><span class="pre">quad</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="integration.html#oscillatory-quadrature-quadosc">Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="integration.html#quadrature-rules">Quadrature rules</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="odes.html">Ordinary differential equations</a><ul>
+<li class="toctree-l2"><a class="reference external" href="odes.html#solving-the-ode-initial-value-problem-odeint">Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="approximation.html">Function approximation</a><ul>
+<li class="toctree-l2"><a class="reference external" href="approximation.html#taylor-series-taylor">Taylor series (<tt class="docutils literal"><span class="pre">taylor</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="approximation.html#pade-approximation-pade">Pade approximation (<tt class="docutils literal"><span class="pre">pade</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="approximation.html#chebyshev-approximation-chebyfit">Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="approximation.html#fourier-series-fourier-fourierval">Fourier series (<tt class="docutils literal"><span class="pre">fourier</span></tt>, <tt class="docutils literal"><span class="pre">fourierval</span></tt>)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="../functions/zeta.html" title="previous chapter">Zeta functions</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="polynomials.html" title="next chapter">Polynomials</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/calculus/index.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="polynomials.html" title="Polynomials"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../functions/zeta.html" title="Zeta functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2008, Fredrik Johansson.
+      Last updated on Nov 23, 2008.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+    </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
+  </body>
+</html>

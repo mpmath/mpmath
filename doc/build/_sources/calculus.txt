@@ -1,24 +1,60 @@
 Numerical calculus
 ==================
 
-Numerical summation and products
---------------------------------
-
-.. autofunction:: mpmath.calculus.nsum
-.. autofunction:: mpmath.calculus.nprod
-
-Low-level extrapolation
------------------------
-
 Mpmath implements efficient algorithms for acceleration of slowly
 convergent sequences, and in particular for the summation of
 infinite series.
 
+A word of caution
+-----------------
+
+Analyzing continuous functions using finite
+sampling only works for sufficiently well-behaved functions.
+For any numerical algorithm, it is easy to deliberately
+(or in the worst case, unknowingly) manufacture an input
+that gives garbage as output.
+
+The results produced by the following functions should therefore
+always be taken with a grain of salt. It is the user's
+responsibility to validate them. Some combination of the
+following techniques can often provide a reliable assessment:
+
+* Performing the same calculation at two different precision
+  levels, and comparing the precision to which the results agree
+* Performing the same calculation using two different
+  algorithms, or with different options
+* Comparing results with other numerical software
+* Applying a method to test problems for which the exact
+  solution is known
+* Applying knowledge of the analytic properties of the
+  input (or output)
+* Common sense
+
+Summation (``nsum``, ``sumem``)
+-------------------------------
+
+.. autofunction:: mpmath.calculus.nsum
+.. autofunction:: mpmath.calculus.sumem
+
+Products (``nprod``)
+--------------------
+
+.. autofunction:: mpmath.calculus.nprod
+
+Limits (``limit``)
+------------------
+
+.. autofunction:: mpmath.calculus.limit
+
+Extrapolation (``richardson``, ``shanks``)
+------------------------------------------
+
 The following functions provide a direct interface to the
 extrapolation algorithms used by higher level functions
-such as :func:`nsum`. :func:`nsum` essentially works by
-repeatedly calling the following functions with an increasing
-number of terms until the extrapolated sum is accurate enough.
+such as :func:`nsum` and :func:`limit`, which essentially work by
+calling the following functions with an increasing
+number of terms until the extrapolated limit is accurate enough.
+
 The following functions may be useful to call directly if the
 precise number of terms needed to achieve a desired accuracy is
 known in advance, or if one wishes to study the convergence

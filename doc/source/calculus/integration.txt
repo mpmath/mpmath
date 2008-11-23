@@ -1,0 +1,31 @@
+Numerical integration (quadrature)
+----------------------------------
+
+Standard quadrature (``quad``)
+..............................
+
+.. autofunction:: mpmath.quadrature.quad
+
+Oscillatory quadrature (``quadosc``)
+....................................
+
+.. autofunction:: mpmath.quadrature.quadosc
+
+Quadrature rules
+................
+
+.. autoclass:: mpmath.quadrature.Quadrature
+   :members:
+
+Tanh-sinh rule
+~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.quadrature.TanhSinh
+   :members:
+
+
+Gauss-Legendre rule
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.quadrature.GaussLegendre
+   :members:
