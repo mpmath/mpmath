@@ -3032,7 +3032,7 @@ def chebyt(n, x):
         >>> f = lambda x: chebyt(m,x)*chebyt(n,x)/sqrt(1-x**2)
         >>> m, n = 3, 4
         >>> nprint(quad(f, [-1, 1]),1)
-        -7.0e-28
+        0.0
         >>> m, n = 4, 4
         >>> print quad(f, [-1, 1])
         1.57079632596448

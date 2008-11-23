@@ -1170,7 +1170,7 @@ def diffs(f, x, n=inf, method='step', scale=1, direction=0):
     rather than the roughly `O(k^2)` evaluations
     required if one calls :func:`diff` `k` separate times.
 
-    With `n \lt \inft`, the generator stops as soon as the
+    With `n < \infty`, the generator stops as soon as the
     `n`-th derivative has been generated. If the exact number of
     needed derivatives is known in advance, this is further
     slightly more efficient.
@@ -1516,47 +1516,6 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     else:
         return [+r for r in roots]
 
-def quadosc(f, interval, period=None, zeros=None, alt=1):
-    """
-    Integrates f(x) over interval = [a, b] where at least one of a and
-    b is infinite and f is a slowly decaying oscillatory function. The
-    zeros of f must be provided, either by specifying a period (suitable
-    when f contains a pure sine or cosine factor) or providing a function
-    that returns the nth zero (suitable when the oscillation is not
-    strictly periodic).
-    """
-    a, b = AS_POINTS(interval)
-    a = mpmathify(a)
-    b = mpmathify(b)
-    if period is None and zeros is None:
-        raise ValueError( \
-            "either the period or zeros keyword parameter must be specified")
-    if a == -inf and b == inf:
-        s1 = quadosc(f, [a, 0], zeros=zeros, period=period, alt=alt)
-        s2 = quadosc(f, [0, b], zeros=zeros, period=period, alt=alt)
-        return s1 + s2
-    if a == -inf:
-        if zeros:
-            return quadosc(lambda x:f(-x), [-b,-a], lambda n: zeros(-n), alt=alt)
-        else:
-            return quadosc(lambda x:f(-x), [-b,-a], period=period, alt=alt)
-    if b != inf:
-        raise ValueError("quadosc requires an infinite integration interval")
-    if not zeros:
-        zeros = lambda n: n*period/2
-    for n in range(1,10):
-        p = zeros(n)
-        if p > a:
-            break
-    if n >= 9:
-        raise ValueError("zeros do not appear to be correctly indexed")
-    if alt == 0:
-        s = quadgl(f, [a, zeros(n+1)])
-        s += nsum(lambda k: quadgl(f, [zeros(2*k), zeros(2*k+2)]), [n, inf])
-    else:
-        s = quadgl(f, [a, zeros(n)])
-        s += nsum(lambda k: quadgl(f, [zeros(k), zeros(k+1)]), [n, inf])
-    return s
 
 #----------------------------------------------------------------------------#
 #                                  ODE solvers                               #
