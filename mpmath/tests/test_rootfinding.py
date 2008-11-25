@@ -57,9 +57,11 @@ def test_multidimensional():
     f1 = lambda x, y: -x + 2*y
     f2 = lambda x, y: (x**2 + x*(y**2 - 2) - 4*y)  /  (x + 4)
     f3 = lambda x, y: sqrt(x**2 + y**2)
-    f = [f1, f2, f3]
-    x = findroot(f, (-10, 10))
-    assert norm_p(x, 2) < 1e-14
+    def f(x, y):
+        f1x = f1(x, y)
+        return (f2(x, y) - f1x, f3(x, y) - f1x)
+    x = findroot(f, (10, 10))
+    assert [int(round(i)) for i in x] == [3, 4]
 
 def test_trivial():
     assert findroot(lambda x: 0, 1) == 1
