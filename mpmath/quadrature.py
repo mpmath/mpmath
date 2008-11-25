@@ -432,7 +432,7 @@ def quad(f, *points, **kwargs):
     A basic 2D integral::
 
         >>> f = lambda x, y: cos(x+y/2)
-        >>> print quadts(f, [-pi/2, pi/2], [0, pi])
+        >>> print quad(f, [-pi/2, pi/2], [0, pi])
         4.0
 
     **Interval format**

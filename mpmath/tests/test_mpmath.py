@@ -67,3 +67,13 @@ def test_str_10000_digits():
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
     mp.dps = 15
+
+def test_monitor():
+    f = lambda x: x**2
+    a = []
+    b = []
+    g = monitor(f, a.append, b.append)
+    assert g(3) == 9
+    assert g(4) == 16
+    assert a[0] == ((3,), {})
+    assert b[0] == 9
