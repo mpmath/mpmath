@@ -32,7 +32,7 @@ def test_aintegers():
     # XXX: re-fix this so that all operations are tested with all rounding modes
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
-      for rounding in ['down', 'up', 'floor', 'ceiling', 'nearest']:
+      for rounding in ['d', 'u', 'f', 'c', 'n']:
         mp.dps = prec
         M = 10**(prec-2)
         M2 = 10**(prec//2-2)

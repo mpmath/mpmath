@@ -305,6 +305,10 @@ else:
     normalize = _normalize
     normalize1 = _normalize1
 
+if MODE == "gmpy" and gmpy.version() > '1.03':
+    normalize = gmpy._mpmath_normalize
+    normalize1 = gmpy._mpmath_normalize
+
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #
 #----------------------------------------------------------------------------#
