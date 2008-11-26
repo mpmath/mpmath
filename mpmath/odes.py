@@ -190,7 +190,7 @@ def odefun(F, x0, y0, tol=None, degree=None, method='taylor', verbose=False):
         \end{cases}
 
     To get a well-defined IVP, we need two initial values. With
-    `y(0) = y_0(0) = 1` and `y'(x) = y_1(0) = 0`, the problem will of
+    `y(0) = y_0(0) = 1` and `-y'(0) = y_1(0) = 0`, the problem will of
     course be solved by `y(x) = y_0(x) = \cos(x)` and
     `-y'(x) = y_1(x) = \sin(x)`. We check this::
 
