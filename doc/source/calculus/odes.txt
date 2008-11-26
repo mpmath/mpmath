@@ -1,7 +1,7 @@
 Ordinary differential equations
 -------------------------------
 
-Solving the ODE initial value problem (``odeint``)
+Solving the ODE initial value problem (``odefun``)
 ..................................................
 
-.. autofunction:: mpmath.calculus.odeint
+.. autofunction:: mpmath.odes.odefun

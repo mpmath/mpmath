@@ -32,7 +32,6 @@ mpmath.functions.khinchin attribute functions/constants.html
 mpmath.functions.glaisher attribute functions/constants.html
 mpmath.functions.im function functions/numberparts.html
 mpmath.functions.e attribute functions/constants.html
-mpmath.calculus.odeint function calculus/odes.html
 mpmath.functions.chi function functions/gamma.html
 mpmath.functions.exp function functions/powers.html
 mpmath.quadrature.TanhSinh class calculus/integration.html
@@ -122,6 +121,7 @@ mpmath.functions.zeta function functions/zeta.html
 mpmath.functions.degree attribute functions/constants.html
 mpmath.elliptic.jdn function functions/elliptic.html
 mpmath.calculus.fourier function calculus/approximation.html
+mpmath.odes.odefun function calculus/odes.html
 mpmath.functions.fresnels function functions/gamma.html
 mpmath.calculus.nsum function calculus/sums_limits.html
 mpmath.functions.tanh function functions/hyperbolic.html

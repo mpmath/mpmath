@@ -48,12 +48,169 @@
   
   <div class="section" id="ordinary-differential-equations">
 <h1>Ordinary differential equations<a class="headerlink" href="#ordinary-differential-equations" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="solving-the-ode-initial-value-problem-odeint">
-<h2>Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odeint</span></tt>)<a class="headerlink" href="#solving-the-ode-initial-value-problem-odeint" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="solving-the-ode-initial-value-problem-odefun">
+<h2>Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odefun</span></tt>)<a class="headerlink" href="#solving-the-ode-initial-value-problem-odefun" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="mpmath.calculus.odeint">
-<!--[mpmath.calculus.odeint]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">odeint</tt><big>(</big><em>derivs</em>, <em>x0</em>, <em>t_list</em>, <em>step=&lt;function ODE_step_rk4 at 0x01310330&gt;</em><big>)</big><a class="headerlink" href="#mpmath.calculus.odeint" title="Permalink to this definition">¶</a></dt>
-<dd>Given the list t_list of values, returns the solution at these points.</dd></dl>
+<dt id="mpmath.odes.odefun">
+<!--[mpmath.odes.odefun]--><tt class="descclassname">mpmath.odes.</tt><tt class="descname">odefun</tt><big>(</big><em>F</em>, <em>x0</em>, <em>y0</em>, <em>tol=None</em>, <em>degree=None</em>, <em>method='taylor'</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.odes.odefun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function <img class="math" src="../_images/math/c95aa1e21f4eaed305033bad7a543b0c1bd49d75.png" alt="y(x) = [y_0(x), y_1(x), \ldots, y_n(x)]" />
+that is a numerical solution of the <img class="math" src="../_images/math/0e3efd9b14723a92c2ae891fe27780d5f8e2b215.png" alt="n+1" />-dimensional first-order
+ordinary differential equation (ODE) system</p>
+<div class="math">
+<p><img src="../_images/math/b64f322a3bbbdd89527d96adedca0ae7e349d750.png" alt="y_0'(x) = F_0(x, [y_0(x), y_1(x), \ldots, y_n(x)])
+
+y_1'(x) = F_1(x, [y_0(x), y_1(x), \ldots, y_n(x)])
+
+\vdots
+
+y_n'(x) = F_n(x, [y_0(x), y_1(x), \ldots, y_n(x)])" />
+</div></p><p>The derivatives are specified by the vector-valued function
+<em>F</em> that evaluates
+<img class="math" src="../_images/math/0cec1de7ac896b916797c29929dc9668d0da9bce.png" alt="[y_0', \ldots, y_n'] = F(x, [y_0, \ldots, y_n])" />.
+The initial point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> is specified by the scalar argument <em>x0</em>,
+and the initial value <img class="math" src="../_images/math/4152479c1d94cd43ae2e0f114d190e8b1477a282.png" alt="y(x_0) =  [y_0(x_0), \ldots, y_n(x_0)]" /> is
+specified by the vector argument <em>y0</em>.</p>
+<p>For convenience, if the system is one-dimensional, you may optionally
+provide just a scalar value for <em>y0</em>. In this case, <em>F</em> should accept
+a scalar <em>y</em> argument and return a scalar. The solution function
+<em>y</em> will return scalar values instead of length-1 vectors.</p>
+<p>Evaluation of the solution function <img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)" /> is permitted
+for any <img class="math" src="../_images/math/f50f6293717aa3975f6a13e30a9c1918c71b66cc.png" alt="x \ge x_0" />.</p>
+<p>A high-order ODE can be solved by transforming it into first-order
+vector form. This transformation is described in standard texts
+on ODEs. Examples will also be given below.</p>
+<p><strong>Options, speed and accuracy</strong></p>
+<p>By default, <tt class="xref docutils literal"><span class="pre">odefun()</span></tt> uses a high-order Taylor series
+method. For reasonably well-behaved problems, the solution will
+be fully accurate to within the working precision. Note that
+<em>F</em> must be possible to evaluate to very high precision
+for the generation of Taylor series to work.</p>
+<p>To get a faster but less accurate solution, you can set a large
+value for <em>tol</em> (which defaults roughly to <em>eps</em>). If you just
+want to plot the solution or perform a basic simulation,
+<em>tol = 0.01</em> is likely sufficient.</p>
+<p>The <em>degree</em> argument controls the degree of the solver (with
+<em>method=&#8217;taylor&#8217;</em>, this is the degree of the Taylor series
+expansion). A higher degree means that a longer step can be taken
+before a new local solution must be generated from <em>F</em>,
+meaning that fewer steps are required to get from <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> to a given
+<img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1" />. On the other hand, a higher degree also means that each
+local solution becomes more expensive (i.e., more evaluations of
+<em>F</em> are required per step, and at higher precision).</p>
+<p>The optimal setting therefore involves a tradeoff. Generally,
+decreasing the <em>degree</em> for Taylor series is likely to give faster
+solution at low precision, while increasing is likely to be better
+at higher precision.</p>
+<p>The function
+object returned by <tt class="xref docutils literal"><span class="pre">odefun()</span></tt> caches the solutions at all step
+points and uses polynomial interpolation between step points.
+Therefore, once <img class="math" src="../_images/math/7f48e0e8b7e3a5eb9b8af5dd8482abeab9f8062d.png" alt="y(x_1)" /> has been evaluated for some <img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1" />,
+<img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)" /> can be evaluated very quickly for any <img class="math" src="../_images/math/89b1b114673cf95d4e145003dff953289713c1b9.png" alt="x_0 \le x \le x_1" />.
+and continuing the evaluation up to <img class="math" src="../_images/math/c8d1cbde73f350fe7638f1e88c54d09bc8d5213f.png" alt="x_2 &gt; x_1" /> is also fast.</p>
+<p><strong>Examples of first-order ODEs</strong></p>
+<p>We will solve the standard test problem <img class="math" src="../_images/math/556429eac9b1a2f60b76e7e592f149d07992b9f2.png" alt="y'(x) = y(x), y(0) = 1" />
+which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c43b6a9c897f705544c88bde9e232.png" alt="y(x) = \exp(x)" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">1.0 1.0</span>
+<span class="go">2.71828182845905 2.71828182845905</span>
+<span class="go">12.1824939607035 12.1824939607035</span>
+</pre></div>
+</div>
+<p>The solution with high precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">2.7182818284590452353602874713526624977572470937</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">2.7182818284590452353602874713526624977572470937</span>
+</pre></div>
+</div>
+<p>Using the more general vectorized form, the test problem
+can be input as (note that <em>f</em> returns a 1-element vector):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">),</span> <span class="mf">15</span><span class="p">)</span>
+<span class="go">[2.71828182845905]</span>
+</pre></div>
+</div>
+<p><tt class="xref docutils literal"><span class="pre">odefun()</span></tt> can solve nonlinear ODEs, which are generally
+impossible (and at best difficult) to solve analytically. As
+an example of a nonlinear ODE, we will solve <img class="math" src="../_images/math/c34028f032b7862ef437fd28b823864b93f7e519.png" alt="y'(x) = x \sin(y(x))" />
+for <img class="math" src="../_images/math/ebe1d8dcde3aca73ffbeadaef782c9260b794a56.png" alt="y(0) = \pi/2" />. An exact solution happens to be known
+for this problem, and is given by
+<img class="math" src="../_images/math/67cfad187966d79d7cd686fc9cec6ec2aeb01d8c.png" alt="y(x) = 2 \tan^{-1}\left(\exp\left(x^2/2\right)\right)" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">2.87255666284091 2.87255666284091</span>
+<span class="go">3.14158520028345 3.14158520028345</span>
+<span class="go">3.14159265358979 3.14159265358979</span>
+</pre></div>
+</div>
+<p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" /> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" />, an ODE can be solved using direct
+integration. We can therefore obtain a reference solution with
+<tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.72128263801696</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
+<span class="go">0.72128263801696</span>
+</pre></div>
+</div>
+<p><strong>Examples of second-order ODEs</strong></p>
+<p>We will solve the harmonic oscillator equation <img class="math" src="../_images/math/235e62ac7d78725e4d80ed91df0757d2342111a2.png" alt="y''(x) + y(x) = 0" />.
+To do this, we introduce the helper functions <img class="math" src="../_images/math/6a5a5ed65f64703becf652e1bdba8be87f5cc323.png" alt="y_0 = y, y_1 = y_0'" />
+whereby the original equation can be written as <img class="math" src="../_images/math/e776fc87c854934996b7f55f1cbc989b60fcdce7.png" alt="y_1' + y_0' = 0" />. Put
+together, we get the first-order, two-dimensional vector ODE</p>
+<div class="math">
+<p><img src="../_images/math/8616b59629d509bab68b88af91bdd6e44702fbaf.png" alt="\begin{cases}
+y_0' = y_1 \\
+y_1' = -y_0
+\end{cases}" />
+</div></p><p>To get a well-defined IVP, we need two initial values. With
+<img class="math" src="../_images/math/4b3550d19ee43e1e918f29d7a95be7d68fadb3c9.png" alt="y(0) = y_0(0) = 1" /> and <img class="math" src="../_images/math/463ad3c3204406ed2f5ce174748d5fba403be765.png" alt="y'(x) = y_1(0) = 0" />, the problem will of
+course be solved by <img class="math" src="../_images/math/c1fc6376a5338b0caf1e557f9f7e988ba952efa2.png" alt="y(x) = y_0(x) = \cos(x)" /> and
+<img class="math" src="../_images/math/344ab3a288e442d9e4e741f5e41503aee4d4ea5a.png" alt="-y'(x) = y_1(x) = \sin(x)" />. We check this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mf">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">15</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mf">15</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;---&quot;</span>
+<span class="gp">...</span>
+<span class="go">[1.0, 0.0]</span>
+<span class="go">[1.0, 0.0]</span>
+<span class="go">---</span>
+<span class="go">[0.54030230586814, 0.841470984807897]</span>
+<span class="go">[0.54030230586814, 0.841470984807897]</span>
+<span class="go">---</span>
+<span class="go">[-0.801143615546934, 0.598472144103957]</span>
+<span class="go">[-0.801143615546934, 0.598472144103957]</span>
+<span class="go">---</span>
+<span class="go">[-0.839071529076452, -0.54402111088937]</span>
+<span class="go">[-0.839071529076452, -0.54402111088937]</span>
+<span class="go">---</span>
+</pre></div>
+</div>
+<p>Note that we get both the sine and the cosine solutions
+simultaneously.</p>
+<p><strong>TODO</strong></p>
+<ul class="simple">
+<li>Better automatic choice of degree and step size</li>
+<li>Make determination of Taylor series convergence radius
+more robust</li>
+<li>Allow solution for <img class="math" src="../_images/math/11a741227f4f3d08275c94e8b830249bd4516566.png" alt="x &lt; x_0" /></li>
+<li>Allow solution for complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /></li>
+<li>Test for difficult (ill-conditioned) problems</li>
+<li>Implement Runge-Kutta and other algorithms</li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
@@ -67,7 +224,7 @@
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Ordinary differential equations</a><ul>
-<li><a class="reference external" href="#solving-the-ode-initial-value-problem-odeint">Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odeint</span></tt>)</a></li>
+<li><a class="reference external" href="#solving-the-ode-initial-value-problem-odefun">Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odefun</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -108,7 +265,7 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 23, 2008.
+      Last updated on Nov 27, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
