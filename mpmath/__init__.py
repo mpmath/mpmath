@@ -47,6 +47,8 @@ from calculus import fourier, fourierval
 from calculus import sumem, chebyfit, limit
 from calculus import odeint
 
+from odes import odefun
+
 from quadrature import quad, quadgl, quadts, quadosc, TanhSinh, GaussLegendre
 
 from identification import pslq, identify, findpoly
