@@ -422,6 +422,12 @@ class GaussLegendre(Quadrature):
         # evaluation of the roots
         orig = mp.prec
         mp.prec = int(prec*1.5)
+        if degree == 1:
+            x = mpf(3)/5
+            w = mpf(5)/9
+            nodes = [(-x,w),(mpf(0),mpf(8)/9),(x,w)]
+            mp.prec = orig
+            return nodes
         nodes = []
         n = 3*2**(degree-1)
         upto = n//2 + 1

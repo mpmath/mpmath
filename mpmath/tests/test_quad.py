@@ -22,6 +22,9 @@ def test_quad_symmetry():
     assert quadts(sin, [-1, 1]) == 0
     assert quadgl(sin, [-1, 1]) == 0
 
+def test_quadgl_linear():
+    assert quadgl(lambda x: x, [0, 1], maxdegree=1).ae(0.5)
+
 def test_complex_integration():
     assert quadts(lambda x: x, [0, 1+j]).ae(j)
 
