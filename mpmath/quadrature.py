@@ -10,58 +10,12 @@ import math
 def NEG(x):
     return make_mpf(mpf_neg(x._mpf_))
 
-def transform(f, a, b):
-    """
-    Given an integrand f defined over the interval [a, b], return an
-    equivalent integrand g defined on the standard interval [-1, 1].
-
-    If a and b are finite, this is achived by means of a linear change
-    of variables. If at least one point is infinite, the substitution
-    t = 1/x is used.
-    """
-    a = mpmathify(a)
-    b = mpmathify(b)
-    if (a, b) == (-1, 1):
-        return f
-    one = mpf(1)
-    half = mpf(0.5)
-    # The transformation 1/x sends [1, inf] to [0, 1], which in turn
-    # can be transformed to [-1, 1] the usual way. For a double
-    # infinite interval, we simply evaluate the function symmetrically
-    if (a, b) == (-inf, inf):
-        # return transform(lambda x: (f(-1/x+1)+f(1/x-1))/x**2, 0, 1)
-        def y(x):
-            u = 2/(x+one)
-            w = one - u
-            return half * (f(w)+f(-w)) * u**2
-        return y
-    if a == -inf:
-        # return transform(lambda x: f(-1/x+b+1)/x**2, 0, 1)
-        b1 = b+1
-        def y(x):
-            u = 2/(x+one)
-            return half * f(b1-u) * u**2
-        return y
-    if b == inf:
-        # return transform(lambda x: f(1/x+a-1)/x**2, 0, 1)
-        a1 = a-1
-        def y(x):
-            u = 2/(x+one)
-            return half * f(a1+u) * u**2
-        return y
-    # Simple linear change of variables
-    C = (b-a)/2
-    D = (b+a)/2
-    def g(x):
-        return C * f(D + C*x)
-    return g
-
-
 class Quadrature(object):
     """
     Quadrature rules are implemented using this class, in order to
     simplify the code and provide a common infrastructure
     for tasks such as error estimation and node caching.
+
     You can implement a custom quadrature rule by subclassing
     :class:`Quadrature` and implementing the appropriate
     methods. The subclass can then be used by :func:`quad` by
@@ -75,39 +29,115 @@ class Quadrature(object):
     def __new__(cls):
         if hasattr(cls, "_instance"):
             return cls._instance
-        q = object.__new__(cls)
-        q.cached_nodes = {}
-        cls._instance = q
-        return q
+        self = object.__new__(cls)
+        self.standard_cache = {}
+        self.transformed_cache = {}
+        self.interval_count = {}
+        cls._instance = self
+        return self
 
-    def get_nodes(self, prec, degree, verbose=False):
+    def clear(self):
         """
-        Return nodes for given precision and degree. The nodes
-        are retrieved from a cache if already computed; otherwise
-        they are computed by calling :func:`calc_nodes` and
-        are then cached.
-        
-        Subclasses should probably not implement this method,
-        and instead implement :func:`calc_nodes` for the actual
-        node computation.
+        Delete cached node data.
         """
-        if (prec, degree) in self.cached_nodes:
-            return self.cached_nodes[prec, degree]
-        orig = mp.prec
-        try:
-            nodes = self.calc_nodes(prec, degree, verbose)
-        finally:
-            mp.prec = orig
-        self.cached_nodes[prec, degree] = nodes
-        return nodes
+        self.standard_cache = {}
+        self.transformed_cache = {}
+        self.interval_count = {}
 
-    def calc_nodes(self, prec, degree, verbose=False):
-        """
-        Compute nodes. Subclasses should implement this method,
-        but use the existing :func:`get_nodes` method to
-        retrieve the nodes.
+    def calc_nodes(self, degree, prec, verbose=False):
+        r"""
+        Compute nodes for the standard interval `[-1, 1]`. Subclasses
+        should probably implement only this method, and use
+        :func:`get_nodes` method to retrieve the nodes.
         """
         raise NotImplementedError
+
+    def get_nodes(self, a, b, degree, prec, verbose=False):
+        """
+        Return nodes for given interval, degree and precision. The
+        nodes are retrieved from a cache if already computed;
+        otherwise they are computed by calling :func:`calc_nodes`
+        and are then cached.
+
+        Subclasses should probably not implement this method,
+        but just implement :func:`calc_nodes` for the actual
+        node computation.
+        """
+        key = (a, b, degree, prec)
+        if key in self.transformed_cache:
+            return self.transformed_cache[key]
+        orig = mp.prec
+        try:
+            mp.prec = prec+20
+            # Get nodes on standard interval
+            if (degree, prec) in self.standard_cache:
+                nodes = self.standard_cache[degree, prec]
+            else:
+                nodes = self.calc_nodes(degree, prec, verbose)
+                self.standard_cache[degree, prec] = nodes
+            # Transform to general interval
+            nodes = self.transform_nodes(nodes, a, b, verbose)
+            if key in self.interval_count:
+                self.transformed_cache[key] = nodes
+            else:
+                self.interval_count[key] = True
+        finally:
+            mp.prec = orig
+        return nodes
+
+    def transform_nodes(self, nodes, a, b, verbose=False):
+        r"""
+        Rescale standardized nodes (for `[-1, 1]`) to a general
+        interval `[a, b]`. For a finite interval, a simple linear
+        change of variables is used. Otherwise, the following
+        transformations are used:
+
+        .. math ::
+
+            [a, \infty] : t = \frac{1}{x} + (a-1)
+
+            [-\infty, b] : t = (b+1) - \frac{1}{x}
+
+            [-\infty, \infty] : t = \frac{x}{\sqrt{1-x^2}}
+
+        """
+        a = mpmathify(a)
+        b = mpmathify(b)
+        one = mpf(1)
+        if (a, b) == (-one, one):
+            return nodes
+        half = mpf(0.5)
+        new_nodes = []
+        if (a, b) == (-inf, inf):
+            p05 = mpf(-0.5)
+            for x, w in nodes:
+                x2 = x*x
+                px1 = one-x2
+                spx1 = px1**p05
+                x = x*spx1
+                w *= spx1/px1
+                new_nodes.append((x, w))
+        elif a == -inf:
+            b1 = b+1
+            for x, w in nodes:
+                u = 2/(x+one)
+                x = b1-u
+                w *= half*u**2
+                new_nodes.append((x, w))
+        elif b == inf:
+            a1 = a-1
+            for x, w in nodes:
+                u = 2/(x+one)
+                x = a1+u
+                w *= half*u**2
+                new_nodes.append((x, w))
+        else:
+            # Simple linear change of variables
+            C = (b-a)/2
+            D = (b+a)/2
+            for x, w in nodes:
+                new_nodes.append((D+C*x, C*w))
+        return new_nodes
 
     def guess_degree(self, prec):
         """
@@ -177,26 +207,33 @@ class Quadrature(object):
 
     def summation(self, f, points, prec, epsilon, max_degree, verbose=False):
         """
-        Main summation function. Computes the 1D integral over
+        Main integration function. Computes the 1D integral over
         the interval specified by *points*. For each subinterval,
         performs quadrature of degree from 1 up to *max_degree*
         until :func:`estimate_error` signals convergence.
 
         :func:`summation` transforms each subintegration to
-        the standard interval and then calls calls :func:`sum_next`.
+        the standard interval and then calls :func:`sum_next`.
         """
         I = err = mpf(0)
         for i in xrange(len(points)-1):
             a, b = points[i], points[i+1]
             if a == b:
                 continue
-            g = transform(f, a, b)
+            # XXX: we could use a single variable transformation,
+            # but this is not good in practice. We get better accuracy
+            # by having 0 as an endpoint.
+            if (a, b) == (-inf, inf):
+                _f = f
+                f = lambda x: _f(NEG(x)) + _f(x)
+                a, b = (mpf(0), inf)
             results = []
             for degree in xrange(1, max_degree+1):
+                nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
                     print "Integrating from %s to %s (degree %s of %s)" % \
                         (nstr(a), nstr(b), degree, max_degree)
-                results.append(self.sum_next(g, prec, degree, results, verbose))
+                results.append(self.sum_next(f, nodes, degree, prec, results, verbose))
                 if degree > 1:
                     err = self.estimate_error(results, prec, epsilon)
                     if err <= epsilon:
@@ -209,21 +246,17 @@ class Quadrature(object):
                 print "Failed to reach full accuracy. Estimated error:", nstr(err)
         return I, err
 
-    def sum_next(self, f, prec, degree, results, verbose=False):
+    def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
         r"""
-        This method should integrate `f(x)\,dx` over the standard interval
-        `[-1, 1]`. Subclasses need to implement this method, unless they
-        overwrite :func:`summation` to implement a custom scheme.
-        A typical implementation of :func:`sum_next` might look roughly
-        like this::
-
-            return sum(w*f(x) for (x, w) in self.get_nodes(prec, degree))
+        Evaluates the step sum `\sum w_k f(x_k)` where the *nodes* list
+        contains the `(w_k, x_k)` pairs.
 
         :func:`summation` will supply the list *results* of
         values computed by :func:`sum_next` at previous degrees, in
         case the quadrature rule is able to reuse them.
         """
-        raise NotImplementedError
+        return sum(w*f(x) for (x,w) in nodes)
+
 
 class TanhSinh(Quadrature):
     r"""
@@ -259,7 +292,7 @@ class TanhSinh(Quadrature):
       * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
     """
 
-    def sum_next(self, f, prec, degree, previous, verbose=False):
+    def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
         """
         Step sum for tanh-sinh quadrature of degree `m`. We exploit the
         fact that half of the abscissas at degree `m` are precisely the
@@ -272,11 +305,11 @@ class TanhSinh(Quadrature):
             S = previous[-1]/(h*2)
         else:
             S = mpf(0)
-        for x, w in self.get_nodes(prec, degree, verbose=False):
-            S += w*(f(NEG(x)) + f(x))
+        for x, w in nodes:
+            S += w*f(x)
         return h*S
 
-    def calc_nodes(self, prec, degree, verbose=False):
+    def calc_nodes(self, degree, prec, verbose=False):
         r"""
         The abscissas and weights for tanh-sinh quadrature of degree
         `m` are given by
@@ -305,7 +338,9 @@ class TanhSinh(Quadrature):
         # the point x = 0. (It doesn't work well otherwise; not sure why.)
         t0 = ldexp(1, -degree)
         if degree == 1:
-            nodes.append((mpf(0), pi4))
+            #nodes.append((mpf(0), pi4))
+            #nodes.append((-mpf(0), pi4))
+            nodes.append((mpf(0), pi/2))
             h = t0
         else:
             h = t0*2
@@ -336,6 +371,8 @@ class TanhSinh(Quadrature):
                 break
 
             nodes.append((x, w))
+            nodes.append((NEG(x), w))
+
             a *= udelta
             b *= urdelta
 
@@ -373,7 +410,7 @@ class GaussLegendre(Quadrature):
 
     """
 
-    def calc_nodes(self, prec, degree, verbose=False):
+    def calc_nodes(self, degree, prec, verbose=False):
         """
         Calculates the abscissas and weights for Gauss-Legendre
         quadrature of degree of given degree (actually `3 \cdot 2^m`).
@@ -409,15 +446,9 @@ class GaussLegendre(Quadrature):
             if verbose  and j % 30 == 15:
                 print "Computing nodes (%i of %i)" % (j, upto)
             nodes.append((x, w))
+            nodes.append((NEG(x), w))
         mp.prec = orig
         return nodes
-
-    def sum_next(self, f, prec, degree, previous, verbose=False):
-        """Simple step sum. Uses symmetry of the weights."""
-        s = mpf(0)
-        for x, w in self.get_nodes(prec, degree, verbose):
-            s += w * (f(NEG(x)) + f(x))
-        return s
 
 def quad(f, *points, **kwargs):
     r"""

@@ -1077,7 +1077,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
     component even if the derivative is actually real::
 
         >>> print diff(sqrt, 1, method='quad')
-        (0.5 - 1.2908503133698e-26j)
+        (0.5 - 7.58129703509927e-27j)
 
     **Scale**
 
