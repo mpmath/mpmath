@@ -24,7 +24,7 @@ from functions import (
     ldexp, frexp, sign, arg,
     degrees, radians, atan2,
     fib, fibonacci,
-    zeta, altzeta, gamma, factorial, fac, beta,
+    zeta, altzeta, gamma, factorial, fac, fac2, beta,
     psi, psi0, psi1, psi2, psi3,
     polygamma, digamma, trigamma, tetragamma, pentagamma,
     harmonic, bernoulli, bernfrac, stieltjes,

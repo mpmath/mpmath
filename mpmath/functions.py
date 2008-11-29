@@ -1140,13 +1140,214 @@ gamma = mpfunc('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, "gamma functio
 factorial = mpfunc('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, "factorial")
 fac = factorial
 
-def psi(m, z):
-    """
-    Gives the polygamma function of order m of z, psi^(m)(z). Special
-    cases are the digamma function (psi0), trigamma function (psi1),
-    tetragamma (psi2) and pentagamma (psi4) functions.
+factorial.__doc__ = r"""
+Computes the factorial, `x!`. For integers `n \ge 0`, we have
+`n! = 1 \cdot 2 \cdots (n-1) \cdot n` and more generally the factorial
+is defined for real or complex `x` by `x! = \Gamma(x+1)`.
 
-    The parameter m should be a nonnegative integer.
+**Examples**
+
+Basic values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> for k in range(6):
+    ...     print k, fac(k)
+    ...
+    0 1.0
+    1 1.0
+    2 2.0
+    3 6.0
+    4 24.0
+    5 120.0
+    >>> print fac(inf)
+    +inf
+    >>> print fac(0.5), sqrt(pi)/2
+    0.886226925452758 0.886226925452758
+
+For large positive `x`, `x!` can be approximated by
+Stirling's formula::
+
+    >>> x = 10**10
+    >>> print fac(x)
+    2.32579620567308e+95657055186
+    >>> print sqrt(2*pi*x)*(x/e)**x
+    2.32579597597705e+95657055186
+
+:func:`fac` supports evaluation for astronomically large values::
+
+    >>> print fac(10**30)
+    6.22311232304258e+29565705518096748172348871081098
+
+Reciprocal factorials appear in the Taylor series of the
+exponential function (among many other contexts)::
+
+    >>> print nsum(lambda k: 1/fac(k), [0, inf]), exp(1)
+    2.71828182845905 2.71828182845905
+    >>> print nsum(lambda k: pi**k/fac(k), [0, inf]), exp(pi)
+    23.1406926327793 23.1406926327793
+
+"""
+
+gamma.__doc__ = r"""
+Computes the gamma function, `\Gamma(x)`. The gamma function is a
+shifted version of the ordinary factorial, satisfying
+`\Gamma(n) = (n-1)!` for integers `n > 0`. More generally, it
+is defined by
+
+.. math ::
+
+    \Gamma(x) = \int_0^{\infty} t^{x-1} e^{-t}\, dt
+
+for any real or complex `x` with `\Re(x) > 0` and for `\Re(x) < 0`
+by analytic continuation.
+
+**Examples**
+
+Basic values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> for k in range(1, 6):
+    ...     print k, gamma(k)
+    ...
+    1 1.0
+    2 1.0
+    3 2.0
+    4 6.0
+    5 24.0
+    >>> print gamma(inf)
+    +inf
+    >>> print gamma(0)
+    Traceback (most recent call last):
+      ...
+    ValueError: gamma function pole
+
+The gamma function of a half-integer is a rational multiple of
+`\sqrt{\pi}`::
+
+    >>> print gamma(0.5), sqrt(pi)
+    1.77245385090552 1.77245385090552
+    >>> print gamma(1.5), sqrt(pi)/2
+    0.886226925452758 0.886226925452758
+
+We can check the integral definition::
+
+    >>> print gamma(3.5)
+    3.32335097044784
+    >>> print quad(lambda t: t**2.5*exp(-t), [0,inf])
+    3.32335097044784
+
+:func:`gamma` supports arbitrary-precision evaluation and
+complex arguments::
+
+    >>> mp.dps = 50
+    >>> print gamma(sqrt(3))
+    0.91510229697308632046045539308226554038315280564184
+    >>> mp.dps = 25
+    >>> print gamma(2j)
+    (0.009902440080927490985955066 - 0.07595200133501806872408048j)
+
+Arguments can also be large. Note that the gamma function grows
+very quickly::
+
+    >>> mp.dps = 15
+    >>> print gamma(10**20)
+    6.33636415517321e+1956570547910964391727
+
+"""
+
+def psi(m, z):
+    r"""
+    Gives the polygamma function of order `m` of `z`, `\psi^{(m)}(z)`.
+    Special cases are known as the *digamma function* (`\psi^{(0)}(z)`),
+    the *trigamma function* (`\psi^{(1)}(z)`), etc. The polygamma
+    functions are defined as the logarithmic derivatives of the gamma
+    function:
+
+    .. math ::
+
+        \psi^{(m)}(z) = \left(\frac{d}{dz}\right)^{m+1} \log \Gamma(z)
+
+    In particular, `\psi^{(0)}(z) = \Gamma'(z)/\Gamma(z)`. In the
+    present implementation of :func:`psi`, the order `m` must be a
+    nonnegative integer, while the argument `z` may be an arbitrary
+    complex number (with exception for the polygamma function's poles
+    at `z = 0, -1, -2, \ldots`).
+
+    **Examples**
+
+    For various rational arguments, the polygamma function reduces to
+    a combination of standard mathematical constants::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print psi(0, 1), -euler
+        -0.5772156649015328606065121 -0.5772156649015328606065121
+        >>> print psi(1, '1/4'), pi**2+8*catalan
+        17.19732915450711073927132 17.19732915450711073927132
+        >>> print psi(2, '1/2'), -14*apery
+        -16.82879664423431999559633 -16.82879664423431999559633
+
+    The polygamma functions are derivatives of each other::
+
+        >>> print diff(lambda x: psi(3, x), pi), psi(4, pi)
+        -0.1105749312578862734526952 -0.1105749312578862734526952
+        >>> print quad(lambda x: psi(4, x), [2, 3]), psi(3,3)-psi(3,2)
+        -0.375 -0.375
+
+    The digamma function diverges logarithmically as `z \to \infty`,
+    while higher orders tend to zero::
+
+        >>> print psi(0,inf), psi(1,inf), psi(2,inf)
+        +inf 0.0 0.0
+
+    Evaluation for a complex argument::
+
+        >>> print psi(2, -1-2j)
+        (0.03902435405364952654838445 + 0.1574325240413029954685366j)
+
+    Evaluation is supported for large orders `m` and/or large
+    arguments `z`::
+
+        >>> print psi(3, 10**100)
+        2.0e-300
+        >>> print psi(250, 10**30+10**20*j)
+        (-1.293142504363642687204865e-7010 + 3.232856260909107391513108e-7018j)
+
+    **Application to infinite series**
+
+    Any infinite series where the summand is a rational function of
+    the index `k` can be evaluated in closed form in terms of polygamma
+    functions of the roots and poles of the summand::
+
+        >>> a = sqrt(2)
+        >>> b = sqrt(3)
+        >>> print nsum(lambda k: 1/((k+a)**2*(k+b)), [0, inf])
+        0.4049668927517857061917531
+        >>> print (psi(0,a)-psi(0,b)-a*psi(1,a)+b*psi(1,a))/(a-b)**2
+        0.4049668927517857061917531
+
+    This follows from the series representation (`m > 0`)
+
+    .. math ::
+
+        \psi^{(m)}(z) = (-1)^{m+1} m! \sum_{k=0}^{\infty}
+            \frac{1}{(z+k)^{m+1}}.
+
+    Since the roots of a polynomial may be complex, it is sometimes
+    necessary to use the complex polygamma function to evaluate
+    an entirely real-valued sum::
+
+        >>> print nsum(lambda k: 1/(k**2-2*k+3), [0, inf])
+        1.694361433907061256154665
+        >>> nprint(polyroots([1,-2,3]))
+        [(1.0 - 1.41421j), (1.0 + 1.41421j)]
+        >>> r1 = 1-sqrt(2)*j
+        >>> r2 = r1.conjugate()
+        >>> print (psi(0,-r2)-psi(0,-r1))/(r1-r2)
+        (1.694361433907061256154665 + 0.0j)
+
     """
     z = mpmathify(z)
     m = int(m)
@@ -1593,16 +1794,230 @@ def beta(x, y):
     return gammaprod([x, y], [x+y])
 
 def binomial(n, k):
-    """Binomial coefficient, C(n,k) = n!/(k!*(n-k)!)."""
+    r"""
+    Computes the binomial coefficient
+
+    .. math ::
+
+        {n \choose k} = \frac{n!}{k!(n-k)!}.
+
+    The binomial coefficient gives the number of ways that `k` items
+    can be chosen from a set of `n` items. More generally, the binomial
+    coefficient is a well-defined function of arbitrary real or
+    complex `n` and `k`, via the gamma function.
+
+    **Examples**
+
+    Generate Pascal's triangle::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(5):
+        ...     nprint([binomial(n,k) for k in range(n+1)])
+        ...
+        [1.0]
+        [1.0, 1.0]
+        [1.0, 2.0, 1.0]
+        [1.0, 3.0, 3.0, 1.0]
+        [1.0, 4.0, 6.0, 4.0, 1.0]
+
+    There is 1 way to select 0 items from the empty set, and 0 ways to
+    select 1 item from the empty set::
+
+        >>> print binomial(0, 0)
+        1.0
+        >>> print binomial(0, 1)
+        0.0
+
+    :func:`binomial` supports large arguments::
+
+        >>> print binomial(10**20, 10**20-5)
+        8.33333333333333e+157
+        >>> print binomial(10**20, 10**10)
+        2.60784095465201e+104342944813
+
+    Nonintegral binomial coefficients find use in series
+    expansions::
+
+        >>> nprint(taylor(lambda x: (1+x)**0.25, 0, 4))
+        [1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]
+        >>> nprint([binomial(0.25, k) for k in range(5)])
+        [1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]
+
+    An integral representation::
+
+        >>> n, k = 5, 3
+        >>> f = lambda t: exp(-j*k*t)*(1+exp(j*t))**n
+        >>> print chop(quad(f, [-pi,pi])/(2*pi))
+        10.0
+        >>> print binomial(n,k)
+        10.0
+
+    """
     return gammaprod([n+1], [k+1, n-k+1])
 
 def rf(x, n):
-    """Rising factorial (Pochhammer symbol), x^(n)"""
+    r"""
+    Computes the rising factorial or Pochhammer symbol,
+
+    .. math ::
+
+        x^{(n)} = x (x+1) \cdots (x+n-1) = \frac{\Gamma(x+n)}{\Gamma(x)}
+
+    where the rightmost expression is valid for nonintegral `n`.
+
+    **Examples**
+
+    For integral `n`, the rising factorial is a polynomial::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: rf(x,n), 0, n))
+        ...
+        [1.0]
+        [0.0, 1.0]
+        [0.0, 1.0, 1.0]
+        [0.0, 2.0, 3.0, 1.0]
+        [0.0, 6.0, 11.0, 6.0, 1.0]
+
+    Evaluation is supported for arbitrary arguments::
+
+        >>> print rf(2+3j, 5.5)
+        (-7202.03920483347 - 3777.58810701527j)
+    """
     return gammaprod([x+n], [x])
 
 def ff(x, n):
-    """Falling factorial, x_(n)"""
+    r"""
+    Computes the falling factorial,
+
+    .. math ::
+
+        (x)_n = x (x-1) \cdots (x-n+1) = \frac{\Gamma(x+1)}{\Gamma(x-n+1)}
+
+    where the rightmost expression is valid for nonintegral `n`.
+
+    **Examples**
+
+    For integral `n`, the falling factorial is a polynomial::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(5):
+        ...     nprint(taylor(lambda x: ff(x,n), 0, n))
+        ...
+        [1.0]
+        [0.0, 1.0]
+        [0.0, -1.0, 1.0]
+        [0.0, 2.0, -3.0, 1.0]
+        [0.0, -6.0, 11.0, -6.0, 1.0]
+
+    Evaluation is supported for arbitrary arguments::
+
+        >>> print ff(2+3j, 5.5)
+        (-720.41085888203 + 316.101124983878j)
+    """
     return gammaprod([x+1], [x-n+1])
+
+@funcwrapper
+def fac2(x):
+    r"""
+    Computes the double factorial `x!!`, defined for integers
+    `x > 0` by
+
+    .. math ::
+
+        x!! = \begin{cases}
+            1 \cdot 3 \cdots (x-2) \cdot x & x \;\mathrm{odd} \\
+            2 \cdot 4 \cdots (x-2) \cdot x & x \;\mathrm{even}
+        \end{cases}
+
+    and more generally by [1]
+
+    .. math ::
+
+        x!! = 2^{x/2} \left(\frac{\pi}{2}\right)^{(\cos(\pi x)-1)/4}
+              \Gamma\left(\frac{x}{2}+1\right).
+
+    **Examples**
+
+    The integer sequence of double factorials begins::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> nprint([fac2(n) for n in range(10)])
+        [1.0, 1.0, 2.0, 3.0, 8.0, 15.0, 48.0, 105.0, 384.0, 945.0]
+
+    For large `x`, double factorials follow a Stirling-like asymptotic
+    approximation::
+
+        >>> x = mpf(10000)
+        >>> print fac2(x)
+        5.97272691416282e+17830
+        >>> print sqrt(pi)*x**((x+1)/2)*exp(-x/2)
+        5.97262736954392e+17830
+
+    The recurrence formula `x!! = x (x-2)!!` can be reversed to
+    define the double factorial of negative odd integers (but
+    not negative even integers)::
+
+        >>> print fac2(-1), fac2(-3), fac2(-5), fac2(-7)
+        1.0 -1.0 0.333333333333333 -0.0666666666666667
+        >>> fac2(-2)
+        Traceback (most recent call last):
+          ...
+        ValueError: gamma function pole
+
+    With the exception of the poles at negative even integers,
+    :func:`fac2` supports evaluation for arbitrary complex arguments.
+    The recurrence formula is valid generally::
+
+        >>> print fac2(pi+2j)
+        (-1.3697207890154e-12 + 3.93665300979176e-12j)
+        >>> print (pi+2j)*fac2(pi-2+2j)
+        (-1.3697207890154e-12 + 3.93665300979176e-12j)
+
+    Double factorials should not be confused with nested factorials,
+    which are immensely larger::
+
+        >>> print fac(fac(20))
+        5.13805976125208e+43675043585825292774
+        >>> print fac2(20)
+        3715891200.0
+
+    Double factorials appear, among other things, in series expansions
+    of Gaussian functions and the error function. Infinite series
+    include::
+
+        >>> print nsum(lambda k: 1/fac2(k), [0, inf])
+        3.05940740534258
+        >>> print sqrt(e)*(1+sqrt(pi/2)*erf(sqrt(2)/2))
+        3.05940740534258
+        >>> print nsum(lambda k: 2**k/fac2(2*k-1), [1, inf])
+        4.06015693855741
+        >>> print e * erf(1) * sqrt(pi)
+        4.06015693855741
+
+    A beautiful Ramanujan sum::
+
+        >>> print nsum(lambda k: (-1)**k*(fac2(2*k-1)/fac2(2*k))**3, [0,inf])
+        0.90917279454693
+        >>> print (gamma('9/8')/gamma('5/4')/gamma('7/8'))**2
+        0.90917279454693
+
+    **References**
+
+    1. http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/
+
+    2. http://mathworld.wolfram.com/DoubleFactorial.html
+
+    """
+    if isinf(x):
+        if x == inf:
+            return x
+        return nan
+    return 2**(x/2)*(pi/2)**((cospi(x)-1)/4)*gamma(x/2+1)
 
 
 #---------------------------------------------------------------------------#
@@ -2396,7 +2811,7 @@ def li(z):
     The prime number theorem states that the number of primes less
     than `x` is asymptotic to `\mathrm{li}(x)`. For example,
     it is known that there are exactly 1,925,320,391,606,803,968,923
-    prime numbers less than 10^23 [1]. The logarithmic integral
+    prime numbers less than `10^{23}` [1]. The logarithmic integral
     provides a very accurate estimate::
 
         >>> print li(2) + li(10**23)
