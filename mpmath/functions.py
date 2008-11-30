@@ -116,21 +116,150 @@ class _ln10(constant): pass
 
 class _phi(constant): pass
 
-class _euler(constant): pass
+class _euler(constant):
+    r"""
+    Euler's constant or the Euler-Mascheroni constant `\gamma`
+    = 0.57721566... is a number of central importance to
+    number theory and special functions. It is defined as the limit
 
-class _catalan(constant): pass
+    .. math ::
 
-class _khinchin(constant): pass
+        \gamma = \lim_{n\to\infty} H_n - \log n
+
+    where `H_n = 1 + \frac{1}{2} + \ldots + \frac{1}{n}` is a harmonic
+    number (see :func:`harmonic`).
+
+    Evaluation of `\gamma` is supported at arbitrary precision::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print euler
+        0.57721566490153286060651209008240243104215933593992
+
+    We can also compute `\gamma` directly from the definition,
+    although this is less efficient::
+
+        >>> print limit(lambda n: harmonic(n)-log(n), inf)
+        0.57721566490153286060651209008240243104215933593992
+
+    This shows digits 9991-10000 of `\gamma`:
+
+        >>> mp.dps = 10000
+        >>> str(euler)[-10:]
+        '4679858165'
+
+    Integrals, series, and representations for `\gamma` in terms of
+    special functions include the following (there are many others)::
+
+        >>> mp.dps = 25
+        >>> print -quad(lambda x: exp(-x)*log(x), [0,inf])
+        0.5772156649015328606065121
+        >>> print quad(lambda x,y: (x-1)/(1-x*y)/log(x*y), [0,1], [0,1])
+        0.5772156649015328606065121
+        >>> print nsum(lambda k: 1/k-log(1+1/k), [1,inf])
+        0.5772156649015328606065121
+        >>> print nsum(lambda k: (-1)**k*zeta(k)/k, [2,inf])
+        0.5772156649015328606065121
+        >>> print -diff(gamma, 1)
+        0.5772156649015328606065121
+        >>> print limit(lambda x: 1/x-gamma(x), 0)
+        0.5772156649015328606065121
+        >>> print limit(lambda x: zeta(x)-1/(x-1), 1)
+        0.5772156649015328606065121
+        >>> print (log(2*pi*nprod(lambda n:
+        ...     exp(-2+2/n)*(1+2/n)**n, [1,inf]))-3)/2
+        0.5772156649015328606065121
+
+    For generalizations of the identities `\gamma = -\Gamma'(1)`
+    and `\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)`, see
+    :func:`psi` and :func:`stieltjes` respectively.
+    """
+
+class _catalan(constant):
+    r"""
+    Catalan's constant `K` = 0.91596559... is given by the infinite
+    series
+
+    .. math ::
+
+        K = \sum_{k=0}^{\infty} \frac{(-1)^k}{(2k+1)^2}.
+
+    Mpmath can evaluate it to arbitrary precision::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print catalan
+        0.91596559417721901505460351493238411077414937428167
+
+    One can also compute `K` directly from the definition, although
+    this is significantly less efficient::
+
+        >>> print nsum(lambda k: (-1)**k/(2*k+1)**2, [0, inf])
+        0.91596559417721901505460351493238411077414937428167
+
+    This shows digits 9991-10000 of `K`:
+
+        >>> mp.dps = 10000
+        >>> str(catalan)[-10:]
+        '9537871503'
+
+    Catalan's constant has numerous integral representations::
+
+        >>> mp.dps = 50
+        >>> print quad(lambda x: -log(x)/(1+x**2), [0, 1])
+        0.91596559417721901505460351493238411077414937428167
+        >>> print quad(lambda x: atan(x)/x, [0, 1])
+        0.91596559417721901505460351493238411077414937428167
+        >>> print quad(lambda x: ellipk(x**2)/2, [0, 1])
+        0.91596559417721901505460351493238411077414937428167
+        >>> print quad(lambda x,y: 1/(1+(x*y)**2), [0, 1], [0, 1])
+        0.91596559417721901505460351493238411077414937428167
+
+    As well as series representations::
+
+        >>> print pi*log(sqrt(3)+2)/8 + 3*nsum(lambda n:
+        ...  (fac(n)/(2*n+1))**2/fac(2*n), [0, inf])/8
+        0.91596559417721901505460351493238411077414937428167
+        >>> print 1-nsum(lambda n: n*zeta(2*n+1)/16**n, [1,inf])
+        0.91596559417721901505460351493238411077414937428167
+
+    """
+
+class _khinchin(constant):
+    r"""
+    Khinchin's constant `K` = 2.68542... is a number that
+    appears in the theory of continued fractions. Mpmath can evaluate
+    it to arbitrary precision::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print khinchin
+        2.6854520010653064453097148354817956938203822939945
+
+    An integral representation is::
+
+        >>> I = quad(lambda x: log((1-x**2)/sincpi(x))/x/(1+x), [0, 1])
+        >>> print 2*exp(1/log(2)*I)
+        2.6854520010653064453097148354817956938203822939945
+
+    The computation of ``khinchin`` is based on an efficient
+    implementation of the following series::
+
+        >>> f = lambda n: (zeta(2*n)-1)/n*sum((-1)**(k+1)/mpf(k)
+        ...     for k in range(1,2*n))
+        >>> print exp(nsum(f, [1,inf])/log(2))
+        2.6854520010653064453097148354817956938203822939945
+    """
 
 class _glaisher(constant):
-    """
+    r"""
     Glaisher's constant `A`, also known as the Glaisher-Kinkelin
     constant, is a number approximately equal to 1.282427129 that
     sometimes appears in formulas related to gamma and zeta functions.
 
-    It is defined as `A = \exp(1/12-\zeta'(-1))`. Here `\zeta'(s)`
-    denotes the derivative of the Riemann zeta function (see
-    :func:`zeta`).
+    The constant is defined  as `A = \exp(1/12-\zeta'(-1))` where
+    `\zeta'(s)` denotes the derivative of the Riemann zeta function
+    (see :func:`zeta`).
 
     Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
@@ -162,7 +291,6 @@ class _glaisher(constant):
 
     References:
     http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
-
     """
 
 class _apery(constant): pass
