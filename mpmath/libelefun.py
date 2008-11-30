@@ -119,14 +119,25 @@ def ln2_fixed(prec):
     """
     Computes ln(2). This is done with a hyperbolic Machin-type formula.
     """
-    return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
+    if prec < LOG_NEWTON_PREC2:
+        return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
+    else:
+        wp = prec + 20
+        res = log_agm((0, MP_ONE, 1, 1), wp, False)
+        return to_fixed(res, prec)
+
 
 @constant_memo
 def ln10_fixed(prec):
     """
     Computes ln(10). This is done with a hyperbolic Machin-type formula.
     """
-    return machin([(46, 31), (34, 49), (20, 161)], prec, True)
+    if prec < LOG_NEWTON_PREC2:
+        return machin([(46, 31), (34, 49), (20, 161)], prec, True)
+    else:
+        wp = prec + 20
+        res = log_agm((0, MP_FIVE, 1, 3), wp, False)
+        return to_fixed(res, prec)
 
 """
 For computation of pi, we use the Chudnovsky series:
@@ -615,7 +626,7 @@ Here n should be chosen to make t ~= 1. This allows us to settle for a
 suitable fixed-point approximation close to 1. In particular, we choose
 the normalization 0.5 <= t < 2 and use one of two algorithms:
 
-1. For arbitrary precision, we set r = log(t) and use Newton's method
+1. For high precision, we set r = log(t) and use Newton's method
    to solve exp(r) = t. To obtain the Newton method one solves
    exp(r+h) = t, expanding in h which is supposed to be small; one has
    h = log(t * exp(-r)), which can be expanded in powers of
@@ -655,9 +666,21 @@ the normalization 0.5 <= t < 2 and use one of two algorithms:
    term, as opposed to 1 bit per term in the worst case for the direct
    series of log(1+x).
 
+
+For very high precision compute the logarithm using the formula 
+by Sasaki and Kanada,
+log(x) = pi / agm(theta(2,1/x)**2, theta3(3, 1/x)**2)
+see the article by R.P. Brent
+"Fast Algorithms for High-Precision Computation of Elementary Functions"
+brent_invited.pdf which is available online.
+To improve performance, for x > 1 + delta, with delta around 0.1,
+one computes log(x**n)/n for some suitably large n, so that the argument 
+of the theta functions is small and they ar computed fast. 
+For 1 < x <= delta use log(x) = log(2*x) - log(2) and then proceed as above.
+
 There are some further caveats: if x is extremely close to 1,
 the working precision must be increased. We ignore this problem in
-log_newton and log_taylor and instead handle it as needed in
+log_newton, log_taylor and log_agm and instead handle it as needed in
 mpf_log.
 
 """
@@ -689,8 +712,12 @@ def log_newton(x, prec):
 
 if MODE == 'gmpy':
     LOG_TAYLOR_PREC = 700
+    LOG_NEWTON_PREC = 6500
+    LOG_NEWTON_PREC2 = 13000
 else:
     LOG_TAYLOR_PREC = 450
+    LOG_NEWTON_PREC = 21000
+    LOG_NEWTON_PREC2 = 42000
 
 LOG_TAYLOR_WP = LOG_TAYLOR_PREC + 20
 LOG_TAYLOR_SHIFT = 9   # steps of size 2^-N
@@ -729,6 +756,98 @@ def log_taylor(x, prec):
         k += 2
     s <<= 1
     return log_a + s
+
+# ndict_log and nbc_log give a table of values for n in log(x**n)/n
+# increasing n increases the speed, since in the Sasaki and Kanada formula
+# the theta functions get smaller arguments, so they are evaluated faster;
+# on the other hand increasing n the precision decreases.
+# The values n are chosen to be as high as possible (or just a bit less) 
+# while getting the correct result in some examples with q of different sizes
+
+ndict_log = {11: 1<< 6, 12: 1<< 6, 13: 1<<6, 14: 1<<7, 15: 1<<8, 16: 1<<9, 17: 1<<11, 18: 1<<12}
+
+#      0-7      8  9   10  11  12  13  14  15  16  17, 18, 19, 20, 
+nbc_log = [70]*8 + [65, 29, 25, 19, 18, 17, 15, 13, 12, 10, 10, 10, 10] + \
+      [9]*7 + [8]*23 + [7]*130
+#     21-27, 28-50,  51-180
+
+MIN = 2
+
+def mpf_agm(a, b, wc):
+    a = to_fixed(a, wc)
+    b = to_fixed(b, wc)
+    p = 1
+    while 1:
+        an = (a + b) >> 1
+        adiff = a - an
+        if p > 16 and abs(adiff) < 1000:
+            break
+        prod = (a * b) >> wc
+        b = sqrt_fixed2(prod, wc)
+        p = 2*p
+        a = an
+    res = a
+    return from_man_exp(res, -wc, wc, 'n')
+
+def log_agm(x, prec, fneg):
+    #print 'DB', prec
+    sign, nab, exp, bc = x
+    ebc = exp + bc
+    extra1 = 10
+    #n = int(math.log(prec,2))
+    n = bitcount(prec) - 1
+    #print 'DB', n, nn
+    if n <= 18:
+        n = ndict_log[n]
+    else:
+        n = 1 << 13
+    if ebc > 7:
+        if ebc > 35000:
+            return log_newton(x, prec)
+        elif ebc > 180:
+            n = 6
+        else:
+            n = nbc_log[ebc]
+        extra1 += ebc
+    # mp.dps += n + extra1
+    wp = prec + 4*(n + extra1)
+    # q = q**n
+    #q = 1/q
+    if not fneg:
+        x = mpf_pow_int(x, -n, wp)
+    else:
+        x = mpf_pow_int(x, n, wp)
+
+    # compute jtheta2(x)**2
+    x0 = x
+    x = to_fixed(x, wp)
+
+    # x2 = (x*x) >> wp
+    x2 = (x*x) >> wp
+    s2 = a = b = x2
+    while abs(a) > MIN:
+        b = (b*x2) >> wp
+        a = (a*b) >> wp
+        s2 += a
+    s2 = (1 << (wp+1)) + (s2 << 1)
+    s2 = from_man_exp(s2, -wp, wp, 'n')
+    s2 = mpf_mul(s2, s2, wp)
+    t = mpf_sqrt(x0, wp, 'n')
+    s2 = mpf_mul(s2, t, wp)
+    # compute jtheta3(x)**2
+    s3 = a = b = x
+    while abs(a) > MIN:
+        b = (b*x2) >> wp
+        a = (a*b) >> wp
+        s3 += a
+    s3 = (1 << wp) + (s3 << 1)
+    s3 = from_man_exp(s3, -wp, wp, 'n')
+    s3 = mpf_mul(s3, s3, wp)
+    a = mpf_agm(s2, s3, wp)
+    res = mpf_div(mpf_pi(wp), a, wp)
+    res = mpf_div(res, from_int(n, wp), wp)
+    sign, man, exp, bc = res
+    return normalize(sign, man, exp, bc, prec, 'n')
 
 def mpf_log(x, prec, rnd=round_fast):
     """
@@ -794,7 +913,7 @@ def mpf_log(x, prec, rnd=round_fast):
                 t = rshift(man, bc-wp-1)
 
     # Rescale
-    else:
+    elif wp < LOG_NEWTON_PREC:
         # Estimated precision needed for n*log(2) to
         # be accurate relatively
         wp += int(math.log(1+abs(mag),2))
@@ -805,8 +924,31 @@ def mpf_log(x, prec, rnd=round_fast):
     # Use the faster method
     if wp < LOG_TAYLOR_PREC:
         a = log_taylor(t, wp)
-    else:
+    elif wp < LOG_NEWTON_PREC:
         a = log_newton(t, wp)
+    # case with wp >= LOG_NEWTON_PREC
+    else:
+        # for x close to one
+        if mag == 0 or mag == 1:
+            delta = mpf_sub(x, fone, 10)
+            delta_bits = -(delta[2] + delta[3])
+            if delta_bits > 0:
+                wp += delta_bits
+            if mag <= 0:
+                x = mpf_shift(x, -1)
+            else:
+                x = mpf_shift(x, 1)
+        if mag <= 0:
+            rs = mpf_neg(log_agm(x, wp, True), wp, rnd)
+        else:
+            rs = log_agm(x, wp, False)
+        if mag == 0 or mag == 1 and not (res >> (wp - 4)):
+            if mag <= 0:
+                rs = mpf_add(rs, mpf_ln2(wp), wp)
+            else:
+                rs = mpf_sub(rs, mpf_ln2(wp), wp)
+        sign, man, exp, bc = rs
+        return normalize(sign, man, exp, bc, prec, rnd)
 
     return from_man_exp(a + log2n, -wp, prec, rnd)
 

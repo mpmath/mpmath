@@ -1347,64 +1347,64 @@ def python_sqrt_fixed(y, prec, shifted=True):
 def gmpy_sqrt_fixed2(y, prec):
     return gmpy.sqrt(y << prec)
 
-def python_sqrt_fixed2(y, prec):
+def sqrt_newton(x, guard_bits=0):
     """
-    This function is essentially equivalent to sqrt_fixed (see its
-    documentation), but uses an asymptotically faster algorithm.
+    Approximately compute floor(sqrt(x)) for a positive integer x.
+    The result may be off by a few units.
+
+    If a few ``guard_bits`` are specified, the returned root is
+    either exact or 1 unit smaller than the true root.
+
+    Algorithm
+    =========
 
     Instead of using Newton's method to calculate sqrt(y) directly,
     we calculate 1/sqrt(y) with Newton's method and multiply by y to
-    obtain sqrt(y). The Newton iteration for 1/sqrt(y) is
+    obtain sqrt(y). The Newton iteration for 1/sqrt(y) is::
 
-                 r
-                  n      /            2 \
-        r    =  ----  *  | 3  - y * r   |.
-         n+1      2      \           n  /
+                   r
+                    n      /            2 \
+          r    =  ----  *  | 3  - y * r   |.
+           n+1      2      \           n  /
 
     This is slightly slower at low precision levels since it requires
     three multiplications in each step, as opposed to the single
-    division in the Newton iteration for sqrt(y).
+    division in the Newton iteration for sqrt(y). However, since
+    Python uses Karatsuba algorithm for multiplication, three
+    multiplications can be performed much more quickly than a
+    single division at high precision.
 
-    However, since Python uses Karatsuba algorithm for multiplication,
-    three multiplications can be performed much more quickly than a
-    single division at high precision levels.
+    The Newton iteration is performed with dynamically increasing
+    precision for optimal speed. Each step roughly doubles the
+    numerical accuracy, so we need to perform roughly log_2(n)
+    steps, at precision ...n/4, n/2, n, where n = log_2(sqrt(x)).
+
+    The bitwise shifts force rounding downwards. Adding guard bits
+    ensures that the only final error (if any) is the downward
+    rounding error from the final shift.
     """
+    if guard_bits:
+        x <<= guard_bits*2
+    bc = int(math.log(x,2))
+    bc += bc & 1
+    hbc = bc // 2
+    startprec = min(50, hbc)
+    r = int(2.0**(2*startprec) * (x >> (bc-2*startprec)) ** -0.5)
+    pp = startprec
+    for p in giant_steps(startprec, hbc):
+        # r**2, scaled from real size 2**(-bc) to 2**p
+        r2 = (r*r) >> (2*pp - p)
+        # x*r**2, scaled from real size ~1.0 to 2**p
+        xr2 = ((x >> (bc - p)) * r2) >> p
+        # New value of r, scaled from real size 2**(-bc/2) to 2**p
+        #r = (r * ((3<<p) - xr2)) >> (pp + 1)
+        r = (r * ((1<<p) - xr2) + (r << (p+1))) >> (pp + 1)
+        pp = p
+    return (r*(x>>hbc)) >> (p + guard_bits)
 
-    # XXX
-    r = to_float(from_man_exp(y, -prec, 64)) ** -0.5
-    r = int(r * 2**50)
-    # r = invsqrt_initial(y, prec)
+def python_sqrt_fixed2(y, prec):
+    return sqrt_newton(y << prec, 20)
 
-    extra = int(10 + 2*prec**0.3)
-    prevp = 50
-
-    for p in giant_steps(50, prec+extra):
-
-        # This is even messier than in sqrt_fixed. As many shifts as possible
-        # have been combined together for optimal speed, at a slight expense
-        # of legibility.
-
-        # Compute r**2 at precision p.
-        r2 = rshift(r*r, 2*prevp - p)
-
-        # A = r, converted from precision prevp to p
-        A = lshift(r, p-prevp)
-
-        # S = y * r2, computed at precision p. We shift y by '-prec' to
-        # account for its initial precision, and by 'p' for the fixed-point
-        # multiplication
-        S = (lshift(y, p-prec) * r2) >> p
-
-        # B = (3-S) and finally the outer product, both done at precision p
-        B = (3<<p) - S
-        r = (A*B) >> (p+1)
-
-        prevp = p
-
-    # Finally, sqrt(y) = y * (1/sqrt(y))
-    r = (r * y) >> prec
-
-    return r >> extra
 
 if MODE == 'gmpy':
     sqrt_fixed = gmpy_sqrt_fixed
