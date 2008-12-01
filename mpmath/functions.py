@@ -2895,6 +2895,10 @@ def li(z):
     :func:`li` using the simple identity
     `\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)`.
 
+    The logarithmic integral should also not be confused with
+    the polylogarithm (also denoted by Li), which is implemented
+    as :func:`polylog`.
+
     **Examples**
 
     Some basic values and limits::
@@ -4241,6 +4245,230 @@ def hyperfac(z):
     v = gamma(zp1)**z
     mp.prec -= extra
     return v / barnesg(zp1)
+
+@funcwrapper
+def bernpoly(n, z):
+    """
+    Evaluates the Bernoulli polynomial `B_n(z)`.
+
+    The first few Bernoulli polynomials are::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(6):
+        ...     nprint(chop(taylor(lambda x: bernpoly(n,x), 0, n)))
+        ...
+        [1.0]
+        [-0.5, 1.0]
+        [0.166667, -1.0, 1.0]
+        [0.0, 0.5, -1.5, 1.0]
+        [-3.33333e-2, 0.0, 1.0, -2.0, 1.0]
+        [0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]
+
+    At `z = 1`, the Bernoulli polynomial evaluates to a
+    Bernoulli number (see :func:`bernoulli`)::
+
+        >>> print bernpoly(12, 0), bernoulli(12)
+        -0.253113553113553 -0.253113553113553
+        >>> print bernpoly(13, 0), bernoulli(13)
+        0.0 0.0
+
+    """
+    n = int(n)
+    assert n >= 0
+    # XXX: optimize
+    return sum(binomial(n,k)*bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
+
+# TODO: this should be implemented low-level
+def polylog_series(s, z):
+    tol = +eps
+    l = mpf(0)
+    k = 1
+    zk = z
+    while 1:
+        term = zk / k**s
+        l += term
+        if abs(term) < tol:
+            break
+        zk *= z
+        k += 1
+    return l
+
+def polylog_continuation(n, z):
+    if n < 0:
+        return z*0
+    a = -(2*pi*j)**n/fac(n) * bernpoly(n, log(z)/(2*pi*j))
+    if isinstance(z, mpf) and z < 0:
+        a = a.real
+    if z.imag < 0 or (z.imag == 0 and z.real >= 1):
+        a -= 2*pi*j*log(z)**(n-1)/fac(n-1)
+    return a
+
+def polylog_unitcircle(n, z):
+    tol = +eps
+    if n > 1:
+        l = mpf(0)
+        logz = log(z)
+        logmz = mpf(1)
+        m = 0
+        while 1:
+            if (n-m) != 1:
+                term = zeta(n-m) * logmz / fac(m)
+                if term and abs(term) < tol:
+                    break
+                l += term
+            logmz *= logz
+            m += 1
+        l += log(z)**(n-1)/fac(n-1)*(harmonic(n-1)-log(-log(z)))
+    elif n < 1:  # else
+        l = fac(-n)*(-log(z))**(n-1)
+        logz = log(z)
+        logkz = mpf(1)
+        k = 0
+        while 1:
+            b = bernoulli(k-n+1)
+            if b:
+                term = b*logkz/(fac(k)*(k-n+1))
+                if abs(term) < tol:
+                    break
+                l -= term
+            logkz *= logz
+            k += 1
+    else:
+        raise ValueError
+    if isinstance(z, mpf) and z < 0:
+        l = l.real
+    return l
+
+@funcwrapper
+def polylog(s, z):
+    r"""
+    Computes the polylogarithm, defined by the sum
+
+    .. math ::
+
+        \mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}.
+
+    This series is convergent only for `|z| < 1`, so elsewhere
+    the analytic continuation is implied.
+
+    The polylogarithm should not be confused with the logarithmic
+    integral (also denoted by Li or li), which is implemented
+    as :func:`li`.
+
+    **Examples**
+
+    The polylogarithm satisfies a huge number of functional identities.
+    A sample of polylogarithm evaluations is shown below::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print polylog(1,0.5), log(2)
+        0.693147180559945 0.693147180559945
+        >>> print polylog(2,0.5), (pi**2-6*log(2)**2)/12
+        0.582240526465012 0.582240526465012
+        >>> print polylog(2,-phi), -log(phi)**2-pi**2/10
+        -1.21852526068613 -1.21852526068613
+        >>> print polylog(3,0.5), 7*zeta(3)/8-pi**2*log(2)/12+log(2)**3/6
+        0.53721319360804 0.53721319360804
+
+    :func:`polylog` can evaluate the analytic continuation of the
+    polylogarithm when `s` is an integer::
+
+        >>> print polylog(2, 10)
+        (0.536301287357863 - 7.23378441241546j)
+        >>> print polylog(2, -10)
+        -4.1982778868581
+        >>> print polylog(2, 10j)
+        (-3.05968879432873 + 3.71678149306807j)
+        >>> print polylog(-2, 10)
+        -0.150891632373114
+        >>> print polylog(-2, -10)
+        0.067618332081142
+        >>> print polylog(-2, 10j)
+        (0.0384353698579347 + 0.0912451798066779j)
+
+    Some more examples, with arguments on the unit circle (note that
+    the series definition cannot be used for computation here)::
+
+        >>> print polylog(2,j)
+        (-0.205616758356028 + 0.915965594177219j)
+        >>> print j*catalan-pi**2/48
+        (-0.205616758356028 + 0.915965594177219j)
+        >>> print polylog(3,exp(2*pi*j/3))
+        (-0.534247512515375 + 0.765587078525922j)
+        >>> print -4*zeta(3)/9 + 2*j*pi**3/81
+        (-0.534247512515375 + 0.765587078525921j)
+
+    Polylogarithms of different order are related by integration
+    and differentiation::
+
+        >>> s, z = 3, 0.5
+        >>> print polylog(s+1, z)
+        0.517479061673899
+        >>> print quad(lambda t: polylog(s,t)/t, [0, z])
+        0.517479061673899
+        >>> print z*diff(lambda t: polylog(s+2,t), z)
+        0.517479061673899
+
+    Taylor series expansions around `z = 0` are::
+
+        >>> for n in range(-3, 4):
+        ...     nprint(taylor(lambda x: polylog(n,x), 0, 5))
+        ...
+        [0.0, 1.0, 8.0, 27.0, 64.0, 125.0]
+        [0.0, 1.0, 4.0, 9.0, 16.0, 25.0]
+        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+        [0.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        [0.0, 1.0, 0.5, 0.333333, 0.25, 0.2]
+        [0.0, 1.0, 0.25, 0.111111, 6.25e-2, 4.0e-2]
+        [0.0, 1.0, 0.125, 3.7037e-2, 1.5625e-2, 8.0e-3]
+
+    The series defining the polylogarithm is simultaneously
+    a Taylor series and an L-series. For certain values of `z`, the
+    polylogarithm reduces to a pure zeta function::
+
+        >>> print polylog(pi, 1), zeta(pi)
+        1.17624173838258 1.17624173838258
+        >>> print polylog(pi, -1), -altzeta(pi)
+        -0.909670702980385 -0.909670702980385
+
+    Evaluation for arbitrary, nonintegral `s` is supported
+    for `z` within the unit circle:
+
+        >>> print polylog(3+4j, 0.25)
+        (0.24258605789446 - 0.00222938275488344j)
+        >>> print nsum(lambda k: 0.25**k / k**(3+4j), [1,inf])
+        (0.24258605789446 - 0.00222938275488344j)
+
+    **References**
+
+    1. Richard Crandall, "Note on fast polylogarithm computation"
+       http://people.reed.edu/~crandall/papers/Polylog.pdf
+    2. http://en.wikipedia.org/wiki/Polylogarithm
+    3. http://mathworld.wolfram.com/Polylogarithm.html
+
+    """
+    if z == 1:
+        return zeta(s)
+    if z == -1:
+        return -altzeta(s)
+    if s == 0:
+        return z/(1-z)
+    if s == 1:
+        return -log(1-z)
+    if s == -1:
+        return z/(1-z)**2
+    if abs(z) <= 0.75 or (not isint(s) and abs(z) < 0.99):
+        return polylog_series(s, z)
+    if abs(z) >= 1.4 and isint(s):
+        return (-1)**(s+1)*polylog_series(s, 1/z) + polylog_continuation(s, z)
+    if isint(s):
+        return polylog_unitcircle(int(s), z)
+    raise NotImplementedError("polylog for arbitrary s and z")
+    # This could perhaps be used in some cases
+    #from quadrature import quad
+    #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
 if __name__ == '__main__':
     import doctest

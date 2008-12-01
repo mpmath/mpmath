@@ -421,3 +421,26 @@ def test_barnesg():
     assert a == 0 and isinstance(a, mpc)
     a = hyperfac(-3+0j)
     assert a == -4 and isinstance(a, mpc)
+
+def test_polylog():
+    mp.dps = 15
+    zs = [mpmathify(z) for z in [0, 0.5, 0.99, 4, -0.5, -4, 1j, 3+4j]]
+    for z in zs: assert polylog(1, z).ae(-log(1-z))
+    for z in zs: assert polylog(0, z).ae(z/(1-z))
+    for z in zs: assert polylog(-1, z).ae(z/(1-z)**2)
+    for z in zs: assert polylog(-2, z).ae(z*(1+z)/(1-z)**3)
+    for z in zs: assert polylog(-3, z).ae(z*(1+4*z+z**2)/(1-z)**4)
+    assert polylog(3, 7).ae(5.3192579921456754382-5.9479244480803301023j)
+    assert polylog(3, -7).ae(-4.5693548977219423182)
+    assert polylog(2, 0.9).ae(1.2997147230049587252)
+    assert polylog(2, -0.9).ae(-0.75216317921726162037)
+    assert polylog(2, 0.9j).ae(-0.17177943786580149299+0.83598828572550503226j)
+    assert polylog(2, 1.1).ae(1.9619991013055685931-0.2994257606855892575j)
+    assert polylog(2, -1.1).ae(-0.89083809026228260587)
+    assert polylog(2, 1.1*sqrt(j)).ae(0.58841571107611387722+1.09962542118827026011j)
+    assert polylog(-2, 0.9).ae(1710)
+    assert polylog(-2, -0.9).ae(-90/6859.)
+    assert polylog(3, 0.9).ae(1.0496589501864398696)
+    assert polylog(-3, 0.9).ae(48690)
+    assert polylog(-3, -4).ae(-0.0064)
+    assert polylog(0.5+j/3, 0.5+j/2).ae(0.31739144796565650535 + 0.99255390416556261437j)
