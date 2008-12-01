@@ -165,7 +165,58 @@ accurate.</p>
 <dl class="attribute">
 <dt id="mpmath.functions.euler">
 <!--[mpmath.functions.euler]--><tt class="descclassname">functions.</tt><tt class="descname">euler</tt><a class="headerlink" href="#mpmath.functions.euler" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Euler&#8217;s constant or the Euler-Mascheroni constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />
+= 0.57721566... is a number of central importance to
+number theory and special functions. It is defined as the limit</p>
+<div class="math">
+<p><img src="../_images/math/b2fa30c8a0a044ef2c44aa24bd5c354928ffc730.png" alt="\gamma = \lim_{n\to\infty} H_n - \log n" />
+</div></p><p>where <img class="math" src="../_images/math/17d8efce30ecd8b503680a79698c2a145420238b.png" alt="H_n = 1 + \frac{1}{2} + \ldots + \frac{1}{n}" /> is a harmonic
+number (see <tt class="xref docutils literal"><span class="pre">harmonic()</span></tt>).</p>
+<p>Evaluation of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> is supported at arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">euler</span>
+<span class="go">0.57721566490153286060651209008240243104215933593992</span>
+</pre></div>
+</div>
+<p>We can also compute <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> directly from the definition,
+although this is less efficient:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">inf</span><span class="p">)</span>
+<span class="go">0.57721566490153286060651209008240243104215933593992</span>
+</pre></div>
+</div>
+<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">euler</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;4679858165&#39;</span>
+</pre></div>
+</div>
+<p>Integrals, series, and representations for <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> in terms of
+special functions include the following (there are many others):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.5772156649015328606065121</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">]))</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">0.5772156649015328606065121</span>
+</pre></div>
+</div>
+<p>For generalizations of the identities <img class="math" src="../_images/math/1785bf0dc26961e1508e63e1d1b4044aba9d1577.png" alt="\gamma = -\Gamma'(1)" />
+and <img class="math" src="../_images/math/534509422e9762347396775fe4488d80df1bc4bf.png" alt="\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)" />, see
+<tt class="xref docutils literal"><span class="pre">psi()</span></tt> and <tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> respectively.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="catalan-s-constant-catalan">
@@ -173,7 +224,50 @@ accurate.</p>
 <dl class="attribute">
 <dt id="mpmath.functions.catalan">
 <!--[mpmath.functions.catalan]--><tt class="descclassname">functions.</tt><tt class="descname">catalan</tt><a class="headerlink" href="#mpmath.functions.catalan" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Catalan&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> = 0.91596559... is given by the infinite
+series</p>
+<div class="math">
+<p><img src="../_images/math/73256db412f712a118cec432dbabe92fa1af02f2.png" alt="K = \sum_{k=0}^{\infty} \frac{(-1)^k}{(2k+1)^2}." />
+</div></p><p>Mpmath can evaluate it to arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">catalan</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+</pre></div>
+</div>
+<p>One can also compute <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> directly from the definition, although
+this is significantly less efficient:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+</pre></div>
+</div>
+<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">catalan</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<span class="go">&#39;9537871503&#39;</span>
+</pre></div>
+</div>
+<p>Catalan&#8217;s constant has numerous integral representations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">atan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ellipk</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+</pre></div>
+</div>
+<p>As well as series representations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">+</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">8</span> <span class="o">+</span> <span class="mf">3</span><span class="o">*</span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span>
+<span class="gp">... </span> <span class="p">(</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span><span class="o">/</span><span class="mf">8</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">-</span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">16</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.91596559417721901505460351493238411077414937428167</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="apery-s-constant-apery">
@@ -189,7 +283,30 @@ accurate.</p>
 <dl class="attribute">
 <dt id="mpmath.functions.khinchin">
 <!--[mpmath.functions.khinchin]--><tt class="descclassname">functions.</tt><tt class="descname">khinchin</tt><a class="headerlink" href="#mpmath.functions.khinchin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Khinchin&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> = 2.68542... is a number that
+appears in the theory of continued fractions. Mpmath can evaluate
+it to arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">khinchin</span>
+<span class="go">2.6854520010653064453097148354817956938203822939945</span>
+</pre></div>
+</div>
+<p>An integral representation is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">log</span><span class="p">((</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">sincpi</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">I</span><span class="p">)</span>
+<span class="go">2.6854520010653064453097148354817956938203822939945</span>
+</pre></div>
+</div>
+<p>The computation of <tt class="docutils literal"><span class="pre">khinchin</span></tt> is based on an efficient
+implementation of the following series:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="o">*</span><span class="nb">sum</span><span class="p">((</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">mpf</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="go">2.6854520010653064453097148354817956938203822939945</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="glaisher-s-constant-glaisher">
@@ -199,10 +316,11 @@ accurate.</p>
 <!--[mpmath.functions.glaisher]--><tt class="descclassname">functions.</tt><tt class="descname">glaisher</tt><a class="headerlink" href="#mpmath.functions.glaisher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Glaisher&#8217;s constant <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, also known as the Glaisher-Kinkelin
 constant, is a number approximately equal to 1.282427129 that
-sometimes appears in formulas related to gamma and zeta functions.</p>
-<p>It is defined as <img class="math" src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))" />. Here <img class="math" src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)" />
-denotes the derivative of the Riemann zeta function (see
-<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>).</p>
+sometimes appears in formulas related to gamma and zeta functions.
+It is also related to the Barnes G-function (see <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>).</p>
+<p>The constant is defined  as <img class="math" src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))" /> where
+<img class="math" src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)" /> denotes the derivative of the Riemann zeta function
+(see <tt class="xref docutils literal"><span class="pre">zeta()</span></tt>).</p>
 <p>Mpmath can evaluate Glaisher&#8217;s constant to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
@@ -296,7 +414,7 @@ code for additional details.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Nov 27, 2008.
+      Last updated on Dec 01, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

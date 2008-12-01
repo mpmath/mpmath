@@ -1,0 +1,12 @@
+Optimization
+------------
+
+Root-finding (``findroot``)
+...........................
+
+.. autofunction:: mpmath.optimization.findroot
+
+Minimization and maximization (``findmin``, ``findmax``)
+........................................................
+
+(To be added.)

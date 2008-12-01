@@ -1,16 +1,42 @@
-Gamma functions and exponential integrals
------------------------------------------
+Factorials and gamma functions
+------------------------------
 
-Gamma and factorial (:func:`gamma`, :func:`factorial`/:func:`fac`)
-..................................................................
+.. contents::
 
-.. autofunction:: mpmath.functions.gamma
+Factorials (:func:`factorial`/:func:`fac`)
+..........................................
+
 .. autofunction:: mpmath.functions.factorial
 
-Incomplete gamma functions (:func:`gammainc`)
-.............................................
+Gamma function (:func:`gamma`, :func:`gammaprod`)
+.................................................
 
-.. autofunction:: mpmath.functions.gammainc
+.. autofunction:: mpmath.functions.gamma
+.. autofunction:: mpmath.functions.gammaprod
+
+Binomial coefficients, rising and falling factorials (:func:`binomial`, :func:`rf`, :func:`ff`)
+...............................................................................................
+
+.. autofunction:: mpmath.functions.binomial
+.. autofunction:: mpmath.functions.rf
+.. autofunction:: mpmath.functions.ff
+
+Beta function (:func:`beta`)
+............................
+
+.. autofunction:: mpmath.functions.beta
+
+Double factorials (:func:`fac2`)
+................................
+
+.. autofunction:: mpmath.functions.fac2(x)
+
+Super- and hyperfactorials (:func:`superfac`, :func:`hyperfac`, :func:`barnesg`)
+................................................................................
+
+.. autofunction:: mpmath.functions.superfac
+.. autofunction:: mpmath.functions.hyperfac
+.. autofunction:: mpmath.functions.barnesg
 
 Polygamma functions (:func:`psi`, :func:`digamma`, :func:`trigamma`, :func:`harmonic`)
 ......................................................................................
@@ -19,50 +45,3 @@ Polygamma functions (:func:`psi`, :func:`digamma`, :func:`trigamma`, :func:`harm
 .. autofunction:: mpmath.functions.digamma
 .. autofunction:: mpmath.functions.trigamma
 .. autofunction:: mpmath.functions.harmonic
-
-Gamma function products (:func:`gammaprod`, :func:`beta`, :func:`binomial`, :func:`rf`, :func:`ff`)
-...................................................................................................
-
-.. autofunction:: mpmath.functions.gammaprod
-.. autofunction:: mpmath.functions.binomial
-.. autofunction:: mpmath.functions.rf
-.. autofunction:: mpmath.functions.ff
-.. autofunction:: mpmath.functions.beta
-
-Exponential and logarithmic integrals (:func:`ei`, :func:`li`)
-..............................................................
-
-.. autofunction:: mpmath.functions.ei
-.. autofunction:: mpmath.functions.li
-
-Trigonometric integrals (:func:`ci`, :func:`si`)
-................................................
-
-.. autofunction:: mpmath.functions.ci
-.. autofunction:: mpmath.functions.si
-
-Hyperbolic integrals (:func:`chi`, :func:`shi`)
-................................................
-
-.. autofunction:: mpmath.functions.chi
-.. autofunction:: mpmath.functions.shi
-
-Error functions (:func:`erf`, :func:`erfc`, :func:`erfi`, :func:`erfinv`)
-.........................................................................
-
-.. autofunction:: mpmath.functions.erf
-.. autofunction:: mpmath.functions.erfc
-.. autofunction:: mpmath.functions.erfi
-.. autofunction:: mpmath.functions.erfinv
-
-The normal distribution (:func:`npdf`, :func:`ncdf`)
-....................................................
-
-.. autofunction:: mpmath.functions.npdf
-.. autofunction:: mpmath.functions.ncdf
-
-Fresnel integrals (:func:`fresnels`, :func:`fresnelc`)
-......................................................
-
-.. autofunction:: mpmath.functions.fresnels
-.. autofunction:: mpmath.functions.fresnelc

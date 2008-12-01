@@ -1,0 +1,47 @@
+Exponential and Gaussian integrals
+----------------------------------
+
+.. contents::
+
+Incomplete gamma functions (:func:`gammainc`)
+.............................................
+
+.. autofunction:: mpmath.functions.gammainc
+
+Exponential and logarithmic integrals (:func:`ei`, :func:`li`)
+..............................................................
+
+.. autofunction:: mpmath.functions.ei
+.. autofunction:: mpmath.functions.li
+
+Trigonometric integrals (:func:`ci`, :func:`si`)
+................................................
+
+.. autofunction:: mpmath.functions.ci
+.. autofunction:: mpmath.functions.si
+
+Hyperbolic integrals (:func:`chi`, :func:`shi`)
+................................................
+
+.. autofunction:: mpmath.functions.chi
+.. autofunction:: mpmath.functions.shi
+
+Error functions (:func:`erf`, :func:`erfc`, :func:`erfi`, :func:`erfinv`)
+.........................................................................
+
+.. autofunction:: mpmath.functions.erf
+.. autofunction:: mpmath.functions.erfc
+.. autofunction:: mpmath.functions.erfi
+.. autofunction:: mpmath.functions.erfinv
+
+The normal distribution (:func:`npdf`, :func:`ncdf`)
+....................................................
+
+.. autofunction:: mpmath.functions.npdf
+.. autofunction:: mpmath.functions.ncdf
+
+Fresnel integrals (:func:`fresnels`, :func:`fresnelc`)
+......................................................
+
+.. autofunction:: mpmath.functions.fresnels
+.. autofunction:: mpmath.functions.fresnelc
