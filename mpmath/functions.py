@@ -256,6 +256,7 @@ class _glaisher(constant):
     Glaisher's constant `A`, also known as the Glaisher-Kinkelin
     constant, is a number approximately equal to 1.282427129 that
     sometimes appears in formulas related to gamma and zeta functions.
+    It is also related to the Barnes G-function (see :func:`barnesg`).
 
     The constant is defined  as `A = \exp(1/12-\zeta'(-1))` where
     `\zeta'(s)` denotes the derivative of the Riemann zeta function
@@ -3914,6 +3915,332 @@ def lambertw(z, k=0, approx=None):
             w = wn
     print "Warning: Lambert W iteration failed to converge:", z
     return wn
+
+@funcwrapper
+def barnesg(z):
+    r"""
+    Evaluates the Barnes G-function, which generalizes the
+    superfactorial (:func:`superfac`) and by extension also the
+    hyperfactorial (:func:`hyperfac`) to the complex numbers
+    in an analogous way to how the gamma function generalizes
+    the ordinary factorial.
+
+    The Barnes G-function may be defined in terms of a Weierstrass
+    product:
+
+    .. math ::
+
+        G(z+1) = (2\pi)^{z/2} e^{-[z(z+1)+\gamma z^2]/2}
+        \prod_{n=1}^\infty
+        \left[\left(1+\frac{z}{n}\right)^ne^{-z+z^2/(2n)}\right]
+
+    For positive integers `n`, we have have relation to superfactorials
+    `G(n) = \mathrm{sf}(n-2) = 0! \cdot 1! \cdots (n-2)!`.
+
+    **Examples**
+
+    Some elementary values and limits of the Barnes G-function::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print barnesg(1), barnesg(2), barnesg(3)
+        1.0 1.0 1.0
+        >>> print barnesg(4)
+        2.0
+        >>> print barnesg(5)
+        12.0
+        >>> print barnesg(6)
+        288.0
+        >>> print barnesg(7)
+        34560.0
+        >>> print barnesg(8)
+        24883200.0
+        >>> print barnesg(inf)
+        +inf
+        >>> print barnesg(0), barnesg(-1), barnesg(-2)
+        0.0 0.0 0.0
+
+    Closed-form values are known for some rational arguments::
+
+        >>> print barnesg('1/2')
+        0.603244281209446
+        >>> print sqrt(exp(0.25+log(2)/12)/sqrt(pi)/glaisher**3)
+        0.603244281209446
+        >>> print barnesg('1/4')
+        0.29375596533861
+        >>> print nthroot(exp('3/8')/exp(catalan/pi)/
+        ...      gamma(0.25)**3/sqrt(glaisher)**9, 4)
+        0.29375596533861
+
+    The Barnes G-function satisfies the functional equation
+    `G(z+1) = \Gamma(z) G(z)`::
+
+        >>> z = pi
+        >>> print barnesg(z+1)
+        2.39292119327948
+        >>> print gamma(z)*barnesg(z)
+        2.39292119327948
+
+    The asymptotic growth rate of the Barnes G-function is related to
+    the Glaisher-Kinkelin constant::
+
+        >>> print limit(lambda n: barnesg(n+1)/(n**(n**2/2-mpf(1)/12)*
+        ...     (2*pi)**(n/2)*exp(-3*n**2/4)), inf)
+        0.847536694177301
+        >>> print exp('1/12')/glaisher
+        0.847536694177301
+
+    The Barnes G-function can be differentiated in closed form::
+
+        >>> z = 3
+        >>> print diff(barnesg, z)
+        0.264507203401607
+        >>> print barnesg(z)*((z-1)*psi(0,z)-z+(log(2*pi)+1)/2)
+        0.264507203401607
+
+    Evaluation is supported for arbitrary arguments and at arbitrary
+    precision::
+
+        >>> print barnesg(6.5)
+        2548.7457695685
+        >>> print barnesg(-pi)
+        0.00535976768353037
+        >>> print barnesg(3+4j)
+        (-0.000676375932234244 - 4.42236140124728e-5j)
+        >>> mp.dps = 50
+        >>> print barnesg(1/sqrt(2))
+        0.81305501090451340843586085064413533788206204124732
+        >>> q = barnesg(10j)
+        >>> print q.real
+        0.000000000021852360840356557241543036724799812371995850552234
+        >>> print q.imag
+        -0.00000000000070035335320062304849020654215545839053210041457588
+
+    **References**
+
+    1. Whittaker & Watson, *A Course of Modern Analysis*,
+       Cambridge University Press, 4th edition (1927), p.264
+    2. http://en.wikipedia.org/wiki/Barnes_G-function
+    3. http://mathworld.wolfram.com/BarnesG-Function.html
+
+    """
+    if isinf(z):
+        if z == inf:
+            return z
+        return nan
+    if isnan(z):
+        return z
+    if (not z.imag) and z.real <= 0 and isint(z.real):
+        return z*0
+    # Account for size (would not be needed if computing log(G))
+    if abs(z) > 5:
+        mp.dps += 2*log(abs(z),2)
+    # Estimate terms for asymptotic expansion
+    N = mp.dps // 2 + 5
+    G = 1
+    while re(z) < N:
+        G /= gamma(z)
+        z += 1
+    z -= 1
+    s = mpf(1)/12
+    s -= log(glaisher)
+    s += z*log(2*pi)/2
+    s += (z**2/2-mpf(1)/12)*log(z)
+    s -= 3*z**2/4
+    z2k = z2 = z**2
+    for k in xrange(1, N+1):
+        t = bernoulli(2*k+2) / (4*k*(k+1)*z2k)
+        if abs(t) < eps:
+            #print k, N      # check how many terms were needed
+            break
+        z2k *= z2
+        s += t
+    #if k == N:
+    #    print "warning: series for barnesg failed to converge"
+    return G*exp(s)
+
+def superfac(z):
+    r"""
+    Computes the superfactorial, defined as the product of
+    consecutive factorials
+
+    .. math ::
+
+        \mathrm{sf}(n) = \prod_{k=1}^n k!
+
+    For general complex `z`, `\mathrm{sf}(z)` is defined
+    in terms of the Barnes G-function (see :func:`barnesg`).
+
+    **Examples**
+
+    The first few superfactorials are (OEIS A000178)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(10):
+        ...     print n, superfac(n)
+        ...
+        0 1.0
+        1 1.0
+        2 2.0
+        3 12.0
+        4 288.0
+        5 34560.0
+        6 24883200.0
+        7 125411328000.0
+        8 5.05658474496e+15
+        9 1.83493347225108e+21
+
+    Superfactorials grow very rapidly::
+
+        >>> print superfac(1000)
+        3.24570818422368e+1177245
+        >>> print superfac(10**10)
+        2.61398543581249e+467427913956904067453
+
+    Evaluation is supported for arbitrary arguments::
+
+        >>> mp.dps = 25
+        >>> print superfac(pi)
+        17.20051550121297985285333
+        >>> print superfac(2+3j)
+        (-0.005915485633199789627466468 + 0.008156449464604044948738263j)
+        >>> print diff(superfac, 1)
+        0.2645072034016070205673056
+
+    **References**
+
+    1. http://www.research.att.com/~njas/sequences/A000178
+
+    """
+    return barnesg(z+2)
+
+@funcwrapper
+def hyperfac(z):
+    r"""
+    Computes the hyperfactorial, defined for integers as the product
+
+    .. math ::
+
+        H(n) = \prod_{k=1}^n k^k.
+
+
+    The hyperfactorial satisfies the recurrence formula `H(z) = z^z H(z-1)`.
+    It can be defined more generally in terms of the Barnes G-function (see
+    :func:`barnesg`) and the gamma function by the formula
+
+    .. math ::
+
+        H(z) = \frac{\Gamma(z+1)^z}{G(z)}.
+
+    The extension to complex numbers can also be done via
+    the integral representation
+
+    .. math ::
+
+        H(z) = (2\pi)^{-z/2} \exp \left[
+            {z+1 \choose 2} + \int_0^z \log(t!)\,dt
+            \right].
+
+    **Examples**
+
+    The rapidly-growing sequence of hyperfactorials begins
+    (OEIS A002109)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> for n in range(10):
+        ...     print n, hyperfac(n)
+        ...
+        0 1.0
+        1 1.0
+        2 4.0
+        3 108.0
+        4 27648.0
+        5 86400000.0
+        6 4031078400000.0
+        7 3.3197663987712e+18
+        8 5.56964379417266e+25
+        9 2.15779412229419e+34
+
+    Some even larger hyperfactorials are::
+
+        >>> print hyperfac(1000)
+        5.46458120882585e+1392926
+        >>> print hyperfac(10**10)
+        4.60408207642219e+489142638002418704309
+
+    The hyperfactorial can be evaluated for arbitrary arguments::
+
+        >>> print hyperfac(0.5)
+        0.880449235173423
+        >>> print diff(hyperfac, 1)
+        0.581061466795327
+        >>> print hyperfac(pi)
+        205.211134637462
+        >>> print hyperfac(-10+1j)
+        (3.66238556639137e+35 - 2.98305038640398e+35j)
+
+    The recurrence property of the hyperfactorial holds
+    generally::
+
+        >>> z = 3-4j
+        >>> print hyperfac(z)
+        (-36985.0589204655 - 52070.8243465421j)
+        >>> print z**z * hyperfac(z-1)
+        (-36985.0589204655 - 52070.8243465421j)
+
+    The hyperfactorial may also be computed using the integral
+    definition::
+
+        >>> z = 2.5
+        >>> print hyperfac(z)
+        15.9842119922237
+        >>> print (2*pi)**(-z/2)*exp(binomial(z+1,2) +
+        ...     quad(lambda t: log(fac(t)), [0, z]))
+        15.9842119922237
+
+    :func:`hyperfac` supports arbitrary-precision evaluation::
+
+        >>> mp.dps = 50
+        >>> print hyperfac(10)
+        215779412229418562091680268288000000000000000.0
+        >>> print hyperfac(1/sqrt(2))
+        0.89404818005227001975423476035729076375705084390942
+
+    **TODO**
+
+    :func:`hyperfac` currently gives needlessly complicated
+    branch cuts for the complex hyperfactorial. It should be possible
+    to obtain a simpler branch cut structure via a proper
+    implementation of the log-gamma function.
+
+    **References**
+
+    1. http://www.research.att.com/~njas/sequences/A002109
+    2. http://mathworld.wolfram.com/Hyperfactorial.html
+
+    """
+    # XXX: estimate needed extra bits accurately
+    if z == inf:
+        return z
+    if abs(z) > 5:
+        extra = 4*int(log(abs(z),2))
+    else:
+        extra = 0
+    mp.prec += extra
+    if not z.imag and z.real < 0 and isint(z.real):
+        n = int(re(z))
+        h = hyperfac(-n-1)
+        if ((n+1)//2) & 1:
+            h = -h
+        if isinstance(z, mpc):
+            return h + 0j
+        return h
+    zp1 = z+1
+    v = gamma(zp1)**z
+    mp.prec -= extra
+    return v / barnesg(zp1)
 
 if __name__ == '__main__':
     import doctest

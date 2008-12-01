@@ -35,7 +35,8 @@ from functions import (
     fresnels, fresnelc, airyai, airybi,
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
     jv, jn, j0, j1,
-    lambertw
+    lambertw,
+    barnesg, superfac, hyperfac
 )
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn
