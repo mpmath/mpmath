@@ -1,3 +1,105 @@
+--0.10-svn--
+(in development)
+
+General:
+
+* Most of the documentation is now generated from docstrings
+  using Sphinx' autodoc feature, and proper LaTeX is used
+  for mathematical formulas. A large amount of new documentation
+  has been written.
+
+Numerical calculus, etc:
+
+* Implemented a fast high-precision ODE solver (to replace the slow
+  and low-accuracy RK4 algorithm)
+* Created an intelligent function nsum() to replace sumrich/sumsh
+* Implemented nprod() for computing infinite products
+* Rewrote limit() to use the same adaptive extrapolation algorithm
+  as nsum()
+* Multidimensional nonlinear solving with Newton's method
+  implemented in findroot() (contributed by Vinzent Steinberg)
+* Simplified the implementation and interface of sumem()
+* Reimplemented Shanks transformation for nsum using Wynn's epsilon
+  algorithm (shanks())
+* Reimplemented Richardson extrapolation slightly more simply and
+  efficiently (richardson())
+* Prevent shanks() from exiting prematurely by adding
+  random noise to zeros
+* Removed the obsolete secant() function (see findroot())
+* Implemented high-order derivatives (diff(), diffs())
+* Implemented calculation of Taylor series (taylor())
+* Implemented calculation of Fourier series (fourier(), fourierval())
+* Implemented Pade approximation (pade()) (contributed by
+  Mario Pernici)
+* Better cancel condition for findroot() (contributed by
+  Vinzent Steinberg)
+* Some refactoring of numerical integration code
+* Fix erroneous nodes for 0-th order Gauss-Legendre quadrature,
+  which was causing unnecessary slowness
+* Quadrature nodes are cached for arbitrary intervals, giving a
+  30% speedup for repeated integrations
+* Unified interface and added more options for identify(), pslq(), findpoly()
+
+New special functions:
+
+* Implemented polylogarithms (polylog())
+* Implemented Bernoulli polynomials (bernpoly())
+* Implemented the Barnes G-function (barnesg())
+* Implemented double factorials (fac2())
+* Implemented superfactorials (superfac())
+* Implemented hyperfactorials (hyperfac())
+* Replaced lower_gamma and upper_gamma with a more versatile
+  function gammainc() for computing the generalized (and optionally
+  regularized) incomplete gamma function
+* Implemented sinc() and sincpi()
+* Implemented Fibonacci numbers (fib())
+* Implemented the Dirichlet eta function (altzeta())
+* Implemented the inverse error function (erfinv())
+* Jacobi theta functions and elliptic functions were essentially
+  rewritten from scratch, making them much faster and more
+  general. Renamed Jacobi theta functions: jacobi_theta -> jtheta,
+  etc. (contributed by Mario Pernici)
+* Implemented derivatives of jtheta (djtheta) (contributed by
+  Mario Pernici)
+
+Speed improvements and bugfixes to special functions:
+* Fast logarithm at very high precision using the formula by
+  Sasaki and Kanada (contributed by Mario Pernici)
+* Slightly faster logarithm at low precision (contributed by
+  Mario Pernici)
+* Fixed accuracy problems in sinpi() and cospi()
+* Correct evaluation of beta() at limits
+* Faster computation of stieltjes(n) for n = 1,2,3
+* Fixed bernoulli() being inaccurate for large n and low precision,
+  and being needlessly slow for small n and huge precision
+* Fixed accuracy of zeta(s) for large negative re(s)
+* Fixed accuracy problems for asinh, atanh and tanh
+* Fixed accuracy of airyai() for large x.real
+* Fixed bug in nthroot() for very large arguments (contributed by
+  Mario Pernici)
+
+Arithmetic and basic interface:
+* Made float(huge) -> inf and float(1/huge) -> 0 instead of
+  raising OverflowError
+* Support for gmpy-based mpf normalization (contributed by Case van Horsen)
+* Renamed convert_lossless -> mpmathify
+* mpmathify() accepts strings representing fractions or complex
+  numbers (contributed by Vinzent Steinberg)
+* Fixed a bug in interval multiplication giving wrong signs
+* Added monitor() to monitor function evaluation
+* Implemented a chop() utility function for deletion of numerical noise
+* Added re(), im(), conj(), fabs(), mpf.conjugate()
+
+Matrices:
+
+* Generation Hilbert matrices (hilbert) (contributed by
+  Vinzent Steinberg)
+* Added lu_solve_mat to solve a*x=b where a and b are matrices (contributed
+  by Mario Pernici)
+* Implemented computation of matrix exponentials (exp_pade()) (contributed
+  by Mario Pernici)
+* Prettier repr of complex matrices (contributed by Vinzent Steinberg)
+
 --0.10--
 Released October 15, 2008
 
