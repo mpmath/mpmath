@@ -711,11 +711,11 @@ def log_newton(x, prec):
     return r >> extra
 
 if MODE == 'gmpy':
-    LOG_TAYLOR_PREC = 700
+    LOG_TAYLOR_PREC = 2500
     LOG_NEWTON_PREC = 6500
     LOG_NEWTON_PREC2 = 13000
 else:
-    LOG_TAYLOR_PREC = 450
+    LOG_TAYLOR_PREC = 1500
     LOG_NEWTON_PREC = 21000
     LOG_NEWTON_PREC2 = 42000
 
@@ -748,13 +748,19 @@ def log_taylor(x, prec):
     # see http://en.wikipedia.org/wiki/Logarithm
     v = (u << prec) // ((MP_ONE << (prec+1)) + u)
     v2 = (v * v) >> prec
-    s = MP_ZERO
-    k = 1
+    v4 = (v2 * v2) >> prec
+    s0 = v
+    s1 = v//3
+    v = (v * v4) >> prec
+    k = 5
     while v:
-        s += v // k
-        v = (v * v2) >> prec
+        s0 += v // k
         k += 2
-    s <<= 1
+        s1 += v // k
+        v = (v * v4) >> prec
+        k += 2
+    s1 = (s1 * v2) >> prec
+    s = (s0 + s1) << 1
     return log_a + s
 
 # ndict_log and nbc_log give a table of values for n in log(x**n)/n
