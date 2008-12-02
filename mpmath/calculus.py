@@ -1324,6 +1324,8 @@ def pade(a, L, M):
         >>> f(x)
         mpf('1.3816985594155149')
     """
+    # To determine L+1 coefficients of P and M coefficients of Q
+    # L+M+1 coefficients of A must be provided
     assert(len(a) >= L+M+1)
 
     if M == 0:
@@ -1331,6 +1333,11 @@ def pade(a, L, M):
             return [mpf(1)], [mpf(1)]
         else:
             return a[:L+1], [mpf(1)]
+
+    # Solve first
+    # a[L]*q[1] + ... + a[L-M+1]*q[M] = -a[L+1]
+    # ...
+    # a[L+M-1]*q[1] + ... + a[L]*q[M] = -a[L+M]    
     A = matrix(M)
     for j in range(M):
         for i in range(min(M, L+j+1)):
@@ -1338,6 +1345,7 @@ def pade(a, L, M):
     v = -matrix(a[(L+1):(L+M+1)])
     x = lu_solve(A, v)
     q = [mpf(1)] + list(x)
+    # compute p
     p = [0]*(L+1)
     for i in range(L+1):
         s = a[i]

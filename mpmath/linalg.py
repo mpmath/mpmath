@@ -155,7 +155,7 @@ def L_solve(L, b, p=None):
     """
     Solve the lower part of a LU factorized matrix for y.
     """
-    L.rows == L.cols, 'need n*n matrix'
+    assert L.rows == L.cols, 'need n*n matrix'
     n = L.rows
     assert len(b) == n
     b = copy(b)
@@ -241,7 +241,7 @@ def lu(A):
     much more memory efficient.
     """
     # get factorization
-    A, p = LU_decomp(A.copy())
+    A, p = LU_decomp(A)
     n = A.rows
     L = matrix(n)
     U = matrix(n)
