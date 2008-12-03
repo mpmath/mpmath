@@ -816,7 +816,10 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         norm = abs
     # happily return starting point if it's a root
     if norm(fx) == 0:
-        return matrix(x0) if multidimensional else x0[0]
+        if multidimensional:
+            return matrix(x0)
+        else:
+            return x0[0]
     # use solver
     iterations = solver(f, x0, **kwargs)
     if 'maxsteps' in kwargs:
