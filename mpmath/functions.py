@@ -1774,12 +1774,19 @@ def gammaprod(a, b):
         \frac{\Gamma(a_0) \Gamma(a_1) \cdots \Gamma(a_p)}
              {\Gamma(b_0) \Gamma(b_1) \cdots \Gamma(b_q)}
 
-    **Handling of poles**
-
     Unlike direct calls to :func:`gamma`, :func:`gammaprod` considers
     the entire product as a limit and evaluates this limit properly if
     any of the numerator or denominator arguments are nonpositive
     integers such that poles of the gamma function are encountered.
+    That is, :func:`gammaprod` evaluates
+
+    .. math ::
+
+        \lim_{\epsilon \to 0}
+        \frac{\Gamma(a_0+\epsilon) \Gamma(a_1+\epsilon) \cdots
+            \Gamma(a_p+\epsilon)}
+             {\Gamma(b_0+\epsilon) \Gamma(b_1+\epsilon) \cdots
+            \Gamma(b_q+\epsilon)}
 
     In particular:
 

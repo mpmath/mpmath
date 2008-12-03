@@ -546,8 +546,8 @@ def quad(f, *points, **kwargs):
     **Examples of 1D integrals**
 
     Intervals may be infinite or half-infinite. The following two
-    examples evaluate the limits of the tangent function
-    (`\int 1/(1+x) = \tan x`), and the Gaussian integral
+    examples evaluate the limits of the inverse tangent function
+    (`\int 1/(1+x^2) = \tan^{-1} x`), and the Gaussian integral
     `\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}`::
 
         >>> mp.dps = 15
