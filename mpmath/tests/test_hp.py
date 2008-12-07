@@ -201,11 +201,13 @@ def test_hp():
     assert str(log(3))[-20:] == '02166121184001409826'
     mp.dps = 15
  
+# values checked with Mathematica
 def test_log_hp():
     mp.dps = 2000
     a = mpf(10)**15000/3
     r = log(a)
-    assert int(r * 2**2000) % 10**20 == 41211418408045693016    
+    # Mathematica Mod[IntegerPart[N[Log[10^15000/3] * 2^2000, 2000]], 10^20]
+    assert int(r * 2**2000) % 10**20 == 41211418408045693016 
     mp.dps = 10000
     r = log(2)
     assert int(r * 2**10000) % 10**20 == 58399470094557813486
@@ -218,3 +220,10 @@ def test_log_hp():
     r = log(1 + mpf(1)/10**100)
     assert int(r * 2**10000) % 10**20 == 68102964891545314045
     mp.dps = 15
+
+def test_exp_hp():
+    mp.dps = 4000
+    r = exp(mpf(1)/10)
+    # Mathematica Mod[IntegerPart[N[Exp[1/10] * 2^4000, 4000]], 10^20]
+    assert int(r * 2**mp.dps) % 10**20 == 11143561395283434883
+

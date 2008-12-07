@@ -10,6 +10,7 @@ see libmpc and libmpi.
 """
 
 import math
+from bisect import bisect
 
 from settings import (\
     MP_BASE, MP_ZERO, MP_ONE, MP_FIVE, MODE,
