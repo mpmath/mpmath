@@ -20,7 +20,7 @@ from settings import (\
 from libmpf import (\
     ComplexResult,
     bitcount, bctable, lshift, rshift, giant_steps, giant_steps2,
-    sqrt_fixed, sqrt_fixed2,
+    giant_stepsn, sqrt_fixed, sqrt_fixed2,
     from_int, to_int, from_man_exp, to_fixed,
     normalize,
     fzero, fone, fnone, fhalf, finf, fninf, fnan,
@@ -488,6 +488,10 @@ def mpf_cbrt(s, prec, rnd=round_fast):
 # exp(x) as exp(t)*(2**n), using the Maclaurin series for exp(t)
 # (the multiplication by 2**n just amounts to shifting the exponent).
 
+# For very high precision use the newton method to compute exp from
+# log_agm; for |x| very large or very small use
+# exp(x + m) = exp(x) * e**m,  m = int(n * math.log(2))
+
 # Input: x * 2**prec
 # Output: exp(x) * 2**(prec + r)
 def exp_series(x, prec, r):
@@ -515,12 +519,44 @@ def exp_series2(x, prec, r):
         sign = 1
         x = -x
     x2 = (x*x) >> prec
-    s1 = a = x
-    k = 3
-    while a:
-        a = ((a * x2) >> prec) // (k*(k-1))
-        s1 += a
-        k += 2
+    if prec < 1500:
+        s1 = a = x
+        k = 3
+        while a:
+            a = ((a * x2) >> prec) // (k*(k-1))
+            s1 += a
+            k += 2
+    else:
+        # use Smith's method:
+        # reduce the number of multiplication summing concurrently J series
+        # J=4
+        # Sinh(x) =
+        #   (x + x^9/9! + ...) + x^2 * (x/3! + x^9/11! + ...) +
+        #   x^4 * (x/5! + x^9/13! + ...) + x^6 * (x/7! + x^9/15! + ...)
+        J = 4
+        ax = [1 << prec, x2]
+        px = x2
+        asum = [x, x//6]
+        fact = 6
+        k = 4
+        for j in range(2, J):
+            px = (px * x2) >> prec
+            ax.append(px)
+            fact *= k*(k+1)
+            asum.append(x//fact)
+            k += 2
+        lx = (ax[-1]*x2) >> prec
+        p = asum[-1]
+        while p:
+            p = (p * lx) >> prec
+            for j in range(J):
+                p = p/(k*(k+1))
+                asum[j] += p
+                k += 2
+        s1 = 0
+        for i in range(1, J):
+            s1 += ax[i]*asum[i]
+        s1 = asum[0] + (s1 >> prec)
     c1 = sqrt_fixed(((s1*s1) >> prec) + (1<<prec), prec)
     if sign:
         s = c1 - s1
@@ -531,6 +567,40 @@ def exp_series2(x, prec, r):
         s = (s*s) >> prec
         r -= 1
     return s
+
+# use the fourth order newton method, with step
+# r = r + r * (h + h^2/2 + h^3/6 + h$/24)
+# at each step the precision is quadrupled.
+
+def exp_newton(x, prec):
+    extra = 10
+    r = mpf_exp(x, 60)
+    start = 50
+    prevp = start
+    for p in giant_stepsn(start, prec+extra, 4):
+        h = mpf_sub(x, mpf_log(r, p), p)
+        h2 = mpf_mul(h, h, p)
+        h3 = mpf_mul(h2, h, p)
+        h4 = mpf_mul(h2, h2, p)
+        t = mpf_add(h, mpf_shift(h2, -1), p)
+        t = mpf_add(t, mpf_div(h3, from_int(6, p), p), p)
+        t = mpf_add(t, mpf_div(h4, from_int(24, p), p), p)
+        t = mpf_mul(r, t, p)
+        r = mpf_add(r, t, p)
+    return r
+
+# for precision larger than this limit, for x > 1, use the newton method
+LIM_EXP_SERIES2 = 10000
+# when the newton method is used, if x has mag=exp+bc larger than LIM_MAG
+# shift it
+LIM_MAG = 5
+
+# table of values to determine if exp_series2 or exp_newton is faster,
+# determined with benchmarking on a PC, with gmpy
+ns_exp = [8,9,10,11,12,13,33,66,83,99,132,166,199,232,265,298,332,664]
+precs_exp = [43000, 63000, 64000, 64000, 65000, 66000, 72000, 82000, 99000,
+   115000, 148000, 190000, 218000, 307000, 363000, 528000, 594000, 1650000]
+
 
 def mpf_exp(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
@@ -564,17 +634,52 @@ def mpf_exp(x, prec, rnd=round_fast):
             n = 0
         man = exp_series(t, wp, r)
     else:
-        r = int(0.7 * wp**0.5)
-        if mag < 0:
-            r = max(1, r + mag)
-        wp += r + 20
-        t = to_fixed(x, wp)
-        if mag > 1:
-            lg2 = ln2_fixed(wp)
-            n, t = divmod(t, lg2)
+        use_newton = False
+        if wp > LIM_EXP_SERIES2:
+            if mag > 0:
+                use_newton = True
+            elif mag <= 0 and -mag <= ns_exp[-1]:
+                i = bisect(ns_exp, -mag-1)
+                if i < len(ns_exp):
+                    wp0 = precs_exp[i]
+                    if wp > wp0:
+                        use_newton = True
+
+        if not use_newton:
+            r = int(0.7 * wp**0.5)
+            if mag < 0:
+                r = max(1, r + mag)
+            wp += r + 20
+            t = to_fixed(x, wp)
+            if mag > 1:
+                lg2 = ln2_fixed(wp)
+                n, t = divmod(t, lg2)
+            else:
+                n = 0
+            man = exp_series2(t, wp, r)
         else:
-            n = 0
-        man = exp_series2(t, wp, r)
+            # if x is very small or very large use
+            # exp(x + m) = exp(x) * e**m
+            if mag > LIM_MAG:
+                wp += mag*10 + 100
+                n = int(mag * math.log(2)) + 1
+                x = mpf_sub(x, from_int(n, wp), wp)
+            elif mag <= 0:
+                wp += -mag*10 + 100
+                if mag < 0:
+                    n = int(-mag * math.log(2)) + 1
+                    x = mpf_add(x, from_int(n, wp), wp)
+            res = exp_newton(x, wp)
+            sign, man, exp, bc = res
+            if mag < 0:
+                t = mpf_pow_int(mpf_e(wp), n, wp)
+                res = mpf_div(res, t, wp)
+                sign, man, exp, bc = res
+            if mag > LIM_MAG:
+                t = mpf_pow_int(mpf_e(wp), n, wp)
+                res = mpf_mul(res, t, wp)
+                sign, man, exp, bc = res
+            return normalize(sign, man, exp, bc, prec, rnd)
     bc = wp - 2 + bctable[int(man >> (wp - 2))]
     return normalize(0, man, int(-wp+n), bc, prec, rnd)
 
@@ -722,6 +827,8 @@ else:
 LOG_TAYLOR_WP = LOG_TAYLOR_PREC + 20
 LOG_TAYLOR_SHIFT = 9   # steps of size 2^-N
 
+LOG_NEWTON_MAG = 35000
+
 log_taylor_cache = {}
 
 def log_taylor_get_cached(n, prec):
@@ -808,7 +915,7 @@ def log_agm(x, prec, fneg):
     else:
         n = 1 << 13
     if ebc > 7:
-        if ebc > 35000:
+        if ebc > LOG_NEWTON_MAG:
             return log_newton(x, prec)
         elif ebc > 180:
             n = 6
@@ -919,7 +1026,7 @@ def mpf_log(x, prec, rnd=round_fast):
                 t = rshift(man, bc-wp-1)
 
     # Rescale
-    elif wp < LOG_NEWTON_PREC:
+    elif wp < LOG_NEWTON_PREC or mag > LOG_NEWTON_MAG:
         # Estimated precision needed for n*log(2) to
         # be accurate relatively
         wp += int(math.log(1+abs(mag),2))
@@ -930,7 +1037,7 @@ def mpf_log(x, prec, rnd=round_fast):
     # Use the faster method
     if wp < LOG_TAYLOR_PREC:
         a = log_taylor(t, wp)
-    elif wp < LOG_NEWTON_PREC:
+    elif wp < LOG_NEWTON_PREC or mag > LOG_NEWTON_MAG:
         a = log_newton(t, wp)
     # case with wp >= LOG_NEWTON_PREC
     else:

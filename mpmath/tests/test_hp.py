@@ -202,6 +202,10 @@ def test_hp():
     mp.dps = 15
  
 def test_log_hp():
+    mp.dps = 2000
+    a = mpf(10)**15000/3
+    r = log(a)
+    assert int(r * 2**2000) % 10**20 == 41211418408045693016    
     mp.dps = 10000
     r = log(2)
     assert int(r * 2**10000) % 10**20 == 58399470094557813486

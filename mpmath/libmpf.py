@@ -74,6 +74,14 @@ def giant_steps2(start, target):
         L = L + [L[-1]//3 + 1]
     return L[::-1]
 
+def giant_stepsn(start, target, n):
+    """Return a list of integers ~= [start, n*start, ..., target/n,
+    target] describing suitable precision steps for Halley's method."""
+    L = [target]
+    while L[-1] > start*n:
+        L = L + [L[-1]//n + 1]
+    return L[::-1]
+
 def rshift(x, n):
     """For an integer x, calculate x >> n with the fastest (floor)
     rounding. Unlike the plain Python expression (x >> n), n is
