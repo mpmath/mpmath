@@ -103,6 +103,17 @@ def test_exp_integrals():
     assert chi(0) == -inf
     assert chi(inf) == inf
 
+def test_trig_integrals():
+    mp.dps = 30
+    assert si(mpf(1)/1000000).ae('0.000000999999999999944444444444446111')
+    assert ci(mpf(1)/1000000).ae('-13.2382948930629912435014366276')
+    assert si(10**10).ae('1.5707963267075846569685111517747537')
+    assert ci(10**10).ae('-4.87506025174822653785729773959e-11')
+    assert si(10**100).ae(pi/2)
+    assert (ci(10**100)*10**100).ae('-0.372376123661276688262086695553')
+    assert si(-3) == -si(3)
+    assert ci(-3).ae(ci(3) + pi*j)
+
 def test_airy():
     mp.dps = 15
     assert (airyai(10)*10**10).ae(1.1047532552898687)

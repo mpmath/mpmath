@@ -2977,30 +2977,154 @@ def li(z):
         return -inf
     return ei(log(z))
 
-@funcwrapper
-def ci(z):
-    """Cosine integral, Ci(z)"""
-    if z == inf:
-        return 1/z
-    if not z:
-        return -inf
-    z2 = -(z/2)**2
-    return euler + log(z) + \
-        z2*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
+ci = mpfunc('ci', libhyper.mpf_ci, libhyper.mpc_ci, '')
+si = mpfunc('si', libhyper.mpf_si, libhyper.mpc_si, '')
 
-@funcwrapper
-def si(z):
-    """Sine integral, Si(z)"""
-    if z == inf:
-        return pi/2
-    if z == -inf:
-        return -pi/2
-    z2 = -(z/2)**2
-    return z*hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
+ci.__doc__ = r"""
+Computes the cosine integral,
+
+.. math ::
+
+    \mathrm{Ci}(x) = -\int_x^{\infty} \frac{\cos t}{t}\,dt
+    = \gamma + \log x + \int_0^x \frac{\cos t - 1}{t}\,dt
+
+**Examples**
+
+Some values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print ci(0)
+    -inf
+    >>> print ci(1)
+    0.3374039229009681346626462
+    >>> print ci(pi)
+    0.07366791204642548599010096
+    >>> print ci(inf)
+    0.0
+    >>> print ci(-inf)
+    (0.0 + 3.141592653589793238462643j)
+    >>> print ci(2+3j)
+    (1.408292501520849518759125 - 2.983617742029605093121118j)
+
+The cosine integral behaves roughly like the sinc function
+(see :func:`sinc`) for large real `x`::
+
+    >>> print ci(10**10)
+    -4.875060251748226537857298e-11
+    >>> print sinc(10**10)
+    -4.875060250875106915277943e-11
+    >>> print chop(limit(ci, inf))
+    0.0
+
+It has infinitely many roots on the positive real axis::
+
+    
+    >>> print findroot(ci, 1)
+    0.6165054856207162337971104
+    >>> print findroot(ci, 2)
+    3.384180422551186426397851
+
+We can evaluate the defining integral as a reference::
+
+    >>> mp.dps = 15
+    >>> print -quadosc(lambda t: cos(t)/t, [5, inf], omega=1)
+    -0.190029749656644
+    >>> print ci(5)
+    -0.190029749656644
+
+Some infinite series can be evaluated using the
+cosine integral::
+
+    >>> print nsum(lambda k: (-1)**k/(fac(2*k)*(2*k)), [1,inf])
+    -0.239811742000565
+    >>> print ci(1) - euler
+    -0.239811742000565
+
+"""
+
+si.__doc__ = r"""
+Computes the sine integral,
+
+.. math ::
+
+    \mathrm{Si}(x) = \int_0^x \frac{\sin t}{t}\,dt.
+
+The sine integral is thus the antiderivative of the sinc
+function (see :func:`sinc`).
+
+**Examples**
+Some values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print si(0)
+    0.0
+    >>> print si(1)
+    0.9460830703671830149413533
+    >>> print si(-1)
+    -0.9460830703671830149413533
+    >>> print si(pi)
+    1.851937051982466170361053
+    >>> print si(inf)
+    1.570796326794896619231322
+    >>> print si(-inf)
+    -1.570796326794896619231322
+    >>> print si(2+3j)
+    (4.547513889562289219853204 + 1.399196580646054789459839j)
+
+The sine integral approaches `\pi/2` for large real `x`::
+
+    >>> print si(10**10)
+    1.570796326707584656968511
+    >>> print pi/2
+    1.570796326794896619231322
+
+We can evaluate the defining integral as a reference::
+
+    >>> mp.dps = 15
+    >>> print quad(sinc, [0, 5])
+    1.54993124494467
+    >>> print si(5)
+    1.54993124494467
+
+Some infinite series can be evaluated using the
+sine integral::
+
+    >>> print nsum(lambda k: (-1)**k/(fac(2*k+1)*(2*k+1)), [0,inf])
+    0.946083070367183
+    >>> print si(1)
+    0.946083070367183
+
+"""
 
 @funcwrapper
 def chi(z):
-    """Hyperbolic cosine integral, Chi(z)"""
+    r"""
+    Computes the hyperbolic cosine integral, defined
+    in analogy with the cosine integral (see :func:`ci`) as
+
+    .. math ::
+
+        \mathrm{Chi}(x) = -\int_x^{\infty} \frac{\cosh t}{t}\,dt
+        = \gamma + \log x + \int_0^x \frac{\cosh t - 1}{t}\,dt
+
+    Some values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print chi(0)
+        -inf
+        >>> print chi(1)
+        0.8378669409802082408946786
+        >>> print chi(inf)
+        +inf
+        >>> print findroot(chi, 0.5)
+        0.5238225713898644064509583
+        >>> print chi(2+3j)
+        (-0.1683628683277204662429321 + 2.625115880451325002151688j)
+
+    """
     if not z:
         return -inf
     z2 = (z/2)**2
@@ -3009,13 +3133,70 @@ def chi(z):
 
 @funcwrapper
 def shi(z):
-    """Hyperbolic sine integral, Shi(z)"""
+    r"""
+    Computes the hyperbolic sine integral, defined
+    in analogy with the sine integral (see :func:`si`) as
+
+    .. math ::
+
+        \mathrm{Shi}(x) = \int_0^x \frac{\sinh t}{t}\,dt.
+
+    Some values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print shi(0)
+        0.0
+        >>> print shi(1)
+        1.057250875375728514571842
+        >>> print shi(-1)
+        -1.057250875375728514571842
+        >>> print shi(inf)
+        +inf
+        >>> print shi(2+3j)
+        (-0.1931890762719198291678095 + 2.645432555362369624818525j)
+
+    """
     z2 = (z/2)**2
     return z*hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
 
 @funcwrapper
 def fresnels(z):
-    """Fresnel integral S, S(z)"""
+    r"""
+    Computes the Fresnel sine integral
+
+    .. math ::
+
+        S(x) = \int_0^x \sin\left(\frac{\pi t^2}{2}\right) \,dt
+
+    Note that some sources define this function
+    without the normalization factor `\pi/2`.
+
+    **Examples**
+
+    Some basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print fresnels(0)
+        0.0
+        >>> print fresnels(inf)
+        0.5
+        >>> print fresnels(-inf)
+        -0.5
+        >>> print fresnels(1)
+        0.4382591473903547660767567
+        >>> print fresnels(1+2j)
+        (36.72546488399143842838788 + 15.58775110440458732748279j)
+
+    Comparing with the definition::
+
+        >>> print fresnels(3)
+        0.4963129989673750360976123
+        >>> print quad(lambda t: sin(pi*t**2/2), [0,3])
+        0.4963129989673750360976123
+
+    """
     if z == inf:
         return mpf(0.5)
     if z == -inf:
@@ -3024,7 +3205,41 @@ def fresnels(z):
 
 @funcwrapper
 def fresnelc(z):
-    """Fresnel integral C, C(z)"""
+    r"""
+    Computes the Fresnel cosine integral
+
+    .. math ::
+
+        C(x) = \int_0^x \cos\left(\frac{\pi t^2}{2}\right) \,dt
+
+    Note that some sources define this function
+    without the normalization factor `\pi/2`.
+
+    **Examples**
+
+    Some basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print fresnelc(0)
+        0.0
+        >>> print fresnelc(inf)
+        0.5
+        >>> print fresnelc(-inf)
+        -0.5
+        >>> print fresnelc(1)
+        0.7798934003768228294742064
+        >>> print fresnelc(1+2j)
+        (16.08787137412548041729489 - 36.22568799288165021578758j)
+
+    Comparing with the definition::
+
+        >>> print fresnelc(3)
+        0.6057207892976856295561611
+        >>> print quad(lambda t: cos(pi*t**2/2), [0,3])
+        0.6057207892976856295561611
+
+    """
     if z == inf:
         return mpf(0.5)
     if z == -inf:
