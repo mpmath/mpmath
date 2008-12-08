@@ -1099,6 +1099,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
 
     **Direction**
 
+
     By default, :func:`diff` uses a central difference approximation.
     This corresponds to direction=0. Alternatively, it can compute a
     left difference (direction=-1) or right difference (direction=1).
@@ -1359,11 +1360,26 @@ def pade(a, L, M):
 #----------------------------------------------------------------------------#
 
 def polyval(coeffs, x, derivative=False):
-    """
-    Given coefficients [cn, ..., c2, c1, c0], evaluate
-    P(x) = cn*x**n + ... + c2*x**2 + c1*x + c0.
+    r"""
+    Given coefficients `[c_n, \ldots, c_2, c_1, c_0]` and a number `x`,
+    :func:`polyval` evaluates the polynomial
 
-    If derivative=True is set, a tuple (P(x), P'(x)) is returned.
+    .. math ::
+
+        P(x) = c_n x^n + \ldots + c_2 x^2 + c_1 x + c_0.
+
+    If *derivative=True* is set, :func:`polyval` simultaneously
+    evaluates `P(x)` with the derivative, `P'(x)`, and returns the
+    tuple `(P(x), P'(x))`.
+
+        >>> from mpmath import *
+        >>> polyval([3, 0, 2], 0.5)
+        mpf('2.75')
+        >>> polyval([3, 0, 2], 0.5, derivative=True)
+        (mpf('2.75'), mpf('3.0'))
+
+    The coefficients and the evaluation point may be any combination
+    of real or complex numbers.
     """
     if not coeffs:
         return mpf(0)
@@ -1386,19 +1402,19 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     given as a list of coefficients, in the format used by :func:`polyval`.
     The leading coefficient must be nonzero.
 
-    With ``error=True``, :func:`polyroots` returns a tuple (roots, err) where
-    err is an estimate of the maximum error among the computed roots.
+    With *error=True*, :func:`polyroots` returns a tuple *(roots, err)* where
+    *err* is an estimate of the maximum error among the computed roots.
 
     **Examples**
 
-    Finding the three real roots of x^3 - x^2 - 14*x + 24::
+    Finding the three real roots of `x^3 - x^2 - 14x + 24`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
         >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]
 
-    Finding the two complex conjugate roots of 4x^2 + 3x + 2, with an
+    Finding the two complex conjugate roots of `4x^2 + 3x + 2`, with an
     error estimate::
 
         >>> roots, err = polyroots([4,3,2], error=True)
@@ -1417,7 +1433,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         (2.22044604925031e-16 + 0.0j)
 
     The following example computes all the 5th roots of unity; that is,
-    the roots of x^5 - 1::
+    the roots of `x^5 - 1`::
 
         >>> mp.dps = 20
         >>> for r in polyroots([1, 0, 0, 0, 0, -1]):
@@ -1431,7 +1447,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
 
     **Precision and conditioning**
 
-    Provided there are no repeated roots, ``polyroots`` can typically
+    Provided there are no repeated roots, :func:`polyroots` can typically
     compute all roots of an arbitrary polynomial to high precision::
 
         >>> mp.dps = 60
@@ -1447,8 +1463,6 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         3.14626436994197234232913506571557044551247712918732870123249
         >>> print sqrt(3) - sqrt(2)
         0.317837245195782244725757617296174288373133378433432554879127
-
-    
 
     **Algorithm**
 
@@ -1468,7 +1482,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
 
     **References**
 
-        [1] http://en.wikipedia.org/wiki/Durand-Kerner_method
+    1. http://en.wikipedia.org/wiki/Durand-Kerner_method
 
     """
     if len(coeffs) <= 1:
