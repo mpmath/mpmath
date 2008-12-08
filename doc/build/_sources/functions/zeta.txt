@@ -13,11 +13,17 @@ Dirichlet eta function (:func:`altzeta`)
 
 .. autofunction:: mpmath.functions.altzeta
 
-Bernoulli numbers (:func:`bernoulli`, :func:`bernfrac`)
-.......................................................
+Bernoulli numbers and polynomials (:func:`bernoulli`, :func:`bernfrac`, :func:`bernpoly`)
+.........................................................................................
 
 .. autofunction:: mpmath.functions.bernoulli
 .. autofunction:: mpmath.functions.bernfrac
+.. autofunction:: mpmath.functions.bernpoly(n,z)
+
+Polylogarithms (:func:`polylog`)
+................................
+
+.. autofunction:: mpmath.functions.polylog(s,z)
 
 Stieltjes constants (:func:`stieltjes`)
 .......................................

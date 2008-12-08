@@ -126,8 +126,8 @@ integrations are required (e.g. for multiple integrals).</p>
 <tt class="xref docutils literal"><span class="pre">GaussLegendre</span></tt> for additional details.</p>
 <p><strong>Examples of 1D integrals</strong></p>
 <p>Intervals may be infinite or half-infinite. The following two
-examples evaluate the limits of the tangent function
-(<img class="math" src="../_images/math/5b35e16a4d0e8f96097373b914f2b5d3ec236252.png" alt="\int 1/(1+x) = \tan x" />), and the Gaussian integral
+examples evaluate the limits of the inverse tangent function
+(<img class="math" src="../_images/math/61c9dca77f580d0d6ff196dbf084dbd46eb55c4a.png" alt="\int 1/(1+x^2) = \tan^{-1} x" />), and the Gaussian integral
 <img class="math" src="../_images/math/15a441c328cdcb543e4f1195ce6424f269cc9607.png" alt="\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
@@ -746,7 +746,7 @@ quadrature of degree of given degree (actually <img class="math" src="../_images
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 01, 2008.
+      Last updated on Dec 08, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

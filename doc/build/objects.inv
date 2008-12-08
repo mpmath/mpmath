@@ -9,7 +9,6 @@ mpmath.functions.factorial function functions/gamma.html
 mpmath.functions.gammainc function functions/expintegrals.html
 mpmath.quadrature.Quadrature.get_nodes method calculus/integration.html
 mpmath.functions.asinh function functions/hyperbolic.html
-mpmath.functions.sec function functions/trigonometric.html
 mpmath.functions.nthroot function functions/powers.html
 mpmath.identification.findpoly function identification.html
 mpmath.functions.sech function functions/hyperbolic.html
@@ -49,7 +48,7 @@ mpmath.functions.ln function functions/powers.html
 mpmath.functions.jacobi function functions/hypergeometric.html
 mpmath.functions.sqrt function functions/powers.html
 mpmath.quadrature.Quadrature.guess_degree method calculus/integration.html
-mpmath.functions.j1 function functions/hypergeometric.html
+mpmath.functions.sec function functions/trigonometric.html
 mpmath.quadrature.TanhSinh.calc_nodes method calculus/integration.html
 mpmath.functions.frexp function functions/numberparts.html
 mpmath.quadrature.Quadrature.summation method calculus/integration.html
@@ -67,10 +66,15 @@ mpmath.functions.euler attribute functions/constants.html
 mpmath.functions.power function functions/powers.html
 mpmath.quadrature.Quadrature.transform_nodes method calculus/integration.html
 mpmath.functions.bernfrac function functions/zeta.html
+mpmath.functions.besseli function functions/hypergeometric.html
+mpmath.functions.besselj function functions/hypergeometric.html
+mpmath.functions.besselk function functions/hypergeometric.html
 mpmath.functions.fabs function functions/numberparts.html
 mpmath.functions.ncdf function functions/expintegrals.html
 mpmath.functions.agm function functions/powers.html
 mpmath.functions.csch function functions/hyperbolic.html
+mpmath.functions.bessely function functions/hypergeometric.html
+mpmath.functions.hankel1 function functions/hypergeometric.html
 mpmath.functions.si function functions/expintegrals.html
 mpmath.functions.chebyt function functions/hypergeometric.html
 mpmath.functions.chebyu function functions/hypergeometric.html
@@ -84,11 +88,10 @@ mpmath.functions.catalan attribute functions/constants.html
 mpmath.functions.trigamma function functions/gamma.html
 mpmath.functions.hypot function functions/numberparts.html
 mpmath.functions.apery attribute functions/constants.html
-mpmath.functions.jv function functions/hypergeometric.html
+mpmath.identification.identify function identification.html
 mpmath.functions.ellipe function functions/elliptic.html
 mpmath.calculus.chebyfit function calculus/approximation.html
 mpmath.functions.ellipk function functions/elliptic.html
-mpmath.identification.identify function identification.html
 mpmath.calculus.taylor function calculus/approximation.html
 mpmath.functions.asin function functions/trigonometric.html
 mpmath.optimization.findroot function calculus/optimization.html
@@ -107,7 +110,6 @@ mpmath.functions.fibonacci function functions/powers.html
 mpmath.functions.atanh function functions/hyperbolic.html
 mpmath.functions.bernoulli function functions/zeta.html
 mpmath.calculus.fourierval function calculus/approximation.html
-mpmath.functions.j0 function functions/hypergeometric.html
 mpmath.calculus.shanks function calculus/sums_limits.html
 mpmath.functions.acot function functions/trigonometric.html
 mpmath.functions.phi attribute functions/constants.html
@@ -119,6 +121,7 @@ mpmath.functions.radians function functions/trigonometric.html
 mpmath.functions.acosh function functions/hyperbolic.html
 mpmath.functions.sinpi function functions/trigonometric.html
 mpmath.functions.cbrt function functions/powers.html
+mpmath.functions.legendre function functions/hypergeometric.html
 mpmath.functions.zeta function functions/zeta.html
 mpmath.functions.degree attribute functions/constants.html
 mpmath.elliptic.jdn function functions/elliptic.html
@@ -129,7 +132,9 @@ mpmath.calculus.nsum function calculus/sums_limits.html
 mpmath.functions.tanh function functions/hyperbolic.html
 mpmath.functions.gammaprod function functions/gamma.html
 mpmath.quadrature.Quadrature.clear method calculus/integration.html
+mpmath.functions.bernpoly function functions/zeta.html
 mpmath.calculus.polyval function calculus/polynomials.html
+mpmath.functions.polylog function functions/zeta.html
 mpmath.quadrature.quadosc function calculus/integration.html
 mpmath.functions.erfinv function functions/expintegrals.html
 mpmath.functions.pi attribute functions/constants.html
@@ -147,7 +152,7 @@ mpmath.functions.hyperfac function functions/gamma.html
 mpmath.quadrature.GaussLegendre.calc_nodes method calculus/integration.html
 mpmath.functions.floor function functions/numberparts.html
 mpmath.functions.acos function functions/trigonometric.html
-mpmath.functions.legendre function functions/hypergeometric.html
+mpmath.functions.hankel2 function functions/hypergeometric.html
 mpmath.functions.arg function functions/numberparts.html
 mpmath.functions.sinh function functions/hyperbolic.html
 mpmath.quadrature.Quadrature class calculus/integration.html

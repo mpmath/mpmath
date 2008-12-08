@@ -54,8 +54,9 @@
 <li><a class="reference internal" href="#zeta-functions" id="id1">Zeta functions</a><ul>
 <li><a class="reference internal" href="#riemann-zeta-function-zeta" id="id2">Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
 <li><a class="reference internal" href="#dirichlet-eta-function-altzeta" id="id3">Dirichlet eta function (<tt class="xref docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
-<li><a class="reference internal" href="#bernoulli-numbers-bernoulli-bernfrac" id="id4">Bernoulli numbers (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>)</a></li>
-<li><a class="reference internal" href="#stieltjes-constants-stieltjes" id="id5">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+<li><a class="reference internal" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" id="id4">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
+<li><a class="reference internal" href="#polylogarithms-polylog" id="id5">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
+<li><a class="reference internal" href="#stieltjes-constants-stieltjes" id="id6">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -211,8 +212,8 @@ so from below rather than from above:</p>
 </dd></dl>
 
 </div>
-<div class="section" id="bernoulli-numbers-bernoulli-bernfrac">
-<h2><a class="toc-backref" href="#id4">Bernoulli numbers (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>)<a class="headerlink" href="#bernoulli-numbers-bernoulli-bernfrac" title="Permalink to this headline">¶</a></a></h2>
+<div class="section" id="bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">
+<h2><a class="toc-backref" href="#id4">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)<a class="headerlink" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.bernoulli">
 <!--[mpmath.functions.bernoulli]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bernoulli</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.bernoulli" title="Permalink to this definition">¶</a></dt>
@@ -336,9 +337,144 @@ slower than the specialized program calcbn.exe [2]</p>
 </ol>
 </dd></dl>
 
+<dl class="function">
+<dt id="mpmath.functions.bernpoly">
+<!--[mpmath.functions.bernpoly]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bernpoly</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.bernpoly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Bernoulli polynomial <img class="math" src="../_images/math/d79269d871ce4723e28967c1f828f909535253d8.png" alt="B_n(z)" />.</p>
+<p>The first few Bernoulli polynomials are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">bernpoly</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
+<span class="gp">...</span>
+<span class="go">[1.0]</span>
+<span class="go">[-0.5, 1.0]</span>
+<span class="go">[0.166667, -1.0, 1.0]</span>
+<span class="go">[0.0, 0.5, -1.5, 1.0]</span>
+<span class="go">[-3.33333e-2, 0.0, 1.0, -2.0, 1.0]</span>
+<span class="go">[0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]</span>
+</pre></div>
+</div>
+<p>At <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1" />, the Bernoulli polynomial evaluates to a
+Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bernpoly</span><span class="p">(</span><span class="mf">12</span><span class="p">,</span> <span class="mf">0</span><span class="p">),</span> <span class="n">bernoulli</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span>
+<span class="go">-0.253113553113553 -0.253113553113553</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bernpoly</span><span class="p">(</span><span class="mf">13</span><span class="p">,</span> <span class="mf">0</span><span class="p">),</span> <span class="n">bernoulli</span><span class="p">(</span><span class="mf">13</span><span class="p">)</span>
+<span class="go">0.0 0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="polylogarithms-polylog">
+<h2><a class="toc-backref" href="#id5">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)<a class="headerlink" href="#polylogarithms-polylog" title="Permalink to this headline">¶</a></a></h2>
+<dl class="function">
+<dt id="mpmath.functions.polylog">
+<!--[mpmath.functions.polylog]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">polylog</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.polylog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the polylogarithm, defined by the sum</p>
+<div class="math">
+<p><img src="../_images/math/1844460c51df730ab47d52800dcc95353705ccba.png" alt="\mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}." />
+</div></p><p>This series is convergent only for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1" />, so elsewhere
+the analytic continuation is implied.</p>
+<p>The polylogarithm should not be confused with the logarithmic
+integral (also denoted by Li or li), which is implemented
+as <tt class="xref docutils literal"><span class="pre">li()</span></tt>.</p>
+<p><strong>Examples</strong></p>
+<p>The polylogarithm satisfies a huge number of functional identities.
+A sample of polylogarithm evaluations is shown below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.693147180559945 0.693147180559945</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">6</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span>
+<span class="go">0.582240526465012 0.582240526465012</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="n">phi</span><span class="p">),</span> <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">10</span>
+<span class="go">-1.21852526068613 -1.21852526068613</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span> <span class="mf">7</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">8</span><span class="o">-</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span><span class="o">+</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">3</span><span class="o">/</span><span class="mf">6</span>
+<span class="go">0.53721319360804 0.53721319360804</span>
+</pre></div>
+</div>
+<p><tt class="xref docutils literal"><span class="pre">polylog()</span></tt> can evaluate the analytic continuation of the
+polylogarithm when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is an integer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">(0.536301287357863 - 7.23378441241546j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">-4.1982778868581</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.05968879432873 + 3.71678149306807j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">-0.150891632373114</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">0.067618332081142</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.0384353698579347 + 0.0912451798066779j)</span>
+</pre></div>
+</div>
+<p>Some more examples, with arguments on the unit circle (note that
+the series definition cannot be used for computation here):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.205616758356028 + 0.915965594177219j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">j</span><span class="o">*</span><span class="n">catalan</span><span class="o">-</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">48</span>
+<span class="go">(-0.205616758356028 + 0.915965594177219j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="n">exp</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">j</span><span class="o">/</span><span class="mf">3</span><span class="p">))</span>
+<span class="go">(-0.534247512515375 + 0.765587078525922j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">9</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="o">/</span><span class="mf">81</span>
+<span class="go">(-0.534247512515375 + 0.765587078525921j)</span>
+</pre></div>
+</div>
+<p>Polylogarithms of different order are related by integration
+and differentiation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<span class="go">0.517479061673899</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">polylog</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">t</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+<span class="go">0.517479061673899</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">z</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">polylog</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mf">2</span><span class="p">,</span><span class="n">t</span><span class="p">),</span> <span class="n">z</span><span class="p">)</span>
+<span class="go">0.517479061673899</span>
+</pre></div>
+</div>
+<p>Taylor series expansions around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" /> are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">polylog</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">[0.0, 1.0, 8.0, 27.0, 64.0, 125.0]</span>
+<span class="go">[0.0, 1.0, 4.0, 9.0, 16.0, 25.0]</span>
+<span class="go">[0.0, 1.0, 2.0, 3.0, 4.0, 5.0]</span>
+<span class="go">[0.0, 1.0, 1.0, 1.0, 1.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 0.5, 0.333333, 0.25, 0.2]</span>
+<span class="go">[0.0, 1.0, 0.25, 0.111111, 6.25e-2, 4.0e-2]</span>
+<span class="go">[0.0, 1.0, 0.125, 3.7037e-2, 1.5625e-2, 8.0e-3]</span>
+</pre></div>
+</div>
+<p>The series defining the polylogarithm is simultaneously
+a Taylor series and an L-series. For certain values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, the
+polylogarithm reduces to a pure zeta function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">zeta</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">1.17624173838258 1.17624173838258</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="o">-</span><span class="n">altzeta</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">-0.909670702980385 -0.909670702980385</span>
+</pre></div>
+</div>
+<p>Evaluation for arbitrary, nonintegral <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is supported
+for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> within the unit circle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polylog</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">(0.24258605789446 - 0.00222938275488344j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">0.25</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">(0.24258605789446 - 0.00222938275488344j)</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li>Richard Crandall, &#8220;Note on fast polylogarithm computation&#8221;
+<a class="reference external" href="http://people.reed.edu/~crandall/papers/Polylog.pdf">http://people.reed.edu/~crandall/papers/Polylog.pdf</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Polylogarithm">http://en.wikipedia.org/wiki/Polylogarithm</a></li>
+<li><a class="reference external" href="http://mathworld.wolfram.com/Polylogarithm.html">http://mathworld.wolfram.com/Polylogarithm.html</a></li>
+</ol>
+</dd></dl>
+
 </div>
 <div class="section" id="stieltjes-constants-stieltjes">
-<h2><a class="toc-backref" href="#id5">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)<a class="headerlink" href="#stieltjes-constants-stieltjes" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id6">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)<a class="headerlink" href="#stieltjes-constants-stieltjes" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.stieltjes">
 <!--[mpmath.functions.stieltjes]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.stieltjes" title="Permalink to this definition">¶</a></dt>
@@ -408,7 +544,8 @@ about 2 minutes.</p>
 <li><a class="reference external" href="">Zeta functions</a><ul>
 <li><a class="reference external" href="#riemann-zeta-function-zeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
 <li><a class="reference external" href="#dirichlet-eta-function-altzeta">Dirichlet eta function (<tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
-<li><a class="reference external" href="#bernoulli-numbers-bernoulli-bernfrac">Bernoulli numbers (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>)</a></li>
+<li><a class="reference external" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">Bernoulli numbers and polynomials (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
+<li><a class="reference external" href="#polylogarithms-polylog">Polylogarithms (<tt class="docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
 <li><a class="reference external" href="#stieltjes-constants-stieltjes">Stieltjes constants (<tt class="docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
 </ul>
 </li>
@@ -450,7 +587,7 @@ about 2 minutes.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 01, 2008.
+      Last updated on Dec 08, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

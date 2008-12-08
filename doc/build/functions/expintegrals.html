@@ -243,6 +243,9 @@ function, defined by</p>
 </div></p><p>This &#8220;offset logarithmic integral&#8221; can be computed via
 <tt class="xref docutils literal"><span class="pre">li()</span></tt> using the simple identity
 <img class="math" src="../_images/math/afd2720cc15b5e1df0fc0dbcdd26f48aa1cf6aca.png" alt="\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)" />.</p>
+<p>The logarithmic integral should also not be confused with
+the polylogarithm (also denoted by Li), which is implemented
+as <tt class="xref docutils literal"><span class="pre">polylog()</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -312,13 +315,116 @@ provides a very accurate estimate:</p>
 <h2><a class="toc-backref" href="#id4">Trigonometric integrals (<tt class="xref docutils literal"><span class="pre">ci()</span></tt>, <tt class="xref docutils literal"><span class="pre">si()</span></tt>)<a class="headerlink" href="#trigonometric-integrals-ci-si" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.ci">
-<!--[mpmath.functions.ci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ci</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ci" title="Permalink to this definition">¶</a></dt>
-<dd>Cosine integral, Ci(z)</dd></dl>
+<!--[mpmath.functions.ci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ci</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the cosine integral,</p>
+<div class="math">
+<p><img src="../_images/math/88a47638ad4c93c10e6b3625519e81bc9371a542.png" alt="\mathrm{Ci}(x) = -\int_x^{\infty} \frac{\cos t}{t}\,dt
+= \gamma + \log x + \int_0^x \frac{\cos t - 1}{t}\,dt" />
+</div></p><p><strong>Examples</strong></p>
+<p>Some values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.3374039229009681346626462</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.07366791204642548599010096</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">(0.0 + 3.141592653589793238462643j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(1.408292501520849518759125 - 2.983617742029605093121118j)</span>
+</pre></div>
+</div>
+<p>The cosine integral behaves roughly like the sinc function
+(see <tt class="xref docutils literal"><span class="pre">sinc()</span></tt>) for large real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">-4.875060251748226537857298e-11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">-4.875060250875106915277943e-11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">limit</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="n">inf</span><span class="p">))</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>It has infinitely many roots on the positive real axis:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.6165054856207162337971104</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">ci</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">3.384180422551186426397851</span>
+</pre></div>
+</div>
+<p>We can evaluate the defining integral as a reference:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">t</span><span class="p">,</span> <span class="p">[</span><span class="mf">5</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-0.190029749656644</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">-0.190029749656644</span>
+</pre></div>
+</div>
+<p>Some infinite series can be evaluated using the
+cosine integral:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="p">(</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">)),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">-0.239811742000565</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">euler</span>
+<span class="go">-0.239811742000565</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.si">
-<!--[mpmath.functions.si]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">si</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.si" title="Permalink to this definition">¶</a></dt>
-<dd>Sine integral, Si(z)</dd></dl>
+<!--[mpmath.functions.si]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">si</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.si" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the sine integral,</p>
+<div class="math">
+<p><img src="../_images/math/c6f4de1fa90d03021c350326a1de82372fcc8486.png" alt="\mathrm{Si}(x) = \int_0^x \frac{\sin t}{t}\,dt." />
+</div></p><p>The sine integral is thus the antiderivative of the sinc
+function (see <tt class="xref docutils literal"><span class="pre">sinc()</span></tt>).</p>
+<p><strong>Examples</strong>
+Some values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.9460830703671830149413533</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-0.9460830703671830149413533</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">1.851937051982466170361053</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">1.570796326794896619231322</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-1.570796326794896619231322</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(4.547513889562289219853204 + 1.399196580646054789459839j)</span>
+</pre></div>
+</div>
+<p>The sine integral approaches <img class="math" src="../_images/math/039bf945c704ff98e6f81626bbad32550cc37193.png" alt="\pi/2" /> for large real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">1.570796326707584656968511</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">1.570796326794896619231322</span>
+</pre></div>
+</div>
+<p>We can evaluate the defining integral as a reference:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sinc</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
+<span class="go">1.54993124494467</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">1.54993124494467</span>
+</pre></div>
+</div>
+<p>Some infinite series can be evaluated using the
+sine integral:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="p">(</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.946083070367183</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.946083070367183</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="hyperbolic-integrals-chi-shi">
@@ -326,12 +432,51 @@ provides a very accurate estimate:</p>
 <dl class="function">
 <dt id="mpmath.functions.chi">
 <!--[mpmath.functions.chi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.chi" title="Permalink to this definition">¶</a></dt>
-<dd>Hyperbolic cosine integral, Chi(z)</dd></dl>
+<dd><p>Computes the hyperbolic cosine integral, defined
+in analogy with the cosine integral (see <tt class="xref docutils literal"><span class="pre">ci()</span></tt>) as</p>
+<div class="math">
+<p><img src="../_images/math/a1ba2d9e8191139ad1ef2a63a2601774b544321f.png" alt="\mathrm{Chi}(x) = -\int_x^{\infty} \frac{\cosh t}{t}\,dt
+= \gamma + \log x + \int_0^x \frac{\cosh t - 1}{t}\,dt" />
+</div></p><p>Some values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chi</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">-inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.8378669409802082408946786</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chi</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">chi</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.5238225713898644064509583</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chi</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.1683628683277204662429321 + 2.625115880451325002151688j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.shi">
 <!--[mpmath.functions.shi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">shi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.shi" title="Permalink to this definition">¶</a></dt>
-<dd>Hyperbolic sine integral, Shi(z)</dd></dl>
+<dd><p>Computes the hyperbolic sine integral, defined
+in analogy with the sine integral (see <tt class="xref docutils literal"><span class="pre">si()</span></tt>) as</p>
+<div class="math">
+<p><img src="../_images/math/71770811bdc4686450bc654f03f550e9dcac3f18.png" alt="\mathrm{Shi}(x) = \int_0^x \frac{\sinh t}{t}\,dt." />
+</div></p><p>Some values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">shi</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">shi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.057250875375728514571842</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">shi</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-1.057250875375728514571842</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">shi</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">shi</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.1931890762719198291678095 + 2.645432555362369624818525j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="error-functions-erf-erfc-erfi-erfinv">
@@ -548,7 +693,7 @@ distribution.</p>
 <dt id="mpmath.functions.ncdf">
 <!--[mpmath.functions.ncdf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ncdf</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ncdf" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">ncdf(x,</span> <span class="pre">mu=0,</span> <span class="pre">sigma=1)</span></tt> evaluates the cumulative distribution
-function of a normal distribution with mean value <img class="math" src="../_images/math/6690e784718c1361117cfcd64ea7dbb49095d0d8.png" alt="mu" />
+function of a normal distribution with mean value <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu" />
 and variance <img class="math" src="../_images/math/741fb9098efcb98055f467f87630a5d0ca599b6b.png" alt="\sigma^2" />.</p>
 <p>See also <tt class="xref docutils literal"><span class="pre">npdf()</span></tt>, which gives the probability density.</p>
 <p>Elementary properties include:</p>
@@ -583,12 +728,68 @@ function having identical mu and sigma:</p>
 <dl class="function">
 <dt id="mpmath.functions.fresnels">
 <!--[mpmath.functions.fresnels]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fresnels</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fresnels" title="Permalink to this definition">¶</a></dt>
-<dd>Fresnel integral S, S(z)</dd></dl>
+<dd><p>Computes the Fresnel sine integral</p>
+<div class="math">
+<p><img src="../_images/math/9733ffe71bb6a0806cce5f481093b7126f3eb2c5.png" alt="S(x) = \int_0^x \sin\left(\frac{\pi t^2}{2}\right) \,dt" />
+</div></p><p>Note that some sources define this function
+without the normalization factor <img class="math" src="../_images/math/039bf945c704ff98e6f81626bbad32550cc37193.png" alt="\pi/2" />.</p>
+<p><strong>Examples</strong></p>
+<p>Some basic values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.4382591473903547660767567</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(36.72546488399143842838788 + 15.58775110440458732748279j)</span>
+</pre></div>
+</div>
+<p>Comparing with the definition:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnels</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.4963129989673750360976123</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">])</span>
+<span class="go">0.4963129989673750360976123</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.fresnelc">
 <!--[mpmath.functions.fresnelc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fresnelc</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fresnelc" title="Permalink to this definition">¶</a></dt>
-<dd>Fresnel integral C, C(z)</dd></dl>
+<dd><p>Computes the Fresnel cosine integral</p>
+<div class="math">
+<p><img src="../_images/math/b120f1ef25e8a877e5b748b59645ef709e763a04.png" alt="C(x) = \int_0^x \cos\left(\frac{\pi t^2}{2}\right) \,dt" />
+</div></p><p>Note that some sources define this function
+without the normalization factor <img class="math" src="../_images/math/039bf945c704ff98e6f81626bbad32550cc37193.png" alt="\pi/2" />.</p>
+<p><strong>Examples</strong></p>
+<p>Some basic values and limits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.7798934003768228294742064</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(16.08787137412548041729489 - 36.22568799288165021578758j)</span>
+</pre></div>
+</div>
+<p>Comparing with the definition:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fresnelc</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.6057207892976856295561611</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">])</span>
+<span class="go">0.6057207892976856295561611</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 </div>
@@ -649,7 +850,7 @@ function having identical mu and sigma:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 01, 2008.
+      Last updated on Dec 08, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

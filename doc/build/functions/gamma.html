@@ -190,12 +190,18 @@ product / quotient of gamma functions:</p>
 <div class="math">
 <p><img src="../_images/math/ab622d03541d902f5282d1b80c21fc40ce599d6a.png" alt="\frac{\Gamma(a_0) \Gamma(a_1) \cdots \Gamma(a_p)}
      {\Gamma(b_0) \Gamma(b_1) \cdots \Gamma(b_q)}" />
-</div></p><p><strong>Handling of poles</strong></p>
-<p>Unlike direct calls to <tt class="xref docutils literal"><span class="pre">gamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt> considers
+</div></p><p>Unlike direct calls to <tt class="xref docutils literal"><span class="pre">gamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt> considers
 the entire product as a limit and evaluates this limit properly if
 any of the numerator or denominator arguments are nonpositive
-integers such that poles of the gamma function are encountered.</p>
-<p>In particular:</p>
+integers such that poles of the gamma function are encountered.
+That is, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt> evaluates</p>
+<div class="math">
+<p><img src="../_images/math/e37b86e9baef6c51fae50cdb13aba2e3fec400ac.png" alt="\lim_{\epsilon \to 0}
+\frac{\Gamma(a_0+\epsilon) \Gamma(a_1+\epsilon) \cdots
+    \Gamma(a_p+\epsilon)}
+     {\Gamma(b_0+\epsilon) \Gamma(b_1+\epsilon) \cdots
+    \Gamma(b_q+\epsilon)}" />
+</div></p><p>In particular:</p>
 <ul class="simple">
 <li>If there are equally many poles in the numerator and the
 denominator, the limit is a rational number times the remaining,
@@ -971,7 +977,7 @@ exceeds a given amount, say 100:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 01, 2008.
+      Last updated on Dec 08, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
