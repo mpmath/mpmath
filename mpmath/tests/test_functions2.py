@@ -11,15 +11,61 @@ def test_bessel():
     assert j1(pi).ae(0.284615343179752757)
     assert j1(1000).ae(0.00472831190708952392)
     assert j1(-25).ae(0.125350249580289905)
-    assert jv(5,1).ae(0.000249757730211234431)
-    assert jv(5,pi).ae(0.0521411843671184747)
-    assert jv(5,1000).ae(0.00502540694523318607)
-    assert jv(5,-25).ae(0.0660079953984229934)
-    assert jv(-3,2).ae(-0.128943249474402051)
-    assert jv(-4,2).ae(0.0339957198075684341)
-    assert jv(3,3+2j).ae(0.424718794929639595942 + 0.625665327745785804812j)
-    assert jv(0.25,4).ae(-0.374760630804249715)
-    assert jv(1+2j,3+4j).ae(0.319247428741872131 - 0.669557748880365678j)
+    assert besselj(5,1).ae(0.000249757730211234431)
+    assert besselj(5,pi).ae(0.0521411843671184747)
+    assert besselj(5,1000).ae(0.00502540694523318607)
+    assert besselj(5,-25).ae(0.0660079953984229934)
+    assert besselj(-3,2).ae(-0.128943249474402051)
+    assert besselj(-4,2).ae(0.0339957198075684341)
+    assert besselj(3,3+2j).ae(0.424718794929639595942 + 0.625665327745785804812j)
+    assert besselj(0.25,4).ae(-0.374760630804249715)
+    assert besselj(1+2j,3+4j).ae(0.319247428741872131 - 0.669557748880365678j)
+    assert bessely(0,0) == -inf
+    assert bessely(1,0) == -inf
+    assert bessely(2,0) == -inf
+    assert bessely(-1,0) == +inf
+    assert bessely(-2,0) == -inf
+    assert bessely(0,0.5).ae(-0.44451873350670655715)
+    assert bessely(1,0.5).ae(-1.4714723926702430692)
+    assert bessely(-1,0.5).ae(1.4714723926702430692)
+    assert bessely(3.5,0.5).ae(-138.86400867242488443)
+    assert bessely(0,3+4j).ae(4.6047596915010138655-8.8110771408232264208j)
+    assert bessely(0,j).ae(-0.26803248203398854876+1.26606587775200833560j)
+    assert besseli(0,0) == 1
+    assert besseli(1,0) == 0
+    assert besseli(2,0) == 0
+    assert besseli(-1,0) == 0
+    assert besseli(-2,0) == 0
+    assert besseli(0,0.5).ae(1.0634833707413235193)
+    assert besseli(1,0.5).ae(0.25789430539089631636)
+    assert besseli(-1,0.5).ae(0.25789430539089631636)
+    assert besseli(3.5,0.5).ae(0.00068103597085793815863)
+    assert besseli(0,3+4j).ae(-3.3924877882755196097-1.3239458916287264815j)
+    assert besseli(0,j).ae(besselj(0,1))
+    assert besselk(0,0) == inf
+    assert besselk(1,0) == inf
+    assert besselk(2,0) == inf
+    assert besselk(-1,0) == inf
+    assert besselk(-2,0) == inf
+    assert besselk(0,0.5).ae(0.92441907122766586178)
+    assert besselk(1,0.5).ae(1.6564411200033008937)
+    assert besselk(-1,0.5).ae(1.6564411200033008937)
+    assert besselk(3.5,0.5).ae(207.48418747548460607)
+    assert besselk(0,3+4j).ae(-0.007239051213570155013+0.026510418350267677215j)
+    assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
+
+def test_hankel():
+    mp.dps = 15
+    assert hankel1(0,0.5).ae(0.93846980724081290423-0.44451873350670655715j)
+    assert hankel1(1,0.5).ae(0.2422684576748738864-1.4714723926702430692j)
+    assert hankel1(-1,0.5).ae(-0.2422684576748738864+1.4714723926702430692j)
+    assert hankel1(1.5,0.5).ae(0.0917016996256513026-2.5214655504213378514j)
+    assert hankel1(1.5,3+4j).ae(0.0066806866476728165382-0.0036684231610839127106j)
+    assert hankel2(0,0.5).ae(0.93846980724081290423+0.44451873350670655715j)
+    assert hankel2(1,0.5).ae(0.2422684576748738864+1.4714723926702430692j)
+    assert hankel2(-1,0.5).ae(-0.2422684576748738864-1.4714723926702430692j)
+    assert hankel2(1.5,0.5).ae(0.0917016996256513026+2.5214655504213378514j)
+    assert hankel2(1.5,3+4j).ae(14.783528526098567526-7.397390270853446512j)
 
 def test_hyper_misc():
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)

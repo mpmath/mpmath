@@ -35,7 +35,7 @@ from functions import (
     ei, li, ci, si, chi, shi,
     fresnels, fresnelc, airyai, airybi,
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
-    jv, jn, j0, j1,
+    besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
     lambertw,
     barnesg, superfac, hyperfac
 )

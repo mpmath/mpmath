@@ -2736,7 +2736,7 @@ def npdf(x, mu=0, sigma=1):
 def ncdf(x, mu=0, sigma=1):
     r"""
     ``ncdf(x, mu=0, sigma=1)`` evaluates the cumulative distribution
-    function of a normal distribution with mean value `mu`
+    function of a normal distribution with mean value `\mu`
     and variance `\sigma^2`.
 
     See also :func:`npdf`, which gives the probability density.
@@ -3312,7 +3312,7 @@ def airyai(z):
         >>> print airyai(-x)
         -0.378814293677658
         >>> p = 2*(x**1.5)/3
-        >>> print sqrt(x)*(jv(1/3.,p) + jv(-1/3.,p))/3
+        >>> print sqrt(x)*(besselj(1/3.,p) + besselj(-1/3.,p))/3
         -0.378814293677658
 
     """
@@ -3393,7 +3393,7 @@ def airybi(z):
         >>> print airybi(-x)
         -0.198289626374927
         >>> p = 2*(x**1.5)/3
-        >>> print sqrt(x/3)*(jv(-1/3.,p) - jv(1/3.,p))
+        >>> print sqrt(x/3)*(besselj(-1/3.,p) - besselj(1/3.,p))
         -0.198289626374926
     """
     if z == inf:
@@ -3859,9 +3859,9 @@ def chebyu(n, x):
     return (n+1) * hyp2f1(-n, n+2, 1.5, (1-x)/2)
 
 @funcwrapper
-def jv(v, x):
+def besselj(v, x):
     r"""
-    ``jv(n,x)`` computes the Bessel function of the first kind
+    ``besselj(n,x)`` computes the Bessel function of the first kind
     `J_n(x)`. Bessel functions of the first kind are defined as
     solutions of the differential equation
 
@@ -3892,28 +3892,28 @@ def jv(v, x):
 
         >>> from mpmath import *
         >>> mp.dps = 15
-        >>> print jv(2, 1000)
+        >>> print besselj(2, 1000)
         -0.024777229528606
-        >>> print jv(4, 0.75)
+        >>> print besselj(4, 0.75)
         0.000801070086542314
-        >>> print jv(2, 1000j)
+        >>> print besselj(2, 1000j)
         (-2.48071721019185e+432 + 0.0j)
         >>> mp.dps = 25
-        >>> print jv(0.75j, 3+4j)
+        >>> print besselj(0.75j, 3+4j)
         (-2.778118364828153309919653 - 1.5863603889018621585533j)
         >>> mp.dps = 50
-        >>> print jv(1, pi)
+        >>> print besselj(1, pi)
         0.28461534317975275734531059968613140570981118184947
 
     The Bessel functions of the first kind satisfy simple
     symmetries around `x = 0`::
 
         >>> mp.dps = 15
-        >>> nprint([jv(n,0) for n in range(5)])
+        >>> nprint([besselj(n,0) for n in range(5)])
         [1.0, 0.0, 0.0, 0.0, 0.0]
-        >>> nprint([jv(n,pi) for n in range(5)])
+        >>> nprint([besselj(n,pi) for n in range(5)])
         [-0.304242, 0.284615, 0.485434, 0.333458, 0.151425]
-        >>> nprint([jv(n,-pi) for n in range(5)])
+        >>> nprint([besselj(n,-pi) for n in range(5)])
         [-0.304242, -0.284615, 0.485434, -0.333458, 0.151425]
 
     Roots of Bessel functions are often used::
@@ -3936,9 +3936,9 @@ def jv(v, x):
     trigonometric function::
 
         >>> x = 10
-        >>> print jv(0.5, x), sqrt(2/(pi*x))*sin(x)
+        >>> print besselj(0.5, x), sqrt(2/(pi*x))*sin(x)
         -0.13726373575505 -0.13726373575505
-        >>> print jv(-0.5, x), sqrt(2/(pi*x))*cos(x)
+        >>> print besselj(-0.5, x), sqrt(2/(pi*x))*cos(x)
         -0.211708866331398 -0.211708866331398
 
     """
@@ -3951,15 +3951,173 @@ def jv(v, x):
     hx = x/2
     return hx**v * hyp0f1(v+1, -hx**2) / factorial(v)
 
-jn = jv
-
 def j0(x):
-    """Computes the Bessel function `J_0(x)`. See :func:`jv`."""
-    return jv(0, x)
+    """Computes the Bessel function `J_0(x)`. See :func:`besselj`."""
+    return besselj(0, x)
 
 def j1(x):
-    """Computes the Bessel function `J_1(x)`.  See :func:`jv`."""
-    return jv(1, x)
+    """Computes the Bessel function `J_1(x)`.  See :func:`besselj`."""
+    return besselj(1, x)
+
+@funcwrapper
+def bessely(n,x):
+    r"""
+    ``bessely(n,x)`` computes the Bessel function of the second kind,
+
+    .. math ::
+
+        Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}.
+
+    For `n` an integer, this formula should be understood as a
+    limit.
+
+    **Examples**
+
+    Some values of `Y_n(x)`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print bessely(0,0), bessely(1,0), bessely(2,0)
+        -inf -inf -inf
+        >>> print bessely(1, pi)
+        0.3588729167767189594679827
+        >>> print bessely(0.5, 3+4j)
+        (9.242861436961450520325216 - 3.085042824915332562522402j)
+
+    """
+    intdist = abs(n.imag) + abs(n.real-floor(n.real+0.5))
+    if not intdist:
+        h = +eps
+        mp.prec *= 2
+        n += h
+    else:
+        mp.prec += -int(log(intdist, 2)+1)
+    return (besselj(n,x)*cospi(n) - besselj(-n,x))/sinpi(n)
+
+@funcwrapper
+def besseli(n,x):
+    r"""
+    ``besseli(n,x)`` computes the modified Bessel function of the first
+    kind,
+
+    .. math ::
+
+        I_n(x) = i^{-n} J_n(ix)
+
+    **Examples**
+
+    Some values of `I_n(x)`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print besseli(0,0)
+        1.0
+        >>> print besseli(1,0)
+        0.0
+        >>> print besseli(0,1)
+        1.266065877752008335598245
+        >>> print besseli(3.5, 2+3j)
+        (-0.2904369752642538144289025 - 0.4469098397654815837307006j)
+
+    For integers `n`, the following integral representation holds::
+
+        >>> mp.dps = 15
+        >>> n = 3
+        >>> x = 2.3
+        >>> print quad(lambda t: exp(x*cos(t))*cos(n*t), [0,pi])/pi
+        0.349223221159309
+        >>> print besseli(n,x)
+        0.349223221159309
+
+    """
+    if isint(n):
+        n = abs(int(n))
+    hx = x/2
+    return hx**n * hyp0f1(n+1, hx**2) / factorial(n)
+
+@funcwrapper
+def besselk(n,x):
+    r"""
+    ``besseli(n,x)`` computes the modified Bessel function of the
+    second kind,
+
+    .. math ::
+
+        K_n(x) = \frac{\pi}{2} \frac{I_{-n}(x)-I_{n}(x)}{\sin(\pi n)}
+
+    For `n` an integer, this formula should be understood as a
+    limit.
+
+    **Examples**
+
+    Some values and limits of `K_n(x)`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print besselk(0,0)
+        +inf
+        >>> print besselk(1,0)
+        +inf
+        >>> print besselk(0,1)
+        0.4210244382407083333356274
+        >>> print besselk(3.5, 2+3j)
+        (-0.02090732889633760668464128 + 0.2464022641351420167819697j)
+
+    """
+    intdist = abs(n.imag) + abs(n.real-floor(n.real+0.5))
+    if not intdist:
+        h = +eps
+        mp.prec *= 2
+        n += h
+    else:
+        mp.prec += -int(log(intdist, 2)+1)
+    return pi*(besseli(-n,x)-besseli(n,x))/(2*sinpi(n))
+
+def hankel1(n,x):
+    r"""
+    ``hankel1(n,x)`` computes the Hankel function of the first kind,
+    which is the complex combination of Bessel functions given by
+
+    .. math ::
+
+        H_n^{(1)}(x) = J_n(x) + i Y_n(x).
+
+    **Examples**
+
+    The Hankel function is generally complex-valued::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print hankel1(2, pi)
+        (0.4854339326315091097054957 - 0.0999007139290278787734903j)
+        >>> print hankel1(3.5, pi)
+        (0.2340002029630507922628888 - 0.6419643823412927142424049j)
+
+    """
+    return besselj(n,x) + j*bessely(n,x)
+
+def hankel2(n,x):
+    r"""
+    ``hankel2(n,x)`` computes the Hankel function of the second kind,
+    which is the complex combination of Bessel functions given by
+
+    .. math ::
+
+        H_n^{(2)}(x) = J_n(x) - i Y_n(x).
+
+    **Examples**
+
+    The Hankel function is generally complex-valued::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print hankel2(2, pi)
+        (0.4854339326315091097054957 + 0.0999007139290278787734903j)
+        >>> print hankel2(3.5, pi)
+        (0.2340002029630507922628888 + 0.6419643823412927142424049j)
+
+    """
+    return besselj(n,x) - j*bessely(n,x)
 
 @funcwrapper
 def lambertw(z, k=0, approx=None):
