@@ -1043,7 +1043,7 @@ def mpf_log(x, prec, rnd=round_fast):
     # case with wp >= LOG_NEWTON_PREC
     else:
         # for x close to one
-        if mag == 0 or mag == 1:
+        if mag == 0 or mag == 1 and not (res >> (wp - 4)):
             delta = mpf_sub(x, fone, 10)
             delta_bits = -(delta[2] + delta[3])
             if delta_bits > 0:

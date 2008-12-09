@@ -236,6 +236,14 @@ def test_log_hp():
     # Mathematica N[Log[10^15000/3], 2000]
     # ...7443804441768333470331
     assert res == '44380444176833347033'
+
+    # see issue 105
+    r = log(mpf(3)/2)
+    # Mathematica N[Log[3/2], 2000]
+    # ...69653749808140753263288
+    res = last_digits(r)
+    assert res == '53749808140753263288'
+
     mp.dps = 10000
     r = log(2)
     res = last_digits(r)
