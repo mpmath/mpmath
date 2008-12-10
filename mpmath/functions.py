@@ -484,6 +484,294 @@ acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 cospi = mpfunc('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, "")
 sinpi = mpfunc('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, "")
 
+cos.__doc__ = r"""
+Computes the cosine of `x`, `\cos(x)`.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print cos(pi/3)
+    0.5
+    >>> print cos(100000001)
+    -0.9802850113244713353133243
+    >>> print cos(2+3j)
+    (-4.189625690968807230132555 - 9.109227893755336597979197j)
+    >>> print cos(inf)
+    nan
+    >>> nprint(chop(taylor(cos, 0, 6)))
+    [1.0, 0.0, -0.5, 0.0, 4.16667e-2, 0.0, -1.38889e-3]
+    >>> print cos(mpi(0,1))
+    [0.540302305868139717400936602301, 1.0]
+    >>> print cos(mpi(0,2))
+    [-0.41614683654714238699756823214, 1.0]
+"""
+
+sin.__doc__ = r"""
+Computes the sine of `x`, `\sin(x)`.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print sin(pi/3)
+    0.8660254037844386467637232
+    >>> print sin(100000001)
+    0.1975887055794968911438743
+    >>> print sin(2+3j)
+    (9.1544991469114295734673 - 4.168906959966564350754813j)
+    >>> print sin(inf)
+    nan
+    >>> nprint(chop(taylor(sin, 0, 6)))
+    [0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3, 0.0]
+    >>> print sin(mpi(0,1))
+    [0.0, 0.841470984807896506652502331201]
+    >>> print sin(mpi(0,2))
+    [0.0, 1.0]
+"""
+
+tan.__doc__ = r"""
+Computes the tangent of `x`, `\tan(x) = \frac{\sin(x)}{\cos(x)}`.
+The tangent function is singular at `x = (n+1/2)\pi`, but
+``tan(x)`` always returns a finite result since `(n+1/2)\pi`
+cannot be represented exactly using floating-point arithmetic.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print tan(pi/3)
+    1.732050807568877293527446
+    >>> print tan(100000001)
+    -0.2015625081449864533091058
+    >>> print tan(2+3j)
+    (-0.003764025641504248292751221 + 1.003238627353609801446359j)
+    >>> print tan(inf)
+    nan
+    >>> nprint(chop(taylor(tan, 0, 6)))
+    [0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]
+    >>> print tan(mpi(0,1))
+    [0.0, 1.55740772465490223050697482944]
+    >>> print tan(mpi(0,2))  # Interval includes a singularity
+    [-inf, +inf]
+"""
+
+sec.__doc__ = r"""
+Computes the secant of `x`, `\mathrm{sec}(x) = \frac{1}{\cos(x)}`.
+The secant function is singular at `x = (n+1/2)\pi`, but
+``sec(x)`` always returns a finite result since `(n+1/2)\pi`
+cannot be represented exactly using floating-point arithmetic.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print sec(pi/3)
+    2.0
+    >>> print sec(10000001)
+    -1.184723164360392819100265
+    >>> print sec(2+3j)
+    (-0.04167496441114427004834991 + 0.0906111371962375965296612j)
+    >>> print sec(inf)
+    nan
+    >>> nprint(chop(taylor(sec, 0, 6)))
+    [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 8.47222e-2]
+    >>> print sec(mpi(0,1))
+    [1.0, 1.85081571768092561791175324143]
+    >>> print sec(mpi(0,2))  # Interval includes a singularity
+    [-inf, +inf]
+"""
+
+csc.__doc__ = r"""
+Computes the cosecant of `x`, `\mathrm{csc}(x) = \frac{1}{\sin(x)}`.
+This cosecant function is singular at `x = n \pi`, but with the
+exception of the point `x = 0`, ``csc(x)`` returns a finite result
+since `n \pi` cannot be represented exactly using floating-point
+arithmetic.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print csc(pi/3)
+    1.154700538379251529018298
+    >>> print csc(10000001)
+    -1.864910497503629858938891
+    >>> print csc(2+3j)
+    (0.09047320975320743980579048 + 0.04120098628857412646300981j)
+    >>> print csc(inf)
+    nan
+    >>> print csc(mpi(0,1))  # Interval includes a singularity
+    [1.18839510577812121626159945235, +inf]
+    >>> print csc(mpi(0,2))
+    [1.0, +inf]
+"""
+
+cot.__doc__ = r"""
+Computes the cotangent of `x`,
+`\mathrm{cot}(x) = \frac{1}{\tan(x)} = \frac{\cos(x)}{\sin(x)}`.
+This cotangent function is singular at `x = n \pi`, but with the
+exception of the point `x = 0`, ``cot(x)`` returns a finite result
+since `n \pi` cannot be represented exactly using floating-point
+arithmetic.
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print cot(pi/3)
+    0.5773502691896257645091488
+    >>> print cot(10000001)
+    1.574131876209625656003562
+    >>> print cot(2+3j)
+    (-0.003739710376336956660117409 - 0.9967577965693583104609688j)
+    >>> print cot(inf)
+    nan
+    >>> print cot(mpi(0,1))  # Interval includes a singularity
+    [0.642092615934330703006419986575, +inf]
+    >>> print cot(mpi(1,2))
+    [-inf, +inf]
+"""
+
+acos.__doc__ = r"""
+Computes the inverse cosine or arccosine of `x`, `\cos^{-1}(x)`.
+Since `-1 \le \cos(x) \le 1` for real `x`, the inverse
+cosine is real-valued only for `-1 \le x \le 1`. On this interval,
+:func:`acos` is defined to be a monotonically decreasing
+function assuming values between `+\pi` and `0`.
+
+Basic values are::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print acos(-1)
+    3.141592653589793238462643
+    >>> print acos(0)
+    1.570796326794896619231322
+    >>> print acos(1)
+    0.0
+    >>> nprint(chop(taylor(acos, 0, 6)))
+    [1.5708, -1.0, 0.0, -0.166667, 0.0, -7.5e-2, 0.0]
+
+:func:`acos` is defined so as to be a proper inverse function of
+`\cos(\theta)` for `0 \le \theta < \pi`.
+We have `\cos(\cos^{-1}(x)) = x` for all `x`, but
+`\cos^{-1}(\cos(x)) = x` only for `0 \le \Re[x] < \pi`::
+
+    >>> for x in [1, 10, -1, 2+3j, 10+3j]:
+    ...     print cos(acos(x)), acos(cos(x))
+    ...
+    1.0 1.0
+    (10.0 + 0.0j) 2.566370614359172953850574
+    -1.0 1.0
+    (2.0 + 3.0j) (2.0 + 3.0j)
+    (10.0 + 3.0j) (2.566370614359172953850574 - 3.0j)
+
+The inverse cosine has two branch points: `x = \pm 1`. :func:`acos`
+places the branch cuts along the line segments `(-\infty, -1)` and
+`(+1, +\infty)`. In general,
+
+.. math ::
+
+    \cos^{-1}(x) = \frac{\pi}{2} + i \log\left(ix + \sqrt{1-x^2} \right)
+
+where the principal-branch log and square root are implied.
+"""
+
+asin.__doc__ = r"""
+Computes the inverse sine or arcsine of `x`, `\sin^{-1}(x)`.
+Since `-1 \le \sin(x) \le 1` for real `x`, the inverse
+sine is real-valued only for `-1 \le x \le 1`.
+On this interval, it is defined to be a monotonically increasing
+function assuming values between `-\pi/2` and `\pi/2`.
+
+Basic values are::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print asin(-1)
+    -1.570796326794896619231322
+    >>> print asin(0)
+    0.0
+    >>> print asin(1)
+    1.570796326794896619231322
+    >>> nprint(chop(taylor(asin, 0, 6)))
+    [0.0, 1.0, 0.0, 0.166667, 0.0, 7.5e-2, 0.0]
+
+:func:`asin` is defined so as to be a proper inverse function of
+`\sin(\theta)` for `-\pi/2 < \theta < \pi/2`.
+We have `\sin(\sin^{-1}(x)) = x` for all `x`, but
+`\sin^{-1}(\sin(x)) = x` only for `-\pi/2 < \Re[x] < \pi/2`::
+
+    >>> for x in [1, 10, -1, 1+3j, -2+3j]:
+    ...     print chop(sin(asin(x))), asin(sin(x))
+    ...
+    1.0 1.0
+    10.0 -0.5752220392306202846120698
+    -1.0 -1.0
+    (1.0 + 3.0j) (1.0 + 3.0j)
+    (-2.0 + 3.0j) (-1.141592653589793238462643 - 3.0j)
+
+The inverse sine has two branch points: `x = \pm 1`. :func:`asin`
+places the branch cuts along the line segments `(-\infty, -1)` and
+`(+1, +\infty)`. In general,
+
+.. math ::
+
+    \sin^{-1}(x) = -i \log\left(ix + \sqrt{1-x^2} \right)
+
+where the principal-branch log and square root are implied.
+"""
+
+atan.__doc__ = r"""
+Computes the inverse tangent or arctangent of `x`, `\tan^{-1}(x)`.
+This is a real-valued function for all real `x`, with range
+`(-\pi/2, \pi/2)`.
+
+Basic values are::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print atan(-inf)
+    -1.570796326794896619231322
+    >>> print atan(-1)
+    -0.7853981633974483096156609
+    >>> print atan(0)
+    0.0
+    >>> print atan(1)
+    0.7853981633974483096156609
+    >>> print atan(inf)
+    1.570796326794896619231322
+    >>> nprint(chop(taylor(atan, 0, 6)))
+    [0.0, 1.0, 0.0, -0.333333, 0.0, 0.2, 0.0]
+
+The inverse tangent is often used to compute angles. However,
+the atan2 function is often better for this as it preserves sign
+(see :func:`atan2`).
+
+:func:`atan` is defined so as to be a proper inverse function of
+`\tan(\theta)` for `-\pi/2 < \theta < \pi/2`.
+We have `\tan(\tan^{-1}(x)) = x` for all `x`, but
+`\tan^{-1}(\tan(x)) = x` only for `-\pi/2 < \Re[x] < \pi/2`::
+
+    >>> mp.dps = 25
+    >>> for x in [1, 10, -1, 1+3j, -2+3j]:
+    ...     print tan(atan(x)), atan(tan(x))
+    ...
+    1.0 1.0
+    10.0 0.5752220392306202846120698
+    -1.0 -1.0
+    (1.0 + 3.0j) (1.000000000000000000000001 + 3.0j)
+    (-2.0 + 3.0j) (1.141592653589793238462644 + 3.0j)
+
+The inverse tangent has two branch points: `x = \pm i`. :func:`atan`
+places the branch cuts along the line segments `(-i \infty, -i)` and
+`(+i, +i \infty)`. In general,
+
+.. math ::
+
+    \tan^{-1}(x) = \frac{i}{2}\left(\log(1-ix)-\log(1+ix)\right)
+
+where the principal-branch log and square root are implied.
+"""
+
+acot.__doc__ = r"""Computes the inverse cotangent of `x`,
+`\mathrm{cot}^{-1}(x) = \tan^{-1}(1/x)`."""
+
+asec.__doc__ = r"""Computes the inverse secant of `x`,
+`\mathrm{sec}^{-1}(x) = \cos^{-1}(1/x)`."""
+
+acsc.__doc__ = r"""Computes the inverse cosecant of `x`,
+`\mathrm{csc}^{-1}(x) = \sin^{-1}(1/x)`."""
+
 sinpi.__doc__ = """
 Computes `\sin(\pi x)`, more accurately than the expression
 ``sin(pi*x)``::
