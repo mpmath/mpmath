@@ -13,3 +13,19 @@ def test_nsum():
     assert nsum(lambda k: (-1)**k / log(k), [2, inf]).ae(0.9242998972229388)
     assert nsum(lambda k: 1/k**2, [1, inf]).ae(pi**2 / 6)
     assert nsum(lambda k: 2**k/fac(k), [0, inf]).ae(exp(2))
+
+def test_nprod():
+    mp.dps = 15
+    assert nprod(lambda k: exp(1/k**2), [1,inf], method='r').ae(exp(pi**2/6))
+
+def test_fsum():
+    mp.dps = 15
+    assert fsum([]) == 0
+    assert fsum([2,3]) == 5
+    assert fsum(lambda x: x**2, [1, 3]) == 14
+
+def test_fprod():
+    mp.dps = 15
+    assert fprod([]) == 1
+    assert fprod([2,3]) == 6
+    assert fprod(lambda x: x**2, [1, 3]) == 36

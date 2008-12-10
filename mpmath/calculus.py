@@ -22,6 +22,72 @@ from quadrature import quad, quadgl, quadts
 from matrices import matrix
 from linalg import lu_solve
 
+def fsum(*args):
+    r"""
+    Calculates a sum containing a finite number of terms (for infinite
+    series, see :func:`nsum`). You can use either ``fsum(<iterable>)``
+    to sum a precomputed sequence of terms, or ``fsum(f, [a,b])`` to
+    evaluate `\sum_{k=a}^b f(k)`.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> fsum([1, 2, 0.5, 7])
+        mpf('10.5')
+        >>> fsum(lambda k: k**3, [-10, 20])
+        mpf('41075.0')
+
+    """
+    L = len(args)
+    orig = mp.prec
+    try:
+        mp.prec += 10
+        if L == 1:
+            v = sum((x for x in args[0]), mpf(0))
+        elif L == 2:
+            f = args[0]
+            a, b = args[1]
+            v = sum((f(mpf(k)) for k in xrange(int(a), int(b)+1)), mpf(0))
+        else:
+            raise ValueError("fsum expected 1 or two arguments")
+    finally:
+        mp.prec = orig
+    return +v
+
+def fprod(*args):
+    r"""
+    Calculates a product containing a finite number of factors (for
+    infinite products, see :func:`nprod`). You can use either
+    ``fprod(<iterable>)`` to multiply a precomputed sequence of
+    factors, or ``fprod(f, [a,b])`` to evaluate `\prod_{k=a}^b f(k)`.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> fprod([1, 2, 0.5, 7])
+        mpf('7.0')
+        >>> fprod(lambda k: k**3, [1, 5])
+        mpf('1728000.0')
+
+    """
+    L = len(args)
+    orig = mp.prec
+    try:
+        mp.prec += 10
+        if L == 1:
+            v = mpf(1)
+            for p in args[0]:
+                v *= p
+        elif L == 2:
+            f = args[0]
+            a, b = args[1]
+            v = mpf(1)
+            for k in xrange(int(a), int(b)+1):
+                v *= f(mpf(k))
+        else:
+            raise ValueError("fprod expected 1 or two arguments")
+    finally:
+        mp.prec = orig
+    return +v
+
 def richardson(seq):
     r"""
     Given a list ``seq`` of the first `N` elements of a slowly convergent
@@ -512,9 +578,9 @@ def nsum(f, interval, **kwargs):
     .. math :: S = \sum_{k=a}^b f(k)
 
     where `(a, b)` = *interval*, and where `a = -\infty` and/or
-    `b = \infty`. Two examples of infinite series that can be
-    summed by :func:`nsum`, where the first converges rapidly and the
-    second converges slowly, are::
+    `b = \infty` (for finite sums, see :func:`fsum`). Two examples of
+    infinite series that can be summed by :func:`nsum`, where the
+    first converges rapidly and the second converges slowly, are::
 
         >>> from mpmath import *
         >>> mp.dps = 15
