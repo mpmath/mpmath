@@ -1,5 +1,5 @@
-Exponential and Gaussian integrals
-----------------------------------
+Exponential integrals and error functions
+-----------------------------------------
 
 .. contents::
 

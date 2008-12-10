@@ -5,6 +5,8 @@ Bessel functions (:func:`besselj`, :func:`bessely`)
 ...................................................
 
 .. autofunction:: mpmath.functions.besselj
+.. autofunction:: mpmath.functions.j0
+.. autofunction:: mpmath.functions.j1
 .. autofunction:: mpmath.functions.bessely
 
 Modified Bessel functions (:func:`besseli`, :func:`besselk`)

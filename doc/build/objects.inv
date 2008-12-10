@@ -9,6 +9,7 @@ mpmath.functions.factorial function functions/gamma.html
 mpmath.functions.gammainc function functions/expintegrals.html
 mpmath.quadrature.Quadrature.get_nodes method calculus/integration.html
 mpmath.functions.asinh function functions/hyperbolic.html
+mpmath.functions.sec function functions/trigonometric.html
 mpmath.functions.nthroot function functions/powers.html
 mpmath.identification.findpoly function identification.html
 mpmath.functions.sech function functions/hyperbolic.html
@@ -30,6 +31,7 @@ mpmath.functions.erfi function functions/expintegrals.html
 mpmath.functions.khinchin attribute functions/constants.html
 mpmath.functions.glaisher attribute functions/constants.html
 mpmath.functions.im function functions/numberparts.html
+mpmath.calculus.fprod function calculus/sums_limits.html
 mpmath.functions.e attribute functions/constants.html
 mpmath.functions.superfac function functions/gamma.html
 mpmath.functions.fac2 function functions/gamma.html
@@ -48,7 +50,7 @@ mpmath.functions.ln function functions/powers.html
 mpmath.functions.jacobi function functions/hypergeometric.html
 mpmath.functions.sqrt function functions/powers.html
 mpmath.quadrature.Quadrature.guess_degree method calculus/integration.html
-mpmath.functions.sec function functions/trigonometric.html
+mpmath.functions.j1 function functions/hypergeometric.html
 mpmath.quadrature.TanhSinh.calc_nodes method calculus/integration.html
 mpmath.functions.frexp function functions/numberparts.html
 mpmath.quadrature.Quadrature.summation method calculus/integration.html
@@ -86,6 +88,7 @@ mpmath.functions.cospi function functions/trigonometric.html
 mpmath.elliptic.jtheta function functions/elliptic.html
 mpmath.functions.catalan attribute functions/constants.html
 mpmath.functions.trigamma function functions/gamma.html
+mpmath.calculus.fsum function calculus/sums_limits.html
 mpmath.functions.hypot function functions/numberparts.html
 mpmath.functions.apery attribute functions/constants.html
 mpmath.identification.identify function identification.html
@@ -110,6 +113,7 @@ mpmath.functions.fibonacci function functions/powers.html
 mpmath.functions.atanh function functions/hyperbolic.html
 mpmath.functions.bernoulli function functions/zeta.html
 mpmath.calculus.fourierval function calculus/approximation.html
+mpmath.functions.j0 function functions/hypergeometric.html
 mpmath.calculus.shanks function calculus/sums_limits.html
 mpmath.functions.acot function functions/trigonometric.html
 mpmath.functions.phi attribute functions/constants.html

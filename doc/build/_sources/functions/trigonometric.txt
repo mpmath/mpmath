@@ -1,6 +1,30 @@
 Trigonometric functions
 -----------------------
 
+Except where otherwise noted, the trigonometric functions
+take a radian angle as input and the inverse trigonometric
+functions return radian angles.
+
+The ordinary trigonometric functions are single-valued
+functions defined everywhere in the complex plane
+(except at the poles of tan, sec, csc, and cot).
+They are defined generally via the exponential function,
+e.g.
+
+.. math ::
+
+    \cos(x) = \frac{e^{ix} + e^{-ix}}{2}.
+
+The inverse trigonometric functions are multivalued,
+thus requiring branch cuts, and are generally real-valued
+only on a part of the real line. Definitions and branch cuts
+are given in the documentation of each function.
+The branch cut conventions used by mpmath are essentially
+the same as those found in most standard mathematical software,
+such as Mathematica and Python's own ``cmath`` libary (as of Python 2.6;
+earlier Python versions implement some functions
+erroneously).
+
 Degree-radian conversion (:func:`degrees`, :func:`radians`)
 ...........................................................
 

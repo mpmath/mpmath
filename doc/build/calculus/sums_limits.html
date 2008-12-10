@@ -48,8 +48,25 @@
   
   <div class="section" id="sums-products-limits-and-extrapolation">
 <h1>Sums, products, limits and extrapolation<a class="headerlink" href="#sums-products-limits-and-extrapolation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="summation-nsum-sumem">
-<h2>Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-nsum-sumem" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="summation-fsum-nsum-sumem">
+<h2>Summation (<tt class="docutils literal"><span class="pre">fsum</span></tt>, <tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-fsum-nsum-sumem" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.fsum">
+<!--[mpmath.calculus.fsum]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fsum</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fsum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a sum containing a finite number of terms (for infinite
+series, see <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>). You can use either <tt class="docutils literal"><span class="pre">fsum(&lt;iterable&gt;)</span></tt>
+to sum a precomputed sequence of terms, or <tt class="docutils literal"><span class="pre">fsum(f,</span> <span class="pre">[a,b])</span></tt> to
+evaluate <img class="math" src="../_images/math/2717cd9de9fb2a75936a227c5f82350e21693490.png" alt="\sum_{k=a}^b f(k)" />.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
+<span class="go">mpf(&#39;10.5&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">20</span><span class="p">])</span>
+<span class="go">mpf(&#39;41075.0&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="function">
 <dt id="mpmath.calculus.nsum">
 <!--[mpmath.calculus.nsum]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">nsum</tt><big>(</big><em>f</em>, <em>interval</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.nsum" title="Permalink to this definition">¶</a></dt>
@@ -57,9 +74,9 @@
 <div class="math">
 <p><img src="../_images/math/e7a402fb18d1cfbf308b0e071b4771f272940d06.png" alt="S = \sum_{k=a}^b f(k)" />
 </div></p><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)" /> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty" /> and/or
-<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" />. Two examples of infinite series that can be
-summed by <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>, where the first converges rapidly and the
-second converges slowly, are:</p>
+<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" /> (for finite sums, see <tt class="xref docutils literal"><span class="pre">fsum()</span></tt>). Two examples of
+infinite series that can be summed by <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>, where the
+first converges rapidly and the second converges slowly, are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
@@ -336,8 +353,25 @@ integral and derivative values (the second should be much faster):</p>
 </dd></dl>
 
 </div>
-<div class="section" id="products-nprod">
-<h2>Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-nprod" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="products-fprod-nprod">
+<h2>Products (<tt class="docutils literal"><span class="pre">fprod</span></tt>, <tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-fprod-nprod" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.fprod">
+<!--[mpmath.calculus.fprod]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fprod</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fprod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a product containing a finite number of factors (for
+infinite products, see <tt class="xref docutils literal"><span class="pre">nprod()</span></tt>). You can use either
+<tt class="docutils literal"><span class="pre">fprod(&lt;iterable&gt;)</span></tt> to multiply a precomputed sequence of
+factors, or <tt class="docutils literal"><span class="pre">fprod(f,</span> <span class="pre">[a,b])</span></tt> to evaluate <img class="math" src="../_images/math/81359ff85e3d7a2568fe55d3eaef6cc4c53c6ffd.png" alt="\prod_{k=a}^b f(k)" />.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
+<span class="go">mpf(&#39;7.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
+<span class="go">mpf(&#39;1728000.0&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="function">
 <dt id="mpmath.calculus.nprod">
 <!--[mpmath.calculus.nprod]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">nprod</tt><big>(</big><em>f</em>, <em>interval</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.nprod" title="Permalink to this definition">¶</a></dt>
@@ -719,8 +753,8 @@ Scientists and Engineers&#8221;, Springer 1999, pp. 368-375</li>
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Sums, products, limits and extrapolation</a><ul>
-<li><a class="reference external" href="#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
-<li><a class="reference external" href="#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
+<li><a class="reference external" href="#summation-fsum-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">fsum</span></tt>, <tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
+<li><a class="reference external" href="#products-fprod-nprod">Products (<tt class="docutils literal"><span class="pre">fprod</span></tt>, <tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
 <li><a class="reference external" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
 <li><a class="reference external" href="#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
 </ul>
@@ -763,19 +797,8 @@ Scientists and Engineers&#8221;, Springer 1999, pp. 368-375</li>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 08, 2008.
+      Last updated on Dec 10, 2008.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
-
-<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-if ((""+document.location).match("google"))
-{
-    _uacct = "UA-2697185-2";
-    urchinTracker();
-}
-</script>
   </body>
 </html>

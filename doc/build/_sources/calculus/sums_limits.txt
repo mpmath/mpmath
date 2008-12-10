@@ -1,15 +1,17 @@
 Sums, products, limits and extrapolation
 ----------------------------------------
 
-Summation (``nsum``, ``sumem``)
-...............................
+Summation (``fsum``, ``nsum``, ``sumem``)
+.........................................
 
+.. autofunction:: mpmath.calculus.fsum
 .. autofunction:: mpmath.calculus.nsum
 .. autofunction:: mpmath.calculus.sumem
 
-Products (``nprod``)
-....................
+Products (``fprod``, ``nprod``)
+...............................
 
+.. autofunction:: mpmath.calculus.fprod
 .. autofunction:: mpmath.calculus.nprod
 
 Limits (``limit``)
