@@ -99,6 +99,27 @@ def acot_fixed(n, prec, hyperbolic):
         k += 2
     return s
 
+def bsp_acot(q, a, b, hyperbolic):
+    if b - a == 1:
+        a1 = MP_BASE(2*a + 3)
+        if hyperbolic or a&1:
+            return MP_ONE, a1 * q**2, a1
+        else:
+            return -MP_ONE, a1 * q**2, a1
+    m = (a+b)//2
+    p1, q1, r1 = bsp_acot(q, a, m, hyperbolic)
+    p2, q2, r2 = bsp_acot(q, m, b, hyperbolic)
+    return q2*p1 + r1*p2, q1*q2, r1*r2
+
+def acot_fixed_bsp(a, prec, hyperbolic):
+    """acot_fixed computed with binary splitting; see
+            http://numbers.computation.free.fr/Constants/
+            Algorithms/splitting.html
+    """
+    N = int(1.1*prec/math.log(prec) + 20)*2
+    p, q, r= bsp_acot(a, 0,N, hyperbolic)
+    return ((p+q)<<prec)//(q*a)
+
 def machin(coefs, prec, hyperbolic=False):
     """
     Evaluate a Machin-like formula, i.e., a linear combination of
@@ -115,18 +136,33 @@ def machin(coefs, prec, hyperbolic=False):
 # Logarithms of integers are needed for various computations involving
 # logarithms, powers, radix conversion, etc
 
+if MODE == 'gmpy':
+    LOG2_PREC_BS = 80000
+else:
+    # for log(2) binary splitting is always slower in python mode
+    LOG2_PREC_BS = 10**20
+
 @constant_memo
 def ln2_fixed(prec):
     """
-    Computes ln(2). This is done with a hyperbolic Machin-type formula.
+    Computes ln(2). This is done with a hyperbolic Machin-type formula
+    at low precision, agm at high precision, binary splitting at
+    very high precision, and only in gmpy mode.
     """
     if prec < LOG_NEWTON_PREC2:
         return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
-    else:
+    elif prec < LOG2_PREC_BS:
         wp = prec + 20
         res = log_agm((0, MP_ONE, 1, 1), wp, False)
         return to_fixed(res, prec)
-
+    else:
+        # use log(2) = 2*acot(3) and binary splitting;
+        # the extra precision added has been determined making tests
+        # up to two million digits
+        c = 0.135 * math.log(prec - 15000) + 0.4
+        wp = int(c*prec)
+        s = acot_fixed_bsp(3, wp, hyperbolic=True) >> (wp-1-prec)
+        return s
 
 @constant_memo
 def ln10_fixed(prec):
