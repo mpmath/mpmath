@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from mptypes import mpmathify, extraprec, eps, mpf
 from calculus import diff
 from functions import sqrt, sign
@@ -294,9 +292,9 @@ class Illinois:
 
     The only difference between the methods is the scaling factor m, which is
     used to ensure convergence (you can choose one using the 'method' keyword):
-    Illinois method ('illinois'):       m = 0.5
-    Pegasus method ('pegasus'):         m = fb/(fb + fz)
-    Anderson-Björk method ('anderson'): m = 1 - fz/fb if positive else 0.5
+    Illinois method ('illinois'):        m = 0.5
+    Pegasus method ('pegasus'):          m = fb/(fb + fz)
+    Anderson-Bjoerk method ('anderson'): m = 1 - fz/fb if positive else 0.5
 
     Pro:
     * converges very fast
@@ -368,7 +366,7 @@ def Anderson(*args, **kwargs):
     u"""
     1d-solver generating pairs of approximative root and error.
 
-    Uses Anderson-Björk method to find a root of f in [a, b].
+    Uses Anderson-Bjoerk method to find a root of f in [a, b].
     Wrapper for illinois to use method='pegasus'.
     """
     kwargs['method'] = 'anderson'
