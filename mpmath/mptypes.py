@@ -7,7 +7,7 @@ __docformat__ = 'plaintext'
 import re
 
 from settings import (MP_BASE, MP_ONE, mp, prec_rounding, extraprec, extradps,
-    workprec, workdps, int_types, repr_dps, round_floor, round_ceiling)
+    workprec, workdps, int_types, repr_dps, round_floor, round_ceiling, dps_to_prec)
 
 from libmpf import (
     ComplexResult, to_pickable, from_pickable, normalize,
@@ -649,7 +649,7 @@ class constant(mpf):
     def __call__(self, prec=None, dps=None, rounding=None):
         if not prec: prec = prec_rounding[0]
         if not rounding: rounding = prec_rounding[1]
-        if dps: prec = dps_to_prec(prec)
+        if dps: prec = dps_to_prec(dps)
         return make_mpf(self.func(prec, rounding))
 
     @property

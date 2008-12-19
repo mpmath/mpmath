@@ -22,6 +22,8 @@ import libmpi
 import gammazeta
 import libhyper
 
+from settings import dps_to_prec
+
 from mptypes import (\
     mpnumeric, mpmathify,
     mpf, make_mpf,
@@ -760,7 +762,7 @@ places the branch cuts along the line segments `(-i \infty, -i)` and
 
     \tan^{-1}(x) = \frac{i}{2}\left(\log(1-ix)-\log(1+ix)\right)
 
-where the principal-branch log and square root are implied.
+where the principal-branch log is implied.
 """
 
 acot.__doc__ = r"""Computes the inverse cotangent of `x`,
@@ -4933,7 +4935,7 @@ def bernpoly(n, z):
         [-3.33333e-2, 0.0, 1.0, -2.0, 1.0]
         [0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]
 
-    At `z = 1`, the Bernoulli polynomial evaluates to a
+    At `z = 0`, the Bernoulli polynomial evaluates to a
     Bernoulli number (see :func:`bernoulli`)::
 
         >>> print bernpoly(12, 0), bernoulli(12)
