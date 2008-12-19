@@ -111,12 +111,14 @@ def bsp_acot(q, a, b, hyperbolic):
     p2, q2, r2 = bsp_acot(q, m, b, hyperbolic)
     return q2*p1 + r1*p2, q1*q2, r1*r2
 
+# the acoth(x) series converges like the geometric series for x^2
+# N = ceil(p*log(2)/(2*log(x)))
 def acot_fixed_bsp(a, prec, hyperbolic):
     """acot_fixed computed with binary splitting; see
             http://numbers.computation.free.fr/Constants/
             Algorithms/splitting.html
     """
-    N = int(1.1*prec/math.log(prec) + 20)*2
+    N = int(0.35 * prec/math.log(a) + 20)
     p, q, r= bsp_acot(a, 0,N, hyperbolic)
     return ((p+q)<<prec)//(q*a)
 
@@ -137,32 +139,25 @@ def machin(coefs, prec, hyperbolic=False):
 # logarithms, powers, radix conversion, etc
 
 if MODE == 'gmpy':
-    LOG2_PREC_BS = 80000
+    LOG2_PREC_BSP = 14000
 else:
-    # for log(2) binary splitting is always slower in python mode
-    LOG2_PREC_BS = 10**20
+    LOG2_PREC_BSP = 20000
 
 @constant_memo
 def ln2_fixed(prec):
     """
-    Computes ln(2). This is done with a hyperbolic Machin-type formula
-    at low precision, agm at high precision, binary splitting at
-    very high precision, and only in gmpy mode.
+    Computes ln(2). This is done with a hyperbolic Machin-type formula,
+    with binary splitting at high precision.
     """
-    if prec < LOG_NEWTON_PREC2:
+    if prec < LOG2_PREC_BSP:
         return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
-    elif prec < LOG2_PREC_BS:
-        wp = prec + 20
-        res = log_agm((0, MP_ONE, 1, 1), wp, False)
-        return to_fixed(res, prec)
     else:
-        # use log(2) = 2*acot(3) and binary splitting;
-        # the extra precision added has been determined making tests
-        # up to two million digits
-        c = 0.135 * math.log(prec - 15000) + 0.4
-        wp = int(c*prec)
-        s = acot_fixed_bsp(3, wp, hyperbolic=True) >> (wp-1-prec)
-        return s
+        extraprec = 10
+        s = MP_ZERO
+        for a, b in [(18, 26), (-2, 4801), (8, 8749)]:
+            s += MP_BASE(a) * acot_fixed_bsp(MP_BASE(b), prec+extraprec,
+                    hyperbolic=True)
+        return s >> extraprec
 
 @constant_memo
 def ln10_fixed(prec):
