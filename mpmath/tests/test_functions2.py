@@ -329,8 +329,11 @@ def test_lambertw():
     assert lambertw(0) == 0
     assert lambertw(0+0j) == 0
     assert lambertw(inf) == inf
-    assert isnan(lambertw(-inf))
     assert isnan(lambertw(nan))
+    assert lambertw(inf,1).real == inf
+    assert lambertw(inf,1).imag.ae(2*pi)
+    assert lambertw(-inf,1).real == inf
+    assert lambertw(-inf,1).imag.ae(3*pi)
     assert lambertw(0,-1) == -inf
     assert lambertw(0,1) == -inf
     assert lambertw(0,3) == -inf

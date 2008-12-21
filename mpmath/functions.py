@@ -4432,7 +4432,7 @@ def lambertw(z, k=0, approx=None):
 
     **Basic examples**
 
-    The Lambert W equation is the inverse of `w \exp(w)`::
+    The Lambert W function is the inverse of `w \exp(w)`::
 
         >>> from mpmath import *
         >>> mp.dps = 35
@@ -4453,7 +4453,8 @@ def lambertw(z, k=0, approx=None):
 
     **Applications to equation-solving**
 
-    The Lambert W function can give the value of the infinite power
+    The Lambert W function may be used to solve various kinds of
+    equations, such as finding the value of the infinite power
     tower `z^{z^{z^{\ldots}}}`::
 
         >>> def tower(z, n):
@@ -4504,7 +4505,7 @@ def lambertw(z, k=0, approx=None):
         >>> print lambertw(0, k=3)
         -inf
         >>> print lambertw(inf, k=3)
-        +inf
+        (+inf + 18.8495559215388j)
 
     The `k = 0` and `k = -1` branches join at `z = -1/e` where
     `W(z) = -1` for both branches. Since `-1/e` can only be represented
@@ -4570,8 +4571,13 @@ def lambertw(z, k=0, approx=None):
     elif k == 0 and z.imag and abs(z) <= 0.6:
         w = z
     else:
-        if z == inf: return z
-        if z == -inf: return nan
+        if z == inf:
+            if k == 0:
+                return z
+            else:
+                return z + 2*k*pi*j
+        if z == -inf:
+            return (-z) + (2*k+1)*pi*j
         # Simple asymptotic approximation as above
         w = log(z)
         if k: w += k * 2*pi*j
