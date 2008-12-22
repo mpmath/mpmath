@@ -1595,13 +1595,21 @@ def mpf_atan2(y, x, prec, rnd=round_fast):
     xsign, xman, xexp, xbc = x
     ysign, yman, yexp, ybc = y
     if not yman:
-        if y == fnan or x == fnan:
-            return fnan
-        if mpf_sign(x) >= 0:
-            return fzero
-        return mpf_pi(prec, rnd)
+        if y == fzero and x != fnan:
+            if mpf_sign(x) >= 0:
+                return fzero
+            return mpf_pi(prec, rnd)
+        if y in (finf, fninf):
+            if x in (finf, fninf):
+                return fnan
+            # pi/2
+            if y == finf:
+                return mpf_shift(mpf_pi(prec, rnd), -1)
+            # -pi/2
+            return mpf_neg(mpf_shift(mpf_pi(prec, negative_rnd[rnd]), -1))
+        return fnan
     if ysign:
-        return mpf_neg(mpf_atan2(mpf_neg(y), x, prec, rnd))
+        return mpf_neg(mpf_atan2(mpf_neg(y), x, prec, negative_rnd[rnd]))
     if not xman:
         if x == fnan:
             return fnan
@@ -1609,7 +1617,7 @@ def mpf_atan2(y, x, prec, rnd=round_fast):
             return fzero
         if x == fninf:
             return mpf_pi(prec, rnd)
-        if not yman:
+        if y == fzero:
             return fzero
         return mpf_shift(mpf_pi(prec, rnd), -1)
     tquo = mpf_atan(mpf_div(y, x, prec+4), prec+4)

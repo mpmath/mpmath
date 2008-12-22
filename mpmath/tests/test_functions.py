@@ -223,13 +223,6 @@ def test_complex_sqrt_accuracy():
 
 def test_atan():
     assert atan(-2.3).ae(math.atan(-2.3))
-    assert atan2(1,1).ae(math.atan2(1,1))
-    assert atan2(1,-1).ae(math.atan2(1,-1))
-    assert atan2(-1,-1).ae(math.atan2(-1,-1))
-    assert atan2(-1,1).ae(math.atan2(-1,1))
-    assert atan2(-1,0).ae(math.atan2(-1,0))
-    assert atan2(1,0).ae(math.atan2(1,0))
-    assert atan2(0,0) == 0
     assert atan(1e-50) == 1e-50
     assert atan(1e50).ae(pi/2)
     assert atan(-1e-50) == -1e-50
@@ -239,6 +232,35 @@ def test_atan():
         mp.dps = dps
         assert (4*atan(1)).ae(pi)
     mp.dps = 15
+
+def test_atan2():
+    mp.dps = 15
+    assert atan2(1,1).ae(pi/4)
+    assert atan2(1,-1).ae(3*pi/4)
+    assert atan2(-1,-1).ae(-3*pi/4)
+    assert atan2(-1,1).ae(-pi/4)
+    assert atan2(-1,0).ae(-pi/2)
+    assert atan2(1,0).ae(pi/2)
+    assert atan2(0,0) == 0
+    assert atan2(inf,0).ae(pi/2)
+    assert atan2(-inf,0).ae(-pi/2)
+    assert isnan(atan2(inf,inf))
+    assert isnan(atan2(-inf,inf))
+    assert isnan(atan2(inf,-inf))
+    assert isnan(atan2(3,nan))
+    assert isnan(atan2(nan,3))
+    assert isnan(atan2(0,nan))
+    assert isnan(atan2(nan,0))
+    assert atan2(0,inf) == 0
+    assert atan2(0,-inf).ae(pi)
+    assert atan2(10,inf) == 0
+    assert atan2(-10,inf) == 0
+    assert atan2(-10,-inf).ae(-pi)
+    assert atan2(10,-inf).ae(pi)
+    assert atan2(inf,10).ae(pi/2)
+    assert atan2(inf,-10).ae(pi/2)
+    assert atan2(-inf,10).ae(-pi/2)
+    assert atan2(-inf,-10).ae(-pi/2)
 
 def test_areal_inverses():
     assert asin(mpf(0)) == 0
