@@ -163,8 +163,14 @@ def test_jtheta_issue39():
         r2 = jtheta(1, z, q)
     assert r1.ae(r2)
     mp.dps = 15
-
-
+    # issue 39 about high derivatives
+    assert djtheta(3, 4.5, 0.25, 9).ae(1359.04892680683)
+    assert djtheta(3, 4.5, 0.25, 50).ae(-6.14832772630905e+33)
+    mp.dps = 50
+    r = djtheta(3, 4.5, 0.25, 9)
+    assert r.ae('1359.048926806828939547859396600218966947753213803')
+    r = djtheta(3, 4.5, 0.25, 50)
+    assert r.ae('-6148327726309051673317975084654262.4119215720343656')
 
 def test_jtheta_identities():
     """
