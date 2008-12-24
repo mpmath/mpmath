@@ -3062,6 +3062,18 @@ def ncdf(x, mu=0, sigma=1):
     else:
         return (1+erf(a))/2
 
+def ei_as(a):
+    extra = 10
+    mp.dps += extra
+    s = k = p = 1
+    while abs(p) > eps:
+        p = (p*k)/a
+        s += p
+        k += 1
+    s = (s * exp(a))/a
+    mp.dps -= extra
+    return s
+
 @funcwrapper
 def ei(z):
     r"""
@@ -3148,6 +3160,15 @@ def ei(z):
         >>> print ei(z)
         0.769881289937359
 
+    For x large enough use the asymptotic expansion
+    ei_as(x) = exp(x)/x * Sum(k!/x^k, (k,0,inf))
+    k!/x^k  goes as exp(f(k))
+    f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in 
+    log(k/x) + 1/(2*k) = 0; therefore the smallest term of the 
+    asympotic series is k!/x^k ~= e^(-k - 1/2)
+    requiring this to be equal to e^-prec one gets x ~= k ~= prec*log(2)
+    so that one should use ei_as(x) for x > prec*log(2)
+
     **References**
 
     1. Relations between Ei and other functions:
@@ -3156,6 +3177,8 @@ def ei(z):
     2. Abramowitz & Stegun, section 5:
        http://www.math.sfu.ca/~cbm/aands/page_228.htm
 
+    3. Asymptotic expansion for Ei:
+       http://mathworld.wolfram.com/En-Function.html
     """
     if z == inf:
         return z
@@ -3163,6 +3186,13 @@ def ei(z):
         return -mpf(0)
     if not z:
         return -inf
+    if abs(z) > mp.prec * 0.7 + 50:
+        r = ei_as(z)
+        if z.imag > 0:
+            r += j*pi
+        elif z.imag < 0:
+            r -= j*pi
+        return r
     v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
         (log(z)-log(1/z))/2 + euler
     if isinstance(z, mpf) and z < 0:

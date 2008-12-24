@@ -149,6 +149,21 @@ def test_exp_integrals():
     assert chi(0) == -inf
     assert chi(inf) == inf
 
+    # tests for the asymptotic expansion
+    # values checked with Mathematica ExpIntegralEi
+    mp.dps = 50
+    r = ei(20000)
+    s = '3.8781962825045010930273870085501819470698476975019e+8681'
+    assert str(r) == s
+    r = ei(-200)
+    s = '-6.8852261063076355977108174824557929738368086933303e-90'
+    assert str(r) == s
+    r =ei(20000 + 10*j)
+    sre = '-3.255138234032069402493850638874410725961401274106e+8681'
+    sim = '-2.1081929993474403520785942429469187647767369645423e+8681'
+    assert str(r.real) == sre and str(r.imag) == sim
+    mp.dps = 15
+    
 def test_trig_integrals():
     mp.dps = 30
     assert si(mpf(1)/1000000).ae('0.000000999999999999944444444444446111')
