@@ -336,10 +336,19 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
     if not prec:
         if not man:
             return fzero
-        while not man & 1:
-            man >>= 1
-            exp += 1
-            bc -= 1
+        if not man & 1:
+            if man & 2:
+                return (sign, man >> 1, exp + 1, bc - 1)
+            t = trailtable[int(man & 255)]
+            if not t:
+                while not man & 255:
+                    man >>= 8
+                    exp += 8
+                    bc -= 8
+                t = trailtable[int(man & 255)]
+            man >>= t
+            exp += t
+            bc -= t
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
