@@ -1,6 +1,6 @@
 from mptypes import mpmathify, extraprec, eps, mpf
 from calculus import diff
-from functions import sqrt, sign
+from functions import sqrt, sign, ldexp
 from matrices import matrix, norm_p
 from linalg import lu_solve
 from copy import copy
@@ -252,12 +252,15 @@ class Bisection:
         a = self.a
         b = self.b
         l = b - a
+        fb = f(b)
         while True:
-            m = 0.5 * (a + b) # TODO: ldexp?
-            if f(m) * f(b) < 0:
+            m = ldexp(a + b, -1)
+            fm = f(m)
+            if fm * fb < 0:
                 a = m
             else:
                 b = m
+                fb = fm
             l /= 2
             yield (a + b)/2, abs(l)
 
