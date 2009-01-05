@@ -133,7 +133,10 @@ if MODE == 'gmpy':
 else:
     bitcount = python_bitcount
     trailing = python_trailing
-
+    
+if MODE == 'gmpy' and 'bit_length' in dir(gmpy):
+    bitcount = gmpy.bit_length
+    
 # Used to avoid slow function calls as far as possible
 trailtable = map(trailing, range(256))
 bctable = map(bitcount, range(1024))
@@ -312,8 +315,8 @@ if STRICT:
 else:
     normalize = _normalize
     normalize1 = _normalize1
-
-if MODE == "gmpy" and gmpy.version() > '1.03':
+    
+if MODE == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
     normalize = gmpy._mpmath_normalize
     normalize1 = gmpy._mpmath_normalize
 
@@ -351,6 +354,9 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
             bc -= t
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
+    
+if MODE == 'gmpy' and '_mpmath_create' in dir(gmpy):
+    from_man_exp = gmpy._mpmath_create
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
