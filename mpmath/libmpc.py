@@ -19,6 +19,7 @@ from libmpf import (\
 
 from libelefun import (\
     mpf_pi, mpf_exp, mpf_log, cos_sin, cosh_sinh, mpf_tan,
+    mpf_log_hypot,
     mpf_cos_sin_pi, mpf_phi,
     mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
     mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot, mpf_fibonacci
@@ -379,7 +380,9 @@ def mpc_exp((a, b), prec, rnd=round_fast):
     return re, im
 
 def mpc_log(z, prec, rnd=round_fast):
-    return mpf_log(mpc_abs(z, prec, rnd), prec, rnd), mpc_arg(z, prec, rnd)
+    re = mpf_log_hypot(z[0], z[1], prec, rnd)
+    im = mpc_arg(z, prec, rnd)
+    return re, im
 
 def mpc_cos((a, b), prec, rnd=round_fast):
     """Complex cosine. The formula used is cos(a+bi) = cos(a)*cosh(b) -

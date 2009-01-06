@@ -140,6 +140,7 @@ def test_issue_33():
     assert (+b).ae(2.7182818284590451)
 
 def test_log():
+    mp.dps = 15
     assert log(1) == 0
     for x in [0.5, 1.5, 2.0, 3.0, 100, 10**50, 1e-50]:
         assert log(x).ae(math.log(x))
@@ -147,6 +148,20 @@ def test_log():
     assert log(1024, 2) == 10
     assert log(10**1234, 10) == 1234
     assert log(2+2j).ae(cmath.log(2+2j))
+    # Accuracy near 1
+    assert (log(0.6+0.8j).real*10**17).ae(2.2204460492503131)
+    assert (log(0.6-0.8j).real*10**17).ae(2.2204460492503131)
+    assert (log(0.8-0.6j).real*10**17).ae(2.2204460492503131)
+    assert (log(1+1e-8j).real*10**16).ae(0.5)
+    assert (log(1-1e-8j).real*10**16).ae(0.5)
+    assert (log(-1+1e-8j).real*10**16).ae(0.5)
+    assert (log(-1-1e-8j).real*10**16).ae(0.5)
+    assert (log(1j+1e-8).real*10**16).ae(0.5)
+    assert (log(1j-1e-8).real*10**16).ae(0.5)
+    assert (log(-1j+1e-8).real*10**16).ae(0.5)
+    assert (log(-1j-1e-8).real*10**16).ae(0.5)
+    assert (log(1+1e-40j).real*10**80).ae(0.5)
+    assert (log(1j+1e-40).real*10**80).ae(0.5)
 
 def test_trig_hyperb_basic():
     for x in (range(100) + range(-100,0)):

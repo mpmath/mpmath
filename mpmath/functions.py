@@ -450,6 +450,99 @@ does not give a real cube root for negative real numbers::
 """
 
 exp = mpfunc('exp', libelefun.mpf_exp, libmpc.mpc_exp, "exponential function", libmpi.mpi_exp)
+
+exp.__doc__ = r"""
+Computes the exponential function,
+
+.. math ::
+
+    \exp(x) = e^x = \sum_{k=0}^{\infty} \frac{x^k}{k!}.
+
+For complex numbers, the exponential function also satisfies
+
+.. math ::
+
+    \exp(x+yi) = e^x (\cos y + i \sin y).
+
+**Basic examples**
+
+Some values of the exponential function::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print exp(0)
+    1.0
+    >>> print exp(1)
+    2.718281828459045235360287
+    >>> print exp(-1)
+    0.3678794411714423215955238
+    >>> print exp(inf)
+    +inf
+    >>> print exp(-inf)
+    0.0
+
+Arguments can be arbitrarily large::
+
+    >>> print exp(10000)
+    8.806818225662921587261496e+4342
+    >>> print exp(-10000)
+    1.135483865314736098540939e-4343
+
+Evaluation is supported for interval arguments::
+
+    >>> print exp(mpi(-inf,0))
+    [0.0, 1.0]
+    >>> print exp(mpi(0,1))
+    [1.0, 2.71828182845904523536028749558]
+
+The exponential function can be evaluated efficiently to arbitrary
+precision::
+
+    >>> mp.dps = 10000
+    >>> print exp(pi)  #doctest: +ELLIPSIS
+    23.140692632779269005729...8984304016040616
+
+**Functional properties**
+
+Numerical verification of Euler's identity for the complex
+exponential function::
+
+    >>> mp.dps = 15
+    >>> print exp(j*pi)+1
+    (0.0 + 1.22464679914735e-16j)
+    >>> print chop(exp(j*pi)+1)
+    0.0
+
+This recovers the coefficients (reciprocal factorials) in the
+Maclaurin series expansion of exp::
+
+    >>> nprint(taylor(exp, 0, 5))
+    [1.0, 1.0, 0.5, 0.166667, 4.16667e-2, 8.33333e-3]
+
+The exponential function is its own derivative and antiderivative::
+
+    >>> print exp(pi)
+    23.1406926327793
+    >>> print diff(exp, pi)
+    23.1406926327793
+    >>> print quad(exp, [-inf, pi])
+    23.1406926327793
+
+The exponential function can be evaluated using various methods,
+including direct summation of the series, limits, and solving
+the defining differential equation::
+
+    >>> print nsum(lambda k: pi**k/fac(k), [0,inf])
+    23.1406926327793
+    >>> print limit(lambda k: (1+pi/k)**k, inf)
+    23.1406926327793
+    >>> print odefun(lambda t, x: x, 0, 1)(pi)
+    23.1406926327793
+
+
+"""
+
+
 ln = mpfunc('ln', libelefun.mpf_log, libmpc.mpc_log, "natural logarithm", libmpi.mpi_log)
 
 ln.__doc__ = r"""Computes the natural logarithm of `x`, `\ln x`.
@@ -3374,6 +3467,7 @@ The sine integral is thus the antiderivative of the sinc
 function (see :func:`sinc`).
 
 **Examples**
+
 Some values and limits::
 
     >>> from mpmath import *
