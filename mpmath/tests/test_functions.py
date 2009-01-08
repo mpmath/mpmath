@@ -710,3 +710,11 @@ def test_fibonacci():
 def test_call_with_dps():
     mp.dps = 15
     assert abs(exp(1, dps=30)-e(dps=35)) < 1e-29
+
+def test_tanh():
+    mp.dps = 15
+    assert tanh(0) == 0
+    assert tanh(inf) == 1
+    assert tanh(-inf) == -1
+    assert isnan(tanh(nan))
+    assert tanh(mpc('inf', '0')) == 1

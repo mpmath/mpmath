@@ -1478,6 +1478,10 @@ def cosh_sinh(x, prec, rnd=round_fast, tanh=0):
     """Simultaneously compute (cosh(x), sinh(x)) for real x"""
     sign, man, exp, bc = x
     if (not man) and exp:
+        if tanh:
+            if x == finf: return fone
+            if x == fninf: return fnone
+            return fnan
         if x == finf: return (finf, finf)
         if x == fninf: return (finf, fninf)
         return fnan, fnan
