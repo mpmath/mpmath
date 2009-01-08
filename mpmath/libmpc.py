@@ -10,11 +10,13 @@ from settings import (\
 
 from libmpf import (\
     bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
+    negative_rnd,
     to_str, to_fixed, from_man_exp, from_float, from_int, to_int,
     fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
-    mpf_rdiv_int, mpf_floor, mpf_ceil
+    mpf_rdiv_int, mpf_floor, mpf_ceil,
+    mpf_sign,
 )
 
 from libelefun import (\
@@ -31,6 +33,23 @@ mpc_one = fone, fzero
 mpc_zero = fzero, fzero
 mpc_two = ftwo, fzero
 mpc_half = (fhalf, fzero)
+
+_infs = (finf, fninf)
+_infs_nan = (finf, fninf, fnan)
+
+def mpc_is_inf(z):
+    """Check if either real or imaginary part is infinite"""
+    re, im = z
+    if re in _infs: return True
+    if im in _infs: return True
+    return False
+
+def mpc_is_infnan(z):
+    """Check if either real or imaginary part is infinite or nan"""
+    re, im = z
+    if re in _infs_nan: return True
+    if im in _infs_nan: return True
+    return False
 
 def complex_to_str(re, im, dps):
     rs = to_str(re, dps)
@@ -470,7 +489,8 @@ def mpc_tanh((a, b), prec, rnd=round_fast):
     return a, b
 
 # TODO: avoid loss of accuracy
-def mpc_atan((a, b), prec, rnd=round_fast):
+def mpc_atan(z, prec, rnd=round_fast):
+    a, b = z
     # atan(z) = (I/2)*(log(1-I*z) - log(1+I*z))
     # x = 1-I*z = 1 + b - I*a
     # y = 1+I*z = 1 - b + I*a
@@ -481,7 +501,12 @@ def mpc_atan((a, b), prec, rnd=round_fast):
     l2 = mpc_log(y, wp)
     a, b = mpc_sub(l1, l2, prec, rnd)
     # (I/2) * (a+b*I) = (-b/2 + a/2*I)
-    return mpf_neg(mpf_shift(b,-1)), mpf_shift(a,-1)
+    v = mpf_neg(mpf_shift(b,-1)), mpf_shift(a,-1)
+    # Subtraction at infinity gives correct real part but
+    # wrong imaginary part (should be zero)
+    if v[1] == fnan and mpc_is_inf(z):
+        v = (v[0], fzero)
+    return v
 
 beta_crossover = from_float(0.6417)
 alpha_crossover = from_float(1.5)
@@ -650,7 +675,12 @@ def mpc_atanh(z, prec, rnd=round_fast):
     b = mpc_sub(mpc_one, z, wp)
     a = mpc_log(a, wp)
     b = mpc_log(b, wp)
-    return mpc_shift(mpc_sub(a, b, wp), -1)
+    v = mpc_shift(mpc_sub(a, b, wp), -1)
+    # Subtraction at infinity gives correct imaginary part but
+    # wrong real part (should be zero)
+    if v[0] == fnan and mpc_is_inf(z):
+        v = (fzero, v[1])
+    return v
 
 def mpc_fibonacci(z, prec, rnd=round_fast):
     re, im = z

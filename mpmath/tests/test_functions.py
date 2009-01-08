@@ -237,6 +237,7 @@ def test_complex_sqrt_accuracy():
     mp.dps = 15
 
 def test_atan():
+    mp.dps = 15
     assert atan(-2.3).ae(math.atan(-2.3))
     assert atan(1e-50) == 1e-50
     assert atan(1e50).ae(pi/2)
@@ -247,6 +248,19 @@ def test_atan():
         mp.dps = dps
         assert (4*atan(1)).ae(pi)
     mp.dps = 15
+    pi2 = pi/2
+    assert atan(mpc(inf,-1)).ae(pi2)
+    assert atan(mpc(inf,0)).ae(pi2)
+    assert atan(mpc(inf,1)).ae(pi2)
+    assert atan(mpc(1,inf)).ae(pi2)
+    assert atan(mpc(0,inf)).ae(pi2)
+    assert atan(mpc(-1,inf)).ae(-pi2)
+    assert atan(mpc(-inf,1)).ae(-pi2)
+    assert atan(mpc(-inf,0)).ae(-pi2)
+    assert atan(mpc(-inf,-1)).ae(-pi2)
+    assert atan(mpc(-1,-inf)).ae(-pi2)
+    assert atan(mpc(0,-inf)).ae(-pi2)
+    assert atan(mpc(1,-inf)).ae(pi2)
 
 def test_atan2():
     mp.dps = 15
@@ -718,3 +732,30 @@ def test_tanh():
     assert tanh(-inf) == -1
     assert isnan(tanh(nan))
     assert tanh(mpc('inf', '0')) == 1
+
+def test_atanh():
+    mp.dps = 15
+    assert atanh(0) == 0
+    assert atanh(0.5).ae(0.54930614433405484570)
+    assert atanh(-0.5).ae(-0.54930614433405484570)
+    assert atanh(1) == inf
+    assert atanh(-1) == -inf
+    assert isnan(atanh(nan))
+    assert isinstance(atanh(1), mpf)
+    assert isinstance(atanh(-1), mpf)
+    # Limits at infinity
+    jpi2 = j*pi/2
+    assert atanh(inf).ae(-jpi2)
+    assert atanh(-inf).ae(jpi2)
+    assert atanh(mpc(inf,-1)).ae(-jpi2)
+    assert atanh(mpc(inf,0)).ae(-jpi2)
+    assert atanh(mpc(inf,1)).ae(jpi2)
+    assert atanh(mpc(1,inf)).ae(jpi2)
+    assert atanh(mpc(0,inf)).ae(jpi2)
+    assert atanh(mpc(-1,inf)).ae(jpi2)
+    assert atanh(mpc(-inf,1)).ae(jpi2)
+    assert atanh(mpc(-inf,0)).ae(jpi2)
+    assert atanh(mpc(-inf,-1)).ae(-jpi2)
+    assert atanh(mpc(-1,-inf)).ae(-jpi2)
+    assert atanh(mpc(0,-inf)).ae(-jpi2)
+    assert atanh(mpc(1,-inf)).ae(-jpi2)

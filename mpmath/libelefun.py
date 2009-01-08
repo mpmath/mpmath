@@ -1746,9 +1746,15 @@ def mpf_acosh(x, prec, rnd=round_fast):
 def mpf_atanh(x, prec, rnd=round_fast):
     # atanh(x) = log((1+x)/(1-x))/2
     sign, man, exp, bc = x
+    if (not man) and exp:
+        if x in (fzero, fnan):
+            return x
+        raise ComplexResult("atanh(x) is real only for -1 <= x <= 1")
     mag = bc + exp
     if mag > 0:
-        raise ComplexResult("atanh(x) is real only for -1 < x < 1")
+        if mag == 1 and man == 1:
+            return [finf, fninf][sign]
+        raise ComplexResult("atanh(x) is real only for -1 <= x <= 1")
     wp = prec + 15
     if mag < -8:
         if mag < -wp:
