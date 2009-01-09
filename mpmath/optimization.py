@@ -529,6 +529,13 @@ class MDNewton:
     Use the 'norm' keyword to specify which norm to use. Defaults to max-norm.
     The function to calculate the Jacobian matrix can be given using the
     keyword 'J'. Otherwise it will be calculated numerically.
+
+    Please note that this method converges only locally. Especially for high-
+    dimensional systems it is not trvial to find a good starting point being
+    close enough to the root.
+    It is recommended to use a faster, low-precision solver from SciPy [1] or
+    OpenOpt [2] to get an initial guess. Afterwards you can use this method for
+    root-polishing to any precision.
     """
     maxsteps = 10
 
@@ -689,6 +696,21 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         0.567143290409784 0.567143290409784
         >>> print lambert(1000), lambert(1000)
         5.2496028524016 5.2496028524016
+
+    Multidimensional functions are also supported::
+
+        >>> f = [lambda x1, x2: x1**2 + x2,
+        ...      lambda x1, x2: 5*x1**2 - 3*x1 + 2*x2 - 3]
+        >>> findroot(f, (0, 0))
+        matrix(
+        [['-0.618033988749895'],
+         ['-0.381966011250105']])
+        >>> findroot(f, (10, 10))
+        matrix(
+        [['1.61803398874989'],
+         ['-2.61803398874989']])
+
+    You can verify this by solving the system manually.
 
     **Multiple roots**
 
