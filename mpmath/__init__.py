@@ -7,7 +7,8 @@ from mptypes import (
     eps, j, inf, nan, isnan, isinf, isint,
     nstr, nprint, fraction, almosteq,
     arange, linspace, rand, absmin, absmax,
-    chop, monitor
+    fsum, fprod,
+    chop, monitor, timing
 )
 
 from functions import (
@@ -42,7 +43,7 @@ from functions import (
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
-from calculus import richardson, shanks, nsum, nprod, fsum, fprod
+from calculus import richardson, shanks, nsum, nprod
 from calculus import diff, diffun, diffs, taylor, pade
 from calculus import polyval, polyroots
 from calculus import fourier, fourierval

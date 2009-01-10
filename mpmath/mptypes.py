@@ -17,7 +17,8 @@ from libmpf import (
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
     mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
     mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
-    mpf_hash, mpf_rand
+    mpf_hash, mpf_rand,
+    mpf_sum
 )
 
 from libmpc import (
@@ -964,3 +965,99 @@ def monitor(f, input='print', output='print'):
         output(v)
         return v
     return f_monitored
+
+def fsum(terms):
+    """
+    Calculates a sum containing a finite number of terms (for infinite
+    series, see :func:`nsum`). The terms will be converted to
+    mpmath numbers. For len(terms) > 2, this function is generally
+    faster and produces more accurate results than the builtin
+    Python function :func:`sum`.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> fsum([1, 2, 0.5, 7])
+        mpf('10.5')
+    """
+    prec, rnd = prec_rounding
+    real = []
+    imag = []
+    other = 0
+    for term in terms:
+        if hasattr(term, "_mpf_"):
+            val = term._mpf_
+        elif hasattr(term, "_mpc_"):
+            val, im = term._mpc_
+            imag.append(im)
+        else:
+            term = mpmathify(term)
+            if hasattr(term, "_mpf_"):
+                val = term._mpf_
+            elif hasattr(term, "_mpc_"):
+                val, im = term._mpc_
+                imag.append(im)
+            else:
+                other += term
+                continue
+        real.append(val)
+    s = mpf_sum(real, prec, rnd)
+    if imag:
+        s = make_mpc((s, mpf_sum(imag, prec, rnd)))
+    else:
+        s = make_mpf(s)
+    if other is 0:
+        return s
+    else:
+        return s + other
+
+def fprod(factors):
+    r"""
+    Calculates a product containing a finite number of factors (for
+    infinite products, see :func:`nprod`). The factors will be
+    converted to mpmath numbers.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> fprod([1, 2, 0.5, 7])
+        mpf('7.0')
+        >>> fprod(lambda k: k**3, [1, 5])
+        mpf('1728000.0')
+
+    """
+    orig = mp.prec
+    try:
+        v = mpf(1)
+        for p in factors:
+            v *= p
+    finally:
+        mp.prec = orig
+    return +v
+
+def timing(f, *args, **kwargs):
+    """
+    Returns time elapsed for evaluating ``f()``. Optionally arguments
+    may be passed to time the execution of ``f(*args, **kwargs)``.
+
+    If the first call is very quick, ``f`` is called
+    repeatedly and the best time is returned.
+    """
+    if args or kwargs:
+        if len(args) == 1 and not kwargs:
+            arg = args[0]
+            g = lambda: f(arg)
+        else:
+            g = lambda: f(*args, **kwargs)
+    else:
+        g = f
+    from timeit import default_timer as clock
+    t1=clock(); v=g(); t2=clock(); t=t2-t1
+    if t > 0.05:
+        return t
+    for i in range(3):
+        t1=clock();
+        # Evaluate multiple times because the timer function
+        # has a significant overhead
+        g();g();g();g();g();g();g();g();g();g()
+        t2=clock()
+        t=min(t,(t2-t1)/10)
+    return t

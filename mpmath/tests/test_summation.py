@@ -7,6 +7,7 @@ def test_sumem():
 
 def test_nsum():
     mp.dps = 15
+    assert nsum(lambda x: x**2, [1, 3]) == 14
     assert nsum(lambda k: 1/factorial(k), [0, inf]).ae(e)
     assert nsum(lambda k: (-1)**(k+1) / k, [1, inf]).ae(log(2))
     assert nsum(lambda k: (-1)**(k+1) / k**2, [1, inf]).ae(pi**2 / 12)
@@ -17,15 +18,24 @@ def test_nsum():
 def test_nprod():
     mp.dps = 15
     assert nprod(lambda k: exp(1/k**2), [1,inf], method='r').ae(exp(pi**2/6))
+    assert nprod(lambda x: x**2, [1, 3]) == 36
 
 def test_fsum():
     mp.dps = 15
     assert fsum([]) == 0
+    assert fsum([-4]) == -4
     assert fsum([2,3]) == 5
-    assert fsum(lambda x: x**2, [1, 3]) == 14
+    assert fsum([1e-100,1]) == 1
+    assert fsum([1,1e-100]) == 1
+    assert fsum([1e100,1]) == 1e100
+    assert fsum([1,1e100]) == 1e100
+    assert fsum([1e-100,0]) == 1e-100
+    assert fsum([1e-100,1e100,1e-100]) == 1e100
+    assert fsum([2,1+1j,1]) == 4+1j
+    assert fsum([1,mpi(2,3)]) == mpi(3,4)
+    assert fsum([2,inf,3]) == inf
 
 def test_fprod():
     mp.dps = 15
     assert fprod([]) == 1
     assert fprod([2,3]) == 6
-    assert fprod(lambda x: x**2, [1, 3]) == 36

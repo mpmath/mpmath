@@ -733,6 +733,50 @@ def mpf_sub(s, t, prec, rnd=round_fast):
         return mpf_add(s, (1-sign, man, exp, bc), prec, rnd)
     return mpf_add(s, mpf_neg(t), prec, rnd)
 
+def mpf_sum(xs, prec=0, rnd=round_fast):
+    """
+    Sum a list of mpf values efficiently and accurately
+    (typically no temporary roundoff occurs). If prec=0,
+    the final result will not be rounded either.
+
+    There may be roundoff error or cancellation if extremely
+    large exponent differences occur.
+    """
+    man = 0
+    exp = 0
+    max_extra_prec = prec*2 or 1000000  # XXX
+    special = None
+    for x in xs:
+        xsign, xman, xexp, xbc = x
+        if xman:
+            if xsign:
+                xman = -xman
+            delta = xexp - exp
+            if xexp >= exp:
+                # x much larger than existing sum?
+                # first: quick test
+                if (delta > max_extra_prec) and \
+                    ((not man) or delta-bitcount(man) > max_extra_prec):
+                    man = xman
+                    exp = xexp
+                else:
+                    man += (xman << delta)
+            else:
+                delta = -delta
+                # x much smaller than existing sum?
+                if delta-xbc > max_extra_prec:
+                    if not man:
+                        man, exp = xman, xexp
+                else:
+                    man = (man << delta) + xman
+                    exp = xexp
+        elif xexp:
+            special = mpf_add(special or fzero, x, 1)
+    # Will be inf or nan
+    if special:
+        return special
+    return from_man_exp(man, exp, prec, rnd)
+
 def mpf_mul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
@@ -839,7 +883,7 @@ def mpf_div(s, t, prec, rnd=round_fast):
     return normalize(sign, quot, sexp-texp-extra, bc, prec, rnd)
 
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
-    """Floating-point division with a Python integer as numerator"""
+    """Floating-point division n/t with a Python integer as numerator"""
     tsign, tman, texp, tbc = t
     if not n or not tman:
         return mpf_div(from_int(n), t, prec, rnd)

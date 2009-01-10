@@ -13,7 +13,7 @@ from itertools import izip
 
 from settings import (mp, extraprec)
 from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
-    AS_POINTS, arange, nstr, nprint, isinf)
+    AS_POINTS, arange, nstr, nprint, isinf, fsum, fprod)
 from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign)
 from gammazeta import int_fac
@@ -21,72 +21,6 @@ from gammazeta import int_fac
 from quadrature import quad, quadgl, quadts
 from matrices import matrix
 from linalg import lu_solve
-
-def fsum(*args):
-    r"""
-    Calculates a sum containing a finite number of terms (for infinite
-    series, see :func:`nsum`). You can use either ``fsum(<iterable>)``
-    to sum a precomputed sequence of terms, or ``fsum(f, [a,b])`` to
-    evaluate `\sum_{k=a}^b f(k)`.
-
-        >>> from mpmath import *
-        >>> mp.dps = 15
-        >>> fsum([1, 2, 0.5, 7])
-        mpf('10.5')
-        >>> fsum(lambda k: k**3, [-10, 20])
-        mpf('41075.0')
-
-    """
-    L = len(args)
-    orig = mp.prec
-    try:
-        mp.prec += 10
-        if L == 1:
-            v = sum((x for x in args[0]), mpf(0))
-        elif L == 2:
-            f = args[0]
-            a, b = args[1]
-            v = sum((f(mpf(k)) for k in xrange(int(a), int(b)+1)), mpf(0))
-        else:
-            raise ValueError("fsum expected 1 or two arguments")
-    finally:
-        mp.prec = orig
-    return +v
-
-def fprod(*args):
-    r"""
-    Calculates a product containing a finite number of factors (for
-    infinite products, see :func:`nprod`). You can use either
-    ``fprod(<iterable>)`` to multiply a precomputed sequence of
-    factors, or ``fprod(f, [a,b])`` to evaluate `\prod_{k=a}^b f(k)`.
-
-        >>> from mpmath import *
-        >>> mp.dps = 15
-        >>> fprod([1, 2, 0.5, 7])
-        mpf('7.0')
-        >>> fprod(lambda k: k**3, [1, 5])
-        mpf('1728000.0')
-
-    """
-    L = len(args)
-    orig = mp.prec
-    try:
-        mp.prec += 10
-        if L == 1:
-            v = mpf(1)
-            for p in args[0]:
-                v *= p
-        elif L == 2:
-            f = args[0]
-            a, b = args[1]
-            v = mpf(1)
-            for k in xrange(int(a), int(b)+1):
-                v *= f(mpf(k))
-        else:
-            raise ValueError("fprod expected 1 or two arguments")
-    finally:
-        mp.prec = orig
-    return +v
 
 def richardson(seq):
     r"""
@@ -578,7 +512,7 @@ def nsum(f, interval, **kwargs):
     .. math :: S = \sum_{k=a}^b f(k)
 
     where `(a, b)` = *interval*, and where `a = -\infty` and/or
-    `b = \infty` (for finite sums, see :func:`fsum`). Two examples of
+    `b = \infty` are allowed. Two examples of
     infinite series that can be summed by :func:`nsum`, where the
     first converges rapidly and the second converges slowly, are::
 
@@ -589,8 +523,11 @@ def nsum(f, interval, **kwargs):
         >>> print nsum(lambda n: 1/n**2, [1, inf])
         1.64493406684823
 
-    When possible, :func:`nsum` applies convergence acceleration to
+    When appropriate, :func:`nsum` applies convergence acceleration to
     accurately estimate the sums of slowly convergent series.
+    If the sum is finite, :func:`nsum` currently does not
+    attempt to perform any extrapolation, and simply calls
+    :func:`fsum`.
 
     **Options**
 
@@ -658,6 +595,11 @@ def nsum(f, interval, **kwargs):
         decrease below the target tolerance.
 
     **Basic examples**
+
+    A finite sum::
+
+        >>> print nsum(lambda k: 1/k, [1, 6])
+        2.45
 
     Summation of a series going to negative infinity and a doubly
     infinite series::
@@ -823,7 +765,7 @@ def nsum(f, interval, **kwargs):
             return f(0) + nsum(lambda k: f(-k) + f(k), [1, inf], **kwargs)
         return nsum(f, [-b, inf], **kwargs)
     elif b != inf:
-        raise NotImplementedError("finite sums")
+        return fsum(f(mpf(k)) for k in xrange(int(a), int(b)+1))
 
     a = int(a)
 
@@ -854,7 +796,7 @@ def nprod(f, interval, **kwargs):
     .. math :: P = \prod_{k=a}^b f(k)
 
     where `(a, b)` = *interval*, and where `a = -\infty` and/or
-    `b = \infty`. 
+    `b = \infty` are allowed.
 
     This function is essentially equivalent to applying :func:`nsum`
     to the logarithm of the product (which, of course, becomes a
@@ -863,14 +805,19 @@ def nprod(f, interval, **kwargs):
 
     **Examples**
 
+    A simple finite product::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print nprod(lambda k: k, [1, 4])
+        24.0
+
     A large number of infinite products have known exact values,
     and can therefore be used as a reference. Most of the following
     examples are taken from MathWorld [1].
 
-    First, here are a few infinite products with simple values::
+    A few infinite products with simple values are::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15
         >>> print 2*nprod(lambda k: (4*k**2)/(4*k**2-1), [1, inf])
         3.14159265358979
         >>> print nprod(lambda k: (1+1/k)**2/(1+2/k), [1, inf])
@@ -946,6 +893,10 @@ def nprod(f, interval, **kwargs):
        MathWorld
 
     """
+    a, b = AS_POINTS(interval)
+    if a != -inf and b != inf:
+        return fprod(f(mpf(k)) for k in xrange(int(a), int(b)+1))
+
     orig = mp.prec
     try:
         # TODO: we are evaluating log(1+eps) -> eps, which is
@@ -1143,7 +1094,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
     component even if the derivative is actually real::
 
         >>> print diff(sqrt, 1, method='quad')
-        (0.5 - 7.58129703509927e-27j)
+        (0.5 - 9.62422642529928e-27j)
 
     **Scale**
 

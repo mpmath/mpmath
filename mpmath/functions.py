@@ -4026,8 +4026,8 @@ def jacobi(n, a, b, x):
         >>> a = 2
         >>> b = 3
         >>> m, n = 3, 4
-        >>> nprint(quad(f, [-1, 1]), 1)
-        3.0e-24
+        >>> print chop(quad(f, [-1, 1]), 1)
+        0.0
         >>> m, n = 4, 4
         >>> print quad(f, [-1, 1])
         1.9047619047619
