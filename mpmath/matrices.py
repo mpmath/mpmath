@@ -4,6 +4,7 @@ from __future__ import division
 
 from mptypes import (mpmathify, absmax, mpf, mpc, rand, inf, nstr)
 from functions import nthroot, sqrt
+from calculus import fsum
 
 rowsep = '\n'
 colsep = '  '
@@ -34,11 +35,11 @@ class matrix(object):
         >>> matrix(2)
         matrix(
         [['0.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0']])
         >>> matrix(2, 3)
         matrix(
         [['0.0', '0.0', '0.0'],
-        ['0.0', '0.0', '0.0']])
+         ['0.0', '0.0', '0.0']])
 
     Calling ``matrix`` with one dimension will create a square matrix.
 
@@ -48,8 +49,8 @@ class matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-        ['0.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0'],
+         ['0.0', '0.0']])
         >>> A.rows
         3
         >>> A.cols
@@ -63,7 +64,7 @@ class matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0']])
 
     Internally ``mpmathify`` is used every time an element is set. This
     is done using the syntax A[row,column], counting from 0:
@@ -73,7 +74,7 @@ class matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-        ['0.0', mpc(real='1.0', imag='1.0')]])
+         ['0.0', mpc(real='1.0', imag='1.0')]])
 
     You can use the keyword ``force_type`` to change the function which is 
     called on every new element:
@@ -81,14 +82,14 @@ class matrix(object):
         >>> matrix(2, 5, force_type=int)
         matrix(
         [[0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]])
+         [0, 0, 0, 0, 0]])
 
     A more comfortable way to create a matrix lets you use nested lists:
 
         >>> matrix([[1, 2], [3, 4]])
         matrix(
         [['1.0', '2.0'],
-        ['3.0', '4.0']])
+         ['3.0', '4.0']])
 
     If you want to preserve the type of the elements you can use
     ``force_type=None``:
@@ -96,7 +97,7 @@ class matrix(object):
         >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
         matrix(
         [[1, 2.5],
-        [1j, '2.0']])
+         [1j, '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -112,8 +113,8 @@ class matrix(object):
         >>> matrix([1, 2, 3])
         matrix(
         [['1.0'],
-        ['2.0'],
-        ['3.0']])
+         ['2.0'],
+         ['3.0']])
         >>> matrix([[1, 2, 3]])
         matrix(
         [['1.0', '2.0', '3.0']])
@@ -151,17 +152,17 @@ class matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0']])
         >>> B = A.copy()
         >>> B[0,0] = 1
         >>> B
         matrix(
         [['1.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0']])
         >>> A
         matrix(
         [['0.0', '0.0'],
-        ['0.0', '0.0']])
+         ['0.0', '0.0']])
 
     Finally, it is possible to convert a matrix to a nested list. This is very useful,
     as most Python libraries involving matrices or arrays (namely NumPy or SymPy)
@@ -181,11 +182,11 @@ class matrix(object):
         >>> A + B
         matrix(
         [['-1.0', '6.0'],
-        ['8.0', '13.0']])
+         ['8.0', '13.0']])
         >>> A - B
         matrix(
         [['3.0', '-2.0'],
-        ['-2.0', '-5.0']])
+         ['-2.0', '-5.0']])
         >>> A + ones(3) # doctest:+ELLIPSIS
         Traceback (most recent call last):
         File "<stdin>", line 1, in <module>
@@ -199,15 +200,15 @@ class matrix(object):
         >>> A * 2
         matrix(
         [['2.0', '4.0'],
-        ['6.0', '8.0']])
+         ['6.0', '8.0']])
         >>> A / 4
         matrix(
         [['0.25', '0.5'],
-        ['0.75', '1.0']])
+         ['0.75', '1.0']])
         >>> A - 1
         matrix(
         [['0.0', '1.0'],
-        ['2.0', '3.0']])
+         ['2.0', '3.0']])
 
     Of course you can perform matrix multiplication, if the dimensions are
     compatible::
@@ -215,7 +216,7 @@ class matrix(object):
         >>> A * B
         matrix(
         [['8.0', '22.0'],
-        ['14.0', '48.0']])
+         ['14.0', '48.0']])
         >>> matrix([[1, 2, 3]]) * matrix([[-6], [7], [-2]])
         matrix(
         [['2.0']])
@@ -225,18 +226,18 @@ class matrix(object):
         >>> A**2
         matrix(
         [['7.0', '10.0'],
-        ['15.0', '22.0']])
+         ['15.0', '22.0']])
 
     Negative powers will calculate the inverse::
 
         >>> A**-1
         matrix(
         [['-2.0', '1.0'],
-        ['1.5', '-0.5']])
+         ['1.5', '-0.5']])
         >>> A * A**-1
         matrix(
         [['1.0', '0.0'],
-        ['0.0', '1.0']])
+         ['0.0', '1.0']])
 
     Matrix transposition is straightforward::
 
@@ -244,12 +245,12 @@ class matrix(object):
         >>> A
         matrix(
         [['1.0', '1.0', '1.0'],
-        ['1.0', '1.0', '1.0']])
+         ['1.0', '1.0', '1.0']])
         >>> A.T
         matrix(
         [['1.0', '1.0'],
-        ['1.0', '1.0'],
-        ['1.0', '1.0']])
+         ['1.0', '1.0'],
+         ['1.0', '1.0']])
 
     Norms
     .....
@@ -743,7 +744,7 @@ def mnorm_1(A):
     """
     assert isinstance(A, matrix)
     m, n = A.rows, A.cols
-    return max((sum((absmax(A[i,j]) for i in xrange(m))) for j in xrange(n)))
+    return max(fsum(absmax(A[i,j]) for i in xrange(m)) for j in xrange(n))
 
 def mnorm_oo(A):
     """
@@ -751,7 +752,7 @@ def mnorm_oo(A):
     """
     assert isinstance(A, matrix)
     m, n = A.rows, A.cols
-    return max((sum((absmax(A[i,j]) for j in xrange(n))) for i in xrange(m)))
+    return max(fsum(absmax(A[i,j]) for j in xrange(n)) for i in xrange(m))
 
 def mnorm_F(A):
     """
@@ -771,11 +772,11 @@ def norm_p(x, p=2):
     Note: you may want to use float('inf') or mpmath's equivalent to specify oo.
     """
     if p == inf:
-        return max((absmax(i) for i in x))
+        return max(absmax(i) for i in x)
     elif p > 1:
-        return nthroot(sum((abs(i)**p for i in x)), p)
+        return nthroot(fsum(abs(i)**p for i in x), p)
     elif p == 1:
-        return sum((abs(i) for i in x))
+        return fsum(abs(i) for i in x)
     else:
         raise ValueError('p has to be an integer greater than 0')
 
