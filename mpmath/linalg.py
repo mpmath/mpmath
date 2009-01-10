@@ -108,6 +108,7 @@ from __future__ import division
 from mptypes import extraprec, absmin, mp, eps, mpf
 from functions import sqrt, sign, log, factorial
 from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p, mnorm_oo
+from calculus import fsum
 from copy import copy
 
 def LU_decomp(A, overwrite=False, use_cache=True):
@@ -132,7 +133,7 @@ def LU_decomp(A, overwrite=False, use_cache=True):
         # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
         biggest = 0
         for k in xrange(j, n):
-            current = 1/sum([absmin(A[k,l]) for l in xrange(j, n)]) \
+            current = 1/fsum([absmin(A[k,l]) for l in xrange(j, n)]) \
                       * absmin(A[k,j])
             if current > biggest: # TODO: what if equal?
                 biggest = current
@@ -311,37 +312,27 @@ def householder(A):
     # calculate Householder matrix
     p = []
     for j in xrange(0, n - 1):
-        s = 0.
-        for i in xrange(j, m):
-            s += (A[i,j])**2
+        s = fsum((A[i,j])**2 for i in xrange(j, m))
         if not abs(s) > eps:
             raise ValueError('matrix is numerically singular')
         p.append(-sign(A[j,j]) * sqrt(s))
         kappa = s - p[j] * A[j,j]
         A[j,j] -= p[j]
         for k in xrange(j+1, n):
-            y = 0.
-            for i in xrange(j, m):
-                y += A[i,j] * A[i,k]
-            y /= kappa
+            y = fsum(A[i,j] * A[i,k] for i in xrange(j, m)) /  kappa
             for i in xrange(j, m):
                 A[i,k] -= A[i,j] * y
     # solve Rx = c1
-    x = []
-    for i in xrange(n - 1):
-        x.append(A[i,n - 1])
+    x = [A[i,n - 1] for i in xrange(n - 1)]
     for i in xrange(n - 2, -1, -1):
-        for j in xrange(i + 1, n - 1):
-            x[i] -= A[i,j] * x[j]
+        x[i] -= fsum(A[i,j] * x[j] for j in xrange(i + 1, n - 1))
         x[i] /= p[i]
     # calculate residual
     if not m == n - 1:
-        r = []
-        for i in xrange(m - n + 1):
-            r.append(A[m-1-i, n-1])
+        r = [A[m-1-i, n-1] for i in xrange(m - n + 1)]
     else:
         # determined system, residual should be 0
-        r = [0]*m
+        r = [0]*m # maybe a bad idea, changing r[i] will change all elements
     return A, p, x, r
 
 #def qr(A):
@@ -408,12 +399,12 @@ def cholesky(A):
     n = A.rows
     L = matrix(n)
     for j in xrange(n):
-        s = A[j,j] - sum((L[j,k]**2 for k in xrange(j)))
+        s = A[j,j] - fsum(L[j,k]**2 for k in xrange(j))
         if s < eps:
             raise ValueError('matrix not positive-definite')
         L[j,j] = sqrt(s)
         for i in xrange(j, n):
-            L[i,j] = (A[i,j] - sum((L[i,k] * L[j,k] for k in xrange(j)))) \
+            L[i,j] = (A[i,j] - fsum(L[i,k] * L[j,k] for k in xrange(j))) \
                      / L[j,j]
     return L
 
@@ -440,7 +431,7 @@ def cholesky_solve(A, b, **kwargs):
     n = L.rows
     assert len(b) == n
     for i in xrange(n):
-        b[i] -= sum((L[i,j] * b[j] for j in xrange(i)))
+        b[i] -= fsum(L[i,j] * b[j] for j in xrange(i))
         b[i] /= L[i,i]
     x = U_solve(L.T, b)
     return x
@@ -483,20 +474,20 @@ def cond(A, norm=mnorm_1):
 
 
 def lu_solve_mat(a, b):
-    """solve a * x = b  where a and b are matrices"""
+    """Solve a * x = b  where a and b are matrices."""
     r = matrix(a.rows, b.cols)
     for i in range(b.cols):
         c = lu_solve(a, b.column(i))
         for j in range(len(c)):
             r[j, i] = c[j]
     return r
-  
+
 def exp_pade(a):
-    """exponential of a matrix using Pade approximants
-       
-       See G. H. Golub, C. F. van Loan 'Matrix Computations', 
+    """Exponential of a matrix using Pade approximants.
+
+       See G. H. Golub, C. F. van Loan 'Matrix Computations',
          third Ed., page 572
-  
+
        TODO:
          - find a good estimate for q
          - reduce the number of matrix multiplications to improve
@@ -533,4 +524,4 @@ def exp_pade(a):
     finally:
         mp.dps -= extra
     return f
-  
+
