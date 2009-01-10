@@ -536,6 +536,9 @@ class MDNewton:
     It is recommended to use a faster, low-precision solver from SciPy [1] or
     OpenOpt [2] to get an initial guess. Afterwards you can use this method for
     root-polishing to any precision.
+
+    [1] http://scipy.org
+    [2] http://openopt.org
     """
     maxsteps = 10
 
