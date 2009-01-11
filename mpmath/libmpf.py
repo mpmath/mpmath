@@ -756,7 +756,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast):
                 # x much larger than existing sum?
                 # first: quick test
                 if (delta > max_extra_prec) and \
-                    ((not man) or delta-bitcount(man) > max_extra_prec):
+                    ((not man) or delta-bitcount(abs(man)) > max_extra_prec):
                     man = xman
                     exp = xexp
                 else:
