@@ -63,7 +63,7 @@ def giant_steps(start, target):
     target] describing suitable precision steps for Newton's method."""
     L = [target]
     while L[-1] > start*2:
-        L = L + [L[-1]//2 + 1]
+        L = L + [L[-1]//2 + 2]
     return L[::-1]
 
 def giant_steps2(start, target):
@@ -71,7 +71,7 @@ def giant_steps2(start, target):
     target] describing suitable precision steps for Halley's method."""
     L = [target]
     while L[-1] > start*3:
-        L = L + [L[-1]//3 + 1]
+        L = L + [L[-1]//3 + 2]
     return L[::-1]
 
 def giant_stepsn(start, target, n):
@@ -79,7 +79,7 @@ def giant_stepsn(start, target, n):
     target] describing suitable precision steps for Halley's method."""
     L = [target]
     while L[-1] > start*n:
-        L = L + [L[-1]//n + 1]
+        L = L + [L[-1]//n + 2]
     return L[::-1]
 
 def rshift(x, n):
@@ -309,16 +309,16 @@ def strict_normalize1(sign, man, exp, bc, prec, rnd):
     assert (not man) or (man & 1)
     return _normalize1(sign, man, exp, bc, prec, rnd)
 
+if MODE == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
+    _normalize = gmpy._mpmath_normalize
+    _normalize1 = gmpy._mpmath_normalize
+
 if STRICT:
     normalize = strict_normalize
     normalize1 = strict_normalize1
 else:
     normalize = _normalize
     normalize1 = _normalize1
-    
-if MODE == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
-    normalize = gmpy._mpmath_normalize
-    normalize1 = gmpy._mpmath_normalize
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #
@@ -857,50 +857,36 @@ def mpf_div(s, t, prec, rnd=round_fast):
                 return fnan
             return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
         return fzero
+    sign = ssign ^ tsign
     if tman == 1:
-        return normalize1(ssign^tsign, sman, sexp-texp, sbc, prec, rnd)
-    if ssign:
-        sman = -sman
-    if tsign:
-        tman = -tman
+        return normalize1(sign, sman, sexp-texp, sbc, prec, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
     extra = prec - sbc + tbc + 5
     if extra < 5:
         extra = 5
     quot, rem = divmod(sman<<extra, tman)
-    if quot >= 0:
-        sign = 0
-    else:
-        quot = -quot
-        sign = 1
     if rem:
-        quot = (quot << 5) + 1
-        extra += 5
-    bc = sbc+extra-tbc-4
-    if bc < 4: bc = bctable[int(quot)]
-    else:      bc += bctable[int(quot>>bc)]
-    return normalize(sign, quot, sexp-texp-extra, bc, prec, rnd)
+        quot = (quot<<1) + 1
+        extra += 1
+        return normalize1(sign, quot, sexp-texp-extra, bitcount(quot), prec, rnd)
+    return normalize(sign, quot, sexp-texp-extra, bitcount(quot), prec, rnd)
 
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     """Floating-point division n/t with a Python integer as numerator"""
-    tsign, tman, texp, tbc = t
-    if not n or not tman:
+    sign, man, exp, bc = t
+    if not n or not man:
         return mpf_div(from_int(n), t, prec, rnd)
-    if tsign:
-        tman = -tman
-    extra = prec + tbc + 5
-    quot, rem = divmod(n<<extra, tman)
-    if quot >= 0:
-        sign = 0
-    else:
-        quot = -quot
-        sign = 1
+    if n < 0:
+        sign ^= 1
+        n = -n
+    extra = prec + bc + 5
+    quot, rem = divmod(n<<extra, man)
     if rem:
-        quot = (quot << 5) + 1
-        extra += 5
-        return normalize1(sign, quot, -texp-extra, bitcount(quot), prec, rnd)
-    return normalize(sign, quot, -texp-extra, bitcount(quot), prec, rnd)
+        quot = (quot<<1) + 1
+        extra += 1
+        return normalize1(sign, quot, -exp-extra, bitcount(quot), prec, rnd)
+    return normalize(sign, quot, -exp-extra, bitcount(quot), prec, rnd)
 
 def mpf_mod(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
@@ -1311,215 +1297,139 @@ def to_bstr(x):
 #                                Square roots                                #
 #----------------------------------------------------------------------------#
 
-
-def sqrt_initial(y, prec):
-    """Given y = floor(x * 2**prec), compute floor(sqrt(x) * 2**50),
-    i.e. calculate a 50-bit approximation of the square root. This is
-    done quickly using regular floating-point arithmetic. It is
-    assumed that x ~= 1."""
-
-    # Two cases; the second avoids overflow
-    if prec < 200: return MP_BASE(y**0.5 * 2.0**(50 - prec*0.5))
-    else:          return MP_BASE((y >> (prec-100))**0.5)
-
-# XXX: doesn't work
-def invsqrt_initial(y, prec):
-    """Like sqrt_initial, but computes 1/sqrt(y) instead of sqrt(y)."""
-    if prec < 200: return MP_BASE(y**-0.5 * 2.0**(50 + prec*0.5))
-    else:          return MP_BASE((y >> (prec-100)) ** -0.5)
-
-
-
-# We start from a 50-bit estimate for r generated with ordinary
-# floating-point arithmetic, and then refines the value to full
-# accuracy using the iteration
-
-#             1  /        y  \
-#    r     = --- | r  +  --- |
-#     n+1     2  \ n     r_n /
-
-# which is simply Newton's method applied to the equation r**2 = y.
-
-# Newton's method doubles the accuracy with each step. We make use of
-# this fact by only using a precision corresponding to the current
-# accuracy during intermediate iterations. For example, with a 50-bit
-# accurate r_1, r_2 can be computed using 100-bit precision, r_3
-# using 200-bit precision, and so on. (In practice, the precision
-# levels must be chosen slightly more conservatively to account for
-# rounding errors in the last one or two bits.)
-
-# It is assumed that x ~= 1 (the main mpf_sqrt() function fiddles with
-# the exponent of the input to reduce it to unit magnitude before
-# passing it here.)
-
-# TODO: it would be possible to specify separate precision levels
-# for the input and output, which could be useful when calculating
-# pure-integer square roots.
-
-# This is the reference implementation. In sqrt_fixed below we
-# do the steps inline at low precision for a ~15% speedup
-def _sqrt_fixed(y, prec):
-    r = sqrt_initial(y, prec)
-    extra = 10
-    prevp = 50
-    for p in giant_steps(50, prec+extra):
-        # In the first term, we shift by the appropriate number of bits to
-        # convert r from the previous precision to the current one.
-        # The "-1" divides by two in the same step.
-
-        # In the second term, we do a fixed-point division using the usual
-        # formula (y<<precision)//r. The precision term is a bit messy and
-        # takes into account the fact that y, r_n and r_{n+1} all have
-        # different precision levels. As before, the "-1" divides by two.
-        r = lshift(r, p-prevp-1) + (lshift(y, p+prevp-prec-1)//r)
-        prevp = p
-    return r >> extra
-
-def gmpy_sqrt_fixed(y, prec, shifted=True):
-    if shifted:
-        return gmpy.sqrt(y << prec)
+def isqrt_small_python(x, bc=0):
+    """
+    Correctly (floor) rounded integer square root, using 
+    division. Fast up to ~200 digits.
+    """
+    if not x:
+        return x
+    bc = bc or bitcount(x)
+    if bc < 1000:
+        # Exact with IEEE double precision arithmetic
+        if bc < 50:
+            return int(x**0.5)
+        # Initial estimate can be any integer >= the true root; round up
+        r = int(x**0.5 * 1.00000000000001) + 1
     else:
-        extra = 10
-        return gmpy.sqrt(y << (prec + 2 * extra)), extra
+        n = bc//2
+        r = int((x>>(2*n-100))**0.5+2)<<(n-50)  # +2 is to round up
+    # The following iteration now precisely computes floor(sqrt(x))
+    # See e.g. Crandall & Pomerance, "Prime Numbers: A Computational
+    # Perspective"
+    while 1:
+        y = (r+x//r)>>1
+        if y >= r:
+            return r
+        r = y
 
-def python_sqrt_fixed(y, prec, shifted=True):
+def isqrt_fast_python(x, bc=0):
     """
-    Square root of a fixed-point number. Given the big integer
-    y = floor(x * 2**prec), this function returns floor(r * 2**prec)
-    where r = sqrt(x).
+    Fast integer square root for large x, computed using division-free
+    Newton iteration. For random integers the result is almost always
+    correct (floor(sqrt(x))), but is 1 ulp too small with a roughly 0.1%
+    probability. For exact squares (or exact squares +/- 1) the chance
+    of a +/- 1 ulp error may be in the ballpark of 10-30%.
 
-    It is assumed that x ~= 1.
+    With 0 guard bits, the largest error over a set of 10^5 random
+    inputs of size 1-10^5 bits was 3 ulp. The use of 10 guard bits
+    almost certainly guarantees a max 1 ulp error. 
     """
-    r = sqrt_initial(y, prec)
-    extra = 10
-    prevp = 50
-    prec2 = prec + extra
-    # unwind giant_steps; for prec2 <= 100 giant_steps(50, prec2)
-    # has one element, for 100 < prec2 < 200 it has at 2 elements
-    if prec2 <= 100:
-        r = lshift(r, prec2-51) + ((y << 59)//r)
-    elif prec2 <= 199:
-        p = prec2//2 + 1
-        r = (r << (p-51)) + (lshift(y, p+59-prec2)//r)
-        r = (r << (prec2-p-1)) + ((y << (p+9))//r)
-    else:
-        prevp1 = prec2//2 + 1
-        for p in giant_steps(50, prevp1):
-            r = (r << (p-prevp-1)) + (y >> (prec2-p-prevp-9))//r
-            prevp = p
-        r = (r << (prec2-prevp1-1)) + (y << (prevp1+9))//r
-    if shifted: return r >> extra
-    else:       return r, extra
-
-def gmpy_sqrt_fixed2(y, prec):
-    return gmpy.sqrt(y << prec)
-
-def sqrt_newton(x, guard_bits=0):
-    """
-    Approximately compute floor(sqrt(x)) for a positive integer x.
-    The result may be off by a few units.
-
-    If a few ``guard_bits`` are specified, the returned root is
-    either exact or 1 unit smaller than the true root.
-
-    Algorithm
-    =========
-
-    Instead of using Newton's method to calculate sqrt(y) directly,
-    we calculate 1/sqrt(y) with Newton's method and multiply by y to
-    obtain sqrt(y). The Newton iteration for 1/sqrt(y) is::
-
-                   r
-                    n      /            2 \
-          r    =  ----  *  | 3  - y * r   |.
-           n+1      2      \           n  /
-
-    This is slightly slower at low precision levels since it requires
-    three multiplications in each step, as opposed to the single
-    division in the Newton iteration for sqrt(y). However, since
-    Python uses Karatsuba algorithm for multiplication, three
-    multiplications can be performed much more quickly than a
-    single division at high precision.
-
-    The Newton iteration is performed with dynamically increasing
-    precision for optimal speed. Each step roughly doubles the
-    numerical accuracy, so we need to perform roughly log_2(n)
-    steps, at precision ...n/4, n/2, n, where n = log_2(sqrt(x)).
-
-    The bitwise shifts force rounding downwards. Adding guard bits
-    ensures that the only final error (if any) is the downward
-    rounding error from the final shift.
-    """
-    if guard_bits:
-        x <<= guard_bits*2
-    bc = int(math.log(x,2))
-    bc += bc & 1
-    hbc = bc // 2
+    bc = bc or bitcount(x)
+    # Small-integer case handled for completeness
+    if bc < 200:
+        # Direct FP approximation is at most 1 ulp wrong
+        if bc < 100:
+            return int(x**0.5)
+        # FP approximation + 1 Newton step is good to 100 bits
+        y = int(x**0.5)
+        return (y + x//y) >> 1
+    guard_bits = 10
+    x <<= 2*guard_bits
+    bc += 2*guard_bits
+    bc += (bc&1)
+    hbc = bc//2
     startprec = min(50, hbc)
+    # Newton iteration for 1/sqrt(x), with floating-point starting value
     r = int(2.0**(2*startprec) * (x >> (bc-2*startprec)) ** -0.5)
     pp = startprec
     for p in giant_steps(startprec, hbc):
         # r**2, scaled from real size 2**(-bc) to 2**p
         r2 = (r*r) >> (2*pp - p)
         # x*r**2, scaled from real size ~1.0 to 2**p
-        xr2 = ((x >> (bc - p)) * r2) >> p
+        xr2 = ((x >> (bc-p)) * r2) >> p
         # New value of r, scaled from real size 2**(-bc/2) to 2**p
-        #r = (r * ((3<<p) - xr2)) >> (pp + 1)
-        r = (r * ((1<<p) - xr2) + (r << (p+1))) >> (pp + 1)
+        r = (r * ((3<<p) - xr2)) >> (pp+1)
         pp = p
-    return (r*(x>>hbc)) >> (p + guard_bits)
+    # (1/sqrt(x))*x = sqrt(x)
+    return (r*(x>>hbc)) >> (p+guard_bits)
 
-def python_sqrt_fixed2(y, prec):
-    return sqrt_newton(y << prec, 20)
+def sqrtrem_python(x, bc=0):
+    """Correctly rounded integer (floor) square root with remainder."""
+    bc = bc or bitcount(x)
+    # to check cutoff:
+    # plot(lambda x: timing(isqrt, 2**int(x)), [0,2000])
+    if bc <= 600:
+        y = isqrt_small_python(x, bc)
+        return y, x - y*y
+    y = isqrt_fast_python(x, bc) + 1
+    rem = x - y*y
+    # Correct remainder
+    while rem < 0:
+        y -= 1
+        rem += (1+2*y)
+    else:
+        if rem:
+            while rem > 2*(1+y):
+                y += 1
+                rem -= (1+2*y)
+    return y, rem
 
+def isqrt_python(x):
+    """Integer square root with correct (floor) rounding."""
+    return sqrtrem_python(x)[0]
+
+def sqrt_fixed(x, prec):
+    return isqrt_fast(x<<prec)
+
+sqrt_fixed2 = sqrt_fixed
 
 if MODE == 'gmpy':
-    sqrt_fixed = gmpy_sqrt_fixed
-    sqrt_fixed2 = gmpy_sqrt_fixed2
+    isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
+    sqrtrem = gmpy.sqrtrem
 else:
-    sqrt_fixed = python_sqrt_fixed
-    sqrt_fixed2 = python_sqrt_fixed2
+    isqrt_small = isqrt_small_python
+    isqrt_fast = isqrt_fast_python
+    isqrt = isqrt_python
+    sqrtrem = sqrtrem_python
 
 def mpf_sqrt(s, prec, rnd=round_fast):
-    """Compute the square root of a raw mpf.
-
-    Returns a tuple representing the square root of s, rounded to the
-    nearest floating-point number in the specified rounding direction.
-    The input must be a tuple representing a nonnegative floating-point
-    number."""
-
-    if s == fone:
-        return fone
+    """
+    Compute the square root of a nonnegative mpf value. The
+    result is correctly rounded.
+    """
     sign, man, exp, bc = s
     if sign:
         raise ComplexResult("square root of a negative number")
     if not man:
         return s
-
-    # Convert to a fixed-point number with prec2 bits. Adjust
-    # exponents to be even so that they can be divided in half
-    prec2 = prec + 12 + (prec & 1)
-
     if exp & 1:
         exp -= 1
         man <<= 1
         bc += 1
-
-    # Mantissa may have more bits than we need. Trim it down.
-    shift = bc - prec2
-    shift -= shift & 1
-    man = rshift(man, shift)
-
-    rnd_shift = 0
-    if rnd == 'd' or rnd == 'f':
-        rnd_shift = 1
-    if prec < 20000:
-        man, extra = sqrt_fixed(man+rnd_shift, prec2, False)
+    elif man == 1:
+        return normalize1(sign, man, exp//2, bc, prec, rnd)
+    shift = max(4, 2*prec-bc+4)
+    shift += shift & 1
+    if rnd in 'fd':
+        man = isqrt(man<<shift)
     else:
-        man = sqrt_fixed2(man+rnd_shift, prec2)
-        extra = 0
-
-    return from_man_exp(man, ((exp+shift-prec2)>>1) - extra, prec, rnd)
+        man, rem = sqrtrem(man<<shift)
+        # Perturb up
+        if rem:
+            man = (man<<1)+1
+            shift += 2
+    return from_man_exp(man, (exp-shift)//2, prec, rnd)
 
 def mpf_hypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs

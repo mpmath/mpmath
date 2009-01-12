@@ -85,7 +85,19 @@ def test_sqrt_rounding():
             a = mpf_rand(prec)
             b = mpf_mul(a, a)
             assert mpf_sqrt(b, prec, rnd) == a
+    # Test some extreme cases
+    mp.dps = 100
+    a = mpf(9) + 1e-90
+    b = mpf(9) - 1e-90
     mp.dps = 15
+    assert sqrt(a, rounding='d') == 3
+    assert sqrt(a, rounding='n') == 3
+    assert sqrt(a, rounding='u') > 3
+    assert sqrt(b, rounding='d') < 3
+    assert sqrt(b, rounding='n') == 3
+    assert sqrt(b, rounding='u') == 3
+    # A worst case, from the MPFR test suite
+    assert sqrt(mpf('7.0503726185518891')) == mpf('2.655253776675949')
 
 def test_float_sqrt():
     mp.dps = 15

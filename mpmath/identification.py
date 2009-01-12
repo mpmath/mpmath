@@ -7,20 +7,11 @@ from mptypes import (mpf, eps, mp, mpmathify, nstr, inf)
 from functions import (log, exp, sqrt)
 
 from libmpf import to_fixed, from_man_exp, MODE
-from libelefun import mpf_sqrt
-from libelefun import sqrt_fixed as _sqrt_fixed
+from libelefun import sqrt_fixed
 
 # round to nearest integer (can be done more elegantly...)
 def round_fixed(x, prec):
     return ((x + (1<<(prec-1))) >> prec) << prec
-
-# XXX. this is needed because the Python sqrt_fixed currently chokes on
-# x not ~= 1
-if MODE == 'python':
-    def sqrt_fixed(x, prec):
-        return to_fixed(mpf_sqrt(from_man_exp(x, -prec, prec), prec), prec)
-else:
-    sqrt_fixed = _sqrt_fixed
 
 def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     """
