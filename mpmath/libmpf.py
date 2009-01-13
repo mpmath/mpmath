@@ -646,74 +646,74 @@ def mpf_sign(s):
         return 0
     return (-1) ** sign
 
-def mpf_add(s, t, prec, rnd=round_fast):
-    if t[2] > s[2]:
-        s, t = t, s
+def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
+    """
+    Add the two raw mpf values s and t.
+
+    With prec=0, no rounding is performed. Note that this can
+    produce a very large mantissa (potentially too large to fit
+    in memory) if exponents are far apart.
+    """
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
-
-    if not sman:
-        if sexp:
-            if s == t or tman or not texp:
-                return s
-            return fnan
-        if tman:
-            return normalize1(tsign, tman, texp, tbc, prec, rnd)
-        return t
-    if not tman:
-        if texp:
-            return t
-        if sman:
-            return normalize1(ssign, sman, sexp, sbc, prec, rnd)
-        return s
-
-    # More generally, if one number is huge and the other is small,
-    # and in particular, if their mantissas don't overlap at all at
-    # the current precision level, we can avoid work.
-    #         precision
-    #      |            |
-    #       111111111
-    #    +                    222222222
-    #       ------------------------
-    #       1111111110000... (222)
-    offset = sexp - texp
-    if offset > 100:
-        delta = sbc + sexp - tbc - texp
-        if delta > prec + 4:
-            offset = min(delta, prec) + 4
-            sman <<= offset
-            if tsign: sman -= 1
-            else:     sman += 1
-            # TODO: use that bc ~= sbc+offset
-            bc = bitcount(sman)
-            return normalize1(ssign, sman, sexp-offset, bc, prec, rnd)
-    if offset:
-        if ssign == tsign:
-            man = tman + (sman << offset)
-            sbc += offset
-            if tbc > sbc:
-                bc = tbc + int(man>>tbc)
-            else:
-                bc = sbc + int(man>>sbc)
-            return normalize1(ssign, man, texp, bc, prec, rnd)
-        else:
-            if ssign: man = tman - (sman << offset)
-            else:     man = (sman << offset) - tman
-            if man >= 0:
-                ssign = 0
-            else:
-                man = -man
-                ssign = 1
-            bc = bitcount(man)
-            return normalize1(ssign, man, texp, bc, prec, rnd)
-    else:
+    tsign ^= _sub
+    # Standard case: two nonzero, regular numbers
+    if sman and tman:
+        offset = sexp - texp
+        if offset:
+            if offset > 0:
+                # Outside precision range; only need to perturb
+                if offset > 100 and prec:
+                    delta = sbc + sexp - tbc - texp
+                    if delta > prec + 4:
+                        offset = min(delta, prec) + 4
+                        sman <<= offset
+                        if tsign: sman -= 1
+                        else:     sman += 1
+                        return normalize1(ssign, sman, sexp-offset,
+                            bitcount(sman), prec, rnd)
+                # Add
+                if ssign == tsign:
+                    man = tman + (sman << offset)
+                # Subtract
+                else:
+                    if ssign: man = tman - (sman << offset)
+                    else:     man = (sman << offset) - tman
+                    if man >= 0:
+                        ssign = 0
+                    else:
+                        man = -man
+                        ssign = 1
+                bc = bitcount(man)
+                return normalize1(ssign, man, texp, bc, prec or bc, rnd)
+            elif offset < 0:
+                # Outside precision range; only need to perturb
+                if offset < 100 and prec:
+                    delta = tbc + texp - sbc - sexp
+                    if delta > prec + 4:
+                        offset = min(delta, prec) + 4
+                        tman <<= offset
+                        if ssign: tman -= 1
+                        else:     tman += 1
+                        return normalize1(tsign, tman, texp-offset,
+                            bitcount(tman), prec, rnd)
+                # Add
+                if ssign == tsign:
+                    man = sman + (tman << -offset)
+                # Subtract
+                else:
+                    if tsign: man = sman - (tman << -offset)
+                    else:     man = (tman << -offset) - sman
+                    if man >= 0:
+                        ssign = 0
+                    else:
+                        man = -man
+                        ssign = 1
+                bc = bitcount(man)
+                return normalize1(ssign, man, sexp, bc, prec or bc, rnd)
+        # Equal exponents; no shifting necessary
         if ssign == tsign:
             man = tman + sman
-            if tbc > sbc:
-                bc = tbc + int(man>>tbc)
-            else:
-                bc = sbc + int(man>>sbc)
-            return normalize(ssign, man, texp, bc, prec, rnd)
         else:
             if ssign: man = tman - sman
             else:     man = sman - tman
@@ -722,16 +722,29 @@ def mpf_add(s, t, prec, rnd=round_fast):
             else:
                 man = -man
                 ssign = 1
-            bc = bitcount(man)
-            return normalize(ssign, man, texp, bc, prec, rnd)
+        bc = bitcount(man)
+        return normalize(ssign, man, texp, bc, prec or bc, rnd)
+    # Handle zeros and special numbers
+    if _sub:
+        t = mpf_neg(t)
+    if not sman:
+        if sexp:
+            if s == t or tman or not texp:
+                return s
+            return fnan
+        if tman:
+            return normalize1(tsign, tman, texp, tbc, prec or tbc, rnd)
+        return t
+    if texp:
+        return t
+    if sman:
+        return normalize1(ssign, sman, sexp, sbc, prec or sbc, rnd)
+    return s
 
-def mpf_sub(s, t, prec, rnd=round_fast):
+def mpf_sub(s, t, prec=0, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of mpf_add that changes the sign of t."""
-    if t[1]:
-        sign, man, exp, bc = t
-        return mpf_add(s, (1-sign, man, exp, bc), prec, rnd)
-    return mpf_add(s, mpf_neg(t), prec, rnd)
+    return mpf_add(s, t, prec, rnd, 1)
 
 def mpf_sum(xs, prec=0, rnd=round_fast):
     """
@@ -777,7 +790,42 @@ def mpf_sum(xs, prec=0, rnd=round_fast):
         return special
     return from_man_exp(man, exp, prec, rnd)
 
-def mpf_mul(s, t, prec=0, rnd=round_fast):
+def gmpy_mpf_mul(s, t, prec=0, rnd=round_fast):
+    """Multiply two raw mpfs"""
+    ssign, sman, sexp, sbc = s
+    tsign, tman, texp, tbc = t
+    sign = ssign ^ tsign
+    man = sman*tman
+    if man:
+        bc = bitcount(man)
+        if prec:
+            return normalize1(sign, man, sexp+texp, bc, prec, rnd)
+        else:
+            return (sign, man, sexp+texp, bc)
+    s_special = (not sman) and sexp
+    t_special = (not tman) and texp
+    if not s_special and not t_special:
+        return fzero
+    if fnan in (s, t): return fnan
+    if (not tman) and texp: s, t = t, s
+    if t == fzero: return fnan
+    return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
+
+def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
+    """Multiply by a Python integer."""
+    sign, man, exp, bc = s
+    if not man:
+        return mpf_mul(s, from_int(n), prec, rnd)
+    if not n:
+        return fzero
+    if n < 0:
+        sign ^= 1
+        n = -n
+    man *= n
+    # Generally n will be small
+    return normalize(sign, man, exp, bitcount(man), prec, rnd)
+
+def python_mpf_mul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -799,7 +847,7 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     if t == fzero: return fnan
     return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
 
-def mpf_mul_int(s, n, prec, rnd=round_fast):
+def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
     sign, man, exp, bc = s
     if not man:
@@ -817,6 +865,13 @@ def mpf_mul_int(s, n, prec, rnd=round_fast):
         bc += bitcount(n) - 1
     bc += int(man>>bc)
     return normalize(sign, man, exp, bc, prec, rnd)
+
+if MODE == 'gmpy':
+    mpf_mul = gmpy_mpf_mul
+    mpf_mul_int = gmpy_mpf_mul_int
+else:
+    mpf_mul = python_mpf_mul
+    mpf_mul_int = python_mpf_mul_int
 
 def mpf_shift(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""
