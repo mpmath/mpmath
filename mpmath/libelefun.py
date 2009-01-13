@@ -528,17 +528,22 @@ def mpf_cbrt(s, prec, rnd=round_fast):
 # Output: exp(x) * 2**(prec + r)
 def exp_series(x, prec, r):
     x >>= r
-    s = (MP_ONE << prec) + x
-    a = x
+    # 1 + x + x^2/2! + x^3/3! + x^4/4! + ... =
+    # (1 + x^2/2! + ...) + x * (1 + x^2/3! + ...)
+    s0 = s1 = (MP_ONE << prec)
     k = 2
-    # Sum exp(x/2**r)
-    while 1:
-        a = ((a*x) >> prec) // k
-        if not a:
-            break
-        s += a
+    a = x2 = (x * x) >> prec
+    while a:
+        a = a // k
+        s0 += a
+        k += 1
+        a = a // k
+        s1 += a
+        a = (a * x2) >> prec
         k += 1
     # Calculate s**(2**r) by repeated squaring
+    s1 = (s1 * x) >> prec
+    s = s0 + s1
     while r:
         s = (s*s) >> prec
         r -= 1
@@ -712,7 +717,7 @@ def mpf_exp(x, prec, rnd=round_fast):
                 res = mpf_mul(res, t, wp)
                 sign, man, exp, bc = res
             return normalize(sign, man, exp, bc, prec, rnd)
-    bc = wp - 2 + bctable[int(man >> (wp - 2))]
+    bc = bitcount1(man)
     return normalize(0, man, int(-wp+n), bc, prec, rnd)
 
 
@@ -1581,16 +1586,20 @@ def atan_taylor(x, prec):
     n = (x >> (prec-ATAN_TAYLOR_SHIFT))
     a, atan_a = atan_taylor_get_cached(n, prec)
     d = x - a
-    s = u = (d << prec) // ((a**2 >> prec) + (a*d >> prec) + (MP_ONE << prec))
-    u2 = (u**2 >> prec)
-    k = 1
-    while u:
-        u = (u * u2) >> prec
+    s0 = v = (d << prec) // ((a**2 >> prec) + (a*d >> prec) + (MP_ONE << prec))
+    v2 = (v**2 >> prec)
+    v4 = (v2 * v2) >> prec
+    s1 = v//3
+    v = (v * v4) >> prec
+    k = 5
+    while v:
+        s0 += v // k
         k += 2
-        if k & 2:
-            s -= u // k
-        else:
-            s += u // k
+        s1 += v // k
+        v = (v * v4) >> prec
+        k += 2
+    s1 = (s1 * v2) >> prec
+    s = s0 - s1
     return atan_a + s
 
 def atan_inf(sign, prec, rnd):
