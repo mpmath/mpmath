@@ -7,7 +7,7 @@ from mptypes import (
     eps, j, inf, nan, isnan, isinf, isint,
     nstr, nprint, fraction, almosteq,
     arange, linspace, rand, absmin, absmax,
-    fsum, fprod,
+    fsum, fprod, fdot,
     chop, monitor, timing
 )
 

@@ -1010,6 +1010,77 @@ def fsum(terms):
     else:
         return s + other
 
+def fdot(A, B=None):
+    r"""
+    Computes the dot product of the iterables `A` and `B`,
+
+    .. math ::
+
+        \sum_{k=0} A_k B_k.
+
+    Alternatively, :func:`fdot` accepts a single iterable of pairs.
+    In other words, ``fdot(A,B)`` and ``fdot(zip(A,B))`` are equivalent.
+
+    The elements are automatically converted to mpmath numbers.
+
+    Examples::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> A = [2, 1.5, 3]
+        >>> B = [1, -1, 2]
+        >>> fdot(A, B)
+        mpf('6.5')
+        >>> zip(A, B)
+        [(2, 1), (1.5, -1), (3, 2)]
+        >>> fdot(_)
+        mpf('6.5')
+
+    """
+    if B:
+        A = zip(A, B)
+    prec, rnd = prec_rounding
+    real = []
+    imag = []
+    other = 0
+    hasattr_ = hasattr
+    types = (mpf, mpc)
+    for a, b in A:
+        if type(a) not in types: a = mpmathify(a)
+        if type(b) not in types: b = mpmathify(b)
+        a_real = hasattr_(a, "_mpf_")
+        b_real = hasattr_(b, "_mpf_")
+        if a_real and b_real:
+            real.append(mpf_mul(a._mpf_, b._mpf_))
+            continue
+        a_complex = hasattr_(a, "_mpc_")
+        b_complex = hasattr_(b, "_mpc_")
+        if a_real and b_complex:
+            aval = a._mpf_
+            bre, bim = b._mpc_
+            real.append(mpf_mul(aval, bre))
+            imag.append(mpf_mul(aval, bim))
+        elif b_real and a_complex:
+            are, aim = a._mpc_
+            bval = b._mpf_
+            real.append(mpf_mul(are, bval))
+            imag.append(mpf_mul(aim, bval))
+        elif a_complex and b_complex:
+            re, im = mpc_mul(a._mpc_, b._mpc_, prec+20)
+            real.append(re)
+            imag.append(im)
+        else:
+            other += a*b
+    s = mpf_sum(real, prec, rnd)
+    if imag:
+        s = make_mpc((s, mpf_sum(imag, prec, rnd)))
+    else:
+        s = make_mpf(s)
+    if other is 0:
+        return s
+    else:
+        return s + other
+
 def fprod(factors):
     r"""
     Calculates a product containing a finite number of factors (for

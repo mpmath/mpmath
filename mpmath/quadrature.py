@@ -1,5 +1,5 @@
 from mptypes import (mp, mpf, mpmathify, inf,
-   eps, nstr, make_mpf, AS_POINTS, fsum)
+   eps, nstr, make_mpf, AS_POINTS, fdot)
 
 from functions import pi, exp, log, ldexp
 
@@ -255,7 +255,7 @@ class Quadrature(object):
         values computed by :func:`sum_next` at previous degrees, in
         case the quadrature rule is able to reuse them.
         """
-        return fsum(w*f(x) for (x,w) in nodes)
+        return fdot((w, f(x)) for (x,w) in nodes)
 
 
 class TanhSinh(Quadrature):
@@ -305,7 +305,7 @@ class TanhSinh(Quadrature):
             S = previous[-1]/(h*2)
         else:
             S = mpf(0)
-        S += fsum(w*f(x) for (x,w) in nodes)
+        S += fdot((w,f(x)) for (x,w) in nodes)
         return h*S
 
     def calc_nodes(self, degree, prec, verbose=False):
