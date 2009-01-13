@@ -67,7 +67,7 @@ def testit(importdir='', testdir=''):
     else:
         import glob
         import os.path
-        from time import clock
+        from timeit import default_timer as clock
         modules = []
         args = sys.argv[1:]
         # search for tests in directory of this file if not otherwise specified
