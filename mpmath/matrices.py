@@ -2,7 +2,7 @@
 
 from __future__ import division
 
-from mptypes import (mpmathify, absmax, mpf, mpc, rand, inf, nstr)
+from mptypes import mpmathify, absmax, mpf, mpc, rand, inf, nstr, fdot
 from functions import nthroot, sqrt
 from calculus import fsum
 
@@ -76,7 +76,7 @@ class matrix(object):
         [['0.0', '0.0'],
          ['0.0', mpc(real='1.0', imag='1.0')]])
 
-    You can use the keyword ``force_type`` to change the function which is 
+    You can use the keyword ``force_type`` to change the function which is
     called on every new element:
 
         >>> matrix(2, 5, force_type=int)
@@ -454,10 +454,8 @@ class matrix(object):
             new = matrix(self.__rows, other.__cols)
             for i in xrange(self.__rows):
                 for j in xrange(other.__cols):
-                    s = 0
-                    for k in xrange(other.__rows):
-                        s += self[i,k] * other[k,j]
-                    new[i, j] = s
+                    new[i, j] = fdot((self[i,k], other[k,j])
+                                     for k in xrange(other.__rows))
             return new
         else:
             # try scalar multiplication
