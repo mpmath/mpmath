@@ -212,8 +212,9 @@ def mpf_hyp0f1_rat((bp, bq), x, prec, rnd):
     x = to_fixed(x, wp)
     s = p = MP_ONE << wp
     n = 1
+    bqx = bq*x
     while 1:
-        p = (p * (bq*x) // (n*bp)) >> wp
+        p = ((p * bqx) >> wp) // (n*bp)
         if -100 < p < 100:
             break
         s += p
@@ -233,8 +234,8 @@ def mpc_hyp0f1_rat((bp, bq), z, prec, rnd):
         r1 = bq
         r2 = n*bp
         pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) // r2) >> wp
-        pim = ((pim * r1) // r2) >> wp
+        pre = ((pre * r1) >> wp) // r2
+        pim = ((pim * r1) >> wp) // r2
         if -100 < pre < 100 and -100 < pim < 100:
             break
         sre += pre
@@ -251,7 +252,7 @@ def mpf_hyp1f1_rat((ap, aq), (bp, bq), x, prec, rnd):
     s = p = MP_ONE << wp
     n = 1
     while 1:
-        p = (p * (ap*bq*x) // (n*aq*bp)) >> wp
+        p = ((p * (ap*bq*x)) >> wp) // (n*aq*bp)
         if -100 < p < 100:
             break
         s += p
@@ -272,8 +273,8 @@ def mpc_hyp1f1_rat((ap, aq), (bp, bq), z, prec, rnd):
         r1 = ap*bq
         r2 = n*aq*bp
         pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) // r2) >> wp
-        pim = ((pim * r1) // r2) >> wp
+        pre = ((pre * r1) >> wp) // r2
+        pim = ((pim * r1) >> wp) // r2
         if -100 < pre < 100 and -100 < pim < 100:
             break
         sre += pre
@@ -291,7 +292,7 @@ def mpf_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x, prec, rnd):
     s = p = MP_ONE << wp
     n = 1
     while 1:
-        p = (p * (ap*bp*cq*x) // (n*aq*bq*cp)) >> wp
+        p = ((p * (ap*bp*cq*x)) >> wp) // (n*aq*bq*cp)
         if -100 < p < 100:
             break
         s += p
@@ -313,8 +314,8 @@ def mpc_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), z, prec, rnd):
         r1 = ap*bp*cq
         r2 = n*aq*bq*cp
         pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) // r2) >> wp
-        pim = ((pim * r1) // r2) >> wp
+        pre = ((pre * r1) >> wp) // r2
+        pim = ((pim * r1) >> wp) // r2
         if -100 < pre < 100 and -100 < pim < 100:
             break
         sre += pre

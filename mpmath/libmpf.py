@@ -138,8 +138,8 @@ if MODE == 'gmpy' and 'bit_length' in dir(gmpy):
     bitcount = gmpy.bit_length
 
 # in gmpy mode bitcount1 accepts as argument only an mpz
-if MODE == 'gmpy' and 'mpz_bitcount' in dir(gmpy):
-    bitcount1 = gmpy.mpz_bitcount
+if MODE == 'gmpy' and '_mpmath_bitcount' in dir(gmpy):
+    bitcount1 = gmpy._mpmath_bitcount
 else:
     bitcount1 = bitcount
 
