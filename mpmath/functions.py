@@ -2029,7 +2029,7 @@ bernfrac = gammazeta.bernfrac
 
 stieltjes_cache = {}
 
-def stieltjes(n):
+def stieltjes(n, a=1):
     r"""
     For a nonnegative integer `n`, ``stieltjes(n)`` computes the
     `n`-th Stieltjes constant `\gamma_n`, defined as the
@@ -2041,6 +2041,10 @@ def stieltjes(n):
 
       \zeta(s) = \frac{1}{s-1} \sum_{n=0}^{\infty}
           \frac{(-1)^n}{n!} \gamma_n (s-1)^n
+
+    More generally, ``stieltjes(n, a)`` gives the corresponding
+    coefficient `\gamma_n(a)` for the Hurwitz zeta function
+    `\zeta(s,a)` (with `\gamma_n = \gamma_n(1)`).
 
     **Examples**
 
@@ -2059,14 +2063,19 @@ def stieltjes(n):
         0.000205332814909065
         >>> print stieltjes(30)
         0.00355772885557316
+        >>> print stieltjes(1000)
+        -1.57095384420474e+486
+        >>> print stieltjes(2000)
+        2.680424678918e+1109
+        >>> print stieltjes(1, 2.5)
+        -0.23747539175716
 
     An alternative way to compute `\gamma_1`::
 
         >>> print diff(extradps(25)(lambda x: 1/(x-1) - zeta(x)), 1)
         -0.0728158454836767
 
-    :func:`stieltjes` supports arbitrary precision evaluation,
-    and caches computed results::
+    :func:`stieltjes` supports arbitrary precision evaluation::
 
         >>> mp.dps = 50
         >>> print stieltjes(2)
@@ -2074,68 +2083,65 @@ def stieltjes(n):
 
     **Algorithm**
 
-    The calculation is done using numerical differentiation
-    for very small `n` (currently `n = 1,2,3`).
+    :func:`stieltjes` numerically evaluates the integral in
+    the following representation due to Ainsworth, Howell and
+    Coffey [1], [2]:
 
-    For larger `n`, integration of the Riemann zeta function is
-    used. The method should work for any `n` and precision, but
-    soon becomes quite slow in practice. The code has been tested
-    with `n = 50` and 100 digit precision; that computation took
-    about 2 minutes.
+    .. math ::
+
+      \gamma_n(a) = \frac{\log^n a}{2a} - \frac{\log^{n+1}(a)}{n+1} +
+          \frac{2}{a} \Re \int_0^{\infty}
+          \frac{(x/a-i)\log^n(a-ix)}{(1+x^2/a^2)(e^{2\pi x}-1)} dx.
+
+    For some reference values with `a = 1`, see e.g. [4].
 
     **References**
 
-    1. http://mathworld.wolfram.com/StieltjesConstants.html
+    1. O. R. Ainsworth & L. W. Howell, "An integral representation of
+       the generalized Euler-Mascheroni constants", NASA Technical
+       Paper 2456 (1985), 
+       http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf
 
-    2. http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
+    2. M. W. Coffey, "The Stieltjes constants, their relation to the
+       `\eta_j` coefficients, and representation of the Hurwitz
+       zeta function", 	arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343
+
+    3. http://mathworld.wolfram.com/StieltjesConstants.html
+
+    4. http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
 
     """
-    n = int(n)
-    if n == 0:
-        return +euler
+    n = mpmathify(n)
+    a = mpmathify(a)
     if n < 0:
         raise ValueError("Stieltjes constants defined for n >= 0")
-    if n in stieltjes_cache:
-        prec, s = stieltjes_cache[n]
-        if prec >= mp.prec:
-            return +s
+    if a == 1:
+        if n == 0:
+            return +euler
+        if n in stieltjes_cache:
+            prec, s = stieltjes_cache[n]
+            if prec >= mp.prec:
+                return +s
+    mag = 1
+    def f(x):
+        xa = x/a
+        v = (xa-j)*log(a-j*x)**n/(1+xa**2)/(exp(2*pi*x)-1)
+        return v.real / mag
+    from quadrature import quad
     orig = mp.prec
     try:
-        if n <= 3:
-            from calculus import diff
-            # The Stieltjes constants appear as derivatives of the Dirichlet
-            # eta function at s = 1 (although a lot of cruft needs to be
-            # included in the formulas). The following special cases were
-            # derived using Mathematica.
-            #
-            # It is possible that a simple recursion formula could be
-            # determined. However, this would not necessarily be worthwhile.
-            #
-            # Note that the nth derivative requires (n+1)*prec, so this
-            # is only faster than the integration method for really small n
-            # anyway.
-            if n == 1:
-                v = -(diff(altzeta, 1, 2, direction=1)*3 + 3*euler*log(2)**2-\
-                    log(2)**3) / (3*log(4))
-            if n == 2:
-                v = (diff(altzeta, 1, 3, direction=1) - euler*log(2)**3 + \
-                    log(2)**4/4 - 3*log(2)**2*stieltjes(1))/log(8)
-            if n == 3:
-                v = -(diff(altzeta, 1, 4, direction=1) + euler*log(2)**4 - \
-                    log(2)**5/5 + 4*log(2)**3*stieltjes(1) + 6*log(2)**2* \
-                    stieltjes(2)) / (4*log(2))
-        else:
-            from quadrature import quadgl
-            def f(x):
-                r = exp(pi*j*x)
-                return (zeta(r+1) / r**n).real
-            p = int(log(factorial(n), 2) + 35)
-            mp.prec += p
-            u = quadgl(f, [-1, 1])
-            v = mpf(-1)**n * factorial(n) * u / 2
+        # Normalize integrand by approx. magnitude to
+        # speed up quadrature (which uses absolute error)
+        if n > 50:
+            mp.prec = 20
+            mag = quad(f, [0,inf], maxdegree=3)
+        mp.prec = orig + 10 + int(n**0.5)
+        s = quad(f, [0,inf], maxdegree=20)
+        v = log(a)**n/(2*a) - log(a)**(n+1)/(n+1) + 2*s/a*mag
     finally:
         mp.prec = orig
-    stieltjes_cache[n] = (mp.prec, v)
+    if a == 1 and isint(n):
+        stieltjes_cache[n] = (mp.prec, v)
     return +v
 
 def isnpint(x):
