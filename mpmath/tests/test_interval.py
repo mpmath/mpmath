@@ -4,6 +4,7 @@ def test_interval_identity():
     mp.dps = 15
     assert mpi(2) == mpi(2, 2)
     assert mpi(2) != mpi(-2, 2)
+    assert not (mpi(2) != mpi(2, 2))
     assert mpi(-1, 1) == mpi(-1, 1)
     assert str(mpi('0.1')) == '[0.099999999999999991673, 0.10000000000000000555]'
     u = mpi(-1, 3)

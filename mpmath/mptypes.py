@@ -561,6 +561,9 @@ class mpi(mpnumeric):
                 return NotImplemented
         return (self.a == other.a) and (self.b == other.b)
 
+    def __ne__(self, other):
+        return not (self == other)
+
     def __abs__(self):
         return make_mpi(mpi_abs(self._val, mp.prec))
 
