@@ -28,7 +28,8 @@ from libmpf import (\
     mpf_cmp, mpf_sign, mpf_abs,
     mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_div, mpf_shift,
     mpf_rdiv_int, mpf_pow_int, mpf_sqrt,
-    reciprocal_rnd, negative_rnd, mpf_perturb
+    reciprocal_rnd, negative_rnd, mpf_perturb,
+    isqrt_fast
 )
 
 
@@ -76,29 +77,6 @@ def def_mpf_constant(fixed):
     f.__doc__ = fixed.__doc__
     return f
 
-def acot_fixed(n, prec, hyperbolic):
-    """
-    Compute acot of an integer using fixed-point arithmetic. With
-    hyperbolic=True, compute acoth. The standard Taylor series
-    is used.
-    """
-    n = MP_BASE(n)
-    s = t = (MP_ONE << prec) // n  # 1 / n
-    k = 3
-    while 1:
-        # Repeatedly divide by k * n**2, and add
-        t //= (n*n)
-        term = t // k
-        if not term:
-            break
-        # Alternate signs
-        if hyperbolic or not k & 2:
-            s += term
-        else:
-            s -= term
-        k += 2
-    return s
-
 def bsp_acot(q, a, b, hyperbolic):
     if b - a == 1:
         a1 = MP_BASE(2*a + 3)
@@ -113,13 +91,13 @@ def bsp_acot(q, a, b, hyperbolic):
 
 # the acoth(x) series converges like the geometric series for x^2
 # N = ceil(p*log(2)/(2*log(x)))
-def acot_fixed_bsp(a, prec, hyperbolic):
-    """acot_fixed computed with binary splitting; see
-            http://numbers.computation.free.fr/Constants/
-            Algorithms/splitting.html
+def acot_fixed(a, prec, hyperbolic):
+    """
+    Compute acot(a) or acoth(a) for an integer a with binary splitting; see
+    http://numbers.computation.free.fr/Constants/Algorithms/splitting.html
     """
     N = int(0.35 * prec/math.log(a) + 20)
-    p, q, r= bsp_acot(a, 0,N, hyperbolic)
+    p, q, r = bsp_acot(a, 0,N, hyperbolic)
     return ((p+q)<<prec)//(q*a)
 
 def machin(coefs, prec, hyperbolic=False):
@@ -138,38 +116,21 @@ def machin(coefs, prec, hyperbolic=False):
 # Logarithms of integers are needed for various computations involving
 # logarithms, powers, radix conversion, etc
 
-if MODE == 'gmpy':
-    LOG2_PREC_BSP = 14000
-else:
-    LOG2_PREC_BSP = 20000
-
 @constant_memo
 def ln2_fixed(prec):
     """
     Computes ln(2). This is done with a hyperbolic Machin-type formula,
     with binary splitting at high precision.
     """
-    if prec < LOG2_PREC_BSP:
-        return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
-    else:
-        extraprec = 10
-        s = MP_ZERO
-        for a, b in [(18, 26), (-2, 4801), (8, 8749)]:
-            s += MP_BASE(a) * acot_fixed_bsp(MP_BASE(b), prec+extraprec,
-                    hyperbolic=True)
-        return s >> extraprec
+    return machin([(18, 26), (-2, 4801), (8, 8749)], prec, True)
 
 @constant_memo
 def ln10_fixed(prec):
     """
     Computes ln(10). This is done with a hyperbolic Machin-type formula.
     """
-    if prec < LOG_NEWTON_PREC2:
-        return machin([(46, 31), (34, 49), (20, 161)], prec, True)
-    else:
-        wp = prec + 20
-        res = log_agm((0, MP_FIVE, 1, 3), wp, False)
-        return to_fixed(res, prec)
+    return machin([(46, 31), (34, 49), (20, 161)], prec, True)
+
 
 """
 For computation of pi, we use the Chudnovsky series:
@@ -239,7 +200,7 @@ def pi_fixed(prec, verbose=False, verbose_base=None):
     if verbose:
         print "binary splitting with N =", N
     g, p, q = bs_chudnovsky(0, N, 0, verbose)
-    sqrtC = sqrt_fixed(CHUD_C<<prec, prec)
+    sqrtC = isqrt_fast(CHUD_C<<(2*prec))
     v = p*CHUD_C*sqrtC//((q+CHUD_A*p)*CHUD_D)
     return v
 
@@ -280,8 +241,7 @@ def phi_fixed(prec):
     Computes the golden ratio, (1+sqrt(5))/2
     """
     prec += 10
-    sqrt = [sqrt_fixed2, sqrt_fixed][prec < 20000]
-    a = sqrt(MP_FIVE<<prec, prec) + (MP_ONE << prec)
+    a = isqrt_fast(MP_FIVE<<(2*prec)) + (MP_ONE << prec)
     return a >> 11
 
 mpf_phi    = def_mpf_constant(phi_fixed)
@@ -571,7 +531,7 @@ def exp_series2(x, prec, r):
         #   (x + x^9/9! + ...) + x^2 * (x/3! + x^9/11! + ...) +
         #   x^4 * (x/5! + x^9/13! + ...) + x^6 * (x/7! + x^9/15! + ...)
         J = 4
-        ax = [1 << prec, x2]
+        ax = [MP_ONE << prec, x2]
         px = x2
         asum = [x, x//6]
         fact = 6
@@ -594,7 +554,7 @@ def exp_series2(x, prec, r):
         for i in range(1, J):
             s1 += ax[i]*asum[i]
         s1 = asum[0] + (s1 >> prec)
-    c1 = sqrt_fixed(((s1*s1) >> prec) + (1<<prec), prec)
+    c1 = isqrt_fast((s1*s1) + (MP_ONE<<(2*prec)))
     if sign:
         s = c1 - s1
     else:
@@ -932,8 +892,7 @@ def mpf_agm(a, b, wc):
         adiff = a - an
         if p > 16 and abs(adiff) < 1000:
             break
-        prod = (a * b) >> wc
-        b = sqrt_fixed2(prod, wc)
+        b = isqrt_fast(a*b)
         p = 2*p
         a = an
     res = a
@@ -1174,7 +1133,7 @@ def cos_taylor(x, prec):
 # Output: c * 2**(prec + r), s * 2**(prec + r)
 def expi_series(x, prec, r):
     x >>= r
-    one = 1 << prec
+    one = MP_ONE << prec
     x2 = (x*x) >> prec
     s = x
     a = x
@@ -1183,7 +1142,7 @@ def expi_series(x, prec, r):
         a = ((a * x2) >> prec) // (-k*(k+1))
         s += a
         k += 2
-    c = sqrt_fixed(one - ((s*s)>>prec), prec)
+    c = isqrt_fast((MP_ONE<<(2*prec)) - (s*s))
     # Calculate (c + j*s)**(2**r) by repeated squaring
     for j in range(r):
         c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
@@ -1334,7 +1293,7 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
         if which_compute == 0:
             sin = sin_taylor(y, wp)
             # only need to evaluate one of the series
-            cos = sqrt_fixed((1<<wp) - ((sin*sin)>>wp), wp)
+            cos = isqrt_fast((MP_ONE<<(2*wp)) - sin*sin)
         elif which_compute == 1:
             sin = 0
             cos = cos_taylor(y, wp)
