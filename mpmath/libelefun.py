@@ -632,7 +632,9 @@ def mpf_exp(x, prec, rnd=round_fast):
         man = exp_series(t, wp, r)
     else:
         use_newton = False
-        if wp > LIM_EXP_SERIES2:
+        # put a bound on exp to avoid infinite recursion in exp_newton
+        # TODO find a good bound
+        if wp > LIM_EXP_SERIES2 and exp < 1000:
             if mag > 0:
                 use_newton = True
             elif mag <= 0 and -mag <= ns_exp[-1]:
