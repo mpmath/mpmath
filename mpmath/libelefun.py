@@ -607,11 +607,12 @@ def mpf_exp(x, prec, rnd=round_fast):
         if x == fninf:
             return fzero
         return x
+    mag = bc+exp
     # Fast handling e**n. TODO: the best cutoff depends on both the
     # size of n and the precision.
     if prec > 600 and exp >= 0:
-        return mpf_pow_int(mpf_e(prec+10), (-1)**sign *(man<<exp), prec, rnd)
-    mag = bc+exp
+        e = mpf_e(prec+10+int(1.45*mag))
+        return mpf_pow_int(e, (-1)**sign *(man<<exp), prec, rnd)
     if mag < -prec-10:
         return mpf_perturb(fone, sign, prec, rnd)
     # extra precision needs to be similar in magnitude to log_2(|x|)
