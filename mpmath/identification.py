@@ -14,19 +14,22 @@ def round_fixed(x, prec):
     return ((x + (1<<(prec-1))) >> prec) << prec
 
 def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
-    """
-    Given a vector of real numbers x = [x1, x2, ..., xn], pslq(x) uses the
-    PSLQ algorithm to find a list of integers [c1, c2, ..., cn] such that::
+    r"""
+    Given a vector of real numbers `x = [x_0, x_1, ..., x_n]`, ``pslq(x)``
+    uses the PSLQ algorithm to find a list of integers
+    `[c_0, c_1, ..., c_n]` such that
 
-        abs(c1*x1 + c2*x2 + ... + cn*xn) < tol
+    .. math ::
 
-    and such that max abs(c[k]) < maxcoeff. If no such vector exists,
-    :func:`pslq` returns None. The tolerance defaults to 3/4 of the
-    working precision.
+        |c_1 x_1 + c_2 x_2 + ... + c_n x_n| < \mathrm{tol}
+
+    and such that `\max |c_k| < \mathrm{maxcoeff}`. If no such vector
+    exists, :func:`pslq` returns ``None``. The tolerance defaults to
+    3/4 of the working precision.
 
     **Examples**
 
-    Find rational approximations for pi::
+    Find rational approximations for `\pi`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -40,8 +43,8 @@ def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         >>> pslq([pi, 1])
         >>>
 
-    To within the standard precision, it is however equal to a
-    rational number with denominator less than 10**12::
+    To within the standard precision, it can however be approximated
+    by at least one rational number with denominator less than `10^{12}`::
 
         >>> pslq([pi, 1], maxcoeff=10**12)
         [-75888275702L, 238410049439L]
@@ -62,15 +65,21 @@ def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
 
     **Machin formulas**
 
-    A famous formula for pi is Machin's::
+    A famous formula for `\pi` is Machin's,
 
-        pi/4 = 4*acot(5) - acot(239)
+    .. math ::
+
+        \frac{\pi}{4} = 4 \operatorname{acot} 5 - \operatorname{acot} 239
 
     There are actually infinitely many formulas of this type. Two
-    others are::
+    others are
 
-        pi/4 = acot(1)
-        pi/4 = 12*acot(49)+32*acot(57)-5*acot(239)+12*acot(110443)
+    .. math ::
+
+        \frac{\pi}{4} = \operatorname{acot} 1
+
+        \frac{\pi}{4} = 12 \operatorname{acot} 49 + 32 \operatorname{acot} 57
+            + 5 \operatorname{acot} 239 + 12 \operatorname{acot} 110443
 
     We can easily verify the formulas using the PSLQ algorithm::
 
@@ -85,13 +94,13 @@ def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     We could try to generate a custom Machin-like formula by running
     the PSLQ algorithm with a few inverse cotangent values, for example
     acot(2), acot(3) ... acot(10). Unfortunately, there is a linear
-    independence among these values, resulting in a zero coefficient for
-    pi::
+    dependence among these values, resulting in only that dependence
+    being detected, with a zero coefficient for `\pi`::
 
         >>> pslq([pi] + [acot(n) for n in range(2,11)])
         [0, 1, -1, 0, 0, 0, -1, 0, 0, 0]
 
-    We get better luck by removing a few of them::
+    We get better luck by removing linearly dependent terms::
 
         >>> pslq([pi] + [acot(n) for n in range(2,11) if n not in (3, 5)])
         [1, -8, 0, 0, 4, 0, 0, 0]
@@ -292,25 +301,25 @@ def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     return None
 
 def findpoly(x, n=1, **kwargs):
-    """
+    r"""
     ``findpoly(x, n)`` returns the coefficients of an integer
-    polynomial P of degree at most n such that P(x) ~= 0. If no
-    polynomial having x as a root can be found, :func:`findpoly`
-    returns None.
+    polynomial `P` of degree at most `n` such that `P(x) \approx 0`.
+    If no polynomial having `x` as a root can be found,
+    :func:`findpoly` returns ``None``.
 
     :func:`findpoly` works by successively calling :func:`pslq` with
-    the vectors [1, x], [1, x, x^2], [1, x, x^2, x^3], ...,
-    [1, x, x^2, .., x^n] as input. Keyword arguments given to
+    the vectors `[1, x]`, `[1, x, x^2]`, `[1, x, x^2, x^3]`, ...,
+    `[1, x, x^2, .., x^n]` as input. Keyword arguments given to
     :func:`findpoly` are forwarded verbatim to :func:`pslq`. In
-    particular, you can specify a tolerance for P(x) with ``tol``
+    particular, you can specify a tolerance for `P(x)` with ``tol``
     and a maximum permitted coefficient size with ``maxcoeff``.
 
-    For large values of n, it is recommended to run :func:`findpoly`
+    For large values of `n`, it is recommended to run :func:`findpoly`
     at high precision; preferrably 50 digits or more.
 
     **Examples**
 
-    By default (degree n = 1), :func:`findpoly` simply finds a linear
+    By default (degree `n = 1`), :func:`findpoly` simply finds a linear
     polynomial with a rational root::
 
         >>> from mpmath import *
@@ -329,9 +338,9 @@ def findpoly(x, n=1, **kwargs):
         -0.618033988749895
         1.61803398874989
 
-    Numbers of the form m + n*sqrt(p) for integers (m, n, p) are
-    solutions to quadratic equations. As we find here, 1+sqrt(2)
-    is a root of the polynomial x^2-2x-1::
+    Numbers of the form `m + n \sqrt p` for integers `(m, n, p)` are
+    solutions to quadratic equations. As we find here, `1+\sqrt 2`
+    is a root of the polynomial `x^2 - 2x - 1`::
 
         >>> findpoly(1+sqrt(2), 2)
         [1, -2, -1]
@@ -344,9 +353,9 @@ def findpoly(x, n=1, **kwargs):
         >>> findpoly(sqrt(2)+sqrt(3), 4)
         [1, 0, -10, 0, 1]
 
-    In fact, x^4 - 10x^2 + 1 is the *minimal polynomial* of
-    r = sqrt(2)+sqrt(3), meaning that a rational polynomial of lower
-    degree having r as a root does not exist. Given sufficient
+    In fact, `x^4 - 10x^2 + 1` is the *minimal polynomial* of
+    `r = \sqrt 2 + \sqrt 3`, meaning that a rational polynomial of
+    lower degree having `r` as a root does not exist. Given sufficient
     precision, :func:`findpoly` will usually find the correct
     minimal polynomial of a given algebraic number.
 
@@ -356,7 +365,7 @@ def findpoly(x, n=1, **kwargs):
     coefficient size and tolerance constraints, that means no such
     polynomial exists.
 
-    We can verify that pi is not an algebraic number of degree 3 with
+    We can verify that `\pi` is not an algebraic number of degree 3 with
     coefficients less than 1000::
 
         >>> mp.dps = 15
@@ -393,7 +402,7 @@ def findpoly(x, n=1, **kwargs):
     for such high-degree runs, since otherwise unwanted low-accuracy
     approximations will be detected. It may also be necessary to set
     maxsteps high to prevent a premature exit (before the coefficient
-    bound has been reached). Running with verbose=True to get an
+    bound has been reached). Running with ``verbose=True`` to get an
     idea what is happening can be useful.
     """
     x = mpf(x)
@@ -514,10 +523,10 @@ transforms = [
 def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
     verbose=False):
     """
-    Given a real number x, identify(x) attempts to find an exact formula
-    for x. This formula is returned as a string. If no match is found,
-    None is returned. With full=True, a list of matching formulas is
-    returned.
+    Given a real number `x`, ``identify(x)`` attempts to find an exact
+    formula for `x`. This formula is returned as a string. If no match
+    is found, ``None`` is returned. With ``full=True``, a list of
+    matching formulas is returned.
 
     As a simple example, :func:`identify` will find an algebraic
     formula for the golden ratio::
@@ -535,10 +544,10 @@ def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
         1. Fractions
         2. Quadratic algebraic numbers
         3. Rational linear combinations of the base constants
-        4. Any of the above after first transforming x into f(x) where
-           f(x) is 1/x, sqrt(x), x^2, log(x) or exp(x), either directly
-           or with x or f(x) multiplied or divided by one of the base
-           constants
+        4. Any of the above after first transforming `x` into `f(x)` where
+           `f(x)` is `1/x`, `\sqrt x`, `x^2`, `\log x` or `\exp x`, either
+           directly or with `x` or `f(x)` multiplied or divided by one of
+           the base constants
         5. Products of fractional powers of the base constants and
            small integers
 
@@ -566,7 +575,7 @@ def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
         >>> identify(0.881373587019543)
         'log(((2+sqrt(8))/2))'
 
-    By default, :func:`identify` does not recognize pi. At standard
+    By default, :func:`identify` does not recognize `\pi`. At standard
     precision it finds a not too useful approximation. At slightly
     increased precision, this approximation is no longer accurate
     enough and :func:`identify` more correctly returns ``None``::
@@ -577,7 +586,7 @@ def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
         >>> identify(pi)
         >>>
 
-    Numbers such as pi, and simple combinations of user-defined
+    Numbers such as `\pi`, and simple combinations of user-defined
     constants, can be identified if they are provided explicitly::
 
         >>> identify(3*pi-2*e, ['pi', 'e'])
@@ -706,7 +715,7 @@ def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
 
     **Miscellaneous issues and limitations**
 
-    The input ``x`` must be a real number. All base constants must be
+    The input `x` must be a real number. All base constants must be
     positive real numbers and must not be rationals or rational linear
     combinations of each other.
 

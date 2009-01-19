@@ -42,14 +42,14 @@ class _pi(constant):
     circle, the half-period of trigonometric functions, and many other
     things in mathematics.
 
-    Mpmath can evaluate `\pi` to arbitrary precision:
+    Mpmath can evaluate `\pi` to arbitrary precision::
 
         >>> from mpmath import *
         >>> mp.dps = 50
         >>> print pi
         3.1415926535897932384626433832795028841971693993751
 
-    This shows digits 99991-100000 of `\pi`:
+    This shows digits 99991-100000 of `\pi`::
 
         >>> mp.dps = 100000
         >>> str(pi)[-10:]
@@ -62,13 +62,13 @@ class _pi(constant):
     involving `\pi` will generally not be preserved in floating-point
     arithmetic. In particular, multiples of :data:`pi` (except for 
     the trivial case ``0*pi``) are *not* the exact roots of
-    :func:`sin`, but differ roughly by the current epsilon:
+    :func:`sin`, but differ roughly by the current epsilon::
 
         >>> mp.dps = 15
         >>> sin(pi)
         mpf('1.2246467991473532e-16')
 
-    One solution is to use the :func:`sinpi` function instead:
+    One solution is to use the :func:`sinpi` function instead::
 
         >>> sinpi(1)
         mpf('0.0')
@@ -77,8 +77,25 @@ class _pi(constant):
     details.
     """
 
+class _degree(constant):
+    """
+    Represents one degree of angle, `1^{\circ} = \pi/180`, or
+    about 0.01745329. This constant may be evaluated to arbitrary
+    precision::
 
-class _degree(constant): pass
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print degree
+        0.017453292519943295769236907684886127134428718885417
+
+    The :data:`degree` object is convenient for conversion
+    to radians::
+
+        >>> print sin(30 * degree)
+        0.5
+        >>> print asin(0.5) / degree
+        30.0
+    """
 
 class _e(constant):
     """
@@ -86,13 +103,13 @@ class _e(constant):
     natural logarithm (:func:`ln`) and of the exponential function
     (:func:`exp`).
 
-    Mpmath can be evaluate `e` to arbitrary precision:
+    Mpmath can be evaluate `e` to arbitrary precision::
 
         >>> mp.dps = 50
         >>> print e
         2.7182818284590452353602874713526624977572470937
 
-    This shows digits 99991-100000 of `e`:
+    This shows digits 99991-100000 of `e`::
 
         >>> mp.dps = 100000
         >>> str(e)[-10:]
@@ -109,14 +126,31 @@ class _e(constant):
     function. Use ``exp(x)`` instead; this is both faster and more
     accurate.
     """
-    pass
-
 
 class _ln2(constant): pass
 
 class _ln10(constant): pass
 
-class _phi(constant): pass
+class _phi(constant):
+    r"""
+    Represents the golden ratio `\phi = (1+\sqrt 5)/2`,
+    approximately equal to 1.6180339887. To high precision,
+    its value is::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print phi
+        1.6180339887498948482045868343656381177203091798058
+
+    Formulas for the golden ratio include the following::
+
+        >>> print (1+sqrt(5))/2
+        1.6180339887498948482045868343656381177203091798058
+        >>> print findroot(lambda x: x**2-x-1, 1)
+        1.6180339887498948482045868343656381177203091798058
+        >>> print limit(lambda n: fib(n+1)/fib(n), inf)
+        1.6180339887498948482045868343656381177203091798058
+    """
 
 class _euler(constant):
     r"""
@@ -144,7 +178,7 @@ class _euler(constant):
         >>> print limit(lambda n: harmonic(n)-log(n), inf)
         0.57721566490153286060651209008240243104215933593992
 
-    This shows digits 9991-10000 of `\gamma`:
+    This shows digits 9991-10000 of `\gamma`::
 
         >>> mp.dps = 10000
         >>> str(euler)[-10:]
@@ -199,7 +233,7 @@ class _catalan(constant):
         >>> print nsum(lambda k: (-1)**k/(2*k+1)**2, [0, inf])
         0.91596559417721901505460351493238411077414937428167
 
-    This shows digits 9991-10000 of `K`:
+    This shows digits 9991-10000 of `K`::
 
         >>> mp.dps = 10000
         >>> str(catalan)[-10:]
@@ -224,7 +258,6 @@ class _catalan(constant):
         0.91596559417721901505460351493238411077414937428167
         >>> print 1-nsum(lambda n: n*zeta(2*n+1)/16**n, [1,inf])
         0.91596559417721901505460351493238411077414937428167
-
     """
 
 class _khinchin(constant):
@@ -296,7 +329,42 @@ class _glaisher(constant):
     http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
     """
 
-class _apery(constant): pass
+class _apery(constant):
+    r"""
+    Represents Apery's constant, which is the irrational number
+    approximately equal to 1.2020569 given by
+
+    .. math ::
+
+        \zeta(3) = \sum_{k=1}^\infty\frac{1}{k^3}.
+
+    The calculation is based on an efficient hypergeometric
+    series. To 50 decimal places, the value is given by::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print apery
+        1.2020569031595942853997381615114499907649862923405
+
+    Other ways to evaluate Apery's constant using mpmath
+    include::
+
+        >>> print zeta(3)
+        1.2020569031595942853997381615114499907649862923405
+        >>> print -diff(trigamma, 1)/2
+        1.2020569031595942853997381615114499907649862923405
+        >>> print 8*nsum(lambda k: 1/(2*k+1)**3, [0,inf])/7
+        1.2020569031595942853997381615114499907649862923405
+        >>> f = lambda k: 2/k**3/(exp(2*pi*k)-1)
+        >>> print 7*pi**3/180 - nsum(f, [1,inf])
+        1.2020569031595942853997381615114499907649862923405
+
+    This shows digits 9991-10000 of Apery's constant::
+
+        >>> mp.dps = 10000
+        >>> str(apery)[-10:]
+        '3189504235'
+    """
 
 # Mathematical constants
 pi = _pi(libelefun.mpf_pi, "pi")
