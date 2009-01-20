@@ -7,7 +7,10 @@ __docformat__ = 'plaintext'
 import math
 
 from bisect import bisect
-from random import getrandbits
+
+# Importing random is slow
+#from random import getrandbits
+getrandbits = None
 
 from settings import (\
     MP_BASE, MP_ZERO, MP_ONE, MP_TWO, MP_FIVE, MODE, STRICT, gmpy,
@@ -520,6 +523,10 @@ def to_fixed(s, prec):
 def mpf_rand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
+    global getrandbits
+    if not getrandbits:
+        import random
+        getrandbits = random.getrandbits
     return from_man_exp(getrandbits(prec), -prec, prec, round_floor)
 
 def mpf_eq(s, t):
