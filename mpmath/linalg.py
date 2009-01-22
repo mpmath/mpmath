@@ -105,10 +105,9 @@ and equation solving with rigorous error bounds::
 
 from __future__ import division
 
-from mptypes import extraprec, absmin, mp, eps, mpf
+from mptypes import extraprec, absmin, mp, eps, mpf, fsum
 from functions import sqrt, sign, log, factorial
 from matrices import matrix, eye, swap_row, extend, mnorm_1, norm_p, mnorm_oo
-from calculus import fsum
 from copy import copy
 
 def LU_decomp(A, overwrite=False, use_cache=True):

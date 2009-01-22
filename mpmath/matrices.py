@@ -2,9 +2,8 @@
 
 from __future__ import division
 
-from mptypes import mpmathify, absmax, mpf, mpc, rand, inf, nstr, fdot
+from mptypes import mpmathify, absmax, mpf, mpc, rand, inf, nstr, fsum, fdot
 from functions import nthroot, sqrt
-from calculus import fsum
 
 rowsep = '\n'
 colsep = '  '
