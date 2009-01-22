@@ -52,17 +52,16 @@
 <h2>Summation (<tt class="docutils literal"><span class="pre">fsum</span></tt>, <tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-fsum-nsum-sumem" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.calculus.fsum">
-<!--[mpmath.calculus.fsum]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fsum</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fsum" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.calculus.fsum]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fsum</tt><big>(</big><em>terms</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates a sum containing a finite number of terms (for infinite
-series, see <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>). You can use either <tt class="docutils literal"><span class="pre">fsum(&lt;iterable&gt;)</span></tt>
-to sum a precomputed sequence of terms, or <tt class="docutils literal"><span class="pre">fsum(f,</span> <span class="pre">[a,b])</span></tt> to
-evaluate <img class="math" src="../_images/math/2717cd9de9fb2a75936a227c5f82350e21693490.png" alt="\sum_{k=a}^b f(k)" />.</p>
+series, see <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>). The terms will be converted to
+mpmath numbers. For len(terms) &gt; 2, this function is generally
+faster and produces more accurate results than the builtin
+Python function <tt class="xref docutils literal"><span class="pre">sum()</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
 <span class="go">mpf(&#39;10.5&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">20</span><span class="p">])</span>
-<span class="go">mpf(&#39;41075.0&#39;)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -74,7 +73,7 @@ evaluate <img class="math" src="../_images/math/2717cd9de9fb2a75936a227c5f82350e
 <div class="math">
 <p><img src="../_images/math/e7a402fb18d1cfbf308b0e071b4771f272940d06.png" alt="S = \sum_{k=a}^b f(k)" />
 </div></p><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)" /> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty" /> and/or
-<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" /> (for finite sums, see <tt class="xref docutils literal"><span class="pre">fsum()</span></tt>). Two examples of
+<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" /> are allowed. Two examples of
 infinite series that can be summed by <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>, where the
 first converges rapidly and the second converges slowly, are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -85,8 +84,11 @@ first converges rapidly and the second converges slowly, are:</p>
 <span class="go">1.64493406684823</span>
 </pre></div>
 </div>
-<p>When possible, <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> applies convergence acceleration to
-accurately estimate the sums of slowly convergent series.</p>
+<p>When appropriate, <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> applies convergence acceleration to
+accurately estimate the sums of slowly convergent series.
+If the sum is finite, <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> currently does not
+attempt to perform any extrapolation, and simply calls
+<tt class="xref docutils literal"><span class="pre">fsum()</span></tt>.</p>
 <p><strong>Options</strong></p>
 <dl class="docutils">
 <dt><em>tol</em></dt>
@@ -144,6 +146,11 @@ The summation automatically stops when the terms
 decrease below the target tolerance.</dd>
 </dl>
 <p><strong>Basic examples</strong></p>
+<p>A finite sum:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">6</span><span class="p">])</span>
+<span class="go">2.45</span>
+</pre></div>
+</div>
 <p>Summation of a series going to negative infinity and a doubly
 infinite series:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">])</span>
@@ -357,17 +364,14 @@ integral and derivative values (the second should be much faster):</p>
 <h2>Products (<tt class="docutils literal"><span class="pre">fprod</span></tt>, <tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-fprod-nprod" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.calculus.fprod">
-<!--[mpmath.calculus.fprod]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fprod</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fprod" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.calculus.fprod]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fprod</tt><big>(</big><em>factors</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fprod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates a product containing a finite number of factors (for
-infinite products, see <tt class="xref docutils literal"><span class="pre">nprod()</span></tt>). You can use either
-<tt class="docutils literal"><span class="pre">fprod(&lt;iterable&gt;)</span></tt> to multiply a precomputed sequence of
-factors, or <tt class="docutils literal"><span class="pre">fprod(f,</span> <span class="pre">[a,b])</span></tt> to evaluate <img class="math" src="../_images/math/81359ff85e3d7a2568fe55d3eaef6cc4c53c6ffd.png" alt="\prod_{k=a}^b f(k)" />.</p>
+infinite products, see <tt class="xref docutils literal"><span class="pre">nprod()</span></tt>). The factors will be
+converted to mpmath numbers.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
 <span class="go">mpf(&#39;7.0&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
-<span class="go">mpf(&#39;1728000.0&#39;)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -379,19 +383,24 @@ factors, or <tt class="docutils literal"><span class="pre">fprod(f,</span> <span
 <div class="math">
 <p><img src="../_images/math/32fba9e0834375a3c5e3c9d0c9761158c331f46c.png" alt="P = \prod_{k=a}^b f(k)" />
 </div></p><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)" /> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty" /> and/or
-<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" />.</p>
+<img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" /> are allowed.</p>
 <p>This function is essentially equivalent to applying <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>
 to the logarithm of the product (which, of course, becomes a
 series). All keyword arguments passed to <tt class="xref docutils literal"><span class="pre">nprod()</span></tt> are
 forwarded verbatim to <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>.</p>
 <p><strong>Examples</strong></p>
+<p>A simple finite product:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<span class="go">24.0</span>
+</pre></div>
+</div>
 <p>A large number of infinite products have known exact values,
 and can therefore be used as a reference. Most of the following
 examples are taken from MathWorld [1].</p>
-<p>First, here are a few infinite products with simple values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<p>A few infinite products with simple values are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">3.14159265358979</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">2.0</span>
@@ -797,8 +806,19 @@ Scientists and Engineers&#8221;, Springer 1999, pp. 368-375</li>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

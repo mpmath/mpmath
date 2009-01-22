@@ -141,6 +141,20 @@ function:</p>
 <span class="go">5.2496028524016 5.2496028524016</span>
 </pre></div>
 </div>
+<p>Multidimensional functions are also supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x2</span><span class="p">,</span>
+<span class="gp">... </span>     <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="mf">5</span><span class="o">*</span><span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">3</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="mf">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">))</span>
+<span class="go">matrix(</span>
+<span class="go">[[&#39;-0.618033988749895&#39;],</span>
+<span class="go"> [&#39;-0.381966011250105&#39;]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">10</span><span class="p">))</span>
+<span class="go">matrix(</span>
+<span class="go">[[&#39;1.61803398874989&#39;],</span>
+<span class="go"> [&#39;-2.61803398874989&#39;]])</span>
+</pre></div>
+</div>
+<p>You can verify this by solving the system manually.</p>
 <p><strong>Multiple roots</strong></p>
 <p>For multiple roots all methods of the Newtonian family (including secant)
 converge slowly. Consider this example:</p>
@@ -274,8 +288,19 @@ with multiple roots and usually need a sign change to find a root:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

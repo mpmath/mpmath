@@ -1,14 +1,30 @@
 Mpmath basics
 =============
 
-In all interactive code examples that follow, it will be assumed that the main contents of the ``mpmath`` package have been imported with "``import *``".
+In interactive code examples that follow, it will be assumed that the main contents of the ``mpmath`` package have been imported with "``import *``".
 
     >>> from mpmath import *
 
-Mpmath numbers
---------------
+Number types
+------------
 
-Mpmath provides two main numerical types: ``mpf`` and ``mpc``. The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` (negative infinity) and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
+Mpmath provides the following numerical types:
+
+    +------------+----------------+
+    | Class      | Description    |
+    +============+================+
+    | ``mpf``    | Real float     |
+    +------------+----------------+
+    | ``mpc``    | Complex float  |
+    +------------+----------------+
+    | ``mpi``    | Real interval  |
+    +------------+----------------+
+    | ``matrix`` | Matrix         |
+    +------------+----------------+
+
+The following section will provide a very short introduction to the types ``mpf`` and ``mpc``. Intervals and matrices are described further in the documentation chapters on interval arithmetic and matrices / linear algebra.
+
+The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` (negative infinity) and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
 
     >>> mpf(4)
     mpf('4.0')
@@ -44,6 +60,7 @@ Prettier output can be obtained by using ``str()`` or ``print``, which hide the 
     3.14159
     >>> print mpc(1j)**0.5
     (0.707106781186548 + 0.707106781186548j)
+
 
 Setting the precision
 ---------------------
@@ -159,16 +176,55 @@ Plotting
 
 If `matplotlib <http://matplotlib.sourceforge.net/>`_ is available, the functions ``plot`` and ``cplot`` in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.
 
-For example, to plot the exponential function::
+.. image:: plot.png
 
-    plot(exp)
+Output of ``plot([cos, sin], [-4, 4])``
 
-To plot both sine and cosine over the interval [-4, 4]::
+.. autofunction:: mpmath.plot
 
-    plot([cos, sin], [-4, 4])
+.. image:: cplot.png
 
-To plot the function f(z) = exp(1/z) in a part of the complex plane::
+Output of ``cplot(gamma, points=10000)``
 
-    cplot(lambda z: exp(1/z), [-2, 2], [-2, 2])
+.. autofunction:: mpmath.cplot
 
-See ``help(plot)`` and ``help(cplot)`` for details.
+Utility functions
+-----------------
+
+The following convenience functions are provided to simplify common tasks. (Mathematical functions with more specific applications are covered in later sections of the documentation.)
+
+Conversion and utilities for numbers
+....................................
+.. autofunction:: mpmath.mpmathify
+.. autofunction:: mpmath.almosteq
+.. autofunction:: mpmath.isint
+.. autofunction:: mpmath.isinf
+.. autofunction:: mpmath.isnan
+.. autofunction:: mpmath.absmin
+.. autofunction:: mpmath.absmax
+
+Arithmetic
+..........
+.. autofunction:: mpmath.fsum
+.. autofunction:: mpmath.fprod
+.. autofunction:: mpmath.fdot
+
+Number generation
+.................
+.. autofunction:: mpmath.fraction
+.. autofunction:: mpmath.rand
+.. autofunction:: mpmath.arange
+.. autofunction:: mpmath.linspace
+
+Rounding and printing
+.....................
+.. autofunction:: mpmath.chop
+.. autofunction:: mpmath.nstr
+.. autofunction:: mpmath.nprint
+
+Debugging
+.........
+.. autofunction:: mpmath.monitor
+.. autofunction:: mpmath.timing
+
+

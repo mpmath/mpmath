@@ -71,7 +71,7 @@ After the setup has completed, you should be able to fire up the interactive Pyt
 Using gmpy (optional)
 ---------------------
 
-By default, mpmath uses Python integers internally. If `gmpy <http://code.google.com/p/gmpy/>`_ version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster at high precision (approximately above 100 digits).
+By default, mpmath uses Python integers internally. If `gmpy <http://code.google.com/p/gmpy/>`_ version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster, especially at high precision (approximately above 100 digits).
 
 To verify that mpmath uses gmpy, check the internal MODE variable is not equal to 'python':
 

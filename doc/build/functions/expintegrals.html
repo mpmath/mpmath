@@ -219,12 +219,22 @@ hypergeometric function <img class="math" src="../_images/math/1f6fb6dd6d16bd0ea
 <span class="go">0.769881289937359</span>
 </pre></div>
 </div>
+<p>For x large enough use the asymptotic expansion
+ei_as(x) = exp(x)/x * Sum(k!/x^k, (k,0,inf))
+k!/x^k  goes as exp(f(k))
+f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in 
+log(k/x) + 1/(2*k) = 0; therefore the smallest term of the 
+asympotic series is k!/x^k ~= e^(-k - 1/2)
+requiring this to be equal to e^-prec one gets x ~= k ~= prec*log(2)
+so that one should use ei_as(x) for x &gt; prec*log(2)</p>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
 <li>Relations between Ei and other functions:
 <a class="reference external" href="http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/">http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/</a></li>
 <li>Abramowitz &amp; Stegun, section 5:
 <a class="reference external" href="http://www.math.sfu.ca/~cbm/aands/page_228.htm">http://www.math.sfu.ca/~cbm/aands/page_228.htm</a></li>
+<li>Asymptotic expansion for Ei:
+<a class="reference external" href="http://mathworld.wolfram.com/En-Function.html">http://mathworld.wolfram.com/En-Function.html</a></li>
 </ol>
 </dd></dl>
 
@@ -381,8 +391,8 @@ cosine integral:</p>
 <p><img src="../_images/math/c6f4de1fa90d03021c350326a1de82372fcc8486.png" alt="\mathrm{Si}(x) = \int_0^x \frac{\sin t}{t}\,dt." />
 </div></p><p>The sine integral is thus the antiderivative of the sinc
 function (see <tt class="xref docutils literal"><span class="pre">sinc()</span></tt>).</p>
-<p><strong>Examples</strong>
-Some values and limits:</p>
+<p><strong>Examples</strong></p>
+<p>Some values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -850,8 +860,19 @@ without the normalization factor <img class="math" src="../_images/math/039bf945
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

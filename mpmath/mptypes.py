@@ -51,11 +51,27 @@ get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
 # TODO: add tests
 
 def mpmathify(x, strings=True):
-    """Attempt to convert x to an mpf or mpc losslessly. If x is an
-    mpf or mpc, return it unchanged. If x is an int, create an mpf with
-    sufficient precision to represent it exactly. If x is a str, just
-    convert it to an mpf with the current working precision (perhaps
-    this should be done differently...)"""
+    """
+    Converts *x* to an ``mpf`` or ``mpc``. If *x* is of type ``mpf``,
+    ``mpc``, ``int``, ``float``, ``complex``, the conversion
+    will be performed losslessly.
+
+    If *x* is a string, the result will be rounded to the present
+    working precision. Strings representing fractions or complex
+    numbers are permitted.
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> mpmathify(3.5)
+        mpf('3.5')
+        >>> mpmathify('2.1')
+        mpf('2.1000000000000001')
+        >>> mpmathify('3/4')
+        mpf('0.75')
+        >>> mpmathify('2+3j')
+        mpc(real='2.0', imag='3.0')
+
+    """
     if isinstance(x, mpnumeric): return x
     if isinstance(x, int_types): return make_mpf(from_int(x))
     if isinstance(x, float): return make_mpf(from_float(x))
@@ -669,20 +685,47 @@ eps = constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
 
 
 def rand():
-    """Return an mpf chosen randomly from [0, 1)."""
+    """
+    Returns an ``mpf`` with value chosen randomly from `[0, 1)`.
+    The number of randomly generated bits in the mantissa is equal
+    to the working precision.
+    """
     return make_mpf(mpf_rand(mp.prec))
 
 def isnan(x):
+    """
+    For an ``mpf`` *x*, determines whether *x* is not-a-number (nan)::
+
+        >>> from mpmath import *
+        >>> isnan(nan), isnan(3)
+        (True, False)
+    """
     if not isinstance(x, mpf):
         return False
     return x._mpf_ == fnan
 
 def isinf(x):
+    """
+    For an ``mpf`` *x*, determines whether *x* is infinite::
+
+        >>> from mpmath import *
+        >>> isinf(inf), isinf(-inf), isinf(3)
+        (True, True, False)
+    """
     if not isinstance(x, mpf):
         return False
     return x._mpf_ in (finf, fninf)
 
 def isint(x):
+    """
+    For an ``mpf`` *x*, or any type that can be converted
+    to ``mpf``, determines whether *x* is exactly
+    integer-valued::
+
+        >>> from mpmath import *
+        >>> isint(3), isint(mpf(3)), isint(3.2)
+        (True, True, False)
+    """
     if isinstance(x, int_types):
         return True
     try:
@@ -697,7 +740,7 @@ def isint(x):
 
 def absmin(x):
     """
-    Returns abs(x).a for an interval, or abs(x) for anything else.
+    Returns ``abs(x).a`` for an interval, or ``abs(x)`` for anything else.
     """
     if isinstance(x, mpi):
         return abs(x).a
@@ -705,7 +748,7 @@ def absmin(x):
 
 def absmax(x):
     """
-    Returns abs(x).b for an interval, or abs(x) for anything else.
+    Returns ``abs(x).b`` for an interval, or ``abs(x)`` for anything else.
     """
     if isinstance(x, mpi):
         return abs(x).b
@@ -717,8 +760,9 @@ def AS_POINTS(x):
     return x
 
 def fraction(p, q):
-    """Given Python integers p, q, return a lazy mpf with value p/q.
-    The value is updated with the precision.
+    """
+    Given Python integers `(p, q)`, returns a lazy ``mpf`` representing
+    the fraction `p/q`. The value is updated with the precision.
 
         >>> mp.dps = 15
         >>> a = fraction(1,100)
@@ -727,7 +771,7 @@ def fraction(p, q):
         0.01
         0.01
         >>> mp.dps = 30
-        >>> print a; print b
+        >>> print a; print b      # a will be accurate
         0.01
         0.0100000000000000002081668171172
         >>> mp.dps = 15
@@ -738,7 +782,37 @@ def fraction(p, q):
 from operator import gt, lt
 
 def arange(*args):
-    """arange([a,] b[, dt]) -> list [a, a + dt, a + 2*dt, ..., x] with x < b"""
+    r"""
+    This is a generalized version of Python's :func:`range` function
+    that accepts fractional endpoints and step sizes and
+    returns a list of ``mpf`` instances. Like :func:`range`,
+    :func:`arange` can be called with 1, 2 or 3 arguments:
+
+    ``arange(b)``
+        `[0, 1, 2, \ldots, x]`
+    ``arange(a, b)``
+        `[a, a+1, a+2, \ldots, x]`
+    ``arange(a, b, h)``
+        `[a, a+h, a+h, \ldots, x]`
+
+    where `b-1 \le x < b` (in the third case, `b-h \le x < b`).
+
+    Like Python's :func:`range`, the endpoint is not included. To
+    produce ranges where the endpoint is included, :func:`linspace`
+    is more convenient.
+
+    **Examples**
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> arange(4)
+        [mpf('0.0'), mpf('1.0'), mpf('2.0'), mpf('3.0')]
+        >>> arange(1, 2, 0.25)
+        [mpf('1.0'), mpf('1.25'), mpf('1.5'), mpf('1.75')]
+        >>> arange(1, -1, -0.75)
+        [mpf('1.0'), mpf('0.25'), mpf('-0.5')]
+
+    """
     if not len(args) <= 3:
         raise TypeError('arange expected at most 3 arguments, got %i'
                         % len(args))
@@ -782,9 +856,26 @@ def arange(*args):
 
 def linspace(*args, **kwargs):
     """
-    linspace(a, b, n, [endpoint=False]) -> n evenly spaced samples from a to b
+    ``linspace(a, b, n)`` returns a list of `n` evenly spaced
+    samples from `a` to `b`. The syntax ``linspace(mpi(a,b), n)``
+    is also valid.
 
-    Instead of a, b you can specify an mpi interval.
+    This function is often more convenient than :func:`arange`
+    for partitioning an interval into subintervals, since
+    the endpoint is included::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> linspace(1, 4, 4)
+        [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
+        >>> linspace(mpi(1,4), 4)
+        [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
+
+    You may also provide the keyword argument ``endpoint=False``::
+
+        >>> linspace(1, 4, 4, endpoint=False)
+        [mpf('1.0'), mpf('1.75'), mpf('2.5'), mpf('3.25')]
+
     """
     if len(args) == 3:
         a = mpf(args[0])
@@ -812,18 +903,37 @@ def linspace(*args, **kwargs):
     return y
 
 def almosteq(s, t, rel_eps=None, abs_eps=None):
-    """
-    Determine whether the difference between s and t is smaller
-    than a given epsilon.
+    r"""
+    Determine whether the difference between `s` and `t` is smaller
+    than a given epsilon, either relatively or absolutely.
 
     Both a maximum relative difference and a maximum difference
     ('epsilons') may be specified. The absolute difference is
-    defined as |s-t| and the relative difference is defined
-    as |s-t|/max(|s|, |t|).
+    defined as `|s-t|` and the relative difference is defined
+    as `|s-t|/\max(|s|, |t|)`.
 
     If only one epsilon is given, both are set to the same value.
-    If none is given, both epsilons are set to 2**(-prec+m) where
-    prec is the current working precision and m is a small integer.
+    If none is given, both epsilons are set to `2^{-p+m}` where
+    `p` is the current working precision and `m` is a small
+    integer. The default setting typically allows :func:`almosteq`
+    to be used to check for mathematical equality
+    in the presence of small rounding errors.
+
+    **Examples**
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> almosteq(3.141592653589793, 3.141592653589790)
+        True
+        >>> almosteq(3.141592653589793, 3.141592653589700)
+        False
+        >>> almosteq(3.141592653589793, 3.141592653589700, 1e-10)
+        True
+        >>> almosteq(1e-20, 2e-20)
+        True
+        >>> almosteq(1e-20, 2e-20, rel_eps=0, abs_eps=0)
+        False
+
     """
     t = mpmathify(t)
     if abs_eps is None and rel_eps is None:
@@ -844,19 +954,23 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
     return err <= rel_eps
 
 def nstr(x, n=6):
-    """Convert an mpf or mpc to a decimal string literal with n significant
-    digits. The small default value for n is chosen to make this function
-    useful for printing collections of numbers.
+    """
+    Convert an ``mpf`` or ``mpc`` to a decimal string literal with *n*
+    significant digits. The small default value for *n* is chosen to
+    make this function useful for printing collections of numbers
+    (lists, matrices, etc).
 
-    If x is a list or tuple, the function is applied to each element.
-    For unrecognized classes, this simply returns str(x).
+    If *x* is a list or tuple, :func:`nstr` is applied recursively
+    to each element. For unrecognized classes, :func:`nstr`
+    simply returns ``str(x)``.
 
-    There is also a companion function nprint that prints the string
+    The companion function :func:`nprint` prints the result
     instead of returning it.
 
+        >>> from mpmath import *
         >>> nstr([+pi, ldexp(1,-500)])
         '[3.14159, 3.05494e-151]'
-        >>> print([+pi, ldexp(1,-500)])
+        >>> nprint([+pi, ldexp(1,-500)])
         [3.14159, 3.05494e-151]
     """
     if isinstance(x, list):
@@ -875,13 +989,15 @@ def nstr(x, n=6):
     return str(x)
 
 def nprint(x, n=6):
-    """Print the result of nstr(x, n)."""
+    """
+    Equivalent to ``print nstr(x, n)``.
+    """
     print nstr(x, n)
 
 def chop(x, tol=None):
     """
     Chops off small real or imaginary parts, or converts
-    number close to zero to exact zeros. The input can be a
+    numbers close to zero to exact zeros. The input can be a
     single number or an iterable::
 
         >>> from mpmath import *
@@ -912,7 +1028,7 @@ def chop(x, tol=None):
 
 def monitor(f, input='print', output='print'):
     """
-    Create a wrapped copy of *f* that monitors evaluation by calling
+    Returns a wrapped copy of *f* that monitors evaluation by calling
     *input* with every input (*args*, *kwargs*) passed to *f* and
     *output* with every value returned from *f*. The default action
     (specify using the special string value ``'print'``) is to print
@@ -1094,8 +1210,6 @@ def fprod(factors):
         >>> mp.dps = 15
         >>> fprod([1, 2, 0.5, 7])
         mpf('7.0')
-        >>> fprod(lambda k: k**3, [1, 5])
-        mpf('1728000.0')
 
     """
     orig = mp.prec
@@ -1135,3 +1249,7 @@ def timing(f, *args, **kwargs):
         t2=clock()
         t=min(t,(t2-t1)/10)
     return t
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

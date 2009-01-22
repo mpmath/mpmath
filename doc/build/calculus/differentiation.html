@@ -93,7 +93,7 @@ be faster if f is very expensive to evaluate at high precision.</blockquote>
 <p>With <tt class="docutils literal"><span class="pre">'quad'</span></tt> the result is likely to have a small imaginary
 component even if the derivative is actually real:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;quad&#39;</span><span class="p">)</span>
-<span class="go">(0.5 - 7.58129703509927e-27j)</span>
+<span class="go">(0.5 - 9.62422642529928e-27j)</span>
 </pre></div>
 </div>
 <p><strong>Scale</strong></p>
@@ -215,8 +215,19 @@ slightly more efficient.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

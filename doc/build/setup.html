@@ -106,7 +106,7 @@
 </div>
 <div class="section" id="using-gmpy-optional">
 <h2>Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
-<p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster at high precision (approximately above 100 digits).</p>
+<p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster, especially at high precision (approximately above 100 digits).</p>
 <p>To verify that mpmath uses gmpy, check the internal MODE variable is not equal to &#8216;python&#8217;:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.settings</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpmath</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">MODE</span>
@@ -210,8 +210,19 @@
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

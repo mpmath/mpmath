@@ -355,7 +355,7 @@ slower than the specialized program calcbn.exe [2]</p>
 <span class="go">[0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]</span>
 </pre></div>
 </div>
-<p>At <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1" />, the Bernoulli polynomial evaluates to a
+<p>At <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />, the Bernoulli polynomial evaluates to a
 Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bernpoly</span><span class="p">(</span><span class="mf">12</span><span class="p">,</span> <span class="mf">0</span><span class="p">),</span> <span class="n">bernoulli</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span>
 <span class="go">-0.253113553113553 -0.253113553113553</span>
@@ -477,7 +477,7 @@ for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda58
 <h2><a class="toc-backref" href="#id6">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)<a class="headerlink" href="#stieltjes-constants-stieltjes" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.stieltjes">
-<!--[mpmath.functions.stieltjes]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.stieltjes" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.stieltjes]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em>, <em>a=1</em><big>)</big><a class="headerlink" href="#mpmath.functions.stieltjes" title="Permalink to this definition">¶</a></dt>
 <dd><p>For a nonnegative integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <tt class="docutils literal"><span class="pre">stieltjes(n)</span></tt> computes the
 <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Stieltjes constant <img class="math" src="../_images/math/55f6b5380d462f954b65d7a2cd05e02ff8cc832e.png" alt="\gamma_n" />, defined as the
 <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th coefficient in the Laurent series expansion of the
@@ -486,7 +486,10 @@ we have:</p>
 <div class="math">
 <p><img src="../_images/math/5e54a4f7913e7906f73ed588cbff7eca0c4649f9.png" alt="\zeta(s) = \frac{1}{s-1} \sum_{n=0}^{\infty}
     \frac{(-1)^n}{n!} \gamma_n (s-1)^n" />
-</div></p><p><strong>Examples</strong></p>
+</div></p><p>More generally, <tt class="docutils literal"><span class="pre">stieltjes(n,</span> <span class="pre">a)</span></tt> gives the corresponding
+coefficient <img class="math" src="../_images/math/f017aab359e171c4856e0399ffcd19a786ae63ff.png" alt="\gamma_n(a)" /> for the Hurwitz zeta function
+<img class="math" src="../_images/math/e089b859d9ecd07c0abd224e89fc50f9cddbd092.png" alt="\zeta(s,a)" /> (with <img class="math" src="../_images/math/bd617ead510732054d05e59ce021c22dfb1e72ae.png" alt="\gamma_n = \gamma_n(1)" />).</p>
+<p><strong>Examples</strong></p>
 <p>The zeroth Stieltjes constant is just Euler&#8217;s constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -501,6 +504,12 @@ we have:</p>
 <span class="go">0.000205332814909065</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">0.00355772885557316</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">-1.57095384420474e+486</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">2000</span><span class="p">)</span>
+<span class="go">2.680424678918e+1109</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+<span class="go">-0.23747539175716</span>
 </pre></div>
 </div>
 <p>An alternative way to compute <img class="math" src="../_images/math/24746dfd17e9188871007307efc793c9be692647.png" alt="\gamma_1" />:</p>
@@ -508,23 +517,30 @@ we have:</p>
 <span class="go">-0.0728158454836767</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> supports arbitrary precision evaluation,
-and caches computed results:</p>
+<p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> supports arbitrary precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stieltjes</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">-0.0096903631928723184845303860352125293590658061013408</span>
 </pre></div>
 </div>
 <p><strong>Algorithm</strong></p>
-<p>The calculation is done using numerical differentiation
-for very small <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> (currently <img class="math" src="../_images/math/9dbca6c95f7d3b0cfa2174589fdf0f7d46d27235.png" alt="n = 1,2,3" />).</p>
-<p>For larger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, integration of the Riemann zeta function is
-used. The method should work for any <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and precision, but
-soon becomes quite slow in practice. The code has been tested
-with <img class="math" src="../_images/math/3260de5e72fd6cdb211848fe2677cb671b301c98.png" alt="n = 50" /> and 100 digit precision; that computation took
-about 2 minutes.</p>
+<p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> numerically evaluates the integral in
+the following representation due to Ainsworth, Howell and
+Coffey [1], [2]:</p>
+<div class="math">
+<p><img src="../_images/math/514a9d2ef1d0505f4aad47a8795b576c7d178b80.png" alt="\gamma_n(a) = \frac{\log^n a}{2a} - \frac{\log^{n+1}(a)}{n+1} +
+    \frac{2}{a} \Re \int_0^{\infty}
+    \frac{(x/a-i)\log^n(a-ix)}{(1+x^2/a^2)(e^{2\pi x}-1)} dx." />
+</div></p><p>For some reference values with <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa0a3.png" alt="a = 1" />, see e.g. [4].</p>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
+<li>O. R. Ainsworth &amp; L. W. Howell, &#8220;An integral representation of
+the generalized Euler-Mascheroni constants&#8221;, NASA Technical
+Paper 2456 (1985), 
+<a class="reference external" href="http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf">http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf</a></li>
+<li>M. W. Coffey, &#8220;The Stieltjes constants, their relation to the
+<img class="math" src="../_images/math/d5a512e1ca0922626d453a3702cc06415bc63b3f.png" alt="\eta_j" /> coefficients, and representation of the Hurwitz
+zeta function&#8221;,  arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
 <li><a class="reference external" href="http://mathworld.wolfram.com/StieltjesConstants.html">http://mathworld.wolfram.com/StieltjesConstants.html</a></li>
 <li><a class="reference external" href="http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt">http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt</a></li>
 </ol>
@@ -587,8 +603,19 @@ about 2 minutes.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Dec 10, 2008.
+      Last updated on Jan 22, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>
