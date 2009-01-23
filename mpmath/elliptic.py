@@ -1119,19 +1119,19 @@ def jtheta(n, z, q):
           ...
         ValueError: abs(q) > Q_LIM = 1.000000
 
-    Implementation note
-    If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
-    are used,
-    which compute the series starting from n=0 using fixed precision
-    numbers;
-    otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
-    the series starting from n=n0, which is the largest term.
-
-    TODO write _jacobi_theta2a and _jacobi_theta3a using fixed precision.
-
     """
     z = mpmathify(z)
     q = mpmathify(q)
+
+    # Implementation note
+    # If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
+    # are used,
+    # which compute the series starting from n=0 using fixed precision
+    # numbers;
+    # otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
+    # the series starting from n=n0, which is the largest term.
+
+    # TODO write _jacobi_theta2a and _jacobi_theta3a using fixed precision.
 
     if abs(q) > Q_LIM:
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
@@ -1262,9 +1262,23 @@ def djtheta(n, z, q, nd=1):
 
 def jsn(u, m):
     """
-    Implementation of the jacobi elliptic sn function in term
-    of jacoby theta functions.
-    u is any complex number, m must be in the unit disk
+    Computes of the Jacobi elliptic sn function in terms
+    of Jacobi theta functions.
+    `u` is any complex number, `m` must be in the unit disk
+
+    The sn-function is doubly periodic in the complex
+    plane with periods `4 K(m)` and `2 i K(1-m)`
+    (see :func:`ellipk`)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print jsn(2, 0.25)
+        0.9628981775982774425751399
+        >>> print jsn(2+4*ellipk(0.25), 0.25)
+        0.9628981775982774425751399
+        >>> print chop(jsn(2+2*j*ellipk(1-0.25), 0.25))
+        0.9628981775982774425751399
+
     """
     if abs(m) < eps:
         return sin(u)
@@ -1291,9 +1305,23 @@ def jsn(u, m):
 
 def jcn(u, m):
     """
-    Implementation of the jacobi elliptic cn function in term
-    of theta functions.
-    u is any complex number, m must be in the unit disk
+    Computes of the Jacobi elliptic cn function in terms
+    of Jacobi theta functions.
+    `u` is any complex number, `m` must be in the unit disk
+
+    The cn-function is doubly periodic in the complex
+    plane with periods `4 K(m)` and `4 i K(1-m)`
+    (see :func:`ellipk`)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print jcn(2, 0.25)
+        -0.2698649654510865792581416
+        >>> print jcn(2+4*ellipk(0.25), 0.25)
+        -0.2698649654510865792581416
+        >>> print chop(jcn(2+4*j*ellipk(1-0.25), 0.25))
+        -0.2698649654510865792581416
+
     """
     if abs(m) < eps:
         return cos(u)
@@ -1322,9 +1350,23 @@ def jcn(u, m):
 
 def jdn(u, m):
     """
-    Implementation of the jacobi elliptic dn function in term
-    of theta functions.
-    u is any complex number, m must be in the unit disk
+    Computes of the Jacobi elliptic dn function in terms
+    of Jacobi theta functions.
+    `u` is any complex number, `m` must be in the unit disk
+
+    The dn-function is doubly periodic in the complex
+    plane with periods `2 K(m)` and `4 i K(1-m)`
+    (see :func:`ellipk`)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print jdn(2, 0.25)
+        0.8764740583123262286931578
+        >>> print jdn(2+2*ellipk(0.25), 0.25)
+        0.8764740583123262286931578
+        >>> print chop(jdn(2+4*j*ellipk(1-0.25), 0.25))
+        0.8764740583123262286931578
+
     """
     if m == zero:
         return one

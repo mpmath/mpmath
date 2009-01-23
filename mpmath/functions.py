@@ -420,7 +420,7 @@ def mpfunc(name, real_f, complex_f, doc, interval_f=None):
         raise NotImplementedError("%s of a %s" % (name, type(x)))
 
     f.__name__ = name
-    f.__doc__ = "Returns the %s of x" % doc
+    f.__doc__ = "Computes the %s of x" % doc
     return f
 
 def altfunc(f, name, desc):
@@ -432,7 +432,7 @@ def altfunc(f, name, desc):
         finally:
             mp.prec = orig
     g.__name__ = name
-    g.__doc__ = "Returns the %s of x, 1/%s(x)" % (desc, f.__name__)
+    g.__doc__ = "Computes the %s of x, 1/%s(x)" % (desc, f.__name__)
     return g
 
 def altinvfunc(f, name, desc):
@@ -444,7 +444,7 @@ def altinvfunc(f, name, desc):
         finally:
             mp.prec = orig
     g.__name__ = name
-    g.__doc__ = "Returns the inverse %s of x, %s(1/x)" % (desc, f.__name__)
+    g.__doc__ = "Computes the inverse %s of x, %s(1/x)" % (desc, f.__name__)
     return g
 
 sqrt = mpfunc('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, "principal square root", libmpi.mpi_sqrt)
@@ -646,6 +646,95 @@ acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
 cospi = mpfunc('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, "")
 sinpi = mpfunc('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, "")
+
+cosh.__doc__ = r"""
+Computes the hyperbolic cosine of `x`,
+`\cosh(x) = (e^x + e^{-x})/2`. Values and limits include::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print cosh(0)
+    1.0
+    >>> print cosh(1)
+    1.543080634815243778477906
+    >>> print cosh(-inf), cosh(+inf)
+    +inf +inf
+
+The hyperbolic cosine is an even, convex function with
+a global minimum at `x = 0`, having a Maclaurin series
+that starts::
+
+    >>> nprint(chop(taylor(cosh, 0, 5)))
+    [1.0, 0.0, 0.5, 0.0, 4.16667e-2, 0.0]
+
+Generalized to complex numbers, the hyperbolic cosine is
+equivalent to a cosine with the argument rotated
+in the imaginary direction, or `\cosh x = \cos ix`::
+
+    >>> print cosh(2+3j)
+    (-3.724545504915322565473971 + 0.5118225699873846088344638j)
+    >>> print cos(3-2j)
+    (-3.724545504915322565473971 + 0.5118225699873846088344638j)
+"""
+
+sinh.__doc__ = r"""
+Computes the hyperbolic sine of `x`,
+`\sinh(x) = (e^x - e^{-x})/2`. Values and limits include::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print sinh(0)
+    0.0
+    >>> print sinh(1)
+    1.175201193643801456882382
+    >>> print sinh(-inf), sinh(+inf)
+    -inf +inf
+
+The hyperbolic sine is an odd function, with a Maclaurin
+series that starts::
+
+    >>> nprint(chop(taylor(sinh, 0, 5)))
+    [0.0, 1.0, 0.0, 0.166667, 0.0, 8.33333e-3]
+
+Generalized to complex numbers, the hyperbolic sine is
+essentially a sine with a rotation `i` applied to
+the argument; more precisely, `\sinh x = -i \sin ix`::
+
+    >>> print sinh(2+3j)
+    (-3.590564589985779952012565 + 0.5309210862485198052670401j)
+    >>> print j*sin(3-2j)
+    (-3.590564589985779952012565 + 0.5309210862485198052670401j)
+"""
+
+tanh.__doc__ = r"""
+Computes the hyperbolic tangent of `x`,
+`\tanh(x) = \sinh(x)/\cosh(x)`. Values and limits include::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print tanh(0)
+    0.0
+    >>> print tanh(1)
+    0.7615941559557648881194583
+    >>> print tanh(-inf), tanh(inf)
+    -1.0 1.0
+
+The hyperbolic tangent is an odd, sigmoidal function, similar
+to the inverse tangent and error function. Its Maclaurin
+series is::
+
+    >>> nprint(chop(taylor(tanh, 0, 5)))
+    [0.0, 1.0, 0.0, -0.333333, 0.0, 0.133333]
+
+Generalized to complex numbers, the hyperbolic tangent is
+essentially a tangent with a rotation `i` applied to
+the argument; more precisely, `\tanh x = -i \tan ix`::
+
+    >>> print tanh(2+3j)
+    (0.9653858790221331242784803 - 0.009884375038322493720314034j)
+    >>> print j*tan(3-2j)
+    (0.9653858790221331242784803 - 0.009884375038322493720314034j)
+"""
 
 cos.__doc__ = r"""
 Computes the cosine of `x`, `\cos(x)`.
@@ -3896,16 +3985,108 @@ def airybi(z):
 
 @funcwrapper
 def ellipe(m):
-    """Complete elliptic integral of the second kind, E(m). Note that
-    the argument is the parameter m = k^2, not the modulus k."""
+    r"""
+    Evaluates the complete elliptic integral of the second kind,
+    `E(m)`, defined by
+
+    .. math ::
+
+        E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt.
+
+    Note that the argument is the parameter `m = k^2`,
+    not the modulus `k` which is sometimes used.
+
+    Alternatively, in terms of a hypergeometric function,
+    we have:
+
+    .. math ::
+
+        E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)
+
+    Note: evaluation is currently only supported for `|m| < 1`.
+
+    **Examples**
+
+    Basic values::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print ellipe(0)
+        1.570796326794896619231322
+        >>> print ellipe(1)
+        1.0
+
+    Verifying the defining integral and hypergeometric
+    representation::
+
+        >>> print ellipe(0.5)
+        1.350643881047675502520175
+        >>> print quad(lambda t: sqrt(1-0.5*sin(t)**2), [0, pi/2])
+        1.350643881047675502520175
+        >>> print pi/2*hyp2f1(0.5,-0.5,1,0.5)
+        1.350643881047675502520175
+
+    Evaluation is supported for complex `m` within the unit
+    circle::
+
+        >>> print ellipe(0.5+0.25j)
+        (1.360868682163129682716687 - 0.1238733442561786843557315j)
+    """
     if m == 1:
         return m
     return pi/2 * sum_hyp2f1_rat((1,2),(-1,2),(1,1), m)
 
 @funcwrapper
 def ellipk(m):
-    """Complete elliptic integral of the first kind, K(m). Note that
-    the argument is the parameter m = k^2, not the modulus k."""
+    r"""
+    Evaluates the complete elliptic integral of the first kind,
+    `K(m)`, defined by
+
+    .. math ::
+
+        K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt.
+
+    Note that the argument is the parameter `m = k^2`,
+    not the modulus `k` which is sometimes used.
+
+    Alternatively, in terms of a hypergeometric function,
+    we have:
+
+    .. math ::
+
+        K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)
+
+    **Examples**
+
+    Values and limits include::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print ellipk(0)
+        1.570796326794896619231322
+        >>> print ellipk(inf)
+        0.0
+        >>> print ellipk(1)
+        +inf
+        >>> print ellipk(-1)
+        1.31102877714605990523242
+
+    Verifying the defining integral and hypergeometric
+    representation::
+
+        >>> print ellipk(0.5)
+        1.85407467730137191843385
+        >>> print quad(lambda t: (1-0.5*sin(t)**2)**-0.5, [0, pi/2])
+        1.85407467730137191843385
+        >>> print pi/2*hyp2f1(0.5,0.5,1,0.5)
+        1.85407467730137191843385
+
+    Evaluation is supported for arbitrary complex `m`::
+
+        >>> print ellipk(3+4j)
+        (0.9111955638049650086562171 + 0.6313342832413452438845091j)
+
+    """
     # Poor implementation:
     # return pi/2 * sum_hyp2f1_rat((1,2),(1,2),(1,1), m)
     if m == 1:
