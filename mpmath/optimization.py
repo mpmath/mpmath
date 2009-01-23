@@ -606,13 +606,15 @@ str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
              force_type=mpmathify, **kwargs):
-    """
-    Find a root of f using x0 as starting point or interval.
-
-    If not abs(f(root))**2 < tol an exception is raised.
+    r"""
+    Find a solution to `f(x) = 0`, using *x0* as starting point or
+    interval for *x*.
 
     Multidimensional overdetermined systems are supported.
     You can specify them using a function or a list of functions.
+
+    If the found root does not satisfy `|f(x)^2 < \mathrm{tol}|`,
+    an exception is raised (this can be disabled with *verify=False*).
 
     **Arguments**
 
@@ -625,21 +627,21 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     *verbose*
         print additional information for each iteration if true
     *verify*
-        verify the solution and raise a ValueError if abs(f(x)) > tol
+        verify the solution and raise a ValueError if `|f(x) > \mathrm{tol}|`
     *force_type*
         use specified type constructor on starting points
     *solver*
-        a generator for f and x0 returning approximative solution and error
+        a generator for *f* and *x0* returning approximative solution and error
     *maxsteps*
         after how many steps the solver will cancel
     *df*
-        first derivative of f (used by some solvers)
+        first derivative of *f* (used by some solvers)
     *d2f*
-        second derivative of f (used by some solvers)
+        second derivative of *f* (used by some solvers)
     *multidimensional*
         force multidimensional solving
     *J*
-        Jacobian matrix of f (used by multidimensional solvers)
+        Jacobian matrix of *f* (used by multidimensional solvers)
     *norm*
         used vector norm (used by multidimensional solvers)
 
@@ -649,13 +651,14 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     You can use the following string aliases:
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
     'ridder', 'anewton', 'bisect'
+
     See mpmath.optimization for their documentation.
 
     **Examples**
 
-    The function ``findroot`` locates a root of a given function using the
+    The function :func:`findroot` locates a root of a given function using the
     secant method by default. A simple example use of the secant method is to
-    compute pi as the root of sin(*x*) closest to *x* = 3::
+    compute `\pi` as the root of `\sin x` closest to `x_0 = 3`::
 
         >>> from mpmath import *
         >>> mp.dps = 30
@@ -686,7 +689,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         1.4616321449683623413
 
     Finally, a useful application is to compute inverse functions, such as the
-    Lambert W function which is the inverse of *w* exp(*w*), given the first
+    Lambert W function which is the inverse of `w e^w`, given the first
     term of the solution's asymptotic expansion as the initial value. In basic
     cases, this gives identical results to mpmath's builtin ``lambertw``
     function::
@@ -727,7 +730,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     Even for a very close starting point the secant method converges very
     slowly. Use ``verbose=True`` to illustrate this.
 
-    It's possible to modify Newton's method to make it converge regardless of
+    It is possible to modify Newton's method to make it converge regardless of
     the root's multiplicity::
 
         >>> findroot(f, -10, solver='mnewton')

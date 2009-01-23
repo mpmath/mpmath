@@ -1,5 +1,5 @@
---0.10-svn--
-(in development)
+--0.11--
+Released January 2?, 2009
 
 General:
 
@@ -7,11 +7,17 @@ General:
   using Sphinx' autodoc feature, and proper LaTeX is used
   for mathematical formulas. A large amount of new documentation
   has been written.
+* Improved gmpy backend. Using gmpy-1.04 gives a ~30% unit tests
+  speedup over 1.03, with speedups in the range of 2-3x for
+  specific operations (contributed by Case van Horsen and
+  Mario Pernici).
+* Mpmath imports slightly faster due to not trying to
+  load the 'random' library
 
 Numerical calculus, etc:
 
 * Implemented a fast high-precision ODE solver (to replace the slow
-  and low-accuracy RK4 algorithm)
+  and low-accuracy RK4 algorithm) (odefun())
 * Created an intelligent function nsum() to replace sumrich/sumsh
 * Implemented nprod() for computing infinite products
 * Rewrote limit() to use the same adaptive extrapolation algorithm
@@ -61,15 +67,26 @@ New special functions:
   etc. (contributed by Mario Pernici)
 * Implemented derivatives of jtheta (djtheta) (contributed by
   Mario Pernici)
+* Implemented Bessel Y, I, K functions (bessely, besseli,
+  besselk; Bessel J functions were also renamed to besselj)
+  also renamed)
+* Generalized Stieltjes constants can now be computed,
+  with stieltjes(n,a)
+* Implemented Hankel functions (hankel1, hankel2)
 
 Speed improvements and bugfixes to special functions:
 * Fast logarithm at very high precision using the formula by
   Sasaki and Kanada (contributed by Mario Pernici)
 * Slightly faster logarithm at low precision (contributed by
   Mario Pernici)
+* Faster exponential function at high precision, using
+  Newton's method (contributed by Mario Pernici)
+* Faster computation of ln2 and ln10 by means of binary splitting
+  (contributed by Mario Pernici)
 * Fixed accuracy problems in sinpi() and cospi()
 * Correct evaluation of beta() at limits
-* Faster computation of stieltjes(n) for n = 1,2,3
+* Much faster evaluation of stieltjes(n), using an improved integral
+  formula
 * Fixed bernoulli() being inaccurate for large n and low precision,
   and being needlessly slow for small n and huge precision
 * Fixed accuracy of zeta(s) for large negative re(s)
@@ -77,11 +94,20 @@ Speed improvements and bugfixes to special functions:
 * Fixed accuracy of airyai() for large x.real
 * Fixed bug in nthroot() for very large arguments (contributed by
   Mario Pernici)
+* Fixed accuracy of log(x) for complex |x| ~= 1
+* Fixed accuracy of exp(n), n a huge integer and prec >= 600
+* Slightly faster hypergeometric functions with rational parameters
+  (contributed by Mario Pernici)
+* Faster and more accurate calculation of ei(x) for large x,
+  using an asymptotic expansion (contributed by Mario Pernici)
+* Fixed accuracy bugs in theta functions (contributed by
+  Mario Pernici)
+* The Lambert W function returns more appropriate values at infinities
 
 Arithmetic and basic interface:
+* Square roots are now rounded correctly
 * Made float(huge) -> inf and float(1/huge) -> 0 instead of
   raising OverflowError
-* Support for gmpy-based mpf normalization (contributed by Case van Horsen)
 * Renamed convert_lossless -> mpmathify
 * mpmathify() accepts strings representing fractions or complex
   numbers (contributed by Vinzent Steinberg)
@@ -89,16 +115,20 @@ Arithmetic and basic interface:
 * Added monitor() to monitor function evaluation
 * Implemented a chop() utility function for deletion of numerical noise
 * Added re(), im(), conj(), fabs(), mpf.conjugate()
+* Fixed the != operator for intervals
+* Added functions fsum, fprod, fdot for efficient computation of
+  sums, products and dot products of lists of mpf:s or mpc:s
 
 Matrices:
 
-* Generation Hilbert matrices (hilbert) (contributed by
+* Generation of Hilbert matrices (hilbert()) (contributed by
   Vinzent Steinberg)
-* Added lu_solve_mat to solve a*x=b where a and b are matrices (contributed
+* Added lu_solve_mat() to solve a*x=b where a and b are matrices (contributed
   by Mario Pernici)
 * Implemented computation of matrix exponentials (exp_pade()) (contributed
   by Mario Pernici)
 * Prettier repr of complex matrices (contributed by Vinzent Steinberg)
+* Speedups by using fdot and fsum (contributed by Vinzent Steinberg)
 
 --0.10--
 Released October 15, 2008

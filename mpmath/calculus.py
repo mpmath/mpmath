@@ -1047,8 +1047,8 @@ def difference_delta(s, n):
 
 def diff(f, x, n=1, method='step', scale=1, direction=0):
     r"""
-    Numerically computes the derivative of f(x). Optionally, computes
-    the nth derivative f^(n)(x), for any order n.
+    Numerically computes the derivative of `f`, `f'(x)`. Optionally,
+    computes the `n`-th derivative, `f^{(n)}(x)`, for any order `n`.
 
     **Basic examples**
 
@@ -1100,12 +1100,12 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
 
     The scale option specifies the scale of variation of f. The step
     size in the finite difference is taken to be approximately
-    eps*scale. Thus, for example if f(x) = cos(1000*x), the scale
-    should be set to 1/1000 and if f(x) = cos(x/1000), the scale
+    eps*scale. Thus, for example if `f(x) = \cos(1000 x)`, the scale
+    should be set to 1/1000 and if `f(x) = \cos(x/1000)`, the scale
     should be 1000. By default, scale = 1.
 
-    (In practice, the default scale will work even for cos(1000*x) or
-    cos(x/1000). Changing this parameter is a good idea if the scale
+    (In practice, the default scale will work even for `\cos(1000 x)` or
+    `\cos(x/1000)`. Changing this parameter is a good idea if the scale
     is something *preposterous*.)
 
     If numerical integration is used, the radius of integration is
@@ -1115,7 +1115,6 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
     typically makes the integration faster and more accurate.
 
     **Direction**
-
 
     By default, :func:`diff` uses a central difference approximation.
     This corresponds to direction=0. Alternatively, it can compute a
@@ -1281,9 +1280,9 @@ def diffun(f, n=1, **options):
     return g
 
 def taylor(f, x, n, **options):
-    """
-    Produce a degree-n Taylor polynomial around the point x of the
-    given function f. The coefficients are returned as a list.
+    r"""
+    Produces a degree-`n` Taylor polynomial around the point `x` of the
+    given function `f`. The coefficients are returned as a list.
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -1296,8 +1295,8 @@ def taylor(f, x, n, **options):
     and supported keyword options.
 
     Note that to evaluate the Taylor polynomial as an approximation
-    of f, e.g. with polyval, the coefficients must be reversed, and
-    the point of the Taylor expansion must be subtracted from
+    of `f`, e.g. with :func:`polyval`, the coefficients must be reversed,
+    and the point of the Taylor expansion must be subtracted from
     the argument:
 
         >>> p = taylor(exp, 2.0, 10)
@@ -1310,20 +1309,23 @@ def taylor(f, x, n, **options):
     return [d/factorial(i) for i, d in enumerate(diffs(f, x, n, **options))]
 
 def pade(a, L, M):
-    """
-    Produce the polynomials coefficients p, q from the Taylor 
-    coefficients a; p has L+1 coefficients, q has M+1 coefficients,
-    with q[0] = 1; a must provide L+M+1 Taylor coefficients.
+    r"""
+    Computes a Pade approximation of degree `(L, M)` to a function.
+    Given at least `L+M+1` Taylor coefficients `a` approximating
+    a function `A(x)`, :func:`pade` returns coefficients of
+    polynomials `P, Q` satisfying
 
-    Defining::
+    .. math ::
 
-        P = sum(p[i]*x**i, 0, L), Q = sum(q[i]*x**i, 0, M), 
+        P = \sum_{k=0}^L p_k x^k
 
-        A = sum(a[i]*x**i, 0,L+M),
+        Q = \sum_{k=0}^M q_k x^k
 
-        A(x)*Q(x) = P(x) + O(x**(L+M+1))
+        Q_0 = 1
 
-    P(x)/Q(x) can provide a good approximation to an analytic function
+        A(x) Q(x) = P(x) + O(x^{L+M+1})
+
+    `P(x)/Q(x)` can provide a good approximation to an analytic function
     beyond the radius of convergence of its Taylor series (example
     from G.A. Baker 'Essentials of Pade Approximants' Academic Press,
     Ch.1A)::
@@ -1332,15 +1334,16 @@ def pade(a, L, M):
         >>> mp.dps = 15
         >>> one = mpf(1)
         >>> def f(x):
-        ...   return sqrt((one + 2*x)/(one + x))
+        ...     return sqrt((one + 2*x)/(one + x))
         ...
         >>> a = taylor(f, 0, 6)
         >>> p, q = pade(a, 3, 3)
         >>> x = 10
-        >>> polyval(p[::-1], x)/polyval(q[::-1], x)
-        mpf('1.3816910556680551')
-        >>> f(x)
-        mpf('1.3816985594155149')
+        >>> print polyval(p[::-1], x)/polyval(q[::-1], x)
+        1.38169105566806
+        >>> print f(x)
+        1.38169855941551
+
     """
     # To determine L+1 coefficients of P and M coefficients of Q
     # L+M+1 coefficients of A must be provided
@@ -1660,17 +1663,17 @@ def chebT(a=1, b=0):
         Ta, Tb = Tmp, Ta
 
 def chebyfit(f, interval, N, error=False):
-    """
-    Computes a polynomial of degree N-1 that approximates the
-    given function f on the interval [a, b]. With ``error=True``,
+    r"""
+    Computes a polynomial of degree `N-1` that approximates the
+    given function `f` on the interval `[a, b]`. With ``error=True``,
     :func:`chebyfit` also returns an accurate estimate of the
     maximum absolute error; that is, the maximum value of
-    abs(f(x) - poly(x)) for x in [a, b].
+    `|f(x) - P(x)|` for `x \in [a, b]`.
 
     :func:`chebyfit` uses the Chebyshev approximation formula,
     which gives a nearly optimal solution: that is, the maximum
     error of the approximating polynomial is very close to
-    the smallest possible for degree N.
+    the smallest possible for any polynomial of the same degree.
 
     Chebyshev approximation is very useful if one needs repeated
     evaluation of an expensive function, such as function defined
@@ -1680,8 +1683,8 @@ def chebyfit(f, interval, N, error=False):
 
     **Examples**
 
-    Here we use it to generate a low-degree approximation of
-    f(x) = cos(x), valid on the interval [1, 2]::
+    Here we use :func:`chebyfit` to generate a low-degree approximation
+    of `f(x) = \cos(x)`, valid on the interval `[1, 2]`::
 
         >>> from mpmath import *
         >>> mp.dps = 15
@@ -1707,13 +1710,13 @@ def chebyfit(f, interval, N, error=False):
 
     **Choice of degree**
 
-    The degree N can be set arbitrarily high, to obtain an
+    The degree `N` can be set arbitrarily high, to obtain an
     arbitrarily good approximation. As a rule of thumb, an
-    N-term Chebyshev approximation is good to N/(b-a) decimal
-    places (although this depends on how well-behaved f is).
-    The cost grows accordingly: ``chebyfit`` evaluates the
-    function (N^2)/2 times to compute the coefficients and an
-    additional N times to estimate the error.
+    `N`-term Chebyshev approximation is good to `N/(b-a)` decimal
+    places on a unit interval (although this depends on how
+    well-behaved `f` is). The cost grows accordingly: ``chebyfit``
+    evaluates the function `(N^2)/2` times to compute the
+    coefficients and an additional `N` times to estimate the error.
 
     **Possible issues**
 
@@ -1728,7 +1731,7 @@ def chebyfit(f, interval, N, error=False):
     in the future.)
 
     It is important to note the Chebyshev approximation works
-    poorly if f is not smooth. A function containing singularities,
+    poorly if `f` is not smooth. A function containing singularities,
     rapid oscillation, etc can be approximated more effectively by
     multiplying it by a weight function that cancels out the
     nonsmooth features, or by dividing the interval into several
@@ -1761,29 +1764,27 @@ def chebyfit(f, interval, N, error=False):
             return d
 
 def fourier(f, interval, N):
-    """
-    Computes the Fourier series of degree N of the given function
-    on the interval [a, b]. More precisely, :func:`fourier` returns
-    two lists (c, s) of coefficients (the cosine series and sine
-    series, respectively), such that::
+    r"""
+    Computes the Fourier series of degree `N` of the given function
+    on the interval `[a, b]`. More precisely, :func:`fourier` returns
+    two lists `(c, s)` of coefficients (the cosine series and sine
+    series, respectively), such that
 
-                   N
-                  ___
-                 \\
-        f(x) ~=   )    c[k]*cos(n*m) + s[k]*sin(n*m)
-                 /___
-                 n = 0
+    .. math ::
 
-    where m = 2*pi/(b-a).
+        f(x) \sim \sum_{k=0}^N
+            c_k \cos(k m) + s_k \sin(k m)
 
-    Note that many texts define the first coefficient as 2*c[0] instead
-    of c[0]. The easiest way to evaluate the computed series correctly
+    where `m = 2 \pi / (b-a)`.
+
+    Note that many texts define the first coefficient as `2 c_0` instead
+    of `c_0`. The easiest way to evaluate the computed series correctly
     is to pass it to :func:`fourierval`.
 
     **Examples**
 
-    The function f(x) = x has a simple Fourier series on the standard
-    interval [-pi, pi]. The cosine coefficients are all zero (because
+    The function `f(x) = x` has a simple Fourier series on the standard
+    interval `[-\pi, \pi]`. The cosine coefficients are all zero (because
     the function has odd symmetry), and the sine coefficients are
     rational numbers::
 
@@ -1812,8 +1813,8 @@ def fourier(f, interval, N):
         >>> plot([f, lambda x: fourierval(cs, I, x)], I) #doctest: +SKIP
 
     Fourier series generally converge slowly (and may not converge
-    pointwise). For example, if f(x) = cosh(x), a 10-term Fourier
-    series gives an L^2 error corresponding to 2-digit accuracy::
+    pointwise). For example, if `f(x) = \cosh(x)`, a 10-term Fourier
+    series gives an `L^2` error corresponding to 2-digit accuracy::
 
         >>> I = [-1, 1]
         >>> cs = fourier(cosh, I, 9)
@@ -1853,10 +1854,10 @@ def fourier(f, interval, N):
 def fourierval(series, interval, x):
     """
     Evaluates a Fourier series (in the format computed by
-    by :func:`fourier` for the given interval) at the point x.
+    by :func:`fourier` for the given interval) at the point `x`.
 
-    The series should be a pair (c, s) where c is the
-    cosine series and s is the sine series. The two lists
+    The series should be a pair `(c, s)` where `c` is the
+    cosine series and `s` is the sine series. The two lists
     need not have the same length.
     """
     cs, ss = series
