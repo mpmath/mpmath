@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Optimization &mdash; mpmath v0.10-svn documentation</title>
+    <title>Root-finding and optimization &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '../',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Sums, products, limits and extrapolation" href="sums_limits.html" />
     <link rel="prev" title="Polynomials" href="polynomials.html" /> 
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -46,17 +46,19 @@
           <div class="body">
             
   
-  <div class="section" id="optimization">
-<h1>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="root-finding-and-optimization">
+<h1>Root-finding and optimization<a class="headerlink" href="#root-finding-and-optimization" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="root-finding-findroot">
 <h2>Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)<a class="headerlink" href="#root-finding-findroot" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.optimization.findroot">
-<!--[mpmath.optimization.findroot]--><tt class="descclassname">mpmath.optimization.</tt><tt class="descname">findroot</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.findroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a root of f using x0 as starting point or interval.</p>
-<p>If not abs(f(root))**2 &lt; tol an exception is raised.</p>
+<!--[mpmath.optimization.findroot]--><tt class="descclassname">mpmath.optimization.</tt><tt class="descname">findroot</tt><big>(</big><em>f</em>, <em>x0</em>, <em>solver=Secant</em>, <em>tol=None</em>, <em>verbose=False</em>, <em>verify=True</em>, <em>force_type=mpmathify</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.findroot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a solution to <img class="math" src="../_images/math/57ccf8d123ba4259e29fba55d9b008874e071492.png" alt="f(x) = 0" />, using <em>x0</em> as starting point or
+interval for <em>x</em>.</p>
 <p>Multidimensional overdetermined systems are supported.
 You can specify them using a function or a list of functions.</p>
+<p>If the found root does not satisfy <img class="math" src="../_images/math/b6ea5899fdb3a93da1fb6aa7dcbdc16c26bbaabe.png" alt="|f(x)^2 &lt; \mathrm{tol}|" />,
+an exception is raised (this can be disabled with <em>verify=False</em>).</p>
 <p><strong>Arguments</strong></p>
 <dl class="docutils">
 <dt><em>f</em></dt>
@@ -68,21 +70,21 @@ You can specify them using a function or a list of functions.</p>
 <dt><em>verbose</em></dt>
 <dd>print additional information for each iteration if true</dd>
 <dt><em>verify</em></dt>
-<dd>verify the solution and raise a ValueError if abs(f(x)) &gt; tol</dd>
+<dd>verify the solution and raise a ValueError if <img class="math" src="../_images/math/b923875aa965f3600a024ee82ee2088827e55444.png" alt="|f(x) &gt; \mathrm{tol}|" /></dd>
 <dt><em>force_type</em></dt>
 <dd>use specified type constructor on starting points</dd>
 <dt><em>solver</em></dt>
-<dd>a generator for f and x0 returning approximative solution and error</dd>
+<dd>a generator for <em>f</em> and <em>x0</em> returning approximative solution and error</dd>
 <dt><em>maxsteps</em></dt>
 <dd>after how many steps the solver will cancel</dd>
 <dt><em>df</em></dt>
-<dd>first derivative of f (used by some solvers)</dd>
+<dd>first derivative of <em>f</em> (used by some solvers)</dd>
 <dt><em>d2f</em></dt>
-<dd>second derivative of f (used by some solvers)</dd>
+<dd>second derivative of <em>f</em> (used by some solvers)</dd>
 <dt><em>multidimensional</em></dt>
 <dd>force multidimensional solving</dd>
 <dt><em>J</em></dt>
-<dd>Jacobian matrix of f (used by multidimensional solvers)</dd>
+<dd>Jacobian matrix of <em>f</em> (used by multidimensional solvers)</dd>
 <dt><em>norm</em></dt>
 <dd>used vector norm (used by multidimensional solvers)</dd>
 </dl>
@@ -91,12 +93,12 @@ yielding pairs of approximative solution and estimated error (which is
 expected to be positive).
 You can use the following string aliases:
 &#8216;secant&#8217;, &#8216;mnewton&#8217;, &#8216;halley&#8217;, &#8216;muller&#8217;, &#8216;illinois&#8217;, &#8216;pegasus&#8217;, &#8216;anderson&#8217;,
-&#8216;ridder&#8217;, &#8216;anewton&#8217;, &#8216;bisect&#8217;
-See mpmath.optimization for their documentation.</p>
+&#8216;ridder&#8217;, &#8216;anewton&#8217;, &#8216;bisect&#8217;</p>
+<p>See mpmath.optimization for their documentation.</p>
 <p><strong>Examples</strong></p>
-<p>The function <tt class="docutils literal"><span class="pre">findroot</span></tt> locates a root of a given function using the
+<p>The function <tt class="xref docutils literal"><span class="pre">findroot()</span></tt> locates a root of a given function using the
 secant method by default. A simple example use of the secant method is to
-compute pi as the root of sin(<em>x</em>) closest to <em>x</em> = 3:</p>
+compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x" /> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
@@ -127,7 +129,7 @@ minimum of the gamma function:</p>
 </pre></div>
 </div>
 <p>Finally, a useful application is to compute inverse functions, such as the
-Lambert W function which is the inverse of <em>w</em> exp(<em>w</em>), given the first
+Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w" />, given the first
 term of the solution&#8217;s asymptotic expansion as the initial value. In basic
 cases, this gives identical results to mpmath&#8217;s builtin <tt class="docutils literal"><span class="pre">lambertw</span></tt>
 function:</p>
@@ -165,7 +167,7 @@ converge slowly. Consider this example:</p>
 </div>
 <p>Even for a very close starting point the secant method converges very
 slowly. Use <tt class="docutils literal"><span class="pre">verbose=True</span></tt> to illustrate this.</p>
-<p>It&#8217;s possible to modify Newton&#8217;s method to make it converge regardless of
+<p>It is possible to modify Newton&#8217;s method to make it converge regardless of
 the root&#8217;s multiplicity:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;mnewton&#39;</span><span class="p">)</span>
 <span class="go">mpf(&#39;1.0&#39;)</span>
@@ -245,7 +247,7 @@ with multiple roots and usually need a sign change to find a root:</p>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Optimization</a><ul>
+<li><a class="reference external" href="">Root-finding and optimization</a><ul>
 <li><a class="reference external" href="#root-finding-findroot">Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)</a></li>
 <li><a class="reference external" href="#minimization-and-maximization-findmin-findmax">Minimization and maximization (<tt class="docutils literal"><span class="pre">findmin</span></tt>, <tt class="docutils literal"><span class="pre">findmax</span></tt>)</a></li>
 </ul>
@@ -282,13 +284,13 @@ with multiple roots and usually need a sign change to find a root:</p>
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

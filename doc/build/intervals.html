@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Interval arithmetic &mdash; mpmath v0.10-svn documentation</title>
+    <title>Interval arithmetic &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="index.html" />
     <link rel="next" title="Matrices" href="matrices.html" />
     <link rel="prev" title="Function approximation" href="calculus/approximation.html" /> 
   </head>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="calculus/approximation.html" title="Function approximation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -47,6 +47,8 @@
   <div class="section" id="interval-arithmetic">
 <h1>Interval arithmetic<a class="headerlink" href="#interval-arithmetic" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">mpi</span></tt> type holds an interval defined by a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.</p>
+<div class="section" id="basic-operations">
+<h2>Basic operations<a class="headerlink" href="#basic-operations" title="Permalink to this headline">¶</a></h2>
 <p>You can create an <tt class="docutils literal"><span class="pre">mpi</span></tt> from a number (treated as a zero-width interval) or a pair of numbers. Strings are treated as exact decimal numbers (note that a Python float like 0.1 generally does not represent the same number as its literal; use <tt class="docutils literal"><span class="pre">'0.1'</span></tt> instead):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -122,7 +124,10 @@
 <span class="go">[3.14159265358979...793333, 3.14159265358979...797277]</span>
 </pre></div>
 </div>
-<p>It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators <tt class="docutils literal"><span class="pre">+,</span> <span class="pre">-,</span> <span class="pre">*,</span> <span class="pre">/,</span> <span class="pre">**</span></tt> should work correctly. It is also possible to call the functions <tt class="docutils literal"><span class="pre">exp</span></tt>, <tt class="docutils literal"><span class="pre">log</span></tt>, <tt class="docutils literal"><span class="pre">sin</span></tt>, <tt class="docutils literal"><span class="pre">cos</span></tt> and <tt class="docutils literal"><span class="pre">tan</span></tt> with interval arguments. Here are some examples:</p>
+</div>
+<div class="section" id="interval-functions">
+<h2>Interval functions<a class="headerlink" href="#interval-functions" title="Permalink to this headline">¶</a></h2>
+<p>It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators <tt class="docutils literal"><span class="pre">+,</span> <span class="pre">-,</span> <span class="pre">*,</span> <span class="pre">/,</span> <span class="pre">**</span></tt> and <tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> should work correctly. It is also possible to call the functions <tt class="xref docutils literal"><span class="pre">exp()</span></tt>, <tt class="xref docutils literal"><span class="pre">log()</span></tt>, <tt class="xref docutils literal"><span class="pre">sin()</span></tt>, <tt class="xref docutils literal"><span class="pre">cos()</span></tt>, <tt class="xref docutils literal"><span class="pre">tan()</span></tt> with interval arguments. Here are some examples:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span> <span class="o">**</span> <span class="n">mpi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
 <span class="go">[0.35355339059327373086, 1.837117307087383633]</span>
@@ -154,15 +159,16 @@
 </pre></div>
 </div>
 <p>Interval support will be added to more functions in the future.</p>
+</div>
 <div class="section" id="establishing-inequalities">
 <h2>Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
-<p>Interval arithmetic can be used to establish inequalities such as <tt class="docutils literal"><span class="pre">exp(pi*sqrt(163))</span> <span class="pre">&lt;</span> <span class="pre">640320**3</span> <span class="pre">+</span> <span class="pre">744</span></tt>. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
+<p>Interval arithmetic can be used to establish inequalities such as <img class="math" src="_images/math/139abec14f3a7179b5113ee469d7bedc4a797cd7.png" alt="\exp(\pi \sqrt{163}) &lt; 640320^3 + 744" />. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
-<p>The answer should be True, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">25</span></tt>, but it is honest enough to admit it:</p>
+<p>The answer should be <tt class="xref docutils literal"><span class="pre">True</span></tt>, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep <tt class="docutils literal"><span class="pre">mp.dps</span> <span class="pre">=</span> <span class="pre">25</span></tt>, but it is honest enough to admit it:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">163</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
 <span class="gp">... </span><span class="c"># doctest: +ELLIPSIS</span>
 <span class="go">[-0.0000003576..., 0.00000029429...]</span>
@@ -191,6 +197,8 @@
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Interval arithmetic</a><ul>
+<li><a class="reference external" href="#basic-operations">Basic operations</a></li>
+<li><a class="reference external" href="#interval-functions">Interval functions</a></li>
 <li><a class="reference external" href="#establishing-inequalities">Establishing inequalities</a></li>
 <li><a class="reference external" href="#linear-algebra">Linear algebra</a></li>
 </ul>
@@ -227,12 +235,12 @@
         <li class="right" >
           <a href="calculus/approximation.html" title="Function approximation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

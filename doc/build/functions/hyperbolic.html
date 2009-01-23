@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hyperbolic functions &mdash; mpmath v0.10-svn documentation</title>
+    <title>Hyperbolic functions &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '../',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Factorials and gamma functions" href="gamma.html" />
     <link rel="prev" title="Trigonometric functions" href="trigonometric.html" /> 
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="trigonometric.html" title="Trigonometric functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -53,32 +53,115 @@
 <dl class="function">
 <dt id="mpmath.functions.cosh">
 <!--[mpmath.functions.cosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cosh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic cosine of x</dd></dl>
+<dd><p>Computes the hyperbolic cosine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
+<img class="math" src="../_images/math/3732ad83966f9b85d1b83c01f0ea37f4ec467ec8.png" alt="\cosh(x) = (e^x + e^{-x})/2" />. Values and limits include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cosh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cosh</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.543080634815243778477906</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cosh</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">),</span> <span class="n">cosh</span><span class="p">(</span><span class="o">+</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">+inf +inf</span>
+</pre></div>
+</div>
+<p>The hyperbolic cosine is an even, convex function with
+a global minimum at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />, having a Maclaurin series
+that starts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<span class="go">[1.0, 0.0, 0.5, 0.0, 4.16667e-2, 0.0]</span>
+</pre></div>
+</div>
+<p>Generalized to complex numbers, the hyperbolic cosine is
+equivalent to a cosine with the argument rotated
+in the imaginary direction, or <img class="math" src="../_images/math/f0a0b4d06f22d8bc20f6f1592b18f65d243765ea.png" alt="\cosh x = \cos ix" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cosh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.724545504915322565473971 + 0.5118225699873846088344638j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.724545504915322565473971 + 0.5118225699873846088344638j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.sinh">
 <!--[mpmath.functions.sinh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic sine of x</dd></dl>
+<dd><p>Computes the hyperbolic sine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
+<img class="math" src="../_images/math/9c750e3bd89537a51a94d226b330d08b3368703e.png" alt="\sinh(x) = (e^x - e^{-x})/2" />. Values and limits include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinh</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.175201193643801456882382</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinh</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">),</span> <span class="n">sinh</span><span class="p">(</span><span class="o">+</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-inf +inf</span>
+</pre></div>
+</div>
+<p>The hyperbolic sine is an odd function, with a Maclaurin
+series that starts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sinh</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<span class="go">[0.0, 1.0, 0.0, 0.166667, 0.0, 8.33333e-3]</span>
+</pre></div>
+</div>
+<p>Generalized to complex numbers, the hyperbolic sine is
+essentially a sine with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" /> applied to
+the argument; more precisely, <img class="math" src="../_images/math/f02d498569463dab4b4f46ed42789fac5dbb0963.png" alt="\sinh x = -i \sin ix" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.590564589985779952012565 + 0.5309210862485198052670401j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">j</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.590564589985779952012565 + 0.5309210862485198052670401j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.tanh">
 <!--[mpmath.functions.tanh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">tanh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.tanh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic tangent of x</dd></dl>
+<dd><p>Computes the hyperbolic tangent of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
+<img class="math" src="../_images/math/950b32d9b0df97b3df6b9437f246638314046cb8.png" alt="\tanh(x) = \sinh(x)/\cosh(x)" />. Values and limits include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tanh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tanh</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.7615941559557648881194583</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tanh</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">),</span> <span class="n">tanh</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">-1.0 1.0</span>
+</pre></div>
+</div>
+<p>The hyperbolic tangent is an odd, sigmoidal function, similar
+to the inverse tangent and error function. Its Maclaurin
+series is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">tanh</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<span class="go">[0.0, 1.0, 0.0, -0.333333, 0.0, 0.133333]</span>
+</pre></div>
+</div>
+<p>Generalized to complex numbers, the hyperbolic tangent is
+essentially a tangent with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" /> applied to
+the argument; more precisely, <img class="math" src="../_images/math/3b086acaefd15f1d02fd7afb36aaaf5718b579ab.png" alt="\tanh x = -i \tan ix" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tanh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.9653858790221331242784803 - 0.009884375038322493720314034j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">j</span><span class="o">*</span><span class="n">tan</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.9653858790221331242784803 - 0.009884375038322493720314034j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.sech">
 <!--[mpmath.functions.sech]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sech</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sech" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic secant of x, 1/cosh(x)</dd></dl>
+<dd>Computes the hyperbolic secant of x, 1/cosh(x)</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.csch">
 <!--[mpmath.functions.csch]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">csch</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.csch" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic cosecant of x, 1/sinh(x)</dd></dl>
+<dd>Computes the hyperbolic cosecant of x, 1/sinh(x)</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.coth">
 <!--[mpmath.functions.coth]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">coth</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.coth" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the hyperbolic cotangent of x, 1/tanh(x)</dd></dl>
+<dd>Computes the hyperbolic cotangent of x, 1/tanh(x)</dd></dl>
 
 </div>
 <div class="section" id="inverse-hyperbolic-functions-acosh-asinh-atanh-asech-acsch-acoth">
@@ -86,32 +169,32 @@
 <dl class="function">
 <dt id="mpmath.functions.acosh">
 <!--[mpmath.functions.acosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.acosh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic cosine of x</dd></dl>
+<dd>Computes the inverse hyperbolic cosine of x</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.asinh">
 <!--[mpmath.functions.asinh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asinh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.asinh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic sine of x</dd></dl>
+<dd>Computes the inverse hyperbolic sine of x</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.atanh">
 <!--[mpmath.functions.atanh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atanh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.atanh" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic tangent of x</dd></dl>
+<dd>Computes the inverse hyperbolic tangent of x</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.asech">
 <!--[mpmath.functions.asech]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asech</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.asech" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic secant of x, acosh(1/x)</dd></dl>
+<dd>Computes the inverse hyperbolic secant of x, acosh(1/x)</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.acsch">
 <!--[mpmath.functions.acsch]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acsch</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acsch" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic cosecant of x, asinh(1/x)</dd></dl>
+<dd>Computes the inverse hyperbolic cosecant of x, asinh(1/x)</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.functions.acoth">
 <!--[mpmath.functions.acoth]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acoth</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acoth" title="Permalink to this definition">¶</a></dt>
-<dd>Returns the inverse hyperbolic cotangent of x, atanh(1/x)</dd></dl>
+<dd>Computes the inverse hyperbolic cotangent of x, atanh(1/x)</dd></dl>
 
 </div>
 </div>
@@ -161,13 +244,13 @@
         <li class="right" >
           <a href="trigonometric.html" title="Trigonometric functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

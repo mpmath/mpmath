@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Technical details &mdash; mpmath v0.10-svn documentation</title>
+    <title>Technical details &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,8 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
-    <link rel="next" title="Speed tricks" href="speedtricks.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="index.html" />
     <link rel="prev" title="Number identification" href="identification.html" /> 
   </head>
   <body>
@@ -30,12 +29,9 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="speedtricks.html" title="Speed tricks"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -160,15 +156,15 @@
 </table>
 </blockquote>
 <p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method. Directed rounding is currently only available via interval arithmetic or via the interface in the <tt class="docutils literal"><span class="pre">libmpf</span></tt> module.</p>
-<p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don&#8217;t round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
-<p>Evaluation of transcendental functions (as well as square roots) is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
-<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than 10^(-100) and smaller than 10^100), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
+<p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> and <tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don&#8217;t round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
+<p>Evaluation of transcendental functions is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
+<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than <img class="math" src="_images/math/7154f5f73a687b60aeca86cfdbe58239c25b97bc.png" alt="10^{-100}" /> and smaller than <img class="math" src="_images/math/97b41aee75eee4f322b88a22ab66cf7565f94e27.png" alt="10^{100}" />), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
 <p>When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0&#8217;s and 9&#8217;s, and finally rounds to nearest, rounding up (away from zero) on a tie. The <tt class="docutils literal"><span class="pre">decimal</span></tt> library could be used to provide more control over the rounding in the binary-to-decimal conversion, and mpmath did do radix conversions via <tt class="docutils literal"><span class="pre">decimal</span></tt> in older versions, but this was far too slow compared to using a custom algorithm.</p>
 </div>
 <div class="section" id="exponent-range">
 <h2>Exponent range<a class="headerlink" href="#exponent-range" title="Permalink to this headline">¶</a></h2>
-<p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly 10^(-300) and 10^300. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory.</p>
-<p>Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of 10^100000. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
+<p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly <img class="math" src="_images/math/20aff77c46a0bdeea25af0edb85fdff922923b94.png" alt="10^{-300}" /> and <img class="math" src="_images/math/7aa5f707dadd9b22c982bdab9dae7f5a7891af81.png" alt="10^{300}" />. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory.</p>
+<p>Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of <img class="math" src="_images/math/bfc92368b446ad26b9b4718f0042e9893cea1fb8.png" alt="10^{100000}" />. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
 <p>In some situations, it might be more convenient if mpmath could &#8220;round&#8221; extremely small numbers to 0 and extremely large numbers to <tt class="docutils literal"><span class="pre">inf</span></tt>, and directly raise an exception or return <tt class="docutils literal"><span class="pre">nan</span></tt> if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.</p>
 </div>
 <div class="section" id="compatibility">
@@ -205,8 +201,6 @@
 
             <h4>Previous topic</h4>
             <p class="topless"><a href="identification.html" title="previous chapter">Number identification</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="speedtricks.html" title="next chapter">Speed tricks</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/technical.txt">Show Source</a></li>
@@ -228,17 +222,14 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="speedtricks.html" title="Speed tricks"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="identification.html" title="Number identification"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

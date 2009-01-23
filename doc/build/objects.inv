@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: mpmath
-# Version: 0.10-svn
+# Version: 0.11
 mpmath.functions.cosh function functions/hyperbolic.html
 mpmath.functions.factorial function functions/gamma.html
 mpmath.functions.harmonic function functions/gamma.html

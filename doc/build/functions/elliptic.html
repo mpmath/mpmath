@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Elliptic functions &mdash; mpmath v0.10-svn documentation</title>
+    <title>Elliptic functions &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '../',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Zeta functions" href="zeta.html" />
     <link rel="prev" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials" href="hypergeometric.html" /> 
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="hypergeometric.html" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -62,16 +62,90 @@
 <div class="section" id="elliptic-integrals-ellipe-ellipk">
 <h2><a class="toc-backref" href="#id2">Elliptic integrals (<tt class="xref docutils literal"><span class="pre">ellipe()</span></tt>, <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>)<a class="headerlink" href="#elliptic-integrals-ellipe-ellipk" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
-<dt id="mpmath.functions.ellipe">
-<!--[mpmath.functions.ellipe]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ellipe</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ellipe" title="Permalink to this definition">¶</a></dt>
-<dd>Complete elliptic integral of the second kind, E(m). Note that
-the argument is the parameter m = k^2, not the modulus k.</dd></dl>
-
-<dl class="function">
 <dt id="mpmath.functions.ellipk">
 <!--[mpmath.functions.ellipk]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ellipk</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ellipk" title="Permalink to this definition">¶</a></dt>
-<dd>Complete elliptic integral of the first kind, K(m). Note that
-the argument is the parameter m = k^2, not the modulus k.</dd></dl>
+<dd><p>Evaluates the complete elliptic integral of the first kind,
+<img class="math" src="../_images/math/1665d5b15ea171ee4ac16d99f646ade489216dfe.png" alt="K(m)" />, defined by</p>
+<div class="math">
+<p><img src="../_images/math/48a0fc5ec9e84176c5f25646e0ef98e70da1a2d3.png" alt="K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt." />
+</div></p><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2" />,
+not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> which is sometimes used.</p>
+<p>Alternatively, in terms of a hypergeometric function,
+we have:</p>
+<div class="math">
+<p><img src="../_images/math/ae3a1b3f89de637827aecd98eaa5a43474139420.png" alt="K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)" />
+</div></p><p><strong>Examples</strong></p>
+<p>Values and limits include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.570796326794896619231322</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.31102877714605990523242</span>
+</pre></div>
+</div>
+<p>Verifying the defining integral and hypergeometric
+representation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">1.85407467730137191843385</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.5</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="go">1.85407467730137191843385</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">1.85407467730137191843385</span>
+</pre></div>
+</div>
+<p>Evaluation is supported for arbitrary complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipk</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.9111955638049650086562171 + 0.6313342832413452438845091j)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.ellipe">
+<!--[mpmath.functions.ellipe]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ellipe</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ellipe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the complete elliptic integral of the second kind,
+<img class="math" src="../_images/math/024ee2b592ac8c90f9998bcd1d98bbc365e936f1.png" alt="E(m)" />, defined by</p>
+<div class="math">
+<p><img src="../_images/math/7ab31be32e0d7fea88d7ebaa4d3cbf1f3e8c1e6e.png" alt="E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt." />
+</div></p><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2" />,
+not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> which is sometimes used.</p>
+<p>Alternatively, in terms of a hypergeometric function,
+we have:</p>
+<div class="math">
+<p><img src="../_images/math/8c37ea3e690ae090f5b00c4899ec390615d5b001.png" alt="E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)" />
+</div></p><p>Note: evaluation is currently only supported for <img class="math" src="../_images/math/e5590c6b3903e91a5a90b6643e4cfdf935cd8812.png" alt="|m| &lt; 1" />.</p>
+<p><strong>Examples</strong></p>
+<p>Basic values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipe</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.570796326794896619231322</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipe</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>Verifying the defining integral and hypergeometric
+representation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipe</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">1.350643881047675502520175</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="go">1.350643881047675502520175</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">1.350643881047675502520175</span>
+</pre></div>
+</div>
+<p>Evaluation is supported for complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> within the unit
+circle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ellipe</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">0.25</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(1.360868682163129682716687 - 0.1238733442561786843557315j)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="jacobi-theta-functions-jtheta-djtheta">
@@ -189,14 +263,6 @@ series would converge too slowly:</p>
 <span class="nc">ValueError</span>: <span class="n-Identifier">abs(q) &gt; Q_LIM = 1.000000</span>
 </pre></div>
 </div>
-<p>Implementation note
-If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
-are used,
-which compute the series starting from n=0 using fixed precision
-numbers;
-otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
-the series starting from n=n0, which is the largest term.</p>
-<p>TODO write _jacobi_theta2a and _jacobi_theta3a using fixed precision.</p>
 </dd></dl>
 
 <dl class="function">
@@ -221,23 +287,65 @@ respect to <img class="math" src="../_images/math/b13f21416d84e13708696f34dea810
 <dl class="function">
 <dt id="mpmath.elliptic.jsn">
 <!--[mpmath.elliptic.jsn]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">jsn</tt><big>(</big><em>u</em>, <em>m</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.jsn" title="Permalink to this definition">¶</a></dt>
-<dd>Implementation of the jacobi elliptic sn function in term
-of jacoby theta functions.
-u is any complex number, m must be in the unit disk</dd></dl>
+<dd><p>Computes of the Jacobi elliptic sn function in terms
+of Jacobi theta functions.
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" /> is any complex number, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> must be in the unit disk</p>
+<p>The sn-function is doubly periodic in the complex
+plane with periods <img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)" /> and <img class="math" src="../_images/math/61df763bbb98a23963bd7678ac9a2449d93cb9d8.png" alt="2 i K(1-m)" />
+(see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jsn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">0.9628981775982774425751399</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jsn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">0.9628981775982774425751399</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">jsn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">2</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">))</span>
+<span class="go">0.9628981775982774425751399</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.jcn">
 <!--[mpmath.elliptic.jcn]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">jcn</tt><big>(</big><em>u</em>, <em>m</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.jcn" title="Permalink to this definition">¶</a></dt>
-<dd>Implementation of the jacobi elliptic cn function in term
-of theta functions.
-u is any complex number, m must be in the unit disk</dd></dl>
+<dd><p>Computes of the Jacobi elliptic cn function in terms
+of Jacobi theta functions.
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" /> is any complex number, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> must be in the unit disk</p>
+<p>The cn-function is doubly periodic in the complex
+plane with periods <img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)" /> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)" />
+(see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jcn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">-0.2698649654510865792581416</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jcn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">-0.2698649654510865792581416</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">jcn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">))</span>
+<span class="go">-0.2698649654510865792581416</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.elliptic.jdn">
 <!--[mpmath.elliptic.jdn]--><tt class="descclassname">mpmath.elliptic.</tt><tt class="descname">jdn</tt><big>(</big><em>u</em>, <em>m</em><big>)</big><a class="headerlink" href="#mpmath.elliptic.jdn" title="Permalink to this definition">¶</a></dt>
-<dd>Implementation of the jacobi elliptic dn function in term
-of theta functions.
-u is any complex number, m must be in the unit disk</dd></dl>
+<dd><p>Computes of the Jacobi elliptic dn function in terms
+of Jacobi theta functions.
+<img class="math" src="../_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" /> is any complex number, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> must be in the unit disk</p>
+<p>The dn-function is doubly periodic in the complex
+plane with periods <img class="math" src="../_images/math/19581a1a0b61aa8752b5fc45e389f124d430cdeb.png" alt="2 K(m)" /> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)" />
+(see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jdn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">0.8764740583123262286931578</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">jdn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">2</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">)</span>
+<span class="go">0.8764740583123262286931578</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">jdn</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">ellipk</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">0.25</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">))</span>
+<span class="go">0.8764740583123262286931578</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 </div>
@@ -288,13 +396,13 @@ u is any complex number, m must be in the unit disk</dd></dl>
         <li class="right" >
           <a href="hypergeometric.html" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.10-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 

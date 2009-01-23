@@ -57,7 +57,7 @@ done using the syntax A[row,column], counting from 0::
     >>> A
     matrix(
     [['0.0', '0.0'],
-     ['0.0', mpc(real='1.0', imag='1.0')]])
+     ['0.0', '(1.0 + 1.0j)']])
 
 You can use the keyword ``force_type`` to change the function which is called on
 every new element::
@@ -243,10 +243,9 @@ Negative powers will calculate the inverse::
     matrix(
     [['-2.0', '1.0'],
      ['1.5', '-0.5']])
-    >>> A * A**-1
-    matrix(
-    [['1.0', '0.0'],
-     ['0.0', '1.0']])
+    >>> nprint(A * A**-1, 3)
+    [      1.0  1.08e-19]
+    [-2.17e-19       1.0]
 
 Matrix transposition is straightforward::
 

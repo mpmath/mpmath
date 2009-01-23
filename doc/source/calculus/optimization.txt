@@ -1,10 +1,10 @@
-Optimization
-------------
+Root-finding and optimization
+-----------------------------
 
 Root-finding (``findroot``)
 ...........................
 
-.. autofunction:: mpmath.optimization.findroot
+.. autofunction:: mpmath.optimization.findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True, force_type=mpmathify, **kwargs)
 
 Minimization and maximization (``findmin``, ``findmax``)
 ........................................................

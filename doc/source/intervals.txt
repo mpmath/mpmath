@@ -3,6 +3,9 @@ Interval arithmetic
 
 The ``mpi`` type holds an interval defined by a pair of ``mpf`` values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.
 
+Basic operations
+----------------
+
 You can create an ``mpi`` from a number (treated as a zero-width interval) or a pair of numbers. Strings are treated as exact decimal numbers (note that a Python float like 0.1 generally does not represent the same number as its literal; use ``'0.1'`` instead)::
 
     >>> from mpmath import *
@@ -79,7 +82,10 @@ Interval arithmetic uses the same precision as the ``mpf`` class; if ``mp.dps = 
     >>> mpi(pi)  # doctest: +ELLIPSIS
     [3.14159265358979...793333, 3.14159265358979...797277]
 
-It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators ``+, -, *, /, **`` should work correctly. It is also possible to call the functions ``exp``, ``log``, ``sin``, ``cos`` and ``tan`` with interval arguments. Here are some examples:
+Interval functions
+------------------
+
+It should be noted that the support for interval arithmetic in mpmath is still somewhat primitive, but the standard arithmetic operators ``+, -, *, /, **`` and :func:`sqrt` should work correctly. It is also possible to call the functions :func:`exp`, :func:`log`, :func:`sin`, :func:`cos`, :func:`tan` with interval arguments. Here are some examples:
 
     >>> mp.dps = 15
     >>> mpi(0.5, 1.5) ** mpi(0.5, 1.5)
@@ -115,13 +121,13 @@ Interval support will be added to more functions in the future.
 Establishing inequalities
 -------------------------
 
-Interval arithmetic can be used to establish inequalities such as ``exp(pi*sqrt(163)) < 640320**3 + 744``. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result::
+Interval arithmetic can be used to establish inequalities such as `\exp(\pi \sqrt{163}) < 640320^3 + 744`. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result::
 
     >>> mp.dps = 25
     >>> exp(pi*sqrt(163)) < (640320**3 + 744)
     False
 
-The answer should be True, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep ``mp.dps = 25``, but it is honest enough to admit it::
+The answer should be ``True``, but the rounding errors are larger than the difference between the numbers. To get the right answer, we can use interval arithmetic to check the sign of the difference between the two sides of the inequality. Interval arithmetic does not tell us the answer right away if we keep ``mp.dps = 25``, but it is honest enough to admit it::
 
     >>> exp(pi * sqrt(mpi(163))) - (640320**3 + 744)
     ... # doctest: +ELLIPSIS

@@ -120,6 +120,8 @@ You can also test that all the interactive examples in the documentation work by
 
     ``python run_doctest.py``
 
+and by running the individual ``.py`` files in the mpmath source.
+
 (The doctests may take several minutes.)
 
 Finally, some additional demo scripts are available in the ``demo`` directory included in the source package.

@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Matrices &mdash; mpmath v0.10-svn documentation</title>
+    <title>Matrices &mdash; mpmath v0.11 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
           URL_ROOT:    '',
-          VERSION:     '0.10-svn',
+          VERSION:     '0.11',
           COLLAPSE_MODINDEX: false,
           FILE_SUFFIX: '.html'
       };
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.10-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.11 documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Interval arithmetic" href="intervals.html" /> 
   </head>
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -97,7 +97,7 @@ done using the syntax A[row,column], counting from 0:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
 <span class="go">matrix(</span>
 <span class="go">[[&#39;0.0&#39;, &#39;0.0&#39;],</span>
-<span class="go"> [&#39;0.0&#39;, mpc(real=&#39;1.0&#39;, imag=&#39;1.0&#39;)]])</span>
+<span class="go"> [&#39;0.0&#39;, &#39;(1.0 + 1.0j)&#39;]])</span>
 </pre></div>
 </div>
 <p>You can use the keyword <tt class="docutils literal"><span class="pre">force_type</span></tt> to change the function which is called on
@@ -283,10 +283,9 @@ compatible:</p>
 <span class="go">matrix(</span>
 <span class="go">[[&#39;-2.0&#39;, &#39;1.0&#39;],</span>
 <span class="go"> [&#39;1.5&#39;, &#39;-0.5&#39;]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span><span class="o">**-</span><span class="mf">1</span>
-<span class="go">matrix(</span>
-<span class="go">[[&#39;1.0&#39;, &#39;0.0&#39;],</span>
-<span class="go"> [&#39;0.0&#39;, &#39;1.0&#39;]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">A</span><span class="o">**-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">[      1.0  1.08e-19]</span>
+<span class="go">[-2.17e-19       1.0]</span>
 </pre></div>
 </div>
 <p>Matrix transposition is straightforward:</p>
@@ -492,12 +491,12 @@ and equation solving with rigorous error bounds:</p>
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.10-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.11 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2008, Fredrik Johansson.
-      Last updated on Jan 22, 2009.
+      Last updated on Jan 23, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
     </div>
 
