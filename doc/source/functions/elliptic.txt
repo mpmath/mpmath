@@ -6,8 +6,8 @@ Elliptic functions
 Elliptic integrals (:func:`ellipe`, :func:`ellipk`)
 ...................................................
 
-.. autofunction:: mpmath.functions.ellipe
 .. autofunction:: mpmath.functions.ellipk
+.. autofunction:: mpmath.functions.ellipe
 
 Jacobi theta functions (:func:`jtheta`, :func:`djtheta`)
 ........................................................

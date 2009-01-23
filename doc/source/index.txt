@@ -24,4 +24,3 @@ Contents:
    matrices.txt
    identification.txt
    technical.txt
-   speedtricks.txt
