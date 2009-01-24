@@ -17,8 +17,11 @@ class Secant:
     x1 defaults to x0 + 0.25.
 
     Pro:
+
     * converges fast
+
     Contra:
+
     * converges slowly for multiple roots
     """
     maxsteps = 30
@@ -60,8 +63,11 @@ class MNewton:
     multiplicity of the root.
 
     Pro:
+
     * converges fast for multiple roots
+
     Contra:
+
     * needs first and second derivative of f
     * 3 function evaluations per iteration
     """
@@ -110,9 +116,12 @@ class Halley:
     Uses Halley's method with cubic convergance rate.
 
     Pro:
+
     * converges even faster the Newton's method
     * useful when computing with *many* digits
+
     Contra:
+
     * needs first and second derivative of f
     * 3 function evaluations per iteration
     * converges slowly for multiple roots
@@ -161,13 +170,16 @@ class Muller:
     Uses Muller's method that converges towards complex roots.
 
     Pro:
+
     * converges fast (somewhat faster than secant)
     * can find complex roots
+
     Contra:
+
     * converges slowly for multiple roots
     * may have complex values for real starting points and real roots
 
-    http://en.wikipedia.org/wiki/M%C3%BCller%27s_method
+    http://en.wikipedia.org/wiki/Muller's_method
     """
     maxsteps = 30
 
@@ -233,8 +245,11 @@ class Bisection:
     Might fail for multiple roots (needs sign change).
 
     Pro:
+
     * robust and reliable
+
     Contra:
+
     * converges slowly
     * needs sign change
     """
@@ -295,13 +310,22 @@ class Illinois:
 
     The only difference between the methods is the scaling factor m, which is
     used to ensure convergence (you can choose one using the 'method' keyword):
-    Illinois method ('illinois'):        m = 0.5
-    Pegasus method ('pegasus'):          m = fb/(fb + fz)
-    Anderson-Bjoerk method ('anderson'): m = 1 - fz/fb if positive else 0.5
+
+    Illinois method ('illinois'):
+        m = 0.5
+
+    Pegasus method ('pegasus'):
+        m = fb/(fb + fz)
+
+    Anderson-Bjoerk method ('anderson'):
+        m = 1 - fz/fb if positive else 0.5
 
     Pro:
+
     * converges very fast
+
     Contra:
+
     * has problems with multiple roots
     * needs sign change
     """
@@ -384,14 +408,17 @@ class Ridder:
     Is told to perform as well as Brent's method while being simpler.
 
     Pro:
+
     * very fast
     * simpler than Brent's method
+
     Contra:
+
     * two function evaluations per step
     * has problems with multiple roots
     * needs sign change
 
-    http://en.wikipedia.org/wiki/Ridders%27_method
+    http://en.wikipedia.org/wiki/Ridders'_method
     """
     maxsteps = 30
 
@@ -435,7 +462,7 @@ class ANewton:
     EXPERIMENTAL 1d-solver generating pairs of approximative root and error.
 
     Uses Newton's method modified to use Steffensens method when convergence is
-    slow. (I. e. for multiple roots.)
+    slow. (I.e. for multiple roots.)
     """
     maxsteps = 20
 
@@ -521,7 +548,9 @@ class MDNewton:
     Find the root of a vector function numerically using Newton's method.
 
     f is a vector function representing a nonlinear equation system.
+
     x0 is the starting point close to the root.
+
     J is a function returning the jacobian matrix for a point.
 
     Supports overdetermined systems.
@@ -533,11 +562,13 @@ class MDNewton:
     Please note that this method converges only locally. Especially for high-
     dimensional systems it is not trvial to find a good starting point being
     close enough to the root.
+
     It is recommended to use a faster, low-precision solver from SciPy [1] or
     OpenOpt [2] to get an initial guess. Afterwards you can use this method for
     root-polishing to any precision.
 
     [1] http://scipy.org
+
     [2] http://openopt.org
     """
     maxsteps = 10
