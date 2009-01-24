@@ -6,6 +6,22 @@ Root-finding (``findroot``)
 
 .. autofunction:: mpmath.optimization.findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True, force_type=mpmathify, **kwargs)
 
+Solvers
+^^^^^^^
+
+.. autofunction:: mpmath.optimization.Secant
+.. autofunction:: mpmath.optimization.MNewton
+.. autofunction:: mpmath.optimization.Halley
+.. autofunction:: mpmath.optimization.Muller
+.. autofunction:: mpmath.optimization.Bisection
+.. autofunction:: mpmath.optimization.Illinois
+.. autofunction:: mpmath.optimization.Pegasus
+.. autofunction:: mpmath.optimization.Anderson
+.. autofunction:: mpmath.optimization.Ridder
+.. autofunction:: mpmath.optimization.ANewton
+.. autofunction:: mpmath.optimization.MDNewton
+
+
 Minimization and maximization (``findmin``, ``findmax``)
 ........................................................
 
