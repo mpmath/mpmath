@@ -14,7 +14,7 @@
 import sys
 
 # If your extensions are in another directory, add it here.
-#sys.path.append('some/directory')
+sys.path.insert(0, '../..')
 
 # General configuration
 # ---------------------
@@ -34,7 +34,7 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'mpmath'
-copyright = '2008, Fredrik Johansson'
+copyright = '2009, Fredrik Johansson'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.
