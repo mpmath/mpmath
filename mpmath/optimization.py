@@ -776,7 +776,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
 
     When you need to find a root in a known interval, it's highly recommended to
     use an intersection-based solver like ``'anderson'`` or ``'ridder'``.
-    Usually the converge faster and more reliable. They have however problems
+    Usually they converge faster and more reliable. They have however problems
     with multiple roots and usually need a sign change to find a root::
 
         >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
