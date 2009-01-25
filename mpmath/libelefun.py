@@ -20,7 +20,7 @@ from settings import (\
 
 from libmpf import (\
     ComplexResult,
-    bitcount, bitcount1, bctable, lshift, rshift, giant_steps, giant_steps2,
+    bitcount, bctable, lshift, rshift, giant_steps, giant_steps2,
     giant_stepsn, sqrt_fixed, sqrt_fixed2,
     from_int, to_int, from_man_exp, to_fixed,
     normalize,
@@ -294,7 +294,7 @@ def int_pow_fixed(y, n, prec):
     """
     if n == 2:
         return (y*y), 0
-    bc = bitcount1(y)
+    bc = bitcount(y)
     exp = 0
     workprec = 2 * (prec + 4*bitcount(n) + 4)
     _, pm, pe, pbc = fone
@@ -680,7 +680,7 @@ def mpf_exp(x, prec, rnd=round_fast):
                 res = mpf_mul(res, t, wp)
                 sign, man, exp, bc = res
             return normalize(sign, man, exp, bc, prec, rnd)
-    bc = bitcount1(man)
+    bc = bitcount(man)
     return normalize(0, man, int(-wp+n), bc, prec, rnd)
 
 
@@ -1332,9 +1332,9 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
             sin = min(ONE, sin)
 
     if which != -1:
-        cos = normalize(cos_sign, cos, -wp, bitcount1(cos), prec, cos_rnd)
+        cos = normalize(cos_sign, cos, -wp, bitcount(cos), prec, cos_rnd)
     if which != 1:
-        sin = normalize(sin_sign, sin, -wp, bitcount1(sin), prec, sin_rnd)
+        sin = normalize(sin_sign, sin, -wp, bitcount(sin), prec, sin_rnd)
 
     return cos, sin
 
