@@ -1,5 +1,5 @@
 --0.11--
-Released January 2?, 2009
+Released January 25, 2009
 
 General:
 
@@ -98,6 +98,7 @@ Speed improvements and bugfixes to special functions:
 * Fixed accuracy of exp(n), n a huge integer and prec >= 600
 * Slightly faster hypergeometric functions with rational parameters
   (contributed by Mario Pernici)
+* Faster and more accurate calculation of ci(x), si(x)
 * Faster and more accurate calculation of ei(x) for large x,
   using an asymptotic expansion (contributed by Mario Pernici)
 * Fixed accuracy bugs in theta functions (contributed by
