@@ -749,6 +749,17 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
 
     You can verify this by solving the system manually.
 
+    Please note that the following (more general) syntax also works::
+
+        >>> def f(x1, x2):
+        ...     return x1**2 + x2, 5*x1**2 - 3*x1 + 2*x2 - 3
+        ...
+        >>> findroot(f, (0, 0))
+        matrix(
+        [['-0.618033988749895'],
+         ['-0.381966011250105']])
+
+
     **Multiple roots**
 
     For multiple roots all methods of the Newtonian family (including secant)
@@ -802,6 +813,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
 
         >>> findroot(lambda x: x**4 + x + 1, (0, 1, 2), solver='muller')
         mpc(real='0.72713608449119684', imag='0.93409928946052944')
+
 
     **Intersection methods**
 
