@@ -568,9 +568,7 @@ class mpi(mpnumeric):
         return mpi_str(self._val, mp.prec)
 
     def __repr__(self):
-        a, b = self._val
-        n = repr_dps(mp.prec)
-        return "mpi('%s', '%s')" % (to_str(a, n), to_str(b, n))
+        return "mpi(%r, %r)" % (self.a, self.b)
 
     def __eq__(self, other):
         if not isinstance(other, mpi):

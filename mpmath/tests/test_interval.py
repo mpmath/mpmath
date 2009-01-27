@@ -7,7 +7,7 @@ def test_interval_identity():
     assert not (mpi(2) != mpi(2, 2))
     assert mpi(-1, 1) == mpi(-1, 1)
     assert str(mpi('0.1')) == "[0.099999999999999991673, 0.10000000000000000555]"
-    assert repr(mpi('0.1')) == "mpi('0.099999999999999992', '0.10000000000000001')"
+    assert repr(mpi('0.1')) == "mpi(mpf('0.099999999999999992'), mpf('0.10000000000000001'))"
     u = mpi(-1, 3)
     assert -1 in u
     assert 2 in u
