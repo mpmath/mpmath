@@ -1230,6 +1230,9 @@ def timing(f, *args, **kwargs):
     If the first call is very quick, ``f`` is called
     repeatedly and the best time is returned.
     """
+    once = kwargs.get('once')
+    if 'once' in kwargs:
+        del kwargs['once']
     if args or kwargs:
         if len(args) == 1 and not kwargs:
             arg = args[0]
@@ -1240,7 +1243,7 @@ def timing(f, *args, **kwargs):
         g = f
     from timeit import default_timer as clock
     t1=clock(); v=g(); t2=clock(); t=t2-t1
-    if t > 0.05:
+    if t > 0.05 or once:
         return t
     for i in range(3):
         t1=clock();

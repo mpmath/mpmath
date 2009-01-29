@@ -13,7 +13,7 @@ import math
 from bisect import bisect
 
 from settings import (\
-    MP_BASE, MP_ZERO, MP_ONE, MP_FIVE, MODE,
+    MP_BASE, MP_ZERO, MP_ONE, MP_TWO, MP_FIVE, MODE,
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
 )
@@ -449,6 +449,299 @@ def mpf_cbrt(s, prec, rnd=round_fast):
     """cubic root of a positive number"""
     return mpf_nthroot(s, 3, prec, rnd)
 
+#----------------------------------------------------------------------------#
+#                                                                            #
+#                                Logarithms                                  #
+#                                                                            #
+#----------------------------------------------------------------------------#
+
+# Fast sequential integer logarithms are required for various series
+# computations related to zeta functions, so we cache them
+# TODO: can this be done better?
+log_int_cache = {}
+
+def log_int_fixed(n, prec):
+    if n < 2:
+        return MP_ZERO
+    cache = log_int_cache.get(prec)
+    if cache and (n in cache):
+        return cache[n]
+    if cache:
+        L = cache[max(cache)]
+    else:
+        cache = log_int_cache[prec] = {}
+        L = cache[2] = ln2_fixed(prec)
+    one = MP_ONE << prec
+    for p in xrange(max(cache)+1, n+1):
+        s = 0
+        u = one
+        k = 1
+        a = (2*p-1)**2
+        while u:
+            s += u // k
+            u //= a
+            k += 2
+        L += 2*s//(2*p-1)
+        cache[p] = L
+    return cache[n]
+
+# Use Taylor series with caching up to this prec
+LOG_TAYLOR_PREC = 2500
+
+# Cache log values in steps of size 2^-N
+LOG_TAYLOR_SHIFT = 9
+
+# prec/size ratio of x for fastest convergence in AGM formula
+LOG_AGM_MAG_PREC_RATIO = 20
+
+log_taylor_cache = {}
+
+# ~= next power of two + 20
+cache_prec_steps = [22,22]
+for k in xrange(1, bitcount(LOG_TAYLOR_PREC)+1):
+    cache_prec_steps += [min(2**k,LOG_TAYLOR_PREC)+20] * 2**(k-1)
+
+def agm_fixed(a, b, prec):
+    """
+    Fixed-point computation of agm(a,b), assuming
+    a, b both close to unit magnitude.
+    """
+    i = 0
+    while 1:
+        anew = (a+b)>>1
+        if i > 4 and abs(a-anew) < 8:
+            return a
+        b = isqrt_fast(a*b)
+        a = anew
+        i += 1
+    return a
+
+def log_agm(x, prec):
+    """
+    Fixed-point computation of -log(x) = log(1/x), suitable
+    for large precision. It is required that 0 < x < 1. The
+    algorithm used is the Sasaki-Kanada formula
+
+        -log(x) = pi/agm(theta2(x)^2,theta3(x)^2). [1]
+
+    For faster convergence in the theta functions, x should
+    be chosen closer to 0.
+
+    Guard bits must be added by the caller.
+
+    HYPOTHESIS: if x = 2^(-n), n bits need to be added to
+    account for the truncation to a fixed-point number,
+    and this is the only significant cancellation error.
+
+    The number of bits lost to roundoff is small and can be
+    considered constant.
+
+    [1] Richard P. Brent, "Fast Algorithms for High-Precision
+        Computation of Elementary Functions (extended abstract)",
+        http://wwwmaths.anu.edu.au/~brent/pd/RNC7-Brent.pdf
+
+    """
+    x2 = (x*x) >> prec
+    # Compute jtheta2(x)**2
+    s = a = b = x2
+    while a:
+        b = (b*x2) >> prec
+        a = (a*b) >> prec
+        s += a
+    s += (MP_ONE<<prec)
+    s = (s*s)>>(prec-2)
+    s = (s*isqrt_fast(x<<prec))>>prec
+    # Compute jtheta3(x)**2
+    t = a = b = x
+    while a:
+        b = (b*x2) >> prec
+        a = (a*b) >> prec
+        t += a
+    t = (MP_ONE<<prec) + (t<<1)
+    t = (t*t)>>prec
+    # Final formula
+    p = agm_fixed(s, t, prec)
+    return (pi_fixed(prec) << prec) // p
+
+def log_taylor(x, prec, r=0):
+    """
+    Fixed-point calculation of log(x). It is assumed that x is close
+    enough to 1 for the Taylor series to converge quickly. Convergence
+    can be improved by specifying r > 0 to compute
+    log(x^(1/2^r))*2^r, at the cost of performing r square roots.
+
+    The caller must provide sufficient guard bits.
+    """
+    for i in xrange(r):
+        x = isqrt_fast(x<<prec)
+    one = MP_ONE << prec
+    v = ((x-one)<<prec)//(x+one)
+    sign = v < 0
+    if sign:
+        v = -v
+    v2 = (v*v) >> prec
+    v4 = (v2*v2) >> prec
+    s0 = v
+    s1 = v//3
+    v = (v*v4) >> prec
+    k = 5
+    while v:
+        s0 += v // k
+        k += 2
+        s1 += v // k
+        v = (v*v4) >> prec
+        k += 2
+    s1 = (s1*v2) >> prec
+    s = (s0+s1) << (1+r)
+    if sign:
+        return -s
+    return s
+
+def log_taylor_cached(x, prec):
+    """
+    Fixed-point computation of log(x), assuming x in (0.5, 2)
+    and prec <= LOG_TAYLOR_PREC.
+    """
+    n = x >> (prec-LOG_TAYLOR_SHIFT)
+    cached_prec = cache_prec_steps[prec]
+    dprec = cached_prec - prec
+    if (n, cached_prec) in log_taylor_cache:
+        a, log_a = log_taylor_cache[n, cached_prec]
+    else:
+        a = n << (cached_prec - LOG_TAYLOR_SHIFT)
+        log_a = log_taylor(a, cached_prec, 8)
+        log_taylor_cache[n, cached_prec] = (a, log_a)
+    a >>= dprec
+    log_a >>= dprec
+    u = ((x - a) << prec) // a
+    v = (u << prec) // ((MP_TWO << prec) + u)
+    v2 = (v*v) >> prec
+    v4 = (v2*v2) >> prec
+    s0 = v
+    s1 = v//3
+    v = (v*v4) >> prec
+    k = 5
+    while v:
+        s0 += v//k
+        k += 2
+        s1 += v//k
+        v = (v*v4) >> prec
+        k += 2
+    s1 = (s1*v2) >> prec
+    s = (s0+s1) << 1
+    return log_a + s
+
+def mpf_log(x, prec, rnd=round_fast):
+    """
+    Compute the natural logarithm of the mpf value x. If x is negative,
+    ComplexResult is raised.
+    """
+    sign, man, exp, bc = x
+    #------------------------------------------------------------------
+    # Handle special values
+    if not man:
+        if x == fzero: return fninf
+        if x == finf: return finf
+        if x == fnan: return fnan
+    if sign:
+        raise ComplexResult("logarithm of a negative number")
+    wp = prec + 20
+    #------------------------------------------------------------------
+    # Handle log(2^n) = log(n)*2.
+    # Here we catch the only possible exact value, log(1) = 0
+    if man == 1:
+        if not exp:
+            return fzero
+        return from_man_exp(exp*ln2_fixed(wp), -wp, prec, rnd)
+    mag = exp+bc
+    abs_mag = abs(mag)
+    #------------------------------------------------------------------
+    # Handle x = 1+eps, where log(x) ~ x. We need to check for
+    # cancellation when moving to fixed-point math and compensate
+    # by increasing the precision. Note that abs_mag in (0, 1) <=>
+    # 0.5 < x < 2 and x != 1
+    if abs_mag <= 1:
+        # Calculate t = x-1 to measure distance from 1 in bits
+        tsign = 1-abs_mag
+        if tsign:
+            tman = (MP_ONE<<bc) - man
+        else:
+            tman = man - (MP_ONE<<(bc-1))
+        tbc = bitcount(tman)
+        cancellation = bc - tbc
+        if cancellation > wp:
+            t = normalize(tsign, tman, abs_mag-bc, tbc, tbc, 'n')
+            return mpf_perturb(t, tsign, prec, rnd)
+        else:
+            wp += cancellation
+        # TODO: if close enough to 1, we could use Taylor series
+        # even in the AGM precision range, since the Taylor series
+        # converges rapidly
+    #------------------------------------------------------------------
+    # Another special case:
+    # n*log(2) is a good enough approximation
+    if abs_mag > 10000:
+        if bitcount(abs_mag) > wp:
+            return from_man_exp(exp*ln2_fixed(wp), -wp, prec, rnd)
+    #------------------------------------------------------------------
+    # General case.
+    # Perform argument reduction using log(x) = log(x*2^n) - n*log(2):
+    # If we are in the Taylor precision range, choose magnitude 0 or 1.
+    # If we are in the AGM precision range, choose magnitude -m for
+    # some large m; benchmarking on one machine showed m = prec/20 to be
+    # optimal between 1000 and 100,000 digits.
+    if wp <= LOG_TAYLOR_PREC:
+        m = log_taylor_cached(lshift(man, wp-bc), wp)
+        if mag:
+            m += mag*ln2_fixed(wp)
+    else:
+        optimal_mag = -wp//LOG_AGM_MAG_PREC_RATIO
+        n = optimal_mag - mag
+        x = mpf_shift(x, n)
+        wp += (-optimal_mag)
+        m = -log_agm(to_fixed(x, wp), wp)
+        m -= n*ln2_fixed(wp)
+    return from_man_exp(m, -wp, prec, rnd)
+
+def mpf_log_hypot(a, b, prec, rnd):
+    """
+    Computes log(sqrt(a^2+b^2)) accurately.
+    """
+    # If either a or b is inf/nan/0, assume it to be a
+    if not b[1]:
+        a, b = b, a
+    # a is inf/nan/0
+    if not a[1]:
+        # both are inf/nan/0
+        if not b[1]:
+            if a == b == fzero:
+                return fninf
+            if fnan in (a, b):
+                return fnan
+            # at least one term is (+/- inf)^2
+            return finf
+        # only a is inf/nan/0
+        if a == fzero:
+            # log(sqrt(0+b^2)) = log(|b|)
+            return mpf_log(mpf_abs(b), prec, rnd)
+        if a == fnan:
+            return fnan
+        return finf
+    # Exact
+    a2 = mpf_mul(a,a)
+    b2 = mpf_mul(b,b)
+    extra = 20
+    # Not exact
+    h2 = mpf_add(a2, b2, prec+extra)
+    cancelled = mpf_add(h2, fnone, 10)
+    mag_cancelled = cancelled[2]+cancelled[3]
+    # Just redo the sum exactly if necessary (could be smarter
+    # and avoid memory allocation when a or b is precisely 1
+    # and the other is tiny...)
+    if cancelled == fzero or mag_cancelled < -extra//2:
+        h2 = mpf_add(a2, b2, prec+extra-min(a2[2],b2[2]))
+    return mpf_shift(mpf_log(h2, prec, rnd), -1)
+
 
 #----------------------------------------------------------------------------#
 #                                                                            #
@@ -682,426 +975,6 @@ def mpf_exp(x, prec, rnd=round_fast):
             return normalize(sign, man, exp, bc, prec, rnd)
     bc = bitcount(man)
     return normalize(0, man, int(-wp+n), bc, prec, rnd)
-
-
-#----------------------------------------------------------------------------#
-#                                                                            #
-#                                Logarithms                                  #
-#                                                                            #
-#----------------------------------------------------------------------------#
-
-# Fast sequential integer logarithms are required for various series
-# computations related to zeta functions, so we cache them
-
-log_int_cache = {}
-
-def log_int_fixed(n, prec):
-    if n < 2:
-        return MP_ZERO
-    cache = log_int_cache.get(prec)
-    if cache and (n in cache):
-        return cache[n]
-    if cache:
-        L = cache[max(cache)]
-    else:
-        cache = log_int_cache[prec] = {}
-        L = cache[2] = ln2_fixed(prec)
-    one = MP_ONE << prec
-    for p in xrange(max(cache)+1, n+1):
-        s = 0
-        u = one
-        k = 1
-        a = (2*p-1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p-1)
-        cache[p] = L
-    return cache[n]
-
-
-
-"""
-The basic idea for evaluating log for an arbitrary floating-point number
-is to write x = t * 2**n (note that n is just the exponent) and compute
-log(x) = n*log(2) + log(t). Of course, log(2) is cached.
-
-Here n should be chosen to make t ~= 1. This allows us to settle for a
-suitable fixed-point approximation close to 1. In particular, we choose
-the normalization 0.5 <= t < 2 and use one of two algorithms:
-
-1. For high precision, we set r = log(t) and use Newton's method
-   to solve exp(r) = t. To obtain the Newton method one solves
-   exp(r+h) = t, expanding in h which is supposed to be small; one has
-   h = log(t * exp(-r)), which can be expanded in powers of
-   s = (t * exp(-r) - 1) : h = s - s*s/2 + s**3/3 + ...
-
-   The first order approximation is Newton method, the second order is
-   Halley's method. We use the second order approximation.
-
-   We set the initial value r_0 to math.log(t) and then iterate
-
-      r_{n+1} = (r_n + exp(-r_n) - 1) - (r_n + exp(-r_n) - 1)/2
-
-   until convergence. As with square roots, we increase the working
-   precision dynamically during the process so that only one
-   full-precision evaluation of exp is required.
-
-2. For low precision, we use Taylor series. Unfortunately, the Taylor
-   series for log(1+x) converges very slowly unless |x| << 1. We could use
-   the "inverse" of Brent's trick for exp, but this would involve computing
-   compound square roots (as opposed to repeated squaring), which is
-   expensive.
-
-   So instead we use the following trick: up to a fixed precision, we
-   precompute log(k/2^N) for N ~= 8-10. This can be done using standard
-   arbitrary-precision Newton's method above (and on the fly as each value
-   of k is needed). Now, for a given t, we round t to the nearest N-bit
-   number to find a cached log value. Then we use the Taylor series
-
-                          b     b^2     b^3
-     log(a+b) = log(a) + --- - ----- + ----- - ... 
-                          a    2 a^2   3 a^3
-
-   where of course a is the cached k/2^N value (t rounded)
-   and b is the difference between t and t rounded.
-
-   On [1/2, 3/2], this gives a series that converges at least N bits per
-   term, as opposed to 1 bit per term in the worst case for the direct
-   series of log(1+x).
-
-
-For very high precision compute the logarithm using the formula 
-by Sasaki and Kanada,
-log(x) = pi / agm(theta(2,1/x)**2, theta3(3, 1/x)**2)
-see the article by R.P. Brent
-"Fast Algorithms for High-Precision Computation of Elementary Functions"
-brent_invited.pdf which is available online.
-To improve performance, for x > 1 + delta, with delta around 0.1,
-one computes log(x**n)/n for some suitably large n, so that the argument 
-of the theta functions is small and they ar computed fast. 
-For 1 < x <= delta use log(x) = log(2*x) - log(2) and then proceed as above.
-
-There are some further caveats: if x is extremely close to 1,
-the working precision must be increased. We ignore this problem in
-log_newton, log_taylor and log_agm and instead handle it as needed in
-mpf_log.
-
-"""
-
-# This function performs the Newton iteration using fixed-point
-# arithmetic. x is assumed to have magnitude ~= 1
-def log_newton(x, prec):
-    extra = 10
-    # 40-bit approximation
-    fx = math.log(long(x)) - 0.69314718055994529*prec
-    r = MP_BASE(fx * 2.0**40)
-    prevp = 40
-    for p in giant_steps2(40, prec+extra):
-        rb = lshift(r, p-prevp)
-        # Parameters for exponential series
-        if p < 300:
-            r = int(2 * p**0.4)
-            exp_func = exp_series
-        else:
-            r = int(0.7 * p**0.5)
-            exp_func = exp_series2
-        exp_extra = r + 10
-        e = exp_func((-rb) << exp_extra, p + exp_extra, r)
-        s = ((rshift(x, prec-p)*e)>>(p + exp_extra)) - (1 << p)
-        s1 = -((s*s)>>(p+1))
-        r = rb + s + s1
-        prevp = p
-    return r >> extra
-
-if MODE == 'gmpy':
-    LOG_TAYLOR_PREC = 2500
-    LOG_NEWTON_PREC = 6500
-    LOG_NEWTON_PREC2 = 13000
-else:
-    LOG_TAYLOR_PREC = 1500
-    LOG_NEWTON_PREC = 21000
-    LOG_NEWTON_PREC2 = 42000
-
-LOG_TAYLOR_WP = LOG_TAYLOR_PREC + 20
-LOG_TAYLOR_SHIFT = 9   # steps of size 2^-N
-
-LOG_NEWTON_MAG = 35000
-
-log_taylor_cache = {}
-
-def log_taylor_get_cached(n, prec):
-    # Taylor series with caching wins up to huge precisions
-    # To avoid unnecessary precomputation at low precision, we 
-    # do it in steps
-    # Round to next power of 2
-    prec2 = (1<<(bitcount(prec-1))) + 20
-    dprec = prec2 - prec
-    if (n, prec2) in log_taylor_cache:
-        a, atan_a = log_taylor_cache[n, prec2]
-    else:
-        a = n << (prec2 - LOG_TAYLOR_SHIFT)
-        atan_a = log_newton(a, prec2)
-        log_taylor_cache[n, prec2] = (a, atan_a)
-    return (a >> dprec), (atan_a >> dprec)
-
-def log_taylor(x, prec):
-    n = (x >> (prec-LOG_TAYLOR_SHIFT))
-    a, log_a = log_taylor_get_cached(n, prec)
-    u = ((x - a) << prec) // a
-    # to compute log(1 + u) use the identity
-    # log(z) = 2 * Sum( ((z-1)/(z+1))**(2*n+1)/(2*n+1), n, 0, inf)
-    # see http://en.wikipedia.org/wiki/Logarithm
-    v = (u << prec) // ((MP_ONE << (prec+1)) + u)
-    v2 = (v * v) >> prec
-    v4 = (v2 * v2) >> prec
-    s0 = v
-    s1 = v//3
-    v = (v * v4) >> prec
-    k = 5
-    while v:
-        s0 += v // k
-        k += 2
-        s1 += v // k
-        v = (v * v4) >> prec
-        k += 2
-    s1 = (s1 * v2) >> prec
-    s = (s0 + s1) << 1
-    return log_a + s
-
-# ndict_log and nbc_log give a table of values for n in log(x**n)/n
-# increasing n increases the speed, since in the Sasaki and Kanada formula
-# the theta functions get smaller arguments, so they are evaluated faster;
-# on the other hand increasing n the precision decreases.
-# The values n are chosen to be as high as possible (or just a bit less) 
-# while getting the correct result in some examples with q of different sizes
-
-ndict_log = {11: 1<< 6, 12: 1<< 6, 13: 1<<6, 14: 1<<7, 15: 1<<8, 16: 1<<9, 17: 1<<11, 18: 1<<12}
-
-#      0-7      8  9   10  11  12  13  14  15  16  17, 18, 19, 20, 
-nbc_log = [70]*8 + [65, 29, 25, 19, 18, 17, 15, 13, 12, 10, 10, 10, 10] + \
-      [9]*7 + [8]*23 + [7]*130
-#     21-27, 28-50,  51-180
-
-MIN = 2
-
-def mpf_agm(a, b, wc):
-    a = to_fixed(a, wc)
-    b = to_fixed(b, wc)
-    p = 1
-    while 1:
-        an = (a + b) >> 1
-        adiff = a - an
-        if p > 16 and abs(adiff) < 1000:
-            break
-        b = isqrt_fast(a*b)
-        p = 2*p
-        a = an
-    res = a
-    return from_man_exp(res, -wc, wc, 'n')
-
-def log_agm(x, prec, fneg):
-    #print 'DB', prec
-    sign, nab, exp, bc = x
-    ebc = exp + bc
-    extra1 = 10
-    #n = int(math.log(prec,2))
-    n = bitcount(prec) - 1
-    #print 'DB', n, nn
-    if n <= 18:
-        n = ndict_log[n]
-    else:
-        n = 1 << 13
-    if ebc > 7:
-        if ebc > LOG_NEWTON_MAG:
-            return log_newton(x, prec)
-        elif ebc > 180:
-            n = 6
-        else:
-            n = nbc_log[ebc]
-        extra1 += ebc
-    # mp.dps += n + extra1
-    wp = prec + 4*(n + extra1)
-    # q = q**n
-    #q = 1/q
-    if not fneg:
-        x = mpf_pow_int(x, -n, wp)
-    else:
-        x = mpf_pow_int(x, n, wp)
-
-    # compute jtheta2(x)**2
-    x0 = x
-    x = to_fixed(x, wp)
-
-    # x2 = (x*x) >> wp
-    x2 = (x*x) >> wp
-    s2 = a = b = x2
-    while abs(a) > MIN:
-        b = (b*x2) >> wp
-        a = (a*b) >> wp
-        s2 += a
-    s2 = (1 << (wp+1)) + (s2 << 1)
-    s2 = from_man_exp(s2, -wp, wp, 'n')
-    s2 = mpf_mul(s2, s2, wp)
-    t = mpf_sqrt(x0, wp, 'n')
-    s2 = mpf_mul(s2, t, wp)
-    # compute jtheta3(x)**2
-    s3 = a = b = x
-    while abs(a) > MIN:
-        b = (b*x2) >> wp
-        a = (a*b) >> wp
-        s3 += a
-    s3 = (1 << wp) + (s3 << 1)
-    s3 = from_man_exp(s3, -wp, wp, 'n')
-    s3 = mpf_mul(s3, s3, wp)
-    a = mpf_agm(s2, s3, wp)
-    res = mpf_div(mpf_pi(wp), a, wp)
-    res = mpf_div(res, from_int(n, wp), wp)
-    sign, man, exp, bc = res
-    return normalize(sign, man, exp, bc, prec, 'n')
-
-def mpf_log(x, prec, rnd=round_fast):
-    """
-    Compute the natural logarithm of the mpf value x. If x is negative,
-    ComplexResult is raised.
-    """
-    sign, man, exp, bc = x
-    if not man:
-        if x == fzero: return fninf
-        if x == finf: return finf
-        if x == fnan: return fnan
-    if sign:
-        raise ComplexResult("logarithm of a negative number")
-
-    # log(2^n)
-    if man == 1:
-        if not exp:
-            return fzero
-        return from_man_exp(exp*ln2_fixed(prec+20), -prec-20, prec, rnd)
-
-    # Assume 20 bits to be sufficient for cancelling rounding errors
-    wp = prec + 20
-    mag = bc + exp
-
-    # Already on the standard interval, (0.5, 1)
-    if not mag:
-        t = rshift(man, bc-wp)
-        log2n = 0
-        # Watch out for "x = 0.9999"
-        # Proceed only if 1-x lost at most 15 bits of accuracy
-        res = (MP_ONE << wp) - t
-        if not (res >> (wp - 15)):
-            # Find out extra precision needed
-            delta = mpf_sub(x, fone, 10)
-            delta_bits = -(delta[2] + delta[3])
-            # O(x^2) term vanishes relatively
-            if delta_bits > wp + 10:
-                xm1 = mpf_sub(x, fone, prec, rnd)
-                return mpf_perturb(xm1, 1, prec, rnd)
-            else:
-                wp += delta_bits
-                t = rshift(man, bc-wp)
-
-    # Already on the standard interval, (1, 2)
-    elif mag == 1:
-        t = rshift(man, bc-wp-1)
-        log2n = 0
-        # Watch out for "x = 1.0001"
-        # Similar to above; note that we flip signs
-        # to obtain a positive residual, ensuring that
-        # the following shift rounds down
-        res = t - (MP_ONE << wp)
-        if not (res >> (wp - 15)):
-            # Find out extra precision needed
-            delta = mpf_sub(x, fone, 10)
-            delta_bits = -(delta[2] + delta[3])
-            # O(x^2) term vanishes relatively
-            if delta_bits > wp + 10:
-                xm1 = mpf_sub(x, fone, prec, rnd)
-                return mpf_perturb(xm1, 1, prec, rnd)
-            else:
-                wp += delta_bits
-                t = rshift(man, bc-wp-1)
-
-    # Rescale
-    elif wp < LOG_NEWTON_PREC or mag > LOG_NEWTON_MAG:
-        # Estimated precision needed for n*log(2) to
-        # be accurate relatively
-        wp += int(math.log(1+abs(mag),2))
-        log2n = mag * ln2_fixed(wp)
-        # Rescaled argument as a fixed-point number
-        t = rshift(man, bc-wp)
-
-    # Use the faster method
-    if wp < LOG_TAYLOR_PREC:
-        a = log_taylor(t, wp)
-    elif wp < LOG_NEWTON_PREC or mag > LOG_NEWTON_MAG:
-        a = log_newton(t, wp)
-    # case with wp >= LOG_NEWTON_PREC
-    else:
-        # for x close to one
-        if mag == 0 or mag == 1 and not (res >> (wp - 4)):
-            delta = mpf_sub(x, fone, 10)
-            delta_bits = -(delta[2] + delta[3])
-            if delta_bits > 0:
-                wp += delta_bits
-            if mag <= 0:
-                x = mpf_shift(x, -1)
-            else:
-                x = mpf_shift(x, 1)
-        if mag <= 0:
-            rs = mpf_neg(log_agm(x, wp, True), wp, rnd)
-        else:
-            rs = log_agm(x, wp, False)
-        if mag == 0 or mag == 1 and not (res >> (wp - 4)):
-            if mag <= 0:
-                rs = mpf_add(rs, mpf_ln2(wp), wp)
-            else:
-                rs = mpf_sub(rs, mpf_ln2(wp), wp)
-        sign, man, exp, bc = rs
-        return normalize(sign, man, exp, bc, prec, rnd)
-
-    return from_man_exp(a + log2n, -wp, prec, rnd)
-
-def mpf_log_hypot(a, b, prec, rnd):
-    """
-    Computes log(sqrt(a^2+b^2)) accurately.
-    """
-    # If either a or b is inf/nan/0, assume it to be a
-    if not b[1]:
-        a, b = b, a
-    # a is inf/nan/0
-    if not a[1]:
-        # both are inf/nan/0
-        if not b[1]:
-            if a == b == fzero:
-                return fninf
-            if fnan in (a, b):
-                return fnan
-            # at least one term is (+/- inf)^2
-            return finf
-        # only a is inf/nan/0
-        if a == fzero:
-            # log(sqrt(0+b^2)) = log(|b|)
-            return mpf_log(mpf_abs(b), prec, rnd)
-        if a == fnan:
-            return fnan
-        return finf
-    # Exact
-    a2 = mpf_mul(a,a)
-    b2 = mpf_mul(b,b)
-    extra = 20
-    # Not exact
-    h2 = mpf_add(a2, b2, prec+extra)
-    cancelled = mpf_add(h2, fnone, 10)
-    mag_cancelled = cancelled[2]+cancelled[3]
-    # Just redo the sum exactly if necessary (could be smarter
-    # and avoid memory allocation when a or b is precisely 1
-    # and the other is tiny...)
-    if cancelled == fzero or mag_cancelled < -extra//2:
-        h2 = mpf_add(a2, b2, prec+extra-min(a2[2],b2[2]))
-    return mpf_shift(mpf_log(h2, prec, rnd), -1)
 
 
 #----------------------------------------------------------------------------#
