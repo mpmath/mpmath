@@ -3983,126 +3983,130 @@ def airybi(z):
     b = z * rt * sum_hyp0f1_rat((4,3), z3) / gamma(mpf(1)/3)
     return a + b
 
-@funcwrapper
-def ellipe(m):
-    r"""
-    Evaluates the complete elliptic integral of the second kind,
-    `E(m)`, defined by
+ellipk = mpfunc('ellipk', libhyper.mpf_ellipk, libhyper.mpc_ellipk, '')
+ellipe = mpfunc('ellipe', libhyper.mpf_ellipe, libhyper.mpc_ellipe, '')
 
-    .. math ::
+ellipk.__doc__ = \
+r"""
+Evaluates the complete elliptic integral of the first kind,
+`K(m)`, defined by
 
-        E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt.
+.. math ::
 
-    Note that the argument is the parameter `m = k^2`,
-    not the modulus `k` which is sometimes used.
+    K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt.
 
-    Alternatively, in terms of a hypergeometric function,
-    we have:
+Note that the argument is the parameter `m = k^2`,
+not the modulus `k` which is sometimes used.
 
-    .. math ::
+Alternatively, in terms of a hypergeometric function,
+we have:
 
-        E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)
+.. math ::
 
-    Note: evaluation is currently only supported for `|m| < 1`.
+    K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)
 
-    **Examples**
+**Examples**
 
-    Basic values::
+Values and limits include::
 
-        >>> from mpmath import *
-        >>> mp.dps = 25
-        >>> print ellipe(0)
-        1.570796326794896619231322
-        >>> print ellipe(1)
-        1.0
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print ellipk(0)
+    1.570796326794896619231322
+    >>> print ellipk(inf)
+    (0.0 + 0.0j)
+    >>> print ellipk(-inf)
+    0.0
+    >>> print ellipk(1)
+    +inf
+    >>> print ellipk(-1)
+    1.31102877714605990523242
+    >>> print ellipk(2)
+    (1.31102877714605990523242 - 1.31102877714605990523242j)
 
-    Verifying the defining integral and hypergeometric
-    representation::
+Verifying the defining integral and hypergeometric
+representation::
 
-        >>> print ellipe(0.5)
-        1.350643881047675502520175
-        >>> print quad(lambda t: sqrt(1-0.5*sin(t)**2), [0, pi/2])
-        1.350643881047675502520175
-        >>> print pi/2*hyp2f1(0.5,-0.5,1,0.5)
-        1.350643881047675502520175
+    >>> print ellipk(0.5)
+    1.85407467730137191843385
+    >>> print quad(lambda t: (1-0.5*sin(t)**2)**-0.5, [0, pi/2])
+    1.85407467730137191843385
+    >>> print pi/2*hyp2f1(0.5,0.5,1,0.5)
+    1.85407467730137191843385
 
-    Evaluation is supported for complex `m` within the unit
-    circle::
+Evaluation is supported for arbitrary complex `m`::
 
-        >>> print ellipe(0.5+0.25j)
-        (1.360868682163129682716687 - 0.1238733442561786843557315j)
-    """
-    if m == 1:
-        return m
-    return pi/2 * sum_hyp2f1_rat((1,2),(-1,2),(1,1), m)
+    >>> print ellipk(3+4j)
+    (0.9111955638049650086562171 + 0.6313342832413452438845091j)
 
-@funcwrapper
-def ellipk(m):
-    r"""
-    Evaluates the complete elliptic integral of the first kind,
-    `K(m)`, defined by
+A definite integral::
 
-    .. math ::
+    >>> print quad(ellipk, [0, 1])
+    2.0
+"""
 
-        K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt.
+ellipe.__doc__ = \
+r"""
+Evaluates the complete elliptic integral of the second kind,
+`E(m)`, defined by
 
-    Note that the argument is the parameter `m = k^2`,
-    not the modulus `k` which is sometimes used.
+.. math ::
 
-    Alternatively, in terms of a hypergeometric function,
-    we have:
+    E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt.
 
-    .. math ::
+Note that the argument is the parameter `m = k^2`,
+not the modulus `k` which is sometimes used.
 
-        K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)
+Alternatively, in terms of a hypergeometric function,
+we have:
 
-    **Examples**
+.. math ::
 
-    Values and limits include::
+    E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)
 
-        >>> from mpmath import *
-        >>> mp.dps = 25
-        >>> print ellipk(0)
-        1.570796326794896619231322
-        >>> print ellipk(inf)
-        0.0
-        >>> print ellipk(1)
-        +inf
-        >>> print ellipk(-1)
-        1.31102877714605990523242
+**Examples**
 
-    Verifying the defining integral and hypergeometric
-    representation::
+Basic values and limits::
 
-        >>> print ellipk(0.5)
-        1.85407467730137191843385
-        >>> print quad(lambda t: (1-0.5*sin(t)**2)**-0.5, [0, pi/2])
-        1.85407467730137191843385
-        >>> print pi/2*hyp2f1(0.5,0.5,1,0.5)
-        1.85407467730137191843385
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print ellipe(0)
+    1.570796326794896619231322
+    >>> print ellipe(1)
+    1.0
+    >>> print ellipe(-1)
+    1.910098894513856008952381
+    >>> print ellipe(2)
+    (0.5990701173677961037199612 + 0.5990701173677961037199612j)
+    >>> print ellipe(inf)
+    (0.0 + +infj)
+    >>> print ellipe(-inf)
+    +inf
 
-    Evaluation is supported for arbitrary complex `m`::
+Verifying the defining integral and hypergeometric
+representation::
 
-        >>> print ellipk(3+4j)
-        (0.9111955638049650086562171 + 0.6313342832413452438845091j)
+    >>> print ellipe(0.5)
+    1.350643881047675502520175
+    >>> print quad(lambda t: sqrt(1-0.5*sin(t)**2), [0, pi/2])
+    1.350643881047675502520175
+    >>> print pi/2*hyp2f1(0.5,-0.5,1,0.5)
+    1.350643881047675502520175
 
-    """
-    # Poor implementation:
-    # return pi/2 * sum_hyp2f1_rat((1,2),(1,2),(1,1), m)
-    if m == 1:
-        return inf
-    if isnan(m):
-        return m
-    if isinf(m):
-        return 1/m
-    s = sqrt(m)
-    a = (1-s)/(1+s)
-    v = pi/4*(1+a)/agm(1,a)
-    if isinstance(m, mpf) and m < 1:
-        return v.real
-    return v
+Evaluation is supported for arbitrary complex `m`::
 
-@funcwrapper
+    >>> print ellipe(0.5+0.25j)
+    (1.360868682163129682716687 - 0.1238733442561786843557315j)
+    >>> print ellipe(3+4j)
+    (1.499553520933346954333612 - 1.577879007912758274533309j)
+
+A definite integral::
+
+    >>> print quad(ellipe, [0,1])
+    1.333333333333333333333333
+
+"""
+
 def agm(a, b=1):
     r"""
     ``agm(a, b)`` computes the arithmetic-geometric mean of `a` and
@@ -4153,6 +4157,13 @@ def agm(a, b=1):
         643448704.760133
         >>> print agm(10**50)
         1.34814309345871e+48
+
+    For tiny `x`, `\mathrm{agm}(1,x) \approx -\pi/(2 \log(x/4))`::
+
+        >>> print agm('0.01')
+        0.262166887202249
+        >>> print -pi/2/log('0.0025')
+        0.262172347753122
 
     The arithmetic-geometric mean can also be computed for complex
     numbers::
@@ -4209,13 +4220,25 @@ def agm(a, b=1):
     arbitrary.
 
     """
-    if not a or not b:
-        return a*b
-    weps = eps * 16 * max(abs(a), abs(b))
-    half = mpf(0.5)
-    while abs(a-b) > weps:
-        a, b = (a+b)*half, (a*b)**half
-    return a
+    if b == 1:
+        return agm1(a)
+    a = mpmathify(a)
+    b = mpmathify(b)
+    prec, rounding = prec_rounding
+    if isinstance(a, mpf) and isinstance(b, mpf):
+        try:
+            v = libhyper.mpf_agm(a._mpf_, b._mpf_, prec, rounding)
+            return make_mpf(v)
+        except ComplexResult:
+            pass
+    if isinstance(a, mpf): a = (a._mpf_, libmpf.fzero)
+    else: a = a._mpc_
+    if isinstance(b, mpf): b = (b._mpf_, libmpf.fzero)
+    else: b = b._mpc_
+    return make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
+
+agm1 = mpfunc('agm1', libhyper.mpf_agm1, libhyper.mpc_agm1,
+    'Fast alias for agm(1,a) = agm(a,1)')
 
 @funcwrapper
 def jacobi(n, a, b, x):
