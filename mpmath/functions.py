@@ -1695,6 +1695,10 @@ zeta.__doc__ = r"""
         >>> print findroot(zeta, 0.5+25j)
         (0.5 + 25.0108575801457j)
 
+    For investigation of the zeta function zeros, the Riemann-Siegel
+    Z-function is often more convenient than working with the Riemann
+    zeta function directly (see :func:`siegelz`).
+
     For large positive `s`, `\zeta(s)` rapidly approaches 1::
 
         >>> print zeta(30)
@@ -5261,16 +5265,21 @@ def hyperfac(z):
         >>> print hyperfac(pi)
         205.211134637462
         >>> print hyperfac(-10+1j)
-        (3.66238556639137e+35 - 2.98305038640398e+35j)
+        (3.01144471378225e+46 - 2.45285242480185e+46j)
 
     The recurrence property of the hyperfactorial holds
     generally::
 
-        >>> z = 3-4j
+        >>> z = 3-4*j
         >>> print hyperfac(z)
-        (-36985.0589204655 - 52070.8243465421j)
+        (-4.49795891462086e-7 - 6.33262283196162e-7j)
         >>> print z**z * hyperfac(z-1)
-        (-36985.0589204655 - 52070.8243465421j)
+        (-4.49795891462086e-7 - 6.33262283196162e-7j)
+        >>> z = mpf(-0.6)
+        >>> print chop(z**z * hyperfac(z-1))
+        1.28170142849352
+        >>> print hyperfac(z)
+        1.28170142849352
 
     The hyperfactorial may also be computed using the integral
     definition::
@@ -5279,7 +5288,7 @@ def hyperfac(z):
         >>> print hyperfac(z)
         15.9842119922237
         >>> print (2*pi)**(-z/2)*exp(binomial(z+1,2) +
-        ...     quad(lambda t: log(fac(t)), [0, z]))
+        ...     quad(lambda t: loggamma(t+1), [0, z]))
         15.9842119922237
 
     :func:`hyperfac` supports arbitrary-precision evaluation::
@@ -5289,13 +5298,6 @@ def hyperfac(z):
         215779412229418562091680268288000000000000000.0
         >>> print hyperfac(1/sqrt(2))
         0.89404818005227001975423476035729076375705084390942
-
-    **TODO**
-
-    :func:`hyperfac` currently gives needlessly complicated
-    branch cuts for the complex hyperfactorial. It should be possible
-    to obtain a simpler branch cut structure via a proper
-    implementation of the log-gamma function.
 
     **References**
 
@@ -5320,9 +5322,237 @@ def hyperfac(z):
             return h + 0j
         return h
     zp1 = z+1
-    v = gamma(zp1)**z
+    # Wrong branch cut
+    #v = gamma(zp1)**z
+    #mp.prec -= extra
+    #return v / barnesg(zp1)
+    v = exp(z*loggamma(zp1))
     mp.prec -= extra
     return v / barnesg(zp1)
+
+@funcwrapper
+def loggamma(z):
+    r"""
+    Computes the log-gamma function. Unlike `\ln(\Gamma(z))`, which
+    has infinitely many complex branch cuts, the log-gamma function
+    only has a single branch cut along the negative half-axis.
+    The functions are identical only on (and very close to) the positive
+    half-axis; elsewhere they differ by `2 n \pi i` (the real parts
+    agree)::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print loggamma(13.2), log(gamma(13.2))
+        20.494004194566 20.494004194566
+        >>> print loggamma(3+4j)
+        (-1.75662678460378 + 4.74266443803466j)
+        >>> print log(gamma(3+4j))
+        (-1.75662678460378 - 1.54052086914493j)
+
+    Note: this is a placeholder implementation. It is slower than
+    :func:`gamma`, and is in particular *not* faster than :func:`gamma`
+    for large arguments.
+    """
+    a = z.real
+    b = z.imag
+    if not b and a > 0:
+        return log(gamma(z))
+    u = arg(z)
+    w = log(gamma(z))
+    if b:
+        gi = -b - u/2 + a*u + b*log(abs(z))
+        n = floor((gi-w.imag)/(2*pi)+0.5) * (2*pi)
+        return w + n*j
+    elif a < 0:
+        n = int(floor(a))
+        w += (n-(n%2))*pi*j
+    return w
+
+@funcwrapper
+def siegeltheta(t):
+    r"""
+    Computes the Riemann-Siegel theta function,
+
+    .. math ::
+
+        \theta(t) = \frac{
+        \log\Gamma\left(\frac{1+2it}{4}\right) - 
+        \log\Gamma\left(\frac{1-2it}{4}\right)
+        }{2i} - \frac{\log \pi}{2} t.
+
+    The Riemann-Siegel theta function is important in
+    providing the phase factor for the Z-function
+    (see :func:`siegelz`). Evaluation is supported for real and
+    complex arguments::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print siegeltheta(0)
+        0.0
+        >>> print siegeltheta(inf)
+        +inf
+        >>> print siegeltheta(-inf)
+        -inf
+        >>> print siegeltheta(1)
+        -1.767547952812290388302216
+        >>> print siegeltheta(10+0.25j)
+        (-3.068638039426838572528867 + 0.05804937947429712998395177j)
+
+    The Riemann-Siegel theta function has odd symmetry around `t = 0`,
+    two local extreme points and three real roots including 0 (located
+    symmetrically)::
+
+        >>> nprint(chop(taylor(siegeltheta, 0, 5)))
+        [0.0, -2.68609, 0.0, 2.69433, 0.0, -6.40218]
+        >>> print findroot(diffun(siegeltheta), 7)
+        6.28983598883690277966509
+        >>> print findroot(siegeltheta, 20)
+        17.84559954041086081682634
+
+    For large `t`, there is a famous asymptotic formula
+    for `\theta(t)`, to first order given by::
+
+        >>> t = mpf(10**6)
+        >>> print siegeltheta(t)
+        5488816.353078403444882823
+        >>> print -t*log(2*pi/t)/2-t/2
+        5488816.745777464310273645
+    """
+    if t.imag:
+        # XXX: cancellation occurs
+        a = loggamma(0.25+0.5j*t)
+        b = loggamma(0.25-0.5j*t)
+        return -log(pi)/2*t - 0.5j*(a-b)
+    else:
+        if isinf(t):
+            return t
+        return loggamma(0.25+0.5j*t).imag - log(pi)/2*t
+
+@funcwrapper
+def grampoint(n):
+    r"""
+    Gives the `n`-th Gram point `g_n`, defined as the solution
+    to the equation `\theta(g_n) = \pi n` where `\theta(t)`
+    is the Riemann-Siegel theta function (:func:`siegeltheta`).
+
+    The first few Gram points are::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print grampoint(0)
+        17.84559954041086081682634
+        >>> print grampoint(1)
+        23.17028270124630927899664
+        >>> print grampoint(2)
+        27.67018221781633796093849
+        >>> print grampoint(3)
+        31.71797995476405317955149
+
+    Checking the definition::
+
+        >>> print siegeltheta(grampoint(3))
+        9.42477796076937971538793
+        >>> print 3*pi
+        9.42477796076937971538793
+
+    A large Gram point::
+
+        >>> print grampoint(10**10)
+        3293531632.728335454561153
+
+    Gram points are useful when studying the Z-function
+    (:func:`siegelz`). See the documentation of that function
+    for additional examples.
+
+    :func:`grampoint` can solve the defining equation for
+    nonintegral `n`. There is a kind of fixed point where
+    `g(x) = \pi x`::
+
+        >>> print findroot(lambda x: grampoint(x) - x, 10000)
+        9146.698193171459265866198
+
+    **References**
+
+    1. http://mathworld.wolfram.com/GramPoint.html
+
+    """
+    # Asymptotic expansion, from
+    # http://mathworld.wolfram.com/GramPoint.html
+    g = 2*pi*exp(1+lambertw((8*n+1)/(8*e)))
+    from optimization import findroot
+    return findroot(lambda t: siegeltheta(t)-pi*n, g)
+
+@funcwrapper
+def siegelz(t):
+    r"""
+    Computes the Z-function, also known as the Riemann-Siegel Z function,
+
+    .. math ::
+
+        Z(t) = e^{i \theta(t)} \zeta(1/2+it)
+
+    where `\zeta(s)` is the Riemann zeta function (:func:`zeta`)
+    and where `\theta(t)` denotes the Riemann-Siegel theta function
+    (see :func:`siegeltheta`).
+
+    Evaluation is supported for real and complex arguments::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print siegelz(1)
+        -0.7363054628673177346778998
+        >>> print siegelz(3+4j)
+        (-0.1852895764366314976003936 - 0.2773099198055652246992479j)
+
+    The Z-function has a Maclaurin expansion::
+
+        >>> nprint(chop(taylor(siegelz, 0, 4)))
+        [-1.46035, 0.0, 2.73588, 0.0, -8.39357]
+
+    The Z-function `Z(t)` is equal to `\pm |\zeta(s)|` on the
+    critical strip `s = 1/2+it` (i.e. for real arguments `t`
+    to `Z`).  Its zeros coincide with those of the Riemann zeta
+    function::
+
+        >>> print findroot(siegelz, 14)
+        14.13472514173469379045725
+        >>> print findroot(siegelz, 20)
+        21.02203963877155499262848
+        >>> print findroot(zeta, 0.5+14j)
+        (0.5 + 14.13472514173469379045725j)
+        >>> print findroot(zeta, 0.5+20j)
+        (0.5 + 21.02203963877155499262848j)
+
+    Since the Z-function is real-valued on the critical strip
+    (and unlike `|\zeta(s)|` analytic), it is useful for
+    investigating the zeros of the Riemann zeta function.
+    For example, one can use a root-finding algorithm based
+    on sign changes::
+
+        >>> print findroot(siegelz, [100, 200], solver='bisect')
+        176.4414342977104188888926
+
+    To locate roots, Gram points `g_n` which can be computed
+    by :func:`grampoint` are useful. If `(-1)^n Z(g_n)` is 
+    positive for two consecutive `n`, then `Z(t)` must have
+    a zero between those points::
+
+        >>> g10 = grampoint(10)
+        >>> g11 = grampoint(11)
+        >>> (-1)**10 * siegelz(g10) > 0
+        True
+        >>> (-1)**11 * siegelz(g11) > 0
+        True
+        >>> print findroot(siegelz, [g10, g11], solver='bisect')
+        56.44624769706339480436776
+        >>> print g10, g11
+        54.67523744685325626632663 57.54516517954725443703014
+
+    """
+    v = exp(j*siegeltheta(t))*zeta(0.5+j*t)
+    if isinstance(t, mpf):
+        return v.real
+    return v
 
 @funcwrapper
 def bernpoly(n, z):

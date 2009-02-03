@@ -38,7 +38,8 @@ from functions import (
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
     lambertw,
-    barnesg, superfac, hyperfac
+    barnesg, superfac, hyperfac,
+    loggamma, siegeltheta, siegelz, grampoint
 )
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn
