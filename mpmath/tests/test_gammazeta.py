@@ -51,6 +51,10 @@ def test_bernoulli():
 
     mp.dps = 1000
     assert bernoulli(10).ae(mpf(5)/66)
+
+    mp.dps = 50000
+    assert bernoulli(10).ae(mpf(5)/66)
+
     mp.dps = 15
 
 def test_gamma():
@@ -187,6 +191,8 @@ def test_altzeta():
     assert altzeta(s).ae((1-2**(1-s))*zeta(s))
     s = -3+4j
     assert altzeta(s).ae((1-2**(1-s))*zeta(s))
+    assert altzeta(-100.5).ae(4.58595480083585913e+108)
+    assert altzeta(1.3).ae(0.73821404216623045)
 
 def test_zeta_huge():
     mp.dps = 15
@@ -233,6 +239,11 @@ def test_polygamma():
     assert psi1(-pi-j).ae(-0.30065008356019703 + 0.01149892486928227j)
     assert (10**6*psi(4,1+10*pi*j)).ae(-6.1491803479004446 - 0.3921316371664063j)
     assert psi0(1+10*pi*j).ae(3.4473994217222650 + 1.5548808324857071j)
+    assert isnan(psi0(nan))
+    assert isnan(psi0(-inf))
+    assert psi0(-100.5).ae(4.615124601338064)
+    assert psi0(3+0j).ae(psi0(3))
+    assert psi0(-100+3j).ae(4.6106071768714086321+3.1117510556817394626j)
 
 def test_polygamma_high_prec():
     mp.dps = 100
@@ -287,6 +298,8 @@ def test_harmonic():
     assert harmonic(10**1000).ae(2303.162308658947)
     assert harmonic(0.5).ae(2-2*log(2))
     assert harmonic(inf) == inf
+    assert harmonic(2+0j) == 1.5+0j
+    assert harmonic(1+2j).ae(1.4918071802755104+0.92080728264223022j)
 
 def test_gamma_huge_1():
     mp.dps = 500
@@ -444,3 +457,5 @@ def test_polylog():
     assert polylog(-3, 0.9).ae(48690)
     assert polylog(-3, -4).ae(-0.0064)
     assert polylog(0.5+j/3, 0.5+j/2).ae(0.31739144796565650535 + 0.99255390416556261437j)
+    assert polylog(3+4j,1).ae(zeta(3+4j))
+    assert polylog(3+4j,-1).ae(-altzeta(3+4j))

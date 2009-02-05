@@ -174,6 +174,19 @@ def test_log():
     assert (log(-1j-1e-8).real*10**16).ae(0.5)
     assert (log(1+1e-40j).real*10**80).ae(0.5)
     assert (log(1j+1e-40).real*10**80).ae(0.5)
+    # Huge
+    assert log(ldexp(1.234,10**20)).ae(log(2)*1e20)
+    assert log(ldexp(1.234,10**200)).ae(log(2)*1e200)
+    # Some special values
+    assert log(mpc(0,0)) == mpc(-inf,0)
+    assert isnan(log(mpc(nan,0)).real)
+    assert isnan(log(mpc(nan,0)).imag)
+    assert isnan(log(mpc(0,nan)).real)
+    assert isnan(log(mpc(0,nan)).imag)
+    assert isnan(log(mpc(nan,1)).real)
+    assert isnan(log(mpc(nan,1)).imag)
+    assert isnan(log(mpc(1,nan)).real)
+    assert isnan(log(mpc(1,nan)).imag)
 
 def test_trig_hyperb_basic():
     for x in (range(100) + range(-100,0)):

@@ -184,6 +184,8 @@ def test_exp_integrals():
     assert shi(-inf) == -inf
     assert chi(0) == -inf
     assert chi(inf) == inf
+    assert ei(0) == -inf
+    assert ei(20+70j).ae(6.1041351911152984397e6 - 2.7324109310519928872e6j)
 
     # tests for the asymptotic expansion
     # values checked with Mathematica ExpIntegralEi
@@ -283,6 +285,10 @@ def test_orthpoly():
     assert legendre(j,-j).ae(2.4448182735671431011 + 0.6928881737669934843j)
     assert chebyu(5,1) == 6
     assert chebyt(3,2) == 26
+    assert legendre(3.5,-1) == inf
+    assert legendre(4.5,-1) == -inf
+    assert legendre(3.5+1j,-1) == inf
+    assert legendre(4.5+1j,-1) == -inf
 
 def test_agm():
     mp.dps = 15
@@ -296,6 +302,7 @@ def test_agm():
     assert agm(1,3).ae(1.8636167832448965424)
     assert agm(1,j).ae(0.599070117367796104+0.599070117367796104j)
     assert agm(2) == agm(1,2)
+    assert agm(-3,4).ae(0.63468509766550907+1.3443087080896272j)
 
 def test_incomplete_gamma():
     mp.dps = 15
@@ -308,6 +315,7 @@ def test_incomplete_gamma():
     assert gammainc(0,2+j,1-j).ae(0.00910653685850304839-0.22378752918074432574j)
     assert gammainc(0,1-j).ae(0.00028162445198141833+0.17932453503935894015j)
     assert gammainc(3,4,5,True).ae(0.11345128607046320253)
+    assert gammainc(3.5,0,inf).ae(gamma(3.5))
 
 def test_erf():
     mp.dps = 15

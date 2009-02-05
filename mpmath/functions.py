@@ -4453,8 +4453,10 @@ def legendre(n, x):
         n = int(n)
     if x == -1:
         # TODO: hyp2f1 should handle this
-        if n == int(n):
+        if isint(n):
             return (-1)**(n + (n>=0)) * mpf(-1)
+        if not int(floor(re(n))) % 2:
+            return -inf
         return inf
     return hyp2f1(-n,n+1,1,(1-x)/2)
 
@@ -5465,8 +5467,7 @@ def grampoint(n):
     for additional examples.
 
     :func:`grampoint` can solve the defining equation for
-    nonintegral `n`. There is a kind of fixed point where
-    `g(x) = \pi x`::
+    nonintegral `n`. There is a fixed point where `g(x) = x`::
 
         >>> print findroot(lambda x: grampoint(x) - x, 10000)
         9146.698193171459265866198
