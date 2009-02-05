@@ -136,7 +136,7 @@ if __name__ == '__main__':
             trace=0, count=1)
         tracer.run('testit(importdir, testdir)')
         r = tracer.results()
-        r.write_results(show_missing=True, coverdir="/tmp")
+        r.write_results(show_missing=True, summary=True, coverdir="/tmp")
     else:
         testit(importdir, testdir)
 
