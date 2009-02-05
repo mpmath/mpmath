@@ -3,13 +3,6 @@ from mpmath.matrices import matrix, eye, swap_row, diag, mnorm_1, mnorm_oo, \
 from mpmath.linalg import inverse
 from mpmath import inf, mpf, sqrt, mpi, nstr
 
-with_numpy = False
-try:
-    import numpy
-    with_numpy = True
-except ImportError:
-    pass
-
 def test_matrix_basic():
     A1 = matrix(3)
     for i in xrange(3):
@@ -136,9 +129,12 @@ def test_matrix_copy():
     B[0,0] = 0
     assert A != B
 
-if with_numpy:
-    def test_matrix_numpy():
-        l = [[1, 2], [3, 4], [5, 6]]
-        a = numpy.matrix(l)
-        assert matrix(l) == matrix(a)
+def test_matrix_numpy():
+    try:
+        import numpy
+    except ImportError:
+        return
+    l = [[1, 2], [3, 4], [5, 6]]
+    a = numpy.matrix(l)
+    assert matrix(l) == matrix(a)
 
