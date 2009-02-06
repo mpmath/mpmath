@@ -289,7 +289,7 @@ def mpf_pow(s, t, prec, rnd=round_fast):
 def int_pow_fixed(y, n, prec):
     """n-th power of a fixed point number with precision prec
 
-       Returns the power in the form man, exp, 
+       Returns the power in the form man, exp,
        man * 2**exp ~= y**n
     """
     if n == 2:
@@ -324,7 +324,7 @@ def int_pow_fixed(y, n, prec):
 
 # froot(s, n, prec, rnd) computes the real n-th root of a
 # positive mpf tuple s.
-# To compute the root we start from a 50-bit estimate for r 
+# To compute the root we start from a 50-bit estimate for r
 # generated with ordinary floating-point arithmetic, and then refine
 # the value to full accuracy using the iteration
 
@@ -335,7 +335,7 @@ def int_pow_fixed(y, n, prec):
 # which is simply Newton's method applied to the equation r**n = y.
 # With giant_steps(start, prec+extra) = [p0,...,pm, prec+extra]
 # and y = man * 2**-shift  one has
-# (man * 2**exp)**(1/n) = 
+# (man * 2**exp)**(1/n) =
 # y**(1/n) * 2**(start-prec/n) * 2**(p0-start) * ... * 2**(prec+extra-pm) *
 # 2**((exp+shift-(n-1)*prec)/n -extra))
 # The last factor is accounted for in the last line of froot.
@@ -1176,7 +1176,7 @@ def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
         elif which_compute == -1:
             sin = sin_taylor(y, wp)
             cos = 0
-    # Use exp(i*x) with Brent's trick 
+    # Use exp(i*x) with Brent's trick
     else:
         r = int(0.137 * prec**0.579)
         ep = r+20
@@ -1404,7 +1404,7 @@ atan_taylor_cache = {}
 
 def atan_taylor_get_cached(n, prec):
     # Taylor series with caching wins up to huge precisions
-    # To avoid unnecessary precomputation at low precision, we 
+    # To avoid unnecessary precomputation at low precision, we
     # do it in steps
     # Round to next power of 2
     prec2 = (1<<(bitcount(prec-1))) + 20

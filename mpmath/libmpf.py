@@ -357,7 +357,7 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
             bc -= t
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
-    
+
 if MODE == 'gmpy' and '_mpmath_create' in dir(gmpy):
     from_man_exp = gmpy._mpmath_create
 
@@ -1361,7 +1361,7 @@ def to_bstr(x):
 
 def isqrt_small_python(x, bc=0):
     """
-    Correctly (floor) rounded integer square root, using 
+    Correctly (floor) rounded integer square root, using
     division. Fast up to ~200 digits.
     """
     if not x:
@@ -1395,7 +1395,7 @@ def isqrt_fast_python(x, bc=0):
 
     With 0 guard bits, the largest error over a set of 10^5 random
     inputs of size 1-10^5 bits was 3 ulp. The use of 10 guard bits
-    almost certainly guarantees a max 1 ulp error. 
+    almost certainly guarantees a max 1 ulp error.
     """
     bc = bc or bitcount(x)
     # Small-integer case handled for completeness

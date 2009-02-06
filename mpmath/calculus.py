@@ -287,7 +287,7 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
 
     .. math ::
 
-        S \sim \int_a^b f(x) \,dx + \frac{f(a)+f(b)}{2} + 
+        S \sim \int_a^b f(x) \,dx + \frac{f(a)+f(b)}{2} +
         \sum_{k=1}^{\infty} \frac{B_{2k}}{(2k)!}
         \left(f^{(2k-1)}(b)-f^{(2k-1)}(a)\right).
 
@@ -981,7 +981,7 @@ def limit(f, x, direction=1, exp=False, **kwargs):
 
     .. math ::
 
-        \gamma = \lim_{n \rightarrow \infty } \left[ \left( 
+        \gamma = \lim_{n \rightarrow \infty } \left[ \left(
         \sum_{k=1}^n \frac{1}{k} \right) - \log(n) \right]
 
     (which converges notoriously slowly)::
@@ -1358,7 +1358,7 @@ def pade(a, L, M):
     # Solve first
     # a[L]*q[1] + ... + a[L-M+1]*q[M] = -a[L+1]
     # ...
-    # a[L+M-1]*q[1] + ... + a[L]*q[M] = -a[L+M]    
+    # a[L+M-1]*q[1] + ... + a[L]*q[M] = -a[L+M]
     A = matrix(M)
     for j in range(M):
         for i in range(min(M, L+j+1)):

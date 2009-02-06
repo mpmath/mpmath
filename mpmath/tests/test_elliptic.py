@@ -6,9 +6,9 @@ Author of the first version: M.T. Taschuk
 
 References:
 
-[1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.', 
+[1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
     (Dover duplicate of 1972 edition)
-[2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946, 
+[2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
     Cambridge Univeristy Press
 
 """
@@ -83,7 +83,7 @@ def test_jtheta():
     res = mpf('1.101385760258855791140606')
     result = jtheta(2, z, q)
     assert(result.ae(res))
-   
+
     # Mathematica N[EllipticTheta[3, 1/10, 1/11], 25]
     res = mpf('1.178319743354331061795905')
     result = jtheta(3, z, q)
@@ -194,7 +194,7 @@ def test_jtheta_identities():
         term3 = (jtheta(2, z, q)**2) * (jtheta(3, zero, q)**2)
         equality = term1 - term2 + term3
         assert(equality.ae(0, eps1))
-        
+
         zstring = str(100*random.random())
         z = mpf(zstring)
         # Abramowitz 16.28.2
@@ -325,7 +325,7 @@ def test_djtheta():
             r = djtheta(n, z, q, nd=3)
             r1 = diff(lambda zz: jtheta(n, zz, q), z, n=3)
             assert r.ae(r1)
-    
+
     # identity in Wittaker, Watson &21.41
     q = one/3
     z = zero
@@ -367,7 +367,7 @@ def test_jsn():
     # It would be nice to test these, but I find that they run
     # in to numerical trouble.  I'm currently treating as a boundary
     # case for sn function.
-    
+
     mp.dps = 25
     arg = one/10
     #N[JacobiSN[1/10, 2^-100], 25]
@@ -445,7 +445,7 @@ def test_jdn():
 def test_sn_cn_dn_identities():
     """
     Tests the some of the jacobi elliptic function identidies found
-    on Mathworld.  Havn't found in Abramowitz.  
+    on Mathworld.  Havn't found in Abramowitz.
     """
     mp.dps = 100
     N = 5
@@ -456,7 +456,7 @@ def test_sn_cn_dn_identities():
         z = mpf(zstring)
 
         # MathWorld
-        # sn(z, q)**2 + cn(z, q)**2 == 1 
+        # sn(z, q)**2 + cn(z, q)**2 == 1
         term1 = jsn(z, q)**2
         term2 = jcn(z, q)**2
         equality = one - term1 - term2

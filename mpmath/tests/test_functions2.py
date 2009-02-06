@@ -201,7 +201,7 @@ def test_exp_integrals():
     sim = '-2.1081929993474403520785942429469187647767369645423e+8681'
     assert str(r.real) == sre and str(r.imag) == sim
     mp.dps = 15
-    
+
 def test_trig_integrals():
     mp.dps = 30
     assert si(mpf(1)/1000000).ae('0.000000999999999999944444444444446111')

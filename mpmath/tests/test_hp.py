@@ -200,9 +200,9 @@ def test_hp():
     mp.dps = 460
     assert str(log(3))[-20:] == '02166121184001409826'
     mp.dps = 15
- 
-# Since str(a) can differ in the last digit from rounded a, and I want 
-# to compare the last digits of big numbers with the results in Mathematica, 
+
+# Since str(a) can differ in the last digit from rounded a, and I want
+# to compare the last digits of big numbers with the results in Mathematica,
 # I made this hack to get the last 20 digits of rounded a
 
 def last_digits(a):

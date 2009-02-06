@@ -39,7 +39,7 @@ def ode_taylor(derivs, x0, y0, tol_prec, n):
                 ser[d].append(s[d])
     finally:
         mp.prec = orig
-    # Estimate radius for which we can get full accuracy. 
+    # Estimate radius for which we can get full accuracy.
     # XXX: do this right for zeros
     radius = mpf(1)
     for ts in ser:

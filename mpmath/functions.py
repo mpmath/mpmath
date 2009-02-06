@@ -60,7 +60,7 @@ class _pi(constant):
     :data:`pi` always rounds to the nearest floating-point
     number when used. This means that exact mathematical identities
     involving `\pi` will generally not be preserved in floating-point
-    arithmetic. In particular, multiples of :data:`pi` (except for 
+    arithmetic. In particular, multiples of :data:`pi` (except for
     the trivial case ``0*pi``) are *not* the exact roots of
     :func:`sin`, but differ roughly by the current epsilon::
 
@@ -1169,7 +1169,7 @@ def nthroot(x, n):
 
     :func:`nthroot` is faster and more accurate than raising to a
     floating-point fraction::
-    
+
         >>> from mpmath import *
         >>> mp.dps = 15
         >>> 16807 ** (mpf(1)/5)
@@ -2065,7 +2065,7 @@ harmonic.__doc__ = r"""
     The firrst few harmonic numbers are::
 
         >>> from mpmath import *
-        >>> mp.dps = 15    
+        >>> mp.dps = 15
         >>> for n in range(8):
         ...     print n, harmonic(n)
         ...
@@ -2260,7 +2260,7 @@ def stieltjes(n, a=1):
 
     1. O. R. Ainsworth & L. W. Howell, "An integral representation of
        the generalized Euler-Mascheroni constants", NASA Technical
-       Paper 2456 (1985), 
+       Paper 2456 (1985),
        http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf
 
     2. M. W. Coffey, "The Stieltjes constants, their relation to the
@@ -3423,8 +3423,8 @@ def ei(z):
     For x large enough use the asymptotic expansion
     ei_as(x) = exp(x)/x * Sum(k!/x^k, (k,0,inf))
     k!/x^k  goes as exp(f(k))
-    f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in 
-    log(k/x) + 1/(2*k) = 0; therefore the smallest term of the 
+    f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in
+    log(k/x) + 1/(2*k) = 0; therefore the smallest term of the
     asympotic series is k!/x^k ~= e^(-k - 1/2)
     requiring this to be equal to e^-prec one gets x ~= k ~= prec*log(2)
     so that one should use ei_as(x) for x > prec*log(2)
@@ -3599,7 +3599,6 @@ The cosine integral behaves roughly like the sinc function
 
 It has infinitely many roots on the positive real axis::
 
-    
     >>> print findroot(ci, 1)
     0.6165054856207162337971104
     >>> print findroot(ci, 2)
@@ -4854,7 +4853,7 @@ def lambertw(z, k=0, approx=None):
 
         >>> w = lambertw(1, k=3)
         >>> print w    # doctest: +NORMALIZE_WHITESPACE
-        (-2.8535817554090378072068187234910812 + 
+        (-2.8535817554090378072068187234910812 +
           17.113535539412145912607826671159289j)
         >>> print w*exp(w)
         (1.0 + 3.5075477124212226194278700785075126e-36j)
@@ -5378,7 +5377,7 @@ def siegeltheta(t):
     .. math ::
 
         \theta(t) = \frac{
-        \log\Gamma\left(\frac{1+2it}{4}\right) - 
+        \log\Gamma\left(\frac{1+2it}{4}\right) -
         \log\Gamma\left(\frac{1-2it}{4}\right)
         }{2i} - \frac{\log \pi}{2} t.
 
@@ -5534,7 +5533,7 @@ def siegelz(t):
         176.4414342977104188888926
 
     To locate roots, Gram points `g_n` which can be computed
-    by :func:`grampoint` are useful. If `(-1)^n Z(g_n)` is 
+    by :func:`grampoint` are useful. If `(-1)^n Z(g_n)` is
     positive for two consecutive `n`, then `Z(t)` must have
     a zero between those points::
 
