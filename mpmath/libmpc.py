@@ -11,7 +11,7 @@ from settings import (\
 from libmpf import (\
     bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
     negative_rnd,
-    to_str, to_fixed, from_man_exp, from_float, from_int, to_int,
+    to_str, to_fixed, from_man_exp, from_float, to_float, from_int, to_int,
     fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
@@ -57,6 +57,23 @@ def complex_to_str(re, im, dps):
         return rs + " - " + to_str(mpf_neg(im), dps) + "j"
     else:
         return rs + " + " + to_str(im, dps) + "j"
+
+def mpc_to_complex(z, strict=False):
+    re, im = z
+    return complex(to_float(re, strict), to_float(im, strict))
+
+def mpc_hash(z):
+    try:
+        return hash(mpc_to_complex(z, strict=True))
+    except OverflowError:
+        return hash(z)
+
+def mpc_conjugate(z, prec, rnd=round_fast):
+    re, im = z
+    return re, mpf_neg(im, prec, rnd)
+
+def mpc_is_nonzero(z):
+    return z != mpc_zero
 
 def mpc_add((a, b), (c, d), prec, rnd=round_fast):
     return mpf_add(a, c, prec, rnd), mpf_add(b, d, prec, rnd)

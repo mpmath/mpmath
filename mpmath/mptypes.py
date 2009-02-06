@@ -23,6 +23,7 @@ from libmpf import (
 
 from libmpc import (
     complex_to_str,
+    mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
     mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
     mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int
 )
@@ -396,12 +397,13 @@ class mpc(mpnumeric):
     def __str__(s):
         return "(%s)" % complex_to_str(s.real._mpf_, s.imag._mpf_, mp.dps)
 
-    def __complex__(s): return complex(float(s.real), float(s.imag))
-    def __pos__(s): return mpc(s.real, s.imag)
+    def __complex__(s): return mpc_to_complex(s._mpc_)
+    def __pos__(s): return make_mpc(mpc_pos(s._mpc_, *prec_rounding))
     def __abs__(s): return make_mpf(mpc_abs(s._mpc_, *prec_rounding))
-    def __neg__(s): return mpc(-s.real, -s.imag)
-    def __nonzero__(s): return bool(s.real) or bool(s.imag)
-    def conjugate(s): return mpc(s.real, -s.imag)
+    def __neg__(s): return make_mpc(mpc_neg(s._mpc_, *prec_rounding))
+    def __nonzero__(s): return mpc_is_nonzero(s._mpc_)
+    def conjugate(s): return make_mpc(mpc_conjugate(s._mpc_, *prec_rounding))
+    def __hash__(s): return mpc_hash(s._mpc_)
 
     def __eq__(s, t):
         if not isinstance(t, mpc):

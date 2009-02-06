@@ -534,7 +534,7 @@ def mpf_eq(s, t):
 def mpf_hash(s):
     try:
         # Try to be compatible with hash values for floats and ints
-        return hash(to_float(s))
+        return hash(to_float(s, strict=1))
     except OverflowError:
         # We must unfortunately sacrifice compatibility with ints here. We
         # could do hash(man << exp) when the exponent is positive, but
