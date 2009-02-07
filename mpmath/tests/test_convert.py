@@ -46,6 +46,10 @@ def test_str_format():
     assert to_str(from_float(1.23),3,show_zero_exponent=True) == '1.23e+0'
     assert to_str(from_float(1.23456789000000e-2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e-2'
     assert to_str(from_float(1.23456789000000e+2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e+2'
+    assert to_str(from_float(2.1287e14), 15, max_fixed=1000) == '212870000000000.0'
+    assert to_str(from_float(2.1287e15), 15, max_fixed=1000) == '2128700000000000.0'
+    assert to_str(from_float(2.1287e16), 15, max_fixed=1000) == '21287000000000000.0'
+    assert to_str(from_float(2.1287e30), 15, max_fixed=1000) == '2128700000000000000000000000000.0'
 
 def test_tight_string_conversion():
     mp.dps = 15

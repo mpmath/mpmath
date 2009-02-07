@@ -1286,6 +1286,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 split = 1
             else:
                 split = exponent + 1
+                if split > dps:
+                    digits += "0"*(split-dps)
             exponent = 0
         else:
             split = 1
