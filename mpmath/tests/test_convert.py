@@ -36,8 +36,16 @@ def test_unicode():
     assert mpf(u'2.76') == 2.76
     assert mpf(u'inf') == inf
 
-def test_keep_zeros():
+def test_str_format():
     assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'
+    assert to_str(from_float(0.0),15,show_zero_exponent=True) == '0.0e+0'
+    assert to_str(from_float(0.0),0,show_zero_exponent=True) == '.0e+0'
+    assert to_str(from_float(0.0),0,show_zero_exponent=False) == '.0'
+    assert to_str(from_float(0.0),1,show_zero_exponent=True) == '0.0e+0'
+    assert to_str(from_float(0.0),1,show_zero_exponent=False) == '0.0'
+    assert to_str(from_float(1.23),3,show_zero_exponent=True) == '1.23e+0'
+    assert to_str(from_float(1.23456789000000e-2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e-2'
+    assert to_str(from_float(1.23456789000000e+2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e+2'
 
 def test_tight_string_conversion():
     mp.dps = 15
