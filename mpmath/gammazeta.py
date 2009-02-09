@@ -44,10 +44,11 @@ from libmpc import (\
     mpc_zero, mpc_one, mpc_half, mpc_two,
     mpc_abs, mpc_shift, mpc_pos,
     mpc_add, mpc_sub, mpc_mul, mpc_div,
-    mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf,
+    mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf, mpc_mpf_div,
     mpc_mul_int, mpc_pow_int,
     mpc_log, mpc_exp, mpc_pow,
     mpc_cos_pi, mpc_sin_pi,
+    mpc_reciprocal, mpc_square
 )
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
@@ -907,7 +908,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     if sign and exp+bc > 3:
         c = mpc_cos_pi(z, wp)
         s = mpc_sin_pi(z, wp)
-        q = mpc_mul(mpc_div(c, s, wp), (mpf_pi(wp), fzero), wp)
+        q = mpc_mul_mpf(mpc_div(c, s, wp), mpf_pi(wp), wp)
         p = mpc_psi0(mpc_sub(mpc_one, z, wp), wp)
         return mpc_sub(p, q, prec, rnd)
     # Just the logarithmic term
@@ -919,14 +920,14 @@ def mpc_psi0(z, prec, rnd=round_fast):
     s = mpc_zero
     if w < n:
         for k in xrange(w, n):
-            s = mpc_sub(s, mpc_div(mpc_one, z, wp), wp)
+            s = mpc_sub(s, mpc_reciprocal(z, wp), wp)
             z = mpc_add_mpf(z, fone, wp)
     z = mpc_sub(z, mpc_one, wp)
     # Logarithmic and endpoint term
     s = mpc_add(s, mpc_log(z, wp), wp)
     s = mpc_add(s, mpc_div(mpc_half, z, wp), wp)
     # Euler-Maclaurin remainder sum
-    z2 = mpc_mul(z, z, wp)
+    z2 = mpc_square(z, wp)
     t = mpc_one
     prev = mpc_zero
     k = 1
@@ -934,7 +935,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     while 1:
         t = mpc_mul(t, z2, wp)
         bern = mpf_bernoulli(2*k, wp)
-        term = mpc_div((bern, fzero), mpc_mul_int(t, 2*k, wp), wp)
+        term = mpc_mpf_div(bern, mpc_mul_int(t, 2*k, wp), wp)
         s = mpc_sub(s, term, wp)
         szterm = mpc_abs(term, 10)
         if k > 2 and mpf_le(szterm, eps):
@@ -1223,7 +1224,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
         wp2 = wp + mag
         pi = mpf_pi(wp+wp2)
         pi2 = (mpf_shift(pi, 1), fzero)
-        d = mpc_div(mpc_pow(pi2, s, wp2), (pi, fzero), wp2)
+        d = mpc_div_mpf(mpc_pow(pi2, s, wp2), pi, wp2)
         return mpc_mul(a,mpc_mul(b,mpc_mul(c,d,wp),wp),prec,rnd)
     n = int(wp/2.54 + 5)
     n += int(0.9*abs(to_int(im)))

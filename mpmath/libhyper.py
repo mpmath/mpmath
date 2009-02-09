@@ -32,6 +32,7 @@ from libmpc import (\
     mpc_div, mpc_add_mpf, mpc_sub_mpf,
     mpc_log, mpc_add, mpc_pos, mpc_shift,
     mpc_is_infnan, mpc_zero, mpc_sqrt, mpc_abs,
+    mpc_mpf_div, mpc_square,
 )
 
 from gammazeta import int_fac, mpf_euler
@@ -388,7 +389,7 @@ def mpc_erf(z, prec, rnd=round_fast):
     if im == fzero:
         return (mpf_erf(re, prec, rnd), fzero)
     wp = prec + 20
-    z2 = mpc_mul(z, z, prec+20)
+    z2 = mpc_square(z, prec+20)
     v = mpc_hyp1f1_rat((1,2), (3,2), mpc_neg(z2), wp, rnd)
     sqrtpi = mpf_sqrt(mpf_pi(wp), wp)
     c = mpf_rdiv_int(2, sqrtpi, wp)
@@ -828,7 +829,7 @@ def mpc_ellipk(z, prec, rnd=round_fast):
     wp = prec + 15
     a = mpc_sqrt(mpc_sub(mpc_one, z, wp), wp)
     v = mpc_agm1(a, wp)
-    r = mpc_div((mpf_pi(wp),fzero), v, prec, rnd)
+    r = mpc_mpf_div(mpf_pi(wp), v, prec, rnd)
     return mpc_shift(r, -1)
 
 def mpf_ellipe(x, prec, rnd=round_fast):

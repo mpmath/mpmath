@@ -22,10 +22,11 @@ from libmpf import (
 )
 
 from libmpc import (
-    complex_to_str,
+    mpc_to_str,
     mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
     mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
-    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int
+    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
+    mpc_mpf_div
 )
 
 from libelefun import mpf_pow
@@ -341,7 +342,7 @@ mpf.__mul__ = binary_op('__mul__',
 mpf.__div__ = binary_op('__div__',
     'val = mpf_div(sval, tval, prec, rounding)' + return_mpf,
     'val = mpf_div(sval, from_int(other), prec, rounding)' + return_mpf,
-    'val = mpc_div((sval, fzero), tval, prec, rounding)' + return_mpc)
+    'val = mpc_mpf_div(sval, tval, prec, rounding)' + return_mpc)
 
 mpf.__mod__ = binary_op('__mod__',
     'val = mpf_mod(sval, tval, prec, rounding)' + return_mpf,
@@ -395,7 +396,7 @@ class mpc(mpnumeric):
         return "mpc(real=%s, imag=%s)" % (r, i)
 
     def __str__(s):
-        return "(%s)" % complex_to_str(s.real._mpf_, s.imag._mpf_, mp.dps)
+        return "(%s)" % mpc_to_str(s._mpc_, mp.dps)
 
     def __complex__(s): return mpc_to_complex(s._mpc_)
     def __pos__(s): return make_mpc(mpc_pos(s._mpc_, *prec_rounding))
@@ -983,7 +984,7 @@ def nstr(x, n=6):
     if isinstance(x, mpf):
         return to_str(x._mpf_, n)
     if isinstance(x, mpc):
-        return "(" + complex_to_str(x._mpc_[0], x._mpc_[1], n)  + ")"
+        return "(" + mpc_to_str(x._mpc_, n)  + ")"
     if isinstance(x, basestring):
         return repr(x)
     from matrices import matrix
