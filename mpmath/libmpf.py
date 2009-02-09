@@ -1381,21 +1381,28 @@ def to_bstr(x):
 #                                Square roots                                #
 #----------------------------------------------------------------------------#
 
-def isqrt_small_python(x, bc=0):
+_1_800 = 1<<800
+_1_600 = 1<<600
+_1_400 = 1<<400
+_1_200 = 1<<200
+_1_100 = 1<<100
+_1_50 = 1<<50
+
+def isqrt_small_python(x):
     """
     Correctly (floor) rounded integer square root, using
     division. Fast up to ~200 digits.
     """
     if not x:
         return x
-    bc = bc or bitcount(x)
-    if bc < 1000:
+    if x < _1_800:
         # Exact with IEEE double precision arithmetic
-        if bc < 50:
+        if x < _1_50:
             return int(x**0.5)
         # Initial estimate can be any integer >= the true root; round up
         r = int(x**0.5 * 1.00000000000001) + 1
     else:
+        bc = bitcount(x)
         n = bc//2
         r = int((x>>(2*n-100))**0.5+2)<<(n-50)  # +2 is to round up
     # The following iteration now precisely computes floor(sqrt(x))
@@ -1407,27 +1414,34 @@ def isqrt_small_python(x, bc=0):
             return r
         r = y
 
-def isqrt_fast_python(x, bc=0):
+def isqrt_fast_python(x):
     """
-    Fast integer square root for large x, computed using division-free
-    Newton iteration. For random integers the result is almost always
-    correct (floor(sqrt(x))), but is 1 ulp too small with a roughly 0.1%
-    probability. For exact squares (or exact squares +/- 1) the chance
-    of a +/- 1 ulp error may be in the ballpark of 10-30%.
+    Fast approximate integer square root, computed using division-free
+    Newton iteration for large x. For random integers the result is almost
+    always correct (floor(sqrt(x))), but is 1 ulp too small with a roughly
+    0.1% probability. If x is very close to an exact square, the answer is
+    1 ulp wrong with high probability.
 
     With 0 guard bits, the largest error over a set of 10^5 random
     inputs of size 1-10^5 bits was 3 ulp. The use of 10 guard bits
     almost certainly guarantees a max 1 ulp error.
     """
-    bc = bc or bitcount(x)
-    # Small-integer case handled for completeness
-    if bc < 200:
-        # Direct FP approximation is at most 1 ulp wrong
-        if bc < 100:
-            return int(x**0.5)
-        # FP approximation + 1 Newton step is good to 100 bits
+    # Use direct division-based iteration if sqrt(x) < 2^400
+    # Assume floating-point square root accurate to within 1 ulp, then:
+    # 0 Newton iterations good to 52 bits
+    # 1 Newton iterations good to 104 bits
+    # 2 Newton iterations good to 208 bits
+    # 3 Newton iterations good to 416 bits
+    if x < _1_800:
         y = int(x**0.5)
-        return (y + x//y) >> 1
+        if x >= _1_100:
+            y = (y + x//y) >> 1
+            if x >= _1_200:
+                y = (y + x//y) >> 1
+                if x >= _1_400:
+                    y = (y + x//y) >> 1
+        return y
+    bc = bitcount(x)
     guard_bits = 10
     x <<= 2*guard_bits
     bc += 2*guard_bits
@@ -1448,15 +1462,14 @@ def isqrt_fast_python(x, bc=0):
     # (1/sqrt(x))*x = sqrt(x)
     return (r*(x>>hbc)) >> (p+guard_bits)
 
-def sqrtrem_python(x, bc=0):
+def sqrtrem_python(x):
     """Correctly rounded integer (floor) square root with remainder."""
-    bc = bc or bitcount(x)
     # to check cutoff:
     # plot(lambda x: timing(isqrt, 2**int(x)), [0,2000])
-    if bc <= 600:
-        y = isqrt_small_python(x, bc)
+    if x < _1_600:
+        y = isqrt_small_python(x)
         return y, x - y*y
-    y = isqrt_fast_python(x, bc) + 1
+    y = isqrt_fast_python(x) + 1
     rem = x - y*y
     # Correct remainder
     while rem < 0:
