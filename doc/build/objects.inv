@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: mpmath
-# Version: 0.11
+# Version: 0.12-svn
 mpmath.functions.cosh function functions/hyperbolic.html
 mpmath.functions.factorial function functions/gamma.html
 mpmath.functions.harmonic function functions/gamma.html
@@ -14,6 +14,7 @@ mpmath.identification.findpoly function identification.html
 mpmath.functions.sech function functions/hyperbolic.html
 mpmath.arange function basics.html
 mpmath.functions.tanh function functions/hyperbolic.html
+mpmath.functions.riemannr function functions/zeta.html
 mpmath.fdot function basics.html
 mpmath.functions.atan function functions/trigonometric.html
 mpmath.functions.cos function functions/trigonometric.html
@@ -72,6 +73,7 @@ mpmath.optimization.Illinois class calculus/optimization.html
 mpmath.functions.asech function functions/hyperbolic.html
 mpmath.functions.atan2 function functions/numberparts.html
 mpmath.functions.degrees function functions/trigonometric.html
+mpmath.functions.siegelz function functions/zeta.html
 mpmath.functions.airyai function functions/hypergeometric.html
 mpmath.calculus.limit function calculus/sums_limits.html
 mpmath.functions.coth function functions/hyperbolic.html
@@ -79,6 +81,7 @@ mpmath.functions.psi function functions/gamma.html
 mpmath.quadrature.Quadrature.estimate_error method calculus/integration.html
 mpmath.optimization.Secant class calculus/optimization.html
 mpmath.functions.power function functions/powers.html
+mpmath.functions.siegeltheta function functions/zeta.html
 mpmath.quadrature.Quadrature.transform_nodes method calculus/integration.html
 mpmath.functions.bernfrac function functions/zeta.html
 mpmath.functions.gamma function functions/gamma.html
@@ -86,12 +89,14 @@ mpmath.functions.besseli function functions/hypergeometric.html
 mpmath.functions.besselj function functions/hypergeometric.html
 mpmath.functions.besselk function functions/hypergeometric.html
 mpmath.functions.fabs function functions/numberparts.html
+mpmath.functions.primepi function functions/zeta.html
 mpmath.functions.ncdf function functions/expintegrals.html
 mpmath.mpmathify function basics.html
 mpmath.functions.agm function functions/powers.html
 mpmath.functions.csch function functions/hyperbolic.html
 mpmath.functions.bessely function functions/hypergeometric.html
 mpmath.almosteq function basics.html
+mpmath.functions.zetazero function functions/zeta.html
 mpmath.functions.si function functions/expintegrals.html
 mpmath.functions.chebyt function functions/hypergeometric.html
 mpmath.functions.chebyu function functions/hypergeometric.html
@@ -99,6 +104,7 @@ mpmath.functions.airybi function functions/hypergeometric.html
 mpmath.quadrature.TanhSinh.sum_next method calculus/integration.html
 mpmath.functions.digamma function functions/gamma.html
 mpmath.functions.stieltjes function functions/zeta.html
+mpmath.functions.primepi2 function functions/zeta.html
 mpmath.functions.cospi function functions/trigonometric.html
 mpmath.elliptic.jtheta function functions/elliptic.html
 mpmath.functions.catalan attribute functions/constants.html
@@ -158,6 +164,7 @@ mpmath.functions.degree attribute functions/constants.html
 mpmath.elliptic.jdn function functions/elliptic.html
 mpmath.absmax function basics.html
 mpmath.calculus.fourier function calculus/approximation.html
+mpmath.functions.grampoint function functions/zeta.html
 mpmath.odes.odefun function calculus/odes.html
 mpmath.calculus.polyroots function calculus/polynomials.html
 mpmath.calculus.nsum function calculus/sums_limits.html
@@ -182,6 +189,7 @@ mpmath.optimization.Ridder class calculus/optimization.html
 mpmath.functions.altzeta function functions/zeta.html
 mpmath.calculus.sumem function calculus/sums_limits.html
 mpmath.functions.erf function functions/expintegrals.html
+mpmath.functions.loggamma function functions/gamma.html
 mpmath.quadrature.Quadrature.sum_next method calculus/integration.html
 mpmath.functions.hyperfac function functions/gamma.html
 mpmath.quadrature.GaussLegendre.calc_nodes method calculus/integration.html

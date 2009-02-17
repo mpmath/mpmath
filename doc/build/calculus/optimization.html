@@ -3,22 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Root-finding and optimization &mdash; mpmath v0.11 documentation</title>
+    <title>Root-finding and optimization &mdash; mpmath v0.12-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:    '../',
-          VERSION:     '0.11',
-          COLLAPSE_MODINDEX: false,
-          FILE_SUFFIX: '.html'
+        URL_ROOT:    '../',
+        VERSION:     '0.12-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Sums, products, limits and extrapolation" href="sums_limits.html" />
     <link rel="prev" title="Polynomials" href="polynomials.html" /> 
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -157,6 +158,16 @@ function:</p>
 </pre></div>
 </div>
 <p>You can verify this by solving the system manually.</p>
+<p>Please note that the following (more general) syntax also works:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x2</span><span class="p">,</span> <span class="mf">5</span><span class="o">*</span><span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">3</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="mf">3</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">))</span>
+<span class="go">matrix(</span>
+<span class="go">[[&#39;-0.618033988749895&#39;],</span>
+<span class="go"> [&#39;-0.381966011250105&#39;]])</span>
+</pre></div>
+</div>
 <p><strong>Multiple roots</strong></p>
 <p>For multiple roots all methods of the Newtonian family (including secant)
 converge slowly. Consider this example:</p>
@@ -468,14 +479,14 @@ root-polishing to any precision.</p>
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jan 24, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+      Last updated on Feb 17, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

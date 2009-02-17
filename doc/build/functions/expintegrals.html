@@ -3,22 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Exponential integrals and error functions &mdash; mpmath v0.11 documentation</title>
+    <title>Exponential integrals and error functions &mdash; mpmath v0.12-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:    '../',
-          VERSION:     '0.11',
-          COLLAPSE_MODINDEX: false,
-          FILE_SUFFIX: '.html'
+        URL_ROOT:    '../',
+        VERSION:     '0.12-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Hypergeometric functions, Bessel/Airy, orthogonal polynomials" href="hypergeometric.html" />
     <link rel="prev" title="Factorials and gamma functions" href="gamma.html" /> 
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="gamma.html" title="Factorials and gamma functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -222,8 +223,8 @@ hypergeometric function <img class="math" src="../_images/math/1f6fb6dd6d16bd0ea
 <p>For x large enough use the asymptotic expansion
 ei_as(x) = exp(x)/x * Sum(k!/x^k, (k,0,inf))
 k!/x^k  goes as exp(f(k))
-f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in 
-log(k/x) + 1/(2*k) = 0; therefore the smallest term of the 
+f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in
+log(k/x) + 1/(2*k) = 0; therefore the smallest term of the
 asympotic series is k!/x^k ~= e^(-k - 1/2)
 requiring this to be equal to e^-prec one gets x ~= k ~= prec*log(2)
 so that one should use ei_as(x) for x &gt; prec*log(2)</p>
@@ -854,14 +855,14 @@ without the normalization factor <img class="math" src="../_images/math/039bf945
         <li class="right" >
           <a href="gamma.html" title="Factorials and gamma functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jan 24, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+      Last updated on Feb 17, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -3,22 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Mathematical functions &mdash; mpmath v0.11 documentation</title>
+    <title>Mathematical functions &mdash; mpmath v0.12-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:    '../',
-          VERSION:     '0.11',
-          COLLAPSE_MODINDEX: false,
-          FILE_SUFFIX: '.html'
+        URL_ROOT:    '../',
+        VERSION:     '0.12-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
     <link rel="next" title="Mathematical constants" href="constants.html" />
     <link rel="prev" title="Mpmath basics" href="../basics.html" /> 
   </head>
@@ -35,7 +36,7 @@
         <li class="right" >
           <a href="../basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -104,7 +105,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference external" href="gamma.html">Factorials and gamma functions</a><ul>
 <li class="toctree-l2"><a class="reference external" href="gamma.html#factorials-factorial-fac">Factorials (<tt class="docutils literal"><span class="pre">factorial()</span></tt>/<tt class="docutils literal"><span class="pre">fac()</span></tt>)</a></li>
-<li class="toctree-l2"><a class="reference external" href="gamma.html#gamma-function-gamma-gammaprod">Gamma function (<tt class="docutils literal"><span class="pre">gamma()</span></tt>, <tt class="docutils literal"><span class="pre">gammaprod()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="gamma.html#gamma-function-gamma-gammaprod-loggamma">Gamma function (<tt class="docutils literal"><span class="pre">gamma()</span></tt>, <tt class="docutils literal"><span class="pre">gammaprod()</span></tt>, <tt class="docutils literal"><span class="pre">loggamma()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="gamma.html#binomial-coefficients-rising-and-falling-factorials-binomial-rf-ff">Binomial coefficients, rising and falling factorials (<tt class="docutils literal"><span class="pre">binomial()</span></tt>, <tt class="docutils literal"><span class="pre">rf()</span></tt>, <tt class="docutils literal"><span class="pre">ff()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="gamma.html#beta-function-beta">Beta function (<tt class="docutils literal"><span class="pre">beta()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="gamma.html#double-factorials-fac2">Double factorials (<tt class="docutils literal"><span class="pre">fac2()</span></tt>)</a></li>
@@ -148,6 +149,9 @@
 <li class="toctree-l1"><a class="reference external" href="zeta.html">Zeta functions</a><ul>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-zeta-function-zeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#dirichlet-eta-function-altzeta">Dirichlet eta function (<tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#zeta-function-zeros-zetazero">Zeta function zeros (<tt class="docutils literal"><span class="pre">zetazero()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-siegel-functions-siegelz-siegeltheta-grampoint">Riemann-Siegel functions (<tt class="docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="docutils literal"><span class="pre">grampoint()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#prime-counting-function-primepi-primepi2-riemannr">Prime counting function (<tt class="docutils literal"><span class="pre">primepi()</span></tt>, <tt class="docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="docutils literal"><span class="pre">riemannr()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">Bernoulli numbers and polynomials (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#polylogarithms-polylog">Polylogarithms (<tt class="docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#stieltjes-constants-stieltjes">Stieltjes constants (<tt class="docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
@@ -192,13 +196,13 @@
         <li class="right" >
           <a href="../basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jan 24, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+      Last updated on Feb 17, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

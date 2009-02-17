@@ -3,22 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.11 documentation</title>
+    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.12-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:    '../',
-          VERSION:     '0.11',
-          COLLAPSE_MODINDEX: false,
-          FILE_SUFFIX: '.html'
+        URL_ROOT:    '../',
+        VERSION:     '0.12-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Differentiation" href="differentiation.html" />
     <link rel="prev" title="Root-finding and optimization" href="optimization.html" /> 
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -315,7 +316,7 @@ to within <tt class="docutils literal"><span class="pre">tol</span></tt> (which 
 </div></p><p>where <img class="math" src="../_images/math/8e8da0aef2d19017da7471378386d61620f288f5.png" alt="(a,b)" /> are given by <tt class="docutils literal"><span class="pre">interval</span></tt> and <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> or <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> may be
 infinite. The approximation is</p>
 <div class="math">
-<p><img src="../_images/math/2f8a5983ccba74e9f920ffcc20acec4a88d0b5df.png" alt="S \sim \int_a^b f(x) \,dx + \frac{f(a)+f(b)}{2} + 
+<p><img src="../_images/math/db8e1afb15b0b9c1fc2523d5dffb9e2a711088ab.png" alt="S \sim \int_a^b f(x) \,dx + \frac{f(a)+f(b)}{2} +
 \sum_{k=1}^{\infty} \frac{B_{2k}}{(2k)!}
 \left(f^{(2k-1)}(b)-f^{(2k-1)}(a)\right)." />
 </div></p><p>The last sum in the Euler-Maclaurin formula is not generally
@@ -541,7 +542,7 @@ very large arguments).</p>
 </div>
 <p>Evaluating Euler&#8217;s constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> using the limit representation</p>
 <div class="math">
-<p><img src="../_images/math/90708ace2f105e79c3ac41db39232615bec44f90.png" alt="\gamma = \lim_{n \rightarrow \infty } \left[ \left( 
+<p><img src="../_images/math/0d13693e9c7ebb8a4826916fa52025cde41ba954.png" alt="\gamma = \lim_{n \rightarrow \infty } \left[ \left(
 \sum_{k=1}^n \frac{1}{k} \right) - \log(n) \right]" />
 </div></p><p>(which converges notoriously slowly):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)])</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -800,14 +801,14 @@ Scientists and Engineers&#8221;, Springer 1999, pp. 368-375</li>
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jan 24, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+      Last updated on Feb 17, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

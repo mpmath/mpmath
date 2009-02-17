@@ -8,11 +8,12 @@ Factorials (:func:`factorial`/:func:`fac`)
 
 .. autofunction:: mpmath.functions.factorial
 
-Gamma function (:func:`gamma`, :func:`gammaprod`)
-.................................................
+Gamma function (:func:`gamma`, :func:`gammaprod`, :func:`loggamma`)
+...................................................................
 
 .. autofunction:: mpmath.functions.gamma
 .. autofunction:: mpmath.functions.gammaprod
+.. autofunction:: mpmath.functions.loggamma
 
 Binomial coefficients, rising and falling factorials (:func:`binomial`, :func:`rf`, :func:`ff`)
 ...............................................................................................

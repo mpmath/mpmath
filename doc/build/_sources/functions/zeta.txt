@@ -1,6 +1,9 @@
 Zeta functions
 --------------
 
+This section includes the Riemann zeta functions
+and associated functions pertaining to analytic number theory.
+
 .. contents::
 
 Riemann zeta function (:func:`zeta`)
@@ -12,6 +15,25 @@ Dirichlet eta function (:func:`altzeta`)
 ........................................
 
 .. autofunction:: mpmath.functions.altzeta
+
+Zeta function zeros (:func:`zetazero`)
+......................................
+
+.. autofunction:: mpmath.functions.zetazero
+
+Riemann-Siegel functions (:func:`siegelz`, :func:`siegeltheta`, :func:`grampoint`)
+..................................................................................
+
+.. autofunction:: mpmath.functions.siegelz
+.. autofunction:: mpmath.functions.siegeltheta
+.. autofunction:: mpmath.functions.grampoint
+
+Prime counting function (:func:`primepi`, :func:`primepi2`, :func:`riemannr`)
+.............................................................................
+
+.. autofunction:: mpmath.functions.primepi
+.. autofunction:: mpmath.functions.primepi2
+.. autofunction:: mpmath.functions.riemannr
 
 Bernoulli numbers and polynomials (:func:`bernoulli`, :func:`bernfrac`, :func:`bernpoly`)
 .........................................................................................

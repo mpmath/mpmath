@@ -3,22 +3,23 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Powers and logarithms &mdash; mpmath v0.11 documentation</title>
+    <title>Powers and logarithms &mdash; mpmath v0.12-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-          URL_ROOT:    '../',
-          VERSION:     '0.11',
-          COLLAPSE_MODINDEX: false,
-          FILE_SUFFIX: '.html'
+        URL_ROOT:    '../',
+        VERSION:     '0.12-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.11 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Trigonometric functions" href="trigonometric.html" />
     <link rel="prev" title="Number parts" href="numberparts.html" /> 
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -487,7 +488,7 @@ principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc520
 <p>Any branch gives a valid inverse:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span>    <span class="c"># doctest: +NORMALIZE_WHITESPACE</span>
-<span class="go">(-2.8535817554090378072068187234910812 + </span>
+<span class="go">(-2.8535817554090378072068187234910812 +</span>
 <span class="go">  17.113535539412145912607826671159289j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 <span class="go">(1.0 + 3.5075477124212226194278700785075126e-36j)</span>
@@ -586,7 +587,7 @@ at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef
 <h2>Arithmetic-geometric mean (<tt class="xref docutils literal"><span class="pre">agm()</span></tt>)<a class="headerlink" href="#arithmetic-geometric-mean-agm" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.agm">
-<!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.agm]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">agm</tt><big>(</big><em>a</em>, <em>b=1</em><big>)</big><a class="headerlink" href="#mpmath.functions.agm" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and
 <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, defined as the limit of the following iteration:</p>
 <div class="math">
@@ -629,6 +630,13 @@ for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c
 <span class="go">643448704.760133</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
 <span class="go">1.34814309345871e+48</span>
+</pre></div>
+</div>
+<p>For tiny <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/9713f6e0ad4bc38c4bb9b33c84311828627ad139.png" alt="\mathrm{agm}(1,x) \approx -\pi/(2 \log(x/4))" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">agm</span><span class="p">(</span><span class="s">&#39;0.01&#39;</span><span class="p">)</span>
+<span class="go">0.262166887202249</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;0.0025&#39;</span><span class="p">)</span>
+<span class="go">0.262172347753122</span>
 </pre></div>
 </div>
 <p>The arithmetic-geometric mean can also be computed for complex
@@ -733,14 +741,14 @@ arbitrary.</p>
         <li class="right" >
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jan 24, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.
+      Last updated on Feb 17, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->
