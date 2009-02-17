@@ -39,7 +39,8 @@ from functions import (
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
     lambertw,
     barnesg, superfac, hyperfac,
-    loggamma, siegeltheta, siegelz, grampoint
+    loggamma, siegeltheta, siegelz, grampoint,
+    zetazero, riemannr, primepi, primepi2
 )
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn

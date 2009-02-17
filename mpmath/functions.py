@@ -5510,7 +5510,7 @@ def siegelz(t):
         [-1.46035, 0.0, 2.73588, 0.0, -8.39357]
 
     The Z-function `Z(t)` is equal to `\pm |\zeta(s)|` on the
-    critical strip `s = 1/2+it` (i.e. for real arguments `t`
+    critical line `s = 1/2+it` (i.e. for real arguments `t`
     to `Z`).  Its zeros coincide with those of the Riemann zeta
     function::
 
@@ -5523,7 +5523,7 @@ def siegelz(t):
         >>> print findroot(zeta, 0.5+20j)
         (0.5 + 21.02203963877155499262848j)
 
-    Since the Z-function is real-valued on the critical strip
+    Since the Z-function is real-valued on the critical line
     (and unlike `|\zeta(s)|` analytic), it is useful for
     investigating the zeros of the Riemann zeta function.
     For example, one can use a root-finding algorithm based
@@ -5553,6 +5553,294 @@ def siegelz(t):
     if isinstance(t, mpf):
         return v.real
     return v
+
+_zeta_zeros = [
+14.134725142,21.022039639,25.010857580,30.424876126,32.935061588,
+37.586178159,40.918719012,43.327073281,48.005150881,49.773832478,
+52.970321478,56.446247697,59.347044003,60.831778525,65.112544048,
+67.079810529,69.546401711,72.067157674,75.704690699,77.144840069,
+79.337375020,82.910380854,84.735492981,87.425274613,88.809111208,
+92.491899271,94.651344041,95.870634228,98.831194218,101.317851006,
+103.725538040,105.446623052,107.168611184,111.029535543,111.874659177,
+114.320220915,116.226680321,118.790782866,121.370125002,122.946829294,
+124.256818554,127.516683880,129.578704200,131.087688531,133.497737203,
+134.756509753,138.116042055,139.736208952,141.123707404,143.111845808,
+146.000982487,147.422765343,150.053520421,150.925257612,153.024693811,
+156.112909294,157.597591818,158.849988171,161.188964138,163.030709687,
+165.537069188,167.184439978,169.094515416,169.911976479,173.411536520,
+174.754191523,176.441434298,178.377407776,179.916484020,182.207078484,
+184.874467848,185.598783678,187.228922584,189.416158656,192.026656361,
+193.079726604,195.265396680,196.876481841,198.015309676,201.264751944,
+202.493594514,204.189671803,205.394697202,207.906258888,209.576509717,
+211.690862595,213.347919360,214.547044783,216.169538508,219.067596349,
+220.714918839,221.430705555,224.007000255,224.983324670,227.421444280,
+229.337413306,231.250188700,231.987235253,233.693404179,236.524229666,
+]
+
+def _load_zeta_zeros(url):
+    import urllib
+    d = urllib.urlopen(url)
+    L = [float(x) for x in d.readlines()]
+    # Sanity check
+    assert round(L[0]) == 14
+    _zeta_zeros[:] = L
+
+def zetazero(n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
+    r"""
+    Returns the `n`-th nontrivial zero of the Riemann zeta function.
+    The zero is computed using :func:`findroot`, using a table lookup
+    for the initial point.
+
+    The zeros are located on the critical line with real part 1/2::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print zetazero(1)
+        (0.5 + 14.13472514173469379045725j)
+        >>> print zetazero(2)
+        (0.5 + 21.02203963877155499262848j)
+        >>> print zetazero(20)
+        (0.5 + 77.14484006887480537268266j)
+
+    Negative indices give the conjugate zeros (`n = 0` is undefined)::
+
+        >>> print zetazero(-1)
+        (0.5 - 14.13472514173469379045725j)
+
+    The default table only provides `n` up to 100. For larger `n` up to
+    100,000,  :func:`zetazero` will automatically download a table
+    (1.8 MB) from the website of Andrew Odlyzko [1]. This requires a
+    fast connection to the internet. Alternatively, you can supply the
+    url to a custom table. The table should be a file listing the
+    imaginary parts as float literals, separated by line breaks.
+
+    1. http://www.dtc.umn.edu/~odlyzko/zeta_tables/
+    """
+    n = int(n)
+    if n < 0:
+        return zetazero(-n).conjugate()
+    if n == 0:
+        raise ValueError("n must be nonzero")
+    if n > len(_zeta_zeros) and n <= 100000:
+        _load_zeta_zeros(url)
+    if n > len(_zeta_zeros):
+        raise NotImplementedError("n too large for zetazeros")
+    from optimization import findroot
+    return mpc(0.5, findroot(siegelz, _zeta_zeros[n-1]))
+
+@funcwrapper
+def riemannr(x):
+    r"""
+    Evaluates the Riemann R function, a smooth approximation of the
+    prime counting function `\pi(x)` (see :func:`primepi`). The Riemann
+    R function gives a fast numerical approximation useful e.g. to
+    roughly estimate the number of primes in a given interval.
+
+    The Riemann R function is computed using the rapidly convergent Gram
+    series,
+
+    .. math ::
+
+        R(x) = 1 + \sum_{k=1}^{\infty}
+            \frac{\log^k x}{k k! \zeta(k+1)}.
+
+    From the Gram series, one sees that the Riemann R function is a
+    well-defined analytic function (except for a branch cut along
+    the negative real half-axis); it can be evaluated for arbitrary
+    real or complex arguments.
+
+    The Riemann R function gives a very accurate approximation
+    of the prime counting function. For example, it is wrong by at
+    most 2 for `x < 1000`, and for `x = 10^9` differs from the exact
+    value of `\pi(x)` by 79, or less than two parts in a million.
+    It is about 10 times more accurate than the logarithmic integral
+    estimate (see :func:`li`), which however is even faster to evaluate.
+    It is orders of magnitude more accurate than the extremely
+    fast `x/\log x` estimate.
+
+    **Examples**
+
+    For small arguments, the Riemann R function almost exactly
+    gives the prime counting function if rounded to the nearest
+    integer::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print primepi(50), riemannr(50)
+        15 14.9757023241462
+        >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(100))
+        1.0
+        >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(300))
+        2.0
+
+    The Riemann R function can be evaluated for arguments far too large
+    for exact determination of `\pi(x)` to be computationally
+    feasible with any presently known algorithm::
+
+        >>> print riemannr(10**30)
+        1.46923988977204e+28
+        >>> print riemannr(10**100)
+        4.3619719871407e+97
+        >>> print riemannr(10**1000)
+        4.3448325764012e+996
+
+    A comparison of the Riemann R function and logarithmic integral estimates
+    for `\pi(x)` using exact values of `\pi(10^n)` up to `n = 9`.
+    The fractional error is shown in parentheses::
+
+        >>> exact = [4,25,168,1229,9592,78498,664579,5761455,50847534]
+        >>> for n, p in enumerate(exact):
+        ...     n += 1
+        ...     r, l = riemannr(10**n), li(10**n)
+        ...     rerr, lerr = nstr((r-p)/p,3), nstr((l-p)/p,3)
+        ...     print "%i %i %s(%s) %s(%s)" % (n, p, r, rerr, l, lerr)
+        ...
+        1 4 4.56458314100509(1.41e-1) 6.1655995047873(5.41e-1)
+        2 25 25.6616332669242(2.65e-2) 30.1261415840796(2.05e-1)
+        3 168 168.359446281167(2.14e-3) 177.609657990152(5.72e-2)
+        4 1229 1226.93121834343(-1.68e-3) 1246.13721589939(1.39e-2)
+        5 9592 9587.43173884197(-4.76e-4) 9629.8090010508(3.94e-3)
+        6 78498 78527.3994291277(3.75e-4) 78627.5491594622(1.65e-3)
+        7 664579 664667.447564748(1.33e-4) 664918.405048569(5.11e-4)
+        8 5761455 5761551.86732017(1.68e-5) 5762209.37544803(1.31e-4)
+        9 50847534 50847455.4277214(-1.55e-6) 50849234.9570018(3.35e-5)
+
+    The derivative of the Riemann R function gives the approximate
+    probability for a number of magnitude `x` to be prime::
+
+        >>> print diff(riemannr, 1000)
+        0.141903028110784
+        >>> print (primepi(1050) - primepi(950)) / 100.
+        0.15
+
+    Evaluation is supported for arbitrary arguments and at arbitrary
+    precision::
+
+        >>> mp.dps = 30
+        >>> print riemannr(7.5)
+        3.72934743264966261918857135136
+        >>> print riemannr(-4+2j)
+        (-0.551002208155486427591793957644 + 2.16966398138119450043195899746j)
+
+    """
+    if x == 0:
+        return mpf(0)
+    # Check if a simple asymptotic estimate is accurate enough
+    if abs(x) > 1000:
+        a = li(x)
+        b = 0.5*li(sqrt(x))
+        if abs(b) < abs(a)*eps:
+            return a
+    if abs(x) < 0.01:
+        # XXX
+        mp.prec += int(-log(abs(x),2))
+    # Sum Gram's series
+    s = t = mpf(1)
+    u = log(x)
+    k = 1
+    while abs(t) > abs(s)*eps:
+        t = t * u / k
+        s += t / (k * zeta(k+1))
+        k += 1
+    return s
+
+def primepi(x):
+    r"""
+    Evaluates the prime counting function, `\pi(x)`, which gives
+    the number of primes less than or equal to `x`. The argument
+    `x` may be fractional.
+
+    The prime counting function is very expensive to evaluate
+    precisely for large `x`, and the present implementation is
+    not optimized in any way. For numerical approximation of the
+    prime counting function, it is better to use :func:`primepi2`
+    or :func:`riemannr`.
+
+    Some values of the prime counting function::
+
+        >>> from mpmath import *
+        >>> [primepi(k) for k in range(20)]
+        [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8]
+        >>> primepi(3.5)
+        2
+        >>> primepi(100000)
+        9592
+
+    """
+    x = int(x)
+    if x < 2:
+        return 0
+    from gammazeta import list_primes
+    return len(list_primes(x))
+
+def primepi2(x):
+    r"""
+    Returns an interval (as an ``mpi`` instance) providing bounds
+    for the value of the prime counting function `\pi(x)`. For small
+    `x`, :func:`primepi2` returns an exact interval based on
+    the output of :func:`primepi`. For `x > 2656`, a loose interval
+    based on Schoenfeld's inequality
+
+    .. math ::
+
+        |\pi(x) - \mathrm{li}(x)| < \frac{\sqrt x \log x}{8 \pi}
+
+    is returned. This estimate is rigorous assuming the truth of
+    the Riemann hypothesis, and can be computed very quickly.
+
+    **Examples**
+
+    Exact values of the prime counting function for small `x`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> print primepi2(10)
+        [4.0, 4.0]
+        >>> print primepi2(100)
+        [25.0, 25.0]
+        >>> print primepi2(1000)
+        [168.0, 168.0]
+
+    Loose intervals are generated for moderately large `x`:
+
+        >>> print primepi2(10000), primepi(10000)
+        [1209.0, 1283.0] 1229
+        >>> print primepi2(50000), primepi(50000)
+        [5070.0, 5263.0] 5133
+
+    As `x` increases, the absolute error gets worse while the relative
+    error improves. The exact value of `\pi(10^{23})` is
+    1925320391606803968923, and :func:`primepi2` gives 9 significant
+    digits::
+
+        >>> p = primepi2(10**23)
+        >>> print p
+        [1.9253203909477023089e+21, 1.925320392280406229e+21]
+        >>> print p.delta / p.a
+        6.9219851739689e-10
+
+    A more precise, nonrigorous estimate for `\pi(x)` can be
+    obtained using the Riemann R function (:func:`riemannr`).
+    For large enough `x`, the value returned by :func:`primepi2`
+    essentially amounts to a small perturbation of the value returned by
+    :func:`riemannr`::
+
+        >>> print primepi2(10**100)
+        [4.3619719871407024816e+97, 4.3619719871407039993e+97]
+        >>> print riemannr(10**100)
+        4.3619719871407e+97
+    """
+    x = int(x)
+    if x < 2:
+        return mpi(0,0)
+    if x < 2657:
+        return mpi(primepi(x))
+    mid = li(x)
+    # Schoenfeld's estimate for x >= 2657, assuming RH
+    err = sqrt(x,rounding='u')*ln(x,rounding='u')/8/pi(rounding='d')
+    a = floor((mpi(mid)-err).a, rounding='d')
+    b = ceil((mpi(mid)+err).b, rounding='u')
+    return mpi(a, b)
 
 @funcwrapper
 def bernpoly(n, z):
