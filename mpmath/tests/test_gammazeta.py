@@ -87,6 +87,7 @@ def test_gamma():
     assert factorial(0) == fac(0) == 1
     assert factorial(3) == 6
     assert isnan(gamma(nan))
+    assert gamma(1100).ae('4.8579168073569433667e2866')
 
 def test_fac2():
     mp.dps = 15
@@ -125,6 +126,8 @@ def test_gamma_quotients():
     assert binomial(-1,0) == 1
     assert binomial(-2,-4) == 3
     assert binomial(4.5, 1.5) == 6.5625
+    assert binomial(1100,1) == 1100
+    assert binomial(1100,2) == 604450
     assert beta(1,1) == 1
     assert beta(0,0) == inf
     assert beta(3,0) == inf

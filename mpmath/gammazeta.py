@@ -692,14 +692,14 @@ def mpf_gamma(x, prec, rounding=round_fast, p1=1):
     reflect = sign or exp+bc < -1
     if p1:
         # Should be done exactly!
-        x = mpf_sub(x, fone, bc-exp+2)
+        x = mpf_sub(x, fone)
     # x < 0.25
     if reflect:
         # gamma = pi / (sin(pi*x) * gamma(1-x))
         wp += 15
         pix = mpf_mul(x, mpf_pi(wp), wp)
         t = mpf_sin_pi(x, wp)
-        g = mpf_gamma(mpf_sub(fone, x, wp), wp)
+        g = mpf_gamma(mpf_sub(fone, x), wp)
         return mpf_div(pix, mpf_mul(t, g, wp), prec, rounding)
     sprec, a, c = get_spouge_coefficients(wp)
     s = spouge_sum_real(x, sprec, a, c)
