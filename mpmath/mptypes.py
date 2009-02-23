@@ -56,7 +56,7 @@ get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
 
 def mpmathify(x, strings=True):
     """
-    Converts *x* to an ``mpf`` or ``mpc``. If *x* is of type ``mpf``,
+    Converts *x* to an ``mpf``, ``mpc`` or ``mpi``. If *x* is of type ``mpf``,
     ``mpc``, ``int``, ``float``, ``complex``, the conversion
     will be performed losslessly.
 
@@ -97,6 +97,8 @@ def mpmathify(x, strings=True):
                 im = match.group('im').rstrip('j')
                 return mpc(mpmathify(re),
                            mpmathify(im))
+            if '[' in x or '(' in x or '+-' in x:
+                return mpi_from_str(x)
             raise e
     if hasattr(x, '_mpf_'): return make_mpf(x._mpf_)
     if hasattr(x, '_mpc_'): return make_mpc(x._mpc_)
@@ -1103,12 +1105,16 @@ def almosteq(s, t, rel_eps=None, abs_eps=None):
         err = diff/abss
     return err <= rel_eps
 
-def nstr(x, n=6):
+def nstr(x, n=6, **kwargs):
     """
-    Convert an ``mpf`` or ``mpc`` to a decimal string literal with *n*
+    Convert an ``mpf``, ``mpc`` or ``mpi`` to a decimal string literal with *n*
     significant digits. The small default value for *n* is chosen to
     make this function useful for printing collections of numbers
     (lists, matrices, etc).
+
+    If *x* is an ``mpi``, there are some extra options, notably *mode*, which
+    can be 'brackets', 'diff', 'plusminus' or 'percent'. See ``mpi_to_str`` for
+    a more complete documentation.
 
     If *x* is a list or tuple, :func:`nstr` is applied recursively
     to each element. For unrecognized classes, :func:`nstr`
@@ -1136,13 +1142,15 @@ def nstr(x, n=6):
     from matrices import matrix
     if isinstance(x, matrix):
         return x.__nstr__(n)
+    if isinstance(x, mpi):
+        return mpi_to_str(x, n, **kwargs)
     return str(x)
 
-def nprint(x, n=6):
+def nprint(x, n=6, **kwargs):
     """
     Equivalent to ``print nstr(x, n)``.
     """
-    print nstr(x, n)
+    print nstr(x, n, **kwargs)
 
 def chop(x, tol=None):
     """
