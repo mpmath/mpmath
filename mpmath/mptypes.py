@@ -37,6 +37,8 @@ from libmpi import (
     mpi_mul, mpi_div, mpi_pow_int, mpi_pow
 )
 
+from string import strip
+
 class mpnumeric(object):
     """Base class for mpf and mpc. Calling mpnumeric(x) returns an mpf
     if x can be converted to an mpf (if it is a float, int, mpf, ...),
@@ -635,6 +637,150 @@ class mpi(mpnumeric):
     __rtruediv__ = __rdiv__
     __floordiv__ = __div__
     __rfloordiv__ = __rdiv__
+
+def mpi_from_str(s):
+    """
+    Parse an interval number given as a string.
+
+    Allowed forms are
+        1. 'a +- b'
+        2. 'a (b%)'  % sign is optional
+        3. '[a, b]'
+        4. 'x[y,z]e'
+    In 1, a is the midpoint of the interval and b is the half-width.
+    In 2, a is the midpoint of the interval and b is the half-width.
+    In 3, the interval is indicated directly.
+    In 4, x are shared digits, y and z are unequal digits, e is the exponent.
+    """
+    e = ValueError("Improperly formed interval number '%s'" %s)
+    s = s.replace(" ", "")
+    if "+-" in s:
+        # case 1
+        n = [mpf(strip(i)) for i in s.split("+-")]
+        return mpi(n[0] - n[1], n[0] + n[1])
+    elif "(" in s:
+        # case 2
+        if s[0] == "(":  # Don't confuse with a complex number (x,y)
+            return None
+        if ")" not in s:
+            raise e
+        s = s.replace(")", "")
+        percent = False
+        if "%" in s:
+            if s[-1] != "%":
+                raise e
+            percent = True
+            s = s.replace("%", "")
+        a, p = [mpf(strip(i)) for i in s.split("(")]
+        d = p
+        if percent:
+            d = a*p / 100
+        return mpi(a - d, a + d)
+    elif "," in s:
+        if ('[' not in s) or (']' not in s):
+            raise e
+        if s[0] == '[':
+            # case 3
+            s = s.replace("[", "")
+            s = s.replace("]", "")
+            n = [mpf(strip(i)) for i in s.split(",")]
+            return mpi(n[0], n[1])
+        else:
+            # case 4
+            x, y = s.split('[')
+            y, z = y.split(',')
+            if 'e' in s:
+                z, e = z.split(']')
+            else:
+                z, e = z.rstrip(']'), ''
+            return mpi(x + y + e, x + z + e)
+    else:
+        return None
+
+def mpi_to_str(x, dps=None, use_spaces=True, brackets=('[', ']'),
+               mode='brackets', percent_dps=4, **kwargs):
+    """
+    Convert a mpi interval to a string.
+
+    **Arguments**
+
+    *dps*
+        decimal places to use for printing
+    *use_spaces*
+        use spaces for more readable output, defaults to true
+    *brackets*
+        tuple of two strings indicating the brackets to use
+    *mode*
+        mode of display: 'plusminus', 'percent', 'brackets' (default) or 'diff'
+    *percent_dps*
+        limit the percentage value to percent_dps digits
+
+    **Examples**
+
+    >>> from mpmath import mpi, mp
+    >>> mp.dps = 30
+    >>> x = mpi(1, 2)
+    >>> mpi_to_str(x, mode='plusminus')
+    1.5 +- 0.5
+    >>> mpi_to_str(x, mode='percent')
+    1.5 (33.33%)
+    >>> mpi_to_str(x, mode='brackets')
+    [1.0, 2.0]
+    >>> mpi_to_str(x, mode='brackets' , brackets=('<', '>'))
+    <1.0, 2.0>
+    >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')
+    >>> mpi_to_str(x, mode='diff')
+    5.2582327113062[393041, 749951]
+    """ # FIXME: doctests are broken
+    if dps is None:
+        dps = mp.dps # TODO: maybe choose a smaller default value
+    a = to_str(x.a._mpf_, dps, **kwargs)
+    b = to_str(x.b._mpf_, dps, **kwargs)
+    mid = to_str(x.mid._mpf_, dps, **kwargs)
+    delta = to_str((x.delta/2)._mpf_, dps, **kwargs)
+    sp = ""
+    if use_spaces:
+        sp = " "
+    br1, br2 = brackets
+    if mode == 'plusminus':
+        s = mid + sp + "+-" + sp + delta
+    elif mode == 'percent':
+        a = x.mid
+        if x.mid != 0:
+            b = 100*x.delta/(2*x.mid)
+        else:
+            b = MP_ZERO
+        m = str(a)
+        p = nstr(b, percent_dps)
+        s = m + sp + "(" + p + "%)"
+    elif mode == 'brackets':
+        s = br1 + a.strip() + "," + sp + b + br2
+    elif mode == 'diff':
+        # use more digits if str(x.a) and str(x.b) are equal
+        if a == b:
+            a = to_str(x.a._mpf_, repr_dps(mp.prec), **kwargs)
+            b = to_str(x.b._mpf_, repr_dps(mp.prec), **kwargs)
+        # separate mantissa and exponent
+        a = a.split('e')
+        if len(a) == 1:
+            a.append('')
+        b = b.split('e')
+        if len(b) == 1:
+            b.append('')
+        if a[1] == b[1]:
+            if a[0] != b[0]:
+                for i in xrange(len(a[0]) + 1):
+                    if a[0][i] != b[0][i]:
+                        break
+                s = (a[0][:i] + br1 + a[0][i:] + ',' + sp + b[0][i:] + br2
+                     + 'e'*min(len(a[1]), 1) + a[1])
+            else: # no difference
+                s = a[0] + br1 + br2 + 'e'*min(len(a[1]), 1) + a[1]
+        else:
+            s = br1 + 'e'.join(a) + ',' + sp + 'e'.join(b) + br2
+    else:
+        raise ValueError("'%s' is unknown mode for printing mpi" % mode)
+    return s
 
 def make_mpi(val, cls=mpi):
     a = new(cls)
