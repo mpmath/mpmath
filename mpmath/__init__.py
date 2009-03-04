@@ -40,7 +40,9 @@ from functions import (
     lambertw,
     barnesg, superfac, hyperfac,
     loggamma, siegeltheta, siegelz, grampoint,
-    zetazero, riemannr, primepi, primepi2
+    zetazero, riemannr, primepi, primepi2,
+    bell, polyexp,
+    expm1
 )
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn

@@ -6066,6 +6066,239 @@ def polylog(s, z):
     #from quadrature import quad
     #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
+# Experimental code; could be used elsewhere
+def sum_accurately(terms, check_step=1):
+    orig = mp.prec
+    extra = 10
+    while 1:
+        mp.prec = orig + extra
+        max_term = -inf
+        s = 0
+        k = 0
+        for term in terms():
+            s += term
+            if not k % check_step and term:
+                abs_term = abs(term)
+                abs_sum = abs(s)
+                max_term = max(max_term, abs_term)
+                if abs_term <= eps*abs_sum:
+                    break
+            k += 1
+        if abs_sum:
+            cancellation = int(max(0,log(max_term/abs_sum,2)))
+        else:
+            cancellation = mp.prec
+        if cancellation < extra:
+            break
+        else:
+            extra += cancellation
+    return s
+
+@funcwrapper
+def bell(n, x=mpf(1)):
+    r"""
+    For `n` a nonnegative integer, ``bell(n,x)`` evaluates the Bell
+    polynomial `B_n(x)`, the first few of which are
+
+    .. math ::
+
+        B_0(x) = 1
+
+        B_1(x) = x
+
+        B_2(x) = x^2+x
+
+        B_3(x) = x^3+3x^2+x
+
+    If `x = 1` or :func:`bell` is called with only one argument, it
+    gives the `n`-th Bell number `B_n`, which is the number of
+    partitions of a set with `n` elements. By setting the precision to
+    at least `\log_{10} B_n` digits, :func:`bell` provides fast
+    calculation of exact Bell numbers.
+
+    In general, :func:`bell` computes
+
+    .. math ::
+
+        B_n(x) = e^{-x} \left(\mathrm{sinc}(\pi n) + E_n(x)\right)
+
+    where `E_n(x)` is the generalized exponential function implemented
+    by :func:`polyexp`. This is an extension of Dobinski's formula [1],
+    where the modification is the sinc term ensuring that `B_n(x)` is
+    continuous in `n`; :func:`bell` can thus be evaluated,
+    differentiated, etc for arbitrary complex arguments.
+
+    **Examples**
+
+    Simple evaluations::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print bell(0, 2.5)
+        1.0
+        >>> print bell(1, 2.5)
+        2.5
+        >>> print bell(2, 2.5)
+        8.75
+
+    Evaluation for arbitrary complex arguments::
+
+        >>> print bell(5.75+1j, 2-3j)
+        (-10767.71345136587098445143 - 15449.55065599872579097221j)
+
+    The first few Bell polynomials::
+
+        >>> for k in range(7):
+        ...     nprint(taylor(lambda x: bell(k,x), 0, k))
+        ...
+        [1.0]
+        [0.0, 1.0]
+        [0.0, 1.0, 1.0]
+        [0.0, 1.0, 3.0, 1.0]
+        [0.0, 1.0, 7.0, 6.0, 1.0]
+        [0.0, 1.0, 15.0, 25.0, 10.0, 1.0]
+        [0.0, 1.0, 31.0, 90.0, 65.0, 15.0, 1.0]
+
+    The first few Bell numbers and complementary Bell numbers::
+
+        >>> print [int(bell(k)) for k in range(10)]
+        [1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147]
+        >>> print [int(bell(k,-1)) for k in range(10)]
+        [1, -1, 0, 1, 1, -2, -9, -9, 50, 267]
+
+    Large Bell numbers::
+
+        >>> mp.dps = 50
+        >>> print bell(50)
+        185724268771078270438257767181908917499221852770.0
+        >>> print bell(50,-1)
+        -29113173035759403920216141265491160286912.0
+
+    Some even larger values::
+
+        >>> mp.dps = 25
+        >>> print bell(1000,-1)
+        -1.237132026969293954162816e+1869
+        >>> print bell(1000)
+        2.989901335682408421480422e+1927
+        >>> print bell(1000,2)
+        6.591553486811969380442171e+1987
+        >>> print bell(1000,100.5)
+        9.101014101401543575679639e+2529
+
+    A determinant identity satisfied by Bell numbers::
+
+        >>> mp.dps = 15
+        >>> N = 8
+        >>> print det([[bell(k+j) for j in range(N)] for k in range(N)])
+        125411328000.0
+        >>> print superfac(N-1)
+        125411328000.0
+
+    **References**
+
+    1. http://mathworld.wolfram.com/DobinskisFormula.html
+
+    """
+    if n == 0:
+        if isnan(x):
+            return x
+        return type(x)(1)
+    if isinf(x) or isinf(n) or isnan(x) or isnan(n):
+        return x**n
+    if n == 1: return x
+    if n == 2: return x*(x+1)
+    if x == 0: return x*n
+    return _polyexp(n, x, True) / exp(x)
+
+def _polyexp(n, x, extra=False, nd=0):
+    def _terms():
+        if extra:
+            yield sincpi(n)
+        t = x
+        k = 1
+        while 1:
+            yield k**n * t
+            k += 1
+            t = t*x/k
+    return sum_accurately(_terms, check_step=4)
+
+@funcwrapper
+def polyexp(s, z):
+    r"""
+    Evaluates the generalized exponential function (for arbitrary
+    complex `s`, `z`)
+
+    .. math ::
+
+        E_s(z) = \sum_{k=1}^{\infty} \frac{k^s}{k!} z^k.
+
+    `E_s(z)` is constructed from the exponential function analogously
+    to how the polylogarithm is constructed from the ordinary
+    logarithm; as a function of `s` (with `z` fixed), `E_s` is a
+    Dirichlet series. It is an entire function of both `s` and `z`.
+
+    In terms of the Bell polynomials `B_n(x)` (see :func:`bell`), we
+    have
+
+    .. math ::
+
+        E_s(z) = e^z B_s(z) - \mathrm{sinc}(\pi s).
+
+    Note that `B_n(x)` and `e^{-x} E_n(x)` are identical if `n`
+    is a nonzero integer, but not otherwise. In particular, they differ
+    at `n = 0`.
+
+    **Examples**
+
+    Evaluating a series::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25
+        >>> print nsum(lambda k: sqrt(k)/fac(k), [1,inf])
+        2.101755547733791780315904
+        >>> print polyexp(0.5,1)
+        2.101755547733791780315904
+
+    Evaluation for arbitrary arguments::
+
+        >>> print polyexp(-3-4j, 2.5+2j)
+        (2.351660261190434618268706 + 1.202966666673054671364215j)
+
+    Evaluation is accurate for tiny function values::
+
+        >>> print polyexp(4, -100)
+        3.499471750566824369520223e-36
+
+    If `n` is a nonpositive integer, `E_n` reduces to a special
+    instance of the hypergeometric function `\,_pF_q`::
+
+        >>> n = 3
+        >>> x = pi
+        >>> print polyexp(-n,x)
+        4.042192318847986561771779
+        >>> print x*hyper([1]*(n+1), [2]*(n+1), x)
+        4.042192318847986561771779
+
+    """
+    if isinf(z) or isinf(s) or isnan(z) or isnan(s):
+        return z**s
+    if z == 0: return z*s
+    if s == 0: return expm1(z)
+    if s == 1: return exp(z)*z
+    if s == 2: return exp(z)*z*(z+1)
+    return _polyexp(s, z)
+
+# TODO: tests; improve implementation
+@funcwrapper
+def expm1(x):
+    """
+    Accurately computes exp(x)-1.
+    """
+    if not x:
+        return type(x)(1)
+    return sum_accurately(lambda: iter([exp(x),-1]),1)
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
