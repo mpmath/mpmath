@@ -559,6 +559,7 @@ def mpf_cmp(s, t):
         # Follow same convention as Python's cmp for float nan
         if t == fnan: return 1
         if s == finf: return 1
+        if t == fninf: return 1
         return -1
     # Different sides of zero
     if ssign != tsign:
