@@ -6208,10 +6208,10 @@ def bell(n, x=mpf(1)):
         return x**n
     if n == 1: return x
     if n == 2: return x*(x+1)
-    if x == 0: return x*n
+    if x == 0: return sincpi(n)
     return _polyexp(n, x, True) / exp(x)
 
-def _polyexp(n, x, extra=False, nd=0):
+def _polyexp(n, x, extra=False):
     def _terms():
         if extra:
             yield sincpi(n)

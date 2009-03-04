@@ -498,3 +498,5 @@ def test_bell_polyexp():
     assert bell(74) == 5006908024247925379707076470957722220463116781409659160159536981161298714301202
     mp.dps = 15
     assert bell(10,20j) == 7504528595600+15649605360020j
+    # continuity of the generalization
+    assert bell(0.5,0).ae(sinc(pi*0.5))
