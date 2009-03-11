@@ -700,7 +700,7 @@ def mpi_from_str(s):
         return None
 
 def mpi_to_str(x, dps=None, use_spaces=True, brackets=('[', ']'),
-               mode='brackets', percent_dps=4, **kwargs):
+               mode='brackets', error_dps=4, **kwargs):
     """
     Convert a mpi interval to a string.
 
@@ -714,8 +714,8 @@ def mpi_to_str(x, dps=None, use_spaces=True, brackets=('[', ']'),
         tuple of two strings indicating the brackets to use
     *mode*
         mode of display: 'plusminus', 'percent', 'brackets' (default) or 'diff'
-    *percent_dps*
-        limit the percentage value to percent_dps digits
+    *error_dps*
+        limit the error to *error_dps* digits (mode 'plusminus and 'percent')
 
     **Examples**
 
@@ -739,7 +739,7 @@ def mpi_to_str(x, dps=None, use_spaces=True, brackets=('[', ']'),
     a = to_str(x.a._mpf_, dps, **kwargs)
     b = to_str(x.b._mpf_, dps, **kwargs)
     mid = to_str(x.mid._mpf_, dps, **kwargs)
-    delta = to_str((x.delta/2)._mpf_, dps, **kwargs)
+    delta = to_str((x.delta/2)._mpf_, error_dps, **kwargs)
     sp = ""
     if use_spaces:
         sp = " "
@@ -753,7 +753,7 @@ def mpi_to_str(x, dps=None, use_spaces=True, brackets=('[', ']'),
         else:
             b = MP_ZERO
         m = str(a)
-        p = nstr(b, percent_dps)
+        p = nstr(b, error_dps)
         s = m + sp + "(" + p + "%)"
     elif mode == 'brackets':
         s = br1 + a.strip() + "," + sp + b + br2
