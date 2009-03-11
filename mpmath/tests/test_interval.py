@@ -235,8 +235,10 @@ def test_interval_cos_sin():
 def test_mpi_to_str():
     mp.dps = 30
     x = mpi(1, 2)
-    assert mpi_to_str(x, mode='plusminus') == '1.5 +- 0.5'
-    assert mpi_to_str(x, mode='plusminus', use_spaces=False) == '1.5+-0.5'
+    # FIXME: error_dps should not be necessary
+    assert mpi_to_str(x, mode='plusminus', error_dps=6) == '1.5 +- 0.5'
+    assert mpi_to_str(x, mode='plusminus', use_spaces=False, error_dps=6
+           ) == '1.5+-0.5'
     assert mpi_to_str(x, mode='percent') == '1.5 (33.33%)'
     assert mpi_to_str(x, mode='brackets', use_spaces=False) == '[1.0,2.0]'
     assert mpi_to_str(x, mode='brackets' , brackets=('<', '>')) == '<1.0, 2.0>'
