@@ -674,7 +674,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                 if offset > 100 and prec:
                     delta = sbc + sexp - tbc - texp
                     if delta > prec + 4:
-                        offset = min(delta, prec) + 4
+                        offset = prec + 4
                         sman <<= offset
                         if tsign: sman -= 1
                         else:     sman += 1
@@ -696,10 +696,10 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                 return normalize1(ssign, man, texp, bc, prec or bc, rnd)
             elif offset < 0:
                 # Outside precision range; only need to perturb
-                if offset < 100 and prec:
+                if offset < -100 and prec:
                     delta = tbc + texp - sbc - sexp
                     if delta > prec + 4:
-                        offset = min(delta, prec) + 4
+                        offset = prec + 4
                         tman <<= offset
                         if ssign: tman -= 1
                         else:     tman += 1
