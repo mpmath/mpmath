@@ -40,7 +40,7 @@ from functions import (
     lambertw,
     barnesg, superfac, hyperfac,
     loggamma, siegeltheta, siegelz, grampoint,
-    zetazero, riemannr, primepi, primepi2,
+    zetazero, riemannr, primepi, primepi2, primezeta,
     bell, polyexp,
     expm1
 )

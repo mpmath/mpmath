@@ -21,6 +21,7 @@ import libmpc
 import libmpi
 import gammazeta
 import libhyper
+import libintmath
 
 from settings import dps_to_prec
 
@@ -5896,6 +5897,116 @@ def primepi2(x):
     a = floor((mpi(mid)-err).a, rounding='d')
     b = ceil((mpi(mid)+err).b, rounding='u')
     return mpi(a, b)
+
+@funcwrapper
+def primezeta(s):
+    r"""
+    Computes the prime zeta function, which is defined
+    in analogy with the Riemann zeta function (:func:`zeta`)
+    as
+
+    .. math ::
+
+        P(s) = \sum_p \frac{1}{p^s}
+
+    where the sum is taken over all prime numbers `p`. Although
+    this sum only converges for `\mathrm{Re}(s) > 1`, the
+    function is defined by analytic continuation in the
+    half-plane `\mathrm{Re}(s) > 0`.
+
+    **Examples**
+
+    Arbitrary-precision evaluation for real and complex arguments is
+    supported::
+
+        >>> from mpmath import *
+        >>> mp.dps = 30
+        >>> print primezeta(2)
+        0.452247420041065498506543364832
+        >>> print primezeta(pi)
+        0.15483752698840284272036497397
+        >>> mp.dps = 50
+        >>> print primezeta(3)
+        0.17476263929944353642311331466570670097541212192615
+        >>> mp.dps = 20
+        >>> print primezeta(3+4j)
+        (-0.12085382601645763295 - 0.013370403397787023602j)
+
+    The prime zeta function has a logarithmic pole at `s = 1`,
+    with residue equal to the difference of the Mertens and
+    Euler constants::
+
+        >>> print primezeta(1)
+        +inf
+        >>> print extradps(25)(lambda x: primezeta(1+x)+log(x))(+eps)
+        -0.31571845205389007685
+        >>> print mertens-euler
+        -0.31571845205389007685
+
+    The analytic continuation to `0 < \mathrm{Re}(s) \le 1`
+    is implemented. In this strip the function exhibits
+    very complex behavior; on the unit interval, it has poles at
+    `1/n` for every squarefree integer `n`::
+
+        >>> print primezeta(0.5)         # Pole at s = 1/2
+        (-inf + 3.1415926535897932385j)
+        >>> print primezeta(0.25)
+        (-1.0416106801757269036 + 0.52359877559829887308j)
+        >>> print primezeta(0.5+10j)
+        (0.54892423556409790529 + 0.45626803423487934264j)
+
+    Although evaluation works in principle for any `\mathrm{Re}(s) > 0`,
+    it should be noted that the evaluation time increases exponentially
+    as `s` approaches the imaginary axis.
+
+    For large `\mathrm{Re}(s)`, `P(s)` is asymptotic to `2^{-s}`::
+
+        >>> print primezeta(inf)
+        0.0
+        >>> print primezeta(10), mpf(2)**-10
+        0.00099360357443698021786 0.0009765625
+        >>> print primezeta(1000)
+        9.3326361850321887899e-302
+        >>> print primezeta(1000+1000j)
+        (-3.8565440833654995949e-302 - 8.4985390447553234305e-302j)
+
+    **References**
+
+    Carl-Erik Froberg, "On the prime zeta function",
+    BIT 8 (1968), pp. 187-202.
+
+    """
+    if isnan(s):
+        return s
+    if re(s) <= 0:
+        raise ValueError("prime zeta function defined only for re(s) > 0")
+    if s == 1:
+        return inf
+    if s == 0.5:
+        return mpc(-inf, pi)
+    r = re(s)
+    if r > mp.prec:
+        return 0.5**s
+    else:
+        wp = mp.prec + int(r)
+        def terms():
+            orig = mp.prec
+            # zeta ~ 1+eps; need to set precision
+            # to get logarithm accurately
+            k = 0
+            while 1:
+                k += 1
+                u = libintmath.moebius(k)
+                if not u:
+                    continue
+                mp.prec = wp
+                t = u*log(zeta(k*s))/k
+                if not t:
+                    return
+                #print mp.prec, nstr(t)
+                mp.prec = orig
+                yield t
+    return sum_accurately(terms)
 
 @funcwrapper
 def bernpoly(n, z):
