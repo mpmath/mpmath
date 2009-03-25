@@ -21,6 +21,8 @@ from settings import (\
     round_nearest, round_fast
 )
 
+from libintmath import list_primes, int_fac
+
 from libmpf import (\
     lshift, sqrt_fixed,
     fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
@@ -296,26 +298,8 @@ mpf_catalan = def_mpf_constant(catalan_fixed)
 #                                                                       #
 #-----------------------------------------------------------------------#
 
-MAX_FACTORIAL_CACHE = 1000
 MAX_BERNOULLI_CACHE = 3000
 
-def int_fac(n, memo={0:1, 1:1}):
-    """Return n factorial (for integers n >= 0 only)."""
-    f = memo.get(n)
-    if f:
-        return f
-    k = len(memo)
-    p = memo[k-1]
-    MAX = MAX_FACTORIAL_CACHE
-    while k <= n:
-        p *= k
-        if k <= MAX:
-            memo[k] = p
-        k += 1
-    return p
-
-if MODE == "gmpy":
-    int_fac = gmpy.fac
 
 """
 Small Bernoulli numbers and factorials are used in numerous summations,
@@ -445,16 +429,6 @@ def mpf_bernoulli_huge(n, prec, rnd=None):
     if not n & 3:
         v = mpf_neg(v)
     return mpf_pos(v, prec, rnd or round_fast)
-
-def list_primes(n):
-    n = n + 1
-    sieve = range(n)
-    sieve[:2] = [0, 0]
-    for i in xrange(2, int(n**0.5)+1):
-        if sieve[i]:
-            for j in xrange(i**2, n, i):
-                sieve[j] = 0
-    return [p for p in sieve if p]
 
 def bernfrac(n):
     r"""
