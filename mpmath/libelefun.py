@@ -50,13 +50,13 @@ def constant_memo(f):
     f.memo_prec = -1
     f.memo_val = None
     def g(prec, **kwargs):
-        if prec == f.memo_prec:
-            return f.memo_val
-        if prec < f.memo_prec:
-            return f.memo_val >> (f.memo_prec-prec)
-        f.memo_val = f(prec, **kwargs)
-        f.memo_prec = prec
-        return f.memo_val
+        memo_prec = f.memo_prec
+        if prec <= memo_prec:
+            return f.memo_val >> (memo_prec-prec)
+        newprec = int(prec*1.05+10)
+        f.memo_val = f(newprec, **kwargs)
+        f.memo_prec = newprec
+        return f.memo_val >> (newprec-prec)
     g.__name__ = f.__name__
     g.__doc__ = f.__doc__
     return g
