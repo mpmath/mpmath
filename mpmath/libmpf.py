@@ -20,7 +20,7 @@ from settings import (\
 )
 
 from libintmath import (
-    giant_steps, giant_steps2, giant_stepsn,
+    giant_steps,
     trailtable, bctable, lshift, rshift, bitcount, trailing,
     sqrt_fixed, numeral, isqrt, isqrt_fast, sqrtrem,
     bin_to_radix

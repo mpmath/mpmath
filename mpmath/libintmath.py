@@ -11,25 +11,25 @@ from bisect import bisect
 
 from settings import MODE, gmpy, MP_BASE, MP_ONE, MP_ZERO
 
-def giant_steps(start, target):
-    """Return a list of integers ~= [start, 2*start, ..., target/2,
-    target] describing suitable precision steps for Newton's method."""
-    L = [target]
-    while L[-1] > start*2:
-        L = L + [L[-1]//2 + 2]
-    return L[::-1]
+def giant_steps(start, target, n=2):
+    """
+    Return a list of integers ~=
 
-def giant_steps2(start, target):
-    """Return a list of integers ~= [start, 3*start, ..., target/3,
-    target] describing suitable precision steps for Halley's method."""
-    L = [target]
-    while L[-1] > start*3:
-        L = L + [L[-1]//3 + 2]
-    return L[::-1]
+    [start, n*start, ..., target/n^2, target/n, target]
 
-def giant_stepsn(start, target, n):
-    """Return a list of integers ~= [start, n*start, ..., target/n,
-    target] describing suitable precision steps for Halley's method."""
+    but conservatively rounded so that the quotient between two
+    successive elements is actually slightly less than n.
+
+    With n = 2, this describes suitable precision steps for a
+    quadratically convergent algorithm such as Newton's method;
+    with n = 3 steps for cubic convergence (Halley's method), etc.
+
+        >>> giant_steps(50,1000)
+        [66, 128, 253, 502, 1000]
+        >>> giant_steps(50,1000,4)
+        [65, 252, 1000]
+
+    """
     L = [target]
     while L[-1] > start*n:
         L = L + [L[-1]//n + 2]

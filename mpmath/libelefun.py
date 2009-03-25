@@ -20,8 +20,7 @@ from settings import (\
 
 from libmpf import (\
     ComplexResult,
-    bitcount, bctable, lshift, rshift, giant_steps, giant_steps2,
-    giant_stepsn, sqrt_fixed,
+    bitcount, bctable, lshift, rshift, giant_steps, sqrt_fixed,
     from_int, to_int, from_man_exp, to_fixed,
     normalize,
     fzero, fone, fnone, fhalf, finf, fninf, fnan,
@@ -869,7 +868,7 @@ def exp_newton(x, prec):
     r = mpf_exp(x, 60)
     start = 50
     prevp = start
-    for p in giant_stepsn(start, prec+extra, 4):
+    for p in giant_steps(start, prec+extra, 4):
         h = mpf_sub(x, mpf_log(r, p), p)
         h2 = mpf_mul(h, h, p)
         h3 = mpf_mul(h2, h, p)
