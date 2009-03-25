@@ -142,6 +142,20 @@ def test_solve():
     assert norm_p(residual(A10, lu_solve(A10, b10), b10), 2) < 1.e-10
     assert norm_p(residual(A10, qr_solve(A10, b10)[0], b10), 2) < 1.e-10
 
+def test_singular():
+    A = [[5.6, 1.2], [7./15, .1]]
+    B = repr(zeros(2))
+    b = [1, 2]
+    def _assert_ZeroDivisionError(statement):
+        try:
+            eval(statement)
+            assert False
+        except (ZeroDivisionError, ValueError):
+            pass
+    for i in ['lu_solve(%s, %s)' % (A, b), 'lu_solve(%s, %s)' % (B, b),
+              'qr_solve(%s, %s)' % (A, b), 'qr_solve(%s, %s)' % (B, b)]:
+        _assert_ZeroDivisionError(i)
+
 def test_cholesky():
     A9.force_type = float
     assert cholesky(A9) == matrix([[2, 0, 0], [1, 2, 0], [-1, -3/2, 3/2]])
