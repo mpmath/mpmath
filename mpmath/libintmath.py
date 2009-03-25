@@ -335,3 +335,22 @@ def list_primes(n):
             for j in xrange(i**2, n, i):
                 sieve[j] = 0
     return [p for p in sieve if p]
+
+def moebius(n):
+    """
+    Evaluates the Moebius function which is `mu(n) = (-1)^k` if `n`
+    is a product of `k` distinct primes and `mu(n) = 0` otherwise.
+
+    TODO: speed up using factorization
+    """
+    n = abs(int(n))
+    if n < 2:
+        return n
+    factors = []
+    for p in xrange(2, n+1):
+        if not (n % p):
+            if not (n % p**2):
+                return 0
+            if not sum(p % f for f in factors):
+                factors.append(p)
+    return (-1)**len(factors)

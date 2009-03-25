@@ -13,7 +13,7 @@ from mptypes import (
 
 from functions import (
     pi, degree, e, ln2, ln10, phi, euler,
-    catalan, khinchin, glaisher, apery,
+    catalan, khinchin, glaisher, apery, mertens, twinprime,
     sqrt, cbrt, exp, ln, log, log10, power,
     cos, sin, tan, cosh, sinh, tanh,
     acos, asin, atan, asinh, acosh, atanh,

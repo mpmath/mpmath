@@ -366,6 +366,60 @@ class _apery(constant):
         '3189504235'
     """
 
+class _mertens(constant):
+    r"""
+    Represents the Mertens or Meissel-Mertens constant, which is the
+    prime number analog of Euler's constant:
+
+    .. math ::
+
+        B_1 = \lim_{N\to\infty}
+            \left(\sum_{p_k \le N} \frac{1}{p_k} - \log \log N \right)
+
+    Here `p_k` denotes the `k`-th prime number. Other names for this
+    constant include the Hadamard-de la Vallee-Poussin constant or
+    the prime reciprocal constant.
+
+    The following gives the Mertens constant to 50 digits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print mertens
+        0.2614972128476427837554268386086958590515666482612
+
+    References:
+    http://mathworld.wolfram.com/MertensConstant.html
+
+    """
+
+class _twinprime(constant):
+    r"""
+    Represents the twin prime constant, which is the factor `C_2`
+    featuring in the Hardy-Littlewood conjecture for the growth of the
+    twin prime counting function,
+
+    .. math ::
+
+        \pi_2(n) \sim 2 C_2 \frac{n}{\log^2 n}.
+
+    It is given by the product over primes
+
+    .. math ::
+
+        C_2 = \prod_{p\ge3} \frac{p(p-2)}{(p-1)^2} \approx 0.66016
+
+    Computing `C_2` to 50 digits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 50
+        >>> print twinprime
+        0.66016181584686957392781211001455577843262336028473
+
+    References:
+    http://mathworld.wolfram.com/TwinPrimesConstant.html
+
+    """
+
 # Mathematical constants
 pi = _pi(libelefun.mpf_pi, "pi")
 degree = _degree(libelefun.mpf_degree, "degree")
@@ -378,7 +432,8 @@ catalan = _catalan(gammazeta.mpf_catalan, "Catalan's constant")
 khinchin = _khinchin(gammazeta.mpf_khinchin, "Khinchin's constant")
 glaisher = _glaisher(gammazeta.mpf_glaisher, "Glaisher's constant")
 apery = _apery(gammazeta.mpf_apery, "Apery's constant")
-
+mertens = _mertens(gammazeta.mpf_mertens, "Merten's constant")
+twinprime = _twinprime(gammazeta.mpf_twinprime, "Twin prime constant")
 
 def funcwrapper(f):
     def g(*args, **kwargs):
