@@ -12,16 +12,16 @@ see libmpc and libmpi.
 import math
 from bisect import bisect
 
-from settings import (\
+from settings import (
     MP_BASE, MP_ZERO, MP_ONE, MP_TWO, MP_FIVE, MODE,
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
 )
 
-from libmpf import (\
+from libmpf import (
     ComplexResult,
     bitcount, bctable, lshift, rshift, giant_steps, sqrt_fixed,
-    from_int, to_int, from_man_exp, to_fixed,
+    from_int, to_int, from_man_exp, to_fixed, to_float, from_float,
     normalize,
     fzero, fone, fnone, fhalf, finf, fninf, fnan,
     mpf_cmp, mpf_sign, mpf_abs,

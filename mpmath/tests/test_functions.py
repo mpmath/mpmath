@@ -353,6 +353,11 @@ def test_areal_inverses():
         assert atanh(mpf(x)).ae(cmath.atanh(x).real)
         assert isinstance(atanh(mpf(x)), mpf)
 
+    dps = mp.dps
+    mp.dps = 300
+    assert isinstance(asin(0.5), mpf)
+    mp.dps = dps
+
 def test_invhyperb_inaccuracy():
     mp.dps = 15
     assert (asinh(1e-5)*10**5).ae(0.99999999998333333)
