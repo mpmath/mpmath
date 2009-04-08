@@ -542,7 +542,7 @@ def jacobian(f, x):
 
 one = mpf(1)
 
-# TODO: support force_type
+# TODO: test with user-specified jacobian matrix, support force_type
 class MDNewton:
     """
     Find the root of a vector function numerically using Newton's method.
@@ -580,7 +580,7 @@ class MDNewton:
         assert x0.cols == 1, 'need a vector'
         self.x0 = x0
         if 'J' in kwargs:
-            self.J = kwarks['J']
+            self.J = kwargs['J']
         else:
             def J(*x):
                 return jacobian(f, x)
