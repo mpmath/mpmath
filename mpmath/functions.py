@@ -1080,7 +1080,7 @@ def lambertw(A, z, k=0, approx=None):
         if not k:
             w = z
         # For small real z < 0, the -1 branch behaves roughly like log(-z)
-        elif k == -1 and not z.imag and z.real < 0:
+        elif k == -1 and not A.im(z) and A.re(z) < 0:
             w = A.ln(-z)
         # Use a simple asymptotic approximation.
         else:
@@ -1089,7 +1089,7 @@ def lambertw(A, z, k=0, approx=None):
             # gets better for large |k|; need to check that this always
             # works for k ~= -1, 0, 1.
             if k: w += k * 2*A.pi*A.j
-    elif k == 0 and z.imag and abs(z) <= 0.6:
+    elif k == 0 and A.im(z) and abs(z) <= 0.6:
         w = z
     else:
         if z == A.inf:
@@ -1327,7 +1327,7 @@ def primezeta(A, s):
         return A.inf
     if s == 0.5:
         return A.mpc(A.ninf, A.pi)
-    r = re(s)
+    r = A.re(s)
     if r > A.prec:
         return 0.5**s
     else:
