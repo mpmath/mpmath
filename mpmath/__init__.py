@@ -8,8 +8,10 @@ from mptypes import (
     nstr, nprint, fraction, almosteq,
     arange, linspace, rand, absmin, absmax,
     fsum, fprod, fdot,
-    chop, monitor, timing
+    chop
 )
+
+from usertools import monitor, timing
 
 from functions import (
     pi, degree, e, ln2, ln10, phi, euler,

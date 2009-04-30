@@ -490,6 +490,7 @@ def bernfrac(n):
 
     The first few Bernoulli numbers are exactly::
 
+        >>> from mpmath import *
         >>> for n in range(15):
         ...     p, q = bernfrac(n)
         ...     print n, "%s/%s" % (p, q)
@@ -625,7 +626,7 @@ def get_spouge_coefficients(prec):
     if prec in spouge_cache:
         return spouge_cache[prec]
     for p in spouge_cache:
-        if 0.8 <= float(p)/prec < 1:
+        if 0.8 <= prec/float(p) < 1:
             return spouge_cache[p]
     # Here we estimate the value of a based on Spouge's inequality for
     # the relative error

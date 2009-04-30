@@ -11,8 +11,8 @@ etc
 
 from itertools import izip
 
-from settings import (mp, extraprec)
-from mptypes import (mpnumeric, mpmathify, mpf, mpc, j, inf, eps,
+from mptypes import (mp, extraprec)
+from mptypes import (mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint, isinf, fsum, fprod)
 from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign)
@@ -1403,7 +1403,7 @@ def polyval(coeffs, x, derivative=False):
     """
     if not coeffs:
         return mpf(0)
-    p = mpnumeric(coeffs[0])
+    p = mpmathify(coeffs[0])
     q = mpf(0)
     for c in coeffs[1:]:
         if derivative:

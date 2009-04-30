@@ -749,6 +749,9 @@ def quad(f, *points, **kwargs):
         return +v, err
     return +v
 
+# XXX
+type(mp).quad = staticmethod(quad)
+
 def quadts(*args, **kwargs):
     """
     Performs tanh-sinh quadrature. The call

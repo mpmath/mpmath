@@ -1,4 +1,4 @@
-from mptypes import mpmathify, extraprec, eps, mpf
+from mptypes import mpmathify, extraprec, eps, mpf, MultiPrecisionArithmetic
 from calculus import diff
 from functions import sqrt, sign, ldexp
 from matrices import matrix, norm_p
@@ -1018,3 +1018,5 @@ def steffensen(f):
         ffx = f(fx)
         return (x*ffx - fx**2) / (ffx - 2*fx + x)
     return F
+
+MultiPrecisionArithmetic.findroot = staticmethod(findroot)
