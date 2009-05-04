@@ -1,7 +1,7 @@
 from mptypes import mpmathify, extraprec, eps, mpf, MultiPrecisionArithmetic
 from calculus import diff
 from functions import sqrt, sign, ldexp
-from matrices import matrix, norm_p
+from matrices import matrix, norm as norm_
 from linalg import lu_solve
 from copy import copy
 
@@ -880,7 +880,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         # only one multidimensional solver available at the moment
         solver = MDNewton
         if not 'norm' in kwargs:
-            norm = lambda x: norm_p(x, mpf('inf'))
+            norm = lambda x: norm_(x, mpf('inf'))
             kwargs['norm'] = norm
         else:
             norm = kwargs['norm']

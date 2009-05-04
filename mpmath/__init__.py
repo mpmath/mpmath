@@ -63,7 +63,7 @@ from quadrature import quad, quadgl, quadts, quadosc, TanhSinh, GaussLegendre
 from identification import pslq, identify, findpoly
 
 from matrices import matrix, eye, diag, zeros, ones, hilbert, randmatrix, \
-    mnorm_1, mnorm_oo, mnorm_F, norm_p
+    norm, mnorm
 from linalg import lu_solve, inverse, residual, qr_solve, cholesky_solve, det, \
     cond, lu
 

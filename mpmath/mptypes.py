@@ -488,7 +488,7 @@ class MultiPrecisionArithmetic(Context):
             err = diff/abss
         return err <= rel_eps
 
-    def fsum(A, terms):
+    def fsum(A, terms, absolute=False, squared=False):
         """
         Calculates a sum containing a finite number of terms (for infinite
         series, see :func:`nsum`). The terms will be converted to
@@ -500,29 +500,52 @@ class MultiPrecisionArithmetic(Context):
             >>> mp.dps = 15
             >>> fsum([1, 2, 0.5, 7])
             mpf('10.5')
+
+        With squared=True each term is squared, and with absolute=True
+        the absolute value of each term is used.
         """
         prec, rnd = A._prec_rounding
         real = []
         imag = []
         other = 0
         for term in terms:
+            reval = imval = 0
             if hasattr(term, "_mpf_"):
-                val = term._mpf_
+                reval = term._mpf_
             elif hasattr(term, "_mpc_"):
-                val, im = term._mpc_
-                imag.append(im)
+                reval, imval = term._mpc_
             else:
                 term = A.convert(term)
                 if hasattr(term, "_mpf_"):
-                    val = term._mpf_
+                    reval = term._mpf_
                 elif hasattr(term, "_mpc_"):
-                    val, im = term._mpc_
-                    imag.append(im)
+                    reval, imval = term._mpc_
                 else:
+                    if absolute: term = A.absmax(term)
+                    if squared: term = term**2
                     other += term
                     continue
-            real.append(val)
-        s = mpf_sum(real, prec, rnd)
+            if imval:
+                if squared:
+                    if absolute:
+                        real.append(mpf_mul(reval,reval))
+                        real.append(mpf_mul(imval,imval))
+                    else:
+                        reval, imval = mpc_pow_int((reval,imval),2,prec+10)
+                        real.append(reval)
+                        imag.append(imval)
+                elif absolute:
+                    real.append(mpc_abs((reval,imval), prec))
+                else:
+                    real.append(reval)
+                    imag.append(imval)
+            else:
+                if squared:
+                    reval = mpf_mul(reval, reval)
+                elif absolute:
+                    reval = mpf_abs(reval)
+                real.append(reval)
+        s = mpf_sum(real, prec, rnd, absolute)
         if imag:
             s = A.make_mpc((s, mpf_sum(imag, prec, rnd)))
         else:

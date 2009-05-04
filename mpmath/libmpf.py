@@ -674,7 +674,7 @@ def mpf_sub(s, t, prec=0, rnd=round_fast):
     simply a wrapper of mpf_add that changes the sign of t."""
     return mpf_add(s, t, prec, rnd, 1)
 
-def mpf_sum(xs, prec=0, rnd=round_fast):
+def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
     """
     Sum a list of mpf values efficiently and accurately
     (typically no temporary roundoff occurs). If prec=0,
@@ -682,6 +682,8 @@ def mpf_sum(xs, prec=0, rnd=round_fast):
 
     There may be roundoff error or cancellation if extremely
     large exponent differences occur.
+
+    With absolute=True, sums the absolute values.
     """
     man = 0
     exp = 0
@@ -690,7 +692,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast):
     for x in xs:
         xsign, xman, xexp, xbc = x
         if xman:
-            if xsign:
+            if xsign and not absolute:
                 xman = -xman
             delta = xexp - exp
             if xexp >= exp:
@@ -712,6 +714,8 @@ def mpf_sum(xs, prec=0, rnd=round_fast):
                     man = (man << delta) + xman
                     exp = xexp
         elif xexp:
+            if absolute:
+                x = mpf_abs(x)
             special = mpf_add(special or fzero, x, 1)
     # Will be inf or nan
     if special:
