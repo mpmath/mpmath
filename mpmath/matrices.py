@@ -401,7 +401,7 @@ class matrix(object):
         return s
 
     def __getitem__(self, key):
-        if isinstance(key, int):
+        if type(key) is int:
             # only sufficent for vectors
             if self.__rows == 1:
                 key = (0, key)
@@ -420,7 +420,7 @@ class matrix(object):
                 return 0
 
     def __setitem__(self, key, value):
-        if isinstance(key, int):
+        if type(key) is int:
             # only sufficent for vectors
             if self.__rows == 1:
                 key = (0, key)
