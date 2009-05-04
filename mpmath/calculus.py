@@ -491,7 +491,7 @@ def adaptive_extrapolation(update, emfun, kwargs):
                             " will most likely fail")
                     TRY_EULER_MACLAURIN = False
                 else:
-                    value, em_error = emfun(index+1, tol)
+                    value, em_error = emfun(index, tol)
                     value += partial[-1]
                     if verbose:
                         print "Euler-Maclaurin error: %s" % nstr(em_error)
@@ -783,7 +783,7 @@ def nsum(f, interval, **kwargs):
     def emfun(point, tol):
         workprec = mp.prec
         mp.prec = prec + 10
-        v = sumem(f, [point, inf], tol, error=1)
+        v = sumem(f, [a+point, inf], tol, error=1)
         mp.prec = workprec
         return v
 
