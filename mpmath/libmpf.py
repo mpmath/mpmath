@@ -1193,6 +1193,7 @@ def from_str(x, prec, rnd=round_fast):
 
     TODO: the rounding does not work properly for large exponents.
     """
+    x = x.strip()
     if x in special_str:
         return special_str[x]
 
