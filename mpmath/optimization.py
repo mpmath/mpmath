@@ -9,6 +9,48 @@ from copy import copy
 # 1D-SOLVERS #
 ##############
 
+class Newton:
+    """
+    1d-solver generating pairs of approximative root and error.
+
+    Needs starting points x0 close to the root.
+
+    Pro:
+
+    * converges fast
+    * sometimes more robust than secant with bad second starting point
+
+    Contra:
+
+    * converges slowly for multiple roots
+    * needs first derivative
+    * 2 function evaluations per iteration
+    """
+    maxsteps = 20
+
+    def __init__(self, f, x0, **kwargs):
+        if len(x0) == 1:
+            self.x0 = x0[0]
+        else:
+            raise ValueError('expected 1 starting point, got %i' * len(x0))
+        self.f = f
+        if not 'df' in kwargs:
+            def df(x):
+                return diff(f, x)
+        else:
+            df = kwargs['df']
+        self.df = df
+
+    def __iter__(self):
+        f = self.f
+        df = self.df
+        x0 = self.x0
+        while True:
+            x1 = x0 - f(x0) / df(x0)
+            error = abs(x1 - x0)
+            x0 = x1
+            yield (x1, error)
+
 class Secant:
     """
     1d-solver generating pairs of approximative root and error.
@@ -629,10 +671,10 @@ class MDNewton:
 # UTILITIES #
 #############
 
-str2solver = {'secant':Secant,'mnewton':MNewton, 'halley':Halley,
-              'muller':Muller, 'bisect':Bisection, 'illinois':Illinois,
-              'pegasus':Pegasus, 'anderson':Anderson, 'ridder':Ridder,
-              'anewton':ANewton, 'mdnewton':MDNewton}
+str2solver = {'newton':Newton, 'secant':Secant,'mnewton':MNewton,
+              'halley':Halley, 'muller':Muller, 'bisect':Bisection,
+              'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
 
 @extraprec(20)
 def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,

@@ -10,7 +10,7 @@ def test_findroot():
     assert findroot(lambda x: x*x+1, mpc(2+2j)).ae(1j)
     # test all solvers with 1 starting point
     f = lambda x: cos(x)
-    for solver in [Secant, MNewton, Muller, ANewton]:
+    for solver in [Newton, Secant, MNewton, Muller, ANewton]:
         x = findroot(f, 2., solver=solver)
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
