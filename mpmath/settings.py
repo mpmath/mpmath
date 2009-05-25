@@ -47,15 +47,27 @@ def repr_dps(n):
 
 # So we can import it from this module
 gmpy = None
+sage = None
 
 MODE = 'python'
 MP_BASE = long
+
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
         import gmpy
         if gmpy.version() >= '1.03':
             MODE = 'gmpy'
             MP_BASE = gmpy.mpz
+    except:
+        pass
+
+if 'MPMATH_NOSAGE' not in os.environ:
+    try:
+        import sage.all
+        if hasattr(sage.all.Integer, "trailing_zero_bits"):
+            sage = sage.all
+            MODE = 'sage'
+            MP_BASE = sage.Integer
     except:
         pass
 

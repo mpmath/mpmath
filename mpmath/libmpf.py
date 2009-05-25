@@ -16,7 +16,7 @@ from settings import (\
     MP_BASE, MP_ZERO, MP_ONE, MP_TWO, MP_FIVE, MODE, STRICT, gmpy,
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
-    MP_BASE_TYPE,
+    MP_BASE_TYPE, MODE
 )
 
 from libintmath import (
@@ -31,9 +31,14 @@ from libintmath import (
 #   2: pickle doesn't work for gmpy mpzs
 # Both problems are solved by using hex()
 
-def to_pickable(x):
-    sign, man, exp, bc = x
-    return sign, hex(man)[2:], exp, bc
+if MODE == 'sage':
+    def to_pickable(x):
+        sign, man, exp, bc = x
+        return sign, hex(man), exp, bc
+else:
+    def to_pickable(x):
+        sign, man, exp, bc = x
+        return sign, hex(man)[2:], exp, bc
 
 def from_pickable(x):
     sign, man, exp, bc = x
@@ -278,12 +283,14 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
+
+
 if MODE == 'gmpy' and '_mpmath_create' in dir(gmpy):
     from_man_exp = gmpy._mpmath_create
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
-def from_int(n, prec=None, rnd=round_fast):
+def from_int(n, prec=0, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
     the mantissa is stored exactly."""
     if not prec:
@@ -797,7 +804,13 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     bc += int(man>>bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
+
 if MODE == 'gmpy':
+    mpf_mul = gmpy_mpf_mul
+    mpf_mul_int = gmpy_mpf_mul_int
+elif MODE == 'sage':
+    # Like gmpy, take advantage of fast bitcount. Needs
+    # to be changed if gmpy_mpf_mul implementation changes
     mpf_mul = gmpy_mpf_mul
     mpf_mul_int = gmpy_mpf_mul_int
 else:

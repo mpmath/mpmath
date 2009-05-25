@@ -9,7 +9,7 @@ here from settings.py
 import math
 from bisect import bisect
 
-from settings import MODE, gmpy, MP_BASE, MP_ONE, MP_ZERO
+from settings import MODE, gmpy, sage, MP_BASE, MP_ONE, MP_ZERO
 
 def giant_steps(start, target, n=2):
     """
@@ -49,6 +49,11 @@ def lshift(x, n):
     if n >= 0: return x << n
     else:      return x >> (-n)
 
+if MODE == 'sage':
+    import operator
+    rshift = operator.rshift
+    lshift = operator.lshift
+
 def python_trailing(n):
     """Count the number of trailing zero bits in abs(n)."""
     if not n:
@@ -80,9 +85,19 @@ def gmpy_bitcount(n):
     if n: return MP_BASE(n).numdigits(2)
     else: return 0
 
+def sage_bitcount(n):
+    if n: return MP_BASE(n).nbits()
+    else: return 0
+
+def sage_trailing(n):
+    return MP_BASE(n).trailing_zero_bits()
+
 if MODE == 'gmpy':
     bitcount = gmpy_bitcount
     trailing = gmpy_trailing
+elif MODE == 'sage':
+    bitcount = sage_bitcount
+    trailing = sage_trailing
 else:
     bitcount = python_bitcount
     trailing = python_trailing
@@ -274,6 +289,9 @@ sqrt_fixed2 = sqrt_fixed
 if MODE == 'gmpy':
     isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
     sqrtrem = gmpy.sqrtrem
+elif MODE == 'sage':
+    isqrt_small = isqrt_fast = isqrt = lambda n: MP_BASE(n).isqrt()
+    sqrtrem = lambda n: MP_BASE(n).sqrtrem()
 else:
     isqrt_small = isqrt_small_python
     isqrt_fast = isqrt_fast_python
@@ -323,8 +341,11 @@ def int_fac(n, memo={0:1, 1:1}):
         k += 1
     return p
 
-if MODE == "gmpy":
+if MODE == 'gmpy':
     int_fac = gmpy.fac
+elif MODE == 'sage':
+    int_fac = lambda n: int(sage.factorial(n))
+    ifib = sage.fibonacci
 
 def list_primes(n):
     n = n + 1
@@ -335,6 +356,10 @@ def list_primes(n):
             for j in xrange(i**2, n, i):
                 sieve[j] = 0
     return [p for p in sieve if p]
+
+if MODE == 'sage':
+    def list_primes(n):
+        return list(sage.primes(n+1))
 
 def moebius(n):
     """
