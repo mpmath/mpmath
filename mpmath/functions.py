@@ -156,47 +156,47 @@ acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
 
 
 @defun_wrapped
-def sinc(A, x):
-    if A.isinf(x):
+def sinc(ctx, x):
+    if ctx.isinf(x):
         return 1/x
     if not x:
         return x+1
-    return A.sin(x)/x
+    return ctx.sin(x)/x
 
 @defun_wrapped
-def sincpi(A, x):
-    if A.isinf(x):
+def sincpi(ctx, x):
+    if ctx.isinf(x):
         return 1/x
     if not x:
         return x+1
-    return A.sinpi(x)/(A.pi*x)
+    return ctx.sinpi(x)/(ctx.pi*x)
 
 @defun
-def nthroot(A, x, n):
-    x = A.convert(x)
+def nthroot(ctx, x, n):
+    x = ctx.convert(x)
     n = int(n)
     if hasattr(x, '_mpf_'):
         try:
-            return A.make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *A._prec_rounding))
+            return ctx.make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *ctx._prec_rounding))
         except ComplexResult:
-            if A.trap_complex:
+            if ctx.trap_complex:
                 raise
             x = (x._mpf_, libmpf.fzero)
     else:
         x = x._mpc_
-    return A.make_mpc(libmpc.mpc_nthroot(x, n, *A._prec_rounding))
+    return ctx.make_mpc(libmpc.mpc_nthroot(x, n, *ctx._prec_rounding))
 
 @defun
-def hypot(A, x, y):
+def hypot(ctx, x, y):
     r"""
     Computes the Euclidean norm of the vector `(x, y)`, equal
     to `\sqrt{x^2 + y^2}`. Both `x` and `y` must be real."""
-    x = A.convert(x)
-    y = A.convert(y)
-    return A.make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *A._prec_rounding))
+    x = ctx.convert(x)
+    y = ctx.convert(y)
+    return ctx.make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *ctx._prec_rounding))
 
 @defun
-def ldexp(A, x, n):
+def ldexp(ctx, x, n):
     r"""
     Computes `x 2^n` efficiently. No rounding is performed.
     The argument `x` must be a real floating-point number (or
@@ -209,11 +209,11 @@ def ldexp(A, x, n):
         mpf('0.125')
 
     """
-    x = A.convert(x)
-    return A.make_mpf(libmpf.mpf_shift(x._mpf_, n))
+    x = ctx.convert(x)
+    return ctx.make_mpf(libmpf.mpf_shift(x._mpf_, n))
 
 @defun
-def frexp(A, x):
+def frexp(ctx, x):
     r"""
     Given a real number `x`, returns `(y, n)` with `y \in [0.5, 1)`,
     `n` a Python integer, and such that `x = y 2^n`. No rounding is
@@ -224,12 +224,12 @@ def frexp(A, x):
         (mpf('0.9375'), 3)
 
     """
-    x = A.convert(x)
+    x = ctx.convert(x)
     y, n = libmpf.mpf_frexp(x._mpf_)
-    return A.make_mpf(y), n
+    return ctx.make_mpf(y), n
 
 @defun
-def sign(A, x):
+def sign(ctx, x):
     r"""
     Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
     (with the special case `\sign(0) = 0`)::
@@ -250,15 +250,15 @@ def sign(A, x):
         (0.707106781186547 + 0.707106781186547j)
 
     """
-    x = A.convert(x)
-    if not x or A.isnan(x):
+    x = ctx.convert(x)
+    if not x or ctx.isnan(x):
         return x
-    if A.is_real_type(x):
-        return A.mpf(cmp(x, 0))
+    if ctx.is_real_type(x):
+        return ctx.mpf(cmp(x, 0))
     return x / abs(x)
 
 @defun
-def arg(A, x):
+def arg(ctx, x):
     r"""
     Computes the complex argument (phase) of `x`, defined as the
     signed angle between the positive real axis and `x` in the
@@ -283,11 +283,11 @@ def arg(A, x):
 
     The value returned by :func:`arg` is an ``mpf`` instance.
     """
-    x = A.convert(x)
-    return A.atan2(x.imag, x.real)
+    x = ctx.convert(x)
+    return ctx.atan2(x.imag, x.real)
 
 @defun
-def fabs(A, x):
+def fabs(ctx, x):
     r"""
     Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
     :func:`fabs` converts non-mpmath numbers (such as ``int``)
@@ -302,10 +302,10 @@ def fabs(A, x):
         mpf('5.0')
 
     """
-    return abs(A.convert(x))
+    return abs(ctx.convert(x))
 
 @defun
-def re(A, x):
+def re(ctx, x):
     r"""
     Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
     :func:`re` converts `x` to a mpmath number::
@@ -316,10 +316,10 @@ def re(A, x):
         >>> re(-1+4j)
         mpf('-1.0')
     """
-    return A.convert(x).real
+    return ctx.convert(x).real
 
 @defun
-def im(A, x):
+def im(ctx, x):
     r"""
     Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
     :func:`im` converts `x` to a mpmath number::
@@ -331,10 +331,10 @@ def im(A, x):
         mpf('4.0')
 
     """
-    return A.convert(x).imag
+    return ctx.convert(x).imag
 
 @defun
-def conj(A, x):
+def conj(ctx, x):
     r"""
     Returns the complex conjugate of `x`, `\overline{x}`. Unlike
     ``x.conjugate()``, :func:`im` converts `x` to a mpmath number::
@@ -346,74 +346,74 @@ def conj(A, x):
         mpc(real='-1.0', imag='-4.0')
 
     """
-    return A.convert(x).conjugate()
+    return ctx.convert(x).conjugate()
 
 
 @defun
-def log(A, x, b=None):
+def log(ctx, x, b=None):
     if b is None:
         return ln(x)
-    wp = A.prec + 20
-    return A.ln(x, prec=wp) / A.ln(b, prec=wp)
+    wp = ctx.prec + 20
+    return ctx.ln(x, prec=wp) / ctx.ln(b, prec=wp)
 
 @defun
-def log10(A, x):
+def log10(ctx, x):
     r"""
     Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
     is equivalent to ``log(x, 10)``.
     """
-    return A.log(x, 10)
+    return ctx.log(x, 10)
 
 @defun
-def power(A, x, y):
-    return A.convert(x) ** A.convert(y)
+def power(ctx, x, y):
+    return ctx.convert(x) ** ctx.convert(y)
 
 @defun
-def modf(A,x,y):
-    return A.convert(x) % A.convert(y)
+def modf(ctx,x,y):
+    return ctx.convert(x) % ctx.convert(y)
 
 @defun
-def degrees(A,x):
-    return x / A.degree
+def degrees(ctx,x):
+    return x / ctx.degree
 
 @defun
-def radians(A,x):
-    return x * A.degree
+def radians(ctx,x):
+    return x * ctx.degree
 
 @defun
-def atan2(A, y, x):
-    x = A.convert(x)
-    y = A.convert(y)
-    return A.make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *A._prec_rounding))
+def atan2(ctx, y, x):
+    x = ctx.convert(x)
+    y = ctx.convert(y)
+    return ctx.make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *ctx._prec_rounding))
 
 @defun
-def psi(A, m, z):
-    z = A.convert(z)
+def psi(ctx, m, z):
+    z = ctx.convert(z)
     m = int(m)
-    if A.is_real_type(z):
-        return A.make_mpf(gammazeta.mpf_psi(m, z._mpf_, *A._prec_rounding))
+    if ctx.is_real_type(z):
+        return ctx.make_mpf(gammazeta.mpf_psi(m, z._mpf_, *ctx._prec_rounding))
     else:
-        return A.make_mpc(gammazeta.mpc_psi(m, z._mpc_, *A._prec_rounding))
+        return ctx.make_mpc(gammazeta.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
 
 @defun
-def psi0(A, z):
+def psi0(ctx, z):
     """Shortcut for psi(0,z) (the digamma function)"""
-    return A.psi(0, z)
+    return ctx.psi(0, z)
 
 @defun
-def psi1(A, z):
+def psi1(ctx, z):
     """Shortcut for psi(1,z) (the trigamma function)"""
-    return A.psi(1, z)
+    return ctx.psi(1, z)
 
 @defun
-def psi2(A, z):
+def psi2(ctx, z):
     """Shortcut for psi(2,z) (the tetragamma function)"""
-    return A.psi(2, z)
+    return ctx.psi(2, z)
 
 @defun
-def psi3(A, z):
+def psi3(ctx, z):
     """Shortcut for psi(3,z) (the pentagamma function)"""
-    return A.psi(3, z)
+    return ctx.psi(3, z)
 
 polygamma = MultiPrecisionArithmetic.polygamma = psi
 digamma = MultiPrecisionArithmetic.digamma = psi0
@@ -422,80 +422,80 @@ tetragamma = MultiPrecisionArithmetic.tetragamma = psi2
 pentagamma = MultiPrecisionArithmetic.pentagamma = psi3
 
 @defun
-def bernoulli(A, n):
-    return A.make_mpf(gammazeta.mpf_bernoulli(int(n), *A._prec_rounding))
+def bernoulli(ctx, n):
+    return ctx.make_mpf(gammazeta.mpf_bernoulli(int(n), *ctx._prec_rounding))
 
 bernfrac = defun_static(gammazeta.bernfrac)
 
 @defun
-def stieltjes(A, n, a=1):
-    n = A.convert(n)
-    a = A.convert(a)
+def stieltjes(ctx, n, a=1):
+    n = ctx.convert(n)
+    a = ctx.convert(a)
     if n < 0:
-        return A.bad_domain("Stieltjes constants defined for n >= 0")
-    if hasattr(A, "stieltjes_cache"):
-        stieltjes_cache = A.stieltjes_cache
+        return ctx.bad_domain("Stieltjes constants defined for n >= 0")
+    if hasattr(ctx, "stieltjes_cache"):
+        stieltjes_cache = ctx.stieltjes_cache
     else:
-        stieltjes_cache = A.stieltjes_cache = {}
+        stieltjes_cache = ctx.stieltjes_cache = {}
     if a == 1:
         if n == 0:
-            return +A.euler
+            return +ctx.euler
         if n in stieltjes_cache:
             prec, s = stieltjes_cache[n]
-            if prec >= A.prec:
+            if prec >= ctx.prec:
                 return +s
     mag = 1
     def f(x):
         xa = x/a
-        v = (xa-A.j)*A.ln(a-A.j*x)**n/(1+xa**2)/(A.exp(2*A.pi*x)-1)
+        v = (xa-ctx.j)*ctx.ln(a-ctx.j*x)**n/(1+xa**2)/(ctx.exp(2*ctx.pi*x)-1)
         return v.real / mag
-    orig = A.prec
+    orig = ctx.prec
     try:
         # Normalize integrand by approx. magnitude to
         # speed up quadrature (which uses absolute error)
         if n > 50:
-            A.prec = 20
-            mag = A.quad(f, [0,A.inf], maxdegree=3)
-        A.prec = orig + 10 + int(n**0.5)
-        s = A.quad(f, [0,A.inf], maxdegree=20)
-        v = A.ln(a)**n/(2*a) - A.ln(a)**(n+1)/(n+1) + 2*s/a*mag
+            ctx.prec = 20
+            mag = ctx.quad(f, [0,ctx.inf], maxdegree=3)
+        ctx.prec = orig + 10 + int(n**0.5)
+        s = ctx.quad(f, [0,ctx.inf], maxdegree=20)
+        v = ctx.ln(a)**n/(2*a) - ctx.ln(a)**(n+1)/(n+1) + 2*s/a*mag
     finally:
-        A.prec = orig
-    if a == 1 and A.isint(n):
-        stieltjes_cache[n] = (A.prec, v)
+        ctx.prec = orig
+    if a == 1 and ctx.isint(n):
+        stieltjes_cache[n] = (ctx.prec, v)
     return +v
 
 @defun
-def gammaprod(A, a, b):
-    a = [A.convert(x) for x in a]
-    b = [A.convert(x) for x in b]
+def gammaprod(ctx, a, b):
+    a = [ctx.convert(x) for x in a]
+    b = [ctx.convert(x) for x in b]
     poles_num = []
     poles_den = []
     regular_num = []
     regular_den = []
-    for x in a: [regular_num, poles_num][A.isnpint(x)].append(x)
-    for x in b: [regular_den, poles_den][A.isnpint(x)].append(x)
+    for x in a: [regular_num, poles_num][ctx.isnpint(x)].append(x)
+    for x in b: [regular_den, poles_den][ctx.isnpint(x)].append(x)
     # One more pole in numerator or denominator gives 0 or inf
-    if len(poles_num) < len(poles_den): return A.zero
-    if len(poles_num) > len(poles_den): return A.inf
+    if len(poles_num) < len(poles_den): return ctx.zero
+    if len(poles_num) > len(poles_den): return ctx.inf
     # All poles cancel
     # lim G(i)/G(j) = (-1)**(i+j) * gamma(1-j) / gamma(1-i)
-    p = A.one
-    orig = A.prec
+    p = ctx.one
+    orig = ctx.prec
     try:
-        A.prec = orig + 15
+        ctx.prec = orig + 15
         while poles_num:
             i = poles_num.pop()
             j = poles_den.pop()
-            p *= (-1)**(i+j) * A.gamma(1-j) / A.gamma(1-i)
-        for x in regular_num: p *= A.gamma(x)
-        for x in regular_den: p /= A.gamma(x)
+            p *= (-1)**(i+j) * ctx.gamma(1-j) / ctx.gamma(1-i)
+        for x in regular_num: p *= ctx.gamma(x)
+        for x in regular_den: p /= ctx.gamma(x)
     finally:
-        A.prec = orig
+        ctx.prec = orig
     return +p
 
 @defun
-def beta(A, x, y):
+def beta(ctx, x, y):
     r"""
     Computes the beta function,
     `B(x,y) = \Gamma(x) \Gamma(y) / \Gamma(x+y)`.
@@ -561,42 +561,42 @@ def beta(A, x, y):
         0.319504062596158
 
     """
-    x = A.convert(x)
-    y = A.convert(y)
-    if A.isinf(y):
+    x = ctx.convert(x)
+    y = ctx.convert(y)
+    if ctx.isinf(y):
         x, y = y, x
-    if A.isinf(x):
-        if x == A.inf and not y.imag:
-            if y == A.ninf:
-                return A.nan
+    if ctx.isinf(x):
+        if x == ctx.inf and not y.imag:
+            if y == ctx.ninf:
+                return ctx.nan
             if y > 0:
-                return A.zero
-            if A.isint(y):
-                return A.nan
+                return ctx.zero
+            if ctx.isint(y):
+                return ctx.nan
             if y < 0:
-                return A.sign(A.gamma(y)) * A.inf
-        return A.nan
-    return A.gammaprod([x, y], [x+y])
+                return ctx.sign(ctx.gamma(y)) * ctx.inf
+        return ctx.nan
+    return ctx.gammaprod([x, y], [x+y])
 
 @defun
-def binomial(A, n, k):
-    return A.gammaprod([n+1], [k+1, n-k+1])
+def binomial(ctx, n, k):
+    return ctx.gammaprod([n+1], [k+1, n-k+1])
 
 @defun
-def rf(A, x, n):
-    return A.gammaprod([x+n], [x])
+def rf(ctx, x, n):
+    return ctx.gammaprod([x+n], [x])
 
 @defun
-def ff(A, x, n):
-    return A.gammaprod([x+1], [x-n+1])
+def ff(ctx, x, n):
+    return ctx.gammaprod([x+1], [x-n+1])
 
 @defun_wrapped
-def fac2(A, x):
-    if A.isinf(x):
-        if x == A.inf:
+def fac2(ctx, x):
+    if ctx.isinf(x):
+        if x == ctx.inf:
             return x
-        return A.nan
-    return 2**(x/2)*(A.pi/2)**((A.cospi(x)-1)/4)*A.gamma(x/2+1)
+        return ctx.nan
+    return 2**(x/2)*(ctx.pi/2)**((ctx.cospi(x)-1)/4)*ctx.gamma(x/2+1)
 
 
 #---------------------------------------------------------------------------#
@@ -632,13 +632,13 @@ mpq_1 = _mpq((1,1))
 mpq_0 = _mpq((0,1))
 
 @defun
-def _hyp_parse_param(A, x):
+def _hyp_parse_param(ctx, x):
     if isinstance(x, tuple):
         p, q = x
         return [[p, q]], [], []
     if isinstance(x, (int, long)):
         return [[x, 1]], [], []
-    x = A.convert(x)
+    x = ctx.convert(x)
     if hasattr(x, '_mpf_'):
         return [], [x._mpf_], []
     if hasattr(x, '_mpc_'):
@@ -650,25 +650,25 @@ def _as_num(x):
     return x
 
 @defun
-def hypsum(A, ar, af, ac, br, bf, bc, x):
-    prec, rnd = A._prec_rounding
+def hypsum(ctx, ar, af, ac, br, bf, bc, x):
+    prec, rnd = ctx._prec_rounding
     if hasattr(x, '_mpf_') and not (ac or bc):
         v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, x._mpf_, None, prec, rnd)
-        return A.make_mpf(v)
+        return ctx.make_mpf(v)
     else:
         if hasattr(x, '_mpc_'):
             re, im = x._mpc_
         else:
             re, im = x._mpf_, libmpf.fzero
         v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
-        return A.make_mpc(v)
+        return ctx.make_mpc(v)
 
 @defun
-def eval_hyp2f1(A,a,b,c,z):
-    prec, rnd = A._prec_rounding
-    ar, af, ac = A._hyp_parse_param(a)
-    br, bf, bc = A._hyp_parse_param(b)
-    cr, cf, cc = A._hyp_parse_param(c)
+def eval_hyp2f1(ctx,a,b,c,z):
+    prec, rnd = ctx._prec_rounding
+    ar, af, ac = ctx._hyp_parse_param(a)
+    br, bf, bc = ctx._hyp_parse_param(b)
+    cr, cf, cc = ctx._hyp_parse_param(c)
     absz = abs(z)
     if absz == 1:
         # TODO: determine whether it actually does, and otherwise
@@ -677,51 +677,51 @@ def eval_hyp2f1(A,a,b,c,z):
     if absz <= 1:
         # All rational
         if ar and br and cr:
-            return A.sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
-        return A.hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
+            return ctx.sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
+        return ctx.hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
     # Use 1/z transformation
-    a = (ar and _as_num(ar[0])) or A.convert(a)
-    b = (br and _as_num(br[0])) or A.convert(b)
-    c = (cr and _as_num(cr[0])) or A.convert(c)
-    orig = A.prec
+    a = (ar and _as_num(ar[0])) or ctx.convert(a)
+    b = (br and _as_num(br[0])) or ctx.convert(b)
+    c = (cr and _as_num(cr[0])) or ctx.convert(c)
+    orig = ctx.prec
     try:
-        A.prec = orig + 15
-        h1 = A.eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
-        h2 = A.eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
+        ctx.prec = orig + 15
+        h1 = ctx.eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
+        h2 = ctx.eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
         #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
         #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
-        f1 = A.gammaprod([c,b-a],[b,c-a])
-        f2 = A.gammaprod([c,a-b],[a,c-b])
+        f1 = ctx.gammaprod([c,b-a],[b,c-a])
+        f2 = ctx.gammaprod([c,a-b],[a,c-b])
         s1 = f1 * (-z)**(mpq_0-a) * h1
         s2 = f2 * (-z)**(mpq_0-b) * h2
         v = s1 + s2
     finally:
-        A.prec = orig
+        ctx.prec = orig
     return +v
 
 @defun
-def sum_hyp0f1_rat(A, a, z):
-    prec, rnd = A._prec_rounding
+def sum_hyp0f1_rat(ctx, a, z):
+    prec, rnd = ctx._prec_rounding
     if hasattr(z, "_mpf_"):
-        return A.make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
+        return ctx.make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
     else:
-        return A.make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
+        return ctx.make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
 
 @defun
-def sum_hyp1f1_rat(A, a, b, z):
-    prec, rnd = A._prec_rounding
+def sum_hyp1f1_rat(ctx, a, b, z):
+    prec, rnd = ctx._prec_rounding
     if hasattr(z, "_mpf_"):
-        return A.make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
+        return ctx.make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
     else:
-        return A.make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
+        return ctx.make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
 
 @defun
-def sum_hyp2f1_rat(A, a, b, c, z):
-    prec, rnd = A._prec_rounding
+def sum_hyp2f1_rat(ctx, a, b, c, z):
+    prec, rnd = ctx._prec_rounding
     if hasattr(z, "_mpf_"):
-        return A.make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
+        return ctx.make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
     else:
-        return A.make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
+        return ctx.make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
 
 
 #---------------------------------------------------------------------------#
@@ -729,62 +729,62 @@ def sum_hyp2f1_rat(A, a, b, c, z):
 #---------------------------------------------------------------------------#
 
 @defun
-def hyper(A, a_s, b_s, z):
+def hyper(ctx, a_s, b_s, z):
     p = len(a_s)
     q = len(b_s)
-    z = A.convert(z)
+    z = ctx.convert(z)
     degree = p, q
     if degree == (0, 1):
-        br, bf, bc = A._hyp_parse_param(b_s[0])
+        br, bf, bc = ctx._hyp_parse_param(b_s[0])
         if br:
-            return A.sum_hyp0f1_rat(br[0], z)
-        return A.hypsum([], [], [], br, bf, bc, z)
+            return ctx.sum_hyp0f1_rat(br[0], z)
+        return ctx.hypsum([], [], [], br, bf, bc, z)
     if degree == (1, 1):
-        ar, af, ac = A._hyp_parse_param(a_s[0])
-        br, bf, bc = A._hyp_parse_param(b_s[0])
+        ar, af, ac = ctx._hyp_parse_param(a_s[0])
+        br, bf, bc = ctx._hyp_parse_param(b_s[0])
         if ar and br:
             a, b = ar[0], br[0]
-            return A.sum_hyp1f1_rat(a, b, z)
-        return A.hypsum(ar, af, ac, br, bf, bc, z)
+            return ctx.sum_hyp1f1_rat(a, b, z)
+        return ctx.hypsum(ar, af, ac, br, bf, bc, z)
     if degree == (2, 1):
-        return A.eval_hyp2f1(a_s[0], a_s[1], b_s[0], z)
+        return ctx.eval_hyp2f1(a_s[0], a_s[1], b_s[0], z)
     ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
     for a in a_s:
-        r, f, c = A._hyp_parse_param(a)
+        r, f, c = ctx._hyp_parse_param(a)
         ars += r
         afs += f
         acs += c
     for b in b_s:
-        r, f, c = A._hyp_parse_param(b)
+        r, f, c = ctx._hyp_parse_param(b)
         brs += r
         bfs += f
         bcs += c
-    return A.hypsum(ars, afs, acs, brs, bfs, bcs, z)
+    return ctx.hypsum(ars, afs, acs, brs, bfs, bcs, z)
 
 @defun
-def hyp0f1(A, a, z):
+def hyp0f1(ctx, a, z):
     r"""Hypergeometric function `\,_0F_1`. ``hyp0f1(a,z)`` is equivalent
     to ``hyper([],[a],z)``; see documentation for :func:`hyper` for more
     information."""
-    return A.hyper([], [a], z)
+    return ctx.hyper([], [a], z)
 
 @defun
-def hyp1f1(A,a,b,z):
+def hyp1f1(ctx,a,b,z):
     r"""Hypergeometric function `\,_1F_1`. ``hyp1f1(a,b,z)`` is equivalent
     to ``hyper([a],[b],z)``; see documentation for :func:`hyper` for more
     information."""
-    return A.hyper([a], [b], z)
+    return ctx.hyper([a], [b], z)
 
 @defun
-def hyp2f1(A,a,b,c,z):
+def hyp2f1(ctx,a,b,c,z):
     r"""Hypergeometric function `\,_2F_1`. ``hyp2f1(a,b,c,z)`` is equivalent
     to ``hyper([a,b],[c],z)``; see documentation for :func:`hyper` for more
     information."""
-    return A.hyper([a,b], [c], z)
+    return ctx.hyper([a,b], [c], z)
 
 @defun
-def _lower_gamma(A, z, b):
-    return A.hyp1f1(1, 1+z, b) * b**z * A.exp(-b) / z
+def _lower_gamma(ctx, z, b):
+    return ctx.hyp1f1(1, 1+z, b) * b**z * ctx.exp(-b) / z
 
 def _check_pos(x):
     try:
@@ -793,14 +793,14 @@ def _check_pos(x):
         return False
 
 @defun_wrapped
-def gammainc(A, z, a=0, b=None, regularized=False):
+def gammainc(ctx, z, a=0, b=None, regularized=False):
     if b is None:
-        b = A.inf
-    ln = A.ln
-    ei = A.ei
-    if b == A.inf:
+        b = ctx.inf
+    ln = ctx.ln
+    ei = ctx.ei
+    if b == ctx.inf:
         if not a:
-            v = A.gamma(z)
+            v = ctx.gamma(z)
         else:
             if not z:
                 # Reduces to exponential integral. Mind branch cuts.
@@ -809,9 +809,9 @@ def gammainc(A, z, a=0, b=None, regularized=False):
                 else:
                     return -ei(-a) + (ln(-a)-ln(-1/a))/2-ln(a)
             # XXX: avoid poles
-            v = A.gamma(z) - A._lower_gamma(z, a)
+            v = ctx.gamma(z) - ctx._lower_gamma(z, a)
     elif not a:
-        v = A._lower_gamma(z, b)
+        v = ctx._lower_gamma(z, b)
     else:
         if not z:
             # Reduces to exponential integral
@@ -822,291 +822,291 @@ def gammainc(A, z, a=0, b=None, regularized=False):
                     (ln(-a)-ln(-1/a))/2-ln(a) + \
                     (ln(-1/b)-ln(-b))/2+ln(b)
         # XXX: avoid poles
-        v = A._lower_gamma(z, b) - A._lower_gamma(z, a)
+        v = ctx._lower_gamma(z, b) - ctx._lower_gamma(z, a)
     if regularized:
-        return v / A.gamma(z)
+        return v / ctx.gamma(z)
     else:
         return v
 
 @defun_wrapped
-def erfi(A, z):
-    return (2/A.sqrt(A.pi)*z) * A.sum_hyp1f1_rat((1,2),(3,2), z**2)
+def erfi(ctx, z):
+    return (2/ctx.sqrt(ctx.pi)*z) * ctx.sum_hyp1f1_rat((1,2),(3,2), z**2)
 
 @defun_wrapped
-def erfinv(A, x):
+def erfinv(ctx, x):
     if x.imag or (x < -1) or (x > 1):
-        return A.bad_domain("erfinv(x) is defined only for -1 <= x <= 1")
-    if A.isnan(x): return x
+        return ctx.bad_domain("erfinv(x) is defined only for -1 <= x <= 1")
+    if ctx.isnan(x): return x
     if not x: return x
-    if x == 1: return A.inf
-    if x == -1: return A.ninf
+    if x == 1: return ctx.inf
+    if x == -1: return ctx.ninf
     if abs(x) < 0.9:
         a = 0.53728*x**3 + 0.813198*x
     else:
         # An asymptotic formula
-        u = A.ln(2/A.pi/(abs(x)-1)**2)
-        a = A.sign(x) * A.sqrt(u - A.ln(u))/A.sqrt(2)
-    return A.findroot(lambda t: A.erf(t)-x, a)
+        u = ctx.ln(2/ctx.pi/(abs(x)-1)**2)
+        a = ctx.sign(x) * ctx.sqrt(u - ctx.ln(u))/ctx.sqrt(2)
+    return ctx.findroot(lambda t: ctx.erf(t)-x, a)
 
 @defun_wrapped
-def npdf(A, x, mu=0, sigma=1):
-    sigma = A.convert(sigma)
-    return A.exp(-(x-mu)**2/(2*sigma**2)) / (sigma*A.sqrt(2*A.pi))
+def npdf(ctx, x, mu=0, sigma=1):
+    sigma = ctx.convert(sigma)
+    return ctx.exp(-(x-mu)**2/(2*sigma**2)) / (sigma*ctx.sqrt(2*ctx.pi))
 
 @defun_wrapped
-def ncdf(A, x, mu=0, sigma=1):
-    a = (x-mu)/(sigma*A.sqrt(2))
+def ncdf(ctx, x, mu=0, sigma=1):
+    a = (x-mu)/(sigma*ctx.sqrt(2))
     if a < 0:
-        return A.erfc(-a)/2
+        return ctx.erfc(-a)/2
     else:
-        return (1+A.erf(a))/2
+        return (1+ctx.erf(a))/2
 
-def ei_as(A, a):
+def ei_as(ctx, a):
     extra = 10
-    A.dps += extra
+    ctx.dps += extra
     s = k = p = 1
-    while abs(p) > A.eps:
+    while abs(p) > ctx.eps:
         p = (p*k)/a
         s += p
         k += 1
-    s = (s * A.exp(a))/a
-    A.dps -= extra
+    s = (s * ctx.exp(a))/a
+    ctx.dps -= extra
     return s
 
 @defun_wrapped
-def ei(A, z):
-    if z == A.inf:
+def ei(ctx, z):
+    if z == ctx.inf:
         return z
-    if z == A.ninf:
-        return -A.zero
+    if z == ctx.ninf:
+        return -ctx.zero
     if not z:
-        return A.ninf
-    if abs(z) > A.prec * 0.7 + 50:
-        r = ei_as(A, z)
+        return ctx.ninf
+    if abs(z) > ctx.prec * 0.7 + 50:
+        r = ei_as(ctx, z)
         if z.imag > 0:
-            r += A.j*A.pi
+            r += ctx.j*ctx.pi
         elif z.imag < 0:
-            r -= A.j*A.pi
+            r -= ctx.j*ctx.pi
         return r
     v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
-        (A.ln(z)-A.ln(1/z))/2 + A.euler
-    if A.is_real_type(z) and z < 0:
+        (ctx.ln(z)-ctx.ln(1/z))/2 + ctx.euler
+    if ctx.is_real_type(z) and z < 0:
         return v.real
     return v
 
 @defun_wrapped
-def li(A, z):
+def li(ctx, z):
     if not z:
         return z
     if z == 1:
-        return A.ninf
-    return A.ei(A.ln(z))
+        return ctx.ninf
+    return ctx.ei(ctx.ln(z))
 
 @defun_wrapped
-def chi(A, z):
+def chi(ctx, z):
     if not z:
-        return A.ninf
+        return ctx.ninf
     z2 = (z/2)**2
-    return A.euler + A.ln(z) + \
-        z2*A.hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
+    return ctx.euler + ctx.ln(z) + \
+        z2*ctx.hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
 
 @defun_wrapped
-def shi(A, z):
+def shi(ctx, z):
     z2 = (z/2)**2
-    return z*A.hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
+    return z*ctx.hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
 
 @defun_wrapped
-def fresnels(A, z):
-    if z == A.inf:
-        return A.mpf(0.5)
-    if z == A.ninf:
-        return A.mpf(-0.5)
-    return A.pi*z**3/6*A.hypsum([[3,4]],[],[],[[3,2],[7,4]],[],[],-A.pi**2*z**4/16)
+def fresnels(ctx, z):
+    if z == ctx.inf:
+        return ctx.mpf(0.5)
+    if z == ctx.ninf:
+        return ctx.mpf(-0.5)
+    return ctx.pi*z**3/6*ctx.hypsum([[3,4]],[],[],[[3,2],[7,4]],[],[],-ctx.pi**2*z**4/16)
 
 @defun_wrapped
-def fresnelc(A, z):
-    if z == A.inf:
-        return A.mpf(0.5)
-    if z == A.ninf:
-        return A.mpf(-0.5)
-    return z*A.hypsum([[1,4]],[],[],[[1,2],[5,4]],[],[],-A.pi**2*z**4/16)
+def fresnelc(ctx, z):
+    if z == ctx.inf:
+        return ctx.mpf(0.5)
+    if z == ctx.ninf:
+        return ctx.mpf(-0.5)
+    return z*ctx.hypsum([[1,4]],[],[],[[1,2],[5,4]],[],[],-ctx.pi**2*z**4/16)
 
 @defun_wrapped
-def airyai(A, z):
-    if z == A.inf or z == A.ninf:
+def airyai(ctx, z):
+    if z == ctx.inf or z == ctx.ninf:
         return 1/z
     if z.real > 2:
         # cancellation: both terms are ~ 2^(z^1.5),
         # result is ~ 2^(-z^1.5), so need ~2*z^1.5 extra bits
-        A.prec += 2*int(z.real**1.5)
+        ctx.prec += 2*int(z.real**1.5)
     z3 = z**3 / 9
-    a = A.sum_hyp0f1_rat((2,3), z3) / (A.cbrt(9) * A.gamma(A.mpf(2)/3))
-    b = z * A.sum_hyp0f1_rat((4,3), z3) / (A.cbrt(3) * A.gamma(A.mpf(1)/3))
+    a = ctx.sum_hyp0f1_rat((2,3), z3) / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
+    b = z * ctx.sum_hyp0f1_rat((4,3), z3) / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
     return a - b
 
 @defun_wrapped
-def airybi(A, z):
-    if z == A.inf:
+def airybi(ctx, z):
+    if z == ctx.inf:
         return z
-    if z == A.ninf:
+    if z == ctx.ninf:
         return 1/z
     z3 = z**3 / 9
-    rt = A.nthroot(3, 6)
-    a = A.sum_hyp0f1_rat((2,3), z3) / (rt * A.gamma(A.mpf(2)/3))
-    b = z * rt * A.sum_hyp0f1_rat((4,3), z3) / A.gamma(A.mpf(1)/3)
+    rt = ctx.nthroot(3, 6)
+    a = ctx.sum_hyp0f1_rat((2,3), z3) / (rt * ctx.gamma(ctx.mpf(2)/3))
+    b = z * rt * ctx.sum_hyp0f1_rat((4,3), z3) / ctx.gamma(ctx.mpf(1)/3)
     return a + b
 
 @defun
-def agm(A, a, b=1):
+def agm(ctx, a, b=1):
     if b == 1:
-        return A.agm1(a)
-    a = A.convert(a)
-    b = A.convert(b)
-    prec, rounding = A._prec_rounding
+        return ctx.agm1(a)
+    a = ctx.convert(a)
+    b = ctx.convert(b)
+    prec, rounding = ctx._prec_rounding
     if hasattr(a, '_mpf_') and hasattr(b, '_mpf_'):
         try:
             v = libhyper.mpf_agm(a._mpf_, b._mpf_, prec, rounding)
-            return A.make_mpf(v)
+            return ctx.make_mpf(v)
         except ComplexResult:
             pass
     if hasattr(a, '_mpf_'): a = (a._mpf_, libmpf.fzero)
     else: a = a._mpc_
     if hasattr(b, '_mpf_'): b = (b._mpf_, libmpf.fzero)
     else: b = b._mpc_
-    return A.make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
+    return ctx.make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
 
 @defun_wrapped
-def jacobi(A, n, a, b, x):
-    return A.binomial(n+a,n) * A.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
+def jacobi(ctx, n, a, b, x):
+    return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
 
 @defun_wrapped
-def legendre(A, n, x):
-    if A.isint(n):
+def legendre(ctx, n, x):
+    if ctx.isint(n):
         n = int(n)
     if x == -1:
         # TODO: hyp2f1 should handle this
-        if A.isint(n):
-            return (-1)**(n + (n>=0)) * A.mpf(-1)
-        if not int(A.floor(A.re(n))) % 2:
-            return A.ninf
-        return A.inf
-    return A.hyp2f1(-n,n+1,1,(1-x)/2)
+        if ctx.isint(n):
+            return (-1)**(n + (n>=0)) * ctx.mpf(-1)
+        if not int(ctx.floor(ctx.re(n))) % 2:
+            return ctx.ninf
+        return ctx.inf
+    return ctx.hyp2f1(-n,n+1,1,(1-x)/2)
 
 @defun_wrapped
-def chebyt(A, n, x):
-    return A.hyp2f1(-n,n,0.5,(1-x)/2)
+def chebyt(ctx, n, x):
+    return ctx.hyp2f1(-n,n,0.5,(1-x)/2)
 
 @defun_wrapped
-def chebyu(A, n, x):
-    return (n+1) * A.hyp2f1(-n, n+2, 1.5, (1-x)/2)
+def chebyu(ctx, n, x):
+    return (n+1) * ctx.hyp2f1(-n, n+2, 1.5, (1-x)/2)
 
 @defun_wrapped
-def _besselj(A, v, x):
+def _besselj(ctx, v, x):
     hx = x/2
-    return hx**v * A.hyp0f1(v+1, -hx**2) / A.factorial(v)
+    return hx**v * ctx.hyp0f1(v+1, -hx**2) / ctx.factorial(v)
 
 @defun
-def besselj(A, v, x):
-    if A.isint(v):
-        x = A.convert(x)
+def besselj(ctx, v, x):
+    if ctx.isint(v):
+        x = ctx.convert(x)
         v = int(v)
-        prec, rounding = A._prec_rounding
+        prec, rounding = ctx._prec_rounding
         if hasattr(x, '_mpf_'):
-            return A.make_mpf(libhyper.mpf_besseljn(v, x._mpf_, prec, rounding))
+            return ctx.make_mpf(libhyper.mpf_besseljn(v, x._mpf_, prec, rounding))
         if hasattr(x, '_mpc_'):
-            return A.make_mpc(libhyper.mpc_besseljn(v, x._mpc_, prec, rounding))
-    return A._besselj(v, x)
+            return ctx.make_mpc(libhyper.mpc_besseljn(v, x._mpc_, prec, rounding))
+    return ctx._besselj(v, x)
 
 @defun
-def j0(A, x):
+def j0(ctx, x):
     """Computes the Bessel function `J_0(x)`. See :func:`besselj`."""
-    return A.besselj(0, x)
+    return ctx.besselj(0, x)
 
 @defun
-def j1(A, x):
+def j1(ctx, x):
     """Computes the Bessel function `J_1(x)`.  See :func:`besselj`."""
-    return A.besselj(1, x)
+    return ctx.besselj(1, x)
 
 @defun_wrapped
-def bessely(A,n,x):
-    intdist = abs(n.imag) + abs(n.real-A.floor(n.real+0.5))
+def bessely(ctx,n,x):
+    intdist = abs(n.imag) + abs(n.real-ctx.floor(n.real+0.5))
     if not intdist:
-        h = +A.eps
-        A.prec *= 2
+        h = +ctx.eps
+        ctx.prec *= 2
         n += h
     else:
-        A.prec += -int(A.log(intdist, 2)+1)
-    return (A.besselj(n,x)*A.cospi(n) - A.besselj(-n,x))/A.sinpi(n)
+        ctx.prec += -int(ctx.log(intdist, 2)+1)
+    return (ctx.besselj(n,x)*ctx.cospi(n) - ctx.besselj(-n,x))/ctx.sinpi(n)
 
 @defun_wrapped
-def besseli(A,n,x):
-    if A.isint(n):
+def besseli(ctx,n,x):
+    if ctx.isint(n):
         n = abs(int(n))
     hx = x/2
-    return hx**n * A.hyp0f1(n+1, hx**2) / A.factorial(n)
+    return hx**n * ctx.hyp0f1(n+1, hx**2) / ctx.factorial(n)
 
 @defun_wrapped
-def besselk(A,n,x):
-    intdist = abs(n.imag) + abs(n.real-A.floor(n.real+0.5))
+def besselk(ctx,n,x):
+    intdist = abs(n.imag) + abs(n.real-ctx.floor(n.real+0.5))
     if not intdist:
-        h = +A.eps
-        A.prec *= 2
+        h = +ctx.eps
+        ctx.prec *= 2
         n += h
     else:
-        A.prec += -int(A.log(intdist, 2)+1)
-    return A.pi*(A.besseli(-n,x)-A.besseli(n,x))/(2*A.sinpi(n))
+        ctx.prec += -int(ctx.log(intdist, 2)+1)
+    return ctx.pi*(ctx.besseli(-n,x)-ctx.besseli(n,x))/(2*ctx.sinpi(n))
 
 @defun_wrapped
-def hankel1(A,n,x):
-    return A.besselj(n,x) + A.j*A.bessely(n,x)
+def hankel1(ctx,n,x):
+    return ctx.besselj(n,x) + ctx.j*ctx.bessely(n,x)
 
 @defun_wrapped
-def hankel2(A,n,x):
-    return A.besselj(n,x) - A.j*A.bessely(n,x)
+def hankel2(ctx,n,x):
+    return ctx.besselj(n,x) - ctx.j*ctx.bessely(n,x)
 
 @defun_wrapped
-def lambertw(A, z, k=0, approx=None):
-    if A.isnan(z):
+def lambertw(ctx, z, k=0, approx=None):
+    if ctx.isnan(z):
         return z
-    A.prec += 20
+    ctx.prec += 20
     # We must be extremely careful near the singularities at -1/e and 0
-    u = A.exp(-1)
+    u = ctx.exp(-1)
     if abs(z) <= u:
         if not z:
             # w(0,0) = 0; for all other branches we hit the pole
             if not k:
                 return z
-            return A.ninf
+            return ctx.ninf
         if not k:
             w = z
         # For small real z < 0, the -1 branch behaves roughly like log(-z)
-        elif k == -1 and not A.im(z) and A.re(z) < 0:
-            w = A.ln(-z)
+        elif k == -1 and not ctx.im(z) and ctx.re(z) < 0:
+            w = ctx.ln(-z)
         # Use a simple asymptotic approximation.
         else:
-            w = A.ln(z)
+            w = ctx.ln(z)
             # The branches are roughly logarithmic. This approximation
             # gets better for large |k|; need to check that this always
             # works for k ~= -1, 0, 1.
-            if k: w += k * 2*A.pi*A.j
-    elif k == 0 and A.im(z) and abs(z) <= 0.6:
+            if k: w += k * 2*ctx.pi*ctx.j
+    elif k == 0 and ctx.im(z) and abs(z) <= 0.6:
         w = z
     else:
-        if z == A.inf:
+        if z == ctx.inf:
             if k == 0:
                 return z
             else:
-                return z + 2*k*A.pi*A.j
-        if z == A.ninf:
-            return (-z) + (2*k+1)*A.pi*A.j
+                return z + 2*k*ctx.pi*ctx.j
+        if z == ctx.ninf:
+            return (-z) + (2*k+1)*ctx.pi*ctx.j
         # Simple asymptotic approximation as above
-        w = A.ln(z)
-        if k: w += k * 2*A.pi*A.j
+        w = ctx.ln(z)
+        if k: w += k * 2*ctx.pi*ctx.j
     # Use Halley iteration to solve w*exp(w) = z
-    two = A.mpf(2)
-    weps = A.ldexp(A.eps, 15)
+    two = ctx.mpf(2)
+    weps = ctx.ldexp(ctx.eps, 15)
     for i in xrange(100):
-        ew = A.exp(w)
+        ew = ctx.exp(w)
         wew = w*ew
         wewz = wew-z
         wn = w - wewz/(wew+ew-(w+two)*wewz/(two*w+two))
@@ -1118,113 +1118,113 @@ def lambertw(A, z, k=0, approx=None):
     return wn
 
 @defun_wrapped
-def barnesg(A, z):
-    if A.isinf(z):
-        if z == A.inf:
+def barnesg(ctx, z):
+    if ctx.isinf(z):
+        if z == ctx.inf:
             return z
-        return A.nan
-    if A.isnan(z):
+        return ctx.nan
+    if ctx.isnan(z):
         return z
-    if (not z.imag) and z.real <= 0 and A.isint(z.real):
+    if (not z.imag) and z.real <= 0 and ctx.isint(z.real):
         return z*0
     # Account for size (would not be needed if computing log(G))
     if abs(z) > 5:
-        A.dps += 2*A.log(abs(z),2)
+        ctx.dps += 2*ctx.log(abs(z),2)
     # Estimate terms for asymptotic expansion
-    N = A.dps // 2 + 5
+    N = ctx.dps // 2 + 5
     G = 1
-    while A.re(z) < N:
-        G /= A.gamma(z)
+    while ctx.re(z) < N:
+        G /= ctx.gamma(z)
         z += 1
     z -= 1
-    s = A.mpf(1)/12
-    s -= A.log(A.glaisher)
-    s += z*A.log(2*A.pi)/2
-    s += (z**2/2-A.mpf(1)/12)*A.log(z)
+    s = ctx.mpf(1)/12
+    s -= ctx.log(ctx.glaisher)
+    s += z*ctx.log(2*ctx.pi)/2
+    s += (z**2/2-ctx.mpf(1)/12)*ctx.log(z)
     s -= 3*z**2/4
     z2k = z2 = z**2
     for k in xrange(1, N+1):
-        t = A.bernoulli(2*k+2) / (4*k*(k+1)*z2k)
-        if abs(t) < A.eps:
+        t = ctx.bernoulli(2*k+2) / (4*k*(k+1)*z2k)
+        if abs(t) < ctx.eps:
             #print k, N      # check how many terms were needed
             break
         z2k *= z2
         s += t
     #if k == N:
     #    print "warning: series for barnesg failed to converge"
-    return G*A.exp(s)
+    return G*ctx.exp(s)
 
 @defun
-def superfac(A, z):
-    return A.barnesg(z+2)
+def superfac(ctx, z):
+    return ctx.barnesg(z+2)
 
 @defun_wrapped
-def hyperfac(A, z):
+def hyperfac(ctx, z):
     # XXX: estimate needed extra bits accurately
-    if z == A.inf:
+    if z == ctx.inf:
         return z
     if abs(z) > 5:
-        extra = 4*int(A.log(abs(z),2))
+        extra = 4*int(ctx.log(abs(z),2))
     else:
         extra = 0
-    A.prec += extra
-    if not z.imag and z.real < 0 and A.isint(z.real):
-        n = int(A.re(z))
-        h = A.hyperfac(-n-1)
+    ctx.prec += extra
+    if not z.imag and z.real < 0 and ctx.isint(z.real):
+        n = int(ctx.re(z))
+        h = ctx.hyperfac(-n-1)
         if ((n+1)//2) & 1:
             h = -h
-        if A.is_complex_type(z):
+        if ctx.is_complex_type(z):
             return h + 0j
         return h
     zp1 = z+1
     # Wrong branch cut
-    #v = A.gamma(zp1)**z
-    #A.prec -= extra
-    #return v / A.barnesg(zp1)
-    v = A.exp(z*A.loggamma(zp1))
-    A.prec -= extra
-    return v / A.barnesg(zp1)
+    #v = ctx.gamma(zp1)**z
+    #ctx.prec -= extra
+    #return v / ctx.barnesg(zp1)
+    v = ctx.exp(z*ctx.loggamma(zp1))
+    ctx.prec -= extra
+    return v / ctx.barnesg(zp1)
 
 @defun_wrapped
-def loggamma(A, z):
+def loggamma(ctx, z):
     a = z.real
     b = z.imag
     if not b and a > 0:
-        return A.ln(A.gamma(z))
-    u = A.arg(z)
-    w = A.ln(A.gamma(z))
+        return ctx.ln(ctx.gamma(z))
+    u = ctx.arg(z)
+    w = ctx.ln(ctx.gamma(z))
     if b:
-        gi = -b - u/2 + a*u + b*A.ln(abs(z))
-        n = A.floor((gi-w.imag)/(2*A.pi)+0.5) * (2*A.pi)
-        return w + n*A.j
+        gi = -b - u/2 + a*u + b*ctx.ln(abs(z))
+        n = ctx.floor((gi-w.imag)/(2*ctx.pi)+0.5) * (2*ctx.pi)
+        return w + n*ctx.j
     elif a < 0:
-        n = int(A.floor(a))
-        w += (n-(n%2))*A.pi*A.j
+        n = int(ctx.floor(a))
+        w += (n-(n%2))*ctx.pi*ctx.j
     return w
 
 @defun_wrapped
-def siegeltheta(A, t):
+def siegeltheta(ctx, t):
     if t.imag:
         # XXX: cancellation occurs
-        a = A.loggamma(0.25+0.5j*t)
-        b = A.loggamma(0.25-0.5j*t)
-        return -A.ln(A.pi)/2*t - 0.5j*(a-b)
+        a = ctx.loggamma(0.25+0.5j*t)
+        b = ctx.loggamma(0.25-0.5j*t)
+        return -ctx.ln(ctx.pi)/2*t - 0.5j*(a-b)
     else:
-        if A.isinf(t):
+        if ctx.isinf(t):
             return t
-        return A.loggamma(0.25+0.5j*t).imag - A.ln(A.pi)/2*t
+        return ctx.loggamma(0.25+0.5j*t).imag - ctx.ln(ctx.pi)/2*t
 
 @defun_wrapped
-def grampoint(A, n):
-    # Asymptotic expansion, from
+def grampoint(ctx, n):
+    # ctxsymptotic expansion, from
     # http://mathworld.wolfram.com/GramPoint.html
-    g = 2*A.pi*A.exp(1+A.lambertw((8*n+1)/(8*e)))
-    return A.findroot(lambda t: A.siegeltheta(t)-A.pi*n, g)
+    g = 2*ctx.pi*ctx.exp(1+ctx.lambertw((8*n+1)/(8*e)))
+    return ctx.findroot(lambda t: ctx.siegeltheta(t)-ctx.pi*n, g)
 
 @defun_wrapped
-def siegelz(A, t):
-    v = A.exp(A.j*A.siegeltheta(t))*A.zeta(0.5+A.j*t)
-    if A.is_real_type(t):
+def siegelz(ctx, t):
+    v = ctx.exp(ctx.j*ctx.siegeltheta(t))*ctx.zeta(0.5+ctx.j*t)
+    if ctx.is_real_type(t):
         return v.real
     return v
 
@@ -1260,7 +1260,7 @@ def _load_zeta_zeros(url):
     _zeta_zeros[:] = L
 
 @defun
-def zetazero(A, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
+def zetazero(ctx, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
     n = int(n)
     if n < 0:
         return zetazero(-n).conjugate()
@@ -1270,28 +1270,28 @@ def zetazero(A, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
         _load_zeta_zeros(url)
     if n > len(_zeta_zeros):
         raise NotImplementedError("n too large for zetazeros")
-    return A.mpc(0.5, A.findroot(A.siegelz, _zeta_zeros[n-1]))
+    return ctx.mpc(0.5, ctx.findroot(ctx.siegelz, _zeta_zeros[n-1]))
 
 @defun_wrapped
-def riemannr(A, x):
+def riemannr(ctx, x):
     if x == 0:
-        return A.zero
+        return ctx.zero
     # Check if a simple asymptotic estimate is accurate enough
     if abs(x) > 1000:
-        a = A.li(x)
-        b = 0.5*A.li(A.sqrt(x))
-        if abs(b) < abs(a)*A.eps:
+        a = ctx.li(x)
+        b = 0.5*ctx.li(ctx.sqrt(x))
+        if abs(b) < abs(a)*ctx.eps:
             return a
     if abs(x) < 0.01:
         # XXX
-        A.prec += int(-A.log(abs(x),2))
+        ctx.prec += int(-ctx.log(abs(x),2))
     # Sum Gram's series
-    s = t = A.one
-    u = A.ln(x)
+    s = t = ctx.one
+    u = ctx.ln(x)
     k = 1
-    while abs(t) > abs(s)*A.eps:
+    while abs(t) > abs(s)*ctx.eps:
         t = t * u / k
-        s += t / (k * A.zeta(k+1))
+        s += t / (k * ctx.zeta(k+1))
         k += 1
     return s
 
@@ -1304,36 +1304,36 @@ def primepi(x):
     return len(list_primes(x))
 
 @defun_wrapped
-def primepi2(A, x):
+def primepi2(ctx, x):
     x = int(x)
     if x < 2:
-        return A.mpi(0,0)
+        return ctx.mpi(0,0)
     if x < 2657:
-        return A.mpi(A.primepi(x))
-    mid = A.li(x)
+        return ctx.mpi(ctx.primepi(x))
+    mid = ctx.li(x)
     # Schoenfeld's estimate for x >= 2657, assuming RH
-    err = A.sqrt(x,rounding='u')*A.ln(x,rounding='u')/8/A.pi(rounding='d')
-    a = A.floor((A.mpi(mid)-err).a, rounding='d')
-    b = A.ceil((A.mpi(mid)+err).b, rounding='u')
-    return A.mpi(a, b)
+    err = ctx.sqrt(x,rounding='u')*ctx.ln(x,rounding='u')/8/ctx.pi(rounding='d')
+    a = ctx.floor((ctx.mpi(mid)-err).a, rounding='d')
+    b = ctx.ceil((ctx.mpi(mid)+err).b, rounding='u')
+    return ctx.mpi(a, b)
 
 @defun_wrapped
-def primezeta(A, s):
-    if A.isnan(s):
+def primezeta(ctx, s):
+    if ctx.isnan(s):
         return s
-    if A.re(s) <= 0:
+    if ctx.re(s) <= 0:
         raise ValueError("prime zeta function defined only for re(s) > 0")
     if s == 1:
-        return A.inf
+        return ctx.inf
     if s == 0.5:
-        return A.mpc(A.ninf, A.pi)
-    r = A.re(s)
-    if r > A.prec:
+        return ctx.mpc(ctx.ninf, ctx.pi)
+    r = ctx.re(s)
+    if r > ctx.prec:
         return 0.5**s
     else:
-        wp = A.prec + int(r)
+        wp = ctx.prec + int(r)
         def terms():
-            orig = A.prec
+            orig = ctx.prec
             # zeta ~ 1+eps; need to set precision
             # to get logarithm accurately
             k = 0
@@ -1342,26 +1342,26 @@ def primezeta(A, s):
                 u = libintmath.moebius(k)
                 if not u:
                     continue
-                A.prec = wp
-                t = u*A.ln(A.zeta(k*s))/k
+                ctx.prec = wp
+                t = u*ctx.ln(ctx.zeta(k*s))/k
                 if not t:
                     return
-                #print A.prec, A.nstr(t)
-                A.prec = orig
+                #print ctx.prec, ctx.nstr(t)
+                ctx.prec = orig
                 yield t
-    return sum_accurately(A, terms)
+    return sum_accurately(ctx, terms)
 
 @defun_wrapped
-def bernpoly(A, n, z):
+def bernpoly(ctx, n, z):
     n = int(n)
     assert n >= 0
     # XXX: optimize
-    return sum(A.binomial(n,k)*A.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
+    return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
 
 # TODO: this should be implemented low-level
-def polylog_series(A, s, z):
-    tol = +A.eps
-    l = A.zero
+def polylog_series(ctx, s, z):
+    tol = +ctx.eps
+    l = ctx.zero
     k = 1
     zk = z
     while 1:
@@ -1373,42 +1373,42 @@ def polylog_series(A, s, z):
         k += 1
     return l
 
-def polylog_continuation(A, n, z):
+def polylog_continuation(ctx, n, z):
     if n < 0:
         return z*0
-    twopij = 2j * A.pi
-    a = -twopij**n/A.fac(n) * A.bernpoly(n, A.ln(z)/twopij)
-    if A.is_real_type(z) and z < 0:
+    twopij = 2j * ctx.pi
+    a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
+    if ctx.is_real_type(z) and z < 0:
         a = a.real
     if z.imag < 0 or (z.imag == 0 and z.real >= 1):
-        a -= twopij*A.ln(z)**(n-1)/A.fac(n-1)
+        a -= twopij*ctx.ln(z)**(n-1)/ctx.fac(n-1)
     return a
 
-def polylog_unitcircle(A, n, z):
-    tol = +A.eps
+def polylog_unitcircle(ctx, n, z):
+    tol = +ctx.eps
     if n > 1:
-        l = A.zero
-        logz = A.ln(z)
-        logmz = A.one
+        l = ctx.zero
+        logz = ctx.ln(z)
+        logmz = ctx.one
         m = 0
         while 1:
             if (n-m) != 1:
-                term = A.zeta(n-m) * logmz / A.fac(m)
+                term = ctx.zeta(n-m) * logmz / ctx.fac(m)
                 if term and abs(term) < tol:
                     break
                 l += term
             logmz *= logz
             m += 1
-        l += A.ln(z)**(n-1)/A.fac(n-1)*(A.harmonic(n-1)-A.ln(-A.ln(z)))
+        l += ctx.ln(z)**(n-1)/ctx.fac(n-1)*(ctx.harmonic(n-1)-ctx.ln(-ctx.ln(z)))
     elif n < 1:  # else
-        l = A.fac(-n)*(-A.ln(z))**(n-1)
-        logz = A.ln(z)
-        logkz = A.one
+        l = ctx.fac(-n)*(-ctx.ln(z))**(n-1)
+        logz = ctx.ln(z)
+        logkz = ctx.one
         k = 0
         while 1:
-            b = A.bernoulli(k-n+1)
+            b = ctx.bernoulli(k-n+1)
             if b:
-                term = b*logkz/(A.fac(k)*(k-n+1))
+                term = b*logkz/(ctx.fac(k)*(k-n+1))
                 if abs(term) < tol:
                     break
                 l -= term
@@ -1416,40 +1416,40 @@ def polylog_unitcircle(A, n, z):
             k += 1
     else:
         raise ValueError
-    if A.is_real_type(z) and z < 0:
+    if ctx.is_real_type(z) and z < 0:
         l = l.real
     return l
 
 @defun_wrapped
-def polylog(A, s, z):
+def polylog(ctx, s, z):
     if z == 1:
-        return A.zeta(s)
+        return ctx.zeta(s)
     if z == -1:
-        return -A.altzeta(s)
+        return -ctx.altzeta(s)
     if s == 0:
         return z/(1-z)
     if s == 1:
-        return -A.ln(1-z)
+        return -ctx.ln(1-z)
     if s == -1:
         return z/(1-z)**2
-    if abs(z) <= 0.75 or (not A.isint(s) and abs(z) < 0.99):
-        return polylog_series(A, s, z)
-    if abs(z) >= 1.4 and A.isint(s):
-        return (-1)**(s+1)*polylog_series(A, s, 1/z) + polylog_continuation(A, s, z)
-    if A.isint(s):
-        return polylog_unitcircle(A, int(s), z)
+    if abs(z) <= 0.75 or (not ctx.isint(s) and abs(z) < 0.99):
+        return polylog_series(ctx, s, z)
+    if abs(z) >= 1.4 and ctx.isint(s):
+        return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, s, z)
+    if ctx.isint(s):
+        return polylog_unitcircle(ctx, int(s), z)
     raise NotImplementedError("polylog for arbitrary s and z")
     # This could perhaps be used in some cases
     #from quadrature import quad
     #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
 # Experimental code; could be used elsewhere
-def sum_accurately(A, terms, check_step=1):
-    orig = A.prec
+def sum_accurately(ctx, terms, check_step=1):
+    orig = ctx.prec
     extra = 10
     while 1:
-        A.prec = orig + extra
-        max_term = A.ninf
+        ctx.prec = orig + extra
+        max_term = ctx.ninf
         s = 0
         k = 0
         for term in terms():
@@ -1458,13 +1458,13 @@ def sum_accurately(A, terms, check_step=1):
                 abs_term = abs(term)
                 abs_sum = abs(s)
                 max_term = max(max_term, abs_term)
-                if abs_term <= A.eps*abs_sum:
+                if abs_term <= ctx.eps*abs_sum:
                     break
             k += 1
         if abs_sum:
-            cancellation = int(max(0,A.log(max_term/abs_sum,2)))
+            cancellation = int(max(0,ctx.log(max_term/abs_sum,2)))
         else:
-            cancellation = A.prec
+            cancellation = ctx.prec
         if cancellation < extra:
             break
         else:
@@ -1472,50 +1472,50 @@ def sum_accurately(A, terms, check_step=1):
     return s
 
 @defun_wrapped
-def bell(A, n, x=1):
-    x = A.convert(x)
+def bell(ctx, n, x=1):
+    x = ctx.convert(x)
     if not n:
-        if A.isnan(x):
+        if ctx.isnan(x):
             return x
         return type(x)(1)
-    if A.isinf(x) or A.isinf(n) or A.isnan(x) or A.isnan(n):
+    if ctx.isinf(x) or ctx.isinf(n) or ctx.isnan(x) or ctx.isnan(n):
         return x**n
     if n == 1: return x
     if n == 2: return x*(x+1)
-    if x == 0: return A.sincpi(n)
-    return _polyexp(A, n, x, True) / A.exp(x)
+    if x == 0: return ctx.sincpi(n)
+    return _polyexp(ctx, n, x, True) / ctx.exp(x)
 
-def _polyexp(A, n, x, extra=False):
+def _polyexp(ctx, n, x, extra=False):
     def _terms():
         if extra:
-            yield A.sincpi(n)
+            yield ctx.sincpi(n)
         t = x
         k = 1
         while 1:
             yield k**n * t
             k += 1
             t = t*x/k
-    return sum_accurately(A, _terms, check_step=4)
+    return sum_accurately(ctx, _terms, check_step=4)
 
 @defun_wrapped
-def polyexp(A, s, z):
-    if A.isinf(z) or A.isinf(s) or A.isnan(z) or A.isnan(s):
+def polyexp(ctx, s, z):
+    if ctx.isinf(z) or ctx.isinf(s) or ctx.isnan(z) or ctx.isnan(s):
         return z**s
     if z == 0: return z*s
-    if s == 0: return A.expm1(z)
-    if s == 1: return A.exp(z)*z
-    if s == 2: return A.exp(z)*z*(z+1)
-    return _polyexp(A, s, z)
+    if s == 0: return ctx.expm1(z)
+    if s == 1: return ctx.exp(z)*z
+    if s == 2: return ctx.exp(z)*z*(z+1)
+    return _polyexp(ctx, s, z)
 
 # TODO: tests; improve implementation
 @defun_wrapped
-def expm1(A, x):
+def expm1(ctx, x):
     """
     Accurately computes exp(x)-1.
     """
     if not x:
         return type(x)(1)
-    return sum_accurately(A, lambda: iter([A.exp(x),-1]),1)
+    return sum_accurately(ctx, lambda: iter([ctx.exp(x),-1]),1)
 
 # hack
 if __name__ == '__main__':

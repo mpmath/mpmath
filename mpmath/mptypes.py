@@ -92,124 +92,127 @@ class MultiPrecisionArithmetic(Context):
     Context for multiprecision arithmetic with a global precision.
     """
 
-    def __init__(self):
+    def __init__(ctx):
         # Settings
-        self._prec_rounding = [53, round_nearest]
-        self.trap_complex = False
-        self.mpf = type('mpf', (_mpf,), {})
-        self.mpc = type('mpc', (_mpc,), {})
-        self.mpi = type('mpi', (_mpi,), {})
-        self.constant = type('constant', (_constant,), {})
-        self.types = [self.mpf, self.mpc, self.mpi, self.constant]
+        ctx._prec_rounding = [53, round_nearest]
+        ctx.trap_complex = False
+        ctx.mpf = type('mpf', (_mpf,), {})
+        ctx.mpc = type('mpc', (_mpc,), {})
+        ctx.mpi = type('mpi', (_mpi,), {})
+        ctx.constant = type('constant', (_constant,), {})
+        ctx.types = [ctx.mpf, ctx.mpc, ctx.mpi, ctx.constant]
         # For fast access
-        self.mpf._ctxdata = [self.mpf, new, self._prec_rounding]
-        self.mpc._ctxdata = [self.mpc, new, self._prec_rounding]
-        self.mpi._ctxdata = [self.mpi, new, self._prec_rounding]
-        self.constant._ctxdata = [self.mpf, new, self._prec_rounding]
-        self.constant.context = self
-        self.mpf.context = self
-        self.mpc.context = self
-        self.mpi.context = self
+        ctx.mpf._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
+        ctx.mpc._ctxdata = [ctx.mpc, new, ctx._prec_rounding]
+        ctx.mpi._ctxdata = [ctx.mpi, new, ctx._prec_rounding]
+        ctx.constant._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
+        ctx.constant.context = ctx
+        ctx.mpf.context = ctx
+        ctx.mpc.context = ctx
+        ctx.mpi.context = ctx
         # Predefined data
-        self.one = self.make_mpf(fone)
-        self.zero = self.make_mpf(fzero)
-        self.inf = self.make_mpf(finf)
-        self.ninf = self.make_mpf(fninf)
-        self.nan = self.make_mpf(fnan)
-        self.j = self.make_mpc((fzero,fone))
-        eps = self.constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
-            "epsilon of working precision")
-        self.eps = eps
-        self._create_constants({})
+        ctx._create_constants({})
 
     # pi, etc
     _constants = []
 
-    def _create_constants(self, namespace):
+    def _create_constants(ctx, namespace):
+        ctx.one = ctx.make_mpf(fone)
+        ctx.zero = ctx.make_mpf(fzero)
+        ctx.inf = ctx.make_mpf(finf)
+        ctx.ninf = ctx.make_mpf(fninf)
+        ctx.nan = ctx.make_mpf(fnan)
+        ctx.j = ctx.make_mpc((fzero,fone))
+        eps = ctx.constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
+            "epsilon of working precision")
+        ctx.eps = eps
         import function_docs
-        for name, func, descr in self._constants:
+        for name, func, descr in ctx._constants:
             doc = function_docs.__dict__.get(name, descr)
-            const_cls = type("_" + name, (self.constant,), {'__doc__':doc})
+            const_cls = type("_" + name, (ctx.constant,), {'__doc__':doc})
             const_inst = const_cls(func, descr)
-            setattr(self, name, const_inst)
+            setattr(ctx, name, const_inst)
             namespace[name] = const_inst
 
-    def clone(self):
+    def clone(ctx):
+        """
+        Create a copy of the context, with the same working precision.
+        """
         a = MultiPrecisionArithmetic()
-        a.prec = self.prec
+        a.prec = ctx.prec
         return a
 
     # Several helper methods
     # TODO: add more of these, make consistent, write docstrings, ...
 
-    def is_real_type(self, x):
+    def is_real_type(ctx, x):
         return hasattr(x, '_mpf_')
 
-    def is_complex_type(self, x):
+    def is_complex_type(ctx, x):
         return hasattr(x, '_mpc_')
 
-    def make_mpf(self, v):
-        a = new(self.mpf)
+    def make_mpf(ctx, v):
+        a = new(ctx.mpf)
         a._mpf_ = v
         return a
 
-    def make_mpc(self, v):
-        a = new(self.mpc)
+    def make_mpc(ctx, v):
+        a = new(ctx.mpc)
         a._mpc_ = v
         return a
 
-    def make_mpi(self, v):
-        a = new(self.mpi)
+    def make_mpi(ctx, v):
+        a = new(ctx.mpi)
         a._mpi_ = v
         return a
 
-    def isnpint(self, x):
+    def isnpint(ctx, x):
         if not x:
             return True
         if hasattr(x, '_mpf_'):
             sign, man, exp, bc = x._mpf_
             return sign and exp >= 0
         if hasattr(x, '_mpc_'):
-            return not x.imag and self.isnpint(x.real)
+            return not x.imag and ctx.isnpint(x.real)
 
-    def bad_domain(self, msg):
+    def bad_domain(ctx, msg):
         raise ValueError(msg)
 
-    def __str__(self):
+    def __str__(ctx):
         lines = ["Mpmath settings:",
-            ("  mp.prec = %s" % self.prec).ljust(30) + "[default: 53]",
-            ("  mp.dps = %s" % self.dps).ljust(30) + "[default: 15]",
-            ("  mp.trap_complex = %s" % self.trap_complex).ljust(30) + "[default: False]",
+            ("  mp.prec = %s" % ctx.prec).ljust(30) + "[default: 53]",
+            ("  mp.dps = %s" % ctx.dps).ljust(30) + "[default: 15]",
+            ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
 
-    def default(self):
-        self._prec = self._prec_rounding[0] = 53
-        self._dps = 15
-        self.trap_complex = False
+    def default(ctx):
+        ctx._prec = ctx._prec_rounding[0] = 53
+        ctx._dps = 15
+        ctx.trap_complex = False
 
-    def set_prec(self, n):
-        self._prec = self._prec_rounding[0] = max(1, int(n))
-        self._dps = prec_to_dps(n)
+    def set_prec(ctx, n):
+        ctx._prec = ctx._prec_rounding[0] = max(1, int(n))
+        ctx._dps = prec_to_dps(n)
 
-    def set_dps(self, n):
-        self._prec = self._prec_rounding[0] = dps_to_prec(n)
-        self._dps = max(1, int(n))
+    def set_dps(ctx, n):
+        ctx._prec = ctx._prec_rounding[0] = dps_to_prec(n)
+        ctx._dps = max(1, int(n))
 
-    prec = property(lambda self: self._prec, set_prec)
-    dps = property(lambda self: self._dps, set_dps)
-
-    @property
-    def repr_digits(self):
-        return repr_dps(self._prec)
+    prec = property(lambda ctx: ctx._prec, set_prec)
+    dps = property(lambda ctx: ctx._dps, set_dps)
 
     @property
-    def str_digits(self):
-        return self._dps
+    def repr_digits(ctx):
+        return repr_dps(ctx._prec)
+
+    @property
+    def str_digits(ctx):
+        return ctx._dps
 
     verbose = False
 
-    def extraprec(self, n, normalize_output=False):
+    def extraprec(ctx, n, normalize_output=False):
         """
         The block
 
@@ -225,16 +228,16 @@ class MultiPrecisionArithmetic(Context):
         normalize_output=True, it rounds the return value to the parent
         precision.
         """
-        return PrecisionManager(self, lambda p: p + n, None, normalize_output)
+        return PrecisionManager(ctx, lambda p: p + n, None, normalize_output)
 
-    def extradps(self, n, normalize_output=False):
+    def extradps(ctx, n, normalize_output=False):
         """
         This function is analogous to extraprec (see documentation)
         but changes the decimal precision instead of the number of bits.
         """
-        return PrecisionManager(self, None, lambda d: d + n, normalize_output)
+        return PrecisionManager(ctx, None, lambda d: d + n, normalize_output)
 
-    def workprec(self, n, normalize_output=False):
+    def workprec(ctx, n, normalize_output=False):
         """
         The block
 
@@ -249,16 +252,16 @@ class MultiPrecisionArithmetic(Context):
         and restores the precision afterwards. With normalize_output=True,
         it rounds the return value to the parent precision.
         """
-        return PrecisionManager(self, lambda p: n, None, normalize_output)
+        return PrecisionManager(ctx, lambda p: n, None, normalize_output)
 
-    def workdps(self, n, normalize_output=False):
+    def workdps(ctx, n, normalize_output=False):
         """
         This function is analogous to workprec (see documentation)
         but changes the decimal precision instead of the number of bits.
         """
-        return PrecisionManager(self, None, lambda d: n, normalize_output)
+        return PrecisionManager(ctx, None, lambda d: n, normalize_output)
 
-    def nstr(A, x, n=6, **kwargs):
+    def nstr(ctx, x, n=6, **kwargs):
         """
         Convert an ``mpf``, ``mpc`` or ``mpi`` to a decimal string literal with *n*
         significant digits. The small default value for *n* is chosen to
@@ -296,16 +299,16 @@ class MultiPrecisionArithmetic(Context):
         if isinstance(x, matrix):
             return x.__nstr__(n)
         if hasattr(x, '_mpi_'):
-            return A.mpi_to_str(x, n, **kwargs)
+            return ctx.mpi_to_str(x, n, **kwargs)
         return str(x)
 
-    def nprint(A, x, n=6, **kwargs):
+    def nprint(ctx, x, n=6, **kwargs):
         """
         Equivalent to ``print nstr(x, n)``.
         """
-        print A.nstr(x, n, **kwargs)
+        print ctx.nstr(x, n, **kwargs)
 
-    def convert(A, x, strings=True):
+    def convert(ctx, x, strings=True):
         """
         Converts *x* to an ``mpf``, ``mpc`` or ``mpi``. If *x* is of type ``mpf``,
         ``mpc``, ``int``, ``float``, ``complex``, the conversion
@@ -327,20 +330,20 @@ class MultiPrecisionArithmetic(Context):
             mpc(real='2.0', imag='3.0')
 
         """
-        if type(x) in A.types: return x
-        if isinstance(x, int_types): return A.make_mpf(from_int(x))
-        if isinstance(x, float): return A.make_mpf(from_float(x))
-        if isinstance(x, complex): return A.mpc(x)
-        prec, rounding = A._prec_rounding
+        if type(x) in ctx.types: return x
+        if isinstance(x, int_types): return ctx.make_mpf(from_int(x))
+        if isinstance(x, float): return ctx.make_mpf(from_float(x))
+        if isinstance(x, complex): return ctx.mpc(x)
+        prec, rounding = ctx._prec_rounding
         if strings and isinstance(x, basestring):
             try:
                 _mpf_ = from_str(x, prec, rounding)
-                return A.make_mpf(_mpf_)
+                return ctx.make_mpf(_mpf_)
             except Exception, e:
                 if '/' in x:
                     fract = x.split('/')
                     assert len(fract) == 2
-                    return A.convert(fract[0]) / A.convert(fract[1])
+                    return ctx.convert(fract[0]) / ctx.convert(fract[1])
                 if 'j' in x.lower():
                     x = x.lower().replace(' ', '')
                     match = get_complex.match(x)
@@ -348,18 +351,18 @@ class MultiPrecisionArithmetic(Context):
                     if not re:
                         re = 0
                     im = match.group('im').rstrip('j')
-                    return A.mpc(A.convert(re), A.convert(im))
+                    return ctx.mpc(ctx.convert(re), ctx.convert(im))
                 if '[' in x or '(' in x or '+-' in x:
                     # XXX
-                    return A.mpi_from_str(x)
+                    return ctx.mpi_from_str(x)
                 raise e
-        if hasattr(x, '_mpf_'): return A.make_mpf(x._mpf_)
-        if hasattr(x, '_mpc_'): return A.make_mpc(x._mpc_)
+        if hasattr(x, '_mpf_'): return ctx.make_mpf(x._mpf_)
+        if hasattr(x, '_mpc_'): return ctx.make_mpc(x._mpc_)
         if hasattr(x, '_mpmath_'):
-            return A.convert(x._mpmath_(*prec_rounding))
+            return ctx.convert(x._mpmath_(*prec_rounding))
         raise TypeError("cannot create mpf from " + repr(x))
 
-    def isnan(A, x):
+    def isnan(ctx, x):
         """
         For an ``mpf`` *x*, determines whether *x* is not-a-number (nan)::
 
@@ -371,7 +374,7 @@ class MultiPrecisionArithmetic(Context):
             return False
         return x._mpf_ == fnan
 
-    def isinf(A, x):
+    def isinf(ctx, x):
         """
         For an ``mpf`` *x*, determines whether *x* is infinite::
 
@@ -383,7 +386,7 @@ class MultiPrecisionArithmetic(Context):
             return False
         return x._mpf_ in (finf, fninf)
 
-    def isint(A, x):
+    def isint(ctx, x):
         """
         For an ``mpf`` *x*, or any type that can be converted
         to ``mpf``, determines whether *x* is exactly
@@ -396,16 +399,16 @@ class MultiPrecisionArithmetic(Context):
         if isinstance(x, int_types):
             return True
         try:
-            x = A.convert(x)
+            x = ctx.convert(x)
         except:
             return False
         if hasattr(x, '_mpf_'):
-            if A.isnan(x) or A.isinf(x):
+            if ctx.isnan(x) or ctx.isinf(x):
                 return False
             return x == int(x)
         return False
 
-    def chop(A, x, tol=None):
+    def chop(ctx, x, tol=None):
         """
         Chops off small real or imaginary parts, or converts
         numbers close to zero to exact zeros. The input can be a
@@ -421,23 +424,23 @@ class MultiPrecisionArithmetic(Context):
         The tolerance defaults to ``100*eps``.
         """
         if tol is None:
-            tol = 100*A.eps
+            tol = 100*ctx.eps
         try:
-            x = A.convert(x)
+            x = ctx.convert(x)
             absx = abs(x)
             if abs(x) < tol:
-                return A.zero
-            if A.is_complex_type(x):
+                return ctx.zero
+            if ctx.is_complex_type(x):
                 if abs(x.imag) < min(tol, absx*tol):
                     return x.real
                 if abs(x.real) < min(tol, absx*tol):
-                    return A.mpc(0, x.imag)
+                    return ctx.mpc(0, x.imag)
         except TypeError:
             if hasattr(x, "__iter__"):
-                return [A.chop(a, tol) for a in x]
+                return [ctx.chop(a, tol) for a in x]
         return x
 
-    def almosteq(A, s, t, rel_eps=None, abs_eps=None):
+    def almosteq(ctx, s, t, rel_eps=None, abs_eps=None):
         r"""
         Determine whether the difference between `s` and `t` is smaller
         than a given epsilon, either relatively or absolutely.
@@ -470,9 +473,9 @@ class MultiPrecisionArithmetic(Context):
             False
 
         """
-        t = A.convert(t)
+        t = ctx.convert(t)
         if abs_eps is None and rel_eps is None:
-            rel_eps = abs_eps = A.make_mpf((0, 1, -A.prec+4, 1))
+            rel_eps = abs_eps = ctx.make_mpf((0, 1, -ctx.prec+4, 1))
         if abs_eps is None:
             abs_eps = rel_eps
         elif rel_eps is None:
@@ -488,7 +491,7 @@ class MultiPrecisionArithmetic(Context):
             err = diff/abss
         return err <= rel_eps
 
-    def fsum(A, terms, absolute=False, squared=False):
+    def fsum(ctx, terms, absolute=False, squared=False):
         """
         Calculates a sum containing a finite number of terms (for infinite
         series, see :func:`nsum`). The terms will be converted to
@@ -504,7 +507,7 @@ class MultiPrecisionArithmetic(Context):
         With squared=True each term is squared, and with absolute=True
         the absolute value of each term is used.
         """
-        prec, rnd = A._prec_rounding
+        prec, rnd = ctx._prec_rounding
         real = []
         imag = []
         other = 0
@@ -515,13 +518,13 @@ class MultiPrecisionArithmetic(Context):
             elif hasattr(term, "_mpc_"):
                 reval, imval = term._mpc_
             else:
-                term = A.convert(term)
+                term = ctx.convert(term)
                 if hasattr(term, "_mpf_"):
                     reval = term._mpf_
                 elif hasattr(term, "_mpc_"):
                     reval, imval = term._mpc_
                 else:
-                    if absolute: term = A.absmax(term)
+                    if absolute: term = ctx.absmax(term)
                     if squared: term = term**2
                     other += term
                     continue
@@ -547,15 +550,15 @@ class MultiPrecisionArithmetic(Context):
                 real.append(reval)
         s = mpf_sum(real, prec, rnd, absolute)
         if imag:
-            s = A.make_mpc((s, mpf_sum(imag, prec, rnd)))
+            s = ctx.make_mpc((s, mpf_sum(imag, prec, rnd)))
         else:
-            s = A.make_mpf(s)
+            s = ctx.make_mpf(s)
         if other is 0:
             return s
         else:
             return s + other
 
-    def fdot(self, A, B=None):
+    def fdot(ctx, A, B=None):
         r"""
         Computes the dot product of the iterables `A` and `B`,
 
@@ -584,15 +587,15 @@ class MultiPrecisionArithmetic(Context):
         """
         if B:
             A = zip(A, B)
-        prec, rnd = self._prec_rounding
+        prec, rnd = ctx._prec_rounding
         real = []
         imag = []
         other = 0
         hasattr_ = hasattr
-        types = (self.mpf, self.mpc)
+        types = (ctx.mpf, ctx.mpc)
         for a, b in A:
-            if type(a) not in types: a = self.convert(a)
-            if type(b) not in types: b = self.convert(b)
+            if type(a) not in types: a = ctx.convert(a)
+            if type(b) not in types: b = ctx.convert(b)
             a_real = hasattr_(a, "_mpf_")
             b_real = hasattr_(b, "_mpf_")
             if a_real and b_real:
@@ -618,15 +621,15 @@ class MultiPrecisionArithmetic(Context):
                 other += a*b
         s = mpf_sum(real, prec, rnd)
         if imag:
-            s = self.make_mpc((s, mpf_sum(imag, prec, rnd)))
+            s = ctx.make_mpc((s, mpf_sum(imag, prec, rnd)))
         else:
-            s = self.make_mpf(s)
+            s = ctx.make_mpf(s)
         if other is 0:
             return s
         else:
             return s + other
 
-    def fprod(A, factors):
+    def fprod(ctx, factors):
         r"""
         Calculates a product containing a finite number of factors (for
         infinite products, see :func:`nprod`). The factors will be
@@ -638,24 +641,24 @@ class MultiPrecisionArithmetic(Context):
             mpf('7.0')
 
         """
-        orig = A.prec
+        orig = ctx.prec
         try:
-            v = A.one
+            v = ctx.one
             for p in factors:
                 v *= p
         finally:
-            A.prec = orig
+            ctx.prec = orig
         return +v
 
-    def rand(A):
+    def rand(ctx):
         """
         Returns an ``mpf`` with value chosen randomly from `[0, 1)`.
         The number of randomly generated bits in the mantissa is equal
         to the working precision.
         """
-        return A.make_mpf(mpf_rand(A._prec))
+        return ctx.make_mpf(mpf_rand(ctx._prec))
 
-    def fraction(self, p, q):
+    def fraction(ctx, p, q):
         """
         Given Python integers `(p, q)`, returns a lazy ``mpf`` representing
         the fraction `p/q`. The value is updated with the precision.
@@ -672,10 +675,10 @@ class MultiPrecisionArithmetic(Context):
             0.0100000000000000002081668171172
             >>> mp.dps = 15
         """
-        return self.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
+        return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
             '%s/%s' % (p, q))
 
-    def arange(self, *args):
+    def arange(ctx, *args):
         r"""
         This is a generalized version of Python's :func:`range` function
         that accepts fractional endpoints and step sizes and
@@ -724,7 +727,7 @@ class MultiPrecisionArithmetic(Context):
             b = args[1]
         if len(args) == 3:
             dt = args[2]
-        a, b, dt = self.mpf(a), self.mpf(b), self.mpf(dt)
+        a, b, dt = ctx.mpf(a), ctx.mpf(b), ctx.mpf(dt)
         assert a + dt != a, 'dt is too small and would cause an infinite loop'
         # adapt code for sign of dt
         if a > b:
@@ -748,7 +751,7 @@ class MultiPrecisionArithmetic(Context):
                 break
         return result
 
-    def linspace(self, *args, **kwargs):
+    def linspace(ctx, *args, **kwargs):
         """
         ``linspace(a, b, n)`` returns a list of `n` evenly spaced
         samples from `a` to `b`. The syntax ``linspace(mpi(a,b), n)``
@@ -772,8 +775,8 @@ class MultiPrecisionArithmetic(Context):
 
         """
         if len(args) == 3:
-            a = self.mpf(args[0])
-            b = self.mpf(args[1])
+            a = ctx.mpf(args[0])
+            b = ctx.mpf(args[1])
             n = int(args[2])
         elif len(args) == 2:
             assert hasattr(args[0], '_mpi_')
@@ -787,16 +790,16 @@ class MultiPrecisionArithmetic(Context):
             raise ValueError('n must be greater than 0')
         if not 'endpoint' in kwargs or kwargs['endpoint']:
             if n == 1:
-                return [self.mpf(a)]
-            step = (b - a) / self.mpf(n - 1)
+                return [ctx.mpf(a)]
+            step = (b - a) / ctx.mpf(n - 1)
             y = [i*step + a for i in xrange(n)]
             y[-1] = b
         else:
-            step = (b - a) / self.mpf(n)
+            step = (b - a) / ctx.mpf(n)
             y = [i*step + a for i in xrange(n)]
         return y
 
-    def mpi_from_str(self, s):
+    def mpi_from_str(ctx, s):
         """
         Parse an interval number given as a string.
 
@@ -814,8 +817,8 @@ class MultiPrecisionArithmetic(Context):
         s = s.replace(" ", "")
         if "+-" in s:
             # case 1
-            n = [self.mpf(strip(i)) for i in s.split("+-")]
-            return self.mpi(n[0] - n[1], n[0] + n[1])
+            n = [ctx.mpf(strip(i)) for i in s.split("+-")]
+            return ctx.mpi(n[0] - n[1], n[0] + n[1])
         elif "(" in s:
             # case 2
             if s[0] == "(":  # Don't confuse with a complex number (x,y)
@@ -829,11 +832,11 @@ class MultiPrecisionArithmetic(Context):
                     raise e
                 percent = True
                 s = s.replace("%", "")
-            a, p = [self.mpf(strip(i)) for i in s.split("(")]
+            a, p = [ctx.mpf(strip(i)) for i in s.split("(")]
             d = p
             if percent:
                 d = a*p / 100
-            return self.mpi(a - d, a + d)
+            return ctx.mpi(a - d, a + d)
         elif "," in s:
             if ('[' not in s) or (']' not in s):
                 raise e
@@ -841,8 +844,8 @@ class MultiPrecisionArithmetic(Context):
                 # case 3
                 s = s.replace("[", "")
                 s = s.replace("]", "")
-                n = [self.mpf(strip(i)) for i in s.split(",")]
-                return self.mpi(n[0], n[1])
+                n = [ctx.mpf(strip(i)) for i in s.split(",")]
+                return ctx.mpi(n[0], n[1])
             else:
                 # case 4
                 x, y = s.split('[')
@@ -851,11 +854,11 @@ class MultiPrecisionArithmetic(Context):
                     z, e = z.split(']')
                 else:
                     z, e = z.rstrip(']'), ''
-                return self.mpi(x + y + e, x + z + e)
+                return ctx.mpi(x + y + e, x + z + e)
         else:
             return None
 
-    def mpi_to_str(self, x, dps=None, use_spaces=True, brackets=('[', ']'),
+    def mpi_to_str(ctx, x, dps=None, use_spaces=True, brackets=('[', ']'),
                    mode='brackets', error_dps=4, **kwargs):
         """
         Convert a mpi interval to a string.
@@ -891,7 +894,7 @@ class MultiPrecisionArithmetic(Context):
         5.2582327113062[393041, 749951]
         """ # FIXME: doctests are broken
         if dps is None:
-            dps = self.dps # TODO: maybe choose a smaller default value
+            dps = ctx.dps # TODO: maybe choose a smaller default value
         a = to_str(x.a._mpf_, dps, **kwargs)
         b = to_str(x.b._mpf_, dps, **kwargs)
         mid = to_str(x.mid._mpf_, dps, **kwargs)
@@ -909,15 +912,15 @@ class MultiPrecisionArithmetic(Context):
             else:
                 b = MP_ZERO
             m = str(a)
-            p = self.nstr(b, error_dps)
+            p = ctx.nstr(b, error_dps)
             s = m + sp + "(" + p + "%)"
         elif mode == 'brackets':
             s = br1 + a.strip() + "," + sp + b + br2
         elif mode == 'diff':
             # use more digits if str(x.a) and str(x.b) are equal
             if a == b:
-                a = to_str(x.a._mpf_, repr_dps(self.prec), **kwargs)
-                b = to_str(x.b._mpf_, repr_dps(self.prec), **kwargs)
+                a = to_str(x.a._mpf_, repr_dps(ctx.prec), **kwargs)
+                b = to_str(x.b._mpf_, repr_dps(ctx.prec), **kwargs)
             # separate mantissa and exponent
             a = a.split('e')
             if len(a) == 1:
@@ -1616,10 +1619,10 @@ def def_mp_builtin(name, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
     by raising ComplexResult.
 
     """
-    def f(A, x, **kwargs):
-        if type(x) not in A.types:
-            x = A.convert(x)
-        prec, rounding = A._prec_rounding
+    def f(ctx, x, **kwargs):
+        if type(x) not in ctx.types:
+            x = ctx.convert(x)
+        prec, rounding = ctx._prec_rounding
         if kwargs:
             prec = kwargs.get('prec', prec)
             if 'dps' in kwargs:
@@ -1627,17 +1630,17 @@ def def_mp_builtin(name, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
             rounding = kwargs.get('rounding', rounding)
         if hasattr(x, '_mpf_'):
             try:
-                return A.make_mpf(mpf_f(x._mpf_, prec, rounding))
+                return ctx.make_mpf(mpf_f(x._mpf_, prec, rounding))
             except ComplexResult:
                 # Handle propagation to complex
-                if A.trap_complex:
+                if ctx.trap_complex:
                     raise
-                return A.make_mpc(mpc_f((x._mpf_, fzero), prec, rounding))
+                return ctx.make_mpc(mpc_f((x._mpf_, fzero), prec, rounding))
         elif hasattr(x, '_mpc_'):
-            return A.make_mpc(mpc_f(x._mpc_, prec, rounding))
+            return ctx.make_mpc(mpc_f(x._mpc_, prec, rounding))
         elif hasattr(x, '_mpi_'):
             if mpi_f:
-                return A.make_mpi(mpi_f(x._mpi_, prec))
+                return ctx.make_mpi(mpi_f(x._mpi_, prec))
         raise NotImplementedError("%s of a %s" % (name, type(x)))
     f.__name__ = name
     import function_docs
@@ -1652,14 +1655,14 @@ def defun_wrapped(f):
     extra working precision before entry) as well as converting
     all input args to recognized number types.
     """
-    def g(A, *args, **kwargs):
-        orig_prec = A.prec
+    def g(ctx, *args, **kwargs):
+        orig_prec = ctx.prec
         try:
-            A.prec = orig_prec + 10
-            args = [A.convert(z) for z in args]
-            v = f(A, *args, **kwargs)
+            ctx.prec = orig_prec + 10
+            args = [ctx.convert(z) for z in args]
+            v = f(ctx, *args, **kwargs)
         finally:
-            A.prec = orig_prec
+            ctx.prec = orig_prec
         return +v
     g.__name__ = f.__name__
     import function_docs
