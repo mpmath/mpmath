@@ -10,6 +10,7 @@ Solvers
 ^^^^^^^
 
 .. autoclass:: mpmath.optimization.Secant
+.. autoclass:: mpmath.optimization.Newton
 .. autoclass:: mpmath.optimization.MNewton
 .. autoclass:: mpmath.optimization.Halley
 .. autoclass:: mpmath.optimization.Muller

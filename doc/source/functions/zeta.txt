@@ -6,40 +6,36 @@ and associated functions pertaining to analytic number theory.
 
 .. contents::
 
-Riemann zeta function (:func:`zeta`)
-....................................
+Riemann zeta function (:func:`zeta`, :func:`altzeta`)
+.....................................................
 
-.. autofunction:: mpmath.functions.zeta
-
-Dirichlet eta function (:func:`altzeta`)
-........................................
-
-.. autofunction:: mpmath.functions.altzeta
+.. autofunction:: mpmath.functions.zeta(s)
+.. autofunction:: mpmath.functions.altzeta(s)
 
 Zeta function zeros (:func:`zetazero`)
 ......................................
 
-.. autofunction:: mpmath.functions.zetazero
+.. autofunction:: mpmath.functions.zetazero(n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1')
 
 Riemann-Siegel functions (:func:`siegelz`, :func:`siegeltheta`, :func:`grampoint`)
 ..................................................................................
 
-.. autofunction:: mpmath.functions.siegelz
-.. autofunction:: mpmath.functions.siegeltheta
-.. autofunction:: mpmath.functions.grampoint
+.. autofunction:: mpmath.functions.siegelz(t)
+.. autofunction:: mpmath.functions.siegeltheta(t)
+.. autofunction:: mpmath.functions.grampoint(n)
 
 Prime counting function (:func:`primepi`, :func:`primepi2`, :func:`riemannr`)
 .............................................................................
 
-.. autofunction:: mpmath.functions.primepi
-.. autofunction:: mpmath.functions.primepi2
-.. autofunction:: mpmath.functions.riemannr
+.. autofunction:: mpmath.functions.primepi(x)
+.. autofunction:: mpmath.functions.primepi2(x)
+.. autofunction:: mpmath.functions.riemannr(x)
 
 Bernoulli numbers and polynomials (:func:`bernoulli`, :func:`bernfrac`, :func:`bernpoly`)
 .........................................................................................
 
-.. autofunction:: mpmath.functions.bernoulli
-.. autofunction:: mpmath.functions.bernfrac
+.. autofunction:: mpmath.functions.bernoulli(n)
+.. autofunction:: mpmath.functions.bernfrac(n)
 .. autofunction:: mpmath.functions.bernpoly(n,z)
 
 Polylogarithms (:func:`polylog`)
@@ -50,4 +46,15 @@ Polylogarithms (:func:`polylog`)
 Stieltjes constants (:func:`stieltjes`)
 .......................................
 
-.. autofunction:: mpmath.functions.stieltjes
+.. autofunction:: mpmath.functions.stieltjes(n,a=1)
+
+Bell numbers and polynomials (:func:`bell`, :func:`polyexp`)
+............................................................
+
+.. autofunction:: mpmath.functions.bell(n,x)
+.. autofunction:: mpmath.functions.polyexp(s,z)
+
+Other zeta functions (:func:`primezeta`)
+........................................
+
+.. autofunction:: mpmath.functions.primezeta(s)

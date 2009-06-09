@@ -4,41 +4,41 @@ Hypergeometric functions, Bessel/Airy, orthogonal polynomials
 Bessel functions (:func:`besselj`, :func:`bessely`)
 ...................................................
 
-.. autofunction:: mpmath.functions.besselj
-.. autofunction:: mpmath.functions.j0
-.. autofunction:: mpmath.functions.j1
-.. autofunction:: mpmath.functions.bessely
+.. autofunction:: mpmath.functions.besselj(n,x)
+.. autofunction:: mpmath.functions.j0(x)
+.. autofunction:: mpmath.functions.j1(x)
+.. autofunction:: mpmath.functions.bessely(n,x)
 
 Modified Bessel functions (:func:`besseli`, :func:`besselk`)
 ............................................................
 
-.. autofunction:: mpmath.functions.besseli
-.. autofunction:: mpmath.functions.besselk
+.. autofunction:: mpmath.functions.besseli(n,x)
+.. autofunction:: mpmath.functions.besselk(n,x)
 
 Hankel functions (:func:`hankel1`, :func:`hankel2`)
 .....................................................
 
-.. autofunction:: mpmath.functions.hankel1
-.. autofunction:: mpmath.functions.hankel2
+.. autofunction:: mpmath.functions.hankel1(n,x)
+.. autofunction:: mpmath.functions.hankel2(n,x)
 
 Airy functions (:func:`airyai`, :func:`airybi`)
 ...............................................
 
-.. autofunction:: mpmath.functions.airyai
-.. autofunction:: mpmath.functions.airybi
+.. autofunction:: mpmath.functions.airyai(x)
+.. autofunction:: mpmath.functions.airybi(x)
 
 Orthogonal polynomials (:func:`jacobi`, :func:`legendre`, :func:`chebyt`, :func:`chebyu`)
 .........................................................................................
 
-.. autofunction:: mpmath.functions.jacobi
-.. autofunction:: mpmath.functions.legendre
-.. autofunction:: mpmath.functions.chebyt
-.. autofunction:: mpmath.functions.chebyu
+.. autofunction:: mpmath.functions.jacobi(n, a, b, x)
+.. autofunction:: mpmath.functions.legendre(n, x)
+.. autofunction:: mpmath.functions.chebyt(n, x)
+.. autofunction:: mpmath.functions.chebyu(n, x)
 
 Generic hypergeometric series (:func:`hyper`, :func:`hyp0f1`, :func:`hyp1f1`, :func:`hyp2f1`)
 .............................................................................................
 
-.. autofunction:: mpmath.functions.hyper
-.. autofunction:: mpmath.functions.hyp0f1
-.. autofunction:: mpmath.functions.hyp1f1
-.. autofunction:: mpmath.functions.hyp2f1
+.. autofunction:: mpmath.functions.hyper(a_s, b_s, z)
+.. autofunction:: mpmath.functions.hyp0f1(a, z)
+.. autofunction:: mpmath.functions.hyp1f1(a, b, z)
+.. autofunction:: mpmath.functions.hyp2f1(a, b, c, z)

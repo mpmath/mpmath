@@ -269,33 +269,10 @@ multidimensional nature it's not possible to compare them, but there are
 several functions to map a matrix or a vector to a positive real number, the
 so called norms.
 
-For vectors the p-norm is intended, usually the 1-, the 2- and the oo-norm are
-used.
+.. autofunction :: mpmath.linalg.norm
 
-    >>> x = matrix([-10, 2, 100])
-    >>> norm_p(x, 1)
-    mpf('112.0')
-    >>> norm_p(x, 2)
-    mpf('100.5186549850325')
-    >>> norm_p(x, inf)
-    mpf('100.0')
+.. autofunction :: mpmath.linalg.mnorm
 
-Please note that the 2-norm is the most used one, though it is more expensive
-to calculate than the 1- or oo-norm.
-
-It is possible to generalize some vector norms to matrix norm::
-
-    >>> A = matrix([[1, -1000], [100, 50]])
-    >>> mnorm_1(A)
-    mpf('1050.0')
-    >>> mnorm_oo(A)
-    mpf('1001.0')
-    >>> mnorm_F(A)
-    mpf('1006.2310867787777')
-
-The last norm (the "Frobenius-norm") is an approximation for the 2-norm, which
-is hard to calculate and not available. The Frobenius-norm lacks some
-mathematical properties you might expect from a norm.
 
 Linear algebra
 --------------
@@ -375,7 +352,7 @@ The function ``lu`` computes an explicit LU factorization of a matrix::
 Interval matrices
 -----------------
 
-Matrices may contain interval elements. This allows one to perform
+Matrices may contain interval elements. This allows for performing
 basic linear algebra operations such as matrix multiplication
 and equation solving with rigorous error bounds::
 
@@ -385,11 +362,10 @@ and equation solving with rigorous error bounds::
     >>>
     >>> b = matrix(['4','0.6','0.5'], force_type=mpi)
     >>> c = lu_solve(a, b)
-    >>> c
-    matrix(
-    [[[5.2582327113062393041, 5.2582327113062749951]],
-     [[-13.155049396267856583, -13.155049396267821167]],
-     [[7.4206915477497212555, 7.4206915477497310922]]])
+    >>> print c
+    [  [5.2582327113062393041, 5.2582327113062749951]]
+    [[-13.155049396267856583, -13.155049396267821167]]
+    [  [7.4206915477497212555, 7.4206915477497310922]]
     >>> print a*c
     [  [3.9999999999999866773, 4.0000000000000133227]]
     [[0.59999999999972430942, 0.60000000000027142733]]

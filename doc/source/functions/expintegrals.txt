@@ -6,42 +6,42 @@ Exponential integrals and error functions
 Incomplete gamma functions (:func:`gammainc`)
 .............................................
 
-.. autofunction:: mpmath.functions.gammainc
+.. autofunction:: mpmath.functions.gammainc(z, a=0, b=inf, regularized=False)
 
 Exponential and logarithmic integrals (:func:`ei`, :func:`li`)
 ..............................................................
 
-.. autofunction:: mpmath.functions.ei
-.. autofunction:: mpmath.functions.li
+.. autofunction:: mpmath.functions.ei(x, **kwargs)
+.. autofunction:: mpmath.functions.li(x, **kwargs)
 
 Trigonometric integrals (:func:`ci`, :func:`si`)
 ................................................
 
-.. autofunction:: mpmath.functions.ci
-.. autofunction:: mpmath.functions.si
+.. autofunction:: mpmath.functions.ci(x, **kwargs)
+.. autofunction:: mpmath.functions.si(x, **kwargs)
 
 Hyperbolic integrals (:func:`chi`, :func:`shi`)
 ................................................
 
-.. autofunction:: mpmath.functions.chi
-.. autofunction:: mpmath.functions.shi
+.. autofunction:: mpmath.functions.chi(x, **kwargs)
+.. autofunction:: mpmath.functions.shi(x, **kwargs)
 
 Error functions (:func:`erf`, :func:`erfc`, :func:`erfi`, :func:`erfinv`)
 .........................................................................
 
-.. autofunction:: mpmath.functions.erf
-.. autofunction:: mpmath.functions.erfc
-.. autofunction:: mpmath.functions.erfi
-.. autofunction:: mpmath.functions.erfinv
+.. autofunction:: mpmath.functions.erf(x, **kwargs)
+.. autofunction:: mpmath.functions.erfc(x, **kwargs)
+.. autofunction:: mpmath.functions.erfi(x)
+.. autofunction:: mpmath.functions.erfinv(x)
 
 The normal distribution (:func:`npdf`, :func:`ncdf`)
 ....................................................
 
-.. autofunction:: mpmath.functions.npdf
-.. autofunction:: mpmath.functions.ncdf
+.. autofunction:: mpmath.functions.npdf(x, mu=0, sigma=1)
+.. autofunction:: mpmath.functions.ncdf(x, mu=0, sigma=1)
 
 Fresnel integrals (:func:`fresnels`, :func:`fresnelc`)
 ......................................................
 
-.. autofunction:: mpmath.functions.fresnels
-.. autofunction:: mpmath.functions.fresnelc
+.. autofunction:: mpmath.functions.fresnels(x)
+.. autofunction:: mpmath.functions.fresnelc(x)
