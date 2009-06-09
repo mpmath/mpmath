@@ -6,26 +6,26 @@ Factorials and gamma functions
 Factorials (:func:`factorial`/:func:`fac`)
 ..........................................
 
-.. autofunction:: mpmath.functions.factorial
+.. autofunction:: mpmath.functions.factorial(x, **kwargs)
 
 Gamma function (:func:`gamma`, :func:`gammaprod`, :func:`loggamma`)
 ...................................................................
 
-.. autofunction:: mpmath.functions.gamma
-.. autofunction:: mpmath.functions.gammaprod
-.. autofunction:: mpmath.functions.loggamma
+.. autofunction:: mpmath.functions.gamma(x, **kwargs)
+.. autofunction:: mpmath.functions.gammaprod(a, b)
+.. autofunction:: mpmath.functions.loggamma(x)
 
 Binomial coefficients, rising and falling factorials (:func:`binomial`, :func:`rf`, :func:`ff`)
 ...............................................................................................
 
-.. autofunction:: mpmath.functions.binomial
-.. autofunction:: mpmath.functions.rf
-.. autofunction:: mpmath.functions.ff
+.. autofunction:: mpmath.functions.binomial(n,k)
+.. autofunction:: mpmath.functions.rf(x,n)
+.. autofunction:: mpmath.functions.ff(x,n)
 
 Beta function (:func:`beta`)
 ............................
 
-.. autofunction:: mpmath.functions.beta
+.. autofunction:: mpmath.functions.beta(x,y)
 
 Double factorials (:func:`fac2`)
 ................................
@@ -35,14 +35,14 @@ Double factorials (:func:`fac2`)
 Super- and hyperfactorials (:func:`superfac`, :func:`hyperfac`, :func:`barnesg`)
 ................................................................................
 
-.. autofunction:: mpmath.functions.superfac
-.. autofunction:: mpmath.functions.hyperfac
-.. autofunction:: mpmath.functions.barnesg
+.. autofunction:: mpmath.functions.superfac(z)
+.. autofunction:: mpmath.functions.hyperfac(z)
+.. autofunction:: mpmath.functions.barnesg(z)
 
 Polygamma functions (:func:`psi`, :func:`digamma`, :func:`trigamma`, :func:`harmonic`)
 ......................................................................................
 
-.. autofunction:: mpmath.functions.psi
-.. autofunction:: mpmath.functions.digamma
-.. autofunction:: mpmath.functions.trigamma
-.. autofunction:: mpmath.functions.harmonic
+.. autofunction:: mpmath.functions.psi(m, z)
+.. autofunction:: mpmath.functions.digamma(z)
+.. autofunction:: mpmath.functions.trigamma(z)
+.. autofunction:: mpmath.functions.harmonic(z)

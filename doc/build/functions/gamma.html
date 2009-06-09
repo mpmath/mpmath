@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Factorials and gamma functions &mdash; mpmath v0.12-svn documentation</title>
+    <title>Factorials and gamma functions &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Exponential integrals and error functions" href="expintegrals.html" />
     <link rel="prev" title="Hyperbolic functions" href="hyperbolic.html" /> 
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="hyperbolic.html" title="Hyperbolic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -178,7 +178,7 @@ complex arguments:</p>
 very quickly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span>
-<span class="go">6.33636415517321e+1956570547910964391727</span>
+<span class="go">1.9328495143101e+1956570551809674817225</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -233,7 +233,7 @@ returns 0.</li>
 
 <dl class="function">
 <dt id="mpmath.functions.loggamma">
-<!--[mpmath.functions.loggamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">loggamma</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.loggamma" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.loggamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">loggamma</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.loggamma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the log-gamma function. Unlike <img class="math" src="../_images/math/5eeb6d5fe38d952cd99378c691ab37bc50fa75ed.png" alt="\ln(\Gamma(z))" />, which
 has infinitely many complex branch cuts, the log-gamma function
 only has a single branch cut along the negative half-axis.
@@ -292,7 +292,7 @@ select 1 item from the empty set:</p>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">binomial()</span></tt> supports large arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">-</span><span class="mf">5</span><span class="p">)</span>
-<span class="go">8.33333333333333e+157</span>
+<span class="go">8.33333333333333e+97</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">2.60784095465201e+104342944813</span>
 </pre></div>
@@ -584,7 +584,7 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 
 <dl class="function">
 <dt id="mpmath.functions.hyperfac">
-<!--[mpmath.functions.hyperfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyperfac</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyperfac" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.hyperfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyperfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyperfac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the hyperfactorial, defined for integers as the product</p>
 <div class="math">
 <p><img src="../_images/math/7c9e270249c95be726fb6edea3abd3553f3e36f9.png" alt="H(n) = \prod_{k=1}^n k^k." />
@@ -678,7 +678,7 @@ definition:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.barnesg">
-<!--[mpmath.functions.barnesg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">barnesg</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.barnesg" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.barnesg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">barnesg</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.barnesg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Barnes G-function, which generalizes the
 superfactorial (<tt class="xref docutils literal"><span class="pre">superfac()</span></tt>) and by extension also the
 hyperfactorial (<tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt>) to the complex numbers
@@ -879,7 +879,7 @@ an entirely real-valued sum:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.harmonic">
-<!--[mpmath.functions.harmonic]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">harmonic</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.harmonic" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.harmonic]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">harmonic</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.harmonic" title="Permalink to this definition">¶</a></dt>
 <dd><p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is an integer, <tt class="docutils literal"><span class="pre">harmonic(n)</span></tt> gives a floating-point
 approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th harmonic number <img class="math" src="../_images/math/58a3a829660a9f4760582b6a696c712b9a464abe.png" alt="H(n)" />, defined as</p>
 <div class="math">
@@ -996,13 +996,13 @@ exceeds a given amount, say 100:</p>
         <li class="right" >
           <a href="hyperbolic.html" title="Hyperbolic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

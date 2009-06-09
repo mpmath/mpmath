@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Matrices &mdash; mpmath v0.12-svn documentation</title>
+    <title>Matrices &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Interval arithmetic" href="intervals.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -308,32 +308,66 @@ compatible:</p>
 multidimensional nature it&#8217;s not possible to compare them, but there are
 several functions to map a matrix or a vector to a positive real number, the
 so called norms.</p>
-<p>For vectors the p-norm is intended, usually the 1-, the 2- and the oo-norm are
-used.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">norm_p</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<dl class="function">
+<dt id="mpmath.linalg.norm">
+<!--[mpmath.linalg.norm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">norm</tt><big>(</big><em>x</em>, <em>p=2</em><big>)</big><a class="headerlink" href="#mpmath.linalg.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the entrywise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of an iterable <em>x</em>, i.e. the vector norm
+<img class="math" src="_images/math/f93d4f96e853780721fd3f0bdbd9c0beff6ac0d9.png" alt="\left(\sum_k |x_k|^p\right)^{1/p}" />, for any given <img class="math" src="_images/math/fbdfe77d15141724eb478aad6ee4c12fb05ff874.png" alt="1 \le p \le \infty" />.</p>
+<p>Special cases:</p>
+<p>If <em>x</em> is not iterable, this just returns <tt class="docutils literal"><span class="pre">absmax(x)</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the sum of absolute values.</p>
+<p><tt class="docutils literal"><span class="pre">p=2</span></tt> is the standard Euclidean vector norm.</p>
+<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the magnitude of the largest element.</p>
+<p>For <em>x</em> a matrix, <tt class="docutils literal"><span class="pre">p=2</span></tt> is the Frobenius norm.
+For operator matrix norms, use <tt class="xref docutils literal"><span class="pre">mnorm()</span></tt> instead.</p>
+<p>You can use the string &#8216;inf&#8217; as well as float(&#8216;inf&#8217;) or mpf(&#8216;inf&#8217;)
+to specify the infinity norm.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">mpf(&#39;112.0&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">norm_p</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">mpf(&#39;100.5186549850325&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">norm_p</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">mpf(&#39;100.0&#39;)</span>
 </pre></div>
 </div>
-<p>Please note that the 2-norm is the most used one, though it is more expensive
-to calculate than the 1- or oo-norm.</p>
-<p>It is possible to generalize some vector norms to matrix norm:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000</span><span class="p">],</span> <span class="p">[</span><span class="mf">100</span><span class="p">,</span> <span class="mf">50</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm_1</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.linalg.mnorm">
+<!--[mpmath.linalg.mnorm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">mnorm</tt><big>(</big><em>A</em>, <em>p=1</em><big>)</big><a class="headerlink" href="#mpmath.linalg.mnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the matrix (operator) <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of A. Currently <tt class="docutils literal"><span class="pre">p=1</span></tt> and <tt class="docutils literal"><span class="pre">p=inf</span></tt>
+are supported:</p>
+<p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the 1-norm (maximal column sum)</p>
+<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty" />-norm (maximal row sum).
+You can use the string &#8216;inf&#8217; as well as float(&#8216;inf&#8217;) or mpf(&#8216;inf&#8217;)</p>
+<p><tt class="docutils literal"><span class="pre">p=2</span></tt> (not implemented) for a square matrix is the usual spectral
+matrix norm, i.e. the largest singular value.</p>
+<p><tt class="docutils literal"><span class="pre">p='f'</span></tt> (or &#8216;F&#8217;, &#8216;fro&#8217;, &#8216;Frobenius, &#8216;frobenius&#8217;) gives the
+Frobenius norm, which is the elementwise 2-norm. The Frobenius norm is an
+approximation of the spectral norm and satisfies</p>
+<div class="math">
+<p><img src="_images/math/424f83eda2a3acdae490f8e78126eb1fb9e63108.png" alt="\frac{1}{\sqrt{\mathrm{rank}(A)}} \|A\|_F \le \|A\|_2 \le \|A\|_F" />
+</div></p><p>The Frobenius norm lacks some mathematical properties that might
+be expected of a norm.</p>
+<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000</span><span class="p">],</span> <span class="p">[</span><span class="mf">100</span><span class="p">,</span> <span class="mf">50</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">mpf(&#39;1050.0&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm_oo</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">mpf(&#39;1001.0&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm_F</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="s">&#39;F&#39;</span><span class="p">)</span>
 <span class="go">mpf(&#39;1006.2310867787777&#39;)</span>
 </pre></div>
 </div>
-<p>The last norm (the &#8220;Frobenius-norm&#8221;) is an approximation for the 2-norm, which
-is hard to calculate and not available. The Frobenius-norm lacks some
-mathematical properties you might expect from a norm.</p>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="linear-algebra">
@@ -409,7 +443,7 @@ the residual automatically.</p>
 </div>
 <div class="section" id="interval-matrices">
 <h2>Interval matrices<a class="headerlink" href="#interval-matrices" title="Permalink to this headline">¶</a></h2>
-<p>Matrices may contain interval elements. This allows one to perform
+<p>Matrices may contain interval elements. This allows for performing
 basic linear algebra operations such as matrix multiplication
 and equation solving with rigorous error bounds:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span><span class="s">&#39;0.3&#39;</span><span class="p">,</span><span class="s">&#39;1.0&#39;</span><span class="p">],</span>
@@ -418,11 +452,10 @@ and equation solving with rigorous error bounds:</p>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="s">&#39;4&#39;</span><span class="p">,</span><span class="s">&#39;0.6&#39;</span><span class="p">,</span><span class="s">&#39;0.5&#39;</span><span class="p">],</span> <span class="n">force_type</span><span class="o">=</span><span class="n">mpi</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">lu_solve</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
-<span class="go">matrix(</span>
-<span class="go">[[[5.2582327113062393041, 5.2582327113062749951]],</span>
-<span class="go"> [[-13.155049396267856583, -13.155049396267821167]],</span>
-<span class="go"> [[7.4206915477497212555, 7.4206915477497310922]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span>
+<span class="go">[  [5.2582327113062393041, 5.2582327113062749951]]</span>
+<span class="go">[[-13.155049396267856583, -13.155049396267821167]]</span>
+<span class="go">[  [7.4206915477497212555, 7.4206915477497310922]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="o">*</span><span class="n">c</span>
 <span class="go">[  [3.9999999999999866773, 4.0000000000000133227]]</span>
 <span class="go">[[0.59999999999972430942, 0.60000000000027142733]]</span>
@@ -492,12 +525,12 @@ and equation solving with rigorous error bounds:</p>
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

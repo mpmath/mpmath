@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Zeta functions &mdash; mpmath v0.12-svn documentation</title>
+    <title>Zeta functions &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Numerical calculus" href="../calculus/index.html" />
     <link rel="prev" title="Elliptic functions" href="elliptic.html" /> 
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="elliptic.html" title="Elliptic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,23 +55,24 @@ and associated functions pertaining to analytic number theory.</p>
 <p class="topic-title first">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#zeta-functions" id="id1">Zeta functions</a><ul>
-<li><a class="reference internal" href="#riemann-zeta-function-zeta" id="id2">Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
-<li><a class="reference internal" href="#dirichlet-eta-function-altzeta" id="id3">Dirichlet eta function (<tt class="xref docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
-<li><a class="reference internal" href="#zeta-function-zeros-zetazero" id="id4">Zeta function zeros (<tt class="xref docutils literal"><span class="pre">zetazero()</span></tt>)</a></li>
-<li><a class="reference internal" href="#riemann-siegel-functions-siegelz-siegeltheta-grampoint" id="id5">Riemann-Siegel functions (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt>)</a></li>
-<li><a class="reference internal" href="#prime-counting-function-primepi-primepi2-riemannr" id="id6">Prime counting function (<tt class="xref docutils literal"><span class="pre">primepi()</span></tt>, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>)</a></li>
-<li><a class="reference internal" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" id="id7">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
-<li><a class="reference internal" href="#polylogarithms-polylog" id="id8">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
-<li><a class="reference internal" href="#stieltjes-constants-stieltjes" id="id9">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+<li><a class="reference internal" href="#riemann-zeta-function-zeta-altzeta" id="id2">Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>, <tt class="xref docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
+<li><a class="reference internal" href="#zeta-function-zeros-zetazero" id="id3">Zeta function zeros (<tt class="xref docutils literal"><span class="pre">zetazero()</span></tt>)</a></li>
+<li><a class="reference internal" href="#riemann-siegel-functions-siegelz-siegeltheta-grampoint" id="id4">Riemann-Siegel functions (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt>)</a></li>
+<li><a class="reference internal" href="#prime-counting-function-primepi-primepi2-riemannr" id="id5">Prime counting function (<tt class="xref docutils literal"><span class="pre">primepi()</span></tt>, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>)</a></li>
+<li><a class="reference internal" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" id="id6">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
+<li><a class="reference internal" href="#polylogarithms-polylog" id="id7">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
+<li><a class="reference internal" href="#stieltjes-constants-stieltjes" id="id8">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+<li><a class="reference internal" href="#bell-numbers-and-polynomials-bell-polyexp" id="id9">Bell numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bell()</span></tt>, <tt class="xref docutils literal"><span class="pre">polyexp()</span></tt>)</a></li>
+<li><a class="reference internal" href="#other-zeta-functions-primezeta" id="id10">Other zeta functions (<tt class="xref docutils literal"><span class="pre">primezeta()</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="riemann-zeta-function-zeta">
-<h2><a class="toc-backref" href="#id2">Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)<a class="headerlink" href="#riemann-zeta-function-zeta" title="Permalink to this headline">¶</a></a></h2>
+<div class="section" id="riemann-zeta-function-zeta-altzeta">
+<h2><a class="toc-backref" href="#id2">Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>, <tt class="xref docutils literal"><span class="pre">altzeta()</span></tt>)<a class="headerlink" href="#riemann-zeta-function-zeta-altzeta" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.zeta">
-<!--[mpmath.functions.zeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">zeta</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.zeta" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.zeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">zeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.functions.zeta" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">zeta(s)</span></tt> computes the Riemann zeta function, <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)" />.
 The Riemann zeta function is defined for <img class="math" src="../_images/math/0595aab81177f026be8c3d56c543764ac9d0fa1a.png" alt="\Re(s) &gt; 1" /> by</p>
 <div class="math">
@@ -149,12 +150,9 @@ when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37a
 </ol>
 </dd></dl>
 
-</div>
-<div class="section" id="dirichlet-eta-function-altzeta">
-<h2><a class="toc-backref" href="#id3">Dirichlet eta function (<tt class="xref docutils literal"><span class="pre">altzeta()</span></tt>)<a class="headerlink" href="#dirichlet-eta-function-altzeta" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.altzeta">
-<!--[mpmath.functions.altzeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">altzeta</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.altzeta" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.altzeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">altzeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.functions.altzeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Dirichlet eta function, <img class="math" src="../_images/math/0bc6f3bd7d91d9f60d7f8cf621067d999cc5068b.png" alt="\eta(s)" />, also known as the
 alternating zeta function. This function is defined in analogy
 with the Riemann zeta function as providing the sum of the
@@ -222,7 +220,7 @@ so from below rather than from above:</p>
 
 </div>
 <div class="section" id="zeta-function-zeros-zetazero">
-<h2><a class="toc-backref" href="#id4">Zeta function zeros (<tt class="xref docutils literal"><span class="pre">zetazero()</span></tt>)<a class="headerlink" href="#zeta-function-zeros-zetazero" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id3">Zeta function zeros (<tt class="xref docutils literal"><span class="pre">zetazero()</span></tt>)<a class="headerlink" href="#zeta-function-zeros-zetazero" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.zetazero">
 <!--[mpmath.functions.zetazero]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">zetazero</tt><big>(</big><em>n</em>, <em>url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'</em><big>)</big><a class="headerlink" href="#mpmath.functions.zetazero" title="Permalink to this definition">¶</a></dt>
@@ -258,10 +256,10 @@ imaginary parts as float literals, separated by line breaks.</p>
 
 </div>
 <div class="section" id="riemann-siegel-functions-siegelz-siegeltheta-grampoint">
-<h2><a class="toc-backref" href="#id5">Riemann-Siegel functions (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt>)<a class="headerlink" href="#riemann-siegel-functions-siegelz-siegeltheta-grampoint" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id4">Riemann-Siegel functions (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt>)<a class="headerlink" href="#riemann-siegel-functions-siegelz-siegeltheta-grampoint" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.siegelz">
-<!--[mpmath.functions.siegelz]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">siegelz</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.siegelz" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.siegelz]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">siegelz</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.functions.siegelz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Z-function, also known as the Riemann-Siegel Z function,</p>
 <div class="math">
 <p><img src="../_images/math/f0bf6f1bfe9ef2bdea1993df9edab44d0ed7a47c.png" alt="Z(t) = e^{i \theta(t)} \zeta(1/2+it)" />
@@ -325,7 +323,7 @@ a zero between those points:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.siegeltheta">
-<!--[mpmath.functions.siegeltheta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">siegeltheta</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.siegeltheta" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.siegeltheta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">siegeltheta</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.functions.siegeltheta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Riemann-Siegel theta function,</p>
 <div class="math">
 <p><img src="../_images/math/fd5b18390eba6e4043da03ae0d904356aab2b648.png" alt="\theta(t) = \frac{
@@ -374,7 +372,7 @@ for <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41e
 
 <dl class="function">
 <dt id="mpmath.functions.grampoint">
-<!--[mpmath.functions.grampoint]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">grampoint</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.grampoint" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.grampoint]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">grampoint</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.grampoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Gram point <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n" />, defined as the solution
 to the equation <img class="math" src="../_images/math/ef41f24eb8eeb321f8396e07150e5bd3216b5215.png" alt="\theta(g_n) = \pi n" /> where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)" />
 is the Riemann-Siegel theta function (<tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>).</p>
@@ -420,7 +418,7 @@ nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c9
 
 </div>
 <div class="section" id="prime-counting-function-primepi-primepi2-riemannr">
-<h2><a class="toc-backref" href="#id6">Prime counting function (<tt class="xref docutils literal"><span class="pre">primepi()</span></tt>, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>)<a class="headerlink" href="#prime-counting-function-primepi-primepi2-riemannr" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id5">Prime counting function (<tt class="xref docutils literal"><span class="pre">primepi()</span></tt>, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>)<a class="headerlink" href="#prime-counting-function-primepi-primepi2-riemannr" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.primepi">
 <!--[mpmath.functions.primepi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">primepi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.primepi" title="Permalink to this definition">¶</a></dt>
@@ -481,9 +479,9 @@ error improves. The exact value of <img class="math" src="../_images/math/11c7d4
 digits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">primepi2</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">23</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span>
-<span class="go">[1.9253203909477023089e+21, 1.925320392280406229e+21]</span>
+<span class="go">[1.9253203909477020467e+21, 1.925320392280406229e+21]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">delta</span> <span class="o">/</span> <span class="n">p</span><span class="o">.</span><span class="n">a</span>
-<span class="go">6.9219851739689e-10</span>
+<span class="go">6.9219865355293e-10</span>
 </pre></div>
 </div>
 <p>A more precise, nonrigorous estimate for <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> can be
@@ -492,7 +490,7 @@ For large enough <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b
 essentially amounts to a small perturbation of the value returned by
 <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primepi2</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
-<span class="go">[4.3619719871407024816e+97, 4.3619719871407039993e+97]</span>
+<span class="go">[4.3619719871407024816e+97, 4.3619719871407032404e+97]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">riemannr</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">4.3619719871407e+97</span>
 </pre></div>
@@ -501,7 +499,7 @@ essentially amounts to a small perturbation of the value returned by
 
 <dl class="function">
 <dt id="mpmath.functions.riemannr">
-<!--[mpmath.functions.riemannr]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">riemannr</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.riemannr" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.riemannr]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">riemannr</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.riemannr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Riemann R function, a smooth approximation of the
 prime counting function <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> (see <tt class="xref docutils literal"><span class="pre">primepi()</span></tt>). The Riemann
 R function gives a fast numerical approximation useful e.g. to
@@ -590,7 +588,7 @@ precision:</p>
 
 </div>
 <div class="section" id="bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">
-<h2><a class="toc-backref" href="#id7">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)<a class="headerlink" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id6">Bernoulli numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>)<a class="headerlink" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.bernoulli">
 <!--[mpmath.functions.bernoulli]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bernoulli</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.bernoulli" title="Permalink to this definition">¶</a></dt>
@@ -660,7 +658,8 @@ always reduced to lowest terms. Note that for <img class="math" src="../_images/
 <img class="math" src="../_images/math/d72198ae318470c88b2114f13302cfcf4e9e9563.png" alt="B_n = 0" />, and <img class="math" src="../_images/math/6457ca2dcd40dc21d9aa0db18c66bbac9af4d899.png" alt="(0, 1)" /> is returned.</p>
 <p><strong>Examples</strong></p>
 <p>The first few Bernoulli numbers are exactly:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">15</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">15</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">bernfrac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -744,7 +743,7 @@ Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernou
 
 </div>
 <div class="section" id="polylogarithms-polylog">
-<h2><a class="toc-backref" href="#id8">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)<a class="headerlink" href="#polylogarithms-polylog" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id7">Polylogarithms (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>)<a class="headerlink" href="#polylogarithms-polylog" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.polylog">
 <!--[mpmath.functions.polylog]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">polylog</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.polylog" title="Permalink to this definition">¶</a></dt>
@@ -851,7 +850,7 @@ for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda58
 
 </div>
 <div class="section" id="stieltjes-constants-stieltjes">
-<h2><a class="toc-backref" href="#id9">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)<a class="headerlink" href="#stieltjes-constants-stieltjes" title="Permalink to this headline">¶</a></a></h2>
+<h2><a class="toc-backref" href="#id8">Stieltjes constants (<tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt>)<a class="headerlink" href="#stieltjes-constants-stieltjes" title="Permalink to this headline">¶</a></a></h2>
 <dl class="function">
 <dt id="mpmath.functions.stieltjes">
 <!--[mpmath.functions.stieltjes]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em>, <em>a=1</em><big>)</big><a class="headerlink" href="#mpmath.functions.stieltjes" title="Permalink to this definition">¶</a></dt>
@@ -917,10 +916,235 @@ Paper 2456 (1985),
 <a class="reference external" href="http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf">http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf</a></li>
 <li>M. W. Coffey, &#8220;The Stieltjes constants, their relation to the
 <img class="math" src="../_images/math/d5a512e1ca0922626d453a3702cc06415bc63b3f.png" alt="\eta_j" /> coefficients, and representation of the Hurwitz
-zeta function&#8221;,  arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
+zeta function&#8221;,      arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
 <li><a class="reference external" href="http://mathworld.wolfram.com/StieltjesConstants.html">http://mathworld.wolfram.com/StieltjesConstants.html</a></li>
 <li><a class="reference external" href="http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt">http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt</a></li>
 </ol>
+</dd></dl>
+
+</div>
+<div class="section" id="bell-numbers-and-polynomials-bell-polyexp">
+<h2><a class="toc-backref" href="#id9">Bell numbers and polynomials (<tt class="xref docutils literal"><span class="pre">bell()</span></tt>, <tt class="xref docutils literal"><span class="pre">polyexp()</span></tt>)<a class="headerlink" href="#bell-numbers-and-polynomials-bell-polyexp" title="Permalink to this headline">¶</a></a></h2>
+<dl class="function">
+<dt id="mpmath.functions.bell">
+<!--[mpmath.functions.bell]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bell</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.bell" title="Permalink to this definition">¶</a></dt>
+<dd><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> a nonnegative integer, <tt class="docutils literal"><span class="pre">bell(n,x)</span></tt> evaluates the Bell
+polynomial <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" />, the first few of which are</p>
+<div class="math">
+<p><img src="../_images/math/370eaaa999927a40127739b601e85935724735d3.png" alt="B_0(x) = 1
+
+B_1(x) = x
+
+B_2(x) = x^2+x
+
+B_3(x) = x^3+3x^2+x" />
+</div></p><p>If <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> or <tt class="xref docutils literal"><span class="pre">bell()</span></tt> is called with only one argument, it
+gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Bell number <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" />, which is the number of
+partitions of a set with <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> elements. By setting the precision to
+at least <img class="math" src="../_images/math/816b0b85300fda85bdb84aa1858eadc31859deed.png" alt="\log_{10} B_n" /> digits, <tt class="xref docutils literal"><span class="pre">bell()</span></tt> provides fast
+calculation of exact Bell numbers.</p>
+<p>In general, <tt class="xref docutils literal"><span class="pre">bell()</span></tt> computes</p>
+<div class="math">
+<p><img src="../_images/math/14f27b46bfc53a41da9762cad023072e45efb5a0.png" alt="B_n(x) = e^{-x} \left(\mathrm{sinc}(\pi n) + E_n(x)\right)" />
+</div></p><p>where <img class="math" src="../_images/math/65e3e61fce7353dfe4ed8461c9c994afc38c2492.png" alt="E_n(x)" /> is the generalized exponential function implemented
+by <tt class="xref docutils literal"><span class="pre">polyexp()</span></tt>. This is an extension of Dobinski&#8217;s formula [1],
+where the modification is the sinc term ensuring that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> is
+continuous in <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />; <tt class="xref docutils literal"><span class="pre">bell()</span></tt> can thus be evaluated,
+differentiated, etc for arbitrary complex arguments.</p>
+<p><strong>Examples</strong></p>
+<p>Simple evaluations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+<span class="go">2.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+<span class="go">8.75</span>
+</pre></div>
+</div>
+<p>Evaluation for arbitrary complex arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">5.75</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">,</span> <span class="mf">2</span><span class="o">-</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-10767.71345136587098445143 - 15449.55065599872579097221j)</span>
+</pre></div>
+</div>
+<p>The first few Bell polynomials:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">7</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">bell</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">[1.0]</span>
+<span class="go">[0.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 3.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 7.0, 6.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 15.0, 25.0, 10.0, 1.0]</span>
+<span class="go">[0.0, 1.0, 31.0, 90.0, 65.0, 15.0, 1.0]</span>
+</pre></div>
+</div>
+<p>The first few Bell numbers and complementary Bell numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">bell</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">)]</span>
+<span class="go">[1, 1, 2, 5, 15, 52, 203, 877, 4140, 21147]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">bell</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">)]</span>
+<span class="go">[1, -1, 0, 1, 1, -2, -9, -9, 50, 267]</span>
+</pre></div>
+</div>
+<p>Large Bell numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">50</span><span class="p">)</span>
+<span class="go">185724268771078270438257767181908917499221852770.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">50</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-29113173035759403920216141265491160286912.0</span>
+</pre></div>
+</div>
+<p>Some even larger values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">-1.237132026969293954162816e+1869</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">2.989901335682408421480422e+1927</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">6.591553486811969380442171e+1987</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bell</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span><span class="mf">100.5</span><span class="p">)</span>
+<span class="go">9.101014101401543575679639e+2529</span>
+</pre></div>
+</div>
+<p>A determinant identity satisfied by Bell numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">N</span> <span class="o">=</span> <span class="mf">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">det</span><span class="p">([[</span><span class="n">bell</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)])</span>
+<span class="go">125411328000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">superfac</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">125411328000.0</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://mathworld.wolfram.com/DobinskisFormula.html">http://mathworld.wolfram.com/DobinskisFormula.html</a></li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.functions.polyexp">
+<!--[mpmath.functions.polyexp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">polyexp</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.polyexp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the generalized exponential function (for arbitrary
+complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />)</p>
+<div class="math">
+<p><img src="../_images/math/4b40c56593a606a415fbd4530c20a1400c940a4a.png" alt="E_s(z) = \sum_{k=1}^{\infty} \frac{k^s}{k!} z^k." />
+</div></p><p><img class="math" src="../_images/math/e567acf2f26e4fa492b6e310313ea47573c52ce9.png" alt="E_s(z)" /> is constructed from the exponential function analogously
+to how the polylogarithm is constructed from the ordinary
+logarithm; as a function of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> (with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> fixed), <img class="math" src="../_images/math/951eec7bf6dd63c58cc159490924cb51eb5a0b6d.png" alt="E_s" /> is a
+Dirichlet series. It is an entire function of both <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
+<p>In terms of the Bell polynomials <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> (see <tt class="xref docutils literal"><span class="pre">bell()</span></tt>), we
+have</p>
+<div class="math">
+<p><img src="../_images/math/a380f7ed2531fb35c6adaa6b8e56bd5c23240bb4.png" alt="E_s(z) = e^z B_s(z) - \mathrm{sinc}(\pi s)." />
+</div></p><p>Note that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> and <img class="math" src="../_images/math/c47c624139806711c9800c70920de6c85f87481a.png" alt="e^{-x} E_n(x)" /> are identical if <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />
+is a nonzero integer, but not otherwise. In particular, they differ
+at <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0" />.</p>
+<p><strong>Examples</strong></p>
+<p>Evaluating a series:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">2.101755547733791780315904</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyexp</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">2.101755547733791780315904</span>
+</pre></div>
+</div>
+<p>Evaluation for arbitrary arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyexp</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="o">-</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">2.5</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(2.351660261190434618268706 + 1.202966666673054671364215j)</span>
+</pre></div>
+</div>
+<p>Evaluation is accurate for tiny function values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyexp</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="o">-</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">3.499471750566824369520223e-36</span>
+</pre></div>
+</div>
+<p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is a nonpositive integer, <img class="math" src="../_images/math/0d3cbf9ab1e976e485e5a8b8459491ffa0b561dc.png" alt="E_n" /> reduces to a special
+instance of the hypergeometric function <img class="math" src="../_images/math/405161549f551ae4e04876e9405fd9a40873733d.png" alt="\,_pF_q" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyexp</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="go">4.042192318847986561771779</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">*</span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
+<span class="go">4.042192318847986561771779</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="other-zeta-functions-primezeta">
+<h2><a class="toc-backref" href="#id10">Other zeta functions (<tt class="xref docutils literal"><span class="pre">primezeta()</span></tt>)<a class="headerlink" href="#other-zeta-functions-primezeta" title="Permalink to this headline">¶</a></a></h2>
+<dl class="function">
+<dt id="mpmath.functions.primezeta">
+<!--[mpmath.functions.primezeta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">primezeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.functions.primezeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the prime zeta function, which is defined
+in analogy with the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
+as</p>
+<div class="math">
+<p><img src="../_images/math/0226575fda5703d7f9ac0f7aff667e441e45cb02.png" alt="P(s) = \sum_p \frac{1}{p^s}" />
+</div></p><p>where the sum is taken over all prime numbers <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />. Although
+this sum only converges for <img class="math" src="../_images/math/987815a6cda24b23ceb241d165f933d5c6f6f08f.png" alt="\mathrm{Re}(s) &gt; 1" />, the
+function is defined by analytic continuation in the
+half-plane <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0" />.</p>
+<p><strong>Examples</strong></p>
+<p>Arbitrary-precision evaluation for real and complex arguments is
+supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.452247420041065498506543364832</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.15483752698840284272036497397</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">0.17476263929944353642311331466570670097541212192615</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.12085382601645763295 - 0.013370403397787023602j)</span>
+</pre></div>
+</div>
+<p>The prime zeta function has a logarithmic pole at <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" />,
+with residue equal to the difference of the Mertens and
+Euler constants:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">extradps</span><span class="p">(</span><span class="mf">25</span><span class="p">)(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">))(</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span>
+<span class="go">-0.31571845205389007685</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mertens</span><span class="o">-</span><span class="n">euler</span>
+<span class="go">-0.31571845205389007685</span>
+</pre></div>
+</div>
+<p>The analytic continuation to <img class="math" src="../_images/math/b01a6ac8c09ad8380bb653074565be16582adbe2.png" alt="0 &lt; \mathrm{Re}(s) \le 1" />
+is implemented. In this strip the function exhibits
+very complex behavior; on the unit interval, it has poles at
+<img class="math" src="../_images/math/75727773d9c4fd9120a7e6337c224dbb405c584f.png" alt="1/n" /> for every squarefree integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>         <span class="c"># Pole at s = 1/2</span>
+<span class="go">(-inf + 3.1415926535897932385j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">(-1.0416106801757269036 + 0.52359877559829887308j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">10</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.54892423556409790529 + 0.45626803423487934264j)</span>
+</pre></div>
+</div>
+<p>Although evaluation works in principle for any <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0" />,
+it should be noted that the evaluation time increases exponentially
+as <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> approaches the imaginary axis.</p>
+<p>For large <img class="math" src="../_images/math/bcf0faa38ddd4717cb4a60e935104791339817e1.png" alt="\mathrm{Re}(s)" />, <img class="math" src="../_images/math/5c6c83a7ae943a31fe2d2c9cfb0cf967575634e8.png" alt="P(s)" /> is asymptotic to <img class="math" src="../_images/math/08a2c637ee36c9feba7b71c53dbdbd990ec98533.png" alt="2^{-s}" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">10</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">10</span>
+<span class="go">0.00099360357443698021786 0.0009765625</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">9.3326361850321887899e-302</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">primezeta</span><span class="p">(</span><span class="mf">1000</span><span class="o">+</span><span class="mf">1000</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.8565440833654995949e-302 - 8.4985390447553234305e-302j)</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<p>Carl-Erik Froberg, &#8220;On the prime zeta function&#8221;,
+BIT 8 (1968), pp. 187-202.</p>
 </dd></dl>
 
 </div>
@@ -935,14 +1159,15 @@ zeta function&#8221;,  arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Zeta functions</a><ul>
-<li><a class="reference external" href="#riemann-zeta-function-zeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
-<li><a class="reference external" href="#dirichlet-eta-function-altzeta">Dirichlet eta function (<tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
+<li><a class="reference external" href="#riemann-zeta-function-zeta-altzeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>, <tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
 <li><a class="reference external" href="#zeta-function-zeros-zetazero">Zeta function zeros (<tt class="docutils literal"><span class="pre">zetazero()</span></tt>)</a></li>
 <li><a class="reference external" href="#riemann-siegel-functions-siegelz-siegeltheta-grampoint">Riemann-Siegel functions (<tt class="docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="docutils literal"><span class="pre">grampoint()</span></tt>)</a></li>
 <li><a class="reference external" href="#prime-counting-function-primepi-primepi2-riemannr">Prime counting function (<tt class="docutils literal"><span class="pre">primepi()</span></tt>, <tt class="docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="docutils literal"><span class="pre">riemannr()</span></tt>)</a></li>
 <li><a class="reference external" href="#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">Bernoulli numbers and polynomials (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
 <li><a class="reference external" href="#polylogarithms-polylog">Polylogarithms (<tt class="docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
 <li><a class="reference external" href="#stieltjes-constants-stieltjes">Stieltjes constants (<tt class="docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+<li><a class="reference external" href="#bell-numbers-and-polynomials-bell-polyexp">Bell numbers and polynomials (<tt class="docutils literal"><span class="pre">bell()</span></tt>, <tt class="docutils literal"><span class="pre">polyexp()</span></tt>)</a></li>
+<li><a class="reference external" href="#other-zeta-functions-primezeta">Other zeta functions (<tt class="docutils literal"><span class="pre">primezeta()</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -977,13 +1202,13 @@ zeta function&#8221;,  arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
         <li class="right" >
           <a href="elliptic.html" title="Elliptic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

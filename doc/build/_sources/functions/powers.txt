@@ -4,34 +4,34 @@ Powers and logarithms
 Roots (:func:`sqrt`, :func:`cbrt`, :func:`nthroot`)
 ...................................................
 
-.. autofunction:: mpmath.functions.sqrt
-.. autofunction:: mpmath.functions.cbrt
-.. autofunction:: mpmath.functions.nthroot
+.. autofunction:: mpmath.functions.sqrt(x, **kwargs)
+.. autofunction:: mpmath.functions.cbrt(x, **kwargs)
+.. autofunction:: mpmath.functions.nthroot(x, n)
 
 Exponentiation (:func:`exp`, :func:`power`)
 ...........................................
 
-.. autofunction:: mpmath.functions.exp
-.. autofunction:: mpmath.functions.power
+.. autofunction:: mpmath.functions.exp(x, **kwargs)
+.. autofunction:: mpmath.functions.power(x, y)
 
 Logarithms (:func:`log`, :func:`ln`, :func:`log10`)
 ...................................................
 
-.. autofunction:: mpmath.functions.log
-.. autofunction:: mpmath.functions.ln
-.. autofunction:: mpmath.functions.log10
+.. autofunction:: mpmath.functions.log(x, b=None)
+.. autofunction:: mpmath.functions.ln(x, **kwargs)
+.. autofunction:: mpmath.functions.log10(x)
 
 Fibonacci numbers (:func:`fibonacci`/:func:`fib`)
 ...................................................
 
-.. autofunction:: mpmath.functions.fibonacci
+.. autofunction:: mpmath.functions.fibonacci(n, **kwargs)
 
 Lambert W function (:func:`lambertw`)
 ...................................................
 
-.. autofunction:: mpmath.functions.lambertw
+.. autofunction:: mpmath.functions.lambertw(z, k=0)
 
 Arithmetic-geometric mean (:func:`agm`)
 .......................................
 
-.. autofunction:: mpmath.functions.agm
+.. autofunction:: mpmath.functions.agm(a, b=1)

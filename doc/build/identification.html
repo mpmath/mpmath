@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Number identification &mdash; mpmath v0.12-svn documentation</title>
+    <title>Number identification &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Technical details" href="technical.html" />
     <link rel="prev" title="Matrices" href="matrices.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="matrices.html" title="Matrices"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -228,14 +228,14 @@ a symbolic algorithm:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">sympy</span> <span class="k">import</span> <span class="n">simplify</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">sympify</span><span class="p">(</span><span class="s">&#39;-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">(3/2 - 1/2*5**(1/2))**(-1/2)</span>
+<span class="go">(3/2 - 5**(1/2)/2)**(-1/2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">simplify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">2/(6 - 2*5**(1/2))**(1/2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">sympify</span><span class="p">(</span><span class="n">identify</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="mf">30</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">1/2 + 1/2*5**(1/2)</span>
+<span class="go">1/2 + 5**(1/2)/2</span>
 </pre></div>
 </div>
 <p>(In fact, this functionality is available directly in SymPy as the
@@ -510,12 +510,12 @@ arithmetic, since this is significantly (about 7x) faster.</p>
         <li class="right" >
           <a href="matrices.html" title="Matrices"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

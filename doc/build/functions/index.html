@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Mathematical functions &mdash; mpmath v0.12-svn documentation</title>
+    <title>Mathematical functions &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="next" title="Mathematical constants" href="constants.html" />
     <link rel="prev" title="Mpmath basics" href="../basics.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -60,6 +60,8 @@
 <li class="toctree-l2"><a class="reference external" href="constants.html#apery-s-constant-apery">Apery&#8217;s constant (<tt class="docutils literal"><span class="pre">apery</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="constants.html#khinchin-s-constant-khinchin">Khinchin&#8217;s constant (<tt class="docutils literal"><span class="pre">khinchin</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="constants.html#glaisher-s-constant-glaisher">Glaisher&#8217;s constant (<tt class="docutils literal"><span class="pre">glaisher</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#mertens-constant-mertens">Mertens constant (<tt class="docutils literal"><span class="pre">mertens</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="constants.html#twin-prime-constant-twinprime">Twin prime constant (<tt class="docutils literal"><span class="pre">twinprime</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -147,14 +149,15 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="zeta.html">Zeta functions</a><ul>
-<li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-zeta-function-zeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>)</a></li>
-<li class="toctree-l2"><a class="reference external" href="zeta.html#dirichlet-eta-function-altzeta">Dirichlet eta function (<tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-zeta-function-zeta-altzeta">Riemann zeta function (<tt class="docutils literal"><span class="pre">zeta()</span></tt>, <tt class="docutils literal"><span class="pre">altzeta()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#zeta-function-zeros-zetazero">Zeta function zeros (<tt class="docutils literal"><span class="pre">zetazero()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#riemann-siegel-functions-siegelz-siegeltheta-grampoint">Riemann-Siegel functions (<tt class="docutils literal"><span class="pre">siegelz()</span></tt>, <tt class="docutils literal"><span class="pre">siegeltheta()</span></tt>, <tt class="docutils literal"><span class="pre">grampoint()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#prime-counting-function-primepi-primepi2-riemannr">Prime counting function (<tt class="docutils literal"><span class="pre">primepi()</span></tt>, <tt class="docutils literal"><span class="pre">primepi2()</span></tt>, <tt class="docutils literal"><span class="pre">riemannr()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#bernoulli-numbers-and-polynomials-bernoulli-bernfrac-bernpoly">Bernoulli numbers and polynomials (<tt class="docutils literal"><span class="pre">bernoulli()</span></tt>, <tt class="docutils literal"><span class="pre">bernfrac()</span></tt>, <tt class="docutils literal"><span class="pre">bernpoly()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#polylogarithms-polylog">Polylogarithms (<tt class="docutils literal"><span class="pre">polylog()</span></tt>)</a></li>
 <li class="toctree-l2"><a class="reference external" href="zeta.html#stieltjes-constants-stieltjes">Stieltjes constants (<tt class="docutils literal"><span class="pre">stieltjes()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#bell-numbers-and-polynomials-bell-polyexp">Bell numbers and polynomials (<tt class="docutils literal"><span class="pre">bell()</span></tt>, <tt class="docutils literal"><span class="pre">polyexp()</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="zeta.html#other-zeta-functions-primezeta">Other zeta functions (<tt class="docutils literal"><span class="pre">primezeta()</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -196,12 +199,12 @@
         <li class="right" >
           <a href="../basics.html" title="Mpmath basics"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

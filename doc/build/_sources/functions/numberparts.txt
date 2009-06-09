@@ -4,36 +4,36 @@ Number parts
 Complex components (:func:`fabs`, :func:`re`, :func:`im`, :func:`arg`)
 ......................................................................
 
-.. autofunction:: mpmath.functions.fabs
-.. autofunction:: mpmath.functions.re
-.. autofunction:: mpmath.functions.im
-.. autofunction:: mpmath.functions.arg
+.. autofunction:: mpmath.functions.fabs(x)
+.. autofunction:: mpmath.functions.re(x)
+.. autofunction:: mpmath.functions.im(x)
+.. autofunction:: mpmath.functions.arg(x)
 
 Complex conjugate (:func:`conj`)
 ....................................
 
-.. autofunction:: mpmath.functions.conj
+.. autofunction:: mpmath.functions.conj(x)
 
 Floor and ceiling functions (:func:`floor`, :func:`ceil`)
 .........................................................
 
-.. autofunction:: mpmath.functions.floor
-.. autofunction:: mpmath.functions.ceil
+.. autofunction:: mpmath.functions.floor(x, **kwargs)
+.. autofunction:: mpmath.functions.ceil(x, **kwargs)
 
 Modulo (:func:`modf`)
 ....................................
 
-.. autofunction:: mpmath.functions.modf
+.. autofunction:: mpmath.functions.modf(x, y)
 
 Exponent decomposition (:func:`ldexp`, :func:`frexp`)
 .....................................................
 
-.. autofunction:: mpmath.functions.ldexp
-.. autofunction:: mpmath.functions.frexp
+.. autofunction:: mpmath.functions.ldexp(x, n)
+.. autofunction:: mpmath.functions.frexp(x, n)
 
 Vector components (:func:`hypot`, :func:`atan2`)
 ................................................
 
 
-.. autofunction:: mpmath.functions.hypot
-.. autofunction:: mpmath.functions.atan2
+.. autofunction:: mpmath.functions.hypot(x, y)
+.. autofunction:: mpmath.functions.atan2(y, x)

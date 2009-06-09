@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Powers and logarithms &mdash; mpmath v0.12-svn documentation</title>
+    <title>Powers and logarithms &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Trigonometric functions" href="trigonometric.html" />
     <link rel="prev" title="Number parts" href="numberparts.html" /> 
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -54,7 +54,7 @@
 <dl class="function">
 <dt id="mpmath.functions.sqrt">
 <!--[mpmath.functions.sqrt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sqrt" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> computes the principal square root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x" />.
+<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> gives the principal square root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x" />.
 For positive real numbers, the principal root is simply the
 positive square root. For arbitrary complex numbers, the principal
 square root is defined to satisfy <img class="math" src="../_images/math/c029e0366a469e4e92b174d25c5c98bec0c787e6.png" alt="\sqrt x = \exp(\log(x)/2)" />.
@@ -122,7 +122,7 @@ does not give a real cube root for negative real numbers:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.nthroot">
-<!--[mpmath.functions.nthroot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">nthroot</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.nthroot" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.nthroot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">nthroot</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.nthroot" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">nthroot(x,</span> <span class="pre">n)</span></tt> computes the principal <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
 <img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" />. Here <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> must be an integer, and can be negative
 (<img class="math" src="../_images/math/43577a4bb6fed57fefa828236669f403761e5ecc.png" alt="x^{-1/n}" /> is <img class="math" src="../_images/math/6a9b9a4c4eae23d6ade48ceb41e518b1ad02e63f.png" alt="1/x^{1/n}" />).</p>
@@ -334,7 +334,7 @@ is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <s
 <h2>Fibonacci numbers (<tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>/<tt class="xref docutils literal"><span class="pre">fib()</span></tt>)<a class="headerlink" href="#fibonacci-numbers-fibonacci-fib" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.fibonacci">
-<!--[mpmath.functions.fibonacci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fibonacci</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fibonacci" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.fibonacci]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fibonacci</tt><big>(</big><em>n</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.fibonacci" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">fibonacci(n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Fibonacci number, <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" />. The
 Fibonacci numbers are defined by the recurrence <img class="math" src="../_images/math/3c80df4dced24d2e083ecaf5eba04730e2abd010.png" alt="F(n) = F(n-1) + F(n-2)" />
 with the initial values <img class="math" src="../_images/math/e1676ed7f6f03f442bbb3620cc13f1d86a018db0.png" alt="F(0) = 0" />, <img class="math" src="../_images/math/0faeea7ef7f0f0e89604b913937e23bd424c7035.png" alt="F(1) = 1" />. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>
@@ -458,7 +458,7 @@ numbers can be expressed in terms of a Jacobi theta function:</p>
 <h2>Lambert W function (<tt class="xref docutils literal"><span class="pre">lambertw()</span></tt>)<a class="headerlink" href="#lambert-w-function-lambertw" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.lambertw">
-<!--[mpmath.functions.lambertw]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">lambertw</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.lambertw" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.lambertw]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">lambertw</tt><big>(</big><em>z</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.functions.lambertw" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Lambert W function <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is defined as the inverse function
 of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. In other words, the value of <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is such that
 <img class="math" src="../_images/math/453b5e9b62a3f5ffa964b35fe3d393cfcd78c6c0.png" alt="z = W(z) \exp(W(z))" /> for any complex number <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
@@ -741,13 +741,13 @@ arbitrary.</p>
         <li class="right" >
           <a href="numberparts.html" title="Number parts"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

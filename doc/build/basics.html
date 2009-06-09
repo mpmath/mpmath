@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Mpmath basics &mdash; mpmath v0.12-svn documentation</title>
+    <title>Mpmath basics &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Mathematical functions" href="functions/index.html" />
     <link rel="prev" title="Setting up mpmath" href="setup.html" /> 
   </head>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -122,8 +122,8 @@
 </div>
 <div class="section" id="setting-the-precision">
 <h2>Setting the precision<a class="headerlink" href="#setting-the-precision" title="Permalink to this headline">¶</a></h2>
-<p>Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling <tt class="docutils literal"><span class="pre">mpf()</span></tt> rounds the result to the current working precision. The working precision is controlled by a special object called <tt class="docutils literal"><span class="pre">mp</span></tt>, which has the following default state:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span>
+<p>Mpmath uses a global working precision; it does not keep track of the precision or accuracy of individual numbers. Performing an arithmetic operation or calling <tt class="docutils literal"><span class="pre">mpf()</span></tt> rounds the result to the current working precision. The working precision is controlled by a context object called <tt class="docutils literal"><span class="pre">mp</span></tt>, which has the following default state:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mp</span>
 <span class="go">Mpmath settings:</span>
 <span class="go">  mp.prec = 53                [default: 53]</span>
 <span class="go">  mp.dps = 15                 [default: 15]</span>
@@ -209,6 +209,27 @@
 <span class="go">mpf(&#39;0.33333331346511841&#39;)</span>
 </pre></div>
 </div>
+<p>Some functions accept the <tt class="docutils literal"><span class="pre">prec</span></tt> and <tt class="docutils literal"><span class="pre">dps</span></tt> keyword arguments and this will override the global working precision. Note that this will not affect the precision at which the result is printed, so to get all digits, you must either use increase precision afterward when printing or use <tt class="docutils literal"><span class="pre">nstr</span></tt>/<tt class="docutils literal"><span class="pre">nprint</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">2.71828182845905</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">50</span><span class="p">)</span>      <span class="c"># Extra digits won&#39;t be printed</span>
+<span class="go">2.71828182845905</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">50</span><span class="p">),</span> <span class="mf">50</span><span class="p">)</span>
+<span class="go">2.7182818284590452353602874713526624977572470937</span>
+</pre></div>
+</div>
+<p>Finally, instead of using the global context object <tt class="docutils literal"><span class="pre">mp</span></tt>, you can create custom contexts and work with methods of those instances instead of global functions. The working precision will be local to each context object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp2</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp2</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mp</span><span class="o">.</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3</span>
+<span class="go">0.3333333333</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mp2</span><span class="o">.</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3</span>
+<span class="go">0.33333333333333333333</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: the ability to create multiple contexts is a new feature that is only partially implemented. Not all mpmath functions are yet available as context-local methods. In the present version, you are likely to encounter bugs if you try mixing different contexts.</p>
 </div>
 </div>
 <div class="section" id="providing-correct-input">
@@ -262,7 +283,7 @@ is plotted with dots.</p>
 <p>Output of <tt class="docutils literal"><span class="pre">cplot(gamma,</span> <span class="pre">points=10000)</span></tt></p>
 <dl class="function">
 <dt id="mpmath.cplot">
-<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=&lt;function default_color_function at 0x01338030&gt;</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=&lt;function default_color_function at 0x013445B0&gt;</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the given complex-valued function <em>f</em> over a rectangular part
 of the complex plane specified by the pairs of intervals <em>re</em> and <em>im</em>.
 For example:</p>
@@ -292,7 +313,7 @@ option is useful to display progress.</p>
 <dl class="function">
 <dt id="mpmath.mpmathify">
 <!--[mpmath.mpmathify]--><tt class="descclassname">mpmath.</tt><tt class="descname">mpmathify</tt><big>(</big><em>x</em>, <em>strings=True</em><big>)</big><a class="headerlink" href="#mpmath.mpmathify" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts <em>x</em> to an <tt class="docutils literal"><span class="pre">mpf</span></tt> or <tt class="docutils literal"><span class="pre">mpc</span></tt>. If <em>x</em> is of type <tt class="docutils literal"><span class="pre">mpf</span></tt>,
+<dd><p>Converts <em>x</em> to an <tt class="docutils literal"><span class="pre">mpf</span></tt>, <tt class="docutils literal"><span class="pre">mpc</span></tt> or <tt class="docutils literal"><span class="pre">mpi</span></tt>. If <em>x</em> is of type <tt class="docutils literal"><span class="pre">mpf</span></tt>,
 <tt class="docutils literal"><span class="pre">mpc</span></tt>, <tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">float</span></tt>, <tt class="docutils literal"><span class="pre">complex</span></tt>, the conversion
 will be performed losslessly.</p>
 <p>If <em>x</em> is a string, the result will be rounded to the present
@@ -394,7 +415,7 @@ integer-valued:</p>
 <h3>Arithmetic<a class="headerlink" href="#arithmetic" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.fsum">
-<!--[mpmath.fsum]--><tt class="descclassname">mpmath.</tt><tt class="descname">fsum</tt><big>(</big><em>terms</em><big>)</big><a class="headerlink" href="#mpmath.fsum" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.fsum]--><tt class="descclassname">mpmath.</tt><tt class="descname">fsum</tt><big>(</big><em>terms</em>, <em>absolute=False</em>, <em>squared=False</em><big>)</big><a class="headerlink" href="#mpmath.fsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates a sum containing a finite number of terms (for infinite
 series, see <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>). The terms will be converted to
 mpmath numbers. For len(terms) &gt; 2, this function is generally
@@ -406,6 +427,8 @@ Python function <tt class="xref docutils literal"><span class="pre">sum()</span>
 <span class="go">mpf(&#39;10.5&#39;)</span>
 </pre></div>
 </div>
+<p>With squared=True each term is squared, and with absolute=True
+the absolute value of each term is used.</p>
 </dd></dl>
 
 <dl class="function">
@@ -554,11 +577,14 @@ single number or an iterable:</p>
 
 <dl class="function">
 <dt id="mpmath.nstr">
-<!--[mpmath.nstr]--><tt class="descclassname">mpmath.</tt><tt class="descname">nstr</tt><big>(</big><em>x</em>, <em>n=6</em><big>)</big><a class="headerlink" href="#mpmath.nstr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert an <tt class="docutils literal"><span class="pre">mpf</span></tt> or <tt class="docutils literal"><span class="pre">mpc</span></tt> to a decimal string literal with <em>n</em>
+<!--[mpmath.nstr]--><tt class="descclassname">mpmath.</tt><tt class="descname">nstr</tt><big>(</big><em>x</em>, <em>n=6</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an <tt class="docutils literal"><span class="pre">mpf</span></tt>, <tt class="docutils literal"><span class="pre">mpc</span></tt> or <tt class="docutils literal"><span class="pre">mpi</span></tt> to a decimal string literal with <em>n</em>
 significant digits. The small default value for <em>n</em> is chosen to
 make this function useful for printing collections of numbers
 (lists, matrices, etc).</p>
+<p>If <em>x</em> is an <tt class="docutils literal"><span class="pre">mpi</span></tt>, there are some extra options, notably <em>mode</em>, which
+can be &#8216;brackets&#8217;, &#8216;diff&#8217;, &#8216;plusminus&#8217; or &#8216;percent&#8217;. See <tt class="docutils literal"><span class="pre">mpi_to_str</span></tt> for
+a more complete documentation.</p>
 <p>If <em>x</em> is a list or tuple, <tt class="xref docutils literal"><span class="pre">nstr()</span></tt> is applied recursively
 to each element. For unrecognized classes, <tt class="xref docutils literal"><span class="pre">nstr()</span></tt>
 simply returns <tt class="docutils literal"><span class="pre">str(x)</span></tt>.</p>
@@ -575,7 +601,7 @@ instead of returning it.</p>
 
 <dl class="function">
 <dt id="mpmath.nprint">
-<!--[mpmath.nprint]--><tt class="descclassname">mpmath.</tt><tt class="descname">nprint</tt><big>(</big><em>x</em>, <em>n=6</em><big>)</big><a class="headerlink" href="#mpmath.nprint" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.nprint]--><tt class="descclassname">mpmath.</tt><tt class="descname">nprint</tt><big>(</big><em>x</em>, <em>n=6</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprint" title="Permalink to this definition">¶</a></dt>
 <dd>Equivalent to <tt class="docutils literal"><span class="pre">print</span> <span class="pre">nstr(x,</span> <span class="pre">n)</span></tt>.</dd></dl>
 
 </div>
@@ -690,12 +716,12 @@ repeatedly and the best time is returned.</p>
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.12-svn documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.12 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

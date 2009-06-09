@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hypergeometric functions, Bessel/Airy, orthogonal polynomials &mdash; mpmath v0.12-svn documentation</title>
+    <title>Hypergeometric functions, Bessel/Airy, orthogonal polynomials &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.12-svn',
+        VERSION:     '0.12',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.12-svn documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Elliptic functions" href="elliptic.html" />
     <link rel="prev" title="Exponential integrals and error functions" href="expintegrals.html" /> 
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="expintegrals.html" title="Exponential integrals and error functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -53,7 +53,7 @@
 <h2>Bessel functions (<tt class="xref docutils literal"><span class="pre">besselj()</span></tt>, <tt class="xref docutils literal"><span class="pre">bessely()</span></tt>)<a class="headerlink" href="#bessel-functions-besselj-bessely" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.besselj">
-<!--[mpmath.functions.besselj]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besselj</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.besselj" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.besselj]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besselj</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.besselj" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">besselj(n,x)</span></tt> computes the Bessel function of the first kind
 <img class="math" src="../_images/math/ea647045ebedb7454bd92eccace37cb7cc3860aa.png" alt="J_n(x)" />. Bessel functions of the first kind are defined as
 solutions of the differential equation</p>
@@ -140,7 +140,7 @@ trigonometric function:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.bessely">
-<!--[mpmath.functions.bessely]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bessely</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.bessely" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.bessely]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">bessely</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.bessely" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">bessely(n,x)</span></tt> computes the Bessel function of the second kind,</p>
 <div class="math">
 <p><img src="../_images/math/8ab8d5d6e975d4bfa57aa7bd8ba776b90ccfcc80.png" alt="Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}." />
@@ -165,7 +165,7 @@ limit.</p>
 <h2>Modified Bessel functions (<tt class="xref docutils literal"><span class="pre">besseli()</span></tt>, <tt class="xref docutils literal"><span class="pre">besselk()</span></tt>)<a class="headerlink" href="#modified-bessel-functions-besseli-besselk" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.besseli">
-<!--[mpmath.functions.besseli]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besseli</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.besseli" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.besseli]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besseli</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.besseli" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">besseli(n,x)</span></tt> computes the modified Bessel function of the first
 kind,</p>
 <div class="math">
@@ -198,8 +198,8 @@ kind,</p>
 
 <dl class="function">
 <dt id="mpmath.functions.besselk">
-<!--[mpmath.functions.besselk]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besselk</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.besselk" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">besseli(n,x)</span></tt> computes the modified Bessel function of the
+<!--[mpmath.functions.besselk]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">besselk</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.besselk" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">besselk(n,x)</span></tt> computes the modified Bessel function of the
 second kind,</p>
 <div class="math">
 <p><img src="../_images/math/c7bd979e358f199bdb7bd5dd3d66447f8fb2e348.png" alt="K_n(x) = \frac{\pi}{2} \frac{I_{-n}(x)-I_{n}(x)}{\sin(\pi n)}" />
@@ -267,7 +267,7 @@ which is the complex combination of Bessel functions given by</p>
 <h2>Airy functions (<tt class="xref docutils literal"><span class="pre">airyai()</span></tt>, <tt class="xref docutils literal"><span class="pre">airybi()</span></tt>)<a class="headerlink" href="#airy-functions-airyai-airybi" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.airyai">
-<!--[mpmath.functions.airyai]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airyai</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.airyai" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.airyai]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airyai</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.airyai" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Airy function <img class="math" src="../_images/math/66d39ec6233672a4f352aa04a6211c98ae50a0fa.png" alt="\mathrm{Ai}(x)" />, which is
 a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0" />.
 The Ai-function behaves roughly like a slowly decaying
@@ -337,7 +337,7 @@ For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf64
 
 <dl class="function">
 <dt id="mpmath.functions.airybi">
-<!--[mpmath.functions.airybi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airybi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.airybi" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.airybi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">airybi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.airybi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Airy function <img class="math" src="../_images/math/ba535c7012921d4c545958cf8234030338a1cfe6.png" alt="\mathrm{Bi}(x)" />, which is
 a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0" />.
 The Bi-function behaves roughly like a slowly decaying
@@ -410,7 +410,7 @@ For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf64
 <h2>Orthogonal polynomials (<tt class="xref docutils literal"><span class="pre">jacobi()</span></tt>, <tt class="xref docutils literal"><span class="pre">legendre()</span></tt>, <tt class="xref docutils literal"><span class="pre">chebyt()</span></tt>, <tt class="xref docutils literal"><span class="pre">chebyu()</span></tt>)<a class="headerlink" href="#orthogonal-polynomials-jacobi-legendre-chebyt-chebyu" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.functions.jacobi">
-<!--[mpmath.functions.jacobi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jacobi</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.jacobi" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.jacobi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jacobi</tt><big>(</big><em>n</em>, <em>a</em>, <em>b</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.jacobi" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">jacobi(n,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">x)</span></tt> evaluates the Jacobi polynomial
 <img class="math" src="../_images/math/ca97c3d1353d63ad511d603d70a7143fc1239c03.png" alt="P_n^{(a,b)}(x)" />. The Jacobi polynomials are a special
 case of the hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" /> given by:</p>
@@ -503,7 +503,7 @@ are large:</p>
 
 <dl class="function">
 <dt id="mpmath.functions.legendre">
-<!--[mpmath.functions.legendre]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legendre</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.legendre" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.legendre]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legendre</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.legendre" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">legendre(n,</span> <span class="pre">x)</span></tt> evaluates the Legendre polynomial <img class="math" src="../_images/math/9f7ba371de1369bc2066fe2ef779dd977b4cbdf6.png" alt="P_n(x)" />.
 The Legendre polynomials are given by the formula</p>
 <div class="math">
@@ -589,7 +589,7 @@ integrates to zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc
 
 <dl class="function">
 <dt id="mpmath.functions.chebyt">
-<!--[mpmath.functions.chebyt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyt</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyt" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.chebyt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyt</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyt" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">chebyt(n,</span> <span class="pre">x)</span></tt> evaluates the Chebyshev polynomial of the first
 kind <img class="math" src="../_images/math/e4fe51661da2eabbd80cb6c7080652f96263b19d.png" alt="T_n(x)" />, defined by the identity</p>
 <div class="math">
@@ -630,7 +630,7 @@ function <img class="math" src="../_images/math/d76ea6713fb4ffe020fafb88f2098ea1
 
 <dl class="function">
 <dt id="mpmath.functions.chebyu">
-<!--[mpmath.functions.chebyu]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyu</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyu" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.functions.chebyu]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyu</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyu" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">chebyu(n,</span> <span class="pre">x)</span></tt> evaluates the Chebyshev polynomial of the second
 kind <img class="math" src="../_images/math/bc224bf0d5fd957095a282940921bd63fc68a468.png" alt="U_n(x)" />, defined by the identity</p>
 <div class="math">
@@ -787,13 +787,13 @@ information.</dd></dl>
         <li class="right" >
           <a href="expintegrals.html" title="Exponential integrals and error functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.12-svn documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.12 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 17, 2009.
+      Last updated on Jun 09, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
