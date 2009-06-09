@@ -1,3 +1,77 @@
+--0.12--
+Released June 9, 2009
+
+General
+* It is now possible to create multiple context objects and use context-local
+  methods instead of global state/functions (e.g. mp2=mp.clone(); mp2.dps=50;
+  mp2.cos(3)). Not all functions have been converted to context methods, and
+  there are some bugs, so this feature is currently experimental.
+* If mpmath is installed in Sage 4.0 or later, mpmath will now use sage.Integer
+  instead of Python long internally.
+* Removed instances of old-style integer division from the codebase.
+* runtests.py can be run with -coverage to generate coverage statistics.
+
+Types and basic arithmetic
+
+* Fixed comparison with -inf.
+* Changed repr format of the mpi interval type to make eval(repr(x)) == x.
+* Improved printing of intervals, with configurable output format (contributed
+  by Vinzent Steinberg based on code by Don Peterson).
+* Intervals supported by mpmathify() and nstr() (contributed by Vinzent
+  Steinberg).
+* mpc is now hashable.
+* Added more formatting options to the internal function to_str.
+* Faster pure-Python square root.
+* Fix trailing whitespace giving wrong values in str->mpf conversion.
+
+Calculus
+
+* Fixed nsum() with Euler-Maclaurin summation which would previously
+  ignore the starting index and sum from n=1.
+* Implemented Newton's method for findroot() (contributed  by Vinzent
+  Steinberg).
+
+Linear algebra
+
+* Fixed LU_decomp() to recognize singular matrices (contributed by Vinzent
+  Steinberg).
+* The various norm functions were replaced by the generic vector norm
+  function norm(x,p) and the generic matrix norm function mnorm(x,p).
+
+Special functions:
+
+* Some internal caches were changed to always slightly overallocate
+  precision. This fixes worst-case behavior where previously the cached
+  value had to be recomputed on every function call.
+* Fixed log(tiny number) returning nonsense at high precision.
+* Fixed gamma() and derivative functions such as binomial() returning
+  wrong results at integer inputs being divisible by a large power of 2.
+* Fixed asin() not to raise an exception at high precision (contributed
+  by Vinzent Steinberg).
+* Optimized the AGM code for the natural logarithm, making the previously
+  used Newton method at intermediate precisions obsolete.
+* The arithmetic-geometric mean function agm() is now an order of magnitude
+  faster at low precision.
+* Faster implementations of ellipk() and ellipe().
+* Analytic continuation of ellipe() to |x| >= 1 implemented.
+* Implemented the log gamma function (loggamma()) with correct branch
+  cuts (slow, placeholder implementation).
+* Fixed branch cuts of hyperfac().
+* Implemented the Riemann-Siegel Z-function (siegelz()).
+* Implemented the Riemann-Siegel theta function (siegeltheta()).
+* Implemented calculation of Gram points (grampoint()).
+* Implemented calculation of Riemann zeta function zeros (zetazero()).
+* Implemented the prime counting function: a slow, exact version (primepi()).
+  and a fast approximate version (primepi2()) that gives a bounding interval.
+* Implemented the Riemann R prime counting function (riemannr()).
+* Implemented Bell numbers and polynomials (bell()).
+* Implemented the expm1() function.
+* Implemented the 'polyexponential function' (polyexp()).
+* Implemented the twin prime constant (twinprime) and Mertens' constant
+  (mertens).
+* Implemented the prime zeta function (primezeta()).
+
+
 --0.11--
 Released January 26, 2009
 
