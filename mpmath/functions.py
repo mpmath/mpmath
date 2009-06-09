@@ -106,7 +106,7 @@ def funcwrapper(f):
     def g(*args, **kwargs):
         orig = mp.prec
         try:
-            args = [mpmathify(z) for z in args]
+            args = [mp.mpmathify(z) for z in args]
             mp.prec = orig + 10
             v = f(*args, **kwargs)
         finally:
@@ -1218,7 +1218,7 @@ def siegeltheta(ctx, t):
 def grampoint(ctx, n):
     # ctxsymptotic expansion, from
     # http://mathworld.wolfram.com/GramPoint.html
-    g = 2*ctx.pi*ctx.exp(1+ctx.lambertw((8*n+1)/(8*e)))
+    g = 2*ctx.pi*ctx.exp(1+ctx.lambertw((8*n+1)/(8*ctx.e)))
     return ctx.findroot(lambda t: ctx.siegeltheta(t)-ctx.pi*n, g)
 
 @defun_wrapped

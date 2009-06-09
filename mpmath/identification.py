@@ -700,14 +700,14 @@ def identify(x, constants=[], tol=None, maxcoeff=1000, full=False,
         >>> from sympy import simplify
         >>> x = sympify('-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)')
         >>> x
-        (3/2 - 1/2*5**(1/2))**(-1/2)
+        (3/2 - 5**(1/2)/2)**(-1/2)
         >>> x = simplify(x)
         >>> x
         2/(6 - 2*5**(1/2))**(1/2)
         >>> mp.dps = 30
         >>> x = sympify(identify(x.evalf(30)))
         >>> x
-        1/2 + 1/2*5**(1/2)
+        1/2 + 5**(1/2)/2
 
     (In fact, this functionality is available directly in SymPy as the
     function :func:`nsimplify`, which is essentially a wrapper for

@@ -73,7 +73,7 @@ class matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-         ['0.0', mpc(real='1.0', imag='1.0')]])
+         ['0.0', '(1.0 + 1.0j)']])
 
     You can use the keyword ``force_type`` to change the function which is
     called on every new element:
@@ -188,9 +188,7 @@ class matrix(object):
          ['-2.0', '-5.0']])
         >>> A + ones(3) # doctest:+ELLIPSIS
         Traceback (most recent call last):
-        File "<stdin>", line 1, in <module>
-        File "...", line 238, in __add__
-            raise ValueError('incompatible dimensions for addition')
+          ...
         ValueError: incompatible dimensions for addition
 
     It is possible to multiply or add matrices and scalars. In the latter case the
@@ -235,8 +233,8 @@ class matrix(object):
          ['1.5', '-0.5']])
         >>> A * A**-1
         matrix(
-        [['1.0', '0.0'],
-         ['0.0', '1.0']])
+        [['1.0', '1.0842021724855e-19'],
+         ['-2.16840434497101e-19', '1.0']])
 
     Matrix transposition is straightforward::
 
@@ -837,3 +835,7 @@ def mnorm(A, p=1):
         return max(fsum((A[i,j] for j in xrange(n)), absolute=1) for i in xrange(m))
     else:
         raise NotImplementedError("matrix p-norm for arbitrary p")
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

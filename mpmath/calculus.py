@@ -399,9 +399,8 @@ def adaptive_extrapolation(update, emfun, kwargs):
     skip = option('skip', 0)
     steps = iter(option('steps', xrange(10, 10**9, 10)))
     #steps = (10 for i in xrange(1000))
-    if method in ('d', 'direct'):
-        TRY_RICHARDSON = self.TRY_SHANKS = \
-            TRY_EULER_MACLAURIN = False
+    if 'd' in method or 'direct' in method:
+        TRY_RICHARDSON = TRY_SHANKS = TRY_EULER_MACLAURIN = False
     else:
         TRY_RICHARDSON = ('r' in method) or ('richardson' in method)
         TRY_SHANKS = ('s' in method) or ('shanks' in method)

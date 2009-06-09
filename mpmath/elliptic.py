@@ -15,8 +15,6 @@
         Cambridge Univeristy Press
 
 """
-import sys
-
 from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero, j)
 from functions import (pi, sqrt, cos, sin, exp, log, tanh, ellipk,
                        sech, nthroot)
@@ -56,16 +54,17 @@ def calculate_nome(k):
         nome = exp(argument)
         return nome
 
+# XXX: unused
 def calculate_k(q):
     """
     Calculates the value of k for a particular nome, q,
-    using jacobi theta functions.
+    using Jacobi theta functions.
     """
 
     q = mpmathify(q)
 
-    v2 = jacobi_theta(2, 0, q)
-    v3 = jacobi_theta(3, 0, q)
+    v2 = jtheta(2, 0, q)
+    v3 = jtheta(3, 0, q)
     m = v2**2/v3**2
     return m
 

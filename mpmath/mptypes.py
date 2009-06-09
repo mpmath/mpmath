@@ -6,8 +6,8 @@ __docformat__ = 'plaintext'
 
 import re
 
-from settings import (MP_BASE, MP_ONE, int_types, repr_dps, round_floor,
-    round_ceiling, dps_to_prec, round_nearest, prec_to_dps)
+from settings import (MP_BASE, MP_ZERO, MP_ONE, int_types, repr_dps,
+    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps)
 
 from libmpf import (
     ComplexResult, to_pickable, from_pickable, normalize,
@@ -878,21 +878,24 @@ class MultiPrecisionArithmetic(Context):
 
         **Examples**
 
-        >>> from mpmath import mpi, mp
-        >>> mp.dps = 30
-        >>> x = mpi(1, 2)
-        >>> mpi_to_str(x, mode='plusminus')
-        1.5 +- 0.5
-        >>> mpi_to_str(x, mode='percent')
-        1.5 (33.33%)
-        >>> mpi_to_str(x, mode='brackets')
-        [1.0, 2.0]
-        >>> mpi_to_str(x, mode='brackets' , brackets=('<', '>'))
-        <1.0, 2.0>
-        >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')
-        >>> mpi_to_str(x, mode='diff')
-        5.2582327113062[393041, 749951]
-        """ # FIXME: doctests are broken
+            >>> from mpmath import mpi, mp
+            >>> mp.dps = 30
+            >>> x = mpi(1, 2)
+            >>> mpi_to_str(x, mode='plusminus')
+            '1.5 +- 5.0e-1'
+            >>> mpi_to_str(x, mode='percent')
+            '1.5 (33.33%)'
+            >>> mpi_to_str(x, mode='brackets')
+            '[1.0, 2.0]'
+            >>> mpi_to_str(x, mode='brackets' , brackets=('<', '>'))
+            '<1.0, 2.0>'
+            >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')
+            >>> mpi_to_str(x, mode='diff')
+            '5.2582327113062[4, 7]'
+            >>> mpi_to_str(mpi(0), mode='percent')
+            '0.0 (0%)'
+
+        """
         if dps is None:
             dps = ctx.dps # TODO: maybe choose a smaller default value
         a = to_str(x.a._mpf_, dps, **kwargs)
