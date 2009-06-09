@@ -1,4 +1,4 @@
-__version__ = '0.12-svn'
+__version__ = '0.12'
 
 from mptypes import (
     mpnumeric, mpf, mpc, mpi, mpmathify,
