@@ -264,6 +264,7 @@ def test_hyper_1f1():
     assert hyp1f1((1,2),1.5,0.7).ae(v)
 
 def test_hyper_2f1():
+    mp.dps = 15
     v = 1.0652207633823291032
     assert hyper([(1,2), (3,4)], [2], 0.3).ae(v)
     assert hyper([(1,2), 0.75], [2], 0.3).ae(v)
@@ -291,6 +292,40 @@ def test_hyper_2f1():
     assert hyper([(2,10),(3,10)],[(4,10)],4+2j).ae(v)
     assert hyper([0.2,(3,10)],[0.4+0j],4+2j).ae(v)
     assert hyper([0.2,(3,10)],[(4,10)],4+2j).ae(v)
+
+def test_hyper_2f1_hard():
+    mp.dps = 15
+    # Singular cases
+    assert hyp2f1(2,-1,-1,3) == 7
+    assert hyp2f1(2,-2,-2,3) == 34
+    assert hyp2f1(2,-2,-3,3) == 14
+    assert hyp2f1(2,-3,-2,3) == inf
+    assert hyp2f1(2,-1.5,-1.5,3) == 0.25
+    assert hyp2f1(1,2,3,0) == 1
+    assert hyp2f1(0,1,0,0) == 1
+    assert hyp2f1(0,0,0,0) == 1
+    assert isnan(hyp2f1(1,1,0,0))
+    assert hyp2f1(2,-1,-5, 0.25+0.25j).ae(1.1+0.1j)
+    assert hyp2f1(2,-5,-5, 0.25+0.25j).ae(163./128 + 125./128*j)
+    assert hyp2f1(0.7235, -1, -5, 0.3).ae(1.04341)
+    assert hyp2f1(0.7235, -5, -5, 0.3).ae(1.2939225017815903812)
+    # Check evaluation on / close to unit circle
+    z = exp(j*pi/3)
+    w = (nthroot(2,3)+1)*exp(j*pi/12)/nthroot(3,4)**3
+    assert hyp2f1('1/2','1/6','1/3', z).ae(w)
+    assert hyp2f1('1/2','1/6','1/3', z.conjugate()).ae(w.conjugate())
+    assert hyp2f1(0.25, (1,3), 2, '0.999').ae(1.06826449496030635)
+    assert hyp2f1(0.25, (1,3), 2, '1.001').ae(1.06867299254830309446-0.00001446586793975874j)
+    assert hyp2f1(0.25, (1,3), 2, -1).ae(0.96656584492524351673)
+    assert hyp2f1(0.25, (1,3), 2, j).ae(0.99041766248982072266+0.03777135604180735522j)
+    assert hyp2f1(2,3,5,'0.99').ae(27.699347904322690602)
+    assert hyp2f1((3,2),-0.5,3,'0.99').ae(0.68403036843911661388)
+    assert hyp2f1(2,3,5,1j).ae(0.37290667145974386127+0.59210004902748285917j)
+    assert fsum([hyp2f1((7,10),(2,3),(-1,2), 0.95*exp(j*k)) for k in range(1,15)]).ae(52.851400204289452922+6.244285013912953225j)
+    assert fsum([hyp2f1((7,10),(2,3),(-1,2), 1.05*exp(j*k)) for k in range(1,15)]).ae(54.506013786220655330-3.000118813413217097j)
+    assert fsum([hyp2f1((7,10),(2,3),(-1,2), exp(j*k)) for k in range(1,15)]).ae(55.792077935955314887+1.731986485778500241j)
+    assert hyp2f1(2,2.5,-3.25,0.999).ae(218373932801217082543180041.33)
+
 
 def test_orthpoly():
     mp.dps = 15

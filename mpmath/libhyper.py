@@ -138,6 +138,14 @@ def hypsum_internal(ar, af, ac, br, bf, bc, xre, xim, prec, rnd):
         for ap, aq in ar: mul *= ap
         for bp, bq in br: div *= bp
 
+        # Ok if denominator is zero, provided numerator
+        # also is zero, and the series is actually a polynomial
+        # XXX: account for degree when doing this
+        if not div:
+            if not mul:
+                break
+            raise ZeroDivisionError
+
         if have_complex:
             # Multiply by rational factors
             pre *= mul
@@ -297,7 +305,14 @@ def mpf_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x, prec, rnd):
     s = p = MP_ONE << wp
     n = 1
     while 1:
-        p = ((p * (ap*bp*cq*x)) >> wp) // (n*aq*bq*cp)
+        p = ((p * (ap*bp*cq*x)) >> wp)
+        d = (n*aq*bq*cp)
+        if d:
+            p //= d
+        elif p:
+            raise ZeroDivisionError
+        else:
+            break
         if -100 < p < 100:
             break
         s += p
@@ -318,6 +333,10 @@ def mpc_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), z, prec, rnd):
     while 1:
         r1 = ap*bp*cq
         r2 = n*aq*bq*cp
+        if not r2:
+            if not r1:
+                break
+            raise ZeroDivisionError
         pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
         pre = ((pre * r1) >> wp) // r2
         pim = ((pim * r1) >> wp) // r2

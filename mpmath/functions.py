@@ -614,6 +614,15 @@ class _mpq(tuple):
         return mp.make_mpf(from_rational(self[0], self[1], prec, rounding))
         #(mpf(self[0])/self[1])._mpf_
 
+    def __neg__(self):
+        a, b = self
+        return _mpq((-a, b))
+
+    def __cmp__(self, other):
+        if type(other) is int and self[1] == 1:
+            return cmp(self[0], other)
+        return cmp(mp.mpf(self), other)
+
     def __add__(self, other):
         if isinstance(other, _mpq):
             a, b = self
@@ -663,38 +672,134 @@ def hypsum(ctx, ar, af, ac, br, bf, bc, x):
         v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
         return ctx.make_mpc(v)
 
+def _hyp2f1_gosper(ctx,a,b,c,z):
+    # Use Gosper's recurrence
+    # See http://www.math.utexas.edu/pipermail/maxima/2006/000126.html
+    a = ctx.convert(a)
+    b = ctx.convert(b)
+    c = ctx.convert(c)
+    d = ctx.mpf(0)
+    e = ctx.mpf(1)
+    f = ctx.mpf(0)
+    k = 0
+    abz = a*b*z
+    ch = c/2
+    c1h = (c+1)/2
+    g = z/(1-z)
+    abg = a*b*g
+    cba = c-b-a
+    z2 = z-2
+    while 1:
+        kakbz = (k+a)*(k+b)*z
+        w = 1 / (4*(k+1)*(k+ch)*(k+c1h))
+        d1 = kakbz*(e-(k+cba)*d*g)*w
+        e1 = kakbz*(d*abg+(k+c)*e)*w
+        f1 = f + e - d*(k*(cba*z+k*z2-c)-abz)/(2*(k+ch)*(1-z))
+        if abs(f1-f) < 10*ctx.eps:
+            break
+        d, e, f = d1, e1, f1
+        k += 1
+    return f1
+
 @defun
 def eval_hyp2f1(ctx,a,b,c,z):
     prec, rnd = ctx._prec_rounding
     ar, af, ac = ctx._hyp_parse_param(a)
     br, bf, bc = ctx._hyp_parse_param(b)
     cr, cf, cc = ctx._hyp_parse_param(c)
+
+    # TODO: this is not always the right return value
+    if z == 1:
+        return ctx.inf
+
+    if not z:
+        if c or a == 0 or b == 0:
+            return 1+z
+        # Indeterminate
+        return ctx.nan
+
+    # Hit zero denominator unless numerator goes to 0 first
+    if ctx.isint(c) and c <= 0:
+        if (ctx.isint(a) and c <= a <= 0) or \
+           (ctx.isint(b) and c <= b <= 0):
+            pass
+        else:
+            # Pole in series
+            return ctx.inf
+    elif a == c:
+        return (1-z)**(-b)
+    elif b == c:
+        return (1-z)**(-a)
+
     absz = abs(z)
-    if absz == 1:
-        # TODO: determine whether it actually does, and otherwise
-        # return infinity instead
-        print "Warning: 2F1 might not converge for |z| = 1"
-    if absz <= 1:
+
+    # Fast case: standard series converges rapidly,
+    # possibly in finitely many terms
+    if absz <= 0.8 or (ctx.isint(a) and a <= 0 and a >= -1000) or \
+                      (ctx.isint(b) and b <= 0 and b >= -1000):
         # All rational
         if ar and br and cr:
             return ctx.sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
         return ctx.hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
-    # Use 1/z transformation
+
     a = (ar and _as_num(ar[0])) or ctx.convert(a)
     b = (br and _as_num(br[0])) or ctx.convert(b)
     c = (cr and _as_num(cr[0])) or ctx.convert(c)
+
+    a_orig = a
+    b_orig = b
+    c_orig = c
+
     orig = ctx.prec
     try:
-        ctx.prec = orig + 15
-        h1 = ctx.eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
-        h2 = ctx.eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
-        #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
-        #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
-        f1 = ctx.gammaprod([c,b-a],[b,c-a])
-        f2 = ctx.gammaprod([c,a-b],[a,c-b])
-        s1 = f1 * (-z)**(mpq_0-a) * h1
-        s2 = f2 * (-z)**(mpq_0-b) * h2
-        v = s1 + s2
+        ctx.prec += 10
+        extra = 0
+        h = +ctx.eps
+
+        # May encounter poles that cancel, so perturb integers
+        # XXX: this is a bit flaky
+        for y in [a, b, c, c-a, c-b]:
+            nn, dd = ctx.nint_distance(y)
+            if dd < -orig:
+                extra = orig
+                ctx.prec *= 2
+                a = h + a
+                b = 2*h + b
+                c = 5*h + c
+            elif dd < -4:
+                extra = max(extra, -dd)
+
+        ctx.prec = orig + 10 + min(ctx.prec, extra)
+
+        # Use 1/z transformation
+        if absz >= 1.3:
+            h1 = ctx.eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
+            h2 = ctx.eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
+            #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
+            #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
+            f1 = ctx.gammaprod([c,b-a],[b,c-a])
+            f2 = ctx.gammaprod([c,a-b],[a,c-b])
+            s1 = f1 * (-z)**(-a) * h1
+            s2 = f2 * (-z)**(-b) * h2
+            v = s1 + s2
+            if v.imag and ctx.isint(a_orig) and ctx.isint(b_orig):
+                v = v.real
+
+        # Use 1-z transformation
+        elif abs(1-z) <= 0.75:
+            h1 = ctx.eval_hyp2f1(a, b, mpq_1+a+b-c, 1-z)
+            h2 = ctx.eval_hyp2f1(c-a, c-b, mpq_1+c-a-b, 1-z)
+            f1 = ctx.gammaprod([c,c-a-b],[c-a,c-b])
+            f2 = ctx.gammaprod([c,a+b-c],[a,b])
+            s1 = f1 * h1
+            s2 = (1-z)**(c-a-b) * f2 * h2
+            v = s1 + s2
+            if v.imag and ctx.isint(c_orig-a_orig-b_orig):
+                v = v.real
+
+        # Remaining part of unit circle
+        else:
+            v = _hyp2f1_gosper(ctx,a,b,c,z)
     finally:
         ctx.prec = orig
     return +v
