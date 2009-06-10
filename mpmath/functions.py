@@ -466,7 +466,7 @@ def stieltjes(ctx, n, a=1):
     return +v
 
 @defun
-def gammaprod(ctx, a, b):
+def gammaprod(ctx, a, b, _infsign=False):
     a = [ctx.convert(x) for x in a]
     b = [ctx.convert(x) for x in b]
     poles_num = []
@@ -477,7 +477,15 @@ def gammaprod(ctx, a, b):
     for x in b: [regular_den, poles_den][ctx.isnpint(x)].append(x)
     # One more pole in numerator or denominator gives 0 or inf
     if len(poles_num) < len(poles_den): return ctx.zero
-    if len(poles_num) > len(poles_den): return ctx.inf
+    if len(poles_num) > len(poles_den):
+        # Get correct sign of infinity for x+h, h -> 0 from above
+        # XXX: hack, this should be done properly
+        if _infsign:
+            a = [x and x*(1+ctx.eps) or x+ctx.eps for x in poles_num]
+            b = [x and x*(1+ctx.eps) or x+ctx.eps for x in poles_den]
+            return sign(gammaprod(a+regular_num,b+regular_den)) * ctx.inf
+        else:
+            return ctx.inf
     # All poles cancel
     # lim G(i)/G(j) = (-1)**(i+j) * gamma(1-j) / gamma(1-i)
     p = ctx.one
@@ -708,11 +716,26 @@ def eval_hyp2f1(ctx,a,b,c,z):
     br, bf, bc = ctx._hyp_parse_param(b)
     cr, cf, cc = ctx._hyp_parse_param(c)
 
-    # TODO: this is not always the right return value
     if z == 1:
-        return ctx.inf
+        # TODO: the following logic can be simplified
+        convergent = ctx.re(c-a-b) > 0
+        finite = (ctx.isint(a) and a <= 0) or (ctx.isint(b) and b <= 0)
+        zerodiv = ctx.isint(c) and c <= 0 and not \
+            ((ctx.isint(a) and c <= a <= 0) or (ctx.isint(b) and c <= b <= 0))
+        #print "bz", a, b, c, z, convergent, finite, zerodiv
+        # Gauss's theorem gives the value if convergent
+        if (convergent or finite) and not zerodiv:
+            return ctx.gammaprod([c, c-a-b], [c-a, c-b], _infsign=True)
+        # Otherwise, there is a pole and we take the
+        # sign to be that when approaching from below
+        # XXX: this evaluation is not necessarily correct in all cases
+        return ctx.eval_hyp2f1(a,b,c,1-ctx.eps*2) * ctx.inf
 
+    # Equal to 1 (first term), unless there is a subsequent
+    # division by zero
     if not z:
+        # Division by zero but power of z is higher than
+        # first order so cancels
         if c or a == 0 or b == 0:
             return 1+z
         # Indeterminate
@@ -1126,13 +1149,6 @@ def jacobi(ctx, n, a, b, x):
 def legendre(ctx, n, x):
     if ctx.isint(n):
         n = int(n)
-    if x == -1:
-        # TODO: hyp2f1 should handle this
-        if ctx.isint(n):
-            return (-1)**(n + (n>=0)) * ctx.mpf(-1)
-        if not int(ctx.floor(ctx.re(n))) % 2:
-            return ctx.ninf
-        return ctx.inf
     return ctx.hyp2f1(-n,n+1,1,(1-x)/2)
 
 @defun_wrapped

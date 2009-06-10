@@ -309,6 +309,20 @@ def test_hyper_2f1_hard():
     assert hyp2f1(2,-5,-5, 0.25+0.25j).ae(163./128 + 125./128*j)
     assert hyp2f1(0.7235, -1, -5, 0.3).ae(1.04341)
     assert hyp2f1(0.7235, -5, -5, 0.3).ae(1.2939225017815903812)
+    assert hyp2f1(-1,-2,4,1) == 1.5
+    assert hyp2f1(1,2,-3,1) == inf
+    assert hyp2f1(-2,-2,1,1) == 6
+    assert hyp2f1(1,-2,-4,1).ae(5./3)
+    assert hyp2f1(0,-6,-4,1) == 1
+    assert hyp2f1(0,-3,-4,1) == 1
+    assert hyp2f1(0,0,0,1) == 1
+    assert hyp2f1(1,0,0,1) == 1
+    assert hyp2f1(1,1,0,1) == inf
+    assert hyp2f1(1,-6,-4,1) == inf
+    assert hyp2f1(-7.2,-0.5,-4.5,1) == 0
+    assert hyp2f1(-7.2,-1,-2,1).ae(-2.6)
+    assert hyp2f1(1,-0.5,-4.5, 1) == inf
+    assert hyp2f1(1,0.5,-4.5, 1) == -inf
     # Check evaluation on / close to unit circle
     z = exp(j*pi/3)
     w = (nthroot(2,3)+1)*exp(j*pi/12)/nthroot(3,4)**3
@@ -346,8 +360,8 @@ def test_orthpoly():
     assert chebyt(3,2) == 26
     assert legendre(3.5,-1) == inf
     assert legendre(4.5,-1) == -inf
-    assert legendre(3.5+1j,-1) == inf
-    assert legendre(4.5+1j,-1) == -inf
+    assert legendre(3.5+1j,-1) == mpc(inf,inf)
+    assert legendre(4.5+1j,-1) == mpc(-inf,-inf)
 
 def test_agm():
     mp.dps = 15
