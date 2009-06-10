@@ -8,9 +8,10 @@ Incomplete gamma functions (:func:`gammainc`)
 
 .. autofunction:: mpmath.functions.gammainc(z, a=0, b=inf, regularized=False)
 
-Exponential and logarithmic integrals (:func:`ei`, :func:`li`)
-..............................................................
+Exponential and logarithmic integrals (:func:`expint`, :func:`ei`, :func:`li`)
+..............................................................................
 
+.. autofunction:: mpmath.functions.expint(*args)
 .. autofunction:: mpmath.functions.ei(x, **kwargs)
 .. autofunction:: mpmath.functions.li(x, **kwargs)
 
