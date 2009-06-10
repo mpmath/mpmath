@@ -90,6 +90,7 @@ def test_inverse():
         assert mnorm(A*inv - eye(A.rows), 1) < 1.e-14
 
 def test_householder():
+    mp.dps = 15
     A, b = A8, b8
     H, p, x, r = householder(extend(A, b))
     assert H == matrix(
@@ -142,6 +143,7 @@ def test_solve():
     assert norm(residual(A10, qr_solve(A10, b10)[0], b10), 2) < 1.e-10
 
 def test_singular():
+    mp.dps = 15
     A = [[5.6, 1.2], [7./15, .1]]
     B = repr(zeros(2))
     b = [1, 2]

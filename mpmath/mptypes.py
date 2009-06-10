@@ -1297,7 +1297,7 @@ class _mpc(mpnumeric):
     def __nonzero__(s):
         return mpc_is_nonzero(s._mpc_)
 
-    def __hash__(s): 
+    def __hash__(s):
         return mpc_hash(s._mpc_)
 
     @classmethod

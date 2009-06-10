@@ -286,7 +286,7 @@ def euler_fixed(prec):
     return (U<<(prec-extra))//V
 
 # Use zeta accelerated formulas for the Mertens and twin
-# prime constants; see 
+# prime constants; see
 # http://mathworld.wolfram.com/MertensConstant.html
 # http://mathworld.wolfram.com/TwinPrimesConstant.html
 
