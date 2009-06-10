@@ -356,6 +356,9 @@ def test_areal_inverses():
     dps = mp.dps
     mp.dps = 300
     assert isinstance(asin(0.5), mpf)
+    mp.dps = 1000
+    assert asin(1).ae(pi/2)
+    assert asin(-1).ae(-pi/2)
     mp.dps = dps
 
 def test_invhyperb_inaccuracy():
