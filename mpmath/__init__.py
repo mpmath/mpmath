@@ -8,7 +8,7 @@ from mptypes import (
     nstr, nprint, fraction, almosteq,
     arange, linspace, rand, absmin, absmax,
     fsum, fprod, fdot,
-    chop
+    chop, nint_distance
 )
 
 from usertools import monitor, timing
@@ -35,7 +35,7 @@ from functions import (
     gammainc, gammaprod, binomial, rf, ff,
     hyper, hyp0f1, hyp1f1, hyp2f1,
     erf, erfc, erfi, erfinv, npdf, ncdf,
-    ei, li, ci, si, chi, shi,
+    expint, ei, li, ci, si, chi, shi,
     fresnels, fresnelc, airyai, airybi,
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,

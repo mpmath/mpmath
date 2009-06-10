@@ -895,6 +895,44 @@ def ei(ctx, z):
     return v
 
 @defun_wrapped
+def expint(ctx, *args):
+    if len(args) == 1:
+        n = ctx.one
+        z = args[0]
+    else:
+        n, z = args
+    if ctx.isnan(n) or ctx.isnan(z):
+        return z*n
+    if z == ctx.inf:
+        return type(z)(0)
+    if z == 0:
+        # integral from 1 to infinity of t^n
+        if ctx.re(n) <= 1:
+            # TODO: reasonable sign of infinity
+            return type(z)(ctx.inf)
+        else:
+            return ctx.one/(n-1)
+    if n == 0:
+        return ctx.exp(-z)/z
+    if n == -1:
+        return ctx.exp(-z)*(z+1)/z**2
+    # Perturb if at pole
+    m, d = ctx.nint_distance(n)
+    if ctx.re(n) > 0:
+        if d < -ctx.prec:
+            h = +ctx.eps
+            ctx.prec *= 2
+            n += h
+            z += h
+        elif d < -4:
+            ctx.prec -= d
+    # XXX: this is entirely arbitrary
+    ctx.prec += 4*(int(abs(n)) + int(abs(z)))
+    # Main formula
+    # TODO: use asymptotic expansions, either here or in gammainc
+    return z**(n-1) * ctx.gammainc(1-n, z)
+
+@defun_wrapped
 def li(ctx, z):
     if not z:
         return z
@@ -1028,14 +1066,14 @@ def j1(ctx, x):
     return ctx.besselj(1, x)
 
 @defun_wrapped
-def bessely(ctx,n,x):
-    intdist = abs(n.imag) + abs(n.real-ctx.floor(n.real+0.5))
-    if not intdist:
+def bessely(ctx, n, x):
+    m, d = ctx.nint_distance(n)
+    if d < -ctx.prec:
         h = +ctx.eps
         ctx.prec *= 2
         n += h
-    else:
-        ctx.prec += -int(ctx.log(intdist, 2)+1)
+    elif d < -4:
+        ctx.prec -= d
     return (ctx.besselj(n,x)*ctx.cospi(n) - ctx.besselj(-n,x))/ctx.sinpi(n)
 
 @defun_wrapped
@@ -1046,14 +1084,14 @@ def besseli(ctx,n,x):
     return hx**n * ctx.hyp0f1(n+1, hx**2) / ctx.factorial(n)
 
 @defun_wrapped
-def besselk(ctx,n,x):
-    intdist = abs(n.imag) + abs(n.real-ctx.floor(n.real+0.5))
-    if not intdist:
+def besselk(ctx, n, x):
+    m, d = ctx.nint_distance(n)
+    if d < -ctx.prec:
         h = +ctx.eps
         ctx.prec *= 2
         n += h
-    else:
-        ctx.prec += -int(ctx.log(intdist, 2)+1)
+    elif d < -4:
+        ctx.prec -= d
     return ctx.pi*(ctx.besseli(-n,x)-ctx.besseli(n,x))/(2*ctx.sinpi(n))
 
 @defun_wrapped

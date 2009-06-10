@@ -186,7 +186,31 @@ def test_exp_integrals():
     assert chi(inf) == inf
     assert ei(0) == -inf
     assert ei(20+70j).ae(6.1041351911152984397e6 - 2.7324109310519928872e6j)
-
+    assert expint(0,0) == inf
+    assert expint(0,1).ae(1/e)
+    assert expint(0,1.5).ae(2/exp(1.5)/3)
+    assert expint(1,1).ae(-ei(-1))
+    assert expint(2,0).ae(1)
+    assert expint(3,0).ae(1/2.)
+    assert expint(4,0).ae(1/3.)
+    assert expint(-2, 0.5).ae(26/sqrt(e))
+    assert expint(-1,-1) == 0
+    assert expint(-2,-1).ae(-e)
+    assert expint(5.5, 0).ae(2/9.)
+    assert expint(2.00000001,0).ae(100000000./100000001)
+    assert expint(2+3j,4-j).ae(0.0023461179581675065414+0.0020395540604713669262j)
+    assert expint('1.01', '1e-1000').ae(99.9999999899412802)
+    assert expint('1.000000000001', 3.5).ae(0.00697013985754701819446)
+    assert expint(2,3).ae(3*ei(-3)+exp(-3))
+    assert (expint(10,20)*10**10).ae(0.694439055541231353)
+    assert expint(3,inf) == 0
+    assert expint(3.2,inf) == 0
+    assert expint(3.2+2j,inf) == 0
+    assert expint(1,3j).ae(-0.11962978600800032763+0.27785620120457163717j)
+    assert expint(1,3).ae(0.013048381094197037413)
+    assert expint(1,-3).ae(-ei(3)-pi*j)
+    assert expint(3) == expint(1,3)
+    assert expint(1,-20).ae(-25615652.66405658882 - 3.1415926535897932385j)
     # tests for the asymptotic expansion
     # values checked with Mathematica ExpIntegralEi
     mp.dps = 50

@@ -18,7 +18,8 @@ from libmpf import (
     mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
     mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
     mpf_hash, mpf_rand,
-    mpf_sum
+    mpf_sum,
+    bitcount
 )
 
 from libmpc import (
@@ -407,6 +408,66 @@ class MultiPrecisionArithmetic(Context):
                 return False
             return x == int(x)
         return False
+
+    def nint_distance(ctx, x):
+        """
+        Returns (n, d) where n is the nearest integer to x and d is the
+        log-2 distance (i.e. distance in bits) of n from x. If d < 0,
+        (-d) gives the bits of cancellation when n is subtracted from x.
+        This function is intended to be used to check for cancellation
+        at poles.
+        """
+        x = ctx.convert(x)
+        if hasattr(x, "_mpf_"):
+            re = x._mpf_
+            im_dist = ctx.ninf
+        elif hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            isign, iman, iexp, ibc = im
+            if iman:
+                im_dist = iexp + ibc
+            elif im == fzero:
+                im_dist = ctx.ninf
+            else:
+                raise ValueError("requires a finite number")
+        else:
+            raise TypeError("requires an mpf/mpc")
+        sign, man, exp, bc = re
+        shift = exp+bc
+        if sign:
+            man = -man
+        if shift < -1:
+            n = 0
+            re_dist = shift
+        elif man:
+            if exp >= 0:
+                n = man << exp
+                re_dist = ctx.ninf
+            else:
+                if shift >= 0:
+                    xfixed = man << shift
+                else:
+                    xfixed = man >> (-shift)
+                n1 = xfixed >> bc
+                n2 = -((-xfixed) >> bc)
+                dist1 = abs(xfixed - (n1<<bc))
+                dist2 = abs(xfixed - (n2<<bc))
+                if dist1 < dist2:
+                    re_dist = dist1
+                    n = n1
+                else:
+                    re_dist = dist2
+                    n = n2
+                if re_dist:
+                    re_dist = bitcount(re_dist) - bc
+                else:
+                    re_dist = ctx.ninf
+        elif re == fzero:
+            re_dist = ctx.ninf
+            n = 0
+        else:
+            raise ValueError("requires a finite number")
+        return n, max(re_dist, im_dist)
 
     def chop(ctx, x, tol=None):
         """
@@ -1737,6 +1798,8 @@ fprod = mp.fprod
 fraction = mp.fraction
 arange = mp.arange
 linspace = mp.linspace
+
+nint_distance = mp.nint_distance
 
 mpi_to_str = mp.mpi_to_str
 mpi_from_str = mp.mpi_from_str

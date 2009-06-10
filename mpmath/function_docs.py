@@ -2602,6 +2602,68 @@ function having identical mu and sigma::
     0.107981933026376
 """
 
+expint = r"""
+:func:`expint(n,z)` gives the generalized exponential integral
+or En-function,
+
+.. math ::
+
+    \mathrm{E}_n(z) = \int_1^{\infty} \frac{e^{-zt}}{t^n} dt,
+
+where `n` and `z` may both be complex numbers. The single-argument
+version :func:`expint(z)` will compute `\mathrm{E}_1(z)`, given
+by the above integral with `n = 1` or equivalently by
+
+.. math ::
+
+    \mathrm{E}_1(z) = \int_z^{\infty} \frac{e^{-t}}{t} dt.
+
+**Examples**
+
+Evaluation at real and complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print expint(6.25)
+    0.0002704758872637179088496194
+    >>> print expint(1, 6.25)
+    0.0002704758872637179088496194
+    >>> print expint(-3, 2+3j)
+    (0.00299658467335472929656159 + 0.06100816202125885450319632j)
+    >>> print expint(2+3j, 4-5j)
+    (0.001803529474663565056945248 - 0.002235061547756185403349091j)
+
+With `n = 1`, the En-function is essentially the same
+as the ei-function (:func:`ei`) with negated argument, except for an
+imaginary branch cut term::
+
+    >>> print expint(2.5)
+    0.02491491787026973549562801
+    >>> print -ei(-2.5)
+    0.02491491787026973549562801
+    >>> print expint(-2.5)
+    (-7.073765894578600711923552 - 3.141592653589793238462643j)
+    >>> print -ei(2.5)
+    -7.073765894578600711923552
+
+At negative integer values of `n`, `E_n(z)` reduces to a
+rational-exponential function::
+
+    >>> f = lambda n, z: fac(n)*sum(z**k/fac(k-1) for k in range(1,n+2))/\
+    ...     exp(z)/z**(n+2)
+    >>> n = 3
+    >>> z = 1/pi
+    >>> print expint(-n,z)
+    584.2604820613019908668219
+    >>> print f(n,z)
+    584.2604820613019908668219
+    >>> n = 5
+    >>> print expint(-n,z)
+    115366.5762594725451811138
+    >>> print f(n,z)
+    115366.5762594725451811138
+"""
+
 ei = r"""
 Computes the exponential integral or Ei-function, `\mathrm{Ei}(x)`.
 The exponential integral is defined as
@@ -2646,7 +2708,6 @@ numerically as a reference::
 :func:`ei` supports complex arguments and arbitrary
 precision evaluation::
 
-    >>> mp.dps = 50
     >>> mp.dps = 50
     >>> print ei(pi)
     10.928374389331410348638445906907535171566338835056
