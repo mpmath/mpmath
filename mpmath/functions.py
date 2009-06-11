@@ -657,7 +657,16 @@ def _hyp_parse_param(ctx, x):
         return [[x, 1]], [], []
     x = ctx.convert(x)
     if hasattr(x, '_mpf_'):
-        return [], [x._mpf_], []
+        sign, man, exp, bc = _mpf_ = x._mpf_
+        # Recognize simple rationals
+        if exp >= -4:
+            if sign:
+                man = -man
+            if exp >= 0:
+                return [[int(man)<<exp, 1]], [], []
+            return [[int(man), 2**(-exp)]], [], []
+        else:
+            return [], [_mpf_], []
     if hasattr(x, '_mpc_'):
         return [], [], [x._mpc_]
 
