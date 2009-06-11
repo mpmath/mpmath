@@ -395,6 +395,12 @@ def test_incomplete_gamma():
     assert gammainc(3,4,5,True).ae(0.11345128607046320253)
     assert gammainc(3.5,0,inf).ae(gamma(3.5))
 
+def test_incomplete_beta():
+    mp.dps = 15
+    assert betainc(-2,-3,0.5,0.75).ae(63.4305673311255413583969)
+    assert betainc(4.5,0.5+2j,2.5,6).ae(0.2628801146130621387903065 + 0.5162565234467020592855378j)
+    assert betainc(4,5,0,6).ae(90747.77142857142857142857)
+
 def test_erf():
     mp.dps = 15
     assert erf(0) == 0

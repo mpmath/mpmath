@@ -504,71 +504,6 @@ def gammaprod(ctx, a, b, _infsign=False):
 
 @defun
 def beta(ctx, x, y):
-    r"""
-    Computes the beta function,
-    `B(x,y) = \Gamma(x) \Gamma(y) / \Gamma(x+y)`.
-    The beta function is also commonly defined by the integral
-    representation
-
-    .. math ::
-
-        B(x,y) = \int_0^1 t^{x-1} (1-t)^{y-1} \, dt
-
-    **Examples**
-
-    For integer and half-integer arguments where all three gamma
-    functions are finite, the beta function becomes either rational
-    number or a rational multiple of `\pi`::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15
-        >>> print beta(5, 2)
-        0.0333333333333333
-        >>> print beta(1.5, 2)
-        0.266666666666667
-        >>> print 16*beta(2.5, 1.5)
-        3.14159265358979
-
-    Where appropriate, :func:`beta` evaluates limits. A pole
-    of the beta function is taken to result in ``+inf``::
-
-        >>> print beta(-0.5, 0.5)
-        0.0
-        >>> print beta(-3, 3)
-        -0.333333333333333
-        >>> print beta(-2, 3)
-        +inf
-        >>> print beta(inf, 1)
-        0.0
-        >>> print beta(inf, 0)
-        nan
-
-    :func:`beta` supports complex numbers and arbitrary precision
-    evaluation::
-
-        >>> print beta(1, 2+j)
-        (0.4 - 0.2j)
-        >>> mp.dps = 25
-        >>> print beta(j,0.5)
-        (1.079424249270925780135675 - 1.410032405664160838288752j)
-        >>> mp.dps = 50
-        >>> print beta(pi, e)
-        0.037890298781212201348153837138927165984170287886464
-
-    Various integrals can be computed by means of the
-    beta function::
-
-        >>> mp.dps = 15
-        >>> print quad(lambda t: t**2.5*(1-t)**2, [0, 1])
-        0.0230880230880231
-        >>> print beta(3.5, 3)
-        0.0230880230880231
-        >>> print quad(lambda t: sin(t)**4 * sqrt(cos(t)), [0, pi/2])
-        0.319504062596158
-        >>> print beta(2.5, 0.75)/2
-        0.319504062596158
-
-    """
     x = ctx.convert(x)
     y = ctx.convert(y)
     if ctx.isinf(y):
@@ -585,6 +520,31 @@ def beta(ctx, x, y):
                 return ctx.sign(ctx.gamma(y)) * ctx.inf
         return ctx.nan
     return ctx.gammaprod([x, y], [x+y])
+
+@defun_wrapped
+def betainc(ctx, a, b, x1=0, x2=1, regularized=False):
+    if x1 == x2:
+        v = 0
+    elif not x1:
+        if x1 == 0 and x2 == 1:
+            v = ctx.beta(a, b)
+        else:
+            v = x2**a * ctx.hyp2f1(a, 1-b, a+1, x2) / a
+    else:
+        m, d = ctx.nint_distance(a)
+        if m <= 0:
+            if d < -ctx.prec:
+                h = +ctx.eps
+                ctx.prec *= 2
+                a += h
+            elif d < -4:
+                ctx.prec -= d
+        s1 = x2**a * ctx.hyp2f1(a,1-b,a+1,x2)
+        s2 = x1**a * ctx.hyp2f1(a,1-b,a+1,x1)
+        v = (s1 - s2) / a
+    if regularized:
+        v /= ctx.beta(a,b)
+    return v
 
 @defun
 def binomial(ctx, n, k):

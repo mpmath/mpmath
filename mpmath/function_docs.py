@@ -2015,6 +2015,74 @@ beta function::
 
 """
 
+betainc = r"""
+``betainc(a, b, x1=0, x2=1, regularized=False)`` gives the generalized
+incomplete beta function,
+
+.. math ::
+
+    I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} u^{a-1} (1-t)^{b-1} dt.
+
+When `x_1 = 0, x_2 = 1`, this reduces to the ordinary (complete)
+beta function `B(a,b)`; see :func:`beta`.
+
+With the keyword argument ``regularized=True``, :func:`betainc`
+computes the regularized incomplete beta function
+`I_{x_1}^{x_2}(a,b) / B(a,b)`. This is the cumulative density of the
+beta distribution with parameters `a`, `b`.
+
+Note: implementations of the incomplete beta function in some other
+software uses a different argument order. For example, Mathematica uses the
+reversed argument order ``Beta[x1,x2,a,b]``. For the equivalent of SciPy's
+three-argument incomplete beta integral (implicitly with `x1 = 0`), use
+``betainc(a,b,0,x2,regularized=True)``.
+
+**Examples**
+
+Verifying that :func:`betainc` computes the integral in the
+definition::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> x,y,a,b = 3, 4, 0, 6
+    >>> print betainc(x, y, a, b)
+    -4010.4
+    >>> print quad(lambda t: t**(x-1) * (1-t)**(y-1), [a, b])
+    -4010.4
+
+The arguments may be arbitrary complex numbers::
+
+    >>> print betainc(0.75, 1-4j, 0, 2+3j)
+    (0.2241657956955709603655887 + 0.3619619242700451992411724j)
+
+With regularization::
+
+    >>> print betainc(1, 2, 0, 0.25, regularized=True)
+    0.4375
+    >>> print betainc(pi, e, 0, 1, regularized=True)   # Complete
+    1.0
+
+The beta integral satisfies some simple argument transformation
+symmetries::
+
+    >>> mp.dps = 15
+    >>> print betainc(2,3,4,5), -betainc(2,3,5,4), betainc(3,2,1-5,1-4)
+    56.0833333333333 56.0833333333333 56.0833333333333
+
+The beta integral can often be evaluated analytically. For integer and
+rational arguments, the incomplete beta function typically reduces to a
+simple algebraic-logarithmic expression::
+
+    >>> mp.dps = 25
+    >>> print identify(chop(betainc(0, 0, 3, 4)))
+    -(log((9/8)))
+    >>> print identify(betainc(2, 3, 4, 5))
+    (673/12)
+    >>> print identify(betainc(1.5, 1, 1, 2))
+    ((-12+sqrt(1152))/18)
+
+"""
+
 binomial = r"""
 Computes the binomial coefficient
 
@@ -2678,9 +2746,8 @@ integral is interpreted as providing the Cauchy principal value.
 For real `x`, the Ei-function behaves roughly like
 `\mathrm{Ei}(x) \approx \exp(x) + \log(|x|)`.
 
-This function should not be confused with the family of related
-functions denoted by `E_n` which are also called "exponential
-integrals".
+The Ei-function is related to the more general family of exponential
+integral functions denoted by `E_n`, which are available as :func:`expint`.
 
 **Basic examples**
 
