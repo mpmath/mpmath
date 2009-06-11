@@ -805,8 +805,6 @@ def eval_hyp2f1(ctx,a,b,c,z):
             s1 = f1 * (-z)**(-a) * h1
             s2 = f2 * (-z)**(-b) * h2
             v = s1 + s2
-            if v.imag and ctx.isint(a_orig) and ctx.isint(b_orig):
-                v = v.real
 
         # Use 1-z transformation
         elif abs(1-z) <= 0.75:
@@ -817,8 +815,6 @@ def eval_hyp2f1(ctx,a,b,c,z):
             s1 = f1 * h1
             s2 = (1-z)**(c-a-b) * f2 * h2
             v = s1 + s2
-            if v.imag and ctx.isint(c_orig-a_orig-b_orig):
-                v = v.real
 
         # Remaining part of unit circle
         else:
