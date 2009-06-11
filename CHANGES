@@ -33,8 +33,7 @@ Calculus
 
 Linear algebra
 
-* Fixed LU_decomp() to recognize singular matrices (contributed by Vinzent
-  Steinberg).
+* Fixed LU_decomp() to recognize singular matrices (contributed by Jorn Baayen).
 * The various norm functions were replaced by the generic vector norm
   function norm(x,p) and the generic matrix norm function mnorm(x,p).
 
