@@ -19,7 +19,7 @@ from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero, j)
 from functions import (pi, sqrt, cos, sin, exp, log, tanh, ellipk,
                        sech, nthroot)
 from libmpf import to_fixed, MP_ZERO, mpf_shift, from_man_exp
-from mpmath.libelefun import cos_sin
+from libelefun import cos_sin
 
 # The series for the Jacobi theta functions converge for |q| < 1;
 # in the current implementation they throw a ValueError for
