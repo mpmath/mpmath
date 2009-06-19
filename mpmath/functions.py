@@ -68,13 +68,15 @@ altzeta = def_mp_builtin('altzeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta
 gamma = def_mp_builtin('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, None, "gamma function")
 factorial = def_mp_builtin('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, None, "factorial")
 harmonic = def_mp_builtin('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic, None, "nth harmonic number")
-erf = def_mp_builtin("erf", libhyper.mpf_erf, libhyper.mpc_erf, None, "Error function, erf(z)")
-erfc = def_mp_builtin("erfc", libhyper.mpf_erfc, libhyper.mpc_erfc, None, "Complementary error function, erfc(z) = 1-erf(z)")
 ci = def_mp_builtin('ci', libhyper.mpf_ci, libhyper.mpc_ci, None, "")
 si = def_mp_builtin('si', libhyper.mpf_si, libhyper.mpc_si, None, "")
 ellipk = def_mp_builtin('ellipk', libhyper.mpf_ellipk, libhyper.mpc_ellipk, None, "")
 ellipe = def_mp_builtin('ellipe', libhyper.mpf_ellipe, libhyper.mpc_ellipe, None, "")
 agm1 = def_mp_builtin('agm1', libhyper.mpf_agm1, libhyper.mpc_agm1, None, "Fast alias for agm(1,a) = agm(a,1)")
+
+_erf = def_mp_builtin('_erf', libhyper.mpf_erf, None, None, "Error function, erf(z)")
+_erfc = def_mp_builtin('_erfc', libhyper.mpf_erfc, None, None, "Complementary error function, erfc(z) = 1-erf(z)")
+
 
 fac = MultiPrecisionArithmetic.fac = factorial
 fib = MultiPrecisionArithmetic.fib = fibonacci
@@ -106,7 +108,7 @@ def funcwrapper(f):
     def g(*args, **kwargs):
         orig = mp.prec
         try:
-            args = [mp.mpmathify(z) for z in args]
+            args = [mp.convert(z) for z in args]
             mp.prec = orig + 10
             v = f(*args, **kwargs)
         finally:
@@ -582,6 +584,18 @@ class _mpq(tuple):
         return mp.make_mpf(from_rational(self[0], self[1], prec, rounding))
         #(mpf(self[0])/self[1])._mpf_
 
+    @property
+    def _mpq_(self):
+        return self
+
+    def __int__(self):
+        a, b = self
+        return a // b
+
+    def __abs__(self):
+        a, b = self
+        return _mpq((abs(a), b))
+
     def __neg__(self):
         a, b = self
         return _mpq((-a, b))
@@ -596,25 +610,45 @@ class _mpq(tuple):
             a, b = self
             c, d = other
             return _mpq((a*d+b*c, b*d))
+        if isinstance(other, (int, long)):
+            a, b = self
+            return _mpq((a+b*other, b))
         return NotImplemented
+
+    __radd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, _mpq):
             a, b = self
             c, d = other
             return _mpq((a*d-b*c, b*d))
+        if isinstance(other, (int, long)):
+            a, b = self
+            return _mpq((a-b*other, b))
+        return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, _mpq):
+            a, b = self
+            c, d = other
+            return _mpq((b*c-a*d, b*d))
+        if isinstance(other, (int, long)):
+            a, b = self
+            return _mpq((b*other-a, b))
         return NotImplemented
 
 mpq_1 = _mpq((1,1))
 mpq_0 = _mpq((0,1))
+mpq_12 = _mpq((1,2))
+mpq_32 = _mpq((3,2))
 
 @defun
 def _hyp_parse_param(ctx, x):
     if isinstance(x, tuple):
         p, q = x
-        return [[p, q]], [], []
+        return [[p, q]], [], [], _mpq(x)
     if isinstance(x, (int, long)):
-        return [[x, 1]], [], []
+        return [[x, 1]], [], [], x
     x = ctx.convert(x)
     if hasattr(x, '_mpf_'):
         sign, man, exp, bc = _mpf_ = x._mpf_
@@ -623,12 +657,12 @@ def _hyp_parse_param(ctx, x):
             if sign:
                 man = -man
             if exp >= 0:
-                return [[int(man)<<exp, 1]], [], []
-            return [[int(man), 2**(-exp)]], [], []
+                return [[int(man)<<exp, 1]], [], [], x
+            return [[int(man), 2**(-exp)]], [], [], x
         else:
-            return [], [_mpf_], []
+            return [], [_mpf_], [], x
     if hasattr(x, '_mpc_'):
-        return [], [], [x._mpc_]
+        return [], [], [x._mpc_], x
 
 def _as_num(x):
     if isinstance(x, list):
@@ -649,6 +683,163 @@ def hypsum(ctx, ar, af, ac, br, bf, bc, x):
         v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
         return ctx.make_mpc(v)
 
+@defun
+def hyper(ctx, a_s, b_s, z, **kwargs):
+    """
+    Hypergeometric function, general case.
+    """
+    p = len(a_s)
+    q = len(b_s)
+    z = ctx.convert(z)
+    degree = p, q
+    # Handle common cases
+    if degree == (0, 1):
+        return ctx.hyp0f1(b_s[0], z, **kwargs)
+    elif degree == (1, 1):
+        return ctx.hyp1f1(a_s[0], b_s[0], z, **kwargs)
+    elif degree == (2, 1):
+        return ctx.hyp2f1(a_s[0], a_s[1], b_s[0], z, **kwargs)
+    elif degree == (2, 0):
+        return ctx.hyp2f0(a_s[0], a_s[1], z, **kwargs)
+    elif degree == (0, 0):
+        return ctx.exp(z)
+    # TODO: do convergence tests here
+    z = ctx.convert(z)
+    ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
+    for a in a_s:
+        r, f, c, a = ctx._hyp_parse_param(a)
+        ars += r
+        afs += f
+        acs += c
+    for b in b_s:
+        r, f, c, b = ctx._hyp_parse_param(b)
+        brs += r
+        bfs += f
+        bcs += c
+    return ctx.hypsum(ars, afs, acs, brs, bfs, bcs, z)
+
+@defun
+def sum_hyp0f1_rat(ctx, a, z):
+    prec, rnd = ctx._prec_rounding
+    if hasattr(z, "_mpf_"):
+        return ctx.make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
+    else:
+        return ctx.make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
+
+@defun
+def sum_hyp1f1_rat(ctx, a, b, z):
+    prec, rnd = ctx._prec_rounding
+    if hasattr(z, "_mpf_"):
+        return ctx.make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
+    else:
+        return ctx.make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
+
+@defun
+def sum_hyp2f1_rat(ctx, a, b, c, z):
+    prec, rnd = ctx._prec_rounding
+    if hasattr(z, "_mpf_"):
+        return ctx.make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
+    else:
+        return ctx.make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
+
+@defun
+def _hyp2f0_check_convergence(ctx, a, b, z, prec):
+    """
+    Quickly check if the series for 2F0 with the given parameters will
+    converge to within 2^(-prec) before it diverges to infinity
+    """
+    a = max(1, abs(a), abs(b))
+    z = abs(z)
+    amag = ctx.mag(a)
+    zmag = ctx.mag(z)
+    tol = -prec
+    # z extremely tiny
+    if 2*amag + zmag < tol:
+        return True
+    a = int(a)
+    # Assume minimum occurs at n = (1/z) (may not be accurate!)
+    n = int(1/z)
+    nmag = -zmag
+    # Accurately estimate size of term using Stirling's formula
+    t = 2*((a+n)*max(amag,nmag)-n) - (n*nmag-n) - 2*(a*amag-a) + n*zmag
+    #print "debug", t, tol
+    return t < tol
+
+@defun
+def hyp0f1(ctx, b, z, **kwargs):
+    """
+    Hypergeometric 0F1.
+    """
+    br, bf, bc, b = ctx._hyp_parse_param(b)
+    z = ctx.convert(z)
+    if ctx.mag(z) >= 8 and not kwargs.get('force_series'):
+        if ctx._hyp2f0_check_convergence(b, b, 1/abs(z)**0.5, ctx.prec+42):
+            # http://functions.wolfram.com/HypergeometricFunctions/
+            # Hypergeometric0F1/06/02/03/0004/
+            # We don't need hypercomb because the only possible singularity
+            # occurs when the value is undefined. However, we should perhaps
+            # still check for cancellation...
+            # TODO: handle the all-real case more efficiently!
+            # TODO: figure out how much precision is needed (exponential growth)
+            orig = ctx.prec
+            try:
+                ctx.prec += 12
+                w = ctx.sqrt(-z)
+                jw = ctx.j*w
+                u = 1/(4*jw)
+                c = mpq_12 - b
+                E = exp(2*jw)
+                H1 = (-jw)**c/E*ctx.hyp2f0(b-mpq_12, mpq_32-b, -u,
+                    force_series=True)
+                H2 = (jw)**c*E*ctx.hyp2f0(b-mpq_12, mpq_32-b, u,
+                    force_series=True)
+                v = gamma(b)/(2*sqrt(pi))*(H1 + H2)
+            finally:
+                ctx.prec = orig
+            if ctx.is_real_type(b) and ctx.is_real_type(z):
+                v = v.real
+            return +v
+    if br:
+        return ctx.sum_hyp0f1_rat(br[0], z)
+    return ctx.hypsum([], [], [], br, bf, bc, z)
+
+@defun
+def hyp1f1(ctx, a, b, z, **kwargs):
+    """
+    Hypergeometric 1F1.
+    """
+    ar, af, ac, a = ctx._hyp_parse_param(a)
+    br, bf, bc, b = ctx._hyp_parse_param(b)
+    z = ctx.convert(z)
+    if not z:
+        return ctx.one+z
+    if ctx.mag(z) >= 7:
+        if ctx.isinf(z):
+            if ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
+                return ctx.inf
+            return ctx.nan * z
+        # TODO: extra precision?
+        # Check with twice the precision because a limit could be invoked
+        if ctx._hyp2f0_check_convergence(a, a-b, 1/z, 2*ctx.prec+40):
+            sector = z.imag < 0 and z.real <= 0
+            def h(a,b):
+                if sector:
+                    E = ctx.exp(-ctx.j * ctx.pi*a)
+                else:
+                    E = ctx.exp(ctx.j * ctx.pi*a)
+                rz = 1/z
+                T1 = ([E,z], [1,-a], [b], [b-a], [a, 1+a-b], [], -rz)
+                T2 = ([ctx.exp(z),z], [1,a-b], [b], [a], [b-a, 1-a], [], rz)
+                return T1, T2
+            v = ctx.hypercomb(h, [a,b], force_series=True)
+            if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
+                v = v.real
+            return +v
+    if ar and br:
+        a, b = ar[0], br[0]
+        return ctx.sum_hyp1f1_rat(a, b, z)
+    return ctx.hypsum(ar, af, ac, br, bf, bc, z)
+
 def _hyp2f1_gosper(ctx,a,b,c,z):
     # Use Gosper's recurrence
     # See http://www.math.utexas.edu/pipermail/maxima/2006/000126.html
@@ -659,31 +850,40 @@ def _hyp2f1_gosper(ctx,a,b,c,z):
     e = ctx.mpf(1)
     f = ctx.mpf(0)
     k = 0
+    # Common subexpression elimination, unfortunately making
+    # things a bit unreadable. The formula is quite messy to begin
+    # with, though...
     abz = a*b*z
     ch = c/2
     c1h = (c+1)/2
-    g = z/(1-z)
+    nz = 1-z
+    g = z/nz
     abg = a*b*g
     cba = c-b-a
     z2 = z-2
+    tol = -ctx.prec - 10
     while 1:
-        kakbz = (k+a)*(k+b)*z
-        w = 1 / (4*(k+1)*(k+ch)*(k+c1h))
-        d1 = kakbz*(e-(k+cba)*d*g)*w
-        e1 = kakbz*(d*abg+(k+c)*e)*w
-        f1 = f + e - d*(k*(cba*z+k*z2-c)-abz)/(2*(k+ch)*(1-z))
-        if abs(f1-f) < 10*ctx.eps:
+        kch = k+ch
+        kakbz = (k+a)*(k+b)*z / (4*(k+1)*kch*(k+c1h))
+        d1 = kakbz*(e-(k+cba)*d*g)
+        e1 = kakbz*(d*abg+(k+c)*e)
+        f1 = f + e - d*(k*(cba*z+k*z2-c)-abz)/(2*kch*nz)
+        if ctx.mag(f1-f) < tol:
             break
         d, e, f = d1, e1, f1
         k += 1
     return f1
 
 @defun
-def eval_hyp2f1(ctx,a,b,c,z):
+def hyp2f1(ctx,a,b,c,z):
+    """
+    Hypergeometric 2F1.
+    """
     prec, rnd = ctx._prec_rounding
-    ar, af, ac = ctx._hyp_parse_param(a)
-    br, bf, bc = ctx._hyp_parse_param(b)
-    cr, cf, cc = ctx._hyp_parse_param(c)
+    ar, af, ac, a = ctx._hyp_parse_param(a)
+    br, bf, bc, b = ctx._hyp_parse_param(b)
+    cr, cf, cc, c = ctx._hyp_parse_param(c)
+    z = ctx.convert(z)
 
     if z == 1:
         # TODO: the following logic can be simplified
@@ -698,7 +898,7 @@ def eval_hyp2f1(ctx,a,b,c,z):
         # Otherwise, there is a pole and we take the
         # sign to be that when approaching from below
         # XXX: this evaluation is not necessarily correct in all cases
-        return ctx.eval_hyp2f1(a,b,c,1-ctx.eps*2) * ctx.inf
+        return ctx.hyp2f1(a,b,c,1-ctx.eps*2) * ctx.inf
 
     # Equal to 1 (first term), unless there is a subsequent
     # division by zero
@@ -738,52 +938,27 @@ def eval_hyp2f1(ctx,a,b,c,z):
     b = (br and _as_num(br[0])) or ctx.convert(b)
     c = (cr and _as_num(cr[0])) or ctx.convert(c)
 
-    a_orig = a
-    b_orig = b
-    c_orig = c
-
     orig = ctx.prec
     try:
         ctx.prec += 10
-        extra = 0
-        h = +ctx.eps
-
-        # May encounter poles that cancel, so perturb integers
-        # XXX: this is a bit flaky
-        for y in [a, b, c, c-a, c-b]:
-            nn, dd = ctx.nint_distance(y)
-            if dd < -orig:
-                extra = orig
-                ctx.prec *= 2
-                a = h + a
-                b = 2*h + b
-                c = 5*h + c
-            elif dd < -4:
-                extra = max(extra, -dd)
-
-        ctx.prec = orig + 10 + min(ctx.prec, extra)
 
         # Use 1/z transformation
         if absz >= 1.3:
-            h1 = ctx.eval_hyp2f1(a, mpq_1-c+a, mpq_1-b+a, 1/z)
-            h2 = ctx.eval_hyp2f1(b, mpq_1-c+b, mpq_1-a+b, 1/z)
-            #s1 = G(c)*G(b-a)/G(b)/G(c-a) * (-z)**(-a) * h1
-            #s2 = G(c)*G(a-b)/G(a)/G(c-b) * (-z)**(-b) * h2
-            f1 = ctx.gammaprod([c,b-a],[b,c-a])
-            f2 = ctx.gammaprod([c,a-b],[a,c-b])
-            s1 = f1 * (-z)**(-a) * h1
-            s2 = f2 * (-z)**(-b) * h2
-            v = s1 + s2
+            def h(a,b):
+                t = mpq_1-c; ab = a-b; rz = 1/z
+                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[mpq_1+ab],  rz)
+                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[mpq_1-ab],  rz)
+                return T1, T2
+            v = ctx.hypercomb(h, [a,b])
 
         # Use 1-z transformation
         elif abs(1-z) <= 0.75:
-            h1 = ctx.eval_hyp2f1(a, b, mpq_1+a+b-c, 1-z)
-            h2 = ctx.eval_hyp2f1(c-a, c-b, mpq_1+c-a-b, 1-z)
-            f1 = ctx.gammaprod([c,c-a-b],[c-a,c-b])
-            f2 = ctx.gammaprod([c,a+b-c],[a,b])
-            s1 = f1 * h1
-            s2 = (1-z)**(c-a-b) * f2 * h2
-            v = s1 + s2
+            def h(a,b):
+                t = c-a-b; ca = c-a; cb = c-b; rz = 1-z
+                T1 = [], [], [c,t], [ca,cb], [a,b], [1-t], rz
+                T2 = [rz], [t], [c,a+b-c], [a,b], [ca,cb], [1+t], rz
+                return T1, T2
+            v = ctx.hypercomb(h, [a,b])
 
         # Remaining part of unit circle
         else:
@@ -793,87 +968,129 @@ def eval_hyp2f1(ctx,a,b,c,z):
     return +v
 
 @defun
-def sum_hyp0f1_rat(ctx, a, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
+def hypercomb(ctx, function, params=[], **kwargs):
+    orig = ctx.prec
+    sumvalue = 0
+    dist = ctx.nint_distance
+    ninf = ctx.ninf
+    convert = ctx.convert
+    orig_params = params[:]
+    try:
+        while 1:
+            ctx.prec += 10
+            orig2 = ctx.prec
+            params = orig_params[:]
+            terms = function(*params)
+            recompute = False
+            for term in terms:
+                w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term
+                extraprec = 0
+                try:
+                    for data in alpha_s, beta_s, b_s:#, w_s ?:
+                        for i, x in enumerate(data):
+                            n, d = dist(x)
+                            # Poles
+                            if n > 0:
+                                continue
+                            if d < -orig:
+                                h = ldexp(1,-orig-10)
+                                recompute = True
+                                ctx.prec = (orig2+10)*2
+                                for k in range(len(params)):
+                                    params[k] += h
+                                    # Heuristically ensure that the perturbations
+                                    # are "independent" so that two perturbations
+                                    # don't accidentally cancel each other out
+                                    # in a subtraction.
+                                    h += h/(k+1)
+                                recompute = True
+                                raise StopIteration
+                            elif d < -4:
+                                ctx.prec += (-d)
+                                recompute = True
+                except StopIteration:
+                    pass
+            if recompute:
+                terms = function(*params)
+            evaluated_terms = []
+            # TODO: check for excessive additive cancellation here
+            # Problem: reconcile this with intentional cancellation
+            for w_s, c_s, alpha_s, beta_s, a_s, b_s, z in terms:
+                v = ctx.hyper(a_s, b_s, z, **kwargs)
+                for a in alpha_s: v *= ctx.gamma(a)
+                for b in beta_s: v /= ctx.gamma(b)
+                for w, c in zip(w_s, c_s):
+                    v *= convert(w) ** c
+                evaluated_terms.append(v)
+            if len(terms) == 1:
+                sumvalue = evaluated_terms[0]
+                break
+            elif kwargs.get('check_cancellation'):
+                sumvalue = sum(evaluated_terms)
+                c = max(ctx.mag(x) for x in evaluated_terms) - ctx.mag(sumvalue)
+                if c < ctx.prec - orig:
+                    break
+                else:
+                    ctx.prec += min(c, orig)
+                    if ctx.prec > 10*orig:
+                        raise ValueError("hypercomb() was called with"
+                            "check_cancellation=True but failed to converge"
+                            "within a reasonable number of steps. The function"
+                            "value is probably either zero or extremely small.")
+                    continue
+            else:
+                sumvalue = sum(evaluated_terms)
+                break
+    finally:
+        ctx.prec = orig
+    return +sumvalue
 
 @defun
-def sum_hyp1f1_rat(ctx, a, b, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
-
-@defun
-def sum_hyp2f1_rat(ctx, a, b, c, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
-
-
-#---------------------------------------------------------------------------#
-#                      And now the user-friendly versions                   #
-#---------------------------------------------------------------------------#
-
-@defun
-def hyper(ctx, a_s, b_s, z):
-    p = len(a_s)
-    q = len(b_s)
+def hyp2f0(ctx, a, b, z, **kwargs):
+    """
+    Hypergeometric 2F0.
+    """
+    ar, af, ac, a = ctx._hyp_parse_param(a)
+    br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
-    degree = p, q
-    if degree == (0, 1):
-        br, bf, bc = ctx._hyp_parse_param(b_s[0])
-        if br:
-            return ctx.sum_hyp0f1_rat(br[0], z)
-        return ctx.hypsum([], [], [], br, bf, bc, z)
-    if degree == (1, 1):
-        ar, af, ac = ctx._hyp_parse_param(a_s[0])
-        br, bf, bc = ctx._hyp_parse_param(b_s[0])
-        if ar and br:
-            a, b = ar[0], br[0]
-            return ctx.sum_hyp1f1_rat(a, b, z)
-        return ctx.hypsum(ar, af, ac, br, bf, bc, z)
-    if degree == (2, 1):
-        return ctx.eval_hyp2f1(a_s[0], a_s[1], b_s[0], z)
-    ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
-    for a in a_s:
-        r, f, c = ctx._hyp_parse_param(a)
-        ars += r
-        afs += f
-        acs += c
-    for b in b_s:
-        r, f, c = ctx._hyp_parse_param(b)
-        brs += r
-        bfs += f
-        bcs += c
-    return ctx.hypsum(ars, afs, acs, brs, bfs, bcs, z)
+    # TODO: also use series when it terminates
+    if kwargs.get('force_series') or \
+       ctx._hyp2f0_check_convergence(a, b, z, ctx.prec+40) or \
+        (ctx.isint(a) and -100 < a <= 0) or \
+        (ctx.isint(b) and -100 < b <= 0):
+        return ctx.hypsum(ar+br, af+bf, ac+bc, [], [], [], z)
+    def h(a, b):
+        w = ctx.sinpi(b)
+        rz = -1/z
+        T1 = ([ctx.pi,w,rz],[1,-1,a],[],[a-b+1,b],[a],[b],rz)
+        T2 = ([-ctx.pi,w,rz],[1,-1,1+a-b],[],[a,2-b],[a-b+1],[2-b],rz)
+        return T1, T2
+    return ctx.hypercomb(h, [a, 1+a-b], check_cancellation=True)
 
 @defun
-def hyp0f1(ctx, a, z):
-    r"""Hypergeometric function `\,_0F_1`. ``hyp0f1(a,z)`` is equivalent
-    to ``hyper([],[a],z)``; see documentation for :func:`hyper` for more
-    information."""
-    return ctx.hyper([], [a], z)
+def hyperu(ctx, a,b,z):
+    ar, af, ac, a = ctx._hyp_parse_param(a)
+    br, bf, bc, b = ctx._hyp_parse_param(b)
+    z = ctx.convert(z)
+    if not z:
+        if ctx.re(b) <= 1:
+            return ctx.gammaprod([1-b],[a-b+1])
+        else:
+            return ctx.inf + z
+    bb = 1+a-b
+    if ctx._hyp2f0_check_convergence(a, bb, 1/z, ctx.prec+40):
+        def h(a,b):
+            rz = -1/z
+            return [([z],[-a],[],[],[a,b],[],rz)]
+        return hypercomb(h, [a,bb], force_series=True)
+    else:
+        def h(a,b):
+            w = sinpi(b)
+            T1 = ([pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
+            T2 = ([-pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
+            return T1, T2
+        return hypercomb(h, [a,b], check_cancellation=True)
 
-@defun
-def hyp1f1(ctx,a,b,z):
-    r"""Hypergeometric function `\,_1F_1`. ``hyp1f1(a,b,z)`` is equivalent
-    to ``hyper([a],[b],z)``; see documentation for :func:`hyper` for more
-    information."""
-    return ctx.hyper([a], [b], z)
-
-@defun
-def hyp2f1(ctx,a,b,c,z):
-    r"""Hypergeometric function `\,_2F_1`. ``hyp2f1(a,b,c,z)`` is equivalent
-    to ``hyper([a,b],[c],z)``; see documentation for :func:`hyper` for more
-    information."""
-    return ctx.hyper([a,b], [c], z)
 
 @defun
 def _lower_gamma(ctx, z, b):
@@ -922,8 +1139,52 @@ def gammainc(ctx, z, a=0, b=None, regularized=False):
         return v
 
 @defun_wrapped
+def _erf_complex(ctx, z):
+    v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), -z**2)
+    if not z.real:
+        v = v.imag*ctx.j
+    return v
+
+@defun_wrapped
+def _erfc_complex(ctx, z):
+    if ctx.re(z) > 2:
+        v = ctx.exp(-z*z)/ctx.sqrt(ctx.pi)*ctx.hyperu((1,2),(1,2),z**2)
+    else:
+        v = 1 - ctx._erf_complex(z)
+    if not z.real:
+        v = 1+v.imag*ctx.j
+    return v
+
+@defun
+def erf(ctx, z):
+    z = ctx.convert(z)
+    if hasattr(z, "_mpf_"):
+        return ctx._erf(z)
+    elif hasattr(z, "_mpc_"):
+        if z.imag:
+            return ctx._erf_complex(z)
+        else:
+            return ctx.mpc(ctx._erf(z.real))
+
+@defun
+def erfc(ctx, z):
+    z = ctx.convert(z)
+    if hasattr(z, "_mpf_"):
+        return ctx._erfc(z)
+    elif hasattr(z, "_mpc_"):
+        if z.imag:
+            return ctx._erfc_complex(z)
+        else:
+            return ctx.mpc(ctx._erfc(z.real))
+
+@defun_wrapped
 def erfi(ctx, z):
-    return (2/ctx.sqrt(ctx.pi)*z) * ctx.sum_hyp1f1_rat((1,2),(3,2), z**2)
+    if not z:
+        return z
+    v = (2/ctx.sqrt(ctx.pi)*z) * ctx.hyp1f1((1,2), (3,2), z**2)
+    if not z.real:
+        v = v.imag*ctx.j
+    return v
 
 @defun_wrapped
 def erfinv(ctx, x):
@@ -939,6 +1200,7 @@ def erfinv(ctx, x):
         # An asymptotic formula
         u = ctx.ln(2/ctx.pi/(abs(x)-1)**2)
         a = ctx.sign(x) * ctx.sqrt(u - ctx.ln(u))/ctx.sqrt(2)
+    ctx.prec += 10
     return ctx.findroot(lambda t: ctx.erf(t)-x, a)
 
 @defun_wrapped
@@ -981,10 +1243,11 @@ def ei(ctx, z):
         elif z.imag < 0:
             r -= ctx.j*ctx.pi
         return r
-    v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + \
-        (ctx.ln(z)-ctx.ln(1/z))/2 + ctx.euler
-    if ctx.is_real_type(z) and z < 0:
-        return v.real
+    v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + ctx.euler
+    if z.imag:
+        v += (ctx.ln(z)-ctx.ln(1/z))/2
+    else:
+        v += ctx.ln(abs(z))
     return v
 
 @defun_wrapped
@@ -1066,13 +1329,25 @@ def fresnelc(ctx, z):
 def airyai(ctx, z):
     if z == ctx.inf or z == ctx.ninf:
         return 1/z
-    if z.real > 2:
+    if z:
+        # Account for exponential scaling
+        ctx.prec += max(0, int(1.5*ctx.mag(z)))
+    if z.real > 4:
+        # We could still use 1F1, but it results in huge cancellation;
+        # the following expansion is better
+        w = z**1.5
+        r = -ctx.mpf(3)/(4*w)
+        v = ctx.exp(-2*w/3)/(2*ctx.sqrt(ctx.pi)*ctx.nthroot(z,4))
+        v *= ctx.hyp2f0((1,6),(5,6),r)
+        return v
+    elif z.real > 1:
+        # If not using asymptotic series:
         # cancellation: both terms are ~ 2^(z^1.5),
         # result is ~ 2^(-z^1.5), so need ~2*z^1.5 extra bits
         ctx.prec += 2*int(z.real**1.5)
     z3 = z**3 / 9
-    a = ctx.sum_hyp0f1_rat((2,3), z3) / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
-    b = z * ctx.sum_hyp0f1_rat((4,3), z3) / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
+    a = ctx.hyp0f1((2,3), z3) / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
+    b = z * ctx.hyp0f1((4,3), z3) / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
     return a - b
 
 @defun_wrapped
@@ -1081,10 +1356,13 @@ def airybi(ctx, z):
         return z
     if z == ctx.ninf:
         return 1/z
+    if z:
+        # Account for exponential scaling
+        ctx.prec += max(0, int(1.5*ctx.mag(z)))
     z3 = z**3 / 9
     rt = ctx.nthroot(3, 6)
-    a = ctx.sum_hyp0f1_rat((2,3), z3) / (rt * ctx.gamma(ctx.mpf(2)/3))
-    b = z * rt * ctx.sum_hyp0f1_rat((4,3), z3) / ctx.gamma(ctx.mpf(1)/3)
+    a = ctx.hyp0f1((2,3), z3) / (rt * ctx.gamma(ctx.mpf(2)/3))
+    b = z * rt * ctx.hyp0f1((4,3), z3) / ctx.gamma(ctx.mpf(1)/3)
     return a + b
 
 @defun
@@ -1118,11 +1396,11 @@ def legendre(ctx, n, x):
 
 @defun_wrapped
 def chebyt(ctx, n, x):
-    return ctx.hyp2f1(-n,n,0.5,(1-x)/2)
+    return ctx.hyp2f1(-n,n,(1,2),(1-x)/2)
 
 @defun_wrapped
 def chebyu(ctx, n, x):
-    return (n+1) * ctx.hyp2f1(-n, n+2, 1.5, (1-x)/2)
+    return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2)
 
 @defun_wrapped
 def _besselj(ctx, v, x):
@@ -1641,12 +1919,25 @@ def expm1(ctx, x):
         return type(x)(1)
     return sum_accurately(ctx, lambda: iter([ctx.exp(x),-1]),1)
 
-# hack
+
 if __name__ == '__main__':
     #import doctest
     #doctest.testmod()
+    try:
+        import psyco; psyco.full()
+    except ImportError:
+        pass
+    import sys
+    filter = []
+    for i, arg in enumerate(sys.argv):
+        if 'functions.py' in arg:
+            filter = sys.argv[i+1:]
+            break
     import doctest
     globs = globals().copy()
     for obj in globs: #sorted(globs.keys()):
+        if filter:
+            if not sum([pat in obj for pat in filter]):
+                continue
         print obj
         doctest.run_docstring_examples(globs[obj], {})

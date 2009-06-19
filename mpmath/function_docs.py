@@ -2021,7 +2021,7 @@ incomplete beta function,
 
 .. math ::
 
-    I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} u^{a-1} (1-t)^{b-1} dt.
+    I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} t^{a-1} (1-t)^{b-1} dt.
 
 When `x_1 = 0, x_2 = 1`, this reduces to the ordinary (complete)
 beta function `B(a,b)`; see :func:`beta`.
@@ -2342,6 +2342,165 @@ floats and complex numbers::
 
 """
 
+hypercomb = r"""
+Computes a weighted combination of hypergeometric functions
+
+.. math ::
+
+    \sum_{r=1}^N \left[ \prod_{k=1}^{l_r} {w_{r,k}}^{c_{r,k}}
+    \frac{\prod_{k=1}^{m_r} \Gamma(\alpha_{r,k})}{\prod_{k=1}^{n_r}
+    \Gamma(\beta_{r,k})}
+    \,_{p_r}F_{q_r}(a_{r,1},\ldots,a_{r,p}; b_{r,1},    
+    \ldots, b_{r,q}; z_r)\right].
+
+Typically the parameters are linear combinations of a small set of base
+parameters; :func:`hypercomb` permits computing a correct value in
+the case that some of the `\alpha`, `\beta`, `b` turn out to be
+nonpositive integers, or if division by zero occurs for some `w^c`,
+assuming that there are opposing singularities that cancel out.
+The limit is computed by evaluating the function with the base
+parameters perturbed, at a higher working precision.
+
+The first argument should be a function that takes the perturbable
+base parameters ``params`` as input and returns `N` tuples
+``(w, c, alpha, beta, a, b, z)``, where the coefficients ``w``, ``c``,
+gamma factors ``alpha``, ``beta``, and hypergeometric coefficients
+``a``, ``b`` each should be lists of numbers, and ``z`` should be a single
+number.
+
+**Examples**
+
+The following evaluates
+
+.. math ::
+
+    (a-1) \frac{\Gamma(a-3)}{\Gamma(a-4)} \,_1F_1(a,a-1,z) = e^z(a-4)(a+z-1)
+
+with `a=1, z=3`. There is a zero factor, two gamma function poles, and
+the 1F1 function is singular; all singularities cancel out to give a finite
+value::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print hypercomb(lambda a: [([a-1],[1],[a-3],[a-4],[a],[a-1],3)], [1])
+    -180.769832308689
+    >>> print -9*exp(3)
+    -180.769832308689
+
+"""
+
+hyp0f1 = r"""Hypergeometric function `\,_0F_1`. ``hyp0f1(a,z)`` is equivalent
+to ``hyper([],[a],z)``; see documentation for :func:`hyper` for more
+information."""
+
+hyp1f1 = r"""
+Hypergeometric function `\,_1F_1`. ``hyp1f1(a,b,z)`` is equivalent
+to ``hyper([a],[b],z)``; see documentation for :func:`hyper` for more
+information."""
+
+hyp2f1 = r"""
+Hypergeometric function `\,_2F_1`. ``hyp2f1(a,b,c,z)`` is equivalent
+to ``hyper([a,b],[c],z)``; see documentation for :func:`hyper` for more
+information."""
+
+hyperu = r"""
+Gives the Tricomi confluent hypergeometric function `U`, which provides a second
+linearly independent solution to the confluent hypergeometric differential
+equation (the first is provided by `\,_1F_1` [1]).
+
+**Examples**
+
+Evaluation for arbitrary complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print hyperu(2,3,4)
+    0.0625
+    >>> print hyperu(0.25, 5, 1000)
+    0.1779949416140579573763523
+    >>> print hyperu(0.25, 5, -1000)
+    (0.1256256609322773150118907 - 0.1256256609322773150118907j)
+
+An integral representation::
+
+    >>> a,b,z = 2, 3.5, 4.25
+    >>> print hyperu(a,b,z)
+    0.06674960718150520648014567
+    >>> print quad(lambda t: exp(-z*t)*t**(a-1)*(1+t)**(b-a-1),[0,inf]) / gamma(a)
+    0.06674960718150520648014567
+
+
+[1] http://www.math.ucla.edu/~cbm/aands/page_504.htm
+"""
+
+hyp2f0 = r"""
+Gives the hypergeometric function `\,_2F_0`, defined formally by the
+series
+
+.. math ::
+
+    \,_2F_0(a,b;;z) = \sum_{n=0}^{\infty} (a)_n (b)_n \frac{z^n}{n!}.
+
+This series usually does not converge. For small enough `z`, it can be viewed
+as an asymptotic series that may be summed directly with an appropriate
+truncation. When this is not the case, :func:`hyp2f0` gives a regularized sum,
+or equivalently, it uses a representation in terms of the complex
+hypergeometric U function [1]. The series also converges when either `a` or `b`
+is a nonpositive integer, as it then terminates into a polynomial
+after `-a` or `-b` terms.
+
+**Examples**
+
+Evaluation is supported for arbitrary complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print hyp2f0((2,3), 1.25, -100)
+    0.07095851870980052763312791
+    >>> print hyp2f0((2,3), 1.25, 100)
+    (-0.03254379032170590665041131 + 0.07269254613282301012735797j)
+    >>> print hyp2f0(-0.75, 1-j, 4j)
+    (-0.3579987031082732264862155 - 3.052951783922142735255881j)
+
+Even with real arguments, the regularized value of 2F0 is often complex-valued,
+but the imaginary part decreases exponentially as `z \to 0`. In the following
+example, the first call uses complex evaluation while the second has a small
+enough `z` to evaluate using the direct series and thus the returned value
+is strictly real (this should be taken to indicate that the imaginary
+part is less than ``eps``)::
+
+    >>> mp.dps = 15
+    >>> print hyp2f0(1.5, 0.5, 0.05)
+    (1.04166637647907 + 8.34584913683906e-8j)
+    >>> print hyp2f0(1.5, 0.5, 0.001)
+    1.00075141036779
+
+The imaginary part can be retrieved by increasing the working precision::
+
+    >>> mp.dps = 80
+    >>> nprint(hyp2f0(1.5, 0.5, 0.009).imag)
+    1.23828e-46
+
+In the polynomial case (the series terminating), 2F0 can evaluate exactly::
+
+    >>> mp.dps = 15
+    >>> print hyp2f0(-6,-6,2)
+    291793.0
+    >>> print identify(hyp2f0(-2,1,0.25))
+    (5/8)
+
+The coefficients of the polynomials can be recovered using Taylor expansion::
+
+    >>> nprint(taylor(lambda x: hyp2f0(-3,0.5,x), 0, 10))
+    [1.0, -1.5, 2.25, -1.875, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    >>> nprint(taylor(lambda x: hyp2f0(-4,0.5,x), 0, 10))
+    [1.0, -2.0, 4.5, -7.5, 6.5625, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+
+[1] http://www.math.ucla.edu/~cbm/aands/page_504.htm
+"""
+
+
 gammainc = r"""
 ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
 gamma function with integration limits `[a, b]`:
@@ -2472,6 +2631,20 @@ supports complex numbers::
     >>> print erf(1+j)
     (1.316151281697947644880271 + 0.1904534692378346862841089j)
 
+Evaluation is supported for large arguments::
+
+    >>> mp.dps = 25
+    >>> print erf('1e1000')
+    1.0
+    >>> print erf('-1e1000')
+    -1.0
+    >>> print erf('1e-1000')
+    1.128379167095512573896159e-1000
+    >>> print erf('1e7j')
+    (0.0 + 8.593897639029319267398803e+43429448190317j)
+    >>> print erf('1e7+1e7j')
+    (0.9999999858172446172631323 + 3.728805278735270407053036e-8j)
+
 **Related functions**
 
 See also :func:`erfc`, which is more accurate for large `x`,
@@ -2500,6 +2673,11 @@ arguments::
 
     >>> print erfc(10**10)
     4.3504398860243e-43429448190325182776
+
+Complex arguments are supported::
+
+    >>> print erfc(500+50j)
+    (1.19739830969552e-107492 + 1.46072418957528e-107491j)
 
 """
 
@@ -2547,10 +2725,21 @@ Note the symmetry between erf and erfi::
     >>> print erfi(2+1j)
     (-5.04914370344703 - 0.536643565778565j)
 
-**Possible issues**
+Large arguments are supported::
 
-The current implementation of :func:`erfi` is much less efficient
-and accurate than the one for erf.
+    >>> print erfi(1000)
+    1.71130938718796e+434291
+    >>> print erfi(10**10)
+    7.3167287567024e+43429448190325182754
+    >>> print erfi(-10**10)
+    -7.3167287567024e+43429448190325182754
+    >>> print erfi(1000-500j)
+    (2.49895233563961e+325717 + 2.6846779342253e+325717j)
+    >>> print erfi(100000j)
+    (0.0 + 1.0j)
+    >>> print erfi(-100000j)
+    (0.0 - 1.0j)
+
 
 """
 
@@ -2595,10 +2784,11 @@ It is simple to check that :func:`erfinv` computes inverse values of
 :func:`erfinv` supports arbitrary-precision evaluation::
 
     >>> mp.dps = 50
-    >>> erf(3)
-    mpf('0.99997790950300141455862722387041767962015229291260075')
-    >>> erfinv(_)
-    mpf('3.0')
+    >>> x = erf(2)
+    >>> print x
+    0.99532226501895273416206925636725292861089179704006
+    >>> print erfinv(x)
+    2.0
 
 A definite integral involving the inverse error function::
 
@@ -3187,9 +3377,7 @@ Limits and values include::
     >>> print airyai(-inf)
     0.0
 
-:func:`airyai` uses a series expansion around `x = 0`,
-so it is slow for extremely large arguments. Here are
-some evaluations for moderately large arguments::
+Evaluation is supported for large arguments::
 
     >>> print airyai(-100)
     0.176753393239553
@@ -3200,7 +3388,16 @@ some evaluations for moderately large arguments::
     >>> print airyai(-50+50j)
     (1.04124253736317e+158 + 3.3475255449236e+157j)
 
-The first negative root is::
+Huge arguments are also fine::
+
+    >>> print airyai(10**10)
+    1.16223597829874e-289529654602171
+    >>> print airyai(-10**10)
+    0.000173620644815282
+    >>> print airyai(10**10*(1+j))
+    (5.71150868372136e-186339621747698 + 1.86724550696231e-186339621747697j)
+
+The first negative root of the Ai function is::
 
     >>> print findroot(airyai, -2)
     -2.33810741045977
@@ -3256,9 +3453,7 @@ Limits and values include::
     >>> print airybi(-inf)
     0.0
 
-:func:`airyai` uses a series expansion around `x = 0`,
-so it is slow for extremely large arguments. Here are
-some evaluations for moderately large arguments::
+Evaluation is supported for large arguments::
 
     >>> print airybi(-100)
     0.0242738876801601
@@ -3269,7 +3464,17 @@ some evaluations for moderately large arguments::
     >>> print airybi(-50+50j)
     (-3.3475255449236e+157 + 1.04124253736317e+158j)
 
-The first negative root is::
+Huge arguments are also fine::
+
+    >>> mp.dps = 15
+    >>> print airybi(10**10)
+    1.36938578794354e+289529654602165
+    >>> print airybi(-10**10)
+    0.00177565614169293
+    >>> print airybi(10**10*(1+j))
+    (-6.5599559310962e+186339621747689 - 6.82246272698136e+186339621747690j)
+
+The first negative root of the Bi function is::
 
     >>> print findroot(airybi, -1)
     -1.17371322270913

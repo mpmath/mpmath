@@ -68,6 +68,9 @@ def test_hankel():
     assert hankel2(1.5,3+4j).ae(14.783528526098567526-7.397390270853446512j)
 
 def test_hyper_misc():
+    mp.dps = 15
+    assert hyper([],[],0) == 1
+    assert hyper([],[],-2).ae(exp(-2))
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
     assert hyp2f1((1,4),(1,2),(3,4),mpf(80)/81).ae(1.8)
     assert hyp2f1((2,3),(1,1),(3,2),(2+j)/3).ae(1.327531603558679093+0.439585080092769253j)
@@ -241,15 +244,26 @@ def test_airy():
     mp.dps = 15
     assert (airyai(10)*10**10).ae(1.1047532552898687)
     assert (airybi(10)/10**9).ae(0.45564115354822515)
+    assert (airyai(1000)*10**9158).ae(9.306933063179556004)
+    assert (airybi(1000)/10**9154).ae(5.4077118391949465477)
+    assert airyai(-1000).ae(0.055971895773019918842)
+    assert airybi(-1000).ae(-0.083264574117080633012)
+    assert (airyai(100+100j)*10**188).ae(2.9099582462207032076 + 2.353013591706178756j)
+    assert (airybi(100+100j)/10**185).ae(1.7086751714463652039 - 3.1416590020830804578j)
 
 def test_hyper_0f1():
+    mp.dps = 15
     v = 8.63911136507950465
     assert hyper([],[(1,3)],1.5).ae(v)
     assert hyper([],[1/3.],1.5).ae(v)
     assert hyp0f1(1/3.,1.5).ae(v)
     assert hyp0f1((1,3),1.5).ae(v)
+    # Asymptotic expansion
+    assert hyp0f1(3,1e9).ae('4.9679055380347771271e+27455')
+    assert hyp0f1(3,1e9j).ae('-2.1222788784457702157e+19410 + 5.0840597555401854116e+19410j')
 
 def test_hyper_1f1():
+    mp.dps = 15
     v = 1.2917526488617656673
     assert hyper([(1,2)],[(3,2)],0.7).ae(v)
     assert hyper([(1,2)],[(3,2)],0.7+0j).ae(v)
@@ -262,6 +276,9 @@ def test_hyper_1f1():
     assert hyper([0.5+0j],[1.5+0j],0.7+0j).ae(v)
     assert hyp1f1(0.5,1.5,0.7).ae(v)
     assert hyp1f1((1,2),1.5,0.7).ae(v)
+    # Asymptotic expansion
+    assert hyp1f1(2,3,1e10).ae('2.1555012157015796988e+4342944809')
+    assert (hyp1f1(2,3,1e10j)*10**10).ae(-0.97501205020039745852 - 1.7462392454512132074j)
 
 def test_hyper_2f1():
     mp.dps = 15
@@ -345,6 +362,41 @@ def test_hyper_2f1_hard():
     assert hyp2f1(1,1,2,3+4j).ae(0.14576709331407297807+0.48379185417980360773j)
     assert hyp2f1(1,1,2,4).ae(-0.27465307216702742285 - 0.78539816339744830962j)
     assert hyp2f1(1,1,2,-4).ae(0.40235947810852509365)
+
+def test_hyper_u():
+    mp.dps = 15
+    assert hyperu(2,-3,0).ae(0.05)
+    assert hyperu(2,-3.5,0).ae(4./99)
+    assert hyperu(2,0,0) == 0.5
+    assert hyperu(-5,1,0) == -120
+    assert hyperu(-5,2,0) == inf
+    assert hyperu(-5,-2,0) == 0
+    assert hyperu(7,7,3).ae(0.00014681269365593503986)  #exp(3)*gammainc(-6,3)
+    assert hyperu(2,-3,4).ae(0.011836478100271995559)
+    assert hyperu(3,4,5).ae(1./125)
+    assert hyperu(2,3,0.0625) == 256
+    assert hyperu(-1,2,0.25+0.5j) == -1.75+0.5j
+    assert hyperu(0.5,1.5,7.25).ae(2/sqrt(29))
+    assert hyperu(2,6,pi).ae(0.55804439825913399130)
+    assert (hyperu((3,2),8,100+201j)*10**4).ae(-0.3797318333856738798 - 2.9974928453561707782j)
+    assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
+
+def test_hyper_2f0():
+    mp.dps = 15
+    assert hyp2f0(2,3,7).ae(0.0116108068639728714668 - 0.0073727413865865802130j)
+    assert hyp2f0(2,3,0) == 1
+    assert hyp2f0(0,0,0) == 1
+    assert hyp2f0(-1,-1,1).ae(2)
+    assert hyp2f0(-4,1,1.5).ae(62.5)
+    assert hyp2f0(-4,1,50).ae(147029801)
+    assert hyp2f0(-4,1,0.0001).ae(0.99960011997600240000)
+    assert hyp2f0(0.5,0.25,0.001).ae(1.0001251174078538115)
+    assert hyp2f0(0.5,0.25,3+4j).ae(0.85548875824755163518 + 0.21636041283392292973j)
+    # Important: cancellation check
+    assert hyp2f0((1,6),(5,6),-0.02371708245126284498).ae(0.996785723120804309)
+    # Should be exact; polynomial case
+    assert hyp2f0(-2,1,0.5+0.5j) == 0
+    assert hyp2f0(1,-2,0.5+0.5j) == 0
 
 def test_orthpoly():
     mp.dps = 15
@@ -452,6 +504,14 @@ def test_erf():
     assert erf(erfinv('0.99999999999999999999999999999995')).ae('0.99999999999999999999999999999995')
     assert erf(erfinv('0.999999999999999999999999999999995')).ae('0.999999999999999999999999999999995')
     assert erf(erfinv('-0.999999999999999999999999999999995')).ae('-0.999999999999999999999999999999995')
+    mp.dps = 15
+    # Complex asymptotic expansions
+    v = erfc(50j)
+    assert v.real == 1
+    assert v.imag.ae('-6.1481820666053078736e+1083')
+    assert erfc(-100+5j).ae(2)
+    assert (erfc(100+5j)*10**4335).ae(2.3973567853824133572 - 3.9339259530609420597j)
+    assert erfc(100+100j).ae(0.00065234366376857698698 - 0.0039357263629214118437j)
 
 def test_pdf():
     mp.dps = 15

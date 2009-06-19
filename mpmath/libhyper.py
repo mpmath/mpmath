@@ -385,7 +385,7 @@ def mpf_erf(x, prec, rnd=round_fast):
         c = mpf_sqrt(mpf_pi(prec+20), prec+20)
         # TODO: interval rounding
         return mpf_div(x, c, prec, rnd)
-    wp = prec + abs(size) + 20
+    wp = prec + abs(size) + 25
     # Taylor series for erf, fixed-point summation
     t = abs(to_fixed(x, wp))
     t2 = (t*t) >> wp
@@ -401,19 +401,7 @@ def mpf_erf(x, prec, rnd=round_fast):
     s = (s << (wp+1)) // sqrt_fixed(pi_fixed(wp), wp)
     if sign:
         s = -s
-    return from_man_exp(s, -wp, wp, rnd)
-
-def mpc_erf(z, prec, rnd=round_fast):
-    re, im = z
-    if im == fzero:
-        return (mpf_erf(re, prec, rnd), fzero)
-    wp = prec + 20
-    z2 = mpc_square(z, prec+20)
-    v = mpc_hyp1f1_rat((1,2), (3,2), mpc_neg(z2), wp, rnd)
-    sqrtpi = mpf_sqrt(mpf_pi(wp), wp)
-    c = mpf_rdiv_int(2, sqrtpi, wp)
-    c = mpc_mul_mpf(z, c, wp)
-    return mpc_mul(c, v, prec, rnd)
+    return from_man_exp(s, -wp, prec, rnd)
 
 # If possible, we use the asymptotic series for erfc.
 # This is an alternating divergent asymptotic series, so
@@ -464,13 +452,6 @@ def mpf_erfc(x, prec, rnd=round_fast):
     z = mpf_exp(mpf_neg(mpf_mul(x,x,wp),wp),wp)
     y = mpf_div(mpf_mul(z, s, wp), x, prec, rnd)
     return y
-
-def mpc_erfc(z, prec, rnd=round_fast):
-    real, imag = z
-    if not imag:
-        return (mpf_erfc(real, prec, rnd), fzero)
-    # XXX: cancellation
-    return mpc_sub(mpc_one, mpc_erf(z, prec+20, rnd), prec, rnd)
 
 
 #-----------------------------------------------------------------------#

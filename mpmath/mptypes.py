@@ -147,10 +147,14 @@ class MultiPrecisionArithmetic(Context):
     # TODO: add more of these, make consistent, write docstrings, ...
 
     def is_real_type(ctx, x):
-        return hasattr(x, '_mpf_')
+        if hasattr(x, '_mpc_') or type(x) is complex:
+            return False
+        return True
 
     def is_complex_type(ctx, x):
-        return hasattr(x, '_mpc_')
+        if hasattr(x, '_mpc_') or type(x) is complex:
+            return True
+        return False
 
     def make_mpf(ctx, v):
         a = new(ctx.mpf)
@@ -363,6 +367,8 @@ class MultiPrecisionArithmetic(Context):
             return ctx.convert(x._mpmath_(*prec_rounding))
         raise TypeError("cannot create mpf from " + repr(x))
 
+    mpmathify = convert
+
     def isnan(ctx, x):
         """
         For an ``mpf`` *x*, determines whether *x* is not-a-number (nan)::
@@ -408,6 +414,39 @@ class MultiPrecisionArithmetic(Context):
                 return False
             return x == int(x)
         return False
+
+    def _mpf_mag(ctx, x):
+        sign, man, exp, bc = x
+        if man:
+            return exp+bc
+        if x == fzero:
+            return ctx.ninf
+        if x == finf or x == fninf:
+            return ctx.inf
+        return ctx.nan
+
+    def mag(ctx, x):
+        if type(x) in int_types:  # XXX: inttypes
+            if x:
+                return bitcount(abs(x))
+            return ctx.ninf
+        # Hack
+        if hasattr(x, "_mpq_"):
+            p, q = x._mpq_
+            if p:
+                return 1 + bitcount(abs(p)) - bitcount(abs(q))
+            return ctx.ninf
+        x = ctx.convert(x)
+        if hasattr(x, "_mpf_"):
+            return ctx._mpf_mag(x._mpf_)
+        if hasattr(x, "_mpc_"):
+            r, i = x._mpc_
+            if r == fzero:
+                return ctx._mpf_mag(i)
+            if i == fzero:
+                return ctx._mpf_mag(r)
+            return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
+        raise ValueError("mag() needed a number")
 
     def nint_distance(ctx, x):
         """
@@ -1799,6 +1838,7 @@ fraction = mp.fraction
 arange = mp.arange
 linspace = mp.linspace
 
+mag = mp.mag
 nint_distance = mp.nint_distance
 
 mpi_to_str = mp.mpi_to_str
