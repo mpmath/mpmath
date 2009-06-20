@@ -1466,6 +1466,97 @@ def hankel1(ctx,n,x):
 def hankel2(ctx,n,x):
     return ctx.besselj(n,x) - ctx.j*ctx.bessely(n,x)
 
+@defun
+def whitm(ctx,k,m,z):
+    k = ctx.convert(k)
+    m = ctx.convert(m)
+    z = ctx.convert(z)
+    def h(k,m):
+        return [([ctx.exp(-z/2), z], [1, m+0.5], [], [], [0.5+m-k], [1+2*m], z)]
+    return ctx.hypercomb(h, [k,m])
+
+@defun
+def whitw(ctx,k,m,z):
+    k = ctx.convert(k)
+    m = ctx.convert(m)
+    z = ctx.convert(z)
+    def h(k,m):
+        w = ctx.exp(-z/2)
+        T1 = [w, z], [1, 0.5-m], [2*m], [0.5+m-k], [0.5-m-k], [1-2*m], z
+        T2 = [w, z], [1, 0.5+m], [-2*m], [0.5-m-k], [0.5+m-k], [1+2*m], z
+        return T1, T2
+    return ctx.hypercomb(h, [k,m])
+
+@defun
+def struveh(ctx,n,z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/StruveH/26/01/02/
+    def h(n):
+        return [([z/2, 0.5*ctx.sqrt(ctx.pi)], [n+1, -1], [], [n+1.5], [1], [1.5, n+1.5], -(z/2)**2)]
+    return ctx.hypercomb(h, [n])
+
+@defun
+def struvel(ctx,n,z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/StruveL/26/01/02/
+    def h(n):
+        return [([z/2, 0.5*ctx.sqrt(ctx.pi)], [n+1, -1], [], [n+1.5], [1], [1.5, n+1.5], (z/2)**2)]
+    return ctx.hypercomb(h, [n])
+
+@defun
+def ber(ctx, n, z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBer2/26/01/02/0001/
+    def h(n):
+        r = -(z/4)**4
+        T1 = [ctx.cospi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
+        T2 = [-ctx.sinpi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
+        return T1, T2
+    return ctx.hypercomb(h, [n])
+
+@defun
+def bei(ctx, n, z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBei2/26/01/02/0001/
+    def h(n):
+        r = -(z/4)**4
+        T1 = [ctx.cospi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
+        T2 = [ctx.sinpi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
+        return T1, T2
+    return ctx.hypercomb(h, [n])
+
+@defun
+def ker(ctx, n, z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKer2/26/01/02/0001/
+    def h(n):
+        r = -(z/4)**4
+        T1 = [2, z, 4*cospi(0.25*n)], [-n-3, n, 1], [-n], [], [], [0.5, 0.5*(1+n), 0.5*(n+2)], r
+        T2 = [2, z, -sinpi(0.25*n)], [-n-3, 2+n, 1], [-n-1], [], [], [1.5, 0.5*(3+n), 0.5*(n+2)], r
+        T3 = [2, z, 4*cospi(0.75*n)], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T4 = [2, z, -sinpi(0.75*n)], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        return T1, T2, T3, T4
+    return ctx.hypercomb(h, [n])
+
+@defun
+def kei(ctx, n, z):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKei2/26/01/02/0001/
+    def h(n):
+        r = -(z/4)**4
+        T1 = [-cospi(0.75*n), 2, z], [1, n-3, 2-n], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        T2 = [-sinpi(0.75*n), 2, z], [1, n-1, -n], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T3 = [-sinpi(0.25*n), 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
+        T4 = [-cospi(0.25*n), 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
+        return T1, T2, T3, T4
+    return ctx.hypercomb(h, [n])
+
 @defun_wrapped
 def lambertw(ctx, z, k=0, approx=None):
     if ctx.isnan(z):

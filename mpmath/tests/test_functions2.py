@@ -67,6 +67,32 @@ def test_hankel():
     assert hankel2(1.5,0.5).ae(0.0917016996256513026+2.5214655504213378514j)
     assert hankel2(1.5,3+4j).ae(14.783528526098567526-7.397390270853446512j)
 
+def test_struve():
+    mp.dps = 15
+    assert struveh(2,3).ae(0.74238666967748318564)
+    assert struveh(-2.5,3).ae(0.41271003220971599344)
+    assert struvel(2,3).ae(1.7476573277362782744)
+    assert struvel(-2.5,3).ae(1.5153394466819651377)
+
+def test_whittaker():
+    mp.dps = 15
+    assert whitm(2,3,4).ae(49.753745589025246591)
+    assert whitw(2,3,4).ae(14.111656223052932215)
+
+def test_kelvin():
+    mp.dps = 15
+    assert ber(2,3).ae(0.80836846563726819091)
+    assert ber(3,4).ae(-0.28262680167242600233)
+    assert ber(-3,2).ae(-0.085611448496796363669)
+    assert bei(2,3).ae(-0.89102236377977331571)
+    assert bei(-3,2).ae(-0.14420994155731828415)
+    assert ker(2,3).ae(0.12839126695733458928)
+    assert ker(-3,2).ae(-0.29802153400559142783)
+    assert ker(0.5,3).ae(-0.085662378535217097524)
+    assert kei(2,3).ae(0.036804426134164634000)
+    assert kei(-3,2).ae(0.88682069845786731114)
+    assert kei(0.5,3).ae(0.013633041571314302948)
+
 def test_hyper_misc():
     mp.dps = 15
     assert hyper([],[],0) == 1
