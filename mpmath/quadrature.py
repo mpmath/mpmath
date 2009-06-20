@@ -784,7 +784,7 @@ def quadgl(*args, **kwargs):
 
     is simply a shortcut for:
 
-        quad(func, *points, ..., method=TanhSinh)
+        quad(func, *points, ..., method=GaussLegendre)
 
     For example, a single integral and a double integral:
 
