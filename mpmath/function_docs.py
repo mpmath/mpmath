@@ -2472,8 +2472,8 @@ part is less than ``eps``)::
     >>> mp.dps = 15
     >>> print hyp2f0(1.5, 0.5, 0.05)
     (1.04166637647907 + 8.34584913683906e-8j)
-    >>> print hyp2f0(1.5, 0.5, 0.001)
-    1.00075141036779
+    >>> print hyp2f0(1.5, 0.5, 0.0005)
+    1.00037535207621
 
 The imaginary part can be retrieved by increasing the working precision::
 
