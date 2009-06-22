@@ -57,6 +57,10 @@ def test_bernoulli():
 
     mp.dps = 15
 
+def test_bernpoly():
+    mp.dps = 15
+    assert bernpoly(10000,10000).ae('5.8196915936323387117e+39999')
+
 def test_gamma():
     mp.dps = 15
     assert gamma(0.25).ae(3.6256099082219083119)

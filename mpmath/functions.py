@@ -729,6 +729,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
             return ctx.hyp1f1(a_s[0], b_s[0], z, **kwargs)
         elif q == 2:
             return ctx.hyp1f2(a_s[0], b_s[0], b_s[1], z, **kwargs)
+        elif q == 0:
+            return (1-z)**(-a_s[0])
     elif p == 2:
         if q == 1:
             return ctx.hyp2f1(a_s[0], a_s[1], b_s[0], z, **kwargs)
@@ -2083,7 +2085,18 @@ def primezeta(ctx, s):
 def bernpoly(ctx, n, z):
     n = int(n)
     assert n >= 0
-    # XXX: optimize
+    # XXX: optimize further
+    if abs(z) > 2:
+        s = t = ctx.one
+        r = ctx.one/z
+        for k in xrange(1,n+1):
+            t = t*(n+1-k)/k*r
+            if not (k > 2 and k & 1):
+                u = t*ctx.bernoulli(k)
+                s += u
+                if abs(u) < ctx.eps:
+                    break
+        return z**n * s
     return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
 
 # TODO: this should be implemented low-level

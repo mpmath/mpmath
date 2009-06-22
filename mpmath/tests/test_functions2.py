@@ -95,8 +95,12 @@ def test_kelvin():
 
 def test_hyper_misc():
     mp.dps = 15
+    # Degenerate case: 0F0
     assert hyper([],[],0) == 1
     assert hyper([],[],-2).ae(exp(-2))
+    # Degeenrate case: 1F0
+    assert hyper([2],[],1.5) == 4
+    #
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
     assert hyp2f1((1,4),(1,2),(3,4),mpf(80)/81).ae(1.8)
     assert hyp2f1((2,3),(1,1),(3,2),(2+j)/3).ae(1.327531603558679093+0.439585080092769253j)
