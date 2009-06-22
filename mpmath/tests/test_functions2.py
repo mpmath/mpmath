@@ -95,10 +95,16 @@ def test_kelvin():
 
 def test_hyper_misc():
     mp.dps = 15
+    assert hyp0f1(1,0) == 1
+    assert hyp1f1(1,2,0) == 1
+    assert hyp1f2(1,2,3,0) == 1
+    assert hyp2f1(1,2,3,0) == 1
+    assert hyp2f2(1,2,3,4,0) == 1
+    assert hyp2f3(1,2,3,4,5,0) == 1
     # Degenerate case: 0F0
     assert hyper([],[],0) == 1
     assert hyper([],[],-2).ae(exp(-2))
-    # Degeenrate case: 1F0
+    # Degenerate case: 1F0
     assert hyper([2],[],1.5) == 4
     #
     assert hyp2f1((1,3),(2,3),(5,6),mpf(27)/32).ae(1.6)
@@ -258,6 +264,9 @@ def test_exp_integrals():
     sim = '-2.1081929993474403520785942429469187647767369645423e+8681'
     assert str(r.real) == sre and str(r.imag) == sim
     mp.dps = 15
+    # More asymptotic expansions
+    assert chi(-10**6+100j).ae('1.3077239389562548386e+434288 + 7.6808956999707408158e+434287j')
+    assert shi(-10**6+100j).ae('-1.3077239389562548386e+434288 - 7.6808956999707408158e+434287j')
 
 def test_trig_integrals():
     mp.dps = 30
@@ -417,6 +426,7 @@ def test_hyper_u():
 
 def test_hyper_2f0():
     mp.dps = 15
+    assert hyper([1,2],[],3) == hyp2f0(1,2,3)
     assert hyp2f0(2,3,7).ae(0.0116108068639728714668 - 0.0073727413865865802130j)
     assert hyp2f0(2,3,0) == 1
     assert hyp2f0(0,0,0) == 1
@@ -438,6 +448,7 @@ def test_hyper_2f0():
 
 def test_hyper_1f2():
     mp.dps = 15
+    assert hyper([1],[2,3],4) == hyp1f2(1,2,3,4)
     a1,b1,b2 = (1,10),(2,3),1./16
     assert hyp1f2(a1,b1,b2,10).ae(298.7482725554557568)
     assert hyp1f2(a1,b1,b2,100).ae(224128961.48602947604)
@@ -460,6 +471,7 @@ def test_hyper_1f2():
 
 def test_hyper_2f3():
     mp.dps = 15
+    assert hyper([1,2],[3,4,5],6) == hyp2f3(1,2,3,4,5,6)
     a1,a2,b1,b2,b3 = (1,10),(2,3),(3,10), 2, 1./16
     # Check asymptotic expansion
     assert hyp2f3(a1,a2,b1,b2,b3,10).ae(128.98207160698659976)
@@ -479,6 +491,15 @@ def test_hyper_2f3():
     assert hyp2f3(a1,a2,b1,b2,b3,10**7*j).ae('-1.7477645579418800826e+1938 - 1.7606522995808116405e+1938j')
     assert hyp2f3(a1,a2,b1,b2,b3,10**8*j).ae('-1.6932731942958401784e+6137 - 2.4521909113114629368e+6137j')
     assert hyp2f3(a1,a2,b1,b2,b3,10**20*j).ae('-2.0988815677627225449e+6141851451 + 5.7708223542739208681e+6141851452j')
+
+def test_hyper_2f2():
+    mp.dps = 15
+    assert hyper([1,2],[3,4],5) == hyp2f2(1,2,3,4,5)
+    a1,a2,b1,b2 = (3,10),4,(1,2),1./16
+    assert hyp2f2(a1,a2,b1,b2,10).ae(448225936.3377556696)
+    assert hyp2f2(a1,a2,b1,b2,10000).ae('1.2012553712966636711e+4358')
+    assert hyp2f2(a1,a2,b1,b2,-20000).ae(-0.04182343755661214626)
+    assert hyp2f2(a1,a2,b1,b2,10**20).ae('1.1148680024303263661e+43429448190325182840')
 
 def test_orthpoly():
     mp.dps = 15

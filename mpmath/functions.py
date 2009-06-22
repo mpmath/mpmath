@@ -734,8 +734,12 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     elif p == 2:
         if q == 1:
             return ctx.hyp2f1(a_s[0], a_s[1], b_s[0], z, **kwargs)
+        elif q == 2:
+            return ctx.hyp2f2(a_s[0], a_s[1], b_s[0], b_s[1], z, **kwargs)
         elif q == 3:
             return ctx.hyp2f3(a_s[0], a_s[1], b_s[0], b_s[1], b_s[2], z, **kwargs)
+        elif q == 0:
+            return ctx.hyp2f0(a_s[0], a_s[1], z, **kwargs)
     # TODO: do convergence tests here
     z = ctx.convert(z)
     ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
@@ -813,8 +817,6 @@ def _hyp_check_convergence(ctx, a_s, b_s, z, prec, n=None):
     #print "debug", prec, "kek", n, t, tol, t < tol, "real", int(log(abs(u),2))
     return t < tol
 
-
-
 @defun
 def hyp0f1(ctx, b, z, **kwargs):
     """
@@ -822,7 +824,7 @@ def hyp0f1(ctx, b, z, **kwargs):
     """
     br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
-    magz = ctx.mag(z)
+    magz = z and ctx.mag(z)
     if magz >= 8 and not kwargs.get('force_series'):
         #if ctx._hyp2f0_check_convergence(b, b, 1/abs(z)**0.5, ctx.prec+40+magz//2):
         if ctx._hyp_check_convergence([b, b], [], 1/abs(z)**0.5, ctx.prec+40+magz//2):
@@ -1102,6 +1104,83 @@ def hypercomb(ctx, function, params=[], **kwargs):
 class NoConvergence(Exception):
     pass
 
+
+@defun
+def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
+    a1r, a1f, a1c, a1 = ctx._hyp_parse_param(a1)
+    a2r, a2f, a2c, a2 = ctx._hyp_parse_param(a2)
+    b1r, b1f, b1c, b1 = ctx._hyp_parse_param(b1)
+    b2r, b2f, b2c, b2 = ctx._hyp_parse_param(b2)
+    z = ctx.convert(z)
+
+    absz = abs(z)
+    magz = ctx.mag(z)
+    orig = ctx.prec
+
+    # Asymptotic expansion is ~ exp(z)
+    asymp_extraprec = magz
+
+    # Asymptotic series is in terms of 3F1
+    can_use_asymptotic = (not kwargs.get('force_series')) and \
+        (ctx.mag(absz) > 7) and \
+        (ctx.sqrt(absz) > 1.5*orig) and \
+        ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [a1-a2+1],
+            1/absz, orig+40+asymp_extraprec)
+
+    # TODO: much of the following could be shared with 2F3 instead of
+    # copypasted
+    if can_use_asymptotic:
+        #print "using asymp"
+        try:
+            ctx.prec += asymp_extraprec
+            # http://functions.wolfram.com/HypergeometricFunctions/
+            # Hypergeometric2F2/06/02/02/0002/
+            def h(a1,a2,b1,b2):
+                X = a1+a2-b1-b2
+                A2 = a1+a2
+                B2 = b1+b2
+                c = {}
+                c[0] = ctx.one
+                c[1] = (A2-1)*X+b1*b2-a1*a2
+                s1 = 0
+                k = 0
+                tprev = 0
+                while 1:
+                    if k not in c:
+                        uu1 = 1-B2+2*a1+a1**2+2*a2+a2**2-A2*B2+a1*a2+b1*b2+(2*B2-3*(A2+1))*k+2*k**2
+                        uu2 = (k-A2+b1-1)*(k-A2+b2-1)*(k-X-2)
+                        c[k] = ctx.one/k * (uu1*c[k-1]-uu2*c[k-2])
+                    t1 = c[k] * z**(-k)
+                    if abs(t1) < 0.1*ctx.eps:
+                        #print "Convergence :)"
+                        break
+                    # Quit if the series doesn't converge quickly enough
+                    if k > 5 and abs(tprev) / abs(t1) < 1.5:
+                        #print "No convergence :("
+                        raise NoConvergence
+                    s1 += t1
+                    tprev = t1
+                    k += 1
+                S = ctx.exp(z)*s1
+                T1 = [z,S], [X,1], [b1,b2],[a1,a2],[],[],0
+                T2 = [-z],[-a1],[b1,b2,a2-a1],[a2,b1-a1,b2-a1],[a1,a1-b1+1,a1-b2+1],[a1-a2+1],-1/z
+                T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
+                return T1, T2, T3
+            v = hypercomb(h, [a1,a2,b1,b2])
+            if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
+                v = ctx.re(v)
+            return v
+        except NoConvergence:
+            pass
+        finally:
+            ctx.prec = orig
+
+    #print "not using asymp"
+    return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r, b1f+b2f, b1c+b2c, z)
+
+
+
+
 @defun
 def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
     a1r, a1f, a1c, a1 = ctx._hyp_parse_param(a1)
@@ -1114,7 +1193,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
     orig = ctx.prec
 
     # Asymptotic expansion is ~ exp(sqrt(z))
-    asymp_extraprec = magz//2
+    asymp_extraprec = z and magz//2
 
     # Asymptotic series is in terms of 3F0
     can_use_asymptotic = (not kwargs.get('force_series')) and \
@@ -1202,7 +1281,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
     magz = ctx.mag(z)
 
     # Asymptotic expansion is ~ exp(sqrt(z))
-    asymp_extraprec = magz//2
+    asymp_extraprec = z and magz//2
     orig = ctx.prec
 
     # Asymptotic series is in terms of 4F1
@@ -1480,7 +1559,7 @@ def ei(ctx, z):
         elif z.imag < 0:
             r -= ctx.j*ctx.pi
         return r
-    v = z*hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1]],[],[],z) + ctx.euler
+    v = z*hyp2f2(1,1,2,2,z) + ctx.euler
     if z.imag:
         v += (ctx.ln(z)-ctx.ln(1/z))/2
     else:
@@ -1537,14 +1616,19 @@ def li(ctx, z):
 def chi(ctx, z):
     if not z:
         return ctx.ninf
+    if z == ctx.inf or z == ctx.ninf:
+        return ctx.inf
     z2 = (z/2)**2
-    return ctx.euler + ctx.ln(z) + \
-        z2*ctx.hypsum([[1,1],[1,1]],[],[],[[2,1],[2,1],[3,2]],[],[],z2)
+    return ctx.euler + ctx.ln(z) + z2*ctx.hyp2f3(1,1,2,2,(3,2),z2)
 
 @defun_wrapped
 def shi(ctx, z):
+    if z == ctx.inf:
+        return z
+    if z == ctx.ninf:
+        return z
     z2 = (z/2)**2
-    return z*ctx.hypsum([[1,2]],[],[],[[3,2],[3,2]],[],[],z2)
+    return z*ctx.hyp1f2((1,2),(3,2),(3,2),z2)
 
 @defun_wrapped
 def fresnels(ctx, z):
