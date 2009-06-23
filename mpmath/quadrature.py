@@ -214,7 +214,7 @@ class QuadratureRule(object):
             # by having 0 as an endpoint.
             if (a, b) == (ctx.ninf, ctx.inf):
                 _f = f
-                f = lambda x: _f(ctx._NEG(x)) + _f(x)
+                f = lambda x: _f(ctx.fneg(x,exact=True)) + _f(x)
                 a, b = (ctx.zero, ctx.inf)
             results = []
             for degree in xrange(1, max_degree+1):
@@ -360,7 +360,7 @@ class TanhSinh(QuadratureRule):
                 break
 
             nodes.append((x, w))
-            nodes.append((ctx._NEG(x), w))
+            nodes.append((ctx.fneg(x,exact=True), w))
 
             a *= udelta
             b *= urdelta
@@ -442,7 +442,7 @@ class GaussLegendre(QuadratureRule):
             if verbose  and j % 30 == 15:
                 print "Computing nodes (%i of %i)" % (j, upto)
             nodes.append((x, w))
-            nodes.append((ctx._NEG(x), w))
+            nodes.append((ctx.fneg(x,exact=True), w))
         ctx.prec = orig
         return nodes
 
