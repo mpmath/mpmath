@@ -18,7 +18,6 @@ from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign)
 from gammazeta import int_fac
 
-from quadrature import quad, quadgl, quadts
 from matrices import matrix
 from linalg import lu_solve
 
@@ -378,7 +377,7 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
         if integral:
             s += integral
         else:
-            integral, ierr = quad(f, interval, error=True)
+            integral, ierr = mp.quad(f, interval, error=True)
             if verbose:
                 print "Integration error:", ierr
             s += integral
@@ -1165,7 +1164,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
                 rei = radius*exp(j*t)
                 z = x + rei
                 return f(z) / rei**n
-            d = quadts(g, [0, 2*pi])
+            d = mp.quadts(g, [0, 2*pi])
             v = d * factorial(n) / (2*pi)
         else:
             raise ValueError("unknown method: %r" % method)
@@ -1840,8 +1839,8 @@ def fourier(f, interval, N):
     cutoff = eps*10
     for n in xrange(N+1):
         m = 2*n*pi/L
-        an = 2*quadgl(lambda t: f(t)*cos(m*t), interval)/L
-        bn = 2*quadgl(lambda t: f(t)*sin(m*t), interval)/L
+        an = 2*mp.quadgl(lambda t: f(t)*cos(m*t), interval)/L
+        bn = 2*mp.quadgl(lambda t: f(t)*sin(m*t), interval)/L
         if n == 0:
             an /= 2
         if abs(an) < cutoff: an = mpf(0)

@@ -59,7 +59,12 @@ from calculus import odeint
 
 from odes import odefun
 
-from quadrature import quad, quadgl, quadts, quadosc, TanhSinh, GaussLegendre
+from quadrature import TanhSinh, GaussLegendre
+
+quad = mp.quad
+quadgl = mp.quadgl
+quadts = mp.quadts
+quadosc = mp.quadosc
 
 from identification import pslq, identify, findpoly
 

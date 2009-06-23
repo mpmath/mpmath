@@ -5,6 +5,8 @@ operating with them.
 __docformat__ = 'plaintext'
 
 import re
+from string import strip
+from operator import gt, lt
 
 from settings import (MP_BASE, MP_ZERO, MP_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps)
@@ -38,8 +40,7 @@ from libmpi import (
     mpi_mul, mpi_div, mpi_pow_int, mpi_pow
 )
 
-from string import strip
-from operator import gt, lt
+import quadrature
 
 
 new = object.__new__
@@ -88,7 +89,7 @@ class Context(object):
     pass
 
 
-class MultiPrecisionArithmetic(Context):
+class MultiPrecisionArithmetic(Context, quadrature.QuadratureMethods):
     """
     Context for multiprecision arithmetic with a global precision.
     """
@@ -113,6 +114,8 @@ class MultiPrecisionArithmetic(Context):
         ctx.mpi.context = ctx
         # Predefined data
         ctx._create_constants({})
+
+        quadrature.QuadratureMethods.__init__(ctx)
 
     # pi, etc
     _constants = []
@@ -368,6 +371,12 @@ class MultiPrecisionArithmetic(Context):
         raise TypeError("cannot create mpf from " + repr(x))
 
     mpmathify = convert
+
+    # Exact negation
+    # XXX: replace with a proper fneg method, allowing full control over prec
+    @staticmethod
+    def _NEG(x):
+        return make_mpf(mpf_neg(x._mpf_))
 
     def isnan(ctx, x):
         """
@@ -1710,7 +1719,6 @@ def AS_POINTS(x):
         return [x.a, x.b]
     return x
 
-
 def def_mp_builtin(name, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
     """
     Given a low-level mpf_ function, and optionally similar functions
@@ -1847,6 +1855,7 @@ mpi_from_str = mp.mpi_from_str
 # XXX
 mp.absmin = absmin
 mp.absmax = absmax
+mp.AS_POINTS = AS_POINTS
 
 if __name__ == '__main__':
     import doctest
