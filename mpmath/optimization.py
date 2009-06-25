@@ -155,7 +155,7 @@ class Halley:
     1d-solver generating pairs of approximative root and error.
 
     Needs a starting point x0 close to the root.
-    Uses Halley's method with cubic convergance rate.
+    Uses Halley's method with cubic convergence rate.
 
     Pro:
 
@@ -254,7 +254,7 @@ class Muller:
         fx2 = f(x2)
         while True:
             # TODO: maybe refactoring with function for divided differences
-            # calculate divided diffferences
+            # calculate divided differences
             fx2x1 = (fx1 - fx2) / (x1 - x2)
             fx2x0 = (fx0 - fx2) / (x0 - x2)
             fx1x0 = (fx0 - fx1) / (x0 - x1)
@@ -346,7 +346,7 @@ class Illinois:
     """
     1d-solver generating pairs of approximative root and error.
 
-    Uses Illinois method or similair to find a root of f in [a, b].
+    Uses Illinois method or similar to find a root of f in [a, b].
     Might fail for multiple roots (needs sign change).
     Combines bisect with secant (improved regula falsi).
 
@@ -602,7 +602,7 @@ class MDNewton:
     keyword 'J'. Otherwise it will be calculated numerically.
 
     Please note that this method converges only locally. Especially for high-
-    dimensional systems it is not trvial to find a good starting point being
+    dimensional systems it is not trivial to find a good starting point being
     close enough to the root.
 
     It is recommended to use a faster, low-precision solver from SciPy [1] or
@@ -764,7 +764,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     Finally, a useful application is to compute inverse functions, such as the
     Lambert W function which is the inverse of `w e^w`, given the first
     term of the solution's asymptotic expansion as the initial value. In basic
-    cases, this gives identical results to mpmath's builtin ``lambertw``
+    cases, this gives identical results to mpmath's built-in ``lambertw``
     function::
 
         >>> def lambert(x):
