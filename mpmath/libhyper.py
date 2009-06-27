@@ -652,31 +652,37 @@ def mpc_si(z, prec, rnd=round_fast):
 # is very small
 
 def mpf_besseljn(n, x, prec, rounding=round_fast):
+    prec += 50
     negate = n < 0 and n & 1
+    mag = x[2]+x[3]
     n = abs(n)
-    origprec = prec
-    prec += 20 + n*bitcount(n)
-    x = to_fixed(x, prec)
-    x2 = (x**2) >> prec
+    wp = prec + 20 + n*bitcount(n)
+    if mag < 0:
+        wp -= n * mag
+    x = to_fixed(x, wp)
+    x2 = (x**2) >> wp
     if not n:
-        s = t = MP_ONE << prec
+        s = t = MP_ONE << wp
     else:
-        s = t = (x**n // int_fac(n)) >> ((n-1)*prec + n)
+        s = t = (x**n // int_fac(n)) >> ((n-1)*wp + n)
     k = 1
     while t:
-        t = ((t * x2) // (-4*k*(k+n))) >> prec
+        t = ((t * x2) // (-4*k*(k+n))) >> wp
         s += t
         k += 1
     if negate:
         s = -s
-    return from_man_exp(s, -prec, origprec, rounding)
+    return from_man_exp(s, -wp, prec, rounding)
 
 def mpc_besseljn(n, z, prec, rounding=round_fast):
     negate = n < 0 and n & 1
     n = abs(n)
     origprec = prec
     zre, zim = z
-    prec += 20 + n*bitcount(n)
+    mag = max(zre[2]+zre[3], zim[2]+zim[3])
+    prec += 20 + n*bitcount(n) + abs(mag)
+    if mag < 0:
+        prec -= n * mag
     zre = to_fixed(zre, prec)
     zim = to_fixed(zim, prec)
     z2re = (zre**2 - zim**2) >> prec

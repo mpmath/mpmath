@@ -1037,35 +1037,54 @@ def hypercomb(ctx, function, params=[], **kwargs):
             orig2 = ctx.prec
             params = orig_params[:]
             terms = function(*params)
+            perturb = False
             recompute = False
             for term in terms:
                 w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term
                 extraprec = 0
                 try:
-                    for data in alpha_s, beta_s, b_s:#, w_s ?:
+                    # Avoid division by zero in leading factors (TODO:
+                    # also check for near division by zero?)
+                    for k, w in enumerate(w_s):
+                        if not w:
+                            if ctx.re(c_s[k]) <= 0:
+                                perturb = recompute = True
+                                raise StopIteration
+                    # Check for gamma and series poles and near-poles
+                    for data in alpha_s, beta_s, b_s:
                         for i, x in enumerate(data):
                             n, d = dist(x)
                             # Poles
                             if n > 0:
                                 continue
                             if d < -orig:
-                                h = ldexp(1,-orig-10)
-                                recompute = True
-                                ctx.prec = (orig2+10)*2
-                                for k in range(len(params)):
-                                    params[k] += h
-                                    # Heuristically ensure that the perturbations
-                                    # are "independent" so that two perturbations
-                                    # don't accidentally cancel each other out
-                                    # in a subtraction.
-                                    h += h/(k+1)
-                                recompute = True
+                                perturb = recompute = True
                                 raise StopIteration
                             elif d < -4:
                                 ctx.prec += (-d)
                                 recompute = True
                 except StopIteration:
                     pass
+            if perturb:
+                """
+                # Should check for poles far from 0 and ensure that
+                # the summation includes those terms
+                minterms = 0
+                for term in terms:
+                    for b in term[-2]:
+                        n, d = dist(b)
+                        if d < -4 and n <= 0:
+                            minterms = max(minterms, -n)
+                """
+                h = ctx.ldexp(1,-orig-10)
+                ctx.prec = (orig2+10)*2
+                for k in range(len(params)):
+                    params[k] += h
+                    # Heuristically ensure that the perturbations
+                    # are "independent" so that two perturbations
+                    # don't accidentally cancel each other out
+                    # in a subtraction.
+                    h += h/(k+1)
             if recompute:
                 terms = function(*params)
             evaluated_terms = []
@@ -1723,23 +1742,6 @@ def chebyt(ctx, n, x):
 def chebyu(ctx, n, x):
     return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2)
 
-@defun_wrapped
-def _besselj(ctx, v, x):
-    hx = x/2
-    return hx**v * ctx.hyp0f1(v+1, -hx**2) / ctx.factorial(v)
-
-@defun
-def besselj(ctx, v, x):
-    if ctx.isint(v):
-        x = ctx.convert(x)
-        v = int(v)
-        prec, rounding = ctx._prec_rounding
-        if hasattr(x, '_mpf_'):
-            return ctx.make_mpf(libhyper.mpf_besseljn(v, x._mpf_, prec, rounding))
-        if hasattr(x, '_mpc_'):
-            return ctx.make_mpc(libhyper.mpc_besseljn(v, x._mpc_, prec, rounding))
-    return ctx._besselj(v, x)
-
 @defun
 def j0(ctx, x):
     """Computes the Bessel function `J_0(x)`. See :func:`besselj`."""
@@ -1750,34 +1752,167 @@ def j1(ctx, x):
     """Computes the Bessel function `J_1(x)`.  See :func:`besselj`."""
     return ctx.besselj(1, x)
 
+@defun
+def besselj(ctx, n, z, derivative=0):
+    if type(n) is int:
+        n_isint = True
+    else:
+        n = ctx.convert(n)
+        n_isint = ctx.isint(n)
+        if n_isint:
+            n = int(n)
+    if n_isint and n < 0:
+        return (-1)**n * ctx.besselj(-n, z, derivative)
+    z = ctx.convert(z)
+    M = ctx.mag(z)
+    if derivative:
+        d = ctx.convert(derivative)
+        # TODO: the integer special-casing shouldn't be necessary.
+        # However, the hypergeometric series gets inaccurate for large d
+        # because of inaccurate pole cancellation at a pole far from
+        # zero (needs to be fixed in hypercomb or hypsum)
+        if ctx.isint(d) and d >= 0:
+            d = int(d)
+            orig = ctx.prec
+            try:
+                ctx.prec += 15
+                v = ctx.fsum((-1)**k * ctx.binomial(d,k) * ctx.besselj(2*k+n-d,z)
+                    for k in range(d+1))
+            finally:
+                ctx.prec = orig
+            v *= ctx.mpf(2)**(-d)
+        else:
+            def h(n,d):
+                r = ctx.fmul(ctx.fmul(z, z, prec=ctx.prec+M), -0.25, exact=True)
+                B = [0.5*(n-d+1), 0.5*(n-d+2), n+1]
+                T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[n+1],B,[(n+1)*0.5,(n+2)*0.5],B,r)]
+                return T
+            v = ctx.hypercomb(h, [n,d])
+    # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
+    elif (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
+        prec, rounding = ctx._prec_rounding
+        if hasattr(z, '_mpf_'):
+            v = ctx.make_mpf(libhyper.mpf_besseljn(n, z._mpf_, prec, rounding))
+        elif hasattr(z, '_mpc_'):
+            v = ctx.make_mpc(libhyper.mpc_besseljn(n, z._mpc_, prec, rounding))
+        else:
+            raise TypeError
+    elif not z:
+        if not n:
+            v = ctx.one + n+z
+        elif ctx.re(n) > 0:
+            v = n*z
+        else:
+            v = ctx.inf + z + n
+    else:
+        v = 0
+        orig = ctx.prec
+        try:
+            # XXX: workaround for accuracy in low level hypergeometric series
+            # when alternating, large arguments
+            ctx.prec += min(3*abs(M), ctx.prec)
+            w = ctx.fmul(z, 0.5, exact=True)
+            def h(n):
+                r = ctx.fneg(ctx.fmul(w, w, prec=ctx.prec+M), exact=True)
+                return [([w], [n], [], [n+1], [], [n+1], r)]
+            v = ctx.hypercomb(h, [n])
+        finally:
+            ctx.prec = orig
+        v = +v
+    return v
+
+@defun
+def besseli(ctx, n, z, derivative=0):
+    n = ctx.convert(n)
+    z = ctx.convert(z)
+    if not z:
+        if derivative:
+            raise ValueError
+        if not n:
+            # I(0,0) = 1
+            return 1+n+z
+        if ctx.isint(n):
+            return 0*(n+z)
+        r = ctx.re(n)
+        if r == 0:
+            return ctx.nan*(n+z)
+        elif r > 0:
+            return 0*(n+z)
+        else:
+            return ctx.inf+(n+z)
+    M = ctx.mag(z)
+    if derivative:
+        d = ctx.convert(derivative)
+        def h(n,d):
+            r = ctx.fmul(ctx.fmul(z, z, prec=ctx.prec+M), 0.25, exact=True)
+            B = [0.5*(n-d+1), 0.5*(n-d+2), n+1]
+            T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[n+1],B,[(n+1)*0.5,(n+2)*0.5],B,r)]
+            return T
+        v = ctx.hypercomb(h, [n,d])
+    else:
+        def h(n):
+            w = ctx.fmul(z, 0.5, exact=True)
+            r = ctx.fmul(w, w, prec=ctx.prec+M)
+            return [([w], [n], [], [n+1], [], [n+1], r)]
+        v = ctx.hypercomb(h, [n])
+    return v
+
 @defun_wrapped
-def bessely(ctx, n, x):
+def bessely(ctx, n, z, derivative=0):
+    if not z:
+        if derivative:
+            # Not implemented
+            raise ValueError
+        if not n:
+            # ~ log(z/2)
+            return -ctx.inf + (n+z)
+        if ctx.im(n):
+            return nan * (n+z)
+        r = ctx.re(n)
+        q = n+0.5
+        if ctx.isint(q):
+            if n > 0:
+                return -ctx.inf + (n+z)
+            else:
+                return 0 * (n+z)
+        if r < 0 and int(ctx.floor(q)) % 2:
+            return ctx.inf + (n+z)
+        else:
+            return ctx.ninf + (n+z)
+    ctx.prec += 10
     m, d = ctx.nint_distance(n)
     if d < -ctx.prec:
         h = +ctx.eps
         ctx.prec *= 2
         n += h
-    elif d < -4:
+    elif d < 0:
         ctx.prec -= d
-    return (ctx.besselj(n,x)*ctx.cospi(n) - ctx.besselj(-n,x))/ctx.sinpi(n)
+    # TODO: avoid cancellation for imaginary arguments
+    return (ctx.besselj(n,z,derivative)*ctx.cospi(n) - \
+        ctx.besselj(-n,z,derivative))/ctx.sinpi(n)
 
 @defun_wrapped
-def besseli(ctx,n,x):
-    if ctx.isint(n):
-        n = abs(int(n))
-    hx = x/2
-    return hx**n * ctx.hyp0f1(n+1, hx**2) / ctx.factorial(n)
-
-@defun_wrapped
-def besselk(ctx, n, x):
-    m, d = ctx.nint_distance(n)
-    if d < -ctx.prec:
-        h = +ctx.eps
-        ctx.prec *= 2
-        n += h
-    elif d < -4:
-        ctx.prec -= d
-    return ctx.pi*(ctx.besseli(-n,x)-ctx.besseli(n,x))/(2*ctx.sinpi(n))
+def besselk(ctx, n, z):
+    if not z:
+        return ctx.inf
+    M = ctx.mag(z)
+    if M < 1:
+        # Represent as limit definition
+        def h(n):
+            r = (z/2)**2
+            T1 = [z, 2], [-n, n-1], [n], [], [], [1-n], r
+            T2 = [z, 2], [n, -n-1], [-n], [], [], [1+n], r
+            return T1, T2
+    # We could use the limit definition always, but it leads
+    # to very bad cancellation (of exponentially large terms)
+    # for large real z
+    # Instead represent in terms of 2F0
+    else:
+        ctx.prec += M
+        def h(n):
+            return [([pi/2, z, exp(-z)], [0.5,-0.5,1], [], [], \
+                [n+0.5, 0.5-n], [], -1/(2*z))]
+    return ctx.hypercomb(h, [n], check_cancellation=True)
 
 @defun_wrapped
 def hankel1(ctx,n,x):

@@ -20,17 +20,32 @@ def test_bessel():
     assert besselj(3,3+2j).ae(0.424718794929639595942 + 0.625665327745785804812j)
     assert besselj(0.25,4).ae(-0.374760630804249715)
     assert besselj(1+2j,3+4j).ae(0.319247428741872131 - 0.669557748880365678j)
+    assert (besselj(3, 10**10) * 10**5).ae(0.76765081748139204023)
+    assert bessely(-0.5, 0) == 0
+    assert bessely(0.5, 0) == -inf
+    assert bessely(1.5, 0) == -inf
     assert bessely(0,0) == -inf
-    assert bessely(1,0) == -inf
-    assert bessely(2,0) == -inf
-    assert bessely(-1,0) == +inf
-    assert bessely(-2,0) == -inf
+    assert bessely(-0.4, 0) == -inf
+    assert bessely(-0.6, 0) == inf
+    assert bessely(-1, 0) == inf
+    assert bessely(-1.4, 0) == inf
+    assert bessely(-1.6, 0) == -inf
+    assert bessely(-1, 0) == inf
+    assert bessely(-2, 0) == -inf
+    assert bessely(-3, 0) == inf
+    assert bessely(0.5, 0) == -inf
+    assert bessely(1, 0) == -inf
+    assert bessely(1.5, 0) == -inf
+    assert bessely(2, 0) == -inf
+    assert bessely(2.5, 0) == -inf
+    assert bessely(3, 0) == -inf
     assert bessely(0,0.5).ae(-0.44451873350670655715)
     assert bessely(1,0.5).ae(-1.4714723926702430692)
     assert bessely(-1,0.5).ae(1.4714723926702430692)
     assert bessely(3.5,0.5).ae(-138.86400867242488443)
     assert bessely(0,3+4j).ae(4.6047596915010138655-8.8110771408232264208j)
     assert bessely(0,j).ae(-0.26803248203398854876+1.26606587775200833560j)
+    assert (bessely(3, 10**10) * 10**5).ae(0.21755917537013204058)
     assert besseli(0,0) == 1
     assert besseli(1,0) == 0
     assert besseli(2,0) == 0
@@ -42,6 +57,7 @@ def test_bessel():
     assert besseli(3.5,0.5).ae(0.00068103597085793815863)
     assert besseli(0,3+4j).ae(-3.3924877882755196097-1.3239458916287264815j)
     assert besseli(0,j).ae(besselj(0,1))
+    assert (besseli(3, 10**10) * mpf(10)**(-4342944813)).ae(4.2996028505491271875)
     assert besselk(0,0) == inf
     assert besselk(1,0) == inf
     assert besselk(2,0) == inf
@@ -53,6 +69,7 @@ def test_bessel():
     assert besselk(3.5,0.5).ae(207.48418747548460607)
     assert besselk(0,3+4j).ae(-0.007239051213570155013+0.026510418350267677215j)
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
+    assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
 
 def test_hankel():
     mp.dps = 15

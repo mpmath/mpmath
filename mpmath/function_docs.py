@@ -4030,7 +4030,7 @@ function `w(x) = \sqrt{1-x^2}`::
 """
 
 besselj = r"""
-``besselj(n,x)`` computes the Bessel function of the first kind
+``besselj(n, x, derivative=0)`` gives the Bessel function of the first kind
 `J_n(x)`. Bessel functions of the first kind are defined as
 solutions of the differential equation
 
@@ -4054,6 +4054,14 @@ function `\,_0F_1`:
     J_n(x) = \frac{x^n}{2^n \Gamma(n+1)}
              \,_0F_1\left(n+1,-\frac{x^2}{4}\right)
 
+With *derivative* = `m \ne 0`, the `m`-th derivative
+
+.. math ::
+
+    \frac{d^m}{dx^m} J_n(x)
+
+is computed.
+
 **Examples**
 
 Evaluation is supported for arbitrary arguments, and at
@@ -4073,6 +4081,18 @@ arbitrary precision::
     >>> mp.dps = 50
     >>> print besselj(1, pi)
     0.28461534317975275734531059968613140570981118184947
+
+Arguments may be large::
+
+    >>> mp.dps = 25
+    >>> print besselj(0, 10000)
+    -0.007096160353388801477265164
+    >>> print besselj(0, 10**10)
+    0.000002175591750246891726859055
+    >>> print besselj(2, 10**100)
+    7.337048736538615712436929e-51
+    >>> print besselj(2, 10**5*j)
+    (-3.540725411970948860173735e+43426 + 4.4949812409615803110051e-43433j)
 
 The Bessel functions of the first kind satisfy simple
 symmetries around `x = 0`::
@@ -4110,39 +4130,40 @@ trigonometric function::
     >>> print besselj(-0.5, x), sqrt(2/(pi*x))*cos(x)
     -0.211708866331398 -0.211708866331398
 
-"""
+Derivatives of any order can be computed (negative orders
+correspond to integration)::
 
-bessely = r"""
-``bessely(n,x)`` computes the Bessel function of the second kind,
-
-.. math ::
-
-    Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}.
-
-For `n` an integer, this formula should be understood as a
-limit.
-
-**Examples**
-
-Some values of `Y_n(x)`::
-
-    >>> from mpmath import *
     >>> mp.dps = 25
-    >>> print bessely(0,0), bessely(1,0), bessely(2,0)
-    -inf -inf -inf
-    >>> print bessely(1, pi)
-    0.3588729167767189594679827
-    >>> print bessely(0.5, 3+4j)
-    (9.242861436961450520325216 - 3.085042824915332562522402j)
+    >>> print besselj(0, 7.5, 1)
+    -0.1352484275797055051822405
+    >>> print diff(lambda x: besselj(0,x), 7.5)
+    -0.1352484275797055051822405
+    >>> print besselj(0, 7.5, 10)
+    -0.1377811164763244890135677
+    >>> print diff(lambda x: besselj(0,x), 7.5, 10)
+    -0.1377811164763244890135677
+    >>> print besselj(0,7.5,-1) - besselj(0,3.5,-1)
+    -0.1241343240399987693521378
+    >>> print quad(j0, [3.5, 7.5])
+    -0.1241343240399987693521378
+
 """
 
 besseli = r"""
-``besseli(n,x)`` computes the modified Bessel function of the first
-kind,
+``besseli(n, x, derivative=0)`` gives the modified Bessel function of the
+first kind,
 
 .. math ::
 
-    I_n(x) = i^{-n} J_n(ix)
+    I_n(x) = i^{-n} J_n(ix).
+
+With *derivative* = `m \ne 0`, the `m`-th derivative
+
+.. math ::
+
+    \frac{d^m}{dx^m} I_n(x)
+
+is computed.
 
 **Examples**
 
@@ -4159,6 +4180,15 @@ Some values of `I_n(x)`::
     >>> print besseli(3.5, 2+3j)
     (-0.2904369752642538144289025 - 0.4469098397654815837307006j)
 
+Arguments may be large::
+
+    >>> print besseli(2, 1000)
+    2.480717210191852440616782e+432
+    >>> print besseli(2, 10**10)
+    4.299602851624027900335391e+4342944813
+    >>> print besseli(2, 6000+10000j)
+    (-2.114650753239580827144204e+2603 + 4.385040221241629041351886e+2602j)
+
 For integers `n`, the following integral representation holds::
 
     >>> mp.dps = 15
@@ -4169,10 +4199,87 @@ For integers `n`, the following integral representation holds::
     >>> print besseli(n,x)
     0.349223221159309
 
+Derivatives and antiderivatives of any order can be computed::
+
+    >>> mp.dps = 25
+    >>> print besseli(2, 7.5, 1)
+    195.8229038931399062565883
+    >>> print diff(lambda x: besseli(2,x), 7.5)
+    195.8229038931399062565883
+    >>> print besseli(2, 7.5, 10)
+    153.3296508971734525525176
+    >>> print diff(lambda x: besseli(2,x), 7.5, 10)
+    153.3296508971734525525176
+    >>> print besseli(2,7.5,-1) - besseli(2,3.5,-1)
+    202.5043900051930141956876
+    >>> print quad(lambda x: besseli(2,x), [3.5, 7.5])
+    202.5043900051930141956876
+
+"""
+
+bessely = r"""
+``bessely(n, x, derivative=0)`` gives the Bessel function of the second kind,
+
+.. math ::
+
+    Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}.
+
+For `n` an integer, this formula should be understood as a
+limit. With *derivative* = `m \ne 0`, the `m`-th derivative
+
+.. math ::
+
+    \frac{d^m}{dx^m} Y_n(x)
+
+is computed.
+
+**Examples**
+
+Some values of `Y_n(x)`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> print bessely(0,0), bessely(1,0), bessely(2,0)
+    -inf -inf -inf
+    >>> print bessely(1, pi)
+    0.3588729167767189594679827
+    >>> print bessely(0.5, 3+4j)
+    (9.242861436961450520325216 - 3.085042824915332562522402j)
+
+Arguments may be large::
+
+    >>> print bessely(0, 10000)
+    0.00364780555898660588668872
+    >>> print bessely(2.5, 10**50)
+    -4.8952500412050989295774e-26
+    >>> print bessely(2.5, -10**50)
+    (0.0 + 4.8952500412050989295774e-26j)
+
+Derivatives and antiderivatives of any order can be computed::
+
+    >>> print bessely(2, 3.5, 1)
+    0.3842618820422660066089231
+    >>> print diff(lambda x: bessely(2, x), 3.5)
+    0.3842618820422660066089231
+    >>> print bessely(0.5, 3.5, 1)
+    -0.2066598304156764337900417
+    >>> print diff(lambda x: bessely(0.5, x), 3.5)
+    -0.2066598304156764337900417
+    >>> print diff(lambda x: bessely(2, x), 0.5, 10)
+    -208173867409.5547350101511
+    >>> print bessely(2, 0.5, 10)
+    -208173867409.5547350101511
+    >>> print bessely(2, 100.5, 100)
+    0.02668487547301372334849043
+    >>> print quad(lambda x: bessely(2,x), [1,3])
+    -1.377046859093181969213262
+    >>> print bessely(2,3,-1) - bessely(2,1,-1)
+    -1.377046859093181969213262
+
 """
 
 besselk = r"""
-``besselk(n,x)`` computes the modified Bessel function of the
+``besselk(n, x)`` gives the modified Bessel function of the
 second kind,
 
 .. math ::
@@ -4184,18 +4291,49 @@ limit.
 
 **Examples**
 
-Some values and limits of `K_n(x)`::
+Evaluation is supported for arbitrary complex arguments::
 
     >>> from mpmath import *
     >>> mp.dps = 25
+    >>> print besselk(0,1)
+    0.4210244382407083333356274
+    >>> print besselk(0, -1)
+    (0.4210244382407083333356274 - 3.97746326050642263725661j)
+    >>> print besselk(3.5, 2+3j)
+    (-0.02090732889633760668464128 + 0.2464022641351420167819697j)
+    >>> print besselk(2+3j, 0.5)
+    (0.9615816021726349402626083 + 0.1918250181801757416908224j)
+
+Arguments may be large::
+
+    >>> print besselk(0, 100)
+    4.656628229175902018939005e-45
+    >>> print besselk(1, 10**6)
+    4.131967049321725588398296e-434298
+    >>> print besselk(1, 10**6*j)
+    (0.001140348428252385844876706 - 0.0005200017201681152909000961j)
+    >>> print besselk(4.5, fmul(10**50, j, exact=True))
+    (1.561034538142413947789221e-26 + 1.243554598118700063281496e-25j)
+
+The point `x = 0` is a singularity (logarithmic if `n = 0`)::
+
     >>> print besselk(0,0)
     +inf
     >>> print besselk(1,0)
     +inf
-    >>> print besselk(0,1)
-    0.4210244382407083333356274
-    >>> print besselk(3.5, 2+3j)
-    (-0.02090732889633760668464128 + 0.2464022641351420167819697j)
+    >>> for n in range(-4, 5):
+    ...     print besselk(n, '1e-1000')
+    ...
+    4.8e+4001
+    8.0e+3000
+    2.0e+2000
+    1.0e+1000
+    2302.701024509704096466802
+    1.0e+1000
+    2.0e+2000
+    8.0e+3000
+    4.8e+4001
+
 """
 
 hankel1 = r"""
