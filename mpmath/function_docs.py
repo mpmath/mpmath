@@ -4147,6 +4147,16 @@ correspond to integration)::
     >>> print quad(j0, [3.5, 7.5])
     -0.1241343240399987693521378
 
+Differentiation with a noninteger order gives the fractional derivative
+in the sense of the Riemann-Liouville differintegral, as computed by
+:func:`differint`::
+
+    >>> mp.dps = 15
+    >>> print besselj(1, 3.5, 0.75)
+    -0.385977722939384
+    >>> print differint(lambda x: besselj(1, x), 3.5, 0.75)
+    -0.385977722939384
+
 """
 
 besseli = r"""

@@ -52,7 +52,7 @@ from functions import (
 from elliptic import jtheta, djtheta, jsn, jcn, jdn
 
 from calculus import richardson, shanks, nsum, nprod
-from calculus import diff, diffun, diffs, taylor, pade
+from calculus import diff, diffun, diffs, differint, taylor, pade
 from calculus import polyval, polyroots
 from calculus import fourier, fourierval
 from calculus import sumem, chebyfit, limit
