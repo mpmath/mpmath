@@ -24,7 +24,7 @@ from functions import (
     asec, acsc, acot, asech, acsch, acoth,
     cospi, sinpi, sinc, sincpi,
     fabs, re, im, conj, floor, ceil,
-    nthroot, hypot, modf,
+    root, nthroot, hypot, modf,
     ldexp, frexp, sign, arg,
     degrees, radians, atan2,
     fib, fibonacci,
@@ -46,7 +46,8 @@ from functions import (
     loggamma, siegeltheta, siegelz, grampoint,
     zetazero, riemannr, primepi, primepi2, primezeta,
     bell, polyexp,
-    expm1
+    expm1, powm1,
+    unitroots, cyclotomic
 )
 
 from elliptic import jtheta, djtheta, jsn, jcn, jdn

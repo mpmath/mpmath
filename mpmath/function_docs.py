@@ -1019,31 +1019,249 @@ represented exactly at the present working precision, the
 result will be rounded, not necessarily in the ceiling
 direction."""
 
-nthroot = r"""
-``nthroot(x, n)`` computes the principal `n`-th root of `x`,
-`x^{1/n}`. Here `n` must be an integer, and can be negative
-(`x^{-1/n}` is `1/x^{1/n}`).
 
-For `n = 2` or `n = 3`, using this function is equivalent to
-calling :func:`sqrt` or :func:`cbrt`. In general,
-``nthroot(x, n)`` is defined to compute `\exp(\log(x)/n)`.
+expm1 = r"""
+Computes `e^x - 1`, accurately for small `x`.
 
-:func:`nthroot` is implemented to use Newton's method for small
+Unlike the expression ``exp(x) - 1``, ``expm1(x)`` does not suffer from
+potentially catastrophic cancellation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print exp(1e-10)-1; print expm1(1e-10)
+    1.00000008274037e-10
+    1.00000000005e-10
+    >>> print exp(1e-20)-1; print expm1(1e-20)
+    0.0
+    1.0e-20
+    >>> print 1/(exp(1e-20)-1)
+    Traceback (most recent call last):
+      ...
+    ZeroDivisionError
+    >>> print 1/expm1(1e-20)
+    1.0e+20
+
+Evaluation works for extremely tiny values::
+
+    >>> print expm1(0)
+    0.0
+    >>> print expm1('1e-10000000')
+    1.0e-10000000
+
+"""
+
+powm1 = r"""
+Computes `x^y - 1`, accurately when `x^y` is very close to 1.
+
+This avoids potentially catastrophic cancellation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> print power(0.99999995, 1e-10) - 1
+    0.0
+    >>> print powm1(0.99999995, 1e-10)
+    -5.00000012791934e-18
+
+Powers exactly equal to 1, and only those powers, yield 0 exactly::
+
+    >>> print powm1(-j, 4)
+    (0.0 + 0.0j)
+    >>> print powm1(3, 0)
+    0.0
+    >>> print powm1(fadd(-1, 1e-100, exact=True), 4)
+    -4.0e-100
+
+Evaluation works for extremely tiny `y`::
+
+    >>> print powm1(2, '1e-100000')
+    6.93147180559945e-100001
+    >>> print powm1(j, '1e-1000')
+    (-1.23370055013617e-2000 + 1.5707963267949e-1000j)
+
+"""
+
+root = r"""
+``root(z, n, k=0)`` computes an `n`-th root of `z`, i.e. returns a number
+`r` that (up to possible approximation error) satisfies `r^n = z`.
+(``nthroot`` is available as an alias for ``root``.)
+
+Every complex number `z \ne 0` has `n` distinct `n`-th roots, which are
+equidistant points on a circle with radius `|z|^{1/n}`, centered around the
+origin. A specific root may be selected using the optional index
+`k`. The roots are indexed counterclockwise, starting with `k = 0` for the root
+closest to the positive real half-axis.
+
+The `k = 0` root is the so-called principal `n`-th root, often denoted by
+`\sqrt[n]{z}` or `z^{1/n}`, and also given by `\exp(\log(z) / n)`. If `z` is
+a positive real number, the principal root is just the unique positive
+`n`-th root of `z`. Under some circumstances, non-principal real roots exist:
+for positive real `z`, `n` even, there is a negative root given by `k = n/2`;
+for negative real `z`, `n` odd, there is a negative root given by `k = (n-1)/2`.
+
+To obtain all roots with a simple expression, use
+``[root(z,n,k) for k in range(n)]``.
+
+An important special case, ``root(1, n, k)`` returns the `k`-th `n`-th root of
+unity, `\zeta_k = e^{2 \pi i k / n}`. Alternatively, :func:`unitroots`
+provides a slightly more convenient way to obtain the roots of unity,
+including the option to compute only the primitive roots of unity.
+
+Both `k` and `n` should be integers; `k` outside of ``range(n)`` will be
+reduced modulo `n`. If `n` is negative, `x^{-1/n} = 1/x^{1/n}` (or
+the equivalent reciprocal for a non-principal root with `k \ne 0`) is computed.
+
+:func:`root` is implemented to use Newton's method for small
 `n`. At high precision, this makes `x^{1/n}` not much more
 expensive than the regular exponentiation, `x^n`. For very large
 `n`, :func:`nthroot` falls back to use the exponential function.
 
-:func:`nthroot` is faster and more accurate than raising to a
+**Examples**
+
+:func:`nthroot`/:func:`root` is faster and more accurate than raising to a
 floating-point fraction::
 
     >>> from mpmath import *
     >>> mp.dps = 15
     >>> 16807 ** (mpf(1)/5)
     mpf('7.0000000000000009')
-    >>> nthroot(16807, 5)
+    >>> root(16807, 5)
+    mpf('7.0')
+    >>> nthroot(16807, 5)    # Alias
     mpf('7.0')
 
+A high-precision root::
+
+    >>> mp.dps = 50
+    >>> print nthroot(10, 5)
+    1.584893192461113485202101373391507013269442133825
+    >>> print nthroot(10, 5) ** 5
+    10.0
+
+Computing principal and non-principal square and cube roots::
+
+    >>> mp.dps = 15
+    >>> print root(10, 2)
+    3.16227766016838
+    >>> print root(10, 2, 1)
+    -3.16227766016838
+    >>> print root(-10, 3)
+    (1.07721734501594 + 1.86579517236206j)
+    >>> print root(-10, 3, 1)
+    -2.15443469003188
+    >>> print root(-10, 3, 2)
+    (1.07721734501594 - 1.86579517236206j)
+
+All the 7th roots of a complex number::
+
+    >>> for r in [root(3+4j, 7, k) for k in range(7)]:
+    ...     print r, r**7
+    ...
+    (1.24747270589553 + 0.166227124177353j) (3.0 + 4.0j)
+    (0.647824911301003 + 1.07895435170559j) (3.0 + 4.0j)
+    (-0.439648254723098 + 1.17920694574172j) (3.0 + 4.0j)
+    (-1.19605731775069 + 0.391492658196305j) (3.0 + 4.0j)
+    (-1.05181082538903 - 0.691023585965793j) (3.0 + 4.0j)
+    (-0.115529328478668 - 1.25318497558335j) (3.0 + 4.0j)
+    (0.907748109144957 - 0.871672518271819j) (3.0 + 4.0j)
+
+Cube roots of unity::
+
+    >>> for k in range(3): print root(1, 3, k)
+    ...
+    1.0
+    (-0.5 + 0.866025403784439j)
+    (-0.5 - 0.866025403784439j)
+
+Some exact high order roots::
+
+    >>> print root(75**210, 105)
+    5625.0
+    >>> print root(1, 128, 96)
+    (0.0 - 1.0j)
+    >>> print root(4**128, 128, 96)
+    (0.0 - 4.0j)
+
 """
+
+unitroots = r"""
+``unitroots(n)`` returns `\zeta_0, \zeta_1, \ldots, \zeta_{n-1}`,
+all the distinct `n`-th roots of unity, as a list. If the option
+*primitive=True* is passed, only the primitive roots are returned.
+
+Every `n`-th root of unity satisfies `(\zeta_k)^n = 1`. There are `n` distinct
+roots for each `n` (`\zeta_k` and `\zeta_j` are the same when
+`k = j \pmod n`), which form a regular polygon with vertices on the unit
+circle. They are ordered counterclockwise with increasing `k`, starting
+with `\zeta_0 = 1`.
+
+**Examples**
+
+The roots of unity up to `n = 4`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> nprint(unitroots(1))
+    [1.0]
+    >>> nprint(unitroots(2))
+    [1.0, -1.0]
+    >>> nprint(unitroots(3))
+    [1.0, (-0.5 + 0.866025j), (-0.5 - 0.866025j)]
+    >>> nprint(unitroots(4))
+    [1.0, (0.0 + 1.0j), -1.0, (0.0 - 1.0j)]
+
+Roots of unity form a geometric series that sums to 0::
+
+    >>> mp.dps = 50
+    >>> print chop(fsum(unitroots(25)))
+    0.0
+
+Primitive roots up to `n = 4`::
+
+    >>> mp.dps = 15
+    >>> nprint(unitroots(1, primitive=True))
+    [1.0]
+    >>> nprint(unitroots(2, primitive=True))
+    [-1.0]
+    >>> nprint(unitroots(3, primitive=True))
+    [(-0.5 + 0.866025j), (-0.5 - 0.866025j)]
+    >>> nprint(unitroots(4, primitive=True))
+    [(0.0 + 1.0j), (0.0 - 1.0j)]
+
+There are only four primitive 12th roots::
+
+    >>> nprint(unitroots(12, primitive=True))
+    [(0.866025 + 0.5j), (-0.866025 + 0.5j), (-0.866025 - 0.5j), (0.866025 - 0.5j)]
+
+The `n`-th roots of unity form a group, the cyclic group of order `n`.
+Any primitive root `r` is a generator for this group, meaning that
+`r^0, r^1, \ldots, r^{n-1}` gives the whole set of unit roots (in
+some permuted order)::
+
+    >>> for r in unitroots(6): print r
+    ...
+    1.0
+    (0.5 + 0.866025403784439j)
+    (-0.5 + 0.866025403784439j)
+    -1.0
+    (-0.5 - 0.866025403784439j)
+    (0.5 - 0.866025403784439j)
+    >>> r = unitroots(6, primitive=True)[1]
+    >>> for k in range(6): print chop(r**k)
+    ...
+    1.0
+    (0.5 - 0.866025403784439j)
+    (-0.5 - 0.866025403784439j)
+    -1.0
+    (-0.5 + 0.866025403784438j)
+    (0.5 + 0.866025403784438j)
+
+The number of primitive roots equals the Euler totient function `\phi(n)`::
+
+    >>> [len(unitroots(n, primitive=True)) for n in range(1,20)]
+    [1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18]
+
+"""
+
 
 log = r"""
 Computes the base-`b` logarithm of `x`, `\log_b(x)`. If `b` is
@@ -5546,5 +5764,96 @@ instance of the hypergeometric function `\,_pF_q`::
     4.042192318847986561771779
     >>> print x*hyper([1]*(n+1), [2]*(n+1), x)
     4.042192318847986561771779
+
+"""
+
+cyclotomic = r"""
+Evaluates the cyclotomic polynomial `\Phi_n(x)`, defined by
+
+.. math ::
+
+    \Phi_n(x) = \prod_{\zeta} (x - \zeta)
+
+where `\zeta` ranges over all primitive `n`-th roots of unity
+(see :func:`unitroots`). An equivalent representation, used
+for computation, is
+
+.. math ::
+
+    \Phi_n(x) = \prod_{d\mid n}(x^d-1)^{\mu(n/d)} = \Phi_n(x)
+
+where `\mu(m)` denotes the Moebius function. The cyclotomic
+polynomials are integer polynomials, the first of which can be
+written explicitly as
+
+.. math ::
+
+    \Phi_0(x) = 1
+
+    \Phi_1(x) = x - 1
+
+    \Phi_2(x) = x + 1
+
+    \Phi_3(x) = x^3 + x^2 + 1
+
+    \Phi_4(x) = x^2 + 1
+
+    \Phi_5(x) = x^4 + x^3 + x^2 + x + 1
+
+    \Phi_6(x) = x^2 - x + 1
+
+**Examples**
+
+The coefficients of low-order cyclotomic polynomials can be recovered
+using Taylor expansion::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15
+    >>> for n in range(9):
+    ...     p = chop(taylor(lambda x: cyclotomic(n,x), 0, 10))
+    ...     print n,; nprint(p[:10+1-p[::-1].index(1)])
+    ...
+    0 [1.0]
+    1 [-1.0, 1.0]
+    2 [1.0, 1.0]
+    3 [1.0, 1.0, 1.0]
+    4 [1.0, 0.0, 1.0]
+    5 [1.0, 1.0, 1.0, 1.0, 1.0]
+    6 [1.0, -1.0, 1.0]
+    7 [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    8 [1.0, 0.0, 0.0, 0.0, 1.0]
+
+The definition as a product over primitive roots may be checked
+by computing the product explicitly (for a real argument, this
+method will generally introduce numerical noise in the imaginary
+part)::
+
+    >>> mp.dps = 25
+    >>> z = 3+4j
+    >>> print cyclotomic(10, z)
+    (-419.0 - 360.0j)
+    >>> print fprod(z-r for r in unitroots(10, primitive=True))
+    (-419.0 - 360.0j)
+    >>> z = 3
+    >>> print cyclotomic(10, z)
+    61.0
+    >>> print fprod(z-r for r in unitroots(10, primitive=True))
+    (61.0 - 3.146045605088568607055454e-25j)
+
+Up to permutation, the roots of a given cyclotomic polynomial
+can be checked to agree with the list of primitive roots::
+
+    >>> p = taylor(lambda x: cyclotomic(6,x), 0, 6)[:3]
+    >>> for r in polyroots(p[::-1]):
+    ...     print r
+    ...
+    (0.5 - 0.8660254037844386467637232j)
+    (0.5 + 0.8660254037844386467637232j)
+    >>>
+    >>> for r in unitroots(6, primitive=True):
+    ...     print r
+    ...
+    (0.5 + 0.8660254037844386467637232j)
+    (0.5 - 0.8660254037844386467637232j)
 
 """

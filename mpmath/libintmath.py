@@ -379,3 +379,13 @@ def moebius(n):
             if not sum(p % f for f in factors):
                 factors.append(p)
     return (-1)**len(factors)
+
+def gcd(*args):
+    a = 0
+    for b in args:
+        if a:
+            while b:
+                a, b = b, a % b
+        else:
+            a = b
+    return a

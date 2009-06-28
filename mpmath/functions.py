@@ -173,10 +173,70 @@ def sincpi(ctx, x):
         return x+1
     return ctx.sinpi(x)/(ctx.pi*x)
 
+# TODO: tests; improve implementation
+@defun_wrapped
+def expm1(ctx, x):
+    if not x:
+        return type(x)(0)
+    # exp(x) - 1 ~ x
+    if ctx.mag(x) < -ctx.prec:
+        return x + 0.5*x**2
+    # TODO: accurately eval the smaller of the real/imag parts
+    return sum_accurately(ctx, lambda: iter([ctx.exp(x),-1]),1)
+
+@defun_wrapped
+def powm1(ctx, x, y):
+    mag = ctx.mag
+    one = ctx.one
+    w = x**y - one
+    M = mag(w)
+    # Only moderate cancellation
+    if M > -8:
+        return w
+    # Check for the only possible exact cases
+    if not w:
+        if (not y) or (x in (1, -1, 1j, -1j) and ctx.isint(y)):
+            return w
+    x1 = x - one
+    magy = mag(y)
+    lnx = ctx.ln(x)
+    # Small y: x^y - 1 ~ log(x)*y + O(log(x)^2 * y^2)
+    if magy + mag(lnx) < -ctx.prec:
+        return lnx*y + (lnx*y)**2/2
+    # TODO: accurately eval the smaller of the real/imag part
+    return sum_accurately(ctx, lambda: iter([x**y, -1]), 1)
+
 @defun
-def nthroot(ctx, x, n):
-    x = ctx.convert(x)
+def _rootof1(ctx, k, n):
+    k = int(k)
     n = int(n)
+    k %= n
+    if not k:
+        return ctx.one
+    elif 2*k == n:
+        return -ctx.one
+    elif 4*k == n:
+        return ctx.j
+    elif 4*k == 3*n:
+        return -ctx.j
+    return ctx.exp(2*ctx.pi*k/n*ctx.j)
+
+@defun
+def root(ctx, x, n, k=0):
+    n = int(n)
+    x = ctx.convert(x)
+    if k:
+        # Special case: there is an exact real root
+        if (n & 1 and 2*k == n-1) and (not ctx.im(x)) and (ctx.re(x) < 0):
+            return -ctx.root(-x, n)
+        # Multiply by root of unity
+        prec = ctx.prec
+        try:
+            ctx.prec += 10
+            v = ctx.root(x, n, 0) * ctx._rootof1(k, n)
+        finally:
+            ctx.prec = prec
+        return +v
     if hasattr(x, '_mpf_'):
         try:
             return ctx.make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *ctx._prec_rounding))
@@ -187,6 +247,23 @@ def nthroot(ctx, x, n):
     else:
         x = x._mpc_
     return ctx.make_mpc(libmpc.mpc_nthroot(x, n, *ctx._prec_rounding))
+
+nthroot = MultiPrecisionArithmetic.nthroot = root
+
+@defun
+def unitroots(ctx, n, primitive=False):
+    gcd = libintmath.gcd
+    prec = ctx.prec
+    try:
+        ctx.prec += 10
+        if primitive:
+            v = [ctx._rootof1(k,n) for k in range(n) if gcd(k,n) == 1]
+        else:
+            # TODO: this can be done *much* faster
+            v = [ctx._rootof1(k,n) for k in range(n)]
+    finally:
+        ctx.prec = prec
+    return [+x for x in v]
 
 @defun
 def hypot(ctx, x, y):
@@ -2467,15 +2544,48 @@ def polyexp(ctx, s, z):
     if s == 2: return ctx.exp(z)*z*(z+1)
     return _polyexp(ctx, s, z)
 
-# TODO: tests; improve implementation
 @defun_wrapped
-def expm1(ctx, x):
-    """
-    Accurately computes exp(x)-1.
-    """
-    if not x:
-        return type(x)(1)
-    return sum_accurately(ctx, lambda: iter([ctx.exp(x),-1]),1)
+def cyclotomic(ctx, n, z):
+    n = int(n)
+    assert n >= 0
+    p = ctx.one
+    if n == 0:
+        return p
+    if n == 1:
+        return z - p
+    if n == 2:
+        return z + p
+    # Use divisor product representation. Unfortunately, this sometimes
+    # includes singularities for roots of unity, which we have to cancel out.
+    # Matching zeros/poles pairwise, we have (1-z^a)/(1-z^b) ~ a/b + O(z-1).
+    moebius = libintmath.moebius
+    a_prod = 1
+    b_prod = 1
+    num_zeros = 0
+    num_poles = 0
+    for d in range(1,n+1):
+        if not n % d:
+            w = moebius(n//d)
+            # Use powm1 because it is important that we get 0 only
+            # if it really is exactly 0
+            b = -ctx.powm1(z, d)
+            if b:
+                p *= b**w
+            else:
+                if w == 1:
+                    a_prod *= d
+                    num_zeros += 1
+                elif w == -1:
+                    b_prod *= d
+                    num_poles += 1
+    #print n, num_zeros, num_poles
+    if num_zeros:
+        if num_zeros > num_poles:
+            p *= 0
+        else:
+            p *= a_prod
+            p /= b_prod
+    return p
 
 
 if __name__ == '__main__':
