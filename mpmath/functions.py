@@ -1166,6 +1166,7 @@ def hypercomb(ctx, function, params=[], **kwargs):
                 terms = function(*params)
             evaluated_terms = []
             for w_s, c_s, alpha_s, beta_s, a_s, b_s, z in terms:
+                #print "hypercomb", len(a_s), len(b_s), a_s, b_s, z
                 v = ctx.hyper(a_s, b_s, z, **kwargs)
                 for a in alpha_s: v *= ctx.gamma(a)
                 for b in beta_s: v /= ctx.gamma(b)
@@ -2587,6 +2588,40 @@ def cyclotomic(ctx, n, z):
             p /= b_prod
     return p
 
+@defun
+def meijerg(ctx, a_s, b_s, z, r=1, **kwargs):
+    an, ap = a_s
+    bm, bq = b_s
+    n = len(an)
+    p = n + len(ap)
+    m = len(bm)
+    q = m + len(bq)
+    a = an+ap
+    b = bm+bq
+    a = map(ctx.convert, a)
+    b = map(ctx.convert, b)
+    z = ctx.convert(z)
+    #print "m,n,p,q =", m,n,p,q
+    #assert p<q or (p==q and (m+n > p)) or (p==q and (m+n) == p and abs(z) < 1)
+    def h(*args):
+        a = args[:p]
+        b = args[p:]
+        #assert len(a) == p
+        #assert len(b) == q
+        terms = []
+        for k in range(m):
+            bases = [z]
+            expts = [b[k]/r]
+            gn = [b[j]-b[k] for j in range(m) if j != k]
+            gn += [1-a[j]+b[k] for j in range(n)]
+            gd = [a[j]-b[k] for j in range(n,p)]
+            gd += [1-b[j]+b[k] for j in range(m,q)]
+            hn = [1-a[j]+b[k] for j in range(p)]
+            hd = [1-b[j]+b[k] for j in range(q) if j != k]
+            hz = (-ctx.one)**(p-m-n) * z**(ctx.one/r)
+            terms.append((bases, expts, gn, gd, hn, hd, hz))
+        return terms
+    return ctx.hypercomb(h, a+b, **kwargs)
 
 if __name__ == '__main__':
     #import doctest

@@ -5857,3 +5857,183 @@ can be checked to agree with the list of primitive roots::
     (0.5 - 0.8660254037844386467637232j)
 
 """
+
+meijerg = r"""
+Evaluates the Meijer G-function, defined as
+
+.. math ::
+
+    G^{m,n}_{p,q} \left( \left. \begin{matrix}
+         a_1, \dots, a_n ; a_{n+1} \dots a_p \\
+         b_1, \dots, b_m ; b_{m+1} \dots b_q
+    \end{matrix}\; \right| \; z ; r \right) =
+    \frac{1}{2 \pi i} \int_L
+    \frac{\prod_{j=1}^m \Gamma(b_j+s) \prod_{j=1}^n\Gamma(1-a_j-s)}
+         {\prod_{j=n+1}^{p}\Gamma(a_j+s) \prod_{j=m+1}^q \Gamma(1-b_j-s)}
+         z^{-s/r} ds
+
+for an appropriate choice of the contour `L` (see references).
+
+There are `p` elements `a_j`.
+The argument *a_s* should be a pair of lists, the first containing the
+`n` elements `a_1, \ldots, a_n` and the second containing
+the `p-n` elements `a_{n+1}, \ldots a_p`.
+
+There are `q` elements `b_j`.
+The argument *b_s* should be a pair of lists, the first containing the
+`m` elements `b_1, \ldots, b_m` and the second containing
+the `q-m` elements `b_{m+1}, \ldots b_q`.
+
+The implicit tuple `(m, n, p, q)` constitutes the order or degree of the
+Meijer G-function, and is determined by the lengths of the coefficient
+vectors. Confusingly, the indices in this tuple appear in a different order
+from the coefficients, but this notation is standard. The many examples
+given below should hopefully clear up any potential confusion.
+
+**Algorithm**
+
+The Meijer G-function is evaluated by rewriting it as a combination of `m`
+hypergeometric series each of degree `\,_pF_{q-1}`. Currently,
+evaluation will only work if `\,_pF_{q-1}` can be evaluated via
+:func:`hyper` for the given `z`, i.e. if either `z` is small enough
+for direct convergence or if the hypergeometric function in question is
+implemented with the appropriate analytic continuation / asymptotic
+expansion for large `z`.
+
+Keyword arguments are forwarded to :func:`hypercomb`. If :func:`meijerg`
+fails to return an accurate value, passing ``check_cancellation=True``
+may help.
+
+**Examples**
+
+Many standard functions are special cases of the Meijer G-function
+(possibly rescaled and/or with branch cut corrections). We define
+some test parameters::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25
+    >>> a = mpf(0.75)
+    >>> b = mpf(1.5)
+    >>> z = mpf(2.25)
+
+The exponential function:
+`e^z = G^{1,0}_{0,1} \left( \left. \begin{matrix} - \\ 0 \end{matrix} \;
+\right| \; -z \right)`
+
+    >>> print meijerg([[],[]], [[0],[]], -z)
+    9.487735836358525720550369
+    >>> print exp(z)
+    9.487735836358525720550369
+
+The natural logarithm:
+`\log(1+z) = G^{1,2}_{2,2} \left( \left. \begin{matrix} 1, 1 \\ 1, 0
+\end{matrix} \; \right| \; -z \right)`
+
+    >>> print meijerg([[1,1],[]], [[1],[0]], z)
+    1.178654996341646117219023
+    >>> print log(1+z)
+    1.178654996341646117219023
+
+A rational function:
+`\frac{z}{z+1} = G^{1,2}_{2,2} \left( \left. \begin{matrix} 1, 1 \\ 1, 1
+\end{matrix} \; \right| \; z \right)`
+
+    >>> print meijerg([[1,1],[]], [[1],[1]], z)
+    0.6923076923076923076923077
+    >>> print z/(z+1)
+    0.6923076923076923076923077
+
+The sine and cosine functions:
+
+`\frac{1}{\sqrt \pi} \sin(2 \sqrt z) = G^{1,0}_{0,2} \left( \left. \begin{matrix}
+- \\ \frac{1}{2}, 0 \end{matrix} \; \right| \; z \right)`
+
+`\frac{1}{\sqrt \pi} \cos(2 \sqrt z) = G^{1,0}_{0,2} \left( \left. \begin{matrix}
+- \\ 0, \frac{1}{2} \end{matrix} \; \right| \; z \right)`
+
+    >>> print meijerg([[],[]], [[0.5],[0]], (z/2)**2)
+    0.4389807929218676682296453
+    >>> print sin(z)/sqrt(pi)
+    0.4389807929218676682296453
+    >>> print meijerg([[],[]], [[0],[0.5]], (z/2)**2)
+    -0.3544090145996275423331762
+    >>> print cos(z)/sqrt(pi)
+    -0.3544090145996275423331762
+
+Bessel functions:
+
+`J_a(2 \sqrt z) = G^{1,0}_{0,2} \left( \left.
+\begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
+\end{matrix} \; \right| \; z \right)`
+
+`Y_a(2 \sqrt z) = G^{2,0}_{1,3} \left( \left.
+\begin{matrix} \frac{-a-1}{2} \\ \frac{a}{2}, -\frac{a}{2}, \frac{-a-1}{2}
+\end{matrix} \; \right| \; z \right)`
+
+`(-z)^{a/2} z^{-a/2} I_a(2 \sqrt z) = G^{1,0}_{0,2} \left( \left.
+\begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
+\end{matrix} \; \right| \; -z \right)`
+
+`2 K_a(2 \sqrt z) = G^{2,0}_{0,2} \left( \left.
+\begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
+\end{matrix} \; \right| \; z \right)`
+
+As the example with the Bessel *I* function shows, a branch
+factor is required for some arguments when inverting the square root.
+
+    >>> print meijerg([[],[]], [[a/2],[-a/2]], (z/2)**2)
+    0.5059425789597154858527264
+    >>> print besselj(a,z)
+    0.5059425789597154858527264
+    >>> print meijerg([[],[(-a-1)/2]], [[a/2,-a/2],[(-a-1)/2]], (z/2)**2)
+    0.1853868950066556941442559
+    >>> print bessely(a, z)
+    0.1853868950066556941442559
+    >>> print meijerg([[],[]], [[a/2],[-a/2]], -(z/2)**2)
+    (0.8685913322427653875717476 + 2.096964974460199200551738j)
+    >>> print (-z)**(a/2) / z**(a/2) * besseli(a, z)
+    (0.8685913322427653875717476 + 2.096964974460199200551738j)
+    >>> print 0.5*meijerg([[],[]], [[a/2,-a/2],[]], (z/2)**2)
+    0.09334163695597828403796071
+    >>> print besselk(a,z)
+    0.09334163695597828403796071
+
+Error functions:
+
+`\sqrt{\pi} z^{2(a-1)} \mathrm{erfc}(z) = G^{2,0}_{1,2} \left( \left.
+\begin{matrix} a \\ a-1, a-\frac{1}{2}
+\end{matrix} \; \right| \; z, \frac{1}{2} \right)`
+
+    >>> print meijerg([[],[a]], [[a-1,a-0.5],[]], z, 0.5)
+    0.00172839843123091957468712
+    >>> print sqrt(pi) * z**(2*a-2) * erfc(z)
+    0.00172839843123091957468712
+
+A Meijer G-function of higher degree, (1,1,2,3):
+
+    >>> print meijerg([[a],[b]], [[a],[b,a-1]], z)
+    1.55984467443050210115617
+    >>> print sin((b-a)*pi)/pi*(exp(z)-1)*z**(a-1)
+    1.55984467443050210115617
+
+A Meijer G-function of still higher degree, (4,1,2,4), that can
+be expanded as a messy combination of exponential integrals:
+
+    >>> print meijerg([[a],[2*b-a]], [[b,a,b-0.5,-1-a+2*b],[]], z)
+    0.3323667133658557271898061
+    >>> print chop(4**(a-b+1)*sqrt(pi)*gamma(2*b-2*a)*z**a*\
+    ...     expint(2*b-2*a, -2*sqrt(-z))*expint(2*b-2*a, 2*sqrt(-z)))
+    0.3323667133658557271898061
+
+
+**References**
+
+1. http://en.wikipedia.org/wiki/Meijer_G-function
+
+2. http://mathworld.wolfram.com/MeijerG-Function.html
+
+3. http://functions.wolfram.com/HypergeometricFunctions/MeijerG/
+
+4. http://functions.wolfram.com/HypergeometricFunctions/MeijerG1/
+
+"""
