@@ -98,6 +98,7 @@ class MultiPrecisionArithmetic(Context, quadrature.QuadratureMethods):
         # Settings
         ctx._prec_rounding = [53, round_nearest]
         ctx.trap_complex = False
+        ctx.pretty = False
         ctx.mpf = type('mpf', (_mpf,), {})
         ctx.mpc = type('mpc', (_mpc,), {})
         ctx.mpi = type('mpi', (_mpi,), {})
@@ -1499,7 +1500,11 @@ class _mpf(mpnumeric):
     def __getstate__(self): return to_pickable(self._mpf_)
     def __setstate__(self, val): self._mpf_ = from_pickable(val)
 
-    def __repr__(s): return "mpf('%s')" % to_str(s._mpf_, s.context.repr_digits)
+    def __repr__(s):
+        if s.context.pretty:
+            return str(s)
+        return "mpf('%s')" % to_str(s._mpf_, s.context.repr_digits)
+
     def __str__(s): return to_str(s._mpf_, s.context.str_digits)
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
@@ -1713,6 +1718,8 @@ class _mpc(mpnumeric):
         self._mpc_ = from_pickable(val[0]), from_pickable(val[1])
 
     def __repr__(s):
+        if s.context.pretty:
+            return str(s)
         r = repr(s.real)[4:-1]
         i = repr(s.imag)[4:-1]
         return "%s(real=%s, imag=%s)" % (type(s).__name__, r, i)
@@ -1947,6 +1954,8 @@ class _mpi(mpnumeric):
         return mpi_str(self._mpi_, mp.prec)
 
     def __repr__(self):
+        if self.context.pretty:
+            return str(self)
         return "mpi(%r, %r)" % (self.a, self.b)
 
     def __eq__(self, other):

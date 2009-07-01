@@ -458,14 +458,14 @@ class QuadratureMethods:
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
 
             >>> from mpmath import *
-            >>> mp.dps = 15
-            >>> print quad(sin, [0, pi])
+            >>> mp.dps = 15; mp.pretty = True
+            >>> quad(sin, [0, pi])
             2.0
 
         A basic 2D integral::
 
             >>> f = lambda x, y: cos(x+y/2)
-            >>> print quad(f, [-pi/2, pi/2], [0, pi])
+            >>> quad(f, [-pi/2, pi/2], [0, pi])
             4.0
 
         **Interval format**
@@ -547,9 +547,9 @@ class QuadratureMethods:
         `\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}`::
 
             >>> mp.dps = 15
-            >>> print quad(lambda x: 2/(x**2+1), [0, inf])
+            >>> quad(lambda x: 2/(x**2+1), [0, inf])
             3.14159265358979
-            >>> print quad(lambda x: exp(-x**2), [-inf, inf])**2
+            >>> quad(lambda x: exp(-x**2), [-inf, inf])**2
             3.14159265358979
 
         Integrals can typically be resolved to high precision.
@@ -558,13 +558,13 @@ class QuadratureMethods:
         `-1 \le x \le 1`, `y \ge 0`::
 
             >>> mp.dps = 50
-            >>> print 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
+            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
             3.1415926535897932384626433832795028841971693993751
 
         One can just as well compute 1000 digits (output truncated)::
 
             >>> mp.dps = 1000
-            >>> print 2*quad(lambda x: sqrt(1-x**2), [-1, 1])  #doctest:+ELLIPSIS
+            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])  #doctest:+ELLIPSIS
             3.141592653589793238462643383279502884...216420198
 
         Complex integrals are supported. The following computes
@@ -572,7 +572,7 @@ class QuadratureMethods:
         diamond-shaped path from `1` to `+i` to `-1` to `-i` to `1`::
 
             >>> mp.dps = 15
-            >>> print quad(lambda z: 1/z, [1,j,-1,-j,1])
+            >>> quad(lambda z: 1/z, [1,j,-1,-j,1])
             (0.0 + 6.28318530717959j)
 
         **Examples of 2D and 3D integrals**
@@ -583,26 +583,26 @@ class QuadratureMethods:
 
             >>> mp.dps = 30
             >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
-            >>> print quad(f, [0, 1], [0, 1])
+            >>> quad(f, [0, 1], [0, 1])
             0.577215664901532860606512090082
-            >>> print euler
+            >>> +euler
             0.577215664901532860606512090082
 
             >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
-            >>> print quad(f, [-1, 1], [-1, 1])
+            >>> quad(f, [-1, 1], [-1, 1])
             3.17343648530607134219175646705
-            >>> print 4*log(2+sqrt(3))-2*pi/3
+            >>> 4*log(2+sqrt(3))-2*pi/3
             3.17343648530607134219175646705
 
             >>> f = lambda x, y: 1/(1-x**2 * y**2)
-            >>> print quad(f, [0, 1], [0, 1])
+            >>> quad(f, [0, 1], [0, 1])
             1.23370055013616982735431137498
-            >>> print pi**2 / 8
+            >>> pi**2 / 8
             1.23370055013616982735431137498
 
-            >>> print quad(lambda x, y: 1/(1-x*y), [0, 1], [0, 1])
+            >>> quad(lambda x, y: 1/(1-x*y), [0, 1], [0, 1])
             1.64493406684822643647241516665
-            >>> print pi**2 / 6
+            >>> pi**2 / 6
             1.64493406684822643647241516665
 
         Multiple integrals may be done over infinite ranges::
@@ -619,16 +619,16 @@ class QuadratureMethods:
         quadrature to actually measure the area circle::
 
             >>> f = lambda x: quad(lambda y: 1, [-sqrt(1-x**2), sqrt(1-x**2)])
-            >>> print quad(f, [-1, 1])
+            >>> quad(f, [-1, 1])
             3.14159265358979
 
         Here is a simple triple integral::
 
             >>> mp.dps = 15
             >>> f = lambda x,y,z: x*y/(1+z)
-            >>> print quad(f, [0,1], [0,1], [1,2], method='gauss-legendre')
+            >>> quad(f, [0,1], [0,1], [1,2], method='gauss-legendre')
             0.101366277027041
-            >>> print (log(3)-log(2))/4
+            >>> (log(3)-log(2))/4
             0.101366277027041
 
         **Singularities**
@@ -640,23 +640,23 @@ class QuadratureMethods:
         The best solution is to split the integral into parts::
 
             >>> mp.dps = 15
-            >>> print quad(lambda x: abs(sin(x)), [0, 2*pi])   # Bad
+            >>> quad(lambda x: abs(sin(x)), [0, 2*pi])   # Bad
             3.99900894176779
-            >>> print quad(lambda x: abs(sin(x)), [0, pi, 2*pi])  # Good
+            >>> quad(lambda x: abs(sin(x)), [0, pi, 2*pi])  # Good
             4.0
 
         The tanh-sinh rule often works well for integrands having a
         singularity at one or both endpoints::
 
             >>> mp.dps = 15
-            >>> print quad(log, [0, 1], method='tanh-sinh')  # Good
+            >>> quad(log, [0, 1], method='tanh-sinh')  # Good
             -1.0
-            >>> print quad(log, [0, 1], method='gauss-legendre')  # Bad
+            >>> quad(log, [0, 1], method='gauss-legendre')  # Bad
             -0.999932197413801
 
         However, the result may still be inaccurate for some functions::
 
-            >>> print quad(lambda x: 1/sqrt(x), [0, 1], method='tanh-sinh')
+            >>> quad(lambda x: 1/sqrt(x), [0, 1], method='tanh-sinh')
             1.99999999946942
 
         This problem is not due to the quadrature rule per se, but to
@@ -666,7 +666,7 @@ class QuadratureMethods:
             >>> mp.dps = 30
             >>> a = quad(lambda x: 1/sqrt(x), [0, 1], method='tanh-sinh')
             >>> mp.dps = 15
-            >>> print +a
+            >>> +a
             2.0
 
         **Highly variable functions**
@@ -678,20 +678,22 @@ class QuadratureMethods:
         `\sin(x)` accurately over an interval of length 100 but not over
         length 1000::
 
-            >>> print quad(sin, [0, 100]), 1-cos(100)   # Good
-            0.137681127712316 0.137681127712316
-            >>> print quad(sin, [0, 1000]), 1-cos(1000)   # Bad
-            -37.8587612408485 0.437620923709297
+            >>> quad(sin, [0, 100]); 1-cos(100)   # Good
+            0.137681127712316
+            0.137681127712316
+            >>> quad(sin, [0, 1000]); 1-cos(1000)   # Bad
+            -37.8587612408485
+            0.437620923709297
 
         One solution is to break the integration into 10 intervals of
         length 100::
 
-            >>> print quad(sin, linspace(0, 1000, 10))   # Good
+            >>> quad(sin, linspace(0, 1000, 10))   # Good
             0.437620923709297
 
         Another is to increase the degree of the quadrature::
 
-            >>> print quad(sin, [0, 1000], maxdegree=10)   # Also good
+            >>> quad(sin, [0, 1000], maxdegree=10)   # Also good
             0.437620923709297
 
         Whether splitting the interval or increasing the degree is
@@ -700,11 +702,11 @@ class QuadratureMethods:
         `x = 0`::
 
             >>> f = lambda x: 1/(1+x**2)
-            >>> print quad(f, [-100, 100])   # Bad
+            >>> quad(f, [-100, 100])   # Bad
             3.64804647105268
-            >>> print quad(f, [-100, 100], maxdegree=10)   # Good
+            >>> quad(f, [-100, 100], maxdegree=10)   # Good
             3.12159332021646
-            >>> print quad(f, [-100, 0, 100])   # Also good
+            >>> quad(f, [-100, 0, 100])   # Also good
             3.12159332021646
 
         **References**
@@ -832,15 +834,15 @@ class QuadratureMethods:
         Below is an example of each::
 
             >>> from mpmath import *
-            >>> mp.dps = 15
+            >>> mp.dps = 15; mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
-            >>> print quadosc(f, [0,inf], omega=3)
+            >>> quadosc(f, [0,inf], omega=3)
             0.37833007080198
-            >>> print quadosc(f, [0,inf], period=2*pi/3)
+            >>> quadosc(f, [0,inf], period=2*pi/3)
             0.37833007080198
-            >>> print quadosc(f, [0,inf], zeros=lambda n: pi*n/3)
+            >>> quadosc(f, [0,inf], zeros=lambda n: pi*n/3)
             0.37833007080198
-            >>> print (ei(3)*exp(-3)-exp(3)*ei(-3))/2  # Computed by Mathematica
+            >>> (ei(3)*exp(-3)-exp(3)*ei(-3))/2  # Computed by Mathematica
             0.37833007080198
 
         Note that *zeros* was specified to multiply `n` by the
@@ -853,25 +855,25 @@ class QuadratureMethods:
         Here is an example of an integration over the entire real line,
         and a half-infinite integration starting at `-\infty`::
 
-            >>> print quadosc(lambda x: cos(x)/(1+x**2), [-inf, inf], omega=1)
+            >>> quadosc(lambda x: cos(x)/(1+x**2), [-inf, inf], omega=1)
             1.15572734979092
-            >>> print pi/e
+            >>> pi/e
             1.15572734979092
-            >>> print quadosc(lambda x: cos(x)/x**2, [-inf, -1], period=2*pi)
+            >>> quadosc(lambda x: cos(x)/x**2, [-inf, -1], period=2*pi)
             -0.0844109505595739
-            >>> print cos(1)+si(1)-pi/2
+            >>> cos(1)+si(1)-pi/2
             -0.0844109505595738
 
         Of course, the integrand may contain a complex exponential just as
         well as a real sine or cosine::
 
-            >>> print quadosc(lambda x: exp(3*j*x)/(1+x**2), [-inf,inf], omega=3)
+            >>> quadosc(lambda x: exp(3*j*x)/(1+x**2), [-inf,inf], omega=3)
             (0.156410688228254 + 0.0j)
-            >>> print pi/e**3
+            >>> pi/e**3
             0.156410688228254
-            >>> print quadosc(lambda x: exp(3*j*x)/(2+x+x**2), [-inf,inf], omega=3)
+            >>> quadosc(lambda x: exp(3*j*x)/(2+x+x**2), [-inf,inf], omega=3)
             (0.00317486988463794 - 0.0447701735209082j)
-            >>> print 2*pi/sqrt(7)/exp(3*(j+sqrt(7))/2)
+            >>> 2*pi/sqrt(7)/exp(3*(j+sqrt(7))/2)
             (0.00317486988463794 - 0.0447701735209082j)
 
         **Non-periodic functions**
@@ -884,15 +886,15 @@ class QuadratureMethods:
         periodic, are "asymptotically periodic" in a sufficiently strong sense
         that the sum extrapolation will work out::
 
-            >>> print quadosc(j0, [0, inf], period=2*pi)
+            >>> quadosc(j0, [0, inf], period=2*pi)
             1.0
-            >>> print quadosc(j1, [0, inf], period=2*pi)
+            >>> quadosc(j1, [0, inf], period=2*pi)
             1.0
 
         More properly, one should provide the exact Bessel function zeros::
 
             >>> j0zero = lambda n: findroot(j0, pi*(n-0.25))
-            >>> print quadosc(j0, [0, inf], zeros=j0zero)
+            >>> quadosc(j0, [0, inf], zeros=j0zero)
             1.0
 
         For an example where *zeros* becomes necessary, consider the
@@ -913,12 +915,12 @@ class QuadratureMethods:
 
             >>> mp.dps = 30
             >>> f = lambda x: cos(x**2)
-            >>> print quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
+            >>> quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
             0.626657068657750125603941321203
             >>> f = lambda x: sin(x**2)
-            >>> print quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
+            >>> quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
             0.626657068657750125603941321203
-            >>> print sqrt(pi/8)
+            >>> sqrt(pi/8)
             0.626657068657750125603941321203
 
         (Interestingly, these integrals can still be evaluated if one
@@ -929,9 +931,9 @@ class QuadratureMethods:
 
             >>> mp.dps = 15
             >>> f = lambda x: sin(exp(x))
-            >>> print quadosc(f, [1,inf], zeros=lambda n: log(n))
+            >>> quadosc(f, [1,inf], zeros=lambda n: log(n))
             -0.25024394235267
-            >>> print pi/2-si(e)
+            >>> pi/2-si(e)
             -0.250243942352671
 
         **Non-alternating functions**
@@ -941,11 +943,11 @@ class QuadratureMethods:
         that sometimes works is to multiply or divide the frequency by 2::
 
             >>> f = lambda x: 1/x**2+sin(x)/x**4
-            >>> print quadosc(f, [1,inf], omega=1)  # Bad
+            >>> quadosc(f, [1,inf], omega=1)  # Bad
             1.28642190869921
-            >>> print quadosc(f, [1,inf], omega=0.5)  # Perfect
+            >>> quadosc(f, [1,inf], omega=0.5)  # Perfect
             1.28652953559617
-            >>> print 1+(cos(1)+ci(1)+sin(1))/6
+            >>> 1+(cos(1)+ci(1)+sin(1))/6
             1.28652953559617
 
         **Fast decay**
@@ -955,9 +957,9 @@ class QuadratureMethods:
         :func:`quad` will likely handle it without trouble (and generally be
         much faster than :func:`quadosc`)::
 
-            >>> print quadosc(lambda x: cos(x)/exp(x), [0, inf], omega=1)
+            >>> quadosc(lambda x: cos(x)/exp(x), [0, inf], omega=1)
             0.5
-            >>> print quad(lambda x: cos(x)/exp(x), [0, inf])
+            >>> quad(lambda x: cos(x)/exp(x), [0, inf])
             0.5
 
         """

@@ -734,8 +734,8 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     compute `\pi` as the root of `\sin x` closest to `x_0 = 3`::
 
         >>> from mpmath import *
-        >>> mp.dps = 30
-        >>> print findroot(sin, 3)
+        >>> mp.dps = 30; mp.pretty = True
+        >>> findroot(sin, 3)
         3.14159265358979323846264338328
 
     The secant method can be used to find complex roots of analytic functions,
@@ -743,14 +743,14 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     (or else it will never leave the real line)::
 
         >>> mp.dps = 15
-        >>> print findroot(lambda x: x**3 + 2*x + 1, j)
+        >>> findroot(lambda x: x**3 + 2*x + 1, j)
         (0.226698825758202 + 1.46771150871022j)
 
     A nice application is to compute nontrivial roots of the Riemann zeta
     function with many digits (good initial values are needed for convergence)::
 
         >>> mp.dps = 30
-        >>> print findroot(zeta, 0.5+14j)
+        >>> findroot(zeta, 0.5+14j)
         (0.5 + 14.1347251417346937904572519836j)
 
     The secant method can also be used as an optimization algorithm, by passing
@@ -758,7 +758,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     minimum of the gamma function::
 
         >>> mp.dps = 20
-        >>> print findroot(lambda x: diff(gamma, x), 1)
+        >>> findroot(lambda x: diff(gamma, x), 1)
         1.4616321449683623413
 
     Finally, a useful application is to compute inverse functions, such as the
@@ -771,10 +771,12 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
         ...
         >>> mp.dps = 15
-        >>> print lambert(1), lambertw(1)
-        0.567143290409784 0.567143290409784
-        >>> print lambert(1000), lambert(1000)
-        5.2496028524016 5.2496028524016
+        >>> lambert(1); lambertw(1)
+        0.567143290409784
+        0.567143290409784
+        >>> lambert(1000); lambert(1000)
+        5.2496028524016
+        5.2496028524016
 
     Multidimensional functions are also supported::
 
@@ -809,7 +811,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
 
         >>> f = lambda x: (x - 1)**99
         >>> findroot(f, 0.9, verify=False)
-        mpf('0.91807354244492868')
+        0.918073542444929
 
     Even for a very close starting point the secant method converges very
     slowly. Use ``verbose=True`` to illustrate this.
@@ -818,7 +820,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     the root's multiplicity::
 
         >>> findroot(f, -10, solver='mnewton')
-        mpf('1.0')
+        1.0
 
     This variant uses the first and second derivative of the function, which is
     not very efficient.
@@ -845,7 +847,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
         error: 10.562244329955107759
         x: 1.0
         error: 7.8598304758094664213e-18
-        mpf('1.0')
+        1.0
 
 
     **Complex roots**
@@ -854,7 +856,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     even for real starting points very fast::
 
         >>> findroot(lambda x: x**4 + x + 1, (0, 1, 2), solver='muller')
-        mpc(real='0.72713608449119684', imag='0.93409928946052944')
+        (0.727136084491197 + 0.934099289460529j)
 
 
     **Intersection methods**
@@ -865,7 +867,7 @@ def findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True,
     with multiple roots and usually need a sign change to find a root::
 
         >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
-        mpf('0.0')
+        0.0
 
     Be careful with symmetric functions::
 

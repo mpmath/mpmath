@@ -282,6 +282,7 @@ def ldexp(ctx, x, n):
     possible to convert into one) and `n` must be a Python ``int``.
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> ldexp(1, 10)
         mpf('1024.0')
         >>> ldexp(1, -3)
@@ -299,6 +300,7 @@ def frexp(ctx, x):
     performed.
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> frexp(7.5)
         (mpf('0.9375'), 3)
 
@@ -314,6 +316,7 @@ def sign(ctx, x):
     (with the special case `\sign(0) = 0`)::
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> sign(10)
         mpf('1.0')
         >>> sign(-10)
@@ -324,8 +327,8 @@ def sign(ctx, x):
     Note that the sign function is also defined for complex numbers,
     for which it gives the projection onto the unit circle::
 
-        >>> mp.dps = 15
-        >>> print sign(1+j)
+        >>> mp.dps = 15; mp.pretty = True
+        >>> sign(1+j)
         (0.707106781186547 + 0.707106781186547j)
 
     """
@@ -344,16 +347,16 @@ def arg(ctx, x):
     complex plane::
 
         >>> from mpmath import *
-        >>> mp.dps = 15
-        >>> print arg(3)
+        >>> mp.dps = 15; mp.pretty = True
+        >>> arg(3)
         0.0
-        >>> print arg(3+3j)
+        >>> arg(3+3j)
         0.785398163397448
-        >>> print arg(3j)
+        >>> arg(3j)
         1.5707963267949
-        >>> print arg(-3)
+        >>> arg(-3)
         3.14159265358979
-        >>> print arg(-3j)
+        >>> arg(-3j)
         -1.5707963267949
 
     The angle is defined to satisfy `-\pi < \arg(x) \le \pi` and
@@ -373,6 +376,7 @@ def fabs(ctx, x):
     into mpmath numbers::
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> fabs(3)
         mpf('3.0')
         >>> fabs(-3)
@@ -390,6 +394,7 @@ def re(ctx, x):
     :func:`re` converts `x` to a mpmath number::
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> re(3)
         mpf('3.0')
         >>> re(-1+4j)
@@ -404,6 +409,7 @@ def im(ctx, x):
     :func:`im` converts `x` to a mpmath number::
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> im(3)
         mpf('0.0')
         >>> im(-1+4j)
@@ -419,6 +425,7 @@ def conj(ctx, x):
     ``x.conjugate()``, :func:`im` converts `x` to a mpmath number::
 
         >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = False
         >>> conj(3)
         mpf('3.0')
         >>> conj(-1+4j)
