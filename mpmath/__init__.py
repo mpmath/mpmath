@@ -32,7 +32,7 @@ from functions import (
     psi, psi0, psi1, psi2, psi3,
     polygamma, digamma, trigamma, tetragamma, pentagamma,
     harmonic, bernoulli, bernfrac, stieltjes,
-    bernpoly, polylog,
+    bernpoly, polylog, clsin, clcos,
     gammainc, gammaprod, binomial, rf, ff,
     hyper, hyp0f1, hyp1f1, hyp1f2, hyp2f1, hyp2f2, hyp2f0, hyp2f3, hyperu,
     hypercomb, meijerg,

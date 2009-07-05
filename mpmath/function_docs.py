@@ -5600,6 +5600,16 @@ for `z` within the unit circle:
     >>> nsum(lambda k: 0.25**k / k**(3+4j), [1,inf])
     (0.24258605789446 - 0.00222938275488344j)
 
+It is also currently supported outside of the unit circle for `z`
+not too large in magnitude::
+
+    >>> polylog(1+j, 20+40j)
+    (-7.1421172179728 - 3.92726697721369j)
+    >>> polylog(1+j, 200+400j)
+    Traceback (most recent call last):
+      ...
+    NotImplementedError: polylog for arbitrary s and z
+
 **References**
 
 1. Richard Crandall, "Note on fast polylogarithm computation"
@@ -6038,5 +6048,238 @@ be expanded as a messy combination of exponential integrals:
 3. http://functions.wolfram.com/HypergeometricFunctions/MeijerG/
 
 4. http://functions.wolfram.com/HypergeometricFunctions/MeijerG1/
+
+"""
+
+clsin = r"""
+Computes the Clausen sine function, defined formally by the series
+
+.. math ::
+
+    \mathrm{Cl}_s(z) = \sum_{k=1}^{\infty} \frac{\sin(kz)}{k^s}.
+
+The special case `\mathrm{Cl}_2(z)` (i.e. ``clsin(2,z)``) is the classical
+"Clausen function". More generally, the Clausen function is defined for
+complex `s` and `z`, even when the series does not converge. The
+Clausen function is related to the polylogarithm (:func:`polylog`) as
+
+.. math ::
+
+    \mathrm{Cl}_s(z) = \frac{1}{2i}\left(\mathrm{Li}_s\left(e^{iz}\right) -
+                       \mathrm{Li}_s\left(e^{-iz}\right)\right)
+
+    = \mathrm{Im}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R}),
+
+and this representation can be taken to provide the analytic continuation of the
+series. The complementary function :func:`clcos` gives the corresponding
+cosine sum.
+
+**Examples**
+
+Evaluation for arbitrarily chosen `s` and `z`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> s, z = 3, 4
+    >>> clsin(s, z); nsum(lambda k: sin(z*k)/k**s, [1,inf])
+    -0.6533010136329338746275795
+    -0.6533010136329338746275795
+
+Using `z + \pi` instead of `z` gives an alternating series::
+
+    >>> clsin(s, z+pi)
+    0.8860032351260589402871624
+    >>> nsum(lambda k: (-1)**k*sin(z*k)/k**s, [1,inf])
+    0.8860032351260589402871624
+
+With `s = 1`, the sum can be expressed in closed form
+using elementary functions::
+
+    >>> z = 1 + sqrt(3)
+    >>> clsin(1, z)
+    0.2047709230104579724675985
+    >>> chop((log(1-exp(-j*z)) - log(1-exp(j*z)))/(2*j))
+    0.2047709230104579724675985
+    >>> nsum(lambda k: sin(k*z)/k, [1,inf])
+    0.2047709230104579724675985
+
+The classical Clausen function `\mathrm{Cl}_2(\theta)` gives the
+value of the integral `\int_0^{\theta} -\ln(2\sin(x/2)) dx` for
+`0 < \theta < 2 \pi`::
+
+    >>> cl2 = lambda t: clsin(2, t)
+    >>> cl2(3.5)
+    -0.2465045302347694216534255
+    >>> -quad(lambda x: ln(2*sin(0.5*x)), [0, 3.5])
+    -0.2465045302347694216534255
+
+This function is symmetric about `\theta = \pi` with zeros and extreme
+points::
+
+    >>> cl2(0); cl2(pi/3); chop(cl2(pi)); cl2(5*pi/3); chop(cl2(2*pi))
+    0.0
+    1.014941606409653625021203
+    0.0
+    -1.014941606409653625021203
+    0.0
+
+Catalan's constant is a special value::
+
+    >>> cl2(pi/2)
+    0.9159655941772190150546035
+    >>> +catalan
+    0.9159655941772190150546035
+
+The Clausen sine function can be expressed in closed form when
+`s` is an odd integer (becoming zero when `s` < 0)::
+
+    >>> z = 1 + sqrt(2)
+    >>> clsin(1, z); (pi-z)/2
+    0.3636895456083490948304773
+    0.3636895456083490948304773
+    >>> clsin(3, z); pi**2/6*z - pi*z**2/4 + z**3/12
+    0.5661751584451144991707161
+    0.5661751584451144991707161
+    >>> clsin(-1, z)
+    0.0
+    >>> clsin(-3, z)
+    0.0
+
+It can also be expressed in closed form for even integer `s \le 0`,
+providing a finite sum for series such as
+`\sin(z) + \sin(2z) + \sin(3z) + \ldots`::
+
+    >>> z = 1 + sqrt(2)
+    >>> clsin(0, z)
+    0.1903105029507513881275865
+    >>> cot(z/2)/2
+    0.1903105029507513881275865
+    >>> clsin(-2, z)
+    -0.1089406163841548817581392
+    >>> -cot(z/2)*csc(z/2)**2/4
+    -0.1089406163841548817581392
+
+Evaluation for complex `s`, `z` in a nonconvergent case::
+
+    >>> s, z = -1-j, 1+2j
+    >>> clsin(s, z)
+    (-0.593079480117379002516034 + 0.9038644233367868273362446j)
+    >>> extraprec(20)(nsum)(lambda k: sin(k*z)/k**s, [1,inf])
+    (-0.593079480117379002516034 + 0.9038644233367868273362446j)
+
+"""
+
+clcos = r"""
+Computes the Clausen cosine function, defined formally by the series
+
+.. math ::
+
+    \mathrm{\widetilde{Cl}}_s(z) = \sum_{k=1}^{\infty} \frac{\cos(kz)}{k^s}.
+
+This function is complementary to the Clausen sine function
+:func:`clsin`. In terms of the polylogarithm,
+
+.. math ::
+
+    \mathrm{\widetilde{Cl}}_s(z) =
+        \frac{1}{2}\left(\mathrm{Li}_s\left(e^{iz}\right) +
+        \mathrm{Li}_s\left(e^{-iz}\right)\right)
+
+    = \mathrm{Re}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R}).
+
+**Examples**
+
+Evaluation for arbitrarily chosen `s` and `z`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> s, z = 3, 4
+    >>> clcos(s, z); nsum(lambda k: cos(z*k)/k**s, [1,inf])
+    -0.6518926267198991308332759
+    -0.6518926267198991308332759
+
+Using `z + \pi` instead of `z` gives an alternating series::
+
+    >>> s, z = 3, 0.5
+    >>> clcos(s, z+pi)
+    -0.8155530586502260817855618
+    >>> nsum(lambda k: (-1)**k*cos(z*k)/k**s, [1,inf])
+    -0.8155530586502260817855618
+
+With `s = 1`, the sum can be expressed in closed form
+using elementary functions::
+
+    >>> z = 1 + sqrt(3)
+    >>> clcos(1, z)
+    -0.6720334373369714849797918
+    >>> chop(-0.5*(log(1-exp(j*z))+log(1-exp(-j*z))))
+    -0.6720334373369714849797918
+    >>> -log(abs(2*sin(0.5*z)))    # Equivalent to above when z is real
+    -0.6720334373369714849797918
+    >>> nsum(lambda k: cos(k*z)/k, [1,inf])
+    -0.6720334373369714849797918
+
+It can also be expressed in closed form when `s` is an even integer.
+For example,
+
+    >>> clcos(2,z)
+    -0.7805359025135583118863007
+    >>> pi**2/6 - pi*z/2 + z**2/4
+    -0.7805359025135583118863007
+
+The case `s = 0` gives the renormalized sum of
+`\cos(z) + \cos(2z) + \cos(3z) + \ldots` (which happens to be the same for
+any value of `z`)::
+
+    >>> clcos(0, z)
+    -0.5
+    >>> nsum(lambda k: cos(k*z), [1,inf])
+    -0.5
+
+Also the sums
+
+.. math ::
+
+    \cos(z) + 2\cos(2z) + 3\cos(3z) + \ldots
+
+and
+
+.. math ::
+
+    \cos(z) + 2^n \cos(2z) + 3^n \cos(3z) + \ldots
+
+for higher integer powers `n = -s` can be done in closed form. They are zero
+when `n` is positive and even (`s` negative and even)::
+
+    >>> clcos(-1, z); 1/(2*cos(z)-2)
+    -0.2607829375240542480694126
+    -0.2607829375240542480694126
+    >>> clcos(-3, z); (2+cos(z))*csc(z/2)**4/8
+    0.1472635054979944390848006
+    0.1472635054979944390848006
+    >>> clcos(-2, z); clcos(-4, z); clcos(-6, z)
+    0.0
+    0.0
+    0.0
+
+With `z = \pi`, the series reduces to that of the Riemann zeta function
+(more generally, if `z = p \pi/q`, it is a finite sum over Hurwitz zeta
+function values)::
+
+    >>> clcos(2.5, 0); zeta(2.5)
+    1.34148725725091717975677
+    1.34148725725091717975677
+    >>> clcos(2.5, pi); -altzeta(2.5)
+    -0.8671998890121841381913472
+    -0.8671998890121841381913472
+
+Evaluation for complex `s`, `z` in a nonconvergent case::
+
+    >>> s, z = -1-j, 1+2j
+    >>> clcos(s, z)
+    (0.9407430121562251476136807 + 0.715826296033590204557054j)
+    >>> extraprec(15)(nsum)(lambda k: cos(k*z)/k**s, [1,inf])
+    (0.9407430121562251476136807 + 0.7158262960335902045570541j)
+
 
 """

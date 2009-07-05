@@ -2465,6 +2465,23 @@ def polylog_unitcircle(ctx, n, z):
         l = l.real
     return l
 
+def polylog_general(ctx, s, z):
+    v = ctx.zero
+    u = ctx.ln(z)
+    if not abs(u) < 5: # theoretically |u| < 2*pi
+        raise NotImplementedError("polylog for arbitrary s and z")
+    t = 1
+    k = 0
+    while 1:
+        term = ctx.zeta(s-k) * t
+        if abs(term) < ctx.eps:
+            break
+        v += term
+        k += 1
+        t *= u
+        t /= k
+    return ctx.gamma(1-s)*(-u)**(s-1) + v
+
 @defun_wrapped
 def polylog(ctx, s, z):
     if z == 1:
@@ -2477,16 +2494,39 @@ def polylog(ctx, s, z):
         return -ctx.ln(1-z)
     if s == -1:
         return z/(1-z)**2
-    if abs(z) <= 0.75 or (not ctx.isint(s) and abs(z) < 0.99):
+    if abs(z) <= 0.75 or (not ctx.isint(s) and abs(z) < 0.9):
         return polylog_series(ctx, s, z)
     if abs(z) >= 1.4 and ctx.isint(s):
         return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, s, z)
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(s), z)
-    raise NotImplementedError("polylog for arbitrary s and z")
+    return polylog_general(ctx, s, z)
+
+    #raise NotImplementedError("polylog for arbitrary s and z")
     # This could perhaps be used in some cases
     #from quadrature import quad
     #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
+
+@defun
+def clsin(ctx, s, z):
+    if ctx.isint(s) and s < 0 and int(s) % 2 == 1:
+        return z*0
+    a = ctx.exp(ctx.j*z)
+    if ctx.is_real_type(z) and ctx.is_real_type(s):
+        return ctx.im(ctx.polylog(s,a))
+    b = 1/a
+    return (-0.5j)*(ctx.polylog(s,a) - ctx.polylog(s,b))
+
+@defun_wrapped
+def clcos(ctx, s, z):
+    if ctx.isint(s) and s < 0 and int(s) % 2 == 0:
+        return z*0
+    a = ctx.exp(ctx.j*z)
+    if ctx.is_real_type(z) and ctx.is_real_type(s):
+        return ctx.re(ctx.polylog(s,a))
+    b = 1/a
+    return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
+
 
 # Experimental code; could be used elsewhere
 def sum_accurately(ctx, terms, check_step=1):
@@ -2638,6 +2678,7 @@ if __name__ == '__main__':
     except ImportError:
         pass
     import sys
+    from timeit import default_timer as clock
     filter = []
     for i, arg in enumerate(sys.argv):
         if 'functions.py' in arg:
@@ -2649,5 +2690,8 @@ if __name__ == '__main__':
         if filter:
             if not sum([pat in obj for pat in filter]):
                 continue
-        print obj
+        print obj,
+        t1 = clock()
         doctest.run_docstring_examples(globs[obj], {})
+        t2 = clock()
+        print round(t2-t1, 3)
