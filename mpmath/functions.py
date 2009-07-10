@@ -23,6 +23,8 @@ import gammazeta
 import libhyper
 import libintmath
 
+NoConvergence = libhyper.NoConvergence
+
 from mptypes import (\
     MultiPrecisionArithmetic,
     def_mp_builtin,
@@ -68,6 +70,8 @@ altzeta = def_mp_builtin('altzeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta
 gamma = def_mp_builtin('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, None, "gamma function")
 factorial = def_mp_builtin('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, None, "factorial")
 harmonic = def_mp_builtin('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic, None, "nth harmonic number")
+ei = def_mp_builtin('ei', libhyper.mpf_ei, libhyper.mpc_ei)
+e1 = def_mp_builtin('e1', libhyper.mpf_e1, libhyper.mpc_e1)
 ci = def_mp_builtin('ci', libhyper.mpf_ci, libhyper.mpc_ci, None, "")
 si = def_mp_builtin('si', libhyper.mpf_si, libhyper.mpc_si, None, "")
 ellipk = def_mp_builtin('ellipk', libhyper.mpf_ellipk, libhyper.mpc_ellipk, None, "")
@@ -780,17 +784,17 @@ def _as_num(x):
     return x
 
 @defun
-def hypsum(ctx, ar, af, ac, br, bf, bc, x):
+def hypsum(ctx, ar, af, ac, br, bf, bc, x, **kwargs):
     prec, rnd = ctx._prec_rounding
     if hasattr(x, '_mpf_') and not (ac or bc):
-        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, x._mpf_, None, prec, rnd)
+        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, x._mpf_, None, prec, rnd, **kwargs)
         return ctx.make_mpf(v)
     else:
         if hasattr(x, '_mpc_'):
             re, im = x._mpc_
         else:
             re, im = x._mpf_, libmpf.fzero
-        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd)
+        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd, **kwargs)
         return ctx.make_mpc(v)
 
 @defun
@@ -891,15 +895,18 @@ def _hyp_check_convergence(ctx, a_s, b_s, z, prec, n=None):
     #nmag = -zmag
 
     # Accurately estimate size of nth term using Stirling's formula
-    t = n*zmag
-    t -= (n*nmag-n)
-    t += p*((a+n)*max(amag,nmag)-(a*amag-a))
-    t -= q*((b+n)*max(bmag,nmag)-(b*bmag-b))
+    t = zmag*n         # z^n
+    t -= n*nmag - n    # 1/n!
+    t += p*((a+n)*max(amag,nmag)-(a*amag-a))   # numerator rfs
+    t -= q*((b+n)*max(bmag,nmag)-(b*bmag-b))   # denominator rfs
 
-    u = z**n / ctx.fac(n) * rf(a,n)**p / rf(b,n)**q
+    #u = z**n / ctx.fac(n) * ctx.rf(a,n)**p / ctx.rf(b,n)**q
+    #print "CONV", prec, p,q, "KEK", n, "est", t, tol, t < tol, "real", int(log(abs(u),2))
+    #print "1", zmag*n, ctx.mag(z**n)
+    #print "2", n*nmag-n, ctx.mag(ctx.fac(n))
 
-    #print "debug", prec, "kek", n, t, tol, t < tol, "real", int(log(abs(u),2))
     return t < tol
+
 
 @defun
 def hyp0f1(ctx, b, z, **kwargs):
@@ -959,6 +966,8 @@ def hyp1f1(ctx, a, b, z, **kwargs):
         # TODO: extra precision?
         # Check with twice the precision because a limit could be invoked
         #if ctx._hyp2f0_check_convergence(a, a-b, 1/z, 2*ctx.prec+40):
+        # TODO: do this optimally, but still so as to avoid infinite recursion
+        # between 1F1 and 2F0
         checked = 2*ctx.prec+40
         if ctx._hyp_check_convergence([a, a-b], [], 1/z, 2*ctx.prec+40):
             sector = z.imag < 0 and z.real <= 0
@@ -1204,9 +1213,6 @@ def hypercomb(ctx, function, params=[], **kwargs):
         ctx.prec = orig
     return +sumvalue
 
-
-class NoConvergence(Exception):
-    pass
 
 
 @defun
@@ -1465,7 +1471,6 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
     return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r+b3r, b1f+b2f+b3f,
         b1c+b2c+b3c, z)
 
-
 @defun
 def hyp2f0(ctx, a, b, z, **kwargs):
     """
@@ -1474,12 +1479,14 @@ def hyp2f0(ctx, a, b, z, **kwargs):
     ar, af, ac, a = ctx._hyp_parse_param(a)
     br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
-    # TODO: also use series when it terminates
-    if kwargs.get('force_series') or \
-        ctx._hyp_check_convergence([a, b], [], z, ctx.prec+40) or \
-        (ctx.isint(a) and -100 < a <= 0) or \
-        (ctx.isint(b) and -100 < b <= 0):
-        return ctx.hypsum(ar+br, af+bf, ac+bc, [], [], [], z)
+    # We want to try aggressively to use the asymptotic expansion,  
+    # and fall back only when absolutely necessary
+    try:
+        return ctx.hypsum(ar+br, af+bf, ac+bc, [], [], [], z, maxterms=ctx.prec)
+    except NoConvergence:
+        if kwargs.get('force_series'):
+            raise
+        pass
     def h(a, b):
         w = ctx.sinpi(b)
         rz = -1/z
@@ -1499,64 +1506,24 @@ def hyperu(ctx, a,b,z):
         else:
             return ctx.inf + z
     bb = 1+a-b
-    if ctx._hyp_check_convergence([a, bb], [], 1/z, ctx.prec+40):
-        def h(a,b):
-            rz = -1/z
-            return [([z],[-a],[],[],[a,b],[],rz)]
-        return hypercomb(h, [a,bb], force_series=True)
-    else:
-        def h(a,b):
-            w = sinpi(b)
-            T1 = ([pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
-            T2 = ([-pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
-            return T1, T2
-        return hypercomb(h, [a,b], check_cancellation=True)
-
-@defun
-def _lower_gamma(ctx, z, b):
-    return ctx.hyp1f1(1, 1+z, b) * b**z * ctx.exp(-b) / z
-
-def _check_pos(x):
+    bbr, bbf, bbc, bb = ctx._hyp_parse_param(bb)
     try:
-        return x > 0
-    except TypeError:
-        return False
-
-@defun_wrapped
-def gammainc(ctx, z, a=0, b=None, regularized=False):
-    if b is None:
-        b = ctx.inf
-    ln = ctx.ln
-    ei = ctx.ei
-    if b == ctx.inf:
-        if not a:
-            v = ctx.gamma(z)
-        else:
-            if not z:
-                # Reduces to exponential integral. Mind branch cuts.
-                if _check_pos(a):
-                    return -ei(-a)
-                else:
-                    return -ei(-a) + (ln(-a)-ln(-1/a))/2-ln(a)
-            # XXX: avoid poles
-            v = ctx.gamma(z) - ctx._lower_gamma(z, a)
-    elif not a:
-        v = ctx._lower_gamma(z, b)
-    else:
-        if not z:
-            # Reduces to exponential integral
-            if _check_pos(a) and _check_pos(b):
-                return ei(-b) - ei(-a)
-            else:
-                return ei(-b)-ei(-a) + \
-                    (ln(-a)-ln(-1/a))/2-ln(a) + \
-                    (ln(-1/b)-ln(-b))/2+ln(b)
-        # XXX: avoid poles
-        v = ctx._lower_gamma(z, b) - ctx._lower_gamma(z, a)
-    if regularized:
-        return v / ctx.gamma(z)
-    else:
-        return v
+        orig = ctx.prec
+        try:
+            ctx.prec += 10
+            v = ctx.hypsum(ar+bbr, af+bbf, ac+bbc, [], [], [], -1/z,
+                maxterms=ctx.prec)
+            return v / z**a
+        finally:
+            ctx.prec = orig
+    except NoConvergence:
+        pass
+    def h(a,b):
+        w = sinpi(b)
+        T1 = ([pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
+        T2 = ([-pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
+        return T1, T2
+    return hypercomb(h, [a,b], check_cancellation=True)
 
 @defun_wrapped
 def _erf_complex(ctx, z):
@@ -1636,51 +1603,156 @@ def ncdf(ctx, x, mu=0, sigma=1):
     else:
         return (1+ctx.erf(a))/2
 
-def ei_as(ctx, a):
-    extra = 10
-    ctx.dps += extra
-    s = k = p = 1
-    while abs(p) > ctx.eps:
-        p = (p*k)/a
-        s += p
-        k += 1
-    s = (s * ctx.exp(a))/a
-    ctx.dps -= extra
-    return s
+@defun
+def _gamma_upper_int(ctx, n, z):
+    n = int(n)
+    if n == 0:
+        return ctx.e1(z)
+    if not hasattr(z, '_mpf_'):
+        raise NotImplementedError
+    prec, rounding = ctx._prec_rounding
+    real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding, gamma=True)
+    if imag is None:
+        return ctx.make_mpf(real)
+    else:
+        return ctx.make_mpc((real, imag))
+
+@defun
+def _expint_int(ctx, n, z):
+    n = int(n)
+    if n == 1:
+        return ctx.e1(z)
+    if not hasattr(z, '_mpf_'):
+        raise NotImplementedError
+    prec, rounding = ctx._prec_rounding
+    real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding)
+    if imag is None:
+        return ctx.make_mpf(real)
+    else:
+        return ctx.make_mpc((real, imag))
+
+@defun
+def gammainc(ctx, z, a=0, b=None, regularized=False):
+    regularized = bool(regularized)
+    z = ctx.convert(z)
+    if a is None:
+        a = ctx.zero
+        lower_modified = False
+    else:
+        a = ctx.convert(a)
+        lower_modified = a != ctx.zero
+    if b is None:
+        b = ctx.inf
+        upper_modified = False
+    else:
+        b = ctx.convert(b)
+        upper_modified = b != ctx.inf
+    # Complete gamma function
+    if not (upper_modified or lower_modified):
+        if regularized:
+            if ctx.re(z) < 0:
+                return ctx.inf
+            elif ctx.re(z) > 0:
+                return ctx.one
+            else:
+                return ctx.nan
+        return ctx.gamma(z)
+    # Standardize
+    if ctx.re(a) >= ctx.re(b):
+        if a == b:
+            return ctx.zero
+        return -ctx.gammainc(z, b, a, regularized)
+    # Generalized gamma
+    if upper_modified and lower_modified:
+        return +ctx._gamma3(z, a, b, regularized)
+    # Upper gamma
+    elif lower_modified:
+        return ctx._upper_gamma(z, a, regularized)
+    # Lower gamma
+    elif upper_modified:
+        return ctx._lower_gamma(z, b, regularized)
+
+@defun
+def _lower_gamma(ctx, z, b, regularized=False):
+    # Pole
+    if ctx.isnpint(z):
+        return type(z)(ctx.inf)
+    G = [z] * regularized
+    negb = ctx.fneg(b, exact=True)
+    def h(z):
+        T1 = [exp(negb), b, z], [1, z, -1], [], G, [1], [1+z], b
+        return (T1,)
+    return ctx.hypercomb(h, [z])
+
+@defun
+def _upper_gamma(ctx, z, a, regularized=False):
+    # Fast integer case, when available
+    if ctx.isint(z):
+        try:
+            if regularized:
+                # Gamma pole
+                if ctx.isnpint(z):
+                    return type(z)(ctx.zero)
+                orig = ctx.prec
+                try:
+                    ctx.prec += 10
+                    return ctx._gamma_upper_int(z, a) / ctx.gamma(z)
+                finally:
+                    ctx.prec = orig
+            else:
+                return ctx._gamma_upper_int(z, a)
+        except NotImplementedError:
+            pass
+    nega = ctx.fneg(a, exact=True)
+    G = [z] * regularized
+    # Use 2F0 series when possible; fall back to lower gamma representation
+    try:
+        def h(z):
+            r = z-1
+            return [([exp(nega), a], [1, r], [], G, [1, -r], [], 1/nega)]
+        return ctx.hypercomb(h, [z], force_series=True)
+    except NoConvergence:
+        def h(z):
+            T1 = [], [1, z-1], [z], G, [], [], 0
+            T2 = [-exp(nega), a, z], [1, z, -1], [], G, [1], [1+z], a
+            return T1, T2
+        return ctx.hypercomb(h, [z], check_cancellation=True)
+
+@defun
+def _gamma3(ctx, z, a, b, regularized=False):
+    pole = ctx.isnpint(z)
+    if regularized and pole:
+        return ctx.zero
+    try:
+        ctx.prec += 15
+        # We don't know in advance whether it's better to write as a difference
+        # of lower or upper gamma functions, so try both
+        T1 = ctx.gammainc(z, a, regularized=regularized)
+        T2 = ctx.gammainc(z, b, regularized=regularized)
+        R = T1 - T2
+        if ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
+            return R
+        if not pole:
+            T1 = ctx.gammainc(z, 0, b, regularized=regularized)
+            T2 = ctx.gammainc(z, 0, a, regularized=regularized)
+            R = T1 - T2
+            if ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
+                return R
+    finally:
+        ctx.prec -= 15
+    raise NotImplementedError
 
 @defun_wrapped
-def ei(ctx, z):
-    if z == ctx.inf:
-        return z
-    if z == ctx.ninf:
-        return -ctx.zero
-    if not z:
-        return ctx.ninf
-    if abs(z) > ctx.prec * 0.7 + 50:
-        r = ei_as(ctx, z)
-        if z.imag > 0:
-            r += ctx.j*ctx.pi
-        elif z.imag < 0:
-            r -= ctx.j*ctx.pi
-        return r
-    v = z*hyp2f2(1,1,2,2,z) + ctx.euler
-    if z.imag:
-        v += (ctx.ln(z)-ctx.ln(1/z))/2
-    else:
-        v += ctx.ln(abs(z))
-    return v
-
-@defun_wrapped
-def expint(ctx, *args):
-    if len(args) == 1:
-        n = ctx.one
-        z = args[0]
-    else:
-        n, z = args
+def expint(ctx, n, z):
+    if ctx.isint(n) and ctx.is_real_type(z):
+        try:
+            return ctx._expint_int(n, z)
+        except NotImplementedError:
+            pass
     if ctx.isnan(n) or ctx.isnan(z):
         return z*n
     if z == ctx.inf:
-        return type(z)(0)
+        return 1/z
     if z == 0:
         # integral from 1 to infinity of t^n
         if ctx.re(n) <= 1:
@@ -1692,20 +1764,6 @@ def expint(ctx, *args):
         return ctx.exp(-z)/z
     if n == -1:
         return ctx.exp(-z)*(z+1)/z**2
-    # Perturb if at pole
-    m, d = ctx.nint_distance(n)
-    if ctx.re(n) > 0:
-        if d < -ctx.prec:
-            h = +ctx.eps
-            ctx.prec *= 2
-            n += h
-            z += h
-        elif d < -4:
-            ctx.prec -= d
-    # XXX: this is entirely arbitrary
-    ctx.prec += 4*(int(abs(n)) + int(abs(z)))
-    # Main formula
-    # TODO: use asymptotic expansions, either here or in gammainc
     return z**(n-1) * ctx.gammainc(1-n, z)
 
 @defun_wrapped
@@ -2113,7 +2171,7 @@ def lambertw(ctx, z, k=0, approx=None):
             return ctx.ninf
         if not k:
             w = z
-        # For small real z < 0, the -1 branch behaves roughly like log(-z)
+        # For small real z < 0, the -1 branch aves roughly like log(-z)
         elif k == -1 and not ctx.im(z) and ctx.re(z) < 0:
             w = ctx.ln(-z)
         # Use a simple asymptotic approximation.
@@ -2387,9 +2445,16 @@ def primezeta(ctx, s):
 
 @defun_wrapped
 def bernpoly(ctx, n, z):
+    # Slow implementation:
+    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
     n = int(n)
-    assert n >= 0
-    # XXX: optimize further
+    if n <= 3:
+        if n < 0:
+            raise ValueError("Bernoulli polynomials only defined for n >= 0")
+        if n == 0: return z ** 0
+        if n == 1: return z - 0.5
+        if n == 2: return (6*z*(z-1)+1)/6
+        if n == 3: return z*(z*(z-1.5)+0.5)
     if abs(z) > 2:
         s = t = ctx.one
         r = ctx.one/z
@@ -2401,7 +2466,17 @@ def bernpoly(ctx, n, z):
                 if abs(u) < ctx.eps:
                     break
         return z**n * s
-    return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
+    s = ctx.bernoulli(n)
+    t = ctx.one
+    for k in xrange(1,n+1):
+        t = t*(n+1-k)/k * z
+        m = n-k
+        if not (m > 2 and m & 1):
+            u = t*ctx.bernoulli(m)
+            s += u
+            #if abs(u) < ctx.eps:
+            #    break
+    return s
 
 # TODO: this should be implemented low-level
 def polylog_series(ctx, s, z):

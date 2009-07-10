@@ -225,8 +225,6 @@ def test_exp_integrals():
     assert ci(inf) == 0
     assert ci(0) == -inf
     assert isinstance(ei(-0.7), mpf)
-    assert ei(inf) == inf
-    assert ei(-inf) == -0.0
     assert airyai(inf) == 0
     assert airybi(inf) == inf
     assert airyai(-inf) == 0
@@ -240,8 +238,60 @@ def test_exp_integrals():
     assert shi(-inf) == -inf
     assert chi(0) == -inf
     assert chi(inf) == inf
+
+def test_ei():
+    mp.dps = 15
     assert ei(0) == -inf
+    assert ei(inf) == inf
+    assert ei(-inf) == -0.0
     assert ei(20+70j).ae(6.1041351911152984397e6 - 2.7324109310519928872e6j)
+    # tests for the asymptotic expansion
+    # values checked with Mathematica ExpIntegralEi
+    mp.dps = 50
+    r = ei(20000)
+    s = '3.8781962825045010930273870085501819470698476975019e+8681'
+    assert str(r) == s
+    r = ei(-200)
+    s = '-6.8852261063076355977108174824557929738368086933303e-90'
+    assert str(r) == s
+    r =ei(20000 + 10*j)
+    sre = '-3.255138234032069402493850638874410725961401274106e+8681'
+    sim = '-2.1081929993474403520785942429469187647767369645423e+8681'
+    assert str(r.real) == sre and str(r.imag) == sim
+    mp.dps = 15
+    # More asymptotic expansions
+    assert chi(-10**6+100j).ae('1.3077239389562548386e+434288 + 7.6808956999707408158e+434287j')
+    assert shi(-10**6+100j).ae('-1.3077239389562548386e+434288 - 7.6808956999707408158e+434287j')
+    mp.dps = 15
+    assert ei(10j).ae(-0.0454564330044553726+3.2291439210137706686j)
+    assert ei(100j).ae(-0.0051488251426104921+3.1330217936839529126j)
+    u = ei(fmul(10**20, j, exact=True))
+    assert u.real.ae(-6.4525128526578084421345e-21, abs_eps=0, rel_eps=8*eps)
+    assert u.imag.ae(pi)
+    assert ei(-10j).ae(-0.0454564330044553726-3.2291439210137706686j)
+    assert ei(-100j).ae(-0.0051488251426104921-3.1330217936839529126j)
+    u = ei(fmul(-10**20, j, exact=True))
+    assert u.real.ae(-6.4525128526578084421345e-21, abs_eps=0, rel_eps=8*eps)
+    assert u.imag.ae(-pi)
+    assert ei(10+10j).ae(-1576.1504265768517448+436.9192317011328140j)
+    u = ei(-10+10j)
+    assert u.real.ae(7.6698978415553488362543e-7, abs_eps=0, rel_eps=8*eps)
+    assert u.imag.ae(3.141595611735621062025)
+
+def test_e1():
+    mp.dps = 15
+    assert e1(0) == inf
+    assert e1(inf) == 0
+    assert e1(-inf) == mpc(-inf, -pi)
+    assert e1(10j).ae(0.045456433004455372635 + 0.087551267423977430100j)
+    assert e1(100j).ae(0.0051488251426104921444 - 0.0085708599058403258790j)
+    assert e1(fmul(10**20, j, exact=True)).ae(6.4525128526578084421e-21 - 7.6397040444172830039e-21j, abs_eps=0, rel_eps=8*eps)
+    assert e1(-10j).ae(0.045456433004455372635 - 0.087551267423977430100j)
+    assert e1(-100j).ae(0.0051488251426104921444 + 0.0085708599058403258790j)
+    assert e1(fmul(-10**20, j, exact=True)).ae(6.4525128526578084421e-21 + 7.6397040444172830039e-21j, abs_eps=0, rel_eps=8*eps)
+
+def test_expint():
+    mp.dps = 15
     assert expint(0,0) == inf
     assert expint(0,1).ae(1/e)
     assert expint(0,1.5).ae(2/exp(1.5)/3)
@@ -262,28 +312,15 @@ def test_exp_integrals():
     assert expint(3,inf) == 0
     assert expint(3.2,inf) == 0
     assert expint(3.2+2j,inf) == 0
-    assert expint(1,3j).ae(-0.11962978600800032763+0.27785620120457163717j)
+    assert expint(1,3j).ae(-0.11962978600800032763 + 0.27785620120457163717j)
     assert expint(1,3).ae(0.013048381094197037413)
     assert expint(1,-3).ae(-ei(3)-pi*j)
-    assert expint(3) == expint(1,3)
+    #assert expint(3) == expint(1,3)
     assert expint(1,-20).ae(-25615652.66405658882 - 3.1415926535897932385j)
-    # tests for the asymptotic expansion
-    # values checked with Mathematica ExpIntegralEi
-    mp.dps = 50
-    r = ei(20000)
-    s = '3.8781962825045010930273870085501819470698476975019e+8681'
-    assert str(r) == s
-    r = ei(-200)
-    s = '-6.8852261063076355977108174824557929738368086933303e-90'
-    assert str(r) == s
-    r =ei(20000 + 10*j)
-    sre = '-3.255138234032069402493850638874410725961401274106e+8681'
-    sim = '-2.1081929993474403520785942429469187647767369645423e+8681'
-    assert str(r.real) == sre and str(r.imag) == sim
-    mp.dps = 15
-    # More asymptotic expansions
-    assert chi(-10**6+100j).ae('1.3077239389562548386e+434288 + 7.6808956999707408158e+434287j')
-    assert shi(-10**6+100j).ae('-1.3077239389562548386e+434288 - 7.6808956999707408158e+434287j')
+    assert expint(1000000,0).ae(1./999999)
+    assert expint(0,2+3j).ae(-0.025019798357114678171 + 0.027980439405104419040j)
+    assert expint(-1,2+3j).ae(-0.022411973626262070419 + 0.038058922011377716932j)
+    assert expint(-1.5,0) == inf
 
 def test_trig_integrals():
     mp.dps = 30
@@ -554,7 +591,7 @@ def test_agm():
     assert agm(2) == agm(1,2)
     assert agm(-3,4).ae(0.63468509766550907+1.3443087080896272j)
 
-def test_incomplete_gamma():
+def test_gammainc():
     mp.dps = 15
     assert gammainc(2,5).ae(6*exp(-5))
     assert gammainc(2,0,5).ae(1-6*exp(-5))
@@ -566,6 +603,183 @@ def test_incomplete_gamma():
     assert gammainc(0,1-j).ae(0.00028162445198141833+0.17932453503935894015j)
     assert gammainc(3,4,5,True).ae(0.11345128607046320253)
     assert gammainc(3.5,0,inf).ae(gamma(3.5))
+    assert gammainc(-150.5,500).ae('6.9825435345798951153e-627')
+    assert gammainc(-150.5,800).ae('4.6885137549474089431e-788')
+    assert gammainc(-3.5, -20.5).ae(0.27008820585226911 - 1310.31447140574997636j)
+    assert gammainc(-3.5, -200.5).ae(0.27008820585226911 - 5.3264597096208368435e76j) # XXX real part
+    assert gammainc(0,0,2) == inf
+    assert gammainc(1,b=1).ae(0.6321205588285576784)
+    assert gammainc(3,2,2) == 0
+    # Regularized upper gamma
+    assert isnan(gammainc(0, 0, regularized=True))
+    assert gammainc(-1, 0, regularized=True) == inf
+    assert gammainc(1, 0, regularized=True) == 1
+    assert gammainc(0, 5, regularized=True) == 0
+    assert gammainc(0, 2+3j, regularized=True) == 0
+    assert gammainc(0, 5000, regularized=True) == 0
+    assert gammainc(0, 10**30, regularized=True) == 0
+    assert gammainc(-1, 5, regularized=True) == 0
+    assert gammainc(-1, 5000, regularized=True) == 0
+    assert gammainc(-1, 10**30, regularized=True) == 0
+    assert gammainc(-1, -5, regularized=True) == 0
+    assert gammainc(-1, -5000, regularized=True) == 0
+    assert gammainc(-1, -10**30, regularized=True) == 0
+    assert gammainc(-1, 3+4j, regularized=True) == 0
+    assert gammainc(1, 5, regularized=True).ae(exp(-5))
+    assert gammainc(1, 5000, regularized=True).ae(exp(-5000))
+    assert gammainc(1, 10**30, regularized=True).ae(exp(-10**30))
+    assert gammainc(1, 3+4j, regularized=True).ae(exp(-3-4j))
+    assert gammainc(-1000000,2).ae('1.3669297209397347754e-301037', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-1000000,2,regularized=True) == 0
+    assert gammainc(-1000000,3+4j).ae('-1.322575609404222361e-698979 - 4.9274570591854533273e-698978j', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-1000000,3+4j,regularized=True) == 0
+    assert gammainc(2+3j, 4+5j, regularized=True).ae(0.085422013530993285774-0.052595379150390078503j)
+    assert gammainc(1000j, 1000j, regularized=True).ae(0.49702647628921131761 + 0.00297355675013575341j)
+    # Generalized
+    assert gammainc(3,4,2) == -gammainc(3,2,4)
+    assert gammainc(4, 2, 3).ae(1.2593494302978947396)
+    assert gammainc(4, 2, 3, regularized=True).ae(0.20989157171631578993)
+    assert gammainc(0, 2, 3).ae(0.035852129613864082155)
+    assert gammainc(0, 2, 3, regularized=True) == 0
+    assert gammainc(-1, 2, 3).ae(0.015219822548487616132)
+    assert gammainc(-1, 2, 3, regularized=True) == 0
+    assert gammainc(0, 2, 3).ae(0.035852129613864082155)
+    assert gammainc(0, 2, 3, regularized=True) == 0
+    # Should use upper gammas
+    assert gammainc(5, 10000, 12000).ae('1.1359381951461801687e-4327', abs_eps=0, rel_eps=8*eps)
+    # Should use lower gammas
+    assert gammainc(10000, 2, 3).ae('8.1244514125995785934e4765')
+
+def test_gammainc_expint_n():
+    # These tests are intended to check all cases of the low-level code
+    # for upper gamma and expint with small integer index.
+    # Need to cover positive/negative arguments; small/large/huge arguments
+    # for both positive and negative indices, as well as indices 0 and 1 
+    # which may be special-cased
+    mp.dps = 15
+    assert expint(-3,3.5).ae(0.021456366563296693987)
+    assert expint(-2,3.5).ae(0.014966633183073309405)
+    assert expint(-1,3.5).ae(0.011092916359219041088)
+    assert expint(0,3.5).ae(0.0086278238349481430685)
+    assert expint(1,3.5).ae(0.0069701398575483929193)
+    assert expint(2,3.5).ae(0.0058018939208991255223)
+    assert expint(3,3.5).ae(0.0049453773495857807058)
+    assert expint(-3,-3.5).ae(-4.6618170604073311319)
+    assert expint(-2,-3.5).ae(-5.5996974157555515963)
+    assert expint(-1,-3.5).ae(-6.7582555017739415818)
+    assert expint(0,-3.5).ae(-9.4615577024835182145)
+    assert expint(1,-3.5).ae(-13.925353995152335292 - 3.1415926535897932385j)
+    assert expint(2,-3.5).ae(-15.62328702434085977 - 10.995574287564276335j)
+    assert expint(3,-3.5).ae(-10.783026313250347722 - 19.242255003237483586j)
+    assert expint(-3,350).ae(2.8614825451252838069e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(-2,350).ae(2.8532837224504675901e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(-1,350).ae(2.8451316155828634555e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(0,350).ae(2.8370258275042797989e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(1,350).ae(2.8289659656701459404e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(2,350).ae(2.8209516419468505006e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(3,350).ae(2.8129824725501272171e-155, abs_eps=0, rel_eps=8*eps)
+    assert expint(-3,-350).ae(-2.8528796154044839443e+149)
+    assert expint(-2,-350).ae(-2.8610072121701264351e+149)
+    assert expint(-1,-350).ae(-2.8691813842677537647e+149)
+    assert expint(0,-350).ae(-2.8774025343659421709e+149)
+    u = expint(1,-350)
+    assert u.ae(-2.8856710698020863568e+149)
+    assert u.imag.ae(-3.1415926535897932385)
+    u = expint(2,-350)
+    assert u.ae(-2.8939874026504650534e+149)
+    assert u.imag.ae(-1099.5574287564276335)
+    u = expint(3,-350)
+    assert u.ae(-2.9023519497915044349e+149)
+    assert u.imag.ae(-192422.55003237483586)
+    assert expint(-3,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(-2,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(-1,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(0,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(1,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(2,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(3,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert expint(-3,-350000000000000000000000).ae('-3.7805306852415755699e+152003068666138139677871')
+    assert expint(-2,-350000000000000000000000).ae('-3.7805306852415755699e+152003068666138139677871')
+    assert expint(-1,-350000000000000000000000).ae('-3.7805306852415755699e+152003068666138139677871')
+    assert expint(0,-350000000000000000000000).ae('-3.7805306852415755699e+152003068666138139677871')
+    u = expint(1,-350000000000000000000000)
+    assert u.ae('-3.7805306852415755699e+152003068666138139677871')
+    assert u.imag.ae(-3.1415926535897932385)
+    u = expint(2,-350000000000000000000000)
+    assert u.imag.ae(-1.0995574287564276335e+24)
+    assert u.ae('-3.7805306852415755699e+152003068666138139677871')
+    u = expint(3,-350000000000000000000000)
+    assert u.imag.ae(-1.9242255003237483586e+47)
+    assert u.ae('-3.7805306852415755699e+152003068666138139677871')
+    # Small case; no branch cut
+    assert gammainc(-3,3.5).ae(0.00010020262545203707109)
+    assert gammainc(-2,3.5).ae(0.00040370427343557393517)
+    assert gammainc(-1,3.5).ae(0.0016576839773997501492)
+    assert gammainc(0,3.5).ae(0.0069701398575483929193)
+    assert gammainc(1,3.5).ae(0.03019738342231850074)
+    assert gammainc(2,3.5).ae(0.13588822540043325333)
+    assert gammainc(3,3.5).ae(0.64169439772426814072)
+    # Small case; with branch cut
+    assert gammainc(-3,-3.5).ae(0.03595832954467563286 - 0.52359877559829887308j)
+    assert gammainc(-2,-3.5).ae(-0.88024704597962022221 - 1.5707963267948966192j)
+    assert gammainc(-1,-3.5).ae(4.4637962926688170771 - 3.1415926535897932385j)
+    assert gammainc(0,-3.5).ae(-13.925353995152335292 - 3.1415926535897932385j)
+    assert gammainc(1,-3.5).ae(33.115451958692313751)
+    assert gammainc(2,-3.5).ae(-82.788629896730784377)
+    assert gammainc(3,-3.5).ae(240.08702670051927469)
+    # Asymptotic case; no branch cut
+    assert gammainc(-3,350).ae(6.5424095113340358813e-163, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-2,350).ae(2.296312222489899769e-160, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-1,350).ae(8.059861834133858573e-158, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(0,350).ae(2.8289659656701459404e-155, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(1,350).ae(9.9295903962649792963e-153, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(2,350).ae(3.485286229089007733e-150, abs_eps=0, rel_eps=8*eps)
+    assert gammainc(3,350).ae(1.2233453960006379793e-147, abs_eps=0, rel_eps=8*eps)
+    # Asymptotic case; branch cut
+    u = gammainc(-3,-350)
+    assert u.ae(6.7889565783842895085e+141)
+    assert u.imag.ae(-0.52359877559829887308)
+    u = gammainc(-2,-350)
+    assert u.ae(-2.3692668977889832121e+144)
+    assert u.imag.ae(-1.5707963267948966192)
+    u = gammainc(-1,-350)
+    assert u.ae(8.2685354361441858669e+146)
+    assert u.imag.ae(-3.1415926535897932385)
+    u = gammainc(0,-350)
+    assert u.ae(-2.8856710698020863568e+149)
+    assert u.imag.ae(-3.1415926535897932385)
+    u = gammainc(1,-350)
+    assert u.ae(1.0070908870280797598e+152)
+    assert u.imag == 0
+    u = gammainc(2,-350)
+    assert u.ae(-3.5147471957279983618e+154)
+    assert u.imag == 0
+    u = gammainc(3,-350)
+    assert u.ae(1.2266568422179417091e+157)
+    assert u.imag == 0
+    # Extreme asymptotic case
+    assert gammainc(-3,350000000000000000000000).ae('5.0362468738874738859e-152003068666138139677990', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-2,350000000000000000000000).ae('1.7626864058606158601e-152003068666138139677966', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(-1,350000000000000000000000).ae('6.1694024205121555102e-152003068666138139677943', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(0,350000000000000000000000).ae('2.1592908471792544286e-152003068666138139677919', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(1,350000000000000000000000).ae('7.5575179651273905e-152003068666138139677896', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(2,350000000000000000000000).ae('2.645131287794586675e-152003068666138139677872', abs_eps=0, rel_eps=8*eps)
+    assert gammainc(3,350000000000000000000000).ae('9.2579595072810533625e-152003068666138139677849', abs_eps=0, rel_eps=8*eps)
+    u = gammainc(-3,-350000000000000000000000)
+    assert u.ae('8.8175642804468234866e+152003068666138139677800')
+    assert u.imag.ae(-0.52359877559829887308)
+    u = gammainc(-2,-350000000000000000000000)
+    assert u.ae('-3.0861474981563882203e+152003068666138139677824')
+    assert u.imag.ae(-1.5707963267948966192)
+    u = gammainc(-1,-350000000000000000000000)
+    assert u.ae('1.0801516243547358771e+152003068666138139677848')
+    assert u.imag.ae(-3.1415926535897932385)
+    u = gammainc(0,-350000000000000000000000)
+    assert u.ae('-3.7805306852415755699e+152003068666138139677871')
+    assert u.imag.ae(-3.1415926535897932385)
+    assert gammainc(1,-350000000000000000000000).ae('1.3231857398345514495e+152003068666138139677895')
+    assert gammainc(2,-350000000000000000000000).ae('-4.6311500894209300731e+152003068666138139677918')
+    assert gammainc(3,-350000000000000000000000).ae('1.6209025312973255256e+152003068666138139677942')
 
 def test_incomplete_beta():
     mp.dps = 15
@@ -637,7 +851,7 @@ def test_pdf():
     mp.dps = 15
     assert npdf(-inf) == 0
     assert npdf(inf) == 0
-    assert npdf(5,0,2).ae(5+4,4,2)
+    assert npdf(5,0,2).ae(npdf(5+4,4,2))
     assert quadts(lambda x: npdf(x,-0.5,0.8), [-inf, inf]) == 1
     assert ncdf(0) == 0.5
     assert ncdf(3,3) == 0.5

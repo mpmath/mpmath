@@ -3090,13 +3090,8 @@ or En-function,
 
     \mathrm{E}_n(z) = \int_1^{\infty} \frac{e^{-zt}}{t^n} dt,
 
-where `n` and `z` may both be complex numbers. The single-argument
-version :func:`expint(z)` will compute `\mathrm{E}_1(z)`, given
-by the above integral with `n = 1` or equivalently by
-
-.. math ::
-
-    \mathrm{E}_1(z) = \int_z^{\infty} \frac{e^{-t}}{t} dt.
+where `n` and `z` may both be complex numbers. The case with `n = 1` is
+also given by :func:`e1`.
 
 **Examples**
 
@@ -3104,27 +3099,12 @@ Evaluation at real and complex arguments::
 
     >>> from mpmath import *
     >>> mp.dps = 25; mp.pretty = True
-    >>> expint(6.25)
-    0.0002704758872637179088496194
     >>> expint(1, 6.25)
     0.0002704758872637179088496194
     >>> expint(-3, 2+3j)
     (0.00299658467335472929656159 + 0.06100816202125885450319632j)
     >>> expint(2+3j, 4-5j)
     (0.001803529474663565056945248 - 0.002235061547756185403349091j)
-
-With `n = 1`, the En-function is essentially the same
-as the ei-function (:func:`ei`) with negated argument, except for an
-imaginary branch cut term::
-
-    >>> expint(2.5)
-    0.02491491787026973549562801
-    >>> -ei(-2.5)
-    0.02491491787026973549562801
-    >>> expint(-2.5)
-    (-7.073765894578600711923552 - 3.141592653589793238462643j)
-    >>> -ei(2.5)
-    -7.073765894578600711923552
 
 At negative integer values of `n`, `E_n(z)` reduces to a
 rational-exponential function::
@@ -3142,6 +3122,40 @@ rational-exponential function::
     115366.5762594725451811138
     >>> f(n,z)
     115366.5762594725451811138
+"""
+
+e1 = r"""
+Computes the exponential integral `\mathrm{E}_1(z)`, given by
+
+.. math ::
+
+    \mathrm{E}_1(z) = \int_z^{\infty} \frac{e^{-t}}{t} dt.
+
+This is equivalent to :func:`expint` with `n = 1`.
+
+**Examples**
+
+Two ways to evaluate this function::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> e1(6.25)
+    0.0002704758872637179088496194
+    >>> expint(1,6.25)
+    0.0002704758872637179088496194
+
+The E1-function is essentially the same as the Ei-function (:func:`ei`)
+with negated argument, except for an imaginary branch cut term::
+
+    >>> e1(2.5)
+    0.02491491787026973549562801
+    >>> -ei(-2.5)
+    0.02491491787026973549562801
+    >>> e1(-2.5)
+    (-7.073765894578600711923552 - 3.141592653589793238462643j)
+    >>> -ei(2.5)
+    -7.073765894578600711923552
+
 """
 
 ei = r"""

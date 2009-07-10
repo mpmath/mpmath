@@ -37,7 +37,7 @@ from functions import (
     hyper, hyp0f1, hyp1f1, hyp1f2, hyp2f1, hyp2f2, hyp2f0, hyp2f3, hyperu,
     hypercomb, meijerg,
     erf, erfc, erfi, erfinv, npdf, ncdf,
-    expint, ei, li, ci, si, chi, shi,
+    expint, e1, ei, li, ci, si, chi, shi,
     fresnels, fresnelc, airyai, airybi,
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
