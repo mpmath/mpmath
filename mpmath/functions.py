@@ -1657,10 +1657,10 @@ def gammainc(ctx, z, a=0, b=None, regularized=False):
             else:
                 return ctx.nan
         return ctx.gamma(z)
+    if a == b:
+        return ctx.zero
     # Standardize
-    if ctx.re(a) >= ctx.re(b):
-        if a == b:
-            return ctx.zero
+    if ctx.re(a) > ctx.re(b):
         return -ctx.gammainc(z, b, a, regularized)
     # Generalized gamma
     if upper_modified and lower_modified:
