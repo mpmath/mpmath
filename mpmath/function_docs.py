@@ -6295,5 +6295,121 @@ Evaluation for complex `s`, `z` in a nonconvergent case::
     >>> extraprec(15)(nsum)(lambda k: cos(k*z)/k**s, [1,inf])
     (0.9407430121562251476136807 + 0.7158262960335902045570541j)
 
+"""
+
+whitm = r"""
+Evaluates the Whittaker function `M(k,m,z)`, which gives a solution
+to the Whittaker differential equation
+
+.. math ::
+
+    \frac{d^2f}{dz^2} + \left(-\frac{1}{4}+\frac{k}{z}+
+      \frac{(\frac{1}{4}-m^2)}{z^2}\right) f = 0.
+
+A second solution is given by :func:`whitw`.
+
+The Whittaker functions are defined in Abramowitz & Stegun, section 13.1.
+They are alternate forms of the confluent hypergeometric functions
+`\,_1F_1` and `U`:
+
+.. math ::
+
+    M(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
+        \,_1F_1(\tfrac{1}{2}+m-k, 1+2m, z)
+
+    W(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
+        U(\tfrac{1}{2}+m-k, 1+2m, z).
+
+**Examples**
+
+Evaluation for arbitrary real and complex arguments is supported::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> whitm(1, 1, 1)
+    0.7302596799460411820509668
+    >>> whitm(1, 1, -1)
+    (0.0 - 1.417977827655098025684246j)
+    >>> whitm(j, j/2, 2+3j)
+    (3.245477713363581112736478 - 0.822879187542699127327782j)
+    >>> whitm(2, 3, 100000)
+    4.303985255686378497193063e+21707
+
+Evaluation at zero::
+
+    >>> whitm(1,-1,0); whitm(1,-0.5,0); whitm(1,0,0)
+    +inf
+    nan
+    0.0
+
+We can verify that :func:`whitm` numerically satisfies the
+differential equation for arbitrarily chosen values::
+
+    >>> k = mpf(0.25)
+    >>> m = mpf(1.5)
+    >>> f = lambda z: whitm(k,m,z)
+    >>> for z in [-1, 2.5, 3, 1+2j]:
+    ...     chop(diff(f,z,2) + (-0.25 + k/z + (0.25-m**2)/z**2)*f(z))
+    ...
+    0.0
+    0.0
+    0.0
+    0.0
+
+An integral involving both :func:`whitm` and :func:`whitmw`,
+verifying evaluation along the real axis::
+
+    >>> quad(lambda x: exp(-x)*whitm(3,2,x)*whitw(1,-2,x), [0,inf])
+    3.438869842576800225207341
+    >>> 128/(21*sqrt(pi))
+    3.438869842576800225207341
+
+"""
+
+whitw = r"""
+Evaluates the Whittaker function `W(k,m,z)`, which gives a second
+solution to the Whittaker differential equation. (See :func:`whitm`.)
+
+**Examples**
+
+Evaluation for arbitrary real and complex arguments is supported::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> whitw(1, 1, 1)
+    1.19532063107581155661012
+    >>> whitw(1, 1, -1)
+    (-0.9424875979222187313924639 - 0.2607738054097702293308689j)
+    >>> whitw(j, j/2, 2+3j)
+    (0.1782899315111033879430369 - 0.01609578360403649340169406j)
+    >>> whitw(2, 3, 100000)
+    1.887705114889527446891274e-21705
+    >>> whitw(-1, -1, 100)
+    1.905250692824046162462058e-24
+
+Evaluation at zero::
+
+    >>> for m in [-1, -0.5, 0, 0.5, 1]:
+    ...     whitw(1, m, 0)
+    ...
+    +inf
+    nan
+    0.0
+    nan
+    +inf
+
+We can verify that :func:`whitw` numerically satisfies the
+differential equation for arbitrarily chosen values::
+
+    >>> k = mpf(0.25)
+    >>> m = mpf(1.5)
+    >>> f = lambda z: whitw(k,m,z)
+    >>> for z in [-1, 2.5, 3, 1+2j]:
+    ...     chop(diff(f,z,2) + (-0.25 + k/z + (0.25-m**2)/z**2)*f(z))
+    ...
+    0.0
+    0.0
+    0.0
+    0.0
 
 """

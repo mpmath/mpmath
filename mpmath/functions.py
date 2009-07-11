@@ -2065,26 +2065,33 @@ def hankel1(ctx,n,x):
 def hankel2(ctx,n,x):
     return ctx.besselj(n,x) - ctx.j*ctx.bessely(n,x)
 
-@defun
+@defun_wrapped
 def whitm(ctx,k,m,z):
-    k = ctx.convert(k)
-    m = ctx.convert(m)
-    z = ctx.convert(z)
-    def h(k,m):
-        return [([ctx.exp(-z/2), z], [1, m+0.5], [], [], [0.5+m-k], [1+2*m], z)]
-    return ctx.hypercomb(h, [k,m])
+    if z == 0:
+        # M(k,m,z) = 0^(1/2+m)
+        if ctx.re(m) > -0.5:
+            return z
+        elif ctx.re(m) < -0.5:
+            return ctx.inf + z
+        else:
+            return ctx.nan * z
+    x = ctx.fmul(-0.5, z, exact=True)
+    y = 0.5+m
+    return exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z)
 
-@defun
+@defun_wrapped
 def whitw(ctx,k,m,z):
-    k = ctx.convert(k)
-    m = ctx.convert(m)
-    z = ctx.convert(z)
-    def h(k,m):
-        w = ctx.exp(-z/2)
-        T1 = [w, z], [1, 0.5-m], [2*m], [0.5+m-k], [0.5-m-k], [1-2*m], z
-        T2 = [w, z], [1, 0.5+m], [-2*m], [0.5-m-k], [0.5+m-k], [1+2*m], z
-        return T1, T2
-    return ctx.hypercomb(h, [k,m])
+    if z == 0:
+        g = abs(ctx.re(m))
+        if g < 0.5:
+            return z
+        elif g > 0.5:
+            return ctx.inf + z
+        else:
+            return ctx.nan * z
+    x = ctx.fmul(-0.5, z, exact=True)
+    y = 0.5+m
+    return exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z)
 
 @defun
 def struveh(ctx,n,z):
