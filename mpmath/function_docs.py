@@ -6413,3 +6413,188 @@ differential equation for arbitrarily chosen values::
     0.0
 
 """
+
+ber = r"""
+Computes the Kelvin function ber, which for real arguments gives the real part
+of the Bessel J function of a rotated argument
+
+.. math ::
+
+    J_n\left(x e^{3\pi i/4}\right) = \mathrm{ber}_n(x) + i \mathrm{bei}_n(x).
+
+The imaginary part is given by :func:`bei`.
+
+**Examples**
+
+Verifying the defining relation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> n, x = 2, 3.5
+    >>> ber(n,x)
+    1.442338852571888752631129
+    >>> bei(n,x)
+    -0.948359035324558320217678
+    >>> besselj(n, x*root(1,8,3))
+    (1.442338852571888752631129 - 0.948359035324558320217678j)
+
+The ber and bei functions are also defined by analytic continuation
+for complex arguments::
+
+    >>> ber(1+j, 2+3j)
+    (4.675445984756614424069563 - 15.84901771719130765656316j)
+    >>> bei(1+j, 2+3j)
+    (15.83886679193707699364398 + 4.684053288183046528703611j)
+
+"""
+
+bei = r"""
+Computes the Kelvin function bei, which for real arguments gives the
+imaginary part of the Bessel J function of a rotated argument.
+See :func:`ber`.
+"""
+
+ker = r"""
+Computes the Kelvin function ker, which for real arguments gives the real part
+of the (rescaled) Bessel K function of a rotated argument
+
+.. math ::
+
+    e^{-\pi i/2} K_n\left(x e^{3\pi i/4}\right) = \mathrm{ker}_n(x) + i \mathrm{kei}_n(x).
+
+The imaginary part is given by :func:`kei`.
+
+**Examples**
+
+Verifying the defining relation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> n, x = 2, 4.5
+    >>> ker(n,x)
+    0.02542895201906369640249801
+    >>> kei(n,x)
+    -0.02074960467222823237055351
+    >>> exp(-n*pi*j/2) * besselk(n, x*root(1,8,1))
+    (0.02542895201906369640249801 - 0.02074960467222823237055351j)
+
+The ker and kei functions are also defined by analytic continuation
+for complex arguments::
+
+    >>> ker(1+j, 3+4j)
+    (1.586084268115490421090533 - 2.939717517906339193598719j)
+    >>> kei(1+j, 3+4j)
+    (-2.940403256319453402690132 - 1.585621643835618941044855j)
+
+"""
+
+kei = r"""
+Computes the Kelvin function kei, which for real arguments gives the
+imaginary part of the (rescaled) Bessel K function of a rotated argument.
+See :func:`ker`.
+"""
+
+struveh = r"""
+Gives the Struve function
+
+.. math ::
+
+    \,\mathbf{H}_n(z) = 
+    \sum_{k=0}^\infty \frac{(-1)^k}{\Gamma(k+\frac{3}{2})
+        \Gamma(k+n+\frac{3}{2})} {\left({\frac{z}{2}}\right)}^{2k+n+1}
+
+which is a solution to the Struve differential equation
+
+.. math ::
+
+    z^2 f''(z) + z f'(z) + (z^2-n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}.
+
+**Examples**
+
+Evaluation for arbitrary real and complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> struveh(0, 3.5)
+    0.3608207733778295024977797
+    >>> struveh(-1, 10)
+    -0.255212719726956768034732
+    >>> struveh(1, -100.5)
+    0.5819566816797362287502246
+    >>> struveh(2.5, 10000000000000)
+    3153915652525200060.308937
+    >>> struveh(2.5, -10000000000000)
+    (0.0 - 3153915652525200060.308937j)
+    >>> struveh(1+j, 1000000+4000000j)
+    (-3.066421087689197632388731e+1737173 - 1.596619701076529803290973e+1737173j)
+
+A Struve function of half-integer order is elementary; for example:
+
+    >>> z = 3
+    >>> struveh(0.5, 3)
+    0.9167076867564138178671595
+    >>> sqrt(2/(pi*z))*(1-cos(z))
+    0.9167076867564138178671595
+
+Numerically verifying the differential equation::
+
+    >>> z = mpf(4.5)
+    >>> n = 3
+    >>> f = lambda z: struveh(n,z)
+    >>> lhs = z**2*diff(f,z,2) + z*diff(f,z) + (z**2-n**2)*f(z)
+    >>> rhs = 2*z**(n+1)/fac2(2*n-1)/pi
+    >>> lhs
+    17.40359302709875496632744
+    >>> rhs
+    17.40359302709875496632744
+
+"""
+
+struvel = r"""
+Gives the modified Struve function
+
+.. math ::
+
+    \,\mathbf{L}_n(z) = -i e^{-n\pi i/2} \mathbf{H}_n(i z)
+
+which solves to the modified Struve differential equation
+
+.. math ::
+
+    z^2 f''(z) + z f'(z) - (z^2+n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}.
+
+**Examples**
+
+Evaluation for arbitrary real and complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> struvel(0, 3.5)
+    7.180846515103737996249972
+    >>> struvel(-1, 10)
+    2670.994904980850550721511
+    >>> struvel(1, -100.5)
+    1.757089288053346261497686e+42
+    >>> struvel(2.5, 10000000000000)
+    4.160893281017115450519948e+4342944819025
+    >>> struvel(2.5, -10000000000000)
+    (0.0 - 4.160893281017115450519948e+4342944819025j)
+    >>> struvel(1+j, 700j)
+    (-0.1721150049480079451246076 + 0.1240770953126831093464055j)
+    >>> struvel(1+j, 1000000+4000000j)
+    (-2.973341637511505389128708e+434290 - 5.164633059729968297147448e+434290j)
+
+Numerically verifying the differential equation::
+
+    >>> z = mpf(3.5)
+    >>> n = 3
+    >>> f = lambda z: struvel(n,z)
+    >>> lhs = z**2*diff(f,z,2) + z*diff(f,z) - (z**2+n**2)*f(z)
+    >>> rhs = 2*z**(n+1)/fac2(2*n-1)/pi
+    >>> lhs
+    6.368850306060678353018165
+    >>> rhs
+    6.368850306060678353018165
+
+
+"""
