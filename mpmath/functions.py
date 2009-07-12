@@ -2752,6 +2752,51 @@ def meijerg(ctx, a_s, b_s, z, r=1, **kwargs):
         return terms
     return ctx.hypercomb(h, a+b, **kwargs)
 
+@defun_wrapped
+def appellf1(ctx,a,b1,b2,c,z1,z2):
+    # Assume z1 smaller
+    # We will use z1 for the outer loop
+    if abs(z1) > abs(z2):
+        z1, z2 = z2, z1
+        b1, b2 = b2, b1
+    def ok(x):
+        return abs(x) < 0.99
+    # Finite cases
+    if ctx.isnpint(a):
+        pass
+    elif ctx.isnpint(b1):
+        pass
+    elif ctx.isnpint(b2):
+        z1, z2, b1, b2 = z2, z1, b2, b1
+    else:
+        #print z1, z2
+        # Note: ok if |z2| > 1, because
+        # 2F1 implements analytic continuation
+        if not ok(z1):
+            u1 = (z1-z2)/(z1-1)
+            if not ok(u1):
+                raise ValueError("Analytic continuation not implemented")
+            #print "Using analytic continuation"
+            return (1-z1)**(-b1)*(1-z2)**(c-a-b2)*\
+                ctx.appellf1(c-a,b1,c-b1-b2,c,u1,z2)
+    #print "inner is", a, b2, c
+    one = ctx.one
+    s = 0
+    t = 1
+    k = 0
+    while 1:
+        h = ctx.hyp2f1(a,b2,c,z2)
+        term = t * h
+        if abs(term) < ctx.eps and abs(h) > 10*ctx.eps:
+            break
+        s += term
+        k += 1
+        t = (t*a*b1*z1) / (c*k)
+        c += one
+        a += one
+        b1 += one
+    return s
+
 if __name__ == '__main__':
     #import doctest
     #doctest.testmod()

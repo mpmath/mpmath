@@ -6595,6 +6595,106 @@ Numerically verifying the differential equation::
     6.368850306060678353018165
     >>> rhs
     6.368850306060678353018165
+"""
+
+appellf1 = r"""
+Gives the Appell F1 hypergeometric function of two variables,
+
+.. math ::
+
+    F_1(a,b_1,b_2,c,z_1,z_2) = \sum_{m=0}^{\infty}
+        \sum_{n=0}^{\infty}
+        \frac{(a)_{m+n} (b_1)_m (b_2)_n}{m! \,n! \,(c)_{m+n}} z_1^m z_2^n.
+
+This series is only generally convergent when `|z_1| < 1` and `|z_2| < 1`,
+although :func:`appellf1` can evaluate the continuation
+in many cases.
+
+**Examples**
+
+Evaluation is supported for real and complex parameters::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> appellf1(1,0,0.5,1,0.5,0.25)
+    1.154700538379251529018298
+    >>> appellf1(1,1+j,0.5,1,0.5,0.5j)
+    (1.138403860350148085179415 + 1.510544741058517621110615j)
+
+For some integer parameters, the F1 series reduces to a polynomial::
+
+    >>> appellf1(2,-4,-3,1,2,5)
+    -816.0
+    >>> appellf1(-5,1,2,1,4,5)
+    -20528.0
+
+The analytic continuation with respect to either `z_1` or `z_2`,
+and sometimes with respect to both, can be evaluated::
+
+    >>> appellf1(2,3,4,5,100,0.5)
+    (0.0006231042714165329279738662 + 0.0000005769149277148425774499857j)
+    >>> appellf1('1.1', '0.3', '0.2+2j', '0.4', '0.2', 1.5+3j)
+    (-0.1782604566893954897128702 + 0.002472407104546216117161499j)
+    >>> appellf1(1,2,3,4,10,12)
+    -0.07122993830066776374929313
+
+For certain arguments, F1 reduces to an ordinary hypergeometric function::
+
+    >>> appellf1(1,2,3,5,0.5,0.25)
+    1.547902270302684019335555
+    >>> 4*hyp2f1(1,2,5,'1/3')/3
+    1.547902270302684019335555
+    >>> appellf1(1,2,3,4,0,1.5)
+    (-1.717202506168937502740238 - 2.792526803190927323077905j)
+    >>> hyp2f1(1,3,4,1.5)
+    (-1.717202506168937502740238 - 2.792526803190927323077905j)
+
+The Appell F1 function allows for closed-form evaluation of various
+integrals, such as any integral of the form
+`\int x^r (x+a)^p (x+b)^q dx`::
+
+    >>> def integral(a,b,p,q,r,x1,x2):
+    ...     a,b,p,q,r,x1,x2 = map(mpmathify, [a,b,p,q,r,x1,x2])
+    ...     f = lambda x: x**r * (x+a)**p * (x+b)**q
+    ...     def F(x):
+    ...         v = x**(r+1)/(r+1) * (a+x)**p * (b+x)**q
+    ...         v *= (1+x/a)**(-p)
+    ...         v *= (1+x/b)**(-q)
+    ...         v *= appellf1(r+1,-p,-q,2+r,-x/a,-x/b)
+    ...         return v
+    ...     print "Num. quad:", quad(f, [x1,x2])
+    ...     print "Appell F1:", F(x2)-F(x1)
+    ...
+    >>> integral('1/5','4/3','-2','3','1/2',0,1)
+    Num. quad: 9.073335358785776206576981
+    Appell F1: 9.073335358785776206576981
+    >>> integral('3/2','4/3','-2','3','1/2',0,1)
+    Num. quad: 1.092829171999626454344678
+    Appell F1: 1.092829171999626454344678
+    >>> integral('3/2','4/3','-2','3','1/2',12,25)
+    Num. quad: 1106.323225040235116498927
+    Appell F1: 1106.323225040235116498927
+
+Also incomplete elliptic integrals fall into this category [1]::
+
+    >>> def E(z, m):
+    ...     if (pi/2).ae(z):
+    ...         return ellipe(m)
+    ...     return 2*round(re(z)/pi)*ellipe(m) + mpf(-1)**round(re(z)/pi)*\
+    ...         sin(z)*appellf1(0.5,0.5,-0.5,1.5,sin(z)**2,m*sin(z)**2)
+    ...
+    >>> z, m = 1, 0.5
+    >>> E(z,m); quad(lambda t: sqrt(1-m*sin(t)**2), [0,pi/4,3*pi/4,z])
+    0.9273298836244400669659042
+    0.9273298836244400669659042
+    >>> z, m = 3, 2
+    >>> E(z,m); quad(lambda t: sqrt(1-m*sin(t)**2), [0,pi/4,3*pi/4,z])
+    (1.057495752337234229715836 + 1.198140234735592207439922j)
+    (1.057495752337234229715836 + 1.198140234735592207439922j)
+
+**References**
+
+1. http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/
 
 
 """
