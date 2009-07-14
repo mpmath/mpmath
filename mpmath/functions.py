@@ -1151,6 +1151,17 @@ def hypercomb(ctx, function, params=[], **kwargs):
                             if n > 0:
                                 continue
                             if d < -orig:
+                                # OK if we have a polynomial
+                                # ------------------------------
+                                ok = False
+                                if data is b_s:
+                                    for u in a_s:
+                                        if ctx.isnpint(u) and u >= int(n):
+                                            ok = True
+                                            break
+                                if ok:
+                                    continue
+                                # ------------------------------
                                 perturb = recompute = True
                                 raise StopIteration
                             elif d < -4:
@@ -2609,6 +2620,166 @@ def clcos(ctx, s, z):
     b = 1/a
     return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
 
+@defun
+def hurwitz(ctx, s, a=1, derivative=0):
+    d = int(derivative)
+    s = ctx.convert(s)
+    if s == 1:
+        return ctx.inf
+    abss = abs(s)
+    if abss == ctx.inf:
+        if ctx.re(s) == ctx.inf:
+            if d == 0:
+                return ctx.one
+            return ctx.zero
+        return s*0
+    elif ctx.isnan(abss):
+        return 1/s
+    prec = ctx.prec
+    try:
+        ctx.prec += 10
+        v = ctx._hurwitz(s, a, d)
+    finally:
+        ctx.prec = prec
+    return +v
+
+@defun
+def _hurwitz(ctx, s, a=1, d=0):
+    # We strongly want to special-case rational a
+    ar, af, ac, a = ctx._hyp_parse_param(a)
+    prec = ctx.prec
+    # TODO: implement reflection for derivatives
+    res = ctx.re(s)
+    negs = -s
+    try:
+        if res < 0 and not d: #and (ar or af):
+            # Integer reflection formula
+            if ctx.isnpint(s):
+                n = int(res)
+                if n <= 0:
+                    return ctx.bernpoly(1-n, a) / (n-1)
+            t = 1-s
+            # We now require a to be standardized
+            v = 0
+            shift = 0
+            b = a
+            while re(b) > 1:
+                b -= 1
+                v -= b**negs
+                shift -= 1
+            while re(b) <= 0:
+                v += b**negs
+                b += 1
+                shift += 1
+            # Rational reflection formula
+            if ar:
+                p, q = ar[0]
+                p += shift*q
+                assert 1 <= p <= q
+                g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
+                    for k in range(1,q+1))
+                g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
+                v += g
+                return v
+            # General reflection formula
+            else:
+                C1 = ctx.cospi(t/2)
+                C2 = ctx.sinpi(t/2)
+                # Clausen functions; could maybe use polylog directly
+                if C1: C1 *= ctx.clcos(t, 2*ctx.pi*a)
+                if C2: C2 *= ctx.clsin(t, 2*ctx.pi*a)
+                v += 2*ctx.gamma(t)/(2*ctx.pi)**t*(C1+C2)
+                return v
+    except NotImplementedError:
+        pass
+    a = ctx.convert(a)
+    tol = -prec
+    # Estimate number of terms for Euler-Maclaurin summation; could be improved
+    M1 = 0
+    M2 = prec // 3
+    N = M2
+    lsum = 0
+    # This speeds up the recurrence for derivatives
+    if ctx.isint(s):
+        s = int(s)
+    s1 = s-1
+    while 1:
+        # Truncated L-series
+        if d:
+            l = ctx.fsum(ctx.log(n+a)**d * (n+a)**negs for n in range(M1,M2))
+        else:
+            l = ctx.fsum((n+a)**negs for n in range(M1,M2))
+        lsum += l
+        M2a = M2+a
+        logM2a = ctx.log(M2a)
+        logM2ad = logM2a**d
+        logs = [logM2ad]
+        logr = 1/logM2a
+        rM2a = 1/M2a
+        M2as = rM2a**s
+        if d:
+            tailsum = ctx.gammainc(d+1, s1*logM2a) / s1**(d+1)
+        else:
+            tailsum = 1/((s-1)*(M2a)**s1)
+        tailsum += 0.5 * logM2ad * M2as
+        U = [1]
+        r = M2as
+        fact = 2
+        for j in range(1, N+1):
+            # TODO: the following could perhaps be tidied a bit
+            j2 = 2*j
+            if j == 1:
+                upds = [1]
+            else:
+                upds = [j2-2, j2-1]
+            for m in upds:
+                D = min(m,d+1)
+                if m <= d:
+                    logs.append(logs[-1] * logr)
+                Un = [0]*(D+1)
+                for i in xrange(D): Un[i] = (1-m-s)*U[i]
+                for i in xrange(1,D+1): Un[i] += (d-(i-1))*U[i-1]
+                U = Un
+                r *= rM2a
+            t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
+            tailsum += t
+            if ctx.mag(t) < tol:
+                return (-1)**d * (lsum + tailsum)
+            fact *= (j2+1)*(j2+2)
+        M1, M2 = M2, M2*2
+
+@defun
+def dirichlet(ctx, s, chi=[1], derivative=0):
+    s = ctx.convert(s)
+    q = len(chi)
+    d = int(derivative)
+    if d > 2:
+        raise NotImplementedError("arbitrary order derivatives")
+    prec = ctx.prec
+    try:
+        ctx.prec += 10
+        if s == 1:
+            have_pole = True
+            for x in chi:
+                if x and x != 1:
+                    have_pole = False
+                    h = +ctx.eps
+                    ctx.prec *= 2*(d+1)
+                    s += h
+            if have_pole:
+                return +ctx.inf
+        z = ctx.zero
+        for p in range(1,q+1):
+            if chi[p%q]:
+                if d == 1:
+                    z += chi[p%q] * (ctx.hurwitz(s, (p,q), 1) - \
+                        ctx.hurwitz(s, (p,q))*ctx.log(q))
+                else:
+                    z += chi[p%q] * ctx.hurwitz(s, (p,q))
+        z /= q**s
+    finally:
+        ctx.prec = prec
+    return +z
 
 # Experimental code; could be used elsewhere
 def sum_accurately(ctx, terms, check_step=1):

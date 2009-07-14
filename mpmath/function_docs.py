@@ -6695,6 +6695,212 @@ Also incomplete elliptic integrals fall into this category [1]::
 **References**
 
 1. http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/
+"""
 
+hurwitz = r"""
+Computes the Hurwitz zeta function
+
+.. math ::
+
+    \zeta(s,a) = \sum_{k=0}^\infty \frac{1}{(a+k)^s}.
+
+With `a = 1`, this reduces to the ordinary Riemann zeta function.
+Optionally, ``hurwitz(s, a, n)`` computes
+the `n`-th derivative with respect to `s`,
+
+.. math ::
+
+    \zeta^{(n)}(s,a) = (-1)^n \sum_{k=0}^\infty \frac{\log^n(a+k)}{(a+k)^s}.
+
+Although these series only converge for `\Re(s) > 1`, the Hurwitz
+zeta function is defined through analytic continuation for arbitrary
+complex `s \ne 1` (`s = 1` is a pole). The implementation uses Euler-Maclaurin
+summation along with reflection formulas in some cases when `\Re(s) < 0`.
+
+The parameter `a` is usually a rational number `a = p/q`, and may be specified
+as such by passing an integer tuple `(p, q)`. Evaluation is supported for
+arbitrary complex `a`, but may be slow and/or inaccurate when `\Re(s) < 0` for
+nonrational `a` or when computing derivatives.
+
+**Examples**
+
+Some basic evaluations:
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hurwitz(2, 3); -5./4 + pi**2/6
+    0.3949340668482264364724152
+    0.3949340668482264364724152
+    >>> hurwitz(2, (3,4)); pi**2 - 8*catalan
+    2.541879647671606498397663
+    2.541879647671606498397663
+
+For positive integer values of `s`, the Hurwitz zeta function can be evaluated
+using polygamma functions::
+
+    >>> hurwitz(4, (1,5)); psi(3, '1/5')/6
+    625.5408324774542966919938
+    625.5408324774542966919938
+
+Some Riemann zeta function values::
+
+    >>> hurwitz(2)
+    1.644934066848226436472415
+    >>> 1-sum((hurwitz(k)-1)/k for k in range(2,85))
+    0.5772156649015328606065121
+    >>> +euler
+    0.5772156649015328606065121
+    >>> hurwitz(inf)
+    1.0
+
+Evaluation on the critical line::
+
+    >>> findroot(hurwitz, 0.5+14j)
+    (0.5 + 14.13472514173469379045725j)
+
+A derivative identity; evaluation for `s < 1`::
+
+    >>> hurwitz(0, 3+4j, 1)
+    (-2.675565317808456852310934 + 4.742664438034657928194889j)
+    >>> loggamma(3+4j) - ln(2*pi)/2
+    (-2.675565317808456852310934 + 4.742664438034657928194889j)
+
+A high order derivative::
+
+    >>> hurwitz(2, 1, 20)
+    2432902008176640000.000242
+
+A fourth derivative at a complex value::
+
+    >>> hurwitz(3+4j, 5.5+2j, 4)
+    (-0.140075548947797130681075 - 0.3109263360275413251313634j)
+
+Generating a Taylor series at `s = 2` using derivatives::
+
+    >>> for k in range(11): print hurwitz(2,1,k)/fac(k), "*", "(s-2)^%i" % k
+    ...
+    1.644934066848226436472415 * (s-2)^0
+    -0.9375482543158437537025741 * (s-2)^1
+    0.9946401171494505117104293 * (s-2)^2
+    -1.000024300473840810940657 * (s-2)^3
+    1.000061933072352565457512 * (s-2)^4
+    -1.000006869443931806408941 * (s-2)^5
+    1.000000173233769531820592 * (s-2)^6
+    -0.9999999569989868493432399 * (s-2)^7
+    0.9999999937218844508684206 * (s-2)^8
+    -0.9999999996355013916608284 * (s-2)^9
+    1.000000000004610645020747 * (s-2)^10
+
+Evaluation at zero and for negative integer `s`::
+
+    >>> hurwitz(0); zeta(0)
+    -0.5
+    -0.5
+    >>> hurwitz(0, 10)
+    -9.5
+    >>> hurwitz(-1); zeta(-1)
+    -0.08333333333333333333333333
+    -0.08333333333333333333333333
+    >>> hurwitz(-2); zeta(-2)
+    0.0
+    0.0
+    >>> hurwitz(-2, (2,3)); mpf(1)/81
+    0.01234567901234567901234568
+    0.01234567901234567901234568
+
+Evaluation for negative `s`, with rational and nonrational `a`::
+
+    >>> hurwitz(-3+4j, (5,4))
+    (0.2899236037682695182085988 + 0.06561206166091757973112783j)
+    >>> hurwitz(-3.25, 1/pi)
+    -0.0005117269627574430494396877
+    >>> hurwitz(-3.5, pi(dps=30), 1)
+    11.15636039044000329471003
+    >>> hurwitz(-100.5, (8,3))
+    -4.68162300487989766727122e+77
+    >>> hurwitz(-10.5, (-8,3))
+    (-0.01521913704446246609237979 + 29907.72510874248161608216j)
+    >>> hurwitz(-1000.5, (-8,3))
+    (1.031911949062334538202567e+1770 + 1.519555750556794218804724e+426j)
+    >>> hurwitz(-1+j, 3+4j)
+    (-16.32988355630802510888631 - 22.17706465801374033261383j)
+    >>> hurwitz(-1+j, 3+4j, 2)
+    (32.48985276392056641594055 - 51.11604466157397267043655j)
+    >>> diff(lambda s: hurwitz(s, 3+4j), -1+j, 2)
+    (32.48985276392056641594055 - 51.11604466157397267043655j)
+
+"""
+
+dirichlet = r"""
+Evaluates the Dirichlet L-function
+
+.. math ::
+
+    L(s,\chi) = \sum_{k=1}^\infty \frac{\chi(k)}{k^s}.
+
+where `\chi` is a periodic sequence of length `q` which should be supplied
+in the form of a list `[\chi(0), \chi(1), \ldots, \chi(q-1)]`.
+Strictly, `\chi` should be a Dirichlet character, but any periodic
+sequence will work.
+
+For example, ``dirichlet(s, [1])`` gives the ordinary
+Riemann zeta function and ``dirichlet(s, [-1,1])`` gives
+the alternating zeta function (Dirichlet eta function).
+
+Also the derivative with respect to `s` (currently only a first
+derivative) can be evaluated.
+
+**Examples**
+
+The ordinary Riemann zeta function::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> dirichlet(3, [1]); zeta(3)
+    1.202056903159594285399738
+    1.202056903159594285399738
+    >>> dirichlet(1, [1])
+    +inf
+
+The alternating zeta function::
+
+    >>> dirichlet(1, [-1,1]); ln(2)
+    0.6931471805599453094172321
+    0.6931471805599453094172321
+
+The following defines the Dirichlet beta function
+`\beta(s) = \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)^s}` and verifies
+several values of this function::
+
+    >>> B = lambda s, d=0: dirichlet(s, [0, 1, 0, -1], d)
+    >>> B(0); 1./2
+    0.5
+    0.5
+    >>> B(1); pi/4
+    0.7853981633974483096156609
+    0.7853981633974483096156609
+    >>> B(2); +catalan
+    0.9159655941772190150546035
+    0.9159655941772190150546035
+    >>> B(2,1); diff(B, 2)
+    0.08158073611659279510291217
+    0.08158073611659279510291217
+    >>> B(-1,1); 2*catalan/pi
+    0.5831218080616375602767689
+    0.5831218080616375602767689
+    >>> B(0,1); log(gamma(0.25)**2/(2*pi*sqrt(2)))
+    0.3915943927068367764719453
+    0.3915943927068367764719454
+    >>> B(1,1); 0.25*pi*(euler+2*ln2+3*ln(pi)-4*ln(gamma(0.25)))
+    0.1929013167969124293631898
+    0.1929013167969124293631898
+
+A custom L-series of period 3::
+
+    >>> dirichlet(2, [2,0,1])
+    0.7059715047839078092146831
+    >>> 2*nsum(lambda k: (3*k)**-2, [1,inf]) + \
+    ...   nsum(lambda k: (3*k+2)**-2, [0,inf])
+    0.7059715047839078092146831
 
 """

@@ -183,6 +183,9 @@ class MultiPrecisionArithmetic(Context, quadrature.QuadratureMethods):
             return sign and exp >= 0
         if hasattr(x, '_mpc_'):
             return not x.imag and ctx.isnpint(x.real)
+        if type(x) in (int, long):
+            return x <= 0
+        return ctx.isnpint(ctx.convert(x))
 
     def bad_domain(ctx, msg):
         raise ValueError(msg)
