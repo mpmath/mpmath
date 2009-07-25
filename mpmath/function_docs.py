@@ -1620,28 +1620,24 @@ when `s` is far away from the real axis.
 """
 
 altzeta = r"""
-Computes the Dirichlet eta function, `\eta(s)`, also known as the
+Gives the Dirichlet eta function, `\eta(s)`, also known as the
 alternating zeta function. This function is defined in analogy
 with the Riemann zeta function as providing the sum of the
 alternating series
 
 .. math ::
 
-    \eta(s) = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots
+    \eta(s) = \sum_{k=0}^{\infty} \frac{(-1)^k}{k^s}
+        = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots
 
-Note that `\eta(1) = \log(2)` is the alternating harmonic series.
-The eta function unlike the Riemann zeta function is an entire
-function, having a finite value for all complex `s`.
+The eta function, unlike the Riemann zeta function, is an entire
+function, having a finite value for all complex `s`. The special case
+`\eta(1) = \log(2)` gives the value of the alternating harmonic series.
 
-The alternating and non-alternating zeta functions are related
-via the simple formula
-
-.. math ::
-
-    \eta(s) = (1 - 2^{1-s}) \zeta(s).
-
-This formula can be used to define `\eta(s)` for `\Re(s) \le 0`,
-where the series diverges.
+The alternating zeta function may expressed using the Riemann zeta function
+as `\eta(s) = (1 - 2^{1-s}) \zeta(s)`. It can also be expressed
+in terms of the Hurwitz zeta function (:func:`hurwitz`), for example using
+:func:`dirichlet` (see documentation for that function).
 
 **Examples**
 
@@ -2250,7 +2246,7 @@ beta function `B(a,b)`; see :func:`beta`.
 
 With the keyword argument ``regularized=True``, :func:`betainc`
 computes the regularized incomplete beta function
-`I_{x_1}^{x_2}(a,b) / B(a,b)`. This is the cumulative density of the
+`I_{x_1}^{x_2}(a,b) / B(a,b)`. This is the cumulative distribution of the
 beta distribution with parameters `a`, `b`.
 
 Note: implementations of the incomplete beta function in some other
@@ -2538,7 +2534,8 @@ far the most common).
 
 **Examples**
 
-We can compare the output of :func:`hyper` with :func:`nsum`::
+Verifying that :func:`hyper` gives the sum in the definition, by
+comparison with :func:`nsum`::
 
     >>> from mpmath import *
     >>> mp.dps = 25; mp.pretty = True
@@ -2561,6 +2558,56 @@ floats and complex numbers::
     >>> fn = lambda n: rf(a,n)*rf(b,n)/rf(c,n)/rf(d,n)/rf(e,n)*x**n/fac(n)
     >>> nsum(fn, [0, inf])
     (0.9923571616434024810831887 - 0.005753848733883879742993122j)
+
+The `\,_0F_0` and `\,_1F_0` series are just elementary functions::
+
+    >>> a, z = sqrt(2), pi
+    >>> hyper([],[],z)
+    23.14069263277926900572909
+    >>> exp(z)
+    23.14069263277926900572909
+    >>> hyper([a],[],z)
+    (-0.09069132879922920160334114 + 0.3283224323946162083579656j)
+    >>> (1-z)**(-a)
+    (-0.09069132879922920160334114 + 0.3283224323946162083579656j)
+
+If any `a_k` coefficient is a nonpositive integer, the series terminates
+into a finite polynomial::
+
+    >>> hyper([1,1,1,-3],[2,5],1)
+    0.7904761904761904761904762
+    >>> identify(_)
+    '(83/105)'
+
+If any `b_k` is a nonpositive integer, the function is undefined (unless the
+series terminates before the division by zero occurs)::
+
+    >>> hyper([1,1,1,-3],[-2,5],1)
+    Traceback (most recent call last):
+      ...
+    ZeroDivisionError
+    >>> hyper([1,1,1,-1],[-2,5],1)
+    1.1
+
+Generally, the radius of convergence of the hypergeometric series is either 0
+(if `p > q+1`), 1 (if `p = q+1`), or `\infty`. A divergent series will evaluate
+if an analytic continuation or regularization is implemented (see the list of
+:func:`hypXfX` functions); otherwise an exception is raised::
+
+    >>> hyper([1,1], [1], 2)           # divergent case of 2F1, implemented
+    -1.0
+    >>> hyper([1,1,1,1], [1,1,1], 0.5) # convergent case of 4F3
+    2.0
+    >>> hyper([1,1,1,1], [1,1,1], 2)   # divergent case of 4F3, not implemented
+    Traceback (most recent call last):
+      ...
+    NoConvergence
+    >>> hyper([1,1], [], 0.5)          # regularization of 2F0, implemented
+    (1.340965419580146562086448 + 0.8503366631752726568782447j)
+    >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1, not implemented
+    Traceback (most recent call last):
+      ...
+    NoConvergence
 
 """
 
@@ -2611,24 +2658,224 @@ value::
 
 """
 
-hyp0f1 = r"""Hypergeometric function `\,_0F_1`. ``hyp0f1(a,z)`` is equivalent
-to ``hyper([],[a],z)``; see documentation for :func:`hyper` for more
-information."""
+hyp0f1 = r"""
+Gives the hypergeometric function `\,_0F_1`, sometimes known as the
+confluent limit function, defined as
+
+.. math ::
+
+    \,_0F_1(a,z) = \sum_{k=0}^{\infty} \frac{1}{(a)_k} \frac{z^k}{k!}.
+
+This function satisfies the differential equation `z f''(z) + a f'(z) = f(z)`,
+and is related to the Bessel function of the first kind (see :func:`besselj`).
+
+``hyp0f1(a,z)`` is equivalent to ``hyper([],[a],z)``; see documentation for
+:func:`hyper` for more information.
+
+**Examples**
+
+Evaluation for arbitrary arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hyp0f1(2, 0.25)
+    1.130318207984970054415392
+    >>> hyp0f1((1,2), 1234567)
+    6.27287187546220705604627e+964
+    >>> hyp0f1(3+4j, 1000000j)
+    (3.905169561300910030267132e+606 + 3.807708544441684513934213e+606j)
+
+Evaluation is supported for arbitrarily large values of `z`,
+using asymptotic expansions::
+
+    >>> hyp0f1(1, 10**50)
+    2.131705322874965310390701e+8685889638065036553022565
+    >>> hyp0f1(1, -10**50)
+    1.115945364792025420300208e-13
+
+Verifying the differential equation::
+
+    >>> a = 2.5
+    >>> f = lambda z: hyp0f1(a,z)
+    >>> for z in [0, 10, 3+4j]:
+    ...     chop(z*diff(f,z,2) + a*diff(f,z) - f(z))
+    ...
+    0.0
+    0.0
+    0.0
+
+"""
 
 hyp1f1 = r"""
-Hypergeometric function `\,_1F_1`. ``hyp1f1(a,b,z)`` is equivalent
+Gives the confluent hypergeometric function of the first kind,
+
+.. math ::
+
+    \,_1F_1(a,b,z) = \sum_{k=0}^{\infty} \frac{(a)_k}{(b)_k} \frac{z^k}{k!},
+
+also known as Kummer's function and sometimes denoted by `M(a,b,z)`. This
+function gives one solution to the confluent (Kummer's) differential equation
+
+.. math ::
+
+    z f''(z) + (b-z) f'(z) - af(z) = 0.
+
+A second solution is given by the `U` function; see :func:`hyperu`.
+Solutions are also given in an alternate form by the Whittaker
+functions (:func:`whitm`, :func:`whitw`).
+
+``hyp1f1(a,b,z)`` is equivalent
 to ``hyper([a],[b],z)``; see documentation for :func:`hyper` for more
-information."""
+information.
+
+**Examples**
+
+Evaluation for real and complex values of the argument `z`, with
+fixed parameters `a = 2, b = -1/3`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hyp1f1(2, (-1,3), 3.25)
+    -2815.956856924817275640248
+    >>> hyp1f1(2, (-1,3), -3.25)
+    -1.145036502407444445553107
+    >>> hyp1f1(2, (-1,3), 1000)
+    -8.021799872770764149793693e+441
+    >>> hyp1f1(2, (-1,3), -1000)
+    0.00000313198763300681359453533
+    >>> hyp1f1(2, (-1,3), 100+100j)
+    (-3.189190365227034385898282e+48 - 1.106169926814270418999315e+49j)
+
+Parameters may be complex::
+
+    >>> hyp1f1(2+3j, -1+j, 10j)
+    (261.8977905181045142673351 + 160.8930312845682213562172j)
+
+Arbitrarily large values of `z` are supported::
+
+    >>> hyp1f1(3, 4, 10**20)
+    3.890569218254486878220752e+43429448190325182745
+    >>> hyp1f1(3, 4, -10**20)
+    6.0e-60
+    >>> hyp1f1(3, 4, 10**20*j)
+    (-1.935753855797342532571597e-20 - 2.291911213325184901239155e-20j)
+
+Verifying the differential equation::
+
+    >>> a, b = 1.5, 2
+    >>> f = lambda z: hyp1f1(a,b,z)
+    >>> for z in [0, -10, 3, 3+4j]:
+    ...     chop(z*diff(f,z,2) + (b-z)*diff(f,z) - a*f(z))
+    ...
+    0.0
+    0.0
+    0.0
+    0.0
+
+An integral representation::
+
+    >>> a, b = 1.5, 3
+    >>> z = 1.5
+    >>> hyp1f1(a,b,z)
+    2.269381460919952778587441
+    >>> g = lambda t: exp(z*t)*t**(a-1)*(1-t)**(b-a-1)
+    >>> gammaprod([b],[a,b-a])*quad(g, [0,1])
+    2.269381460919952778587441
+
+
+"""
 
 hyp2f1 = r"""
-Hypergeometric function `\,_2F_1`. ``hyp2f1(a,b,c,z)`` is equivalent
-to ``hyper([a,b],[c],z)``; see documentation for :func:`hyper` for more
-information."""
+Gives the Gauss hypergeometric function `\,_2F_1` (often simply referred to as
+*the* hypergeometric function), defined for `|z| < 1` as
+
+.. math ::
+
+    \,_2F_1(a,b,c,z) = \sum_{k=0}^{\infty}
+        \frac{(a)_k (b)_k}{(c)_k} \frac{z^k}{k!}.
+
+and for `|z| \ge 1` by analytic continuation, with a branch cut on `(1, \infty)`
+when necessary.
+
+Special cases of this function include many of the orthogonal polynomials as
+well as the incomplete beta function and other functions. Properties of the
+Gauss hypergeometric function are documented comprehensively in many references,
+for example Abramowitz & Stegun, section 15.
+
+The implementation supports the analytic continuation as well as evaluation
+close to the unit circle where `|z| \approx 1`. The syntax ``hyp2f1(a,b,c,z)``
+is equivalent to ``hyper([a,b],[c],z)``.
+
+**Examples**
+
+Evaluation with `z` inside, outside and on the unit circle, for
+fixed parameters::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hyp2f1(2, (1,2), 4, 0.75)
+    1.303703703703703703703704
+    >>> hyp2f1(2, (1,2), 4, -1.75)
+    0.7431290566046919177853916
+    >>> hyp2f1(2, (1,2), 4, 1.75)
+    (1.418075801749271137026239 - 1.114976146679907015775102j)
+    >>> hyp2f1(2, (1,2), 4, 1)
+    1.6
+    >>> hyp2f1(2, (1,2), 4, -1)
+    0.8235498012182875315037882
+    >>> hyp2f1(2, (1,2), 4, j)
+    (0.9144026291433065674259078 + 0.2050415770437884900574923j)
+    >>> hyp2f1(2, (1,2), 4, 2+j)
+    (0.9274013540258103029011549 + 0.7455257875808100868984496j)
+    >>> hyp2f1(2, (1,2), 4, 0.25j)
+    (0.9931169055799728251931672 + 0.06154836525312066938147793j)
+
+Evaluation with complex parameter values::
+
+    >>> hyp2f1(1+j, 0.75, 10j, 1+5j)
+    (0.8834833319713479923389638 + 0.7053886880648105068343509j)
+
+Evaluation with `z = 1`::
+
+    >>> hyp2f1(-2.5, 3.5, 1.5, 1)
+    0.0
+    >>> hyp2f1(-2.5, 3, 4, 1)
+    0.06926406926406926406926407
+    >>> hyp2f1(2, 3, 4, 1)
+    +inf
+
+Evaluation for huge arguments::
+
+    >>> hyp2f1((-1,3), 1.75, 4, '1e100')
+    (7.883714220959876246415651e+32 + 1.365499358305579597618785e+33j)
+    >>> hyp2f1((-1,3), 1.75, 4, '1e1000000')
+    (7.883714220959876246415651e+333332 + 1.365499358305579597618785e+333333j)
+    >>> hyp2f1((-1,3), 1.75, 4, '1e1000000j')
+    (1.365499358305579597618785e+333333 - 7.883714220959876246415651e+333332j)
+
+An integral representation::
+
+    >>> a,b,c,z = -0.5, 1, 2.5, 0.25
+    >>> g = lambda t: t**(b-1) * (1-t)**(c-b-1) * (1-t*z)**(-a)
+    >>> gammaprod([c],[b,c-b]) * quad(g, [0,1])
+    0.9480458814362824478852618
+    >>> hyp2f1(a,b,c,z)
+    0.9480458814362824478852618
+
+Verifying the hypergeometric differential equation::
+
+    >>> f = lambda z: hyp2f1(a,b,c,z)
+    >>> chop(z*(1-z)*diff(f,z,2) + (c-(a+b+1)*z)*diff(f,z) - a*b*f(z))
+    0.0
+
+"""
 
 hyperu = r"""
-Gives the Tricomi confluent hypergeometric function `U`, which provides a second
-linearly independent solution to the confluent hypergeometric differential
-equation (the first is provided by `\,_1F_1` [1]).
+Gives the Tricomi confluent hypergeometric function `U`, also known as
+the Kummer or confluent hypergeometric function of the second kind. This
+function gives a second linearly independent solution to the confluent
+hypergeometric differential equation (the first is provided by `\,_1F_1`  --
+see :func:`hyp1f1`).
 
 **Examples**
 
@@ -2642,6 +2889,24 @@ Evaluation for arbitrary complex arguments::
     0.1779949416140579573763523
     >>> hyperu(0.25, 5, -1000)
     (0.1256256609322773150118907 - 0.1256256609322773150118907j)
+
+The `U` function may be singular at `z = 0`::
+
+    >>> hyperu(1.5, 2, 0)
+    +inf
+    >>> hyperu(1.5, -2, 0)
+    0.1719434921288400112603671
+
+Verifying the differential equation::
+
+    >>> a, b = 1.5, 2
+    >>> f = lambda z: hyperu(a,b,z)
+    >>> for z in [-10, 3, 3+4j]:
+    ...     chop(z*diff(f,z,2) + (b-z)*diff(f,z) - a*f(z))
+    ...
+    0.0
+    0.0
+    0.0
 
 An integral representation::
 
@@ -2666,7 +2931,7 @@ series
 This series usually does not converge. For small enough `z`, it can be viewed
 as an asymptotic series that may be summed directly with an appropriate
 truncation. When this is not the case, :func:`hyp2f0` gives a regularized sum,
-or equivalently, it uses a representation in terms of the complex
+or equivalently, it uses a representation in terms of the
 hypergeometric U function [1]. The series also converges when either `a` or `b`
 is a nonpositive integer, as it then terminates into a polynomial
 after `-a` or `-b` terms.
@@ -5739,8 +6004,8 @@ A determinant identity satisfied by Bell numbers::
 """
 
 polyexp = r"""
-Evaluates the generalized exponential function (for arbitrary
-complex `s`, `z`)
+Evaluates the polyexponential function, defined for arbitrary
+complex `s`, `z` by the series
 
 .. math ::
 
@@ -5748,11 +6013,12 @@ complex `s`, `z`)
 
 `E_s(z)` is constructed from the exponential function analogously
 to how the polylogarithm is constructed from the ordinary
-logarithm; as a function of `s` (with `z` fixed), `E_s` is a
-Dirichlet series. It is an entire function of both `s` and `z`.
+logarithm; as a function of `s` (with `z` fixed), `E_s` is an L-series
+It is an entire function of both `s` and `z`.
 
-In terms of the Bell polynomials `B_n(x)` (see :func:`bell`), we
-have
+The polyexponential function provides a generalization of the
+Bell polynomials `B_n(x)` (see :func:`bell`) to noninteger orders `n`.
+In terms of the Bell polynomials,
 
 .. math ::
 
@@ -6902,5 +7168,205 @@ A custom L-series of period 3::
     >>> 2*nsum(lambda k: (3*k)**-2, [1,inf]) + \
     ...   nsum(lambda k: (3*k+2)**-2, [0,inf])
     0.7059715047839078092146831
+
+"""
+
+coulombf = r"""
+Calculates the regular Coulomb wave function
+
+.. math ::
+
+    F_l(\eta,z) = C_l(\eta) z^{l+1} e^{-iz} \,_1F_1(l+1-i\eta, 2l+2, 2iz)
+
+where the normalization constant `C_l(\eta)` is as calculated by
+:func:`coulombc`. This function solves the differential equation
+
+.. math ::
+
+    f''(z) + \left(1-\frac{2\eta}{z}-\frac{l(l+1)}{z^2}\right) f(z) = 0.
+
+A second linearly independent solution is given by the irregular
+Coulomb wave function `G_l(\eta,z)` (see :func:`coulombg`)
+and thus the general solution is
+`f(z) = C_1 F_l(\eta,z) + C_2 G_l(\eta,z)` for arbitrary
+constants `C_1`, `C_2`.
+Physically, the Coulomb wave functions give the radial solution
+to the Schrodinger equation for a point particle in a `1/z` potential; `z` is
+then the radius and `l`, `\eta` are quantum numbers.
+
+The Coulomb wave functions with real parameters are defined
+in Abramowitz & Stegun, section 14. However, all parameters are permitted
+to be complex in this implementation (see references).
+
+**Examples**
+
+Evaluation is supported for arbitrary magnitudes of `z`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> coulombf(2, 1.5, 3.5)
+    0.4080998961088761187426445
+    >>> coulombf(-2, 1.5, 3.5)
+    0.7103040849492536747533465
+    >>> coulombf(2, 1.5, '1e-10')
+    4.143324917492256448770769e-33
+    >>> coulombf(2, 1.5, 1000)
+    0.4482623140325567050716179
+    >>> coulombf(2, 1.5, 10**10)
+    -0.066804196437694360046619
+
+Verifying the differential equation::
+
+    >>> l, eta, z = 2, 3, mpf(2.75)
+    >>> A, B = 1, 2
+    >>> f = lambda z: A*coulombf(l,eta,z) + B*coulombg(l,eta,z)
+    >>> chop(diff(f,z,2) + (1-2*eta/z - l*(l+1)/z**2)*f(z))
+    0.0
+
+A Wronskian relation satisfied by the Coulomb wave functions::
+
+    >>> l = 2
+    >>> eta = 1.5
+    >>> F = lambda z: coulombf(l,eta,z)
+    >>> G = lambda z: coulombg(l,eta,z)
+    >>> for z in [3.5, -1, 2+3j]:
+    ...     chop(diff(F,z)*G(z) - F(z)*diff(G,z))
+    ...
+    1.0
+    1.0
+    1.0
+
+Another Wronskian relation::
+
+    >>> F = coulombf
+    >>> G = coulombg
+    >>> for z in [3.5, -1, 2+3j]:
+    ...     chop(F(l-1,eta,z)*G(l,eta,z)-F(l,eta,z)*G(l-1,eta,z) - l/sqrt(l**2+eta**2))
+    ...
+    0.0
+    0.0
+    0.0
+
+An integral identity connecting the regular and irregular wave functions::
+
+    >>> l, eta, z = 4+j, 2-j, 5+2j
+    >>> coulombf(l,eta,z) + j*coulombg(l,eta,z)
+    (0.7997977752284033239714479 + 0.9294486669502295512503127j)
+    >>> g = lambda t: exp(-t)*t**(l-j*eta)*(t+2*j*z)**(l+j*eta)
+    >>> j*exp(-j*z)*z**(-l)/fac(2*l+1)/coulombc(l,eta)*quad(g, [0,inf])
+    (0.7997977752284033239714479 + 0.9294486669502295512503127j)
+
+Some test case with complex parameters, taken from Michel [2]::
+
+    >>> mp.dps = 15
+    >>> coulombf(1+0.1j, 50+50j, 100.156)
+    (-1.02107292320897e+15 - 2.83675545731519e+15j)
+    >>> coulombg(1+0.1j, 50+50j, 100.156)
+    (2.83675545731519e+15 - 1.02107292320897e+15j)
+    >>> coulombf(1e-5j, 10+1e-5j, 0.1+1e-6j)
+    (4.30566371247811e-14 - 9.03347835361657e-19j)
+    >>> coulombg(1e-5j, 10+1e-5j, 0.1+1e-6j)
+    (778709182061.134 + 18418936.2660553j)
+
+The following reproduces a table in Abramowitz & Stegun, at twice
+the precision::
+
+    >>> mp.dps = 10
+    >>> eta = 2; z = 5
+    >>> for l in [5, 4, 3, 2, 1, 0]:
+    ...     print l, coulombf(l,eta,z), diff(lambda z: coulombf(l,eta,z), z)
+    ...
+    5 0.09079533488 0.1042553261
+    4 0.2148205331 0.2029591779
+    3 0.4313159311 0.320534053
+    2 0.7212774133 0.3952408216
+    1 0.9935056752 0.3708676452
+    0 1.143337392 0.2937960375
+
+**References**
+
+1. I.J. Thompson & A.R. Barnett, "Coulomb and Bessel Functions of Complex
+   Arguments and Order", J. Comp. Phys., vol 64, no. 2, June 1986.
+
+2. N. Michel, "Precise Coulomb wave functions for a wide range of
+   complex `l`, `\eta` and `z`", http://arxiv.org/abs/physics/0702051v1
+
+"""
+
+coulombg = r"""
+Calculates the irregular Coulomb wave function
+
+.. math ::
+
+    G_l(\eta,z) = \frac{F_l(\eta,z) \cos(\chi) - F_{-l-1}(\eta,z)}{\sin(\chi)}
+
+where `\chi = \sigma_l - \sigma_{-l-1} - (l+1/2) \pi`
+and `\sigma_l(\eta) = (\ln \Gamma(1+l+i\eta)-\ln \Gamma(1+l-i\eta))/(2i)`.
+
+See :func:`coulombf` for additional information.
+
+**Examples**
+
+Evaluation is supported for arbitrary magnitudes of `z`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> coulombg(-2, 1.5, 3.5)
+    1.380011900612186346255524
+    >>> coulombg(2, 1.5, 3.5)
+    1.919153700722748795245926
+    >>> coulombg(-2, 1.5, '1e-10')
+    201126715824.7329115106793
+    >>> coulombg(-2, 1.5, 1000)
+    0.1802071520691149410425512
+    >>> coulombg(-2, 1.5, 10**10)
+    0.652103020061678070929794
+
+The following reproduces a table in Abramowitz & Stegun,
+at twice the precision::
+
+    >>> mp.dps = 10
+    >>> eta = 2; z = 5
+    >>> for l in [1, 2, 3, 4, 5]:
+    ...     print l, coulombg(l,eta,z), -diff(lambda z: coulombg(l,eta,z), z)
+    ...
+    1 1.08148276 0.6028279961
+    2 1.496877075 0.5661803178
+    3 2.048694714 0.7959909551
+    4 3.09408669 1.731802374
+    5 5.629840456 4.549343289
+
+Evaluation close to the singularity at `z = 0`::
+
+    >>> mp.dps = 15
+    >>> coulombg(0,10,1)
+    3088184933.67358
+    >>> coulombg(0,10,'1e-10')
+    5554866000719.8
+    >>> coulombg(0,10,'1e-100')
+    5554866221524.1
+
+Evaluation with a half-integer value for `l`::
+
+    >>> coulombg(1.5, 1, 10)
+    0.852320038297334
+
+"""
+
+coulombc = r"""
+Gives the normalizing Gamow constant for Coulomb wave functions,
+
+.. math ::
+
+    C_l(\eta) = 2^l \exp\left(-\pi \eta/2 + [\ln \Gamma(1+l+i\eta) +
+        \ln \Gamma(1+l-i\eta)]/2 - \ln \Gamma(2l+2)\right),
+
+where the log gamma function with continuous phase
+away from the negative half axis (see :func:`loggamma`) is implied.
+
+This function is used internally for the calculation of
+Coulomb wave functions, and automatically cached to make multiple
+evaluations with fixed `l`, `\eta` fast.
+
 
 """

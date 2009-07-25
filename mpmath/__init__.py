@@ -43,6 +43,7 @@ from functions import (
     ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
     struveh, struvel, whitm, whitw, ber, bei, ker, kei,
+    coulombc, coulombf, coulombg,
     lambertw,
     barnesg, superfac, hyperfac,
     loggamma, siegeltheta, siegelz, grampoint,
