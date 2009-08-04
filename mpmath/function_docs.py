@@ -4240,6 +4240,107 @@ arbitrary.
 
 """
 
+
+hermite = r"""
+Evaluates the Hermite polynomial `H_n(z)`, which may be defined using
+the recurrence
+
+.. math ::
+
+    H_0(z) = 1
+
+    H_1(z) = 2z
+
+    H_{n+1} = 2z H_n(z) - 2n H_{n-1}(z).
+
+The Hermite polynomials are orthogonal on `(-\infty, \infty)` with
+respect to the weight `e^{-z^2}`. More generally, allowing arbitrary complex
+values of `n`, the Hermite function `H_n(z)` is defined as
+
+.. math ::
+
+    H_n(z) = (2z)^n \,_2F_0\left(-\frac{n}{2}, \frac{1-n}{2},
+        -\frac{1}{z^2}\right)
+
+for `\Re{z} > 0`, or generally
+
+.. math ::
+
+    H_n(z) = 2^n \sqrt{\pi} \left(
+        \frac{1}{\Gamma\left(\frac{1-n}{2}\right)}
+        \,_1F_1\left(-\frac{n}{2}, \frac{1}{2}, z^2\right) -
+        \frac{2z}{\Gamma\left(-\frac{n}{2}\right)}
+        \,_1F_1\left(\frac{1-n}{2}, \frac{3}{2}, z^2\right)
+    \right).
+
+**Examples**
+
+Evaluation for arbitrary arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hermite(0, 10)
+    1.0
+    >>> hermite(1, 10); hermite(2, 10)
+    20.0
+    398.0
+    >>> hermite(10000, 2)
+    4.950440066552087387515653e+19334
+    >>> hermite(3, -10**8)
+    -7999999999999998800000000.0
+    >>> hermite(-3, -10**8)
+    1.675159751729877682920301e+4342944819032534
+    >>> hermite(2+3j, -1+2j)
+    (-0.076521306029935133894219 - 0.1084662449961914580276007j)
+
+Coefficients of the first few Hermite polynomials are::
+
+    >>> for n in range(7):
+    ...     chop(taylor(lambda z: hermite(n, z), 0, n))
+    ...
+    [1.0]
+    [0.0, 2.0]
+    [-2.0, 0.0, 4.0]
+    [0.0, -12.0, 0.0, 8.0]
+    [12.0, 0.0, -48.0, 0.0, 16.0]
+    [0.0, 120.0, 0.0, -160.0, 0.0, 32.0]
+    [-120.0, 0.0, 720.0, 0.0, -480.0, 0.0, 64.0]
+
+Values at `z = 0`::
+
+    >>> for n in range(-5, 9):
+    ...     hermite(n, 0)
+    ...
+    0.02769459142039868792653387
+    0.08333333333333333333333333
+    0.2215567313631895034122709
+    0.5
+    0.8862269254527580136490837
+    1.0
+    0.0
+    -2.0
+    0.0
+    12.0
+    0.0
+    -120.0
+    0.0
+    1680.0
+
+Hermite functions satisfy the differential equation::
+
+    >>> n = 4
+    >>> f = lambda z: hermite(n, z)
+    >>> z = 1.5
+    >>> chop(diff(f,z,2) - 2*z*diff(f,z) + 2*n*f(z))
+    0.0
+
+Verifying orthogonality::
+
+    >>> chop(quad(lambda t: hermite(2,t)*hermite(4,t)*exp(-t**2), [-inf,inf]))
+    0.0
+
+"""
+
 jacobi = r"""
 ``jacobi(n, a, b, x)`` evaluates the Jacobi polynomial
 `P_n^{(a,b)}(x)`. The Jacobi polynomials are a special
@@ -4510,8 +4611,6 @@ Verifying the associated Legendre differential equation::
     0.0
     0.0
 """
-
-
 
 legenq = r"""
 Calculates the (associated) Legendre function of the second kind of

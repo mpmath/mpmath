@@ -577,6 +577,37 @@ def test_orthpoly():
     assert legendre(3.5+1j,-1) == mpc(inf,inf)
     assert legendre(4.5+1j,-1) == mpc(-inf,-inf)
 
+def test_hermite():
+    mp.dps = 15
+    assert hermite(-2, 0).ae(0.5)
+    assert hermite(-1, 0).ae(0.88622692545275801365)
+    assert hermite(0, 0).ae(1)
+    assert hermite(1, 0) == 0
+    assert hermite(2, 0).ae(-2)
+    assert hermite(0, 2).ae(1)
+    assert hermite(1, 2).ae(4)
+    assert hermite(1, -2).ae(-4)
+    assert hermite(2, -2).ae(14)
+    assert hermite(0.5, 0).ae(0.69136733903629335053)
+    assert hermite(9, 0) == 0
+    assert hermite(4,4).ae(3340)
+    assert hermite(3,4).ae(464)
+    assert hermite(-4,4).ae(0.00018623860287512396181)
+    assert hermite(-3,4).ae(0.0016540169879668766270)
+    assert hermite(9, 2.5j).ae(13638725j)
+    assert hermite(9, -2.5j).ae(-13638725j)
+    assert hermite(9, 100).ae(511078883759363024000)
+    assert hermite(9, -100).ae(-511078883759363024000)
+    assert hermite(9, 100j).ae(512922083920643024000j)
+    assert hermite(9, -100j).ae(-512922083920643024000j)
+    assert hermite(-9.5, 2.5j).ae(-2.9004951258126778174e-6 + 1.7601372934039951100e-6j)
+    assert hermite(-9.5, -2.5j).ae(-2.9004951258126778174e-6 - 1.7601372934039951100e-6j)
+    assert hermite(-9.5, 100).ae(1.3776300722767084162e-22, abs_eps=0, rel_eps=eps)
+    assert hermite(-9.5, -100).ae('1.3106082028470671626e4355')
+    assert hermite(-9.5, 100j).ae(-9.7900218581864768430e-23 - 9.7900218581864768430e-23j, abs_eps=0, rel_eps=eps)
+    assert hermite(-9.5, -100j).ae(-9.7900218581864768430e-23 + 9.7900218581864768430e-23j, abs_eps=0, rel_eps=eps)
+    assert hermite(2+3j, -1-j).ae(851.3677063883687676 - 1496.4373467871007997j)
+
 def test_legenp():
     mp.dps = 15
     assert legenp(2,0,4) == legendre(2,4)
@@ -589,6 +620,13 @@ def test_legenp():
     assert legenp(2,4,3,type=3).ae(0)
     assert legenp(2,1,0.5).ae(-1.2990381056766579701)
     assert legenp(2,1,0.5,type=3).ae(1.2990381056766579701j)
+    assert legenp(3,2,3).ae(-360)
+    assert legenp(3,3,3).ae(240j*2**0.5)
+    assert legenp(3,4,3).ae(0)
+    assert legenp(0,0.5,2).ae(0.52503756790433198939 - 0.52503756790433198939j)
+    assert legenp(-1,-0.5,2).ae(0.60626116232846498110 + 0.60626116232846498110j)
+    assert legenp(-2,0.5,2).ae(1.5751127037129959682 - 1.5751127037129959682j)
+    assert legenp(-2,0.5,-0.5).ae(-0.85738275810499171286)
 
 def test_legenq():
     mp.dps = 15

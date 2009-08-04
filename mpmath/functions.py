@@ -1879,6 +1879,19 @@ def agm(ctx, a, b=1):
     return ctx.make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
 
 @defun_wrapped
+def hermite(ctx, n, z):
+    if not z:
+        try:
+            return 2**n * ctx.sqrt(ctx.pi) / ctx.gamma(0.5*(1-n))
+        except ValueError:
+            return 0.0*(n+z)
+    if ctx.re(z) > 0 or (ctx.re(z) == 0 and ctx.im(z) > 0) or ctx.isnpint(-n):
+        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), -z**(-2))
+    else:
+        return ctx.hermite(n,-z) + 2**(n+2)*ctx.sqrt(ctx.pi) * (-z) / \
+            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z**2)
+
+@defun_wrapped
 def jacobi(ctx, n, a, b, x):
     return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
 
