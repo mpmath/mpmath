@@ -4441,6 +4441,142 @@ We can verify this numerically::
 
 """
 
+
+legenp = r"""
+Calculates the (associated) Legendre function of the first kind of
+degree *n* and order *m*, `P_n^m(z)`. Taking `m = 0` gives the ordinary
+Legendre function of the second kind, `P_n(z)`. The parameters may be
+complex numbers.
+
+In terms of the Gauss hypergeometric function, the (associated) Legendre
+function is defined as
+
+.. math ::
+
+    P_n^m(z) = \frac{1}{\Gamma(1-m)} \frac{(1+z)^{m/2}}{(1-z)^{m/2}}
+        \,_2F_1\left(-n, n+1, 1-m, \frac{1-z}{2}\right).
+
+With *type=3* instead of *type=2*, the alternative
+definition
+
+.. math ::
+
+    \hat{P}_n^m(z) = \frac{1}{\Gamma(1-m)} \frac{(z+1)^{m/2}}{(z-1)^{m/2}}
+        \,_2F_1\left(-n, n+1, 1-m, \frac{1-z}{2}\right).
+
+is used. These functions correspond respectively to ``LegendreP[n,m,2,z]``
+and ``LegendreP[n,m,3,z]`` in Mathematica.
+
+The general solution of the (associated) Legendre differential equation
+
+.. math ::
+
+    (1-z^2) f''(z) - 2zf'(z) + \left(n(n+1)-\frac{m^2}{1-z^2}\right)f(z) = 0
+
+is given by `C_1 P_n^m(z) + C_2 Q_n^m(z)` for arbitrary constants
+`C_1`, `C_2`, where `Q_n^m(z)` is a Legendre function of the
+second kind as implemented by :func:`legenq`.
+
+**Examples**
+
+Evaluation for arbitrary parameters and arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> legenp(2, 0, 10); legendre(2, 10)
+    149.5
+    149.5
+    >>> legenp(-2, 0.5, 2.5)
+    (1.972260393822275434196053 - 1.972260393822275434196053j)
+    >>> legenp(2+3j, 1-j, -0.5+4j)
+    (-3.335677248386698208736542 - 5.663270217461022307645625j)
+    >>> chop(legenp(3, 2, -1.5, type=2))
+    28.125
+    >>> chop(legenp(3, 2, -1.5, type=3))
+    -28.125
+
+Verifying the associated Legendre differential equation::
+
+    >>> n, m = 2, -0.5
+    >>> C1, C2 = 1, -3
+    >>> f = lambda z: C1*legenp(n,m,z) + C2*legenq(n,m,z)
+    >>> deq = lambda z: (1-z**2)*diff(f,z,2) - 2*z*diff(f,z) + \
+    ...     (n*(n+1)-m**2/(1-z**2))*f(z)
+    >>> for z in [0, 2, -1.5, 0.5+2j]:
+    ...     chop(deq(mpmathify(z)))
+    ...
+    0.0
+    0.0
+    0.0
+    0.0
+"""
+
+
+
+legenq = r"""
+Calculates the (associated) Legendre function of the second kind of
+degree *n* and order *m*, `Q_n^m(z)`. Taking `m = 0` gives the ordinary
+Legendre function of the second kind, `Q_n(z)`. The parameters may
+complex numbers.
+
+The Legendre functions of the second kind give a second set of
+solutions to the (associated) Legendre differential equation.
+(See :func:`legenp`.)
+Unlike the Legendre functions of the first kind, they are not
+polynomials of `z` for integer `n`, `m` but rational or logarithmic
+functions with poles at `z = \pm 1`.
+
+There are various ways to define Legendre functions of
+the second kind, giving rise to different complex structure.
+A version can be selected using the *type* keyword argument.
+The *type=2* and *type=3* functions are given respectively by
+
+.. math ::
+
+    Q_n^m(z) = \frac{\pi}{2 \sin(\pi m)}
+        \left( \cos(\pi m) P_n^m(z) -
+        \frac{\Gamma(1+m+n)}{\Gamma(1-m+n)} P_n^{-m}(z)\right)
+
+    \hat{Q}_n^m(z) = \frac{\pi}{2 \sin(\pi m)} e^{\pi i m}
+        \left( \hat{P}_n^m(z) -
+        \frac{\Gamma(1+m+n)}{\Gamma(1-m+n)} \hat{P}_n^{-m}(z)\right)
+
+where `P` and `\hat{P}` are the *type=2* and *type=3* Legendre functions
+of the first kind. The formulas above should be understood as limits
+when `m` is an integer.
+
+These functions correspond to ``LegendreQ[n,m,2,z]`` (or ``LegendreQ[n,m,z]``)
+and ``LegendreQ[n,m,3,z]`` in Mathematica. The *type=3* function
+is essentially the same as the function defined in
+Abramowitz & Stegun (eq. 8.1.3) but with `(z+1)^{m/2}(z-1)^{m/2}` instead
+of `(z^2-1)^{m/2}`, giving slightly different branches.
+
+**Examples**
+
+Evaluation for arbitrary parameters and arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> legenq(2, 0, 0.5)
+    -0.8186632680417568557122028
+    >>> legenq(-1.5, -2, 2.5)
+    (0.6655964618250228714288277 + 0.3937692045497259717762649j)
+    >>> legenq(2-j, 3+4j, -6+5j)
+    (-10001.95256487468541686564 - 6011.691337610097577791134j)
+
+Different versions of the function::
+
+    >>> legenq(2, 1, 0.5)
+    0.7298060598018049369381857
+    >>> legenq(2, 1, 1.5)
+    (-7.902916572420817192300921 + 0.1998650072605976600724502j)
+    >>> legenq(2, 1, 0.5, type=3)
+    (2.040524284763495081918338 - 0.7298060598018049369381857j)
+    >>> chop(legenq(2, 1, 1.5, type=3))
+    -0.1998650072605976600724502
+
+"""
+
 chebyt = r"""
 ``chebyt(n, x)`` evaluates the Chebyshev polynomial of the first
 kind `T_n(x)`, defined by the identity

@@ -40,7 +40,7 @@ from functions import (
     erf, erfc, erfi, erfinv, npdf, ncdf,
     expint, e1, ei, li, ci, si, chi, shi,
     fresnels, fresnelc, airyai, airybi,
-    ellipe, ellipk, agm, jacobi, legendre, chebyt, chebyu,
+    ellipe, ellipk, agm, jacobi, chebyt, chebyu, legendre, legenp, legenq,
     besselj, j0, j1, besseli, bessely, besselk, hankel1, hankel2,
     struveh, struvel, whitm, whitw, ber, bei, ker, kei,
     coulombc, coulombf, coulombg,
