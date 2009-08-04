@@ -560,6 +560,9 @@ def test_orthpoly():
     assert jacobi(-4,2,3,0.7).ae(22800./4913)
     assert jacobi(3,2,4,5.5) == 4133.125
     assert jacobi(1.5,5/6.,4,0).ae(-1.0851951434075508417)
+    assert jacobi(-2, 1, 2, 4).ae(-0.16)
+    assert jacobi(2, -1, 2.5, 4).ae(34.59375)
+    #assert jacobi(2, -1, 2, 4) == 28.5
     assert legendre(5, 7) == 129367
     assert legendre(0.5,0).ae(0.53935260118837935667)
     assert legendre(-1,-1) == 1
@@ -607,6 +610,20 @@ def test_hermite():
     assert hermite(-9.5, 100j).ae(-9.7900218581864768430e-23 - 9.7900218581864768430e-23j, abs_eps=0, rel_eps=eps)
     assert hermite(-9.5, -100j).ae(-9.7900218581864768430e-23 + 9.7900218581864768430e-23j, abs_eps=0, rel_eps=eps)
     assert hermite(2+3j, -1-j).ae(851.3677063883687676 - 1496.4373467871007997j)
+
+def test_gegenbauer():
+    mp.dps = 15
+    assert gegenbauer(1,2,3).ae(12)
+    assert gegenbauer(2,3,4).ae(381)
+    assert gegenbauer(0,0,0) == 0
+    assert gegenbauer(2,-1,3) == 0
+    assert gegenbauer(-7, 0.5, 3).ae(8989)
+    assert gegenbauer(1, -0.5, 3).ae(-3)
+    assert gegenbauer(1, -1.5, 3).ae(-9)
+    assert gegenbauer(1, -0.5, 3).ae(-3)
+    assert gegenbauer(-0.5, -0.5, 3).ae(-2.6383553159023906245)
+    assert gegenbauer(2+3j, 1-j, 3+4j).ae(14.880536623203696780 + 20.022029711598032898j)
+    #assert gegenbauer(-2, -0.5, 3).ae(-12)
 
 def test_legenp():
     mp.dps = 15

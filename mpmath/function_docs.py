@@ -4240,6 +4240,72 @@ arbitrary.
 
 """
 
+gegenbauer = r"""
+Evaluates the Gegenbauer polynomial, or ultraspherical polynomial,
+
+.. math ::
+
+    C_n^{(a)}(z) = {n+2a-1 \choose n} \,_2F_1\left(-n, n+2a;
+        a+\frac{1}{2}; \frac{1}{2}(1-z)\right).
+
+When `n` is a nonnegative integer, this formula gives a polynomial
+in `z` of degree `n`, but all parameters are permitted to be
+complex numbers. With `a = 1/2`, the Gegenbauer polynomial
+reduces to a Legendre polynomial.
+
+**Examples**
+
+Evaluation for arbitrary arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> gegenbauer(3, 0.5, -10)
+    -2485.0
+    >>> gegenbauer(1000, 10, 100)
+    3.012757178975667428359374e+2322
+    >>> gegenbauer(2+3j, -0.75, -1000j)
+    (-5038991.358609026523401901 + 9414549.285447104177860806j)
+
+Evaluation at negative integer orders::
+
+    >>> gegenbauer(-4, 2, 1.75)
+    -1.0
+    >>> chop(gegenbauer(-4, 3, 1.75))
+    0.0
+    >>> chop(gegenbauer(-4, 2j, 1.75))
+    0.0
+    >>> gegenbauer(-7, 0.5, 3)
+    8989.0
+
+The Gegenbauer polynomials solve the differential equation::
+
+    >>> n, a = 4.5, 1+2j
+    >>> f = lambda z: gegenbauer(n, a, z)
+    >>> for z in [0, 0.75, -0.5j]:
+    ...     chop((1-z**2)*diff(f,z,2) - (2*a+1)*z*diff(f,z) + n*(n+2*a)*f(z))
+    ...
+    0.0
+    0.0
+    0.0
+
+The Gegenbauer polynomials have generating function
+`(1-2zt+t^2)^{-a}`::
+
+    >>> a, z = 2.5, 1
+    >>> taylor(lambda t: (1-2*z*t+t**2)**(-a), 0, 3)
+    [1.0, 5.0, 15.0, 35.0]
+    >>> [gegenbauer(n,a,z) for n in range(4)]
+    [1.0, 5.0, 15.0, 35.0]
+
+The Gegenbauer polynomials are orthogonal on `[-1, 1]` with respect
+to the weight `(1-z^2)^{a-\frac{1}{2}}`::
+
+    >>> a, n, m = 2.5, 4, 5
+    >>> Cn = lambda z: gegenbauer(n, a, z)
+    >>> Cm = lambda z: gegenbauer(m, a, z)
+    >>> chop(quad(lambda z: Cn(z)*Cm(z)*(1-z**2)*(a-0.5), [-1, 1]))
+    0.0
+"""
 
 hermite = r"""
 Evaluates the Hermite polynomial `H_n(z)`, which may be defined using

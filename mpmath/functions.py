@@ -1892,7 +1892,37 @@ def hermite(ctx, n, z):
             ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z**2)
 
 @defun_wrapped
+def gegenbauer(ctx, n, a, z):
+    # Special cases: a+0.5, a*2 poles
+    if ctx.isnpint(a):
+        return 0*(z+n)
+    if ctx.isnpint(a+0.5):
+        # TODO: something else is required here
+        # E.g.: gegenbauer(-2, -0.5, 3) == -12
+        if ctx.isnpint(n+1):
+            raise NotImplementedError("Gegenbauer function with two limits")
+        def h(a):
+            a2 = 2*a
+            T = [], [], [n+a2], [n+1, a2], [-n, n+a2], [a+0.5], 0.5*(1-z)
+            return [T]
+        return ctx.hypercomb(h, [a])
+    def h(n):
+        a2 = 2*a
+        T = [], [], [n+a2], [n+1, a2], [-n, n+a2], [a+0.5], 0.5*(1-z)
+        return [T]
+    return ctx.hypercomb(h, [n])
+
+@defun_wrapped
 def jacobi(ctx, n, a, b, x):
+    if not ctx.isnpint(a):
+        def h(n):
+            return (([], [], [a+n+1], [n+1, a+1], [-n, a+b+n+1], [a+1], (1-x)*0.5),)
+        return ctx.hypercomb(h, [n])
+    if not ctx.isint(b):
+        def h(n, a):
+            return (([], [], [-b], [n+1, -b-n], [-n, a+b+n+1], [b+1], (x+1)*0.5),)
+        return ctx.hypercomb(h, [n, a])
+    # XXX: determine appropriate limit
     return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
 
 @defun_wrapped
