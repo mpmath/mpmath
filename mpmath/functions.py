@@ -958,7 +958,7 @@ def hyp1f1(ctx, a, b, z, **kwargs):
     z = ctx.convert(z)
     if not z:
         return ctx.one+z
-    if ctx.mag(z) >= 7:
+    if ctx.mag(z) >= 7 and not (ctx.isint(a) and ctx.re(a) <= 0):
         if ctx.isinf(z):
             if ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
                 return ctx.inf
@@ -1924,6 +1924,15 @@ def jacobi(ctx, n, a, b, x):
         return ctx.hypercomb(h, [n, a])
     # XXX: determine appropriate limit
     return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
+
+@defun_wrapped
+def laguerre(ctx, n, a, z):
+    # XXX: limits, poles
+    #if ctx.isnpint(n):
+    #    return 0*(a+z)
+    def h(a):
+        return (([], [], [a+n+1], [a+1, n+1], [-n], [a+1], z),)
+    return ctx.hypercomb(h, [a])
 
 @defun_wrapped
 def legendre(ctx, n, x):

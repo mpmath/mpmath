@@ -4307,6 +4307,61 @@ to the weight `(1-z^2)^{a-\frac{1}{2}}`::
     0.0
 """
 
+laguerre = r"""
+Gives the generalized (associated) Laguerre polynomial, defined by
+
+.. math ::
+
+    L_n^a(z) = \frac{\Gamma(n+b+1)}{\Gamma(b+1) \Gamma(n+1)}
+        \,_1F_1(-n, a+1, z).
+
+With `a = 0` and `n` a nonnegative integer, this reduces to an ordinary
+Laguerre polynomial, the sequence of which begins
+`L_0(z) = 1, L_1(z) = 1-z, L_2(z) = z^2-2z+1, \ldots`.
+
+The Laguerre polynomials are orthogonal with respect to the weight
+`z^a e^{-z}` on `[0, \infty)`.
+
+**Examples**
+
+Evaluation for arbitrary arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> laguerre(5, 0, 0.25)
+    0.03726399739583333333333333
+    >>> laguerre(1+j, 0.5, 2+3j)
+    (4.474921610704496808379097 - 11.02058050372068958069241j)
+    >>> laguerre(2, 0, 10000)
+    49980001.0
+    >>> laguerre(2.5, 0, 10000)
+    -9.327764910194842158583189e+4328
+
+The first few Laguerre polynomials, normalized to have integer
+coefficients::
+
+    >>> for n in range(7):
+    ...     chop(taylor(lambda z: fac(n)*laguerre(n, 0, z), 0, n))
+    ...
+    [1.0]
+    [1.0, -1.0]
+    [2.0, -4.0, 1.0]
+    [6.0, -18.0, 9.0, -1.0]
+    [24.0, -96.0, 72.0, -16.0, 1.0]
+    [120.0, -600.0, 600.0, -200.0, 25.0, -1.0]
+    [720.0, -4320.0, 5400.0, -2400.0, 450.0, -36.0, 1.0]
+
+Verifying orthogonality::
+
+    >>> Lm = lambda t: laguerre(m,a,t)
+    >>> Ln = lambda t: laguerre(n,a,t)
+    >>> a, n, m = 2.5, 2, 3
+    >>> chop(quad(lambda t: exp(-t)*t**a*Lm(t)*Ln(t), [0,inf]))
+    0.0
+
+
+"""
+
 hermite = r"""
 Evaluates the Hermite polynomial `H_n(z)`, which may be defined using
 the recurrence

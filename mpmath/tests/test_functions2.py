@@ -372,6 +372,8 @@ def test_hyper_1f1():
     # Asymptotic expansion
     assert hyp1f1(2,3,1e10).ae('2.1555012157015796988e+4342944809')
     assert (hyp1f1(2,3,1e10j)*10**10).ae(-0.97501205020039745852 - 1.7462392454512132074j)
+    # Shouldn't use asymptotic expansion
+    assert hyp1f1(-2, 1, 10000).ae(49980001)
 
 def test_hyper_2f1():
     mp.dps = 15
@@ -579,6 +581,8 @@ def test_orthpoly():
     assert legendre(4.5,-1) == -inf
     assert legendre(3.5+1j,-1) == mpc(inf,inf)
     assert legendre(4.5+1j,-1) == mpc(-inf,-inf)
+    assert laguerre(4, -2, 3).ae(-1.125)
+    assert laguerre(3, 1+j, 0.5).ae(0.2291666666666666667 + 2.5416666666666666667j)
 
 def test_hermite():
     mp.dps = 15
