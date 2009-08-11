@@ -2742,7 +2742,7 @@ fixed parameters `a = 2, b = -1/3`::
     >>> hyp1f1(2, (-1,3), 1000)
     -8.021799872770764149793693e+441
     >>> hyp1f1(2, (-1,3), -1000)
-    0.00000313198763300681359453533
+    0.000003131987633006813594535331
     >>> hyp1f1(2, (-1,3), 100+100j)
     (-3.189190365227034385898282e+48 - 1.106169926814270418999315e+49j)
 
@@ -3030,30 +3030,70 @@ We can compare with numerical quadrature to verify that
 :func:`gammainc` computes the integral in the definition::
 
     >>> from mpmath import *
-    >>> mp.dps = 20; mp.pretty = True
+    >>> mp.dps = 25; mp.pretty = True
     >>> gammainc(2+3j, 4, 10)
-    (0.009772126686277051606 - 0.077063730631298989245j)
+    (0.00977212668627705160602312 - 0.0770637306312989892451977j)
     >>> quad(lambda t: t**(2+3j-1) * exp(-t), [4, 10])
-    (0.009772126686277051606 - 0.077063730631298989245j)
+    (0.00977212668627705160602312 - 0.0770637306312989892451977j)
+
+Argument symmetries follow directly from the integral definition::
+
+    >>> gammainc(3, 4, 5) + gammainc(3, 5, 4)
+    0.0
+    >>> gammainc(3,0,2) + gammainc(3,2,4); gammainc(3,0,4)
+    1.523793388892911312363331
+    1.523793388892911312363331
+    >>> findroot(lambda z: gammainc(2,z,3), 1)
+    3.0
+
+Evaluation for arbitrarily large arguments::
+
+    >>> gammainc(10, 100)
+    4.083660630910611272288592e-26
+    >>> gammainc(10, 10000000000000000)
+    5.290402449901174752972486e-4342944819032375
+    >>> gammainc(3+4j, 1000000+1000000j)
+    (-1.257913707524362408877881e-434284 + 2.556691003883483531962095e-434284j)
+
+Evaluation of a generalized incomplete gamma function automatically chooses
+the representation that gives a more accurate result, depending on which
+parameter is larger::
+
+    >>> gammainc(10000000, 3) - gammainc(10000000, 2)   # Bad
+    0.0
+    >>> gammainc(10000000, 2, 3)   # Good
+    1.755146243738946045873491e+4771204
+    >>> gammainc(2, 0, 100000001) - gammainc(2, 0, 100000000)   # Bad
+    0.0
+    >>> gammainc(2, 100000000, 100000001)   # Good
+    4.078258353474186729184421e-43429441
 
 The incomplete gamma functions satisfy simple recurrence
 relations::
 
-    >>> mp.dps = 15
-    >>> z = 3.5
-    >>> a = 2
-    >>> gammainc(z+1, a), z*gammainc(z,a) + a**z*exp(-a)
-    (10.6013029693353, 10.6013029693353)
-    >>> gammainc(z+1,0,a), z*gammainc(z,0,a) - a**z*exp(-a)
-    (1.03042542723211, 1.03042542723211)
+    >>> mp.dps = 25
+    >>> z, a = mpf(3.5), mpf(2)
+    >>> gammainc(z+1, a); z*gammainc(z,a) + a**z*exp(-a)
+    10.60130296933533459267329
+    10.60130296933533459267329
+    >>> gammainc(z+1,0,a); z*gammainc(z,0,a) - a**z*exp(-a)
+    1.030425427232114336470932
+    1.030425427232114336470932
+
+Evaluation at integers and poles::
+
+    >>> gammainc(-3, -4, -5)
+    (-0.2214577048967798566234192 + 0.0j)
+    >>> gammainc(-3, 0, 5)
+    +inf
 
 If `z` is an integer, the recurrence reduces the incomplete gamma
 function to `P(a) \exp(-a) + Q(b) \exp(-b)` where `P` and
 `Q` are polynomials::
 
-    >>> mp.dps = 15
-    >>> gammainc(1, 2), exp(-2)
-    (0.135335283236613, 0.135335283236613)
+    >>> gammainc(1, 2); exp(-2)
+    0.1353352832366126918939995
+    0.1353352832366126918939995
     >>> mp.dps = 50
     >>> identify(gammainc(6, 1, 2), ['exp(-1)', 'exp(-2)'])
     '(326*exp(-1) + (-872)*exp(-2))'
@@ -3062,11 +3102,14 @@ The incomplete gamma functions reduce to functions such as
 the exponential integral Ei and the error function for special
 arguments::
 
-    >>> mp.dps = 15
-    >>> gammainc(0, 4), -ei(-4)
-    (0.00377935240984891, 0.00377935240984891)
-    >>> gammainc(0.5, 0, 2), sqrt(pi)*erf(sqrt(2))
-    (1.6918067329452, 1.6918067329452)
+    >>> mp.dps = 25
+    >>> gammainc(0, 4); -ei(-4)
+    0.00377935240984890647887486
+    0.00377935240984890647887486
+    >>> gammainc(0.5, 0, 2); sqrt(pi)*erf(sqrt(2))
+    1.691806732945198336509541
+    1.691806732945198336509541
+
 """
 
 erf = r"""
@@ -3130,7 +3173,7 @@ Evaluation is supported for large arguments::
     >>> erf('1e7j')
     (0.0 + 8.593897639029319267398803e+43429448190317j)
     >>> erf('1e7+1e7j')
-    (0.9999999858172446172631323 + 3.728805278735270407053036e-8j)
+    (0.9999999858172446172631323 + 3.728805278735270407053139e-8j)
 
 **Related functions**
 
@@ -4931,7 +4974,7 @@ arbitrary precision::
     >>> besselj(4, 0.75)
     0.000801070086542314
     >>> besselj(2, 1000j)
-    (-2.48071721019185e+432 + 0.0j)
+    (-2.48071721019185e+432 + 6.41567059811949e-437j)
     >>> mp.dps = 25
     >>> besselj(0.75j, 3+4j)
     (-2.778118364828153309919653 - 1.5863603889018621585533j)

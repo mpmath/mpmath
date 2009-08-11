@@ -1062,3 +1062,9 @@ def test_appellf1():
     assert appellf1(2,1,-2,1,0.5,0.25).ae(1.5)
     assert appellf1(-2,1,3,2,3,3).ae(19)
     assert appellf1(1,2,3,4,0.5,0.125).ae( 1.53843285792549786518)
+
+def test_coulomb():
+    # Note: most tests are doctests
+    # Test for a bug:
+    mp.dps = 15
+    assert coulombg(mpc(-5,0),2,3).ae(20.087729487721430394)

@@ -442,7 +442,7 @@ def mpf_erfc(x, prec, rnd=round_fast):
         if regular_erf:
             return mpf_sub(fone, mpf_erf(x, prec+10, negative_rnd[rnd]), prec, rnd)
         # 1-erf(x) ~ exp(-x^2), increase prec to deal with cancellation
-        n = to_int(x)
+        n = to_int(x)+1
         return mpf_sub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
     s = term = MP_ONE << wp
     term_prev = 0
@@ -551,10 +551,12 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
             v = mpf_mul(v, mpf_exp(x, wp), wp)
             v = mpf_div(v, x, prec, rnd)
         else:
-            wp += 2*max(0,xmag)
+            wp += 2*to_int(xabs)
             u = to_fixed(x, wp)
             v = ei_taylor(u, wp) + euler_fixed(wp)
-            v = mpf_add(from_man_exp(v,-wp), mpf_log(xabs,wp), prec, rnd)
+            t1 = from_man_exp(v,-wp)
+            t2 = mpf_log(xabs,wp)
+            v = mpf_add(t1, t2, prec, rnd)
     else:
         if x == fzero: v = fninf
         elif x == finf: v = finf
@@ -613,7 +615,8 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
             return v
     except NoConvergence:
         pass
-    wp += 2*max(0,zmag)
+    #wp += 2*max(0,zmag)
+    wp += 2*to_int(mpc_abs(z, 5))
     zre = to_fixed(a, wp)
     zim = to_fixed(b, wp)
     vre, vim = complex_ei_taylor(zre, zim, wp)
@@ -670,6 +673,9 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
         n = 1-n
     wp = prec + 20
     xmag = exp + bc
+    # Beware of near-poles
+    if xmag < -10:
+        raise NotImplementedError
     nmag = bitcount(abs(n))
     have_imag = n > 0 and sign
     negx = mpf_neg(x)

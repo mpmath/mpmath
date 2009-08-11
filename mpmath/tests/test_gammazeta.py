@@ -25,9 +25,6 @@ def test_bernoulli():
     p, q = bernfrac(1000)
     assert p % 10**10 == 7950421099
     assert q == 342999030
-    p, q = bernfrac(9000)
-    assert p % 10**10 == 9636701091
-    assert q == 4091851784687571609141381951327092757255270
     mp.dps = 15
     assert bernoulli(0) == 1
     assert bernoulli(1) == -0.5

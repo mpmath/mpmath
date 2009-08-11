@@ -1136,6 +1136,10 @@ def jtheta(n, z, q):
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
 
     extra = 10
+    if z:
+        M = mp.mag(z)
+        if M > 5 or (n == 1 and M < -5):
+            extra += 2*abs(M)
     cz = 0.5
     extra2 = 50
     prec0 = mp.prec
@@ -1208,6 +1212,10 @@ def djtheta(n, z, q, nd=1):
     if abs(q) > Q_LIM:
         raise ValueError('abs(q) > Q_LIM = %f' % Q_LIM)
     extra = 10 + mp.prec * nd // 10
+    if z:
+        M = mp.mag(z)
+        if M > 5 or (n != 1 and M < -5):
+            extra += 2*abs(M)
     cz = 0.5
     extra2 = 50
     prec0 = mp.prec

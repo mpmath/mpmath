@@ -915,10 +915,14 @@ def hyp0f1(ctx, b, z, **kwargs):
     """
     br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
-    magz = z and ctx.mag(z)
+    if z:
+        magz = ctx.mag(z)
+    else:
+        magz = 0
     if magz >= 8 and not kwargs.get('force_series'):
         #if ctx._hyp2f0_check_convergence(b, b, 1/abs(z)**0.5, ctx.prec+40+magz//2):
-        if ctx._hyp_check_convergence([b, b], [], 1/abs(z)**0.5, ctx.prec+40+magz//2):
+        #if ctx._hyp_check_convergence([b, b], [], 1/abs(z)**0.5, ctx.prec+40+magz//2):
+        try:
             # http://functions.wolfram.com/HypergeometricFunctions/
             # Hypergeometric0F1/06/02/03/0004/
             # We don't need hypercomb because the only possible singularity
@@ -944,6 +948,8 @@ def hyp0f1(ctx, b, z, **kwargs):
             if ctx.is_real_type(b) and ctx.is_real_type(z):
                 v = v.real
             return +v
+        except NoConvergence:
+            pass
     if br:
         return ctx.sum_hyp0f1_rat(br[0], z)
     return ctx.hypsum([], [], [], br, bf, bc, z)
@@ -958,7 +964,8 @@ def hyp1f1(ctx, a, b, z, **kwargs):
     z = ctx.convert(z)
     if not z:
         return ctx.one+z
-    if ctx.mag(z) >= 7 and not (ctx.isint(a) and ctx.re(a) <= 0):
+    magz = ctx.mag(z)
+    if magz >= 7 and not (ctx.isint(a) and ctx.re(a) <= 0):
         if ctx.isinf(z):
             if ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
                 return ctx.inf
@@ -968,8 +975,10 @@ def hyp1f1(ctx, a, b, z, **kwargs):
         #if ctx._hyp2f0_check_convergence(a, a-b, 1/z, 2*ctx.prec+40):
         # TODO: do this optimally, but still so as to avoid infinite recursion
         # between 1F1 and 2F0
-        checked = 2*ctx.prec+40
-        if ctx._hyp_check_convergence([a, a-b], [], 1/z, 2*ctx.prec+40):
+        #checked = 2*ctx.prec+40
+        #if ctx._hyp_check_convergence([a, a-b], [], 1/z, 2*ctx.prec+40):
+        try:
+            ctx.prec += magz
             sector = z.imag < 0 and z.real <= 0
             def h(a,b):
                 if sector:
@@ -984,6 +993,10 @@ def hyp1f1(ctx, a, b, z, **kwargs):
             if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
                 v = v.real
             return +v
+        except NoConvergence:
+            pass
+        finally:
+            ctx.prec -= magz
     if ar and br:
         a, b = ar[0], br[0]
         return ctx.sum_hyp1f1_rat(a, b, z)
@@ -1243,10 +1256,11 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
 
     # Asymptotic series is in terms of 3F1
     can_use_asymptotic = (not kwargs.get('force_series')) and \
-        (ctx.mag(absz) > 7) and \
-        (ctx.sqrt(absz) > 1.5*orig) and \
-        ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [a1-a2+1],
-            1/absz, orig+40+asymp_extraprec)
+        (ctx.mag(absz) > 3) #and \
+        #(ctx.sqrt(absz) > 1.5*orig)
+        #(ctx.sqrt(absz) > 1.5*orig) #and \
+        #ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [a1-a2+1],
+        #    1/absz, orig+40+asymp_extraprec)
 
     # TODO: much of the following could be shared with 2F3 instead of
     # copypasted
@@ -1319,9 +1333,9 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
     # Asymptotic series is in terms of 3F0
     can_use_asymptotic = (not kwargs.get('force_series')) and \
         (ctx.mag(absz) > 19) and \
-        (ctx.sqrt(absz) > 1.5*orig) and \
-        ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [],
-            1/absz, orig+40+asymp_extraprec)
+        (ctx.sqrt(absz) > 1.5*orig) #and \
+        #ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [],
+        #    1/absz, orig+40+asymp_extraprec)
 
     # TODO: much of the following could be shared with 2F3 instead of
     # copypasted
@@ -1410,9 +1424,9 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
     # for the leading series to converge
     can_use_asymptotic = (not kwargs.get('force_series')) and \
         (ctx.mag(absz) > 19) and \
-        (ctx.sqrt(absz) > 1.5*orig) and \
-        ctx._hyp_check_convergence([a2, a2-b1+1, a2-b2+1, a2-b3+1], [-a1+a2+1],
-            1/absz, orig+40+asymp_extraprec)
+        (ctx.sqrt(absz) > 1.5*orig) #and \
+        #ctx._hyp_check_convergence([a2, a2-b1+1, a2-b2+1, a2-b3+1], [-a1+a2+1],
+        #    1/absz, orig+40+asymp_extraprec)
 
     if can_use_asymptotic:
         #print "using asymp"
@@ -1538,7 +1552,9 @@ def hyperu(ctx, a,b,z):
 
 @defun_wrapped
 def _erf_complex(ctx, z):
-    v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), -z**2)
+    z2 = ctx.square_exp_arg(z, -1)
+    #z2 = -z**2
+    v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), z2)
     if not z.real:
         v = v.imag*ctx.j
     return v
@@ -1546,7 +1562,9 @@ def _erf_complex(ctx, z):
 @defun_wrapped
 def _erfc_complex(ctx, z):
     if ctx.re(z) > 2:
-        v = ctx.exp(-z*z)/ctx.sqrt(ctx.pi)*ctx.hyperu((1,2),(1,2),z**2)
+        z2 = ctx.square_exp_arg(z)
+        nz2 = ctx.fneg(z2, exact=True)
+        v = ctx.exp(nz2)/ctx.sqrt(ctx.pi) * ctx.hyperu((1,2),(1,2), z2)
     else:
         v = 1 - ctx._erf_complex(z)
     if not z.real:
@@ -1575,11 +1593,19 @@ def erfc(ctx, z):
         else:
             return ctx.mpc(ctx._erfc(z.real))
 
+@defun
+def square_exp_arg(ctx, z, mult=1):
+    z2 = ctx.fmul(z, z, prec=ctx.prec*4+20)
+    if mult != 1:
+        z2 = ctx.fmul(z2, mult, exact=True)
+    return z2
+
 @defun_wrapped
 def erfi(ctx, z):
     if not z:
         return z
-    v = (2/ctx.sqrt(ctx.pi)*z) * ctx.hyp1f1((1,2), (3,2), z**2)
+    z2 = ctx.square_exp_arg(z)
+    v = (2/ctx.sqrt(ctx.pi)*z) * ctx.hyp1f1((1,2), (3,2), z2)
     if not z.real:
         v = v.imag*ctx.j
     return v
@@ -1747,7 +1773,9 @@ def _gamma3(ctx, z, a, b, regularized=False):
             T1 = ctx.gammainc(z, 0, b, regularized=regularized)
             T2 = ctx.gammainc(z, 0, a, regularized=regularized)
             R = T1 - T2
-            if ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
+            # May be ok, but should probably at least print a warning
+            # about possible cancellation
+            if 1: #ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
                 return R
     finally:
         ctx.prec -= 15
@@ -1791,7 +1819,7 @@ def chi(ctx, z):
         return ctx.ninf
     if z == ctx.inf or z == ctx.ninf:
         return ctx.inf
-    z2 = (z/2)**2
+    z2 = ctx.square_exp_arg(z, 0.25)
     return ctx.euler + ctx.ln(z) + z2*ctx.hyp2f3(1,1,2,2,(3,2),z2)
 
 @defun_wrapped
@@ -1800,7 +1828,7 @@ def shi(ctx, z):
         return z
     if z == ctx.ninf:
         return z
-    z2 = (z/2)**2
+    z2 = ctx.square_exp_arg(z, 0.25)
     return z*ctx.hyp1f2((1,2),(3,2),(3,2),z2)
 
 @defun_wrapped
@@ -1886,10 +1914,18 @@ def hermite(ctx, n, z):
         except ValueError:
             return 0.0*(n+z)
     if ctx.re(z) > 0 or (ctx.re(z) == 0 and ctx.im(z) > 0) or ctx.isnpint(-n):
-        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), -z**(-2))
+        prec = ctx.prec
+        ctx.prec = ctx.prec*4+20
+        z2 = -z**(-2)
+        ctx.prec = prec
+        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), z2)
     else:
+        prec = ctx.prec
+        ctx.prec = ctx.prec*4+20
+        z2 = z**2
+        ctx.prec = prec
         return ctx.hermite(n,-z) + 2**(n+2)*ctx.sqrt(ctx.pi) * (-z) / \
-            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z**2)
+            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z2)
 
 @defun_wrapped
 def gegenbauer(ctx, n, a, z):
@@ -1938,6 +1974,15 @@ def laguerre(ctx, n, a, z):
 def legendre(ctx, n, x):
     if ctx.isint(n):
         n = int(n)
+        # Accuracy near zeros
+        if (n + (n < 0)) & 1:
+            if not x:
+                return x
+            mag = ctx.mag(x)
+            if mag < -2*ctx.prec-10:
+                return x
+            if mag < -5:
+                ctx.prec += -mag
     return ctx.hyp2f1(-n,n+1,1,(1-x)/2)
 
 @defun
@@ -2095,7 +2140,7 @@ def besselj(ctx, n, z, derivative=0):
             ctx.prec += min(3*abs(M), ctx.prec)
             w = ctx.fmul(z, 0.5, exact=True)
             def h(n):
-                r = ctx.fneg(ctx.fmul(w, w, prec=ctx.prec+M), exact=True)
+                r = ctx.fneg(ctx.fmul(w, w, prec=max(0,ctx.prec+M)), exact=True)
                 return [([w], [n], [], [n+1], [], [n+1], r)]
             v = ctx.hypercomb(h, [n])
         finally:
@@ -2134,7 +2179,7 @@ def besseli(ctx, n, z, derivative=0):
     else:
         def h(n):
             w = ctx.fmul(z, 0.5, exact=True)
-            r = ctx.fmul(w, w, prec=ctx.prec+M)
+            r = ctx.fmul(w, w, prec=max(0,ctx.prec+M))
             return [([w], [n], [], [n+1], [], [n+1], r)]
         v = ctx.hypercomb(h, [n])
     return v
@@ -3114,12 +3159,15 @@ def coulombf(ctx, l, eta, z, w=1, chop=True):
     # Regular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
+    #ctx.prec += 10
     def h(l, eta):
         try:
             jw = ctx.j*w
+            jwz = ctx.fmul(jw, z, exact=True)
+            jwz2 = ctx.fmul(jwz, -2, exact=True)
             C = ctx.coulombc(l, eta)
-            T1 = [C, z, ctx.exp(jw*z)], [1, l+1, 1], [], [], [1+l+jw*eta], \
-                [2*l+2], -2*jw*z
+            T1 = [C, z, ctx.exp(jwz)], [1, l+1, 1], [], [], [1+l+jw*eta], \
+                [2*l+2], jwz2
         except ValueError:
             T1 = [0], [-1], [], [], [], [], 0
         return (T1,)
@@ -3150,6 +3198,8 @@ def coulombg(ctx, l, eta, z, w=1, chop=True):
     # Irregular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
+    if not l.imag:
+        l = l.real  # XXX: for isint
     def h(l, eta):
         # Force perturbation for integers and half-integers
         if ctx.isint(l*2):
