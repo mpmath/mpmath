@@ -54,7 +54,7 @@ def test_asymp(f, maxdps=150, verbose=False):
     dps = [5,15,25,50,90,150,500,1500,5000,10000]
     dps = [p for p in dps if p <= maxdps]
     def check(x,y,p,inpt):
-        if abs(x-y)/abs(y) < mpf(10)**(-p+1):
+        if abs(x-y)/abs(y) < workprec(20)(power)(10, -p+1):
             return
         print
         print "Error!"
@@ -97,6 +97,11 @@ def test_bernoulli_huge():
     p, q = bernfrac(9000)
     assert p % 10**10 == 9636701091
     assert q == 4091851784687571609141381951327092757255270
+    mp.dps = 15
+    assert str(bernoulli(10**100)) == '-2.58183325604736e+987675256497386331227838638980680030172857347883537824464410652557820800494271520411283004120790908623'
+    mp.dps = 50
+    assert str(bernoulli(10**100)) == '-2.5818332560473632073252488656039475548106223822913e+987675256497386331227838638980680030172857347883537824464410652557820800494271520411283004120790908623'
+    mp.dps = 15
 
 cases = """\
 test_bernoulli_huge()
