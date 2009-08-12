@@ -4,9 +4,10 @@ special functions.
 
 (Other torture tests may also be placed here.)
 
-Running this file (gmpy and psyco recommended!) takes several minutes.
-(A single test may take between a second and several a minute;
-possibly more.)
+Running this file (gmpy and psyco recommended!) takes several CPU minutes.
+With Python 2.6+, multiprocessing is used automatically to run tests
+in parallel if many cores are available. (A single test may take between
+a second and several minutes; possibly more.)
 
 The idea:
 
@@ -38,6 +39,7 @@ TODO:
 
 
 import sys, os
+from timeit import default_timer as clock
 
 if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
@@ -67,8 +69,6 @@ def test_asymp(f, maxdps=150, verbose=False):
         raise AssertionError
     for n in range(-20,20):
         if verbose:
-            print "n =", n
-        else:
             print ".",
         mp.dps = 25
         xpos = mpf(10)**n / 1.1287
@@ -89,7 +89,8 @@ def test_asymp(f, maxdps=150, verbose=False):
                 check(prev[3], new[3], p, xcomplex1)
                 check(prev[4], new[4], p, xcomplex2)
             prev = new
-    print
+    if verbose:
+        print
 
 a1, a2, a3, a4, a5 = 1.5, -2.25, 3.125, 4, 2
 
@@ -193,20 +194,25 @@ test_asymp(lambda z: djtheta(3, z, 0.5, 1))
 test_asymp(lambda z: djtheta(4, z, 0.5, 1))
 """
 
-from timeit import default_timer as clock
+def testit(line):
+    print line
+    t1 = clock()
+    exec line
+    t2 = clock()
+    elapsed = t2-t1
+    print "Time:", elapsed, "for", line, "(OK)"
 
-def testit():
-    cumtime = 0
-    for line in cases.splitlines():
-        print line
-        t1 = clock()
-        exec line
-        t2 = clock()
-        elapsed = t2-t1
-        print "Time:", elapsed
-        cumtime += elapsed
-    print "Total time:", cumtime
-
-if __name__ == "__main__":
-    testit()
+if __name__ == '__main__':
+    try:
+        from multiprocessing import Pool
+        mapf = Pool(None).map
+        print "Running tests with multiprocessing"
+    except ImportError:
+        print "Not using multiprocessing"
+        mapf = map
+    t1 = clock()
+    tasks = cases.splitlines()
+    mapf(testit, tasks)
+    t2 = clock()
+    print "Cumulative wall time:", t2-t1
 
