@@ -59,12 +59,12 @@ computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c
 <p><strong>Basic examples</strong></p>
 <p>Derivatives of a simple function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 <span class="go">3.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">2.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
@@ -93,7 +93,7 @@ is required. For high order derivatives, this method may thus
 be faster if f is very expensive to evaluate at high precision.</blockquote>
 <p>With <tt class="docutils literal"><span class="pre">'quad'</span></tt> the result is likely to have a small imaginary
 component even if the derivative is actually real:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;quad&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">sqrt</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;quad&#39;</span><span class="p">)</span>
 <span class="go">(0.5 - 9.44048454290863e-27j)</span>
 </pre></div>
 </div>
@@ -117,11 +117,11 @@ This corresponds to direction=0. Alternatively, it can compute a
 left difference (direction=-1) or right difference (direction=1).
 This is useful for computing left- or right-sided derivatives
 of nonsmooth functions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">direction</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">-1.0</span>
 </pre></div>
 </div>
@@ -149,7 +149,9 @@ required if one calls <tt class="xref docutils literal"><span class="pre">diff()
 needed derivatives is known in advance, this is further
 slightly more efficient.</p>
 <p><strong>Examples</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
 <span class="go">[0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">),</span> <span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">1</span><span class="p">)):</span> <span class="k">print</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span>
 <span class="gp">...</span>
@@ -159,6 +161,70 @@ slightly more efficient.</p>
 <span class="go">3 0.841470984807897</span>
 <span class="go">4 0.54030230586814</span>
 <span class="go">5 -0.841470984807897</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fractional-derivatives-differintegration-differint">
+<h2>Fractional derivatives / differintegration (<tt class="docutils literal"><span class="pre">differint</span></tt>)<a class="headerlink" href="#fractional-derivatives-differintegration-differint" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.calculus.differint">
+<!--[mpmath.calculus.differint]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">differint</tt><big>(</big><em>f</em>, <em>x</em>, <em>n=1</em>, <em>x0=0</em><big>)</big><a class="headerlink" href="#mpmath.calculus.differint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the Riemann-Liouville differintegral, or fractional
+derivative, defined by</p>
+<div class="math">
+<p><img src="../_images/math/cb3f8dd0c4965356179ff341ffe8b45834703dab.png" alt="\,_{x_0}{\mathbb{D}}^n_xf(x) \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m}
+\int_{x_0}^{x}(x-t)^{m-n-1}f(t)dt" />
+</div></p><p>where <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> is a given (presumably well-behaved) function,
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is the evaluation point, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is the order, and <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> is
+the reference point of integration (<img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> is an arbitrary
+parameter selected automatically).</p>
+<p>With <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1" />, this is just the standard derivative <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)" />; with <img class="math" src="../_images/math/598a16d4b7dde3dec3a390109882d54bb0308ea5.png" alt="n = 2" />,
+the second derivative <img class="math" src="../_images/math/85fbafec756a37f52333eb40e07673b92e85999b.png" alt="f''(x)" />, etc. With <img class="math" src="../_images/math/56584f0779cf04f3f0d66161f78cb2175bd832c3.png" alt="n = -1" />, it gives
+<img class="math" src="../_images/math/9a7ca706803ef77d2606f7199f6fabc9d7650017.png" alt="\int_{x_0}^x f(t) dt" />, with <img class="math" src="../_images/math/7ef8073b3de4e6bb550c05a09a3852c9463a4a5d.png" alt="n = -2" />
+it gives <img class="math" src="../_images/math/99e272575b108fb659eace5c6352ad4dfdbe600f.png" alt="\int_{x_0}^x \left( \int_{x_0}^t f(u) du \right) dt" />, etc.</p>
+<p>As <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is permitted to be any number, this operator generalizes
+iterated differentiation and iterated integration to a single
+operator with a continuous order parameter.</p>
+<p><strong>Examples</strong></p>
+<p>There is an exact formula for the fractional derivative of a
+monomial <img class="math" src="../_images/math/90954d0d6ad3d96701a5fbbd6e096d937f9ef43e.png" alt="x^p" />, which may be used as a reference. For example,
+the following gives a half-derivative (order 0.5):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">);</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">2</span><span class="p">;</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differint</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="go">7.81764019044672</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="n">n</span><span class="p">)</span>
+<span class="go">7.81764019044672</span>
+</pre></div>
+</div>
+<p>Another useful test function is the exponential function, whose
+integration / differentiation formula easy generalizes
+to arbitrary order. Here we first compute a third derivative,
+and then a triply nested integral. (The reference point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" />
+is set to <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty" /> to avoid nonzero endpoint terms.):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">differint</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">0.278538406900792</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*-</span><span class="mf">1.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mf">3</span>
+<span class="go">0.278538406900792</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differint</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">1922.50563031149</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="mf">3.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">pi</span><span class="o">**</span><span class="mf">3</span>
+<span class="go">1922.50563031149</span>
+</pre></div>
+</div>
+<p>However, for noninteger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the differentiation formula for the
+exponential function must be modified to give the same result as the
+Riemann-Liouville differintegral:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">*</span><span class="n">j</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">differint</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="go">(-123295.005390743 + 140955.117867654j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">gammainc</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">)</span>
+<span class="go">(-123295.005390743 + 140955.117867654j)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -176,6 +242,7 @@ slightly more efficient.</p>
             <ul>
 <li><a class="reference external" href="">Differentiation</a><ul>
 <li><a class="reference external" href="#numerical-derivatives-diff-diffs">Numerical derivatives (<tt class="docutils literal"><span class="pre">diff</span></tt>, <tt class="docutils literal"><span class="pre">diffs</span></tt>)</a></li>
+<li><a class="reference external" href="#fractional-derivatives-differintegration-differint">Fractional derivatives / differintegration (<tt class="docutils literal"><span class="pre">differint</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
@@ -216,7 +283,7 @@ slightly more efficient.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

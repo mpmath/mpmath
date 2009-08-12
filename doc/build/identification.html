@@ -63,7 +63,7 @@ matching formulas is returned.</p>
 <p>As a simple example, <tt class="xref docutils literal"><span class="pre">identify()</span></tt> will find an algebraic
 formula for the golden ratio:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
 <span class="go">&#39;((1+sqrt(5))/2)&#39;</span>
 </pre></div>
@@ -194,13 +194,13 @@ the first few):</p>
 </div>
 <p>The numerical values are roughly as close to pi as permitted by the
 specified tolerance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">e</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">6</span><span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">6</span><span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">3.14157719846001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">135</span><span class="o">*</span><span class="n">e</span><span class="o">*</span><span class="n">catalan</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">98</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">135</span><span class="o">*</span><span class="n">e</span><span class="o">*</span><span class="n">catalan</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">98</span>
 <span class="go">3.14166950419369</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="mf">13</span><span class="o">+</span><span class="mf">22</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">e</span><span class="o">-</span><span class="mf">13</span><span class="o">+</span><span class="mf">22</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span>
 <span class="go">3.14158000062992</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="mf">24</span><span class="o">*</span><span class="n">e</span><span class="o">-</span><span class="mf">6</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">24</span><span class="o">*</span><span class="n">e</span><span class="o">-</span><span class="mf">6</span><span class="o">+</span><span class="mf">4</span><span class="o">*</span><span class="n">catalan</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span>
 <span class="go">3.14158791577159</span>
 </pre></div>
 </div>
@@ -279,7 +279,7 @@ at high precision; preferrably 50 digits or more.</p>
 <p>By default (degree <img class="math" src="_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1" />), <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> simply finds a linear
 polynomial with a rational root:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
 <span class="go">[-10, 7]</span>
 </pre></div>
@@ -300,7 +300,7 @@ solutions to quadratic equations. As we find here, <img class="math" src="_image
 is a root of the polynomial <img class="math" src="_images/math/937caf8a69f609a3c4cc40deb81502b3da5a2d56.png" alt="x^2 - 2x - 1" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findpoly</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">[1, -2, -1]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">2.4142135623731</span>
 </pre></div>
 </div>
@@ -379,7 +379,7 @@ exists, <tt class="xref docutils literal"><span class="pre">pslq()</span></tt> r
 <p><strong>Examples</strong></p>
 <p>Find rational approximations for <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="go">[-7, 22]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
@@ -395,7 +395,7 @@ exists, <tt class="xref docutils literal"><span class="pre">pslq()</span></tt> r
 by at least one rational number with denominator less than <img class="math" src="_images/math/424bc9c16dd44c6587d3169db64109837aa146ec.png" alt="10^{12}" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pslq</span><span class="p">([</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">maxcoeff</span><span class="o">=</span><span class="mf">10</span><span class="o">**</span><span class="mf">12</span><span class="p">)</span>
 <span class="go">[-75888275702L, 238410049439L]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span><span class="o">/</span><span class="n">_</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span><span class="o">/</span><span class="n">_</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
 <span class="go">-3.14159265358979</span>
 </pre></div>
 </div>
@@ -447,9 +447,9 @@ being detected, with a zero coefficient for <img class="math" src="_images/math/
 </pre></div>
 </div>
 <p>In other words, we found the following formula:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">8</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">8</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4</span><span class="o">*</span><span class="n">acot</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>
 <span class="go">3.14159265358979323846264338328</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
 <span class="go">3.14159265358979323846264338328</span>
 </pre></div>
 </div>
@@ -515,7 +515,7 @@ arithmetic, since this is significantly (about 7x) faster.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

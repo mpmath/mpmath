@@ -112,7 +112,7 @@ and continuing the evaluation up to <img class="math" src="../_images/math/c8d1c
 <p>We will solve the standard test problem <img class="math" src="../_images/math/556429eac9b1a2f60b76e7e592f149d07992b9f2.png" alt="y'(x) = y(x), y(0) = 1" />
 which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c43b6a9c897f705544c88bde9e232.png" alt="y(x) = \exp(x)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -125,9 +125,9 @@ which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c4
 <p>The solution with high precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
 </pre></div>
 </div>
@@ -135,7 +135,7 @@ which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c4
 can be input as (note that <em>f</em> returns a 1-element vector):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">),</span> <span class="mf">15</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">[2.71828182845905]</span>
 </pre></div>
 </div>
@@ -159,9 +159,9 @@ integration. We can therefore obtain a reference solution with
 <tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.72128263801696</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
 <span class="go">0.72128263801696</span>
 </pre></div>
 </div>
@@ -266,7 +266,7 @@ more robust</li>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

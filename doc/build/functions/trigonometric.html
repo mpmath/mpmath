@@ -68,83 +68,97 @@ the same as those found in most standard mathematical software,
 such as Mathematica and Python&#8217;s own <tt class="docutils literal"><span class="pre">cmath</span></tt> libary (as of Python 2.6;
 earlier Python versions implement some functions
 erroneously).</p>
-<div class="section" id="degree-radian-conversion-degrees-radians">
-<h2>Degree-radian conversion (<tt class="xref docutils literal"><span class="pre">degrees()</span></tt>, <tt class="xref docutils literal"><span class="pre">radians()</span></tt>)<a class="headerlink" href="#degree-radian-conversion-degrees-radians" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="degree-radian-conversion">
+<h2>Degree-radian conversion<a class="headerlink" href="#degree-radian-conversion" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="degrees">
+<h3><tt class="xref docutils literal"><span class="pre">degrees()</span></tt><a class="headerlink" href="#degrees" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.degrees">
 <!--[mpmath.functions.degrees]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">degrees</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.degrees" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the radian angle <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a degree angle:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">degrees</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">degrees</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">60.0</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="radians">
+<h3><tt class="xref docutils literal"><span class="pre">radians()</span></tt><a class="headerlink" href="#radians" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.radians">
 <!--[mpmath.functions.radians]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">radians</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.radians" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the degree angle <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to radians:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">radians</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radians</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>
 <span class="go">1.0471975511966</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="trigonometric-functions-cos-sin-tan-sec-csc-cot">
-<h2>Trigonometric functions (<tt class="xref docutils literal"><span class="pre">cos()</span></tt>, <tt class="xref docutils literal"><span class="pre">sin()</span></tt>, <tt class="xref docutils literal"><span class="pre">tan()</span></tt>, <tt class="xref docutils literal"><span class="pre">sec()</span></tt>, <tt class="xref docutils literal"><span class="pre">csc()</span></tt>, <tt class="xref docutils literal"><span class="pre">cot()</span></tt>)<a class="headerlink" href="#trigonometric-functions-cos-sin-tan-sec-csc-cot" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id1">
+<h2>Trigonometric functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cos">
+<h3><tt class="xref docutils literal"><span class="pre">cos()</span></tt><a class="headerlink" href="#cos" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.cos">
 <!--[mpmath.functions.cos]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cos</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the cosine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/c938e3f9dea789595c6290070f7975f45bc4300a.png" alt="\cos(x)" />.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
 <span class="go">-0.9802850113244713353133243</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-4.189625690968807230132555 - 9.109227893755336597979197j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[1.0, 0.0, -0.5, 0.0, 4.16667e-2, 0.0, -1.38889e-3]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">[0.540302305868139717400936602301, 1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">[-0.41614683654714238699756823214, 1.0]</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="sin">
+<h3><tt class="xref docutils literal"><span class="pre">sin()</span></tt><a class="headerlink" href="#sin" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.sin">
 <!--[mpmath.functions.sin]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sin</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the sine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/081bf0417da2140657aad909a14ca6c3ff8b77d5.png" alt="\sin(x)" />.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.8660254037844386467637232</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
 <span class="go">0.1975887055794968911438743</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(9.1544991469114295734673 - 4.168906959966564350754813j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">[0.0, 0.841470984807896506652502331201]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">[0.0, 1.0]</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="tan">
+<h3><tt class="xref docutils literal"><span class="pre">tan()</span></tt><a class="headerlink" href="#tan" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.tan">
 <!--[mpmath.functions.tan]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">tan</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.tan" title="Permalink to this definition">¶</a></dt>
@@ -153,25 +167,28 @@ The tangent function is singular at <img class="math" src="../_images/math/6fc79
 <tt class="docutils literal"><span class="pre">tan(x)</span></tt> always returns a finite result since <img class="math" src="../_images/math/b0055c4425e492c37e317d03a83dcf382f1da9ab.png" alt="(n+1/2)\pi" />
 cannot be represented exactly using floating-point arithmetic.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">1.732050807568877293527446</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="mf">100000001</span><span class="p">)</span>
 <span class="go">-0.2015625081449864533091058</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.003764025641504248292751221 + 1.003238627353609801446359j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">tan</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">[0.0, 1.55740772465490223050697482944]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="sec">
+<h3><tt class="xref docutils literal"><span class="pre">sec()</span></tt><a class="headerlink" href="#sec" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.sec">
 <!--[mpmath.functions.sec]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sec</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sec" title="Permalink to this definition">¶</a></dt>
@@ -180,25 +197,28 @@ The secant function is singular at <img class="math" src="../_images/math/6fc799
 <tt class="docutils literal"><span class="pre">sec(x)</span></tt> always returns a finite result since <img class="math" src="../_images/math/b0055c4425e492c37e317d03a83dcf382f1da9ab.png" alt="(n+1/2)\pi" />
 cannot be represented exactly using floating-point arithmetic.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">2.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
 <span class="go">-1.184723164360392819100265</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.04167496441114427004834991 + 0.0906111371962375965296612j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 8.47222e-2]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">[1.0, 1.85081571768092561791175324143]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="csc">
+<h3><tt class="xref docutils literal"><span class="pre">csc()</span></tt><a class="headerlink" href="#csc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.csc">
 <!--[mpmath.functions.csc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">csc</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.csc" title="Permalink to this definition">¶</a></dt>
@@ -208,23 +228,26 @@ exception of the point <img class="math" src="../_images/math/2d348bde3e15456e71
 since <img class="math" src="../_images/math/34efe5253c7b569cf0ec1641dfe9a2c4bdd367b6.png" alt="n \pi" /> cannot be represented exactly using floating-point
 arithmetic.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">1.154700538379251529018298</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
 <span class="go">-1.864910497503629858938891</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.09047320975320743980579048 + 0.04120098628857412646300981j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[1.18839510577812121626159945235, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">[1.0, +inf]</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="cot">
+<h3><tt class="xref docutils literal"><span class="pre">cot()</span></tt><a class="headerlink" href="#cot" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.cot">
 <!--[mpmath.functions.cot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cot</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.cot" title="Permalink to this definition">¶</a></dt>
@@ -235,59 +258,68 @@ exception of the point <img class="math" src="../_images/math/2d348bde3e15456e71
 since <img class="math" src="../_images/math/34efe5253c7b569cf0ec1641dfe9a2c4bdd367b6.png" alt="n \pi" /> cannot be represented exactly using floating-point
 arithmetic.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.5773502691896257645091488</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="mf">10000001</span><span class="p">)</span>
 <span class="go">1.574131876209625656003562</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.003739710376336956660117409 - 0.9967577965693583104609688j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[0.642092615934330703006419986575, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="trigonometric-functions-with-modified-argument-cospi-sinpi">
-<h2>Trigonometric functions with modified argument (<tt class="xref docutils literal"><span class="pre">cospi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>)<a class="headerlink" href="#trigonometric-functions-with-modified-argument-cospi-sinpi" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="trigonometric-functions-with-modified-argument">
+<h2>Trigonometric functions with modified argument<a class="headerlink" href="#trigonometric-functions-with-modified-argument" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cospi">
+<h3><tt class="xref docutils literal"><span class="pre">cospi()</span></tt><a class="headerlink" href="#cospi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.cospi">
 <!--[mpmath.functions.cospi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cospi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cospi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <img class="math" src="../_images/math/d49c1e556b2fd2cb785ca3fe0d14d1247707b79a.png" alt="\cos(\pi x)" />, more accurately than the expression
 <tt class="docutils literal"><span class="pre">cos(pi*x)</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
-<span class="go">1.0 0.999999999997493</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
-<span class="go">0.0 1.59960492420134e-6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">(1.0, 0.999999999997493)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cospi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">(0.0, 1.59960492420134e-6)</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="sinpi">
+<h3><tt class="xref docutils literal"><span class="pre">sinpi()</span></tt><a class="headerlink" href="#sinpi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.sinpi">
 <!--[mpmath.functions.sinpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinpi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <img class="math" src="../_images/math/61395a5902d5ef1f78b3dc6e004e7856f9e45c71.png" alt="\sin(\pi x)" />, more accurately than the expression
 <tt class="docutils literal"><span class="pre">sin(pi*x)</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
-<span class="go">0.0 -2.23936276195592e-6</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
-<span class="go">1.0 0.999999999998721</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">))</span>
+<span class="go">(0.0, -2.23936276195592e-6)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinpi</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="go">(1.0, 0.999999999998721)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="inverse-trigonometric-functions-acos-asin-atan-asec-acsc-acot">
-<h2>Inverse trigonometric functions (<tt class="xref docutils literal"><span class="pre">acos()</span></tt>, <tt class="xref docutils literal"><span class="pre">asin()</span></tt>, <tt class="xref docutils literal"><span class="pre">atan()</span></tt>, <tt class="xref docutils literal"><span class="pre">asec()</span></tt>, <tt class="xref docutils literal"><span class="pre">acsc()</span></tt>, <tt class="xref docutils literal"><span class="pre">acot()</span></tt>)<a class="headerlink" href="#inverse-trigonometric-functions-acos-asin-atan-asec-acsc-acot" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="inverse-trigonometric-functions">
+<h2>Inverse trigonometric functions<a class="headerlink" href="#inverse-trigonometric-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="acos">
+<h3><tt class="xref docutils literal"><span class="pre">acos()</span></tt><a class="headerlink" href="#acos" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.acos">
 <!--[mpmath.functions.acos]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acos</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.acos" title="Permalink to this definition">¶</a></dt>
@@ -298,12 +330,12 @@ cosine is real-valued only for <img class="math" src="../_images/math/f260c78fb4
 function assuming values between <img class="math" src="../_images/math/08e02a30b63dba4891fe31161e3c4a2dc4dc4b2e.png" alt="+\pi" /> and <img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0" />.</p>
 <p>Basic values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acos</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">3.141592653589793238462643</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">acos</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acos</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">1.570796326794896619231322</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">acos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">acos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">acos</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[1.5708, -1.0, 0.0, -0.166667, 0.0, -7.5e-2, 0.0]</span>
@@ -331,6 +363,9 @@ places the branch cuts along the line segments <img class="math" src="../_images
 </div></p><p>where the principal-branch log and square root are implied.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="asin">
+<h3><tt class="xref docutils literal"><span class="pre">asin()</span></tt><a class="headerlink" href="#asin" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.asin">
 <!--[mpmath.functions.asin]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asin</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.asin" title="Permalink to this definition">¶</a></dt>
@@ -341,12 +376,12 @@ On this interval, it is defined to be a monotonically increasing
 function assuming values between <img class="math" src="../_images/math/d45899b464b92ec7d9086f93e2ff440b344cfb55.png" alt="-\pi/2" /> and <img class="math" src="../_images/math/039bf945c704ff98e6f81626bbad32550cc37193.png" alt="\pi/2" />.</p>
 <p>Basic values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">asin</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asin</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">-1.570796326794896619231322</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">asin</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asin</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">asin</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">asin</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">1.570796326794896619231322</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">asin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, 0.166667, 0.0, 7.5e-2, 0.0]</span>
@@ -374,6 +409,9 @@ places the branch cuts along the line segments <img class="math" src="../_images
 </div></p><p>where the principal-branch log and square root are implied.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="atan">
+<h3><tt class="xref docutils literal"><span class="pre">atan()</span></tt><a class="headerlink" href="#atan" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.atan">
 <!--[mpmath.functions.atan]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atan</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.atan" title="Permalink to this definition">¶</a></dt>
@@ -383,15 +421,15 @@ This is a real-valued function for all real <img class="math" src="../_images/ma
 <p>Basic values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">);</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="go">-1.570796326794896619231322</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">-0.7853981633974483096156609</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.7853981633974483096156609</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">1.570796326794896619231322</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">atan</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, -0.333333, 0.0, 0.2, 0.0]</span>
@@ -423,17 +461,26 @@ places the branch cuts along the line segments <img class="math" src="../_images
 </div></p><p>where the principal-branch log is implied.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="asec">
+<h3><tt class="xref docutils literal"><span class="pre">asec()</span></tt><a class="headerlink" href="#asec" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.asec">
 <!--[mpmath.functions.asec]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">asec</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.asec" title="Permalink to this definition">¶</a></dt>
 <dd>Computes the inverse secant of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
 <img class="math" src="../_images/math/8012cf7a70f89667ec4b2ebd2dac7e7b79f27f49.png" alt="\mathrm{sec}^{-1}(x) = \cos^{-1}(1/x)" />.</dd></dl>
 
+</div>
+<div class="section" id="acsc">
+<h3><tt class="xref docutils literal"><span class="pre">acsc()</span></tt><a class="headerlink" href="#acsc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.acsc">
 <!--[mpmath.functions.acsc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acsc</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acsc" title="Permalink to this definition">¶</a></dt>
 <dd>Computes the inverse cosecant of x, asin(1/x)</dd></dl>
 
+</div>
+<div class="section" id="acot">
+<h3><tt class="xref docutils literal"><span class="pre">acot()</span></tt><a class="headerlink" href="#acot" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.acot">
 <!--[mpmath.functions.acot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">acot</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.acot" title="Permalink to this definition">¶</a></dt>
@@ -441,8 +488,11 @@ places the branch cuts along the line segments <img class="math" src="../_images
 <img class="math" src="../_images/math/bb8eb1280c23567e9f9c562a28fbbd692c0190d6.png" alt="\mathrm{cot}^{-1}(x) = \tan^{-1}(1/x)" />.</dd></dl>
 
 </div>
-<div class="section" id="sinc-function-sinc-sincpi">
-<h2>Sinc function (<tt class="xref docutils literal"><span class="pre">sinc()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt>)<a class="headerlink" href="#sinc-function-sinc-sincpi" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="sinc-function">
+<h2>Sinc function<a class="headerlink" href="#sinc-function" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sinc">
+<h3><tt class="xref docutils literal"><span class="pre">sinc()</span></tt><a class="headerlink" href="#sinc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.sinc">
 <!--[mpmath.functions.sinc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinc</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinc" title="Permalink to this definition">¶</a></dt>
@@ -455,24 +505,27 @@ places the branch cuts along the line segments <img class="math" src="../_images
 </div></p><p>See <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> for the normalized sinc function.</p>
 <p>Simple values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinc</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinc</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.841470984807897</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sinc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
 <p>The integral of the sinc function is the sine integral Si:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sinc</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sinc</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.946083070367183</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.946083070367183</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="sincpi">
+<h3><tt class="xref docutils literal"><span class="pre">sincpi()</span></tt><a class="headerlink" href="#sincpi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.sincpi">
 <!--[mpmath.functions.sincpi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sincpi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.sincpi" title="Permalink to this definition">¶</a></dt>
@@ -487,19 +540,20 @@ places the branch cuts along the line segments <img class="math" src="../_images
 <p>The normalization entails that the function integrates
 to unity over the entire real line:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">sincpi</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">sincpi</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
 <span class="go">1.0</span>
 </pre></div>
 </div>
 <p>Like, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> is evaluated accurately
 at its roots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sincpi</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sincpi</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -512,11 +566,39 @@ at its roots:</p>
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Trigonometric functions</a><ul>
-<li><a class="reference external" href="#degree-radian-conversion-degrees-radians">Degree-radian conversion (<tt class="docutils literal"><span class="pre">degrees()</span></tt>, <tt class="docutils literal"><span class="pre">radians()</span></tt>)</a></li>
-<li><a class="reference external" href="#trigonometric-functions-cos-sin-tan-sec-csc-cot">Trigonometric functions (<tt class="docutils literal"><span class="pre">cos()</span></tt>, <tt class="docutils literal"><span class="pre">sin()</span></tt>, <tt class="docutils literal"><span class="pre">tan()</span></tt>, <tt class="docutils literal"><span class="pre">sec()</span></tt>, <tt class="docutils literal"><span class="pre">csc()</span></tt>, <tt class="docutils literal"><span class="pre">cot()</span></tt>)</a></li>
-<li><a class="reference external" href="#trigonometric-functions-with-modified-argument-cospi-sinpi">Trigonometric functions with modified argument (<tt class="docutils literal"><span class="pre">cospi()</span></tt>, <tt class="docutils literal"><span class="pre">sinpi()</span></tt>)</a></li>
-<li><a class="reference external" href="#inverse-trigonometric-functions-acos-asin-atan-asec-acsc-acot">Inverse trigonometric functions (<tt class="docutils literal"><span class="pre">acos()</span></tt>, <tt class="docutils literal"><span class="pre">asin()</span></tt>, <tt class="docutils literal"><span class="pre">atan()</span></tt>, <tt class="docutils literal"><span class="pre">asec()</span></tt>, <tt class="docutils literal"><span class="pre">acsc()</span></tt>, <tt class="docutils literal"><span class="pre">acot()</span></tt>)</a></li>
-<li><a class="reference external" href="#sinc-function-sinc-sincpi">Sinc function (<tt class="docutils literal"><span class="pre">sinc()</span></tt>, <tt class="docutils literal"><span class="pre">sincpi()</span></tt>)</a></li>
+<li><a class="reference external" href="#degree-radian-conversion">Degree-radian conversion</a><ul>
+<li><a class="reference external" href="#degrees"><tt class="docutils literal"><span class="pre">degrees()</span></tt></a></li>
+<li><a class="reference external" href="#radians"><tt class="docutils literal"><span class="pre">radians()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#id1">Trigonometric functions</a><ul>
+<li><a class="reference external" href="#cos"><tt class="docutils literal"><span class="pre">cos()</span></tt></a></li>
+<li><a class="reference external" href="#sin"><tt class="docutils literal"><span class="pre">sin()</span></tt></a></li>
+<li><a class="reference external" href="#tan"><tt class="docutils literal"><span class="pre">tan()</span></tt></a></li>
+<li><a class="reference external" href="#sec"><tt class="docutils literal"><span class="pre">sec()</span></tt></a></li>
+<li><a class="reference external" href="#csc"><tt class="docutils literal"><span class="pre">csc()</span></tt></a></li>
+<li><a class="reference external" href="#cot"><tt class="docutils literal"><span class="pre">cot()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#trigonometric-functions-with-modified-argument">Trigonometric functions with modified argument</a><ul>
+<li><a class="reference external" href="#cospi"><tt class="docutils literal"><span class="pre">cospi()</span></tt></a></li>
+<li><a class="reference external" href="#sinpi"><tt class="docutils literal"><span class="pre">sinpi()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#inverse-trigonometric-functions">Inverse trigonometric functions</a><ul>
+<li><a class="reference external" href="#acos"><tt class="docutils literal"><span class="pre">acos()</span></tt></a></li>
+<li><a class="reference external" href="#asin"><tt class="docutils literal"><span class="pre">asin()</span></tt></a></li>
+<li><a class="reference external" href="#atan"><tt class="docutils literal"><span class="pre">atan()</span></tt></a></li>
+<li><a class="reference external" href="#asec"><tt class="docutils literal"><span class="pre">asec()</span></tt></a></li>
+<li><a class="reference external" href="#acsc"><tt class="docutils literal"><span class="pre">acsc()</span></tt></a></li>
+<li><a class="reference external" href="#acot"><tt class="docutils literal"><span class="pre">acot()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#sinc-function">Sinc function</a><ul>
+<li><a class="reference external" href="#sinc"><tt class="docutils literal"><span class="pre">sinc()</span></tt></a></li>
+<li><a class="reference external" href="#sincpi"><tt class="docutils literal"><span class="pre">sincpi()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -557,7 +639,7 @@ at its roots:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

@@ -52,19 +52,19 @@
 <div class="section" id="standard-quadrature-quad">
 <h2>Standard quadrature (<tt class="docutils literal"><span class="pre">quad</span></tt>)<a class="headerlink" href="#standard-quadrature-quad" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="mpmath.quadrature.quad">
-<!--[mpmath.quadrature.quad]--><tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">quad</tt><big>(</big><em>f</em>, <em>*points</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.quad" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quad">
+<!--[mpmath.quad]--><tt class="descclassname">mpmath.</tt><tt class="descname">quad</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>*points</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.quad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes a single, double or triple integral over a given
 1D interval, 2D rectangle, or 3D cuboid. A basic example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
 <span class="go">2.0</span>
 </pre></div>
 </div>
 <p>A basic 2D integral:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>
 <span class="go">4.0</span>
 </pre></div>
 </div>
@@ -131,9 +131,9 @@ examples evaluate the limits of the inverse tangent function
 (<img class="math" src="../_images/math/61c9dca77f580d0d6ff196dbf084dbd46eb55c4a.png" alt="\int 1/(1+x^2) = \tan^{-1} x" />), and the Gaussian integral
 <img class="math" src="../_images/math/15a441c328cdcb543e4f1195ce6424f269cc9607.png" alt="\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">3.14159265358979</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span><span class="o">**</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span><span class="o">**</span><span class="mf">2</span>
 <span class="go">3.14159265358979</span>
 </pre></div>
 </div>
@@ -142,13 +142,13 @@ The following computes 50 digits of <img class="math" src="../_images/math/f2ca0
 area of the half-circle defined by <img class="math" src="../_images/math/87adb30179d12676da06d9c6a7a88648265fd94f.png" alt="x^2 + y^2 \le 1" />,
 <img class="math" src="../_images/math/f260c78fb4c935f83297e9c2cb2cf7c3c3e3adfc.png" alt="-1 \le x \le 1" />, <img class="math" src="../_images/math/4a4e6e39a7375117fa73ed88a17f8ede37db56b0.png" alt="y \ge 0" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
 </div>
 <p>One can just as well compute 1000 digits (output truncated):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">1000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>  <span class="c">#doctest:+ELLIPSIS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>  <span class="c">#doctest:+ELLIPSIS</span>
 <span class="go">3.141592653589793238462643383279502884...216420198</span>
 </pre></div>
 </div>
@@ -156,7 +156,7 @@ area of the half-circle defined by <img class="math" src="../_images/math/87adb3
 a residue at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" /> by integrating counterclockwise along the
 diamond-shaped path from <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" /> to <img class="math" src="../_images/math/f07a8bc43a3f4fe9db689ab597112a5cf846e3a8.png" alt="+i" /> to <img class="math" src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1" /> to <img class="math" src="../_images/math/0fda51aabf3fa68a72ba3b46518abc175c76dab2.png" alt="-i" /> to <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">z</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="n">j</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">z</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="n">j</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">(0.0 + 6.28318530717959j)</span>
 </pre></div>
 </div>
@@ -166,26 +166,26 @@ diamond-shaped path from <img class="math" src="../_images/math/dce34f4dfb240614
 to high precision fairly rapidly by <tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.577215664901532860606512090082</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">euler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">euler</span>
 <span class="go">0.577215664901532860606512090082</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">3.17343648530607134219175646705</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">4</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">4</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span>
 <span class="go">3.17343648530607134219175646705</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">*</span> <span class="n">y</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">1.23370055013616982735431137498</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">8</span>
 <span class="go">1.23370055013616982735431137498</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">1.64493406684822643647241516665</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="mf">6</span>
 <span class="go">1.64493406684822643647241516665</span>
 </pre></div>
 </div>
@@ -202,16 +202,16 @@ For example, we can replicate the earlier example of calculating
 <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> by integrating over the unit-circle, and actually use double
 quadrature to actually measure the area circle:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">3.14159265358979</span>
 </pre></div>
 </div>
 <p>Here is a simple triple integral:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">z</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;gauss-legendre&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;gauss-legendre&#39;</span><span class="p">)</span>
 <span class="go">0.101366277027041</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">/</span><span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">/</span><span class="mf">4</span>
 <span class="go">0.101366277027041</span>
 </pre></div>
 </div>
@@ -222,23 +222,23 @@ algorithm copes well with mid-interval singularities (such as
 mid-interval discontinuities in <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" /> or <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)" />).
 The best solution is to split the integral into parts:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>   <span class="c"># Bad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>   <span class="c"># Bad</span>
 <span class="go">3.99900894176779</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>  <span class="c"># Good</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>  <span class="c"># Good</span>
 <span class="go">4.0</span>
 </pre></div>
 </div>
 <p>The tanh-sinh rule often works well for integrands having a
 singularity at one or both endpoints:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;tanh-sinh&#39;</span><span class="p">)</span>  <span class="c"># Good</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;tanh-sinh&#39;</span><span class="p">)</span>  <span class="c"># Good</span>
 <span class="go">-1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;gauss-legendre&#39;</span><span class="p">)</span>  <span class="c"># Bad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;gauss-legendre&#39;</span><span class="p">)</span>  <span class="c"># Bad</span>
 <span class="go">-0.999932197413801</span>
 </pre></div>
 </div>
 <p>However, the result may still be inaccurate for some functions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;tanh-sinh&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;tanh-sinh&#39;</span><span class="p">)</span>
 <span class="go">1.99999999946942</span>
 </pre></div>
 </div>
@@ -248,7 +248,7 @@ circumvented by temporarily increasing the precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;tanh-sinh&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="o">+</span><span class="n">a</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">a</span>
 <span class="go">2.0</span>
 </pre></div>
 </div>
@@ -259,20 +259,22 @@ differentiable) but contain sharp mid-interval peaks or many
 example, with default settings, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> is able to integrate
 <img class="math" src="../_images/math/081bf0417da2140657aad909a14ca6c3ff8b77d5.png" alt="\sin(x)" /> accurately over an interval of length 100 but not over
 length 1000:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">100</span><span class="p">]),</span> <span class="mf">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>   <span class="c"># Good</span>
-<span class="go">0.137681127712316 0.137681127712316</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">]),</span> <span class="mf">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>   <span class="c"># Bad</span>
-<span class="go">-37.8587612408485 0.437620923709297</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">100</span><span class="p">]);</span> <span class="mf">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>   <span class="c"># Good</span>
+<span class="go">0.137681127712316</span>
+<span class="go">0.137681127712316</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">]);</span> <span class="mf">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>   <span class="c"># Bad</span>
+<span class="go">-37.8587612408485</span>
+<span class="go">0.437620923709297</span>
 </pre></div>
 </div>
 <p>One solution is to break the integration into 10 intervals of
 length 100:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">,</span> <span class="mf">10</span><span class="p">))</span>   <span class="c"># Good</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="n">linspace</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">,</span> <span class="mf">10</span><span class="p">))</span>   <span class="c"># Good</span>
 <span class="go">0.437620923709297</span>
 </pre></div>
 </div>
 <p>Another is to increase the degree of the quadrature:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">],</span> <span class="n">maxdegree</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>   <span class="c"># Also good</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1000</span><span class="p">],</span> <span class="n">maxdegree</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>   <span class="c"># Also good</span>
 <span class="go">0.437620923709297</span>
 </pre></div>
 </div>
@@ -281,11 +283,11 @@ more efficient differs from case to case. Another example is the
 function <img class="math" src="../_images/math/9e304d281d5bb66802cb88a03ebfb328b1b276e8.png" alt="1/(1+x^2)" />, which has a sharp peak centered around
 <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>   <span class="c"># Bad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>   <span class="c"># Bad</span>
 <span class="go">3.64804647105268</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">100</span><span class="p">],</span> <span class="n">maxdegree</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>   <span class="c"># Good</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">100</span><span class="p">],</span> <span class="n">maxdegree</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>   <span class="c"># Good</span>
 <span class="go">3.12159332021646</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>   <span class="c"># Also good</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>   <span class="c"># Also good</span>
 <span class="go">3.12159332021646</span>
 </pre></div>
 </div>
@@ -299,8 +301,8 @@ function <img class="math" src="../_images/math/9e304d281d5bb66802cb88a03ebfb328
 <div class="section" id="oscillatory-quadrature-quadosc">
 <h2>Oscillatory quadrature (<tt class="docutils literal"><span class="pre">quadosc</span></tt>)<a class="headerlink" href="#oscillatory-quadrature-quadosc" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="mpmath.quadrature.quadosc">
-<!--[mpmath.quadrature.quadosc]--><tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">quadosc</tt><big>(</big><em>f</em>, <em>interval</em>, <em>omega=None</em>, <em>period=None</em>, <em>zeros=None</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.quadosc" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadosc">
+<!--[mpmath.quadosc]--><tt class="descclassname">mpmath.</tt><tt class="descname">quadosc</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>omega=None</em>, <em>period=None</em>, <em>zeros=None</em><big>)</big><a class="headerlink" href="#mpmath.quadosc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates</p>
 <div class="math">
 <p><img src="../_images/math/faa759cbb4bff58ffe7cb487a95808076380f36d.png" alt="I = \int_a^b f(x) dx" />
@@ -323,15 +325,15 @@ the zeros by either providing the angular frequency <img class="math" src="../_i
 specify the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th zero by providing the <em>zeros</em> arguments.
 Below is an example of each:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.37833007080198</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.37833007080198</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.37833007080198</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">ei</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">*</span><span class="n">ei</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span>  <span class="c"># Computed by Mathematica</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">ei</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">*</span><span class="n">ei</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span>  <span class="c"># Computed by Mathematica</span>
 <span class="go">0.37833007080198</span>
 </pre></div>
 </div>
@@ -343,25 +345,25 @@ passed to <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>
 typically makes the extrapolation much more efficient.</p>
 <p>Here is an example of an integration over the entire real line,
 and a half-infinite integration starting at <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty" />:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">1.15572734979092</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="n">e</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">/</span><span class="n">e</span>
 <span class="go">1.15572734979092</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">-0.0844109505595739</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">si</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span>
 <span class="go">-0.0844109505595738</span>
 </pre></div>
 </div>
 <p>Of course, the integrand may contain a complex exponential just as
 well as a real sine or cosine:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">(0.156410688228254 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="n">e</span><span class="o">**</span><span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">/</span><span class="n">e</span><span class="o">**</span><span class="mf">3</span>
 <span class="go">0.156410688228254</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="n">x</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">j</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="n">x</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">(0.00317486988463794 - 0.0447701735209082j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">7</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">7</span><span class="p">))</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">(0.00317486988463794 - 0.0447701735209082j)</span>
 </pre></div>
 </div>
@@ -372,15 +374,15 @@ be necessary to use <em>zeros</em>.</p>
 <p>A notable exception can be made for Bessel functions which, though not
 periodic, are &#8220;asymptotically periodic&#8221; in a sufficiently strong sense
 that the sum extrapolation will work out:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.0</span>
 </pre></div>
 </div>
 <p>More properly, one should provide the exact Bessel function zeros:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">j0zero</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">findroot</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mf">0.25</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="n">j0zero</span><span class="p">)</span>
 <span class="go">1.0</span>
 </pre></div>
 </div>
@@ -398,12 +400,12 @@ if one provides the correct asymptotic distribution of zeros
 (<img class="math" src="../_images/math/234066a9d63a3b077620a87c2e47f7ab5d421941.png" alt="x_n \sim \sqrt{n}" />), <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt> works:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
 <span class="go">0.626657068657750125603941321203</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
 <span class="go">0.626657068657750125603941321203</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">8</span><span class="p">)</span>
 <span class="go">0.626657068657750125603941321203</span>
 </pre></div>
 </div>
@@ -413,9 +415,9 @@ places some other constant than <img class="math" src="../_images/math/f2ca003a7
 the inverse-function distribution <img class="math" src="../_images/math/45bcd9e1bf383713528adb77d14117fc8fd1942f.png" alt="h^{-1}(x)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 <span class="go">-0.25024394235267</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">-</span><span class="n">si</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">-</span><span class="n">si</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="go">-0.250243942352671</span>
 </pre></div>
 </div>
@@ -424,11 +426,11 @@ the inverse-function distribution <img class="math" src="../_images/math/45bcd9e
 alternating signs, the extrapolation might fail. A simple trick
 that sometimes works is to multiply or divide the frequency by 2:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>  <span class="c"># Bad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>  <span class="c"># Bad</span>
 <span class="go">1.28642190869921</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c"># Perfect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c"># Perfect</span>
 <span class="go">1.28652953559617</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">1</span><span class="o">+</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span><span class="o">+</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">ci</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">6</span>
 <span class="go">1.28652953559617</span>
 </pre></div>
 </div>
@@ -437,9 +439,9 @@ that sometimes works is to multiply or divide the frequency by 2:</p>
 integrands. If the integrand decreases exponentially or faster,
 <tt class="xref docutils literal"><span class="pre">quad()</span></tt> will likely handle it without trouble (and generally be
 much faster than <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.5</span>
 </pre></div>
 </div>
@@ -449,33 +451,33 @@ much faster than <tt class="xref docutils literal"><span class="pre">quadosc()</
 <div class="section" id="quadrature-rules">
 <h2>Quadrature rules<a class="headerlink" href="#quadrature-rules" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="mpmath.quadrature.Quadrature">
-<!--[mpmath.quadrature.Quadrature]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">Quadrature</tt><a class="headerlink" href="#mpmath.quadrature.Quadrature" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule">
+<!--[mpmath.quadrature.QuadratureRule]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">QuadratureRule</tt><big>(</big><em>ctx</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule" title="Permalink to this definition">¶</a></dt>
 <dd><p>Quadrature rules are implemented using this class, in order to
 simplify the code and provide a common infrastructure
 for tasks such as error estimation and node caching.</p>
 <p>You can implement a custom quadrature rule by subclassing
-<tt class="xref docutils literal"><span class="pre">Quadrature</span></tt> and implementing the appropriate
+<tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> and implementing the appropriate
 methods. The subclass can then be used by <tt class="xref docutils literal"><span class="pre">quad()</span></tt> by
 passing it as the <em>method</em> argument.</p>
-<p><tt class="xref docutils literal"><span class="pre">Quadrature</span></tt> instances are supposed to be singletons.
-<tt class="xref docutils literal"><span class="pre">Quadrature</span></tt> therefore implements instance caching
+<p><tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> instances are supposed to be singletons.
+<tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> therefore implements instance caching
 in <tt class="xref docutils literal"><span class="pre">__new__()</span></tt>.</p>
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.calc_nodes">
-<!--[mpmath.quadrature.Quadrature.calc_nodes]--><tt class="descname">calc_nodes</tt><big>(</big><em>degree</em>, <em>prec</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.calc_nodes" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.calc_nodes">
+<!--[mpmath.quadrature.QuadratureRule.calc_nodes]--><tt class="descname">calc_nodes</tt><big>(</big><em>degree</em>, <em>prec</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.calc_nodes" title="Permalink to this definition">¶</a></dt>
 <dd>Compute nodes for the standard interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" />. Subclasses
 should probably implement only this method, and use
 <tt class="xref docutils literal"><span class="pre">get_nodes()</span></tt> method to retrieve the nodes.</dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.clear">
-<!--[mpmath.quadrature.Quadrature.clear]--><tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.clear">
+<!--[mpmath.quadrature.QuadratureRule.clear]--><tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.clear" title="Permalink to this definition">¶</a></dt>
 <dd>Delete cached node data.</dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.estimate_error">
-<!--[mpmath.quadrature.Quadrature.estimate_error]--><tt class="descname">estimate_error</tt><big>(</big><em>results</em>, <em>prec</em>, <em>epsilon</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.estimate_error" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.estimate_error">
+<!--[mpmath.quadrature.QuadratureRule.estimate_error]--><tt class="descname">estimate_error</tt><big>(</big><em>results</em>, <em>prec</em>, <em>epsilon</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.estimate_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given results from integrations <img class="math" src="../_images/math/dbc47e6361fa8fb5c5677d7f82dfa0ee87591207.png" alt="[I_1, I_2, \ldots, I_k]" /> done
 with a quadrature of rule of degree <img class="math" src="../_images/math/2f5f1a6ec7851c120425e8e3940b6414fc9b1247.png" alt="1, 2, \ldots, k" />, estimate
 the error of <img class="math" src="../_images/math/8ea972a3547d6e5b8c88bc77e0110bf571d75898.png" alt="I_k" />.</p>
@@ -490,8 +492,8 @@ this method seems to be very robust in practice.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.get_nodes">
-<!--[mpmath.quadrature.Quadrature.get_nodes]--><tt class="descname">get_nodes</tt><big>(</big><em>a</em>, <em>b</em>, <em>degree</em>, <em>prec</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.get_nodes" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.get_nodes">
+<!--[mpmath.quadrature.QuadratureRule.get_nodes]--><tt class="descname">get_nodes</tt><big>(</big><em>a</em>, <em>b</em>, <em>degree</em>, <em>prec</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.get_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return nodes for given interval, degree and precision. The
 nodes are retrieved from a cache if already computed;
 otherwise they are computed by calling <tt class="xref docutils literal"><span class="pre">calc_nodes()</span></tt>
@@ -502,8 +504,8 @@ node computation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.guess_degree">
-<!--[mpmath.quadrature.Quadrature.guess_degree]--><tt class="descname">guess_degree</tt><big>(</big><em>prec</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.guess_degree" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.guess_degree">
+<!--[mpmath.quadrature.QuadratureRule.guess_degree]--><tt class="descname">guess_degree</tt><big>(</big><em>prec</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.guess_degree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a desired precision <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" /> in bits, estimate the degree <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />
 of the quadrature required to accomplish full accuracy for
 typical integrals. By default, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> will perform up
@@ -548,8 +550,8 @@ experimentation and will sometimes be wrong.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.sum_next">
-<!--[mpmath.quadrature.Quadrature.sum_next]--><tt class="descname">sum_next</tt><big>(</big><em>f</em>, <em>nodes</em>, <em>degree</em>, <em>prec</em>, <em>previous</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.sum_next" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.sum_next">
+<!--[mpmath.quadrature.QuadratureRule.sum_next]--><tt class="descname">sum_next</tt><big>(</big><em>f</em>, <em>nodes</em>, <em>degree</em>, <em>prec</em>, <em>previous</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.sum_next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the step sum <img class="math" src="../_images/math/ca32b5510fe15c6ecc32b3a9e4f6d534e3030b29.png" alt="\sum w_k f(x_k)" /> where the <em>nodes</em> list
 contains the <img class="math" src="../_images/math/94d71c036eb96eaaf04435264a5abb9b737ddb58.png" alt="(w_k, x_k)" /> pairs.</p>
 <p><tt class="xref docutils literal"><span class="pre">summation()</span></tt> will supply the list <em>results</em> of
@@ -558,8 +560,8 @@ case the quadrature rule is able to reuse them.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.summation">
-<!--[mpmath.quadrature.Quadrature.summation]--><tt class="descname">summation</tt><big>(</big><em>f</em>, <em>points</em>, <em>prec</em>, <em>epsilon</em>, <em>max_degree</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.summation" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.summation">
+<!--[mpmath.quadrature.QuadratureRule.summation]--><tt class="descname">summation</tt><big>(</big><em>f</em>, <em>points</em>, <em>prec</em>, <em>epsilon</em>, <em>max_degree</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.summation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main integration function. Computes the 1D integral over
 the interval specified by <em>points</em>. For each subinterval,
 performs quadrature of degree from 1 up to <em>max_degree</em>
@@ -569,8 +571,8 @@ the standard interval and then calls <tt class="xref docutils literal"><span cla
 </dd></dl>
 
 <dl class="method">
-<dt id="mpmath.quadrature.Quadrature.transform_nodes">
-<!--[mpmath.quadrature.Quadrature.transform_nodes]--><tt class="descname">transform_nodes</tt><big>(</big><em>nodes</em>, <em>a</em>, <em>b</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.Quadrature.transform_nodes" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.quadrature.QuadratureRule.transform_nodes">
+<!--[mpmath.quadrature.QuadratureRule.transform_nodes]--><tt class="descname">transform_nodes</tt><big>(</big><em>nodes</em>, <em>a</em>, <em>b</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.QuadratureRule.transform_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rescale standardized nodes (for <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" />) to a general
 interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]" />. For a finite interval, a simple linear
 change of variables is used. Otherwise, the following
@@ -589,7 +591,7 @@ transformations are used:</p>
 <h3>Tanh-sinh rule<a class="headerlink" href="#tanh-sinh-rule" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="mpmath.quadrature.TanhSinh">
-<!--[mpmath.quadrature.TanhSinh]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">TanhSinh</tt><a class="headerlink" href="#mpmath.quadrature.TanhSinh" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.quadrature.TanhSinh]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">TanhSinh</tt><big>(</big><em>ctx</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.TanhSinh" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class implements &#8220;tanh-sinh&#8221; or &#8220;doubly exponential&#8221;
 quadrature. This quadrature rule is based on the Euler-Maclaurin
 integral formula. By performing a change of variables involving
@@ -657,7 +659,7 @@ the previous level allows a 2x speedup.</dd></dl>
 <h3>Gauss-Legendre rule<a class="headerlink" href="#gauss-legendre-rule" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="mpmath.quadrature.GaussLegendre">
-<!--[mpmath.quadrature.GaussLegendre]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">GaussLegendre</tt><a class="headerlink" href="#mpmath.quadrature.GaussLegendre" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.quadrature.GaussLegendre]-->class <tt class="descclassname">mpmath.quadrature.</tt><tt class="descname">GaussLegendre</tt><big>(</big><em>ctx</em><big>)</big><a class="headerlink" href="#mpmath.quadrature.GaussLegendre" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class implements Gauss-Legendre quadrature, which is
 exceptionally efficient for polynomials and polynomial-like (i.e.
 very smooth) integrands.</p>
@@ -747,7 +749,7 @@ quadrature of degree of given degree (actually <img class="math" src="../_images
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

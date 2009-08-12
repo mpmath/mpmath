@@ -48,24 +48,11 @@
             
   
   <div class="section" id="factorials-and-gamma-functions">
-<h1><a class="toc-backref" href="#id1">Factorials and gamma functions<a class="headerlink" href="#factorials-and-gamma-functions" title="Permalink to this headline">¶</a></a></h1>
-<div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#factorials-and-gamma-functions" id="id1">Factorials and gamma functions</a><ul>
-<li><a class="reference internal" href="#factorials-factorial-fac" id="id2">Factorials (<tt class="xref docutils literal"><span class="pre">factorial()</span></tt>/<tt class="xref docutils literal"><span class="pre">fac()</span></tt>)</a></li>
-<li><a class="reference internal" href="#gamma-function-gamma-gammaprod-loggamma" id="id3">Gamma function (<tt class="xref docutils literal"><span class="pre">gamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt>, <tt class="xref docutils literal"><span class="pre">loggamma()</span></tt>)</a></li>
-<li><a class="reference internal" href="#binomial-coefficients-rising-and-falling-factorials-binomial-rf-ff" id="id4">Binomial coefficients, rising and falling factorials (<tt class="xref docutils literal"><span class="pre">binomial()</span></tt>, <tt class="xref docutils literal"><span class="pre">rf()</span></tt>, <tt class="xref docutils literal"><span class="pre">ff()</span></tt>)</a></li>
-<li><a class="reference internal" href="#beta-function-beta" id="id5">Beta function (<tt class="xref docutils literal"><span class="pre">beta()</span></tt>)</a></li>
-<li><a class="reference internal" href="#double-factorials-fac2" id="id6">Double factorials (<tt class="xref docutils literal"><span class="pre">fac2()</span></tt>)</a></li>
-<li><a class="reference internal" href="#super-and-hyperfactorials-superfac-hyperfac-barnesg" id="id7">Super- and hyperfactorials (<tt class="xref docutils literal"><span class="pre">superfac()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt>, <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>)</a></li>
-<li><a class="reference internal" href="#polygamma-functions-psi-digamma-trigamma-harmonic" id="id8">Polygamma functions (<tt class="xref docutils literal"><span class="pre">psi()</span></tt>, <tt class="xref docutils literal"><span class="pre">digamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">trigamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">harmonic()</span></tt>)</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="section" id="factorials-factorial-fac">
-<h2><a class="toc-backref" href="#id2">Factorials (<tt class="xref docutils literal"><span class="pre">factorial()</span></tt>/<tt class="xref docutils literal"><span class="pre">fac()</span></tt>)<a class="headerlink" href="#factorials-factorial-fac" title="Permalink to this headline">¶</a></a></h2>
+<h1>Factorials and gamma functions<a class="headerlink" href="#factorials-and-gamma-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="factorials">
+<h2>Factorials<a class="headerlink" href="#factorials" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="factorial-fac">
+<h3><tt class="xref docutils literal"><span class="pre">factorial()</span></tt>/<tt class="xref docutils literal"><span class="pre">fac()</span></tt><a class="headerlink" href="#factorial-fac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.factorial">
 <!--[mpmath.functions.factorial]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">factorial</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.factorial" title="Permalink to this definition">¶</a></dt>
@@ -75,7 +62,7 @@ is defined for real or complex <img class="math" src="../_images/math/26eeb5258c
 <p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -85,39 +72,195 @@ is defined for real or complex <img class="math" src="../_images/math/26eeb5258c
 <span class="go">3 6.0</span>
 <span class="go">4 24.0</span>
 <span class="go">5 120.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
-<span class="go">0.886226925452758 0.886226925452758</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">(0.886226925452758, 0.886226925452758)</span>
 </pre></div>
 </div>
 <p>For large positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/2950e3accfad26309bf1ecf6947061171fd2797f.png" alt="x!" /> can be approximated by
 Stirling&#8217;s formula:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">2.32579620567308e+95657055186</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">e</span><span class="p">)</span><span class="o">**</span><span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">e</span><span class="p">)</span><span class="o">**</span><span class="n">x</span>
 <span class="go">2.32579597597705e+95657055186</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">fac()</span></tt> supports evaluation for astronomically large values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">6.22311232304258e+29565705518096748172348871081098</span>
 </pre></div>
 </div>
 <p>Reciprocal factorials appear in the Taylor series of the
 exponential function (among many other contexts):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">]),</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">2.71828182845905 2.71828182845905</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">pi</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">]),</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">23.1406926327793 23.1406926327793</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">]),</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">(2.71828182845905, 2.71828182845905)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">pi</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">]),</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">(23.1406926327793, 23.1406926327793)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="gamma-function-gamma-gammaprod-loggamma">
-<h2><a class="toc-backref" href="#id3">Gamma function (<tt class="xref docutils literal"><span class="pre">gamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt>, <tt class="xref docutils literal"><span class="pre">loggamma()</span></tt>)<a class="headerlink" href="#gamma-function-gamma-gammaprod-loggamma" title="Permalink to this headline">¶</a></a></h2>
+<div class="section" id="fac2">
+<h3><tt class="xref docutils literal"><span class="pre">fac2()</span></tt><a class="headerlink" href="#fac2" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.functions.fac2">
+<!--[mpmath.functions.fac2]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fac2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fac2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the double factorial <img class="math" src="../_images/math/9dac1ff8fa3c29c29995e14947de1c827e7951ad.png" alt="x!!" />, defined for integers
+<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> by</p>
+<div class="math">
+<p><img src="../_images/math/0976200a76e1270d24345b631d6f957aff745b26.png" alt="x!! = \begin{cases}
+    1 \cdot 3 \cdots (x-2) \cdot x &amp; x \;\mathrm{odd} \\
+    2 \cdot 4 \cdots (x-2) \cdot x &amp; x \;\mathrm{even}
+\end{cases}" />
+</div></p><p>and more generally by [1]</p>
+<div class="math">
+<p><img src="../_images/math/f339892887fffd06774075144b0e16d966e08d16.png" alt="x!! = 2^{x/2} \left(\frac{\pi}{2}\right)^{(\cos(\pi x)-1)/4}
+      \Gamma\left(\frac{x}{2}+1\right)." />
+</div></p><p><strong>Examples</strong></p>
+<p>The integer sequence of double factorials begins:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">fac2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">)])</span>
+<span class="go">[1.0, 1.0, 2.0, 3.0, 8.0, 15.0, 48.0, 105.0, 384.0, 945.0]</span>
+</pre></div>
+</div>
+<p>For large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, double factorials follow a Stirling-like asymptotic
+approximation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">5.97272691416282e+17830</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">5.97262736954392e+17830</span>
+</pre></div>
+</div>
+<p>The recurrence formula <img class="math" src="../_images/math/3385eb2e9d54abbd1da197208bd4a0b6dae68ce7.png" alt="x!! = x (x-2)!!" /> can be reversed to
+define the double factorial of negative odd integers (but
+not negative even integers):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">7</span><span class="p">)</span>
+<span class="go">(1.0, -1.0, 0.333333333333333, -0.0666666666666667)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ValueError</span>: <span class="n-Identifier">gamma function pole</span>
+</pre></div>
+</div>
+<p>With the exception of the poles at negative even integers,
+<tt class="xref docutils literal"><span class="pre">fac2()</span></tt> supports evaluation for arbitrary complex arguments.
+The recurrence formula is valid generally:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-1.3697207890154e-12 + 3.93665300979176e-12j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span><span class="o">*</span><span class="n">fac2</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mf">2</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-1.3697207890154e-12 + 3.93665300979176e-12j)</span>
+</pre></div>
+</div>
+<p>Double factorials should not be confused with nested factorials,
+which are immensely larger:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="n">fac</span><span class="p">(</span><span class="mf">20</span><span class="p">))</span>
+<span class="go">5.13805976125208e+43675043585825292774</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>
+<span class="go">3715891200.0</span>
+</pre></div>
+</div>
+<p>Double factorials appear, among other things, in series expansions
+of Gaussian functions and the error function. Infinite series
+include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">3.05940740534258</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">erf</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">))</span>
+<span class="go">3.05940740534258</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">2</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">4.06015693855741</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">*</span> <span class="n">erf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">4.06015693855741</span>
+</pre></div>
+</div>
+<p>A beautiful Ramanujan sum:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">))</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.90917279454693</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;9/8&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;5/4&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;7/8&#39;</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span>
+<span class="go">0.90917279454693</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li><a class="reference external" href="http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/">http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/</a></li>
+<li><a class="reference external" href="http://mathworld.wolfram.com/DoubleFactorial.html">http://mathworld.wolfram.com/DoubleFactorial.html</a></li>
+</ol>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="binomial-coefficients">
+<h2>Binomial coefficients<a class="headerlink" href="#binomial-coefficients" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="binomial">
+<h3><tt class="xref docutils literal"><span class="pre">binomial()</span></tt><a class="headerlink" href="#binomial" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.functions.binomial">
+<!--[mpmath.functions.binomial]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">binomial</tt><big>(</big><em>n</em>, <em>k</em><big>)</big><a class="headerlink" href="#mpmath.functions.binomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the binomial coefficient</p>
+<div class="math">
+<p><img src="../_images/math/bdbb15f258885b2ee7f574265055dbeb86cdebdf.png" alt="{n \choose k} = \frac{n!}{k!(n-k)!}." />
+</div></p><p>The binomial coefficient gives the number of ways that <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> items
+can be chosen from a set of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> items. More generally, the binomial
+coefficient is a well-defined function of arbitrary real or
+complex <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />, via the gamma function.</p>
+<p><strong>Examples</strong></p>
+<p>Generate Pascal&#8217;s triangle:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)])</span>
+<span class="gp">...</span>
+<span class="go">[1.0]</span>
+<span class="go">[1.0, 1.0]</span>
+<span class="go">[1.0, 2.0, 1.0]</span>
+<span class="go">[1.0, 3.0, 3.0, 1.0]</span>
+<span class="go">[1.0, 4.0, 6.0, 4.0, 1.0]</span>
+</pre></div>
+</div>
+<p>There is 1 way to select 0 items from the empty set, and 0 ways to
+select 1 item from the empty set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p><tt class="xref docutils literal"><span class="pre">binomial()</span></tt> supports large arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">-</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">8.33333333333333e+97</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">2.60784095465201e+104342944813</span>
+</pre></div>
+</div>
+<p>Nonintegral binomial coefficients find use in series
+expansions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">4</span><span class="p">))</span>
+<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">binomial</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">)])</span>
+<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
+</pre></div>
+</div>
+<p>An integral representation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="o">*</span><span class="n">k</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">t</span><span class="p">))</span><span class="o">**</span><span class="n">n</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
+<span class="go">10.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="gamma-function">
+<h2>Gamma function<a class="headerlink" href="#gamma-function" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="gamma">
+<h3><tt class="xref docutils literal"><span class="pre">gamma()</span></tt><a class="headerlink" href="#gamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.gamma">
 <!--[mpmath.functions.gamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">gamma</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.gamma" title="Permalink to this definition">¶</a></dt>
@@ -132,7 +275,7 @@ by analytic continuation.</p>
 <p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">6</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="n">gamma</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -141,9 +284,9 @@ by analytic continuation.</p>
 <span class="go">3 2.0</span>
 <span class="go">4 6.0</span>
 <span class="go">5 24.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="nc">ValueError</span>: <span class="n-Identifier">gamma function pole</span>
@@ -151,38 +294,41 @@ by analytic continuation.</p>
 </div>
 <p>The gamma function of a half-integer is a rational multiple of
 <img class="math" src="../_images/math/ee0529202bae221e2a886dbd92ecd50e87f90452.png" alt="\sqrt{\pi}" />:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">1.77245385090552 1.77245385090552</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
-<span class="go">0.886226925452758 0.886226925452758</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">(1.77245385090552, 1.77245385090552)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="go">(0.886226925452758, 0.886226925452758)</span>
 </pre></div>
 </div>
 <p>We can check the integral definition:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
 <span class="go">3.32335097044784</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mf">2.5</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mf">2.5</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">t</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">3.32335097044784</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">gamma()</span></tt> supports arbitrary-precision evaluation and
 complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
 <span class="go">0.91510229697308632046045539308226554038315280564184</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.009902440080927490985955066 - 0.07595200133501806872408048j)</span>
 </pre></div>
 </div>
 <p>Arguments can also be large. Note that the gamma function grows
 very quickly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span>
 <span class="go">1.9328495143101e+1956570551809674817225</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="gammaprod">
+<h3><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt><a class="headerlink" href="#gammaprod" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.gammaprod">
 <!--[mpmath.functions.gammaprod]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">gammaprod</tt><big>(</big><em>a</em>, <em>b</em><big>)</big><a class="headerlink" href="#mpmath.functions.gammaprod" title="Permalink to this definition">¶</a></dt>
@@ -217,20 +363,23 @@ returns 0.</li>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([],</span> <span class="p">[</span><span class="mf">0</span><span class="p">])</span>
-<span class="go">mpf(&#39;0.0&#39;)</span>
+<span class="go">0.0</span>
 </pre></div>
 </div>
 <p>A limit:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([</span><span class="o">-</span><span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">3</span><span class="p">])</span>
-<span class="go">mpf(&#39;-0.25&#39;)</span>
+<span class="go">-0.25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">mpf(&#39;-0.25&#39;)</span>
+<span class="go">-0.25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="n">direction</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">mpf(&#39;-0.25&#39;)</span>
+<span class="go">-0.25</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="loggamma">
+<h3><tt class="xref docutils literal"><span class="pre">loggamma()</span></tt><a class="headerlink" href="#loggamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.loggamma">
 <!--[mpmath.functions.loggamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">loggamma</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.loggamma" title="Permalink to this definition">¶</a></dt>
@@ -241,12 +390,12 @@ The functions are identical only on (and very close to) the positive
 half-axis; elsewhere they differ by <img class="math" src="../_images/math/51ab328053373caa3210c85716df41a74bc86c85.png" alt="2 n \pi i" /> (the real parts
 agree):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loggamma</span><span class="p">(</span><span class="mf">13.2</span><span class="p">),</span> <span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">13.2</span><span class="p">))</span>
-<span class="go">20.494004194566 20.494004194566</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">loggamma</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loggamma</span><span class="p">(</span><span class="mf">13.2</span><span class="p">),</span> <span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">13.2</span><span class="p">))</span>
+<span class="go">(20.494004194566, 20.494004194566)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loggamma</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-1.75662678460378 + 4.74266443803466j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">))</span>
 <span class="go">(-1.75662678460378 - 1.54052086914493j)</span>
 </pre></div>
 </div>
@@ -256,66 +405,11 @@ for large arguments.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="binomial-coefficients-rising-and-falling-factorials-binomial-rf-ff">
-<h2><a class="toc-backref" href="#id4">Binomial coefficients, rising and falling factorials (<tt class="xref docutils literal"><span class="pre">binomial()</span></tt>, <tt class="xref docutils literal"><span class="pre">rf()</span></tt>, <tt class="xref docutils literal"><span class="pre">ff()</span></tt>)<a class="headerlink" href="#binomial-coefficients-rising-and-falling-factorials-binomial-rf-ff" title="Permalink to this headline">¶</a></a></h2>
-<dl class="function">
-<dt id="mpmath.functions.binomial">
-<!--[mpmath.functions.binomial]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">binomial</tt><big>(</big><em>n</em>, <em>k</em><big>)</big><a class="headerlink" href="#mpmath.functions.binomial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the binomial coefficient</p>
-<div class="math">
-<p><img src="../_images/math/bdbb15f258885b2ee7f574265055dbeb86cdebdf.png" alt="{n \choose k} = \frac{n!}{k!(n-k)!}." />
-</div></p><p>The binomial coefficient gives the number of ways that <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> items
-can be chosen from a set of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> items. More generally, the binomial
-coefficient is a well-defined function of arbitrary real or
-complex <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />, via the gamma function.</p>
-<p><strong>Examples</strong></p>
-<p>Generate Pascal&#8217;s triangle:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)])</span>
-<span class="gp">...</span>
-<span class="go">[1.0]</span>
-<span class="go">[1.0, 1.0]</span>
-<span class="go">[1.0, 2.0, 1.0]</span>
-<span class="go">[1.0, 3.0, 3.0, 1.0]</span>
-<span class="go">[1.0, 4.0, 6.0, 4.0, 1.0]</span>
-</pre></div>
 </div>
-<p>There is 1 way to select 0 items from the empty set, and 0 ways to
-select 1 item from the empty set:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="go">0.0</span>
-</pre></div>
-</div>
-<p><tt class="xref docutils literal"><span class="pre">binomial()</span></tt> supports large arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">-</span><span class="mf">5</span><span class="p">)</span>
-<span class="go">8.33333333333333e+97</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
-<span class="go">2.60784095465201e+104342944813</span>
-</pre></div>
-</div>
-<p>Nonintegral binomial coefficients find use in series
-expansions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">4</span><span class="p">))</span>
-<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">binomial</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">)])</span>
-<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
-</pre></div>
-</div>
-<p>An integral representation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="o">*</span><span class="n">k</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">t</span><span class="p">))</span><span class="o">**</span><span class="n">n</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
-<span class="go">10.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
-<span class="go">10.0</span>
-</pre></div>
-</div>
-</dd></dl>
-
+<div class="section" id="rising-and-falling-factorials">
+<h2>Rising and falling factorials<a class="headerlink" href="#rising-and-falling-factorials" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rf">
+<h3><tt class="xref docutils literal"><span class="pre">rf()</span></tt><a class="headerlink" href="#rf" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.rf">
 <!--[mpmath.functions.rf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">rf</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.rf" title="Permalink to this definition">¶</a></dt>
@@ -326,7 +420,7 @@ expansions:</p>
 <p><strong>Examples</strong></p>
 <p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the rising factorial is a polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 <span class="gp">...</span>
@@ -338,12 +432,15 @@ expansions:</p>
 </pre></div>
 </div>
 <p>Evaluation is supported for arbitrary arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">rf</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rf</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)</span>
 <span class="go">(-7202.03920483347 - 3777.58810701527j)</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="ff">
+<h3><tt class="xref docutils literal"><span class="pre">ff()</span></tt><a class="headerlink" href="#ff" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.ff">
 <!--[mpmath.functions.ff]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ff</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.ff" title="Permalink to this definition">¶</a></dt>
@@ -354,7 +451,7 @@ expansions:</p>
 <p><strong>Examples</strong></p>
 <p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the falling factorial is a polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 <span class="gp">...</span>
@@ -366,15 +463,18 @@ expansions:</p>
 </pre></div>
 </div>
 <p>Evaluation is supported for arbitrary arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ff</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)</span>
 <span class="go">(-720.41085888203 + 316.101124983878j)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="beta-function-beta">
-<h2><a class="toc-backref" href="#id5">Beta function (<tt class="xref docutils literal"><span class="pre">beta()</span></tt>)<a class="headerlink" href="#beta-function-beta" title="Permalink to this headline">¶</a></a></h2>
+</div>
+<div class="section" id="beta-function">
+<h2>Beta function<a class="headerlink" href="#beta-function" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="beta">
+<h3><tt class="xref docutils literal"><span class="pre">beta()</span></tt><a class="headerlink" href="#beta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.beta">
 <!--[mpmath.functions.beta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">beta</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.beta" title="Permalink to this definition">¶</a></dt>
@@ -389,148 +489,128 @@ representation</p>
 functions are finite, the beta function becomes either rational
 number or a rational multiple of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">0.0333333333333333</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">0.266666666666667</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">16</span><span class="o">*</span><span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">16</span><span class="o">*</span><span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
 <span class="go">3.14159265358979</span>
 </pre></div>
 </div>
 <p>Where appropriate, <tt class="xref docutils literal"><span class="pre">beta()</span></tt> evaluates limits. A pole
 of the beta function is taken to result in <tt class="docutils literal"><span class="pre">+inf</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">-0.333333333333333</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
 <span class="go">nan</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">beta()</span></tt> supports complex numbers and arbitrary precision
 evaluation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.4 - 0.2j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">(1.079424249270925780135675 - 1.410032405664160838288752j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
 <span class="go">0.037890298781212201348153837138927165984170287886464</span>
 </pre></div>
 </div>
 <p>Various integrals can be computed by means of the
 beta function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mf">2.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="mf">2.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.0230880230880231</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">0.0230880230880231</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
 <span class="go">0.319504062596158</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
 <span class="go">0.319504062596158</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="double-factorials-fac2">
-<h2><a class="toc-backref" href="#id6">Double factorials (<tt class="xref docutils literal"><span class="pre">fac2()</span></tt>)<a class="headerlink" href="#double-factorials-fac2" title="Permalink to this headline">¶</a></a></h2>
+<div class="section" id="betainc">
+<h3><tt class="xref docutils literal"><span class="pre">betainc()</span></tt><a class="headerlink" href="#betainc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.fac2">
-<!--[mpmath.functions.fac2]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fac2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fac2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the double factorial <img class="math" src="../_images/math/9dac1ff8fa3c29c29995e14947de1c827e7951ad.png" alt="x!!" />, defined for integers
-<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> by</p>
+<dt id="mpmath.functions.betainc">
+<!--[mpmath.functions.betainc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">betainc</tt><big>(</big><em>a</em>, <em>b</em>, <em>x1=0</em>, <em>x2=1</em>, <em>regularized=False</em><big>)</big><a class="headerlink" href="#mpmath.functions.betainc" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">betainc(a,</span> <span class="pre">b,</span> <span class="pre">x1=0,</span> <span class="pre">x2=1,</span> <span class="pre">regularized=False)</span></tt> gives the generalized
+incomplete beta function,</p>
 <div class="math">
-<p><img src="../_images/math/0976200a76e1270d24345b631d6f957aff745b26.png" alt="x!! = \begin{cases}
-    1 \cdot 3 \cdots (x-2) \cdot x &amp; x \;\mathrm{odd} \\
-    2 \cdot 4 \cdots (x-2) \cdot x &amp; x \;\mathrm{even}
-\end{cases}" />
-</div></p><p>and more generally by [1]</p>
-<div class="math">
-<p><img src="../_images/math/f339892887fffd06774075144b0e16d966e08d16.png" alt="x!! = 2^{x/2} \left(\frac{\pi}{2}\right)^{(\cos(\pi x)-1)/4}
-      \Gamma\left(\frac{x}{2}+1\right)." />
-</div></p><p><strong>Examples</strong></p>
-<p>The integer sequence of double factorials begins:</p>
+<p><img src="../_images/math/56b59a35bb071840738a9c2ad27fc5279d33c099.png" alt="I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} t^{a-1} (1-t)^{b-1} dt." />
+</div></p><p>When <img class="math" src="../_images/math/916c3c50ce6e1b060e76035eb005a42bf34e25b9.png" alt="x_1 = 0, x_2 = 1" />, this reduces to the ordinary (complete)
+beta function <img class="math" src="../_images/math/1cf8ee743e58a5766b20106b9d3d4b023c2d6bee.png" alt="B(a,b)" />; see <tt class="xref docutils literal"><span class="pre">beta()</span></tt>.</p>
+<p>With the keyword argument <tt class="docutils literal"><span class="pre">regularized=True</span></tt>, <tt class="xref docutils literal"><span class="pre">betainc()</span></tt>
+computes the regularized incomplete beta function
+<img class="math" src="../_images/math/e67b0e54be60f8dd1bea7f4ac0e84a083fb2d909.png" alt="I_{x_1}^{x_2}(a,b) / B(a,b)" />. This is the cumulative distribution of the
+beta distribution with parameters <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" />, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />.</p>
+<p>Note: implementations of the incomplete beta function in some other
+software uses a different argument order. For example, Mathematica uses the
+reversed argument order <tt class="docutils literal"><span class="pre">Beta[x1,x2,a,b]</span></tt>. For the equivalent of SciPy&#8217;s
+three-argument incomplete beta integral (implicitly with <img class="math" src="../_images/math/47c09f757b4c952f14c53ffcf6080d79fb331a5f.png" alt="x1 = 0" />), use
+<tt class="docutils literal"><span class="pre">betainc(a,b,0,x2,regularized=True)</span></tt>.</p>
+<p><strong>Examples</strong></p>
+<p>Verifying that <tt class="xref docutils literal"><span class="pre">betainc()</span></tt> computes the integral in the
+definition:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">fac2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">)])</span>
-<span class="go">[1.0, 1.0, 2.0, 3.0, 8.0, 15.0, 48.0, 105.0, 384.0, 945.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">betainc</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">-4010.4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+<span class="go">-4010.4</span>
 </pre></div>
 </div>
-<p>For large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, double factorials follow a Stirling-like asymptotic
-approximation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10000</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">5.97272691416282e+17830</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">((</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
-<span class="go">5.97262736954392e+17830</span>
+<p>The arguments may be arbitrary complex numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">betainc</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">1</span><span class="o">-</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.2241657956955709603655887 + 0.3619619242700451992411724j)</span>
 </pre></div>
 </div>
-<p>The recurrence formula <img class="math" src="../_images/math/3385eb2e9d54abbd1da197208bd4a0b6dae68ce7.png" alt="x!! = x (x-2)!!" /> can be reversed to
-define the double factorial of negative odd integers (but
-not negative even integers):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">7</span><span class="p">)</span>
-<span class="go">1.0 -1.0 0.333333333333333 -0.0666666666666667</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
-<span class="gt">Traceback (most recent call last):</span>
-<span class="c">...</span>
-<span class="nc">ValueError</span>: <span class="n-Identifier">gamma function pole</span>
+<p>With regularization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">betainc</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">regularized</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">0.4375</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">betainc</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="n">regularized</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>   <span class="c"># Complete</span>
+<span class="go">1.0</span>
 </pre></div>
 </div>
-<p>With the exception of the poles at negative even integers,
-<tt class="xref docutils literal"><span class="pre">fac2()</span></tt> supports evaluation for arbitrary complex arguments.
-The recurrence formula is valid generally:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac2</span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
-<span class="go">(-1.3697207890154e-12 + 3.93665300979176e-12j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span><span class="o">*</span><span class="n">fac2</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mf">2</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
-<span class="go">(-1.3697207890154e-12 + 3.93665300979176e-12j)</span>
+<p>The beta integral satisfies some simple argument transformation
+symmetries:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">betainc</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">),</span> <span class="o">-</span><span class="n">betainc</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">4</span><span class="p">),</span> <span class="n">betainc</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">1</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span><span class="mf">1</span><span class="o">-</span><span class="mf">4</span><span class="p">)</span>
+<span class="go">(56.0833333333333, 56.0833333333333, 56.0833333333333)</span>
 </pre></div>
 </div>
-<p>Double factorials should not be confused with nested factorials,
-which are immensely larger:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac</span><span class="p">(</span><span class="n">fac</span><span class="p">(</span><span class="mf">20</span><span class="p">))</span>
-<span class="go">5.13805976125208e+43675043585825292774</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fac2</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>
-<span class="go">3715891200.0</span>
+<p>The beta integral can often be evaluated analytically. For integer and
+rational arguments, the incomplete beta function typically reduces to a
+simple algebraic-logarithmic expression:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">betainc</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">)))</span>
+<span class="go">&#39;-(log((9/8)))&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">betainc</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">))</span>
+<span class="go">&#39;(673/12)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">betainc</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">))</span>
+<span class="go">&#39;((-12+sqrt(1152))/18)&#39;</span>
 </pre></div>
 </div>
-<p>Double factorials appear, among other things, in series expansions
-of Gaussian functions and the error function. Infinite series
-include:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">3.05940740534258</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">erf</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">))</span>
-<span class="go">3.05940740534258</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">2</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">4.06015693855741</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">e</span> <span class="o">*</span> <span class="n">erf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">4.06015693855741</span>
-</pre></div>
-</div>
-<p>A beautiful Ramanujan sum:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">))</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
-<span class="go">0.90917279454693</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;9/8&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;5/4&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">gamma</span><span class="p">(</span><span class="s">&#39;7/8&#39;</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span>
-<span class="go">0.90917279454693</span>
-</pre></div>
-</div>
-<p><strong>References</strong></p>
-<ol class="arabic simple">
-<li><a class="reference external" href="http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/">http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/</a></li>
-<li><a class="reference external" href="http://mathworld.wolfram.com/DoubleFactorial.html">http://mathworld.wolfram.com/DoubleFactorial.html</a></li>
-</ol>
 </dd></dl>
 
 </div>
-<div class="section" id="super-and-hyperfactorials-superfac-hyperfac-barnesg">
-<h2><a class="toc-backref" href="#id7">Super- and hyperfactorials (<tt class="xref docutils literal"><span class="pre">superfac()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt>, <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>)<a class="headerlink" href="#super-and-hyperfactorials-superfac-hyperfac-barnesg" title="Permalink to this headline">¶</a></a></h2>
+</div>
+<div class="section" id="super-and-hyperfactorials">
+<h2>Super- and hyperfactorials<a class="headerlink" href="#super-and-hyperfactorials" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="superfac">
+<h3><tt class="xref docutils literal"><span class="pre">superfac()</span></tt><a class="headerlink" href="#superfac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.superfac">
 <!--[mpmath.functions.superfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">superfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.superfac" title="Permalink to this definition">¶</a></dt>
@@ -543,7 +623,7 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 <p><strong>Examples</strong></p>
 <p>The first few superfactorials are (OEIS A000178):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">superfac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -560,19 +640,19 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 </pre></div>
 </div>
 <p>Superfactorials grow very rapidly:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">superfac</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">superfac</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
 <span class="go">3.24570818422368e+1177245</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">superfac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superfac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">2.61398543581249e+467427913956904067453</span>
 </pre></div>
 </div>
 <p>Evaluation is supported for arbitrary arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">superfac</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superfac</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">17.20051550121297985285333</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">superfac</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superfac</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.005915485633199789627466468 + 0.008156449464604044948738263j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">superfac</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">superfac</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">0.2645072034016070205673056</span>
 </pre></div>
 </div>
@@ -582,6 +662,9 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 </ol>
 </dd></dl>
 
+</div>
+<div class="section" id="hyperfac">
+<h3><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt><a class="headerlink" href="#hyperfac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.hyperfac">
 <!--[mpmath.functions.hyperfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyperfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyperfac" title="Permalink to this definition">¶</a></dt>
@@ -603,7 +686,7 @@ the integral representation</p>
 <p>The rapidly-growing sequence of hyperfactorials begins
 (OEIS A002109):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -620,52 +703,52 @@ the integral representation</p>
 </pre></div>
 </div>
 <p>Some even larger hyperfactorials are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
 <span class="go">5.46458120882585e+1392926</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">4.60408207642219e+489142638002418704309</span>
 </pre></div>
 </div>
 <p>The hyperfactorial can be evaluated for arbitrary arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.880449235173423</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">hyperfac</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">hyperfac</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">0.581061466795327</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">205.211134637462</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(3.01144471378225e+46 - 2.45285242480185e+46j)</span>
 </pre></div>
 </div>
 <p>The recurrence property of the hyperfactorial holds
 generally:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">j</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 <span class="go">(-4.49795891462086e-7 - 6.33262283196162e-7j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">z</span><span class="o">**</span><span class="n">z</span> <span class="o">*</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">**</span><span class="n">z</span> <span class="o">*</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">(-4.49795891462086e-7 - 6.33262283196162e-7j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="o">-</span><span class="mf">0.6</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">z</span><span class="o">**</span><span class="n">z</span> <span class="o">*</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">z</span><span class="o">**</span><span class="n">z</span> <span class="o">*</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">1.28170142849352</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 <span class="go">1.28170142849352</span>
 </pre></div>
 </div>
 <p>The hyperfactorial may also be computed using the integral
 definition:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">2.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 <span class="go">15.9842119922237</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">binomial</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">binomial</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span>
 <span class="gp">... </span>    <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">loggamma</span><span class="p">(</span><span class="n">t</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">z</span><span class="p">]))</span>
 <span class="go">15.9842119922237</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt> supports arbitrary-precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">215779412229418562091680268288000000000000000.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hyperfac</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">0.89404818005227001975423476035729076375705084390942</span>
 </pre></div>
 </div>
@@ -676,6 +759,9 @@ definition:</p>
 </ol>
 </dd></dl>
 
+</div>
+<div class="section" id="barnesg">
+<h3><tt class="xref docutils literal"><span class="pre">barnesg()</span></tt><a class="headerlink" href="#barnesg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.barnesg">
 <!--[mpmath.functions.barnesg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">barnesg</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.barnesg" title="Permalink to this definition">¶</a></dt>
@@ -695,33 +781,33 @@ product:</p>
 <p><strong>Examples</strong></p>
 <p>Some elementary values and limits of the Barnes G-function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">1</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
-<span class="go">1.0 1.0 1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">1</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">(1.0, 1.0, 1.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
 <span class="go">2.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
 <span class="go">12.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">6</span><span class="p">)</span>
 <span class="go">288.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>
 <span class="go">34560.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">8</span><span class="p">)</span>
 <span class="go">24883200.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">0</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
-<span class="go">0.0 0.0 0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">0</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">(0.0, 0.0, 0.0)</span>
 </pre></div>
 </div>
 <p>Closed-form values are known for some rational arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="s">&#39;1/2&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="s">&#39;1/2&#39;</span><span class="p">)</span>
 <span class="go">0.603244281209446</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.25</span><span class="o">+</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="n">glaisher</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.25</span><span class="o">+</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="n">glaisher</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.603244281209446</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="s">&#39;1/4&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="s">&#39;1/4&#39;</span><span class="p">)</span>
 <span class="go">0.29375596533861</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nthroot</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="s">&#39;3/8&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">catalan</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="s">&#39;3/8&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">catalan</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span>
 <span class="gp">... </span>     <span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span><span class="o">**</span><span class="mf">3</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">glaisher</span><span class="p">)</span><span class="o">**</span><span class="mf">9</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
 <span class="go">0.29375596533861</span>
 </pre></div>
@@ -729,44 +815,44 @@ product:</p>
 <p>The Barnes G-function satisfies the functional equation
 <img class="math" src="../_images/math/4c024189ae474f5542591d00f30357a8b14f896c.png" alt="G(z+1) = \Gamma(z) G(z)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">pi</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">2.39292119327948</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">gamma</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 <span class="go">2.39292119327948</span>
 </pre></div>
 </div>
 <p>The asymptotic growth rate of the Barnes G-function is related to
 the Glaisher-Kinkelin constant:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">barnesg</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="o">-</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span><span class="p">)</span><span class="o">*</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">barnesg</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="o">-</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span><span class="p">)</span><span class="o">*</span>
 <span class="gp">... </span>    <span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">4</span><span class="p">)),</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">0.847536694177301</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="s">&#39;1/12&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">glaisher</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="s">&#39;1/12&#39;</span><span class="p">)</span><span class="o">/</span><span class="n">glaisher</span>
 <span class="go">0.847536694177301</span>
 </pre></div>
 </div>
 <p>The Barnes G-function can be differentiated in closed form:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="n">barnesg</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">barnesg</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">0.264507203401607</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="o">-</span><span class="n">z</span><span class="o">+</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">z</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">z</span><span class="p">)</span><span class="o">-</span><span class="n">z</span><span class="o">+</span><span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">0.264507203401607</span>
 </pre></div>
 </div>
 <p>Evaluation is supported for arbitrary arguments and at arbitrary
 precision:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">6.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">6.5</span><span class="p">)</span>
 <span class="go">2548.7457695685</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.00535976768353037</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.000676375932234244 - 4.42236140124728e-5j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
 <span class="go">0.81305501090451340843586085064413533788206204124732</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">barnesg</span><span class="p">(</span><span class="mf">10</span><span class="n">j</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">real</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">real</span>
 <span class="go">0.000000000021852360840356557241543036724799812371995850552234</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span><span class="o">.</span><span class="n">imag</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">imag</span>
 <span class="go">-0.00000000000070035335320062304849020654215545839053210041457588</span>
 </pre></div>
 </div>
@@ -780,8 +866,11 @@ Cambridge University Press, 4th edition (1927), p.264</li>
 </dd></dl>
 
 </div>
-<div class="section" id="polygamma-functions-psi-digamma-trigamma-harmonic">
-<h2><a class="toc-backref" href="#id8">Polygamma functions (<tt class="xref docutils literal"><span class="pre">psi()</span></tt>, <tt class="xref docutils literal"><span class="pre">digamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">trigamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">harmonic()</span></tt>)<a class="headerlink" href="#polygamma-functions-psi-digamma-trigamma-harmonic" title="Permalink to this headline">¶</a></a></h2>
+</div>
+<div class="section" id="polygamma-functions-and-harmonic-numbers">
+<h2>Polygamma functions and harmonic numbers<a class="headerlink" href="#polygamma-functions-and-harmonic-numbers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="psi-digamma-trigamma">
+<h3><tt class="xref docutils literal"><span class="pre">psi()</span></tt>/<tt class="xref docutils literal"><span class="pre">digamma()</span></tt>/<tt class="xref docutils literal"><span class="pre">trigamma()</span></tt><a class="headerlink" href="#psi-digamma-trigamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.psi">
 <!--[mpmath.functions.psi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">psi</tt><big>(</big><em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.psi" title="Permalink to this definition">¶</a></dt>
@@ -801,38 +890,38 @@ at <img class="math" src="../_images/math/ce90a96c015fb3135d2870b05a853b3c1196f4
 <p>For various rational arguments, the polygamma function reduces to
 a combination of standard mathematical constants:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="o">-</span><span class="n">euler</span>
-<span class="go">-0.5772156649015328606065121 -0.5772156649015328606065121</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="s">&#39;1/4&#39;</span><span class="p">),</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">8</span><span class="o">*</span><span class="n">catalan</span>
-<span class="go">17.19732915450711073927132 17.19732915450711073927132</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;1/2&#39;</span><span class="p">),</span> <span class="o">-</span><span class="mf">14</span><span class="o">*</span><span class="n">apery</span>
-<span class="go">-16.82879664423431999559633 -16.82879664423431999559633</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="o">-</span><span class="n">euler</span>
+<span class="go">(-0.5772156649015328606065121, -0.5772156649015328606065121)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="s">&#39;1/4&#39;</span><span class="p">),</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">8</span><span class="o">*</span><span class="n">catalan</span>
+<span class="go">(17.19732915450711073927132, 17.19732915450711073927132)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;1/2&#39;</span><span class="p">),</span> <span class="o">-</span><span class="mf">14</span><span class="o">*</span><span class="n">apery</span>
+<span class="go">(-16.82879664423431999559633, -16.82879664423431999559633)</span>
 </pre></div>
 </div>
 <p>The polygamma functions are derivatives of each other:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
-<span class="go">-0.1105749312578862734526952 -0.1105749312578862734526952</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">psi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">]),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
-<span class="go">-0.375 -0.375</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+<span class="go">(-0.1105749312578862734526952, -0.1105749312578862734526952)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">psi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">]),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">3</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">(-0.375, -0.375)</span>
 </pre></div>
 </div>
 <p>The digamma function diverges logarithmically as <img class="math" src="../_images/math/7731e6f8dabfbe1c1f8e018d07cd3f107fbe0fdd.png" alt="z \to \infty" />,
 while higher orders tend to zero:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
-<span class="go">+inf 0.0 0.0</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
+<span class="go">(+inf, 0.0, 0.0)</span>
 </pre></div>
 </div>
 <p>Evaluation for a complex argument:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.03902435405364952654838445 + 0.1574325240413029954685366j)</span>
 </pre></div>
 </div>
 <p>Evaluation is supported for large orders <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> and/or large
 arguments <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">2.0e-300</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">psi</span><span class="p">(</span><span class="mf">250</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="o">+</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">*</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">250</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="o">+</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">*</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-1.293142504363642687204865e-7010 + 3.232856260909107391513108e-7018j)</span>
 </pre></div>
 </div>
@@ -842,9 +931,9 @@ the index <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bc
 functions of the roots and poles of the summand:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="n">b</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="n">b</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.4049668927517857061917531</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="o">-</span><span class="n">a</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">a</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="o">-</span><span class="n">a</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">a</span><span class="p">)</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">a</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span>
 <span class="go">0.4049668927517857061917531</span>
 </pre></div>
 </div>
@@ -855,13 +944,13 @@ functions of the roots and poles of the summand:</p>
 </div></p><p>Since the roots of a polynomial may be complex, it is sometimes
 necessary to use the complex polygamma function to evaluate
 an entirely real-valued sum:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.694361433907061256154665</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">]))</span>
 <span class="go">[(1.0 - 1.41421j), (1.0 + 1.41421j)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r1</span> <span class="o">=</span> <span class="mf">1</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">j</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r2</span> <span class="o">=</span> <span class="n">r1</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">r1</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">r1</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">r1</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">r1</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span>
 <span class="go">(1.694361433907061256154665 + 0.0j)</span>
 </pre></div>
 </div>
@@ -877,6 +966,9 @@ an entirely real-valued sum:</p>
 <!--[mpmath.functions.trigamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">trigamma</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.trigamma" title="Permalink to this definition">¶</a></dt>
 <dd>Shortcut for psi(1,z) (the trigamma function)</dd></dl>
 
+</div>
+<div class="section" id="harmonic">
+<h3><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt><a class="headerlink" href="#harmonic" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.harmonic">
 <!--[mpmath.functions.harmonic]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">harmonic</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.harmonic" title="Permalink to this definition">¶</a></dt>
@@ -886,7 +978,7 @@ approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe28
 <p><img src="../_images/math/306186c8a1fd38b3f7ae411184a7538561fed918.png" alt="H(n) = 1 + \frac{1}{2} + \frac{1}{3} + \ldots + \frac{1}{n}" />
 </div></p><p>The firrst few harmonic numbers are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">8</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -901,7 +993,7 @@ approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe28
 </pre></div>
 </div>
 <p>The infinite harmonic series <img class="math" src="../_images/math/291e353af0258dda7e14e507fad50acb1acc36d1.png" alt="1 + 1/2 + 1/3 + \ldots" /> diverges:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
@@ -909,19 +1001,19 @@ approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe28
 than by summing the harmonic series term by term. It can therefore
 be computed quickly for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, and even for
 nonintegral arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">230.835724964306</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.613705638880109</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(2.24757548223494 + 0.850502209186044j)</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt> supports arbitrary precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="mf">11</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">11</span><span class="p">)</span>
 <span class="go">3.0198773448773448773448773448773448773448773448773</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.8727388590273302654363491032336134987519132374152</span>
 </pre></div>
 </div>
@@ -930,19 +1022,20 @@ to calculate the exact number of terms required before the sum
 exceeds a given amount, say 100:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="mf">10</span><span class="o">**</span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">harmonic</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mf">100</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">v</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
 <span class="go">15092688622113788323693563264538101449859496.864101</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">v</span>
 <span class="go">15092688622113788323693563264538101449859497</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">v</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="n">v</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">99.999999999999999999999999999999999999999999942747</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">100.000000000000000000000000000000000000000000009</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -955,13 +1048,42 @@ exceeds a given amount, say 100:</p>
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="">Factorials and gamma functions</a><ul>
-<li><a class="reference external" href="#factorials-factorial-fac">Factorials (<tt class="docutils literal"><span class="pre">factorial()</span></tt>/<tt class="docutils literal"><span class="pre">fac()</span></tt>)</a></li>
-<li><a class="reference external" href="#gamma-function-gamma-gammaprod-loggamma">Gamma function (<tt class="docutils literal"><span class="pre">gamma()</span></tt>, <tt class="docutils literal"><span class="pre">gammaprod()</span></tt>, <tt class="docutils literal"><span class="pre">loggamma()</span></tt>)</a></li>
-<li><a class="reference external" href="#binomial-coefficients-rising-and-falling-factorials-binomial-rf-ff">Binomial coefficients, rising and falling factorials (<tt class="docutils literal"><span class="pre">binomial()</span></tt>, <tt class="docutils literal"><span class="pre">rf()</span></tt>, <tt class="docutils literal"><span class="pre">ff()</span></tt>)</a></li>
-<li><a class="reference external" href="#beta-function-beta">Beta function (<tt class="docutils literal"><span class="pre">beta()</span></tt>)</a></li>
-<li><a class="reference external" href="#double-factorials-fac2">Double factorials (<tt class="docutils literal"><span class="pre">fac2()</span></tt>)</a></li>
-<li><a class="reference external" href="#super-and-hyperfactorials-superfac-hyperfac-barnesg">Super- and hyperfactorials (<tt class="docutils literal"><span class="pre">superfac()</span></tt>, <tt class="docutils literal"><span class="pre">hyperfac()</span></tt>, <tt class="docutils literal"><span class="pre">barnesg()</span></tt>)</a></li>
-<li><a class="reference external" href="#polygamma-functions-psi-digamma-trigamma-harmonic">Polygamma functions (<tt class="docutils literal"><span class="pre">psi()</span></tt>, <tt class="docutils literal"><span class="pre">digamma()</span></tt>, <tt class="docutils literal"><span class="pre">trigamma()</span></tt>, <tt class="docutils literal"><span class="pre">harmonic()</span></tt>)</a></li>
+<li><a class="reference external" href="#factorials">Factorials</a><ul>
+<li><a class="reference external" href="#factorial-fac"><tt class="docutils literal"><span class="pre">factorial()</span></tt>/<tt class="docutils literal"><span class="pre">fac()</span></tt></a></li>
+<li><a class="reference external" href="#fac2"><tt class="docutils literal"><span class="pre">fac2()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#binomial-coefficients">Binomial coefficients</a><ul>
+<li><a class="reference external" href="#binomial"><tt class="docutils literal"><span class="pre">binomial()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#gamma-function">Gamma function</a><ul>
+<li><a class="reference external" href="#gamma"><tt class="docutils literal"><span class="pre">gamma()</span></tt></a></li>
+<li><a class="reference external" href="#gammaprod"><tt class="docutils literal"><span class="pre">gammaprod()</span></tt></a></li>
+<li><a class="reference external" href="#loggamma"><tt class="docutils literal"><span class="pre">loggamma()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#rising-and-falling-factorials">Rising and falling factorials</a><ul>
+<li><a class="reference external" href="#rf"><tt class="docutils literal"><span class="pre">rf()</span></tt></a></li>
+<li><a class="reference external" href="#ff"><tt class="docutils literal"><span class="pre">ff()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#beta-function">Beta function</a><ul>
+<li><a class="reference external" href="#beta"><tt class="docutils literal"><span class="pre">beta()</span></tt></a></li>
+<li><a class="reference external" href="#betainc"><tt class="docutils literal"><span class="pre">betainc()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#super-and-hyperfactorials">Super- and hyperfactorials</a><ul>
+<li><a class="reference external" href="#superfac"><tt class="docutils literal"><span class="pre">superfac()</span></tt></a></li>
+<li><a class="reference external" href="#hyperfac"><tt class="docutils literal"><span class="pre">hyperfac()</span></tt></a></li>
+<li><a class="reference external" href="#barnesg"><tt class="docutils literal"><span class="pre">barnesg()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#polygamma-functions-and-harmonic-numbers">Polygamma functions and harmonic numbers</a><ul>
+<li><a class="reference external" href="#psi-digamma-trigamma"><tt class="docutils literal"><span class="pre">psi()</span></tt>/<tt class="docutils literal"><span class="pre">digamma()</span></tt>/<tt class="docutils literal"><span class="pre">trigamma()</span></tt></a></li>
+<li><a class="reference external" href="#harmonic"><tt class="docutils literal"><span class="pre">harmonic()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1002,7 +1124,7 @@ exceeds a given amount, say 100:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

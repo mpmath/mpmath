@@ -13,6 +13,10 @@ Mpmath implements the standard functions from Python's ``math`` and ``cmath`` mo
    hyperbolic.txt
    gamma.txt
    expintegrals.txt
+   bessel.txt
+   orthogonal.txt
    hypergeometric.txt
    elliptic.txt
    zeta.txt
+   numtheory.txt
+

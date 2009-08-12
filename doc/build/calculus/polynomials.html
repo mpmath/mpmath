@@ -64,10 +64,11 @@ approximation of functions by polynomials.</p>
 evaluates <img class="math" src="../_images/math/6efaaf74e576202fad965134bc49c6a34aac4c30.png" alt="P(x)" /> with the derivative, <img class="math" src="../_images/math/114477bf2e4ec5b619df543200769762d6f6b6ff.png" alt="P'(x)" />, and returns the
 tuple <img class="math" src="../_images/math/f8555cde64ef604799506511246ac30f334668eb.png" alt="(P(x), P'(x))" />.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
-<span class="go">mpf(&#39;2.75&#39;)</span>
+<span class="go">2.75</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">derivative</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">(mpf(&#39;2.75&#39;), mpf(&#39;3.0&#39;))</span>
+<span class="go">(2.75, 3.0)</span>
 </pre></div>
 </div>
 <p>The coefficients and the evaluation point may be any combination
@@ -90,7 +91,7 @@ The leading coefficient must be nonzero.</p>
 <p><strong>Examples</strong></p>
 <p>Finding the three real roots of <img class="math" src="../_images/math/fb83f0cdce06ec900df1fe1b5751ce1044068bf8.png" alt="x^3 - x^2 - 14x + 24" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">14</span><span class="p">,</span><span class="mf">24</span><span class="p">]),</span> <span class="mf">4</span><span class="p">)</span>
 <span class="go">[-4.0, 2.0, 3.0]</span>
 </pre></div>
@@ -104,12 +105,12 @@ error estimate:</p>
 <span class="go">(-0.375 - 0.59947894041409j)</span>
 <span class="go">(-0.375 + 0.59947894041409j)</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">err</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">err</span>
 <span class="go">2.22044604925031e-16</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
 <span class="go">(2.22044604925031e-16 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">roots</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">(2.22044604925031e-16 + 0.0j)</span>
 </pre></div>
 </div>
@@ -138,9 +139,9 @@ compute all roots of an arbitrary polynomial to high precision:</p>
 <span class="go">0.317837245195782244725757617296174288373133378433432554879127</span>
 <span class="go">3.14626436994197234232913506571557044551247712918732870123249</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">3.14626436994197234232913506571557044551247712918732870123249</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">0.317837245195782244725757617296174288373133378433432554879127</span>
 </pre></div>
 </div>
@@ -217,7 +218,7 @@ next to each other.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

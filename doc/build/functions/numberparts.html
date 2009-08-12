@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Number parts &mdash; mpmath v0.12 documentation</title>
+    <title>Arithmetic and number parts &mdash; mpmath v0.12 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -47,10 +47,274 @@
           <div class="body">
             
   
-  <div class="section" id="number-parts">
-<h1>Number parts<a class="headerlink" href="#number-parts" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="complex-components-fabs-re-im-arg">
-<h2>Complex components (<tt class="xref docutils literal"><span class="pre">fabs()</span></tt>, <tt class="xref docutils literal"><span class="pre">re()</span></tt>, <tt class="xref docutils literal"><span class="pre">im()</span></tt>, <tt class="xref docutils literal"><span class="pre">arg()</span></tt>)<a class="headerlink" href="#complex-components-fabs-re-im-arg" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="arithmetic-and-number-parts">
+<h1>Arithmetic and number parts<a class="headerlink" href="#arithmetic-and-number-parts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="arithmetic-operations">
+<h2>Arithmetic operations<a class="headerlink" href="#arithmetic-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fadd">
+<h3><tt class="xref docutils literal"><span class="pre">fadd()</span></tt><a class="headerlink" href="#fadd" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mptypes.fadd">
+<!--[mpmath.mptypes.fadd]--><tt class="descclassname">mpmath.mptypes.</tt><tt class="descname">fadd</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mptypes.fadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the numbers <em>x</em> and <em>y</em>, giving a floating-point result,
+optionally using a custom precision and rounding mode.</p>
+<p>The default precision is the working precision of the context.
+You can specify a custom precision in bits by passing the <em>prec</em> keyword
+argument, or by providing an equivalent decimal precision with the <em>dps</em>
+keyword argument. If the precision is set to <tt class="docutils literal"><span class="pre">+inf</span></tt>, or if the flag
+<em>exact=True</em> is passed, an exact addition with no rounding is performed.</p>
+<p>When the precision is finite, the optional <em>rounding</em> keyword argument
+specifies the direction of rounding. Valid options are <tt class="docutils literal"><span class="pre">'n'</span></tt> for
+nearest (default), <tt class="docutils literal"><span class="pre">'f'</span></tt> for floor, <tt class="docutils literal"><span class="pre">'c'</span></tt> for ceiling, <tt class="docutils literal"><span class="pre">'d'</span></tt>
+for down, <tt class="docutils literal"><span class="pre">'u'</span></tt> for up.</p>
+<p><strong>Examples</strong></p>
+<p>Using <tt class="xref docutils literal"><span class="pre">fadd()</span></tt> with precision and rounding control:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">)</span>
+<span class="go">mpf(&#39;2.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;2.0000000000000004&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mf">100</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">2.00000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">15</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">25</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">2.00000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">2.00000000000000000001</span>
+</pre></div>
+</div>
+<p>Exact addition avoids cancellation errors, enforcing familiar laws
+of numbers such as <img class="math" src="../_images/math/9d20854c1e9786fca3250a226216e9f14da61388.png" alt="x+y-x = y" />, which don&#8217;t hold in floating-point
+arithmetic with finite precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span>
+<span class="go">1.0e-1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span>
+<span class="go">1.0e-1000</span>
+</pre></div>
+</div>
+<p>Exact addition can be inefficient and may be impossible to perform
+with large magnitude differences:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fadd</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="s">&#39;1e-100000000000000000000&#39;</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">OverflowError</span>: <span class="n-Identifier">the exact result does not fit in memory</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fsub">
+<h3><tt class="xref docutils literal"><span class="pre">fsub()</span></tt><a class="headerlink" href="#fsub" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mptypes.fsub">
+<!--[mpmath.mptypes.fsub]--><tt class="descclassname">mpmath.mptypes.</tt><tt class="descname">fsub</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mptypes.fsub" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtracts the numbers <em>x</em> and <em>y</em>, giving a floating-point result,
+optionally using a custom precision and rounding mode.</p>
+<p>See the documentation of <tt class="xref docutils literal"><span class="pre">fadd()</span></tt> for a detailed description
+of how to specify precision and rounding.</p>
+<p><strong>Examples</strong></p>
+<p>Using <tt class="xref docutils literal"><span class="pre">fsub()</span></tt> with precision and rounding control:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">)</span>
+<span class="go">mpf(&#39;2.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;1.9999999999999998&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mf">100</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">1.99999999999999999999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">15</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">25</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">1.99999999999999999999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="mf">25</span><span class="p">)</span>
+<span class="go">1.99999999999999999999</span>
+</pre></div>
+</div>
+<p>Exact subtraction avoids cancellation errors, enforcing familiar laws
+of numbers such as <img class="math" src="../_images/math/47cedb5a22095cef482c3ac986b8cc5eb9831628.png" alt="x-y+y = x" />, which don&#8217;t hold in floating-point
+arithmetic with finite precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e1000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+<p>Exact addition can be inefficient and may be impossible to perform
+with large magnitude differences:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fsub</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="s">&#39;1e-100000000000000000000&#39;</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">OverflowError</span>: <span class="n-Identifier">the exact result does not fit in memory</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fneg">
+<h3><tt class="xref docutils literal"><span class="pre">fneg()</span></tt><a class="headerlink" href="#fneg" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mptypes.fneg">
+<!--[mpmath.mptypes.fneg]--><tt class="descclassname">mpmath.mptypes.</tt><tt class="descname">fneg</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mptypes.fneg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negates the number <em>x</em>, giving a floating-point result, optionally
+using a custom precision and rounding mode.</p>
+<p>See the documentation of <tt class="xref docutils literal"><span class="pre">fadd()</span></tt> for a detailed description
+of how to specify precision and rounding.</p>
+<p><strong>Examples</strong></p>
+<p>An mpmath number is returned:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fneg</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="go">mpf(&#39;-2.5&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fneg</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;5.0&#39;, imag=&#39;-2.0&#39;)</span>
+</pre></div>
+</div>
+<p>Precise control over rounding is possible:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">fadd</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1e-100</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fneg</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">mpf(&#39;-2.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fneg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;-2.0000000000000004&#39;)</span>
+</pre></div>
+</div>
+<p>Negating with and without roundoff:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mf">200000000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">mpf</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="go">-200000000000000016777216</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="go">-200000000000000016777216</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">))</span>
+<span class="go">-200000000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mf">10</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">))</span>
+<span class="go">-200000000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">))</span>
+<span class="go">-200000000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">inf</span><span class="p">))</span>
+<span class="go">-200000000000000000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="go">-200000000000000000000001</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fmul">
+<h3><tt class="xref docutils literal"><span class="pre">fmul()</span></tt><a class="headerlink" href="#fmul" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mptypes.fmul">
+<!--[mpmath.mptypes.fmul]--><tt class="descclassname">mpmath.mptypes.</tt><tt class="descname">fmul</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mptypes.fmul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplies the numbers <em>x</em> and <em>y</em>, giving a floating-point result,
+optionally using a custom precision and rounding mode.</p>
+<p>See the documentation of <tt class="xref docutils literal"><span class="pre">fadd()</span></tt> for a detailed description
+of how to specify precision and rounding.</p>
+<p><strong>Examples</strong></p>
+<p>The result is an mpmath number:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmul</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="go">mpf(&#39;10.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmul</span><span class="p">(</span><span class="mf">0.5</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;0.0&#39;, imag=&#39;0.25&#39;)</span>
+</pre></div>
+</div>
+<p>Avoiding roundoff:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">15</span><span class="o">+</span><span class="mf">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+<span class="go">10000000001000010000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go">1.0000000001e+25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="go">10000000001000011026399232</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+<span class="go">10000000001000011026399232</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">25</span><span class="p">))</span>
+<span class="go">10000000001000010000000001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="go">10000000001000010000000001</span>
+</pre></div>
+</div>
+<p>Exact multiplication with complex numbers can be inefficient and may
+be impossible to perform with large magnitude differences between
+real and imaginary parts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">mpc</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;1e-100000000000000000000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;2.0&#39;, imag=&#39;4.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;2.0&#39;, imag=&#39;4.0000000000000009&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">OverflowError</span>: <span class="n-Identifier">the exact result does not fit in memory</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fdiv">
+<h3><tt class="xref docutils literal"><span class="pre">fdiv()</span></tt><a class="headerlink" href="#fdiv" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mptypes.fdiv">
+<!--[mpmath.mptypes.fdiv]--><tt class="descclassname">mpmath.mptypes.</tt><tt class="descname">fdiv</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mptypes.fdiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divides the numbers <em>x</em> and <em>y</em>, giving a floating-point result,
+optionally using a custom precision and rounding mode.</p>
+<p>See the documentation of <tt class="xref docutils literal"><span class="pre">fadd()</span></tt> for a detailed description
+of how to specify precision and rounding.</p>
+<p><strong>Examples</strong></p>
+<p>The result is an mpmath number:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">mpf(&#39;1.5&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.66666666666666663&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">mpc(real=&#39;4.0&#39;, imag=&#39;8.0&#39;)</span>
+</pre></div>
+</div>
+<p>The rounding direction and precision can be controlled:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>    <span class="c"># Should be accurate to at least 3 digits</span>
+<span class="go">mpf(&#39;0.6666259765625&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.66666666666666663&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mf">60</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.66666666666666667&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">rounding</span><span class="o">=</span><span class="s">&#39;u&#39;</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.66666666666666674&#39;)</span>
+</pre></div>
+</div>
+<p>Checking the error of a division by performing it at higher precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">mpf(&#39;-3.7007434154172148e-17&#39;)</span>
+</pre></div>
+</div>
+<p>Unlike <tt class="xref docutils literal"><span class="pre">fadd()</span></tt>, <tt class="xref docutils literal"><span class="pre">fmul()</span></tt>, etc., exact division is not
+allowed since the quotient of two floating-point numbers generally
+does not have an exact floating-point representation. (In the
+future this might be changed to allow the case where the division
+is actually exact.)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fdiv</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ValueError</span>: <span class="n-Identifier">division is not an exact operation</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="complex-components">
+<h2>Complex components<a class="headerlink" href="#complex-components" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fabs">
+<h3><tt class="xref docutils literal"><span class="pre">fabs()</span></tt><a class="headerlink" href="#fabs" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.fabs">
 <!--[mpmath.functions.fabs]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fabs</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fabs" title="Permalink to this definition">¶</a></dt>
@@ -58,6 +322,7 @@
 <tt class="xref docutils literal"><span class="pre">fabs()</span></tt> converts non-mpmath numbers (such as <tt class="docutils literal"><span class="pre">int</span></tt>)
 into mpmath numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fabs</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">mpf(&#39;3.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fabs</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span>
@@ -68,12 +333,16 @@ into mpmath numbers:</p>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="re">
+<h3><tt class="xref docutils literal"><span class="pre">re()</span></tt><a class="headerlink" href="#re" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.re">
 <!--[mpmath.functions.re]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">re</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.re" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the real part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/b997fd37cd7877511801547e80ebbf1f1542e0c9.png" alt="\Re(x)" />. Unlike <tt class="docutils literal"><span class="pre">x.real</span></tt>,
 <tt class="xref docutils literal"><span class="pre">re()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">mpf(&#39;3.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
@@ -82,12 +351,16 @@ into mpmath numbers:</p>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="im">
+<h3><tt class="xref docutils literal"><span class="pre">im()</span></tt><a class="headerlink" href="#im" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.im">
 <!--[mpmath.functions.im]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">im</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.im" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the imaginary part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/836603b7b4095dd04119fbfd4991b24e16be523f.png" alt="\Im(x)" />. Unlike <tt class="docutils literal"><span class="pre">x.imag</span></tt>,
 <tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">mpf(&#39;0.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
@@ -96,6 +369,9 @@ into mpmath numbers:</p>
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="arg">
+<h3><tt class="xref docutils literal"><span class="pre">arg()</span></tt><a class="headerlink" href="#arg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.arg">
 <!--[mpmath.functions.arg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">arg</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.arg" title="Permalink to this definition">¶</a></dt>
@@ -103,16 +379,16 @@ into mpmath numbers:</p>
 signed angle between the positive real axis and <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> in the
 complex plane:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">0.785398163397448</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg</span><span class="p">(</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">1.5707963267949</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">arg</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">3.14159265358979</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">arg</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arg</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">-1.5707963267949</span>
 </pre></div>
 </div>
@@ -123,14 +399,15 @@ results in a nonnegative argument.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="complex-conjugate-conj">
-<h2>Complex conjugate (<tt class="xref docutils literal"><span class="pre">conj()</span></tt>)<a class="headerlink" href="#complex-conjugate-conj" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="conj">
+<h3><tt class="xref docutils literal"><span class="pre">conj()</span></tt><a class="headerlink" href="#conj" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.conj">
 <!--[mpmath.functions.conj]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">conj</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.conj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the complex conjugate of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/cd9d9d7da773d694be33df9af513af204628e732.png" alt="\overline{x}" />. Unlike
 <tt class="docutils literal"><span class="pre">x.conjugate()</span></tt>, <tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">conj</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">mpf(&#39;3.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">conj</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
@@ -140,16 +417,20 @@ results in a nonnegative argument.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="floor-and-ceiling-functions-floor-ceil">
-<h2>Floor and ceiling functions (<tt class="xref docutils literal"><span class="pre">floor()</span></tt>, <tt class="xref docutils literal"><span class="pre">ceil()</span></tt>)<a class="headerlink" href="#floor-and-ceiling-functions-floor-ceil" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="floor-and-ceiling-functions">
+<h2>Floor and ceiling functions<a class="headerlink" href="#floor-and-ceiling-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="floor">
+<h3><tt class="xref docutils literal"><span class="pre">floor()</span></tt><a class="headerlink" href="#floor" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.floor">
 <!--[mpmath.functions.floor]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">floor</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.floor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the floor of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/06681f5b345750104366c512078960fee8d81b49.png" alt="\lfloor x \rfloor" />, defined as
 the largest integer less than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">floor</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
-<span class="go">3.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">floor</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.0&#39;)</span>
 </pre></div>
 </div>
 <p>Note: <tt class="xref docutils literal"><span class="pre">floor()</span></tt> returns a floating-point number, not a
@@ -159,14 +440,18 @@ result will be rounded, not necessarily in the floor
 direction.</p>
 </dd></dl>
 
+</div>
+<div class="section" id="ceil">
+<h3><tt class="xref docutils literal"><span class="pre">ceil()</span></tt><a class="headerlink" href="#ceil" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.ceil">
 <!--[mpmath.functions.ceil]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ceil</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ceil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the ceiling of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/1a7cd7095a9b123f81967d8d3b14d1e02b0174e7.png" alt="\lceil x \rceil" />, defined as
 the smallest integer greater than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ceil</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
-<span class="go">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ceil</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+<span class="go">mpf(&#39;4.0&#39;)</span>
 </pre></div>
 </div>
 <p>Note: <tt class="xref docutils literal"><span class="pre">ceil()</span></tt> returns a floating-point number, not a
@@ -177,29 +462,35 @@ direction.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="modulo-modf">
-<h2>Modulo (<tt class="xref docutils literal"><span class="pre">modf()</span></tt>)<a class="headerlink" href="#modulo-modf" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="modulo">
+<h2>Modulo<a class="headerlink" href="#modulo" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="modf">
+<h3><tt class="xref docutils literal"><span class="pre">modf()</span></tt><a class="headerlink" href="#modf" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.modf">
 <!--[mpmath.functions.modf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">modf</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.modf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to mpmath numbers and returns <img class="math" src="../_images/math/f80dc582d3b3e35e603316ca7eab750b13579d0c.png" alt="x \mod y" />.
 For mpmath numbers, this is equivalent to <tt class="docutils literal"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">y</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">modf</span><span class="p">(</span><span class="mf">100</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modf</span><span class="p">(</span><span class="mf">100</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
 <span class="go">2.61062773871641</span>
 </pre></div>
 </div>
 <p>You can use <tt class="xref docutils literal"><span class="pre">modf()</span></tt> to compute fractional parts of numbers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">modf</span><span class="p">(</span><span class="mf">10.25</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">modf</span><span class="p">(</span><span class="mf">10.25</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">0.25</span>
 </pre></div>
 </div>
 </dd></dl>
 
 </div>
-<div class="section" id="exponent-decomposition-ldexp-frexp">
-<h2>Exponent decomposition (<tt class="xref docutils literal"><span class="pre">ldexp()</span></tt>, <tt class="xref docutils literal"><span class="pre">frexp()</span></tt>)<a class="headerlink" href="#exponent-decomposition-ldexp-frexp" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="exponent-decomposition">
+<h2>Exponent decomposition<a class="headerlink" href="#exponent-decomposition" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ldexp">
+<h3><tt class="xref docutils literal"><span class="pre">ldexp()</span></tt><a class="headerlink" href="#ldexp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.ldexp">
 <!--[mpmath.functions.ldexp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ldexp</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.ldexp" title="Permalink to this definition">¶</a></dt>
@@ -207,6 +498,7 @@ For mpmath numbers, this is equivalent to <tt class="docutils literal"><span cla
 The argument <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> must be a real floating-point number (or
 possible to convert into one) and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> must be a Python <tt class="docutils literal"><span class="pre">int</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ldexp</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">mpf(&#39;1024.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ldexp</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">3</span><span class="p">)</span>
@@ -215,6 +507,9 @@ possible to convert into one) and <img class="math" src="../_images/math/174fadd
 </div>
 </dd></dl>
 
+</div>
+<div class="section" id="frexp">
+<h3><tt class="xref docutils literal"><span class="pre">frexp()</span></tt><a class="headerlink" href="#frexp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.frexp">
 <!--[mpmath.functions.frexp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">frexp</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.frexp" title="Permalink to this definition">¶</a></dt>
@@ -222,6 +517,7 @@ possible to convert into one) and <img class="math" src="../_images/math/174fadd
 <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> a Python integer, and such that <img class="math" src="../_images/math/6bf0d8bf86a6fd9fbcb5829e704d559564903d77.png" alt="x = y 2^n" />. No rounding is
 performed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">frexp</span><span class="p">(</span><span class="mf">7.5</span><span class="p">)</span>
 <span class="go">(mpf(&#39;0.9375&#39;), 3)</span>
 </pre></div>
@@ -229,14 +525,20 @@ performed.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="vector-components-hypot-atan2">
-<h2>Vector components (<tt class="xref docutils literal"><span class="pre">hypot()</span></tt>, <tt class="xref docutils literal"><span class="pre">atan2()</span></tt>)<a class="headerlink" href="#vector-components-hypot-atan2" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="vector-components">
+<h2>Vector components<a class="headerlink" href="#vector-components" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hypot">
+<h3><tt class="xref docutils literal"><span class="pre">hypot()</span></tt><a class="headerlink" href="#hypot" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.hypot">
 <!--[mpmath.functions.hypot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hypot</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.hypot" title="Permalink to this definition">¶</a></dt>
 <dd>Computes the Euclidean norm of the vector <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)" />, equal
 to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c94.png" alt="\sqrt{x^2 + y^2}" />. Both <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> must be real.</dd></dl>
 
+</div>
+<div class="section" id="atan2">
+<h3><tt class="xref docutils literal"><span class="pre">atan2()</span></tt><a class="headerlink" href="#atan2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.functions.atan2">
 <!--[mpmath.functions.atan2]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atan2</tt><big>(</big><em>y</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.atan2" title="Permalink to this definition">¶</a></dt>
@@ -249,21 +551,22 @@ real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89
 <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to give the angle for the correct quadrant. The
 following examples illustrate the difference:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
-<span class="go">0.785398163397448 0.785398163397448</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
-<span class="go">2.35619449019234 -0.785398163397448</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
-<span class="go">-0.785398163397448 -0.785398163397448</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
-<span class="go">-2.35619449019234 0.785398163397448</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(0.785398163397448, 0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(2.35619449019234, -0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(-0.785398163397448, -0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(-2.35619449019234, 0.785398163397448)</span>
 </pre></div>
 </div>
 <p>The angle convention is the same as that used for the complex
 argument; see <tt class="xref docutils literal"><span class="pre">arg()</span></tt>.</p>
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -275,13 +578,42 @@ argument; see <tt class="xref docutils literal"><span class="pre">arg()</span></
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Number parts</a><ul>
-<li><a class="reference external" href="#complex-components-fabs-re-im-arg">Complex components (<tt class="docutils literal"><span class="pre">fabs()</span></tt>, <tt class="docutils literal"><span class="pre">re()</span></tt>, <tt class="docutils literal"><span class="pre">im()</span></tt>, <tt class="docutils literal"><span class="pre">arg()</span></tt>)</a></li>
-<li><a class="reference external" href="#complex-conjugate-conj">Complex conjugate (<tt class="docutils literal"><span class="pre">conj()</span></tt>)</a></li>
-<li><a class="reference external" href="#floor-and-ceiling-functions-floor-ceil">Floor and ceiling functions (<tt class="docutils literal"><span class="pre">floor()</span></tt>, <tt class="docutils literal"><span class="pre">ceil()</span></tt>)</a></li>
-<li><a class="reference external" href="#modulo-modf">Modulo (<tt class="docutils literal"><span class="pre">modf()</span></tt>)</a></li>
-<li><a class="reference external" href="#exponent-decomposition-ldexp-frexp">Exponent decomposition (<tt class="docutils literal"><span class="pre">ldexp()</span></tt>, <tt class="docutils literal"><span class="pre">frexp()</span></tt>)</a></li>
-<li><a class="reference external" href="#vector-components-hypot-atan2">Vector components (<tt class="docutils literal"><span class="pre">hypot()</span></tt>, <tt class="docutils literal"><span class="pre">atan2()</span></tt>)</a></li>
+<li><a class="reference external" href="">Arithmetic and number parts</a><ul>
+<li><a class="reference external" href="#arithmetic-operations">Arithmetic operations</a><ul>
+<li><a class="reference external" href="#fadd"><tt class="docutils literal"><span class="pre">fadd()</span></tt></a></li>
+<li><a class="reference external" href="#fsub"><tt class="docutils literal"><span class="pre">fsub()</span></tt></a></li>
+<li><a class="reference external" href="#fneg"><tt class="docutils literal"><span class="pre">fneg()</span></tt></a></li>
+<li><a class="reference external" href="#fmul"><tt class="docutils literal"><span class="pre">fmul()</span></tt></a></li>
+<li><a class="reference external" href="#fdiv"><tt class="docutils literal"><span class="pre">fdiv()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#complex-components">Complex components</a><ul>
+<li><a class="reference external" href="#fabs"><tt class="docutils literal"><span class="pre">fabs()</span></tt></a></li>
+<li><a class="reference external" href="#re"><tt class="docutils literal"><span class="pre">re()</span></tt></a></li>
+<li><a class="reference external" href="#im"><tt class="docutils literal"><span class="pre">im()</span></tt></a></li>
+<li><a class="reference external" href="#arg"><tt class="docutils literal"><span class="pre">arg()</span></tt></a></li>
+<li><a class="reference external" href="#conj"><tt class="docutils literal"><span class="pre">conj()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#floor-and-ceiling-functions">Floor and ceiling functions</a><ul>
+<li><a class="reference external" href="#floor"><tt class="docutils literal"><span class="pre">floor()</span></tt></a></li>
+<li><a class="reference external" href="#ceil"><tt class="docutils literal"><span class="pre">ceil()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#modulo">Modulo</a><ul>
+<li><a class="reference external" href="#modf"><tt class="docutils literal"><span class="pre">modf()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#exponent-decomposition">Exponent decomposition</a><ul>
+<li><a class="reference external" href="#ldexp"><tt class="docutils literal"><span class="pre">ldexp()</span></tt></a></li>
+<li><a class="reference external" href="#frexp"><tt class="docutils literal"><span class="pre">frexp()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#vector-components">Vector components</a><ul>
+<li><a class="reference external" href="#hypot"><tt class="docutils literal"><span class="pre">hypot()</span></tt></a></li>
+<li><a class="reference external" href="#atan2"><tt class="docutils literal"><span class="pre">atan2()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -322,7 +654,7 @@ argument; see <tt class="xref docutils literal"><span class="pre">arg()</span></
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

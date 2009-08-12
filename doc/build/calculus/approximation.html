@@ -57,7 +57,7 @@
 <dd><p>Produces a degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> Taylor polynomial around the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> of the
 given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" />. The coefficients are returned as a list.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3]</span>
 </pre></div>
@@ -71,9 +71,9 @@ of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f8164
 and the point of the Taylor expansion must be subtracted from
 the argument:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span>
 <span class="go">12.1824939606092</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">exp</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
 <span class="go">12.1824939607035</span>
 </pre></div>
 </div>
@@ -102,7 +102,7 @@ beyond the radius of convergence of its Taylor series (example
 from G.A. Baker &#8216;Essentials of Pade Approximants&#8217; Academic Press,
 Ch.1A):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">one</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">x</span><span class="p">))</span>
@@ -110,9 +110,9 @@ Ch.1A):</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">pade</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">polyval</span><span class="p">(</span><span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">polyval</span><span class="p">(</span><span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
 <span class="go">1.38169105566806</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">1.38169855941551</span>
 </pre></div>
 </div>
@@ -142,7 +142,7 @@ into a fast machine-precision version of the same.)</p>
 <p>Here we use <tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt> to generate a low-degree approximation
 of <img class="math" src="../_images/math/c2644cc9ce7c9379a1398bed5ce9626ba5491d9f.png" alt="f(x) = \cos(x)" />, valid on the interval <img class="math" src="../_images/math/f6e0fb93486b514b62f25bbf3c4724b4e53b3d36.png" alt="[1, 2]" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
 <span class="go">[2.91682e-3, 0.146166, -0.732491, 0.174141, 0.949553]</span>
@@ -213,7 +213,7 @@ interval <img class="math" src="../_images/math/b35e10ec8f56c704d87c8b856a08c455
 the function has odd symmetry), and the sine coefficients are
 rational numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mf">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
@@ -324,7 +324,7 @@ need not have the same length.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

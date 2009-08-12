@@ -101,8 +101,8 @@ You can use the following string aliases:
 secant method by default. A simple example use of the secant method is to
 compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x" /> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">3.14159265358979323846264338328</span>
 </pre></div>
 </div>
@@ -110,14 +110,14 @@ compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff5
 although it must in that case generally be given a nonreal starting value
 (or else it will never leave the real line):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
 <span class="go">(0.226698825758202 + 1.46771150871022j)</span>
 </pre></div>
 </div>
 <p>A nice application is to compute nontrivial roots of the Riemann zeta
 function with many digits (good initial values are needed for convergence):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.5 + 14.1347251417346937904572519836j)</span>
 </pre></div>
 </div>
@@ -125,23 +125,25 @@ function with many digits (good initial values are needed for convergence):</p>
 it a derivative of a function. The following example locates the positive
 minimum of the gamma function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diff</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">diff</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">1.4616321449683623413</span>
 </pre></div>
 </div>
 <p>Finally, a useful application is to compute inverse functions, such as the
 Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w" />, given the first
 term of the solution&#8217;s asymptotic expansion as the initial value. In basic
-cases, this gives identical results to mpmath&#8217;s builtin <tt class="docutils literal"><span class="pre">lambertw</span></tt>
+cases, this gives identical results to mpmath&#8217;s built-in <tt class="docutils literal"><span class="pre">lambertw</span></tt>
 function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">lambert</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1</span><span class="p">),</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">0.567143290409784 0.567143290409784</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1000</span><span class="p">),</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
-<span class="go">5.2496028524016 5.2496028524016</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambert</span><span class="p">(</span><span class="mf">1</span><span class="p">);</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">0.567143290409784</span>
+<span class="go">0.567143290409784</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambert</span><span class="p">(</span><span class="mf">1000</span><span class="p">);</span> <span class="n">lambert</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">5.2496028524016</span>
+<span class="go">5.2496028524016</span>
 </pre></div>
 </div>
 <p>Multidimensional functions are also supported:</p>
@@ -173,7 +175,7 @@ function:</p>
 converge slowly. Consider this example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">99</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="go">mpf(&#39;0.91807354244492868&#39;)</span>
+<span class="go">0.918073542444929</span>
 </pre></div>
 </div>
 <p>Even for a very close starting point the secant method converges very
@@ -181,7 +183,7 @@ slowly. Use <tt class="docutils literal"><span class="pre">verbose=True</span></
 <p>It is possible to modify Newton&#8217;s method to make it converge regardless of
 the root&#8217;s multiplicity:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;mnewton&#39;</span><span class="p">)</span>
-<span class="go">mpf(&#39;1.0&#39;)</span>
+<span class="go">1.0</span>
 </pre></div>
 </div>
 <p>This variant uses the first and second derivative of the function, which is
@@ -207,14 +209,14 @@ necessary:</p>
 <span class="go">error: 10.562244329955107759</span>
 <span class="go">x: 1.0</span>
 <span class="go">error: 7.8598304758094664213e-18</span>
-<span class="go">mpf(&#39;1.0&#39;)</span>
+<span class="go">1.0</span>
 </pre></div>
 </div>
 <p><strong>Complex roots</strong></p>
 <p>For complex roots it&#8217;s recommended to use Muller&#8217;s method as it converges
 even for real starting points very fast:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">4</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;muller&#39;</span><span class="p">)</span>
-<span class="go">mpc(real=&#39;0.72713608449119684&#39;, imag=&#39;0.93409928946052944&#39;)</span>
+<span class="go">(0.727136084491197 + 0.934099289460529j)</span>
 </pre></div>
 </div>
 <p><strong>Intersection methods</strong></p>
@@ -223,7 +225,7 @@ use an intersection-based solver like <tt class="docutils literal"><span class="
 Usually they converge faster and more reliable. They have however problems
 with multiple roots and usually need a sign change to find a root:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;anderson&#39;</span><span class="p">)</span>
-<span class="go">mpf(&#39;0.0&#39;)</span>
+<span class="go">0.0</span>
 </pre></div>
 </div>
 <p>Be careful with symmetric functions:</p>
@@ -302,7 +304,7 @@ multiplicity of the root.</p>
 <!--[mpmath.optimization.Halley]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Halley</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Halley" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs a starting point x0 close to the root.
-Uses Halley&#8217;s method with cubic convergance rate.</p>
+Uses Halley&#8217;s method with cubic convergence rate.</p>
 <p>Pro:</p>
 <ul class="simple">
 <li>converges even faster the Newton&#8217;s method</li>
@@ -357,7 +359,7 @@ Might fail for multiple roots (needs sign change).</p>
 <dt id="mpmath.optimization.Illinois">
 <!--[mpmath.optimization.Illinois]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Illinois</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Illinois" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
-<p>Uses Illinois method or similair to find a root of f in [a, b].
+<p>Uses Illinois method or similar to find a root of f in [a, b].
 Might fail for multiple roots (needs sign change).
 Combines bisect with secant (improved regula falsi).</p>
 <p>The only difference between the methods is the scaling factor m, which is
@@ -437,7 +439,7 @@ slow. (I.e. for multiple roots.)</p>
 The function to calculate the Jacobian matrix can be given using the
 keyword &#8216;J&#8217;. Otherwise it will be calculated numerically.</p>
 <p>Please note that this method converges only locally. Especially for high-
-dimensional systems it is not trvial to find a good starting point being
+dimensional systems it is not trivial to find a good starting point being
 close enough to the root.</p>
 <p>It is recommended to use a faster, low-precision solver from SciPy [1] or
 OpenOpt [2] to get an initial guess. Afterwards you can use this method for
@@ -503,7 +505,7 @@ root-polishing to any precision.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 

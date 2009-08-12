@@ -103,20 +103,11 @@
 </pre></div>
 </div>
 <p>You can mix <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt> instances with each other and with Python numbers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">mpf</span><span class="p">(</span><span class="s">&#39;2.5&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">mpf</span><span class="p">(</span><span class="s">&#39;2.5&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span>
 <span class="go">mpf(&#39;9.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>      <span class="c"># Set precision (see below)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpc</span><span class="p">(</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
 <span class="go">mpc(real=&#39;0.70710678118654757&#39;, imag=&#39;0.70710678118654757&#39;)</span>
-</pre></div>
-</div>
-<p>Prettier output can be obtained by using <tt class="docutils literal"><span class="pre">str()</span></tt> or <tt class="docutils literal"><span class="pre">print</span></tt>, which hide the <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt> constructor signatures and suppress small rounding artifacts:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="s">&quot;3.14159&quot;</span><span class="p">)</span>
-<span class="go">mpf(&#39;3.1415899999999999&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&quot;3.14159&quot;</span><span class="p">)</span>
-<span class="go">3.14159</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpc</span><span class="p">(</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-<span class="go">(0.707106781186548 + 0.707106781186548j)</span>
 </pre></div>
 </div>
 </div>
@@ -154,21 +145,9 @@
 <span class="go">mpc(real=&#39;0.3333333333321&#39;, imag=&#39;0.6666666666642&#39;)</span>
 </pre></div>
 </div>
-<p>The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the <tt class="docutils literal"><span class="pre">nstr</span></tt> and <tt class="docutils literal"><span class="pre">nprint</span></tt> functions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">6</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
-<span class="go">mpf(&#39;0.16666666666666666&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">8</span><span class="p">)</span>
-<span class="go">&#39;0.16666667&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">8</span><span class="p">)</span>
-<span class="go">0.16666667</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nstr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">50</span><span class="p">)</span>
-<span class="go">&#39;0.16666666666666665741480812812369549646973609924316&#39;</span>
-</pre></div>
-</div>
 <p>There is no restriction on the magnitude of numbers. An <tt class="docutils literal"><span class="pre">mpf</span></tt> can for example hold an approximation of a large Mersenne prime:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">32582657</span> <span class="o">-</span> <span class="mf">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">32582657</span> <span class="o">-</span> <span class="mf">1</span>
 <span class="go">1.24575026015369e+9808357</span>
 </pre></div>
 </div>
@@ -242,9 +221,48 @@
 <span class="go">mpf(&#39;10.8999999999999999999999999999997&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">109</span><span class="p">)</span> <span class="o">/</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>   <span class="c"># also good</span>
 <span class="go">mpf(&#39;10.8999999999999999999999999999997&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 </pre></div>
 </div>
 <p>(Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)</p>
+</div>
+<div class="section" id="printing">
+<h2>Printing<a class="headerlink" href="#printing" title="Permalink to this headline">¶</a></h2>
+<p>By default, the <tt class="docutils literal"><span class="pre">repr()</span></tt> of a number includes its type signature. This way <tt class="docutils literal"><span class="pre">eval</span></tt> can be used to recreate a number from its string representation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">eval</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)))</span>
+<span class="go">mpf(&#39;2.5&#39;)</span>
+</pre></div>
+</div>
+<p>Prettier output can be obtained by using <tt class="docutils literal"><span class="pre">str()</span></tt> or <tt class="docutils literal"><span class="pre">print</span></tt>, which hide the <tt class="docutils literal"><span class="pre">mpf</span></tt> and <tt class="docutils literal"><span class="pre">mpc</span></tt> signatures and also suppress rounding artifacts in the last few digits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="s">&quot;3.14159&quot;</span><span class="p">)</span>
+<span class="go">mpf(&#39;3.1415899999999999&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&quot;3.14159&quot;</span><span class="p">)</span>
+<span class="go">3.14159</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpc</span><span class="p">(</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+<span class="go">(0.707106781186548 + 0.707106781186548j)</span>
+</pre></div>
+</div>
+<p>Setting the <tt class="docutils literal"><span class="pre">mp.pretty</span></tt> option will use the <tt class="docutils literal"><span class="pre">str()</span></tt>-style output for <tt class="docutils literal"><span class="pre">repr()</span></tt> as well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="go">0.6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="go">mpf(&#39;0.59999999999999998&#39;)</span>
+</pre></div>
+</div>
+<p>The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the <tt class="docutils literal"><span class="pre">nstr</span></tt> and <tt class="docutils literal"><span class="pre">nprint</span></tt> functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="mf">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">mpf(&#39;0.16666666666666666&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">8</span><span class="p">)</span>
+<span class="go">&#39;0.16666667&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">8</span><span class="p">)</span>
+<span class="go">0.16666667</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nstr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">50</span><span class="p">)</span>
+<span class="go">&#39;0.16666666666666665741480812812369549646973609924316&#39;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="plotting">
 <h2>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
@@ -283,7 +301,7 @@ is plotted with dots.</p>
 <p>Output of <tt class="docutils literal"><span class="pre">cplot(gamma,</span> <span class="pre">points=10000)</span></tt></p>
 <dl class="function">
 <dt id="mpmath.cplot">
-<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=&lt;function default_color_function at 0x013445B0&gt;</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=&lt;function default_color_function at 0x013A67F0&gt;</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the given complex-valued function <em>f</em> over a rectangular part
 of the complex plane specified by the pairs of intervals <em>re</em> and <em>im</em>.
 For example:</p>
@@ -617,7 +635,7 @@ instead of returning it.</p>
 inputs and outputs to stdout, along with the total evaluation
 count:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">5</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">monitor</span><span class="p">(</span><span class="n">exp</span><span class="p">),</span> <span class="mf">1</span><span class="p">)</span>   <span class="c"># diff will eval f(x-h) and f(x+h)</span>
 <span class="go">in  0 (mpf(&#39;0.99999999906867742538452148&#39;),) {}</span>
 <span class="go">out 0 mpf(&#39;2.7182818259274480055282064&#39;)</span>
@@ -673,6 +691,7 @@ repeatedly and the best time is returned.</p>
 </ul>
 </li>
 <li><a class="reference external" href="#providing-correct-input">Providing correct input</a></li>
+<li><a class="reference external" href="#printing">Printing</a></li>
 <li><a class="reference external" href="#plotting">Plotting</a></li>
 <li><a class="reference external" href="#utility-functions">Utility functions</a><ul>
 <li><a class="reference external" href="#conversion-and-utilities-for-numbers">Conversion and utilities for numbers</a></li>
@@ -721,7 +740,7 @@ repeatedly and the best time is returned.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Jun 09, 2009.
+      Last updated on Aug 12, 2009.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
