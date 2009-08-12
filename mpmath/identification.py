@@ -222,7 +222,7 @@ def pslq(x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         szmax = -1
         for i in range(1, n):
             h = H[i,i]
-            sz = (sqrt_fixed((4<<prec)//3, prec)**i * abs(h)) >> (prec*(i-1))
+            sz = (g**i * abs(h)) >> (prec*(i-1))
             if sz > szmax:
                 m = i
                 szmax = sz
