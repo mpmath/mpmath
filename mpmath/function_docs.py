@@ -3613,15 +3613,6 @@ hypergeometric function `\,_2F_2`::
     >>> ei(z)
     0.769881289937359
 
-For x large enough use the asymptotic expansion
-ei_as(x) = exp(x)/x * Sum(k!/x^k, (k,0,inf))
-k!/x^k  goes as exp(f(k))
-f(k) = k*log(k/(x*e)) + log(k)/2, with extremal point in
-log(k/x) + 1/(2*k) = 0; therefore the smallest term of the
-asympotic series is k!/x^k ~= e^(-k - 1/2)
-requiring this to be equal to e^-prec one gets x ~= k ~= prec*log(2)
-so that one should use ei_as(x) for x > prec*log(2)
-
 **References**
 
 1. Relations between Ei and other functions:
