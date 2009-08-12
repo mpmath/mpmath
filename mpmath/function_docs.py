@@ -2785,6 +2785,71 @@ An integral representation::
 
 """
 
+hyp1f2 = r"""
+Gives the hypergeometric function `\,_1F_2(a_1,a_2;b_1,b_2; z)`.
+The call ``hyp1f2(a1,b1,b2,z)`` is equivalent to
+``hyper([a1],[b1,b2],z)``.
+
+Evaluation works for complex and arbitrarily large arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> a, b, c = 1.5, (-1,3), 2.25
+    >>> hyp1f2(a, b, c, 10**20)
+    -1.159388148811981535941434e+8685889639
+    >>> hyp1f2(a, b, c, -10**20)
+    -12.60262607892655945795907
+    >>> hyp1f2(a, b, c, 10**20*j)
+    (4.237220401382240876065501e+6141851464 - 2.950930337531768015892987e+6141851464j)
+    >>> hyp1f2(2+3j, -2j, 0.5j, 10-20j)
+    (135881.9905586966432662004 - 86681.95885418079535738828j)
+
+"""
+
+hyp2f2 = r"""
+Gives the hypergeometric function `\,_2F_2(a_1,a_2;b_1,b_2; z)`.
+The call ``hyp2f2(a1,a2,b1,b2,z)`` is equivalent to
+``hyper([a1,a2],[b1,b2],z)``.
+
+Evaluation works for complex and arbitrarily large arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> a, b, c, d = 1.5, (-1,3), 2.25, 4
+    >>> hyp2f2(a, b, c, d, 10**20)
+    -5.275758229007902299823821e+43429448190325182663
+    >>> hyp2f2(a, b, c, d, -10**20)
+    2561445.079983207701073448
+    >>> hyp2f2(a, b, c, d, 10**20*j)
+    (2218276.509664121194836667 - 1280722.539991603850462856j)
+    >>> hyp2f2(2+3j, -2j, 0.5j, 4j, 10-20j)
+    (80500.68321405666957342788 - 20346.82752982813540993502j)
+
+"""
+
+hyp2f3 = r"""
+Gives the hypergeometric function `\,_2F_3(a_1,a_2;b_1,b_2,b_3; z)`.
+The call ``hyp2f3(a1,a2,b1,b2,b3,z)`` is equivalent to
+``hyper([a1,a2],[b1,b2,b3],z)``.
+
+Evaluation works for arbitrarily large arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> a1,a2,b1,b2,b3 = 1.5, (-1,3), 2.25, 4, (1,5)
+    >>> hyp2f3(a1,a2,b1,b2,b3,10**20)
+    -4.169178177065714963568963e+8685889590
+    >>> hyp2f3(a1,a2,b1,b2,b3,-10**20)
+    7064472.587757755088178629
+    >>> hyp2f3(a1,a2,b1,b2,b3,10**20*j)
+    (-5.163368465314934589818543e+6141851415 + 1.783578125755972803440364e+6141851416j)
+    >>> hyp2f3(2+3j, -2j, 0.5j, 4j, -1-j, 10-20j)
+    (-2280.938956687033150740228 + 13620.97336609573659199632j)
+    >>> hyp2f3(2+3j, -2j, 0.5j, 4j, -1-j, 10000000-20000000j)
+    (4.849835186175096516193e+3504 - 3.365981529122220091353633e+3504j)
+
+"""
+
 hyp2f1 = r"""
 Gives the Gauss hypergeometric function `\,_2F_1` (often simply referred to as
 *the* hypergeometric function), defined for `|z| < 1` as
@@ -7760,7 +7825,7 @@ Gives the normalizing Gamow constant for Coulomb wave functions,
     C_l(\eta) = 2^l \exp\left(-\pi \eta/2 + [\ln \Gamma(1+l+i\eta) +
         \ln \Gamma(1+l-i\eta)]/2 - \ln \Gamma(2l+2)\right),
 
-where the log gamma function with continuous phase
+where the log gamma function with continuous imaginary part
 away from the negative half axis (see :func:`loggamma`) is implied.
 
 This function is used internally for the calculation of
