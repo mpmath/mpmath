@@ -46,20 +46,11 @@ The ``mpc`` type represents a complex number in rectangular form as a pair of ``
 
 You can mix ``mpf`` and ``mpc`` instances with each other and with Python numbers:
 
-    >>> mp.dps = 15
     >>> mpf(3) + 2*mpf('2.5') + 1.0
     mpf('9.0')
+    >>> mp.dps = 15      # Set precision (see below)
     >>> mpc(1j)**0.5
     mpc(real='0.70710678118654757', imag='0.70710678118654757')
-
-Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` constructor signatures and suppress small rounding artifacts:
-
-    >>> mpf("3.14159")
-    mpf('3.1415899999999999')
-    >>> print mpf("3.14159")
-    3.14159
-    >>> print mpc(1j)**0.5
-    (0.707106781186548 + 0.707106781186548j)
 
 
 Setting the precision
@@ -98,21 +89,9 @@ The precision of complex arithmetic is also controlled by the ``mp`` object:
     >>> mpc(1,2) / 3
     mpc(real='0.3333333333321', imag='0.6666666666642')
 
-The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the ``nstr`` and ``nprint`` functions:
-
-    >>> mp.dps = 15
-    >>> a = mpf(1) / 6
-    >>> a
-    mpf('0.16666666666666666')
-    >>> nstr(a, 8)
-    '0.16666667'
-    >>> nprint(a, 8)
-    0.16666667
-    >>> nstr(a, 50)
-    '0.16666666666666665741480812812369549646973609924316'
-
 There is no restriction on the magnitude of numbers. An ``mpf`` can for example hold an approximation of a large Mersenne prime:
 
+    >>> mp.dps = 15
     >>> print mpf(2)**32582657 - 1
     1.24575026015369e+9808357
 
@@ -191,8 +170,47 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
     mpf('10.8999999999999999999999999999997')
     >>> mpf(109) / mpf(10)   # also good
     mpf('10.8999999999999999999999999999997')
+    >>> mp.dps = 15
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
+
+Printing
+--------
+
+By default, the ``repr()`` of a number includes its type signature. This way ``eval`` can be used to recreate a number from its string representation:
+
+    >>> eval(repr(mpf(2.5)))
+    mpf('2.5')
+
+Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` signatures and also suppress rounding artifacts in the last few digits:
+
+    >>> mpf("3.14159")
+    mpf('3.1415899999999999')
+    >>> print mpf("3.14159")
+    3.14159
+    >>> print mpc(1j)**0.5
+    (0.707106781186548 + 0.707106781186548j)
+
+Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr()`` as well:
+
+    >>> mp.pretty = True
+    >>> mpf(0.6)
+    0.6
+    >>> mp.pretty = False
+    >>> mpf(0.6)
+    mpf('0.59999999999999998')
+
+The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use the ``nstr`` and ``nprint`` functions:
+
+    >>> a = mpf(1) / 6
+    >>> a
+    mpf('0.16666666666666666')
+    >>> nstr(a, 8)
+    '0.16666667'
+    >>> nprint(a, 8)
+    0.16666667
+    >>> nstr(a, 50)
+    '0.16666666666666665741480812812369549646973609924316'
 
 Plotting
 --------

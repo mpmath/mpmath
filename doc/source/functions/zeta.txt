@@ -1,60 +1,93 @@
-Zeta functions
---------------
+Zeta functions, L-series and polylogarithms
+-------------------------------------------
 
 This section includes the Riemann zeta functions
 and associated functions pertaining to analytic number theory.
 
-.. contents::
+Riemann zeta function
+.....................
 
-Riemann zeta function (:func:`zeta`, :func:`altzeta`)
-.....................................................
-
+:func:`zeta`
+^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.zeta(s)
+
+
+Hurwitz zeta function
+.....................
+
+:func:`hurwitz`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.hurwitz(s,a,derivative=0)
+
+
+Zeta-type L-functions
+.....................
+
+:func:`altzeta`
+^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.altzeta(s)
 
-Zeta function zeros (:func:`zetazero`)
+:func:`dirichletl`
+^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.dirichlet(s,chi,derivative=0)
+
+:func:`primezeta`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.primezeta(s)
+
+Zeta function zeros
 ......................................
 
+:func:`zetazero`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.zetazero(n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1')
 
-Riemann-Siegel functions (:func:`siegelz`, :func:`siegeltheta`, :func:`grampoint`)
-..................................................................................
-
-.. autofunction:: mpmath.functions.siegelz(t)
-.. autofunction:: mpmath.functions.siegeltheta(t)
-.. autofunction:: mpmath.functions.grampoint(n)
-
-Prime counting function (:func:`primepi`, :func:`primepi2`, :func:`riemannr`)
-.............................................................................
-
-.. autofunction:: mpmath.functions.primepi(x)
-.. autofunction:: mpmath.functions.primepi2(x)
-.. autofunction:: mpmath.functions.riemannr(x)
-
-Bernoulli numbers and polynomials (:func:`bernoulli`, :func:`bernfrac`, :func:`bernpoly`)
-.........................................................................................
-
-.. autofunction:: mpmath.functions.bernoulli(n)
-.. autofunction:: mpmath.functions.bernfrac(n)
-.. autofunction:: mpmath.functions.bernpoly(n,z)
-
-Polylogarithms (:func:`polylog`)
-................................
-
-.. autofunction:: mpmath.functions.polylog(s,z)
-
-Stieltjes constants (:func:`stieltjes`)
-.......................................
-
-.. autofunction:: mpmath.functions.stieltjes(n,a=1)
-
-Bell numbers and polynomials (:func:`bell`, :func:`polyexp`)
-............................................................
-
-.. autofunction:: mpmath.functions.bell(n,x)
-.. autofunction:: mpmath.functions.polyexp(s,z)
-
-Other zeta functions (:func:`primezeta`)
+Riemann-Siegel functions and Gram points
 ........................................
 
-.. autofunction:: mpmath.functions.primezeta(s)
+These functions are used for the study of the Riemann zeta function
+in the critical strip.
+
+:func:`siegelz`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.siegelz(t)
+
+:func:`siegeltheta`
+^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.siegeltheta(t)
+
+:func:`grampoint`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.grampoint(n)
+
+Stieltjes constants
+...................
+
+:func:`stieltjes`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.stieltjes(n,a=1)
+
+Polylogarithms
+................................
+
+:func:`polylog`
+^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.polylog(s,z)
+
+Clausen functions
+.................
+
+:func:`clsin`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.clsin(s, z)
+
+:func:`clcos`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.clcos(s, z)
+
+Polyexponentials
+..................................
+
+:func:`polyexp`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.functions.polyexp(s,z)

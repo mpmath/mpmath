@@ -25,40 +25,89 @@ such as Mathematica and Python's own ``cmath`` libary (as of Python 2.6;
 earlier Python versions implement some functions
 erroneously).
 
-Degree-radian conversion (:func:`degrees`, :func:`radians`)
+Degree-radian conversion
 ...........................................................
 
+:func:`degrees`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.degrees(x)
+
+:func:`radians`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.radians(x)
 
-Trigonometric functions (:func:`cos`, :func:`sin`, :func:`tan`, :func:`sec`, :func:`csc`, :func:`cot`)
-......................................................................................................
+Trigonometric functions
+.......................
 
+:func:`cos`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.cos(x, **kwargs)
+
+:func:`sin`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.sin(x, **kwargs)
+
+:func:`tan`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.tan(x, **kwargs)
+
+:func:`sec`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.sec(x)
+
+:func:`csc`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.csc(x)
+
+:func:`cot`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.cot(x)
 
-Trigonometric functions with modified argument (:func:`cospi`, :func:`sinpi`)
-.............................................................................
+Trigonometric functions with modified argument
+........................................................
 
+:func:`cospi`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.cospi(x, **kwargs)
+
+:func:`sinpi`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.sinpi(x, **kwargs)
 
-Inverse trigonometric functions (:func:`acos`, :func:`asin`, :func:`atan`, :func:`asec`, :func:`acsc`, :func:`acot`)
-....................................................................................................................
+Inverse trigonometric functions
+................................................
 
+:func:`acos`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.acos(x, **kwargs)
+
+:func:`asin`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.asin(x, **kwargs)
+
+:func:`atan`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.atan(x, **kwargs)
+
+:func:`asec`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.asec(x)
+
+:func:`acsc`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.acsc(x)
+
+:func:`acot`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.acot(x)
 
-Sinc function (:func:`sinc`, :func:`sincpi`)
-............................................
+Sinc function
+.............
 
+:func:`sinc`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.sinc(x)
+
+:func:`sincpi`
+^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.functions.sincpi(x)
