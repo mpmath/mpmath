@@ -551,7 +551,7 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
             v = mpf_mul(v, mpf_exp(x, wp), wp)
             v = mpf_div(v, x, prec, rnd)
         else:
-            wp += 2*to_int(xabs)
+            wp += 2*int(to_int(xabs))
             u = to_fixed(x, wp)
             v = ei_taylor(u, wp) + euler_fixed(wp)
             t1 = from_man_exp(v,-wp)
@@ -616,7 +616,7 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
     except NoConvergence:
         pass
     #wp += 2*max(0,zmag)
-    wp += 2*to_int(mpc_abs(z, 5))
+    wp += 2*int(to_int(mpc_abs(z, 5)))
     zre = to_fixed(a, wp)
     zim = to_fixed(b, wp)
     vre, vim = complex_ei_taylor(zre, zim, wp)
