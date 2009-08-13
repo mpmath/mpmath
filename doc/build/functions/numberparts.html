@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Powers and logarithms" href="powers.html" />
@@ -86,7 +84,7 @@ for down, <tt class="docutils literal"><span class="pre">'u'</span></tt> for up.
 </pre></div>
 </div>
 <p>Exact addition avoids cancellation errors, enforcing familiar laws
-of numbers such as <img class="math" src="../_images/math/9d20854c1e9786fca3250a226216e9f14da61388.png" alt="x+y-x = y" />, which don&#8217;t hold in floating-point
+of numbers such as <img class="math" src="../_images/math/9d20854c1e9786fca3250a226216e9f14da61388.png" alt="x+y-x = y"/>, which don&#8217;t hold in floating-point
 arithmetic with finite precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span>
@@ -136,7 +134,7 @@ of how to specify precision and rounding.</p>
 </pre></div>
 </div>
 <p>Exact subtraction avoids cancellation errors, enforcing familiar laws
-of numbers such as <img class="math" src="../_images/math/47cedb5a22095cef482c3ac986b8cc5eb9831628.png" alt="x-y+y = x" />, which don&#8217;t hold in floating-point
+of numbers such as <img class="math" src="../_images/math/47cedb5a22095cef482c3ac986b8cc5eb9831628.png" alt="x-y+y = x"/>, which don&#8217;t hold in floating-point
 arithmetic with finite precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e1000&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span>
@@ -318,7 +316,7 @@ is actually exact.)</p>
 <dl class="function">
 <dt id="mpmath.functions.fabs">
 <!--[mpmath.functions.fabs]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fabs</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fabs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the absolute value of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/49428192d366caf373c0af3c3261687f12b4c883.png" alt="|x|" />. Unlike <tt class="xref docutils literal"><span class="pre">abs()</span></tt>,
+<dd><p>Returns the absolute value of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/49428192d366caf373c0af3c3261687f12b4c883.png" alt="|x|"/>. Unlike <tt class="xref docutils literal"><span class="pre">abs()</span></tt>,
 <tt class="xref docutils literal"><span class="pre">fabs()</span></tt> converts non-mpmath numbers (such as <tt class="docutils literal"><span class="pre">int</span></tt>)
 into mpmath numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -339,8 +337,8 @@ into mpmath numbers:</p>
 <dl class="function">
 <dt id="mpmath.functions.re">
 <!--[mpmath.functions.re]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">re</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.re" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the real part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/b997fd37cd7877511801547e80ebbf1f1542e0c9.png" alt="\Re(x)" />. Unlike <tt class="docutils literal"><span class="pre">x.real</span></tt>,
-<tt class="xref docutils literal"><span class="pre">re()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
+<dd><p>Returns the real part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/b997fd37cd7877511801547e80ebbf1f1542e0c9.png" alt="\Re(x)"/>. Unlike <tt class="docutils literal"><span class="pre">x.real</span></tt>,
+<tt class="xref docutils literal"><span class="pre">re()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">re</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
@@ -357,8 +355,8 @@ into mpmath numbers:</p>
 <dl class="function">
 <dt id="mpmath.functions.im">
 <!--[mpmath.functions.im]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">im</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.im" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the imaginary part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/836603b7b4095dd04119fbfd4991b24e16be523f.png" alt="\Im(x)" />. Unlike <tt class="docutils literal"><span class="pre">x.imag</span></tt>,
-<tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
+<dd><p>Returns the imaginary part of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/836603b7b4095dd04119fbfd4991b24e16be523f.png" alt="\Im(x)"/>. Unlike <tt class="docutils literal"><span class="pre">x.imag</span></tt>,
+<tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">im</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
@@ -375,8 +373,8 @@ into mpmath numbers:</p>
 <dl class="function">
 <dt id="mpmath.functions.arg">
 <!--[mpmath.functions.arg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">arg</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the complex argument (phase) of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, defined as the
-signed angle between the positive real axis and <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> in the
+<dd><p>Computes the complex argument (phase) of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, defined as the
+signed angle between the positive real axis and <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> in the
 complex plane:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -392,7 +390,7 @@ complex plane:</p>
 <span class="go">-1.5707963267949</span>
 </pre></div>
 </div>
-<p>The angle is defined to satisfy <img class="math" src="../_images/math/fcfcb71dcf9ed5528f180f5f0f0b3a6033da1422.png" alt="-\pi &lt; \arg(x) \le \pi" /> and
+<p>The angle is defined to satisfy <img class="math" src="../_images/math/fcfcb71dcf9ed5528f180f5f0f0b3a6033da1422.png" alt="-\pi &lt; \arg(x) \le \pi"/> and
 with the sign convention that a nonnegative imaginary part
 results in a nonnegative argument.</p>
 <p>The value returned by <tt class="xref docutils literal"><span class="pre">arg()</span></tt> is an <tt class="docutils literal"><span class="pre">mpf</span></tt> instance.</p>
@@ -404,8 +402,8 @@ results in a nonnegative argument.</p>
 <dl class="function">
 <dt id="mpmath.functions.conj">
 <!--[mpmath.functions.conj]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">conj</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.conj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the complex conjugate of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/cd9d9d7da773d694be33df9af513af204628e732.png" alt="\overline{x}" />. Unlike
-<tt class="docutils literal"><span class="pre">x.conjugate()</span></tt>, <tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to a mpmath number:</p>
+<dd><p>Returns the complex conjugate of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/cd9d9d7da773d694be33df9af513af204628e732.png" alt="\overline{x}"/>. Unlike
+<tt class="docutils literal"><span class="pre">x.conjugate()</span></tt>, <tt class="xref docutils literal"><span class="pre">im()</span></tt> converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> to a mpmath number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">conj</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
@@ -425,8 +423,8 @@ results in a nonnegative argument.</p>
 <dl class="function">
 <dt id="mpmath.functions.floor">
 <!--[mpmath.functions.floor]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">floor</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.floor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the floor of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/06681f5b345750104366c512078960fee8d81b49.png" alt="\lfloor x \rfloor" />, defined as
-the largest integer less than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<dd><p>Computes the floor of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/06681f5b345750104366c512078960fee8d81b49.png" alt="\lfloor x \rfloor"/>, defined as
+the largest integer less than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">floor</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
@@ -434,7 +432,7 @@ the largest integer less than or equal to <img class="math" src="../_images/math
 </pre></div>
 </div>
 <p>Note: <tt class="xref docutils literal"><span class="pre">floor()</span></tt> returns a floating-point number, not a
-Python <tt class="docutils literal"><span class="pre">int</span></tt>. If <img class="math" src="../_images/math/06681f5b345750104366c512078960fee8d81b49.png" alt="\lfloor x \rfloor" /> is too large to be
+Python <tt class="docutils literal"><span class="pre">int</span></tt>. If <img class="math" src="../_images/math/06681f5b345750104366c512078960fee8d81b49.png" alt="\lfloor x \rfloor"/> is too large to be
 represented exactly at the present working precision, the
 result will be rounded, not necessarily in the floor
 direction.</p>
@@ -446,8 +444,8 @@ direction.</p>
 <dl class="function">
 <dt id="mpmath.functions.ceil">
 <!--[mpmath.functions.ceil]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ceil</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.ceil" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the ceiling of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/1a7cd7095a9b123f81967d8d3b14d1e02b0174e7.png" alt="\lceil x \rceil" />, defined as
-the smallest integer greater than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<dd><p>Computes the ceiling of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/1a7cd7095a9b123f81967d8d3b14d1e02b0174e7.png" alt="\lceil x \rceil"/>, defined as
+the smallest integer greater than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ceil</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
@@ -455,7 +453,7 @@ the smallest integer greater than or equal to <img class="math" src="../_images/
 </pre></div>
 </div>
 <p>Note: <tt class="xref docutils literal"><span class="pre">ceil()</span></tt> returns a floating-point number, not a
-Python <tt class="docutils literal"><span class="pre">int</span></tt>. If <img class="math" src="../_images/math/1a7cd7095a9b123f81967d8d3b14d1e02b0174e7.png" alt="\lceil x \rceil" /> is too large to be
+Python <tt class="docutils literal"><span class="pre">int</span></tt>. If <img class="math" src="../_images/math/1a7cd7095a9b123f81967d8d3b14d1e02b0174e7.png" alt="\lceil x \rceil"/> is too large to be
 represented exactly at the present working precision, the
 result will be rounded, not necessarily in the ceiling
 direction.</p>
@@ -470,7 +468,7 @@ direction.</p>
 <dl class="function">
 <dt id="mpmath.functions.modf">
 <!--[mpmath.functions.modf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">modf</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.modf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to mpmath numbers and returns <img class="math" src="../_images/math/f80dc582d3b3e35e603316ca7eab750b13579d0c.png" alt="x \mod y" />.
+<dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> to mpmath numbers and returns <img class="math" src="../_images/math/f80dc582d3b3e35e603316ca7eab750b13579d0c.png" alt="x \mod y"/>.
 For mpmath numbers, this is equivalent to <tt class="docutils literal"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">y</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -494,9 +492,9 @@ For mpmath numbers, this is equivalent to <tt class="docutils literal"><span cla
 <dl class="function">
 <dt id="mpmath.functions.ldexp">
 <!--[mpmath.functions.ldexp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ldexp</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.ldexp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes <img class="math" src="../_images/math/97a885de4ed6de4d7aa8f6c4a5baa9c7cefbe640.png" alt="x 2^n" /> efficiently. No rounding is performed.
-The argument <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> must be a real floating-point number (or
-possible to convert into one) and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> must be a Python <tt class="docutils literal"><span class="pre">int</span></tt>.</p>
+<dd><p>Computes <img class="math" src="../_images/math/97a885de4ed6de4d7aa8f6c4a5baa9c7cefbe640.png" alt="x 2^n"/> efficiently. No rounding is performed.
+The argument <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> must be a real floating-point number (or
+possible to convert into one) and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> must be a Python <tt class="docutils literal"><span class="pre">int</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ldexp</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
@@ -513,8 +511,8 @@ possible to convert into one) and <img class="math" src="../_images/math/174fadd
 <dl class="function">
 <dt id="mpmath.functions.frexp">
 <!--[mpmath.functions.frexp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">frexp</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.frexp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a real number <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, returns <img class="math" src="../_images/math/3e1c2368f88933a1a0062bce03e695ac95ad41bc.png" alt="(y, n)" /> with <img class="math" src="../_images/math/27b4664469f28fe9f4c30bd8aaad9354aa66e354.png" alt="y \in [0.5, 1)" />,
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> a Python integer, and such that <img class="math" src="../_images/math/6bf0d8bf86a6fd9fbcb5829e704d559564903d77.png" alt="x = y 2^n" />. No rounding is
+<dd><p>Given a real number <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, returns <img class="math" src="../_images/math/3e1c2368f88933a1a0062bce03e695ac95ad41bc.png" alt="(y, n)"/> with <img class="math" src="../_images/math/27b4664469f28fe9f4c30bd8aaad9354aa66e354.png" alt="y \in [0.5, 1)"/>,
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> a Python integer, and such that <img class="math" src="../_images/math/6bf0d8bf86a6fd9fbcb5829e704d559564903d77.png" alt="x = y 2^n"/>. No rounding is
 performed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
@@ -533,8 +531,8 @@ performed.</p>
 <dl class="function">
 <dt id="mpmath.functions.hypot">
 <!--[mpmath.functions.hypot]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hypot</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.hypot" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the Euclidean norm of the vector <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)" />, equal
-to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c94.png" alt="\sqrt{x^2 + y^2}" />. Both <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> must be real.</dd></dl>
+<dd>Computes the Euclidean norm of the vector <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)"/>, equal
+to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c94.png" alt="\sqrt{x^2 + y^2}"/>. Both <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> must be real.</dd></dl>
 
 </div>
 <div class="section" id="atan2">
@@ -542,13 +540,13 @@ to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c
 <dl class="function">
 <dt id="mpmath.functions.atan2">
 <!--[mpmath.functions.atan2]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">atan2</tt><big>(</big><em>y</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.atan2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the two-argument arctangent, <img class="math" src="../_images/math/9dc6015dd5641eb929664202273a3d3f879f9e51.png" alt="\mathrm{atan2}(y, x)" />,
-giving the signed angle between the positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />-axis and the
-point <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)" /> in the 2D plane. This function is defined for
-real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> only.</p>
+<dd><p>Computes the two-argument arctangent, <img class="math" src="../_images/math/9dc6015dd5641eb929664202273a3d3f879f9e51.png" alt="\mathrm{atan2}(y, x)"/>,
+giving the signed angle between the positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>-axis and the
+point <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)"/> in the 2D plane. This function is defined for
+real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> only.</p>
 <p>The two-argument arctangent essentially computes
-<img class="math" src="../_images/math/8dad02890d0db27747cedab53775c0d00798e9ff.png" alt="\mathrm{atan}(y/x)" />, but accounts for the signs of both
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" /> to give the angle for the correct quadrant. The
+<img class="math" src="../_images/math/8dad02890d0db27747cedab53775c0d00798e9ff.png" alt="\mathrm{atan}(y/x)"/>, but accounts for the signs of both
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> to give the angle for the correct quadrant. The
 following examples illustrate the difference:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -654,8 +652,8 @@ argument; see <tt class="xref docutils literal"><span class="pre">arg()</span></
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

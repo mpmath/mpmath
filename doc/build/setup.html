@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Mpmath basics" href="basics.html" />
     <link rel="prev" title="Welcome to mpmath&#8217;s documentation!" href="index.html" /> 
@@ -146,6 +144,50 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <p>(The doctests may take several minutes.)</p>
 <p>Finally, some additional demo scripts are available in the <tt class="docutils literal"><span class="pre">demo</span></tt> directory included in the source package.</p>
 </div>
+<div class="section" id="mpmath-under-sympy">
+<h2>Mpmath under SymPy<a class="headerlink" href="#mpmath-under-sympy" title="Permalink to this headline">¶</a></h2>
+<p>Mpmath is available as a subpackage of <a class="reference external" href="http://sympy.org">SymPy</a>. With SymPy installed, you can just do</p>
+<blockquote>
+<tt class="docutils literal"><span class="pre">import</span> <span class="pre">sympy.mpmath</span> <span class="pre">as</span> <span class="pre">mpmath</span></tt></blockquote>
+<p>instead of <tt class="docutils literal"><span class="pre">import</span> <span class="pre">mpmath</span></tt>. Note that the SymPy version of mpmath might not be the most recent. You can make a separate mpmath installation even if SymPy is installed; the two mpmath packages will not interfere with each other.</p>
+</div>
+<div class="section" id="mpmath-under-sage">
+<h2>Mpmath under Sage<a class="headerlink" href="#mpmath-under-sage" title="Permalink to this headline">¶</a></h2>
+<p>Mpmath is a standard package in <a class="reference external" href="http://sagemath.org/">Sage</a>, in version 4.1 or later of Sage.
+Mpmath is preinstalled a regular Python module, and can be imported as usual within Sage:</p>
+<div class="highlight-python"><pre>----------------------------------------------------------------------
+| Sage Version 4.1, Release Date: 2009-07-09                         |
+| Type notebook() for the GUI, and license() for information.        |
+----------------------------------------------------------------------
+sage: import mpmath
+sage: mpmath.mp.dps = 50
+sage: print mpmath.mpf(2) ** 0.5
+1.4142135623730950488016887242096980785696718753769</pre>
+</div>
+<p>The mpmath installation under Sage automatically use Sage integers for asymptotically fast arithmetic,
+so there is no need to install GMPY:</p>
+<div class="highlight-python"><pre>sage: mpmath.settings.MODE
+'sage'</pre>
+</div>
+<p>Although mpmath can be imported directly, it is recommended to import the interface library
+<tt class="docutils literal"><span class="pre">sage.libs.mpmath.all</span></tt> instead. For example:</p>
+<div class="highlight-python"><pre>sage: import sage.libs.mpmath.all as mpmath</pre>
+</div>
+<p>Importing this library will load some Cython extension code that may slightly speed up mpmath
+and provide better type compatibility between mpmath and Sage number types.
+The function <tt class="xref docutils literal"><span class="pre">call()</span></tt> defined in this library allows you to call a mpmath
+function with any Sage number as input, and get a Sage <tt class="docutils literal"><span class="pre">RealNumber</span></tt> or <tt class="docutils literal"><span class="pre">ComplexNumber</span></tt>
+with the appropriate precision back:</p>
+<div class="highlight-python"><pre>sage: w = mpmath.call(mpmath.erf, 2+3*I, prec=100)
+sage: w
+-20.829461427614568389103088452 + 8.6873182714701631444280787545*I
+sage: type(w)
+&lt;type 'sage.rings.complex_number.ComplexNumber'&gt;
+sage: w.prec()
+100</pre>
+</div>
+<p>See the help for <tt class="docutils literal"><span class="pre">sage.libs.mpmath.all</span></tt> for further information.</p>
+</div>
 </div>
 
 
@@ -169,6 +211,8 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <li><a class="reference external" href="#using-gmpy-optional">Using gmpy (optional)</a></li>
 <li><a class="reference external" href="#running-tests">Running tests</a></li>
 <li><a class="reference external" href="#compiling-the-documentation">Compiling the documentation</a></li>
+<li><a class="reference external" href="#mpmath-under-sympy">Mpmath under SymPy</a></li>
+<li><a class="reference external" href="#mpmath-under-sage">Mpmath under Sage</a></li>
 </ul>
 </li>
 </ul>
@@ -208,8 +252,8 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

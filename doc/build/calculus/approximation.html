@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Interval arithmetic" href="../intervals.html" />
@@ -54,8 +52,8 @@
 <dl class="function">
 <dt id="mpmath.calculus.taylor">
 <!--[mpmath.calculus.taylor]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">taylor</tt><big>(</big><em>f</em>, <em>x</em>, <em>n</em>, <em>**options</em><big>)</big><a class="headerlink" href="#mpmath.calculus.taylor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces a degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> Taylor polynomial around the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> of the
-given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" />. The coefficients are returned as a list.</p>
+<dd><p>Produces a degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor polynomial around the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> of the
+given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>. The coefficients are returned as a list.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
@@ -67,7 +65,7 @@ differentiation. The function must be possible to evaluate
 to arbitrary precision. See <tt class="xref docutils literal"><span class="pre">diff()</span></tt> for additional details
 and supported keyword options.</p>
 <p>Note that to evaluate the Taylor polynomial as an approximation
-of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" />, e.g. with <tt class="xref docutils literal"><span class="pre">polyval()</span></tt>, the coefficients must be reversed,
+of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, e.g. with <tt class="xref docutils literal"><span class="pre">polyval()</span></tt>, the coefficients must be reversed,
 and the point of the Taylor expansion must be subtracted from
 the argument:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
@@ -85,10 +83,10 @@ the argument:</p>
 <dl class="function">
 <dt id="mpmath.calculus.pade">
 <!--[mpmath.calculus.pade]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">pade</tt><big>(</big><em>a</em>, <em>L</em>, <em>M</em><big>)</big><a class="headerlink" href="#mpmath.calculus.pade" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes a Pade approximation of degree <img class="math" src="../_images/math/a2cc450ebacef8e05cc6ade46aea6a86708d6494.png" alt="(L, M)" /> to a function.
-Given at least <img class="math" src="../_images/math/e73609e829d32a9e767c52e3dd564e4d3d8b66b7.png" alt="L+M+1" /> Taylor coefficients <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> approximating
-a function <img class="math" src="../_images/math/133abca2101afa88a51f60a6747c47e699a858e5.png" alt="A(x)" />, <tt class="xref docutils literal"><span class="pre">pade()</span></tt> returns coefficients of
-polynomials <img class="math" src="../_images/math/41bd81b0ae820e8ae1ecb70cb3f2ebfde5a42b4a.png" alt="P, Q" /> satisfying</p>
+<dd><p>Computes a Pade approximation of degree <img class="math" src="../_images/math/a2cc450ebacef8e05cc6ade46aea6a86708d6494.png" alt="(L, M)"/> to a function.
+Given at least <img class="math" src="../_images/math/e73609e829d32a9e767c52e3dd564e4d3d8b66b7.png" alt="L+M+1"/> Taylor coefficients <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> approximating
+a function <img class="math" src="../_images/math/133abca2101afa88a51f60a6747c47e699a858e5.png" alt="A(x)"/>, <tt class="xref docutils literal"><span class="pre">pade()</span></tt> returns coefficients of
+polynomials <img class="math" src="../_images/math/41bd81b0ae820e8ae1ecb70cb3f2ebfde5a42b4a.png" alt="P, Q"/> satisfying</p>
 <div class="math">
 <p><img src="../_images/math/c250a438f776950177437773eafd535d96f5f71b.png" alt="P = \sum_{k=0}^L p_k x^k
 
@@ -97,7 +95,7 @@ Q = \sum_{k=0}^M q_k x^k
 Q_0 = 1
 
 A(x) Q(x) = P(x) + O(x^{L+M+1})" />
-</div></p><p><img class="math" src="../_images/math/e1be778da9a55145063f22cf962c2f6b88befd61.png" alt="P(x)/Q(x)" /> can provide a good approximation to an analytic function
+</div></p><p><img class="math" src="../_images/math/e1be778da9a55145063f22cf962c2f6b88befd61.png" alt="P(x)/Q(x)"/> can provide a good approximation to an analytic function
 beyond the radius of convergence of its Taylor series (example
 from G.A. Baker &#8216;Essentials of Pade Approximants&#8217; Academic Press,
 Ch.1A):</p>
@@ -124,11 +122,11 @@ Ch.1A):</p>
 <dl class="function">
 <dt id="mpmath.calculus.chebyfit">
 <!--[mpmath.calculus.chebyfit]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">chebyfit</tt><big>(</big><em>f</em>, <em>interval</em>, <em>N</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#mpmath.calculus.chebyfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes a polynomial of degree <img class="math" src="../_images/math/a256c70ad4c46ec1127c5be68f8bb3075e9ced31.png" alt="N-1" /> that approximates the
-given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]" />. With <tt class="docutils literal"><span class="pre">error=True</span></tt>,
+<dd><p>Computes a polynomial of degree <img class="math" src="../_images/math/a256c70ad4c46ec1127c5be68f8bb3075e9ced31.png" alt="N-1"/> that approximates the
+given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. With <tt class="docutils literal"><span class="pre">error=True</span></tt>,
 <tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt> also returns an accurate estimate of the
 maximum absolute error; that is, the maximum value of
-<img class="math" src="../_images/math/275078e7919d5cd6715724004e7013ddbe0b4973.png" alt="|f(x) - P(x)|" /> for <img class="math" src="../_images/math/ef57ada8ccf733fecb08daf2503f42216a801934.png" alt="x \in [a, b]" />.</p>
+<img class="math" src="../_images/math/275078e7919d5cd6715724004e7013ddbe0b4973.png" alt="|f(x) - P(x)|"/> for <img class="math" src="../_images/math/ef57ada8ccf733fecb08daf2503f42216a801934.png" alt="x \in [a, b]"/>.</p>
 <p><tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt> uses the Chebyshev approximation formula,
 which gives a nearly optimal solution: that is, the maximum
 error of the approximating polynomial is very close to
@@ -140,7 +138,7 @@ example, it could be used to turn a slow mpmath function
 into a fast machine-precision version of the same.)</p>
 <p><strong>Examples</strong></p>
 <p>Here we use <tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt> to generate a low-degree approximation
-of <img class="math" src="../_images/math/c2644cc9ce7c9379a1398bed5ce9626ba5491d9f.png" alt="f(x) = \cos(x)" />, valid on the interval <img class="math" src="../_images/math/f6e0fb93486b514b62f25bbf3c4724b4e53b3d36.png" alt="[1, 2]" />:</p>
+of <img class="math" src="../_images/math/c2644cc9ce7c9379a1398bed5ce9626ba5491d9f.png" alt="f(x) = \cos(x)"/>, valid on the interval <img class="math" src="../_images/math/f6e0fb93486b514b62f25bbf3c4724b4e53b3d36.png" alt="[1, 2]"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -165,13 +163,13 @@ estimate generated by <tt class="docutils literal"><span class="pre">chebyfit</s
 </pre></div>
 </div>
 <p><strong>Choice of degree</strong></p>
-<p>The degree <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" /> can be set arbitrarily high, to obtain an
+<p>The degree <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> can be set arbitrarily high, to obtain an
 arbitrarily good approximation. As a rule of thumb, an
-<img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" />-term Chebyshev approximation is good to <img class="math" src="../_images/math/0c25ebe2a59d23cfa9536d78add3292711c79b16.png" alt="N/(b-a)" /> decimal
+<img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term Chebyshev approximation is good to <img class="math" src="../_images/math/0c25ebe2a59d23cfa9536d78add3292711c79b16.png" alt="N/(b-a)"/> decimal
 places on a unit interval (although this depends on how
-well-behaved <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> is). The cost grows accordingly: <tt class="docutils literal"><span class="pre">chebyfit</span></tt>
-evaluates the function <img class="math" src="../_images/math/b7fcda37e581c55db282eb7e7939259bf2e02941.png" alt="(N^2)/2" /> times to compute the
-coefficients and an additional <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" /> times to estimate the error.</p>
+well-behaved <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> is). The cost grows accordingly: <tt class="docutils literal"><span class="pre">chebyfit</span></tt>
+evaluates the function <img class="math" src="../_images/math/b7fcda37e581c55db282eb7e7939259bf2e02941.png" alt="(N^2)/2"/> times to compute the
+coefficients and an additional <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> times to estimate the error.</p>
 <p><strong>Possible issues</strong></p>
 <p>One should be careful to use a sufficiently high working
 precision both when calling <tt class="docutils literal"><span class="pre">chebyfit</span></tt> and when evaluating
@@ -183,7 +181,7 @@ accuracy of the polynomial. (The option to return the
 coefficients in Chebyshev form should be made available
 in the future.)</p>
 <p>It is important to note the Chebyshev approximation works
-poorly if <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> is not smooth. A function containing singularities,
+poorly if <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> is not smooth. A function containing singularities,
 rapid oscillation, etc can be approximated more effectively by
 multiplying it by a weight function that cancels out the
 nonsmooth features, or by dividing the interval into several
@@ -196,20 +194,20 @@ segments.</p>
 <dl class="function">
 <dt id="mpmath.calculus.fourier">
 <!--[mpmath.calculus.fourier]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fourier</tt><big>(</big><em>f</em>, <em>interval</em>, <em>N</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fourier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Fourier series of degree <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" /> of the given function
-on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]" />. More precisely, <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> returns
-two lists <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)" /> of coefficients (the cosine series and sine
+<dd><p>Computes the Fourier series of degree <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> of the given function
+on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. More precisely, <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> returns
+two lists <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)"/> of coefficients (the cosine series and sine
 series, respectively), such that</p>
 <div class="math">
 <p><img src="../_images/math/616dfedfc58ea503a6bb967e6dcaed6f745d8bc7.png" alt="f(x) \sim \sum_{k=0}^N
     c_k \cos(k m) + s_k \sin(k m)" />
-</div></p><p>where <img class="math" src="../_images/math/b84bf9ebba38660860b353958230b555d0917674.png" alt="m = 2 \pi / (b-a)" />.</p>
-<p>Note that many texts define the first coefficient as <img class="math" src="../_images/math/f41ba6f0a01ad7e9a1451a2863d2f5e68bdce1ff.png" alt="2 c_0" /> instead
-of <img class="math" src="../_images/math/0134af18ca53751c9f9ec73d48b7fa0ff8da9ea6.png" alt="c_0" />. The easiest way to evaluate the computed series correctly
+</div></p><p>where <img class="math" src="../_images/math/b84bf9ebba38660860b353958230b555d0917674.png" alt="m = 2 \pi / (b-a)"/>.</p>
+<p>Note that many texts define the first coefficient as <img class="math" src="../_images/math/f41ba6f0a01ad7e9a1451a2863d2f5e68bdce1ff.png" alt="2 c_0"/> instead
+of <img class="math" src="../_images/math/0134af18ca53751c9f9ec73d48b7fa0ff8da9ea6.png" alt="c_0"/>. The easiest way to evaluate the computed series correctly
 is to pass it to <tt class="xref docutils literal"><span class="pre">fourierval()</span></tt>.</p>
 <p><strong>Examples</strong></p>
-<p>The function <img class="math" src="../_images/math/427c0ee5f10895f708b681a16c4f5799b31f41a7.png" alt="f(x) = x" /> has a simple Fourier series on the standard
-interval <img class="math" src="../_images/math/b35e10ec8f56c704d87c8b856a08c455e2f91ee3.png" alt="[-\pi, \pi]" />. The cosine coefficients are all zero (because
+<p>The function <img class="math" src="../_images/math/427c0ee5f10895f708b681a16c4f5799b31f41a7.png" alt="f(x) = x"/> has a simple Fourier series on the standard
+interval <img class="math" src="../_images/math/b35e10ec8f56c704d87c8b856a08c455e2f91ee3.png" alt="[-\pi, \pi]"/>. The cosine coefficients are all zero (because
 the function has odd symmetry), and the sine coefficients are
 rational numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -238,8 +236,8 @@ Fourier series:</p>
 </pre></div>
 </div>
 <p>Fourier series generally converge slowly (and may not converge
-pointwise). For example, if <img class="math" src="../_images/math/98b7d89d080d3b48db075f5288db991f97bb0380.png" alt="f(x) = \cosh(x)" />, a 10-term Fourier
-series gives an <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2" /> error corresponding to 2-digit accuracy:</p>
+pointwise). For example, if <img class="math" src="../_images/math/98b7d89d080d3b48db075f5288db991f97bb0380.png" alt="f(x) = \cosh(x)"/>, a 10-term Fourier
+series gives an <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2"/> error corresponding to 2-digit accuracy:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mf">9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span>
@@ -262,9 +260,9 @@ points in the interval specification:</p>
 <dt id="mpmath.calculus.fourierval">
 <!--[mpmath.calculus.fourierval]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">fourierval</tt><big>(</big><em>series</em>, <em>interval</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.calculus.fourierval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates a Fourier series (in the format computed by
-by <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> for the given interval) at the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />.</p>
-<p>The series should be a pair <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)" /> where <img class="math" src="../_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c" /> is the
-cosine series and <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is the sine series. The two lists
+by <tt class="xref docutils literal"><span class="pre">fourier()</span></tt> for the given interval) at the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
+<p>The series should be a pair <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)"/> where <img class="math" src="../_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/> is the
+cosine series and <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is the sine series. The two lists
 need not have the same length.</p>
 </dd></dl>
 
@@ -324,8 +322,8 @@ need not have the same length.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

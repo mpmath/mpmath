@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Factorials and gamma functions" href="gamma.html" />
@@ -56,8 +54,8 @@
 <dl class="function">
 <dt id="mpmath.functions.cosh">
 <!--[mpmath.functions.cosh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">cosh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.cosh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the hyperbolic cosine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
-<img class="math" src="../_images/math/3732ad83966f9b85d1b83c01f0ea37f4ec467ec8.png" alt="\cosh(x) = (e^x + e^{-x})/2" />. Values and limits include:</p>
+<dd><p>Computes the hyperbolic cosine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
+<img class="math" src="../_images/math/3732ad83966f9b85d1b83c01f0ea37f4ec467ec8.png" alt="\cosh(x) = (e^x + e^{-x})/2"/>. Values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cosh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -69,7 +67,7 @@
 </pre></div>
 </div>
 <p>The hyperbolic cosine is an even, convex function with
-a global minimum at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />, having a Maclaurin series
+a global minimum at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/>, having a Maclaurin series
 that starts:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
 <span class="go">[1.0, 0.0, 0.5, 0.0, 4.16667e-2, 0.0]</span>
@@ -77,7 +75,7 @@ that starts:</p>
 </div>
 <p>Generalized to complex numbers, the hyperbolic cosine is
 equivalent to a cosine with the argument rotated
-in the imaginary direction, or <img class="math" src="../_images/math/f0a0b4d06f22d8bc20f6f1592b18f65d243765ea.png" alt="\cosh x = \cos ix" />:</p>
+in the imaginary direction, or <img class="math" src="../_images/math/f0a0b4d06f22d8bc20f6f1592b18f65d243765ea.png" alt="\cosh x = \cos ix"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cosh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-3.724545504915322565473971 + 0.5118225699873846088344638j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
@@ -92,8 +90,8 @@ in the imaginary direction, or <img class="math" src="../_images/math/f0a0b4d06f
 <dl class="function">
 <dt id="mpmath.functions.sinh">
 <!--[mpmath.functions.sinh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">sinh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.sinh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the hyperbolic sine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
-<img class="math" src="../_images/math/9c750e3bd89537a51a94d226b330d08b3368703e.png" alt="\sinh(x) = (e^x - e^{-x})/2" />. Values and limits include:</p>
+<dd><p>Computes the hyperbolic sine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
+<img class="math" src="../_images/math/9c750e3bd89537a51a94d226b330d08b3368703e.png" alt="\sinh(x) = (e^x - e^{-x})/2"/>. Values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sinh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -111,8 +109,8 @@ series that starts:</p>
 </pre></div>
 </div>
 <p>Generalized to complex numbers, the hyperbolic sine is
-essentially a sine with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" /> applied to
-the argument; more precisely, <img class="math" src="../_images/math/f02d498569463dab4b4f46ed42789fac5dbb0963.png" alt="\sinh x = -i \sin ix" />:</p>
+essentially a sine with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/> applied to
+the argument; more precisely, <img class="math" src="../_images/math/f02d498569463dab4b4f46ed42789fac5dbb0963.png" alt="\sinh x = -i \sin ix"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sinh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-3.590564589985779952012565 + 0.5309210862485198052670401j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">j</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
@@ -127,8 +125,8 @@ the argument; more precisely, <img class="math" src="../_images/math/f02d4985694
 <dl class="function">
 <dt id="mpmath.functions.tanh">
 <!--[mpmath.functions.tanh]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">tanh</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.tanh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the hyperbolic tangent of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
-<img class="math" src="../_images/math/950b32d9b0df97b3df6b9437f246638314046cb8.png" alt="\tanh(x) = \sinh(x)/\cosh(x)" />. Values and limits include:</p>
+<dd><p>Computes the hyperbolic tangent of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
+<img class="math" src="../_images/math/950b32d9b0df97b3df6b9437f246638314046cb8.png" alt="\tanh(x) = \sinh(x)/\cosh(x)"/>. Values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tanh</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -147,8 +145,8 @@ series is:</p>
 </pre></div>
 </div>
 <p>Generalized to complex numbers, the hyperbolic tangent is
-essentially a tangent with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i" /> applied to
-the argument; more precisely, <img class="math" src="../_images/math/3b086acaefd15f1d02fd7afb36aaaf5718b579ab.png" alt="\tanh x = -i \tan ix" />:</p>
+essentially a tangent with a rotation <img class="math" src="../_images/math/34857b3ba74ce5cd8607f3ebd23e9015908ada71.png" alt="i"/> applied to
+the argument; more precisely, <img class="math" src="../_images/math/3b086acaefd15f1d02fd7afb36aaaf5718b579ab.png" alt="\tanh x = -i \tan ix"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tanh</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.9653858790221331242784803 - 0.009884375038322493720314034j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">j</span><span class="o">*</span><span class="n">tan</span><span class="p">(</span><span class="mf">3</span><span class="o">-</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
@@ -303,8 +301,8 @@ the argument; more precisely, <img class="math" src="../_images/math/3b086acaefd
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

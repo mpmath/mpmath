@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Root-finding and optimization" href="optimization.html" />
@@ -56,13 +54,13 @@ approximation of functions by polynomials.</p>
 <dl class="function">
 <dt id="mpmath.calculus.polyval">
 <!--[mpmath.calculus.polyval]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">polyval</tt><big>(</big><em>coeffs</em>, <em>x</em>, <em>derivative=False</em><big>)</big><a class="headerlink" href="#mpmath.calculus.polyval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given coefficients <img class="math" src="../_images/math/e85767b01085c03d58551308d1311ceb02a27b66.png" alt="[c_n, \ldots, c_2, c_1, c_0]" /> and a number <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />,
+<dd><p>Given coefficients <img class="math" src="../_images/math/e85767b01085c03d58551308d1311ceb02a27b66.png" alt="[c_n, \ldots, c_2, c_1, c_0]"/> and a number <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
 <tt class="xref docutils literal"><span class="pre">polyval()</span></tt> evaluates the polynomial</p>
 <div class="math">
 <p><img src="../_images/math/94320b9db2068abc23f45eee611fa8337ce3fa80.png" alt="P(x) = c_n x^n + \ldots + c_2 x^2 + c_1 x + c_0." />
 </div></p><p>If <em>derivative=True</em> is set, <tt class="xref docutils literal"><span class="pre">polyval()</span></tt> simultaneously
-evaluates <img class="math" src="../_images/math/6efaaf74e576202fad965134bc49c6a34aac4c30.png" alt="P(x)" /> with the derivative, <img class="math" src="../_images/math/114477bf2e4ec5b619df543200769762d6f6b6ff.png" alt="P'(x)" />, and returns the
-tuple <img class="math" src="../_images/math/f8555cde64ef604799506511246ac30f334668eb.png" alt="(P(x), P'(x))" />.</p>
+evaluates <img class="math" src="../_images/math/6efaaf74e576202fad965134bc49c6a34aac4c30.png" alt="P(x)"/> with the derivative, <img class="math" src="../_images/math/114477bf2e4ec5b619df543200769762d6f6b6ff.png" alt="P'(x)"/>, and returns the
+tuple <img class="math" src="../_images/math/f8555cde64ef604799506511246ac30f334668eb.png" alt="(P(x), P'(x))"/>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -89,14 +87,14 @@ The leading coefficient must be nonzero.</p>
 <p>With <em>error=True</em>, <tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> returns a tuple <em>(roots, err)</em> where
 <em>err</em> is an estimate of the maximum error among the computed roots.</p>
 <p><strong>Examples</strong></p>
-<p>Finding the three real roots of <img class="math" src="../_images/math/fb83f0cdce06ec900df1fe1b5751ce1044068bf8.png" alt="x^3 - x^2 - 14x + 24" />:</p>
+<p>Finding the three real roots of <img class="math" src="../_images/math/fb83f0cdce06ec900df1fe1b5751ce1044068bf8.png" alt="x^3 - x^2 - 14x + 24"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">14</span><span class="p">,</span><span class="mf">24</span><span class="p">]),</span> <span class="mf">4</span><span class="p">)</span>
 <span class="go">[-4.0, 2.0, 3.0]</span>
 </pre></div>
 </div>
-<p>Finding the two complex conjugate roots of <img class="math" src="../_images/math/3dc4a317820d5bfd5d0a1b8320253c7d4a94ea2e.png" alt="4x^2 + 3x + 2" />, with an
+<p>Finding the two complex conjugate roots of <img class="math" src="../_images/math/3dc4a317820d5bfd5d0a1b8320253c7d4a94ea2e.png" alt="4x^2 + 3x + 2"/>, with an
 error estimate:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">roots</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">roots</span><span class="p">:</span>
@@ -115,7 +113,7 @@ error estimate:</p>
 </pre></div>
 </div>
 <p>The following example computes all the 5th roots of unity; that is,
-the roots of <img class="math" src="../_images/math/3cabbad4bddb20b0b984d787b76acc321e944474.png" alt="x^5 - 1" />:</p>
+the roots of <img class="math" src="../_images/math/3cabbad4bddb20b0b984d787b76acc321e944474.png" alt="x^5 - 1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">20</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
@@ -218,8 +216,8 @@ next to each other.</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

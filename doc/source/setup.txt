@@ -125,3 +125,55 @@ and by running the individual ``.py`` files in the mpmath source.
 (The doctests may take several minutes.)
 
 Finally, some additional demo scripts are available in the ``demo`` directory included in the source package.
+
+Mpmath under SymPy
+--------------------
+
+Mpmath is available as a subpackage of `SymPy <http://sympy.org>`_. With SymPy installed, you can just do
+
+    ``import sympy.mpmath as mpmath``
+
+instead of ``import mpmath``. Note that the SymPy version of mpmath might not be the most recent. You can make a separate mpmath installation even if SymPy is installed; the two mpmath packages will not interfere with each other.
+
+Mpmath under Sage
+-------------------
+
+Mpmath is a standard package in `Sage <http://sagemath.org/>`_, in version 4.1 or later of Sage.
+Mpmath is preinstalled a regular Python module, and can be imported as usual within Sage::
+
+    ----------------------------------------------------------------------
+    | Sage Version 4.1, Release Date: 2009-07-09                         |
+    | Type notebook() for the GUI, and license() for information.        |
+    ----------------------------------------------------------------------
+    sage: import mpmath
+    sage: mpmath.mp.dps = 50
+    sage: print mpmath.mpf(2) ** 0.5
+    1.4142135623730950488016887242096980785696718753769
+
+The mpmath installation under Sage automatically use Sage integers for asymptotically fast arithmetic,
+so there is no need to install GMPY::
+
+    sage: mpmath.settings.MODE
+    'sage'
+
+Although mpmath can be imported directly, it is recommended to import the interface library
+``sage.libs.mpmath.all`` instead. For example::
+
+    sage: import sage.libs.mpmath.all as mpmath
+
+Importing this library will load some Cython extension code that may slightly speed up mpmath
+and provide better type compatibility between mpmath and Sage number types.
+The function :func:`call` defined in this library allows you to call a mpmath
+function with any Sage number as input, and get a Sage ``RealNumber`` or ``ComplexNumber``
+with the appropriate precision back::
+
+    sage: w = mpmath.call(mpmath.erf, 2+3*I, prec=100)   
+    sage: w
+    -20.829461427614568389103088452 + 8.6873182714701631444280787545*I
+    sage: type(w)
+    <type 'sage.rings.complex_number.ComplexNumber'>
+    sage: w.prec()
+    100
+
+See the help for ``sage.libs.mpmath.all`` for further information.
+

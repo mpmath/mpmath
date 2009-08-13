@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Hypergeometric functions" href="hypergeometric.html" />
@@ -56,7 +54,7 @@
 <dl class="function">
 <dt id="mpmath.functions.legendre">
 <!--[mpmath.functions.legendre]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legendre</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.legendre" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">legendre(n,</span> <span class="pre">x)</span></tt> evaluates the Legendre polynomial <img class="math" src="../_images/math/9f7ba371de1369bc2066fe2ef779dd977b4cbdf6.png" alt="P_n(x)" />.
+<dd><p><tt class="docutils literal"><span class="pre">legendre(n,</span> <span class="pre">x)</span></tt> evaluates the Legendre polynomial <img class="math" src="../_images/math/9f7ba371de1369bc2066fe2ef779dd977b4cbdf6.png" alt="P_n(x)"/>.
 The Legendre polynomials are given by the formula</p>
 <div class="math">
 <p><img src="../_images/math/38fe540809e4b52fca0bdc2ba12f34f2e40dfae1.png" alt="P_n(x) = \frac{1}{2^n n!} \frac{d^n}{dx^n} (x^2 -1)^n." />
@@ -68,12 +66,12 @@ P_1(x) = x
 
 (n+1) P_{n+1}(x) = (2n+1) x P_n(x) - n P_{n-1}(x)." />
 </div></p><p>A third definition is in terms of the hypergeometric function
-<img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" />, whereby they can be generalized to arbitrary <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>, whereby they can be generalized to arbitrary <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="math">
 <p><img src="../_images/math/4a8af3820475912ebd06768ac74171c27fe276f5.png" alt="P_n(x) = \,_2F_1\left(-n, n+1, 1, \frac{1-x}{2}\right)" />
 </div></p><p><strong>Basic evaluation</strong></p>
 <p>The Legendre polynomials assume fixed values at the points
-<img class="math" src="../_images/math/8d4c38a419ae56f13a202216dd45a1978bc91a54.png" alt="x = -1" /> and <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" />:</p>
+<img class="math" src="../_images/math/8d4c38a419ae56f13a202216dd45a1978bc91a54.png" alt="x = -1"/> and <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">legendre</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">)])</span>
@@ -83,7 +81,7 @@ P_1(x) = x
 </pre></div>
 </div>
 <p>The coefficients of Legendre polynomials can be recovered
-using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> Taylor expansion:</p>
+using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor expansion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
 <span class="gp">...</span>
@@ -95,7 +93,7 @@ using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c
 </pre></div>
 </div>
 <p>The roots of Legendre polynomials are located symmetrically
-on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" />:</p>
+on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">polyroots</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)[::</span><span class="o">-</span><span class="mf">1</span><span class="p">]))</span>
 <span class="gp">...</span>
@@ -106,15 +104,15 @@ on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba100
 <span class="go">[-0.861136, -0.339981, 0.339981, 0.861136]</span>
 </pre></div>
 </div>
-<p>An example of an evaluation for arbitrary <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<p>An example of an evaluation for arbitrary <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">legendre</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.94952805264875 + 2.1071073099422j)</span>
 </pre></div>
 </div>
 <p><strong>Orthogonality</strong></p>
-<p>The Legendre polynomials are orthogonal on <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" /> with respect
-to the trivial weight <img class="math" src="../_images/math/ddf7c7bf07793db4262aeb2e1b26a318a6e85c27.png" alt="w(x) = 1" />. That is, <img class="math" src="../_images/math/21600e9d56166633998cdda57e4d8234553c1063.png" alt="P_m(x) P_n(x)" />
-integrates to zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc7f003099272b9ae298584.png" alt="m \ne n" /> and to <img class="math" src="../_images/math/285bc2fbf54290282cb92b66c1b5a67a76ea1adf.png" alt="2/(2n+1)" /> if <img class="math" src="../_images/math/a39526a4fd8fa70a09be9251b26dbfb4bb423219.png" alt="m = n" />:</p>
+<p>The Legendre polynomials are orthogonal on <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect
+to the trivial weight <img class="math" src="../_images/math/ddf7c7bf07793db4262aeb2e1b26a318a6e85c27.png" alt="w(x) = 1"/>. That is, <img class="math" src="../_images/math/21600e9d56166633998cdda57e4d8234553c1063.png" alt="P_m(x) P_n(x)"/>
+integrates to zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc7f003099272b9ae298584.png" alt="m \ne n"/> and to <img class="math" src="../_images/math/285bc2fbf54290282cb92b66c1b5a67a76ea1adf.png" alt="2/(2n+1)"/> if <img class="math" src="../_images/math/a39526a4fd8fa70a09be9251b26dbfb4bb423219.png" alt="m = n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">legendre</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
 <span class="go">0.0</span>
@@ -146,8 +144,8 @@ integrates to zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc
 <dt id="mpmath.functions.legenp">
 <!--[mpmath.functions.legenp]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legenp</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.legenp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the (associated) Legendre function of the first kind of
-degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/df26d26618564cc9d53e98ffad13b8db3cd84f5a.png" alt="P_n^m(z)" />. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0" /> gives the ordinary
-Legendre function of the second kind, <img class="math" src="../_images/math/31519e614892fb7e7f8b443fa15ac68149839215.png" alt="P_n(z)" />. The parameters may be
+degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/df26d26618564cc9d53e98ffad13b8db3cd84f5a.png" alt="P_n^m(z)"/>. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0"/> gives the ordinary
+Legendre function of the second kind, <img class="math" src="../_images/math/31519e614892fb7e7f8b443fa15ac68149839215.png" alt="P_n(z)"/>. The parameters may be
 complex numbers.</p>
 <p>In terms of the Gauss hypergeometric function, the (associated) Legendre
 function is defined as</p>
@@ -164,8 +162,8 @@ and <tt class="docutils literal"><span class="pre">LegendreP[n,m,3,z]</span></tt
 <p>The general solution of the (associated) Legendre differential equation</p>
 <div class="math">
 <p><img src="../_images/math/7e4a9c802eebd1e8eede8a5e520bd6b5480c9996.png" alt="(1-z^2) f''(z) - 2zf'(z) + \left(n(n+1)-\frac{m^2}{1-z^2}\right)f(z) = 0" />
-</div></p><p>is given by <img class="math" src="../_images/math/e1acb1603031612de2f742eaa69a8f86e2cd9229.png" alt="C_1 P_n^m(z) + C_2 Q_n^m(z)" /> for arbitrary constants
-<img class="math" src="../_images/math/70b97eb4ad6e4e7a5a97e2547d9ed6e965960d0c.png" alt="C_1" />, <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2" />, where <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)" /> is a Legendre function of the
+</div></p><p>is given by <img class="math" src="../_images/math/e1acb1603031612de2f742eaa69a8f86e2cd9229.png" alt="C_1 P_n^m(z) + C_2 Q_n^m(z)"/> for arbitrary constants
+<img class="math" src="../_images/math/70b97eb4ad6e4e7a5a97e2547d9ed6e965960d0c.png" alt="C_1"/>, <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2"/>, where <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)"/> is a Legendre function of the
 second kind as implemented by <tt class="xref docutils literal"><span class="pre">legenq()</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary parameters and arguments:</p>
@@ -208,15 +206,15 @@ second kind as implemented by <tt class="xref docutils literal"><span class="pre
 <dt id="mpmath.functions.legenq">
 <!--[mpmath.functions.legenq]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">legenq</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em>, <em>version=2</em><big>)</big><a class="headerlink" href="#mpmath.functions.legenq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the (associated) Legendre function of the second kind of
-degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)" />. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0" /> gives the ordinary
-Legendre function of the second kind, <img class="math" src="../_images/math/f182d870432fbf0f8135a048b1b5ff6b4f5f1ad1.png" alt="Q_n(z)" />. The parameters may
+degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)"/>. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0"/> gives the ordinary
+Legendre function of the second kind, <img class="math" src="../_images/math/f182d870432fbf0f8135a048b1b5ff6b4f5f1ad1.png" alt="Q_n(z)"/>. The parameters may
 complex numbers.</p>
 <p>The Legendre functions of the second kind give a second set of
 solutions to the (associated) Legendre differential equation.
 (See <tt class="xref docutils literal"><span class="pre">legenp()</span></tt>.)
 Unlike the Legendre functions of the first kind, they are not
-polynomials of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> for integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> but rational or logarithmic
-functions with poles at <img class="math" src="../_images/math/0d1d3efda3e96b7763cf2660767f837c3c1c5f52.png" alt="z = \pm 1" />.</p>
+polynomials of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> for integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> but rational or logarithmic
+functions with poles at <img class="math" src="../_images/math/0d1d3efda3e96b7763cf2660767f837c3c1c5f52.png" alt="z = \pm 1"/>.</p>
 <p>There are various ways to define Legendre functions of
 the second kind, giving rise to different complex structure.
 A version can be selected using the <em>type</em> keyword argument.
@@ -229,14 +227,14 @@ The <em>type=2</em> and <em>type=3</em> functions are given respectively by</p>
 \hat{Q}_n^m(z) = \frac{\pi}{2 \sin(\pi m)} e^{\pi i m}
     \left( \hat{P}_n^m(z) -
     \frac{\Gamma(1+m+n)}{\Gamma(1-m+n)} \hat{P}_n^{-m}(z)\right)" />
-</div></p><p>where <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P" /> and <img class="math" src="../_images/math/4d88c8da55420edccc79578e17c0525c08689c46.png" alt="\hat{P}" /> are the <em>type=2</em> and <em>type=3</em> Legendre functions
+</div></p><p>where <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/4d88c8da55420edccc79578e17c0525c08689c46.png" alt="\hat{P}"/> are the <em>type=2</em> and <em>type=3</em> Legendre functions
 of the first kind. The formulas above should be understood as limits
-when <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> is an integer.</p>
+when <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> is an integer.</p>
 <p>These functions correspond to <tt class="docutils literal"><span class="pre">LegendreQ[n,m,2,z]</span></tt> (or <tt class="docutils literal"><span class="pre">LegendreQ[n,m,z]</span></tt>)
 and <tt class="docutils literal"><span class="pre">LegendreQ[n,m,3,z]</span></tt> in Mathematica. The <em>type=3</em> function
 is essentially the same as the function defined in
-Abramowitz &amp; Stegun (eq. 8.1.3) but with <img class="math" src="../_images/math/8c9d691ae30bde236b7785fef9cc3f9c351fad6a.png" alt="(z+1)^{m/2}(z-1)^{m/2}" /> instead
-of <img class="math" src="../_images/math/a6bc271d565ef85d91da5d032be01e04d25253eb.png" alt="(z^2-1)^{m/2}" />, giving slightly different branches.</p>
+Abramowitz &amp; Stegun (eq. 8.1.3) but with <img class="math" src="../_images/math/8c9d691ae30bde236b7785fef9cc3f9c351fad6a.png" alt="(z+1)^{m/2}(z-1)^{m/2}"/> instead
+of <img class="math" src="../_images/math/a6bc271d565ef85d91da5d032be01e04d25253eb.png" alt="(z^2-1)^{m/2}"/>, giving slightly different branches.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary parameters and arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -272,16 +270,16 @@ of <img class="math" src="../_images/math/a6bc271d565ef85d91da5d032be01e04d25253
 <dt id="mpmath.functions.chebyt">
 <!--[mpmath.functions.chebyt]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyt</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyt" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">chebyt(n,</span> <span class="pre">x)</span></tt> evaluates the Chebyshev polynomial of the first
-kind <img class="math" src="../_images/math/e4fe51661da2eabbd80cb6c7080652f96263b19d.png" alt="T_n(x)" />, defined by the identity</p>
+kind <img class="math" src="../_images/math/e4fe51661da2eabbd80cb6c7080652f96263b19d.png" alt="T_n(x)"/>, defined by the identity</p>
 <div class="math">
 <p><img src="../_images/math/1add736efb518e69c365c9a11b7d48fb62e17754.png" alt="T_n(\cos x) = \cos(n x)." />
 </div></p><p>The Chebyshev polynomials of the first kind are a special
 case of the Jacobi polynomials, and by extension of the
-hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" />. They can thus also be
-evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
+hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>. They can thus also be
+evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
 <p><strong>Basic evaluation</strong></p>
-<p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th polynomial can be recovered
-using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> Taylor expansion:</p>
+<p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th polynomial can be recovered
+using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor expansion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
@@ -296,8 +294,8 @@ using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e
 </div>
 <p><strong>Orthogonality</strong></p>
 <p>The Chebyshev polynomials of the first kind are orthogonal
-on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" /> with respect to the weight
-function <img class="math" src="../_images/math/d76ea6713fb4ffe020fafb88f2098ea16f38f842.png" alt="w(x) = 1/\sqrt{1-x^2}" />:</p>
+on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect to the weight
+function <img class="math" src="../_images/math/d76ea6713fb4ffe020fafb88f2098ea16f38f842.png" alt="w(x) = 1/\sqrt{1-x^2}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">chebyt</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">]),</span><span class="mf">1</span><span class="p">)</span>
@@ -316,16 +314,16 @@ function <img class="math" src="../_images/math/d76ea6713fb4ffe020fafb88f2098ea1
 <dt id="mpmath.functions.chebyu">
 <!--[mpmath.functions.chebyu]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">chebyu</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.chebyu" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">chebyu(n,</span> <span class="pre">x)</span></tt> evaluates the Chebyshev polynomial of the second
-kind <img class="math" src="../_images/math/bc224bf0d5fd957095a282940921bd63fc68a468.png" alt="U_n(x)" />, defined by the identity</p>
+kind <img class="math" src="../_images/math/bc224bf0d5fd957095a282940921bd63fc68a468.png" alt="U_n(x)"/>, defined by the identity</p>
 <div class="math">
 <p><img src="../_images/math/a1ae609ead051c4e0471f855c65795d622d76dbd.png" alt="U_n(\cos x) = \frac{\sin((n+1)x)}{\sin(x)}." />
 </div></p><p>The Chebyshev polynomials of the second kind are a special
 case of the Jacobi polynomials, and by extension of the
-hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" />. They can thus also be
-evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
+hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>. They can thus also be
+evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
 <p><strong>Basic evaluation</strong></p>
-<p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th polynomial can be recovered
-using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> Taylor expansion:</p>
+<p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th polynomial can be recovered
+using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor expansion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
@@ -340,8 +338,8 @@ using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e
 </div>
 <p><strong>Orthogonality</strong></p>
 <p>The Chebyshev polynomials of the second kind are orthogonal
-on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" /> with respect to the weight
-function <img class="math" src="../_images/math/60470bac7b7be5ec9204ca80aa90ea82150a475d.png" alt="w(x) = \sqrt{1-x^2}" />:</p>
+on the interval <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect to the weight
+function <img class="math" src="../_images/math/60470bac7b7be5ec9204ca80aa90ea82150a475d.png" alt="w(x) = \sqrt{1-x^2}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">chebyu</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
@@ -363,17 +361,17 @@ function <img class="math" src="../_images/math/60470bac7b7be5ec9204ca80aa90ea82
 <dt id="mpmath.functions.jacobi">
 <!--[mpmath.functions.jacobi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">jacobi</tt><big>(</big><em>n</em>, <em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.jacobi" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">jacobi(n,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">x)</span></tt> evaluates the Jacobi polynomial
-<img class="math" src="../_images/math/ca97c3d1353d63ad511d603d70a7143fc1239c03.png" alt="P_n^{(a,b)}(x)" />. The Jacobi polynomials are a special
-case of the hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" /> given by:</p>
+<img class="math" src="../_images/math/ca97c3d1353d63ad511d603d70a7143fc1239c03.png" alt="P_n^{(a,b)}(x)"/>. The Jacobi polynomials are a special
+case of the hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/> given by:</p>
 <div class="math">
 <p><img src="../_images/math/ac4d80ba2147ce445beaf36dd549824cc68970bb.png" alt="P_n^{(a,b)}(x) = {n+a \choose n}
   \,_2F_1\left(-n,1+a+b+n,a+1,\frac{1-x}{2}\right)." />
 </div></p><p>Note that this definition generalizes to nonintegral values
-of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. When <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is an integer, the hypergeometric series
+of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. When <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is an integer, the hypergeometric series
 terminates after a finite number of terms, giving
-a polynomial in <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />.</p>
+a polynomial in <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
 <p><strong>Evaluation of Jacobi polynomials</strong></p>
-<p>A special evaluation is <img class="math" src="../_images/math/a26de8ee7daa76d6e686b74f5fdab8944be6cc66.png" alt="P_n^{(a,b)}(1) = {n+a \choose n}" />:</p>
+<p>A special evaluation is <img class="math" src="../_images/math/a26de8ee7daa76d6e686b74f5fdab8944be6cc66.png" alt="P_n^{(a,b)}(1) = {n+a \choose n}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jacobi</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
@@ -382,8 +380,8 @@ a polynomial in <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2
 <span class="go">2.4609375</span>
 </pre></div>
 </div>
-<p>A Jacobi polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is equal to its
-Taylor polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. The explicit
+<p>A Jacobi polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is equal to its
+Taylor polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. The explicit
 coefficients of Jacobi polynomials can therefore
 be recovered easily using <tt class="xref docutils literal"><span class="pre">taylor()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
@@ -396,7 +394,7 @@ be recovered easily using <tt class="xref docutils literal"><span class="pre">ta
 <span class="go">[0.625, 2.5, -11.25, -7.5, 20.625]</span>
 </pre></div>
 </div>
-<p>For nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the Jacobi &#8220;polynomial&#8221; is no longer
+<p>For nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the Jacobi &#8220;polynomial&#8221; is no longer
 a polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jacobi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">4</span><span class="p">))</span>
 <span class="go">[0.309983, 1.84119, -1.26933, 1.26699, -1.34808]</span>
@@ -404,10 +402,10 @@ a polynomial:</p>
 </div>
 <p><strong>Orthogonality</strong></p>
 <p>The Jacobi polynomials are orthogonal on the interval
-<img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" /> with respect to the weight function
-<img class="math" src="../_images/math/b13f14bd4cb8445a3401f1ac1bb66910fd16cc58.png" alt="w(x) = (1-x)^a (1+x)^b" />. That is,
-<img class="math" src="../_images/math/01b58ee5325433b90eefd8e8f723f93b30684874.png" alt="w(x) P_n^{(a,b)}(x) P_m^{(a,b)}(x)" /> integrates to
-zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc7f003099272b9ae298584.png" alt="m \ne n" /> and to a nonzero number if <img class="math" src="../_images/math/a39526a4fd8fa70a09be9251b26dbfb4bb423219.png" alt="m = n" />.</p>
+<img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect to the weight function
+<img class="math" src="../_images/math/b13f14bd4cb8445a3401f1ac1bb66910fd16cc58.png" alt="w(x) = (1-x)^a (1+x)^b"/>. That is,
+<img class="math" src="../_images/math/01b58ee5325433b90eefd8e8f723f93b30684874.png" alt="w(x) P_n^{(a,b)}(x) P_m^{(a,b)}(x)"/> integrates to
+zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc7f003099272b9ae298584.png" alt="m \ne n"/> and to a nonzero number if <img class="math" src="../_images/math/a39526a4fd8fa70a09be9251b26dbfb4bb423219.png" alt="m = n"/>.</p>
 <p>The orthogonality is easy to verify using numerical
 quadrature:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span> <span class="o">=</span> <span class="n">jacobi</span>
@@ -443,7 +441,7 @@ this equation:</p>
 <span class="go">4.0e-12</span>
 </pre></div>
 </div>
-<p>The difference of order <img class="math" src="../_images/math/6336cd9b79f2499e10784c0214c316dc2641adf9.png" alt="10^{-12}" /> is as close to zero as
+<p>The difference of order <img class="math" src="../_images/math/6336cd9b79f2499e10784c0214c316dc2641adf9.png" alt="10^{-12}"/> is as close to zero as
 it could be at 15-digit working precision, since the terms
 are large:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A0</span><span class="p">,</span> <span class="n">A1</span><span class="p">,</span> <span class="n">A2</span>
@@ -465,9 +463,9 @@ are large:</p>
 <div class="math">
 <p><img src="../_images/math/e8d3dd33caf8cf4590357b0aa2e7aa24b5698d24.png" alt="C_n^{(a)}(z) = {n+2a-1 \choose n} \,_2F_1\left(-n, n+2a;
     a+\frac{1}{2}; \frac{1}{2}(1-z)\right)." />
-</div></p><p>When <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is a nonnegative integer, this formula gives a polynomial
-in <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, but all parameters are permitted to be
-complex numbers. With <img class="math" src="../_images/math/b5c1efcd8e4680a8a20c6037b71494a6c427b7dc.png" alt="a = 1/2" />, the Gegenbauer polynomial
+</div></p><p>When <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is a nonnegative integer, this formula gives a polynomial
+in <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, but all parameters are permitted to be
+complex numbers. With <img class="math" src="../_images/math/b5c1efcd8e4680a8a20c6037b71494a6c427b7dc.png" alt="a = 1/2"/>, the Gegenbauer polynomial
 reduces to a Legendre polynomial.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary arguments:</p>
@@ -504,7 +502,7 @@ reduces to a Legendre polynomial.</p>
 </pre></div>
 </div>
 <p>The Gegenbauer polynomials have generating function
-<img class="math" src="../_images/math/7bf34994b503447d946212e98e25d8985e49f5a7.png" alt="(1-2zt+t^2)^{-a}" />:</p>
+<img class="math" src="../_images/math/7bf34994b503447d946212e98e25d8985e49f5a7.png" alt="(1-2zt+t^2)^{-a}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">z</span><span class="o">*</span><span class="n">t</span><span class="o">+</span><span class="n">t</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">[1.0, 5.0, 15.0, 35.0]</span>
@@ -512,8 +510,8 @@ reduces to a Legendre polynomial.</p>
 <span class="go">[1.0, 5.0, 15.0, 35.0]</span>
 </pre></div>
 </div>
-<p>The Gegenbauer polynomials are orthogonal on <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]" /> with respect
-to the weight <img class="math" src="../_images/math/b342b6a42721d088aec75e20cba163cd53b2e759.png" alt="(1-z^2)^{a-\frac{1}{2}}" />:</p>
+<p>The Gegenbauer polynomials are orthogonal on <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect
+to the weight <img class="math" src="../_images/math/b342b6a42721d088aec75e20cba163cd53b2e759.png" alt="(1-z^2)^{a-\frac{1}{2}}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Cn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">gegenbauer</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Cm</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">gegenbauer</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
@@ -532,7 +530,7 @@ to the weight <img class="math" src="../_images/math/b342b6a42721d088aec75e20cba
 <dl class="function">
 <dt id="mpmath.functions.hermite">
 <!--[mpmath.functions.hermite]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hermite</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hermite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the Hermite polynomial <img class="math" src="../_images/math/5033e2e22e5ed9caf21225ee4090314dfbf58500.png" alt="H_n(z)" />, which may be defined using
+<dd><p>Evaluates the Hermite polynomial <img class="math" src="../_images/math/5033e2e22e5ed9caf21225ee4090314dfbf58500.png" alt="H_n(z)"/>, which may be defined using
 the recurrence</p>
 <div class="math">
 <p><img src="../_images/math/75b5fc753a430e7389262811a8a9b9319948cc27.png" alt="H_0(z) = 1
@@ -540,13 +538,13 @@ the recurrence</p>
 H_1(z) = 2z
 
 H_{n+1} = 2z H_n(z) - 2n H_{n-1}(z)." />
-</div></p><p>The Hermite polynomials are orthogonal on <img class="math" src="../_images/math/57f240143a85a508de7721a7548b3b3c545547bc.png" alt="(-\infty, \infty)" /> with
-respect to the weight <img class="math" src="../_images/math/bf5dce5a26b0584f66e28b1c50a5973c7d82e6e0.png" alt="e^{-z^2}" />. More generally, allowing arbitrary complex
-values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the Hermite function <img class="math" src="../_images/math/5033e2e22e5ed9caf21225ee4090314dfbf58500.png" alt="H_n(z)" /> is defined as</p>
+</div></p><p>The Hermite polynomials are orthogonal on <img class="math" src="../_images/math/57f240143a85a508de7721a7548b3b3c545547bc.png" alt="(-\infty, \infty)"/> with
+respect to the weight <img class="math" src="../_images/math/bf5dce5a26b0584f66e28b1c50a5973c7d82e6e0.png" alt="e^{-z^2}"/>. More generally, allowing arbitrary complex
+values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the Hermite function <img class="math" src="../_images/math/5033e2e22e5ed9caf21225ee4090314dfbf58500.png" alt="H_n(z)"/> is defined as</p>
 <div class="math">
 <p><img src="../_images/math/b31ec18c24de864ebf69620a0f263bc87b542886.png" alt="H_n(z) = (2z)^n \,_2F_0\left(-\frac{n}{2}, \frac{1-n}{2},
     -\frac{1}{z^2}\right)" />
-</div></p><p>for <img class="math" src="../_images/math/bf01ae35b63816c0899ff913fa79b3f03b894160.png" alt="\Re{z} &gt; 0" />, or generally</p>
+</div></p><p>for <img class="math" src="../_images/math/bf01ae35b63816c0899ff913fa79b3f03b894160.png" alt="\Re{z} &gt; 0"/>, or generally</p>
 <div class="math">
 <p><img src="../_images/math/44d4342a440ed69b0cafabe81984ad73470d4a98.png" alt="H_n(z) = 2^n \sqrt{\pi} \left(
     \frac{1}{\Gamma\left(\frac{1-n}{2}\right)}
@@ -586,7 +584,7 @@ values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e
 <span class="go">[-120.0, 0.0, 720.0, 0.0, -480.0, 0.0, 64.0]</span>
 </pre></div>
 </div>
-<p>Values at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
+<p>Values at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">9</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">hermite</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -634,11 +632,11 @@ values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e
 <div class="math">
 <p><img src="../_images/math/25665af88af510a7dd4a3464709efdc9fa8db92c.png" alt="L_n^a(z) = \frac{\Gamma(n+b+1)}{\Gamma(b+1) \Gamma(n+1)}
     \,_1F_1(-n, a+1, z)." />
-</div></p><p>With <img class="math" src="../_images/math/b5969c2cfb1ffadf981fbbddcf796c8eb0037546.png" alt="a = 0" /> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> a nonnegative integer, this reduces to an ordinary
+</div></p><p>With <img class="math" src="../_images/math/b5969c2cfb1ffadf981fbbddcf796c8eb0037546.png" alt="a = 0"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> a nonnegative integer, this reduces to an ordinary
 Laguerre polynomial, the sequence of which begins
-<img class="math" src="../_images/math/08424294ec8b0ce0f433a848518546edc44844f0.png" alt="L_0(z) = 1, L_1(z) = 1-z, L_2(z) = z^2-2z+1, \ldots" />.</p>
+<img class="math" src="../_images/math/08424294ec8b0ce0f433a848518546edc44844f0.png" alt="L_0(z) = 1, L_1(z) = 1-z, L_2(z) = z^2-2z+1, \ldots"/>.</p>
 <p>The Laguerre polynomials are orthogonal with respect to the weight
-<img class="math" src="../_images/math/ced4c2d88cf637d4b56a416bdf8c2faca7bd73f4.png" alt="z^a e^{-z}" /> on <img class="math" src="../_images/math/a86f243b13e6ed9b3b2934d2dd9024dc39cdc6b8.png" alt="[0, \infty)" />.</p>
+<img class="math" src="../_images/math/ced4c2d88cf637d4b56a416bdf8c2faca7bd73f4.png" alt="z^a e^{-z}"/> on <img class="math" src="../_images/math/a86f243b13e6ed9b3b2934d2dd9024dc39cdc6b8.png" alt="[0, \infty)"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -757,8 +755,8 @@ coefficients:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

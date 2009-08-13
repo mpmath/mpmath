@@ -26,7 +26,10 @@ for path in paths:
             if script not in f.read():
                 f.seek(0)
                 lines = f.readlines()
-                lines.insert(lines.index("  </body>\n"), script)
+                for i, l in enumerate(lines):
+                    if "</body>" in l:
+                        break
+                lines.insert(i, script)
                 f.seek(0)
                 f.write("".join(lines))
                 print "modified", fname

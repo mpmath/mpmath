@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Interval arithmetic" href="intervals.html" /> 
@@ -311,8 +309,8 @@ so called norms.</p>
 <dl class="function">
 <dt id="mpmath.linalg.norm">
 <!--[mpmath.linalg.norm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">norm</tt><big>(</big><em>x</em>, <em>p=2</em><big>)</big><a class="headerlink" href="#mpmath.linalg.norm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the entrywise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of an iterable <em>x</em>, i.e. the vector norm
-<img class="math" src="_images/math/f93d4f96e853780721fd3f0bdbd9c0beff6ac0d9.png" alt="\left(\sum_k |x_k|^p\right)^{1/p}" />, for any given <img class="math" src="_images/math/fbdfe77d15141724eb478aad6ee4c12fb05ff874.png" alt="1 \le p \le \infty" />.</p>
+<dd><p>Gives the entrywise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norm of an iterable <em>x</em>, i.e. the vector norm
+<img class="math" src="_images/math/f93d4f96e853780721fd3f0bdbd9c0beff6ac0d9.png" alt="\left(\sum_k |x_k|^p\right)^{1/p}"/>, for any given <img class="math" src="_images/math/fbdfe77d15141724eb478aad6ee4c12fb05ff874.png" alt="1 \le p \le \infty"/>.</p>
 <p>Special cases:</p>
 <p>If <em>x</em> is not iterable, this just returns <tt class="docutils literal"><span class="pre">absmax(x)</span></tt>.</p>
 <p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the sum of absolute values.</p>
@@ -339,10 +337,10 @@ to specify the infinity norm.</p>
 <dl class="function">
 <dt id="mpmath.linalg.mnorm">
 <!--[mpmath.linalg.mnorm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">mnorm</tt><big>(</big><em>A</em>, <em>p=1</em><big>)</big><a class="headerlink" href="#mpmath.linalg.mnorm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the matrix (operator) <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of A. Currently <tt class="docutils literal"><span class="pre">p=1</span></tt> and <tt class="docutils literal"><span class="pre">p=inf</span></tt>
+<dd><p>Gives the matrix (operator) <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norm of A. Currently <tt class="docutils literal"><span class="pre">p=1</span></tt> and <tt class="docutils literal"><span class="pre">p=inf</span></tt>
 are supported:</p>
 <p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the 1-norm (maximal column sum)</p>
-<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty" />-norm (maximal row sum).
+<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/>-norm (maximal row sum).
 You can use the string &#8216;inf&#8217; as well as float(&#8216;inf&#8217;) or mpf(&#8216;inf&#8217;)</p>
 <p><tt class="docutils literal"><span class="pre">p=2</span></tt> (not implemented) for a square matrix is the usual spectral
 matrix norm, i.e. the largest singular value.</p>
@@ -353,7 +351,7 @@ approximation of the spectral norm and satisfies</p>
 <p><img src="_images/math/424f83eda2a3acdae490f8e78126eb1fb9e63108.png" alt="\frac{1}{\sqrt{\mathrm{rank}(A)}} \|A\|_F \le \|A\|_2 \le \|A\|_F" />
 </div></p><p>The Frobenius norm lacks some mathematical properties that might
 be expected of a norm.</p>
-<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
+<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -530,8 +528,8 @@ and equation solving with rigorous error bounds:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Numerical integration (quadrature)" href="integration.html" />
@@ -54,8 +52,8 @@
 <dl class="function">
 <dt id="mpmath.calculus.diff">
 <!--[mpmath.calculus.diff]--><tt class="descclassname">mpmath.calculus.</tt><tt class="descname">diff</tt><big>(</big><em>f</em>, <em>x</em>, <em>n=1</em>, <em>method='step'</em>, <em>scale=1</em>, <em>direction=0</em><big>)</big><a class="headerlink" href="#mpmath.calculus.diff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numerically computes the derivative of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" />, <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)" />. Optionally,
-computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th derivative, <img class="math" src="../_images/math/6aa62f84d8f61b6891e92197064bf60a07467b3a.png" alt="f^{(n)}(x)" />, for any order <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
+<dd><p>Numerically computes the derivative of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)"/>. Optionally,
+computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th derivative, <img class="math" src="../_images/math/6aa62f84d8f61b6891e92197064bf60a07467b3a.png" alt="f^{(n)}(x)"/>, for any order <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
 <p><strong>Basic examples</strong></p>
 <p>Derivatives of a simple function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -100,11 +98,11 @@ component even if the derivative is actually real:</p>
 <p><strong>Scale</strong></p>
 <p>The scale option specifies the scale of variation of f. The step
 size in the finite difference is taken to be approximately
-eps*scale. Thus, for example if <img class="math" src="../_images/math/6f31f6ae14b95bd09738fafb35828ce90fb12b86.png" alt="f(x) = \cos(1000 x)" />, the scale
-should be set to 1/1000 and if <img class="math" src="../_images/math/5f5bbe9913d2add07bef83566738d06529c8939f.png" alt="f(x) = \cos(x/1000)" />, the scale
+eps*scale. Thus, for example if <img class="math" src="../_images/math/6f31f6ae14b95bd09738fafb35828ce90fb12b86.png" alt="f(x) = \cos(1000 x)"/>, the scale
+should be set to 1/1000 and if <img class="math" src="../_images/math/5f5bbe9913d2add07bef83566738d06529c8939f.png" alt="f(x) = \cos(x/1000)"/>, the scale
 should be 1000. By default, scale = 1.</p>
-<p>(In practice, the default scale will work even for <img class="math" src="../_images/math/d6d8ff8a439d8953182d29b9ab0c531d7312abec.png" alt="\cos(1000 x)" /> or
-<img class="math" src="../_images/math/fd9cd3debf183f117137f4d26b5de4bab6f9533a.png" alt="\cos(x/1000)" />. Changing this parameter is a good idea if the scale
+<p>(In practice, the default scale will work even for <img class="math" src="../_images/math/d6d8ff8a439d8953182d29b9ab0c531d7312abec.png" alt="\cos(1000 x)"/> or
+<img class="math" src="../_images/math/fd9cd3debf183f117137f4d26b5de4bab6f9533a.png" alt="\cos(x/1000)"/>. Changing this parameter is a good idea if the scale
 is something <em>preposterous</em>.)</p>
 <p>If numerical integration is used, the radius of integration is
 taken to be equal to scale/2. Note that f must not have any
@@ -140,12 +138,12 @@ derivative is the same in all directions.</p>
 <dd><p>Returns a generator that yields the sequence of derivatives</p>
 <div class="math">
 <p><img src="../_images/math/3c0032274f8c788ae74a9e8bc21d0f3584b7d55c.png" alt="f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots" />
-</div></p><p>With <tt class="docutils literal"><span class="pre">method='step'</span></tt>, <tt class="xref docutils literal"><span class="pre">diffs()</span></tt> uses only <img class="math" src="../_images/math/5a1380a26be4f09590e6a602879375d89631623a.png" alt="O(k)" />
-function evaluations to generate the first <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> derivatives,
-rather than the roughly <img class="math" src="../_images/math/7997d6cebe4296b1ac5139dce990c5eff08ec23b.png" alt="O(k^2)" /> evaluations
-required if one calls <tt class="xref docutils literal"><span class="pre">diff()</span></tt> <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> separate times.</p>
-<p>With <img class="math" src="../_images/math/2d8bddb244f84c26228b4846d5c63730b5f3d9d5.png" alt="n &lt; \infty" />, the generator stops as soon as the
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th derivative has been generated. If the exact number of
+</div></p><p>With <tt class="docutils literal"><span class="pre">method='step'</span></tt>, <tt class="xref docutils literal"><span class="pre">diffs()</span></tt> uses only <img class="math" src="../_images/math/5a1380a26be4f09590e6a602879375d89631623a.png" alt="O(k)"/>
+function evaluations to generate the first <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> derivatives,
+rather than the roughly <img class="math" src="../_images/math/7997d6cebe4296b1ac5139dce990c5eff08ec23b.png" alt="O(k^2)"/> evaluations
+required if one calls <tt class="xref docutils literal"><span class="pre">diff()</span></tt> <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> separate times.</p>
+<p>With <img class="math" src="../_images/math/2d8bddb244f84c26228b4846d5c63730b5f3d9d5.png" alt="n &lt; \infty"/>, the generator stops as soon as the
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th derivative has been generated. If the exact number of
 needed derivatives is known in advance, this is further
 slightly more efficient.</p>
 <p><strong>Examples</strong></p>
@@ -176,20 +174,20 @@ derivative, defined by</p>
 <div class="math">
 <p><img src="../_images/math/cb3f8dd0c4965356179ff341ffe8b45834703dab.png" alt="\,_{x_0}{\mathbb{D}}^n_xf(x) \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m}
 \int_{x_0}^{x}(x-t)^{m-n-1}f(t)dt" />
-</div></p><p>where <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> is a given (presumably well-behaved) function,
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is the evaluation point, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is the order, and <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> is
-the reference point of integration (<img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> is an arbitrary
+</div></p><p>where <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> is a given (presumably well-behaved) function,
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> is the evaluation point, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is the order, and <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0"/> is
+the reference point of integration (<img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> is an arbitrary
 parameter selected automatically).</p>
-<p>With <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1" />, this is just the standard derivative <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)" />; with <img class="math" src="../_images/math/598a16d4b7dde3dec3a390109882d54bb0308ea5.png" alt="n = 2" />,
-the second derivative <img class="math" src="../_images/math/85fbafec756a37f52333eb40e07673b92e85999b.png" alt="f''(x)" />, etc. With <img class="math" src="../_images/math/56584f0779cf04f3f0d66161f78cb2175bd832c3.png" alt="n = -1" />, it gives
-<img class="math" src="../_images/math/9a7ca706803ef77d2606f7199f6fabc9d7650017.png" alt="\int_{x_0}^x f(t) dt" />, with <img class="math" src="../_images/math/7ef8073b3de4e6bb550c05a09a3852c9463a4a5d.png" alt="n = -2" />
-it gives <img class="math" src="../_images/math/99e272575b108fb659eace5c6352ad4dfdbe600f.png" alt="\int_{x_0}^x \left( \int_{x_0}^t f(u) du \right) dt" />, etc.</p>
-<p>As <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is permitted to be any number, this operator generalizes
+<p>With <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/>, this is just the standard derivative <img class="math" src="../_images/math/bbad379658bd32e9b6479bbd666b93a96e6b48ba.png" alt="f'(x)"/>; with <img class="math" src="../_images/math/598a16d4b7dde3dec3a390109882d54bb0308ea5.png" alt="n = 2"/>,
+the second derivative <img class="math" src="../_images/math/85fbafec756a37f52333eb40e07673b92e85999b.png" alt="f''(x)"/>, etc. With <img class="math" src="../_images/math/56584f0779cf04f3f0d66161f78cb2175bd832c3.png" alt="n = -1"/>, it gives
+<img class="math" src="../_images/math/9a7ca706803ef77d2606f7199f6fabc9d7650017.png" alt="\int_{x_0}^x f(t) dt"/>, with <img class="math" src="../_images/math/7ef8073b3de4e6bb550c05a09a3852c9463a4a5d.png" alt="n = -2"/>
+it gives <img class="math" src="../_images/math/99e272575b108fb659eace5c6352ad4dfdbe600f.png" alt="\int_{x_0}^x \left( \int_{x_0}^t f(u) du \right) dt"/>, etc.</p>
+<p>As <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is permitted to be any number, this operator generalizes
 iterated differentiation and iterated integration to a single
 operator with a continuous order parameter.</p>
 <p><strong>Examples</strong></p>
 <p>There is an exact formula for the fractional derivative of a
-monomial <img class="math" src="../_images/math/90954d0d6ad3d96701a5fbbd6e096d937f9ef43e.png" alt="x^p" />, which may be used as a reference. For example,
+monomial <img class="math" src="../_images/math/90954d0d6ad3d96701a5fbbd6e096d937f9ef43e.png" alt="x^p"/>, which may be used as a reference. For example,
 the following gives a half-derivative (order 0.5):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -203,8 +201,8 @@ the following gives a half-derivative (order 0.5):</p>
 <p>Another useful test function is the exponential function, whose
 integration / differentiation formula easy generalizes
 to arbitrary order. Here we first compute a third derivative,
-and then a triply nested integral. (The reference point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" />
-is set to <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty" /> to avoid nonzero endpoint terms.):</p>
+and then a triply nested integral. (The reference point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0"/>
+is set to <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty"/> to avoid nonzero endpoint terms.):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">differint</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
 <span class="go">0.278538406900792</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*-</span><span class="mf">1.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pi</span><span class="o">**</span><span class="mf">3</span>
@@ -215,7 +213,7 @@ is set to <img class="math" src="../_images/math/afac538740054d4786c170ef0123850
 <span class="go">1922.50563031149</span>
 </pre></div>
 </div>
-<p>However, for noninteger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the differentiation formula for the
+<p>However, for noninteger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the differentiation formula for the
 exponential function must be modified to give the same result as the
 Riemann-Liouville differintegral:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
@@ -283,8 +281,8 @@ Riemann-Liouville differintegral:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -17,8 +17,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.12 documentation" href="index.html" />
     <link rel="next" title="Matrices" href="matrices.html" />
     <link rel="prev" title="Function approximation" href="calculus/approximation.html" /> 
@@ -165,7 +163,7 @@
 </div>
 <div class="section" id="establishing-inequalities">
 <h2>Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
-<p>Interval arithmetic can be used to establish inequalities such as <img class="math" src="_images/math/139abec14f3a7179b5113ee469d7bedc4a797cd7.png" alt="\exp(\pi \sqrt{163}) &lt; 640320^3 + 744" />. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
+<p>Interval arithmetic can be used to establish inequalities such as <img class="math" src="_images/math/139abec14f3a7179b5113ee469d7bedc4a797cd7.png" alt="\exp(\pi \sqrt{163}) &lt; 640320^3 + 744"/>. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
 <span class="go">False</span>
@@ -243,8 +241,8 @@
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 12, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Aug 13, 2009.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->
