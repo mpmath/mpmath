@@ -1,3 +1,70 @@
+--0.13--
+Released August 13, 2009
+
+New special functions:
+
+* The generalized exponential integral E_n (expint(), e1() for E_1)
+* The generalized incomplete beta function (betainc())
+* Whittaker functions (whitm(), whitw())
+* Struve functions (struveh(), struvel())
+* Kelvin functions (ber(), bei(), ker(), kei())
+* Cyclotomic polynomials (cyclotomic())
+* The Meijer G-function (meijerg())
+* Clausen functions (clsin(), clcos())
+* The Appell F1 hypergeometric function of two variables (appellf1())
+* The Hurwitz zeta function, with nth order derivatives (hurwitz())
+* Dirichlet L-series (dirichlet())
+* Coulomb wave functions (coulombf(), coulombg(), coulombc())
+* Associated Legendre functions of 1st and 2nd kind (legenp(), legenq())
+* Hermite polynomials (hermite())
+* Gegenbauer polynomials (gegenbauer())
+* Associated Laguerre polynomials (laguerre())
+* Hypergeometric functions hyp1f2(), hyp2f2(), hyp2f3(), hyp2f0(), hyperu()
+
+Evaluation of hypergeometric functions:
+
+* Added the function hypercomb() for evaluating expressions containing
+  hypergeometric series, with automatic handling of limits
+* The available hypergeometric series (of orders up to and including 2F3)
+  implement asymptotic expansions with respect to the last argument z, allowing
+  fast and accurate evaluation anywhere in the complex plane. A massive number
+  of functions, including Bessel functions, error functions, etc., have been
+  updated to take advantage of this to support fast and accurate evaluation
+  anywhere in the complex plane.
+* Fixed hyp2f1 to handle z close to and on the unit circle (supporting
+  evaluation anywhere in the complex plane)
+* hyper() handles the 0F0 and 1F0 cases exactly
+* hyper() eventually raises NoConvergence instead of getting stuck in
+  an infinite loop if given a divergent or extremely slowly convergent series
+
+Other improvements and bug fixes to special functions:
+
+* gammainc is much faster for large arguments and avoids catastrophic
+  cancellation
+* Implemented specialized code for ei(x), e1(x), expint(n,x) and gammainc(n,x)
+  for small integers n, making evaluation much faster
+* Extended the domain of polylog
+* Fixed accuracy for asin(x) near x = 1
+* Fast evaluation of Bernoulli polynomials for large z
+* Fixed Jacobi polynomials to handle some poles
+* Some Bessel functions support computing nth order derivatives
+* A set of "torture tests" for special functions is available as
+  tests/torture.py
+
+Other:
+* Implemented the differint() function for fractional differentiaton / iterated
+  integration
+* Added functions fadd, fsub, fneg, fmul, fdiv for high-level arithmetic with
+  controllable precision and rounding
+* Added the function mag() for quick order-of-magnitude estimates of numbers
+* Implemented powm1() for accurate calculation of x^y-1
+* Improved speed and accuracy for raising a pure imaginary number to
+  an integer power
+* nthroot() renamed to root(); root() optionally computes any of
+  the non-principal roots of a number
+* Implemented unitroots() for generating all (primitive) roots of unity
+* Added the mp.pretty option for nicer repr output
+
 --0.12--
 Released June 9, 2009
 
