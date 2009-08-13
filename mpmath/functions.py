@@ -978,23 +978,24 @@ def hyp1f1(ctx, a, b, z, **kwargs):
         #checked = 2*ctx.prec+40
         #if ctx._hyp_check_convergence([a, a-b], [], 1/z, 2*ctx.prec+40):
         try:
-            ctx.prec += magz
-            sector = z.imag < 0 and z.real <= 0
-            def h(a,b):
-                if sector:
-                    E = ctx.exp(-ctx.j * ctx.pi*a)
-                else:
-                    E = ctx.exp(ctx.j * ctx.pi*a)
-                rz = 1/z
-                T1 = ([E,z], [1,-a], [b], [b-a], [a, 1+a-b], [], -rz)
-                T2 = ([ctx.exp(z),z], [1,a-b], [b], [a], [b-a, 1-a], [], rz)
-                return T1, T2
-            v = ctx.hypercomb(h, [a,b], force_series=True)
-            if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
-                v = v.real
-            return +v
-        except NoConvergence:
-            pass
+            try:
+                ctx.prec += magz
+                sector = z.imag < 0 and z.real <= 0
+                def h(a,b):
+                    if sector:
+                        E = ctx.exp(-ctx.j * ctx.pi*a)
+                    else:
+                        E = ctx.exp(ctx.j * ctx.pi*a)
+                    rz = 1/z
+                    T1 = ([E,z], [1,-a], [b], [b-a], [a, 1+a-b], [], -rz)
+                    T2 = ([ctx.exp(z),z], [1,a-b], [b], [a], [b-a, 1-a], [], rz)
+                    return T1, T2
+                v = ctx.hypercomb(h, [a,b], force_series=True)
+                if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
+                    v = v.real
+                return +v
+            except NoConvergence:
+                pass
         finally:
             ctx.prec -= magz
     if ar and br:
@@ -1267,46 +1268,47 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
     if can_use_asymptotic:
         #print "using asymp"
         try:
-            ctx.prec += asymp_extraprec
-            # http://functions.wolfram.com/HypergeometricFunctions/
-            # Hypergeometric2F2/06/02/02/0002/
-            def h(a1,a2,b1,b2):
-                X = a1+a2-b1-b2
-                A2 = a1+a2
-                B2 = b1+b2
-                c = {}
-                c[0] = ctx.one
-                c[1] = (A2-1)*X+b1*b2-a1*a2
-                s1 = 0
-                k = 0
-                tprev = 0
-                while 1:
-                    if k not in c:
-                        uu1 = 1-B2+2*a1+a1**2+2*a2+a2**2-A2*B2+a1*a2+b1*b2+(2*B2-3*(A2+1))*k+2*k**2
-                        uu2 = (k-A2+b1-1)*(k-A2+b2-1)*(k-X-2)
-                        c[k] = ctx.one/k * (uu1*c[k-1]-uu2*c[k-2])
-                    t1 = c[k] * z**(-k)
-                    if abs(t1) < 0.1*ctx.eps:
-                        #print "Convergence :)"
-                        break
-                    # Quit if the series doesn't converge quickly enough
-                    if k > 5 and abs(tprev) / abs(t1) < 1.5:
-                        #print "No convergence :("
-                        raise NoConvergence
-                    s1 += t1
-                    tprev = t1
-                    k += 1
-                S = ctx.exp(z)*s1
-                T1 = [z,S], [X,1], [b1,b2],[a1,a2],[],[],0
-                T2 = [-z],[-a1],[b1,b2,a2-a1],[a2,b1-a1,b2-a1],[a1,a1-b1+1,a1-b2+1],[a1-a2+1],-1/z
-                T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
-                return T1, T2, T3
-            v = hypercomb(h, [a1,a2,b1,b2])
-            if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
-                v = ctx.re(v)
-            return v
-        except NoConvergence:
-            pass
+            try:
+                ctx.prec += asymp_extraprec
+                # http://functions.wolfram.com/HypergeometricFunctions/
+                # Hypergeometric2F2/06/02/02/0002/
+                def h(a1,a2,b1,b2):
+                    X = a1+a2-b1-b2
+                    A2 = a1+a2
+                    B2 = b1+b2
+                    c = {}
+                    c[0] = ctx.one
+                    c[1] = (A2-1)*X+b1*b2-a1*a2
+                    s1 = 0
+                    k = 0
+                    tprev = 0
+                    while 1:
+                        if k not in c:
+                            uu1 = 1-B2+2*a1+a1**2+2*a2+a2**2-A2*B2+a1*a2+b1*b2+(2*B2-3*(A2+1))*k+2*k**2
+                            uu2 = (k-A2+b1-1)*(k-A2+b2-1)*(k-X-2)
+                            c[k] = ctx.one/k * (uu1*c[k-1]-uu2*c[k-2])
+                        t1 = c[k] * z**(-k)
+                        if abs(t1) < 0.1*ctx.eps:
+                            #print "Convergence :)"
+                            break
+                        # Quit if the series doesn't converge quickly enough
+                        if k > 5 and abs(tprev) / abs(t1) < 1.5:
+                            #print "No convergence :("
+                            raise NoConvergence
+                        s1 += t1
+                        tprev = t1
+                        k += 1
+                    S = ctx.exp(z)*s1
+                    T1 = [z,S], [X,1], [b1,b2],[a1,a2],[],[],0
+                    T2 = [-z],[-a1],[b1,b2,a2-a1],[a2,b1-a1,b2-a1],[a1,a1-b1+1,a1-b2+1],[a1-a2+1],-1/z
+                    T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
+                    return T1, T2, T3
+                v = hypercomb(h, [a1,a2,b1,b2])
+                if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
+                    v = ctx.re(v)
+                return v
+            except NoConvergence:
+                pass
         finally:
             ctx.prec = orig
 
@@ -1342,55 +1344,56 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
     if can_use_asymptotic:
         #print "using asymp"
         try:
-            ctx.prec += asymp_extraprec
-            # http://functions.wolfram.com/HypergeometricFunctions/
-            # Hypergeometric1F2/06/02/03/
-            def h(a1,b1,b2):
-                X = mpq_1_2*(a1-b1-b2+mpq_1_2)
-                c = {}
-                c[0] = ctx.one
-                c[1] = 2*(mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-mpq_3_16)
-                c[2] = 2*(b1*b2+mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-mpq_3_16)**2+\
-                    mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
-                    4*(a1-b1-b2)*(-8*a1**2+11*a1+b1+b2-2)-3)
-                s1 = 0
-                s2 = 0
-                k = 0
-                tprev = 0
-                while 1:
-                    if k not in c:
-                        uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
-                            (b1-b2)**2 - 2*a1*(b1+b2-2) + mpq_1_4)
-                        uu2 = (k-a1+b1-b2-mpq_1_2)*(k-a1-b1+b2-mpq_1_2)*\
-                            (k-a1+b1+b2-mpq_5_2)
-                        c[k] = ctx.one/(2*k)*(uu1*c[k-1]-uu2*c[k-2])
-                    w = c[k] * (-z)**(-0.5*k)
-                    t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
-                    t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
-                    if abs(t1) < 0.1*ctx.eps:
-                        #print "Convergence :)"
-                        break
-                    # Quit if the series doesn't converge quickly enough
-                    if k > 5 and abs(tprev) / abs(t1) < 1.5:
-                        #print "No convergence :("
-                        raise NoConvergence
-                    s1 += t1
-                    s2 += t2
-                    tprev = t1
-                    k += 1
-                S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
-                    ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
-                T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2], [a1],\
-                    [], [], 0
-                T2 = [-z], [-a1], [b1,b2],[b1-a1,b2-a1], \
-                    [a1,a1-b1+1,a1-b2+1], [], 1/z
-                return T1, T2
-            v = hypercomb(h, [a1,b1,b2])
-            if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
-                v = ctx.re(v)
-            return v
-        except NoConvergence:
-            pass
+            try:
+                ctx.prec += asymp_extraprec
+                # http://functions.wolfram.com/HypergeometricFunctions/
+                # Hypergeometric1F2/06/02/03/
+                def h(a1,b1,b2):
+                    X = mpq_1_2*(a1-b1-b2+mpq_1_2)
+                    c = {}
+                    c[0] = ctx.one
+                    c[1] = 2*(mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-mpq_3_16)
+                    c[2] = 2*(b1*b2+mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-mpq_3_16)**2+\
+                        mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
+                        4*(a1-b1-b2)*(-8*a1**2+11*a1+b1+b2-2)-3)
+                    s1 = 0
+                    s2 = 0
+                    k = 0
+                    tprev = 0
+                    while 1:
+                        if k not in c:
+                            uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
+                                (b1-b2)**2 - 2*a1*(b1+b2-2) + mpq_1_4)
+                            uu2 = (k-a1+b1-b2-mpq_1_2)*(k-a1-b1+b2-mpq_1_2)*\
+                                (k-a1+b1+b2-mpq_5_2)
+                            c[k] = ctx.one/(2*k)*(uu1*c[k-1]-uu2*c[k-2])
+                        w = c[k] * (-z)**(-0.5*k)
+                        t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
+                        t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
+                        if abs(t1) < 0.1*ctx.eps:
+                            #print "Convergence :)"
+                            break
+                        # Quit if the series doesn't converge quickly enough
+                        if k > 5 and abs(tprev) / abs(t1) < 1.5:
+                            #print "No convergence :("
+                            raise NoConvergence
+                        s1 += t1
+                        s2 += t2
+                        tprev = t1
+                        k += 1
+                    S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
+                        ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
+                    T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2], [a1],\
+                        [], [], 0
+                    T2 = [-z], [-a1], [b1,b2],[b1-a1,b2-a1], \
+                        [a1,a1-b1+1,a1-b2+1], [], 1/z
+                    return T1, T2
+                v = hypercomb(h, [a1,b1,b2])
+                if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
+                    v = ctx.re(v)
+                return v
+            except NoConvergence:
+                pass
         finally:
             ctx.prec = orig
 
@@ -1431,64 +1434,65 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
     if can_use_asymptotic:
         #print "using asymp"
         try:
-            ctx.prec += asymp_extraprec
-            # http://functions.wolfram.com/HypergeometricFunctions/
-            # Hypergeometric2F3/06/02/03/01/0002/
-            def h(a1,a2,b1,b2,b3):
-                X = mpq_1_2*(a1+a2-b1-b2-b3+mpq_1_2)
-                A2 = a1+a2
-                B3 = b1+b2+b3
-                A = a1*a2
-                B = b1*b2+b3*b2+b1*b3
-                R = b1*b2*b3
-                c = {}
-                c[0] = ctx.one
-                c[1] = 2*(B - A + mpq_1_4*(3*A2+B3-2)*(A2-B3) - mpq_3_16)
-                c[2] = mpq_1_2*c[1]**2 + mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
-                    4*(-8*A2**2 + 11*A2 + 8*A + B3 - 2)*(A2-B3)-3)
-                s1 = 0
-                s2 = 0
-                k = 0
-                tprev = 0
-                while 1:
-                    if k not in c:
-                        uu1 = (k-2*X-3)*(k-2*X-2*b1-1)*(k-2*X-2*b2-1)*\
-                            (k-2*X-2*b3-1)
-                        uu2 = (4*(k-1)**3 - 6*(4*X+B3)*(k-1)**2 + \
-                            2*(24*X**2+12*B3*X+4*B+B3-1)*(k-1) - 32*X**3 - \
-                            24*B3*X**2 - 4*B - 8*R - 4*(4*B+B3-1)*X + 2*B3-1)
-                        uu3 = (5*(k-1)**2+2*(-10*X+A2-3*B3+3)*(k-1)+2*c[1])
-                        c[k] = ctx.one/(2*k)*(uu1*c[k-3]-uu2*c[k-2]+uu3*c[k-1])
-                    w = c[k] * (-z)**(-0.5*k)
-                    t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
-                    t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
-                    #print k, abs(t1)
-                    if abs(t1) < 0.1*ctx.eps:
-                        #print "Convergence :)"
-                        break
-                    # Quit if the series doesn't converge quickly enough
-                    if k > 5 and abs(tprev) / abs(t1) < 1.5:
-                        #print "No convergence :("
-                        raise NoConvergence
-                    s1 += t1
-                    s2 += t2
-                    tprev = t1
-                    k += 1
-                S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
-                    ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
-                T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2, b3], [a1, a2],\
-                    [], [], 0
-                T2 = [-z], [-a1], [b1,b2,b3,a2-a1],[a2,b1-a1,b2-a1,b3-a1], \
-                    [a1,a1-b1+1,a1-b2+1,a1-b3+1], [a1-a2+1], 1/z
-                T3 = [-z], [-a2], [b1,b2,b3,a1-a2],[a1,b1-a2,b2-a2,b3-a2], \
-                    [a2,a2-b1+1,a2-b2+1,a2-b3+1],[-a1+a2+1], 1/z
-                return T1, T2, T3
-            v = hypercomb(h, [a1,a2,b1,b2,b3])
-            if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
-                v = ctx.re(v)
-            return v
-        except NoConvergence:
-            pass
+            try:
+                ctx.prec += asymp_extraprec
+                # http://functions.wolfram.com/HypergeometricFunctions/
+                # Hypergeometric2F3/06/02/03/01/0002/
+                def h(a1,a2,b1,b2,b3):
+                    X = mpq_1_2*(a1+a2-b1-b2-b3+mpq_1_2)
+                    A2 = a1+a2
+                    B3 = b1+b2+b3
+                    A = a1*a2
+                    B = b1*b2+b3*b2+b1*b3
+                    R = b1*b2*b3
+                    c = {}
+                    c[0] = ctx.one
+                    c[1] = 2*(B - A + mpq_1_4*(3*A2+B3-2)*(A2-B3) - mpq_3_16)
+                    c[2] = mpq_1_2*c[1]**2 + mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
+                        4*(-8*A2**2 + 11*A2 + 8*A + B3 - 2)*(A2-B3)-3)
+                    s1 = 0
+                    s2 = 0
+                    k = 0
+                    tprev = 0
+                    while 1:
+                        if k not in c:
+                            uu1 = (k-2*X-3)*(k-2*X-2*b1-1)*(k-2*X-2*b2-1)*\
+                                (k-2*X-2*b3-1)
+                            uu2 = (4*(k-1)**3 - 6*(4*X+B3)*(k-1)**2 + \
+                                2*(24*X**2+12*B3*X+4*B+B3-1)*(k-1) - 32*X**3 - \
+                                24*B3*X**2 - 4*B - 8*R - 4*(4*B+B3-1)*X + 2*B3-1)
+                            uu3 = (5*(k-1)**2+2*(-10*X+A2-3*B3+3)*(k-1)+2*c[1])
+                            c[k] = ctx.one/(2*k)*(uu1*c[k-3]-uu2*c[k-2]+uu3*c[k-1])
+                        w = c[k] * (-z)**(-0.5*k)
+                        t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
+                        t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
+                        #print k, abs(t1)
+                        if abs(t1) < 0.1*ctx.eps:
+                            #print "Convergence :)"
+                            break
+                        # Quit if the series doesn't converge quickly enough
+                        if k > 5 and abs(tprev) / abs(t1) < 1.5:
+                            #print "No convergence :("
+                            raise NoConvergence
+                        s1 += t1
+                        s2 += t2
+                        tprev = t1
+                        k += 1
+                    S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
+                        ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
+                    T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2, b3], [a1, a2],\
+                        [], [], 0
+                    T2 = [-z], [-a1], [b1,b2,b3,a2-a1],[a2,b1-a1,b2-a1,b3-a1], \
+                        [a1,a1-b1+1,a1-b2+1,a1-b3+1], [a1-a2+1], 1/z
+                    T3 = [-z], [-a2], [b1,b2,b3,a1-a2],[a1,b1-a2,b2-a2,b3-a2], \
+                        [a2,a2-b1+1,a2-b2+1,a2-b3+1],[-a1+a2+1], 1/z
+                    return T1, T2, T3
+                v = hypercomb(h, [a1,a2,b1,b2,b3])
+                if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
+                    v = ctx.re(v)
+                return v
+            except NoConvergence:
+                pass
         finally:
             ctx.prec = orig
 
