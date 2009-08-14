@@ -372,7 +372,12 @@ class MultiPrecisionArithmetic(Context, quadrature.QuadratureMethods):
         if hasattr(x, '_mpc_'): return ctx.make_mpc(x._mpc_)
         if hasattr(x, '_mpmath_'):
             return ctx.convert(x._mpmath_(*prec_rounding))
-        raise TypeError("cannot create mpf from " + repr(x))
+        from matrices import matrix
+        try:
+            return matrix(x)
+        except TypeError:
+            pass
+        raise TypeError("cannot create mpmath type from " + repr(x))
 
     mpmathify = convert
 
