@@ -738,6 +738,14 @@ class _mpq(tuple):
             return _mpq((a*other, b))
         return NotImplemented
 
+    def __div__(self, other):
+        if isinstance(other, (int, long)):
+            if other:
+                a, b = self
+                return _mpq((a, b*other))
+            raise ZeroDivisionError
+        return NotImplemented
+
     def __pow__(self, other):
         if type(other) is int:
             a, b = self
@@ -1006,35 +1014,55 @@ def hyp1f1(ctx, a, b, z, **kwargs):
 def _hyp2f1_gosper(ctx,a,b,c,z):
     # Use Gosper's recurrence
     # See http://www.math.utexas.edu/pipermail/maxima/2006/000126.html
-    a = ctx.convert(a)
-    b = ctx.convert(b)
-    c = ctx.convert(c)
-    d = ctx.mpf(0)
-    e = ctx.mpf(1)
-    f = ctx.mpf(0)
-    k = 0
-    # Common subexpression elimination, unfortunately making
-    # things a bit unreadable. The formula is quite messy to begin
-    # with, though...
-    abz = a*b*z
-    ch = c/2
-    c1h = (c+1)/2
-    nz = 1-z
-    g = z/nz
-    abg = a*b*g
-    cba = c-b-a
-    z2 = z-2
-    tol = -ctx.prec - 10
+    _a,_b,_c,_z = a, b, c, z
+
+    orig = ctx.prec
+    extra = 10
     while 1:
-        kch = k+ch
-        kakbz = (k+a)*(k+b)*z / (4*(k+1)*kch*(k+c1h))
-        d1 = kakbz*(e-(k+cba)*d*g)
-        e1 = kakbz*(d*abg+(k+c)*e)
-        f1 = f + e - d*(k*(cba*z+k*z2-c)-abz)/(2*kch*nz)
-        if ctx.mag(f1-f) < tol:
+        ctx.prec = orig + extra
+        #a = ctx.convert(_a)
+        #b = ctx.convert(_b)
+        #c = ctx.convert(_c)
+        z = ctx.convert(_z)
+        d = ctx.mpf(0)
+        e = ctx.mpf(1)
+        f = ctx.mpf(0)
+        k = 0
+        # Common subexpression elimination, unfortunately making
+        # things a bit unreadable. The formula is quite messy to begin
+        # with, though...
+        abz = a*b*z
+        ch = c/2
+        c1h = (c+1)/2
+        nz = 1-z
+        g = z/nz
+        abg = a*b*g
+        cba = c-b-a
+        z2 = z-2
+        tol = -ctx.prec - 10
+        nstr = ctx.nstr
+        nprint = ctx.nprint
+        mag = ctx.mag
+        maxmag = ctx.ninf
+        while 1:
+            kch = k+ch
+            kakbz = (k+a)*(k+b)*z / (4*(k+1)*kch*(k+c1h))
+            d1 = kakbz*(e-(k+cba)*d*g)
+            e1 = kakbz*(d*abg+(k+c)*e)
+            ft = d*(k*(cba*z+k*z2-c)-abz)/(2*kch*nz)
+            f1 = f + e - ft
+            maxmag = max(maxmag, mag(f1))
+            if mag(f1-f) < tol:
+                break
+            d, e, f = d1, e1, f1
+            k += 1
+        cancellation = maxmag - mag(f1)
+        if cancellation < extra:
             break
-        d, e, f = d1, e1, f1
-        k += 1
+        else:
+            extra += cancellation
+            if extra > 100*orig:
+                raise NoConvergence
     return f1
 
 @defun
@@ -1133,7 +1161,7 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
 @defun
 def hypercomb(ctx, function, params=[], **kwargs):
     orig = ctx.prec
-    sumvalue = 0
+    sumvalue = ctx.zero
     dist = ctx.nint_distance
     ninf = ctx.ninf
     convert = ctx.convert
@@ -1219,7 +1247,7 @@ def hypercomb(ctx, function, params=[], **kwargs):
                 break
             # Problem: reconcile this with intentional cancellation
             elif kwargs.get('check_cancellation'):
-                sumvalue = sum(evaluated_terms)
+                sumvalue = ctx.fsum(evaluated_terms)
                 c = max(ctx.mag(x) for x in evaluated_terms) - ctx.mag(sumvalue)
                 if c < ctx.prec - orig:
                     break
@@ -1232,7 +1260,7 @@ def hypercomb(ctx, function, params=[], **kwargs):
                             "value is probably either zero or extremely small.")
                     continue
             else:
-                sumvalue = sum(evaluated_terms)
+                sumvalue = ctx.fsum(evaluated_terms)
                 break
     finally:
         ctx.prec = orig

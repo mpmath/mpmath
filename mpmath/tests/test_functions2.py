@@ -457,6 +457,9 @@ def test_hyper_2f1_hard():
     assert hyp2f1(1,1,2,3+4j).ae(0.14576709331407297807+0.48379185417980360773j)
     assert hyp2f1(1,1,2,4).ae(-0.27465307216702742285 - 0.78539816339744830962j)
     assert hyp2f1(1,1,2,-4).ae(0.40235947810852509365)
+    # Other:
+    # Cancellation with a large parameter involved (bug reported on sage-devel)
+    assert hyp2f1(112, (51,10), (-9,10), -0.99999).ae(-1.6241361047970862961e-24, abs_eps=0, rel_eps=eps*16)
 
 def test_hyper_u():
     mp.dps = 15
