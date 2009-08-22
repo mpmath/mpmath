@@ -192,6 +192,7 @@ test_asymp(lambda z: djtheta(1, z, 0.5, 1))
 test_asymp(lambda z: djtheta(2, z, 0.5, 1))
 test_asymp(lambda z: djtheta(3, z, 0.5, 1))
 test_asymp(lambda z: djtheta(4, z, 0.5, 1))
+test_asymp(barnesg, maxdps=90)
 """
 
 def testit(line):

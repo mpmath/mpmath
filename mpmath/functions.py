@@ -1154,6 +1154,10 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
         # Remaining part of unit circle
         else:
             v = _hyp2f1_gosper(ctx,a,b,c,z)
+
+        # TODO: for z ~= -1, we could use a series expansion around -1
+        # using the fact that F(a,b,c,-1) = F(a,c-b,c,0.5)/2^a
+
     finally:
         ctx.prec = orig
     return +v
@@ -2445,10 +2449,22 @@ def barnesg(ctx, z):
     # Account for size (would not be needed if computing log(G))
     if abs(z) > 5:
         ctx.dps += 2*ctx.log(abs(z),2)
+    # Reflection formula
+    if ctx.re(z) < -ctx.dps:
+        w = 1-z
+        pi2 = 2*ctx.pi
+        u = ctx.exp(ctx.j*pi2*w)
+        v = ctx.j*ctx.pi/12 - ctx.j*ctx.pi*w**2/2 + w*ctx.ln(1-u) - \
+            ctx.j*ctx.polylog(2, u)/pi2
+        v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
+        if ctx.is_real_type(z):
+            v = v.real
+        return v
     # Estimate terms for asymptotic expansion
+    # TODO: fixme, obviously
     N = ctx.dps // 2 + 5
     G = 1
-    while ctx.re(z) < N:
+    while abs(z) < N or ctx.re(z) < 1:
         G /= ctx.gamma(z)
         z += 1
     z -= 1
@@ -2466,7 +2482,7 @@ def barnesg(ctx, z):
         z2k *= z2
         s += t
     #if k == N:
-    #    print "warning: series for barnesg failed to converge"
+    #    print "warning: series for barnesg failed to converge", mp.dps
     return G*ctx.exp(s)
 
 @defun
