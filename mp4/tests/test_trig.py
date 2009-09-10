@@ -1,4 +1,4 @@
-from mpmath import *
+from mp4 import *
 from mpmath.libmpf import *
 
 def test_trig_misc_hard():

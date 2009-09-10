@@ -50,14 +50,21 @@ if "-nogmpy" in sys.argv:
     sys.argv.remove('-nogmpy')
     os.environ['MPMATH_NOGMPY'] = 'Y'
 
-from mpmath import *
+filt = ''
+if not sys.argv[-1].endswith(".py"):
+    filt = sys.argv[-1]
+
+from mp4 import *
 
 def test_asymp(f, maxdps=150, verbose=False):
     dps = [5,15,25,50,90,150,500,1500,5000,10000]
     dps = [p for p in dps if p <= maxdps]
     def check(x,y,p,inpt):
-        if abs(x-y)/abs(y) < workprec(20)(power)(10, -p+1):
+        #prec = mp.prec
+        #mp.prec = 20
+        if abs(x-y)/abs(y) < power(10, -p+1): #workprec(20)(power)(10, -p+1):
             return
+        #mp.prec = prec
         print
         print "Error!"
         print "Input:", inpt
@@ -196,12 +203,13 @@ test_asymp(barnesg, maxdps=90)
 """
 
 def testit(line):
-    print line
-    t1 = clock()
-    exec line
-    t2 = clock()
-    elapsed = t2-t1
-    print "Time:", elapsed, "for", line, "(OK)"
+    if filt in line:
+        print line
+        t1 = clock()
+        exec line
+        t2 = clock()
+        elapsed = t2-t1
+        print "Time:", elapsed, "for", line, "(OK)"
 
 if __name__ == '__main__':
     try:

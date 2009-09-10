@@ -1,4 +1,4 @@
-from mpmath import *
+from mp4 import *
 
 def test_diff():
     assert diff(log, 2.0, n=0).ae(log(2))

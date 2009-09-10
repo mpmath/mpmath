@@ -1,4 +1,4 @@
-from mpmath import *
+from mp4 import *
 from mpmath.mptypes import mpi_to_str, mpi_from_str
 
 def test_interval_identity():

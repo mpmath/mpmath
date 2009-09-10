@@ -10,18 +10,28 @@ etc
 """
 
 from itertools import izip
+from gammazeta import int_fac
 
+'''
 from mptypes import (mp, extraprec)
 from mptypes import (mpmathify, mpf, mpc, j, inf, eps,
     AS_POINTS, arange, nstr, nprint, isinf, fsum, fprod)
 from functions import (ldexp, factorial, exp, ln, sin, cos, pi, bernoulli,
     sign, ceil, re, gamma)
-from gammazeta import int_fac
 
 from matrices import matrix
 from linalg import lu_solve
+'''
 
-def richardson(seq):
+
+class CalculusMethods(object):
+    pass
+
+def defun(f):
+    setattr(CalculusMethods, f.__name__, f)
+
+@defun
+def richardson(ctx, seq):
     r"""
     Given a list ``seq`` of the first `N` elements of a slowly convergent
     infinite sequence, :func:`richardson` computes the `N`-term
@@ -65,7 +75,7 @@ def richardson(seq):
 
     Applying Richardson extrapolation to the Leibniz series for `\pi`::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 30; mp.pretty = True
         >>> S = [4*sum(mpf(-1)**n/(2*n+1) for n in range(m))
         ...     for m in range(1,30)]
@@ -88,23 +98,24 @@ def richardson(seq):
 
     """
     assert len(seq) >= 3
-    if sign(seq[-1]-seq[-2]) != sign(seq[-2]-seq[-3]):
+    if ctx.sign(seq[-1]-seq[-2]) != ctx.sign(seq[-2]-seq[-3]):
         seq = seq[::2]
     N = len(seq)//2-1
-    s = mpf(0)
+    s = ctx.zero
     # The general weight is c[k] = (N+k)**N * (-1)**(k+N) / k! / (N-k)!
     # To avoid repeated factorials, we simplify the quotient
     # of successive weights to obtain a recurrence relation
-    c = (-1)**N * N**N / mpf(int_fac(N))
+    c = (-1)**N * N**N / ctx.mpf(int_fac(N))
     maxc = 1
     for k in xrange(N+1):
         s += c * seq[N+k]
         maxc = max(abs(c), maxc)
-        c *= (k-N)*mpf(k+N+1)**N
-        c /= ((1+k)*mpf(k+N)**N)
+        c *= (k-N)*ctx.mpf(k+N+1)**N
+        c /= ((1+k)*ctx.mpf(k+N)**N)
     return s, maxc
 
-def shanks(seq, table=None, randomized=False):
+@defun
+def shanks(ctx, seq, table=None, randomized=False):
     r"""
     Given a list ``seq`` of the first `N` elements of a slowly
     convergent infinite sequence `(A_k)`, :func:`shanks` computes the iterated
@@ -183,7 +194,7 @@ def shanks(seq, table=None, randomized=False):
     We illustrate by applying Shanks transformation to the Leibniz
     series for `\pi`::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 50
         >>> S = [4*sum(mpf(-1)**n/(2*n+1) for n in range(m))
         ...     for m in range(1,30)]
@@ -244,7 +255,8 @@ def shanks(seq, table=None, randomized=False):
     STOP = len(seq) - 1
     if STOP & 1:
         STOP -= 1
-    one = mpf(1)
+    one = ctx.one
+    eps = +ctx.eps
     if randomized:
         from random import Random
         rnd = Random()
@@ -271,7 +283,8 @@ def shanks(seq, table=None, randomized=False):
         table.append(row)
     return table
 
-def sumem(f, interval, tol=None, reject=10, integral=None,
+@defun
+def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
     adiffs=None, bdiffs=None, verbose=False, error=False):
     r"""
     Uses the Euler-Maclaurin formula to compute an approximation accurate
@@ -318,7 +331,7 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
     Summation of an infinite series, with automatic and symbolic
     integral and derivative values (the second should be much faster)::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 50; mp.pretty = True
         >>> sumem(lambda n: 1/n**2, [32, inf])
         0.03174336652030209012658168043874142714132886413417
@@ -335,28 +348,28 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
         10500155000624963999742499550000
 
     """
-    tol = tol or +eps
-    interval = AS_POINTS(interval)
-    a = mpmathify(interval[0])
-    b = mpmathify(interval[-1])
-    err = mpf(0)
+    tol = tol or +ctx.eps
+    interval = ctx.AS_POINTS(interval)
+    a = ctx.convert(interval[0])
+    b = ctx.convert(interval[-1])
+    err = ctx.zero
     prev = 0
     M = 10000
-    if a == -inf: adiffs = (0 for n in xrange(M))
-    else:         adiffs = adiffs or diffs(f, a)
-    if b == inf:  bdiffs = (0 for n in xrange(M))
-    else:         bdiffs = bdiffs or diffs(f, b)
-    orig = mp.prec
+    if a == ctx.ninf: adiffs = (0 for n in xrange(M))
+    else:             adiffs = adiffs or ctx.diffs(f, a)
+    if b == ctx.inf:  bdiffs = (0 for n in xrange(M))
+    else:             bdiffs = bdiffs or ctx.diffs(f, b)
+    orig = ctx.prec
     #verbose = 1
     try:
-        mp.prec += 10
-        s = mpf(0)
+        ctx.prec += 10
+        s = ctx.zero
         for k, (da, db) in enumerate(izip(adiffs, bdiffs)):
             if k & 1:
-                term = (db-da) * bernoulli(k+1) / factorial(k+1)
+                term = (db-da) * ctx.bernoulli(k+1) / ctx.factorial(k+1)
                 mag = abs(term)
                 if verbose:
-                    print "term", k, "magnitude =", nstr(mag)
+                    print "term", k, "magnitude =", ctx.nstr(mag)
                 if k > 4 and mag < tol:
                     s += term
                     break
@@ -369,31 +382,32 @@ def sumem(f, interval, tol=None, reject=10, integral=None,
                     s += term
                 prev = term
         # Endpoint correction
-        if a != -inf: s += f(a)/2
-        if b != inf: s += f(b)/2
+        if a != ctx.ninf: s += f(a)/2
+        if b != ctx.inf: s += f(b)/2
         # Tail integral
         if verbose:
-            print "Integrating f(x) from x = %s to %s" % (nstr(a), nstr(b))
+            print "Integrating f(x) from x = %s to %s" % (ctx.nstr(a), ctx.nstr(b))
         if integral:
             s += integral
         else:
-            integral, ierr = mp.quad(f, interval, error=True)
+            integral, ierr = ctx.quad(f, interval, error=True)
             if verbose:
                 print "Integration error:", ierr
             s += integral
             err += ierr
     finally:
-        mp.prec = orig
+        ctx.prec = orig
     if error:
         return s, err
     else:
         return s
 
-def adaptive_extrapolation(update, emfun, kwargs):
+@defun
+def adaptive_extrapolation(ctx, update, emfun, kwargs):
     option = kwargs.get
-    tol = option('tol', eps/2**10)
+    tol = option('tol', ctx.eps/2**10)
     verbose = option('verbose', False)
-    maxterms = option('maxterms', mp.dps*10)
+    maxterms = option('maxterms', ctx.dps*10)
     method = option('method', 'r+s').split('+')
     skip = option('skip', 0)
     steps = iter(option('steps', xrange(10, 10**9, 10)))
@@ -411,13 +425,13 @@ def adaptive_extrapolation(update, emfun, kwargs):
     index = 0
     step = 10
     partial = []
-    best = mpf(0)
-    orig = mp.prec
+    best = ctx.zero
+    orig = ctx.prec
     try:
         if TRY_RICHARDSON or TRY_SHANKS:
-            mp.prec *= 4
+            ctx.prec *= 4
         else:
-            mp.prec += 30
+            ctx.prec += 30
         while 1:
             if index >= maxterms:
                 break
@@ -437,24 +451,23 @@ def adaptive_extrapolation(update, emfun, kwargs):
             best = partial[-1]
             error = abs(best - partial[-2])
             if verbose:
-                print "Direct error: %s" % nstr(error)
+                print "Direct error: %s" % ctx.nstr(error)
             if error <= tol:
                 return best
 
             # Check each extrapolation method
             if TRY_RICHARDSON:
-                value, maxc = richardson(partial)
+                value, maxc = ctx.richardson(partial)
                 # Convergence
                 richardson_error = abs(value - last_richardson_value)
                 if verbose:
-                    print "Richardson error: %s" % \
-                        nstr(richardson_error)
+                    print "Richardson error: %s" % ctx.nstr(richardson_error)
                 # Convergence
                 if richardson_error <= tol:
                     return value
                 last_richardson_value = value
                 # Unreliable due to cancellation
-                if eps*maxc > tol:
+                if ctx.eps*maxc > tol:
                     if verbose:
                         print "Ran out of precision for Richardson"
                     TRY_RICHARDSON = False
@@ -462,7 +475,7 @@ def adaptive_extrapolation(update, emfun, kwargs):
                     error = richardson_error
                     best = value
             if TRY_SHANKS:
-                shanks_table = shanks(partial, shanks_table, randomized=True)
+                shanks_table = ctx.shanks(partial, shanks_table, randomized=True)
                 row = shanks_table[-1]
                 if len(row) == 2:
                     est1 = row[-1]
@@ -474,7 +487,7 @@ def adaptive_extrapolation(update, emfun, kwargs):
                     print "Shanks error: %s" % nstr(shanks_error)
                 if shanks_error <= tol:
                     return est1
-                if eps*maxc > tol:
+                if ctx.eps*maxc > tol:
                     if verbose:
                         print "Ran out of precision for Shanks"
                     TRY_SHANKS = False
@@ -482,7 +495,7 @@ def adaptive_extrapolation(update, emfun, kwargs):
                     error = shanks_error
                     best = est1
             if TRY_EULER_MACLAURIN:
-                if mpc(sign(partial[-1]) / sign(partial[-2])).ae(-1):
+                if ctx.mpc(ctx.sign(partial[-1]) / ctx.sign(partial[-2])).ae(-1):
                     if verbose:
                         print ("NOT using Euler-Maclaurin: the series appears"
                             " to be alternating, so numerical\n quadrature"
@@ -492,18 +505,19 @@ def adaptive_extrapolation(update, emfun, kwargs):
                     value, em_error = emfun(index, tol)
                     value += partial[-1]
                     if verbose:
-                        print "Euler-Maclaurin error: %s" % nstr(em_error)
+                        print "Euler-Maclaurin error: %s" % ctx.nstr(em_error)
                     if em_error <= tol:
                         return value
                     if em_error < error:
                         best = value
     finally:
-        mp.prec = orig
+        ctx.prec = orig
     if verbose:
         print "Warning: failed to converge to target accuracy"
     return best
 
-def nsum(f, interval, **kwargs):
+@defun
+def nsum(ctx, f, interval, **kwargs):
     r"""
     Computes the sum
 
@@ -514,7 +528,7 @@ def nsum(f, interval, **kwargs):
     infinite series that can be summed by :func:`nsum`, where the
     first converges rapidly and the second converges slowly, are::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> nsum(lambda n: 1/fac(n), [0, inf])
         2.71828182845905
@@ -734,10 +748,10 @@ def nsum(f, interval, **kwargs):
     for an infinite geometric series::
 
         >>> mp.dps = 15
-        >>> for n in arange(-8, 8):
+        >>> for n in range(-8, 8):
         ...     if n == 1:
         ...         continue
-        ...     print n, 1/(1-n), nsum(lambda k: n**k, [0, inf],
+        ...     print mpf(n), mpf(1)/(1-n), nsum(lambda k: n**k, [0, inf],
         ...         method='shanks')
         ...
         -8.0 0.111111111111111 0.111111111111111
@@ -757,13 +771,13 @@ def nsum(f, interval, **kwargs):
         7.0 -0.166666666666667 -0.166666666666667
 
     """
-    a, b = AS_POINTS(interval)
-    if a == -inf:
-        if b == inf:
-            return f(0) + nsum(lambda k: f(-k) + f(k), [1, inf], **kwargs)
-        return nsum(f, [-b, inf], **kwargs)
-    elif b != inf:
-        return fsum(f(mpf(k)) for k in xrange(int(a), int(b)+1))
+    a, b = ctx.AS_POINTS(interval)
+    if a == ctx.ninf:
+        if b == ctx.inf:
+            return f(0) + ctx.nsum(lambda k: f(-k) + f(k), [1, ctx.inf], **kwargs)
+        return ctx.nsum(f, [-b, ctx.inf], **kwargs)
+    elif b != ctx.inf:
+        return ctx.fsum(f(ctx.mpf(k)) for k in xrange(int(a), int(b)+1))
 
     a = int(a)
 
@@ -771,23 +785,24 @@ def nsum(f, interval, **kwargs):
         if partial_sums:
             psum = partial_sums[-1]
         else:
-            psum = mpf(0)
+            psum = ctx.zero
         for k in indices:
-            psum = psum + f(a + mpf(k))
+            psum = psum + f(a + ctx.mpf(k))
             partial_sums.append(psum)
 
-    prec = mp.prec
+    prec = ctx.prec
 
     def emfun(point, tol):
-        workprec = mp.prec
-        mp.prec = prec + 10
-        v = sumem(f, [a+point, inf], tol, error=1)
-        mp.prec = workprec
+        workprec = ctx.prec
+        ctx.prec = prec + 10
+        v = ctx.sumem(f, [a+point, ctx.inf], tol, error=1)
+        ctx.prec = workprec
         return v
 
-    return +adaptive_extrapolation(update, emfun, kwargs)
+    return +ctx.adaptive_extrapolation(update, emfun, kwargs)
 
-def nprod(f, interval, **kwargs):
+@defun
+def nprod(ctx, f, interval, **kwargs):
     """
     Computes the product
 
@@ -805,7 +820,7 @@ def nprod(f, interval, **kwargs):
 
     A simple finite product::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> nprod(lambda k: k, [1, 4])
         24.0
@@ -891,23 +906,24 @@ def nprod(f, interval, **kwargs):
        MathWorld
 
     """
-    a, b = AS_POINTS(interval)
-    if a != -inf and b != inf:
-        return fprod(f(mpf(k)) for k in xrange(int(a), int(b)+1))
+    a, b = ctx.AS_POINTS(interval)
+    if a != ctx.ninf and b != ctx.inf:
+        return ctx.fprod(f(ctx.mpf(k)) for k in xrange(int(a), int(b)+1))
 
-    orig = mp.prec
+    orig = ctx.prec
     try:
         # TODO: we are evaluating log(1+eps) -> eps, which is
         # inaccurate. This currently works because nsum greatly
         # increases the working precision. But we should be
         # more intelligent and handle the precision here.
-        mp.prec += 10
-        v = nsum(lambda n: ln(f(n)), interval, **kwargs)
+        ctx.prec += 10
+        v = ctx.nsum(lambda n: ctx.ln(f(n)), interval, **kwargs)
     finally:
-        mp.prec = orig
-    return +exp(v)
+        ctx.prec = orig
+    return +ctx.exp(v)
 
-def limit(f, x, direction=1, exp=False, **kwargs):
+@defun
+def limit(ctx, f, x, direction=1, exp=False, **kwargs):
     r"""
     Computes an estimate of the limit
 
@@ -950,7 +966,7 @@ def limit(f, x, direction=1, exp=False, **kwargs):
 
     A basic evaluation of a removable singularity::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 30; mp.pretty = True
         >>> limit(lambda x: (x-sin(x))/x**3, 0)
         0.166666666666666666666666666667
@@ -1002,11 +1018,11 @@ def limit(f, x, direction=1, exp=False, **kwargs):
 
     """
 
-    if isinf(x):
-        direction = sign(x)
-        g = lambda k: f(mpf(k+1)*direction)
+    if ctx.isinf(x):
+        direction = ctx.sign(x)
+        g = lambda k: f(ctx.mpf(k+1)*direction)
     else:
-        direction *= mpf(1)
+        direction *= ctx.one
         g = lambda k: f(x + direction/(k+1))
     if exp:
         h = g
@@ -1020,14 +1036,15 @@ def limit(f, x, direction=1, exp=False, **kwargs):
     if not 'steps' in kwargs:
         kwargs['steps'] = [10]
 
-    return +adaptive_extrapolation(update, None, kwargs)
+    return +ctx.adaptive_extrapolation(update, None, kwargs)
 
 
 #----------------------------------------------------------------------------#
 #                                Differentiation                             #
 #----------------------------------------------------------------------------#
 
-def difference_delta(s, n):
+@defun
+def difference_delta(ctx, s, n):
     r"""
     Given a sequence `(s_k)` containing at least `n+1` items, returns the
     `n`-th forward difference,
@@ -1036,14 +1053,16 @@ def difference_delta(s, n):
 
         \Delta^n = \sum_{k=0}^{\infty} (-1)^{k+n} {n \choose k} s_k.
     """
-    d = mpf(0)
+    n = int(n)
+    d = ctx.zero
     b = (-1) ** (n & 1)
     for k in xrange(n+1):
         d += b * s[k]
         b = (b * (k-n)) // (k+1)
     return d
 
-def diff(f, x, n=1, method='step', scale=1, direction=0):
+@defun
+def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
     r"""
     Numerically computes the derivative of `f`, `f'(x)`. Optionally,
     computes the `n`-th derivative, `f^{(n)}(x)`, for any order `n`.
@@ -1052,7 +1071,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
 
     Derivatives of a simple function::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> diff(lambda x: x**2 + x, 1.0)
         3.0
@@ -1138,41 +1157,42 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
 
     """
     if n == 0:
-        return f(x)
-    orig = mp.prec
+        return f(ctx.convert(x))
+    orig = ctx.prec
     try:
         if method == 'step':
-            mp.prec = (orig+20) * (n+1)
-            h = ldexp(scale, -orig-10)
+            ctx.prec = (orig+20) * (n+1)
+            h = ctx.ldexp(scale, -orig-10)
             # Applying the finite difference formula recursively n times,
             # we get a step sum weighted by a row of binomial coefficients
             # Directed: steps x, x+h, ... x+n*h
             if direction:
-                h *= sign(direction)
+                h *= ctx.sign(direction)
                 steps = xrange(n+1)
                 norm = h**n
             # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
             else:
                 steps = xrange(-n, n+1, 2)
                 norm = (2*h)**n
-            v = difference_delta([f(x+k*h) for k in steps], n)
+            v = ctx.difference_delta([f(x+k*h) for k in steps], n)
             v = v / norm
         elif method == 'quad':
-            mp.prec += 10
-            radius = mpf(scale)/2
+            ctx.prec += 10
+            radius = ctx.mpf(scale)/2
             def g(t):
-                rei = radius*exp(j*t)
+                rei = radius*ctx.exp(ctx.j*t)
                 z = x + rei
                 return f(z) / rei**n
-            d = mp.quadts(g, [0, 2*pi])
-            v = d * factorial(n) / (2*pi)
+            d = ctx.quadts(g, [0, 2*ctx.pi])
+            v = d * ctx.factorial(n) / (2*ctx.pi)
         else:
             raise ValueError("unknown method: %r" % method)
     finally:
-        mp.prec = orig
+        ctx.prec = orig
     return +v
 
-def diffs(f, x, n=inf, method='step', scale=1, direction=0):
+@defun
+def diffs(ctx, f, x, n=None, method='step', scale=1, direction=0):
     r"""
     Returns a generator that yields the sequence of derivatives
 
@@ -1192,7 +1212,7 @@ def diffs(f, x, n=inf, method='step', scale=1, direction=0):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15
         >>> nprint(list(diffs(cos, 1, 5)))
         [0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]
@@ -1206,22 +1226,27 @@ def diffs(f, x, n=inf, method='step', scale=1, direction=0):
         5 -0.841470984807897
 
     """
+    if n is None:
+        n = ctx.inf
+    else:
+        n = int(n)
+
     if method != 'step':
         k = 0
         while k < n:
-            yield diff(f, x, k)
+            yield ctx.diff(f, x, k)
             k += 1
         return
 
-    targetprec = mp.prec
+    targetprec = ctx.prec
 
     def getvalues(m):
-        callprec = mp.prec
+        callprec = ctx.prec
         try:
-            mp.prec = workprec = (targetprec+20) * (m+1)
-            h = ldexp(scale, -targetprec-10)
+            ctx.prec = workprec = (targetprec+20) * (m+1)
+            h = ctx.ldexp(scale, -targetprec-10)
             if direction:
-                h *= sign(direction)
+                h *= ctx.sign(direction)
                 y = [f(x+h*k) for k in xrange(m+1)]
                 hnorm = h
             else:
@@ -1229,13 +1254,13 @@ def diffs(f, x, n=inf, method='step', scale=1, direction=0):
                 hnorm = 2*h
             return y, hnorm, workprec
         finally:
-            mp.prec = callprec
+            ctx.prec = callprec
 
-    yield f(x)
+    yield f(ctx.convert(x))
     if n < 1:
         return
 
-    if n is inf:
+    if n == ctx.inf:
         A, B = 1, 2
     else:
         A, B = 1, n+1
@@ -1244,18 +1269,19 @@ def diffs(f, x, n=inf, method='step', scale=1, direction=0):
         y, hnorm, workprec = getvalues(B)
         for k in xrange(A, B):
             try:
-                callprec = mp.prec
-                mp.prec = workprec
-                d = difference_delta(y, k) / hnorm**k
+                callprec = ctx.prec
+                ctx.prec = workprec
+                d = ctx.difference_delta(y, k) / hnorm**k
             finally:
-                mp.prec = callprec
+                ctx.prec = callprec
             yield +d
             if k >= n:
                 return
         A, B = B, int(A*1.4+1)
         B = min(B, n)
 
-def differint(f, x, n=1, x0=0):
+@defun
+def differint(ctx, f, x, n=1, x0=0):
     r"""
     Calculates the Riemann-Liouville differintegral, or fractional
     derivative, defined by
@@ -1285,7 +1311,7 @@ def differint(f, x, n=1, x0=0):
     monomial `x^p`, which may be used as a reference. For example,
     the following gives a half-derivative (order 0.5)::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> x = mpf(3); p = 2; n = 0.5
         >>> differint(lambda t: t**p, x, n)
@@ -1322,17 +1348,18 @@ def differint(f, x, n=1, x0=0):
 
 
     """
-    m = max(int(ceil(re(n)))+1, 1)
+    m = max(int(ctx.ceil(ctx.re(n)))+1, 1)
     r = m-n-1
-    g = lambda x: mp.quad(lambda t: (x-t)**r * f(t), [x0, x])
-    return diff(g, x, m) / gamma(m-n)
+    g = lambda x: ctx.quad(lambda t: (x-t)**r * f(t), [x0, x])
+    return ctx.diff(g, x, m) / ctx.gamma(m-n)
 
-def diffun(f, n=1, **options):
+@defun
+def diffun(ctx, f, n=1, **options):
     """
     Given a function f, returns a function g(x) that evaluates the nth
     derivative f^(n)(x)::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> cos2 = diffun(sin)
         >>> sin2 = diffun(sin, 4)
@@ -1348,15 +1375,16 @@ def diffun(f, n=1, **options):
     if n == 0:
         return f
     def g(x):
-        return diff(f, x, n, **options)
+        return ctx.diff(f, x, n, **options)
     return g
 
-def taylor(f, x, n, **options):
+@defun
+def taylor(ctx, f, x, n, **options):
     r"""
     Produces a degree-`n` Taylor polynomial around the point `x` of the
     given function `f`. The coefficients are returned as a list.
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> nprint(chop(taylor(sin, 0, 5)))
         [0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3]
@@ -1378,9 +1406,10 @@ def taylor(f, x, n, **options):
         12.1824939607035
 
     """
-    return [d/factorial(i) for i, d in enumerate(diffs(f, x, n, **options))]
+    return [d/ctx.factorial(i) for i, d in enumerate(ctx.diffs(f, x, n, **options))]
 
-def pade(a, L, M):
+@defun
+def pade(ctx, a, L, M):
     r"""
     Computes a Pade approximation of degree `(L, M)` to a function.
     Given at least `L+M+1` Taylor coefficients `a` approximating
@@ -1402,7 +1431,7 @@ def pade(a, L, M):
     from G.A. Baker 'Essentials of Pade Approximants' Academic Press,
     Ch.1A)::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> one = mpf(1)
         >>> def f(x):
@@ -1423,21 +1452,21 @@ def pade(a, L, M):
 
     if M == 0:
         if L == 0:
-            return [mpf(1)], [mpf(1)]
+            return [ctx.one], [ctx.one]
         else:
-            return a[:L+1], [mpf(1)]
+            return a[:L+1], [ctx.one]
 
     # Solve first
     # a[L]*q[1] + ... + a[L-M+1]*q[M] = -a[L+1]
     # ...
     # a[L+M-1]*q[1] + ... + a[L]*q[M] = -a[L+M]
-    A = matrix(M)
+    A = ctx.matrix(M)
     for j in range(M):
         for i in range(min(M, L+j+1)):
             A[j, i] = a[L+j-i]
-    v = -matrix(a[(L+1):(L+M+1)])
-    x = lu_solve(A, v)
-    q = [mpf(1)] + list(x)
+    v = -ctx.matrix(a[(L+1):(L+M+1)])
+    x = ctx.lu_solve(A, v)
+    q = [ctx.one] + list(x)
     # compute p
     p = [0]*(L+1)
     for i in range(L+1):
@@ -1451,7 +1480,9 @@ def pade(a, L, M):
 #                                Polynomials                                 #
 #----------------------------------------------------------------------------#
 
-def polyval(coeffs, x, derivative=False):
+# XXX: extra precision
+@defun
+def polyval(ctx, coeffs, x, derivative=False):
     r"""
     Given coefficients `[c_n, \ldots, c_2, c_1, c_0]` and a number `x`,
     :func:`polyval` evaluates the polynomial
@@ -1464,7 +1495,7 @@ def polyval(coeffs, x, derivative=False):
     evaluates `P(x)` with the derivative, `P'(x)`, and returns the
     tuple `(P(x), P'(x))`.
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.pretty = True
         >>> polyval([3, 0, 2], 0.5)
         2.75
@@ -1475,9 +1506,9 @@ def polyval(coeffs, x, derivative=False):
     of real or complex numbers.
     """
     if not coeffs:
-        return mpf(0)
-    p = mpmathify(coeffs[0])
-    q = mpf(0)
+        return ctx.zero
+    p = ctx.convert(coeffs[0])
+    q = ctx.zero
     for c in coeffs[1:]:
         if derivative:
             q = p + x*q
@@ -1487,7 +1518,8 @@ def polyval(coeffs, x, derivative=False):
     else:
         return p
 
-def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
+@defun
+def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
     """
     Computes all roots (real or complex) of a given polynomial. The roots are
     returned as a sorted list, where real roots appear first followed by
@@ -1502,7 +1534,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
 
     Finding the three real roots of `x^3 - x^2 - 14x + 24`::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]
@@ -1521,9 +1553,9 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         2.22044604925031e-16
         >>>
         >>> polyval([4,3,2], roots[0])
-        (2.22044604925031e-16 + 0.0j)
+        2.22044604925031e-16
         >>> polyval([4,3,2], roots[1])
-        (2.22044604925031e-16 + 0.0j)
+        2.22044604925031e-16
 
     The following example computes all the 5th roots of unity; that is,
     the roots of `x^5 - 1`::
@@ -1584,20 +1616,20 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
         # Constant polynomial with no roots
         return []
 
-    orig = mp.prec
-    weps = +eps
+    orig = ctx.prec
+    weps = +ctx.eps
     try:
-        mp.prec += 10
+        ctx.prec += 10
         deg = len(coeffs) - 1
         # Must be monic
-        lead = mpmathify(coeffs[0])
+        lead = ctx.convert(coeffs[0])
         if lead == 1:
-            coeffs = map(mpmathify, coeffs)
+            coeffs = map(ctx.convert, coeffs)
         else:
             coeffs = [c/lead for c in coeffs]
-        f = lambda x: polyval(coeffs, x)
-        roots = [mpc((0.4+0.9j)**n) for n in xrange(deg)]
-        err = [mpf(1) for n in xrange(deg)]
+        f = lambda x: ctx.polyval(coeffs, x)
+        roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
+        err = [ctx.one for n in xrange(deg)]
         # Durand-Kerner iteration until convergence
         for step in xrange(maxsteps):
             if max(err).ae(0):
@@ -1623,10 +1655,10 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
                     roots[i] = roots[i].imag * 1j
         roots.sort(key=lambda x: (abs(x.imag), x.real))
     finally:
-        mp.prec = orig
+        ctx.prec = orig
     if error:
         err = max(err)
-        err = max(err, ldexp(1, -orig+1))
+        err = max(err, ctx.ldexp(1, -orig+1))
         return [+r for r in roots], +err
     else:
         return [+r for r in roots]
@@ -1636,6 +1668,7 @@ def polyroots(coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False):
 #                                  ODE solvers                               #
 #----------------------------------------------------------------------------#
 
+'''
 def smul(a, x):
     """Multiplies the vector "x" by the scalar "a"."""
     R = []
@@ -1668,7 +1701,7 @@ def ODE_step_euler(x, y, h, derivs):
     X = derivs(y,x)
     return vadd(y, smul(h, X))
 
-half = mpf(0.5)
+#half = mpf(0.5)
 
 def ODE_step_rk4(x, y, h, derivs):
     """
@@ -1700,6 +1733,7 @@ def odeint(derivs, x0, t_list, step=ODE_step_rk4):
         x = step(t_list[i], x, dt, derivs)
         result.append(x)
     return result
+'''
 
 #----------------------------------------------------------------------------#
 #                              Approximation methods                         #
@@ -1714,16 +1748,16 @@ def odeint(derivs, x0, t_list, step=ODE_step_rk4):
 # for convenience.
 
 # Coefficient in Chebyshev approximation
-def chebcoeff(f,a,b,j,N):
-    s = mpf(0)
-    h = mpf(0.5)
+def chebcoeff(ctx,f,a,b,j,N):
+    s = ctx.mpf(0)
+    h = ctx.mpf(0.5)
     for k in range(1, N+1):
-        t = cos(pi*(k-h)/N)
-        s += f(t*(b-a)*h + (b+a)*h) * cos(pi*j*(k-h)/N)
+        t = ctx.cos(ctx.pi*(k-h)/N)
+        s += f(t*(b-a)*h + (b+a)*h) * ctx.cos(ctx.pi*j*(k-h)/N)
     return 2*s/N
 
 # Generate Chebyshev polynomials T_n(ax+b) in expanded form
-def chebT(a=1, b=0):
+def chebT(ctx, a=1, b=0):
     Tb = [1]
     yield Tb
     Ta = [b, a]
@@ -1735,7 +1769,8 @@ def chebT(a=1, b=0):
         for i, c in enumerate(Tb): Tmp[i] -= c
         Ta, Tb = Tmp, Ta
 
-def chebyfit(f, interval, N, error=False):
+@defun
+def chebyfit(ctx, f, interval, N, error=False):
     r"""
     Computes a polynomial of degree `N-1` that approximates the
     given function `f` on the interval `[a, b]`. With ``error=True``,
@@ -1759,7 +1794,7 @@ def chebyfit(f, interval, N, error=False):
     Here we use :func:`chebyfit` to generate a low-degree approximation
     of `f(x) = \cos(x)`, valid on the interval `[1, 2]`::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> poly, err = chebyfit(cos, [1, 2], 5, error=True)
         >>> nprint(poly)
@@ -1810,33 +1845,34 @@ def chebyfit(f, interval, N, error=False):
     nonsmooth features, or by dividing the interval into several
     segments.
     """
-    a, b = AS_POINTS(interval)
-    orig = mp.prec
+    a, b = ctx.AS_POINTS(interval)
+    orig = ctx.prec
     try:
-        mp.prec = orig + int(N**0.5) + 20
-        c = [chebcoeff(f,a,b,k,N) for k in range(N)]
-        d = [mpf(0)] * N
+        ctx.prec = orig + int(N**0.5) + 20
+        c = [chebcoeff(ctx,f,a,b,k,N) for k in range(N)]
+        d = [ctx.zero] * N
         d[0] = -c[0]/2
-        h = mpf(0.5)
-        T = chebT(mpf(2)/(b-a), mpf(-1)*(b+a)/(b-a))
+        h = ctx.mpf(0.5)
+        T = chebT(ctx, ctx.mpf(2)/(b-a), ctx.mpf(-1)*(b+a)/(b-a))
         for k in range(N):
             Tk = T.next()
             for i in range(len(Tk)):
                 d[i] += c[k]*Tk[i]
         d = d[::-1]
         # Estimate maximum error
-        err = mpf(0)
+        err = ctx.zero
         for k in range(N):
-            x = cos(pi*k/N) * (b-a)*h + (b+a)*h
-            err = max(err, abs(f(x) - polyval(d, x)))
+            x = ctx.cos(ctx.pi*k/N) * (b-a)*h + (b+a)*h
+            err = max(err, abs(f(x) - ctx.polyval(d, x)))
     finally:
-        mp.prec = orig
-        if error:
-            return d, +err
-        else:
-            return d
+        ctx.prec = orig
+    if error:
+        return d, +err
+    else:
+        return d
 
-def fourier(f, interval, N):
+@defun
+def fourier(ctx, f, interval, N):
     r"""
     Computes the Fourier series of degree `N` of the given function
     on the interval `[a, b]`. More precisely, :func:`fourier` returns
@@ -1861,7 +1897,7 @@ def fourier(f, interval, N):
     the function has odd symmetry), and the sine coefficients are
     rational numbers::
 
-        >>> from mpmath import *
+        >>> from mp4 import *
         >>> mp.dps = 15; mp.pretty = True
         >>> c, s = fourier(lambda x: x, [-pi, pi], 5)
         >>> nprint(c)
@@ -1905,26 +1941,27 @@ def fourier(f, interval, N):
         ([0.5], [0.0])
 
     """
-    interval = AS_POINTS(interval)
+    interval = ctx.AS_POINTS(interval)
     a = interval[0]
     b = interval[-1]
     L = b-a
     cos_series = []
     sin_series = []
-    cutoff = eps*10
+    cutoff = ctx.eps*10
     for n in xrange(N+1):
-        m = 2*n*pi/L
-        an = 2*mp.quadgl(lambda t: f(t)*cos(m*t), interval)/L
-        bn = 2*mp.quadgl(lambda t: f(t)*sin(m*t), interval)/L
+        m = 2*n*ctx.pi/L
+        an = 2*ctx.quadgl(lambda t: f(t)*ctx.cos(m*t), interval)/L
+        bn = 2*ctx.quadgl(lambda t: f(t)*ctx.sin(m*t), interval)/L
         if n == 0:
             an /= 2
-        if abs(an) < cutoff: an = mpf(0)
-        if abs(bn) < cutoff: bn = mpf(0)
+        if abs(an) < cutoff: an = ctx.zero
+        if abs(bn) < cutoff: bn = ctx.zero
         cos_series.append(an)
         sin_series.append(bn)
     return cos_series, sin_series
 
-def fourierval(series, interval, x):
+@defun
+def fourierval(ctx, series, interval, x):
     """
     Evaluates a Fourier series (in the format computed by
     by :func:`fourier` for the given interval) at the point `x`.
@@ -1934,13 +1971,13 @@ def fourierval(series, interval, x):
     need not have the same length.
     """
     cs, ss = series
-    ab = AS_POINTS(interval)
+    ab = ctx.AS_POINTS(interval)
     a = interval[0]
     b = interval[-1]
-    m = 2*pi/(ab[-1]-ab[0])
-    s = mpf(0)
-    s += sum(cs[n]*cos(m*n*x) for n in xrange(len(cs)) if cs[n])
-    s += sum(ss[n]*sin(m*n*x) for n in xrange(len(ss)) if ss[n])
+    m = 2*ctx.pi/(ab[-1]-ab[0])
+    s = ctx.zero
+    s += ctx.fsum(cs[n]*ctx.cos(m*n*x) for n in xrange(len(cs)) if cs[n])
+    s += ctx.fsum(ss[n]*ctx.sin(m*n*x) for n in xrange(len(ss)) if ss[n])
     return s
 
 if __name__ == '__main__':

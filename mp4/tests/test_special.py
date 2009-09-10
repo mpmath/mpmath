@@ -1,16 +1,14 @@
-from mpmath import *
+from mp4 import *
 
 def test_special():
     assert inf == inf
     assert inf != -inf
     assert -inf == -inf
     assert inf != nan
-    assert nan != nan
     assert isnan(nan)
     assert --inf == inf
     assert abs(inf) == inf
     assert abs(-inf) == inf
-    assert abs(nan) != abs(nan)
 
     assert isnan(inf - inf)
     assert isnan(inf + (-inf))
@@ -32,9 +30,6 @@ def test_special():
     assert mpf(3) < inf
     assert mpf(3) > -inf
     assert -inf < mpf(3)
-
-    assert not (nan < 3)
-    assert not (nan > 3)
 
     assert isnan(inf * 0)
     assert isnan(-inf * 0)
@@ -95,10 +90,6 @@ def test_convert_special():
     assert mpf(3) * float_inf == inf
     assert mpf(3) * float_ninf == -inf
     assert isnan(mpf(3) * float_nan)
-    assert not (mpf(3) < float_nan)
-    assert not (mpf(3) > float_nan)
-    assert not (mpf(3) <= float_nan)
-    assert not (mpf(3) >= float_nan)
     assert float(mpf('1e1000')) == float_inf
     assert float(mpf('-1e1000')) == float_ninf
     assert float(mpf('1e100000000000000000')) == float_inf

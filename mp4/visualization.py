@@ -2,14 +2,12 @@
 Plotting (requires matplotlib)
 """
 
-from mptypes import mpc, inf, isnan, isinf, arange, complex_types
-from functions import sqrt, arg
-
 from colorsys import hsv_to_rgb, hls_to_rgb
 
-plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
+class VisualizationMethods(object):
+    plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
 
-def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
+def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
     singularities=[]):
     r"""
     Shows a simple 2D plot of a function `f(x)` or list of functions
@@ -44,7 +42,7 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
     a, b = xlim
     colors = ['b', 'r', 'g', 'm', 'k']
     for n, func in enumerate(f):
-        x = arange(a, b, (b-a)/float(points))
+        x = ctx.arange(a, b, (b-a)/float(points))
         segments = []
         segment = []
         in_complex = False
@@ -55,9 +53,9 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
                         if x[i-1] <= sing and x[i] >= sing:
                             raise ValueError
                 v = func(x[i])
-                if isnan(v) or abs(v) > 1e300:
+                if ctx.isnan(v) or abs(v) > 1e300:
                     raise ValueError
-                if isinstance(v, complex_types):
+                if hasattr(v, "imag") and v.imag:
                     re = float(v.real)
                     im = float(v.imag)
                     if not in_complex:
@@ -71,7 +69,7 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
                         segments.append(segment)
                         segment = []
                     segment.append((float(x[i]), v))
-            except plot_ignore:
+            except ctx.plot_ignore:
                 if segment:
                     segments.append(segment)
                 segment = []
@@ -100,18 +98,18 @@ def plot(f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
     else:
         pylab.show()
 
-def default_color_function(z):
-    if isinf(z):
+def default_color_function(ctx, z):
+    if ctx.isinf(z):
         return (1.0, 1.0, 1.0)
-    if isnan(z):
+    if ctx.isnan(z):
         return (0.5, 0.5, 0.5)
     pi = 3.1415926535898
-    a = (float(arg(z)) + pi) / (2*pi)
+    a = (float(ctx.arg(z)) + ctx.pi) / (2*ctx.pi)
     a = (a + 0.5) % 1.0
     b = 1.0 - float(1/(1.0+abs(z)**0.3))
     return hls_to_rgb(a, b, 0.8)
 
-def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
+def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     verbose=False, file=None, dpi=None):
     """
     Plots the given complex-valued function *f* over a rectangular part
@@ -135,14 +133,16 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
 
     NOTE: This function requires matplotlib (pylab).
     """
+    if color is None:
+        color = ctx.default_color_function
     import pylab
     pylab.clf()
     rea, reb = re
     ima, imb = im
     dre = reb - rea
     dim = imb - ima
-    M = int(sqrt(points*dre/dim)+1)
-    N = int(sqrt(points*dim/dre)+1)
+    M = int(ctx.sqrt(points*dre/dim)+1)
+    N = int(ctx.sqrt(points*dim/dre)+1)
     x = pylab.linspace(rea, reb, M)
     y = pylab.linspace(ima, imb, N)
     # Note: we have to be careful to get the right rotation.
@@ -152,10 +152,10 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
     w = pylab.zeros((N, M, 3))
     for n in xrange(N):
         for m in xrange(M):
-            z = mpc(x[m], y[n])
+            z = ctx.mpc(x[m], y[n])
             try:
                 v = color(f(z))
-            except plot_ignore:
+            except ctx.plot_ignore:
                 v = (0.5, 0.5, 0.5)
             w[n,m] = v
         if verbose:
@@ -167,3 +167,7 @@ def cplot(f, re=[-5,5], im=[-5,5], points=2000, color=default_color_function,
         pylab.savefig(file, dpi=dpi)
     else:
         pylab.show()
+VisualizationMethods.plot = plot
+VisualizationMethods.default_color_function = default_color_function
+VisualizationMethods.cplot = cplot
+

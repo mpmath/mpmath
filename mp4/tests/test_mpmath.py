@@ -1,6 +1,6 @@
 from mpmath.libmpf import *
 from mpmath.libelefun import *
-from mpmath import *
+from mp4 import *
 import random
 
 

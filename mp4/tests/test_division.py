@@ -1,5 +1,5 @@
 from mpmath.libmpf import *
-from mpmath import mpf, mp
+from mp4 import *
 
 from random import randint, choice, seed
 

@@ -130,7 +130,7 @@ def testit(importdir='', testdir=''):
 if __name__ == '__main__':
     if profile:
         import cProfile
-        cProfile.run("testit('%s', '%s')" % (importdir, testdir), sort=1)
+        cProfile.run("testit('%s', '%s')" % (importdir, testdir), sort=2)
     elif coverage:
         import trace
         tracer = trace.Trace(ignoredirs=[sys.prefix, sys.exec_prefix],

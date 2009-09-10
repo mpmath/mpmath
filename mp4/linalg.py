@@ -103,390 +103,410 @@ and equation solving with rigorous error bounds::
 # *test unitvector
 # *iterative solving
 
-from __future__ import division
-
-from mptypes import extraprec, absmin, mp, eps, mpf, fsum
-from functions import sqrt, sign, log, factorial
-from matrices import matrix, eye, swap_row, extend, norm, mnorm
 from copy import copy
 
-def LU_decomp(A, overwrite=False, use_cache=True):
-    """
-    LU-factorization of a n*n matrix using the Gauss algorithm.
-    Returns L and U in one matrix and the pivot indices.
+class LinearAlgebraMethods(object):
 
-    Use overwrite to specify whether A will be overwritten with L and U.
-    """
-    if not A.rows == A.cols:
-        raise ValueError('need n*n matrix')
-    # get from cache if possible
-    if use_cache and isinstance(A, matrix) and A._LU:
-        return A._LU
-    if not overwrite:
-        orig = A
-        A = A.copy()
-    tol = absmin(mnorm(A,1) * eps) # each pivot element has to be bigger
-    n = A.rows
-    p = [None]*(n - 1)
-    for j in xrange(n - 1):
-        # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
-        biggest = 0
-        for k in xrange(j, n):
-            s = fsum([absmin(A[k,l]) for l in xrange(j, n)])
-            if absmin(s) <= tol:
+    def LU_decomp(ctx, A, overwrite=False, use_cache=True):
+        """
+        LU-factorization of a n*n matrix using the Gauss algorithm.
+        Returns L and U in one matrix and the pivot indices.
+
+        Use overwrite to specify whether A will be overwritten with L and U.
+        """
+        if not A.rows == A.cols:
+            raise ValueError('need n*n matrix')
+        # get from cache if possible
+        if use_cache and isinstance(A, ctx.matrix) and A._LU:
+            return A._LU
+        if not overwrite:
+            orig = A
+            A = A.copy()
+        tol = ctx.absmin(ctx.mnorm(A,1) * ctx.eps) # each pivot element has to be bigger
+        n = A.rows
+        p = [None]*(n - 1)
+        for j in xrange(n - 1):
+            # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
+            biggest = 0
+            for k in xrange(j, n):
+                s = ctx.fsum([ctx.absmin(A[k,l]) for l in xrange(j, n)])
+                if ctx.absmin(s) <= tol:
+                    raise ZeroDivisionError('matrix is numerically singular')
+                current = 1/s * ctx.absmin(A[k,j])
+                if current > biggest: # TODO: what if equal?
+                    biggest = current
+                    p[j] = k
+            # swap rows according to p
+            ctx.swap_row(A, j, p[j])
+            if ctx.absmin(A[j,j]) <= tol:
                 raise ZeroDivisionError('matrix is numerically singular')
-            current = 1/s * absmin(A[k,j])
-            if current > biggest: # TODO: what if equal?
-                biggest = current
-                p[j] = k
-        # swap rows according to p
-        swap_row(A, j, p[j])
-        if absmin(A[j,j]) <= tol:
+            # calculate elimination factors and add rows
+            for i in xrange(j + 1, n):
+                A[i,j] /= A[j,j]
+                for k in xrange(j + 1, n):
+                    A[i,k] -= A[i,j]*A[j,k]
+        if ctx.absmin(A[n - 1,n - 1]) <= tol:
             raise ZeroDivisionError('matrix is numerically singular')
-        # calculate elimination factors and add rows
-        for i in xrange(j + 1, n):
-            A[i,j] /= A[j,j]
-            for k in xrange(j + 1, n):
-                A[i,k] -= A[i,j]*A[j,k]
-    if absmin(A[n - 1,n - 1]) <= tol:
-        raise ZeroDivisionError('matrix is numerically singular')
-    # cache decomposition
-    if not overwrite and isinstance(orig, matrix):
-        orig._LU = (A, p)
-    return A, p
+        # cache decomposition
+        if not overwrite and isinstance(orig, ctx.matrix):
+            orig._LU = (A, p)
+        return A, p
 
-def L_solve(L, b, p=None):
-    """
-    Solve the lower part of a LU factorized matrix for y.
-    """
-    assert L.rows == L.cols, 'need n*n matrix'
-    n = L.rows
-    assert len(b) == n
-    b = copy(b)
-    if p: # swap b according to p
-        for k in xrange(0, len(p)):
-            swap_row(b, k, p[k])
-    # solve
-    for i in xrange(1, n):
-        for j in xrange(i):
-            b[i] -= L[i,j] * b[j]
-    return b
+    def L_solve(ctx, L, b, p=None):
+        """
+        Solve the lower part of a LU factorized matrix for y.
+        """
+        assert L.rows == L.cols, 'need n*n matrix'
+        n = L.rows
+        assert len(b) == n
+        b = copy(b)
+        if p: # swap b according to p
+            for k in xrange(0, len(p)):
+                ctx.swap_row(b, k, p[k])
+        # solve
+        for i in xrange(1, n):
+            for j in xrange(i):
+                b[i] -= L[i,j] * b[j]
+        return b
 
-def U_solve(U, y):
-    """
-    Solve the upper part of a LU factorized matrix for x.
-    """
-    assert U.rows == U.cols, 'need n*n matrix'
-    n = U.rows
-    assert len(y) == n
-    x = copy(y)
-    for i in xrange(n - 1, -1, -1):
-        for j in xrange(i + 1, n):
-            x[i] -= U[i,j] * x[j]
-        x[i] /= U[i,i]
-    return x
-
-@extraprec(10)
-def lu_solve(A, b, **kwargs):
-    """
-    Ax = b => x
-
-    Solve a determined or overdetermined linear equations system.
-    Fast LU decomposition is used, which is less accurate than QR decomposition
-    (especially for overdetermined systems), but it's twice as efficient.
-    Use qr_solve if you want more precision or have to solve a very ill-
-    conditioned system.
-    """
-    # do not overwrite A nor b
-    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
-    if A.rows < A.cols:
-        raise ValueError('cannot solve underdetermined system')
-    if A.rows > A.cols:
-        # use least-squares method if overdetermined
-        # (this increases errors)
-        AT = A.T
-        A = AT * A
-        b = AT * b
-        return cholesky_solve(A, b)
-    else:
-        # LU factorization
-        A, p = LU_decomp(A)
-        b = L_solve(A, b, p)
-        x = U_solve(A, b)
+    def U_solve(ctx, U, y):
+        """
+        Solve the upper part of a LU factorized matrix for x.
+        """
+        assert U.rows == U.cols, 'need n*n matrix'
+        n = U.rows
+        assert len(y) == n
+        x = copy(y)
+        for i in xrange(n - 1, -1, -1):
+            for j in xrange(i + 1, n):
+                x[i] -= U[i,j] * x[j]
+            x[i] /= U[i,i]
         return x
 
-def improve_solution(A, x, b, maxsteps=1):
-    """
-    Improve a solution to a linear equation system iteratively.
+    def lu_solve(ctx, A, b, **kwargs):
+        """
+        Ax = b => x
 
-    This re-uses the LU decomposition and is thus cheap.
-    Usually 3 up to 4 iterations are giving the maximal improvement.
-    """
-    assert A.rows == A.cols, 'need n*n matrix' # TODO: really?
-    for _ in xrange(maxsteps):
-        r = residual(A, x, b)
-        if norm(r, 2) < 10*eps:
-            break
-        # this uses cached LU decomposition and is thus cheap
-        dx = lu_solve(A, -r)
-        x += dx
-    return x
-
-def lu(A):
-    """
-    A -> P, L, U
-
-    LU factorisation of a square matrix A. L is the lower, U the upper part.
-    P is the permutation matrix indicating the row swaps.
-
-    P*A = L*U
-
-    If you need efficiency, use the low-level method LU_decomp instead, it's
-    much more memory efficient.
-    """
-    # get factorization
-    A, p = LU_decomp(A)
-    n = A.rows
-    L = matrix(n)
-    U = matrix(n)
-    for i in xrange(n):
-        for j in xrange(n):
-            if i > j:
-                L[i,j] = A[i,j]
-            elif i == j:
-                L[i,j] = 1
-                U[i,j] = A[i,j]
+        Solve a determined or overdetermined linear equations system.
+        Fast LU decomposition is used, which is less accurate than QR decomposition
+        (especially for overdetermined systems), but it's twice as efficient.
+        Use qr_solve if you want more precision or have to solve a very ill-
+        conditioned system.
+        """
+        prec = ctx.prec
+        try:
+            ctx.prec += 10
+            # do not overwrite A nor b
+            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            if A.rows < A.cols:
+                raise ValueError('cannot solve underdetermined system')
+            if A.rows > A.cols:
+                # use least-squares method if overdetermined
+                # (this increases errors)
+                AT = A.T
+                A = AT * A
+                b = AT * b
+                x = ctx.cholesky_solve(A, b)
             else:
-                U[i,j] = A[i,j]
-    # calculate permutation matrix
-    P = eye(n)
-    for k in xrange(len(p)):
-        swap_row(P, k, p[k])
-    return P, L, U
+                # LU factorization
+                A, p = ctx.LU_decomp(A)
+                b = ctx.L_solve(A, b, p)
+                x = ctx.U_solve(A, b)
+        finally:
+            ctx.prec = prec
+        return x
 
-def unitvector(n, i):
-    """
-    Return the i-th n-dimensional unit vector.
-    """
-    assert 0 < i <= n, 'this unit vector does not exist'
-    return [0]*(i-1) + [1] + [0]*(n-i)
+    def improve_solution(ctx, A, x, b, maxsteps=1):
+        """
+        Improve a solution to a linear equation system iteratively.
 
-@extraprec(10)
-def inverse(A, **kwargs):
-    """
-    Calculate the inverse of a matrix.
+        This re-uses the LU decomposition and is thus cheap.
+        Usually 3 up to 4 iterations are giving the maximal improvement.
+        """
+        assert A.rows == A.cols, 'need n*n matrix' # TODO: really?
+        for _ in xrange(maxsteps):
+            r = ctx.residual(A, x, b)
+            if ctx.norm(r, 2) < 10*ctx.eps:
+                break
+            # this uses cached LU decomposition and is thus cheap
+            dx = ctx.lu_solve(A, -r)
+            x += dx
+        return x
 
-    If you want to solve an equation system Ax = b, it's recommended to use
-    solve(A, b) instead, it's about 3 times more efficient.
-    """
-    # do not overwrite A
-    A = matrix(A, **kwargs).copy()
-    n = A.rows
-    # get LU factorisation
-    A, p = LU_decomp(A)
-    cols = []
-    # calculate unit vectors and solve corresponding system to get columns
-    for i in xrange(1, n + 1):
-        e = unitvector(n, i)
-        y = L_solve(A, e, p)
-        cols.append(U_solve(A, y))
-    # convert columns to matrix
-    inv = []
-    for i in xrange(n):
-        row = []
+    def lu(ctx, A):
+        """
+        A -> P, L, U
+
+        LU factorisation of a square matrix A. L is the lower, U the upper part.
+        P is the permutation matrix indicating the row swaps.
+
+        P*A = L*U
+
+        If you need efficiency, use the low-level method LU_decomp instead, it's
+        much more memory efficient.
+        """
+        # get factorization
+        A, p = ctx.LU_decomp(A)
+        n = A.rows
+        L = ctx.matrix(n)
+        U = ctx.matrix(n)
+        for i in xrange(n):
+            for j in xrange(n):
+                if i > j:
+                    L[i,j] = A[i,j]
+                elif i == j:
+                    L[i,j] = 1
+                    U[i,j] = A[i,j]
+                else:
+                    U[i,j] = A[i,j]
+        # calculate permutation matrix
+        P = ctx.eye(n)
+        for k in xrange(len(p)):
+            ctx.swap_row(P, k, p[k])
+        return P, L, U
+
+    def unitvector(ctx, n, i):
+        """
+        Return the i-th n-dimensional unit vector.
+        """
+        assert 0 < i <= n, 'this unit vector does not exist'
+        return [ctx.zero]*(i-1) + [ctx.one] + [ctx.zero]*(n-i)
+
+    def inverse(ctx, A, **kwargs):
+        """
+        Calculate the inverse of a matrix.
+
+        If you want to solve an equation system Ax = b, it's recommended to use
+        solve(A, b) instead, it's about 3 times more efficient.
+        """
+        prec = ctx.prec
+        try:
+            ctx.prec += 10
+            # do not overwrite A
+            A = ctx.matrix(A, **kwargs).copy()
+            n = A.rows
+            # get LU factorisation
+            A, p = ctx.LU_decomp(A)
+            cols = []
+            # calculate unit vectors and solve corresponding system to get columns
+            for i in xrange(1, n + 1):
+                e = ctx.unitvector(n, i)
+                y = ctx.L_solve(A, e, p)
+                cols.append(ctx.U_solve(A, y))
+            # convert columns to matrix
+            inv = []
+            for i in xrange(n):
+                row = []
+                for j in xrange(n):
+                    row.append(cols[j][i])
+                inv.append(row)
+            result = ctx.matrix(inv, **kwargs)
+        finally:
+            ctx.prec = prec
+        return result
+
+    def householder(ctx, A):
+        """
+        (A|b) -> H, p, x, res
+
+        (A|b) is the coefficient matrix with left hand side of an optionally
+        overdetermined linear equation system.
+        H and p contain all information about the transformation matrices.
+        x is the solution, res the residual.
+        """
+        assert isinstance(A, ctx.matrix)
+        m = A.rows
+        n = A.cols
+        assert m >= n - 1
+        # calculate Householder matrix
+        p = []
+        for j in xrange(0, n - 1):
+            s = ctx.fsum((A[i,j])**2 for i in xrange(j, m))
+            if not abs(s) > ctx.eps:
+                raise ValueError('matrix is numerically singular')
+            p.append(-ctx.sign(A[j,j]) * ctx.sqrt(s))
+            kappa = ctx.one / (s - p[j] * A[j,j])
+            A[j,j] -= p[j]
+            for k in xrange(j+1, n):
+                y = ctx.fsum(A[i,j] * A[i,k] for i in xrange(j, m)) * kappa
+                for i in xrange(j, m):
+                    A[i,k] -= A[i,j] * y
+        # solve Rx = c1
+        x = [A[i,n - 1] for i in xrange(n - 1)]
+        for i in xrange(n - 2, -1, -1):
+            x[i] -= ctx.fsum(A[i,j] * x[j] for j in xrange(i + 1, n - 1))
+            x[i] /= p[i]
+        # calculate residual
+        if not m == n - 1:
+            r = [A[m-1-i, n-1] for i in xrange(m - n + 1)]
+        else:
+            # determined system, residual should be 0
+            r = [0]*m # maybe a bad idea, changing r[i] will change all elements
+        return A, p, x, r
+
+    #def qr(ctx, A):
+    #    """
+    #    A -> Q, R
+    #
+    #    QR factorisation of a square matrix A using Householder decomposition.
+    #    Q is orthogonal, this leads to very few numerical errors.
+    #
+    #    A = Q*R
+    #    """
+    #    H, p, x, res = householder(A)
+    # TODO: implement this
+
+    def residual(ctx, A, x, b, **kwargs):
+        """
+        Calculate the residual of a solution to a linear equation system.
+
+        r = A*x - b for A*x = b
+        """
+        oldprec = ctx.prec
+        try:
+            ctx.prec *= 2
+            A, x, b = ctx.matrix(A, **kwargs), ctx.matrix(x, **kwargs), ctx.matrix(b, **kwargs)
+            return A*x - b
+        finally:
+            ctx.prec = oldprec
+
+    def qr_solve(ctx, A, b, norm=None, **kwargs):
+        """
+        Ax = b => x, ||Ax - b||
+
+        Solve a determined or overdetermined linear equations system and
+        calculate the norm of the residual (error).
+        QR decomposition using Householder factorization is applied, which gives very
+        accurate results even for ill-conditioned matrices. qr_solve is twice as
+        efficient.
+        """
+        if norm is None:
+            norm = ctx.norm
+        prec = ctx.prec
+        try:
+            prec += 10
+            # do not overwrite A nor b
+            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            if A.rows < A.cols:
+                raise ValueError('cannot solve underdetermined system')
+            H, p, x, r = ctx.householder(ctx.extend(A, b))
+            res = ctx.norm(r)
+            # calculate residual "manually" for determined systems
+            if res == 0:
+                res = ctx.norm(ctx.residual(A, x, b))
+            return ctx.matrix(x, **kwargs), res
+        finally:
+            ctx.prec = prec
+
+    def cholesky(ctx, A):
+        """
+        Cholesky decomposition of a symmetric positive-definite matrix.
+
+        Can be used to solve linear equation systems twice as efficient compared
+        to LU decomposition or to test whether A is positive-definite.
+
+        A = L * L.T
+        Only L (the lower part) is returned.
+        """
+        assert isinstance(A, ctx.matrix)
+        if not A.rows == A.cols:
+            raise ValueError('need n*n matrix')
+        n = A.rows
+        L = ctx.matrix(n)
         for j in xrange(n):
-            row.append(cols[j][i])
-        inv.append(row)
-    return matrix(inv, **kwargs)
+            s = A[j,j] - ctx.fsum(L[j,k]**2 for k in xrange(j))
+            if s < ctx.eps:
+                raise ValueError('matrix not positive-definite')
+            L[j,j] = ctx.sqrt(s)
+            for i in xrange(j, n):
+                L[i,j] = (A[i,j] - ctx.fsum(L[i,k] * L[j,k] for k in xrange(j))) \
+                         / L[j,j]
+        return L
 
-def householder(A):
-    """
-    (A|b) -> H, p, x, res
+    def cholesky_solve(ctx, A, b, **kwargs):
+        """
+        Ax = b => x
 
-    (A|b) is the coefficient matrix with left hand side of an optionally
-    overdetermined linear equation system.
-    H and p contain all information about the transformation matrices.
-    x is the solution, res the residual.
-    """
-    assert isinstance(A, matrix)
-    m = A.rows
-    n = A.cols
-    assert m >= n - 1
-    # calculate Householder matrix
-    p = []
-    for j in xrange(0, n - 1):
-        s = fsum((A[i,j])**2 for i in xrange(j, m))
-        if not abs(s) > eps:
-            raise ValueError('matrix is numerically singular')
-        p.append(-sign(A[j,j]) * sqrt(s))
-        kappa = s - p[j] * A[j,j]
-        A[j,j] -= p[j]
-        for k in xrange(j+1, n):
-            y = fsum(A[i,j] * A[i,k] for i in xrange(j, m)) /  kappa
-            for i in xrange(j, m):
-                A[i,k] -= A[i,j] * y
-    # solve Rx = c1
-    x = [A[i,n - 1] for i in xrange(n - 1)]
-    for i in xrange(n - 2, -1, -1):
-        x[i] -= fsum(A[i,j] * x[j] for j in xrange(i + 1, n - 1))
-        x[i] /= p[i]
-    # calculate residual
-    if not m == n - 1:
-        r = [A[m-1-i, n-1] for i in xrange(m - n + 1)]
-    else:
-        # determined system, residual should be 0
-        r = [0]*m # maybe a bad idea, changing r[i] will change all elements
-    return A, p, x, r
+        Solve a symmetric positive-definite linear equation system.
+        This is twice as efficient as lu_solve.
 
-#def qr(A):
-#    """
-#    A -> Q, R
-#
-#    QR factorisation of a square matrix A using Householder decomposition.
-#    Q is orthogonal, this leads to very few numerical errors.
-#
-#    A = Q*R
-#    """
-#    H, p, x, res = householder(A)
-# TODO: implement this
+        Typical use cases:
+        * A.T*A
+        * Hessian matrix
+        * differential equations
+        """
+        prec = ctx.prec
+        try:
+            prec += 10
+            # do not overwrite A nor b
+            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            if A.rows !=  A.cols:
+                raise ValueError('can only solve determined system')
+            # Cholesky factorization
+            L = ctx.cholesky(A)
+            # solve
+            n = L.rows
+            assert len(b) == n
+            for i in xrange(n):
+                b[i] -= ctx.fsum(L[i,j] * b[j] for j in xrange(i))
+                b[i] /= L[i,i]
+            x = ctx.U_solve(L.T, b)
+            return x
+        finally:
+            ctx.prec = prec
 
-def residual(A, x, b, **kwargs):
-    """
-    Calculate the residual of a solution to a linear equation system.
+    def det(ctx, A):
+        """
+        Calculate the determinant of a matrix.
+        """
+        prec = ctx.prec
+        try:
+            # do not overwrite A
+            A = ctx.matrix(A).copy()
+            # use LU factorization to calculate determinant
+            try:
+                R, p = ctx.LU_decomp(A)
+            except ZeroDivisionError:
+                return 0
+            z = 1
+            for i, e in enumerate(p):
+                if i != e:
+                    z *= -1
+            for i in xrange(A.rows):
+                z *= R[i,i]
+            return z
+        finally:
+            ctx.prec = prec
 
-    r = A*x - b for A*x = b
-    """
-    oldprec = mp.prec
-    try:
-        mp.prec *= 2
-        A, x, b = matrix(A, **kwargs), matrix(x, **kwargs), matrix(b, **kwargs)
-        return A*x - b
-    finally:
-        mp.prec = oldprec
+    def cond(ctx, A, norm=lambda x: mnorm(x,1)):
+        """
+        Calculate the condition number of a matrix using a specified matrix norm.
 
-@extraprec(10)
-def qr_solve(A, b, norm=norm, **kwargs):
-    """
-    Ax = b => x, ||Ax - b||
+        The condition number estimates the sensitivity of a matrix to errors.
+        Example: small input errors for ill-conditioned coefficient matrices
+        alter the solution of the system dramatically.
 
-    Solve a determined or overdetermined linear equations system and
-    calculate the norm of the residual (error).
-    QR decomposition using Householder factorization is applied, which gives very
-    accurate results even for ill-conditioned matrices. qr_solve is twice as
-    efficient.
-    """
-    # do not overwrite A nor b
-    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
-    if A.rows < A.cols:
-        raise ValueError('cannot solve underdetermined system')
-    H, p, x, r = householder(extend(A, b))
-    res = norm(r)
-    # calculate residual "manually" for determined systems
-    if res == 0:
-        res = norm(residual(A, x, b))
-    return matrix(x, **kwargs), res
+        For ill-conditioned matrices it's recommended to use qr_solve() instead
+        of lu_solve(). This does not help with input errors however, it just avoids
+        to add additional errors.
 
-def cholesky(A):
-    """
-    Cholesky decomposition of a symmetric positive-definite matrix.
-
-    Can be used to solve linear equation systems twice as efficient compared
-    to LU decomposition or to test whether A is positive-definite.
-
-    A = L * L.T
-    Only L (the lower part) is returned.
-    """
-    assert isinstance(A, matrix)
-    if not A.rows == A.cols:
-        raise ValueError('need n*n matrix')
-    n = A.rows
-    L = matrix(n)
-    for j in xrange(n):
-        s = A[j,j] - fsum(L[j,k]**2 for k in xrange(j))
-        if s < eps:
-            raise ValueError('matrix not positive-definite')
-        L[j,j] = sqrt(s)
-        for i in xrange(j, n):
-            L[i,j] = (A[i,j] - fsum(L[i,k] * L[j,k] for k in xrange(j))) \
-                     / L[j,j]
-    return L
-
-@extraprec(10)
-def cholesky_solve(A, b, **kwargs):
-    """
-    Ax = b => x
-
-    Solve a symmetric positive-definite linear equation system.
-    This is twice as efficient as lu_solve.
-
-    Typical use cases:
-    * A.T*A
-    * Hessian matrix
-    * differential equations
-    """
-    # do not overwrite A nor b
-    A, b = matrix(A, **kwargs).copy(), matrix(b, **kwargs).copy()
-    if A.rows !=  A.cols:
-        raise ValueError('can only solve determined system')
-    # Cholesky factorization
-    L = cholesky(A)
-    # solve
-    n = L.rows
-    assert len(b) == n
-    for i in xrange(n):
-        b[i] -= fsum(L[i,j] * b[j] for j in xrange(i))
-        b[i] /= L[i,i]
-    x = U_solve(L.T, b)
-    return x
-
-@extraprec(10)
-def det(A):
-    """
-    Calculate the determinant of a matrix.
-    """
-    # do not overwrite A
-    A = matrix(A).copy()
-    # use LU factorization to calculate determinant
-    try:
-        R, p = LU_decomp(A)
-    except ZeroDivisionError:
-        return 0
-    z = 1
-    for i, e in enumerate(p):
-        if i != e:
-            z *= -1
-    for i in xrange(A.rows):
-        z *= R[i,i]
-    return z
-
-def cond(A, norm=lambda x: mnorm(x,1)):
-    """
-    Calculate the condition number of a matrix using a specified matrix norm.
-
-    The condition number estimates the sensitivity of a matrix to errors.
-    Example: small input errors for ill-conditioned coefficient matrices
-    alter the solution of the system dramatically.
-
-    For ill-conditioned matrices it's recommended to use qr_solve() instead
-    of lu_solve(). This does not help with input errors however, it just avoids
-    to add additional errors.
-
-    Definition:    cond(A) = ||A|| * ||A**-1||
-    """
-    return norm(A) * norm(inverse(A))
+        Definition:    cond(A) = ||A|| * ||A**-1||
+        """
+        return ctx.norm(A) * ctx.norm(ctx.inverse(A))
 
 
-def lu_solve_mat(a, b):
-    """Solve a * x = b  where a and b are matrices."""
-    r = matrix(a.rows, b.cols)
-    for i in range(b.cols):
-        c = lu_solve(a, b.column(i))
-        for j in range(len(c)):
-            r[j, i] = c[j]
-    return r
+    def lu_solve_mat(ctx, a, b):
+        """Solve a * x = b  where a and b are matrices."""
+        r = ctx.matrix(a.rows, b.cols)
+        for i in range(b.cols):
+            c = ctx.lu_solve(a, b.column(i))
+            for j in range(len(c)):
+                r[j, i] = c[j]
+        return r
 
-def exp_pade(a):
-    """Exponential of a matrix using Pade approximants.
+    def exp_pade(ctx, a):
+        """
+        Exponential of a matrix using Pade approximants.
 
        See G. H. Golub, C. F. van Loan 'Matrix Computations',
          third Ed., page 572
@@ -495,36 +515,37 @@ def exp_pade(a):
          - find a good estimate for q
          - reduce the number of matrix multiplications to improve
            performance
-    """
-    def eps_pade(p):
-        return mpf(2)**(3-2*p) * factorial(p)**2/(factorial(2*p)**2 * (2*p + 1))
-    q = 4
-    extraq = 8
-    while 1:
-        if eps_pade(q) < eps:
-            break
-        q += 1
-    q += extraq
-    j = max(1, int(log(mnorm(a,'inf'),2)))
-    extra = q
-    mp.dps += extra
-    try:
-        a = a/2**j
-        na = a.rows
-        den = eye(na)
-        num = eye(na)
-        x = eye(na)
-        c = mpf(1)
-        for k in range(1, q+1):
-            c *= mpf(q - k + 1)/((2*q - k + 1) * k)
-            x = a*x
-            cx = c*x
-            num += cx
-            den += (-1)**k * cx
-        f = lu_solve_mat(den, num)
-        for k in range(j):
-            f = f*f
-    finally:
-        mp.dps -= extra
-    return f
+        """
+        def eps_pade(p):
+            return ctx.mpf(2)**(3-2*p) * ctx.factorial(p)**2/(ctx.factorial(2*p)**2 * (2*p + 1))
+        q = 4
+        extraq = 8
+        while 1:
+            if eps_pade(q) < ctx.eps:
+                break
+            q += 1
+        q += extraq
+        j = max(1, int(ctx.log(ctx.mnorm(a,'inf'),2)))
+        extra = q
+        prec = ctx.prec
+        ctx.dps += extra
+        try:
+            a = a/2**j
+            na = a.rows
+            den = ctx.eye(na)
+            num = ctx.eye(na)
+            x = ctx.eye(na)
+            c = ctx.mpf(1)
+            for k in range(1, q+1):
+                c *= ctx.mpf(q - k + 1)/((2*q - k + 1) * k)
+                x = a*x
+                cx = c*x
+                num += cx
+                den += (-1)**k * cx
+            f = ctx.lu_solve_mat(den, num)
+            for k in range(j):
+                f = f*f
+        finally:
+            ctx.prec = prec
+        return f
 

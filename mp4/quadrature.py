@@ -214,7 +214,7 @@ class QuadratureRule(object):
             # by having 0 as an endpoint.
             if (a, b) == (ctx.ninf, ctx.inf):
                 _f = f
-                f = lambda x: _f(ctx.fneg(x,exact=True)) + _f(x)
+                f = lambda x: _f(-x) + _f(x)
                 a, b = (ctx.zero, ctx.inf)
             results = []
             for degree in xrange(1, max_degree+1):
@@ -360,7 +360,7 @@ class TanhSinh(QuadratureRule):
                 break
 
             nodes.append((x, w))
-            nodes.append((ctx.fneg(x,exact=True), w))
+            nodes.append((-x, w))
 
             a *= udelta
             b *= urdelta
@@ -442,7 +442,7 @@ class GaussLegendre(QuadratureRule):
             if verbose  and j % 30 == 15:
                 print "Computing nodes (%i of %i)" % (j, upto)
             nodes.append((x, w))
-            nodes.append((ctx.fneg(x,exact=True), w))
+            nodes.append((-x, w))
         ctx.prec = orig
         return nodes
 
@@ -457,7 +457,7 @@ class QuadratureMethods:
         Computes a single, double or triple integral over a given
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
 
-            >>> from mpmath import *
+            >>> from mp4 import *
             >>> mp.dps = 15; mp.pretty = True
             >>> quad(sin, [0, pi])
             2.0
@@ -573,7 +573,7 @@ class QuadratureMethods:
 
             >>> mp.dps = 15
             >>> quad(lambda z: 1/z, [1,j,-1,-j,1])
-            (0.0 + 6.28318530717959j)
+            6.28318530717959j
 
         **Examples of 2D and 3D integrals**
 
@@ -833,7 +833,7 @@ class QuadratureMethods:
         specify the `n`-th zero by providing the *zeros* arguments.
         Below is an example of each::
 
-            >>> from mpmath import *
+            >>> from mp4 import *
             >>> mp.dps = 15; mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
             >>> quadosc(f, [0,inf], omega=3)
@@ -868,7 +868,7 @@ class QuadratureMethods:
         well as a real sine or cosine::
 
             >>> quadosc(lambda x: exp(3*j*x)/(1+x**2), [-inf,inf], omega=3)
-            (0.156410688228254 + 0.0j)
+            0.156410688228254
             >>> pi/e**3
             0.156410688228254
             >>> quadosc(lambda x: exp(3*j*x)/(2+x+x**2), [-inf,inf], omega=3)
@@ -991,10 +991,8 @@ class QuadratureMethods:
         #if n >= 9:
         #    raise ValueError("zeros do not appear to be correctly indexed")
         n = 1
-        # XXX: use method
-        from calculus import nsum
         s = ctx.quadgl(f, [a, zeros(n)])
-        s += nsum(lambda k: ctx.quadgl(f, [zeros(k), zeros(k+1)]), [n, ctx.inf])
+        s += ctx.nsum(lambda k: ctx.quadgl(f, [zeros(k), zeros(k+1)]), [n, ctx.inf])
         return s
 
 if __name__ == '__main__':

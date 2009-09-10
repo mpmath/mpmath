@@ -1,5 +1,4 @@
-from mpmath import *
-from mpmath.optimization import *
+from mp4 import *
 
 def test_findroot():
     # old tests, assuming secant

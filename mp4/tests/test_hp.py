@@ -5,7 +5,7 @@ verified with Mathematica.
 """
 
 import time
-from mpmath import *
+from mp4 import *
 
 precs = [5, 15, 28, 35, 57, 80, 100, 150, 200]
 

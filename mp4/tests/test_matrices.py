@@ -1,7 +1,4 @@
-from mpmath.matrices import matrix, eye, swap_row, diag, mnorm, \
-    norm, zeros, ones, hilbert, randmatrix, extend
-from mpmath.linalg import inverse
-from mpmath import inf, mpf, sqrt, mpi, nstr
+from mp4 import *
 
 def test_matrix_basic():
     A1 = matrix(3)

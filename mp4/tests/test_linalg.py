@@ -2,9 +2,7 @@
 
 from __future__ import division
 
-from mpmath.matrices import matrix, norm, mnorm, randmatrix, eye, zeros, diag
-from mpmath.linalg import * # TODO: absolute imports
-from mpmath.mptypes import *
+from mp4 import *
 
 A1 = matrix([[3, 1, 6],
              [2, 1, 3],
@@ -178,11 +176,6 @@ def test_cond():
     assert cond(A, lambda x: mnorm(x,1)) == mpf('327065209.73817754')
     assert cond(A, lambda x: mnorm(x,inf)) == mpf('327065209.73817754')
     assert cond(A, lambda x: mnorm(x,'F')) == mpf('249729266.80008656')
-
-@extradps(50)
-def test_precision():
-    A = randmatrix(10, 10)
-    assert mnorm(inverse(inverse(A)) - A, 1) < 1.e-45
 
 def test_interval_matrix():
     a = matrix([['0.1','0.3','1.0'],['7.1','5.5','4.8'],['3.2','4.4','5.6']],
