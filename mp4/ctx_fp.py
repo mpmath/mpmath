@@ -67,8 +67,8 @@ class FPContext(StandardBaseContext):
             return sum((x**2 for x in args), ctx.zero)
         return sum((x for x in args), ctx.zero)
 
-    def fdot(ctx, xs, ys):
-        if ys:
+    def fdot(ctx, xs, ys=None):
+        if ys is not None:
             xs = zip(xs, ys)
         return sum((x*y for (x,y) in xs), ctx.zero)
 
