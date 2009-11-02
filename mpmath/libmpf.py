@@ -603,8 +603,8 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                     if delta > prec + 4:
                         offset = prec + 4
                         sman <<= offset
-                        if tsign: sman -= 1
-                        else:     sman += 1
+                        if tsign == ssign: sman += 1
+                        else:              sman -= 1
                         return normalize1(ssign, sman, sexp-offset,
                             bitcount(sman), prec, rnd)
                 # Add
@@ -628,8 +628,8 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                     if delta > prec + 4:
                         offset = prec + 4
                         tman <<= offset
-                        if ssign: tman -= 1
-                        else:     tman += 1
+                        if ssign == tsign: tman += 1
+                        else:              tman -= 1
                         return normalize1(tsign, tman, texp-offset,
                             bitcount(tman), prec, rnd)
                 # Add
