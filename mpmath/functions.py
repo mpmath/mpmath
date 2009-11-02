@@ -573,7 +573,7 @@ def gammaprod(ctx, a, b, _infsign=False):
         if _infsign:
             a = [x and x*(1+ctx.eps) or x+ctx.eps for x in poles_num]
             b = [x and x*(1+ctx.eps) or x+ctx.eps for x in poles_den]
-            return sign(gammaprod(a+regular_num,b+regular_den)) * ctx.inf
+            return ctx.sign(ctx.gammaprod(a+regular_num,b+regular_den)) * ctx.inf
         else:
             return ctx.inf
     # All poles cancel
@@ -3274,6 +3274,22 @@ def coulombg(ctx, l, eta, z, w=1, chop=True):
     if chop and (not ctx.im(l)) and (not ctx.im(eta)) and (not ctx.im(z)) and \
         (ctx.re(z) >= 0):
         v = ctx.re(v)
+    return v
+
+@defun
+def _zetasum(ctx, s, a, b):
+    """
+    Computes sum of k^(-s) for k = a, a+1, ..., b with a, b both small
+    integers.
+    """
+    a = int(a)
+    b = int(b)
+    s = ctx.convert(s)
+    prec, rounding = ctx._prec_rounding
+    if hasattr(s, '_mpf_'):
+        v = ctx.make_mpf(gammazeta.mpf_zetasum(s._mpf_, a, b, prec))
+    elif hasattr(s, '_mpc_'):
+        v = ctx.make_mpc(gammazeta.mpc_zetasum(s._mpc_, a, b, prec))
     return v
 
 if __name__ == '__main__':

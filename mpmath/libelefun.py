@@ -462,29 +462,14 @@ def mpf_cbrt(s, prec, rnd=round_fast):
 log_int_cache = {}
 
 def log_int_fixed(n, prec):
-    if n < 2:
-        return MP_ZERO
-    cache = log_int_cache.get(prec)
-    if cache and (n in cache):
-        return cache[n]
-    if cache:
-        L = cache[max(cache)]
-    else:
-        cache = log_int_cache[prec] = {}
-        L = cache[2] = ln2_fixed(prec)
-    one = MP_ONE << prec
-    for p in xrange(max(cache)+1, n+1):
-        s = 0
-        u = one
-        k = 1
-        a = (2*p-1)**2
-        while u:
-            s += u // k
-            u //= a
-            k += 2
-        L += 2*s//(2*p-1)
-        cache[p] = L
-    return cache[n]
+    if n in log_int_cache:
+        value, vprec = log_int_cache[n]
+        if vprec >= prec:
+            return value >> (vprec - prec)
+    extra = 30
+    vprec = prec + extra
+    log_int_cache[n] = to_fixed(mpf_log(from_int(n), vprec+5), vprec), vprec
+    return log_int_cache[n][0] >> extra
 
 # Use Taylor series with caching up to this prec
 LOG_TAYLOR_PREC = 2500

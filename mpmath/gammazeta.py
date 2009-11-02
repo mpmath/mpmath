@@ -1281,7 +1281,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
             w *= (d[n] - d[k])
         else:
             w *= (d[k] - d[n])
-        wre, wim = cos_sin(from_man_exp(-imf * log_int_fixed(k+1, wp), -2*wp), wp)
+        wre, wim = cos_sin(from_man_exp(-imf * log, -2*wp), wp)
         tre += (w * to_fixed(wre, wp)) >> wp
         tim += (w * to_fixed(wim, wp)) >> wp
     tre //= (-d[n])
@@ -1299,3 +1299,41 @@ def mpf_altzeta(s, prec, rnd=round_fast):
 
 def mpc_altzeta(s, prec, rnd=round_fast):
     return mpc_zeta(s, prec, rnd, 1)
+
+def mpf_zetasum(s, a, b, prec):
+    wp = prec + 10
+    t = MP_ZERO
+    sf = to_fixed(s, wp)
+    for k in xrange(a, b+1):
+        u = from_man_exp(-sf*log_int_fixed(k, wp), -2*wp, wp)
+        esign, eman, eexp, ebc = mpf_exp(u, wp)
+        offset = eexp + wp
+        if offset >= 0:
+            t += eman << offset
+        else:
+            t += eman >> (-offset)
+    return from_man_exp(t, -wp, prec, 'n')
+
+def mpc_zetasum(s, a, b, prec):
+    re, im = s
+    wp = prec + 10
+    ref = to_fixed(re, wp)
+    imf = to_fixed(im, wp)
+    tre = MP_ZERO
+    tim = MP_ZERO
+    one = MP_ONE << wp
+    one_2wp = MP_ONE << (2*wp)
+    critical_line = re == fhalf
+    for k in xrange(a, b+1):
+        log = log_int_fixed(k, wp)
+        if critical_line:
+            w = one_2wp // sqrt_fixed(k << wp, wp)
+        else:
+            w = to_fixed(mpf_exp(from_man_exp(-ref*log, -2*wp), wp), wp)
+        wre, wim = cos_sin(from_man_exp(-imf * log, -2*wp), wp)
+        tre += (w * to_fixed(wre, wp)) >> wp
+        tim += (w * to_fixed(wim, wp)) >> wp
+    tre = from_man_exp(tre, -wp, prec, 'n')
+    tim = from_man_exp(tim, -wp, prec, 'n')
+    return tre, tim
+

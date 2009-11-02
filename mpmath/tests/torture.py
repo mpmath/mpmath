@@ -50,6 +50,10 @@ if "-nogmpy" in sys.argv:
     sys.argv.remove('-nogmpy')
     os.environ['MPMATH_NOGMPY'] = 'Y'
 
+filt = ''
+if not sys.argv[-1].endswith(".py"):
+    filt = sys.argv[-1]
+
 from mpmath import *
 
 def test_asymp(f, maxdps=150, verbose=False):
@@ -196,12 +200,13 @@ test_asymp(barnesg, maxdps=90)
 """
 
 def testit(line):
-    print line
-    t1 = clock()
-    exec line
-    t2 = clock()
-    elapsed = t2-t1
-    print "Time:", elapsed, "for", line, "(OK)"
+    if filt in line:
+        print line
+        t1 = clock()
+        exec line
+        t2 = clock()
+        elapsed = t2-t1
+        print "Time:", elapsed, "for", line, "(OK)"
 
 if __name__ == '__main__':
     try:
