@@ -2388,9 +2388,10 @@ def lambertw(ctx, z, k=0, approx=None):
     if ctx.isnan(z):
         return z
     ctx.prec += 20
+    absz = abs(z)
     # We must be extremely careful near the singularities at -1/e and 0
     u = ctx.exp(-1)
-    if abs(z) <= u:
+    if absz <= u:
         if not z:
             # w(0,0) = 0; for all other branches we hit the pole
             if not k:
@@ -2408,8 +2409,17 @@ def lambertw(ctx, z, k=0, approx=None):
             # gets better for large |k|; need to check that this always
             # works for k ~= -1, 0, 1.
             if k: w += k * 2*ctx.pi*ctx.j
-    elif k == 0 and ctx.im(z) and abs(z) <= 0.6:
-        w = z
+    elif k == 0 and ctx.im(z) and absz <= 0.7:
+        # Both the W(z) ~= z and W(z) ~= ln(z) approximations break
+        # down around z ~= -0.5 (converging to the wrong branch), so patch 
+        # with a constant approximation (adjusted for sign)
+        if abs(z+0.5) < 0.1:
+            if ctx.im(z) > 0:
+                w = ctx.mpc(0.7+0.7j)
+            else:
+                w = ctx.mpc(0.7-0.7j)
+        else:
+            w = z
     else:
         if z == ctx.inf:
             if k == 0:

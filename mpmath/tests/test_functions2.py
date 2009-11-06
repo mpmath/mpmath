@@ -1050,6 +1050,11 @@ def test_lambertw():
     mp.dps = 50
     assert lambertw(pi).ae('1.073658194796149172092178407024821347547745350410314531')
     mp.dps = 15
+    # Former bug in generated branch
+    assert lambertw(-0.5+0.002j).ae(-0.78917138132659918344 + 0.76743539379990327749j)
+    assert lambertw(-0.5-0.002j).ae(-0.78917138132659918344 - 0.76743539379990327749j)
+    assert lambertw(-0.448+0.4j).ae(-0.11855133765652382241 + 0.66570534313583423116j)
+    assert lambertw(-0.448-0.4j).ae(-0.11855133765652382241 - 0.66570534313583423116j)
 
 def test_meijerg():
     mp.dps = 15
