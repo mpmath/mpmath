@@ -3635,15 +3635,14 @@ Computes the logarithmic integral or li-function
 
 The logarithmic integral has a singularity at `x = 1`.
 
-Note that there is a second logarithmic integral, the Li
-function, defined by
+Alternatively, ``li(x, offset=True)`` computes the offset
+logarithmic integral (used in number theory)
 
 .. math ::
 
-    \mathrm{Li}(x) = \int_2^x \frac{1}{\log t} \, dt
+    \mathrm{Li}(x) = \int_2^x \frac{1}{\log t} \, dt.
 
-This "offset logarithmic integral" can be computed via
-:func:`li` using the simple identity
+These two functions are related via the simple identity
 `\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)`.
 
 The logarithmic integral should also not be confused with
@@ -3668,6 +3667,14 @@ Some basic values and limits::
     1.45136923488338105028396848589
     >>> li(inf)
     +inf
+    >>> li(2, offset=True)
+    0.0
+    >>> li(1, offset=True)
+    -inf
+    >>> li(0, offset=True)
+    -1.04516378011749278484458888919
+    >>> li(10, offset=True)
+    5.12043572466980515267839286347
 
 The logarithmic integral can be evaluated for arbitrary
 complex arguments::
@@ -3693,12 +3700,13 @@ The logarithmic integral grows like `O(x/\log(x))`::
     4.3619719871407e+97
 
 The prime number theorem states that the number of primes less
-than `x` is asymptotic to `\mathrm{li}(x)`. For example,
-it is known that there are exactly 1,925,320,391,606,803,968,923
-prime numbers less than `10^{23}` [1]. The logarithmic integral
-provides a very accurate estimate::
+than `x` is asymptotic to `\mathrm{Li}(x)` (equivalently
+`\mathrm{li}(x)`). For example, it is known that there are
+exactly 1,925,320,391,606,803,968,923 prime numbers less than
+`10^{23}` [1]. The logarithmic integral provides a very
+accurate estimate::
 
-    >>> li(2) + li(10**23)
+    >>> li(10**23, offset=True)
     1.92532039161405e+21
 
 A definite integral is::

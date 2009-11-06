@@ -1842,7 +1842,11 @@ def expint(ctx, n, z):
     return z**(n-1) * ctx.gammainc(1-n, z)
 
 @defun_wrapped
-def li(ctx, z):
+def li(ctx, z, offset=False):
+    if offset:
+        if z == 2:
+            return ctx.zero
+        return ctx.ei(ctx.ln(z)) - ctx.ei(ctx.ln2)
     if not z:
         return z
     if z == 1:
