@@ -459,6 +459,8 @@ def mpf_cbrt(s, prec, rnd=round_fast):
 # Fast sequential integer logarithms are required for various series
 # computations related to zeta functions, so we cache them
 # TODO: can this be done better?
+MAX_LOG_INT_CACHE = 2000
+
 log_int_cache = {}
 
 def log_int_fixed(n, prec):
@@ -468,8 +470,10 @@ def log_int_fixed(n, prec):
             return value >> (vprec - prec)
     extra = 30
     vprec = prec + extra
-    log_int_cache[n] = to_fixed(mpf_log(from_int(n), vprec+5), vprec), vprec
-    return log_int_cache[n][0] >> extra
+    v = to_fixed(mpf_log(from_int(n), vprec+5), vprec)
+    if n < MAX_LOG_INT_CACHE:
+        log_int_cache[n] = (v, vprec)
+    return v >> extra
 
 # Use Taylor series with caching up to this prec
 LOG_TAYLOR_PREC = 2500
