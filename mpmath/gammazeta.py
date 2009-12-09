@@ -353,7 +353,7 @@ MAX_BERNOULLI_CACHE = 3000
 """
 Small Bernoulli numbers and factorials are used in numerous summations,
 so it is critical for speed that sequential computation is fast and that
-values are cached up to a fairly high threshhold.
+values are cached up to a fairly high threshold.
 
 On the other hand, we also want to support fast computation of isolated
 large numbers. Currently, no such acceleration is provided for integer

@@ -174,7 +174,7 @@ class matrix(object):
     Matrix operations
     -----------------
 
-    You can add and substract matrices of compatible dimensions::
+    You can add and subtract matrices of compatible dimensions::
 
         >>> A = matrix([[1, 2], [3, 4]])
         >>> B = matrix([[-2, 4], [5, 9]])
@@ -674,7 +674,7 @@ def hilbert(m, n=None):
     Create (pseudo) hilbert matrix m x n.
     One given dimension will create hilbert matrix n x n.
 
-    The matrix is very ill-conditioned and symmetric, positive definit if
+    The matrix is very ill-conditioned and symmetric, positive definite if
     square.
     """
     if n is None:

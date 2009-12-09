@@ -593,7 +593,7 @@ class MDNewton:
 
     x0 is the starting point close to the root.
 
-    J is a function returning the jacobian matrix for a point.
+    J is a function returning the Jacobian matrix for a point.
 
     Supports overdetermined systems.
 

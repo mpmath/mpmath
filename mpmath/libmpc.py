@@ -402,8 +402,8 @@ def mpc_exp((a, b), prec, rnd=round_fast):
 
     We use the direct formula exp(a+bi) = exp(a) * (cos(b) + sin(b)*i)
     for the computation. This formula is very nice because it is
-    pewrectly stable; since we just do real multiplications, the only
-    numerical errors that can crewp in are single-ulp rnd errors.
+    pefectly stable; since we just do real multiplications, the only
+    numerical errors that can creep in are single-ulp rounding errors.
 
     The formula is efficient since mpmath's real exp is quite fast and
     since we can compute cos and sin simultaneously.

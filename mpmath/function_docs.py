@@ -1908,7 +1908,7 @@ approximation of the `n`-th harmonic number `H(n)`, defined as
 
     H(n) = 1 + \frac{1}{2} + \frac{1}{3} + \ldots + \frac{1}{n}
 
-The firrst few harmonic numbers are::
+The first few harmonic numbers are::
 
     >>> from mpmath import *
     >>> mp.dps = 15; mp.pretty = True

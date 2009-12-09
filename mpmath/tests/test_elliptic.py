@@ -9,7 +9,7 @@ References:
 [1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
     (Dover duplicate of 1972 edition)
 [2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
-    Cambridge Univeristy Press
+    Cambridge University Press
 
 """
 
@@ -175,7 +175,7 @@ def test_jtheta_issue39():
 def test_jtheta_identities():
     """
     Tests the some of the jacobi identidies found in Abramowitz,
-    Sec. 16.28, Pg. 576.  The identies are tested to 1 part in 10^98.
+    Sec. 16.28, Pg. 576. The identities are tested to 1 part in 10^98.
     """
     mp.dps = 110
     eps1 = ldexp(eps, 30)
@@ -444,8 +444,8 @@ def test_jdn():
 
 def test_sn_cn_dn_identities():
     """
-    Tests the some of the jacobi elliptic function identidies found
-    on Mathworld.  Havn't found in Abramowitz.
+    Tests the some of the jacobi elliptic function identities found
+    on Mathworld. Haven't found in Abramowitz.
     """
     mp.dps = 100
     N = 5

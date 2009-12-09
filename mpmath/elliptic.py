@@ -12,7 +12,7 @@
     [1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
         (Dover duplicate of 1972 edition)
     [2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
-        Cambridge Univeristy Press
+        Cambridge University Press
 
 """
 from mptypes import (mpf, mpc, mp, mpmathify, eps, one, zero, j)

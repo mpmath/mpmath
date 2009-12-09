@@ -1077,7 +1077,7 @@ def diff(f, x, n=1, method='step', scale=1, direction=0):
         The derivative is computed using a finite difference
         approximation, with a small step h. This requires n+1 function
         evaluations and must be performed at (n+1) times the target
-        precison. Accordingly, f must support fast evaluation at high
+        precision. Accordingly, f must support fast evaluation at high
         precision.
 
     ``'quad'``:

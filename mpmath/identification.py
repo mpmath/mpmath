@@ -315,7 +315,7 @@ def findpoly(x, n=1, **kwargs):
     and a maximum permitted coefficient size with ``maxcoeff``.
 
     For large values of `n`, it is recommended to run :func:`findpoly`
-    at high precision; preferrably 50 digits or more.
+    at high precision; preferably 50 digits or more.
 
     **Examples**
 
