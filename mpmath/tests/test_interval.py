@@ -1,5 +1,7 @@
 from mpmath import *
-from mpmath.mptypes import mpi_to_str, mpi_from_str
+
+mpi_to_str = mp.mpi_to_str
+mpi_from_str = mp.mpi_from_str
 
 def test_interval_identity():
     mp.dps = 15

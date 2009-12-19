@@ -2,9 +2,14 @@
 
 from __future__ import division
 
-from mpmath.matrices import matrix, norm, mnorm, randmatrix, eye, zeros, diag
-from mpmath.linalg import * # TODO: absolute imports
-from mpmath.mptypes import *
+from mpmath import *
+
+# XXX: these shouldn't be visible(?)
+LU_decomp = mp.LU_decomp
+L_solve = mp.L_solve
+U_solve = mp.U_solve
+householder = mp.householder
+improve_solution = mp.improve_solution
 
 A1 = matrix([[3, 1, 6],
              [2, 1, 3],
@@ -158,10 +163,9 @@ def test_singular():
         _assert_ZeroDivisionError(i)
 
 def test_cholesky():
-    A9.force_type = float
-    assert cholesky(A9) == matrix([[2, 0, 0], [1, 2, 0], [-1, -3/2, 3/2]])
-    x = cholesky_solve(A9, b9)
-    assert norm(residual(A9, x, b9), inf) == 0
+    assert fp.cholesky(fp.matrix(A9)) == fp.matrix([[2, 0, 0], [1, 2, 0], [-1, -3/2, 3/2]])
+    x = fp.cholesky_solve(A9, b9)
+    assert fp.norm(fp.residual(A9, x, b9), fp.inf) == 0
 
 def test_det():
     assert det(A1) == 1

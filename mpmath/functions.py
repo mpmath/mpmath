@@ -1,165 +1,111 @@
-"""
-This module defines most special functions and mathematical constants
-provided by mpmath. [Exception: elliptic functions are currently
-in elliptic.py]
-
-Most of the actual computational code is located in the lib* modules
-(libelefun, libhyper, ...); this module simply wraps this code to
-handle precision management in a user friendly way, provide type
-conversions, etc.
-
-In addition, this module defines a number of functions that would
-be inconvenient to define in the lib* modules, due to requiring
-high level operations (e.g. numerical quadrature) for the computation,
-or the need to support multiple arguments of mixed types.
-
-"""
-
-import libmpf
-import libelefun
-import libmpc
-import libmpi
 import gammazeta
-import libhyper
 import libintmath
+import rational
 
-NoConvergence = libhyper.NoConvergence
+from libhyper import NoConvergence
 
-from mptypes import (\
-    MultiPrecisionArithmetic,
-    def_mp_builtin,
-    defun_wrapped,
-    defun,
-    defun_static,
-    mp,
-    constant,
-    ComplexResult,
-)
+class SpecialFunctions(object):
+    """
+    This class implements special functions using high-level code.
 
-def_mp_builtin = def_mp_builtin
-libelefun = libelefun
-libmpc = libmpc
-libhyper = libhyper
-gammazeta = gammazeta
+    Elementary and some other functions (e.g. gamma function, basecase
+    hypergeometric series) are assumed to be predefined by the context as
+    "builtins" or "low-level" functions.
+    """
+    defined_functions = {}
 
-# The following multiprecision functions are implemented entirely with
-# low-level code
-sqrt = def_mp_builtin('sqrt', libelefun.mpf_sqrt, libmpc.mpc_sqrt, libmpi.mpi_sqrt, "principal square root")
-cbrt = def_mp_builtin('cbrt', libelefun.mpf_cbrt, libmpc.mpc_cbrt, None, "principal cubic root")
-exp = def_mp_builtin('exp', libelefun.mpf_exp, libmpc.mpc_exp, libmpi.mpi_exp, "exponential function")
-ln = def_mp_builtin('ln', libelefun.mpf_log, libmpc.mpc_log, libmpi.mpi_log, "natural logarithm")
-cos = def_mp_builtin('cos', libelefun.mpf_cos, libmpc.mpc_cos, libmpi.mpi_cos, "cosine")
-sin = def_mp_builtin('sin', libelefun.mpf_sin, libmpc.mpc_sin, libmpi.mpi_sin, "sine")
-tan = def_mp_builtin('tan', libelefun.mpf_tan, libmpc.mpc_tan, libmpi.mpi_tan, "tangent")
-cosh = def_mp_builtin('cosh', libelefun.mpf_cosh, libmpc.mpc_cosh, None, "hyperbolic cosine")
-sinh = def_mp_builtin('sinh', libelefun.mpf_sinh, libmpc.mpc_sinh, None, "hyperbolic sine")
-tanh = def_mp_builtin('tanh', libelefun.mpf_tanh, libmpc.mpc_tanh, None, "hyperbolic tangent")
-acos = def_mp_builtin('acos', libelefun.mpf_acos, libmpc.mpc_acos, None, "inverse cosine")
-asin = def_mp_builtin('asin', libelefun.mpf_asin, libmpc.mpc_asin, None, "inverse sine")
-atan = def_mp_builtin('atan', libelefun.mpf_atan, libmpc.mpc_atan, None, "inverse tangent")
-asinh = def_mp_builtin('asinh', libelefun.mpf_asinh, libmpc.mpc_asinh, None, "inverse hyperbolic sine")
-acosh = def_mp_builtin('acosh', libelefun.mpf_acosh, libmpc.mpc_acosh, None, "inverse hyperbolic cosine")
-atanh = def_mp_builtin('atanh', libelefun.mpf_atanh, libmpc.mpc_atanh, None, "inverse hyperbolic tangent")
-cospi = def_mp_builtin('cospi', libelefun.mpf_cos_pi, libmpc.mpc_cos_pi, None, "")
-sinpi = def_mp_builtin('sinpi', libelefun.mpf_sin_pi, libmpc.mpc_sin_pi, None, "")
-floor = def_mp_builtin('floor', libmpf.mpf_floor, libmpc.mpc_floor, None, "")
-ceil = def_mp_builtin('ceil', libmpf.mpf_ceil, libmpc.mpc_ceil, None, "")
-fibonacci = def_mp_builtin('fibonacci', libelefun.mpf_fibonacci, libmpc.mpc_fibonacci, None, "")
-zeta = def_mp_builtin('zeta', gammazeta.mpf_zeta, gammazeta.mpc_zeta, None, "Riemann zeta function")
-altzeta = def_mp_builtin('altzeta', gammazeta.mpf_altzeta, gammazeta.mpc_altzeta, None, "Dirichlet eta function")
-gamma = def_mp_builtin('gamma', gammazeta.mpf_gamma, gammazeta.mpc_gamma, None, "gamma function")
-factorial = def_mp_builtin('factorial', gammazeta.mpf_factorial, gammazeta.mpc_factorial, None, "factorial")
-harmonic = def_mp_builtin('harmonic', gammazeta.mpf_harmonic, gammazeta.mpc_harmonic, None, "nth harmonic number")
-ei = def_mp_builtin('ei', libhyper.mpf_ei, libhyper.mpc_ei)
-e1 = def_mp_builtin('e1', libhyper.mpf_e1, libhyper.mpc_e1)
-ci = def_mp_builtin('ci', libhyper.mpf_ci, libhyper.mpc_ci, None, "")
-si = def_mp_builtin('si', libhyper.mpf_si, libhyper.mpc_si, None, "")
-ellipk = def_mp_builtin('ellipk', libhyper.mpf_ellipk, libhyper.mpc_ellipk, None, "")
-ellipe = def_mp_builtin('ellipe', libhyper.mpf_ellipe, libhyper.mpc_ellipe, None, "")
-agm1 = def_mp_builtin('agm1', libhyper.mpf_agm1, libhyper.mpc_agm1, None, "Fast alias for agm(1,a) = agm(a,1)")
+    # The series for the Jacobi theta functions converge for |q| < 1;
+    # in the current implementation they throw a ValueError for
+    # abs(q) > THETA_Q_LIM
+    THETA_Q_LIM = 1 - 10**-7
 
-_erf = def_mp_builtin('_erf', libhyper.mpf_erf, None, None, "Error function, erf(z)")
-_erfc = def_mp_builtin('_erfc', libhyper.mpf_erfc, None, None, "Complementary error function, erfc(z) = 1-erf(z)")
+    def __init__(self):
+        cls = self.__class__
+        for name in cls.defined_functions:
+            f, wrap = cls.defined_functions[name]
+            cls.wrap_specfun(name, f, wrap)
+
+        self.mpq_1 = self._mpq(rational.mpq_1)
+        self.mpq_0 = self._mpq(rational.mpq_0)
+        self.mpq_1_2 = self._mpq(rational.mpq_1_2)
+        self.mpq_3_2 = self._mpq(rational.mpq_3_2)
+        self.mpq_1_4 = self._mpq(rational.mpq_1_4)
+        self.mpq_1_16 = self._mpq(rational.mpq_1_16)
+        self.mpq_3_16 = self._mpq(rational.mpq_3_16)
+        self.mpq_5_2 = self._mpq(rational.mpq_5_2)
+        self.mpq_3_4 = self._mpq(rational.mpq_3_4)
+        self.mpq_7_4 = self._mpq(rational.mpq_7_4)
+        self.mpq_5_4 = self._mpq(rational.mpq_5_4)
+
+    # Default -- do nothing
+    @classmethod
+    def wrap_specfun(cls, name, f, wrap):
+        setattr(cls, name, f)
+
+def defun_wrapped(f):
+    SpecialFunctions.defined_functions[f.__name__] = f, True
+
+def defun(f):
+    SpecialFunctions.defined_functions[f.__name__] = f, False
+
+def defun_static(f):
+    setattr(SpecialFunctions, f.__name__, f)
+
+defun_static(gammazeta.bernfrac)
+
+@defun_wrapped
+def cot(ctx, z): return ctx.one / ctx.tan(z)
+
+@defun_wrapped
+def sec(ctx, z): return ctx.one / ctx.cos(z)
+
+@defun_wrapped
+def csc(ctx, z): return ctx.one / ctx.sin(z)
+
+@defun_wrapped
+def coth(ctx, z): return ctx.one / ctx.tanh(z)
+
+@defun_wrapped
+def sech(ctx, z): return ctx.one / ctx.cosh(z)
+
+@defun_wrapped
+def csch(ctx, z): return ctx.one / ctx.sinh(z)
+
+@defun_wrapped
+def acot(ctx, z): return ctx.atan(ctx.one / z)
+
+@defun_wrapped
+def asec(ctx, z): return ctx.acos(ctx.one / z)
+
+@defun_wrapped
+def acsc(ctx, z): return ctx.asin(ctx.one / z)
+
+@defun_wrapped
+def acoth(ctx, z): return ctx.atanh(ctx.one / z)
+
+@defun_wrapped
+def asech(ctx, z): return ctx.acosh(ctx.one / z)
+
+@defun_wrapped
+def acsch(ctx, z): return ctx.asinh(ctx.one / z)
 
 
-fac = MultiPrecisionArithmetic.fac = factorial
-fib = MultiPrecisionArithmetic.fib = fibonacci
+@defun
+def sign(ctx, x):
+    x = ctx.convert(x)
+    if not x or ctx.isnan(x):
+        return x
+    if ctx.is_real_type(x):
+        return ctx.mpf(cmp(x, 0))
+    return x / abs(x)
 
-
-# The main reason why each constant is a class and not just an instance
-# is that Sphinx won't show docstrings for single instances
-
-def defconst(name, func, descr):
-    MultiPrecisionArithmetic._constants.append((name, func, descr))
-
-defconst("pi", libelefun.mpf_pi, "pi")
-defconst("degree", libelefun.mpf_degree, "degree")
-defconst("e", libelefun.mpf_e, "e")
-defconst("ln2", libelefun.mpf_ln2, "ln(2)")
-defconst("ln10", libelefun.mpf_ln10, "ln(10)")
-defconst("phi", libelefun.mpf_phi, "Golden ratio (phi)")
-defconst("euler", gammazeta.mpf_euler, "Euler's constant (gamma)")
-defconst("catalan", gammazeta.mpf_catalan, "Catalan's constant")
-defconst("khinchin", gammazeta.mpf_khinchin, "Khinchin's constant")
-defconst("glaisher", gammazeta.mpf_glaisher, "Glaisher's constant")
-defconst("apery", gammazeta.mpf_apery, "Apery's constant")
-defconst("mertens", gammazeta.mpf_mertens, "Mertens' constant")
-defconst("twinprime", gammazeta.mpf_twinprime, "Twin prime constant")
-
-mp._create_constants(globals())
-
-def funcwrapper(f):
-    def g(*args, **kwargs):
-        orig = mp.prec
-        try:
-            args = [mp.convert(z) for z in args]
-            mp.prec = orig + 10
-            v = f(*args, **kwargs)
-        finally:
-            mp.prec = orig
-        return +v
-    g.__name__ = f.__name__
-    g.__doc__ = f.__doc__
-    return g
-
-def altfunc(f, name, desc):
-    def g(self, x):
-        orig = self.prec
-        try:
-            self.prec = orig + 10
-            return self.one/f(x)
-        finally:
-            self.prec = orig
-    g.__name__ = name
-    g.__doc__ = "Computes the %s of x, 1/%s(x)" % (desc, f.__name__)
-    return defun(g)
-
-def altinvfunc(f, name, desc):
-    def g(self, x):
-        orig = self.prec
-        try:
-            self.prec = orig + 10
-            return f(self.one/x)
-        finally:
-            self.prec = orig
-    setattr(MultiPrecisionArithmetic, name, g)
-    g.__name__ = name
-    g.__doc__ = "Computes the inverse %s of x, %s(1/x)" % (desc, f.__name__)
-    return defun(g)
-
-sec = altfunc(cos, 'sec', 'secant')
-csc = altfunc(sin, 'csc', 'cosecant')
-cot = altfunc(tan, 'cot', 'cotangent')
-sech = altfunc(cosh, 'sech', 'hyperbolic secant')
-csch = altfunc(sinh, 'csch', 'hyperbolic cosecant')
-coth = altfunc(tanh, 'coth', 'hyperbolic cotangent')
-asec = altinvfunc(acos, 'asec', 'secant')
-acsc = altinvfunc(asin, 'acsc', 'cosecant')
-acot = altinvfunc(atan, 'acot', 'cotangent')
-asech = altinvfunc(acosh, 'asech', 'hyperbolic secant')
-acsch = altinvfunc(asinh, 'acsch', 'hyperbolic cosecant')
-acoth = altinvfunc(atanh, 'acoth', 'hyperbolic cotangent')
-
+@defun
+def agm(ctx, a, b=1):
+    if b == 1:
+        return ctx.agm1(a)
+    a = ctx.convert(a)
+    b = ctx.convert(b)
+    return ctx._agm(a, b)
 
 @defun_wrapped
 def sinc(ctx, x):
@@ -181,7 +127,7 @@ def sincpi(ctx, x):
 @defun_wrapped
 def expm1(ctx, x):
     if not x:
-        return type(x)(0)
+        return ctx.zero
     # exp(x) - 1 ~ x
     if ctx.mag(x) < -ctx.prec:
         return x + 0.5*x**2
@@ -241,18 +187,7 @@ def root(ctx, x, n, k=0):
         finally:
             ctx.prec = prec
         return +v
-    if hasattr(x, '_mpf_'):
-        try:
-            return ctx.make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *ctx._prec_rounding))
-        except ComplexResult:
-            if ctx.trap_complex:
-                raise
-            x = (x._mpf_, libmpf.fzero)
-    else:
-        x = x._mpc_
-    return ctx.make_mpc(libmpc.mpc_nthroot(x, n, *ctx._prec_rounding))
-
-nthroot = MultiPrecisionArithmetic.nthroot = root
+    return ctx._nthroot(x, n)
 
 @defun
 def unitroots(ctx, n, primitive=False):
@@ -270,220 +205,48 @@ def unitroots(ctx, n, primitive=False):
     return [+x for x in v]
 
 @defun
-def hypot(ctx, x, y):
-    r"""
-    Computes the Euclidean norm of the vector `(x, y)`, equal
-    to `\sqrt{x^2 + y^2}`. Both `x` and `y` must be real."""
-    x = ctx.convert(x)
-    y = ctx.convert(y)
-    return ctx.make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *ctx._prec_rounding))
-
-@defun
-def ldexp(ctx, x, n):
-    r"""
-    Computes `x 2^n` efficiently. No rounding is performed.
-    The argument `x` must be a real floating-point number (or
-    possible to convert into one) and `n` must be a Python ``int``.
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> ldexp(1, 10)
-        mpf('1024.0')
-        >>> ldexp(1, -3)
-        mpf('0.125')
-
-    """
-    x = ctx.convert(x)
-    return ctx.make_mpf(libmpf.mpf_shift(x._mpf_, n))
-
-@defun
-def frexp(ctx, x):
-    r"""
-    Given a real number `x`, returns `(y, n)` with `y \in [0.5, 1)`,
-    `n` a Python integer, and such that `x = y 2^n`. No rounding is
-    performed.
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> frexp(7.5)
-        (mpf('0.9375'), 3)
-
-    """
-    x = ctx.convert(x)
-    y, n = libmpf.mpf_frexp(x._mpf_)
-    return ctx.make_mpf(y), n
-
-@defun
-def sign(ctx, x):
-    r"""
-    Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
-    (with the special case `\sign(0) = 0`)::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> sign(10)
-        mpf('1.0')
-        >>> sign(-10)
-        mpf('-1.0')
-        >>> sign(0)
-        mpf('0.0')
-
-    Note that the sign function is also defined for complex numbers,
-    for which it gives the projection onto the unit circle::
-
-        >>> mp.dps = 15; mp.pretty = True
-        >>> sign(1+j)
-        (0.707106781186547 + 0.707106781186547j)
-
-    """
-    x = ctx.convert(x)
-    if not x or ctx.isnan(x):
-        return x
-    if ctx.is_real_type(x):
-        return ctx.mpf(cmp(x, 0))
-    return x / abs(x)
-
-@defun
 def arg(ctx, x):
-    r"""
-    Computes the complex argument (phase) of `x`, defined as the
-    signed angle between the positive real axis and `x` in the
-    complex plane::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
-        >>> arg(3)
-        0.0
-        >>> arg(3+3j)
-        0.785398163397448
-        >>> arg(3j)
-        1.5707963267949
-        >>> arg(-3)
-        3.14159265358979
-        >>> arg(-3j)
-        -1.5707963267949
-
-    The angle is defined to satisfy `-\pi < \arg(x) \le \pi` and
-    with the sign convention that a nonnegative imaginary part
-    results in a nonnegative argument.
-
-    The value returned by :func:`arg` is an ``mpf`` instance.
-    """
     x = ctx.convert(x)
     return ctx.atan2(x.imag, x.real)
 
 @defun
 def fabs(ctx, x):
-    r"""
-    Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
-    :func:`fabs` converts non-mpmath numbers (such as ``int``)
-    into mpmath numbers::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> fabs(3)
-        mpf('3.0')
-        >>> fabs(-3)
-        mpf('3.0')
-        >>> fabs(3+4j)
-        mpf('5.0')
-
-    """
     return abs(ctx.convert(x))
 
 @defun
 def re(ctx, x):
-    r"""
-    Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
-    :func:`re` converts `x` to a mpmath number::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> re(3)
-        mpf('3.0')
-        >>> re(-1+4j)
-        mpf('-1.0')
-    """
     return ctx.convert(x).real
 
 @defun
 def im(ctx, x):
-    r"""
-    Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
-    :func:`im` converts `x` to a mpmath number::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> im(3)
-        mpf('0.0')
-        >>> im(-1+4j)
-        mpf('4.0')
-
-    """
     return ctx.convert(x).imag
 
 @defun
 def conj(ctx, x):
-    r"""
-    Returns the complex conjugate of `x`, `\overline{x}`. Unlike
-    ``x.conjugate()``, :func:`im` converts `x` to a mpmath number::
-
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = False
-        >>> conj(3)
-        mpf('3.0')
-        >>> conj(-1+4j)
-        mpc(real='-1.0', imag='-4.0')
-
-    """
     return ctx.convert(x).conjugate()
-
 
 @defun
 def log(ctx, x, b=None):
     if b is None:
-        return ln(x)
+        return ctx.ln(x)
     wp = ctx.prec + 20
     return ctx.ln(x, prec=wp) / ctx.ln(b, prec=wp)
 
 @defun
 def log10(ctx, x):
-    r"""
-    Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
-    is equivalent to ``log(x, 10)``.
-    """
     return ctx.log(x, 10)
 
 @defun
-def power(ctx, x, y):
-    return ctx.convert(x) ** ctx.convert(y)
-
-@defun
-def modf(ctx,x,y):
+def modf(ctx, x, y):
     return ctx.convert(x) % ctx.convert(y)
 
 @defun
-def degrees(ctx,x):
+def degrees(ctx, x):
     return x / ctx.degree
 
 @defun
-def radians(ctx,x):
+def radians(ctx, x):
     return x * ctx.degree
-
-@defun
-def atan2(ctx, y, x):
-    x = ctx.convert(x)
-    y = ctx.convert(y)
-    return ctx.make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *ctx._prec_rounding))
-
-@defun
-def psi(ctx, m, z):
-    z = ctx.convert(z)
-    m = int(m)
-    if ctx.is_real_type(z):
-        return ctx.make_mpf(gammazeta.mpf_psi(m, z._mpf_, *ctx._prec_rounding))
-    else:
-        return ctx.make_mpc(gammazeta.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
 
 @defun
 def psi0(ctx, z):
@@ -505,17 +268,11 @@ def psi3(ctx, z):
     """Shortcut for psi(3,z) (the pentagamma function)"""
     return ctx.psi(3, z)
 
-polygamma = MultiPrecisionArithmetic.polygamma = psi
-digamma = MultiPrecisionArithmetic.digamma = psi0
-trigamma = MultiPrecisionArithmetic.trigamma = psi1
-tetragamma = MultiPrecisionArithmetic.tetragamma = psi2
-pentagamma = MultiPrecisionArithmetic.pentagamma = psi3
-
-@defun
-def bernoulli(ctx, n):
-    return ctx.make_mpf(gammazeta.mpf_bernoulli(int(n), *ctx._prec_rounding))
-
-bernfrac = defun_static(gammazeta.bernfrac)
+#polygamma = MultiPrecisionArithmetic.polygamma = psi
+#digamma = MultiPrecisionArithmetic.digamma = psi0
+#trigamma = MultiPrecisionArithmetic.trigamma = psi1
+#tetragamma = MultiPrecisionArithmetic.tetragamma = psi2
+#pentagamma = MultiPrecisionArithmetic.pentagamma = psi3
 
 @defun
 def stieltjes(ctx, n, a=1):
@@ -656,155 +413,6 @@ def fac2(ctx, x):
         return ctx.nan
     return 2**(x/2)*(ctx.pi/2)**((ctx.cospi(x)-1)/4)*ctx.gamma(x/2+1)
 
-
-#---------------------------------------------------------------------------#
-#                                                                           #
-#                          Hypergeometric functions                         #
-#                                                                           #
-#---------------------------------------------------------------------------#
-
-from libmpf import from_rational
-
-class _mpq(tuple):
-
-    def _mpmath_(self, prec, rounding):
-        # XXX
-        return mp.make_mpf(from_rational(self[0], self[1], prec, rounding))
-        #(mpf(self[0])/self[1])._mpf_
-
-    @property
-    def _mpq_(self):
-        return self
-
-    def __int__(self):
-        a, b = self
-        return a // b
-
-    def __abs__(self):
-        a, b = self
-        return _mpq((abs(a), b))
-
-    def __neg__(self):
-        a, b = self
-        return _mpq((-a, b))
-
-    def __nonzero__(self):
-        return bool(self[0])
-
-    def __cmp__(self, other):
-        if type(other) is int and self[1] == 1:
-            return cmp(self[0], other)
-        return cmp(mp.mpf(self), other)
-
-    def __add__(self, other):
-        if isinstance(other, _mpq):
-            a, b = self
-            c, d = other
-            return _mpq((a*d+b*c, b*d))
-        if isinstance(other, (int, long)):
-            a, b = self
-            return _mpq((a+b*other, b))
-        return NotImplemented
-
-    __radd__ = __add__
-
-    def __sub__(self, other):
-        if isinstance(other, _mpq):
-            a, b = self
-            c, d = other
-            return _mpq((a*d-b*c, b*d))
-        if isinstance(other, (int, long)):
-            a, b = self
-            return _mpq((a-b*other, b))
-        return NotImplemented
-
-    def __rsub__(self, other):
-        if isinstance(other, _mpq):
-            a, b = self
-            c, d = other
-            return _mpq((b*c-a*d, b*d))
-        if isinstance(other, (int, long)):
-            a, b = self
-            return _mpq((b*other-a, b))
-        return NotImplemented
-
-    def __mul__(self, other):
-        if isinstance(other, _mpq):
-            a, b = self
-            c, d = other
-            return _mpq((a*c, b*d))
-        if isinstance(other, (int, long)):
-            a, b = self
-            return _mpq((a*other, b))
-        return NotImplemented
-
-    def __div__(self, other):
-        if isinstance(other, (int, long)):
-            if other:
-                a, b = self
-                return _mpq((a, b*other))
-            raise ZeroDivisionError
-        return NotImplemented
-
-    def __pow__(self, other):
-        if type(other) is int:
-            a, b = self
-            return _mpq((a**other, b**other))
-        return NotImplemented
-
-    __rmul__ = __mul__
-
-
-mpq_1 = _mpq((1,1))
-mpq_0 = _mpq((0,1))
-mpq_1_2 = _mpq((1,2))
-mpq_3_2 = _mpq((3,2))
-mpq_1_4 = _mpq((1,4))
-mpq_1_16 = _mpq((1,16))
-mpq_3_16 = _mpq((3,16))
-mpq_5_2 = _mpq((5,2))
-
-@defun
-def _hyp_parse_param(ctx, x):
-    if isinstance(x, tuple):
-        p, q = x
-        return [[p, q]], [], [], _mpq(x)
-    if isinstance(x, (int, long)):
-        return [[x, 1]], [], [], x
-    x = ctx.convert(x)
-    if hasattr(x, '_mpf_'):
-        sign, man, exp, bc = _mpf_ = x._mpf_
-        # Recognize simple rationals
-        if exp >= -4:
-            if sign:
-                man = -man
-            if exp >= 0:
-                return [[int(man)<<exp, 1]], [], [], x
-            return [[int(man), 2**(-exp)]], [], [], x
-        else:
-            return [], [_mpf_], [], x
-    if hasattr(x, '_mpc_'):
-        return [], [], [x._mpc_], x
-
-def _as_num(x):
-    if isinstance(x, list):
-        return _mpq(x)
-    return x
-
-@defun
-def hypsum(ctx, ar, af, ac, br, bf, bc, x, **kwargs):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(x, '_mpf_') and not (ac or bc):
-        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, x._mpf_, None, prec, rnd, **kwargs)
-        return ctx.make_mpf(v)
-    else:
-        if hasattr(x, '_mpc_'):
-            re, im = x._mpc_
-        else:
-            re, im = x._mpf_, libmpf.fzero
-        v = libhyper.hypsum_internal(ar, af, ac, br, bf, bc, re, im, prec, rnd, **kwargs)
-        return ctx.make_mpc(v)
-
 @defun
 def hyper(ctx, a_s, b_s, z, **kwargs):
     """
@@ -836,100 +444,22 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
             return ctx.hyp2f3(a_s[0], a_s[1], b_s[0], b_s[1], b_s[2], z, **kwargs)
         elif q == 0:
             return ctx.hyp2f0(a_s[0], a_s[1], z, **kwargs)
-    # TODO: do convergence tests here
-    z = ctx.convert(z)
-    ars, afs, acs, brs, bfs, bcs = [], [], [], [], [], []
-    for a in a_s:
-        r, f, c, a = ctx._hyp_parse_param(a)
-        ars += r
-        afs += f
-        acs += c
-    for b in b_s:
-        r, f, c, b = ctx._hyp_parse_param(b)
-        brs += r
-        bfs += f
-        bcs += c
-    return ctx.hypsum(ars, afs, acs, brs, bfs, bcs, z)
-
-@defun
-def sum_hyp0f1_rat(ctx, a, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp0f1_rat(a, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp0f1_rat(a, z._mpc_, prec, rnd))
-
-@defun
-def sum_hyp1f1_rat(ctx, a, b, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp1f1_rat(a, b, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp1f1_rat(a, b, z._mpc_, prec, rnd))
-
-@defun
-def sum_hyp2f1_rat(ctx, a, b, c, z):
-    prec, rnd = ctx._prec_rounding
-    if hasattr(z, "_mpf_"):
-        return ctx.make_mpf(libhyper.mpf_hyp2f1_rat(a, b, c, z._mpf_, prec, rnd))
-    else:
-        return ctx.make_mpc(libhyper.mpc_hyp2f1_rat(a, b, c, z._mpc_, prec, rnd))
-
-@defun
-def _hyp_check_convergence(ctx, a_s, b_s, z, prec, n=None):
-    p = len(a_s)
-    q = len(b_s)
-    a = max([1] + map(abs, a_s))
-    b = min([1] + map(abs, b_s))
-    z = abs(z)
-    amag = ctx.mag(a)
-    bmag = ctx.mag(b)
-    zmag = ctx.mag(z)
-    tol = -prec
-    # z extremely tiny
-    if p*amag - q*bmag + zmag < tol:
-        return True
-    a = int(a)
-    b = int(b)
-    # XXX: better choice of n?
-
-    if n:
-        n = int(n)
-    else:
-        n = prec
-    nmag = ctx.mag(n)
-
-    #n = int(1/z)
-    #nmag = -zmag
-
-    # Accurately estimate size of nth term using Stirling's formula
-    t = zmag*n         # z^n
-    t -= n*nmag - n    # 1/n!
-    t += p*((a+n)*max(amag,nmag)-(a*amag-a))   # numerator rfs
-    t -= q*((b+n)*max(bmag,nmag)-(b*bmag-b))   # denominator rfs
-
-    #u = z**n / ctx.fac(n) * ctx.rf(a,n)**p / ctx.rf(b,n)**q
-    #print "CONV", prec, p,q, "KEK", n, "est", t, tol, t < tol, "real", int(log(abs(u),2))
-    #print "1", zmag*n, ctx.mag(z**n)
-    #print "2", n*nmag-n, ctx.mag(ctx.fac(n))
-
-    return t < tol
-
+    coeffs = map(ctx.convert_maybe_rational, a_s+b_s)
+    coeffs, types = zip(*coeffs)
+    return ctx.hypsum(p, q, types, coeffs, z)
 
 @defun
 def hyp0f1(ctx, b, z, **kwargs):
     """
     Hypergeometric 0F1.
     """
-    br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
+    b, btype = ctx.convert_maybe_rational(b)
     if z:
         magz = ctx.mag(z)
     else:
         magz = 0
     if magz >= 8 and not kwargs.get('force_series'):
-        #if ctx._hyp2f0_check_convergence(b, b, 1/abs(z)**0.5, ctx.prec+40+magz//2):
-        #if ctx._hyp_check_convergence([b, b], [], 1/abs(z)**0.5, ctx.prec+40+magz//2):
         try:
             # http://functions.wolfram.com/HypergeometricFunctions/
             # Hypergeometric0F1/06/02/03/0004/
@@ -944,13 +474,13 @@ def hyp0f1(ctx, b, z, **kwargs):
                 w = ctx.sqrt(-z)
                 jw = ctx.j*w
                 u = 1/(4*jw)
-                c = mpq_1_2 - b
-                E = exp(2*jw)
-                H1 = (-jw)**c/E*ctx.hyp2f0(b-mpq_1_2, mpq_3_2-b, -u,
+                c = ctx.mpq_1_2 - b
+                E = ctx.exp(2*jw)
+                H1 = (-jw)**c/E*ctx.hyp2f0(b-ctx.mpq_1_2, ctx.mpq_3_2-b, -u,
                     force_series=True)
-                H2 = (jw)**c*E*ctx.hyp2f0(b-mpq_1_2, mpq_3_2-b, u,
+                H2 = (jw)**c*E*ctx.hyp2f0(b-ctx.mpq_1_2, ctx.mpq_3_2-b, u,
                     force_series=True)
-                v = gamma(b)/(2*sqrt(pi))*(H1 + H2)
+                v = ctx.gamma(b)/(2*ctx.sqrt(ctx.pi))*(H1 + H2)
             finally:
                 ctx.prec = orig
             if ctx.is_real_type(b) and ctx.is_real_type(z):
@@ -958,18 +488,16 @@ def hyp0f1(ctx, b, z, **kwargs):
             return +v
         except NoConvergence:
             pass
-    if br:
-        return ctx.sum_hyp0f1_rat(br[0], z)
-    return ctx.hypsum([], [], [], br, bf, bc, z)
+    return ctx.hypsum(0, 1, (btype,), [b], z)
 
 @defun
 def hyp1f1(ctx, a, b, z, **kwargs):
     """
     Hypergeometric 1F1.
     """
-    ar, af, ac, a = ctx._hyp_parse_param(a)
-    br, bf, bc, b = ctx._hyp_parse_param(b)
     z = ctx.convert(z)
+    a, atype = ctx.convert_maybe_rational(a)
+    b, btype = ctx.convert_maybe_rational(b)
     if not z:
         return ctx.one+z
     magz = ctx.mag(z)
@@ -978,13 +506,6 @@ def hyp1f1(ctx, a, b, z, **kwargs):
             if ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
                 return ctx.inf
             return ctx.nan * z
-        # TODO: extra precision?
-        # Check with twice the precision because a limit could be invoked
-        #if ctx._hyp2f0_check_convergence(a, a-b, 1/z, 2*ctx.prec+40):
-        # TODO: do this optimally, but still so as to avoid infinite recursion
-        # between 1F1 and 2F0
-        #checked = 2*ctx.prec+40
-        #if ctx._hyp_check_convergence([a, a-b], [], 1/z, 2*ctx.prec+40):
         try:
             try:
                 ctx.prec += magz
@@ -1006,10 +527,10 @@ def hyp1f1(ctx, a, b, z, **kwargs):
                 pass
         finally:
             ctx.prec -= magz
-    if ar and br:
-        a, b = ar[0], br[0]
-        return ctx.sum_hyp1f1_rat(a, b, z)
-    return ctx.hypsum(ar, af, ac, br, bf, bc, z)
+    #print "TEST", ctx.prec, a._v, b._v, z._v
+    v = ctx.hypsum(1, 1, (atype, btype), [a, b], z)
+    #print "1F1", complex(a), complex(b), complex(z), complex(v)
+    return v
 
 def _hyp2f1_gosper(ctx,a,b,c,z):
     # Use Gosper's recurrence
@@ -1032,8 +553,8 @@ def _hyp2f1_gosper(ctx,a,b,c,z):
         # things a bit unreadable. The formula is quite messy to begin
         # with, though...
         abz = a*b*z
-        ch = c/2
-        c1h = (c+1)/2
+        ch = c * ctx.mpq_1_2
+        c1h = (c+1) * ctx.mpq_1_2
         nz = 1-z
         g = z/nz
         abg = a*b*g
@@ -1070,11 +591,10 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
     """
     Hypergeometric 2F1.
     """
-    prec, rnd = ctx._prec_rounding
-    ar, af, ac, a = ctx._hyp_parse_param(a)
-    br, bf, bc, b = ctx._hyp_parse_param(b)
-    cr, cf, cc, c = ctx._hyp_parse_param(c)
     z = ctx.convert(z)
+    a, atype = ctx.convert_maybe_rational(a)
+    b, btype = ctx.convert_maybe_rational(b)
+    c, ctype = ctx.convert_maybe_rational(c)
 
     if z == 1:
         # TODO: the following logic can be simplified
@@ -1120,14 +640,7 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
     # possibly in finitely many terms
     if absz <= 0.8 or (ctx.isint(a) and a <= 0 and a >= -1000) or \
                       (ctx.isint(b) and b <= 0 and b >= -1000):
-        # All rational
-        if ar and br and cr:
-            return ctx.sum_hyp2f1_rat(ar[0], br[0], cr[0], z)
-        return ctx.hypsum(ar+br, af+bf, ac+bc, cr, cf, cc, z)
-
-    a = (ar and _as_num(ar[0])) or ctx.convert(a)
-    b = (br and _as_num(br[0])) or ctx.convert(b)
-    c = (cr and _as_num(cr[0])) or ctx.convert(c)
+        return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z)
 
     orig = ctx.prec
     try:
@@ -1136,9 +649,9 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
         # Use 1/z transformation
         if absz >= 1.3:
             def h(a,b):
-                t = mpq_1-c; ab = a-b; rz = 1/z
-                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[mpq_1+ab],  rz)
-                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[mpq_1-ab],  rz)
+                t = ctx.mpq_1-c; ab = a-b; rz = 1/z
+                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[ctx.mpq_1+ab],  rz)
+                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[ctx.mpq_1-ab],  rz)
                 return T1, T2
             v = ctx.hypercomb(h, [a,b])
 
@@ -1215,6 +728,7 @@ def hypercomb(ctx, function, params=[], **kwargs):
                                 recompute = True
                 except StopIteration:
                     pass
+
             if perturb:
                 """
                 # Should check for poles far from 0 and ensure that
@@ -1226,7 +740,7 @@ def hypercomb(ctx, function, params=[], **kwargs):
                         if d < -4 and n <= 0:
                             minterms = max(minterms, -n)
                 """
-                h = ctx.ldexp(1,-orig-10)
+                h = ctx.ldexp(ctx.one,-orig-10)
                 ctx.prec = (orig2+10)*2
                 for k in range(len(params)):
                     params[k] += h
@@ -1238,20 +752,31 @@ def hypercomb(ctx, function, params=[], **kwargs):
             if recompute:
                 terms = function(*params)
             evaluated_terms = []
+            #print
+            #print "EVALUATING"
+
             for w_s, c_s, alpha_s, beta_s, a_s, b_s, z in terms:
                 #print "hypercomb", len(a_s), len(b_s), a_s, b_s, z
                 v = ctx.hyper(a_s, b_s, z, **kwargs)
-                for a in alpha_s: v *= ctx.gamma(a)
-                for b in beta_s: v /= ctx.gamma(b)
+                for a in alpha_s:
+                    v *= ctx.gamma(a)
+                for b in beta_s:
+                    v /= ctx.gamma(b)
                 for w, c in zip(w_s, c_s):
-                    v *= convert(w) ** c
+                    v *= ctx.power(w, c)
                 evaluated_terms.append(v)
+
             if len(terms) == 1:
                 sumvalue = evaluated_terms[0]
                 break
             # Problem: reconcile this with intentional cancellation
-            elif kwargs.get('check_cancellation'):
+            elif kwargs.get('check_cancellation') and not ctx._fixed_precision:
                 sumvalue = ctx.fsum(evaluated_terms)
+                #print "CHECK"
+                #print ctx.mag(sumvalue), complex(sumvalue)
+                #for x in evaluated_terms:
+                #    print ctx.prec, ctx.mag(x), complex(x)
+                #print ctx.prec, hash(x), hash(sumvalue)
                 c = max(ctx.mag(x) for x in evaluated_terms) - ctx.mag(sumvalue)
                 if c < ctx.prec - orig:
                     break
@@ -1274,10 +799,10 @@ def hypercomb(ctx, function, params=[], **kwargs):
 
 @defun
 def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
-    a1r, a1f, a1c, a1 = ctx._hyp_parse_param(a1)
-    a2r, a2f, a2c, a2 = ctx._hyp_parse_param(a2)
-    b1r, b1f, b1c, b1 = ctx._hyp_parse_param(b1)
-    b2r, b2f, b2c, b2 = ctx._hyp_parse_param(b2)
+    a1, a1type = ctx.convert_maybe_rational(a1)
+    a2, a2type = ctx.convert_maybe_rational(a2)
+    b1, b1type = ctx.convert_maybe_rational(b1)
+    b2, b2type = ctx.convert_maybe_rational(b2)
     z = ctx.convert(z)
 
     absz = abs(z)
@@ -1289,11 +814,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
 
     # Asymptotic series is in terms of 3F1
     can_use_asymptotic = (not kwargs.get('force_series')) and \
-        (ctx.mag(absz) > 3) #and \
-        #(ctx.sqrt(absz) > 1.5*orig)
-        #(ctx.sqrt(absz) > 1.5*orig) #and \
-        #ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [a1-a2+1],
-        #    1/absz, orig+40+asymp_extraprec)
+        (ctx.mag(absz) > 3)
 
     # TODO: much of the following could be shared with 2F3 instead of
     # copypasted
@@ -1335,7 +856,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
                     T2 = [-z],[-a1],[b1,b2,a2-a1],[a2,b1-a1,b2-a1],[a1,a1-b1+1,a1-b2+1],[a1-a2+1],-1/z
                     T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
                     return T1, T2, T3
-                v = hypercomb(h, [a1,a2,b1,b2])
+                v = ctx.hypercomb(h, [a1,a2,b1,b2])
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
                 return v
@@ -1344,17 +865,15 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
         finally:
             ctx.prec = orig
 
-    #print "not using asymp"
-    return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r, b1f+b2f, b1c+b2c, z)
-
+    return ctx.hypsum(2, 2, (a1type, a2type, b1type, b2type), [a1, a2, b1, b2], z)
 
 
 
 @defun
 def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
-    a1r, a1f, a1c, a1 = ctx._hyp_parse_param(a1)
-    b1r, b1f, b1c, b1 = ctx._hyp_parse_param(b1)
-    b2r, b2f, b2c, b2 = ctx._hyp_parse_param(b2)
+    a1, a1type = ctx.convert_maybe_rational(a1)
+    b1, b1type = ctx.convert_maybe_rational(b1)
+    b2, b2type = ctx.convert_maybe_rational(b2)
     z = ctx.convert(z)
 
     absz = abs(z)
@@ -1381,12 +900,12 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric1F2/06/02/03/
                 def h(a1,b1,b2):
-                    X = mpq_1_2*(a1-b1-b2+mpq_1_2)
+                    X = ctx.mpq_1_2*(a1-b1-b2+ctx.mpq_1_2)
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-mpq_3_16)
-                    c[2] = 2*(b1*b2+mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-mpq_3_16)**2+\
-                        mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
+                    c[1] = 2*(ctx.mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-ctx.mpq_3_16)
+                    c[2] = 2*(b1*b2+ctx.mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-ctx.mpq_3_16)**2+\
+                        ctx.mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
                         4*(a1-b1-b2)*(-8*a1**2+11*a1+b1+b2-2)-3)
                     s1 = 0
                     s2 = 0
@@ -1395,9 +914,9 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                     while 1:
                         if k not in c:
                             uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
-                                (b1-b2)**2 - 2*a1*(b1+b2-2) + mpq_1_4)
-                            uu2 = (k-a1+b1-b2-mpq_1_2)*(k-a1-b1+b2-mpq_1_2)*\
-                                (k-a1+b1+b2-mpq_5_2)
+                                (b1-b2)**2 - 2*a1*(b1+b2-2) + ctx.mpq_1_4)
+                            uu2 = (k-a1+b1-b2-ctx.mpq_1_2)*(k-a1-b1+b2-ctx.mpq_1_2)*\
+                                (k-a1+b1+b2-ctx.mpq_5_2)
                             c[k] = ctx.one/(2*k)*(uu1*c[k-1]-uu2*c[k-2])
                         w = c[k] * (-z)**(-0.5*k)
                         t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
@@ -1420,7 +939,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                     T2 = [-z], [-a1], [b1,b2],[b1-a1,b2-a1], \
                         [a1,a1-b1+1,a1-b2+1], [], 1/z
                     return T1, T2
-                v = hypercomb(h, [a1,b1,b2])
+                v = ctx.hypercomb(h, [a1,b1,b2])
                 if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
                 return v
@@ -1430,18 +949,17 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
             ctx.prec = orig
 
     #print "not using asymp"
-    return ctx.hypsum(a1r, a1f, a1c, b1r+b2r, b1f+b2f, b1c+b2c, z)
+    return ctx.hypsum(1, 2, (a1type, b1type, b2type), [a1, b1, b2], z)
 
 
 
 @defun
 def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
-    prec, rnd = ctx._prec_rounding
-    a1r, a1f, a1c, a1 = ctx._hyp_parse_param(a1)
-    a2r, a2f, a2c, a2 = ctx._hyp_parse_param(a2)
-    b1r, b1f, b1c, b1 = ctx._hyp_parse_param(b1)
-    b2r, b2f, b2c, b2 = ctx._hyp_parse_param(b2)
-    b3r, b3f, b3c, b3 = ctx._hyp_parse_param(b3)
+    a1, a1type = ctx.convert_maybe_rational(a1)
+    a2, a2type = ctx.convert_maybe_rational(a2)
+    b1, b1type = ctx.convert_maybe_rational(b1)
+    b2, b2type = ctx.convert_maybe_rational(b2)
+    b3, b3type = ctx.convert_maybe_rational(b3)
     z = ctx.convert(z)
 
     #return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r+b3r,
@@ -1471,7 +989,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric2F3/06/02/03/01/0002/
                 def h(a1,a2,b1,b2,b3):
-                    X = mpq_1_2*(a1+a2-b1-b2-b3+mpq_1_2)
+                    X = ctx.mpq_1_2*(a1+a2-b1-b2-b3+ctx.mpq_1_2)
                     A2 = a1+a2
                     B3 = b1+b2+b3
                     A = a1*a2
@@ -1479,8 +997,8 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                     R = b1*b2*b3
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(B - A + mpq_1_4*(3*A2+B3-2)*(A2-B3) - mpq_3_16)
-                    c[2] = mpq_1_2*c[1]**2 + mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
+                    c[1] = 2*(B - A + ctx.mpq_1_4*(3*A2+B3-2)*(A2-B3) - ctx.mpq_3_16)
+                    c[2] = ctx.mpq_1_2*c[1]**2 + ctx.mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
                         4*(-8*A2**2 + 11*A2 + 8*A + B3 - 2)*(A2-B3)-3)
                     s1 = 0
                     s2 = 0
@@ -1519,7 +1037,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                     T3 = [-z], [-a2], [b1,b2,b3,a1-a2],[a1,b1-a2,b2-a2,b3-a2], \
                         [a2,a2-b1+1,a2-b2+1,a2-b3+1],[-a1+a2+1], 1/z
                     return T1, T2, T3
-                v = hypercomb(h, [a1,a2,b1,b2,b3])
+                v = ctx.hypercomb(h, [a1,a2,b1,b2,b3])
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
                 return v
@@ -1528,22 +1046,21 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
         finally:
             ctx.prec = orig
 
-    #print "not using asymp"
-    return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r+b3r, b1f+b2f+b3f,
-        b1c+b2c+b3c, z)
+    return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z)
+
 
 @defun
 def hyp2f0(ctx, a, b, z, **kwargs):
     """
     Hypergeometric 2F0.
     """
-    ar, af, ac, a = ctx._hyp_parse_param(a)
-    br, bf, bc, b = ctx._hyp_parse_param(b)
+    a, atype = ctx.convert_maybe_rational(a)
+    b, btype = ctx.convert_maybe_rational(b)
     z = ctx.convert(z)
     # We want to try aggressively to use the asymptotic expansion,  
     # and fall back only when absolutely necessary
     try:
-        return ctx.hypsum(ar+br, af+bf, ac+bc, [], [], [], z, maxterms=ctx.prec)
+        return ctx.hypsum(2, 0, (atype,btype), [a,b], z, maxterms=ctx.prec)
     except NoConvergence:
         if kwargs.get('force_series'):
             raise
@@ -1558,8 +1075,8 @@ def hyp2f0(ctx, a, b, z, **kwargs):
 
 @defun
 def hyperu(ctx, a,b,z):
-    ar, af, ac, a = ctx._hyp_parse_param(a)
-    br, bf, bc, b = ctx._hyp_parse_param(b)
+    a, atype = ctx.convert_maybe_rational(a)
+    b, btype = ctx.convert_maybe_rational(b)
     z = ctx.convert(z)
     if not z:
         if ctx.re(b) <= 1:
@@ -1567,24 +1084,23 @@ def hyperu(ctx, a,b,z):
         else:
             return ctx.inf + z
     bb = 1+a-b
-    bbr, bbf, bbc, bb = ctx._hyp_parse_param(bb)
+    bb, bbtype = ctx.convert_maybe_rational(bb)
     try:
         orig = ctx.prec
         try:
             ctx.prec += 10
-            v = ctx.hypsum(ar+bbr, af+bbf, ac+bbc, [], [], [], -1/z,
-                maxterms=ctx.prec)
+            v = ctx.hypsum(2, 0, (atype, bbtype), [a, bb], -1/z, maxterms=ctx.prec)
             return v / z**a
         finally:
             ctx.prec = orig
     except NoConvergence:
         pass
     def h(a,b):
-        w = sinpi(b)
-        T1 = ([pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
-        T2 = ([-pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
+        w = ctx.sinpi(b)
+        T1 = ([ctx.pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
+        T2 = ([-ctx.pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
         return T1, T2
-    return hypercomb(h, [a,b], check_cancellation=True)
+    return ctx.hypercomb(h, [a,b], check_cancellation=True)
 
 @defun_wrapped
 def _erf_complex(ctx, z):
@@ -1610,24 +1126,18 @@ def _erfc_complex(ctx, z):
 @defun
 def erf(ctx, z):
     z = ctx.convert(z)
-    if hasattr(z, "_mpf_"):
-        return ctx._erf(z)
-    elif hasattr(z, "_mpc_"):
-        if z.imag:
-            return ctx._erf_complex(z)
-        else:
-            return ctx.mpc(ctx._erf(z.real))
+    if ctx.is_complex_type(z):
+        return ctx._erf_complex(z)
+    else:
+        return ctx._erf(z.real)
 
 @defun
 def erfc(ctx, z):
     z = ctx.convert(z)
-    if hasattr(z, "_mpf_"):
-        return ctx._erfc(z)
-    elif hasattr(z, "_mpc_"):
-        if z.imag:
-            return ctx._erfc_complex(z)
-        else:
-            return ctx.mpc(ctx._erfc(z.real))
+    if ctx.is_complex_type(z):
+        return ctx._erfc_complex(z)
+    else:
+        return ctx._erfc(z.real)
 
 @defun
 def square_exp_arg(ctx, z, mult=1):
@@ -1675,35 +1185,6 @@ def ncdf(ctx, x, mu=0, sigma=1):
         return ctx.erfc(-a)/2
     else:
         return (1+ctx.erf(a))/2
-
-@defun
-def _gamma_upper_int(ctx, n, z):
-    n = int(n)
-    if n == 0:
-        return ctx.e1(z)
-    if not hasattr(z, '_mpf_'):
-        raise NotImplementedError
-    prec, rounding = ctx._prec_rounding
-    real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding, gamma=True)
-    if imag is None:
-        return ctx.make_mpf(real)
-    else:
-        return ctx.make_mpc((real, imag))
-
-@defun
-def _expint_int(ctx, n, z):
-    n = int(n)
-    if n == 1:
-        return ctx.e1(z)
-    if not hasattr(z, '_mpf_'):
-        raise NotImplementedError
-    prec, rounding = ctx._prec_rounding
-    real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding)
-    if imag is None:
-        return ctx.make_mpf(real)
-    else:
-        return ctx.make_mpc((real, imag))
-
 @defun
 def gammainc(ctx, z, a=0, b=None, regularized=False):
     regularized = bool(regularized)
@@ -1753,7 +1234,7 @@ def _lower_gamma(ctx, z, b, regularized=False):
     G = [z] * regularized
     negb = ctx.fneg(b, exact=True)
     def h(z):
-        T1 = [exp(negb), b, z], [1, z, -1], [], G, [1], [1+z], b
+        T1 = [ctx.exp(negb), b, z], [1, z, -1], [], G, [1], [1+z], b
         return (T1,)
     return ctx.hypercomb(h, [z])
 
@@ -1782,12 +1263,12 @@ def _upper_gamma(ctx, z, a, regularized=False):
     try:
         def h(z):
             r = z-1
-            return [([exp(nega), a], [1, r], [], G, [1, -r], [], 1/nega)]
+            return [([ctx.exp(nega), a], [1, r], [], G, [1, -r], [], 1/nega)]
         return ctx.hypercomb(h, [z], force_series=True)
     except NoConvergence:
         def h(z):
             T1 = [], [1, z-1], [z], G, [], [], 0
-            T2 = [-exp(nega), a, z], [1, z, -1], [], G, [1], [1+z], a
+            T2 = [-ctx.exp(nega), a, z], [1, z, -1], [], G, [1], [1+z], a
             return T1, T2
         return ctx.hypercomb(h, [z], check_cancellation=True)
 
@@ -1871,13 +1352,16 @@ def shi(ctx, z):
     z2 = ctx.square_exp_arg(z, 0.25)
     return z*ctx.hyp1f2((1,2),(3,2),(3,2),z2)
 
+
+
 @defun_wrapped
 def fresnels(ctx, z):
     if z == ctx.inf:
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    return ctx.pi*z**3/6*ctx.hypsum([[3,4]],[],[],[[3,2],[7,4]],[],[],-ctx.pi**2*z**4/16)
+    return ctx.pi*z**3/6*ctx.hypsum(1,2,('Q','Q','Q'),\
+        [ctx.mpq_3_4,ctx.mpq_3_2,ctx.mpq_7_4],-ctx.pi**2*z**4/16)
 
 @defun_wrapped
 def fresnelc(ctx, z):
@@ -1885,12 +1369,13 @@ def fresnelc(ctx, z):
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    return z*ctx.hypsum([[1,4]],[],[],[[1,2],[5,4]],[],[],-ctx.pi**2*z**4/16)
+    return z*ctx.hypsum(1,2,('Q','Q','Q'),\
+        [ctx.mpq_1_4,ctx.mpq_1_2,ctx.mpq_5_4],-ctx.pi**2*z**4/16)
 
 @defun_wrapped
 def airyai(ctx, z):
     if z == ctx.inf or z == ctx.ninf:
-        return 1/z
+        return ctx.zero
     if z:
         # Account for exponential scaling
         ctx.prec += max(0, int(1.5*ctx.mag(z)))
@@ -1926,25 +1411,6 @@ def airybi(ctx, z):
     a = ctx.hyp0f1((2,3), z3) / (rt * ctx.gamma(ctx.mpf(2)/3))
     b = z * rt * ctx.hyp0f1((4,3), z3) / ctx.gamma(ctx.mpf(1)/3)
     return a + b
-
-@defun
-def agm(ctx, a, b=1):
-    if b == 1:
-        return ctx.agm1(a)
-    a = ctx.convert(a)
-    b = ctx.convert(b)
-    prec, rounding = ctx._prec_rounding
-    if hasattr(a, '_mpf_') and hasattr(b, '_mpf_'):
-        try:
-            v = libhyper.mpf_agm(a._mpf_, b._mpf_, prec, rounding)
-            return ctx.make_mpf(v)
-        except ComplexResult:
-            pass
-    if hasattr(a, '_mpf_'): a = (a._mpf_, libmpf.fzero)
-    else: a = a._mpc_
-    if hasattr(b, '_mpf_'): b = (b._mpf_, libmpf.fzero)
-    else: b = b._mpc_
-    return ctx.make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
 
 @defun_wrapped
 def hermite(ctx, n, z):
@@ -2157,13 +1623,7 @@ def besselj(ctx, n, z, derivative=0):
             v = ctx.hypercomb(h, [n,d])
     # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
     elif (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
-        prec, rounding = ctx._prec_rounding
-        if hasattr(z, '_mpf_'):
-            v = ctx.make_mpf(libhyper.mpf_besseljn(n, z._mpf_, prec, rounding))
-        elif hasattr(z, '_mpc_'):
-            v = ctx.make_mpc(libhyper.mpc_besseljn(n, z._mpc_, prec, rounding))
-        else:
-            raise TypeError
+        return ctx._besselj(n, z)
     elif not z:
         if not n:
             v = ctx.one + n+z
@@ -2172,7 +1632,7 @@ def besselj(ctx, n, z, derivative=0):
         else:
             v = ctx.inf + z + n
     else:
-        v = 0
+        #v = 0
         orig = ctx.prec
         try:
             # XXX: workaround for accuracy in low level hypergeometric series
@@ -2277,7 +1737,7 @@ def besselk(ctx, n, z):
     else:
         ctx.prec += M
         def h(n):
-            return [([pi/2, z, exp(-z)], [0.5,-0.5,1], [], [], \
+            return [([ctx.pi/2, z, ctx.exp(-z)], [0.5,-0.5,1], [], [], \
                 [n+0.5, 0.5-n], [], -1/(2*z))]
     return ctx.hypercomb(h, [n], check_cancellation=True)
 
@@ -2301,7 +1761,7 @@ def whitm(ctx,k,m,z):
             return ctx.nan * z
     x = ctx.fmul(-0.5, z, exact=True)
     y = 0.5+m
-    return exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z)
+    return ctx.exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z)
 
 @defun_wrapped
 def whitw(ctx,k,m,z):
@@ -2315,7 +1775,7 @@ def whitw(ctx,k,m,z):
             return ctx.nan * z
     x = ctx.fmul(-0.5, z, exact=True)
     y = 0.5+m
-    return exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z)
+    return ctx.exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z)
 
 @defun
 def struveh(ctx,n,z):
@@ -2366,10 +1826,10 @@ def ker(ctx, n, z):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKer2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [2, z, 4*cospi(0.25*n)], [-n-3, n, 1], [-n], [], [], [0.5, 0.5*(1+n), 0.5*(n+2)], r
-        T2 = [2, z, -sinpi(0.25*n)], [-n-3, 2+n, 1], [-n-1], [], [], [1.5, 0.5*(3+n), 0.5*(n+2)], r
-        T3 = [2, z, 4*cospi(0.75*n)], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
-        T4 = [2, z, -sinpi(0.75*n)], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        T1 = [2, z, 4*ctx.cospi(0.25*n)], [-n-3, n, 1], [-n], [], [], [0.5, 0.5*(1+n), 0.5*(n+2)], r
+        T2 = [2, z, -ctx.sinpi(0.25*n)], [-n-3, 2+n, 1], [-n-1], [], [], [1.5, 0.5*(3+n), 0.5*(n+2)], r
+        T3 = [2, z, 4*ctx.cospi(0.75*n)], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T4 = [2, z, -ctx.sinpi(0.75*n)], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
         return T1, T2, T3, T4
     return ctx.hypercomb(h, [n])
 
@@ -2380,15 +1840,16 @@ def kei(ctx, n, z):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKei2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [-cospi(0.75*n), 2, z], [1, n-3, 2-n], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
-        T2 = [-sinpi(0.75*n), 2, z], [1, n-1, -n], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
-        T3 = [-sinpi(0.25*n), 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
-        T4 = [-cospi(0.25*n), 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
+        T1 = [-ctx.cospi(0.75*n), 2, z], [1, n-3, 2-n], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        T2 = [-ctx.sinpi(0.75*n), 2, z], [1, n-1, -n], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T3 = [-ctx.sinpi(0.25*n), 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
+        T4 = [-ctx.cospi(0.25*n), 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
         return T1, T2, T3, T4
     return ctx.hypercomb(h, [n])
 
 @defun_wrapped
-def lambertw(ctx, z, k=0, approx=None):
+def lambertw(ctx, z, k=0):
+    k = int(k)
     if ctx.isnan(z):
         return z
     ctx.prec += 20
@@ -2447,7 +1908,7 @@ def lambertw(ctx, z, k=0, approx=None):
             return wn
         else:
             w = wn
-    print "Warning: Lambert W iteration failed to converge:", z
+    ctx.warn("Lambert W iteration failed to converge for %s" % z)
     return wn
 
 @defun_wrapped
@@ -2496,7 +1957,7 @@ def barnesg(ctx, z):
         z2k *= z2
         s += t
     #if k == N:
-    #    print "warning: series for barnesg failed to converge", mp.dps
+    #    print "warning: series for barnesg failed to converge", ctx.dps
     return G*ctx.exp(s)
 
 @defun
@@ -2608,7 +2069,7 @@ def _load_zeta_zeros(url):
 def zetazero(ctx, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
     n = int(n)
     if n < 0:
-        return zetazero(-n).conjugate()
+        return ctx.zetazero(-n).conjugate()
     if n == 0:
         raise ValueError("n must be nonzero")
     if n > len(_zeta_zeros) and n <= 100000:
@@ -2641,7 +2102,7 @@ def riemannr(ctx, x):
     return s
 
 @defun_static
-def primepi(x):
+def primepi(ctx, x):
     x = int(x)
     if x < 2:
         return 0
@@ -2812,6 +2273,8 @@ def polylog_general(ctx, s, z):
 
 @defun_wrapped
 def polylog(ctx, s, z):
+    s = ctx.convert(s)
+    z = ctx.convert(z)
     if z == 1:
         return ctx.zeta(s)
     if z == -1:
@@ -2881,7 +2344,7 @@ def hurwitz(ctx, s, a=1, derivative=0):
 @defun
 def _hurwitz(ctx, s, a=1, d=0):
     # We strongly want to special-case rational a
-    ar, af, ac, a = ctx._hyp_parse_param(a)
+    a, atype = ctx.convert_maybe_rational(a)
     prec = ctx.prec
     # TODO: implement reflection for derivatives
     res = ctx.re(s)
@@ -2898,17 +2361,21 @@ def _hurwitz(ctx, s, a=1, d=0):
             v = 0
             shift = 0
             b = a
-            while re(b) > 1:
+            while ctx.re(b) > 1:
                 b -= 1
                 v -= b**negs
                 shift -= 1
-            while re(b) <= 0:
+            while ctx.re(b) <= 0:
                 v += b**negs
                 b += 1
                 shift += 1
             # Rational reflection formula
-            if ar:
-                p, q = ar[0]
+            if atype == 'Q' or atype == 'Z':
+                try:
+                    p, q = a
+                except:
+                    assert a == int(a)
+                    p = int(a)
                 p += shift*q
                 assert 1 <= p <= q
                 g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
@@ -3206,7 +2673,7 @@ def appellf1(ctx,a,b1,b2,c,z1,z2):
 @defun_wrapped
 def coulombc(ctx, l, eta, _cache={}):
     if (l, eta) in _cache and _cache[l,eta][0] >= ctx.prec:
-        return _cache[l,eta][1]
+        return +_cache[l,eta][1]
     G3 = ctx.loggamma(2*l+2)
     G1 = ctx.loggamma(1+l+ctx.j*eta)
     G2 = ctx.loggamma(1+l-ctx.j*eta)
@@ -3291,20 +2758,1143 @@ def coulombg(ctx, l, eta, z, w=1, chop=True):
     return v
 
 @defun
-def _zetasum(ctx, s, a, b):
+def calculate_nome(ctx, k):
+    k = ctx.convert(k)
+    if abs(k) > ctx.one:             # range error
+        raise ValueError
+    if k == ctx.zero:
+        return ctx.zero
+    elif k == ctx.one:
+        return ctx.one
+    else:
+        kprimesquared = ctx.one - k**2
+        kprime = ctx.sqrt(kprimesquared)
+        top = ctx.ellipk(kprimesquared)
+        bottom = ctx.ellipk(k**2)
+        argument = -ctx.pi*top/bottom
+        nome = ctx.exp(argument)
+        return nome
+
+@defun
+def _jacobi_theta2(ctx, z, q):
+    extra1 = 10
+    extra2 = 20
+    # the loops below break when the fixed precision quantities
+    # a and b go to zero;
+    # right shifting small negative numbers by wp one obtains -1, not zero,
+    # so the condition a**2 + b**2 > MIN is used to break the loops.
+    MIN = 2
+    if z == ctx.zero:
+        if (not q.imag):
+            wp = ctx.prec + extra1
+            x = ctx.to_fixed(q, wp)
+            x2 = (x*x) >> wp
+            a = b = x2
+            s = x2
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                s += a
+            s = (1 << (wp+1)) + (s << 1)
+            s = ctx.ldexp(s, -wp)
+        else:
+            wp = ctx.prec + extra1
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp-1)
+            are = bre = x2re
+            aim = bim = x2im
+            sre = (1<<wp) + are
+            sim = aim
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                sre += are
+                sim += aim
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+    else:
+        if (not q.imag) and (not z.imag):
+            wp = ctx.prec + extra1
+            x = ctx.to_fixed(q, wp)
+            x2 = (x*x) >> wp
+            a = b = x2
+            c1, s1 = ctx.cos_sin(z, prec=wp)
+            cn = c1 = ctx.to_fixed(c1, wp)
+            sn = s1 = ctx.to_fixed(s1, wp)
+            c2 = (c1*c1 - s1*s1) >> wp
+            s2 = (c1 * s1) >> (wp - 1)
+            cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+            s = c1 + ((a * cn) >> wp)
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+                s += (a * cn) >> wp
+            s = (s << 1)
+            s = ctx.ldexp(s, -wp)
+            s *= ctx.nthroot(q, 4)
+            return s
+        # case z real, q complex
+        elif not z.imag:
+            wp = ctx.prec + extra2
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = x2re
+            aim = bim = x2im
+            c1, s1 = ctx.cos_sin(z, prec=wp)
+            cn = c1 = ctx.to_fixed(c1, wp)
+            sn = s1 = ctx.to_fixed(s1, wp)
+            c2 = (c1*c1 - s1*s1) >> wp
+            s2 = (c1 * s1) >> (wp - 1)
+            cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+            sre = c1 + ((are * cn) >> wp)
+            sim = ((aim * cn) >> wp)
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+                sre += ((are * cn) >> wp)
+                sim += ((aim * cn) >> wp)
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+        #case z complex, q real
+        elif not q.imag:
+            wp = ctx.prec + extra2
+            x = ctx.to_fixed(q, wp)
+            x2 = (x*x) >> wp
+            a = b = x2
+            prec0 = ctx.prec
+            ctx.prec = wp
+            c1 = ctx.cos(z)
+            s1 = ctx.sin(z)
+            ctx.prec = prec0
+            cnre = c1re = ctx.to_fixed(c1.real, wp)
+            cnim = c1im = ctx.to_fixed(c1.imag, wp)
+            snre = s1re = ctx.to_fixed(s1.real, wp)
+            snim = s1im = ctx.to_fixed(s1.imag, wp)
+            #c2 = (c1*c1 - s1*s1) >> wp
+            c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
+            c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
+            #s2 = (c1 * s1) >> (wp - 1)
+            s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
+            s2im = (c1re*s1im + c1im*s1re) >> (wp - 1)
+            #cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+            t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+            t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+            t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+            t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            sre = c1re + ((a * cnre) >> wp)
+            sim = c1im + ((a * cnim) >> wp)
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+                t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+                t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+                t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                sre += ((a * cnre) >> wp)
+                sim += ((a * cnim) >> wp)
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+        # case z and q complex
+        else:
+            wp = ctx.prec + extra2
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = x2re
+            aim = bim = x2im
+            prec0 = ctx.prec
+            ctx.prec = wp
+            # cos(z), siz(z) with z complex
+            c1 = ctx.cos(z)
+            s1 = ctx.sin(z)
+            ctx.prec = prec0
+            cnre = c1re = ctx.to_fixed(c1.real, wp)
+            cnim = c1im = ctx.to_fixed(c1.imag, wp)
+            snre = s1re = ctx.to_fixed(s1.real, wp)
+            snim = s1im = ctx.to_fixed(s1.imag, wp)
+            c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
+            c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
+            s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
+            s2im = (c1re*s1im + c1im*s1re) >> (wp - 1)
+            t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+            t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+            t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+            t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            n = 1
+            termre = c1re
+            termim = c1im
+            sre = c1re + ((are * cnre - aim * cnim) >> wp)
+            sim = c1im + ((are * cnim + aim * cnre) >> wp)
+            n = 3
+            termre = ((are * cnre - aim * cnim) >> wp)
+            termim = ((are * cnim + aim * cnre) >> wp)
+            sre = c1re + ((are * cnre - aim * cnim) >> wp)
+            sim = c1im + ((are * cnim + aim * cnre) >> wp)
+            n = 5
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                #cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+                t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+                t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+                t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+                t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                termre = ((are * cnre - aim * cnim) >> wp)
+                termim = ((aim * cnre + are * cnim) >> wp)
+                sre += ((are * cnre - aim * cnim) >> wp)
+                sim += ((aim * cnre + are * cnim) >> wp)
+                n += 2
+            sre = (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+    s *= ctx.nthroot(q, 4)
+    return s
+
+@defun
+def _djacobi_theta2(ctx, z, q, nd):
+    MIN = 2
+    extra1 = 10
+    extra2 = 20
+    if (not q.imag) and (not z.imag):
+        wp = ctx.prec + extra1
+        x = ctx.to_fixed(q, wp)
+        x2 = (x*x) >> wp
+        a = b = x2
+        c1, s1 = ctx.cos_sin(z, prec=wp)
+        cn = c1 = ctx.to_fixed(c1, wp)
+        sn = s1 = ctx.to_fixed(s1, wp)
+        c2 = (c1*c1 - s1*s1) >> wp
+        s2 = (c1 * s1) >> (wp - 1)
+        cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+        if (nd&1):
+            s = s1 + ((a * sn * 3**nd) >> wp)
+        else:
+            s = c1 + ((a * cn * 3**nd) >> wp)
+        n = 2
+        while abs(a) > MIN:
+            b = (b*x2) >> wp
+            a = (a*b) >> wp
+            cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+            if nd&1:
+                s += (a * sn * (2*n+1)**nd) >> wp
+            else:
+                s += (a * cn * (2*n+1)**nd) >> wp
+            n += 1
+        s = -(s << 1)
+        s = ctx.ldexp(s, -wp)
+        # case z real, q complex
+    elif not z.imag:
+        wp = ctx.prec + extra2
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
+        x2re = (xre*xre - xim*xim) >> wp
+        x2im = (xre*xim) >> (wp - 1)
+        are = bre = x2re
+        aim = bim = x2im
+        c1, s1 = ctx.cos_sin(z, prec=wp)
+        cn = c1 = ctx.to_fixed(c1, wp)
+        sn = s1 = ctx.to_fixed(s1, wp)
+        c2 = (c1*c1 - s1*s1) >> wp
+        s2 = (c1 * s1) >> (wp - 1)
+        cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+        if (nd&1):
+            sre = s1 + ((are * sn * 3**nd) >> wp)
+            sim = ((aim * sn * 3**nd) >> wp)
+        else:
+            sre = c1 + ((are * cn * 3**nd) >> wp)
+            sim = ((aim * cn * 3**nd) >> wp)
+        n = 5
+        while are**2 + aim**2 > MIN:
+            bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                       (bre * x2im + bim * x2re) >> wp
+            are, aim = (are * bre - aim * bim) >> wp,   \
+                       (are * bim + aim * bre) >> wp
+            cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+
+            if (nd&1):
+                sre += ((are * sn * n**nd) >> wp)
+                sim += ((aim * sn * n**nd) >> wp)
+            else:
+                sre += ((are * cn * n**nd) >> wp)
+                sim += ((aim * cn * n**nd) >> wp)
+            n += 2
+        sre = -(sre << 1)
+        sim = -(sim << 1)
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    #case z complex, q real
+    elif not q.imag:
+        wp = ctx.prec + extra2
+        x = ctx.to_fixed(q, wp)
+        x2 = (x*x) >> wp
+        a = b = x2
+        prec0 = ctx.prec
+        ctx.prec = wp
+        c1 = ctx.cos(z)
+        s1 = ctx.sin(z)
+        ctx.prec = prec0
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
+        #c2 = (c1*c1 - s1*s1) >> wp
+        c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
+        c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
+        #s2 = (c1 * s1) >> (wp - 1)
+        s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
+        s2im = (c1re*s1im + c1im*s1re) >> (wp - 1)
+        #cn, sn = (cn*c2 - sn*s2) >> wp, (sn*c2 + cn*s2) >> wp
+        t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+        t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+        t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+        t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+        cnre = t1
+        cnim = t2
+        snre = t3
+        snim = t4
+        if (nd&1):
+            sre = s1re + ((a * snre * 3**nd) >> wp)
+            sim = s1im + ((a * snim * 3**nd) >> wp)
+        else:
+            sre = c1re + ((a * cnre * 3**nd) >> wp)
+            sim = c1im + ((a * cnim * 3**nd) >> wp)
+        n = 5
+        while abs(a) > MIN:
+            b = (b*x2) >> wp
+            a = (a*b) >> wp
+            t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+            t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+            t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+            t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            if (nd&1):
+                sre += ((a * snre * n**nd) >> wp)
+                sim += ((a * snim * n**nd) >> wp)
+            else:
+                sre += ((a * cnre * n**nd) >> wp)
+                sim += ((a * cnim * n**nd) >> wp)
+            n += 2
+        sre = -(sre << 1)
+        sim = -(sim << 1)
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    # case z and q complex
+    else:
+        wp = ctx.prec + extra2
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
+        x2re = (xre*xre - xim*xim) >> wp
+        x2im = (xre*xim) >> (wp - 1)
+        are = bre = x2re
+        aim = bim = x2im
+        prec0 = ctx.prec
+        ctx.prec = wp
+        # cos(2*z), sin(2*z) with z complex
+        c1 = ctx.cos(z)
+        s1 = ctx.sin(z)
+        ctx.prec = prec0
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
+        c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
+        c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
+        s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
+        s2im = (c1re*s1im + c1im*s1re) >> (wp - 1)
+        t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+        t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+        t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+        t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+        cnre = t1
+        cnim = t2
+        snre = t3
+        snim = t4
+        if (nd&1):
+            sre = s1re + (((are * snre - aim * snim) * 3**nd) >> wp)
+            sim = s1im + (((are * snim + aim * snre)* 3**nd) >> wp)
+        else:
+            sre = c1re + (((are * cnre - aim * cnim) * 3**nd) >> wp)
+            sim = c1im + (((are * cnim + aim * cnre)* 3**nd) >> wp)
+        n = 5
+        while are**2 + aim**2 > MIN:
+            bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                       (bre * x2im + bim * x2re) >> wp
+            are, aim = (are * bre - aim * bim) >> wp,   \
+                       (are * bim + aim * bre) >> wp
+            #cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+            t1 = (cnre*c2re - cnim*c2im - snre*s2re + snim*s2im) >> wp
+            t2 = (cnre*c2im + cnim*c2re - snre*s2im - snim*s2re) >> wp
+            t3 = (snre*c2re - snim*c2im + cnre*s2re - cnim*s2im) >> wp
+            t4 = (snre*c2im + snim*c2re + cnre*s2im + cnim*s2re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            if (nd&1):
+                sre += (((are * snre - aim * snim) * n**nd) >> wp)
+                sim += (((aim * snre + are * snim) * n**nd) >> wp)
+            else:
+                sre += (((are * cnre - aim * cnim) * n**nd) >> wp)
+                sim += (((aim * cnre + are * cnim) * n**nd) >> wp)
+            n += 2
+        sre = -(sre << 1)
+        sim = -(sim << 1)
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    s *= ctx.nthroot(q, 4)
+    if (nd&1):
+        return (-1)**(nd//2) * s
+    else:
+        return (-1)**(1 + nd//2) * s
+
+@defun
+def _jacobi_theta3(ctx, z, q):
+    extra1 = 10
+    extra2 = 20
+    MIN = 2
+    if z == ctx.zero:
+        if not q.imag:
+            wp = ctx.prec + extra1
+            x = ctx.to_fixed(q, wp)
+            s = x
+            a = b = x
+            x2 = (x*x) >> wp
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                s += a
+            s = (1 << wp) + (s << 1)
+            s = ctx.ldexp(s, -wp)
+            return s
+        else:
+            wp = ctx.prec + extra1
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            sre = are = bre = xre
+            sim = aim = bim = xim
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                sre += are
+                sim += aim
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+            return s
+    else:
+        if (not q.imag) and (not z.imag):
+            s = 0
+            wp = ctx.prec + extra1
+            x = ctx.to_fixed(q, wp)
+            a = b = x
+            x2 = (x*x) >> wp
+            c1, s1 = ctx.cos_sin(z*2, prec=wp)
+            c1 = ctx.to_fixed(c1, wp)
+            s1 = ctx.to_fixed(s1, wp)
+            cn = c1
+            sn = s1
+            s += (a * cn) >> wp
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+                s += (a * cn) >> wp
+            s = (1 << wp) + (s << 1)
+            s = ctx.ldexp(s, -wp)
+            return s
+        # case z real, q complex
+        elif not z.imag:
+            wp = ctx.prec + extra2
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = xre
+            aim = bim = xim
+            c1, s1 = ctx.cos_sin(z*2, prec=wp)
+            c1 = ctx.to_fixed(c1, wp)
+            s1 = ctx.to_fixed(s1, wp)
+            cn = c1
+            sn = s1
+            sre = (are * cn) >> wp
+            sim = (aim * cn) >> wp
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+                sre += (are * cn) >> wp
+                sim += (aim * cn) >> wp
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+            return s
+        #case z complex, q real
+        elif not q.imag:
+            wp = ctx.prec + extra2
+            x = ctx.to_fixed(q, wp)
+            a = b = x
+            x2 = (x*x) >> wp
+            prec0 = ctx.prec
+            ctx.prec = wp
+            c1 = ctx.cos(2*z)
+            s1 = ctx.sin(2*z)
+            ctx.prec = prec0
+            cnre = c1re = ctx.to_fixed(c1.real, wp)
+            cnim = c1im = ctx.to_fixed(c1.imag, wp)
+            snre = s1re = ctx.to_fixed(s1.real, wp)
+            snim = s1im = ctx.to_fixed(s1.imag, wp)
+            sre = (a * cnre) >> wp
+            sim = (a * cnim) >> wp
+            while abs(a) > MIN:
+                b = (b*x2) >> wp
+                a = (a*b) >> wp
+                t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
+                t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
+                t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
+                t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                sre += (a * cnre) >> wp
+                sim += (a * cnim) >> wp
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+            return s
+        # case z and q complex
+        else:
+            wp = ctx.prec + extra2
+            xre = ctx.to_fixed(q.real, wp)
+            xim = ctx.to_fixed(q.imag, wp)
+            x2re = (xre*xre - xim*xim) >> wp
+            x2im = (xre*xim) >> (wp - 1)
+            are = bre = xre
+            aim = bim = xim
+            prec0 = ctx.prec
+            ctx.prec = wp
+            # cos(2*z), sin(2*z) with z complex
+            c1 = ctx.cos(2*z)
+            s1 = ctx.sin(2*z)
+            ctx.prec = prec0
+            cnre = c1re = ctx.to_fixed(c1.real, wp)
+            cnim = c1im = ctx.to_fixed(c1.imag, wp)
+            snre = s1re = ctx.to_fixed(s1.real, wp)
+            snim = s1im = ctx.to_fixed(s1.imag, wp)
+            sre = (are * cnre - aim * cnim) >> wp
+            sim = (aim * cnre + are * cnim) >> wp
+            while are**2 + aim**2 > MIN:
+                bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                           (bre * x2im + bim * x2re) >> wp
+                are, aim = (are * bre - aim * bim) >> wp,   \
+                           (are * bim + aim * bre) >> wp
+                t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
+                t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
+                t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
+                t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
+                cnre = t1
+                cnim = t2
+                snre = t3
+                snim = t4
+                sre += (are * cnre - aim * cnim) >> wp
+                sim += (aim * cnre + are * cnim) >> wp
+            sre = (1 << wp) + (sre << 1)
+            sim = (sim << 1)
+            sre = ctx.ldexp(sre, -wp)
+            sim = ctx.ldexp(sim, -wp)
+            s = ctx.mpc(sre, sim)
+            return s
+
+@defun
+def _djacobi_theta3(ctx, z, q, nd):
+    """nd=1,2,3 order of the derivative with respect to z"""
+    MIN = 2
+    extra1 = 10
+    extra2 = 20
+    if (not q.imag) and (not z.imag):
+        s = 0
+        wp = ctx.prec + extra1
+        x = ctx.to_fixed(q, wp)
+        a = b = x
+        x2 = (x*x) >> wp
+        c1, s1 = ctx.cos_sin(z*2, prec=wp)
+        c1 = ctx.to_fixed(c1, wp)
+        s1 = ctx.to_fixed(s1, wp)
+        cn = c1
+        sn = s1
+        if (nd&1):
+            s += (a * sn) >> wp
+        else:
+            s += (a * cn) >> wp
+        n = 2
+        while abs(a) > MIN:
+            b = (b*x2) >> wp
+            a = (a*b) >> wp
+            cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+            if nd&1:
+                s += (a * sn * n**nd) >> wp
+            else:
+                s += (a * cn * n**nd) >> wp
+            n += 1
+        s = -(s << (nd+1))
+        s = ctx.ldexp(s, -wp)
+    # case z real, q complex
+    elif not z.imag:
+        wp = ctx.prec + extra2
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
+        x2re = (xre*xre - xim*xim) >> wp
+        x2im = (xre*xim) >> (wp - 1)
+        are = bre = xre
+        aim = bim = xim
+        c1, s1 = ctx.cos_sin(z*2, prec=wp)
+        c1 = ctx.to_fixed(c1, wp)
+        s1 = ctx.to_fixed(s1, wp)
+        cn = c1
+        sn = s1
+        if (nd&1):
+            sre = (are * sn) >> wp
+            sim = (aim * sn) >> wp
+        else:
+            sre = (are * cn) >> wp
+            sim = (aim * cn) >> wp
+        n = 2
+        while are**2 + aim**2 > MIN:
+            bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                       (bre * x2im + bim * x2re) >> wp
+            are, aim = (are * bre - aim * bim) >> wp,   \
+                       (are * bim + aim * bre) >> wp
+            cn, sn = (cn*c1 - sn*s1) >> wp, (sn*c1 + cn*s1) >> wp
+            if nd&1:
+                sre += (are * sn * n**nd) >> wp
+                sim += (aim * sn * n**nd) >> wp
+            else:
+                sre += (are * cn * n**nd) >> wp
+                sim += (aim * cn * n**nd) >> wp
+            n += 1
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    #case z complex, q real
+    elif not q.imag:
+        wp = ctx.prec + extra2
+        x = ctx.to_fixed(q, wp)
+        a = b = x
+        x2 = (x*x) >> wp
+        prec0 = ctx.prec
+        ctx.prec = wp
+        c1 = ctx.cos(2*z)
+        s1 = ctx.sin(2*z)
+        ctx.prec = prec0
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
+        if (nd&1):
+            sre = (a * snre) >> wp
+            sim = (a * snim) >> wp
+        else:
+            sre = (a * cnre) >> wp
+            sim = (a * cnim) >> wp
+        n = 2
+        while abs(a) > MIN:
+            b = (b*x2) >> wp
+            a = (a*b) >> wp
+            t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
+            t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
+            t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
+            t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            if (nd&1):
+                sre += (a * snre * n**nd) >> wp
+                sim += (a * snim * n**nd) >> wp
+            else:
+                sre += (a * cnre * n**nd) >> wp
+                sim += (a * cnim * n**nd) >> wp
+            n += 1
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    # case z and q complex
+    else:
+        wp = ctx.prec + extra2
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
+        x2re = (xre*xre - xim*xim) >> wp
+        x2im = (xre*xim) >> (wp - 1)
+        are = bre = xre
+        aim = bim = xim
+        prec0 = ctx.prec
+        ctx.prec = wp
+        # cos(2*z), sin(2*z) with z complex
+        c1 = ctx.cos(2*z)
+        s1 = ctx.sin(2*z)
+        ctx.prec = prec0
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
+        if (nd&1):
+            sre = (are * snre - aim * snim) >> wp
+            sim = (aim * snre + are * snim) >> wp
+        else:
+            sre = (are * cnre - aim * cnim) >> wp
+            sim = (aim * cnre + are * cnim) >> wp
+        n = 2
+        while are**2 + aim**2 > MIN:
+            bre, bim = (bre * x2re - bim * x2im) >> wp, \
+                       (bre * x2im + bim * x2re) >> wp
+            are, aim = (are * bre - aim * bim) >> wp,   \
+                       (are * bim + aim * bre) >> wp
+            t1 = (cnre*c1re - cnim*c1im - snre*s1re + snim*s1im) >> wp
+            t2 = (cnre*c1im + cnim*c1re - snre*s1im - snim*s1re) >> wp
+            t3 = (snre*c1re - snim*c1im + cnre*s1re - cnim*s1im) >> wp
+            t4 = (snre*c1im + snim*c1re + cnre*s1im + cnim*s1re) >> wp
+            cnre = t1
+            cnim = t2
+            snre = t3
+            snim = t4
+            if(nd&1):
+                sre += ((are * snre - aim * snim) * n**nd) >> wp
+                sim += ((aim * snre + are * snim) * n**nd) >> wp
+            else:
+                sre += ((are * cnre - aim * cnim) * n**nd) >> wp
+                sim += ((aim * cnre + are * cnim) * n**nd) >> wp
+            n += 1
+        sre = -(sre << (nd+1))
+        sim = -(sim << (nd+1))
+        sre = ctx.ldexp(sre, -wp)
+        sim = ctx.ldexp(sim, -wp)
+        s = ctx.mpc(sre, sim)
+    if (nd&1):
+        return (-1)**(nd//2) * s
+    else:
+        return (-1)**(1 + nd//2) * s
+
+@defun
+def _jacobi_theta2a(ctx, z, q):
     """
-    Computes sum of k^(-s) for k = a, a+1, ..., b with a, b both small
-    integers.
+    case z.imag != 0
+    theta(2, z, q) =
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=-inf, inf)
+    max term for minimum (2*n+1)*log(q).real - 2* z.imag
+    n0 = int(z.imag/log(q).real - 1/2)
+    theta(2, z, q) =
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=n0, inf) +
+    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n, n0-1, -inf)
     """
-    a = int(a)
-    b = int(b)
-    s = ctx.convert(s)
-    prec, rounding = ctx._prec_rounding
-    if hasattr(s, '_mpf_'):
-        v = ctx.make_mpf(gammazeta.mpf_zetasum(s._mpf_, a, b, prec))
-    elif hasattr(s, '_mpc_'):
-        v = ctx.make_mpc(gammazeta.mpc_zetasum(s._mpc_, a, b, prec))
-    return v
+    n = n0 = int(z.imag/ctx.log(q).real - 1/2)
+    e2 = ctx.exp(2*ctx.j*z)
+    e = e0 = ctx.exp(ctx.j*(2*n+1)*z)
+    a = q**(n*n + n)
+    # leading term
+    term = a * e
+    s = term
+    eps1 = ctx.eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = ctx.exp(-2j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    s = s * ctx.nthroot(q, 4)
+    return s
+
+@defun
+def _jacobi_theta3a(ctx, z, q):
+    """
+    case z.imag != 0
+    theta3(z, q) = Sum(q**(n*n) * exp(j*2*n*z), n, -inf, inf)
+    max term for n*abs(log(q).real) + z.imag ~= 0
+    n0 = int(- z.imag/abs(log(q).real))
+    """
+    n = n0 = int(- z.imag/abs(ctx.log(q).real))
+    e2 = ctx.exp(2*ctx.j*z)
+    e = e0 = ctx.exp(ctx.j*2*n*z)
+    s = term = q**(n*n) * e
+    eps1 = ctx.eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = q**(n*n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = ctx.exp(-2*ctx.j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = q**(n*n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    return s
+
+@defun
+def _djacobi_theta2a(ctx, z, q, nd):
+    """
+    case z.imag != 0
+    dtheta(2, z, q, nd) =
+    j* q**1/4 * Sum(q**(n*n + n) * (2*n+1)*exp(j*(2*n + 1)*z), n=-inf, inf)
+    max term for (2*n0+1)*log(q).real - 2* z.imag ~= 0
+    n0 = int(z.imag/log(q).real - 1/2)
+    """
+    n = n0 = int(z.imag/ctx.log(q).real - 1/2)
+    e2 = ctx.exp(2*ctx.j*z)
+    e = e0 = ctx.exp(ctx.j*(2*n + 1)*z)
+    a = q**(n*n + n)
+    # leading term
+    term = (2*n+1)**nd * a * e
+    s = term
+    eps1 = ctx.eps*abs(term)
+    while 1:
+        n += 1
+        e = e * e2
+        term = (2*n+1)**nd * q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    e = e0
+    e2 = ctx.exp(-2*ctx.j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        term = (2*n+1)**nd * q**(n*n + n) * e
+        if abs(term) < eps1:
+            break
+        s += term
+    return ctx.j**nd * s * ctx.nthroot(q, 4)
+
+@defun
+def _djacobi_theta3a(ctx, z, q, nd):
+    """
+    case z.imag != 0
+    djtheta3(z, q, nd) = (2*j)**nd *
+      Sum(q**(n*n) * n**nd * exp(j*2*n*z), n, -inf, inf)
+    max term for minimum n*abs(log(q).real) + z.imag
+    """
+    n = n0 = int(-z.imag/abs(ctx.log(q).real))
+    e2 = ctx.exp(2*ctx.j*z)
+    e = e0 = ctx.exp(ctx.j*2*n*z)
+    a = q**(n*n) * e
+    s = term = n**nd * a
+    if n != 0:
+        eps1 = ctx.eps*abs(term)
+    else:
+        eps1 = ctx.eps*abs(a)
+    while 1:
+        n += 1
+        e = e * e2
+        a = q**(n*n) * e
+        term = n**nd * a
+        if n != 0:
+            aterm = abs(term)
+        else:
+            aterm = abs(a)
+        if aterm < eps1:
+            break
+        s += term
+    e = e0
+    e2 = ctx.exp(-2*ctx.j*z)
+    n = n0
+    while 1:
+        n -= 1
+        e = e * e2
+        a = q**(n*n) * e
+        term = n**nd * a
+        if n != 0:
+            aterm = abs(term)
+        else:
+            aterm = abs(a)
+        if aterm < eps1:
+            break
+        s += term
+    return (2*ctx.j)**nd * s
+
+@defun
+def jtheta(ctx, n, z, q, derivative=0):
+    if derivative:
+        return ctx._djtheta(n, z, q, derivative)
+
+    z = ctx.convert(z)
+    q = ctx.convert(q)
+
+    # Implementation note
+    # If z.imag is close to zero, _jacobi_theta2 and _jacobi_theta3
+    # are used,
+    # which compute the series starting from n=0 using fixed precision
+    # numbers;
+    # otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
+    # the series starting from n=n0, which is the largest term.
+
+    # TODO: write _jacobi_theta2a and _jacobi_theta3a using fixed-point
+
+    if abs(q) > ctx.THETA_Q_LIM:
+        raise ValueError('abs(q) > THETA_Q_LIM = %f' % ctx.THETA_Q_LIM)
+
+    extra = 10
+    if z:
+        M = ctx.mag(z)
+        if M > 5 or (n == 1 and M < -5):
+            extra += 2*abs(M)
+    cz = 0.5
+    extra2 = 50
+    prec0 = ctx.prec
+    try:
+        ctx.prec += extra
+        if n == 1:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._jacobi_theta2(z - ctx.pi/2, q)
+                else:
+                    ctx.dps += 10
+                    res = ctx._jacobi_theta2a(z - ctx.pi/2, q)
+            else:
+                res = ctx._jacobi_theta2(z - ctx.pi/2, q)
+        elif n == 2:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._jacobi_theta2(z, q)
+                else:
+                    ctx.dps += 10
+                    res = ctx._jacobi_theta2a(z, q)
+            else:
+                res = ctx._jacobi_theta2(z, q)
+        elif n == 3:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._jacobi_theta3(z, q)
+                else:
+                    ctx.dps += 10
+                    res = ctx._jacobi_theta3a(z, q)
+            else:
+                res = ctx._jacobi_theta3(z, q)
+        elif n == 4:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._jacobi_theta3(z, -q)
+                else:
+                    ctx.dps += 10
+                    res = ctx._jacobi_theta3a(z, -q)
+            else:
+                res = ctx._jacobi_theta3(z, -q)
+        else:
+            raise ValueError
+    finally:
+        ctx.prec = prec0
+    return res
+
+@defun
+def _djtheta(ctx, n, z, q, derivative=1):
+    z = ctx.convert(z)
+    q = ctx.convert(q)
+    nd = int(derivative)
+
+    if abs(q) > ctx.THETA_Q_LIM:
+        raise ValueError('abs(q) > THETA_Q_LIM = %f' % ctx.THETA_Q_LIM)
+    extra = 10 + ctx.prec * nd // 10
+    if z:
+        M = ctx.mag(z)
+        if M > 5 or (n != 1 and M < -5):
+            extra += 2*abs(M)
+    cz = 0.5
+    extra2 = 50
+    prec0 = ctx.prec
+    try:
+        ctx.prec += extra
+        if n == 1:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
+                else:
+                    ctx.dps += 10
+                    res = ctx._djacobi_theta2a(z - ctx.pi/2, q, nd)
+            else:
+                res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
+        elif n == 2:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._djacobi_theta2(z, q, nd)
+                else:
+                    ctx.dps += 10
+                    res = ctx._djacobi_theta2a(z, q, nd)
+            else:
+                res = ctx._djacobi_theta2(z, q, nd)
+        elif n == 3:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._djacobi_theta3(z, q, nd)
+                else:
+                    ctx.dps += 10
+                    res = ctx._djacobi_theta3a(z, q, nd)
+            else:
+                res = ctx._djacobi_theta3(z, q, nd)
+        elif n == 4:
+            if abs(z.imag) != 0:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
+                    ctx.dps += extra2
+                    res = ctx._djacobi_theta3(z, -q, nd)
+                else:
+                    ctx.dps += 10
+                    res = ctx._djacobi_theta3a(z, -q, nd)
+            else:
+                res = ctx._djacobi_theta3(z, -q, nd)
+        else:
+            raise ValueError
+    finally:
+        ctx.prec = prec0
+    return +res
+
+@defun
+def jsn(ctx, u, m):
+    if abs(m) < ctx.eps:
+        return ctx.sin(u)
+    elif m == ctx.one:
+        return ctx.tanh(u)
+    else:
+        extra = 10
+    try:
+        ctx.prec += extra
+        q = ctx.calculate_nome(ctx.sqrt(m))
+        v3 = ctx.jtheta(3, 0, q)
+        v2 = ctx.jtheta(2, 0, q)        # mathworld says v4
+        arg1 = u / (v3*v3)
+        v1 = ctx.jtheta(1, arg1, q)
+        v4 = ctx.jtheta(4, arg1, q)
+        sn = (v3/v2)*(v1/v4)
+    finally:
+        ctx.prec -= extra
+    return sn
+
+@defun
+def jcn(ctx, u, m):
+    if abs(m) < ctx.eps:
+        return ctx.cos(u)
+    elif m == ctx.one:
+        return ctx.sech(u)
+    else:
+        extra = 10
+    try:
+        ctx.prec += extra
+        q = ctx.calculate_nome(ctx.sqrt(m))
+        v3 = ctx.jtheta(3, 0, q)
+        v2 = ctx.jtheta(2, 0, q)
+        v04 = ctx.jtheta(4, 0, q)
+        arg1 = u / (v3*v3)
+        v1 = ctx.jtheta(2, arg1, q)
+        v4 = ctx.jtheta(4, arg1, q)
+        cn = (v04/v2)*(v1/v4)
+    finally:
+        ctx.prec -= extra
+    return +cn
+
+@defun
+def jdn(ctx, u, m):
+    if m == ctx.zero:
+        return ctx.one
+    elif m == ctx.one:
+        return ctx.sech(u)
+    else:
+        extra = 10
+    try:
+        ctx.prec += extra
+        q = ctx.calculate_nome(ctx.sqrt(m))
+        v3 = ctx.jtheta(3, 0, q)
+        v2 = ctx.jtheta(2, 0, q)
+        v04 = ctx.jtheta(4, 0, q)
+        arg1 = u / (v3*v3)
+        v1 = ctx.jtheta(3, arg1, q)
+        v4 = ctx.jtheta(4, arg1, q)
+        cn = (v04/v3)*(v1/v4)
+    finally:
+        ctx.prec -= extra
+    return +cn
 
 if __name__ == '__main__':
     #import doctest
@@ -3331,3 +3921,4 @@ if __name__ == '__main__':
         doctest.run_docstring_examples(globs[obj], {})
         t2 = clock()
         print round(t2-t1, 3)
+

@@ -38,7 +38,6 @@ from libmpc import (\
 
 from gammazeta import int_fac, mpf_gamma_int, mpf_euler, euler_fixed
 
-
 class NoConvergence(Exception):
     pass
 
@@ -51,318 +50,233 @@ class NoConvergence(Exception):
 
 """
 TODO:
-  * By counting the number of multiplications vs divisions,
-    the bit size of p can be kept around wp instead of growing
-    it to n*wp for some (possibly large) n
 
-  * Due to roundoff error, the series may fail to converge
-    when x is negative and the convergence is slow.
+1. proper mpq parsing
+2. imaginary z special-cased (also: rational, integer?)
+3. more clever handling of series that don't converge because of stupid
+   upwards rounding
+4. checking for cancellation
 
 """
 
-def hypsum_internal(ar, af, ac, br, bf, bc, xre, xim, prec, rnd, **kwargs):
+def make_hyp_summator(key):
     """
-    Generic hypergeometric summation. This function computes:
+    Returns a function that sums a generalized hypergeometric series,
+    for given parameter types (integer, rational, real, complex).
 
-            1   a_1 a_2 ...     1  (a_1 + 1) (a_2 + 1) ...  2
-        1 + --  ----------- x + -- ----------------------- x  + ...
-            1!  b_1 b_2 ...     2! (b_1 + 1) (b_2 + 1) ...
-
-    The a_i and b_i sequences are separated by type:
-
-    ar - list of a_i rationals [p,q]
-    af - list of a_i mpf value tuples
-    ac - list of a_i mpc value tuples
-    br - list of b_i rationals [p,q]
-    bf - list of b_i mpf value tuples
-    bc - list of b_i mpc value tuples
-
-    xre - real part of x, mpf value
-    xim - imaginary part of x, mpf value (or None)
-
-    Returns an mpc value is any complex parameter is given (or xim is not
-    None); otherwise returns an mpf value.
     """
+    p, q, param_types, ztype = key
 
-    have_float = af or bf
-    have_complex = ac or bc
+    pstring = "".join(param_types)
+    fname = "hypsum_%i_%i_%s_%s_%s" % (p, q, pstring[:p], pstring[p:], ztype)
+    #print "generating hypsum", fname
 
-    # We want to mutate these in-place
-    ar = [list(a) for a in ar]
-    br = [list(b) for b in br]
+    have_complex_param = 'C' in param_types
+    have_complex_arg = ztype == 'C'
+    have_complex = have_complex_param or have_complex_arg
 
-    wp = prec + 25
+    source = []
+    add = source.append
 
-    MAX = kwargs.get('maxterms', wp*100)
+    aint = []
+    arat = []
+    bint = []
+    brat = []
+    areal = []
+    breal = []
+    acomplex = []
+    bcomplex = []
 
-    if xim is None:
-        x = to_fixed(xre, wp)
-        y = MP_ZERO
-    else:
-        have_complex = 1
-        x = to_fixed(xre, wp)
-        y = to_fixed(xim, wp)
+    add("wp = prec + 40")
+    add("MAX = kwargs.get('maxterms', wp*100)")
+    add("HIGH = MP_ONE*100000")
+    add("LOW = -HIGH")
 
-    sre = pre = one = MP_ONE << wp
-    sim = pim = MP_ZERO
-
-    n = 1
-
-    # Need to shift down by wp once for each fixed-point multiply
-    # At minimum, we multiply by once by x each step
-    shift = 1
-
-    # Fixed-point real coefficients
-    if have_float:
-        len_af = len(af)
-        len_bf = len(bf)
-        range_af = range(len_af)
-        range_bf = range(len_bf)
-        for i in range_af: af[i] = to_fixed(af[i], wp)
-        for i in range_bf: bf[i] = to_fixed(bf[i], wp)
-        shift += len_af
-
-    # Fixed-point complex coefficients
+    # Setup code
+    add("SRE = PRE = one = (MP_ONE << wp)")
     if have_complex:
-        len_ac = len(ac)
-        len_bc = len(bc)
-        range_ac = range(len_ac)
-        range_bc = range(len_bc)
-        for i in range_ac: ac[i] = [to_fixed(ac[i][0], wp), to_fixed(ac[i][1], wp)]
-        for i in range_bc: bc[i] = [to_fixed(bc[i][0], wp), to_fixed(bc[i][1], wp)]
-        shift += len_ac
+        add("SIM = PIM = MP_ZERO")
 
-    aqs = [a[1] for a in ar]
-    bqs = [b[1] for b in br]
-    aqprod = reduce(operator.mul, aqs, 1)
-    bqprod = reduce(operator.mul, bqs, 1)
-
-    assert shift >= 0
-
-    while 1:
-        # Integer and rational part of product
-        mul = bqprod
-        div = n * aqprod
-        for ap, aq in ar: mul *= ap
-        for bp, bq in br: div *= bp
-
-        # Ok if denominator is zero, provided numerator
-        # also is zero, and the series is actually a polynomial
-        # XXX: account for degree when doing this
-        if not div:
-            if not mul:
-                break
-            raise ZeroDivisionError
-
-        if have_complex:
-            # Multiply by rational factors
-            pre *= mul
-            pim *= mul
-            # Multiply by z
-            pre, pim = pre*x - pim*y, pim*x + pre*y
-            # Multiply by real factors
-            for a in af:
-                pre *= a
-                pim *= a
-            # Multiply by complex factors
-            for are, aim in ac:
-                pre, pim = pre*are - pim*aim, pim*are + pre*aim
-            # Divide by rational factors
-            pre //= div
-            pim //= div
-            # Divide by real factors
-            for b in bf:
-                pre = (pre << wp) // b
-                pim = (pim << wp) // b
-            # Divide by complex factors
-            for bre, bim in bc:
-                mag = bre*bre + bim*bim
-                re = pre*bre + pim*bim
-                im = pim*bre - pre*bim
-                pre = (re << wp) // mag
-                pim = (im << wp) // mag
-        elif have_float:
-            # Multiply and divide by real and rational factors, and x
-            for a in af: pre *= a
-            for b in bf:
-                pre = (pre << wp) // b
-            pre = (pre * (mul * x)) // div
-
-        else:
-            # Multiply and divide by rational factors and x
-            pre = (pre * (mul * x)) // div
-
-        pre >>= (wp*shift)
-        sre += pre
-
-        if have_complex:
-            pim >>= (wp*shift)
-            sim += pim
-            if (-100 < pre < 100) and (-100 < pim < 100):
-                break
-        else:
-            if -100 < pre < 100:
-                break
-
-        # Add 1 to all as and bs
-        n += 1
-
-        if n > MAX:
-            raise NoConvergence
-
-        for ap_aq in ar: ap_aq[0] += ap_aq[1]
-        for bp_bq in br: bp_bq[0] += bp_bq[1]
-        if have_float:
-            for i in range_af: af[i] += one
-            for i in range_bf: bf[i] += one
-        if have_complex:
-            for i in range_ac: ac[i][0] += one
-            for i in range_bc: bc[i][0] += one
-
-    re = from_man_exp(sre, -wp, prec, rnd)
-    if have_complex:
-        im = from_man_exp(sim, -wp, prec, rnd)
-        return (re, im)
+    if have_complex_arg:
+        add("xsign, xm, xe, xbc = z[0]")
+        add("if xsign: xm = -xm")
+        add("ysign, ym, ye, ybc = z[1]")
+        add("if ysign: ym = -ym")
     else:
-        return re
+        add("xsign, xm, xe, xbc = z")
+        add("if xsign: xm = -xm")
 
+    add("offset = xe + wp")
+    add("if offset >= 0:")
+    add("    ZRE = xm << offset")
+    add("else:")
+    add("    ZRE = xm >> (-offset)")
+    if have_complex_arg:
+        add("offset = ye + wp")
+        add("if offset >= 0:")
+        add("    ZIM = ym << offset")
+        add("else:")
+        add("    ZIM = ym >> (-offset)")
 
-#---------------------------------------------------------------------------#
-#   Special-case implementation for rational parameters. These are          #
-#   about 2x faster at low precision                                        #
-#---------------------------------------------------------------------------#
+    for i, flag in enumerate(param_types):
+        W = ["A", "B"][i >= p]
+        if flag == 'Z':
+            ([aint,bint][i >= p]).append(i)
+            add("%sINT_%i = coeffs[%i]" % (W, i, i))
+        elif flag == 'Q':
+            ([arat,brat][i >= p]).append(i)
+            add("%sP_%i, %sQ_%i = coeffs[%i]" % (W, i, W, i, i))
+        elif flag == 'R':
+            ([areal,breal][i >= p]).append(i)
+            add("xsign, xm, xe, xbc = coeffs[%i]._mpf_" % i)
+            add("if xsign: xm = -xm")
+            add("offset = xe + wp")
+            add("if offset >= 0:")
+            add("    %sREAL_%i = xm << offset" % (W, i))
+            add("else:")
+            add("    %sREAL_%i = xm >> (-offset)" % (W, i))
+        elif flag == 'C':
+            ([acomplex,bcomplex][i >= p]).append(i)
+            add("__re, __im = coeffs[%i]._mpc_" % i)
+            add("xsign, xm, xe, xbc = __re")
+            add("if xsign: xm = -xm")
+            add("ysign, ym, ye, ybc = __im")
+            add("if ysign: ym = -ym")
 
-def mpf_hyp0f1_rat((bp, bq), x, prec, rnd):
-    wp = prec + 25
-    x = to_fixed(x, wp)
-    s = p = MP_ONE << wp
-    n = 1
-    bqx = bq*x
-    while 1:
-        p = ((p * bqx) >> wp) // (n*bp)
-        if -100 < p < 100:
-            break
-        s += p
-        n += 1
-        bp += bq
-    return from_man_exp(s, -wp, prec, rnd)
-
-def mpc_hyp0f1_rat((bp, bq), z, prec, rnd):
-    wp = prec + 25
-    zre, zim = z
-    zre = to_fixed(zre, wp)
-    zim = to_fixed(zim, wp)
-    sre = pre = MP_ONE << wp
-    sim = pim = MP_ZERO
-    n = 1
-    while 1:
-        r1 = bq
-        r2 = n*bp
-        pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) >> wp) // r2
-        pim = ((pim * r1) >> wp) // r2
-        if -100 < pre < 100 and -100 < pim < 100:
-            break
-        sre += pre
-        sim += pim
-        n += 1
-        bp += bq
-    re = from_man_exp(sre, -wp, prec, rnd)
-    im = from_man_exp(sim, -wp, prec, rnd)
-    return re, im
-
-def mpf_hyp1f1_rat((ap, aq), (bp, bq), x, prec, rnd):
-    wp = prec + 25
-    x = to_fixed(x, wp)
-    s = p = MP_ONE << wp
-    n = 1
-    while 1:
-        p = ((p * (ap*bq*x)) >> wp) // (n*aq*bp)
-        if -100 < p < 100:
-            break
-        s += p
-        n += 1
-        ap += aq
-        bp += bq
-    return from_man_exp(s, -wp, prec, rnd)
-
-def mpc_hyp1f1_rat((ap, aq), (bp, bq), z, prec, rnd):
-    wp = prec + 25
-    zre, zim = z
-    zre = to_fixed(zre, wp)
-    zim = to_fixed(zim, wp)
-    sre = pre = MP_ONE << wp
-    sim = pim = MP_ZERO
-    n = 1
-    while 1:
-        r1 = ap*bq
-        r2 = n*aq*bp
-        pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) >> wp) // r2
-        pim = ((pim * r1) >> wp) // r2
-        if -100 < pre < 100 and -100 < pim < 100:
-            break
-        sre += pre
-        sim += pim
-        n += 1
-        ap += aq
-        bp += bq
-    re = from_man_exp(sre, -wp, prec, rnd)
-    im = from_man_exp(sim, -wp, prec, rnd)
-    return re, im
-
-def mpf_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), x, prec, rnd):
-    wp = prec + 25
-    x = to_fixed(x, wp)
-    s = p = MP_ONE << wp
-    n = 1
-    while 1:
-        p = ((p * (ap*bp*cq*x)) >> wp)
-        d = (n*aq*bq*cp)
-        if d:
-            p //= d
-        elif p:
-            raise ZeroDivisionError
+            add("offset = xe + wp")
+            add("if offset >= 0:")
+            add("    %sCRE_%i = xm << offset" % (W, i))
+            add("else:")
+            add("    %sCRE_%i = xm >> (-offset)" % (W, i))
+            add("offset = ye + wp")
+            add("if offset >= 0:")
+            add("    %sCIM_%i = ym << offset" % (W, i))
+            add("else:")
+            add("    %sCIM_%i = ym >> (-offset)" % (W, i))
         else:
-            break
-        if -100 < p < 100:
-            break
-        s += p
-        n += 1
-        ap += aq
-        bp += bq
-        cp += cq
-    return from_man_exp(s, -wp, prec, rnd)
+            raise ValueError
 
-def mpc_hyp2f1_rat((ap, aq), (bp, bq), (cp, cq), z, prec, rnd):
-    wp = prec + 25
-    zre, zim = z
-    zre = to_fixed(zre, wp)
-    zim = to_fixed(zim, wp)
-    sre = pre = MP_ONE << wp
-    sim = pim = MP_ZERO
-    n = 1
-    while 1:
-        r1 = ap*bp*cq
-        r2 = n*aq*bq*cp
-        if not r2:
-            if not r1:
-                break
-            raise ZeroDivisionError
-        pre, pim = pre*zre - pim*zim, pim*zre + pre*zim
-        pre = ((pre * r1) >> wp) // r2
-        pim = ((pim * r1) >> wp) // r2
-        if -100 < pre < 100 and -100 < pim < 100:
-            break
-        sre += pre
-        sim += pim
-        n += 1
-        ap += aq
-        bp += bq
-        cp += cq
-    re = from_man_exp(sre, -wp, prec, rnd)
-    im = from_man_exp(sim, -wp, prec, rnd)
-    return re, im
+    l_areal = len(areal)
+    l_breal = len(breal)
+    cancellable_real = min(l_areal, l_breal)
+    noncancellable_real_num = areal[cancellable_real:]
+    noncancellable_real_den = breal[cancellable_real:]
+
+    # LOOP
+    add("for n in xrange(1,10**8):")
+    # Real factors
+    multiplier = " * ".join(["AINT_#".replace("#", str(i)) for i in aint] + \
+                            ["AP_#".replace("#", str(i)) for i in arat] + \
+                            ["BQ_#".replace("#", str(i)) for i in brat])
+
+    divisor    = " * ".join(["BINT_#".replace("#", str(i)) for i in bint] + \
+                            ["BP_#".replace("#", str(i)) for i in brat] + \
+                            ["AQ_#".replace("#", str(i)) for i in arat] + ["n"])
+
+    if multiplier:
+        add("    mul = " + multiplier)
+    add("    div = " + divisor)
+
+    # Check for singular terms
+    add("    if not div:")
+    add("        if not mul:")
+    add("            break")
+    add("        raise ZeroDivisionError")
+
+    # Update product
+    if have_complex:
+
+        # TODO: when there are several real parameters and just a few complex
+        # (maybe just the complex argument), we only need to do about
+        # half as many ops if we accumulate the real factor in a single real variable
+        for k in range(cancellable_real): add("    PRE = PRE * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for i in noncancellable_real_num: add("    PRE = (PRE * AREAL_#) >> wp".replace("#", str(i)))
+        for i in noncancellable_real_den: add("    PRE = (PRE << wp) // BREAL_#".replace("#", str(i)))
+        for k in range(cancellable_real): add("    PIM = PIM * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for i in noncancellable_real_num: add("    PIM = (PIM * AREAL_#) >> wp".replace("#", str(i)))
+        for i in noncancellable_real_den: add("    PIM = (PIM << wp) // BREAL_#".replace("#", str(i)))
+
+        if multiplier:
+            if have_complex_arg:
+                add("    PRE, PIM = (mul*(PRE*ZRE-PIM*ZIM))//div, (mul*(PIM*ZRE+PRE*ZIM))//div")
+                add("    PRE >>= wp")
+                add("    PIM >>= wp")
+            else:
+                add("    PRE = ((mul * PRE * ZRE) >> wp) // div")
+                add("    PIM = ((mul * PIM * ZRE) >> wp) // div")
+        else:
+            if have_complex_arg:
+                add("    PRE, PIM = (PRE*ZRE-PIM*ZIM)//div, (PIM*ZRE+PRE*ZIM)//div")
+                add("    PRE >>= wp")
+                add("    PIM >>= wp")
+            else:
+                add("    PRE = ((PRE * ZRE) >> wp) // div")
+                add("    PIM = ((PIM * ZRE) >> wp) // div")
+
+        for i in acomplex:
+            add("    PRE, PIM = PRE*ACRE_#-PIM*ACIM_#, PIM*ACRE_#+PRE*ACIM_#".replace("#", str(i)))
+            add("    PRE >>= wp")
+            add("    PIM >>= wp")
+
+        for i in bcomplex:
+            add("    mag = BCRE_#*BCRE_#+BCIM_#*BCIM_#".replace("#", str(i)))
+            add("    re = PRE*BCRE_# + PIM*BCIM_#".replace("#", str(i)))
+            add("    im = PIM*BCRE_# - PRE*BCIM_#".replace("#", str(i)))
+            add("    PRE = (re << wp) // mag".replace("#", str(i)))
+            add("    PIM = (im << wp) // mag".replace("#", str(i)))
+
+    else:
+        for k in range(cancellable_real): add("    PRE = PRE * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for i in noncancellable_real_num: add("    PRE = (PRE * AREAL_#) >> wp".replace("#", str(i)))
+        for i in noncancellable_real_den: add("    PRE = (PRE << wp) // BREAL_#".replace("#", str(i)))
+        if multiplier:
+            add("    PRE = ((PRE * mul * ZRE) >> wp) // div")
+        else:
+            add("    PRE = ((PRE * ZRE) >> wp) // div")
+
+    # Add product to sum
+    if have_complex:
+        add("    SRE += PRE")
+        add("    SIM += PIM")
+        add("    if (HIGH > PRE > LOW) and (HIGH > PIM > LOW):")
+        add("        break")
+    else:
+        add("    SRE += PRE")
+        add("    if HIGH > PRE > LOW:")
+        add("        break")
+
+    #add("    from mpmath import nprint, log")
+    #add("    nprint([n, log(abs(PRE),2)])")
+    add("    if n > MAX:")
+    add("        raise NoConvergence")
+
+    # +1 all variables for next loop
+    for i in aint:     add("    AINT_# += 1".replace("#", str(i)))
+    for i in bint:     add("    BINT_# += 1".replace("#", str(i)))
+    for i in arat:     add("    AP_# += AQ_#".replace("#", str(i)))
+    for i in brat:     add("    BP_# += BQ_#".replace("#", str(i)))
+    for i in areal:    add("    AREAL_# += one".replace("#", str(i)))
+    for i in breal:    add("    BREAL_# += one".replace("#", str(i)))
+    for i in acomplex: add("    ACRE_# += one".replace("#", str(i)))
+    for i in bcomplex: add("    BCRE_# += one".replace("#", str(i)))
+
+    if have_complex:
+        add("a = from_man_exp(SRE, -wp, prec, 'n')")
+        add("b = from_man_exp(SIM, -wp, prec, 'n')")
+        add("return (a, b), True")
+    else:
+        add("a = from_man_exp(SRE, -wp, prec, 'n')")
+        add("return a, False")
+
+    source = "\n".join(("    " + line) for line in source)
+    source = ("def %s(coeffs, z, prec, **kwargs):\n" % fname) + source
+
+    namespace = {}
+
+    exec source in globals(), namespace
+    #print source
+
+    return source, namespace[fname]
 
 
 

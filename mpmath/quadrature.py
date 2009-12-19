@@ -214,7 +214,7 @@ class QuadratureRule(object):
             # by having 0 as an endpoint.
             if (a, b) == (ctx.ninf, ctx.inf):
                 _f = f
-                f = lambda x: _f(ctx.fneg(x,exact=True)) + _f(x)
+                f = lambda x: _f(-x) + _f(x)
                 a, b = (ctx.zero, ctx.inf)
             results = []
             for degree in xrange(1, max_degree+1):
@@ -360,7 +360,7 @@ class TanhSinh(QuadratureRule):
                 break
 
             nodes.append((x, w))
-            nodes.append((ctx.fneg(x,exact=True), w))
+            nodes.append((-x, w))
 
             a *= udelta
             b *= urdelta
@@ -442,7 +442,7 @@ class GaussLegendre(QuadratureRule):
             if verbose  and j % 30 == 15:
                 print "Computing nodes (%i of %i)" % (j, upto)
             nodes.append((x, w))
-            nodes.append((ctx.fneg(x,exact=True), w))
+            nodes.append((-x, w))
         ctx.prec = orig
         return nodes
 
@@ -991,10 +991,8 @@ class QuadratureMethods:
         #if n >= 9:
         #    raise ValueError("zeros do not appear to be correctly indexed")
         n = 1
-        # XXX: use method
-        from calculus import nsum
         s = ctx.quadgl(f, [a, zeros(n)])
-        s += nsum(lambda k: ctx.quadgl(f, [zeros(k), zeros(k+1)]), [n, ctx.inf])
+        s += ctx.nsum(lambda k: ctx.quadgl(f, [zeros(k), zeros(k+1)]), [n, ctx.inf])
         return s
 
 if __name__ == '__main__':
