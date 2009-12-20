@@ -104,16 +104,13 @@ _lanczos_p = (0.99999999999980993, 676.5203681218851, -1259.1392167224028,
      -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7)
  
 def _gamma_real(x):
-    try:
-        _intx = int(x)
-        if _intx == x:
-            if _intx <= 0:
-                #return (-1)**_intx * INF
-                raise ValueError
-            if _intx <= _max_exact_gamma:
-                return _exact_gamma[_intx]
-    except:
-        pass
+    _intx = int(x)
+    if _intx == x:
+        if _intx <= 0:
+            #return (-1)**_intx * INF
+            raise ZeroDivisionError("gamma function pole")
+        if _intx <= _max_exact_gamma:
+            return _exact_gamma[_intx]
     if x < 0.5:
         return pi / (math.sin(pi*x)*_gamma_real(1-x))
     else:

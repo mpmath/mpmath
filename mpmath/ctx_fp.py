@@ -4,6 +4,8 @@ import math
 import cmath
 import math2
 
+import function_docs
+
 from gammazeta import mpf_bernoulli
 from libmpf import to_float
 
@@ -43,6 +45,19 @@ class FPContext(StandardBaseContext):
     nan = math2.NAN
     j = 1j
 
+    # Called by SpecialFunctions.__init__()
+    @classmethod
+    def wrap_specfun(cls, name, f, wrap):
+        if wrap:
+            def f_wrapped(ctx, *args, **kwargs):
+                convert = ctx.convert
+                args = [convert(a) for a in args]
+                return f(ctx, *args, **kwargs)
+        else:
+            f_wrapped = f
+        f_wrapped.__doc__ = function_docs.__dict__.get(name, "<no doc>")
+        setattr(cls, name, f_wrapped)
+
     def bernoulli(ctx, n):
         cache = ctx._bernoulli_cache
         if n in cache:
@@ -58,6 +73,21 @@ class FPContext(StandardBaseContext):
 
     def AS_POINTS(ctx, x):
         return x
+
+    def fneg(ctx, x, **kwargs):
+        return -ctx.convert(x)
+
+    def fadd(ctx, x, y, **kwargs):
+        return ctx.convert(x)+ctx.convert(y)
+
+    def fsub(ctx, x, y, **kwargs):
+        return ctx.convert(x)-ctx.convert(y)
+
+    def fmul(ctx, x, y, **kwargs):
+        return ctx.convert(x)*ctx.convert(y)
+
+    def fdiv(ctx, x, y, **kwargs):
+        return ctx.convert(x)/ctx.convert(y)
 
     def fsum(ctx, args, absolute=False, squared=False):
         if absolute:
@@ -89,15 +119,14 @@ class FPContext(StandardBaseContext):
             x = x.real
         return x <= 0.0 and round(x) == x
 
-    def mpf(ctx, x):
+    mpf = float
+    mpc = complex
+
+    def convert(ctx, x):
         try:
             return float(x)
         except:
             return complex(x)
-
-    mpc = complex
-
-    convert = mpf
 
     power = staticmethod(math2.pow)
     sqrt = staticmethod(math2.sqrt)
@@ -122,6 +151,9 @@ class FPContext(StandardBaseContext):
 
     def sinpi(ctx, x):
         return ctx.sin(ctx.pi*x)
+
+    def cospi(ctx, x):
+        return ctx.cos(ctx.pi*x)
 
     def re(ctx, x):
         if type(x) is float:
@@ -158,12 +190,16 @@ class FPContext(StandardBaseContext):
         if type(z) is tuple:
             p, q = z
             return ctx.mpf(p) / q, 'R'
-        if z == int(z):
-            return int(z), 'Z'
+        intz = int(z.real)
+        if z == intz:
+            return intz, 'Z'
         return z, 'R'
 
     def is_real_type(ctx, z):
-        return True
+        return isinstance(z, float)
+
+    def is_complex_type(ctx, z):
+        return isinstance(z, complex)
 
     def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000): 
         s = t = 1.0
@@ -183,4 +219,13 @@ class FPContext(StandardBaseContext):
             if k > maxterms:
                 raise NoConvergence
         return s
+
+    def atan2(ctx, x, y):
+        return math.atan2(x, y)
+
+    # XXX: alias in functions.py
+    def zeta(ctx, s):
+        return ctx.hurwitz(s)
+
+    nstr = str
 

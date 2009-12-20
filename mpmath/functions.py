@@ -740,7 +740,10 @@ def hypercomb(ctx, function, params=[], **kwargs):
                         if d < -4 and n <= 0:
                             minterms = max(minterms, -n)
                 """
-                h = ctx.ldexp(ctx.one,-orig-10)
+                if ctx._fixed_precision:
+                    h = ctx.ldexp(ctx.one, -int(ctx.prec*0.3))
+                else:
+                    h = ctx.ldexp(ctx.one,-orig-10)
                 ctx.prec = (orig2+10)*2
                 for k in range(len(params)):
                     params[k] += h
@@ -2333,6 +2336,8 @@ def hurwitz(ctx, s, a=1, derivative=0):
         return s*0
     elif ctx.isnan(abss):
         return 1/s
+    if ctx.re(s) > 2*ctx.prec and a == 1 and not derivative:
+        return ctx.one + ctx.power(2, -s)
     prec = ctx.prec
     try:
         ctx.prec += 10
@@ -2376,6 +2381,7 @@ def _hurwitz(ctx, s, a=1, d=0):
                 except:
                     assert a == int(a)
                     p = int(a)
+                    q = 1
                 p += shift*q
                 assert 1 <= p <= q
                 g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
@@ -2403,7 +2409,7 @@ def _hurwitz(ctx, s, a=1, d=0):
     lsum = 0
     # This speeds up the recurrence for derivatives
     if ctx.isint(s):
-        s = int(s)
+        s = int(s.real)
     s1 = s-1
     while 1:
         # Truncated L-series

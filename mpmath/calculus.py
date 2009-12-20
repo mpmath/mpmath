@@ -1609,6 +1609,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
     weps = +ctx.eps
     try:
         ctx.prec += 10
+        tol = ctx.eps * 128
         deg = len(coeffs) - 1
         # Must be monic
         lead = ctx.convert(coeffs[0])
@@ -1621,10 +1622,10 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         err = [ctx.one for n in xrange(deg)]
         # Durand-Kerner iteration until convergence
         for step in xrange(maxsteps):
-            if max(err).ae(0):
+            if abs(max(err)) < tol:
                 break
             for i in xrange(deg):
-                if not err[i].ae(0):
+                if not abs(err[i]) < tol:
                     p = roots[i]
                     x = f(p)
                     for j in range(deg):
