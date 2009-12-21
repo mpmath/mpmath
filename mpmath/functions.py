@@ -42,6 +42,16 @@ class SpecialFunctions(object):
     def wrap_specfun(cls, name, f, wrap):
         setattr(cls, name, f)
 
+    # Optional fast versions of common functions in common cases.
+    # If not overridden, default (generic hypergeometric series)
+    # implementations will be used
+    def _besselj(ctx, n, z): raise NotImplementedError
+    def _erf(ctx, z): raise NotImplementedError
+    def _erfc(ctx, z): raise NotImplementedError
+    def _gamma_upper_int(ctx, z, a): raise NotImplementedError
+    def _expint_int(ctx, n, z): raise NotImplementedError
+
+
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True
 
@@ -1129,18 +1139,32 @@ def _erfc_complex(ctx, z):
 @defun
 def erf(ctx, z):
     z = ctx.convert(z)
-    if ctx.is_complex_type(z):
-        return ctx._erf_complex(z)
-    else:
-        return ctx._erf(z.real)
+    if ctx.is_real_type(z):
+        try:
+            return ctx._erf(z.real)
+        except NotImplementedError:
+            pass
+    if ctx.is_complex_type(z) and not z.imag:
+        try:
+            return type(z)(ctx._erf(z.real))
+        except NotImplementedError:
+            pass
+    return ctx._erf_complex(z)
 
 @defun
 def erfc(ctx, z):
     z = ctx.convert(z)
-    if ctx.is_complex_type(z):
-        return ctx._erfc_complex(z)
-    else:
-        return ctx._erfc(z.real)
+    if ctx.is_real_type(z):
+        try:
+            return ctx._erfc(z.real)
+        except NotImplementedError:
+            pass
+    if ctx.is_complex_type(z) and not z.imag:
+        try:
+            return type(z)(ctx._erfc(z.real))
+        except NotImplementedError:
+            pass
+    return ctx._erfc_complex(z)
 
 @defun
 def square_exp_arg(ctx, z, mult=1):
@@ -1354,8 +1378,6 @@ def shi(ctx, z):
         return z
     z2 = ctx.square_exp_arg(z, 0.25)
     return z*ctx.hyp1f2((1,2),(3,2),(3,2),z2)
-
-
 
 @defun_wrapped
 def fresnels(ctx, z):
@@ -1624,30 +1646,34 @@ def besselj(ctx, n, z, derivative=0):
                 T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[n+1],B,[(n+1)*0.5,(n+2)*0.5],B,r)]
                 return T
             v = ctx.hypercomb(h, [n,d])
-    # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
-    elif (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
-        return ctx._besselj(n, z)
-    elif not z:
-        if not n:
-            v = ctx.one + n+z
-        elif ctx.re(n) > 0:
-            v = n*z
-        else:
-            v = ctx.inf + z + n
     else:
-        #v = 0
-        orig = ctx.prec
-        try:
-            # XXX: workaround for accuracy in low level hypergeometric series
-            # when alternating, large arguments
-            ctx.prec += min(3*abs(M), ctx.prec)
-            w = ctx.fmul(z, 0.5, exact=True)
-            def h(n):
-                r = ctx.fneg(ctx.fmul(w, w, prec=max(0,ctx.prec+M)), exact=True)
-                return [([w], [n], [], [n+1], [], [n+1], r)]
-            v = ctx.hypercomb(h, [n])
-        finally:
-            ctx.prec = orig
+    # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
+        if (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
+            try:
+                return ctx._besselj(n, z)
+            except NotImplementedError:
+                pass
+        if not z:
+            if not n:
+                v = ctx.one + n+z
+            elif ctx.re(n) > 0:
+                v = n*z
+            else:
+                v = ctx.inf + z + n
+        else:
+            #v = 0
+            orig = ctx.prec
+            try:
+                # XXX: workaround for accuracy in low level hypergeometric series
+                # when alternating, large arguments
+                ctx.prec += min(3*abs(M), ctx.prec)
+                w = ctx.fmul(z, 0.5, exact=True)
+                def h(n):
+                    r = ctx.fneg(ctx.fmul(w, w, prec=max(0,ctx.prec+M)), exact=True)
+                    return [([w], [n], [], [n+1], [], [n+1], r)]
+                v = ctx.hypercomb(h, [n])
+            finally:
+                ctx.prec = orig
         v = +v
     return v
 
