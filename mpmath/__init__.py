@@ -1,3 +1,5 @@
+__version__ = '0.14-svn'
+
 from usertools import monitor, timing
 
 from ctx_fp import FPContext

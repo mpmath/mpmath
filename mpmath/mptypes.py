@@ -1092,9 +1092,6 @@ class MPContext(StandardBaseContext):
             return (not (q % p)) and p <= 0
         return ctx.isnpint(ctx.convert(x))
 
-    def bad_domain(ctx, msg):
-        raise ValueError(msg)
-
     def __str__(ctx):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % ctx.prec).ljust(30) + "[default: 53]",
@@ -1126,8 +1123,6 @@ class MPContext(StandardBaseContext):
     @property
     def str_digits(ctx):
         return ctx._dps
-
-    verbose = False
 
     def extraprec(ctx, n, normalize_output=False):
         """

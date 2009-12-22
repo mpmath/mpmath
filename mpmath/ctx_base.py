@@ -33,8 +33,14 @@ class StandardBaseContext(Context,
 
     _fixed_precision = False
 
+    # XXX
+    verbose = False
+
     def warn(ctx, msg):
         print "Warning:", msg
+
+    def bad_domain(ctx, msg):
+        raise ValueError(msg)
 
     def chop(ctx, x, tol=None):
         if tol is None:
