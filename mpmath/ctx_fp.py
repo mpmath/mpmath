@@ -201,7 +201,7 @@ class FPContext(StandardBaseContext):
     def is_complex_type(ctx, z):
         return isinstance(z, complex)
 
-    def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000): 
+    def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs): 
         s = t = 1.0
         k = 0
         coeffs = list(coeffs)

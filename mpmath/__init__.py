@@ -244,6 +244,7 @@ hyp2f1 = mp.hyp2f1
 hyp2f2 = mp.hyp2f2
 hyp2f0 = mp.hyp2f0
 hyp2f3 = mp.hyp2f3
+hyp3f2 = mp.hyp3f2
 hyperu = mp.hyperu
 hypercomb = mp.hypercomb
 meijerg = mp.meijerg

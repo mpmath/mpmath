@@ -454,6 +454,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
             return ctx.hyp2f3(a_s[0], a_s[1], b_s[0], b_s[1], b_s[2], z, **kwargs)
         elif q == 0:
             return ctx.hyp2f0(a_s[0], a_s[1], z, **kwargs)
+    elif p == q+1:
+        return ctx._hypq1fq(p, q, a_s, b_s, z, **kwargs)
     coeffs = map(ctx.convert_maybe_rational, a_s+b_s)
     coeffs, types = zip(*coeffs)
     return ctx.hypsum(p, q, types, coeffs, z)
@@ -684,6 +686,109 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
     finally:
         ctx.prec = orig
     return +v
+
+@defun
+def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
+    r"""
+    Evaluates 3F2, 4F3, 5F4, ...
+    """
+    z = ctx.convert(z)
+    a_s = map(ctx.convert_maybe_rational, a_s)
+    b_s = map(ctx.convert_maybe_rational, b_s)
+    a_s, a_types = zip(*a_s)
+    b_s, b_types = zip(*b_s)
+    a_s = list(a_s)
+    b_s = list(b_s)
+    absz = abs(z)
+    ispoly = False
+    for a in a_s:
+        if ctx.isint(a) and a <= 0:
+            ispoly = True
+            break
+    # Direct summation
+    if absz < 1 or ispoly:
+        try:
+            return ctx.hypsum(p, q, a_types+b_types, a_s+b_s, z, **kwargs)
+        except NoConvergence:
+            if absz > 1.1 or ispoly:
+                raise
+    # Use expansion at |z-1| -> 0.
+    # Reference: Wolfgang Buhring, "Generalized Hypergeometric Functions at
+    #   Unit Argument", Proc. Amer. Math. Soc., Vol. 114, No. 1 (Jan. 1992),
+    #   pp.145-153
+    # The current implementation has several problems:
+    # 1. We only implement it for 3F2. The expansion coefficients are
+    #    given by extremely messy nested sums in the higher degree cases
+    #    (see reference). Is efficient sequential generation of the coefficients
+    #    possible in the > 3F2 case?
+    # 2. Although the series converges, it may do so slowly, so we need
+    #    convergence acceleration. The acceleration implemented by
+    #    nsum does not always help, so results returned are sometimes
+    #    inaccurate! Can we do better?
+    # 3. We should check conditions for convergence, and possibly
+    #    do a better job of cancelling out gamma poles if possible.
+    if z == 1:
+        # XXX: should also check for division by zero in the
+        # denominator of the series (cf. hyp2f1)
+        S = ctx.re(sum(b_s)-sum(a_s))
+        if S <= 0:
+            return ctx.hyper(a_s, b_s, 1-ctx.eps*2) * ctx.inf
+    if (p,q) == (3,2) and abs(z-1) < 0.05:   # and kwargs.get('sum1')
+        #print "Using alternate summation (experimental)"
+        a1,a2,a3 = a_s
+        b1,b2 = b_s
+        u = b1+b2-a3
+        initial = ctx.gammaprod([b2-a3,b1-a3,a1,a2],[b2-a3,b1-a3,1,u])
+        def term(k, _cache={0:initial}):
+            u = b1+b2-a3+k
+            if k in _cache:
+                t = _cache[k]
+            else:
+                t = _cache[k-1]
+                t *= (b1+k-a3-1)*(b2+k-a3-1)
+                t /= k*(u-1)
+                _cache[k] = t
+            return t * ctx.hyp2f1(a1,a2,u,z)
+        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose')) * \
+            ctx.gammaprod([b1,b2],[a1,a2,a3])
+    # Try to use convergence acceleration on and close to the unit circle.
+    # Problem: the convergence acceleration degenerates as |z-1| -> 0,
+    # except for special cases. Everywhere else, the Shanks transformation
+    # is very efficient.
+    if absz < 1.1 and z.real <= 1:
+        def term(k, _cache={0:ctx.one}):
+            k = int(k)
+            if k in _cache:
+                return _cache[k]
+            t = _cache[k-1]
+            m = k-1
+            for j in xrange(p): t *= (a_s[j]+m)
+            for j in xrange(q): t /= (b_s[j]+m)
+            t *= z
+            t /= k
+            _cache[k] = t
+            return t
+        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'))
+    # Use 1/z transformation
+    # http://functions.wolfram.com/HypergeometricFunctions/
+    #   HypergeometricPFQ/06/01/05/02/0004/
+    def h(*args):
+        a_s = list(args[:p])
+        b_s = list(args[p:])
+        Ts = []
+        recz = ctx.one/z
+        negz = ctx.fneg(z, exact=True)
+        for k in range(q+1):
+            ak = a_s[k]
+            C = [negz]
+            Cp = [-ak]
+            Gn = b_s + [ak] + [a_s[j]-ak for j in range(q+1) if j != k]
+            Gd = a_s + [b_s[j]-ak for j in range(q)]
+            Fn = [ak] + [ak-b_s[j]+1 for j in range(q)]
+            Fd = [1-a_s[j]+ak for j in range(q+1) if j != k]
+            Ts.append((C, Cp, Gn, Gd, Fn, Fd, recz))
+        return Ts
+    return ctx.hypercomb(h, a_s+b_s, check_cancellation=True)
 
 @defun
 def hypercomb(ctx, function, params=[], **kwargs):
@@ -1061,6 +1166,9 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
 
     return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z)
 
+@defun
+def hyp3f2(ctx, a1, a2, a3, b1, b2, z, **kwargs):
+    return ctx._hypq1fq(3, 2, [a1,a2,a3], [b1,b2], z, **kwargs)
 
 @defun
 def hyp2f0(ctx, a, b, z, **kwargs):

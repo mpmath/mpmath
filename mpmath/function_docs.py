@@ -2594,14 +2594,6 @@ Generally, the radius of convergence of the hypergeometric series is either 0
 if an analytic continuation or regularization is implemented (see the list of
 :func:`hypXfX` functions); otherwise an exception is raised::
 
-    >>> hyper([1,1], [1], 2)           # divergent case of 2F1, implemented
-    -1.0
-    >>> hyper([1,1,1,1], [1,1,1], 0.5) # convergent case of 4F3
-    2.0
-    >>> hyper([1,1,1,1], [1,1,1], 2)   # divergent case of 4F3, not implemented
-    Traceback (most recent call last):
-      ...
-    NoConvergence
     >>> hyper([1,1], [], 0.5)          # regularization of 2F0, implemented
     (1.340965419580146562086448 + 0.8503366631752726568782447j)
     >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1, not implemented
@@ -2609,6 +2601,24 @@ if an analytic continuation or regularization is implemented (see the list of
       ...
     NoConvergence
 
+The analytic continuations of the functions with `p = q+1`, i.e. `\,_2F_1`, 
+`\,_3F_2`,  `\,_4F_3`, etc, are all implemented and therefore these functions
+can be evaluated for `|z| \ge 1`. The shortcuts :func:`hyp2f1`, :func:`hyp3f2`
+are available to handle the most common cases (see their documentation),
+but functions of higher degree are also supported via :func:`hyper`::
+
+    >>> hyper([1,2,3,4], [5,6,7], 1)   # 4F3 at finite-valued branch point
+    1.141783505526870731311423
+    >>> hyper([4,5,6,7], [1,2,3], 1)   # 4F3 at pole
+    +inf
+    >>> hyper([1,2,3,4,5], [6,7,8,9], 10)    # 5F4
+    (1.543998916527972259717257 - 0.5876309929580408028816365j)
+    >>> hyper([1,2,3,4,5,6], [7,8,9,10,11], 1j)   # 6F5
+    (0.9996565821853579063502466 + 0.0129721075905630604445669j)
+
+Please note that, as currently implemented, evaluation of `\,_pF_{p-1}`
+with `p \ge 3` may be slow or inaccurate when `|z-1|` is small,
+for some parameter values.
 """
 
 hypercomb = r"""
@@ -2932,6 +2942,80 @@ Verifying the hypergeometric differential equation::
     >>> f = lambda z: hyp2f1(a,b,c,z)
     >>> chop(z*(1-z)*diff(f,z,2) + (c-(a+b+1)*z)*diff(f,z) - a*b*f(z))
     0.0
+
+"""
+
+hyp3f2 = r"""
+Gives the generalized hypergeometric function `\,_3F_2`, defined for `|z| < 1`
+as
+
+.. math ::
+
+    \,_3F_2(a_1,a_2,a_3,b_1,b_2,z) = \sum_{k=0}^{\infty}
+        \frac{(a_1)_k (a_2)_k (a_3)_k}{(b_1)_k (b_2)_k} \frac{z^k}{k!}.
+
+and for `|z| \ge 1` by analytic continuation. The analytic structure of this
+function is similar to that of `\,_2F_1`, generally with a singularity at
+`z = 1` and a branch cut on `(1, \infty)`.
+
+Evaluation is supported inside, on, and outside
+the circle of convergence `|z| = 1`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> hyp3f2(1,2,3,4,5,0.25)
+    1.083533123380934241548707
+    >>> hyp3f2(1,2+2j,3,4,5,-10+10j)
+    (0.1574651066006004632914361 - 0.03194209021885226400892963j)
+    >>> hyp3f2(1,2,3,4,5,-10)
+    0.3071141169208772603266489
+    >>> hyp3f2(1,2,3,4,5,10)
+    (-0.4857045320523947050581423 - 0.5988311440454888436888028j)
+    >>> hyp3f2(0.25,1,1,2,1.5,1)
+    1.157370995096772047567631
+    >>> (8-pi-2*ln2)/3
+    1.157370995096772047567631
+    >>> hyp3f2(1+j,0.5j,2,1,-2j,-1)
+    (1.74518490615029486475959 + 0.1454701525056682297614029j)
+    >>> hyp3f2(1+j,0.5j,2,1,-2j,sqrt(j))
+    (0.9829816481834277511138055 - 0.4059040020276937085081127j)
+    >>> hyp3f2(-3,2,1,-5,4,1)
+    1.41
+    >>> hyp3f2(-3,2,1,-5,4,2)
+    2.12
+
+Evaluation very close to the unit circle::
+
+    >>> hyp3f2(1,2,3,4,5,'1.0001')
+    (1.564877796743282766872279 - 3.76821518787438186031973e-11j)
+    >>> hyp3f2(1,2,3,4,5,'1+0.0001j')
+    (1.564747153061671573212831 + 0.0001305757570366084557648482j)
+    >>> hyp3f2(1,2,3,4,5,'0.9999')
+    1.564616644881686134983664
+    >>> hyp3f2(1,2,3,4,5,'-0.9999')
+    0.7823896253461678060196207
+
+Note: evaluation for `|z-1|` small can currently be inaccurate or slow
+for some parameter combinations.
+
+For various parameter combinations, `\,_3F_2` admits representation in terms
+of hypergeometric functions of lower degree, or in terms of
+simpler functions::
+
+    >>> for a, b, z in [(1,2,-1), (2,0.5,1)]:
+    ...     hyp2f1(a,b,a+b+0.5,z)**2
+    ...     hyp3f2(2*a,a+b,2*b,a+b+0.5,2*a+2*b,z)
+    ...
+    0.4246104461966439006086308
+    0.4246104461966439006086308
+    7.111111111111111111111111
+    7.111111111111111111111111
+
+    >>> z = 2+3j
+    >>> hyp3f2(0.5,1,1.5,2,2,z)
+    (0.7621440939243342419729144 + 0.4249117735058037649915723j)
+    >>> 4*(pi-2*ellipe(z))/(pi*z)
+    (0.7621440939243342419729144 + 0.4249117735058037649915723j)
 
 """
 
