@@ -458,7 +458,7 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
         return ctx._hypq1fq(p, q, a_s, b_s, z, **kwargs)
     coeffs = map(ctx.convert_maybe_rational, a_s+b_s)
     coeffs, types = zip(*coeffs)
-    return ctx.hypsum(p, q, types, coeffs, z)
+    return ctx.hypsum(p, q, types, coeffs, z, **kwargs)
 
 @defun
 def hyp0f1(ctx, b, z, **kwargs):
@@ -500,7 +500,7 @@ def hyp0f1(ctx, b, z, **kwargs):
             return +v
         except NoConvergence:
             pass
-    return ctx.hypsum(0, 1, (btype,), [b], z)
+    return ctx.hypsum(0, 1, (btype,), [b], z, **kwargs)
 
 @defun
 def hyp1f1(ctx, a, b, z, **kwargs):
@@ -540,16 +540,16 @@ def hyp1f1(ctx, a, b, z, **kwargs):
         finally:
             ctx.prec -= magz
     #print "TEST", ctx.prec, a._v, b._v, z._v
-    v = ctx.hypsum(1, 1, (atype, btype), [a, b], z)
+    v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
     #print "1F1", complex(a), complex(b), complex(z), complex(v)
     return v
 
-def _hyp2f1_gosper(ctx,a,b,c,z):
+def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
     # Use Gosper's recurrence
     # See http://www.math.utexas.edu/pipermail/maxima/2006/000126.html
     _a,_b,_c,_z = a, b, c, z
-
     orig = ctx.prec
+    maxprec = kwargs.get('maxprec', 100*orig)
     extra = 10
     while 1:
         ctx.prec = orig + extra
@@ -594,7 +594,7 @@ def _hyp2f1_gosper(ctx,a,b,c,z):
             break
         else:
             extra += cancellation
-            if extra > 100*orig:
+            if extra > maxprec:
                 raise NoConvergence
     return f1
 
@@ -652,7 +652,7 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
     # possibly in finitely many terms
     if absz <= 0.8 or (ctx.isint(a) and a <= 0 and a >= -1000) or \
                       (ctx.isint(b) and b <= 0 and b >= -1000):
-        return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z)
+        return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z, **kwargs)
 
     orig = ctx.prec
     try:
@@ -665,7 +665,7 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
                 T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[ctx.mpq_1+ab],  rz)
                 T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[ctx.mpq_1-ab],  rz)
                 return T1, T2
-            v = ctx.hypercomb(h, [a,b])
+            v = ctx.hypercomb(h, [a,b], **kwargs)
 
         # Use 1-z transformation
         elif abs(1-z) <= 0.75:
@@ -674,11 +674,11 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
                 T1 = [], [], [c,t], [ca,cb], [a,b], [1-t], rz
                 T2 = [rz], [t], [c,a+b-c], [a,b], [ca,cb], [1+t], rz
                 return T1, T2
-            v = ctx.hypercomb(h, [a,b])
+            v = ctx.hypercomb(h, [a,b], **kwargs)
 
         # Remaining part of unit circle
         else:
-            v = _hyp2f1_gosper(ctx,a,b,c,z)
+            v = _hyp2f1_gosper(ctx,a,b,c,z,**kwargs)
 
         # TODO: for z ~= -1, we could use a series expansion around -1
         # using the fact that F(a,b,c,-1) = F(a,c-b,c,0.5)/2^a
@@ -732,7 +732,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
         # denominator of the series (cf. hyp2f1)
         S = ctx.re(sum(b_s)-sum(a_s))
         if S <= 0:
-            return ctx.hyper(a_s, b_s, 1-ctx.eps*2) * ctx.inf
+            #return ctx.hyper(a_s, b_s, 1-ctx.eps*2, **kwargs) * ctx.inf
+            return ctx.hyper(a_s, b_s, 0.9, **kwargs) * ctx.inf
     if (p,q) == (3,2) and abs(z-1) < 0.05:   # and kwargs.get('sum1')
         #print "Using alternate summation (experimental)"
         a1,a2,a3 = a_s
@@ -749,8 +750,12 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
                 t /= k*(u-1)
                 _cache[k] = t
             return t * ctx.hyp2f1(a1,a2,u,z)
-        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose')) * \
-            ctx.gammaprod([b1,b2],[a1,a2,a3])
+        try:
+            S = ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
+                strict=True)
+            return S * ctx.gammaprod([b1,b2],[a1,a2,a3])
+        except ctx.NoConvergence:
+            pass
     # Try to use convergence acceleration on and close to the unit circle.
     # Problem: the convergence acceleration degenerates as |z-1| -> 0,
     # except for special cases. Everywhere else, the Shanks transformation
@@ -768,7 +773,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             t /= k
             _cache[k] = t
             return t
-        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'))
+        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
+            strict=True)
     # Use 1/z transformation
     # http://functions.wolfram.com/HypergeometricFunctions/
     #   HypergeometricPFQ/06/01/05/02/0004/
@@ -788,78 +794,101 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             Fd = [1-a_s[j]+ak for j in range(q+1) if j != k]
             Ts.append((C, Cp, Gn, Gd, Fn, Fd, recz))
         return Ts
-    return ctx.hypercomb(h, a_s+b_s, check_cancellation=True)
+    return ctx.hypercomb(h, a_s+b_s, **kwargs)
+
+def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
+    perturb = recompute = False
+    extraprec = 0
+    discard = []
+    for term_index, term in enumerate(terms):
+        w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term
+        have_singular_nongamma_weight = False
+        # Avoid division by zero in leading factors (TODO:
+        # also check for near division by zero?)
+        for k, w in enumerate(w_s):
+            if not w:
+                if ctx.re(c_s[k]) <= 0:
+                    perturb = recompute = True
+                    have_singular_nongamma_weight = True
+        pole_count = [0, 0, 0]
+        # Check for gamma and series poles and near-poles
+        for data_index, data in enumerate([alpha_s, beta_s, b_s]):
+            for i, x in enumerate(data):
+                n, d = ctx.nint_distance(x)
+                # Poles
+                if n > 0:
+                    continue
+                if d == ctx.ninf:
+                    # OK if we have a polynomial
+                    # ------------------------------
+                    ok = False
+                    if data_index == 2:
+                        for u in a_s:
+                            if ctx.isnpint(u) and u >= int(n):
+                                ok = True
+                                break
+                    if ok:
+                        continue
+                    pole_count[data_index] += 1
+                    # ------------------------------
+                    #perturb = recompute = True
+                    #return perturb, recompute, extraprec
+                elif d < -4:
+                    extraprec += -d
+                    recompute = True
+        if discard_known_zeros and pole_count[1] > pole_count[0] + pole_count[2] \
+            and not have_singular_nongamma_weight:
+            discard.append(term_index)
+        elif sum(pole_count):
+            perturb = recompute = True
+    return perturb, recompute, extraprec, discard
+
+_hypercomb_msg = """
+hypercomb() failed to converge to the requested %i bits of accuracy
+using a working precision of %i bits. The function value may be zero or
+infinite; try passing zeroprec=N or infprec=M to bound finite values between
+2^(-N) and 2^M. Otherwise try a higher maxprec or maxterms.
+"""
 
 @defun
-def hypercomb(ctx, function, params=[], **kwargs):
+def hypercomb(ctx, function, params=[], discard_known_zeros=True, **kwargs):
     orig = ctx.prec
     sumvalue = ctx.zero
     dist = ctx.nint_distance
     ninf = ctx.ninf
-    convert = ctx.convert
     orig_params = params[:]
+    verbose = kwargs.get('verbose', False)
+    maxprec = kwargs.get('maxprec', ctx._default_hyper_maxprec(orig))
+    kwargs['maxprec'] = maxprec   # For calls to hypsum
+    zeroprec = kwargs.get('zeroprec')
+    infprec = kwargs.get('infprec')
+    perturbed_reference_value = None
+    hextra = 0
     try:
         while 1:
             ctx.prec += 10
+            if ctx.prec > maxprec:
+                raise ValueError(_hypercomb_msg % (orig, ctx.prec))
             orig2 = ctx.prec
             params = orig_params[:]
             terms = function(*params)
-            perturb = False
-            recompute = False
-            for term in terms:
-                w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term
-                extraprec = 0
-                try:
-                    # Avoid division by zero in leading factors (TODO:
-                    # also check for near division by zero?)
-                    for k, w in enumerate(w_s):
-                        if not w:
-                            if ctx.re(c_s[k]) <= 0:
-                                perturb = recompute = True
-                                raise StopIteration
-                    # Check for gamma and series poles and near-poles
-                    for data in alpha_s, beta_s, b_s:
-                        for i, x in enumerate(data):
-                            n, d = dist(x)
-                            # Poles
-                            if n > 0:
-                                continue
-                            if d < -orig:
-                                # OK if we have a polynomial
-                                # ------------------------------
-                                ok = False
-                                if data is b_s:
-                                    for u in a_s:
-                                        if ctx.isnpint(u) and u >= int(n):
-                                            ok = True
-                                            break
-                                if ok:
-                                    continue
-                                # ------------------------------
-                                perturb = recompute = True
-                                raise StopIteration
-                            elif d < -4:
-                                ctx.prec += (-d)
-                                recompute = True
-                except StopIteration:
-                    pass
-
+            if verbose:
+                print
+                print "ENTERING hypercomb main loop"
+                print "prec =", ctx.prec
+                print "hextra", hextra
+            perturb, recompute, extraprec, discard = \
+                _check_need_perturb(ctx, terms, orig, discard_known_zeros)
+            ctx.prec += extraprec
             if perturb:
-                """
-                # Should check for poles far from 0 and ensure that
-                # the summation includes those terms
-                minterms = 0
-                for term in terms:
-                    for b in term[-2]:
-                        n, d = dist(b)
-                        if d < -4 and n <= 0:
-                            minterms = max(minterms, -n)
-                """
-                if ctx._fixed_precision:
-                    h = ctx.ldexp(ctx.one, -int(ctx.prec*0.3))
+                if "hmag" in kwargs:
+                    hmag = kwargs["hmag"]
+                elif ctx._fixed_precision:
+                    hmag = int(ctx.prec*0.3)
                 else:
-                    h = ctx.ldexp(ctx.one,-orig-10)
-                ctx.prec = (orig2+10)*2
+                    hmag = orig + 10 + hextra
+                h = ctx.ldexp(ctx.one, -hmag)
+                ctx.prec = orig2 + 10 + hmag + 10
                 for k in range(len(params)):
                     params[k] += h
                     # Heuristically ensure that the perturbations
@@ -869,46 +898,86 @@ def hypercomb(ctx, function, params=[], **kwargs):
                     h += h/(k+1)
             if recompute:
                 terms = function(*params)
+            if discard_known_zeros:
+                terms = [term for (i, term) in enumerate(terms) if i not in discard]
+            if not terms:
+                return ctx.zero
             evaluated_terms = []
-            #print
-            #print "EVALUATING"
-
-            for w_s, c_s, alpha_s, beta_s, a_s, b_s, z in terms:
-                #print "hypercomb", len(a_s), len(b_s), a_s, b_s, z
+            for term_index, term_data in enumerate(terms):
+                w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term_data
+                if verbose:
+                    print
+                    print "  Evaluating term %i/%i : %iF%i" % \
+                        (term_index+1, len(terms), len(a_s), len(b_s))
+                    print "    powers", ctx.nstr(w_s), ctx.nstr(c_s)
+                    print "    gamma", ctx.nstr(alpha_s), ctx.nstr(beta_s)
+                    print "    hyper", ctx.nstr(a_s), ctx.nstr(b_s)
+                    print "    z", ctx.nstr(z)
                 v = ctx.hyper(a_s, b_s, z, **kwargs)
-                for a in alpha_s:
-                    v *= ctx.gamma(a)
-                for b in beta_s:
-                    v /= ctx.gamma(b)
-                for w, c in zip(w_s, c_s):
-                    v *= ctx.power(w, c)
+                for a in alpha_s: v *= ctx.gamma(a)
+                for b in beta_s: v /= ctx.gamma(b)
+                for w, c in zip(w_s, c_s): v *= ctx.power(w, c)
+                if verbose:
+                    print "    Value:", v
                 evaluated_terms.append(v)
 
-            if len(terms) == 1:
+            if len(terms) == 1 and (not perturb):
                 sumvalue = evaluated_terms[0]
                 break
-            # Problem: reconcile this with intentional cancellation
-            elif kwargs.get('check_cancellation') and not ctx._fixed_precision:
-                sumvalue = ctx.fsum(evaluated_terms)
-                #print "CHECK"
-                #print ctx.mag(sumvalue), complex(sumvalue)
-                #for x in evaluated_terms:
-                #    print ctx.prec, ctx.mag(x), complex(x)
-                #print ctx.prec, hash(x), hash(sumvalue)
-                c = max(ctx.mag(x) for x in evaluated_terms) - ctx.mag(sumvalue)
-                if c < ctx.prec - orig:
-                    break
-                else:
-                    ctx.prec += min(c, orig)
-                    if ctx.prec > 50*orig:
-                        raise ValueError("hypercomb() was called with "
-                            "check_cancellation=True but failed to converge "
-                            "within a reasonable number of steps. The function "
-                            "value is probably either zero or extremely small.")
-                    continue
-            else:
+
+            if ctx._fixed_precision:
                 sumvalue = ctx.fsum(evaluated_terms)
                 break
+
+            sumvalue = ctx.fsum(evaluated_terms)
+            term_magnitudes = [ctx.mag(x) for x in evaluated_terms]
+            max_magnitude = max(term_magnitudes)
+            sum_magnitude = ctx.mag(sumvalue)
+            cancellation = max_magnitude - sum_magnitude
+            if verbose:
+                print
+                print "  Cancellation:", cancellation, "bits"
+                print "  Increased precision:", ctx.prec - orig, "bits"
+
+            precision_ok = cancellation < ctx.prec - orig
+
+            if zeroprec is None:
+                zero_ok = False
+            else:
+                zero_ok = max_magnitude - ctx.prec < -zeroprec
+            if infprec is None:
+                inf_ok = False
+            else:
+                inf_ok = max_magnitude > infprec
+
+            if precision_ok and (not perturb) or ctx.isnan(cancellation):
+                break
+            elif precision_ok:
+                if perturbed_reference_value is None:
+                    hextra += 20
+                    perturbed_reference_value = sumvalue
+                    continue
+                elif ctx.mag(sumvalue - perturbed_reference_value) <= \
+                        ctx.mag(sumvalue) - orig:
+                    break
+                elif zero_ok:
+                    sumvalue = ctx.zero
+                    break
+                elif inf_ok:
+                    sumvalue = ctx.inf
+                    break
+                elif 'hmag' in kwargs:
+                    break
+                else:
+                    hextra *= 2
+                    perturbed_reference_value = sumvalue
+            # Increase precision
+            else:
+                increment = min(max(cancellation, orig//2), max(extraprec,orig))
+                ctx.prec += increment
+                if verbose:
+                    print "  Must start over with increased precision"
+                continue
     finally:
         ctx.prec = orig
     return +sumvalue
@@ -983,7 +1052,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
         finally:
             ctx.prec = orig
 
-    return ctx.hypsum(2, 2, (a1type, a2type, b1type, b2type), [a1, a2, b1, b2], z)
+    return ctx.hypsum(2, 2, (a1type, a2type, b1type, b2type), [a1, a2, b1, b2], z, **kwargs)
 
 
 
@@ -1067,7 +1136,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
             ctx.prec = orig
 
     #print "not using asymp"
-    return ctx.hypsum(1, 2, (a1type, b1type, b2type), [a1, b1, b2], z)
+    return ctx.hypsum(1, 2, (a1type, b1type, b2type), [a1, b1, b2], z, **kwargs)
 
 
 
@@ -1094,10 +1163,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
     # The square root below empirically provides a plausible criterion
     # for the leading series to converge
     can_use_asymptotic = (not kwargs.get('force_series')) and \
-        (ctx.mag(absz) > 19) and \
-        (ctx.sqrt(absz) > 1.5*orig) #and \
-        #ctx._hyp_check_convergence([a2, a2-b1+1, a2-b2+1, a2-b3+1], [-a1+a2+1],
-        #    1/absz, orig+40+asymp_extraprec)
+        (ctx.mag(absz) > 19) and (ctx.sqrt(absz) > 1.5*orig)
 
     if can_use_asymptotic:
         #print "using asymp"
@@ -1134,13 +1200,10 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                         w = c[k] * (-z)**(-0.5*k)
                         t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
                         t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
-                        #print k, abs(t1)
                         if abs(t1) < 0.1*ctx.eps:
-                            #print "Convergence :)"
                             break
                         # Quit if the series doesn't converge quickly enough
                         if k > 5 and abs(tprev) / abs(t1) < 1.5:
-                            #print "No convergence :("
                             raise NoConvergence
                         s1 += t1
                         s2 += t2
@@ -1164,7 +1227,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
         finally:
             ctx.prec = orig
 
-    return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z)
+    return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z, **kwargs)
 
 @defun
 def hyp3f2(ctx, a1, a2, a3, b1, b2, z, **kwargs):
@@ -1192,10 +1255,10 @@ def hyp2f0(ctx, a, b, z, **kwargs):
         T1 = ([ctx.pi,w,rz],[1,-1,a],[],[a-b+1,b],[a],[b],rz)
         T2 = ([-ctx.pi,w,rz],[1,-1,1+a-b],[],[a,2-b],[a-b+1],[2-b],rz)
         return T1, T2
-    return ctx.hypercomb(h, [a, 1+a-b], check_cancellation=True)
+    return ctx.hypercomb(h, [a, 1+a-b], **kwargs)
 
 @defun
-def hyperu(ctx, a,b,z):
+def hyperu(ctx, a,b,z, **kwargs):
     a, atype = ctx.convert_maybe_rational(a)
     b, btype = ctx.convert_maybe_rational(b)
     z = ctx.convert(z)
@@ -1221,7 +1284,7 @@ def hyperu(ctx, a,b,z):
         T1 = ([ctx.pi,w],[1,-1],[],[a-b+1,b],[a],[b],z)
         T2 = ([-ctx.pi,w,z],[1,-1,1-b],[],[a,2-b],[a-b+1],[2-b],z)
         return T1, T2
-    return ctx.hypercomb(h, [a,b], check_cancellation=True)
+    return ctx.hypercomb(h, [a,b], **kwargs)
 
 @defun_wrapped
 def _erf_complex(ctx, z):
@@ -1405,7 +1468,7 @@ def _upper_gamma(ctx, z, a, regularized=False):
             T1 = [], [1, z-1], [z], G, [], [], 0
             T2 = [-ctx.exp(nega), a, z], [1, z, -1], [], G, [1], [1+z], a
             return T1, T2
-        return ctx.hypercomb(h, [z], check_cancellation=True)
+        return ctx.hypercomb(h, [z])
 
 @defun
 def _gamma3(ctx, z, a, b, regularized=False):
@@ -1493,8 +1556,9 @@ def fresnels(ctx, z):
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    return ctx.pi*z**3/6*ctx.hypsum(1,2,('Q','Q','Q'),\
-        [ctx.mpq_3_4,ctx.mpq_3_2,ctx.mpq_7_4],-ctx.pi**2*z**4/16)
+    #return ctx.pi*z**3/6*ctx.hypsum(1,2,('Q','Q','Q'),\
+    #    [ctx.mpq_3_4,ctx.mpq_3_2,ctx.mpq_7_4],-ctx.pi**2*z**4/16)
+    return ctx.pi*z**3/6*ctx.hyp1f2((3,4),(3,2),(7,4),-ctx.pi**2*z**4/16)
 
 @defun_wrapped
 def fresnelc(ctx, z):
@@ -1502,8 +1566,9 @@ def fresnelc(ctx, z):
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    return z*ctx.hypsum(1,2,('Q','Q','Q'),\
-        [ctx.mpq_1_4,ctx.mpq_1_2,ctx.mpq_5_4],-ctx.pi**2*z**4/16)
+    #return z*ctx.hypsum(1,2,('Q','Q','Q'),\
+    #    [ctx.mpq_1_4,ctx.mpq_1_2,ctx.mpq_5_4],-ctx.pi**2*z**4/16)
+    return z*ctx.hyp1f2((1,4),(1,2),(5,4),-ctx.pi**2*z**4/16)
 
 @defun_wrapped
 def airyai(ctx, z):
@@ -1546,7 +1611,7 @@ def airybi(ctx, z):
     return a + b
 
 @defun_wrapped
-def hermite(ctx, n, z):
+def hermite(ctx, n, z, **kwargs):
     if not z:
         try:
             return 2**n * ctx.sqrt(ctx.pi) / ctx.gamma(0.5*(1-n))
@@ -1557,17 +1622,17 @@ def hermite(ctx, n, z):
         ctx.prec = ctx.prec*4+20
         z2 = -z**(-2)
         ctx.prec = prec
-        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), z2)
+        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), z2, **kwargs)
     else:
         prec = ctx.prec
         ctx.prec = ctx.prec*4+20
         z2 = z**2
         ctx.prec = prec
         return ctx.hermite(n,-z) + 2**(n+2)*ctx.sqrt(ctx.pi) * (-z) / \
-            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z2)
+            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z2, **kwargs)
 
 @defun_wrapped
-def gegenbauer(ctx, n, a, z):
+def gegenbauer(ctx, n, a, z, **kwargs):
     # Special cases: a+0.5, a*2 poles
     if ctx.isnpint(a):
         return 0*(z+n)
@@ -1580,37 +1645,37 @@ def gegenbauer(ctx, n, a, z):
             a2 = 2*a
             T = [], [], [n+a2], [n+1, a2], [-n, n+a2], [a+0.5], 0.5*(1-z)
             return [T]
-        return ctx.hypercomb(h, [a])
+        return ctx.hypercomb(h, [a], **kwargs)
     def h(n):
         a2 = 2*a
         T = [], [], [n+a2], [n+1, a2], [-n, n+a2], [a+0.5], 0.5*(1-z)
         return [T]
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun_wrapped
-def jacobi(ctx, n, a, b, x):
+def jacobi(ctx, n, a, b, x, **kwargs):
     if not ctx.isnpint(a):
         def h(n):
             return (([], [], [a+n+1], [n+1, a+1], [-n, a+b+n+1], [a+1], (1-x)*0.5),)
-        return ctx.hypercomb(h, [n])
+        return ctx.hypercomb(h, [n], **kwargs)
     if not ctx.isint(b):
         def h(n, a):
             return (([], [], [-b], [n+1, -b-n], [-n, a+b+n+1], [b+1], (x+1)*0.5),)
-        return ctx.hypercomb(h, [n, a])
+        return ctx.hypercomb(h, [n, a], **kwargs)
     # XXX: determine appropriate limit
-    return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2)
+    return ctx.binomial(n+a,n) * ctx.hyp2f1(-n,1+n+a+b,a+1,(1-x)/2, **kwargs)
 
 @defun_wrapped
-def laguerre(ctx, n, a, z):
+def laguerre(ctx, n, a, z, **kwargs):
     # XXX: limits, poles
     #if ctx.isnpint(n):
     #    return 0*(a+z)
     def h(a):
         return (([], [], [a+n+1], [a+1, n+1], [-n], [a+1], z),)
-    return ctx.hypercomb(h, [a])
+    return ctx.hypercomb(h, [a], **kwargs)
 
 @defun_wrapped
-def legendre(ctx, n, x):
+def legendre(ctx, n, x, **kwargs):
     if ctx.isint(n):
         n = int(n)
         # Accuracy near zeros
@@ -1622,33 +1687,33 @@ def legendre(ctx, n, x):
                 return x
             if mag < -5:
                 ctx.prec += -mag
-    return ctx.hyp2f1(-n,n+1,1,(1-x)/2)
+    return ctx.hyp2f1(-n,n+1,1,(1-x)/2, **kwargs)
 
 @defun
-def legenp(ctx, n, m, z, type=2):
+def legenp(ctx, n, m, z, type=2, **kwargs):
     # Legendre function, 1st kind
     n = ctx.convert(n)
     m = ctx.convert(m)
     # Faster
     if not m:
-        return ctx.legendre(n, z)
+        return ctx.legendre(n, z, **kwargs)
     # TODO: correct evaluation at singularities
     if type == 2:
         def h(n,m):
             g = m*0.5
             T = [1+z, 1-z], [g, -g], [], [1-m], [-n, n+1], [1-m], 0.5*(1-z)
             return (T,)
-        return ctx.hypercomb(h, [n,m])
+        return ctx.hypercomb(h, [n,m], **kwargs)
     if type == 3:
         def h(n,m):
             g = m*0.5
             T = [z+1, z-1], [g, -g], [], [1-m], [-n, n+1], [1-m], 0.5*(1-z)
             return (T,)
-        return ctx.hypercomb(h, [n,m])
+        return ctx.hypercomb(h, [n,m], **kwargs)
     raise ValueError("requires type=2 or type=3")
 
 @defun
-def legenq(ctx, n, m, z, type=2):
+def legenq(ctx, n, m, z, type=2, **kwargs):
     # Legendre function, 2nd kind
     n = ctx.convert(n)
     m = ctx.convert(m)
@@ -1671,7 +1736,7 @@ def legenq(ctx, n, m, z, type=2):
             T2 = [-s, a, b], [-1, -u, u], [n+m+1], [n-m+1, m+1], \
                 [-n, n+1], [m+1], w
             return T1, T2
-        return ctx.hypercomb(h, [n, m])
+        return ctx.hypercomb(h, [n, m], **kwargs)
     if type == 3:
         # The following is faster when there only is a single series
         # Note: not valid for -1 < z < 0 (?)
@@ -1682,7 +1747,7 @@ def legenq(ctx, n, m, z, type=2):
                      [n+m+1], [n+1.5], \
                      [0.5*(2+n+m), 0.5*(1+n+m)], [n+1.5], z**(-2)
                 return [T1]
-            return ctx.hypercomb(h, [n, m])
+            return ctx.hypercomb(h, [n, m], **kwargs)
         else:
             # not valid for 1 < z < inf ?
             def h(n, m):
@@ -1697,16 +1762,16 @@ def legenq(ctx, n, m, z, type=2):
                 T2 = [-s, c, a, b], [-1, 1, -u, u], [n+m+1], [n-m+1, m+1], \
                     [-n, n+1], [m+1], w
                 return T1, T2
-            return ctx.hypercomb(h, [n, m])
+            return ctx.hypercomb(h, [n, m], **kwargs)
     raise ValueError("requires type=2 or type=3")
 
 @defun_wrapped
-def chebyt(ctx, n, x):
-    return ctx.hyp2f1(-n,n,(1,2),(1-x)/2)
+def chebyt(ctx, n, x, **kwargs):
+    return ctx.hyp2f1(-n,n,(1,2),(1-x)/2, **kwargs)
 
 @defun_wrapped
-def chebyu(ctx, n, x):
-    return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2)
+def chebyu(ctx, n, x, **kwargs):
+    return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2, **kwargs)
 
 @defun
 def j0(ctx, x):
@@ -1719,7 +1784,7 @@ def j1(ctx, x):
     return ctx.besselj(1, x)
 
 @defun
-def besselj(ctx, n, z, derivative=0):
+def besselj(ctx, n, z, derivative=0, **kwargs):
     if type(n) is int:
         n_isint = True
     else:
@@ -1728,7 +1793,7 @@ def besselj(ctx, n, z, derivative=0):
         if n_isint:
             n = int(n)
     if n_isint and n < 0:
-        return (-1)**n * ctx.besselj(-n, z, derivative)
+        return (-1)**n * ctx.besselj(-n, z, derivative, **kwargs)
     z = ctx.convert(z)
     M = ctx.mag(z)
     if derivative:
@@ -1750,10 +1815,10 @@ def besselj(ctx, n, z, derivative=0):
         else:
             def h(n,d):
                 r = ctx.fmul(ctx.fmul(z, z, prec=ctx.prec+M), -0.25, exact=True)
-                B = [0.5*(n-d+1), 0.5*(n-d+2), n+1]
-                T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[n+1],B,[(n+1)*0.5,(n+2)*0.5],B,r)]
+                B = [0.5*(n-d+1), 0.5*(n-d+2)]
+                T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[],B,[(n+1)*0.5,(n+2)*0.5],B+[n+1],r)]
                 return T
-            v = ctx.hypercomb(h, [n,d])
+            v = ctx.hypercomb(h, [n,d], **kwargs)
     else:
     # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
         if (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
@@ -1779,14 +1844,14 @@ def besselj(ctx, n, z, derivative=0):
                 def h(n):
                     r = ctx.fneg(ctx.fmul(w, w, prec=max(0,ctx.prec+M)), exact=True)
                     return [([w], [n], [], [n+1], [], [n+1], r)]
-                v = ctx.hypercomb(h, [n])
+                v = ctx.hypercomb(h, [n], **kwargs)
             finally:
                 ctx.prec = orig
         v = +v
     return v
 
 @defun
-def besseli(ctx, n, z, derivative=0):
+def besseli(ctx, n, z, derivative=0, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     if not z:
@@ -1812,17 +1877,17 @@ def besseli(ctx, n, z, derivative=0):
             B = [0.5*(n-d+1), 0.5*(n-d+2), n+1]
             T = [([2,ctx.pi,z],[d-2*n,0.5,n-d],[n+1],B,[(n+1)*0.5,(n+2)*0.5],B,r)]
             return T
-        v = ctx.hypercomb(h, [n,d])
+        v = ctx.hypercomb(h, [n,d], **kwargs)
     else:
         def h(n):
             w = ctx.fmul(z, 0.5, exact=True)
             r = ctx.fmul(w, w, prec=max(0,ctx.prec+M))
             return [([w], [n], [], [n+1], [], [n+1], r)]
-        v = ctx.hypercomb(h, [n])
+        v = ctx.hypercomb(h, [n], **kwargs)
     return v
 
 @defun_wrapped
-def bessely(ctx, n, z, derivative=0):
+def bessely(ctx, n, z, derivative=0, **kwargs):
     if not z:
         if derivative:
             # Not implemented
@@ -1843,6 +1908,7 @@ def bessely(ctx, n, z, derivative=0):
             return ctx.inf + (n+z)
         else:
             return ctx.ninf + (n+z)
+    # XXX: use hypercomb
     ctx.prec += 10
     m, d = ctx.nint_distance(n)
     if d < -ctx.prec:
@@ -1852,11 +1918,11 @@ def bessely(ctx, n, z, derivative=0):
     elif d < 0:
         ctx.prec -= d
     # TODO: avoid cancellation for imaginary arguments
-    return (ctx.besselj(n,z,derivative)*ctx.cospi(n) - \
-        ctx.besselj(-n,z,derivative))/ctx.sinpi(n)
+    return (ctx.besselj(n,z,derivative,**kwargs)*ctx.cospi(n) - \
+        ctx.besselj(-n,z,derivative,**kwargs))/ctx.sinpi(n)
 
 @defun_wrapped
-def besselk(ctx, n, z):
+def besselk(ctx, n, z, **kwargs):
     if not z:
         return ctx.inf
     M = ctx.mag(z)
@@ -1876,18 +1942,18 @@ def besselk(ctx, n, z):
         def h(n):
             return [([ctx.pi/2, z, ctx.exp(-z)], [0.5,-0.5,1], [], [], \
                 [n+0.5, 0.5-n], [], -1/(2*z))]
-    return ctx.hypercomb(h, [n], check_cancellation=True)
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun_wrapped
-def hankel1(ctx,n,x):
-    return ctx.besselj(n,x) + ctx.j*ctx.bessely(n,x)
+def hankel1(ctx,n,x,**kwargs):
+    return ctx.besselj(n,x,**kwargs) + ctx.j*ctx.bessely(n,x,**kwargs)
 
 @defun_wrapped
-def hankel2(ctx,n,x):
-    return ctx.besselj(n,x) - ctx.j*ctx.bessely(n,x)
+def hankel2(ctx,n,x,**kwargs):
+    return ctx.besselj(n,x,**kwargs) - ctx.j*ctx.bessely(n,x,**kwargs)
 
 @defun_wrapped
-def whitm(ctx,k,m,z):
+def whitm(ctx,k,m,z,**kwargs):
     if z == 0:
         # M(k,m,z) = 0^(1/2+m)
         if ctx.re(m) > -0.5:
@@ -1898,10 +1964,10 @@ def whitm(ctx,k,m,z):
             return ctx.nan * z
     x = ctx.fmul(-0.5, z, exact=True)
     y = 0.5+m
-    return ctx.exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z)
+    return ctx.exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z, **kwargs)
 
 @defun_wrapped
-def whitw(ctx,k,m,z):
+def whitw(ctx,k,m,z,**kwargs):
     if z == 0:
         g = abs(ctx.re(m))
         if g < 0.5:
@@ -1912,28 +1978,28 @@ def whitw(ctx,k,m,z):
             return ctx.nan * z
     x = ctx.fmul(-0.5, z, exact=True)
     y = 0.5+m
-    return ctx.exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z)
+    return ctx.exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z, **kwargs)
 
 @defun
-def struveh(ctx,n,z):
+def struveh(ctx,n,z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/StruveH/26/01/02/
     def h(n):
         return [([z/2, 0.5*ctx.sqrt(ctx.pi)], [n+1, -1], [], [n+1.5], [1], [1.5, n+1.5], -(z/2)**2)]
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def struvel(ctx,n,z):
+def struvel(ctx,n,z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/StruveL/26/01/02/
     def h(n):
         return [([z/2, 0.5*ctx.sqrt(ctx.pi)], [n+1, -1], [], [n+1.5], [1], [1.5, n+1.5], (z/2)**2)]
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def ber(ctx, n, z):
+def ber(ctx, n, z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBer2/26/01/02/0001/
@@ -1942,10 +2008,10 @@ def ber(ctx, n, z):
         T1 = [ctx.cospi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
         T2 = [-ctx.sinpi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
         return T1, T2
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def bei(ctx, n, z):
+def bei(ctx, n, z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBei2/26/01/02/0001/
@@ -1954,10 +2020,10 @@ def bei(ctx, n, z):
         T1 = [ctx.cospi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
         T2 = [ctx.sinpi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
         return T1, T2
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def ker(ctx, n, z):
+def ker(ctx, n, z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKer2/26/01/02/0001/
@@ -1968,10 +2034,10 @@ def ker(ctx, n, z):
         T3 = [2, z, 4*ctx.cospi(0.75*n)], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
         T4 = [2, z, -ctx.sinpi(0.75*n)], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
         return T1, T2, T3, T4
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def kei(ctx, n, z):
+def kei(ctx, n, z, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKei2/26/01/02/0001/
@@ -1982,7 +2048,7 @@ def kei(ctx, n, z):
         T3 = [-ctx.sinpi(0.25*n), 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
         T4 = [-ctx.cospi(0.25*n), 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
         return T1, T2, T3, T4
-    return ctx.hypercomb(h, [n])
+    return ctx.hypercomb(h, [n], **kwargs)
 
 @defun_wrapped
 def lambertw(ctx, z, k=0):
@@ -2159,7 +2225,7 @@ def siegeltheta(ctx, t):
 
 @defun_wrapped
 def grampoint(ctx, n):
-    # ctxsymptotic expansion, from
+    # asymptotic expansion, from
     # http://mathworld.wolfram.com/GramPoint.html
     g = 2*ctx.pi*ctx.exp(1+ctx.lambertw((8*n+1)/(8*ctx.e)))
     return ctx.findroot(lambda t: ctx.siegeltheta(t)-ctx.pi*n, g)
@@ -2766,7 +2832,7 @@ def meijerg(ctx, a_s, b_s, z, r=1, **kwargs):
     return ctx.hypercomb(h, a+b, **kwargs)
 
 @defun_wrapped
-def appellf1(ctx,a,b1,b2,c,z1,z2):
+def appellf1(ctx,a,b1,b2,c,z1,z2,**kwargs):
     # Assume z1 smaller
     # We will use z1 for the outer loop
     if abs(z1) > abs(z2):
@@ -2791,14 +2857,14 @@ def appellf1(ctx,a,b1,b2,c,z1,z2):
                 raise ValueError("Analytic continuation not implemented")
             #print "Using analytic continuation"
             return (1-z1)**(-b1)*(1-z2)**(c-a-b2)*\
-                ctx.appellf1(c-a,b1,c-b1-b2,c,u1,z2)
+                ctx.appellf1(c-a,b1,c-b1-b2,c,u1,z2,**kwargs)
     #print "inner is", a, b2, c
     one = ctx.one
     s = 0
     t = 1
     k = 0
     while 1:
-        h = ctx.hyp2f1(a,b2,c,z2)
+        h = ctx.hyp2f1(a,b2,c,z2,zeroprec=ctx.prec,**kwargs)
         term = t * h
         if abs(term) < ctx.eps and abs(h) > 10*ctx.eps:
             break
@@ -2824,7 +2890,7 @@ def coulombc(ctx, l, eta, _cache={}):
     return v
 
 @defun_wrapped
-def coulombf(ctx, l, eta, z, w=1, chop=True):
+def coulombf(ctx, l, eta, z, w=1, chop=True, **kwargs):
     # Regular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
@@ -2840,7 +2906,7 @@ def coulombf(ctx, l, eta, z, w=1, chop=True):
         except ValueError:
             T1 = [0], [-1], [], [], [], [], 0
         return (T1,)
-    v = ctx.hypercomb(h, [l,eta])
+    v = ctx.hypercomb(h, [l,eta], **kwargs)
     if chop and (not ctx.im(l)) and (not ctx.im(eta)) and (not ctx.im(z)) and \
         (ctx.re(z) >= 0):
         v = ctx.re(v)
@@ -2863,7 +2929,7 @@ def _coulomb_chi(ctx, l, eta, _cache={}):
     return v
 
 @defun_wrapped
-def coulombg(ctx, l, eta, z, w=1, chop=True):
+def coulombg(ctx, l, eta, z, w=1, chop=True, **kwargs):
     # Irregular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
@@ -2891,7 +2957,7 @@ def coulombg(ctx, l, eta, z, w=1, chop=True):
         except ValueError:
             T1 = [0], [-1], [], [], [], [], 0
             return (T1,)
-    v = ctx.hypercomb(h, [l,eta], check_cancellation=True)
+    v = ctx.hypercomb(h, [l,eta], **kwargs)
     if chop and (not ctx.im(l)) and (not ctx.im(eta)) and (not ctx.im(z)) and \
         (ctx.re(z) >= 0):
         v = ctx.re(v)

@@ -22,6 +22,8 @@ extradps = mp.extradps
 workprec = mp.workprec
 workdps = mp.workdps
 
+mag = mp.mag
+
 bernfrac = mp.bernfrac
 
 jdn = mp.jdn
@@ -344,7 +346,7 @@ if __name__ == '__main__':
     filter = []
     for i, arg in enumerate(sys.argv):
         if '__init__.py' in arg:
-            filter = sys.argv[i+1:]
+            filter = [sn for sn in sys.argv[i+1:] if not sn.startswith("-")]
             break
     import doctest
     globs = globals().copy()
@@ -354,7 +356,7 @@ if __name__ == '__main__':
                 continue
         print obj,
         t1 = clock()
-        doctest.run_docstring_examples(globs[obj], {})
+        doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
         t2 = clock()
         print round(t2-t1, 3)
 

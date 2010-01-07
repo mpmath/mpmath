@@ -2585,7 +2585,7 @@ series terminates before the division by zero occurs)::
     >>> hyper([1,1,1,-3],[-2,5],1)
     Traceback (most recent call last):
       ...
-    ZeroDivisionError
+    ZeroDivisionError: pole in hypergeometric series
     >>> hyper([1,1,1,-1],[-2,5],1)
     1.1
 
@@ -2599,7 +2599,7 @@ if an analytic continuation or regularization is implemented (see the list of
     >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1, not implemented
     Traceback (most recent call last):
       ...
-    NoConvergence
+    NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
 
 The analytic continuations of the functions with `p = q+1`, i.e. `\,_2F_1`, 
 `\,_3F_2`,  `\,_4F_3`, etc, are all implemented and therefore these functions
@@ -4461,9 +4461,9 @@ Evaluation at negative integer orders::
 
     >>> gegenbauer(-4, 2, 1.75)
     -1.0
-    >>> chop(gegenbauer(-4, 3, 1.75))
+    >>> gegenbauer(-4, 3, 1.75)
     0.0
-    >>> chop(gegenbauer(-4, 2j, 1.75))
+    >>> gegenbauer(-4, 2j, 1.75)
     0.0
     >>> gegenbauer(-7, 0.5, 3)
     8989.0
@@ -4492,8 +4492,8 @@ The Gegenbauer polynomials are orthogonal on `[-1, 1]` with respect
 to the weight `(1-z^2)^{a-\frac{1}{2}}`::
 
     >>> a, n, m = 2.5, 4, 5
-    >>> Cn = lambda z: gegenbauer(n, a, z)
-    >>> Cm = lambda z: gegenbauer(m, a, z)
+    >>> Cn = lambda z: gegenbauer(n, a, z, zeroprec=1000)
+    >>> Cm = lambda z: gegenbauer(m, a, z, zeroprec=1000)
     >>> chop(quad(lambda z: Cn(z)*Cm(z)*(1-z**2)*(a-0.5), [-1, 1]))
     0.0
 """
@@ -4858,7 +4858,7 @@ We can verify this numerically::
 legenp = r"""
 Calculates the (associated) Legendre function of the first kind of
 degree *n* and order *m*, `P_n^m(z)`. Taking `m = 0` gives the ordinary
-Legendre function of the second kind, `P_n(z)`. The parameters may be
+Legendre function of the first kind, `P_n(z)`. The parameters may be
 complex numbers.
 
 In terms of the Gauss hypergeometric function, the (associated) Legendre

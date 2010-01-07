@@ -12,6 +12,8 @@ from settings import (\
     MP_ZERO, MP_ONE, round_fast, round_nearest
 )
 
+from libintmath import gcd
+
 from libmpf import (\
     ComplexResult,
     negative_rnd, bitcount, to_fixed, from_man_exp, from_int, to_int,
@@ -20,7 +22,8 @@ from libmpf import (\
     mpf_sign, mpf_add, mpf_abs, mpf_pos,
     mpf_cmp, mpf_lt, mpf_le,
     mpf_perturb, mpf_neg, mpf_shift, mpf_sub, mpf_mul, mpf_div,
-    sqrt_fixed, mpf_sqrt, mpf_rdiv_int, mpf_pow_int
+    sqrt_fixed, mpf_sqrt, mpf_rdiv_int, mpf_pow_int,
+    to_rational,
 )
 
 from libelefun import (\
@@ -87,9 +90,9 @@ def make_hyp_summator(key):
     acomplex = []
     bcomplex = []
 
-    add("wp = prec + 40")
+    #add("wp = prec + 40")
     add("MAX = kwargs.get('maxterms', wp*100)")
-    add("HIGH = MP_ONE*100000")
+    add("HIGH = MP_ONE<<epsshift")
     add("LOW = -HIGH")
 
     # Setup code
@@ -164,6 +167,13 @@ def make_hyp_summator(key):
 
     # LOOP
     add("for n in xrange(1,10**8):")
+
+    add("    if n in magnitude_check:")
+    add("        p_mag = bitcount(abs(PRE))")
+    if have_complex:
+        add("        p_mag = max(p_mag, bitcount(abs(PIM)))")
+    add("        magnitude_check[n] = wp-p_mag")
+
     # Real factors
     multiplier = " * ".join(["AINT_#".replace("#", str(i)) for i in aint] + \
                             ["AP_#".replace("#", str(i)) for i in arat] + \
@@ -179,8 +189,9 @@ def make_hyp_summator(key):
 
     # Check for singular terms
     add("    if not div:")
-    add("        if not mul:")
-    add("            break")
+    if multiplier:
+        add("        if not mul:")
+        add("            break")
     add("        raise ZeroDivisionError")
 
     # Update product
@@ -245,12 +256,13 @@ def make_hyp_summator(key):
         add("    if HIGH > PRE > LOW:")
         add("        break")
 
-    #add("    from mpmath import nprint, log")
-    #add("    nprint([n, log(abs(PRE),2)])")
-    add("    if n > MAX:")
-    add("        raise NoConvergence")
+    #add("    from mpmath import nprint, log, ldexp")
+    #add("    nprint([n, log(abs(PRE),2), ldexp(PRE,-wp)])")
 
-    # +1 all variables for next loop
+    add("    if n > MAX:")
+    add("        raise NoConvergence('Hypergeometric series converges too slowly. Try increasing maxterms.')")
+
+    # +1 all parameters for next loop
     for i in aint:     add("    AINT_# += 1".replace("#", str(i)))
     for i in bint:     add("    BINT_# += 1".replace("#", str(i)))
     for i in arat:     add("    AP_# += AQ_#".replace("#", str(i)))
@@ -263,13 +275,30 @@ def make_hyp_summator(key):
     if have_complex:
         add("a = from_man_exp(SRE, -wp, prec, 'n')")
         add("b = from_man_exp(SIM, -wp, prec, 'n')")
-        add("return (a, b), True")
+
+        add("if SRE:")
+        add("    if SIM:")
+        add("        magn = max(a[2]+a[3], b[2]+b[3])")
+        add("    else:")
+        add("        magn = a[2]+a[3]")
+        add("elif SIM:")
+        add("    magn = b[2]+b[3]")
+        add("else:")
+        add("    magn = -prec")
+
+        add("return (a, b), True, magn")
     else:
         add("a = from_man_exp(SRE, -wp, prec, 'n')")
-        add("return a, False")
+
+        add("if SRE:")
+        add("    magn = a[2]+a[3]")
+        add("else:")
+        add("    magn = -prec")
+
+        add("return a, False, magn")
 
     source = "\n".join(("    " + line) for line in source)
-    source = ("def %s(coeffs, z, prec, **kwargs):\n" % fname) + source
+    source = ("def %s(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n" % fname) + source
 
     namespace = {}
 

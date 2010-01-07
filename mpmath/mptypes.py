@@ -701,10 +701,11 @@ class _constant(_mpf):
     is converted to a regular mpf at the working precision. A
     regular mpf can also be obtained using the operation +x."""
 
-    def __new__(cls, func, name):
+    def __new__(cls, func, name, docname=''):
         a = object.__new__(cls)
         a.name = name
         a.func = func
+        a.__doc__ = getattr(function_docs, docname, '')
         return a
 
     def __call__(self, prec=None, dps=None, rounding=None):
@@ -755,6 +756,8 @@ class MPContext(StandardBaseContext):
     Context for multiprecision arithmetic with a global precision.
     """
 
+    NoConvergence = libhyper.NoConvergence
+
     def __init__(ctx):
         # Settings
         ctx._prec_rounding = [53, round_nearest]
@@ -777,9 +780,6 @@ class MPContext(StandardBaseContext):
 
         ctx._mpq = rational.mpq
 
-        # Predefined data
-        ctx._create_constants({})
-
         ctx.default()
         StandardBaseContext.__init__(ctx)
 
@@ -794,27 +794,31 @@ class MPContext(StandardBaseContext):
         mpc = ctx.mpc
 
         # Exact constants
-        ctx.j = mpc(1j)
-        ctx.one = mpf(1)
-        ctx.zero = mpf._zero = mpf(0)
-        ctx.inf = mpf(1e300*1e300) # XXX
-        ctx.ninf = mpf(-1e300*1e300)
-        ctx.nan = mpf(1e300*1e300 - 1e300*1e300)
+        ctx.one = ctx.make_mpf(fone)
+        ctx.zero = ctx.make_mpf(fzero)
+        ctx.j = ctx.make_mpc((fzero,fone))
+        ctx.inf = ctx.make_mpf(finf)
+        ctx.ninf = ctx.make_mpf(fninf)
+        ctx.nan = ctx.make_mpf(fnan)
+
+        eps = ctx.constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
+            "epsilon of working precision", "eps")
+        ctx.eps = eps
 
         # Approximate constants
-        ctx.pi = ctx.constant(mpf_pi, "pi")
-        ctx.ln2 = ctx.constant(mpf_ln2, "ln(2)")
-        ctx.ln10 = ctx.constant(mpf_ln10, "ln(10)")
-        ctx.phi = ctx.constant(mpf_phi, "Golden ratio phi")
-        ctx.e = ctx.constant(mpf_e, "e = exp(1)")
-        ctx.euler = ctx.constant(mpf_euler, "Euler's constant")
-        ctx.catalan = ctx.constant(mpf_catalan, "Catalan's constant")
-        ctx.khinchin = ctx.constant(mpf_khinchin, "Khinchin's constant")
-        ctx.glaisher = ctx.constant(mpf_glaisher, "Glaisher's constant")
-        ctx.apery = ctx.constant(mpf_apery, "Apery's constant")
-        ctx.degree = ctx.constant(mpf_degree, "1 deg = pi / 180")
-        ctx.twinprime = ctx.constant(mpf_twinprime, "Twin prime constant")
-        ctx.mertens = ctx.constant(mpf_mertens, "Mertens' constant")
+        ctx.pi = ctx.constant(mpf_pi, "pi", "pi")
+        ctx.ln2 = ctx.constant(mpf_ln2, "ln(2)", "ln2")
+        ctx.ln10 = ctx.constant(mpf_ln10, "ln(10)", "ln10")
+        ctx.phi = ctx.constant(mpf_phi, "Golden ratio phi", "phi")
+        ctx.e = ctx.constant(mpf_e, "e = exp(1)", "e")
+        ctx.euler = ctx.constant(mpf_euler, "Euler's constant", "euler")
+        ctx.catalan = ctx.constant(mpf_catalan, "Catalan's constant", "catalan")
+        ctx.khinchin = ctx.constant(mpf_khinchin, "Khinchin's constant", "khinchin")
+        ctx.glaisher = ctx.constant(mpf_glaisher, "Glaisher's constant", "glaisher")
+        ctx.apery = ctx.constant(mpf_apery, "Apery's constant", "apery")
+        ctx.degree = ctx.constant(mpf_degree, "1 deg = pi / 180", "degree")
+        ctx.twinprime = ctx.constant(mpf_twinprime, "Twin prime constant", "twinprime")
+        ctx.mertens = ctx.constant(mpf_mertens, "Mertens' constant", "mertens")
 
         # XXX: better way to define aliases
         ctx.nthroot = ctx.root
@@ -861,27 +865,6 @@ class MPContext(StandardBaseContext):
         ctx.agm1 = ctx.def_mp_function(libhyper.mpf_agm1, libhyper.mpc_agm1)
         ctx._erf = ctx.def_mp_function(libhyper.mpf_erf, None)
         ctx._erfc = ctx.def_mp_function(libhyper.mpf_erfc, None)
-
-    # pi, etc
-    _constants = []
-
-    def _create_constants(ctx, namespace):
-        ctx.one = ctx.make_mpf(fone)
-        ctx.zero = ctx.make_mpf(fzero)
-        ctx.inf = ctx.make_mpf(finf)
-        ctx.ninf = ctx.make_mpf(fninf)
-        ctx.nan = ctx.make_mpf(fnan)
-        ctx.j = ctx.make_mpc((fzero,fone))
-        eps = ctx.constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
-            "epsilon of working precision")
-        ctx.eps = eps
-        import function_docs
-        for name, func, descr in ctx._constants:
-            doc = function_docs.__dict__.get(name, descr)
-            const_cls = type("_" + name, (ctx.constant,), {'__doc__':doc})
-            const_inst = const_cls(func, descr)
-            setattr(ctx, name, const_inst)
-            namespace[name] = const_inst
 
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)
@@ -974,8 +957,7 @@ class MPContext(StandardBaseContext):
     def def_mp_function(ctx, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
         """
         Given a low-level mpf_ function, and optionally similar functions
-        for mpc_ and mpi_, defines the function as a MultiPrecisionArithmetic
-        method.
+        for mpc_ and mpi_, defines the function as a context method.
 
         It is assumed that the return type is the same as that of
         the input; the exception is that propagation from mpf to mpc is possible
@@ -1009,13 +991,6 @@ class MPContext(StandardBaseContext):
         f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
         return f
 
-        #f.__name__ = name
-        #import function_docs
-        #f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
-        #setattr(MultiPrecisionArithmetic, name, f)
-        #return getattr(MultiPrecisionArithmetic.default_instance, name)
-
-
 
     # Called by SpecialFunctions.__init__()
     @classmethod
@@ -1042,7 +1017,7 @@ class MPContext(StandardBaseContext):
         """
         Create a copy of the context, with the same working precision.
         """
-        a = MultiPrecisionArithmetic()
+        a = ctx.__class__()
         a.prec = ctx.prec
         return a
 
@@ -1310,12 +1285,17 @@ class MPContext(StandardBaseContext):
         else:
             if type(x) in int_types:
                 return int(x), 'Z'
+            p = None
             if isinstance(x, tuple):
                 p, q = x
-                return ctx.mpq((p,q)), 'Q'
-            if isinstance(x, basestring) and '/' in x:
+            elif isinstance(x, basestring) and '/' in x:
                 p, q = x.split('/')
-                return ctx.mpq((int(p), int(q))), 'Q'
+                p = int(p)
+                q = int(q)
+            if p is not None:
+                if not p % q:
+                    return p // q, 'Z'
+                return ctx.mpq((p,q)), 'Q'
             x = ctx.convert(x)
             if hasattr(x, "_mpc_"):
                 v, im = x._mpc_
@@ -1342,7 +1322,11 @@ class MPContext(StandardBaseContext):
         else:
             return x, 'U'
 
-    def hypsum(ctx, p, q, flags, coeffs, z, **kwargs):
+    _hypsum_msg = """hypsum() failed to converge to the requested %i bits of accuracy
+using a working precision of %i bits. Try with a higher maxprec,
+maxterms, or set zeroprec."""
+
+    def hypsum(ctx, p, q, flags, coeffs, z, accurate_small=True, **kwargs):
         if hasattr(z, "_mpf_"):
             key = p, q, flags, 'R'
             v = z._mpf_
@@ -1351,7 +1335,74 @@ class MPContext(StandardBaseContext):
             v = z._mpc_
         if key not in ctx.hyp_summators:
             ctx.hyp_summators[key] = libhyper.make_hyp_summator(key)[1]
-        zv, have_complex = ctx.hyp_summators[key](coeffs, v, ctx.prec, **kwargs)
+        summator = ctx.hyp_summators[key]
+        prec = ctx.prec
+        maxprec = kwargs.get('maxprec', ctx._default_hyper_maxprec(prec))
+        extraprec = 50
+        epsshift = 25
+        # Jumps in magnitude occur when parameters are close to negative
+        # integers. We must ensure that these terms are included in
+        # the sum and added accurately
+        magnitude_check = {}
+        max_total_jump = 0
+        for i, c in enumerate(coeffs):
+            if flags[i] == 'Z':
+                if i >= p and c <= 0:
+                    ok = False
+                    for ii, cc in enumerate(coeffs[:p]):
+                        # Note: c <= cc or c < cc, depending on convention
+                        if flags[ii] == 'Z' and cc <= 0 and c <= cc:
+                            ok = True
+                    if not ok:
+                        raise ZeroDivisionError("pole in hypergeometric series")
+                continue
+            n, d = ctx.nint_distance(c)
+            n = -int(n)
+            d = -d
+            if i >= p and n >= 0 and d > 4:
+                if n in magnitude_check:
+                    magnitude_check[n] += d
+                else:
+                    magnitude_check[n] = d
+                extraprec = max(extraprec, d - prec + 60)
+            max_total_jump += abs(d)
+        while 1:
+            if extraprec > maxprec:
+                raise ValueError(ctx._hypsum_msg % (prec, prec+extraprec))
+            wp = prec + extraprec
+            if magnitude_check:
+                mag_dict = dict((n,None) for n in magnitude_check)
+            else:
+                mag_dict = {}
+            zv, have_complex, magnitude = summator(coeffs, v, prec, wp, \
+                epsshift, mag_dict, **kwargs)
+            cancel = -magnitude
+            jumps_resolved = True
+            if extraprec < max_total_jump:
+                for n in mag_dict.values():
+                    if (n is None) or (n < prec):
+                        jumps_resolved = False
+                        break
+            accurate = (cancel < extraprec-25-5 or not accurate_small)
+            if jumps_resolved:
+                if accurate:
+                    break
+                # zero?
+                zeroprec = kwargs.get('zeroprec')
+                if zeroprec is not None:
+                    if cancel > zeroprec:
+                        if have_complex:
+                            return ctx.mpc(0)
+                        else:
+                            return ctx.zero
+
+            # Some near-singularities were not included, so increase
+            # precision and repeat until they are
+            extraprec *= 2
+            # Possible workaround for bad roundoff in fixed-point arithmetic
+            epsshift += 5
+            extraprec += 5
+
         if have_complex:
             z = ctx.make_mpc(zv)
         else:
@@ -1768,13 +1819,8 @@ class MPContext(StandardBaseContext):
                 return False
             return x == int(x)
         if isinstance(x, ctx.mpq):
-            # XXX: WRONG
             p, q = x
-            if not p:
-                return True
-            if p == 1 or p == -1:
-                return q == 1
-            return not (q % p)
+            return not (p % q)
         return False
 
     def _mpf_mag(ctx, x):
@@ -1788,27 +1834,37 @@ class MPContext(StandardBaseContext):
         return ctx.nan
 
     def mag(ctx, x):
-        if type(x) in int_types:
-            if x:
-                return bitcount(abs(x))
-            return ctx.ninf
-        # Hack
-        if hasattr(x, "_mpq_"):
-            p, q = x._mpq_
-            if p:
-                return 1 + bitcount(abs(p)) - bitcount(abs(q))
-            return ctx.ninf
-        x = ctx.convert(x)
+        """
+        Quick logarithmic magnitude estimate of a number.
+        Returns an integer or infinity `m` such that `|x| <= 2^m`.
+        It is not guaranteed that `m` is an optimal bound,
+        but it will never be off by more than 2 (and probably not
+        more than 1).
+        """
         if hasattr(x, "_mpf_"):
             return ctx._mpf_mag(x._mpf_)
-        if hasattr(x, "_mpc_"):
+        elif hasattr(x, "_mpc_"):
             r, i = x._mpc_
             if r == fzero:
                 return ctx._mpf_mag(i)
             if i == fzero:
                 return ctx._mpf_mag(r)
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
-        raise ValueError("mag() needed a number")
+        elif isinstance(x, int_types):
+            if x:
+                return bitcount(abs(x))
+            return ctx.ninf
+        elif isinstance(x, rational.mpq):
+            p, q = x
+            if p:
+                return 1 + bitcount(abs(p)) - bitcount(abs(q))
+            return ctx.ninf
+        else:
+            x = ctx.convert(x)
+            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
+                return ctx.mag(x)
+            else:
+                raise TypeError("requires an mpf/mpc")
 
     def nint_distance(ctx, x):
         """
@@ -1818,7 +1874,6 @@ class MPContext(StandardBaseContext):
         This function is intended to be used to check for cancellation
         at poles.
         """
-        x = ctx.convert(x)
         if hasattr(x, "_mpf_"):
             re = x._mpf_
             im_dist = ctx.ninf
@@ -1831,8 +1886,24 @@ class MPContext(StandardBaseContext):
                 im_dist = ctx.ninf
             else:
                 raise ValueError("requires a finite number")
+        elif isinstance(x, int_types):
+            return int(x), ctx.ninf
+        elif isinstance(x, rational.mpq):
+            p, q = x
+            n, r = divmod(p, q)
+            if 2*r >= q:
+                n += 1
+            elif not r:
+                return n, ctx.ninf
+            # log(p/q-n) = log((p-nq)/q) = log(p-nq) - log(q)
+            d = bitcount(abs(p-n*q)) - bitcount(q)
+            return n, d
         else:
-            raise TypeError("requires an mpf/mpc")
+            x = ctx.convert(x)
+            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
+                return ctx.nint_distance(x)
+            else:
+                raise TypeError("requires an mpf/mpc")
         sign, man, exp, bc = re
         shift = exp+bc
         if sign:

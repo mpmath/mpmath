@@ -472,7 +472,8 @@ def test_hyper_3f2_etc():
     assert hyper([1,2.79,3.08,4.37],[5.2,6.1,7.3],5).ae(1.0996321464692607231-1.7748052293979985001j)
     assert hyper([1,1,1],[1,2],1) == inf
     assert hyper([1,1,1],[2,(101,100)],1).ae(100.01621213528313220)
-    assert hyper([1,1,1],[2,3],0.9999).ae(1.2897972005319693905)
+    # slow -- covered by doctests
+    #assert hyper([1,1,1],[2,3],0.9999).ae(1.2897972005319693905)
 
 def test_hyper_u():
     mp.dps = 15
@@ -675,15 +676,15 @@ def test_legenq():
     assert isnan(f(3,2,-1,type=3))
     # Evaluation at 0
     assert f(0,1,0,type=2).ae(-1)
-    assert f(-2,2,0,type=2).ae(0)
+    assert f(-2,2,0,type=2,zeroprec=200).ae(0)
     assert f(1.5,3,0,type=2).ae(-2.2239343475841951023)
     assert f(0,1,0,type=3).ae(j)
-    assert f(-2,2,0,type=3).ae(0)
+    assert f(-2,2,0,type=3,zeroprec=200).ae(0)
     assert f(1.5,3,0,type=3).ae(2.2239343475841951022*(1-1j))
     # Standard case, degree 0
     assert f(0,0,-1.5).ae(-0.8047189562170501873 + 1.5707963267948966192j)
     assert f(0,0,-0.5).ae(-0.54930614433405484570)
-    assert f(0,0,0).ae(0)
+    assert f(0,0,0,zeroprec=200).ae(0)
     assert f(0,0,0.5).ae(0.54930614433405484570)
     assert f(0,0,1.5).ae(0.8047189562170501873 - 1.5707963267948966192j)
     assert f(0,0,-1.5,type=3).ae(-0.80471895621705018730)
@@ -700,7 +701,7 @@ def test_legenq():
     # Standard case, degree 2
     assert f(2,0,-1.5).ae(-0.0635669991240192885 + 4.5160394395353277803j)
     assert f(2,0,-0.5).ae(0.81866326804175685571)
-    assert f(2,0,0).ae(0)
+    assert f(2,0,0,zeroprec=200).ae(0)
     assert f(2,0,0.5).ae(-0.81866326804175685571)
     assert f(2,0,1.5).ae(0.0635669991240192885 - 4.5160394395353277803j)
     # Misc orders and degrees
@@ -1089,3 +1090,33 @@ def test_coulomb():
     # Test for a bug:
     mp.dps = 15
     assert coulombg(mpc(-5,0),2,3).ae(20.087729487721430394)
+
+def test_hyper_param_accuracy():
+    mp.dps = 15
+    As = [n+1e-10 for n in range(-5,-1)]
+    Bs = [n+1e-10 for n in range(-12,-5)]
+    assert hyper(As,Bs,10).ae(-381757055858.652671927)
+    assert legenp(0.5, 100, 0.25).ae(-2.4124576567211311755e+144)
+    assert (hyp1f1(1000,1,-100)*10**24).ae(5.2589445437370169113)
+    assert (hyp2f1(10, -900, 10.5, 0.99)*10**24).ae(1.9185370579660768203)
+    assert (hyp2f1(1000,1.5,-3.5,-1.5)*10**385).ae(-2.7367529051334000764)
+    assert hyp2f1(-5, 10, 3, 0.5, zeroprec=500) == 0
+    assert (hyp1f1(-10000, 1000, 100)*10**424).ae(-3.1046080515824859974)
+    assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=100000)*10**231).ae(-4.0534790813913998643)
+    assert legenp(2, 3, 0.25) == 0
+    try:
+        hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3])
+        assert 0
+    except ValueError:
+        pass
+    assert hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3], infprec=200) == inf
+    assert meijerg([[],[]],[[0,0,0,0],[]],0.1).ae(1.5680822343832351418)
+    assert (besselk(400,400)*10**94).ae(1.4387057277018550583)
+    mp.dps = 5
+    (hyp1f1(-5000.5, 1500, 100)*10**185).ae(8.5185229673381935522)
+    (hyp1f1(-5000, 1500, 100)*10**185).ae(9.1501213424563944311)
+    mp.dps = 15
+    (hyp1f1(-5000.5, 1500, 100)*10**185).ae(8.5185229673381935522)
+    (hyp1f1(-5000, 1500, 100)*10**185).ae(9.1501213424563944311)
+    assert hyp0f1(fadd(-20,'1e-100',exact=True), 0.25).ae(1.85014429040102783e+49)
+    assert hyp0f1((-20*10**100+1, 10**100), 0.25).ae(1.85014429040102783e+49)

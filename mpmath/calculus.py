@@ -400,6 +400,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     method = option('method', 'r+s').split('+')
     skip = option('skip', 0)
     steps = iter(option('steps', xrange(10, 10**9, 10)))
+    strict = option('strict')
     #steps = (10 for i in xrange(1000))
     if 'd' in method or 'direct' in method:
         TRY_RICHARDSON = TRY_SHANKS = TRY_EULER_MACLAURIN = False
@@ -501,6 +502,8 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                         best = value
     finally:
         ctx.prec = orig
+    if strict:
+        raise ctx.NoConvergence
     if verbose:
         print "Warning: failed to converge to target accuracy"
     return best
