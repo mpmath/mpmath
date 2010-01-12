@@ -56,7 +56,7 @@ if not sys.argv[-1].endswith(".py"):
 
 from mpmath import *
 
-def test_asymp(f, maxdps=150, verbose=False):
+def test_asymp(f, maxdps=150, verbose=False, huge_range=False):
     dps = [5,15,25,50,90,150,500,1500,5000,10000]
     dps = [p for p in dps if p <= maxdps]
     def check(x,y,p,inpt):
@@ -71,7 +71,10 @@ def test_asymp(f, maxdps=150, verbose=False):
         print "Absolute error:", abs(x-y)
         print "Relative error:", abs(x-y)/abs(y)
         raise AssertionError
-    for n in range(-20,20):
+    exponents = range(-20,20)
+    if huge_range:
+        exponents += [-1000, -100, -50, 50, 100, 1000]
+    for n in exponents:
         if verbose:
             print ".",
         mp.dps = 25
@@ -123,31 +126,31 @@ test_asymp(lambda z: +twinprime, maxdps=150)
 test_asymp(lambda z: stieltjes(2), maxdps=150)
 test_asymp(lambda z: +mertens, maxdps=150)
 test_asymp(lambda z: +apery, maxdps=5000)
-test_asymp(sqrt, maxdps=10000)
-test_asymp(cbrt, maxdps=5000)
-test_asymp(lambda z: root(z,4), maxdps=5000)
-test_asymp(lambda z: root(z,-5), maxdps=5000)
-test_asymp(exp, maxdps=5000)
+test_asymp(sqrt, maxdps=10000, huge_range=True)
+test_asymp(cbrt, maxdps=5000, huge_range=True)
+test_asymp(lambda z: root(z,4), maxdps=5000, huge_range=True)
+test_asymp(lambda z: root(z,-5), maxdps=5000, huge_range=True)
+test_asymp(exp, maxdps=5000, huge_range=True)
 test_asymp(expm1, maxdps=1500)
-test_asymp(ln, maxdps=5000)
+test_asymp(ln, maxdps=5000, huge_range=True)
 test_asymp(cosh, maxdps=5000)
 test_asymp(sinh, maxdps=5000)
 test_asymp(tanh, maxdps=1500)
-test_asymp(sin, maxdps=5000)
-test_asymp(cos, maxdps=5000)
+test_asymp(sin, maxdps=5000, huge_range=True)
+test_asymp(cos, maxdps=5000, huge_range=True)
 test_asymp(tan, maxdps=1500)
-test_asymp(agm, maxdps=1500)
+test_asymp(agm, maxdps=1500, huge_range=True)
 test_asymp(ellipk, maxdps=1500)
 test_asymp(ellipe, maxdps=1500)
-test_asymp(lambertw)
+test_asymp(lambertw, huge_range=True)
 test_asymp(lambda z: lambertw(z,-1))
 test_asymp(lambda z: lambertw(z,1))
 test_asymp(lambda z: lambertw(z,4))
 test_asymp(gamma)
-test_asymp(loggamma)
+test_asymp(loggamma)  # huge_range=True ?
 test_asymp(ei)
 test_asymp(e1)
-test_asymp(li)
+test_asymp(li, huge_range=True)
 test_asymp(chi)
 test_asymp(shi)
 test_asymp(erf)
