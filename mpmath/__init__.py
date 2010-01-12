@@ -9,6 +9,9 @@ from mptypes import MPContext
 fp = FPContext()
 mp = MPContext()
 
+fp._mp = mp
+mp._fp = fp
+
 # XXX: extremely bad pickle hack
 import mptypes
 mptypes.mpf = mp.mpf
@@ -122,6 +125,8 @@ exp_pade = mp.exp_pade
 mpf = mp.mpf
 j = mp.j
 exp = mp.exp
+expj = mp.expj
+expjpi = mp.expjpi
 ln = mp.ln
 im = mp.im
 re = mp.re

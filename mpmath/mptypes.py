@@ -834,6 +834,8 @@ class MPContext(StandardBaseContext):
         ctx.ln = ctx.def_mp_function(libelefun.mpf_log, libmpc.mpc_log, libmpi.mpi_log)
         ctx.atan = ctx.def_mp_function(libelefun.mpf_atan, libmpc.mpc_atan)
         ctx.exp = ctx.def_mp_function(libelefun.mpf_exp, libmpc.mpc_exp, libmpi.mpi_exp)
+        ctx.expj = ctx.def_mp_function(libmpc.mpf_expj, libmpc.mpc_expj)
+        ctx.expjpi = ctx.def_mp_function(libmpc.mpf_expjpi, libmpc.mpc_expjpi)
         ctx.sin = ctx.def_mp_function(libelefun.mpf_sin, libmpc.mpc_sin, libmpi.mpi_sin)
         ctx.cos = ctx.def_mp_function(libelefun.mpf_cos, libmpc.mpc_cos, libmpi.mpi_cos)
         ctx.tan = ctx.def_mp_function(libelefun.mpf_tan, libmpc.mpc_tan, libmpi.mpi_tan)

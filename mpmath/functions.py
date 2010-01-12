@@ -179,7 +179,7 @@ def _rootof1(ctx, k, n):
         return ctx.j
     elif 4*k == 3*n:
         return -ctx.j
-    return ctx.exp(2*ctx.pi*k/n*ctx.j)
+    return ctx.expjpi(2*ctx.mpf(k)/n)
 
 @defun
 def root(ctx, x, n, k=0):
@@ -524,9 +524,9 @@ def hyp1f1(ctx, a, b, z, **kwargs):
                 sector = z.imag < 0 and z.real <= 0
                 def h(a,b):
                     if sector:
-                        E = ctx.exp(-ctx.j * ctx.pi*a)
+                        E = ctx.expjpi(ctx.fneg(a, exact=True))
                     else:
-                        E = ctx.exp(ctx.j * ctx.pi*a)
+                        E = ctx.expjpi(a)
                     rz = 1/z
                     T1 = ([E,z], [1,-a], [b], [b-a], [a, 1+a-b], [], -rz)
                     T2 = ([ctx.exp(z),z], [1,a-b], [b], [a], [b-a, 1-a], [], rz)
@@ -1119,8 +1119,8 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                         s2 += t2
                         tprev = t1
                         k += 1
-                    S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
-                        ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
+                    S = ctx.expj(ctx.pi*X+2*ctx.sqrt(-z))*s1 + \
+                        ctx.expj(-(ctx.pi*X+2*ctx.sqrt(-z)))*s2
                     T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2], [a1],\
                         [], [], 0
                     T2 = [-z], [-a1], [b1,b2],[b1-a1,b2-a1], \
@@ -1209,8 +1209,8 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                         s2 += t2
                         tprev = t1
                         k += 1
-                    S = ctx.exp(ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s1 + \
-                        ctx.exp(-ctx.j*(ctx.pi*X+2*ctx.sqrt(-z)))*s2
+                    S = ctx.expj(ctx.pi*X+2*ctx.sqrt(-z))*s1 + \
+                        ctx.expj(-(ctx.pi*X+2*ctx.sqrt(-z)))*s2
                     T1 = [0.5*S, ctx.pi, -z], [1, -0.5, X], [b1, b2, b3], [a1, a2],\
                         [], [], 0
                     T2 = [-z], [-a1], [b1,b2,b3,a2-a1],[a2,b1-a1,b2-a1,b3-a1], \
@@ -1752,7 +1752,7 @@ def legenq(ctx, n, m, z, type=2, **kwargs):
             # not valid for 1 < z < inf ?
             def h(n, m):
                 s = 2 * ctx.sinpi(m) / ctx.pi
-                c = ctx.exp(ctx.pi*ctx.j*m)
+                c = ctx.expjpi(m)
                 a = 1+z
                 b = z-1
                 u = m/2
@@ -2131,7 +2131,7 @@ def barnesg(ctx, z):
     if ctx.re(z) < -ctx.dps:
         w = 1-z
         pi2 = 2*ctx.pi
-        u = ctx.exp(ctx.j*pi2*w)
+        u = ctx.expjpi(2*w)
         v = ctx.j*ctx.pi/12 - ctx.j*ctx.pi*w**2/2 + w*ctx.ln(1-u) - \
             ctx.j*ctx.polylog(2, u)/pi2
         v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
@@ -2232,7 +2232,7 @@ def grampoint(ctx, n):
 
 @defun_wrapped
 def siegelz(ctx, t):
-    v = ctx.exp(ctx.j*ctx.siegeltheta(t))*ctx.zeta(0.5+ctx.j*t)
+    v = ctx.expj(ctx.siegeltheta(t))*ctx.zeta(0.5+ctx.j*t)
     if ctx.is_real_type(t):
         return v.real
     return v
@@ -2502,20 +2502,26 @@ def polylog(ctx, s, z):
     #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
 @defun
-def clsin(ctx, s, z):
+def clsin(ctx, s, z, pi=False):
     if ctx.isint(s) and s < 0 and int(s) % 2 == 1:
         return z*0
-    a = ctx.exp(ctx.j*z)
+    if pi:
+        a = ctx.expjpi(z)
+    else:
+        a = ctx.expj(z)
     if ctx.is_real_type(z) and ctx.is_real_type(s):
         return ctx.im(ctx.polylog(s,a))
     b = 1/a
     return (-0.5j)*(ctx.polylog(s,a) - ctx.polylog(s,b))
 
 @defun_wrapped
-def clcos(ctx, s, z):
+def clcos(ctx, s, z, pi=False):
     if ctx.isint(s) and s < 0 and int(s) % 2 == 0:
         return z*0
-    a = ctx.exp(ctx.j*z)
+    if pi:
+        a = ctx.expjpi(z)
+    else:
+        a = ctx.expj(z)
     if ctx.is_real_type(z) and ctx.is_real_type(s):
         return ctx.re(ctx.polylog(s,a))
     b = 1/a
@@ -2555,7 +2561,7 @@ def _hurwitz(ctx, s, a=1, d=0):
     res = ctx.re(s)
     negs = -s
     try:
-        if res < 0 and not d: #and (ar or af):
+        if res < 0 and not d:
             # Integer reflection formula
             if ctx.isnpint(s):
                 n = int(res)
@@ -2594,8 +2600,8 @@ def _hurwitz(ctx, s, a=1, d=0):
                 C1 = ctx.cospi(t/2)
                 C2 = ctx.sinpi(t/2)
                 # Clausen functions; could maybe use polylog directly
-                if C1: C1 *= ctx.clcos(t, 2*ctx.pi*a)
-                if C2: C2 *= ctx.clsin(t, 2*ctx.pi*a)
+                if C1: C1 *= ctx.clcos(t, 2*a, pi=True)
+                if C2: C2 *= ctx.clsin(t, 2*a, pi=True)
                 v += 2*ctx.gamma(t)/(2*ctx.pi)**t*(C1+C2)
                 return v
     except NotImplementedError:
@@ -3755,8 +3761,8 @@ def _jacobi_theta2a(ctx, z, q):
     q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n, n0-1, -inf)
     """
     n = n0 = int(z.imag/ctx.log(q).real - 1/2)
-    e2 = ctx.exp(2*ctx.j*z)
-    e = e0 = ctx.exp(ctx.j*(2*n+1)*z)
+    e2 = ctx.expj(2*z)
+    e = e0 = ctx.expj((2*n+1)*z)
     a = q**(n*n + n)
     # leading term
     term = a * e
@@ -3770,7 +3776,7 @@ def _jacobi_theta2a(ctx, z, q):
             break
         s += term
     e = e0
-    e2 = ctx.exp(-2j*z)
+    e2 = ctx.expj(-2*z)
     n = n0
     while 1:
         n -= 1
@@ -3791,8 +3797,8 @@ def _jacobi_theta3a(ctx, z, q):
     n0 = int(- z.imag/abs(log(q).real))
     """
     n = n0 = int(- z.imag/abs(ctx.log(q).real))
-    e2 = ctx.exp(2*ctx.j*z)
-    e = e0 = ctx.exp(ctx.j*2*n*z)
+    e2 = ctx.expj(2**z)
+    e = e0 = ctx.expj(2*n*z)
     s = term = q**(n*n) * e
     eps1 = ctx.eps*abs(term)
     while 1:
@@ -3803,7 +3809,7 @@ def _jacobi_theta3a(ctx, z, q):
             break
         s += term
     e = e0
-    e2 = ctx.exp(-2*ctx.j*z)
+    e2 = ctx.expj(-2*z)
     n = n0
     while 1:
         n -= 1
@@ -3824,8 +3830,8 @@ def _djacobi_theta2a(ctx, z, q, nd):
     n0 = int(z.imag/log(q).real - 1/2)
     """
     n = n0 = int(z.imag/ctx.log(q).real - 1/2)
-    e2 = ctx.exp(2*ctx.j*z)
-    e = e0 = ctx.exp(ctx.j*(2*n + 1)*z)
+    e2 = ctx.expj(2*z)
+    e = e0 = ctx.expj((2*n + 1)*z)
     a = q**(n*n + n)
     # leading term
     term = (2*n+1)**nd * a * e
@@ -3839,7 +3845,7 @@ def _djacobi_theta2a(ctx, z, q, nd):
             break
         s += term
     e = e0
-    e2 = ctx.exp(-2*ctx.j*z)
+    e2 = ctx.expj(-2*z)
     n = n0
     while 1:
         n -= 1
@@ -3859,8 +3865,8 @@ def _djacobi_theta3a(ctx, z, q, nd):
     max term for minimum n*abs(log(q).real) + z.imag
     """
     n = n0 = int(-z.imag/abs(ctx.log(q).real))
-    e2 = ctx.exp(2*ctx.j*z)
-    e = e0 = ctx.exp(ctx.j*2*n*z)
+    e2 = ctx.expj(2*z)
+    e = e0 = ctx.expj(2*n*z)
     a = q**(n*n) * e
     s = term = n**nd * a
     if n != 0:
@@ -3880,7 +3886,7 @@ def _djacobi_theta3a(ctx, z, q, nd):
             break
         s += term
     e = e0
-    e2 = ctx.exp(-2*ctx.j*z)
+    e2 = ctx.expj(-2*z)
     n = n0
     while 1:
         n -= 1

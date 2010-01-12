@@ -17,6 +17,7 @@ from libmpf import (\
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
     mpf_rdiv_int, mpf_floor, mpf_ceil,
     mpf_sign,
+    ComplexResult
 )
 
 from libelefun import (\
@@ -718,3 +719,38 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     u = mpc_sub(u, v, wp)
     u = mpc_div_mpf(u, b, prec, rnd)
     return u
+
+def mpf_expj(x, prec, rnd='f'):
+    raise ComplexResult
+
+def mpc_expj(z, prec, rnd='f'):
+    re, im = z
+    if im == fzero:
+        return cos_sin(re, prec, rnd)
+    if re == fzero:
+        return mpf_exp(mpf_neg(im), prec, rnd), fzero
+    ey = mpf_exp(mpf_neg(im), prec+10)
+    c, s = cos_sin(re, prec+10)
+    re = mpf_mul(ey, c, prec, rnd)
+    im = mpf_mul(ey, s, prec, rnd)
+    return re, im
+
+def mpf_expjpi(x, prec, rnd='f'):
+    raise ComplexResult
+
+def mpc_expjpi(z, prec, rnd='f'):
+    re, im = z
+    if im == fzero:
+        return mpf_cos_sin_pi(re, prec, rnd)
+    sign, man, exp, bc = im
+    wp = prec+10
+    if man:
+        wp += max(0, exp+bc)
+    im = mpf_neg(mpf_mul(mpf_pi(wp), im, wp))
+    if re == fzero:
+        return mpf_exp(im, prec, rnd), fzero
+    ey = mpf_exp(im, prec+10)
+    c, s = mpf_cos_sin_pi(re, prec+10)
+    re = mpf_mul(ey, c, prec, rnd)
+    im = mpf_mul(ey, s, prec, rnd)
+    return re, im

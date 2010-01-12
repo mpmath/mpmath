@@ -992,6 +992,42 @@ at its roots::
     0.0
 """
 
+expj = r"""
+Convenience function for computing `e^{ix}`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> expj(0)
+    (1.0 + 0.0j)
+    >>> expj(-1)
+    (0.5403023058681397174009366 - 0.8414709848078965066525023j)
+    >>> expj(j)
+    (0.3678794411714423215955238 + 0.0j)
+    >>> expj(1+j)
+    (0.1987661103464129406288032 + 0.3095598756531121984439128j)
+"""
+
+expjpi = r"""
+Convenience function for computing `e^{i \pi x}`.
+Evaluation is accurate near zeros (see also :func:`cospi`,
+:func:`sinpi`)::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> expjpi(0)
+    (1.0 + 0.0j)
+    >>> expjpi(1)
+    (-1.0 + 0.0j)
+    >>> expjpi(0.5)
+    (0.0 + 1.0j)
+    >>> expjpi(-1)
+    (-1.0 + 0.0j)
+    >>> expjpi(j)
+    (0.04321391826377224977441774 + 0.0j)
+    >>> expjpi(1+j)
+    (-0.04321391826377224977441774 + 0.0j)
+"""
+
 floor = r"""
 Computes the floor of `x`, `\lfloor x \rfloor`, defined as
 the largest integer less than or equal to `x`::
@@ -7000,6 +7036,13 @@ providing a finite sum for series such as
     >>> -cot(z/2)*csc(z/2)**2/4
     -0.1089406163841548817581392
 
+Call with ``pi=True`` to multiply `z` by `\pi` exactly::
+
+    >>> clsin(3, 3*pi)
+    -8.87563181682264802504844e-26
+    >>> clsin(3, 3, pi=True)
+    0.0
+
 Evaluation for complex `s`, `z` in a nonconvergent case::
 
     >>> s, z = -1-j, 1+2j
@@ -7113,6 +7156,13 @@ function values)::
     >>> clcos(2.5, pi); -altzeta(2.5)
     -0.8671998890121841381913472
     -0.8671998890121841381913472
+
+Call with ``pi=True`` to multiply `z` by `\pi` exactly::
+
+    >>> clcos(-3, 2*pi)
+    2.997921055881167659267063e+102
+    >>> clcos(-3, 2, pi=True)
+    0.008333333333333333333333333
 
 Evaluation for complex `s`, `z` in a nonconvergent case::
 
