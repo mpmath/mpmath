@@ -232,7 +232,7 @@ class QuadratureRule(object):
             I += results[-1]
         if err > epsilon:
             if verbose:
-                print "Failed to reach full accuracy. Estimated error:", nstr(err)
+                print "Failed to reach full accuracy. Estimated error:", ctx.nstr(err)
         return I, err
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
@@ -992,7 +992,9 @@ class QuadratureMethods:
         #    raise ValueError("zeros do not appear to be correctly indexed")
         n = 1
         s = ctx.quadgl(f, [a, zeros(n)])
-        s += ctx.nsum(lambda k: ctx.quadgl(f, [zeros(k), zeros(k+1)]), [n, ctx.inf])
+        def term(k):
+            return ctx.quadgl(f, [zeros(k), zeros(k+1)])
+        s += ctx.nsum(term, [n, ctx.inf])
         return s
 
 if __name__ == '__main__':

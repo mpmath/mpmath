@@ -752,7 +752,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             return t * ctx.hyp2f1(a1,a2,u,z)
         try:
             S = ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
-                strict=True)
+                strict=kwargs.get('strict', True))
             return S * ctx.gammaprod([b1,b2],[a1,a2,a3])
         except ctx.NoConvergence:
             pass
@@ -774,7 +774,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             _cache[k] = t
             return t
         return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
-            strict=True)
+            strict=kwargs.get('strict', True))
     # Use 1/z transformation
     # http://functions.wolfram.com/HypergeometricFunctions/
     #   HypergeometricPFQ/06/01/05/02/0004/
@@ -1043,7 +1043,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
                     T2 = [-z],[-a1],[b1,b2,a2-a1],[a2,b1-a1,b2-a1],[a1,a1-b1+1,a1-b2+1],[a1-a2+1],-1/z
                     T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
                     return T1, T2, T3
-                v = ctx.hypercomb(h, [a1,a2,b1,b2])
+                v = ctx.hypercomb(h, [a1,a2,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
                 return v
@@ -1126,7 +1126,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                     T2 = [-z], [-a1], [b1,b2],[b1-a1,b2-a1], \
                         [a1,a1-b1+1,a1-b2+1], [], 1/z
                     return T1, T2
-                v = ctx.hypercomb(h, [a1,b1,b2])
+                v = ctx.hypercomb(h, [a1,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
                 return v
@@ -1218,7 +1218,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                     T3 = [-z], [-a2], [b1,b2,b3,a1-a2],[a1,b1-a2,b2-a2,b3-a2], \
                         [a2,a2-b1+1,a2-b2+1,a2-b3+1],[-a1+a2+1], 1/z
                     return T1, T2, T3
-                v = ctx.hypercomb(h, [a1,a2,b1,b2,b3])
+                v = ctx.hypercomb(h, [a1,a2,b1,b2,b3], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
                 return v
