@@ -2365,6 +2365,33 @@ maxterms, or set zeroprec."""
             return [x.a, x.b]
         return x
 
+    def sum_accurately(ctx, terms, check_step=1):
+        orig = ctx.prec
+        extra = 10
+        while 1:
+            ctx.prec = orig + extra
+            max_term = ctx.ninf
+            s = ctx.zero
+            k = 0
+            for term in terms():
+                s += term
+                if not k % check_step and term:
+                    abs_term = abs(term)
+                    abs_sum = abs(s)
+                    max_term = max(max_term, abs_term)
+                    if abs_term <= ctx.eps*abs_sum:
+                        break
+                k += 1
+            if abs_sum:
+                cancellation = int(max(0,ctx.log(max_term/abs_sum,2)))
+            else:
+                cancellation = ctx.prec
+            if cancellation < extra:
+                break
+            else:
+                extra += cancellation
+        return s
+
     def _zetasum(ctx, s, a, b):
         """
         Computes sum of k^(-s) for k = a, a+1, ..., b with a, b both small

@@ -214,3 +214,18 @@ class StandardBaseContext(Context,
     bernfrac = staticmethod(libmp.bernfrac)
     moebius = staticmethod(libmp.moebius)
     _int_fac = staticmethod(libmp.int_fac)
+
+    def sum_accurately(ctx, terms, check_step=1):
+        max_term = ctx.ninf
+        s = ctx.zero
+        k = 0
+        for term in terms():
+            s += term
+            if not k % check_step and term:
+                abs_term = abs(term)
+                abs_sum = abs(s)
+                max_term = max(max_term, abs_term)
+                if abs_term <= ctx.eps*abs_sum:
+                    break
+            k += 1
+        return s
