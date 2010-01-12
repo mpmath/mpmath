@@ -112,6 +112,7 @@ def _gamma_real(x):
         if _intx <= _max_exact_gamma:
             return _exact_gamma[_intx]
     if x < 0.5:
+        # TODO: sinpi
         return pi / (math.sin(pi*x)*_gamma_real(1-x))
     else:
         x -= 1.0
@@ -123,8 +124,9 @@ def _gamma_real(x):
 
 def _gamma_complex(x):
     if not x.imag:
-        return complex(gamma(x.real))
+        return complex(_gamma_real(x.real))
     if x.real < 0.5:
+        # TODO: sinpi
         return pi / (cmath.sin(pi*x)*_gamma_complex(1-x))
     else:
         x -= 1.0
@@ -135,6 +137,9 @@ def _gamma_complex(x):
         return 2.506628274631000502417 * t**(x+0.5) * cmath.exp(-t) * r
 
 gamma = _mathfun_real(_gamma_real, _gamma_complex)
+
+def factorial(x):
+    return gamma(x+1.0)
 
 def arg(x):
     if type(x) is float:
@@ -165,3 +170,77 @@ def loggamma(x):
     s += -0.02955065359477124183*r
     return s + p
 
+_psi_coeff = [
+0.083333333333333333333,
+-0.0083333333333333333333,
+0.003968253968253968254,
+-0.0041666666666666666667,
+0.0075757575757575757576,
+-0.021092796092796092796,
+0.083333333333333333333,
+-0.44325980392156862745,
+3.0539543302701197438,
+-26.456212121212121212]
+
+def digamma(x):
+    if x.real < 0.5:
+        x = 1.0-x
+        return pi/tan(pi*x) + digamma(x)
+    s = 0.0
+    while abs(x) < 10:
+        s -= 1.0/x
+        x += 1.0
+    x2 = x**-2
+    t = x2
+    for c in _psi_coeff:
+        s -= c*t
+        if abs(t) < 1e-20:
+            break
+        t *= x2
+    return s + log(x) - 0.5/x
+
+def _digamma_real(x):
+    _intx = int(x)
+    if _intx == x:
+        if _intx <= 0:
+            raise ZeroDivisionError("polygamma pole")
+    if x < 0.5:
+        x = 1.0-x
+        # TODO: sinpi
+        s = pi/math.tan(pi*x)
+    else:
+        s = 0.0
+    while x < 10.0:
+        s -= 1.0/x
+        x += 1.0
+    x2 = x**-2
+    t = x2
+    for c in _psi_coeff:
+        s -= c*t
+        if t < 1e-20:
+            break
+        t *= x2
+    return s + math.log(x) - 0.5/x
+
+def _digamma_complex(x):
+    if not x.imag:
+        return complex(_digamma_real(x.real))
+    if x.real < 0.5:
+        x = 1.0-x
+        # TODO: sinpi
+        s = pi/cmath.tan(pi*x)
+    else:
+        s = 0.0
+    while abs(x) < 10.0:
+        s -= 1.0/x
+        x += 1.0
+    x2 = x**-2
+    t = x2
+    for c in _psi_coeff:
+        s -= c*t
+        if abs(t) < 1e-20:
+            break
+        t *= x2
+    return s + cmath.log(x) - 0.5/x
+
+digamma = _mathfun_real(_digamma_real, _digamma_complex)

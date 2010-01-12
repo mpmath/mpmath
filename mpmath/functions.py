@@ -2501,7 +2501,7 @@ def polylog(ctx, s, z):
     #from quadrature import quad
     #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
-@defun
+@defun_wrapped
 def clsin(ctx, s, z, pi=False):
     if ctx.isint(s) and s < 0 and int(s) % 2 == 1:
         return z*0

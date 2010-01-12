@@ -143,6 +143,7 @@ class FPContext(StandardBaseContext):
     sinh = staticmethod(math2.sinh)
     tanh = staticmethod(math2.tanh)
     gamma = staticmethod(math2.gamma)
+    fac = factorial = staticmethod(math2.factorial)
 
     # XXX: math2
     def arg(ctx, z):
@@ -154,6 +155,12 @@ class FPContext(StandardBaseContext):
 
     def cospi(ctx, x):
         return ctx.cos(ctx.pi*x)
+
+    def expj(ctx, x):
+        return ctx.exp(ctx.j*x)
+
+    def expjpi(ctx, x):
+        return ctx.exp(ctx.j*ctx.pi*x)
 
     def re(ctx, x):
         if type(x) is float:
@@ -169,7 +176,9 @@ class FPContext(StandardBaseContext):
     frexp = math.frexp
 
     def mag(ctx, z):
-        return ctx.frexp(abs(z))[1]
+        if z:
+            return ctx.frexp(abs(z))[1]
+        return ctx.ninf
 
     def isint(ctx, z):
         if z.imag:
@@ -227,5 +236,18 @@ class FPContext(StandardBaseContext):
     def zeta(ctx, s):
         return ctx.hurwitz(s)
 
-    nstr = str
+    def psi(ctx, m, z):
+        m = int(m)
+        if m == 0:
+            return ctx.digamma(z)
+        return (-1)**(m+1) * ctx.fac(m) * ctx.hurwitz(m+1, z)
 
+    digamma = staticmethod(math2.digamma)
+
+    def harmonic(ctx, x):
+        x = ctx.convert(x)
+        if x == 0 or x == 1:
+            return x
+        return ctx.digamma(x) + ctx.euler
+
+    nstr = str
