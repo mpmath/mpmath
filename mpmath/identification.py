@@ -3,13 +3,11 @@ Implements the PSLQ algorithm for integer relation detection,
 and derivative algorithms for constant recognition.
 """
 
-from settings import int_types
-from mpmath.libelefun import sqrt_fixed
+from libmp import int_types, sqrt_fixed
 
 # round to nearest integer (can be done more elegantly...)
 def round_fixed(x, prec):
     return ((x + (1<<(prec-1))) >> prec) << prec
-
 
 class IdentificationMethods(object):
     pass

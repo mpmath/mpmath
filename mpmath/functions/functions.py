@@ -1,8 +1,3 @@
-import gammazeta
-import libintmath
-import rational
-
-from libhyper import NoConvergence
 
 class SpecialFunctions(object):
     """
@@ -25,17 +20,17 @@ class SpecialFunctions(object):
             f, wrap = cls.defined_functions[name]
             cls.wrap_specfun(name, f, wrap)
 
-        self.mpq_1 = self._mpq(rational.mpq_1)
-        self.mpq_0 = self._mpq(rational.mpq_0)
-        self.mpq_1_2 = self._mpq(rational.mpq_1_2)
-        self.mpq_3_2 = self._mpq(rational.mpq_3_2)
-        self.mpq_1_4 = self._mpq(rational.mpq_1_4)
-        self.mpq_1_16 = self._mpq(rational.mpq_1_16)
-        self.mpq_3_16 = self._mpq(rational.mpq_3_16)
-        self.mpq_5_2 = self._mpq(rational.mpq_5_2)
-        self.mpq_3_4 = self._mpq(rational.mpq_3_4)
-        self.mpq_7_4 = self._mpq(rational.mpq_7_4)
-        self.mpq_5_4 = self._mpq(rational.mpq_5_4)
+        self.mpq_1 = self._mpq((1,1))
+        self.mpq_0 = self._mpq((0,1))
+        self.mpq_1_2 = self._mpq((1,2))
+        self.mpq_3_2 = self._mpq((3,2))
+        self.mpq_1_4 = self._mpq((1,4))
+        self.mpq_1_16 = self._mpq((1,16))
+        self.mpq_3_16 = self._mpq((3,16))
+        self.mpq_5_2 = self._mpq((5,2))
+        self.mpq_3_4 = self._mpq((3,4))
+        self.mpq_7_4 = self._mpq((7,4))
+        self.mpq_5_4 = self._mpq((5,4))
 
     # Default -- do nothing
     @classmethod
@@ -60,8 +55,6 @@ def defun(f):
 
 def defun_static(f):
     setattr(SpecialFunctions, f.__name__, f)
-
-defun_static(gammazeta.bernfrac)
 
 @defun_wrapped
 def cot(ctx, z): return ctx.one / ctx.tan(z)
@@ -201,7 +194,7 @@ def root(ctx, x, n, k=0):
 
 @defun
 def unitroots(ctx, n, primitive=False):
-    gcd = libintmath.gcd
+    gcd = ctx._gcd
     prec = ctx.prec
     try:
         ctx.prec += 10
@@ -498,7 +491,7 @@ def hyp0f1(ctx, b, z, **kwargs):
             if ctx.is_real_type(b) and ctx.is_real_type(z):
                 v = v.real
             return +v
-        except NoConvergence:
+        except ctx.NoConvergence:
             pass
     return ctx.hypsum(0, 1, (btype,), [b], z, **kwargs)
 
@@ -535,7 +528,7 @@ def hyp1f1(ctx, a, b, z, **kwargs):
                 if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
                     v = v.real
                 return +v
-            except NoConvergence:
+            except ctx.NoConvergence:
                 pass
         finally:
             ctx.prec -= magz
@@ -595,7 +588,7 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
         else:
             extra += cancellation
             if extra > maxprec:
-                raise NoConvergence
+                raise ctx.NoConvergence
     return f1
 
 @defun
@@ -709,7 +702,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     if absz < 1 or ispoly:
         try:
             return ctx.hypsum(p, q, a_types+b_types, a_s+b_s, z, **kwargs)
-        except NoConvergence:
+        except ctx.NoConvergence:
             if absz > 1.1 or ispoly:
                 raise
     # Use expansion at |z-1| -> 0.
@@ -1034,7 +1027,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
                         # Quit if the series doesn't converge quickly enough
                         if k > 5 and abs(tprev) / abs(t1) < 1.5:
                             #print "No convergence :("
-                            raise NoConvergence
+                            raise ctx.NoConvergence
                         s1 += t1
                         tprev = t1
                         k += 1
@@ -1047,7 +1040,7 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
                 return v
-            except NoConvergence:
+            except ctx.NoConvergence:
                 pass
         finally:
             ctx.prec = orig
@@ -1114,7 +1107,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                         # Quit if the series doesn't converge quickly enough
                         if k > 5 and abs(tprev) / abs(t1) < 1.5:
                             #print "No convergence :("
-                            raise NoConvergence
+                            raise ctx.NoConvergence
                         s1 += t1
                         s2 += t2
                         tprev = t1
@@ -1130,7 +1123,7 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
                 if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
                 return v
-            except NoConvergence:
+            except ctx.NoConvergence:
                 pass
         finally:
             ctx.prec = orig
@@ -1204,7 +1197,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                             break
                         # Quit if the series doesn't converge quickly enough
                         if k > 5 and abs(tprev) / abs(t1) < 1.5:
-                            raise NoConvergence
+                            raise ctx.NoConvergence
                         s1 += t1
                         s2 += t2
                         tprev = t1
@@ -1222,7 +1215,7 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
                 if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
                 return v
-            except NoConvergence:
+            except ctx.NoConvergence:
                 pass
         finally:
             ctx.prec = orig
@@ -1245,7 +1238,7 @@ def hyp2f0(ctx, a, b, z, **kwargs):
     # and fall back only when absolutely necessary
     try:
         return ctx.hypsum(2, 0, (atype,btype), [a,b], z, maxterms=ctx.prec)
-    except NoConvergence:
+    except ctx.NoConvergence:
         if kwargs.get('force_series'):
             raise
         pass
@@ -1277,7 +1270,7 @@ def hyperu(ctx, a,b,z, **kwargs):
             return v / z**a
         finally:
             ctx.prec = orig
-    except NoConvergence:
+    except ctx.NoConvergence:
         pass
     def h(a,b):
         w = ctx.sinpi(b)
@@ -1463,7 +1456,7 @@ def _upper_gamma(ctx, z, a, regularized=False):
             r = z-1
             return [([ctx.exp(nega), a], [1, r], [], G, [1, -r], [], 1/nega)]
         return ctx.hypercomb(h, [z], force_series=True)
-    except NoConvergence:
+    except ctx.NoConvergence:
         def h(z):
             T1 = [], [1, z-1], [z], G, [], [], 0
             T2 = [-ctx.exp(nega), a, z], [1, z, -1], [], G, [1], [1+z], a
@@ -2309,8 +2302,7 @@ def primepi(ctx, x):
     x = int(x)
     if x < 2:
         return 0
-    from gammazeta import list_primes
-    return len(list_primes(x))
+    return len(ctx.list_primes(x))
 
 @defun_wrapped
 def primepi2(ctx, x):
@@ -2348,7 +2340,7 @@ def primezeta(ctx, s):
             k = 0
             while 1:
                 k += 1
-                u = libintmath.moebius(k)
+                u = ctx.moebius(k)
                 if not u:
                     continue
                 ctx.prec = wp
@@ -2773,14 +2765,13 @@ def cyclotomic(ctx, n, z):
     # Use divisor product representation. Unfortunately, this sometimes
     # includes singularities for roots of unity, which we have to cancel out.
     # Matching zeros/poles pairwise, we have (1-z^a)/(1-z^b) ~ a/b + O(z-1).
-    moebius = libintmath.moebius
     a_prod = 1
     b_prod = 1
     num_zeros = 0
     num_poles = 0
     for d in range(1,n+1):
         if not n % d:
-            w = moebius(n//d)
+            w = ctx.moebius(n//d)
             # Use powm1 because it is important that we get 0 only
             # if it really is exactly 0
             b = -ctx.powm1(z, d)

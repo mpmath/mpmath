@@ -6,10 +6,7 @@ import math2
 
 import function_docs
 
-from gammazeta import mpf_bernoulli
-from libmpf import to_float
-
-from libhyper import NoConvergence
+from libmp import mpf_bernoulli, to_float, NoConvergence
 
 class FPContext(StandardBaseContext):
     """

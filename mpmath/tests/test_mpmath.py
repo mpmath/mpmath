@@ -1,5 +1,4 @@
-from mpmath.libmpf import *
-from mpmath.libelefun import *
+from mpmath.libmp import *
 from mpmath import *
 import random
 

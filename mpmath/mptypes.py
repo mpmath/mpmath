@@ -10,10 +10,10 @@ from string import strip
 
 from ctx_base import StandardBaseContext
 
-from settings import (MP_BASE, MP_ZERO, MP_ONE, int_types, repr_dps,
-    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps)
+import libmp
 
-from libmpf import (
+from libmp import (MP_BASE, MP_ZERO, MP_ONE, int_types, repr_dps,
+    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
@@ -23,37 +23,20 @@ from libmpf import (
     mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
     mpf_hash, mpf_rand,
     mpf_sum,
-    bitcount, to_fixed
-)
-
-from libmpc import (
+    bitcount, to_fixed,
     mpc_to_str,
     mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
     mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
     mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
-    mpc_mpf_div
-)
-
-from libelefun import mpf_pow
-
-from libmpi import (
+    mpc_mpf_div,
+    mpf_pow,
     mpi_mid, mpi_delta, mpi_str,
     mpi_abs, mpi_pos, mpi_neg, mpi_add, mpi_sub,
-    mpi_mul, mpi_div, mpi_pow_int, mpi_pow
-)
-
-from libelefun import mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10
-from gammazeta import mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin
-from gammazeta import mpf_glaisher, mpf_twinprime, mpf_mertens
-
-from settings import int_types
-
-import libmpf
-import libmpc
-import libmpi
-import libhyper
-import libelefun
-import gammazeta
+    mpi_mul, mpi_div, mpi_pow_int, mpi_pow,
+    mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10,
+    mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin,
+    mpf_glaisher, mpf_twinprime, mpf_mertens,
+    int_types)
 
 import function_docs
 import rational
@@ -756,7 +739,7 @@ class MPContext(StandardBaseContext):
     Context for multiprecision arithmetic with a global precision.
     """
 
-    NoConvergence = libhyper.NoConvergence
+    NoConvergence = libmp.NoConvergence
 
     def __init__(ctx):
         # Settings
@@ -826,47 +809,47 @@ class MPContext(StandardBaseContext):
         ctx.trigamma = ctx.psi1
         ctx.tetragamma = ctx.psi2
         ctx.pentagamma = ctx.psi3
-        ctx.bernfrac = gammazeta.bernfrac
+        ctx.bernfrac = libmp.bernfrac
 
         # Standard functions
-        ctx.sqrt = ctx.def_mp_function(libmpf.mpf_sqrt, libmpc.mpc_sqrt, libmpi.mpi_sqrt)
-        ctx.cbrt = ctx.def_mp_function(libelefun.mpf_cbrt, libmpc.mpc_cbrt)
-        ctx.ln = ctx.def_mp_function(libelefun.mpf_log, libmpc.mpc_log, libmpi.mpi_log)
-        ctx.atan = ctx.def_mp_function(libelefun.mpf_atan, libmpc.mpc_atan)
-        ctx.exp = ctx.def_mp_function(libelefun.mpf_exp, libmpc.mpc_exp, libmpi.mpi_exp)
-        ctx.expj = ctx.def_mp_function(libmpc.mpf_expj, libmpc.mpc_expj)
-        ctx.expjpi = ctx.def_mp_function(libmpc.mpf_expjpi, libmpc.mpc_expjpi)
-        ctx.sin = ctx.def_mp_function(libelefun.mpf_sin, libmpc.mpc_sin, libmpi.mpi_sin)
-        ctx.cos = ctx.def_mp_function(libelefun.mpf_cos, libmpc.mpc_cos, libmpi.mpi_cos)
-        ctx.tan = ctx.def_mp_function(libelefun.mpf_tan, libmpc.mpc_tan, libmpi.mpi_tan)
-        ctx.sinh = ctx.def_mp_function(libelefun.mpf_sinh, libmpc.mpc_sinh)
-        ctx.cosh = ctx.def_mp_function(libelefun.mpf_cosh, libmpc.mpc_cosh)
-        ctx.tanh = ctx.def_mp_function(libelefun.mpf_tanh, libmpc.mpc_tanh)
-        ctx.asin = ctx.def_mp_function(libelefun.mpf_asin, libmpc.mpc_asin)
-        ctx.acos = ctx.def_mp_function(libelefun.mpf_acos, libmpc.mpc_acos)
-        ctx.atan = ctx.def_mp_function(libelefun.mpf_atan, libmpc.mpc_atan)
-        ctx.asinh = ctx.def_mp_function(libelefun.mpf_asinh, libmpc.mpc_asinh)
-        ctx.acosh = ctx.def_mp_function(libelefun.mpf_acosh, libmpc.mpc_acosh)
-        ctx.atanh = ctx.def_mp_function(libelefun.mpf_atanh, libmpc.mpc_atanh)
-        ctx.sinpi = ctx.def_mp_function(libelefun.mpf_sin_pi, libmpc.mpc_sin_pi)
-        ctx.cospi = ctx.def_mp_function(libelefun.mpf_cos_pi, libmpc.mpc_cos_pi)
-        ctx.floor = ctx.def_mp_function(libmpf.mpf_floor, libmpc.mpc_floor)
-        ctx.ceil = ctx.def_mp_function(libmpf.mpf_ceil, libmpc.mpc_ceil)
-        ctx.fib = ctx.fibonacci = ctx.def_mp_function(libelefun.mpf_fibonacci, libmpc.mpc_fibonacci)
-        ctx.zeta = ctx.def_mp_function(gammazeta.mpf_zeta, gammazeta.mpc_zeta)
-        ctx.altzeta = ctx.def_mp_function(gammazeta.mpf_altzeta, gammazeta.mpc_altzeta)
-        ctx.gamma = ctx.def_mp_function(gammazeta.mpf_gamma, gammazeta.mpc_gamma)
-        ctx.fac = ctx.factorial = ctx.def_mp_function(gammazeta.mpf_factorial, gammazeta.mpc_factorial)
-        ctx.harmonic = ctx.def_mp_function(gammazeta.mpf_harmonic, gammazeta.mpc_harmonic)
-        ctx.ei = ctx.def_mp_function(libhyper.mpf_ei, libhyper.mpc_ei)
-        ctx.e1 = ctx.def_mp_function(libhyper.mpf_e1, libhyper.mpc_e1)
-        ctx.ci = ctx.def_mp_function(libhyper.mpf_ci, libhyper.mpc_ci)
-        ctx.si = ctx.def_mp_function(libhyper.mpf_si, libhyper.mpc_si)
-        ctx.ellipk = ctx.def_mp_function(libhyper.mpf_ellipk, libhyper.mpc_ellipk)
-        ctx.ellipe = ctx.def_mp_function(libhyper.mpf_ellipe, libhyper.mpc_ellipe)
-        ctx.agm1 = ctx.def_mp_function(libhyper.mpf_agm1, libhyper.mpc_agm1)
-        ctx._erf = ctx.def_mp_function(libhyper.mpf_erf, None)
-        ctx._erfc = ctx.def_mp_function(libhyper.mpf_erfc, None)
+        ctx.sqrt = ctx.def_mp_function(libmp.mpf_sqrt, libmp.mpc_sqrt, libmp.mpi_sqrt)
+        ctx.cbrt = ctx.def_mp_function(libmp.mpf_cbrt, libmp.mpc_cbrt)
+        ctx.ln = ctx.def_mp_function(libmp.mpf_log, libmp.mpc_log, libmp.mpi_log)
+        ctx.atan = ctx.def_mp_function(libmp.mpf_atan, libmp.mpc_atan)
+        ctx.exp = ctx.def_mp_function(libmp.mpf_exp, libmp.mpc_exp, libmp.mpi_exp)
+        ctx.expj = ctx.def_mp_function(libmp.mpf_expj, libmp.mpc_expj)
+        ctx.expjpi = ctx.def_mp_function(libmp.mpf_expjpi, libmp.mpc_expjpi)
+        ctx.sin = ctx.def_mp_function(libmp.mpf_sin, libmp.mpc_sin, libmp.mpi_sin)
+        ctx.cos = ctx.def_mp_function(libmp.mpf_cos, libmp.mpc_cos, libmp.mpi_cos)
+        ctx.tan = ctx.def_mp_function(libmp.mpf_tan, libmp.mpc_tan, libmp.mpi_tan)
+        ctx.sinh = ctx.def_mp_function(libmp.mpf_sinh, libmp.mpc_sinh)
+        ctx.cosh = ctx.def_mp_function(libmp.mpf_cosh, libmp.mpc_cosh)
+        ctx.tanh = ctx.def_mp_function(libmp.mpf_tanh, libmp.mpc_tanh)
+        ctx.asin = ctx.def_mp_function(libmp.mpf_asin, libmp.mpc_asin)
+        ctx.acos = ctx.def_mp_function(libmp.mpf_acos, libmp.mpc_acos)
+        ctx.atan = ctx.def_mp_function(libmp.mpf_atan, libmp.mpc_atan)
+        ctx.asinh = ctx.def_mp_function(libmp.mpf_asinh, libmp.mpc_asinh)
+        ctx.acosh = ctx.def_mp_function(libmp.mpf_acosh, libmp.mpc_acosh)
+        ctx.atanh = ctx.def_mp_function(libmp.mpf_atanh, libmp.mpc_atanh)
+        ctx.sinpi = ctx.def_mp_function(libmp.mpf_sin_pi, libmp.mpc_sin_pi)
+        ctx.cospi = ctx.def_mp_function(libmp.mpf_cos_pi, libmp.mpc_cos_pi)
+        ctx.floor = ctx.def_mp_function(libmp.mpf_floor, libmp.mpc_floor)
+        ctx.ceil = ctx.def_mp_function(libmp.mpf_ceil, libmp.mpc_ceil)
+        ctx.fib = ctx.fibonacci = ctx.def_mp_function(libmp.mpf_fibonacci, libmp.mpc_fibonacci)
+        ctx.zeta = ctx.def_mp_function(libmp.mpf_zeta, libmp.mpc_zeta)
+        ctx.altzeta = ctx.def_mp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
+        ctx.gamma = ctx.def_mp_function(libmp.mpf_gamma, libmp.mpc_gamma)
+        ctx.fac = ctx.factorial = ctx.def_mp_function(libmp.mpf_factorial, libmp.mpc_factorial)
+        ctx.harmonic = ctx.def_mp_function(libmp.mpf_harmonic, libmp.mpc_harmonic)
+        ctx.ei = ctx.def_mp_function(libmp.mpf_ei, libmp.mpc_ei)
+        ctx.e1 = ctx.def_mp_function(libmp.mpf_e1, libmp.mpc_e1)
+        ctx.ci = ctx.def_mp_function(libmp.mpf_ci, libmp.mpc_ci)
+        ctx.si = ctx.def_mp_function(libmp.mpf_si, libmp.mpc_si)
+        ctx.ellipk = ctx.def_mp_function(libmp.mpf_ellipk, libmp.mpc_ellipk)
+        ctx.ellipe = ctx.def_mp_function(libmp.mpf_ellipe, libmp.mpc_ellipe)
+        ctx.agm1 = ctx.def_mp_function(libmp.mpf_agm1, libmp.mpc_agm1)
+        ctx._erf = ctx.def_mp_function(libmp.mpf_erf, None)
+        ctx._erfc = ctx.def_mp_function(libmp.mpf_erfc, None)
 
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)
@@ -877,7 +860,7 @@ class MPContext(StandardBaseContext):
         to `\sqrt{x^2 + y^2}`. Both `x` and `y` must be real."""
         x = ctx.convert(x)
         y = ctx.convert(y)
-        return ctx.make_mpf(libmpf.mpf_hypot(x._mpf_, y._mpf_, *ctx._prec_rounding))
+        return ctx.make_mpf(libmp.mpf_hypot(x._mpf_, y._mpf_, *ctx._prec_rounding))
 
     def _gamma_upper_int(ctx, n, z):
         n = int(n)
@@ -886,7 +869,7 @@ class MPContext(StandardBaseContext):
         if not hasattr(z, '_mpf_'):
             raise NotImplementedError
         prec, rounding = ctx._prec_rounding
-        real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding, gamma=True)
+        real, imag = libmp.mpf_expint(n, z._mpf_, prec, rounding, gamma=True)
         if imag is None:
             return ctx.make_mpf(real)
         else:
@@ -899,7 +882,7 @@ class MPContext(StandardBaseContext):
         if not hasattr(z, '_mpf_'):
             raise NotImplementedError
         prec, rounding = ctx._prec_rounding
-        real, imag = libhyper.mpf_expint(n, z._mpf_, prec, rounding)
+        real, imag = libmp.mpf_expint(n, z._mpf_, prec, rounding)
         if imag is None:
             return ctx.make_mpf(real)
         else:
@@ -908,51 +891,51 @@ class MPContext(StandardBaseContext):
     def _nthroot(ctx, x, n):
         if hasattr(x, '_mpf_'):
             try:
-                return ctx.make_mpf(libelefun.mpf_nthroot(x._mpf_, n, *ctx._prec_rounding))
+                return ctx.make_mpf(libmp.mpf_nthroot(x._mpf_, n, *ctx._prec_rounding))
             except ComplexResult:
                 if ctx.trap_complex:
                     raise
-                x = (x._mpf_, libmpf.fzero)
+                x = (x._mpf_, libmp.fzero)
         else:
             x = x._mpc_
-        return ctx.make_mpc(libmpc.mpc_nthroot(x, n, *ctx._prec_rounding))
+        return ctx.make_mpc(libmp.mpc_nthroot(x, n, *ctx._prec_rounding))
 
     def _besselj(ctx, n, z):
         prec, rounding = ctx._prec_rounding
         if hasattr(z, '_mpf_'):
-            return ctx.make_mpf(libhyper.mpf_besseljn(n, z._mpf_, prec, rounding))
+            return ctx.make_mpf(libmp.mpf_besseljn(n, z._mpf_, prec, rounding))
         elif hasattr(z, '_mpc_'):
-            return ctx.make_mpc(libhyper.mpc_besseljn(n, z._mpc_, prec, rounding))
+            return ctx.make_mpc(libmp.mpc_besseljn(n, z._mpc_, prec, rounding))
 
     def _agm(ctx, a, b=1):
         prec, rounding = ctx._prec_rounding
         if hasattr(a, '_mpf_') and hasattr(b, '_mpf_'):
             try:
-                v = libhyper.mpf_agm(a._mpf_, b._mpf_, prec, rounding)
+                v = libmp.mpf_agm(a._mpf_, b._mpf_, prec, rounding)
                 return ctx.make_mpf(v)
             except ComplexResult:
                 pass
-        if hasattr(a, '_mpf_'): a = (a._mpf_, libmpf.fzero)
+        if hasattr(a, '_mpf_'): a = (a._mpf_, libmp.fzero)
         else: a = a._mpc_
-        if hasattr(b, '_mpf_'): b = (b._mpf_, libmpf.fzero)
+        if hasattr(b, '_mpf_'): b = (b._mpf_, libmp.fzero)
         else: b = b._mpc_
-        return ctx.make_mpc(libhyper.mpc_agm(a, b, prec, rounding))
+        return ctx.make_mpc(libmp.mpc_agm(a, b, prec, rounding))
 
     def bernoulli(ctx, n):
-        return ctx.make_mpf(gammazeta.mpf_bernoulli(int(n), *ctx._prec_rounding))
+        return ctx.make_mpf(libmp.mpf_bernoulli(int(n), *ctx._prec_rounding))
 
     def atan2(ctx, y, x):
         x = ctx.convert(x)
         y = ctx.convert(y)
-        return ctx.make_mpf(libelefun.mpf_atan2(y._mpf_, x._mpf_, *ctx._prec_rounding))
+        return ctx.make_mpf(libmp.mpf_atan2(y._mpf_, x._mpf_, *ctx._prec_rounding))
 
     def psi(ctx, m, z):
         z = ctx.convert(z)
         m = int(m)
         if ctx.is_real_type(z):
-            return ctx.make_mpf(gammazeta.mpf_psi(m, z._mpf_, *ctx._prec_rounding))
+            return ctx.make_mpf(libmp.mpf_psi(m, z._mpf_, *ctx._prec_rounding))
         else:
-            return ctx.make_mpc(gammazeta.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
+            return ctx.make_mpc(libmp.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
 
     polygamma = psi
 
@@ -1336,7 +1319,7 @@ maxterms, or set zeroprec."""
             key = p, q, flags, 'C'
             v = z._mpc_
         if key not in ctx.hyp_summators:
-            ctx.hyp_summators[key] = libhyper.make_hyp_summator(key)[1]
+            ctx.hyp_summators[key] = libmp.make_hyp_summator(key)[1]
         summator = ctx.hyp_summators[key]
         prec = ctx.prec
         maxprec = kwargs.get('maxprec', ctx._default_hyper_maxprec(prec))
@@ -1426,7 +1409,7 @@ maxterms, or set zeroprec."""
 
         """
         x = ctx.convert(x)
-        return ctx.make_mpf(libmpf.mpf_shift(x._mpf_, n))
+        return ctx.make_mpf(libmp.mpf_shift(x._mpf_, n))
 
     def frexp(ctx, x):
         r"""
@@ -1441,7 +1424,7 @@ maxterms, or set zeroprec."""
 
         """
         x = ctx.convert(x)
-        y, n = libmpf.mpf_frexp(x._mpf_)
+        y, n = libmp.mpf_frexp(x._mpf_)
         return ctx.make_mpf(y), n
 
     def fneg(ctx, x, **kwargs):
@@ -2392,9 +2375,9 @@ maxterms, or set zeroprec."""
         s = ctx.convert(s)
         prec, rounding = ctx._prec_rounding
         if hasattr(s, '_mpf_'):
-            v = ctx.make_mpf(gammazeta.mpf_zetasum(s._mpf_, a, b, prec))
+            v = ctx.make_mpf(libmp.mpf_zetasum(s._mpf_, a, b, prec))
         elif hasattr(s, '_mpc_'):
-            v = ctx.make_mpc(gammazeta.mpc_zetasum(s._mpc_, a, b, prec))
+            v = ctx.make_mpc(libmp.mpc_zetasum(s._mpc_, a, b, prec))
         return v
 
 

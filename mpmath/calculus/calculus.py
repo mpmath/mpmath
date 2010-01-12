@@ -10,7 +10,6 @@ etc
 """
 
 from itertools import izip
-from gammazeta import int_fac
 
 
 class CalculusMethods(object):
@@ -94,7 +93,7 @@ def richardson(ctx, seq):
     # The general weight is c[k] = (N+k)**N * (-1)**(k+N) / k! / (N-k)!
     # To avoid repeated factorials, we simplify the quotient
     # of successive weights to obtain a recurrence relation
-    c = (-1)**N * N**N / ctx.mpf(int_fac(N))
+    c = (-1)**N * N**N / ctx.mpf(ctx._int_fac(N))
     maxc = 1
     for k in xrange(N+1):
         s += c * seq[N+k]

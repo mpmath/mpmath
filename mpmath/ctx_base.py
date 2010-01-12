@@ -1,14 +1,16 @@
 from operator import gt, lt
 
-from functions import SpecialFunctions
-from quadrature import QuadratureMethods
-from calculus import CalculusMethods
+from functions.functions import SpecialFunctions
+from calculus.quadrature import QuadratureMethods
+from calculus.calculus import CalculusMethods
+from calculus.optimization import OptimizationMethods
+from calculus.odes import ODEMethods
 from matrices import MatrixMethods
 from linalg import LinearAlgebraMethods
 from identification import IdentificationMethods
-from optimization import OptimizationMethods
-from odes import ODEMethods
 from visualization import VisualizationMethods
+
+import libmp
 
 class Context(object):
     pass
@@ -206,3 +208,9 @@ class StandardBaseContext(Context,
 
     def _default_hyper_maxprec(ctx, p):
         return int(1000 * p**0.25 + 4*p)
+
+    _gcd = staticmethod(libmp.gcd)
+    list_primes = staticmethod(libmp.list_primes)
+    bernfrac = staticmethod(libmp.bernfrac)
+    moebius = staticmethod(libmp.moebius)
+    _int_fac = staticmethod(libmp.int_fac)
