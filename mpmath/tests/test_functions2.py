@@ -1076,6 +1076,18 @@ def test_meijerg():
     assert meijerg([[],[1+j]],[[1],[1]], 3+4j).ae(271.46290321152464592 - 703.03330399954820169j)
     assert meijerg([[0.25],[1]],[[0.5],[2]],0) == 0
     assert meijerg([[0],[]],[[0,0,'1/3','2/3'], []], '2/27').ae(2.2019391389653314120)
+    # Verify 1/z series being used
+    assert meijerg([[-3],[-0.5]], [[-1],[-2.5]], -0.5).ae(-1.338096165935754898687431)
+    assert meijerg([[1-(-1)],[1-(-2.5)]], [[1-(-3)],[1-(-0.5)]], -2.0).ae(-1.338096165935754898687431)
+    assert meijerg([[-3],[-0.5]], [[-1],[-2.5]], -1).ae(-(pi+4)/(4*pi))
+    a = 2.5
+    b = 1.25
+    for z in [mpf(0.25), mpf(2)]:
+        x1 = hyp1f1(a,b,z)
+        x2 = gamma(b)/gamma(a)*meijerg([[1-a],[]],[[0],[1-b]],-z)
+        x3 = gamma(b)/gamma(a)*meijerg([[1-0],[1-(1-b)]],[[1-(1-a)],[]],-1/z)
+        assert x1.ae(x2)
+        assert x1.ae(x3)
 
 def test_appellf1():
     mp.dps = 15

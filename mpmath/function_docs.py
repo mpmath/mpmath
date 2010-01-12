@@ -6783,17 +6783,20 @@ given below should hopefully clear up any potential confusion.
 
 **Algorithm**
 
-The Meijer G-function is evaluated by rewriting it as a combination of `m`
-hypergeometric series each of degree `\,_pF_{q-1}`. Currently,
-evaluation will only work if `\,_pF_{q-1}` can be evaluated via
-:func:`hyper` for the given `z`, i.e. if either `z` is small enough
-for direct convergence or if the hypergeometric function in question is
-implemented with the appropriate analytic continuation / asymptotic
-expansion for large `z`.
+The Meijer G-function is evaluated as a combination of hypergeometric series.
+There are two versions of the function, which can be selected with
+the optional *series* argument. 
 
-Keyword arguments are forwarded to :func:`hypercomb`. If :func:`meijerg`
-fails to return an accurate value, passing ``check_cancellation=True``
-may help.
+*series=1* uses a sum of `m` `\,_pF_{q-1}` functions of `z`
+
+*series=2* uses a sum of `n` `\,_qF_{p-1}` functions of `1/z`
+
+The default series is chosen based on the degree and `|z|` in order
+to be consistent with Mathematica's. This definition of the Meijer G-function
+has a discontinuity at `|z| = 1` for some orders, which can
+be avoided by explicitly specifying a series.
+
+Keyword arguments are forwarded to :func:`hypercomb`.
 
 **Examples**
 
@@ -6915,6 +6918,15 @@ be expanded as a messy combination of exponential integrals:
     >>> chop(4**(a-b+1)*sqrt(pi)*gamma(2*b-2*a)*z**a*\
     ...     expint(2*b-2*a, -2*sqrt(-z))*expint(2*b-2*a, 2*sqrt(-z)))
     0.3323667133658557271898061
+
+In the following case, different series give different values::
+
+    >>> chop(meijerg([[1],[0.25]],[[3],[0.5]],-2))
+    -0.06417628097442437076207337
+    >>> meijerg([[1],[0.25]],[[3],[0.5]],-2,series=1)
+    0.1428699426155117511873047
+    >>> chop(meijerg([[1],[0.25]],[[3],[0.5]],-2,series=2))
+    -0.06417628097442437076207337
 
 **References**
 
