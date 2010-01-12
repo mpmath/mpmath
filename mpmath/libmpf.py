@@ -567,7 +567,7 @@ def mpf_abs(s, prec=None, rnd=round_fast):
         return s
     if not prec:
         if sign:
-            return (not sign, man, exp, bc)
+            return (0, man, exp, bc)
         return s
     return normalize1(0, man, exp, bc, prec, rnd)
 
