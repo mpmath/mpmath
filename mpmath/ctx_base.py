@@ -5,8 +5,8 @@ from calculus.quadrature import QuadratureMethods
 from calculus.calculus import CalculusMethods
 from calculus.optimization import OptimizationMethods
 from calculus.odes import ODEMethods
-from matrices import MatrixMethods
-from linalg import LinearAlgebraMethods
+from matrices.matrices import MatrixMethods
+from matrices.linalg import LinearAlgebraMethods
 from identification import IdentificationMethods
 from visualization import VisualizationMethods
 
