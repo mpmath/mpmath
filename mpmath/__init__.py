@@ -3,8 +3,7 @@ __version__ = '0.14-svn'
 from usertools import monitor, timing
 
 from ctx_fp import FPContext
-#from ctx_mp import MPContext
-from mptypes import MPContext
+from ctx_mp import MPContext
 
 fp = FPContext()
 mp = MPContext()
@@ -13,9 +12,9 @@ fp._mp = mp
 mp._fp = fp
 
 # XXX: extremely bad pickle hack
-import mptypes
-mptypes.mpf = mp.mpf
-mptypes.mpc = mp.mpc
+import ctx_mp
+ctx_mp.mpf = mp.mpf
+ctx_mp.mpc = mp.mpc
 
 make_mpf = mp.make_mpf
 make_mpc = mp.make_mpc
