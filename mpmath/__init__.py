@@ -39,6 +39,7 @@ nint_distance = mp.nint_distance
 
 plot = mp.plot
 cplot = mp.cplot
+splot = mp.splot
 
 odefun = mp.odefun
 
