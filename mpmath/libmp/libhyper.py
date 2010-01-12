@@ -8,14 +8,12 @@ cases are also provided.
 import operator
 import math
 
-from settings import (\
-    MP_ZERO, MP_ONE, round_fast, round_nearest
-)
+from backend import MPZ_ZERO, MPZ_ONE
 
 from libintmath import gcd
 
 from libmpf import (\
-    ComplexResult,
+    ComplexResult, round_fast, round_nearest,
     negative_rnd, bitcount, to_fixed, from_man_exp, from_int, to_int,
     from_rational,
     fzero, fone, fnone, ftwo, finf, fninf, fnan,
@@ -27,7 +25,7 @@ from libmpf import (\
 )
 
 from libelefun import (\
-    mpf_pi, mpf_exp, mpf_log, pi_fixed, cos_sin, mpf_cos, mpf_sin,
+    mpf_pi, mpf_exp, mpf_log, pi_fixed, mpf_cos_sin, mpf_cos, mpf_sin,
     mpf_sqrt, agm_fixed,
 )
 
@@ -39,7 +37,8 @@ from libmpc import (\
     mpc_mpf_div, mpc_square, mpc_exp
 )
 
-from gammazeta import int_fac, mpf_gamma_int, mpf_euler, euler_fixed
+from libintmath import ifac
+from gammazeta import mpf_gamma_int, mpf_euler, euler_fixed
 
 class NoConvergence(Exception):
     pass
@@ -92,13 +91,13 @@ def make_hyp_summator(key):
 
     #add("wp = prec + 40")
     add("MAX = kwargs.get('maxterms', wp*100)")
-    add("HIGH = MP_ONE<<epsshift")
+    add("HIGH = MPZ_ONE<<epsshift")
     add("LOW = -HIGH")
 
     # Setup code
-    add("SRE = PRE = one = (MP_ONE << wp)")
+    add("SRE = PRE = one = (MPZ_ONE << wp)")
     if have_complex:
-        add("SIM = PIM = MP_ZERO")
+        add("SIM = PIM = MPZ_ZERO")
 
     if have_complex_arg:
         add("xsign, xm, xe, xbc = z[0]")
@@ -387,7 +386,7 @@ def mpf_erfc(x, prec, rnd=round_fast):
         # 1-erf(x) ~ exp(-x^2), increase prec to deal with cancellation
         n = to_int(x)+1
         return mpf_sub(fone, mpf_erf(x, prec + int(n**2*1.44) + 10), prec, rnd)
-    s = term = MP_ONE << wp
+    s = term = MPZ_ONE << wp
     term_prev = 0
     t = (2 * to_fixed(x, wp) ** 2) >> wp
     k = 1
@@ -437,7 +436,7 @@ def complex_ei_taylor(zre, zim, prec):
     return sre, sim
 
 def ei_asymptotic(x, prec):
-    one = MP_ONE << prec
+    one = MPZ_ONE << prec
     x = t = ((one << prec) // x)
     s = one + x
     k = 2
@@ -449,7 +448,7 @@ def ei_asymptotic(x, prec):
 
 def complex_ei_asymptotic(zre, zim, prec):
     _abs = abs
-    one = MP_ONE << prec
+    one = MPZ_ONE << prec
     M = (zim*zim + zre*zre) >> prec
     # 1 / z
     xre = tre = (zre << prec) // M
@@ -641,10 +640,10 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
             tol = -wp-10
             can_use_asymptotic_series = siz < tol
         if can_use_asymptotic_series:
-            r = ((-MP_ONE) << (wp+wp)) // to_fixed(x, wp)
+            r = ((-MPZ_ONE) << (wp+wp)) // to_fixed(x, wp)
             m = n
             t = r*m
-            s = MP_ONE << wp
+            s = MPZ_ONE << wp
             while m and t:
                 s += t
                 m += 1
@@ -683,11 +682,11 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
             if gamma:
                 T2 = mpf_mul(T2, mpf_pow_int(x, n_orig, wp), wp)
             R = mpf_add(T1, T2)
-            re = mpf_div(R, from_int(int_fac(n-1)), prec, rnd)
+            re = mpf_div(R, from_int(ifac(n-1)), prec, rnd)
         else:
             raise NotImplementedError
     if have_imag:
-        M = from_int(-int_fac(n-1))
+        M = from_int(-ifac(n-1))
         if gamma:
             im = mpf_div(mpf_pi(wp), M, prec, rnd)
         else:
@@ -704,7 +703,7 @@ def mpf_ci_si_taylor(x, wp, which=0):
     x = to_fixed(x, wp)
     x2 = -(x*x) >> wp
     if which == 0:
-        s, t, k = 0, (MP_ONE<<wp), 2
+        s, t, k = 0, (MPZ_ONE<<wp), 2
     else:
         s, t, k = x, x, 3
     while t:
@@ -720,9 +719,9 @@ def mpc_ci_si_taylor(re, im, wp, which=0):
     z2im = (-2*zre*zim)>>wp
     tre = zre
     tim = zim
-    one = MP_ONE<<wp
+    one = MPZ_ONE<<wp
     if which == 0:
-        sre, sim, tre, tim, k = 0, 0, (MP_ONE<<wp), 0, 2
+        sre, sim, tre, tim, k = 0, 0, (MPZ_ONE<<wp), 0, 2
     else:
         sre, sim, tre, tim, k = zre, zim, zre, zim, 3
     while max(abs(tre), abs(tim)) > 2:
@@ -796,8 +795,8 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
     x = mpf_abs(x)
     # Case 2: asymptotic series for x >> 1
     xf = to_fixed(x, wp)
-    xr = (MP_ONE<<(2*wp)) // xf   # 1/x
-    s1 = (MP_ONE << wp)
+    xr = (MPZ_ONE<<(2*wp)) // xf   # 1/x
+    s1 = (MPZ_ONE << wp)
     s2 = xr
     t = xr
     k = 2
@@ -813,7 +812,7 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
     s2 = from_man_exp(s2, -wp)
     s1 = mpf_div(s1, x, wp)
     s2 = mpf_div(s2, x, wp)
-    cos, sin = cos_sin(x, wp)
+    cos, sin = mpf_cos_sin(x, wp)
     # Ci(x) = sin(x)*s1-cos(x)*s2
     # Si(x) = pi/2-cos(x)*s1-sin(x)*s2
     if which != 0:
@@ -898,9 +897,9 @@ def mpf_besseljn(n, x, prec, rounding=round_fast):
     x = to_fixed(x, wp)
     x2 = (x**2) >> wp
     if not n:
-        s = t = MP_ONE << wp
+        s = t = MPZ_ONE << wp
     else:
-        s = t = (x**n // int_fac(n)) >> ((n-1)*wp + n)
+        s = t = (x**n // ifac(n)) >> ((n-1)*wp + n)
     k = 1
     while t:
         t = ((t * x2) // (-4*k*(k+n))) >> wp
@@ -924,12 +923,12 @@ def mpc_besseljn(n, z, prec, rounding=round_fast):
     z2re = (zre**2 - zim**2) >> prec
     z2im = (zre*zim) >> (prec-1)
     if not n:
-        sre = tre = MP_ONE << prec
-        sim = tim = MP_ZERO
+        sre = tre = MPZ_ONE << prec
+        sim = tim = MPZ_ZERO
     else:
         re, im = complex_int_pow(zre, zim, n)
-        sre = tre = (re // int_fac(n)) >> ((n-1)*prec + n)
-        sim = tim = (im // int_fac(n)) >> ((n-1)*prec + n)
+        sre = tre = (re // ifac(n)) >> ((n-1)*prec + n)
+        sim = tim = (im // ifac(n)) >> ((n-1)*prec + n)
     k = 1
     while abs(tre) + abs(tim) > 3:
         p = -4*k*(k+n)

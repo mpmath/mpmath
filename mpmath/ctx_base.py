@@ -213,7 +213,7 @@ class StandardBaseContext(Context,
     list_primes = staticmethod(libmp.list_primes)
     bernfrac = staticmethod(libmp.bernfrac)
     moebius = staticmethod(libmp.moebius)
-    _int_fac = staticmethod(libmp.int_fac)
+    _ifac = staticmethod(libmp.ifac)
 
     def sum_accurately(ctx, terms, check_step=1):
         max_term = ctx.ninf

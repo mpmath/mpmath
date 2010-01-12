@@ -12,7 +12,7 @@ from ctx_base import StandardBaseContext
 
 import libmp
 
-from libmp import (MP_BASE, MP_ZERO, MP_ONE, int_types, repr_dps,
+from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
@@ -87,7 +87,7 @@ class _mpf(mpnumeric):
             if len(val) == 4:
                 sign, man, exp, bc = val
                 v = new(cls)
-                v._mpf_ = normalize(sign, MP_BASE(man), exp, bc, prec, rounding)
+                v._mpf_ = normalize(sign, MPZ(man), exp, bc, prec, rounding)
                 return v
             raise ValueError
         else:
@@ -784,7 +784,7 @@ class MPContext(StandardBaseContext):
         ctx.ninf = ctx.make_mpf(fninf)
         ctx.nan = ctx.make_mpf(fnan)
 
-        eps = ctx.constant(lambda prec, rnd: (0, MP_ONE, 1-prec, 1),
+        eps = ctx.constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1),
             "epsilon of working precision", "eps")
         ctx.eps = eps
 
@@ -2311,7 +2311,7 @@ maxterms, or set zeroprec."""
             if x.mid != 0:
                 b = 100*x.delta/(2*x.mid)
             else:
-                b = MP_ZERO
+                b = MPZ_ZERO
             m = str(a)
             p = ctx.nstr(b, error_dps)
             s = m + sp + "(" + p + "%)"

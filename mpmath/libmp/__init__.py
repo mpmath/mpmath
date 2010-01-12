@@ -1,4 +1,6 @@
-from libmpf import (to_pickable, from_pickable, ComplexResult,
+from libmpf import (prec_to_dps, dps_to_prec, repr_dps,
+  round_down, round_up, round_floor, round_ceiling, round_nearest,
+  to_pickable, from_pickable, ComplexResult,
   fzero, fnzero, fone, fnone, ftwo, ften, fhalf, fnan, finf, fninf,
   math_float_inf, round_int, normalize, normalize1,
   from_man_exp, from_int, to_man_exp, to_int, mpf_ceil, mpf_floor,
@@ -28,8 +30,8 @@ from libelefun import (ln2_fixed, mpf_ln2, ln10_fixed, mpf_ln10,
   pi_fixed, mpf_pi, e_fixed, mpf_e, phi_fixed, mpf_phi,
   degree_fixed, mpf_degree,
   mpf_pow, mpf_nthroot, mpf_cbrt, log_int_fixed, agm_fixed,
-  mpf_log, mpf_log_hypot, mpf_exp, cos_sin, mpf_cos, mpf_sin, mpf_tan,
-  mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi, cosh_sinh,
+  mpf_log, mpf_log_hypot, mpf_exp, mpf_cos_sin, mpf_cos, mpf_sin, mpf_tan,
+  mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi, mpf_cosh_sinh,
   mpf_cosh, mpf_sinh, mpf_tanh, mpf_atan, mpf_atan2, mpf_asin,
   mpf_acos, mpf_asinh, mpf_acosh, mpf_atanh, mpf_fibonacci)
 
@@ -55,10 +57,8 @@ from libmpi import (mpi_str, mpi_add, mpi_sub, mpi_delta, mpi_mid,
   mpi_cos, mpi_sin, mpi_tan, mpi_cot)
 
 from libintmath import (trailing, bitcount, numeral,
-  isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, int_fac,
+  isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,
   list_primes, moebius, gcd)
 
-from settings import (prec_to_dps, dps_to_prec, repr_dps,
-  gmpy, sage, MODE, STRICT, MP_BASE, MP_BASE_TYPE,
-  MP_ZERO, MP_ONE, MP_TWO, MP_THREE, MP_FIVE, int_types,
-  round_down, round_up, round_floor, round_ceiling, round_nearest)
+from backend import (gmpy, sage, BACKEND, STRICT, MPZ, MPZ_TYPE,
+  MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_THREE, MPZ_FIVE, int_types)

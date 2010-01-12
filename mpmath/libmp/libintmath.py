@@ -9,7 +9,7 @@ here from settings.py
 import math
 from bisect import bisect
 
-from settings import MODE, gmpy, sage, MP_BASE, MP_ONE, MP_ZERO
+from backend import BACKEND, gmpy, sage, MPZ, MPZ_ONE, MPZ_ZERO
 
 def giant_steps(start, target, n=2):
     """
@@ -49,7 +49,7 @@ def lshift(x, n):
     if n >= 0: return x << n
     else:      return x >> (-n)
 
-if MODE == 'sage':
+if BACKEND == 'sage':
     import operator
     rshift = operator.rshift
     lshift = operator.lshift
@@ -66,7 +66,7 @@ def python_trailing(n):
 
 def gmpy_trailing(n):
     """Count the number of trailing zero bits in abs(n) using gmpy."""
-    if n: return MP_BASE(n).scan1()
+    if n: return MPZ(n).scan1()
     else: return 0
 
 # Small powers of 2
@@ -82,27 +82,27 @@ def python_bitcount(n):
 
 def gmpy_bitcount(n):
     """Calculate bit size of the nonnegative integer n."""
-    if n: return MP_BASE(n).numdigits(2)
+    if n: return MPZ(n).numdigits(2)
     else: return 0
 
 def sage_bitcount(n):
-    if n: return MP_BASE(n).nbits()
+    if n: return MPZ(n).nbits()
     else: return 0
 
 def sage_trailing(n):
-    return MP_BASE(n).trailing_zero_bits()
+    return MPZ(n).trailing_zero_bits()
 
-if MODE == 'gmpy':
+if BACKEND == 'gmpy':
     bitcount = gmpy_bitcount
     trailing = gmpy_trailing
-elif MODE == 'sage':
+elif BACKEND == 'sage':
     bitcount = sage_bitcount
     trailing = sage_trailing
 else:
     bitcount = python_bitcount
     trailing = python_trailing
 
-if MODE == 'gmpy' and 'bit_length' in dir(gmpy):
+if BACKEND == 'gmpy' and 'bit_length' in dir(gmpy):
     bitcount = gmpy.bit_length
 
 # Used to avoid slow function calls as far as possible
@@ -114,7 +114,7 @@ bctable = map(bitcount, range(1024))
 def bin_to_radix(x, xbits, base, bdigits):
     """Changes radix of a fixed-point number; i.e., converts
     x * 2**xbits to floor(x * 10**bdigits)."""
-    return x * (MP_BASE(base)**bdigits) >> xbits
+    return x * (MPZ(base)**bdigits) >> xbits
 
 stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'
 
@@ -168,12 +168,12 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
         return gmpy.digits(n, base)
     # Divide in half
     half = (size // 2) + (size & 1)
-    A, B = divmod(n, MP_BASE(base)**half)
+    A, B = divmod(n, MPZ(base)**half)
     ad = numeral(A, base, half, digits)
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-if MODE == "gmpy":
+if BACKEND == "gmpy":
     numeral = numeral_gmpy
 else:
     numeral = numeral_python
@@ -288,12 +288,12 @@ def sqrt_fixed(x, prec):
 
 sqrt_fixed2 = sqrt_fixed
 
-if MODE == 'gmpy':
+if BACKEND == 'gmpy':
     isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
     sqrtrem = gmpy.sqrtrem
-elif MODE == 'sage':
-    isqrt_small = isqrt_fast = isqrt = lambda n: MP_BASE(n).isqrt()
-    sqrtrem = lambda n: MP_BASE(n).sqrtrem()
+elif BACKEND == 'sage':
+    isqrt_small = isqrt_fast = isqrt = lambda n: MPZ(n).isqrt()
+    sqrtrem = lambda n: MPZ(n).sqrtrem()
 else:
     isqrt_small = isqrt_small_python
     isqrt_fast = isqrt_fast_python
@@ -312,7 +312,7 @@ def ifib(n, _cache={}):
     # Use Dijkstra's logarithmic algorithm
     # The following implementation is basically equivalent to
     # http://en.literateprograms.org/Fibonacci_numbers_(Scheme)
-    a, b, p, q = MP_ONE, MP_ZERO, MP_ZERO, MP_ONE
+    a, b, p, q = MPZ_ONE, MPZ_ZERO, MPZ_ZERO, MPZ_ONE
     while n:
         if n & 1:
             aq = a*q
@@ -328,7 +328,7 @@ def ifib(n, _cache={}):
 
 MAX_FACTORIAL_CACHE = 1000
 
-def int_fac(n, memo={0:1, 1:1}):
+def ifac(n, memo={0:1, 1:1}):
     """Return n factorial (for integers n >= 0 only)."""
     f = memo.get(n)
     if f:
@@ -343,10 +343,10 @@ def int_fac(n, memo={0:1, 1:1}):
         k += 1
     return p
 
-if MODE == 'gmpy':
-    int_fac = gmpy.fac
-elif MODE == 'sage':
-    int_fac = lambda n: int(sage.factorial(n))
+if BACKEND == 'gmpy':
+    ifac = gmpy.fac
+elif BACKEND == 'sage':
+    ifac = lambda n: int(sage.factorial(n))
     ifib = sage.fibonacci
 
 def list_primes(n):
@@ -359,7 +359,7 @@ def list_primes(n):
                 sieve[j] = 0
     return [p for p in sieve if p]
 
-if MODE == 'sage':
+if BACKEND == 'sage':
     def list_primes(n):
         return list(sage.primes(n+1))
 

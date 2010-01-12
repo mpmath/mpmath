@@ -15,15 +15,13 @@ This module implements gamma- and zeta-related functions:
 
 import math
 
-from settings import (\
-    MP_BASE, MP_ZERO, MP_ONE, MP_THREE, MODE, gmpy,
-    round_floor, round_ceiling, round_down, round_up,
-    round_nearest, round_fast
-)
+from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
 
-from libintmath import list_primes, int_fac, moebius
+from libintmath import list_primes, ifac, moebius
 
 from libmpf import (\
+    round_floor, round_ceiling, round_down, round_up,
+    round_nearest, round_fast,
     lshift, sqrt_fixed,
     fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
     from_int, to_int, to_fixed, from_man_exp, from_rational,
@@ -39,7 +37,7 @@ from libelefun import (\
     def_mpf_constant,
     mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
     mpf_exp, mpf_log, mpf_pow, mpf_cosh,
-    cos_sin, cosh_sinh, mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi,
+    mpf_cos_sin, mpf_cosh_sinh, mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi,
 )
 
 from libmpc import (\
@@ -66,7 +64,7 @@ from libmpc import (\
 @constant_memo
 def catalan_fixed(prec):
     prec = prec + 20
-    a = one = MP_ONE << prec
+    a = one = MPZ_ONE << prec
     s, t, n = 0, 1, 1
     while t:
         a *= 32 * n**3 * (2*n-1)
@@ -103,9 +101,9 @@ def catalan_fixed(prec):
 @constant_memo
 def khinchin_fixed(prec):
     wp = int(prec + prec**0.5 + 15)
-    s = MP_ZERO
+    s = MPZ_ZERO
     fac = from_int(4)
-    t = ONE = MP_ONE << wp
+    t = ONE = MPZ_ONE << wp
     pi = mpf_pi(wp)
     pipow = twopi2 = mpf_shift(mpf_mul(pi, pi, wp), 2)
     n = 1
@@ -172,9 +170,9 @@ def glaisher_fixed(prec):
     # Number of direct terms to sum before applying the Euler-Maclaurin
     # formula to the tail. TODO: choose more intelligently
     N = int(0.33*prec + 5)
-    ONE = MP_ONE << wp
+    ONE = MPZ_ONE << wp
     # Euler-Maclaurin, step 1: sum log(k)/k**2 for k from 2 to N-1
-    s = MP_ZERO
+    s = MPZ_ZERO
     for k in range(2, N):
         #print k, N
         s += log_int_fixed(k, wp) // k**2
@@ -231,10 +229,10 @@ def glaisher_fixed(prec):
 @constant_memo
 def apery_fixed(prec):
     prec += 20
-    d = MP_ONE << prec
-    term = MP_BASE(77) << prec
+    d = MPZ_ONE << prec
+    term = MPZ(77) << prec
     n = 1
-    s = MP_ZERO
+    s = MPZ_ZERO
     while term:
         s += term
         d *= (n**10)
@@ -273,7 +271,7 @@ def euler_fixed(prec):
     p = int(math.log((prec/4) * math.log(2), 2)) + 1
     n = 2**p
     A = U = -p*ln2_fixed(prec)
-    B = V = MP_ONE << prec
+    B = V = MPZ_ONE << prec
     k = 1
     while 1:
         B = B*n**2//k**2
@@ -431,7 +429,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n > 10:
             return mpf_bernoulli_huge(n, prec, rnd)
         numbers = {0:fone}
-        m, bin, bin1 = state = [2, MP_BASE(10), MP_ONE]
+        m, bin, bin1 = state = [2, MPZ(10), MPZ_ONE]
         bernoulli_cache[wp] = (numbers, state)
     while m <= n:
         #print m
@@ -442,7 +440,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         s = 0
         sexp = max(0, szbm)  - wp
         if m < 6:
-            a = MP_ZERO
+            a = MPZ_ZERO
         else:
             a = bin1
         for j in xrange(1, m//6+1):
@@ -677,11 +675,11 @@ def spouge_sum_complex(re, im, prec, a, c):
 # back here
 def mpf_gamma_int(n, prec, rounding=round_fast):
     if n < 1000:
-        return from_int(int_fac(n-1), prec, rounding)
+        return from_int(ifac(n-1), prec, rounding)
     # XXX: choose the cutoff less arbitrarily
     size = int(n*math.log(n,2))
     if prec > size/20.0:
-        return from_int(int_fac(n-1), prec, rounding)
+        return from_int(ifac(n-1), prec, rounding)
     return mpf_gamma(from_int(n), prec, rounding)
 
 def mpf_factorial(x, prec, rounding=round_fast):
@@ -712,7 +710,7 @@ def mpf_gamma(x, prec, rounding=round_fast, p1=1):
             raise ValueError("gamma function pole")
         # A direct factorial is fastest
         if exp + bc <= 10:
-            return from_int(int_fac((man<<exp)-p1), prec, rounding)
+            return from_int(ifac((man<<exp)-p1), prec, rounding)
     reflect = sign or exp+bc < -1
     if p1:
         # Should be done exactly!
@@ -896,9 +894,9 @@ def mpf_psi0(x, prec, rnd=round_fast):
     # Initial recurrence to obtain a large enough x
     m = to_int(x)
     n = int(0.11*wp) + 2
-    s = MP_ZERO
+    s = MPZ_ZERO
     x = to_fixed(x, wp)
-    one = MP_ONE << wp
+    one = MPZ_ONE << wp
     if m < n:
         for k in xrange(m, n):
             s -= (one << wp) // x
@@ -1103,9 +1101,9 @@ borwein_cache = {}
 def borwein_coefficients(n):
     if n in borwein_cache:
         return borwein_cache[n]
-    ds = [MP_ZERO] * (n+1)
-    d = MP_ONE
-    s = ds[0] = MP_ONE
+    ds = [MPZ_ZERO] * (n+1)
+    d = MPZ_ONE
+    s = ds[0] = MPZ_ONE
     for i in range(1, n+1):
         d = d * 4 * (n+i-1) * (n-i+1)
         d //= ((2*i) * ((2*i)-1))
@@ -1133,7 +1131,7 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     elif s >= wp*0.431:
         t = one = 1 << wp
         t += 1 << (wp - s)
-        t += one // (MP_THREE ** s)
+        t += one // (MPZ_THREE ** s)
         t += 1 << max(0, wp - s*2)
         return from_man_exp(t, -wp, prec, rnd)
     else:
@@ -1155,8 +1153,8 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     # Use Borwein's algorithm
     n = int(wp/2.54 + 5)
     d = borwein_coefficients(n)
-    t = MP_ZERO
-    s = MP_BASE(s)
+    t = MPZ_ZERO
+    s = MPZ(s)
     for k in xrange(n):
         t += (((-1)**k * (d[k] - d[n])) << wp) // (k+1)**s
     t = (t << wp) // (-d[n])
@@ -1206,12 +1204,12 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
         pi = mpf_pi(wp+wp2)
         d = mpf_div(mpf_pow(mpf_shift(pi, 1), s, wp2), pi, wp2)
         return mpf_mul(a,mpf_mul(b,mpf_mul(c,d,wp),wp),prec,rnd)
-    t = MP_ZERO
+    t = MPZ_ZERO
     #wp += 16 - (prec & 15)
     # Use Borwein's algorithm
     n = int(wp/2.54 + 5)
     d = borwein_coefficients(n)
-    t = MP_ZERO
+    t = MPZ_ZERO
     sf = to_fixed(s, wp)
     for k in xrange(n):
         u = from_man_exp(-sf*log_int_fixed(k+1, wp), -2*wp, wp)
@@ -1265,10 +1263,10 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
     d = borwein_coefficients(n)
     ref = to_fixed(re, wp)
     imf = to_fixed(im, wp)
-    tre = MP_ZERO
-    tim = MP_ZERO
-    one = MP_ONE << wp
-    one_2wp = MP_ONE << (2*wp)
+    tre = MPZ_ZERO
+    tim = MPZ_ZERO
+    one = MPZ_ONE << wp
+    one_2wp = MPZ_ONE << (2*wp)
     critical_line = re == fhalf
     for k in xrange(n):
         log = log_int_fixed(k+1, wp)
@@ -1281,7 +1279,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
             w *= (d[n] - d[k])
         else:
             w *= (d[k] - d[n])
-        wre, wim = cos_sin(from_man_exp(-imf * log, -2*wp), wp)
+        wre, wim = mpf_cos_sin(from_man_exp(-imf * log, -2*wp), wp)
         tre += (w * to_fixed(wre, wp)) >> wp
         tim += (w * to_fixed(wim, wp)) >> wp
     tre //= (-d[n])
@@ -1302,7 +1300,7 @@ def mpc_altzeta(s, prec, rnd=round_fast):
 
 def mpf_zetasum(s, a, b, prec):
     wp = prec + 10
-    t = MP_ZERO
+    t = MPZ_ZERO
     sf = to_fixed(s, wp)
     for k in xrange(a, b+1):
         u = from_man_exp(-sf*log_int_fixed(k, wp), -2*wp, wp)
@@ -1319,10 +1317,10 @@ def mpc_zetasum(s, a, b, prec):
     wp = prec + 10
     ref = to_fixed(re, wp)
     imf = to_fixed(im, wp)
-    tre = MP_ZERO
-    tim = MP_ZERO
-    one = MP_ONE << wp
-    one_2wp = MP_ONE << (2*wp)
+    tre = MPZ_ZERO
+    tim = MPZ_ZERO
+    one = MPZ_ONE << wp
+    one_2wp = MPZ_ONE << (2*wp)
     critical_line = re == fhalf
     for k in xrange(a, b+1):
         log = log_int_fixed(k, wp)
@@ -1330,7 +1328,7 @@ def mpc_zetasum(s, a, b, prec):
             w = one_2wp // sqrt_fixed(k << wp, wp)
         else:
             w = to_fixed(mpf_exp(from_man_exp(-ref*log, -2*wp), wp), wp)
-        wre, wim = cos_sin(from_man_exp(-imf * log, -2*wp), wp)
+        wre, wim = mpf_cos_sin(from_man_exp(-imf * log, -2*wp), wp)
         tre += (w * to_fixed(wre, wp)) >> wp
         tim += (w * to_fixed(wim, wp)) >> wp
     tre = from_man_exp(tre, -wp, prec, 'n')

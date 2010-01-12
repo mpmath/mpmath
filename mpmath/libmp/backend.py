@@ -1,43 +1,15 @@
 import os
 import sys
 
-# All supported rounding modes
-round_nearest = intern('n')
-round_floor = intern('f')
-round_ceiling = intern('c')
-round_up = intern('u')
-round_down = intern('d')
-
-round_fast = round_down
-
-def prec_to_dps(n):
-    """Return number of accurate decimals that can be represented
-    with a precision of n bits."""
-    return max(1, int(round(int(n)/3.3219280948873626)-1))
-
-def dps_to_prec(n):
-    """Return the number of bits required to represent n decimals
-    accurately."""
-    return max(1, int(round((int(n)+1)*3.3219280948873626)))
-
-def repr_dps(n):
-    """Return the number of decimal digits required to represent
-    a number with n-bit precision so that it can be uniquely
-    reconstructed from the representation."""
-    dps = prec_to_dps(n)
-    if dps == 15:
-        return 17
-    return dps + 3
-
 #----------------------------------------------------------------------------#
 # Support GMPY for high-speed large integer arithmetic.                      #
 #                                                                            #
 # To allow an external module to handle arithmetic, we need to make sure     #
-# that all high-precision variables are declared of the correct type. MP_BASE#
+# that all high-precision variables are declared of the correct type. MPZ    #
 # is the constructor for the high-precision type. It defaults to Python's    #
 # long type but can be assinged another type, typically gmpy.mpz.            #
 #                                                                            #
-# MP_BASE must be used for the mantissa component of an mpf and must be used #
+# MPZ must be used for the mantissa component of an mpf and must be used     #
 # for internal fixed-point operations.                                       #
 #                                                                            #
 # Side-effects                                                               #
@@ -49,15 +21,15 @@ def repr_dps(n):
 gmpy = None
 sage = None
 
-MODE = 'python'
-MP_BASE = long
+BACKEND = 'python'
+MPZ = long
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
         import gmpy
         if gmpy.version() >= '1.03':
-            MODE = 'gmpy'
-            MP_BASE = gmpy.mpz
+            BACKEND = 'gmpy'
+            MPZ = gmpy.mpz
     except:
         pass
 
@@ -66,25 +38,25 @@ if 'MPMATH_NOSAGE' not in os.environ:
         import sage.all
         if hasattr(sage.all.Integer, "trailing_zero_bits"):
             sage = sage.all
-            MODE = 'sage'
-            MP_BASE = sage.Integer
+            BACKEND = 'sage'
+            MPZ = sage.Integer
     except:
         pass
 
-if os.environ.has_key('MPMATH_STRICT'):
+if 'MPMATH_STRICT' in os.environ:
     STRICT = True
 else:
     STRICT = False
 
-MP_BASE_TYPE = type(MP_BASE(0))
-MP_ZERO = MP_BASE(0)
-MP_ONE = MP_BASE(1)
-MP_TWO = MP_BASE(2)
-MP_THREE = MP_BASE(3)
-MP_FIVE = MP_BASE(5)
+MPZ_TYPE = type(MPZ(0))
+MPZ_ZERO = MPZ(0)
+MPZ_ONE = MPZ(1)
+MPZ_TWO = MPZ(2)
+MPZ_THREE = MPZ(3)
+MPZ_FIVE = MPZ(5)
 
-if MODE == 'gmpy':
-    int_types = (int, long, MP_BASE_TYPE)
-else:
+if BACKEND == 'python':
     int_types = (int, long)
+else:
+    int_types = (int, long, MPZ_TYPE)
 
