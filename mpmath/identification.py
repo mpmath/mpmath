@@ -145,14 +145,14 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     if verbose:
         print "PSLQ using prec %i and tol %s" % (prec, ctx.nstr(tol))
 
-    tol = tol.to_fixed(prec)
+    tol = ctx.to_fixed(tol, prec)
     assert tol
 
     # Convert to fixed-point numbers. The dummy None is added so we can
     # use 1-based indexing. (This just allows us to be consistent with
     # Bailey's indexing. The algorithm is 100 lines long, so debugging
     # a single wrong index can be painful.)
-    x = [None] + [ctx.mpf(xk).to_fixed(prec) for xk in x]
+    x = [None] + [ctx.to_fixed(ctx.mpf(xk), prec) for xk in x]
 
     # Sanity check on magnitudes
     minx = min(abs(xx) for xx in x[1:])

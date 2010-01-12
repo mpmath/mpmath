@@ -2407,6 +2407,8 @@ maxterms, or set zeroprec."""
             v = ctx.make_mpc(libmp.mpc_zetasum(s._mpc_, a, b, prec))
         return v
 
+    def to_fixed(ctx, x, prec):
+        return x.to_fixed(prec)
 
 class PrecisionManager:
     def __init__(self, ctx, precfun, dpsfun, normalize_output=False):

@@ -79,7 +79,7 @@ def nthroot(x, n):
     except ValueError:
         return complex(x) ** r
 
-def cos_sin(x):
+def cos_sin(x, **kwargs):
     if type(x) is complex:
         return cmath.cos(x), cmath.sin(x)
     else:

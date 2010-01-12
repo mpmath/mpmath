@@ -248,3 +248,6 @@ class FPContext(StandardBaseContext):
         return ctx.digamma(x) + ctx.euler
 
     nstr = str
+
+    def to_fixed(ctx, x, prec):
+        return int(math.ldexp(x, prec))
