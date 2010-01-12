@@ -807,7 +807,7 @@ def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
         # also check for near division by zero?)
         for k, w in enumerate(w_s):
             if not w:
-                if ctx.re(c_s[k]) <= 0:
+                if ctx.re(c_s[k]) <= 0 and c_s[k]:
                     perturb = recompute = True
                     have_singular_nongamma_weight = True
         pole_count = [0, 0, 0]

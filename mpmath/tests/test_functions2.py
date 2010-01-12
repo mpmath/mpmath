@@ -1120,3 +1120,8 @@ def test_hyper_param_accuracy():
     (hyp1f1(-5000, 1500, 100)*10**185).ae(9.1501213424563944311)
     assert hyp0f1(fadd(-20,'1e-100',exact=True), 0.25).ae(1.85014429040102783e+49)
     assert hyp0f1((-20*10**100+1, 10**100), 0.25).ae(1.85014429040102783e+49)
+
+def test_hypercomb_zero_pow():
+    # check that 0^0 = 1
+    assert hypercomb(lambda a: (([0],[a],[],[],[],[],0),), [0]) == 1
+    assert meijerg([[-1.5],[]],[[0],[-0.75]],0).ae(1.4464090846320771425)
