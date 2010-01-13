@@ -251,3 +251,7 @@ class FPContext(StandardBaseContext):
 
     def to_fixed(ctx, x, prec):
         return int(math.ldexp(x, prec))
+
+    def rand(ctx):
+        import random
+        return random.random()

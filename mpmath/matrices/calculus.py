@@ -302,14 +302,14 @@ class MatrixCalculusMethods:
         # Trivial
         if A*0 == A:
             return A
-        tol = +ctx.eps/2
         prec = ctx.prec
         if _may_rotate:
             d = ctx.det(A)
-            if ctx.im(d).ae(0) and ctx.re(d) < 0:
+            if abs(ctx.im(d)) < 16*ctx.eps and ctx.re(d) < 0:
                 return ctx._sqrtm_rot(A, _may_rotate-1)
         try:
             ctx.prec += 10
+            tol = ctx.eps * 128
             Y = A
             Z = I = A**0
             k = 0
@@ -331,6 +331,8 @@ class MatrixCalculusMethods:
                 if _may_rotate and k > 6 and not mag1 < mag2 * 0.001:
                     return ctx._sqrtm_rot(A, _may_rotate-1)
                 k += 1
+                if k > ctx.prec:
+                    raise ctx.NoConvergence
         finally:
             ctx.prec = prec
         Y *= 1
@@ -419,10 +421,10 @@ class MatrixCalculusMethods:
 
         """
         A = ctx.matrix(A)
-        tol = +ctx.eps
         prec = ctx.prec
         try:
             ctx.prec += 10
+            tol = ctx.eps * 128
             I = A**0
             B = A
             n = 0
@@ -443,6 +445,8 @@ class MatrixCalculusMethods:
                 if ctx.mnorm(T, 'inf') < tol:
                     break
                 k += 1
+                if k > ctx.prec:
+                    raise ctx.NoConvergence
         finally:
             ctx.prec = prec
         L *= 2**n
