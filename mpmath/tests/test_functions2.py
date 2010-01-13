@@ -408,8 +408,10 @@ def test_hyper_2f1():
 def test_hyper_2f1_hard():
     mp.dps = 15
     # Singular cases
-    assert hyp2f1(2,-1,-1,3) == 7
-    assert hyp2f1(2,-2,-2,3) == 34
+    assert hyp2f1(2,-1,-1,3).ae(0.25)
+    assert hyp2f1(2,-2,-2,3).ae(0.25)
+    assert hyp2f1(2,-1,-1,3,eliminate=False) == 7
+    assert hyp2f1(2,-2,-2,3,eliminate=False) == 34
     assert hyp2f1(2,-2,-3,3) == 14
     assert hyp2f1(2,-3,-2,3) == inf
     assert hyp2f1(2,-1.5,-1.5,3) == 0.25
@@ -418,9 +420,9 @@ def test_hyper_2f1_hard():
     assert hyp2f1(0,0,0,0) == 1
     assert isnan(hyp2f1(1,1,0,0))
     assert hyp2f1(2,-1,-5, 0.25+0.25j).ae(1.1+0.1j)
-    assert hyp2f1(2,-5,-5, 0.25+0.25j).ae(163./128 + 125./128*j)
+    assert hyp2f1(2,-5,-5, 0.25+0.25j, eliminate=False).ae(163./128 + 125./128*j)
     assert hyp2f1(0.7235, -1, -5, 0.3).ae(1.04341)
-    assert hyp2f1(0.7235, -5, -5, 0.3).ae(1.2939225017815903812)
+    assert hyp2f1(0.7235, -5, -5, 0.3, eliminate=False).ae(1.2939225017815903812)
     assert hyp2f1(-1,-2,4,1) == 1.5
     assert hyp2f1(1,2,-3,1) == inf
     assert hyp2f1(-2,-2,1,1) == 6
@@ -428,7 +430,7 @@ def test_hyper_2f1_hard():
     assert hyp2f1(0,-6,-4,1) == 1
     assert hyp2f1(0,-3,-4,1) == 1
     assert hyp2f1(0,0,0,1) == 1
-    assert hyp2f1(1,0,0,1) == 1
+    assert hyp2f1(1,0,0,1,eliminate=False) == 1
     assert hyp2f1(1,1,0,1) == inf
     assert hyp2f1(1,-6,-4,1) == inf
     assert hyp2f1(-7.2,-0.5,-4.5,1) == 0

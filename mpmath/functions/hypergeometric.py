@@ -191,45 +191,82 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     """
     Hypergeometric function, general case.
     """
+    z = ctx.convert(z)
     p = len(a_s)
     q = len(b_s)
-    z = ctx.convert(z)
-    degree = p, q
-    # Handle common cases
+    a_s = map(ctx.convert_maybe_rational, a_s)
+    b_s = map(ctx.convert_maybe_rational, b_s)
+    # Reduce degree by eliminating common parameters
+    if kwargs.get('eliminate', True):
+        i = 0
+        while i < q and a_s:
+            b = b_s[i]
+            if b in a_s:
+                a_s.remove(b)
+                b_s.remove(b)
+                p -= 1
+                q -= 1
+            else:
+                i += 1
+    # Handle special cases
     if p == 0:
-        if q == 1:
-            return ctx.hyp0f1(b_s[0], z, **kwargs)
-        elif q == 0:
-            return ctx.exp(z)
+        if   q == 1: return ctx._hyp0f1(b_s, z, **kwargs)
+        elif q == 0: return ctx.exp(z)
     elif p == 1:
-        if q == 1:
-            return ctx.hyp1f1(a_s[0], b_s[0], z, **kwargs)
-        elif q == 2:
-            return ctx.hyp1f2(a_s[0], b_s[0], b_s[1], z, **kwargs)
-        elif q == 0:
-            return (1-z)**(-a_s[0])
+        if   q == 1: return ctx._hyp1f1(a_s, b_s, z, **kwargs)
+        elif q == 2: return ctx._hyp1f2(a_s, b_s, z, **kwargs)
+        elif q == 0: return ctx._hyp1f0(a_s[0][0], z)
     elif p == 2:
-        if q == 1:
-            return ctx.hyp2f1(a_s[0], a_s[1], b_s[0], z, **kwargs)
-        elif q == 2:
-            return ctx.hyp2f2(a_s[0], a_s[1], b_s[0], b_s[1], z, **kwargs)
-        elif q == 3:
-            return ctx.hyp2f3(a_s[0], a_s[1], b_s[0], b_s[1], b_s[2], z, **kwargs)
-        elif q == 0:
-            return ctx.hyp2f0(a_s[0], a_s[1], z, **kwargs)
+        if   q == 1: return ctx._hyp2f1(a_s, b_s, z, **kwargs)
+        elif q == 2: return ctx._hyp2f2(a_s, b_s, z, **kwargs)
+        elif q == 3: return ctx._hyp2f3(a_s, b_s, z, **kwargs)
+        elif q == 0: return ctx._hyp2f0(a_s, b_s, z, **kwargs)
     elif p == q+1:
         return ctx._hypq1fq(p, q, a_s, b_s, z, **kwargs)
-    coeffs = map(ctx.convert_maybe_rational, a_s+b_s)
-    coeffs, types = zip(*coeffs)
+    elif p > q+1 and not kwargs.get('force_series'):
+        return ctx._hyp_borel(p, q, a_s, b_s, z, **kwargs)
+    coeffs, types = zip(*(a_s+b_s))
     return ctx.hypsum(p, q, types, coeffs, z, **kwargs)
 
 @defun
-def hyp0f1(ctx, b, z, **kwargs):
-    """
-    Hypergeometric 0F1.
-    """
-    z = ctx.convert(z)
-    b, btype = ctx.convert_maybe_rational(b)
+def hyp0f1(ctx,b,z,**kwargs):
+    return ctx.hyper([],[b],z,**kwargs)
+
+@defun
+def hyp1f1(ctx,a,b,z,**kwargs):
+    return ctx.hyper([a],[b],z,**kwargs)
+
+@defun
+def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
+    return ctx.hyper([a1],[b1,b2],z,**kwargs)
+
+@defun
+def hyp2f1(ctx,a,b,c,z,**kwargs):
+    return ctx.hyper([a,b],[c],z,**kwargs)
+
+@defun
+def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
+    return ctx.hyper([a1,a2],[b1,b2],z,**kwargs)
+
+@defun
+def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
+    return ctx.hyper([a1,a2],[b1,b2,b3],z,**kwargs)
+
+@defun
+def hyp2f0(ctx,a,b,z,**kwargs):
+    return ctx.hyper([a,b],[],z,**kwargs)
+
+@defun
+def hyp3f2(ctx,a1,a2,a3,b1,b2,z,**kwargs):
+    return ctx.hyper([a1,a2,a3],[b1,b2],z,**kwargs)
+
+@defun_wrapped
+def _hyp1f0(ctx, a, z):
+    return (1-z) ** (-a)
+
+@defun
+def _hyp0f1(ctx, b_s, z, **kwargs):
+    (b, btype), = b_s
     if z:
         magz = ctx.mag(z)
     else:
@@ -266,13 +303,9 @@ def hyp0f1(ctx, b, z, **kwargs):
     return ctx.hypsum(0, 1, (btype,), [b], z, **kwargs)
 
 @defun
-def hyp1f1(ctx, a, b, z, **kwargs):
-    """
-    Hypergeometric 1F1.
-    """
-    z = ctx.convert(z)
-    a, atype = ctx.convert_maybe_rational(a)
-    b, btype = ctx.convert_maybe_rational(b)
+def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
+    (a, atype), = a_s
+    (b, btype), = b_s
     if not z:
         return ctx.one+z
     magz = ctx.mag(z)
@@ -302,9 +335,7 @@ def hyp1f1(ctx, a, b, z, **kwargs):
                 pass
         finally:
             ctx.prec -= magz
-    #print "TEST", ctx.prec, a._v, b._v, z._v
     v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
-    #print "1F1", complex(a), complex(b), complex(z), complex(v)
     return v
 
 def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
@@ -362,15 +393,9 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
     return f1
 
 @defun
-def hyp2f1(ctx,a,b,c,z,**kwargs):
-    """
-    Hypergeometric 2F1.
-    """
-    z = ctx.convert(z)
-    a, atype = ctx.convert_maybe_rational(a)
-    b, btype = ctx.convert_maybe_rational(b)
-    c, ctype = ctx.convert_maybe_rational(c)
-
+def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
+    (a, atype), (b, btype) = a_s
+    (c, ctype), = b_s
     if z == 1:
         # TODO: the following logic can be simplified
         convergent = ctx.re(c-a-b) > 0
@@ -404,10 +429,6 @@ def hyp2f1(ctx,a,b,c,z,**kwargs):
         else:
             # Pole in series
             return ctx.inf
-    elif a == c:
-        return (1-z)**(-b)
-    elif b == c:
-        return (1-z)**(-a)
 
     absz = abs(z)
 
@@ -455,9 +476,6 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     r"""
     Evaluates 3F2, 4F3, 5F4, ...
     """
-    z = ctx.convert(z)
-    a_s = map(ctx.convert_maybe_rational, a_s)
-    b_s = map(ctx.convert_maybe_rational, b_s)
     a_s, a_types = zip(*a_s)
     b_s, b_types = zip(*b_s)
     a_s = list(a_s)
@@ -559,14 +577,73 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
         return Ts
     return ctx.hypercomb(h, a_s+b_s, **kwargs)
 
+@defun
+def _hyp_borel(ctx, p, q, a_s, b_s, z, **kwargs):
+    if a_s:
+        a_s, a_types = zip(*a_s)
+        a_s = list(a_s)
+    else:
+        a_s, a_types = [], ()
+    if b_s:
+        b_s, b_types = zip(*b_s)
+        b_s = list(b_s)
+    else:
+        b_s, b_types = [], ()
+    kwargs['maxterms'] = kwargs.get('maxterms', ctx.prec)
+    try:
+        return ctx.hypsum(p, q, a_types+b_types, a_s+b_s, z, **kwargs)
+    except ctx.NoConvergence:
+        pass
+    prec = ctx.prec
+    try:
+        tol = kwargs.get('asymp_tol', ctx.eps/4)
+        ctx.prec += 10
+        # hypsum is has a conservative tolerance. So we try again:
+        def term(k, cache={0:ctx.one}):
+            if k in cache:
+                return cache[k]
+            t = term(k-1)
+            for a in a_s: t *= (a+(k-1))
+            for b in b_s: t /= (b+(k-1))
+            t *= z
+            t /= k
+            cache[k] = t
+            return t
+        s = ctx.one
+        for k in xrange(1, ctx.prec):
+            t = term(k)
+            s += t
+            if abs(t) <= tol:
+                return s
+    finally:
+        ctx.prec = prec
+    if p <= q+3:
+        contour = kwargs.get('contour')
+        if not contour:
+            if ctx.arg(z) < 0.25:
+                u = z / max(1, abs(z))
+                if ctx.arg(z) >= 0:
+                    contour = [0, 2j, (2j+2)/u, 2/u, ctx.inf]
+                else:
+                    contour = [0, -2j, (-2j+2)/u, 2/u, ctx.inf]
+                #contour = [0, 2j/z, 2/z, ctx.inf]
+                #contour = [0, 2j, 2/z, ctx.inf]
+                #contour = [0, 2j, ctx.inf]
+            else:
+                contour = [0, ctx.inf]
+        quad_kwargs = kwargs.get('quad_kwargs', {})
+        def g(t):
+            return ctx.exp(-t)*ctx.hyper(a_s, b_s+[1], t*z)
+        I, err = ctx.quad(g, contour, error=True, **quad_kwargs)
+        if err <= abs(I)*ctx.eps*8:
+            return I
+    raise ctx.NoConvergence
+
 
 @defun
-def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
-    a1, a1type = ctx.convert_maybe_rational(a1)
-    a2, a2type = ctx.convert_maybe_rational(a2)
-    b1, b1type = ctx.convert_maybe_rational(b1)
-    b2, b2type = ctx.convert_maybe_rational(b2)
-    z = ctx.convert(z)
+def _hyp2f2(ctx, a_s, b_s, z, **kwargs):
+    (a1, a1type), (a2, a2type) = a_s
+    (b1, b1type), (b2, b2type) = b_s
 
     absz = abs(z)
     magz = ctx.mag(z)
@@ -633,11 +710,9 @@ def hyp2f2(ctx,a1,a2,b1,b2,z,**kwargs):
 
 
 @defun
-def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
-    a1, a1type = ctx.convert_maybe_rational(a1)
-    b1, b1type = ctx.convert_maybe_rational(b1)
-    b2, b2type = ctx.convert_maybe_rational(b2)
-    z = ctx.convert(z)
+def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
+    (a1, a1type), = a_s
+    (b1, b1type), (b2, b2type) = b_s
 
     absz = abs(z)
     magz = ctx.mag(z)
@@ -717,16 +792,9 @@ def hyp1f2(ctx,a1,b1,b2,z,**kwargs):
 
 
 @defun
-def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
-    a1, a1type = ctx.convert_maybe_rational(a1)
-    a2, a2type = ctx.convert_maybe_rational(a2)
-    b1, b1type = ctx.convert_maybe_rational(b1)
-    b2, b2type = ctx.convert_maybe_rational(b2)
-    b3, b3type = ctx.convert_maybe_rational(b3)
-    z = ctx.convert(z)
-
-    #return ctx.hypsum(a1r+a2r, a1f+a2f, a1c+a2c, b1r+b2r+b3r,
-    #    b1f+b2f+b3f, b1c+b2c+b3c, z)
+def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
+    (a1, a1type), (a2, a2type) = a_s
+    (b1, b1type), (b2, b2type), (b3, b3type) = b_s
 
     absz = abs(z)
     magz = ctx.mag(z)
@@ -805,18 +873,11 @@ def hyp2f3(ctx,a1,a2,b1,b2,b3,z,**kwargs):
 
     return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z, **kwargs)
 
-@defun
-def hyp3f2(ctx, a1, a2, a3, b1, b2, z, **kwargs):
-    return ctx._hypq1fq(3, 2, [a1,a2,a3], [b1,b2], z, **kwargs)
+
 
 @defun
-def hyp2f0(ctx, a, b, z, **kwargs):
-    """
-    Hypergeometric 2F0.
-    """
-    a, atype = ctx.convert_maybe_rational(a)
-    b, btype = ctx.convert_maybe_rational(b)
-    z = ctx.convert(z)
+def _hyp2f0(ctx, a_s, b_s, z, **kwargs):
+    (a, atype), (b, btype) = a_s
     # We want to try aggressively to use the asymptotic expansion,  
     # and fall back only when absolutely necessary
     try:
@@ -834,7 +895,7 @@ def hyp2f0(ctx, a, b, z, **kwargs):
     return ctx.hypercomb(h, [a, 1+a-b], **kwargs)
 
 @defun
-def hyperu(ctx, a,b,z, **kwargs):
+def hyperu(ctx, a, b, z, **kwargs):
     a, atype = ctx.convert_maybe_rational(a)
     b, btype = ctx.convert_maybe_rational(b)
     z = ctx.convert(z)

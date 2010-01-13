@@ -2597,7 +2597,7 @@ floats and complex numbers::
 
 The `\,_0F_0` and `\,_1F_0` series are just elementary functions::
 
-    >>> a, z = sqrt(2), pi
+    >>> a, z = sqrt(2), +pi
     >>> hyper([],[],z)
     23.14069263277926900572909
     >>> exp(z)
@@ -2625,17 +2625,9 @@ series terminates before the division by zero occurs)::
     >>> hyper([1,1,1,-1],[-2,5],1)
     1.1
 
-Generally, the radius of convergence of the hypergeometric series is either 0
-(if `p > q+1`), 1 (if `p = q+1`), or `\infty`. A divergent series will evaluate
-if an analytic continuation or regularization is implemented (see the list of
-:func:`hypXfX` functions); otherwise an exception is raised::
-
-    >>> hyper([1,1], [], 0.5)          # regularization of 2F0, implemented
-    (1.340965419580146562086448 + 0.8503366631752726568782447j)
-    >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1, not implemented
-    Traceback (most recent call last):
-      ...
-    NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
+Except for polynomial cases, the radius of convergence `R` of the hypergeometric
+series is either `R = \infty` (if `p \le q`), `R = 1` (if `p = q+1`), or
+`R = 0` (if `p > q+1`).
 
 The analytic continuations of the functions with `p = q+1`, i.e. `\,_2F_1`, 
 `\,_3F_2`,  `\,_4F_3`, etc, are all implemented and therefore these functions
@@ -2655,6 +2647,44 @@ but functions of higher degree are also supported via :func:`hyper`::
 Please note that, as currently implemented, evaluation of `\,_pF_{p-1}`
 with `p \ge 3` may be slow or inaccurate when `|z-1|` is small,
 for some parameter values.
+
+When `p > q+1`, ``hyper`` computes the (iterated) Borel sum of the divergent
+series. For `\,_2F_0` the Borel sum has an analytic solution and can be
+computed efficiently (see :func:`hyp2f0`). For higher degrees, the functions
+is evaluated first by attempting to sum it directly as an asymptotic
+series (this only works for tiny `|z|`), and then by evaluating the Borel
+regularized sum using numerical integration. Except for
+special parameter combinations, this can be extremely slow.
+
+    >>> hyper([1,1], [], 0.5)          # regularization of 2F0
+    (1.340965419580146562086448 + 0.8503366631752726568782447j)
+    >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1
+    (1.108287213689475145830699 + 0.5327107430640678181200491j)
+
+With the following magnitude of argument, the asymptotic series for `\,_3F1`
+gives only a few digits. Using Borel summation, ``hyper`` can produce
+a value with full accuracy::
+
+    >>> mp.dps = 15
+    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)
+    Traceback (most recent call last):
+      ...
+    NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
+    >>> hyper([2,0.5,4], [5.25], '0.08', asymp_tol=1e-4)
+    1.0725535790737
+    >>> hyper([2,0.5,4], [5.25], '0.08')
+    (1.07269542893559 + 5.54668863216891e-5j)
+    >>> hyper([2,0.5,4], [5.25], '-0.08', asymp_tol=1e-4)
+    0.946344925484879
+    >>> hyper([2,0.5,4], [5.25], '-0.08')
+    0.946312503737771
+    >>> mp.dps = 25
+    >>> hyper([2,0.5,4], [5.25], '-0.08')
+    0.9463125037377662296700858
+
+Note that with the positive `z` value, there is a complex part in the
+correct result, which falls below the tolerance of the asymptotic series.
+
 """
 
 hypercomb = r"""
