@@ -227,7 +227,7 @@ def test_exp_pade():
         a = diag([1,2,3])
         a1 = m**-1 * a * m
         mp.dps = dps
-        e1 = exp_pade(a1)
+        e1 = expm(a1, method='pade')
         mp.dps = dps + extra
         e2 = m * a1 * m**-1
         d = e2 - a

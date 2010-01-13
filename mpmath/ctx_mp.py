@@ -1954,6 +1954,8 @@ maxterms, or set zeroprec."""
                 if abs(x.real) < min(tol, absx*tol):
                     return ctx.mpc(0, x.imag)
         except TypeError:
+            if isinstance(x, ctx.matrix):
+                return x.apply(lambda a: ctx.chop(a, tol))
             if hasattr(x, "__iter__"):
                 return [ctx.chop(a, tol) for a in x]
         return x

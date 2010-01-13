@@ -329,6 +329,16 @@ class _matrix(object):
         else:
             raise TypeError('could not interpret given arguments')
 
+    def apply(self, f):
+        """
+        Return a copy of self with the function `f` applied elementwise.
+        """
+        new = self.ctx.matrix(self.__rows, self.__cols)
+        for i in xrange(self.__rows):
+            for j in xrange(self.__cols):
+                new[i,j] = f(self[i,j])
+        return new
+
     def __nstr__(self, n=None):
         # Build table of string representations of the elements
         res = []

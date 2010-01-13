@@ -6,6 +6,7 @@ from calculus.calculus import CalculusMethods
 from calculus.optimization import OptimizationMethods
 from calculus.odes import ODEMethods
 from matrices.matrices import MatrixMethods
+from matrices.calculus import MatrixCalculusMethods
 from matrices.linalg import LinearAlgebraMethods
 from identification import IdentificationMethods
 from visualization import VisualizationMethods
@@ -20,6 +21,7 @@ class StandardBaseContext(Context,
     QuadratureMethods,
     CalculusMethods,
     MatrixMethods,
+    MatrixCalculusMethods,
     LinearAlgebraMethods,
     IdentificationMethods,
     OptimizationMethods,
@@ -44,6 +46,7 @@ class StandardBaseContext(Context,
     def bad_domain(ctx, msg):
         raise ValueError(msg)
 
+    # XXX: duplicated
     def chop(ctx, x, tol=None):
         if tol is None:
             tol = 100*ctx.eps
@@ -58,11 +61,14 @@ class StandardBaseContext(Context,
                 if abs(x.real) < min(tol, absx*tol):
                     return ctx.mpc(0, x.imag)
         except (TypeError, ValueError):
+            if isinstance(x, ctx.matrix):
+                return x.apply(lambda a: ctx.chop(a, tol))
             if hasattr(x, "__iter__"):
                 return [ctx.chop(a, tol) for a in x]
             raise
         return x
 
+    # XXX: duplicated
     def almosteq(ctx, s, t, rel_eps=None, abs_eps=None):
         t = ctx.convert(t)
         if abs_eps is None and rel_eps is None:
@@ -82,6 +88,7 @@ class StandardBaseContext(Context,
             err = diff/abss
         return err <= rel_eps
 
+    # XXX: duplicated
     def arange(ctx, *args):
         r"""
         This is a generalized version of Python's :func:`range` function
