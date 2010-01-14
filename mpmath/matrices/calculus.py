@@ -480,6 +480,10 @@ class MatrixCalculusMethods:
             [ 4.0  1.0   4.0]
             [ 7.0  8.0   9.0]
             [10.0  2.0  11.0]
+            >>> powm(extraprec(5)(powm)(A, -1.5), -1/(1.5))
+            [ 4.0  1.0   4.0]
+            [ 7.0  8.0   9.0]
+            [10.0  2.0  11.0]
 
         A Fibonacci-generating matrix::
 
@@ -509,10 +513,7 @@ class MatrixCalculusMethods:
                 v = A ** int(r)
             elif ctx.isint(r*2):
                 y = int(r*2)
-                if y < 0:
-                    v = ctx.inv(ctx.sqrtm(A)) ** -y
-                else:
-                    v = ctx.sqrtm(A) ** y
+                v = ctx.sqrtm(A) ** y
             else:
                 v = ctx.expm(r*ctx.logm(A))
         finally:

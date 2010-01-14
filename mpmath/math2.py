@@ -72,6 +72,9 @@ cosh = _mathfun_real(math.cosh, cmath.cosh)
 sinh = _mathfun_real(math.sinh, cmath.sinh)
 tanh = _mathfun_real(math.tanh, cmath.tanh)
 
+floor = _mathfun_real(math.floor, None)
+ceil = _mathfun_real(math.ceil, None)
+
 def nthroot(x, n):
     r = 1./n
     try:

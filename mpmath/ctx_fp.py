@@ -6,7 +6,8 @@ import math2
 
 import function_docs
 
-from libmp import mpf_bernoulli, to_float, NoConvergence
+from libmp import mpf_bernoulli, to_float
+import libmp
 
 class FPContext(StandardBaseContext):
     """
@@ -23,6 +24,8 @@ class FPContext(StandardBaseContext):
         ctx.pretty = False
 
     _mpq = lambda cls, x: float(x[0])/x[1]
+
+    NoConvergence = libmp.NoConvergence
 
     def _get_prec(ctx): return 53
     def _set_prec(ctx, p): return
@@ -141,6 +144,8 @@ class FPContext(StandardBaseContext):
     tanh = staticmethod(math2.tanh)
     gamma = staticmethod(math2.gamma)
     fac = factorial = staticmethod(math2.factorial)
+    floor = staticmethod(math2.floor)
+    ceil = staticmethod(math2.ceil)
 
     # XXX: math2
     def arg(ctx, z):
@@ -187,7 +192,7 @@ class FPContext(StandardBaseContext):
             return False
 
     def nint_distance(ctx, z):
-        n = round(z)
+        n = round(z.real)
         if n == z:
             return n, ctx.ninf
         return n, ctx.mag(abs(z-n))
@@ -223,7 +228,7 @@ class FPContext(StandardBaseContext):
             if abs(t) < ctx.eps:
                 break
             if k > maxterms:
-                raise NoConvergence
+                raise ctx.NoConvergence
         return s
 
     def atan2(ctx, x, y):
