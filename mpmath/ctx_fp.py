@@ -146,17 +146,13 @@ class FPContext(StandardBaseContext):
     fac = factorial = staticmethod(math2.factorial)
     floor = staticmethod(math2.floor)
     ceil = staticmethod(math2.ceil)
+    cospi = staticmethod(math2.cospi)
+    sinpi = staticmethod(math2.sinpi)
 
     # XXX: math2
     def arg(ctx, z):
         z = complex(z)
         return math.atan2(z.imag, z.real)
-
-    def sinpi(ctx, x):
-        return ctx.sin(ctx.pi*x)
-
-    def cospi(ctx, x):
-        return ctx.cos(ctx.pi*x)
 
     def expj(ctx, x):
         return ctx.exp(ctx.j*x)
@@ -212,7 +208,7 @@ class FPContext(StandardBaseContext):
     def is_complex_type(ctx, z):
         return isinstance(z, complex)
 
-    def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs): 
+    def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs):
         s = t = 1.0
         k = 0
         coeffs = list(coeffs)

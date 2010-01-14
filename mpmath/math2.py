@@ -72,8 +72,10 @@ cosh = _mathfun_real(math.cosh, cmath.cosh)
 sinh = _mathfun_real(math.sinh, cmath.sinh)
 tanh = _mathfun_real(math.tanh, cmath.tanh)
 
-floor = _mathfun_real(math.floor, None)
-ceil = _mathfun_real(math.ceil, None)
+floor = _mathfun_real(math.floor,
+    lambda z: complex(math.floor(z.real), math.floor(z.imag)))
+ceil = _mathfun_real(math.ceil,
+    lambda z: complex(math.ceil(z.real), math.ceil(z.imag)))
 
 def nthroot(x, n):
     r = 1./n
@@ -87,6 +89,51 @@ def cos_sin(x, **kwargs):
         return cmath.cos(x), cmath.sin(x)
     else:
         return math.cos(x), math.sin(x)
+
+def _sinpi_real(x):
+    n, r = divmod(x, 0.5)
+    r *= pi
+    n %= 4
+    if n == 0: return math.sin(r)
+    if n == 1: return math.cos(r)
+    if n == 2: return -math.sin(r)
+    if n == 3: return -math.cos(r)
+
+def _cospi_real(x):
+    n, r = divmod(x, 0.5)
+    r *= pi
+    n %= 4
+    if n == 0: return math.cos(r)
+    if n == 1: return -math.sin(r)
+    if n == 2: return -math.cos(r)
+    if n == 3: return math.sin(r)
+
+def _sinpi_complex(z):
+    n, r = divmod(z.real, 0.5)
+    z = pi*complex(r, z.imag)
+    n %= 4
+    if n == 0: return cmath.sin(z)
+    if n == 1: return cmath.cos(z)
+    if n == 2: return -cmath.sin(z)
+    if n == 3: return -cmath.cos(z)
+
+def _cospi_complex(z):
+    n, r = divmod(z, 0.5)
+    z = pi*complex(r, z.imag)
+    n %= 4
+    if n == 0: return cmath.cos(r)
+    if n == 1: return -cmath.sin(r)
+    if n == 2: return -cmath.cos(r)
+    if n == 3: return cmath.sin(r)
+
+cospi = _mathfun_real(_cospi_real, _cospi_complex)
+sinpi = _mathfun_real(_sinpi_real, _sinpi_complex)
+
+def tanpi(x):
+    return sinpi(x) / cospi(x)
+
+def cotpi(x):
+    return cospi(x) / sinpi(x)
 
 INF = 1e300*1e300
 NINF = -INF
@@ -116,7 +163,7 @@ def _gamma_real(x):
             return _exact_gamma[_intx]
     if x < 0.5:
         # TODO: sinpi
-        return pi / (math.sin(pi*x)*_gamma_real(1-x))
+        return pi / (_sinpi_real(x)*_gamma_real(1-x))
     else:
         x -= 1.0
         r = _lanczos_p[0]
@@ -130,7 +177,7 @@ def _gamma_complex(x):
         return complex(_gamma_real(x.real))
     if x.real < 0.5:
         # TODO: sinpi
-        return pi / (cmath.sin(pi*x)*_gamma_complex(1-x))
+        return pi / (_sinpi_complex(x)*_gamma_complex(1-x))
     else:
         x -= 1.0
         r = _lanczos_p[0]
@@ -185,23 +232,6 @@ _psi_coeff = [
 3.0539543302701197438,
 -26.456212121212121212]
 
-def digamma(x):
-    if x.real < 0.5:
-        x = 1.0-x
-        return pi/tan(pi*x) + digamma(x)
-    s = 0.0
-    while abs(x) < 10:
-        s -= 1.0/x
-        x += 1.0
-    x2 = x**-2
-    t = x2
-    for c in _psi_coeff:
-        s -= c*t
-        if abs(t) < 1e-20:
-            break
-        t *= x2
-    return s + log(x) - 0.5/x
-
 def _digamma_real(x):
     _intx = int(x)
     if _intx == x:
@@ -209,8 +239,7 @@ def _digamma_real(x):
             raise ZeroDivisionError("polygamma pole")
     if x < 0.5:
         x = 1.0-x
-        # TODO: sinpi
-        s = pi/math.tan(pi*x)
+        s = pi*cotpi(x)
     else:
         s = 0.0
     while x < 10.0:
@@ -230,8 +259,7 @@ def _digamma_complex(x):
         return complex(_digamma_real(x.real))
     if x.real < 0.5:
         x = 1.0-x
-        # TODO: sinpi
-        s = pi/cmath.tan(pi*x)
+        s = pi*cotpi(x)
     else:
         s = 0.0
     while abs(x) < 10.0:
