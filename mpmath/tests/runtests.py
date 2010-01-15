@@ -68,13 +68,18 @@ def testit(importdir='', testdir=''):
         sys.path.insert(1, importdir)
     if testdir:
         sys.path.insert(1, testdir)
+    import os.path
+    import mpmath
+    print "mpmath imported from", os.path.dirname(mpmath.__file__)
+    print "mpmath version:", mpmath.__version__
+    print "Python version:", sys.version
+    print
     if "-py" in sys.argv:
         sys.argv.remove('-py')
         import py
         py.test.cmdline.main()
     else:
         import glob
-        import os.path
         from timeit import default_timer as clock
         modules = []
         args = sys.argv[1:]
