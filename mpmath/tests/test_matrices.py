@@ -78,6 +78,12 @@ def test_matrix_transform():
     assert l == [2, 1]
     assert extend(eye(3), [1,2,3]) == matrix([[1,0,0,1],[0,1,0,2],[0,0,1,3]])
 
+def test_matrix_conjugate():
+    A = matrix([[1 + j, 0], [2, j]])
+    assert A.conjugate() == matrix([[mpc(1, -1), 0], [2, mpc(0, -1)]])
+    assert A.transpose_conj() == A.H == matrix([[mpc(1, -1), 2],
+                                                [0, mpc(0, -1)]])
+
 def test_matrix_creation():
     assert diag([1, 2, 3]) == matrix([[1, 0, 0], [0, 2, 0], [0, 0, 3]])
     A1 = ones(2, 3)

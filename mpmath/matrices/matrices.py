@@ -578,6 +578,14 @@ class _matrix(object):
 
     T = property(transpose)
 
+    def conjugate(self):
+        return self.apply(self.ctx.conj)
+
+    def transpose_conj(self):
+        return self.conjugate().transpose()
+
+    H = property(transpose_conj)
+
     def copy(self):
         new = self.ctx.matrix(self.__rows, self.__cols)
         new.__data = self.__data.copy()
