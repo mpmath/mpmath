@@ -192,6 +192,9 @@ class LinearAlgebraMethods(object):
         (especially for overdetermined systems), but it's twice as efficient.
         Use qr_solve if you want more precision or have to solve a very ill-
         conditioned system.
+
+        If you specify real=True, it does not check for overdeterminded complex
+        systems.
         """
         prec = ctx.prec
         try:
@@ -203,10 +206,15 @@ class LinearAlgebraMethods(object):
             if A.rows > A.cols:
                 # use least-squares method if overdetermined
                 # (this increases errors)
-                AT = A.T
-                A = AT * A
-                b = AT * b
-                x = ctx.cholesky_solve(A, b)
+                AH = A.H
+                A = AH * A
+                b = AH * b
+                if (kwargs.get('real', False) or
+                    not any(type(i) is ctx.mpc for i in A)):
+                    # TODO: necessary to check also b?
+                    x = ctx.cholesky_solve(A, b)
+                else:
+                    x = ctx.lu_solve(A, b)
             else:
                 # LU factorization
                 A, p = ctx.LU_decomp(A)
@@ -398,6 +406,7 @@ class LinearAlgebraMethods(object):
         finally:
             ctx.prec = prec
 
+    # TODO: possible for complex matrices? -> have a look at GSL
     def cholesky(ctx, A):
         """
         Cholesky decomposition of a symmetric positive-definite matrix.

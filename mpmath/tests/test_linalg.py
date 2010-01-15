@@ -147,6 +147,11 @@ def test_solve():
     assert norm(residual(A10, lu_solve(A10, b10), b10), 2) < 1.e-10
     assert norm(residual(A10, qr_solve(A10, b10)[0], b10), 2) < 1.e-10
 
+def test_solve_overdet_complex():
+    A = matrix([[1, 2j], [3, 4j], [5, 6]])
+    b = matrix([1 + j, 2, -j])
+    assert norm(residual(A, lu_solve(A, b), b)) < 1.0208
+
 def test_singular():
     mp.dps = 15
     A = [[5.6, 1.2], [7./15, .1]]
