@@ -46,8 +46,21 @@ class StandardBaseContext(Context,
     def bad_domain(ctx, msg):
         raise ValueError(msg)
 
-    # XXX: duplicated
     def chop(ctx, x, tol=None):
+        """
+        Chops off small real or imaginary parts, or converts
+        numbers close to zero to exact zeros. The input can be a
+        single number or an iterable::
+
+            >>> from mpmath import *
+            >>> mp.dps = 15; mp.pretty = False
+            >>> chop(5+1e-10j, tol=1e-9)
+            mpf('5.0')
+            >>> nprint(chop([1.0, 1e-20, 3+1e-18j, -4, 2]))
+            [1.0, 0.0, 3.0, -4.0, 2.0]
+
+        The tolerance defaults to ``100*eps``.
+        """
         if tol is None:
             tol = 100*ctx.eps
         try:
@@ -55,21 +68,51 @@ class StandardBaseContext(Context,
             absx = abs(x)
             if abs(x) < tol:
                 return ctx.zero
-            if ctx.im(x):
+            if ctx.is_complex_type(x):
                 if abs(x.imag) < min(tol, absx*tol):
                     return x.real
                 if abs(x.real) < min(tol, absx*tol):
                     return ctx.mpc(0, x.imag)
-        except (TypeError, ValueError):
+        except TypeError:
             if isinstance(x, ctx.matrix):
                 return x.apply(lambda a: ctx.chop(a, tol))
             if hasattr(x, "__iter__"):
                 return [ctx.chop(a, tol) for a in x]
-            raise
         return x
 
-    # XXX: duplicated
     def almosteq(ctx, s, t, rel_eps=None, abs_eps=None):
+        r"""
+        Determine whether the difference between `s` and `t` is smaller
+        than a given epsilon, either relatively or absolutely.
+
+        Both a maximum relative difference and a maximum difference
+        ('epsilons') may be specified. The absolute difference is
+        defined as `|s-t|` and the relative difference is defined
+        as `|s-t|/\max(|s|, |t|)`.
+
+        If only one epsilon is given, both are set to the same value.
+        If none is given, both epsilons are set to `2^{-p+m}` where
+        `p` is the current working precision and `m` is a small
+        integer. The default setting typically allows :func:`almosteq`
+        to be used to check for mathematical equality
+        in the presence of small rounding errors.
+
+        **Examples**
+
+            >>> from mpmath import *
+            >>> mp.dps = 15
+            >>> almosteq(3.141592653589793, 3.141592653589790)
+            True
+            >>> almosteq(3.141592653589793, 3.141592653589700)
+            False
+            >>> almosteq(3.141592653589793, 3.141592653589700, 1e-10)
+            True
+            >>> almosteq(1e-20, 2e-20)
+            True
+            >>> almosteq(1e-20, 2e-20, rel_eps=0, abs_eps=0)
+            False
+
+        """
         t = ctx.convert(t)
         if abs_eps is None and rel_eps is None:
             rel_eps = abs_eps = ctx.ldexp(1, -ctx.prec+4)
@@ -88,7 +131,6 @@ class StandardBaseContext(Context,
             err = diff/abss
         return err <= rel_eps
 
-    # XXX: duplicated
     def arange(ctx, *args):
         r"""
         This is a generalized version of Python's :func:`range` function
