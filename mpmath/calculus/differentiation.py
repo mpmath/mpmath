@@ -348,7 +348,7 @@ def taylor(ctx, f, x, n, **options):
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
         >>> nprint(chop(taylor(sin, 0, 5)))
-        [0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3]
+        [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333]
 
     The coefficients are computed using high-order numerical
     differentiation. The function must be possible to evaluate

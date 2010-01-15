@@ -1158,17 +1158,17 @@ class MPContext(StandardBaseContext):
             [3.14159, 3.05494e-151]
         """
         if isinstance(x, list):
-            return "[%s]" % (", ".join(ctx.nstr(c, n) for c in x))
+            return "[%s]" % (", ".join(ctx.nstr(c, n, **kwargs) for c in x))
         if isinstance(x, tuple):
-            return "(%s)" % (", ".join(ctx.nstr(c, n) for c in x))
+            return "(%s)" % (", ".join(ctx.nstr(c, n, **kwargs) for c in x))
         if hasattr(x, '_mpf_'):
-            return to_str(x._mpf_, n)
+            return to_str(x._mpf_, n, **kwargs)
         if hasattr(x, '_mpc_'):
-            return "(" + mpc_to_str(x._mpc_, n)  + ")"
+            return "(" + mpc_to_str(x._mpc_, n, **kwargs)  + ")"
         if isinstance(x, basestring):
             return repr(x)
         if isinstance(x, ctx.matrix):
-            return x.__nstr__(n)
+            return x.__nstr__(n, **kwargs)
         if hasattr(x, '_mpi_'):
             return ctx.mpi_to_str(x, n, **kwargs)
         return str(x)

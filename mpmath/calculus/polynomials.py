@@ -70,8 +70,8 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         >>> for r in roots:
         ...     print r
         ...
-        (-0.375 - 0.59947894041409j)
         (-0.375 + 0.59947894041409j)
+        (-0.375 - 0.59947894041409j)
         >>>
         >>> err
         2.22044604925031e-16

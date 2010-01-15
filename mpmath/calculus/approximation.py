@@ -63,7 +63,7 @@ def chebyfit(ctx, f, interval, N, error=False):
         >>> mp.dps = 15; mp.pretty = True
         >>> poly, err = chebyfit(cos, [1, 2], 5, error=True)
         >>> nprint(poly)
-        [2.91682e-3, 0.146166, -0.732491, 0.174141, 0.949553]
+        [0.00291682, 0.146166, -0.732491, 0.174141, 0.949553]
         >>> nprint(err, 12)
         1.61351758081e-5
 
@@ -194,7 +194,7 @@ def fourier(ctx, f, interval, N):
         >>> cs = fourier(cosh, I, 9)
         >>> g = lambda x: (cosh(x) - fourierval(cs, I, x))**2
         >>> nprint(sqrt(quad(g, I)))
-        4.67963e-3
+        0.00467963
 
     :func:`fourier` uses numerical quadrature. For nonsmooth functions,
     the accuracy (and speed) can be improved by including all singular

@@ -1118,8 +1118,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     that may be inserted for visual purposes).
 
     The number will be printed in fixed-point format if the position
-    of the leading digit is strictly between min_fixed (default = -dps/3)
-    and max_fixed (default = dps).
+    of the leading digit is strictly between min_fixed
+    (default = min(-dps/3,-5)) and max_fixed (default = dps).
 
     To force fixed-point format always, set min_fixed = -inf,
     max_fixed = +inf. To force floating-point format, set
@@ -1142,7 +1142,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if s == fnan: return 'nan'
         raise ValueError
 
-    if min_fixed is None: min_fixed = -(dps//3)
+    if min_fixed is None: min_fixed = min(-(dps//3), -5)
     if max_fixed is None: max_fixed = dps
 
     # to_digits_exp rounds to floor.

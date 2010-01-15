@@ -339,7 +339,7 @@ class _matrix(object):
                 new[i,j] = f(self[i,j])
         return new
 
-    def __nstr__(self, n=None):
+    def __nstr__(self, n=None, **kwargs):
         # Build table of string representations of the elements
         res = []
         # Track per-column max lengths for pretty alignment
@@ -348,7 +348,7 @@ class _matrix(object):
             res.append([])
             for j in range(self.cols):
                 if n:
-                    string = self.ctx.nstr(self[i,j], n)
+                    string = self.ctx.nstr(self[i,j], n, **kwargs)
                 else:
                     string = str(self[i,j])
                 res[-1].append(string)
@@ -658,7 +658,8 @@ class MatrixMethods(object):
         One given dimension will create square matrix n x n.
 
         Example:
-        >>> from mpmath import ones
+        >>> from mpmath import ones, mp
+        >>> mp.pretty = False
         >>> ones(2)
         matrix(
         [['1.0', '1.0'],

@@ -509,7 +509,7 @@ This recovers the coefficients (reciprocal factorials) in the
 Maclaurin series expansion of exp::
 
     >>> nprint(taylor(exp, 0, 5))
-    [1.0, 1.0, 0.5, 0.166667, 4.16667e-2, 8.33333e-3]
+    [1.0, 1.0, 0.5, 0.166667, 0.0416667, 0.00833333]
 
 The exponential function is its own derivative and antiderivative::
 
@@ -550,7 +550,7 @@ a global minimum at `x = 0`, having a Maclaurin series
 that starts::
 
     >>> nprint(chop(taylor(cosh, 0, 5)))
-    [1.0, 0.0, 0.5, 0.0, 4.16667e-2, 0.0]
+    [1.0, 0.0, 0.5, 0.0, 0.0416667, 0.0]
 
 Generalized to complex numbers, the hyperbolic cosine is
 equivalent to a cosine with the argument rotated
@@ -579,7 +579,7 @@ The hyperbolic sine is an odd function, with a Maclaurin
 series that starts::
 
     >>> nprint(chop(taylor(sinh, 0, 5)))
-    [0.0, 1.0, 0.0, 0.166667, 0.0, 8.33333e-3]
+    [0.0, 1.0, 0.0, 0.166667, 0.0, 0.00833333]
 
 Generalized to complex numbers, the hyperbolic sine is
 essentially a sine with a rotation `i` applied to
@@ -635,7 +635,7 @@ Computes the cosine of `x`, `\cos(x)`.
     >>> cos(inf)
     nan
     >>> nprint(chop(taylor(cos, 0, 6)))
-    [1.0, 0.0, -0.5, 0.0, 4.16667e-2, 0.0, -1.38889e-3]
+    [1.0, 0.0, -0.5, 0.0, 0.0416667, 0.0, -0.00138889]
     >>> cos(mpi(0,1))
     [0.540302305868139717400936602301, 1.0]
     >>> cos(mpi(0,2))
@@ -656,7 +656,7 @@ Computes the sine of `x`, `\sin(x)`.
     >>> sin(inf)
     nan
     >>> nprint(chop(taylor(sin, 0, 6)))
-    [0.0, 1.0, 0.0, -0.166667, 0.0, 8.33333e-3, 0.0]
+    [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333, 0.0]
     >>> sin(mpi(0,1))
     [0.0, 0.841470984807896506652502331201]
     >>> sin(mpi(0,2))
@@ -704,7 +704,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> sec(inf)
     nan
     >>> nprint(chop(taylor(sec, 0, 6)))
-    [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 8.47222e-2]
+    [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]
     >>> sec(mpi(0,1))
     [1.0, 1.85081571768092561791175324143]
     >>> sec(mpi(0,2))  # Interval includes a singularity
@@ -776,7 +776,7 @@ Basic values are::
     >>> acos(1)
     0.0
     >>> nprint(chop(taylor(acos, 0, 6)))
-    [1.5708, -1.0, 0.0, -0.166667, 0.0, -7.5e-2, 0.0]
+    [1.5708, -1.0, 0.0, -0.166667, 0.0, -0.075, 0.0]
 
 :func:`acos` is defined so as to be a proper inverse function of
 `\cos(\theta)` for `0 \le \theta < \pi`.
@@ -821,7 +821,7 @@ Basic values are::
     >>> asin(1)
     1.570796326794896619231322
     >>> nprint(chop(taylor(asin, 0, 6)))
-    [0.0, 1.0, 0.0, 0.166667, 0.0, 7.5e-2, 0.0]
+    [0.0, 1.0, 0.0, 0.166667, 0.0, 0.075, 0.0]
 
 :func:`asin` is defined so as to be a proper inverse function of
 `\sin(\theta)` for `-\pi/2 < \theta < \pi/2`.
@@ -2383,9 +2383,9 @@ Nonintegral binomial coefficients find use in series
 expansions::
 
     >>> nprint(taylor(lambda x: (1+x)**0.25, 0, 4))
-    [1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]
+    [1.0, 0.25, -0.09375, 0.0546875, -0.0375977]
     >>> nprint([binomial(0.25, k) for k in range(5)])
-    [1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]
+    [1.0, 0.25, -0.09375, 0.0546875, -0.0375977]
 
 An integral representation::
 
@@ -4175,7 +4175,7 @@ the following coefficients (note that every third term
 is zero)::
 
     >>> nprint(chop(taylor(airyai, 0, 5)))
-    [0.355028, -0.258819, 0.0, 5.91713e-2, -2.15683e-2, 0.0]
+    [0.355028, -0.258819, 0.0, 0.0591713, -0.0215683, 0.0]
 
 The Airy functions are a special case of Bessel functions.
 For `x < 0`, we have::
@@ -4252,7 +4252,7 @@ the following coefficients (note that every third term
 is zero)::
 
     >>> nprint(chop(taylor(airybi, 0, 5)))
-    [0.614927, 0.448288, 0.0, 0.102488, 3.73574e-2, 0.0]
+    [0.614927, 0.448288, 0.0, 0.102488, 0.0373574, 0.0]
 
 The Airy functions are a special case of Bessel functions.
 For `x < 0`, we have::
@@ -6194,14 +6194,14 @@ The fractional error is shown in parentheses::
     ...     rerr, lerr = nstr((r-p)/p,3), nstr((l-p)/p,3)
     ...     print "%i %i %s(%s) %s(%s)" % (n, p, r, rerr, l, lerr)
     ...
-    1 4 4.56458314100509(1.41e-1) 6.1655995047873(5.41e-1)
-    2 25 25.6616332669242(2.65e-2) 30.1261415840796(2.05e-1)
-    3 168 168.359446281167(2.14e-3) 177.609657990152(5.72e-2)
-    4 1229 1226.93121834343(-1.68e-3) 1246.13721589939(1.39e-2)
-    5 9592 9587.43173884197(-4.76e-4) 9629.8090010508(3.94e-3)
-    6 78498 78527.3994291277(3.75e-4) 78627.5491594622(1.65e-3)
-    7 664579 664667.447564748(1.33e-4) 664918.405048569(5.11e-4)
-    8 5761455 5761551.86732017(1.68e-5) 5762209.37544803(1.31e-4)
+    1 4 4.56458314100509(0.141) 6.1655995047873(0.541)
+    2 25 25.6616332669242(0.0265) 30.1261415840796(0.205)
+    3 168 168.359446281167(0.00214) 177.609657990152(0.0572)
+    4 1229 1226.93121834343(-0.00168) 1246.13721589939(0.0139)
+    5 9592 9587.43173884197(-0.000476) 9629.8090010508(0.00394)
+    6 78498 78527.3994291277(0.000375) 78627.5491594622(0.00165)
+    7 664579 664667.447564748(0.000133) 664918.405048569(0.000511)
+    8 5761455 5761551.86732017(1.68e-5) 5762209.37544803(0.000131)
     9 50847534 50847455.4277214(-1.55e-6) 50849234.9570018(3.35e-5)
 
 The derivative of the Riemann R function gives the approximate
@@ -6394,7 +6394,7 @@ The first few Bernoulli polynomials are::
     [-0.5, 1.0]
     [0.166667, -1.0, 1.0]
     [0.0, 0.5, -1.5, 1.0]
-    [-3.33333e-2, 0.0, 1.0, -2.0, 1.0]
+    [-0.0333333, 0.0, 1.0, -2.0, 1.0]
     [0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]
 
 At `z = 0`, the Bernoulli polynomial evaluates to a
@@ -6486,8 +6486,8 @@ Taylor series expansions around `z = 0` are::
     [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
     [0.0, 1.0, 1.0, 1.0, 1.0, 1.0]
     [0.0, 1.0, 0.5, 0.333333, 0.25, 0.2]
-    [0.0, 1.0, 0.25, 0.111111, 6.25e-2, 4.0e-2]
-    [0.0, 1.0, 0.125, 3.7037e-2, 1.5625e-2, 8.0e-3]
+    [0.0, 1.0, 0.25, 0.111111, 0.0625, 0.04]
+    [0.0, 1.0, 0.125, 0.037037, 0.015625, 0.008]
 
 The series defining the polylogarithm is simultaneously
 a Taylor series and an L-series. For certain values of `z`, the
@@ -7081,7 +7081,7 @@ providing a finite sum for series such as
 Call with ``pi=True`` to multiply `z` by `\pi` exactly::
 
     >>> clsin(3, 3*pi)
-    -8.87563181682264802504844e-26
+    -8.892316224968072424732898e-26
     >>> clsin(3, 3, pi=True)
     0.0
 
