@@ -118,13 +118,13 @@ def _sinpi_complex(z):
     if n == 3: return -cmath.cos(z)
 
 def _cospi_complex(z):
-    n, r = divmod(z, 0.5)
+    n, r = divmod(z.real, 0.5)
     z = pi*complex(r, z.imag)
     n %= 4
-    if n == 0: return cmath.cos(r)
-    if n == 1: return -cmath.sin(r)
-    if n == 2: return -cmath.cos(r)
-    if n == 3: return cmath.sin(r)
+    if n == 0: return cmath.cos(z)
+    if n == 1: return -cmath.sin(z)
+    if n == 2: return -cmath.cos(z)
+    if n == 3: return cmath.sin(z)
 
 cospi = _mathfun_real(_cospi_real, _cospi_complex)
 sinpi = _mathfun_real(_sinpi_real, _sinpi_complex)
