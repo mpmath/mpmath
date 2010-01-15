@@ -23,6 +23,8 @@ class FPContext(StandardBaseContext):
         ctx._bernoulli_cache = {}
         ctx.pretty = False
 
+        ctx._init_aliases()
+
     _mpq = lambda cls, x: float(x[0])/x[1]
 
     NoConvergence = libmp.NoConvergence

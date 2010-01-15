@@ -31,6 +31,18 @@ class SpecialFunctions(object):
         self.mpq_7_4 = self._mpq((7,4))
         self.mpq_5_4 = self._mpq((5,4))
 
+        self._aliases.update({
+            'phase' : 'arg',
+            'conjugate' : 'conj',
+            'nthroot' : 'root',
+            'digamma' : 'psi0',
+            'trigamma' : 'psi1',
+            'tetragamma' : 'psi2',
+            'pentagamma' : 'psi3',
+            'fibonacci' : 'fib',
+            'factorial' : 'fac',
+        })
+
     # Default -- do nothing
     @classmethod
     def wrap_specfun(cls, name, f, wrap):
@@ -225,6 +237,14 @@ def im(ctx, x):
 @defun
 def conj(ctx, x):
     return ctx.convert(x).conjugate()
+
+@defun
+def polar(ctx, z):
+    return (ctx.fabs(z), ctx.arg(z))
+
+@defun_wrapped
+def rect(ctx, r, phi):
+    return r * ctx.mpc(*ctx.cos_sin(phi))
 
 @defun
 def log(ctx, x, b=None):

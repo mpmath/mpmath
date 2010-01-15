@@ -771,6 +771,9 @@ class MPContext(StandardBaseContext):
 
         ctx.hyp_summators = {}
 
+        ctx._init_aliases()
+
+
     def init_builtins(ctx):
 
         mpf = ctx.mpf
@@ -802,14 +805,6 @@ class MPContext(StandardBaseContext):
         ctx.degree = ctx.constant(mpf_degree, "1 deg = pi / 180", "degree")
         ctx.twinprime = ctx.constant(mpf_twinprime, "Twin prime constant", "twinprime")
         ctx.mertens = ctx.constant(mpf_mertens, "Mertens' constant", "mertens")
-
-        # XXX: better way to define aliases
-        ctx.nthroot = ctx.root
-        ctx.digamma = ctx.psi0
-        ctx.trigamma = ctx.psi1
-        ctx.tetragamma = ctx.psi2
-        ctx.pentagamma = ctx.psi3
-        ctx.bernfrac = libmp.bernfrac
 
         # Standard functions
         ctx.sqrt = ctx.def_mp_function(libmp.mpf_sqrt, libmp.mpc_sqrt, libmp.mpi_sqrt)

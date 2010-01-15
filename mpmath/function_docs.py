@@ -1058,6 +1058,127 @@ represented exactly at the present working precision, the
 result will be rounded, not necessarily in the ceiling
 direction."""
 
+sign = r"""
+Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
+(with the special case `\mathrm{sign}(0) = 0`)::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = False
+    >>> sign(10)
+    mpf('1.0')
+    >>> sign(-10)
+    mpf('-1.0')
+    >>> sign(0)
+    mpf('0.0')
+
+Note that the sign function is also defined for complex numbers,
+for which it gives the projection onto the unit circle::
+
+    >>> mp.dps = 15; mp.pretty = True
+    >>> sign(1+j)
+    (0.707106781186547 + 0.707106781186547j)
+
+"""
+
+arg = r"""
+Computes the complex argument (phase) of `x`, defined as the
+signed angle between the positive real axis and `x` in the
+complex plane::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = True
+    >>> arg(3)
+    0.0
+    >>> arg(3+3j)
+    0.785398163397448
+    >>> arg(3j)
+    1.5707963267949
+    >>> arg(-3)
+    3.14159265358979
+    >>> arg(-3j)
+    -1.5707963267949
+
+The angle is defined to satisfy `-\pi < \arg(x) \le \pi` and
+with the sign convention that a nonnegative imaginary part
+results in a nonnegative argument.
+
+The value returned by :func:`arg` is an ``mpf`` instance.
+"""
+
+fabs = r"""
+Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
+:func:`fabs` converts non-mpmath numbers (such as ``int``)
+into mpmath numbers::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = False
+    >>> fabs(3)
+    mpf('3.0')
+    >>> fabs(-3)
+    mpf('3.0')
+    >>> fabs(3+4j)
+    mpf('5.0')
+"""
+
+re = r"""
+Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
+:func:`re` converts `x` to a mpmath number::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = False
+    >>> re(3)
+    mpf('3.0')
+    >>> re(-1+4j)
+    mpf('-1.0')
+"""
+
+im = r"""
+Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
+:func:`im` converts `x` to a mpmath number::
+
+>>> from mpmath import *
+>>> mp.dps = 15; mp.pretty = False
+>>> im(3)
+mpf('0.0')
+>>> im(-1+4j)
+mpf('4.0')
+"""
+
+conj = r"""
+Returns the complex conjugate of `x`, `\overline{x}`. Unlike
+``x.conjugate()``, :func:`im` converts `x` to a mpmath number::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = False
+    >>> conj(3)
+    mpf('3.0')
+    >>> conj(-1+4j)
+    mpc(real='-1.0', imag='-4.0')
+"""
+
+polar = r"""
+Returns the polar representation of the complex number `z`
+as a pair `(r, \phi)` such that `z = r e^{i \phi}`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = True
+    >>> polar(-2)
+    (2.0, 3.14159265358979)
+    >>> polar(3-4j)
+    (5.0, -0.927295218001612)
+"""
+
+rect = r"""
+Returns the complex number represented by polar
+coordinates `(r, \phi)`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = True
+    >>> chop(rect(2, pi))
+    -2.0
+    >>> rect(sqrt(2), -pi/4)
+    (1.0 - 1.0j)
+"""
 
 expm1 = r"""
 Computes `e^x - 1`, accurately for small `x`.
@@ -1363,6 +1484,11 @@ The Taylor series expansion of the natural logarithm around
     >>> mp.dps = 25
     >>> log(3+4j)
     (1.609437912434100374600759 + 0.9272952180016122324285125j)
+"""
+
+log10 = r"""
+Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
+is equivalent to ``log(x, 10)``.
 """
 
 power = r"""

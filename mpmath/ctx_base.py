@@ -29,11 +29,19 @@ class StandardBaseContext(Context,
     VisualizationMethods):
 
     def __init__(ctx):
+        ctx._aliases = {}
         # Call those that need preinitialization (e.g. for wrappers)
         SpecialFunctions.__init__(ctx)
         QuadratureMethods.__init__(ctx)
         CalculusMethods.__init__(ctx)
         MatrixMethods.__init__(ctx)
+
+    def _init_aliases(ctx):
+        for alias, value in ctx._aliases.items():
+            try:
+                setattr(ctx, alias, getattr(ctx, value))
+            except AttributeError:
+                pass
 
     _fixed_precision = False
 
