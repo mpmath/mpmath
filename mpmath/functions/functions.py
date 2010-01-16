@@ -35,6 +35,7 @@ class SpecialFunctions(object):
             'phase' : 'arg',
             'conjugate' : 'conj',
             'nthroot' : 'root',
+            'polygamma' : 'psi',
             'digamma' : 'psi0',
             'trigamma' : 'psi1',
             'tetragamma' : 'psi2',

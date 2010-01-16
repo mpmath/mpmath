@@ -286,3 +286,6 @@ class StandardBaseContext(Context,
                     break
             k += 1
         return s
+
+    def power(ctx, x, y):
+        return ctx.convert(x) ** ctx.convert(y)

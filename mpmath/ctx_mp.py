@@ -710,30 +710,6 @@ class _constant(_mpf):
 complex_types = (complex, _mpc)
 
 
-
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-#------------------------------------------------------------------------------#
-
-
-
-
-
 class MPContext(StandardBaseContext):
     """
     Context for multiprecision arithmetic with a global precision.
@@ -932,8 +908,6 @@ class MPContext(StandardBaseContext):
         else:
             return ctx.make_mpc(libmp.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
 
-    polygamma = psi
-
     def def_mp_function(ctx, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
         """
         Given a low-level mpf_ function, and optionally similar functions
@@ -971,7 +945,6 @@ class MPContext(StandardBaseContext):
         f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
         return f
 
-
     # Called by SpecialFunctions.__init__()
     @classmethod
     def wrap_specfun(cls, name, f, wrap):
@@ -990,8 +963,6 @@ class MPContext(StandardBaseContext):
             f_wrapped = f
         f_wrapped.__doc__ = function_docs.__dict__.get(name, "<no doc>")
         setattr(cls, name, f_wrapped)
-
-
 
     def clone(ctx):
         """
@@ -1750,9 +1721,6 @@ maxterms, or set zeroprec."""
             if hasattr(y, '_mpc_'):
                 return ctx.make_mpc(mpc_div(x._mpc_, y._mpc_, prec, rounding))
         raise ValueError("Arguments need to be mpf or mpc compatible numbers")
-
-    def power(ctx, x, y):
-        return ctx.convert(x) ** ctx.convert(y)
 
     def isnan(ctx, x):
         """
