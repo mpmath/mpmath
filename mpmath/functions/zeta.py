@@ -191,9 +191,11 @@ def bernpoly(ctx, n, z):
     # Slow implementation:
     #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
     n = int(n)
+    if n < 0:
+        raise ValueError("Bernoulli polynomials only defined for n >= 0")
+    if z == 1:
+        return ctx.bernoulli(n)
     if n <= 3:
-        if n < 0:
-            raise ValueError("Bernoulli polynomials only defined for n >= 0")
         if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return (6*z*(z-1)+1)/6
@@ -354,9 +356,37 @@ def clcos(ctx, s, z, pi=False):
     return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
 
 @defun
-def hurwitz(ctx, s, a=1, derivative=0):
+def zeta(ctx, s, a=1, derivative=0, **kwargs):
     d = int(derivative)
     s = ctx.convert(s)
+    prec = ctx.prec
+    method = kwargs.get('method')
+    verbose = kwargs.get('verbose')
+    if a == 1 and method != 'euler-maclaurin':
+        # Try to use fast code for Riemann zeta
+        im = abs(s.imag)
+        re = abs(s.real)
+        if (im < prec or method == 'borwein') and not derivative:
+            try:
+                if verbose:
+                    print "zeta: Attempting to use the Borwein algorithm"
+                return ctx._zeta(s, **kwargs)
+            except NotImplementedError:
+                if verbose:
+                    print "zeta: Could not use the Borwein algorithm"
+                pass
+        if abs(im) > 60*prec and 10*re < prec and derivative <= 4 or \
+            method == 'riemann-siegel':
+            try:
+                if verbose:
+                    print "zeta: Attempting to use the Riemann-Siegel algorithm"
+                return ctx.rs_zeta(s, derivative, **kwargs)
+            except NotImplementedError:
+                if verbose:
+                    print "zeta: Could not use the Riemann-Siegel algorithm"
+                pass
+            finally:
+                ctx.prec = prec
     if s == 1:
         return ctx.inf
     abss = abs(s)
@@ -370,6 +400,8 @@ def hurwitz(ctx, s, a=1, derivative=0):
         return 1/s
     if ctx.re(s) > 2*ctx.prec and a == 1 and not derivative:
         return ctx.one + ctx.power(2, -s)
+    if verbose:
+        print "zeta: Using the Euler-Maclaurin algorithm"
     prec = ctx.prec
     try:
         ctx.prec += 10
@@ -512,10 +544,10 @@ def dirichlet(ctx, s, chi=[1], derivative=0):
         for p in range(1,q+1):
             if chi[p%q]:
                 if d == 1:
-                    z += chi[p%q] * (ctx.hurwitz(s, (p,q), 1) - \
-                        ctx.hurwitz(s, (p,q))*ctx.log(q))
+                    z += chi[p%q] * (ctx.zeta(s, (p,q), 1) - \
+                        ctx.zeta(s, (p,q))*ctx.log(q))
                 else:
-                    z += chi[p%q] * ctx.hurwitz(s, (p,q))
+                    z += chi[p%q] * ctx.zeta(s, (p,q))
         z /= q**s
     finally:
         ctx.prec = prec

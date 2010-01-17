@@ -325,7 +325,7 @@ def Rzeta_simul(ctx, s, der=0):
         (3*yL >= 2*a*a/25.) or (3*yL+2+ysigma<0) or (abs(ysigma) > a/2.)):
         print 'Error Riemann-Siegel can not compute with such precision'
         ctx.prec = wpinitial
-        return 0
+        raise NotImplementedError
 
     #  We take the maximum of the two values
     L = max(xL, yL)
@@ -832,7 +832,7 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     if ((3*L >= 2*a*a/25.) or (3*L+2+sigma<0) or (abs(sigma)> a/2.)):
         print 'Error Riemann-Siegel can not compute with such precision'
         ctx.prec = wpinitial
-        return 0
+        raise NotImplementedError
 
     #  INITIALIZATION (CONTINUATION)
     #
@@ -1373,7 +1373,9 @@ def z_offline(ctx, w, k=0):
     return zv
 
 @defun
-def rs_zeta(ctx, s, derivative=0):
+def rs_zeta(ctx, s, derivative=0, **kwargs):
+    if derivative > 4:
+        raise NotImplementedError
     s = ctx.convert(s)
     re = s.real; im = s.imag
     if im < 0:

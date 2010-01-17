@@ -219,10 +219,11 @@ def test_zeta_negative():
 
 def test_polygamma():
     mp.dps = 15
+    psi0 = lambda z: psi(0,z)
+    psi1 = lambda z: psi(1,z)
     assert psi0(3) == psi(0,3) == digamma(3)
-    assert psi1(3) == psi(1,3) == trigamma(3)
-    assert psi2(3) == psi(2,3) == tetragamma(3)
-    assert psi3(3) == psi(3,3) == pentagamma(3)
+    #assert psi2(3) == psi(2,3) == tetragamma(3)
+    #assert psi3(3) == psi(3,3) == pentagamma(3)
     assert psi0(pi).ae(0.97721330794200673)
     assert psi0(-pi).ae(7.8859523853854902)
     assert psi0(-pi+1).ae(7.5676424992016996)
@@ -231,7 +232,7 @@ def test_polygamma():
     assert findroot(psi0, 1).ae(1.4616321449683622)
     assert psi0(inf) == inf
     assert psi1(inf) == 0
-    assert psi2(inf) == 0
+    assert psi(2,inf) == 0
     assert psi1(pi).ae(0.37424376965420049)
     assert psi1(-pi).ae(53.030438740085385)
     assert psi1(pi+j).ae(0.32935710377142464 - 0.12222163911221135j)
@@ -251,6 +252,9 @@ def test_polygamma_high_prec():
 
 def test_polygamma_identities():
     mp.dps = 15
+    psi0 = lambda z: psi(0,z)
+    psi1 = lambda z: psi(1,z)
+    psi2 = lambda z: psi(2,z)
     assert psi0(0.5).ae(-euler-2*log(2))
     assert psi0(1).ae(-euler)
     assert psi1(0.5).ae(0.5*pi**2)
@@ -260,13 +264,14 @@ def test_polygamma_identities():
     mp.dps = 20
     u = -182*apery+4*sqrt(3)*pi**3
     mp.dps = 15
-    assert psi2(5/6.).ae(u)
-    assert psi3(0.5).ae(pi**4)
+    assert psi(2,5/6.).ae(u)
+    assert psi(3,0.5).ae(pi**4)
 
 def test_foxtrot_identity():
     # A test of the complex digamma function.
     # See http://mathworld.wolfram.com/FoxTrotSeries.html and
     # http://mathworld.wolfram.com/DigammaFunction.html
+    psi0 = lambda z: psi(0,z)
     mp.dps = 50
     a = (-1)**fraction(1,3)
     b = (-1)**fraction(2,3)

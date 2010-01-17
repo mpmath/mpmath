@@ -232,15 +232,11 @@ class FPContext(StandardBaseContext):
     def atan2(ctx, x, y):
         return math.atan2(x, y)
 
-    # XXX: alias in functions.py
-    def zeta(ctx, s):
-        return ctx.hurwitz(s)
-
     def psi(ctx, m, z):
         m = int(m)
         if m == 0:
             return ctx.digamma(z)
-        return (-1)**(m+1) * ctx.fac(m) * ctx.hurwitz(m+1, z)
+        return (-1)**(m+1) * ctx.fac(m) * ctx.zeta(m+1, z)
 
     digamma = staticmethod(math2.digamma)
 

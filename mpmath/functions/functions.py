@@ -36,6 +36,7 @@ class SpecialFunctions(object):
             'conjugate' : 'conj',
             'nthroot' : 'root',
             'polygamma' : 'psi',
+            'hurwitz' : 'zeta',
             #'digamma' : 'psi0',
             #'trigamma' : 'psi1',
             #'tetragamma' : 'psi2',
@@ -57,7 +58,7 @@ class SpecialFunctions(object):
     def _erfc(ctx, z): raise NotImplementedError
     def _gamma_upper_int(ctx, z, a): raise NotImplementedError
     def _expint_int(ctx, n, z): raise NotImplementedError
-
+    def _zeta(ctx, s): raise NotImplementedError
 
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True
