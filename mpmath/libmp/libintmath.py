@@ -391,3 +391,70 @@ def gcd(*args):
         else:
             a = b
     return a
+
+
+#  Comment by Juan Arias de Reyna:
+#
+#  I learn this method to compute EulerE[2n] from van de Lune.
+#
+#  We apply the formula   EulerE[2n] = (-1)^n 2**(-2n) sum_{j=0}^n a(2n,2j+1)
+#
+#  where the numbers a(n,j) vanish for  j > n+1 or j <= -1  and satisfies
+#
+#  a(0,-1) = a(0,0) = 0;  a(0,1)= 1; a(0,2) = a(0,3) = 0
+#
+#  a(n,j) = a(n-1,j)                              when n+j is even
+#  a(n,j) = (j-1) a(n-1,j-1) + (j+1) a(n-1,j+1)   when n+j is odd
+#
+#
+#  But we can use only one array unidimensional a(j) since to compute
+#  a(n,j) we only need to know a(n-1,k) where k and j are of different parity
+#  and we have not to conserve the used values.
+#
+#  We cached up the values of Euler numbers to sufficiently high order.
+#
+#  Important Observation: If we pretend to use the numbers
+#     EulerE[1], EulerE[2], ... , EulerE[n]
+#     it is convenient to compute first EulerE[n], since the algorithm
+#     computes first all
+#     the previous ones, and keeps them in the CACHE
+
+MAX_EULER_CACHE = 500
+
+def eulernum(m, _cache={0:MPZ_ONE}):
+    r"""
+    Computes the Euler numbers `E(n)`, which can be defined as
+    coefficients of the Taylor expansion of `1/cosh x`:
+
+    .. math ::
+
+        \frac{1}{\cosh x} = \sum_{n=0}^\infty \frac{E_n}{n!} x^n
+
+    Example::
+
+        >>> [int(eulernum(n)) for n in range(11)]
+        [1, 0, -1, 0, 5, 0, -61, 0, 1385, 0, -50521]
+        >>> [int(eulernum(n)) for n in range(11)]   # test cache
+        [1, 0, -1, 0, 5, 0, -61, 0, 1385, 0, -50521]
+
+    """
+    # for odd m > 1, the Euler numbers are zero
+    if m & 1:
+        return MPZ_ZERO
+    f = _cache.get(m)
+    if f:
+        return f
+    MAX = MAX_EULER_CACHE
+    n = m
+    a = map(MPZ, [0,0,1,0,0,0])
+    for  n in range(1, m+1):
+        for j in range(n+1, -1, -2):
+            a[j+1] = (j-1)*a[j] + (j+1)*a[j+2]
+        a.append(0)
+        suma = 0
+        for k in range(n+1, -1, -2):
+            suma += a[k+1]
+            if n <= MAX:
+                _cache[n] = ((-1)**(n//2))*(suma // 2**n)
+        if n == m:
+            return ((-1)**(n//2))*suma // 2**n

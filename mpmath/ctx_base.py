@@ -1,6 +1,7 @@
 from operator import gt, lt
 
 from functions.functions import SpecialFunctions
+from functions.rszeta import RSCache
 from calculus.quadrature import QuadratureMethods
 from calculus.calculus import CalculusMethods
 from calculus.optimization import OptimizationMethods
@@ -18,6 +19,7 @@ class Context(object):
 
 class StandardBaseContext(Context,
     SpecialFunctions,
+    RSCache,
     QuadratureMethods,
     CalculusMethods,
     MatrixMethods,
@@ -32,6 +34,7 @@ class StandardBaseContext(Context,
         ctx._aliases = {}
         # Call those that need preinitialization (e.g. for wrappers)
         SpecialFunctions.__init__(ctx)
+        RSCache.__init__(ctx)
         QuadratureMethods.__init__(ctx)
         CalculusMethods.__init__(ctx)
         MatrixMethods.__init__(ctx)
@@ -271,6 +274,7 @@ class StandardBaseContext(Context,
     bernfrac = staticmethod(libmp.bernfrac)
     moebius = staticmethod(libmp.moebius)
     _ifac = staticmethod(libmp.ifac)
+    _eulernum = staticmethod(libmp.eulernum)
 
     def sum_accurately(ctx, terms, check_step=1):
         max_term = ctx.ninf

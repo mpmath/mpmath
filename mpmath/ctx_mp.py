@@ -810,6 +810,7 @@ class MPContext(StandardBaseContext):
         ctx.zeta = ctx.def_mp_function(libmp.mpf_zeta, libmp.mpc_zeta)
         ctx.altzeta = ctx.def_mp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
         ctx.gamma = ctx.def_mp_function(libmp.mpf_gamma, libmp.mpc_gamma)
+        ctx.digamma = ctx.def_mp_function(libmp.mpf_psi0, libmp.mpc_psi0)
         ctx.fac = ctx.factorial = ctx.def_mp_function(libmp.mpf_factorial, libmp.mpc_factorial)
         ctx.harmonic = ctx.def_mp_function(libmp.mpf_harmonic, libmp.mpc_harmonic)
         ctx.ei = ctx.def_mp_function(libmp.mpf_ei, libmp.mpc_ei)
