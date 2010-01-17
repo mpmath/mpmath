@@ -56,7 +56,7 @@ from libmpi import (mpi_str, mpi_add, mpi_sub, mpi_delta, mpi_mid,
   mpi_log, mpi_sqrt, mpi_pow_int, mpi_pow, mpi_cos_sin,
   mpi_cos, mpi_sin, mpi_tan, mpi_cot)
 
-from libintmath import (trailing, bitcount, numeral,
+from libintmath import (trailing, bitcount, numeral, bin_to_radix,
   isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,
   list_primes, moebius, gcd, eulernum)
 
