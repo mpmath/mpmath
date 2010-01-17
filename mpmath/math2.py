@@ -130,10 +130,24 @@ cospi = _mathfun_real(_cospi_real, _cospi_complex)
 sinpi = _mathfun_real(_sinpi_real, _sinpi_complex)
 
 def tanpi(x):
-    return sinpi(x) / cospi(x)
+    try:
+        return sinpi(x) / cospi(x)
+    except OverflowError:
+        if complex(x).imag > 10:
+            return 1j
+        if complex(x).imag < 10:
+            return -1j
+        raise
 
 def cotpi(x):
-    return cospi(x) / sinpi(x)
+    try:
+        return cospi(x) / sinpi(x)
+    except OverflowError:
+        if complex(x).imag > 10:
+            return -1j
+        if complex(x).imag < 10:
+            return 1j
+        raise
 
 INF = 1e300*1e300
 NINF = -INF

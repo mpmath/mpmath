@@ -173,6 +173,7 @@ def loggamma(ctx, z):
         w += (n-(n%2))*ctx.pi*ctx.j
     return w
 
+'''
 @defun
 def psi0(ctx, z):
     """Shortcut for psi(0,z) (the digamma function)"""
@@ -192,3 +193,4 @@ def psi2(ctx, z):
 def psi3(ctx, z):
     """Shortcut for psi(3,z) (the pentagamma function)"""
     return ctx.psi(3, z)
+'''

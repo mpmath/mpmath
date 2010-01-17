@@ -248,7 +248,7 @@ class FPContext(StandardBaseContext):
         x = ctx.convert(x)
         if x == 0 or x == 1:
             return x
-        return ctx.digamma(x) + ctx.euler
+        return ctx.digamma(x+1) + ctx.euler
 
     nstr = str
 

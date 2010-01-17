@@ -9,7 +9,9 @@ fp = FPContext()
 mp = MPContext()
 
 fp._mp = mp
+mp._mp = mp
 mp._fp = fp
+fp._fp = fp
 
 # XXX: extremely bad pickle hack
 import ctx_mp
@@ -228,15 +230,15 @@ fac2 = mp.fac2
 beta = mp.beta
 betainc = mp.betainc
 psi = mp.psi
-psi0 = mp.psi0
-psi1 = mp.psi1
-psi2 = mp.psi2
-psi3 = mp.psi3
+#psi0 = mp.psi0
+#psi1 = mp.psi1
+#psi2 = mp.psi2
+#psi3 = mp.psi3
 polygamma = mp.polygamma
 digamma = mp.digamma
-trigamma = mp.trigamma
-tetragamma = mp.tetragamma
-pentagamma = mp.pentagamma
+#trigamma = mp.trigamma
+#tetragamma = mp.tetragamma
+#pentagamma = mp.pentagamma
 harmonic = mp.harmonic
 bernoulli = mp.bernoulli
 bernfrac = mp.bernfrac
