@@ -10,8 +10,7 @@ import sys
 import math
 from time import clock
 
-from mpmath.libmpf import bin_to_radix, numeral
-from mpmath.libelefun import pi_fixed
+from mpmath.libmp import bin_to_radix, numeral, pi_fixed
 
 def display_fraction(digits, skip=0, colwidth=10, columns=5):
     perline = colwidth * columns

@@ -10,7 +10,7 @@ Run with:
 """
 
 from mpmath import *
-from mpmath.libmpf import to_fixed, bin_to_radix
+from mpmath.libmp import to_fixed, bin_to_radix
 
 dps = 100
 mp.dps = dps + 10
