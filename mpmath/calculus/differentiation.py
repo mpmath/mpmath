@@ -141,7 +141,7 @@ def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
             ctx.prec += 10
             radius = ctx.mpf(scale)/2
             def g(t):
-                rei = radius*ctx.exp(ctx.j*t)
+                rei = radius*ctx.expj(t)
                 z = x + rei
                 return f(z) / rei**n
             d = ctx.quadts(g, [0, 2*ctx.pi])

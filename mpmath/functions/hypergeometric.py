@@ -1405,7 +1405,7 @@ def legenq(ctx, n, m, z, type=2, **kwargs):
         # Note: not valid for -1 < z < 0 (?)
         if abs(z) > 1:
             def h(n, m):
-                T1 = [ctx.exp(ctx.j*m*ctx.pi), 2, ctx.pi, z, z-1, z+1], \
+                T1 = [ctx.expjpi(m), 2, ctx.pi, z, z-1, z+1], \
                      [1, -n-1, 0.5, -n-m-1, 0.5*m, 0.5*m], \
                      [n+m+1], [n+1.5], \
                      [0.5*(2+n+m), 0.5*(1+n+m)], [n+1.5], z**(-2)
