@@ -1,3 +1,19 @@
+"""
+elliptic.py
+
+Implements the Jacobi theta and Jacobi elliptic functions, using
+arbitrary precision math library
+
+Author of the first version: M.T. Taschuk
+
+References:
+
+[1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
+    (Dover duplicate of 1972 edition)
+[2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
+    Cambridge University Press
+"""
+
 from functions import defun, defun_wrapped
 
 @defun
@@ -30,7 +46,7 @@ def _jacobi_theta2(ctx, z, q):
     if z == ctx.zero:
         if (not q.imag):
             wp = ctx.prec + extra1
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             x2 = (x*x) >> wp
             a = b = x2
             s = x2
@@ -65,10 +81,10 @@ def _jacobi_theta2(ctx, z, q):
     else:
         if (not q.imag) and (not z.imag):
             wp = ctx.prec + extra1
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             x2 = (x*x) >> wp
             a = b = x2
-            c1, s1 = ctx.cos_sin(z, prec=wp)
+            c1, s1 = ctx.cos_sin(z.real, prec=wp)
             cn = c1 = ctx.to_fixed(c1, wp)
             sn = s1 = ctx.to_fixed(s1, wp)
             c2 = (c1*c1 - s1*s1) >> wp
@@ -93,7 +109,7 @@ def _jacobi_theta2(ctx, z, q):
             x2im = (xre*xim) >> (wp - 1)
             are = bre = x2re
             aim = bim = x2im
-            c1, s1 = ctx.cos_sin(z, prec=wp)
+            c1, s1 = ctx.cos_sin(z.real, prec=wp)
             cn = c1 = ctx.to_fixed(c1, wp)
             sn = s1 = ctx.to_fixed(s1, wp)
             c2 = (c1*c1 - s1*s1) >> wp
@@ -117,7 +133,7 @@ def _jacobi_theta2(ctx, z, q):
         #case z complex, q real
         elif not q.imag:
             wp = ctx.prec + extra2
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             x2 = (x*x) >> wp
             a = b = x2
             prec0 = ctx.prec
@@ -240,10 +256,10 @@ def _djacobi_theta2(ctx, z, q, nd):
     extra2 = 20
     if (not q.imag) and (not z.imag):
         wp = ctx.prec + extra1
-        x = ctx.to_fixed(q, wp)
+        x = ctx.to_fixed(q.real, wp)
         x2 = (x*x) >> wp
         a = b = x2
-        c1, s1 = ctx.cos_sin(z, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real, prec=wp)
         cn = c1 = ctx.to_fixed(c1, wp)
         sn = s1 = ctx.to_fixed(s1, wp)
         c2 = (c1*c1 - s1*s1) >> wp
@@ -274,7 +290,7 @@ def _djacobi_theta2(ctx, z, q, nd):
         x2im = (xre*xim) >> (wp - 1)
         are = bre = x2re
         aim = bim = x2im
-        c1, s1 = ctx.cos_sin(z, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real, prec=wp)
         cn = c1 = ctx.to_fixed(c1, wp)
         sn = s1 = ctx.to_fixed(s1, wp)
         c2 = (c1*c1 - s1*s1) >> wp
@@ -309,7 +325,7 @@ def _djacobi_theta2(ctx, z, q, nd):
     #case z complex, q real
     elif not q.imag:
         wp = ctx.prec + extra2
-        x = ctx.to_fixed(q, wp)
+        x = ctx.to_fixed(q.real, wp)
         x2 = (x*x) >> wp
         a = b = x2
         prec0 = ctx.prec
@@ -444,7 +460,7 @@ def _jacobi_theta3(ctx, z, q):
     if z == ctx.zero:
         if not q.imag:
             wp = ctx.prec + extra1
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             s = x
             a = b = x
             x2 = (x*x) >> wp
@@ -480,10 +496,10 @@ def _jacobi_theta3(ctx, z, q):
         if (not q.imag) and (not z.imag):
             s = 0
             wp = ctx.prec + extra1
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             a = b = x
             x2 = (x*x) >> wp
-            c1, s1 = ctx.cos_sin(z*2, prec=wp)
+            c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
             c1 = ctx.to_fixed(c1, wp)
             s1 = ctx.to_fixed(s1, wp)
             cn = c1
@@ -506,7 +522,7 @@ def _jacobi_theta3(ctx, z, q):
             x2im = (xre*xim) >> (wp - 1)
             are = bre = xre
             aim = bim = xim
-            c1, s1 = ctx.cos_sin(z*2, prec=wp)
+            c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
             c1 = ctx.to_fixed(c1, wp)
             s1 = ctx.to_fixed(s1, wp)
             cn = c1
@@ -530,7 +546,7 @@ def _jacobi_theta3(ctx, z, q):
         #case z complex, q real
         elif not q.imag:
             wp = ctx.prec + extra2
-            x = ctx.to_fixed(q, wp)
+            x = ctx.to_fixed(q.real, wp)
             a = b = x
             x2 = (x*x) >> wp
             prec0 = ctx.prec
@@ -615,10 +631,10 @@ def _djacobi_theta3(ctx, z, q, nd):
     if (not q.imag) and (not z.imag):
         s = 0
         wp = ctx.prec + extra1
-        x = ctx.to_fixed(q, wp)
+        x = ctx.to_fixed(q.real, wp)
         a = b = x
         x2 = (x*x) >> wp
-        c1, s1 = ctx.cos_sin(z*2, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
         c1 = ctx.to_fixed(c1, wp)
         s1 = ctx.to_fixed(s1, wp)
         cn = c1
@@ -648,7 +664,7 @@ def _djacobi_theta3(ctx, z, q, nd):
         x2im = (xre*xim) >> (wp - 1)
         are = bre = xre
         aim = bim = xim
-        c1, s1 = ctx.cos_sin(z*2, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
         c1 = ctx.to_fixed(c1, wp)
         s1 = ctx.to_fixed(s1, wp)
         cn = c1
@@ -681,7 +697,7 @@ def _djacobi_theta3(ctx, z, q, nd):
     #case z complex, q real
     elif not q.imag:
         wp = ctx.prec + extra2
-        x = ctx.to_fixed(q, wp)
+        x = ctx.to_fixed(q.real, wp)
         a = b = x
         x2 = (x*x) >> wp
         prec0 = ctx.prec
@@ -827,8 +843,8 @@ def _jacobi_theta3a(ctx, z, q):
     max term for n*abs(log(q).real) + z.imag ~= 0
     n0 = int(- z.imag/abs(log(q).real))
     """
-    n = n0 = int(- z.imag/abs(ctx.log(q).real))
-    e2 = ctx.expj(2**z)
+    n = n0 = int(-z.imag/abs(ctx.log(q).real))
+    e2 = ctx.expj(2*z)
     e = e0 = ctx.expj(2*n*z)
     s = term = q**(n*n) * e
     eps1 = ctx.eps*abs(term)
