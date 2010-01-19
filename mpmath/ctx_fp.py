@@ -98,7 +98,7 @@ class FPContext(StandardBaseContext):
             return sum((abs(x) for x in args), ctx.zero)
         if squared:
             return sum((x**2 for x in args), ctx.zero)
-        return sum((x for x in args), ctx.zero)
+        return sum(args, ctx.zero)
 
     def fdot(ctx, xs, ys=None):
         if ys is not None:

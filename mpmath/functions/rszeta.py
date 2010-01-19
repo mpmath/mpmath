@@ -550,12 +550,12 @@ def Rzeta_simul(ctx, s, der=0):
     xfortcoef={}
     for mu in range(0,der+1):
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 xfortcoef[mu,k,ell]=0
     for mu in range(0,der+1):
         for k in range(0,L):
             ctx.prec = xwptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 xfortcoef[mu,k,ell]=xd[mu,k,ell]*Fp[3*k-2*ell]/pipowers[2*k-ell]
                 xfortcoef[mu,k,ell]=xfortcoef[mu,k,ell]/((2*ctx.j)**ell)
 
@@ -570,7 +570,7 @@ def Rzeta_simul(ctx, s, der=0):
     xtcoef={}
     for mu in range(0,der+1):
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 xtcoef[mu,k,ell]=0
     ctx.prec = max(xwptcoef[0],ywptcoef[0])+3
     aa= trunc_a(t)
@@ -579,7 +579,7 @@ def Rzeta_simul(ctx, s, der=0):
     for chi in range(0,der+1):
         for k in range(0,L):
             ctx.prec = xwptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 xtcoef[chi,k,ell] =0
                 for mu in range(0, chi+1):
                     tcoefter=ctx.binomial(chi,mu)*ctx.power(la,mu)*xfortcoef[chi-mu,k,ell]
@@ -594,24 +594,24 @@ def Rzeta_simul(ctx, s, der=0):
     yfortcoef={}
     for mu in range(0,der+1):
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 yfortcoef[mu,k,ell]=0
     for mu in range(0,der+1):
         for k in range(0,L):
             ctx.prec = ywptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 yfortcoef[mu,k,ell]=yd[mu,k,ell]*Fp[3*k-2*ell]/pipowers[2*k-ell]
                 yfortcoef[mu,k,ell]=yfortcoef[mu,k,ell]/((2*ctx.j)**ell)
     # computing the tcoef[k,ell]
     ytcoef={}
     for chi in range(0,der+1):
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 ytcoef[chi,k,ell]=0
     for chi in range(0,der+1):
         for k in range(0,L):
             ctx.prec = ywptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 ytcoef[chi,k,ell] =0
                 for mu in range(0, chi+1):
                     tcoefter=ctx.binomial(chi,mu)*ctx.power(la,mu)*yfortcoef[chi-mu,k,ell]
@@ -635,14 +635,14 @@ def Rzeta_simul(ctx, s, der=0):
     for chi in range(0,der+1):
         for k in range(0,L):
             ctx.prec = xwptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 xtv[chi,k,ell] = xtcoef[chi,k,ell]* av[k]
     # Computing the quotients
     ytv = {}
     for chi in range(0,der+1):
         for k in range(0,L):
             ctx.prec = ywptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 ytv[chi,k,ell] = ytcoef[chi,k,ell]* av[k]
 
     # COMPUTING THE TERMS xterm[k]
@@ -719,8 +719,9 @@ def Rzeta_simul(ctx, s, der=0):
     ywpsum =  4+ ctx.mag((N+ctx.power(N,1-ysigma))*ctx.ln(N) /eps1)
     wpsum = max(xwpsum, ywpsum)
 
-    # This can be improved
     ctx.prec = wpsum +10
+    '''
+    # This can be improved
     xS1={}
     yS1={}
     for chi in range(0,der+1):
@@ -736,6 +737,8 @@ def Rzeta_simul(ctx, s, der=0):
             yterm = pown*yexpn
             xS1[chi] += xterm
             yS1[chi] += yterm
+    '''
+    xS1, yS1 = ctx._zetasum(s, 1, int(N)-1, range(0,der+1), True)
 
     # END OF COMPUTATION of xrz, yrz
     #  See II Section 3.1
@@ -998,13 +1001,13 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     fortcoef={}
     for mu in derivatives:
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 fortcoef[mu,k,ell]=0
 
     for mu in derivatives:
         for k in range(0,L):
             ctx.prec = wptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 fortcoef[mu,k,ell]=d[mu,k,ell]*Fp[3*k-2*ell]/pipowers[2*k-ell]
                 fortcoef[mu,k,ell]=fortcoef[mu,k,ell]/((2*ctx.j)**ell)
 
@@ -1019,7 +1022,7 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     tcoef={}
     for chi in derivatives:
         for k in range(0,L):
-            for ell in range(-2,3*k/2+1):
+            for ell in range(-2,3*k//2+1):
                 tcoef[chi,k,ell]=0
     ctx.prec = wptcoef[0]+3
     aa = trunc_a(t)
@@ -1028,7 +1031,7 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     for chi in derivatives:
         for k in range(0,L):
             ctx.prec = wptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 tcoef[chi,k,ell] = 0
                 for mu in range(0, chi+1):
                     tcoefter = ctx.binomial(chi,mu) * la**mu * \
@@ -1056,7 +1059,7 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     for chi in derivatives:
         for k in range(0,L):
             ctx.prec = wptcoef[k]
-            for ell in range(0,3*k/2+1):
+            for ell in range(0,3*k//2+1):
                 tv[chi,k,ell] = tcoef[chi,k,ell]* av[k]
 
     # COMPUTING THE TERMS term[k]
@@ -1105,8 +1108,9 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     ctx.prec = 15
     wpsum = 4 + ctx.mag((N+ctx.power(N,1-sigma))*ctx.ln(N)/eps1)
 
+    ctx.prec = wpsum + 10
+    '''
     # This can be improved
-    ctx.prec = wpsum +10
     S1 = {}
     for chi in derivatives:
         S1[chi] = 0
@@ -1116,6 +1120,8 @@ def Rzeta_set(ctx, s, derivatives=[0]):
         for chi in derivatives:
             term = ctx.power(-ln, chi)*expn
             S1[chi] += term
+    '''
+    S1 = ctx._zetasum(s, 1, int(N)-1, derivatives)[0]
 
     # END OF COMPUTATION
     #  See II Section 3.1

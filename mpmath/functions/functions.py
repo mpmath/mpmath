@@ -59,6 +59,8 @@ class SpecialFunctions(object):
     def _gamma_upper_int(ctx, z, a): raise NotImplementedError
     def _expint_int(ctx, n, z): raise NotImplementedError
     def _zeta(ctx, s): raise NotImplementedError
+    def _zetasum_fast(ctx, s, a, n, derivatives, reflect): raise NotImplementedError
+
 
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True

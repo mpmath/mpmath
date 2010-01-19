@@ -509,3 +509,30 @@ def test_primezeta():
     assert primezeta(1) == inf
     assert primezeta(inf) == 0
     assert isnan(primezeta(nan))
+
+def test_rs_zeta():
+    mp.dps = 15
+    assert zeta(0.5+100000j).ae(1.0730320148577531321 + 5.7808485443635039843j)
+    assert zeta(0.75+100000j).ae(1.837852337251873704 + 1.9988492668661145358j)
+    assert zeta(0.5+1000000j, derivative=3).ae(1647.7744105852674733 - 1423.1270943036622097j)
+    assert zeta(1+1000000j, derivative=3).ae(3.4085866124523582894 - 18.179184721525947301j)
+    assert zeta(1+1000000j, derivative=1).ae(-0.10423479366985452134 - 0.74728992803359056244j)
+    assert zeta(0.5-1000000j, derivative=1).ae(11.636804066002521459 + 17.127254072212996004j)
+    # Additional sanity tests using fp arithmetic.
+    # Some more high-precision tests are found in the docstrings
+    def ae(x, y, tol=1e-6):
+        return abs(x-y) < tol*abs(y)
+    assert ae(fp.zeta(0.5-100000j), 1.0730320148577531321 - 5.7808485443635039843j)
+    assert ae(fp.zeta(0.75-100000j), 1.837852337251873704 - 1.9988492668661145358j)
+    assert ae(fp.zeta(0.5+1e6j), 0.076089069738227100006 + 2.8051021010192989554j)
+    assert ae(fp.zeta(0.5+1e6j, derivative=1), 11.636804066002521459 - 17.127254072212996004j)
+    assert ae(fp.zeta(1+1e6j), 0.94738726251047891048 + 0.59421999312091832833j)
+    assert ae(fp.zeta(1+1e6j, derivative=1), -0.10423479366985452134 - 0.74728992803359056244j)
+    assert ae(fp.zeta(0.5+100000j, derivative=1), 10.766962036817482375 - 30.92705282105996714j)
+    assert ae(fp.zeta(0.5+100000j, derivative=2), -119.40515625740538429 + 217.14780631141830251j)
+    assert ae(fp.zeta(0.5+100000j, derivative=3), 1129.7550282628460881 - 1685.4736895169690346j)
+    assert ae(fp.zeta(0.5+100000j, derivative=4), -10407.160819314958615 + 13777.786698628045085j)
+    assert ae(fp.zeta(0.75+100000j, derivative=1), -0.41742276699594321475 - 6.4453816275049955949j)
+    assert ae(fp.zeta(0.75+100000j, derivative=2), -9.214314279161977266 + 35.07290795337967899j)
+    assert ae(fp.zeta(0.75+100000j, derivative=3), 110.61331857820103469 - 236.87847130518129926j)
+    assert ae(fp.zeta(0.75+100000j, derivative=4), -1054.334275898559401 + 1769.9177890161596383j)

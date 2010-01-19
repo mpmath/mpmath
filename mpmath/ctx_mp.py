@@ -2273,6 +2273,7 @@ maxterms, or set zeroprec."""
                 extra += cancellation
         return s
 
+    '''
     def _zetasum(ctx, s, a, b):
         """
         Computes sum of k^(-s) for k = a, a+1, ..., b with a, b both small
@@ -2287,6 +2288,17 @@ maxterms, or set zeroprec."""
         elif hasattr(s, '_mpc_'):
             v = ctx.make_mpc(libmp.mpc_zetasum(s._mpc_, a, b, prec))
         return v
+    '''
+
+    def _zetasum_fast(ctx, s, a, n, derivatives=[0], reflect=False):
+        if not (ctx.isint(a) and hasattr(s, "_mpc_")):
+            raise NotImplementedError
+        a = int(a)
+        prec = ctx._prec
+        xs, ys = libmp.mpc_zetasum(s._mpc_, a, n, derivatives, reflect, prec)
+        xs = map(ctx.make_mpc, xs)
+        ys = map(ctx.make_mpc, ys)
+        return xs, ys
 
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)

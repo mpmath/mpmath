@@ -7745,7 +7745,8 @@ the critical line `s = 1/2 + it`::
     0.0
 
 Evaluation on and near the critical line is supported for large
-heights `t` by means of the Riemann-Siegel formula::
+heights `t` by means of the Riemann-Siegel formula (currently
+for `a = 1`, `n \le 4`)::
 
     >>> zeta(0.5+100000j)
     (1.073032014857753132114076 + 5.780848544363503984261041j)
@@ -7753,6 +7754,20 @@ heights `t` by means of the Riemann-Siegel formula::
     (0.9535316058375145020351559 + 0.9525945894834273060175651j)
     >>> zeta(0.5+10000000j)
     (11.45804061057709254500227 - 8.643437226836021723818215j)
+    >>> zeta(0.5+100000000j, derivative=1)
+    (51.12433106710194942681869 + 43.87221167872304520599418j)
+    >>> zeta(0.5+100000000j, derivative=2)
+    (-444.2760822795430400549229 - 896.3789978119185981665403j)
+    >>> zeta(0.5+100000000j, derivative=3)
+    (3230.72682687670422215339 + 14374.36950073615897616781j)
+    >>> zeta(0.5+100000000j, derivative=4)
+    (-11967.35573095046402130602 - 218945.7817789262839266148j)
+    >>> print zeta(1+10000000j)    # off the line
+    (2.859846483332530337008882 + 0.491808047480981808903986j)
+    >>> print zeta(1+10000000j, derivative=1)
+    (-4.333835494679647915673205 - 0.08405337962602933636096103j)
+    >>> print zeta(1+10000000j, derivative=4)
+    (453.2764822702057701894278 - 581.963625832768189140995j)
 
 Note: for investigation of the zeta function zeros, the Riemann-Siegel
 Z-function is often more convenient than working with the Riemann
@@ -7813,8 +7828,8 @@ Evaluation at zero and for negative integer `s`::
     (0.2899236037682695182085988 + 0.06561206166091757973112783j)
     >>> zeta(-3.25, 1/pi)
     -0.0005117269627574430494396877
-    >>> zeta(-3.5, pi(dps=30), 1)
-    11.15636039044000329471003
+    >>> extraprec(20)(zeta)(-3.5, pi, 1)   # XXX: extra precision
+    11.156360390440003294709
     >>> zeta(-100.5, (8,3))
     -4.68162300487989766727122e+77
     >>> zeta(-10.5, (-8,3))

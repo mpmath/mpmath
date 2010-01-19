@@ -1298,40 +1298,134 @@ def mpf_altzeta(s, prec, rnd=round_fast):
 def mpc_altzeta(s, prec, rnd=round_fast):
     return mpc_zeta(s, prec, rnd, 1)
 
-def mpf_zetasum(s, a, b, prec):
-    wp = prec + 10
-    t = MPZ_ZERO
-    sf = to_fixed(s, wp)
-    for k in xrange(a, b+1):
-        u = from_man_exp(-sf*log_int_fixed(k, wp), -2*wp, wp)
-        esign, eman, eexp, ebc = mpf_exp(u, wp)
-        offset = eexp + wp
-        if offset >= 0:
-            t += eman << offset
-        else:
-            t += eman >> (-offset)
-    return from_man_exp(t, -wp, prec, 'n')
+# Not optimized currently
+mpf_zetasum = None
 
-def mpc_zetasum(s, a, b, prec):
-    re, im = s
+def exp_fixed_prod(x, wp):
+    u = from_man_exp(x, -2*wp, wp)
+    esign, eman, eexp, ebc = mpf_exp(u, wp)
+    offset = eexp + wp
+    if offset >= 0:
+        return eman << offset
+    else:
+        return eman >> (-offset)
+
+def cos_sin_fixed_prod(x, wp):
+    cos, sin = mpf_cos_sin(from_man_exp(x, -2*wp), wp)
+    sign, man, exp, bc = cos
+    if sign:
+        man = -man
+    offset = exp + wp
+    if offset >= 0:
+        cos = man << offset
+    else:
+        cos = man >> (-offset)
+    sign, man, exp, bc = sin
+    if sign:
+        man = -man
+    offset = exp + wp
+    if offset >= 0:
+        sin = man << offset
+    else:
+        sin = man >> (-offset)
+    return cos, sin
+
+def pow_fixed(x, n, wp):
+    if n == 1:
+        return x
+    y = MPZ_ONE << wp
+    while n:
+        if n & 1:
+            y = (y*x) >> wp
+            n -= 1
+        x = (x*x) >> wp
+        n //= 2
+    return y
+
+def mpc_zetasum(s, a, n, derivatives, reflect, prec):
+    """
+    Fast version of mp._zetasum, assuming s = complex, a = integer.
+    """
+
     wp = prec + 10
-    ref = to_fixed(re, wp)
-    imf = to_fixed(im, wp)
-    tre = MPZ_ZERO
-    tim = MPZ_ZERO
+    have_derivatives = derivatives != [0]
+    have_one_derivative = len(derivatives) == 1
+
+    # parse s
+    sre, sim = s
+    critical_line = (sre == fhalf)
+    sre = to_fixed(sre, wp)
+    sim = to_fixed(sim, wp)
+
+    maxd = max(derivatives)
+    if not have_one_derivative:
+        derivatives = range(maxd+1)
+
+    # x_d = 0, y_d = 0
+    xre = [MPZ_ZERO for d in derivatives]
+    xim = [MPZ_ZERO for d in derivatives]
+    if reflect:
+        yre = [MPZ_ZERO for d in derivatives]
+        yim = [MPZ_ZERO for d in derivatives]
+    else:
+        yre = yim = []
+
     one = MPZ_ONE << wp
     one_2wp = MPZ_ONE << (2*wp)
-    critical_line = re == fhalf
-    for k in xrange(a, b+1):
-        log = log_int_fixed(k, wp)
-        if critical_line:
-            w = one_2wp // sqrt_fixed(k << wp, wp)
-        else:
-            w = to_fixed(mpf_exp(from_man_exp(-ref*log, -2*wp), wp), wp)
-        wre, wim = mpf_cos_sin(from_man_exp(-imf * log, -2*wp), wp)
-        tre += (w * to_fixed(wre, wp)) >> wp
-        tim += (w * to_fixed(wim, wp)) >> wp
-    tre = from_man_exp(tre, -wp, prec, 'n')
-    tim = from_man_exp(tim, -wp, prec, 'n')
-    return tre, tim
 
+    for w in xrange(a, a+n+1):
+        log = log_int_fixed(w, wp)
+        cos, sin = cos_sin_fixed_prod(-sim*log, wp)
+        if critical_line:
+            u = one_2wp // sqrt_fixed(w << wp, wp)
+        else:
+            u = exp_fixed_prod(-sre*log, wp)
+        xterm_re = (u * cos) >> wp
+        xterm_im = (u * sin) >> wp
+        if reflect:
+            reciprocal = (one_2wp // (u*w))
+            yterm_re = (reciprocal * cos) >> wp
+            yterm_im = (reciprocal * sin) >> wp
+
+        if have_derivatives:
+            if have_one_derivative:
+                log = pow_fixed(log, maxd, wp)
+                xre[0] += (xterm_re * log) >> wp
+                xim[0] += (xterm_im * log) >> wp
+                if reflect:
+                    yre[0] += (yterm_re * log) >> wp
+                    yim[0] += (yterm_im * log) >> wp
+            else:
+                t = MPZ_ONE << wp
+                for d in derivatives:
+                    xre[d] += (xterm_re * t) >> wp
+                    xim[d] += (xterm_im * t) >> wp
+                    if reflect:
+                        yre[d] += (yterm_re * t) >> wp
+                        yim[d] += (yterm_im * t) >> wp
+                    t = (t * log) >> wp
+        else:
+            xre[0] += xterm_re
+            xim[0] += xterm_im
+            if reflect:
+                yre[0] += yterm_re
+                yim[0] += yterm_im
+    if have_derivatives:
+        if have_one_derivative:
+            if maxd % 2:
+                xre[0] = -xre[0]
+                xim[0] = -xim[0]
+                if reflect:
+                    yre[0] = -yre[0]
+                    yim[0] = -yim[0]
+        else:
+            xre = [(-1)**d * xre[d] for d in derivatives]
+            xim = [(-1)**d * xim[d] for d in derivatives]
+            if reflect:
+                yre = [(-1)**d * yre[d] for d in derivatives]
+                yim = [(-1)**d * yim[d] for d in derivatives]
+    xs = [(from_man_exp(xa, -wp, prec, 'n'), from_man_exp(xb, -wp, prec, 'n'))
+        for (xa, xb) in zip(xre, xim)]
+    ys = [(from_man_exp(ya, -wp, prec, 'n'), from_man_exp(yb, -wp, prec, 'n'))
+        for (ya, yb) in zip(yre, yim)]
+    return xs, ys

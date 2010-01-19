@@ -477,13 +477,14 @@ def _hurwitz(ctx, s, a=1, d=0):
     s1 = s-1
     while 1:
         # Truncated L-series
-        if d:
-            l = ctx.fsum(ctx.log(n+a)**d * (n+a)**negs for n in range(M1,M2))
-        else:
-            l = ctx.fsum((n+a)**negs for n in range(M1,M2))
+        l = ctx._zetasum(s, M1+a, M2-M1-1, [d])[0][0]
+        #if d:
+        #    l = ctx.fsum((-ctx.ln(n+a))**d * (n+a)**negs for n in range(M1,M2))
+        #else:
+        #    l = ctx.fsum((n+a)**negs for n in range(M1,M2))
         lsum += l
         M2a = M2+a
-        logM2a = ctx.log(M2a)
+        logM2a = ctx.ln(M2a)
         logM2ad = logM2a**d
         logs = [logM2ad]
         logr = 1/logM2a
@@ -492,7 +493,7 @@ def _hurwitz(ctx, s, a=1, d=0):
         if d:
             tailsum = ctx.gammainc(d+1, s1*logM2a) / s1**(d+1)
         else:
-            tailsum = 1/((s-1)*(M2a)**s1)
+            tailsum = 1/((s1)*(M2a)**s1)
         tailsum += 0.5 * logM2ad * M2as
         U = [1]
         r = M2as
@@ -516,9 +517,68 @@ def _hurwitz(ctx, s, a=1, d=0):
             t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
             tailsum += t
             if ctx.mag(t) < tol:
-                return (-1)**d * (lsum + tailsum)
+                return lsum + (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
         M1, M2 = M2, M2*2
+
+@defun
+def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
+    """
+    Returns [xd0,xd1,...,xdr], [yd0,yd1,...ydr] where
+
+    xdk = D^k     ( 1/a^s     +  1/(a+1)^s      +  ...  +  1/(a+n)^s     )
+    ydk = D^k conj( 1/a^(1-s) +  1/(a+1)^(1-s)  +  ...  +  1/(a+n)^(1-s) )
+
+    D^k = kth derivative with respect to s, k ranges over the given list of
+    derivatives (which should consist of either a single element
+    or a range 0,1,...r). If reflect=False, the ydks are not computed.
+    """
+    try:
+        return ctx._zetasum_fast(s, a, n, derivatives, reflect)
+    except NotImplementedError:
+        pass
+    negs = ctx.fneg(s, exact=True)
+    have_derivatives = derivatives != [0]
+    have_one_derivative = len(derivatives) == 1
+    if not reflect:
+        if not have_derivatives:
+            return [ctx.fsum((a+k)**negs for k in xrange(n+1))], []
+        if have_one_derivative:
+            d = derivatives[0]
+            x = ctx.fsum(ctx.ln(a+k)**d * (a+k)**negs for k in xrange(n+1))
+            return [(-1)**d * x], []
+    maxd = max(derivatives)
+    if not have_one_derivative:
+        derivatives = range(maxd+1)
+    xs = [ctx.zero for d in derivatives]
+    if reflect:
+        ys = [ctx.zero for d in derivatives]
+    else:
+        ys = []
+    for k in xrange(n+1):
+        w = a + k
+        xterm = w ** negs
+        if reflect:
+            yterm = ctx.conj(ctx.one / (w * xterm))
+        if have_derivatives:
+            logw = -ctx.ln(w)
+            if have_one_derivative:
+                logw = logw ** maxd
+                xs[0] += xterm * logw
+                if reflect:
+                    ys[0] += yterm * logw
+            else:
+                t = ctx.one
+                for d in derivatives:
+                    xs[d] += xterm * t
+                    if reflect:
+                        ys[d] += yterm * t
+                    t *= logw
+        else:
+            xs[0] += xterm
+            if reflect:
+                ys[0] += yterm
+    return xs, ys
 
 @defun
 def dirichlet(ctx, s, chi=[1], derivative=0):
