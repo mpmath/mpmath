@@ -306,7 +306,7 @@ include::
 
     >>> zeta(3)
     1.2020569031595942853997381615114499907649862923405
-    >>> -diff(trigamma, 1)/2
+    >>> -psi(2,1)/2
     1.2020569031595942853997381615114499907649862923405
     >>> 8*nsum(lambda k: 1/(2*k+1)**3, [0,inf])/7
     1.2020569031595942853997381615114499907649862923405
@@ -6444,6 +6444,14 @@ Bernoulli number (see :func:`bernoulli`)::
     >>> bernpoly(13, 0), bernoulli(13)
     (0.0, 0.0)
 
+Evaluation is accurate for large `n` and small `z`::
+
+    >>> mp.dps = 25
+    >>> bernpoly(100, 0.5)
+    2.838224957069370695926416e+78
+    >>> bernpoly(1000, 10.5)
+    5.318704469415522036482914e+1769
+
 """
 
 polylog = r"""
@@ -8334,5 +8342,135 @@ series would converge too slowly::
     Traceback (most recent call last):
       ...
     ValueError: abs(q) > THETA_Q_LIM = 1.000000
+
+"""
+
+eulernum = r"""
+Gives the `n`-th Euler number, defined as the `n`-th derivative of
+`\mathrm{sech}(t) = 1/\cosh(t)` evaluated at `t = 0`. Equivalently, the
+Euler numbers give the coefficients of the Taylor series
+
+.. math ::
+
+    \mathrm{sech}(t) = \sum_{n=0}^{\infty} \frac{E_n}{n!} t^n.
+
+The Euler numbers are closely related to Bernoulli numbers
+and Bernoulli polynomials. They can also be evaluated in terms of
+Euler polynomials (see :func:`eulerpoly`) as `E_n = 2^n E_n(1/2)`.
+
+**Examples**
+
+Computing the first few Euler numbers and verifying that they
+agree with the Taylor series::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> [eulernum(n) for n in range(11)]
+    [1.0, 0.0, -1.0, 0.0, 5.0, 0.0, -61.0, 0.0, 1385.0, 0.0, -50521.0]
+    >>> chop(diffs(sech, 0, 10))
+    [1.0, 0.0, -1.0, 0.0, 5.0, 0.0, -61.0, 0.0, 1385.0, 0.0, -50521.0]
+
+Euler numbers grow very rapidly. :func:`eulernum` efficiently
+computes numerical approximations for large indices::
+
+    >>> eulernum(50)
+    -6.053285248188621896314384e+54
+    >>> eulernum(1000)
+    3.887561841253070615257336e+2371
+    >>> eulernum(10**20)
+    4.346791453661149089338186e+1936958564106659551331
+
+Comparing with an asymptotic formula for the Euler numbers::
+
+    >>> n = 10**5
+    >>> (-1)**(n//2) * 8 * sqrt(n/(2*pi)) * (2*n/(pi*e))**n
+    3.69919063017432362805663e+436961
+    >>> eulernum(n)
+    3.699193712834466537941283e+436961
+
+Pass ``exact=True`` to obtain exact values of Euler numbers as integers::
+
+    >>> print eulernum(50, exact=True)
+    -6053285248188621896314383785111649088103498225146815121
+    >>> print eulernum(200, exact=True) % 10**10
+    1925859625
+    >>> eulernum(1001, exact=True)
+    0
+"""
+
+eulerpoly = r"""
+Evaluates the Euler polynomial `E_n(z)`, defined by the generating function
+representation
+
+.. math ::
+
+    \frac{2e^{zt}}{e^t+1} = \sum_{n=0}^\infty E_n(z) \frac{t^n}{n!}.
+
+The Euler polynomials may also be represented in terms of
+Bernoulli polynomials (see :func:`bernpoly`) using various formulas, for
+example
+
+.. math ::
+
+    E_n(z) = \frac{2}{n+1} \left(
+        B_n(z)-2^{n+1}B_n\left(\frac{z}{2}\right)
+    \right).
+
+Special values include the Euler numbers `E_n = 2^n E_n(1/2)` (see
+:func:`eulernum`).
+
+**Examples**
+
+Computing the coefficients of the first few Euler polynomials::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> for n in range(6):
+    ...     chop(taylor(lambda z: eulerpoly(n,z), 0, n))
+    ...
+    [1.0]
+    [-0.5, 1.0]
+    [0.0, -1.0, 1.0]
+    [0.25, 0.0, -1.5, 1.0]
+    [0.0, 1.0, 0.0, -2.0, 1.0]
+    [-0.5, 0.0, 2.5, 0.0, -2.5, 1.0]
+
+Evaluation for arbitrary `z`::
+
+    >>> eulerpoly(2,3)
+    6.0
+    >>> eulerpoly(5,4)
+    423.5
+    >>> eulerpoly(35, 11111111112)
+    3.994957561486776072734601e+351
+    >>> eulerpoly(4, 10+20j)
+    (-47990.0 - 235980.0j)
+    >>> eulerpoly(2, '-3.5e-5')
+    0.000035001225
+    >>> eulerpoly(3, 0.5)
+    0.0
+    >>> eulerpoly(55, -10**80)
+    -1.0e+4400
+    >>> eulerpoly(5, -inf)
+    -inf
+    >>> eulerpoly(6, -inf)
+    +inf
+
+Computing Euler numbers::
+
+    >>> 2**26 * eulerpoly(26,0.5)
+    -4087072509293123892361.0
+    >>> eulernum(26)
+    -4087072509293123892361.0
+
+Evaluation is accurate for large `n` and small `z`::
+
+    >>> eulerpoly(100, 0.5)
+    2.29047999988194114177943e+108
+    >>> eulerpoly(1000, 10.5)
+    3.628120031122876847764566e+2070
+    >>> eulerpoly(10000, 10.5)
+    1.149364285543783412210773e+30688
+
 
 """

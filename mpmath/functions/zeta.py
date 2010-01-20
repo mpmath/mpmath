@@ -186,6 +186,8 @@ def primezeta(ctx, s):
                 yield t
     return ctx.sum_accurately(terms)
 
+# TODO: for bernpoly and eulerpoly, ensure that all exact zeros are covered
+
 @defun_wrapped
 def bernpoly(ctx, n, z):
     # Slow implementation:
@@ -193,35 +195,94 @@ def bernpoly(ctx, n, z):
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
-    if z == 1:
+    if z == 0 or (z == 1 and n > 1):
         return ctx.bernoulli(n)
+    if z == 0.5:
+        return (ctx.ldexp(1,1-n)-1)*ctx.bernoulli(n)
     if n <= 3:
         if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return (6*z*(z-1)+1)/6
         if n == 3: return z*(z*(z-1.5)+0.5)
+    if abs(z) == ctx.inf:
+        return z ** n
+    if z != z:
+        return z
     if abs(z) > 2:
-        s = t = ctx.one
-        r = ctx.one/z
-        for k in xrange(1,n+1):
-            t = t*(n+1-k)/k*r
-            if not (k > 2 and k & 1):
-                u = t*ctx.bernoulli(k)
-                s += u
-                if abs(u) < ctx.eps:
-                    break
-        return z**n * s
-    s = ctx.bernoulli(n)
-    t = ctx.one
-    for k in xrange(1,n+1):
-        t = t*(n+1-k)/k * z
-        m = n-k
-        if not (m > 2 and m & 1):
-            u = t*ctx.bernoulli(m)
-            s += u
-            #if abs(u) < ctx.eps:
-            #    break
-    return s
+        def terms():
+            t = ctx.one
+            yield t
+            r = ctx.one/z
+            k = 1
+            while k <= n:
+                t = t*(n+1-k)/k*r
+                if not (k > 2 and k & 1):
+                    yield t*ctx.bernoulli(k)
+                k += 1
+        return ctx.sum_accurately(terms) * z**n
+    else:
+        def terms():
+            yield ctx.bernoulli(n)
+            t = ctx.one
+            k = 1
+            while k <= n:
+                t = t*(n+1-k)/k * z
+                m = n-k
+                if not (m > 2 and m & 1):
+                    yield t*ctx.bernoulli(m)
+                k += 1
+        return ctx.sum_accurately(terms)
+
+@defun_wrapped
+def eulerpoly(ctx, n, z):
+    n = int(n)
+    if n < 0:
+        raise ValueError("Euler polynomials only defined for n >= 0")
+    if n <= 2:
+        if n == 0: return z ** 0
+        if n == 1: return z - 0.5
+        if n == 2: return z*(z-1)
+    if abs(z) == ctx.inf:
+        return z**n
+    if z != z:
+        return z
+    m = n+1
+    if z == 0:
+        return -2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m * z**0
+    if z == 1:
+        return 2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m * z**0
+    if z == 0.5:
+        if n % 2:
+            return ctx.zero
+        # Use exact code for Euler numbers
+        if n < 100 or n*ctx.mag(0.46839865*n) < ctx.prec*0.25:
+            return ctx.ldexp(ctx._eulernum(n), -n)
+    # http://functions.wolfram.com/Polynomials/EulerE2/06/01/02/01/0002/
+    def terms():
+        t = ctx.one
+        k = 0
+        w = ctx.ldexp(1,n+2)
+        while 1:
+            v = n-k+1
+            if not (v > 2 and v & 1):
+                yield (2-w)*ctx.bernoulli(v)*t
+            k += 1
+            if k > n:
+                break
+            t = t*z*(n-k+2)/k
+            w *= 0.5
+    return ctx.sum_accurately(terms) / m
+
+@defun
+def eulernum(ctx, n, exact=False):
+    n = int(n)
+    if exact:
+        return int(ctx._eulernum(n))
+    if n < 100:
+        return ctx.mpf(ctx._eulernum(n))
+    if n % 2:
+        return ctx.zero
+    return ctx.ldexp(ctx.eulerpoly(n,0.5), n)
 
 # TODO: this should be implemented low-level
 def polylog_series(ctx, s, z):

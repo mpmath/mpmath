@@ -277,19 +277,32 @@ class StandardBaseContext(Context,
     _eulernum = staticmethod(libmp.eulernum)
 
     def sum_accurately(ctx, terms, check_step=1):
-        max_term = ctx.ninf
-        s = ctx.zero
-        k = 0
-        for term in terms():
-            s += term
-            if not k % check_step and term:
-                abs_term = abs(term)
-                abs_sum = abs(s)
-                max_term = max(max_term, abs_term)
-                if abs_term <= ctx.eps*abs_sum:
+        prec = ctx.prec
+        try:
+            extraprec = 10
+            while 1:
+                ctx.prec = prec + extraprec + 5
+                max_mag = ctx.ninf
+                s = ctx.zero
+                k = 0
+                for term in terms():
+                    s += term
+                    if (not k % check_step) and term:
+                        term_mag = ctx.mag(term)
+                        max_mag = max(max_mag, term_mag)
+                        sum_mag = ctx.mag(s)
+                        if sum_mag - term_mag > ctx.prec:
+                            break
+                    k += 1
+                cancellation = max_mag - sum_mag
+                if cancellation != cancellation:
                     break
-            k += 1
-        return s
+                if cancellation < extraprec or ctx._fixed_precision:
+                    break
+                extraprec += min(ctx.prec, cancellation)
+            return s
+        finally:
+            ctx.prec = prec
 
     def power(ctx, x, y):
         return ctx.convert(x) ** ctx.convert(y)
