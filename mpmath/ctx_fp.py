@@ -150,6 +150,8 @@ class FPContext(StandardBaseContext):
     ceil = staticmethod(math2.ceil)
     cospi = staticmethod(math2.cospi)
     sinpi = staticmethod(math2.sinpi)
+    cbrt = staticmethod(math2.cbrt)
+    _nthroot = staticmethod(math2.nthroot)
 
     # XXX: math2
     def arg(ctx, z):
@@ -254,3 +256,6 @@ class FPContext(StandardBaseContext):
     def rand(ctx):
         import random
         return random.random()
+
+    _erf = staticmethod(math2.erf)
+    _erfc = staticmethod(math2.erfc)

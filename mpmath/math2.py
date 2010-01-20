@@ -1,13 +1,15 @@
 """
 This module complements the math and cmath builtin modules by providing
-fast machine precision versions of some additional functions (gamma, ...).
+fast machine precision versions of some additional functions (gamma, ...)
+and wrapping math/cmath functions so that they can be called with either
+real or complex arguments.
 """
 
 import operator
 import math
 import cmath
 
-# Irrational constants
+# Irrational (?) constants
 pi = 3.1415926535897932385
 e = 2.7182818284590452354
 sqrt2 = 1.4142135623730950488
@@ -19,6 +21,8 @@ euler = 0.57721566490153286061
 catalan = 0.91596559417721901505
 khinchin = 2.6854520010653064453
 apery = 1.2020569031595942854
+
+logpi = 1.1447298858494001741
 
 def _mathfun_real(f_real, f_complex):
     def f(x, **kwargs):
@@ -77,20 +81,22 @@ floor = _mathfun_real(math.floor,
 ceil = _mathfun_real(math.ceil,
     lambda z: complex(math.ceil(z.real), math.ceil(z.imag)))
 
+
+cos_sin = _mathfun_real(lambda x: (math.cos(x), math.sin(x)),
+                        lambda z: (cmath.cos(z), cmath.sin(z)))
+
+cbrt = _mathfun(lambda x: x**(1./3), lambda z: z**(1./3))
+
 def nthroot(x, n):
     r = 1./n
     try:
-        return x ** r
-    except ValueError:
+        return float(x) ** r
+    except (ValueError, TypeError):
         return complex(x) ** r
 
-def cos_sin(x, **kwargs):
-    if type(x) is complex:
-        return cmath.cos(x), cmath.sin(x)
-    else:
-        return math.cos(x), math.sin(x)
-
 def _sinpi_real(x):
+    if x < 0:
+        return -_sinpi_real(-x)
     n, r = divmod(x, 0.5)
     r *= pi
     n %= 4
@@ -100,6 +106,8 @@ def _sinpi_real(x):
     if n == 3: return -math.cos(r)
 
 def _cospi_real(x):
+    if x < 0:
+        x = -x
     n, r = divmod(x, 0.5)
     r *= pi
     n %= 4
@@ -109,6 +117,8 @@ def _cospi_real(x):
     if n == 3: return math.sin(r)
 
 def _sinpi_complex(z):
+    if z.real < 0:
+        return -_sinpi_complex(-z)
     n, r = divmod(z.real, 0.5)
     z = pi*complex(r, z.imag)
     n %= 4
@@ -118,6 +128,8 @@ def _sinpi_complex(z):
     if n == 3: return -cmath.cos(z)
 
 def _cospi_complex(z):
+    if z.real < 0:
+        z = -z
     n, r = divmod(z.real, 0.5)
     z = pi*complex(r, z.imag)
     n %= 4
@@ -217,6 +229,23 @@ def loggamma(x):
             x = float(x)
         except (ValueError, TypeError):
             x = complex(x)
+    # Reflection formula
+    # http://functions.wolfram.com/GammaBetaErf/LogGamma/16/01/01/0003/
+    if x.real < 0.0:
+        if abs(x) < 0.5:
+            v = log(gamma(x))
+            if x.imag == 0:
+                v = v.conjugate()
+            return v
+        z = 1-x
+        re = z.real
+        im = z.imag
+        refloor = floor(re)
+        imsign = cmp(im, 0)
+        return (-pi*1j)*abs(refloor)*(1-abs(imsign)) + logpi - \
+            log(sinpi(z-refloor)) - loggamma(z) + 1j*pi*refloor*imsign
+    if x == 1.0 or x == 2.0:
+        return x*0
     p = 0.
     while abs(x) < 11:
         p -= log(x)
@@ -289,3 +318,101 @@ def _digamma_complex(x):
     return s + cmath.log(x) - 0.5/x
 
 digamma = _mathfun_real(_digamma_real, _digamma_complex)
+
+# TODO: could implement complex erf and erfc here. Need
+# to find an accurate method (avoiding cancellation)
+# for approx. 1 < abs(x) < 9.
+
+_erfc_coeff_P = [
+    1.0000000161203922312,
+    2.1275306946297962644,
+    2.2280433377390253297,
+    1.4695509105618423961,
+    0.66275911699770787537,
+    0.20924776504163751585,
+    0.045459713768411264339,
+    0.0063065951710717791934,
+    0.00044560259661560421715][::-1]
+
+_erfc_coeff_Q = [
+    1.0000000000000000000,
+    3.2559100272784894318,
+    4.9019435608903239131,
+    4.4971472894498014205,
+    2.7845640601891186528,
+    1.2146026030046904138,
+    0.37647108453729465912,
+    0.080970149639040548613,
+    0.011178148899483545902,
+    0.00078981003831980423513][::-1]
+
+def _polyval(coeffs, x):
+    p = coeffs[0]
+    for c in coeffs[1:]:
+        p = c + x*p
+    return p
+
+def _erf_taylor(x):
+    # Taylor series assuming 0 <= x <= 1
+    x2 = x*x
+    s = t = x
+    n = 1
+    while abs(t) > 1e-17:
+        t *= x2/n
+        s -= t/(n+n+1)
+        n += 1
+        t *= x2/n
+        s += t/(n+n+1)
+        n += 1
+    return 1.1283791670955125739*s
+
+def _erfc_mid(x):
+    # Rational approximation assuming 0 <= x <= 9
+    return exp(-x*x)*_polyval(_erfc_coeff_P,x)/_polyval(_erfc_coeff_Q,x)
+
+def _erfc_asymp(x):
+    # Asymptotic expansion assuming x >= 9
+    x2 = x*x
+    v = exp(-x2)/x*0.56418958354775628695
+    r = t = 0.5 / x2
+    s = 1.0
+    for n in range(1,22,4):
+        s -= t
+        t *= r * (n+2)
+        s += t
+        t *= r * (n+4)
+        if abs(t) < 1e-17:
+            break
+    return s * v
+
+def erf(x):
+    """
+    erf of a real number.
+    """
+    x = float(x)
+    if x != x:
+        return x
+    if x < 0.0:
+        return -erf(-x)
+    if x >= 1.0:
+        if x >= 6.0:
+            return 1.0
+        return 1.0 - _erfc_mid(x)
+    return _erf_taylor(x)
+
+def erfc(x):
+    """
+    erfc of a real number.
+    """
+    x = float(x)
+    if x != x:
+        return x
+    if x < 0.0:
+        if x < -6.0:
+            return 2.0
+        return 2.0-erfc(-x)
+    if x > 9.0:
+        return _erfc_asymp(x)
+    if x >= 1.0:
+        return _erfc_mid(x)
+    return 1.0 - _erf_taylor(x)
