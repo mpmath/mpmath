@@ -981,7 +981,7 @@ def jtheta(ctx, n, z, q, derivative=0):
     try:
         ctx.prec += extra
         if n == 1:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._jacobi_theta2(z - ctx.pi/2, q)
@@ -991,7 +991,7 @@ def jtheta(ctx, n, z, q, derivative=0):
             else:
                 res = ctx._jacobi_theta2(z - ctx.pi/2, q)
         elif n == 2:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._jacobi_theta2(z, q)
@@ -1001,7 +1001,7 @@ def jtheta(ctx, n, z, q, derivative=0):
             else:
                 res = ctx._jacobi_theta2(z, q)
         elif n == 3:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._jacobi_theta3(z, q)
@@ -1011,7 +1011,7 @@ def jtheta(ctx, n, z, q, derivative=0):
             else:
                 res = ctx._jacobi_theta3(z, q)
         elif n == 4:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._jacobi_theta3(z, -q)
@@ -1045,7 +1045,7 @@ def _djtheta(ctx, n, z, q, derivative=1):
     try:
         ctx.prec += extra
         if n == 1:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
@@ -1055,7 +1055,7 @@ def _djtheta(ctx, n, z, q, derivative=1):
             else:
                 res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
         elif n == 2:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._djacobi_theta2(z, q, nd)
@@ -1065,7 +1065,7 @@ def _djtheta(ctx, n, z, q, derivative=1):
             else:
                 res = ctx._djacobi_theta2(z, q, nd)
         elif n == 3:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._djacobi_theta3(z, q, nd)
@@ -1075,7 +1075,7 @@ def _djtheta(ctx, n, z, q, derivative=1):
             else:
                 res = ctx._djacobi_theta3(z, q, nd)
         elif n == 4:
-            if abs(z.imag) != 0:
+            if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
                     res = ctx._djacobi_theta3(z, -q, nd)
