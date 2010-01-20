@@ -48,6 +48,12 @@ formula can not compute to the wanted precision.
 
 """
 
+# XXX: currently the loggamma function can generate inaccurate values
+# at high precision. As a temporary workaround, multiply the precision
+# in affected places by the following factor
+LOGGAMMA_BROKENNESS_FACTOR = 1.5
+
+
 import math
 
 class RSCache:
@@ -1147,7 +1153,7 @@ def z_half(ctx,t,der=0):
     tt = t/(2*ctx.pi)
     wptheta = wpinitial +1 + ctx.mag(3*(tt**1.5)*ctx.ln(tt))
     wpz = wpinitial + 1 + ctx.mag(12*tt*ctx.ln(tt))
-    ctx.prec = wptheta
+    ctx.prec = wptheta * LOGGAMMA_BROKENNESS_FACTOR
     theta = ctx.siegeltheta(t)
     ctx.prec = wpz
     rz = Rzeta_set(ctx,s, range(der+1))
@@ -1205,7 +1211,7 @@ def zeta_half(ctx, s, k=0):
     wpbasic = max(wpbasic, wpbasic2)
     wptheta = max(4, 3+ctx.mag(2.7*M1*X)+wpinitial+1)
     wpR = 3+ctx.mag(1.1+2*X)+wpinitial+1
-    ctx.prec = wptheta+wptheta/2
+    ctx.prec = wptheta * LOGGAMMA_BROKENNESS_FACTOR
     theta = ctx.siegeltheta(t-ctx.j*(sigma-ctx.mpf('0.5')))
     if k > 0: ps1 = (ctx.psi(0,s/2).real)/2 - ctx.ln(ctx.pi)/2
     if k > 1: ps2 = -(ctx.psi(1,s/2).imag)/4
@@ -1272,7 +1278,7 @@ def zeta_offline(ctx, s, k=0):
     wpbasic = max(wpbasic, wpbasic2)
     wptheta = max(4, 3+ctx.mag(2.7*M2*X)+wpinitial+1)
     wpR = 3+ctx.mag(1.1+2*X)+wpinitial+1
-    ctx.prec = wptheta+wptheta/2
+    ctx.prec = wptheta * LOGGAMMA_BROKENNESS_FACTOR
     theta = ctx.siegeltheta(t-ctx.j*(sigma-ctx.mpf('0.5')))
     s1 = s
     s2 = ctx.conj(1-s1)
@@ -1338,7 +1344,7 @@ def z_offline(ctx, w, k=0):
     wptheta = max(4,ctx.mag(2.04*aux2)+aux3)
     wpR = ctx.mag(4*aux1)+aux3
     # now the computations
-    ctx.prec = wptheta+wptheta/2
+    ctx.prec = wptheta * LOGGAMMA_BROKENNESS_FACTOR
     theta = ctx.siegeltheta(w)
     ctx.prec = wpR
     xrz, yrz = Rzeta_simul(ctx,s,k)
