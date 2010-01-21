@@ -287,49 +287,55 @@ def lambertw(ctx, z, k=0):
     if ctx.isnan(z):
         return z
     ctx.prec += 20
-    absz = abs(z)
-    # We must be extremely careful near the singularities at -1/e and 0
-    u = ctx.exp(-1)
-    if absz <= u:
-        if not z:
-            # w(0,0) = 0; for all other branches we hit the pole
-            if not k:
-                return z
-            return ctx.ninf
-        if not k:
-            w = z
-        # For small real z < 0, the -1 branch aves roughly like log(-z)
-        elif k == -1 and not ctx.im(z) and ctx.re(z) < 0:
-            w = ctx.ln(-z)
-        # Use a simple asymptotic approximation.
-        else:
-            w = ctx.ln(z)
-            # The branches are roughly logarithmic. This approximation
-            # gets better for large |k|; need to check that this always
-            # works for k ~= -1, 0, 1.
-            if k: w += k * 2*ctx.pi*ctx.j
-    elif k == 0 and ctx.im(z) and absz <= 0.7:
-        # Both the W(z) ~= z and W(z) ~= ln(z) approximations break
-        # down around z ~= -0.5 (converging to the wrong branch), so patch 
-        # with a constant approximation (adjusted for sign)
-        if abs(z+0.5) < 0.1:
-            if ctx.im(z) > 0:
-                w = ctx.mpc(0.7+0.7j)
-            else:
-                w = ctx.mpc(0.7-0.7j)
-        else:
-            w = z
+    mag = ctx.mag(z)
+    # Start from fp approximation
+    if 0 and ctx is ctx._mp and abs(mag) < 900 and abs(k) < 10000:
+        w = ctx._fp.lambertw(z, k)
     else:
-        if z == ctx.inf:
-            if k == 0:
-                return z
+        absz = abs(z)
+        # We must be extremely careful near the singularities at -1/e and 0
+        u = ctx.exp(-1)
+        if absz <= u:
+            if not z:
+                # w(0,0) = 0; for all other branches we hit the pole
+                if not k:
+                    return z
+                return ctx.ninf
+            if not k:
+                w = z
+            # For small real z < 0, the -1 branch aves roughly like log(-z)
+            elif k == -1 and not ctx.im(z) and ctx.re(z) < 0:
+                w = ctx.ln(-z)
+            # Use a simple asymptotic approximation.
             else:
-                return z + 2*k*ctx.pi*ctx.j
-        if z == ctx.ninf:
-            return (-z) + (2*k+1)*ctx.pi*ctx.j
-        # Simple asymptotic approximation as above
-        w = ctx.ln(z)
-        if k: w += k * 2*ctx.pi*ctx.j
+                w = ctx.ln(z)
+                # The branches are roughly logarithmic. This approximation
+                # gets better for large |k|; need to check that this always
+                # works for k ~= -1, 0, 1.
+                if k: w += k * 2*ctx.pi*ctx.j
+        elif k == 0 and ctx.im(z) and absz <= 0.7:
+            # Both the W(z) ~= z and W(z) ~= ln(z) approximations break
+            # down around z ~= -0.5 (converging to the wrong branch), so patch 
+            # with a constant approximation (adjusted for sign)
+            if abs(z+0.5) < 0.1:
+                if ctx.im(z) > 0:
+                    w = ctx.mpc(0.7+0.7j)
+                else:
+                    w = ctx.mpc(0.7-0.7j)
+            else:
+                w = z
+        else:
+            if z == ctx.inf:
+                if k == 0:
+                    return z
+                else:
+                    return z + 2*k*ctx.pi*ctx.j
+            if z == ctx.ninf:
+                return (-z) + (2*k+1)*ctx.pi*ctx.j
+            # Simple asymptotic approximation as above
+            w = ctx.ln(z)
+            if k:
+                w += k * 2*ctx.pi*ctx.j
     # Use Halley iteration to solve w*exp(w) = z
     two = ctx.mpf(2)
     weps = ctx.ldexp(ctx.eps, 15)
