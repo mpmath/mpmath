@@ -8471,6 +8471,72 @@ Evaluation is accurate for large `n` and small `z`::
     3.628120031122876847764566e+2070
     >>> eulerpoly(10000, 10.5)
     1.149364285543783412210773e+30688
+"""
 
+spherharm = r"""
+Evaluates the spherical harmonic `Y_l^m(\theta,\phi)`,
 
+.. math ::
+
+    Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi}\frac{(l-m)!}{(l+m)!}}
+        P_l^m(\cos \theta) e^{i m \phi}
+
+where `P_l^m` is an associated Legendre function (see :func:`legenp`).
+
+Here `\theta \in [0, \pi]` denotes the polar coordinate (ranging
+from the north pole to the south pole) and `\phi \in [0, 2 \pi]` denotes the
+azimuthal coordinate on a sphere. Care should be used since many different
+conventions for spherical coordinate variables are used.
+
+Usually spherical harmonics are considered for `l \in \mathbb{N}`,
+`m \in \mathbb{Z}`, `|m| \le l`. More generally, `l,m,\theta,\phi`
+are permitted to be complex numbers.
+
+Note: :func:`spherharm` returns a complex number, even the value is
+purely real.
+
+**Examples**
+
+Some low-order spherical harmonics with reference values::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> theta = pi/4
+    >>> phi = pi/3
+    >>> spherharm(0,0,theta,phi); 0.5*sqrt(1/pi)*expj(0)
+    (0.2820947917738781434740397 + 0.0j)
+    (0.2820947917738781434740397 + 0.0j)
+    >>> spherharm(1,-1,theta,phi); 0.5*sqrt(3/(2*pi))*expj(-phi)*sin(theta)
+    (0.1221506279757299803965962 - 0.2115710938304086076055298j)
+    (0.1221506279757299803965962 - 0.2115710938304086076055298j)
+    >>> spherharm(1,0,theta,phi); 0.5*sqrt(3/pi)*cos(theta)*expj(0)
+    (0.3454941494713354792652446 + 0.0j)
+    (0.3454941494713354792652446 + 0.0j)
+    >>> spherharm(1,1,theta,phi); -0.5*sqrt(3/(2*pi))*expj(phi)*sin(theta)
+    (-0.1221506279757299803965962 - 0.2115710938304086076055298j)
+    (-0.1221506279757299803965962 - 0.2115710938304086076055298j)
+
+With the normalization convention used, the spherical harmonics are orthonormal
+on the unit sphere::
+
+    >>> sphere = [0,pi], [0,2*pi]
+    >>> dS = lambda t,p: fp.sin(t)   # differential element
+    >>> Y1 = lambda t,p: fp.spherharm(l1,m1,t,p)
+    >>> Y2 = lambda t,p: fp.conj(fp.spherharm(l2,m2,t,p))
+    >>> l1 = l2 = 3; m1 = m2 = 2
+    >>> print fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere)
+    (1+0j)
+    >>> m2 = 1    # m1 != m2
+    >>> fp.chop(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere))
+    0.0
+
+Evaluation is accurate for large orders::
+
+    >>> spherharm(1000,750,0.5,0.25)
+    (3.776445785304252879026585e-102 - 5.82441278771834794493484e-102j)
+
+Evaluation works with complex parameter values::
+
+    >>> spherharm(1+j, 2j, 2+3j, -0.5j)
+    (64.44922331113759992154992 + 1981.693919841408089681743j)
 """

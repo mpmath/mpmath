@@ -299,6 +299,7 @@ legenq = mp.legenq
 hermite = mp.hermite
 gegenbauer = mp.gegenbauer
 laguerre = mp.laguerre
+spherharm = mp.spherharm
 besselj = mp.besselj
 j0 = mp.j0
 j1 = mp.j1
