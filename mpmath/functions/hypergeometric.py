@@ -296,7 +296,7 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
             finally:
                 ctx.prec = orig
             if ctx.is_real_type(b) and ctx.is_real_type(z):
-                v = v.real
+                v = ctx._re(v)
             return +v
         except ctx.NoConvergence:
             pass
@@ -317,7 +317,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         try:
             try:
                 ctx.prec += magz
-                sector = z.imag < 0 and z.real <= 0
+                sector = ctx._im(z) < 0 and ctx._re(z) <= 0
                 def h(a,b):
                     if sector:
                         E = ctx.expjpi(ctx.fneg(a, exact=True))
@@ -329,7 +329,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                     return T1, T2
                 v = ctx.hypercomb(h, [a,b], force_series=True)
                 if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
-                    v = v.real
+                    v = ctx._re(v)
                 return +v
             except ctx.NoConvergence:
                 pass
@@ -541,7 +541,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     # Problem: the convergence acceleration degenerates as |z-1| -> 0,
     # except for special cases. Everywhere else, the Shanks transformation
     # is very efficient.
-    if absz < 1.1 and z.real <= 1:
+    if absz < 1.1 and ctx._re(z) <= 1:
         def term(k, _cache={0:ctx.one}):
             k = int(k)
             if k in _cache:
@@ -928,8 +928,8 @@ def _erf_complex(ctx, z):
     z2 = ctx.square_exp_arg(z, -1)
     #z2 = -z**2
     v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), z2)
-    if not z.real:
-        v = v.imag*ctx.j
+    if not ctx._re(z):
+        v = ctx._im(v)*ctx.j
     return v
 
 @defun_wrapped
@@ -940,8 +940,8 @@ def _erfc_complex(ctx, z):
         v = ctx.exp(nz2)/ctx.sqrt(ctx.pi) * ctx.hyperu((1,2),(1,2), z2)
     else:
         v = 1 - ctx._erf_complex(z)
-    if not z.real:
-        v = 1+v.imag*ctx.j
+    if not ctx._re(z):
+        v = 1+ctx._im(v)*ctx.j
     return v
 
 @defun
@@ -949,7 +949,7 @@ def erf(ctx, z):
     z = ctx.convert(z)
     if ctx.is_real_type(z):
         try:
-            return ctx._erf(z.real)
+            return ctx._erf(z)
         except NotImplementedError:
             pass
     if ctx.is_complex_type(z) and not z.imag:
@@ -964,7 +964,7 @@ def erfc(ctx, z):
     z = ctx.convert(z)
     if ctx.is_real_type(z):
         try:
-            return ctx._erfc(z.real)
+            return ctx._erfc(z)
         except NotImplementedError:
             pass
     if ctx.is_complex_type(z) and not z.imag:
@@ -987,15 +987,17 @@ def erfi(ctx, z):
         return z
     z2 = ctx.square_exp_arg(z)
     v = (2/ctx.sqrt(ctx.pi)*z) * ctx.hyp1f1((1,2), (3,2), z2)
-    if not z.real:
-        v = v.imag*ctx.j
+    if not ctx._re(z):
+        v = ctx._im(v)*ctx.j
     return v
 
 @defun_wrapped
 def erfinv(ctx, x):
-    if x.imag or (x < -1) or (x > 1):
+    xre = ctx._re(x)
+    if (xre != x) or (xre < -1) or (xre > 1):
         return ctx.bad_domain("erfinv(x) is defined only for -1 <= x <= 1")
-    if ctx.isnan(x): return x
+    x = xre
+    #if ctx.isnan(x): return x
     if not x: return x
     if x == 1: return ctx.inf
     if x == -1: return ctx.ninf
@@ -1240,7 +1242,7 @@ def airyai(ctx, z):
     if z:
         # Account for exponential scaling
         ctx.prec += max(0, int(1.5*ctx.mag(z)))
-    if z.real > 4:
+    if ctx._re(z) > 4:
         # We could still use 1F1, but it results in huge cancellation;
         # the following expansion is better
         w = z**1.5
@@ -1248,11 +1250,11 @@ def airyai(ctx, z):
         v = ctx.exp(-2*w/3)/(2*ctx.sqrt(ctx.pi)*ctx.nthroot(z,4))
         v *= ctx.hyp2f0((1,6),(5,6),r)
         return v
-    elif z.real > 1:
+    elif ctx._re(z) > 1:
         # If not using asymptotic series:
         # cancellation: both terms are ~ 2^(z^1.5),
         # result is ~ 2^(-z^1.5), so need ~2*z^1.5 extra bits
-        ctx.prec += 2*int(z.real**1.5)
+        ctx.prec += 2*int(ctx._re(z)**1.5)
     z3 = z**3 / 9
     a = ctx.hyp0f1((2,3), z3) / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
     b = z * ctx.hyp0f1((4,3), z3) / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
@@ -1877,8 +1879,8 @@ def coulombg(ctx, l, eta, z, w=1, chop=True, **kwargs):
     # Irregular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
-    if not l.imag:
-        l = l.real  # XXX: for isint
+    if not ctx._im(l):
+        l = ctx._re(l)  # XXX: for isint
     def h(l, eta):
         # Force perturbation for integers and half-integers
         if ctx.isint(l*2):
@@ -1902,9 +1904,9 @@ def coulombg(ctx, l, eta, z, w=1, chop=True, **kwargs):
             T1 = [0], [-1], [], [], [], [], 0
             return (T1,)
     v = ctx.hypercomb(h, [l,eta], **kwargs)
-    if chop and (not ctx.im(l)) and (not ctx.im(eta)) and (not ctx.im(z)) and \
-        (ctx.re(z) >= 0):
-        v = ctx.re(v)
+    if chop and (not ctx._im(l)) and (not ctx._im(eta)) and (not ctx._im(z)) and \
+        (ctx._re(z) >= 0):
+        v = ctx._re(v)
     return v
 
 @defun

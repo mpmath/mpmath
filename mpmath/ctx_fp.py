@@ -164,16 +164,6 @@ class FPContext(StandardBaseContext):
     def expjpi(ctx, x):
         return ctx.exp(ctx.j*ctx.pi*x)
 
-    def re(ctx, x):
-        if type(x) is float:
-            return x
-        return x.real
-
-    def im(ctx, x):
-        if type(x) is float:
-            return 0.0
-        return x.imag
-
     ldexp = math.ldexp
     frexp = math.frexp
 
@@ -183,16 +173,20 @@ class FPContext(StandardBaseContext):
         return ctx.ninf
 
     def isint(ctx, z):
-        if z.imag:
-            return False
-        z = z.real
+        if hasattr(z, "imag"):   # float/int don't have .real/.imag in py2.5
+            if z.imag:
+                return False
+            z = z.real
         try:
             return z == int(z)
         except:
             return False
 
     def nint_distance(ctx, z):
-        n = round(z.real)
+        if hasattr(z, "imag"):   # float/int don't have .real/.imag in py2.5
+            n = round(z.real)
+        else:
+            n = round(z)
         if n == z:
             return n, ctx.ninf
         return n, ctx.mag(abs(z-n))
@@ -201,7 +195,10 @@ class FPContext(StandardBaseContext):
         if type(z) is tuple:
             p, q = z
             return ctx.mpf(p) / q, 'R'
-        intz = int(z.real)
+        if hasattr(z, "imag"):    # float/int don't have .real/.imag in py2.5
+            intz = int(z.real)
+        else:
+            intz = int(z)
         if z == intz:
             return intz, 'Z'
         return z, 'R'

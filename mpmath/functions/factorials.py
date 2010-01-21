@@ -44,7 +44,7 @@ def beta(ctx, x, y):
     if ctx.isinf(y):
         x, y = y, x
     if ctx.isinf(x):
-        if x == ctx.inf and not y.imag:
+        if x == ctx.inf and not ctx._im(y):
             if y == ctx.ninf:
                 return ctx.nan
             if y > 0:
@@ -84,7 +84,7 @@ def barnesg(ctx, z):
         return ctx.nan
     if ctx.isnan(z):
         return z
-    if (not z.imag) and z.real <= 0 and ctx.isint(z.real):
+    if (not ctx._im(z)) and ctx._re(z) <= 0 and ctx.isint(ctx._re(z)):
         return z*0
     # Account for size (would not be needed if computing log(G))
     if abs(z) > 5:
@@ -98,7 +98,7 @@ def barnesg(ctx, z):
             ctx.j*ctx.polylog(2, u)/pi2
         v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
         if ctx.is_real_type(z):
-            v = v.real
+            v = ctx._re(v)
         return v
     # Estimate terms for asymptotic expansion
     # TODO: fixme, obviously
@@ -139,7 +139,7 @@ def hyperfac(ctx, z):
     else:
         extra = 0
     ctx.prec += extra
-    if not z.imag and z.real < 0 and ctx.isint(z.real):
+    if not ctx._im(z) and ctx._re(z) < 0 and ctx.isint(ctx._re(z)):
         n = int(ctx.re(z))
         h = ctx.hyperfac(-n-1)
         if ((n+1)//2) & 1:
@@ -158,15 +158,15 @@ def hyperfac(ctx, z):
 
 @defun_wrapped
 def loggamma(ctx, z):
-    a = z.real
-    b = z.imag
+    a = ctx._re(z)
+    b = ctx._im(z)
     if not b and a > 0:
         return ctx.ln(ctx.gamma(z))
     u = ctx.arg(z)
     w = ctx.ln(ctx.gamma(z))
     if b:
         gi = -b - u/2 + a*u + b*ctx.ln(abs(z))
-        n = ctx.floor((gi-w.imag)/(2*ctx.pi)+0.5) * (2*ctx.pi)
+        n = ctx.floor((gi-ctx._im(w))/(2*ctx.pi)+0.5) * (2*ctx.pi)
         return w + n*ctx.j
     elif a < 0:
         n = int(ctx.floor(a))

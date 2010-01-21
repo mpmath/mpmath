@@ -229,17 +229,27 @@ def loggamma(x):
             x = float(x)
         except (ValueError, TypeError):
             x = complex(x)
+    try:
+        xreal = x.real
+        ximag = x.imag
+    except AttributeError:   # py2.5
+        xreal = x
+        ximag = 0.0
     # Reflection formula
     # http://functions.wolfram.com/GammaBetaErf/LogGamma/16/01/01/0003/
-    if x.real < 0.0:
+    if xreal < 0.0:
         if abs(x) < 0.5:
             v = log(gamma(x))
-            if x.imag == 0:
+            if ximag == 0:
                 v = v.conjugate()
             return v
         z = 1-x
-        re = z.real
-        im = z.imag
+        try:
+            re = z.real
+            im = z.imag
+        except AttributeError:   # py2.5
+            re = z
+            im = 0.0
         refloor = floor(re)
         imsign = cmp(im, 0)
         return (-pi*1j)*abs(refloor)*(1-abs(imsign)) + logpi - \

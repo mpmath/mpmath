@@ -21,7 +21,7 @@ def stieltjes(ctx, n, a=1):
     def f(x):
         xa = x/a
         v = (xa-ctx.j)*ctx.ln(a-ctx.j*x)**n/(1+xa**2)/(ctx.exp(2*ctx.pi*x)-1)
-        return v.real / mag
+        return ctx._re(v) / mag
     orig = ctx.prec
     try:
         # Normalize integrand by approx. magnitude to
@@ -40,7 +40,7 @@ def stieltjes(ctx, n, a=1):
 
 @defun_wrapped
 def siegeltheta(ctx, t):
-    if t.imag:
+    if ctx._im(t):
         # XXX: cancellation occurs
         a = ctx.loggamma(0.25+0.5j*t)
         b = ctx.loggamma(0.25-0.5j*t)
@@ -48,7 +48,7 @@ def siegeltheta(ctx, t):
     else:
         if ctx.isinf(t):
             return t
-        return ctx.loggamma(0.25+0.5j*t).imag - ctx.ln(ctx.pi)/2*t
+        return ctx._im(ctx.loggamma(0.25+0.5j*t)) - ctx.ln(ctx.pi)/2*t
 
 @defun_wrapped
 def grampoint(ctx, n):
@@ -61,7 +61,7 @@ def grampoint(ctx, n):
 def siegelz(ctx, t):
     v = ctx.expj(ctx.siegeltheta(t))*ctx.zeta(0.5+ctx.j*t)
     if ctx.is_real_type(t):
-        return v.real
+        return ctx._re(v)
     return v
 
 _zeta_zeros = [
@@ -305,8 +305,8 @@ def polylog_continuation(ctx, n, z):
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx.is_real_type(z) and z < 0:
-        a = a.real
-    if z.imag < 0 or (z.imag == 0 and z.real >= 1):
+        a = ctx._re(a)
+    if ctx._im(z) < 0 or (ctx._im(z) == 0 and ctx._re(z) >= 1):
         a -= twopij*ctx.ln(z)**(n-1)/ctx.fac(n-1)
     return a
 
@@ -343,7 +343,7 @@ def polylog_unitcircle(ctx, n, z):
     else:
         raise ValueError
     if ctx.is_real_type(z) and z < 0:
-        l = l.real
+        l = ctx._re(l)
     return l
 
 def polylog_general(ctx, s, z):
@@ -425,8 +425,8 @@ def zeta(ctx, s, a=1, derivative=0, **kwargs):
     verbose = kwargs.get('verbose')
     if a == 1 and method != 'euler-maclaurin':
         # Try to use fast code for Riemann zeta
-        im = abs(s.imag)
-        re = abs(s.real)
+        im = abs(ctx._im(s))
+        re = abs(ctx._re(s))
         if (im < prec or method == 'borwein') and not derivative:
             try:
                 if verbose:
@@ -438,14 +438,15 @@ def zeta(ctx, s, a=1, derivative=0, **kwargs):
                 pass
         if abs(im) > 60*prec and 10*re < prec and derivative <= 4 or \
             method == 'riemann-siegel':
-            try:
-                if verbose:
-                    print "zeta: Attempting to use the Riemann-Siegel algorithm"
-                return ctx.rs_zeta(s, derivative, **kwargs)
-            except NotImplementedError:
-                if verbose:
-                    print "zeta: Could not use the Riemann-Siegel algorithm"
-                pass
+            try:   #  py2.4 compatible try block
+                try:
+                    if verbose:
+                        print "zeta: Attempting to use the Riemann-Siegel algorithm"
+                    return ctx.rs_zeta(s, derivative, **kwargs)
+                except NotImplementedError:
+                    if verbose:
+                        print "zeta: Could not use the Riemann-Siegel algorithm"
+                    pass
             finally:
                 ctx.prec = prec
     if s == 1:
@@ -534,7 +535,7 @@ def _hurwitz(ctx, s, a=1, d=0):
     lsum = 0
     # This speeds up the recurrence for derivatives
     if ctx.isint(s):
-        s = int(s.real)
+        s = int(ctx._re(s))
     s1 = s-1
     while 1:
         # Truncated L-series

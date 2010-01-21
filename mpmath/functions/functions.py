@@ -224,7 +224,9 @@ def unitroots(ctx, n, primitive=False):
 @defun
 def arg(ctx, x):
     x = ctx.convert(x)
-    return ctx.atan2(x.imag, x.real)
+    re = ctx._re(x)
+    im = ctx._im(x)
+    return ctx.atan2(im, re)
 
 @defun
 def fabs(ctx, x):
@@ -232,11 +234,17 @@ def fabs(ctx, x):
 
 @defun
 def re(ctx, x):
-    return ctx.convert(x).real
+    x = ctx.convert(x)
+    if hasattr(x, "real"):    # py2.5 doesn't have .real/.imag for all numbers
+        return x.real
+    return x
 
 @defun
 def im(ctx, x):
-    return ctx.convert(x).imag
+    x = ctx.convert(x)
+    if hasattr(x, "imag"):    # py2.5 doesn't have .real/.imag for all numbers
+        return x.imag
+    return ctx.zero
 
 @defun
 def conj(ctx, x):

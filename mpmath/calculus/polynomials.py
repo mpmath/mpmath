@@ -174,11 +174,11 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         # Remove small imaginary parts
         if cleanup:
             for i in xrange(deg):
-                if abs(roots[i].imag) < weps:
+                if abs(ctx._im(roots[i])) < weps:
                     roots[i] = roots[i].real
-                elif abs(roots[i].real) < weps:
+                elif abs(ctx._re(roots[i])) < weps:
                     roots[i] = roots[i].imag * 1j
-        roots.sort(key=lambda x: (abs(x.imag), x.real))
+        roots.sort(key=lambda x: (abs(ctx._im(x)), ctx._re(x)))
     finally:
         ctx.prec = orig
     if error:

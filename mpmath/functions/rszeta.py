@@ -258,8 +258,8 @@ def Rzeta_simul(ctx, s, der=0):
 
     # INITIALIZATION
     # Take the real and imaginary part of s
-    t = s.imag
-    xsigma = s.real
+    t = ctx._im(s)
+    xsigma = ctx._re(s)
     ysigma = 1 - xsigma
 
     # Now compute several parameter that appear on the program
@@ -795,8 +795,8 @@ def Rzeta_set(ctx, s, derivatives=[0]):
     # restaurate the initial value
     wpinitial = ctx.prec
     # Take the real and imaginary part of s
-    t = s.imag
-    sigma = s.real
+    t = ctx._im(s)
+    sigma = ctx._re(s)
     # Now compute several parameter that appear on the program
     ctx.prec = 15
     a = ctx.sqrt(t/(2*ctx.pi))     #  Careful
@@ -1157,10 +1157,10 @@ def z_half(ctx,t,der=0):
     theta = ctx.siegeltheta(t)
     ctx.prec = wpz
     rz = Rzeta_set(ctx,s, range(der+1))
-    if der > 0: ps1 = (ctx.psi(0,s/2)/2 - ctx.ln(ctx.pi)/2).real
-    if der > 1: ps2 = (ctx.j*ctx.psi(1,s/2)/4).real
-    if der > 2: ps3 = (-ctx.psi(2,s/2)/8).real
-    if der > 3: ps4 = (-ctx.j*ctx.psi(3,s/2)/16).real
+    if der > 0: ps1 = ctx._re(ctx.psi(0,s/2)/2 - ctx.ln(ctx.pi)/2)
+    if der > 1: ps2 = ctx._re(ctx.j*ctx.psi(1,s/2)/4)
+    if der > 2: ps3 = ctx._re(-ctx.psi(2,s/2)/8)
+    if der > 3: ps4 = ctx._re(-ctx.j*ctx.psi(3,s/2)/16)
     exptheta = ctx.expj(theta)
     if der == 0:
         z = 2*exptheta*rz[0]
@@ -1181,15 +1181,15 @@ def z_half(ctx,t,der=0):
         z = z + 4*ps1*rz[3]-4*rz[1]*ps3-4*rz[0]*ps1*ps3+rz[4]+ctx.j*rz[0]*ps4
         z = zf*z
     ctx.prec = wpinitial
-    return z.real
+    return ctx._re(z)
 
 def zeta_half(ctx, s, k=0):
     """
     zeta_half(s,k=0) Computes zeta^(k)(s) when Re s = 0.5
     """
     wpinitial = ctx.prec
-    sigma = s.real
-    t = s.imag
+    sigma = ctx._re(s)
+    t = ctx._im(s)
     #--- compute wptheta, wpR, wpbasic ---
     ctx.prec = 53
     #  X see II Section 3.21 (109) and (110)
@@ -1213,10 +1213,10 @@ def zeta_half(ctx, s, k=0):
     wpR = 3+ctx.mag(1.1+2*X)+wpinitial+1
     ctx.prec = wptheta * LOGGAMMA_BROKENNESS_FACTOR
     theta = ctx.siegeltheta(t-ctx.j*(sigma-ctx.mpf('0.5')))
-    if k > 0: ps1 = (ctx.psi(0,s/2).real)/2 - ctx.ln(ctx.pi)/2
-    if k > 1: ps2 = -(ctx.psi(1,s/2).imag)/4
-    if k > 2: ps3 = -(ctx.psi(2,s/2).real)/8
-    if k > 3: ps4 = (ctx.psi(3,s/2).imag)/16
+    if k > 0: ps1 = (ctx._re(ctx.psi(0,s/2)))/2 - ctx.ln(ctx.pi)/2
+    if k > 1: ps2 = -(ctx._im(ctx.psi(1,s/2)))/4
+    if k > 2: ps3 = -(ctx._re(ctx.psi(2,s/2)))/8
+    if k > 3: ps4 = (ctx._im(ctx.psi(3,s/2)))/16
     ctx.prec = wpR
     xrz = Rzeta_set(ctx,s,range(k+1))
     yrz={}
@@ -1250,8 +1250,8 @@ def zeta_offline(ctx, s, k=0):
     Computes zeta^(k)(s) off the line
     """
     wpinitial = ctx.prec
-    sigma = s.real
-    t = s.imag
+    sigma = ctx._re(s)
+    t = ctx._im(s)
     #--- compute wptheta, wpR, wpbasic ---
     ctx.prec = 53
     #  X see II Section 3.21 (109) and (110)
@@ -1322,17 +1322,17 @@ def z_offline(ctx, w, k=0):
     ctx.prec = 35
     #  X see II Section 3.21 (109) and (110)
     # M1  see II Section 3.21 (111) and (112)
-    if (s1.real >= 0):
-        M1 = 2*ctx.sqrt(s1.imag/(2 * ctx.pi))
+    if (ctx._re(s1) >= 0):
+        M1 = 2*ctx.sqrt(ctx._im(s1)/(2 * ctx.pi))
         X = ctx.sqrt(abs(s1))
     else:
-        X = (2*ctx.pi)**(s1.real-1) * abs(1-s1)**(0.5-s1.real)
-        M1 = 4 * s1.imag*X
+        X = (2*ctx.pi)**(ctx._re(s1)-1) * abs(1-s1)**(0.5-ctx._re(s1))
+        M1 = 4 * ctx._im(s1)*X
     # M2  see II Section 3.21 (111) and (112)
-    if (s2.real >= 0):
-        M2 = 2*ctx.sqrt(s2.imag/(2 * ctx.pi))
+    if (ctx._re(s2) >= 0):
+        M2 = 2*ctx.sqrt(ctx._im(s2)/(2 * ctx.pi))
     else:
-        M2 = 4 * s2.imag*(2*ctx.pi)**(s2.real-1)*abs(1-s2)**(0.5-s2.real)
+        M2 = 4 * ctx._im(s2)*(2*ctx.pi)**(ctx._re(s2)-1)*abs(1-s2)**(0.5-ctx._re(s2))
     # T  see II Section 3.21  Prop. 27
     T = 2*abs(ctx.siegeltheta(w))
     # defining some precisions
@@ -1388,7 +1388,7 @@ def rs_zeta(ctx, s, derivative=0, **kwargs):
     if derivative > 4:
         raise NotImplementedError
     s = ctx.convert(s)
-    re = s.real; im = s.imag
+    re = ctx._re(s); im = ctx._im(s)
     if im < 0:
         z = ctx.conj(ctx.rs_zeta(ctx.conj(s), derivative))
         return z
@@ -1401,7 +1401,7 @@ def rs_zeta(ctx, s, derivative=0, **kwargs):
 @defun
 def rs_z(ctx, w, derivative=0):
     w = ctx.convert(w)
-    re = w.real; im = w.imag
+    re = ctx._re(w); im = ctx._im(w)
     if re < 0:
         return rs_z(ctx, -w, derivative)
     critical_line = (im == 0)

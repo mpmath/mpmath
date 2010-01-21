@@ -57,6 +57,16 @@ class StandardBaseContext(Context,
     def bad_domain(ctx, msg):
         raise ValueError(msg)
 
+    def _re(ctx, x):
+        if hasattr(x, "real"):
+            return x.real
+        return x
+
+    def _im(ctx, x):
+        if hasattr(x, "imag"):
+            return x.imag
+        return ctx.zero
+
     def chop(ctx, x, tol=None):
         """
         Chops off small real or imaginary parts, or converts
