@@ -289,7 +289,8 @@ def lambertw(ctx, z, k=0):
     ctx.prec += 20
     mag = ctx.mag(z)
     # Start from fp approximation
-    if 0 and ctx is ctx._mp and abs(mag) < 900 and abs(k) < 10000:
+    if ctx is ctx._mp and abs(mag) < 900 and abs(k) < 10000 and \
+        abs(z+0.36787944117144) > 0.01:
         w = ctx._fp.lambertw(z, k)
     else:
         absz = abs(z)
