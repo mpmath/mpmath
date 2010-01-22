@@ -426,3 +426,157 @@ def erfc(x):
     if x >= 1.0:
         return _erfc_mid(x)
     return 1.0 - _erf_taylor(x)
+
+gauss42 = [\
+(0.99839961899006235, 0.0041059986046490839),
+(-0.99839961899006235, 0.0041059986046490839),
+(0.9915772883408609, 0.009536220301748501),
+(-0.9915772883408609,0.009536220301748501),
+(0.97934250806374812, 0.014922443697357493),
+(-0.97934250806374812, 0.014922443697357493),
+(0.96175936533820439,0.020227869569052644),
+(-0.96175936533820439, 0.020227869569052644),
+(0.93892355735498811, 0.025422959526113047),
+(-0.93892355735498811,0.025422959526113047),
+(0.91095972490412735, 0.030479240699603467),
+(-0.91095972490412735, 0.030479240699603467),
+(0.87802056981217269,0.03536907109759211),
+(-0.87802056981217269, 0.03536907109759211),
+(0.8402859832618168, 0.040065735180692258),
+(-0.8402859832618168,0.040065735180692258),
+(0.7979620532554873, 0.044543577771965874),
+(-0.7979620532554873, 0.044543577771965874),
+(0.75127993568948048,0.048778140792803244),
+(-0.75127993568948048, 0.048778140792803244),
+(0.70049459055617114, 0.052746295699174064),
+(-0.70049459055617114,0.052746295699174064),
+(0.64588338886924779, 0.056426369358018376),
+(-0.64588338886924779, 0.056426369358018376),
+(0.58774459748510932, 0.059798262227586649),
+(-0.58774459748510932, 0.059798262227586649),
+(0.5263957499311922, 0.062843558045002565),
+(-0.5263957499311922, 0.062843558045002565),
+(0.46217191207042191, 0.065545624364908975),
+(-0.46217191207042191, 0.065545624364908975),
+(0.39542385204297503, 0.067889703376521934),
+(-0.39542385204297503, 0.067889703376521934),
+(0.32651612446541151, 0.069862992492594159),
+(-0.32651612446541151, 0.069862992492594159),
+(0.25582507934287907, 0.071454714265170971),
+(-0.25582507934287907, 0.071454714265170971),
+(0.18373680656485453, 0.072656175243804091),
+(-0.18373680656485453, 0.072656175243804091),
+(0.11064502720851986, 0.073460813453467527),
+(-0.11064502720851986, 0.073460813453467527),
+(0.036948943165351772, 0.073864234232172879),
+(-0.036948943165351772, 0.073864234232172879)]
+
+EI_ASYMP_CONVERGENCE_RADIUS = 40.0
+
+def ei_asymp(z, _e1=False):
+    r = 1./z
+    s = t = 1.0
+    k = 1
+    while 1:
+        t *= k*r
+        s += t
+        if abs(t) < 1e-16:
+            break
+        k += 1
+    v = s*exp(z)/z
+    if _e1:
+        if type(z) is complex:
+            zreal = z.real
+            zimag = z.imag
+        else:
+            zreal = z
+            zimag = 0.0
+        if zimag == 0.0 and zreal > 0.0:
+            v += pi*1j
+    else:
+        if type(z) is complex:
+            if z.imag > 0:
+                v += pi*1j
+            if z.imag < 0:
+                v -= pi*1j
+    return v
+
+def ei_taylor(z, _e1=False):
+    s = t = z
+    k = 2
+    while 1:
+        t = t*z/k
+        term = t/k
+        if abs(term) < 1e-17:
+            break
+        s += term
+        k += 1
+    s += euler
+    if _e1:
+        s += log(-z)
+    else:
+        if type(z) is float or z.imag == 0.0:
+            s += math.log(abs(z))
+        else:
+            s += cmath.log(z)
+    return s
+
+def ei(z, _e1=False):
+    typez = type(z)
+    if type(z) not in (float, complex):
+        try:
+            z = float(z)
+            typez = float
+        except (TypeError, ValueError):
+            z = complex(z)
+            typez = complex
+    if not z:
+        return -INF
+    absz = abs(z)
+    if absz > EI_ASYMP_CONVERGENCE_RADIUS:
+        return ei_asymp(z, _e1)
+    elif absz <= 2.0 or (typez is float and z > 0.0):
+        return ei_taylor(z, _e1)
+    # Integrate, starting from whichever is smaller of a Taylor
+    # series value or an asymptotic series value
+    if typez is complex and z.real > 0.0:
+        zref = z / absz
+        ref = ei_taylor(zref, _e1)
+    else:
+        zref = EI_ASYMP_CONVERGENCE_RADIUS * z / absz
+        ref = ei_asymp(zref, _e1)
+    C = (zref-z)*0.5
+    D = (zref+z)*0.5
+    s = 0.0
+    if type(z) is complex:
+        _exp = cmath.exp
+    else:
+        _exp = math.exp
+    for x,w in gauss42:
+        t = C*x+D
+        s += w*_exp(t)/t
+    ref -= C*s
+    return ref
+
+def e1(z):
+    # hack to get consistent signs if the imaginary part if 0
+    # and signed
+    typez = type(z)
+    if type(z) not in (float, complex):
+        try:
+            z = float(z)
+            typez = float
+        except (TypeError, ValueError):
+            z = complex(z)
+            typez = complex
+    if typez is complex and not z.imag:
+        z = complex(z.real, 0.0)
+    # end hack
+    return -ei(-z, _e1=True)
+
+"""
+from mpmath import *
+fp.e1(-1e-10+0.0j)
+fp.e1(mpc(-1e-10+0.0j))
+
+"""

@@ -1211,23 +1211,17 @@ def ei(ctx, z):
 
 @defun_wrapped
 def _ei_generic(ctx, z):
+    # Note: the following is currently untested because mp and fp
+    # both use special-case ei code
     if z == ctx.inf:
         return z
     if z == ctx.ninf:
         return ctx.zero
     if ctx.mag(z) > 1:
         try:
-            # Cancellation in fp arithmetic -- TODO: optimize accuracy
-            argz = abs(ctx.arg(z))
-            if argz > 2.5:
-                fptol = 1e-8
-            elif argz > 0.8:
-                fptol = 1e-10
-            else:
-                fptol = None
             r = ctx.one/z
             v = ctx.exp(z)*ctx.hyper([1,1],[],r,
-                maxterms=ctx.prec, force_series=True, fp_hypsum_tol=fptol)/z
+                maxterms=ctx.prec, force_series=True)/z
             im = ctx._im(z)
             if im > 0:
                 v += ctx.pi*ctx.j

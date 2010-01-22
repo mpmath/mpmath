@@ -152,6 +152,8 @@ class FPContext(StandardBaseContext):
     sinpi = staticmethod(math2.sinpi)
     cbrt = staticmethod(math2.cbrt)
     _nthroot = staticmethod(math2.nthroot)
+    _ei = staticmethod(math2.ei)
+    _e1 = staticmethod(math2.e1)
 
     # XXX: math2
     def arg(ctx, z):
@@ -214,7 +216,8 @@ class FPContext(StandardBaseContext):
         num = range(p)
         den = range(p,p+q)
         tol = ctx.eps
-        s = t = 1.0; k = 0
+        s = t = 1.0
+        k = 0
         while 1:
             for i in num: t *= (coeffs[i]+k)
             for i in den: t /= (coeffs[i]+k)
@@ -222,17 +225,6 @@ class FPContext(StandardBaseContext):
             if abs(t) < tol:
                 return s
             if k > maxterms:
-                tol2 = kwargs.get('fp_hypsum_tol')
-                if tol2:
-                    s = t = 1.0; k = 0
-                    while 1:
-                        for i in num: t *= (coeffs[i]+k)
-                        for i in den: t /= (coeffs[i]+k)
-                        k += 1; t /= k; t *= z; s += t
-                        if abs(t) < tol2:
-                            return s
-                        if k > maxterms:
-                            raise ctx.NoConvergence
                 raise ctx.NoConvergence
 
     def atan2(ctx, x, y):
