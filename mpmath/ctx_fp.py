@@ -6,7 +6,7 @@ import math2
 
 import function_docs
 
-from libmp import mpf_bernoulli, to_float
+from libmp import mpf_bernoulli, to_float, int_types
 import libmp
 
 class FPContext(StandardBaseContext):
@@ -204,29 +204,36 @@ class FPContext(StandardBaseContext):
         return z, 'R'
 
     def is_real_type(ctx, z):
-        return isinstance(z, float)
+        return isinstance(z, float) or isinstance(z, int_types)
 
     def is_complex_type(ctx, z):
         return isinstance(z, complex)
 
     def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs):
-        s = t = 1.0
-        k = 0
         coeffs = list(coeffs)
         num = range(p)
         den = range(p,p+q)
+        tol = ctx.eps
+        s = t = 1.0; k = 0
         while 1:
             for i in num: t *= (coeffs[i]+k)
             for i in den: t /= (coeffs[i]+k)
-            k += 1
-            t /= k
-            t *= z
-            s += t
-            if abs(t) < ctx.eps:
-                break
+            k += 1; t /= k; t *= z; s += t
+            if abs(t) < tol:
+                return s
             if k > maxterms:
+                tol2 = kwargs.get('fp_hypsum_tol')
+                if tol2:
+                    s = t = 1.0; k = 0
+                    while 1:
+                        for i in num: t *= (coeffs[i]+k)
+                        for i in den: t /= (coeffs[i]+k)
+                        k += 1; t /= k; t *= z; s += t
+                        if abs(t) < tol2:
+                            return s
+                        if k > maxterms:
+                            raise ctx.NoConvergence
                 raise ctx.NoConvergence
-        return s
 
     def atan2(ctx, x, y):
         return math.atan2(x, y)

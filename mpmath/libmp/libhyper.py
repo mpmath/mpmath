@@ -18,7 +18,7 @@ from libmpf import (\
     from_rational,
     fzero, fone, fnone, ftwo, finf, fninf, fnan,
     mpf_sign, mpf_add, mpf_abs, mpf_pos,
-    mpf_cmp, mpf_lt, mpf_le,
+    mpf_cmp, mpf_lt, mpf_le, mpf_gt,
     mpf_perturb, mpf_neg, mpf_shift, mpf_sub, mpf_mul, mpf_div,
     sqrt_fixed, mpf_sqrt, mpf_rdiv_int, mpf_pow_int,
     to_rational,
@@ -713,6 +713,17 @@ def mpf_ci_si_taylor(x, wp, which=0):
     return from_man_exp(s, -wp)
 
 def mpc_ci_si_taylor(re, im, wp, which=0):
+    # The following code is only designed for small arguments,
+    # and not too small arguments (for relative accuracy)
+    if re[1]:
+        mag = re[2]+re[3]
+    elif im[1]:
+        mag = im[2]+im[3]
+    if im[1]:
+        mag = max(mag, im[2]+im[3])
+    if mag > 2 or mag < -wp:
+        raise NotImplementedError
+    wp += (2-mag)
     zre = to_fixed(re, wp)
     zim = to_fixed(im, wp)
     z2re = (zim*zim-zre*zre)>>wp

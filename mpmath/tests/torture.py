@@ -151,6 +151,8 @@ test_asymp(loggamma)  # huge_range=True ?
 test_asymp(ei)
 test_asymp(e1)
 test_asymp(li, huge_range=True)
+test_asymp(ci)
+test_asymp(si)
 test_asymp(chi)
 test_asymp(shi)
 test_asymp(erf)

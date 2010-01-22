@@ -3957,6 +3957,11 @@ It has infinitely many roots on the positive real axis::
     >>> findroot(ci, 2)
     3.384180422551186426397851
 
+Evaluation is supported for `z` anywhere in the complex plane::
+
+    >>> ci(10**6*(1+j))
+    (4.449410587611035724984376e+434287 + 9.75744874290013526417059e+434287j)
+
 We can evaluate the defining integral as a reference::
 
     >>> mp.dps = 15
@@ -4013,6 +4018,11 @@ The sine integral approaches `\pi/2` for large real `x`::
     >>> pi/2
     1.570796326794896619231322
 
+Evaluation is supported for `z` anywhere in the complex plane::
+
+    >>> si(10**6*(1+j))
+    (-9.75744874290013526417059e+434287 + 4.449410587611035724984376e+434287j)
+
 We can evaluate the defining integral as a reference::
 
     >>> mp.dps = 15
@@ -4055,6 +4065,11 @@ Some values and limits::
     >>> chi(2+3j)
     (-0.1683628683277204662429321 + 2.625115880451325002151688j)
 
+Evaluation is supported for `z` anywhere in the complex plane::
+
+    >>> chi(10**6*(1+j))
+    (4.449410587611035724984376e+434287 - 9.75744874290013526417059e+434287j)
+
 """
 
 shi = r"""
@@ -4079,6 +4094,11 @@ Some values and limits::
     +inf
     >>> shi(2+3j)
     (-0.1931890762719198291678095 + 2.645432555362369624818525j)
+
+Evaluation is supported for `z` anywhere in the complex plane::
+
+    >>> shi(10**6*(1+j))
+    (4.449410587611035724984376e+434287 - 9.75744874290013526417059e+434287j)
 
 """
 

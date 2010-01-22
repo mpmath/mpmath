@@ -60,7 +60,10 @@ class SpecialFunctions(object):
     def _expint_int(ctx, n, z): raise NotImplementedError
     def _zeta(ctx, s): raise NotImplementedError
     def _zetasum_fast(ctx, s, a, n, derivatives, reflect): raise NotImplementedError
-
+    def _ei(ctx, z): raise NotImplementedError
+    def _e1(ctx, z): raise NotImplementedError
+    def _ci(ctx, z): raise NotImplementedError
+    def _si(ctx, z): raise NotImplementedError
 
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True

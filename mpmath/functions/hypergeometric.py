@@ -841,7 +841,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                                 24*B3*X**2 - 4*B - 8*R - 4*(4*B+B3-1)*X + 2*B3-1)
                             uu3 = (5*(k-1)**2+2*(-10*X+A2-3*B3+3)*(k-1)+2*c[1])
                             c[k] = ctx.one/(2*k)*(uu1*c[k-3]-uu2*c[k-2]+uu3*c[k-1])
-                        w = c[k] * (-z)**(-0.5*k)
+                        w = c[k] * ctx.power(-z, -0.5*k)
                         t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
                         t2 = ctx.j**k * ctx.mpf(2)**(-k) * w
                         if abs(t1) < 0.1*ctx.eps:
@@ -873,15 +873,15 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
 
     return ctx.hypsum(2, 3, (a1type, a2type, b1type, b2type, b3type), [a1, a2, b1, b2, b3], z, **kwargs)
 
-
-
 @defun
 def _hyp2f0(ctx, a_s, b_s, z, **kwargs):
     (a, atype), (b, btype) = a_s
     # We want to try aggressively to use the asymptotic expansion,  
     # and fall back only when absolutely necessary
     try:
-        return ctx.hypsum(2, 0, (atype,btype), [a,b], z, maxterms=ctx.prec)
+        kwargsb = kwargs.copy()
+        kwargsb['maxterms'] = kwargsb.get('maxterms', ctx.prec)
+        return ctx.hypsum(2, 0, (atype,btype), [a,b], z, **kwargsb)
     except ctx.NoConvergence:
         if kwargs.get('force_series'):
             raise
@@ -975,8 +975,13 @@ def erfc(ctx, z):
     return ctx._erfc_complex(z)
 
 @defun
-def square_exp_arg(ctx, z, mult=1):
-    z2 = ctx.fmul(z, z, prec=ctx.prec*4+20)
+def square_exp_arg(ctx, z, mult=1, reciprocal=False):
+    prec = ctx.prec*4+20
+    if reciprocal:
+        z2 = ctx.fmul(z, z, prec=prec)
+        z2 = ctx.fdiv(ctx.one, z2, prec=prec)
+    else:
+        z2 = ctx.fmul(z, z, prec=prec)
     if mult != 1:
         z2 = ctx.fmul(z2, mult, exact=True)
     return z2
@@ -1197,23 +1202,135 @@ def li(ctx, z, offset=False):
         return ctx.ninf
     return ctx.ei(ctx.ln(z))
 
-@defun_wrapped
-def chi(ctx, z):
-    if not z:
-        return ctx.ninf
-    if z == ctx.inf or z == ctx.ninf:
-        return ctx.inf
-    z2 = ctx.square_exp_arg(z, 0.25)
-    return ctx.euler + ctx.ln(z) + z2*ctx.hyp2f3(1,1,2,2,(3,2),z2)
+@defun
+def ei(ctx, z):
+    try:
+        return ctx._ei(z)
+    except NotImplementedError:
+        return ctx._ei_generic(z)
 
 @defun_wrapped
-def shi(ctx, z):
+def _ei_generic(ctx, z):
     if z == ctx.inf:
         return z
     if z == ctx.ninf:
-        return z
-    z2 = ctx.square_exp_arg(z, 0.25)
-    return z*ctx.hyp1f2((1,2),(3,2),(3,2),z2)
+        return ctx.zero
+    if ctx.mag(z) > 1:
+        try:
+            # Cancellation in fp arithmetic -- TODO: optimize accuracy
+            argz = abs(ctx.arg(z))
+            if argz > 2.5:
+                fptol = 1e-8
+            elif argz > 0.8:
+                fptol = 1e-10
+            else:
+                fptol = None
+            r = ctx.one/z
+            v = ctx.exp(z)*ctx.hyper([1,1],[],r,
+                maxterms=ctx.prec, force_series=True, fp_hypsum_tol=fptol)/z
+            im = ctx._im(z)
+            if im > 0:
+                v += ctx.pi*ctx.j
+            if im < 0:
+                v -= ctx.pi*ctx.j
+            return v
+        except ctx.NoConvergence:
+            pass
+    v = z*ctx.hyp2f2(1,1,2,2,z) + ctx.euler
+    if ctx._im(z):
+        v += 0.5*(ctx.log(z) - ctx.log(ctx.one/z))
+    else:
+        v += ctx.log(abs(z))
+    return v
+
+@defun
+def e1(ctx, z):
+    try:
+        return ctx._e1(z)
+    except NotImplementedError:
+        return ctx.expint(1, z)
+
+@defun
+def ci(ctx, z):
+    try:
+        return ctx._ci(z)
+    except NotImplementedError:
+        return ctx._ci_generic(z)
+
+@defun_wrapped
+def _ci_generic(ctx, z):
+    if ctx.isinf(z):
+        if z == ctx.inf: return ctx.zero
+        if z == ctx.ninf: return ctx.pi*1j
+    jz = ctx.fmul(ctx.j,z,exact=True)
+    njz = ctx.fneg(jz,exact=True)
+    v = 0.5*(ctx.ei(jz) + ctx.ei(njz))
+    zreal = ctx._re(z)
+    zimag = ctx._im(z)
+    if zreal == 0:
+        if zimag > 0: v += ctx.pi*0.5j
+        if zimag < 0: v -= ctx.pi*0.5j
+    if zreal < 0:
+        if zimag >= 0: v += ctx.pi*1j
+        if zimag <  0: v -= ctx.pi*1j
+    if ctx.is_real_type(z) and zreal > 0:
+        v = ctx._re(v)
+    return v
+
+@defun
+def si(ctx, z):
+    try:
+        return ctx._si(z)
+    except NotImplementedError:
+        return ctx._si_generic(z)
+
+@defun_wrapped
+def _si_generic(ctx, z):
+    if ctx.isinf(z):
+        if z == ctx.inf: return 0.5*ctx.pi
+        if z == ctx.ninf: return -0.5*ctx.pi
+    # Suffers from cancellation near 0
+    if ctx.mag(z) >= -1:
+        jz = ctx.fmul(ctx.j,z,exact=True)
+        njz = ctx.fneg(jz,exact=True)
+        v = (-0.5j)*(ctx.ei(jz) - ctx.ei(njz))
+        zreal = ctx._re(z)
+        if zreal > 0:
+            v -= 0.5*ctx.pi
+        if zreal < 0:
+            v += 0.5*ctx.pi
+        if ctx.is_real_type(z):
+            v = ctx._re(v)
+        return v
+    else:
+        return z*ctx.hyp1f2((1,2),(3,2),(3,2),-0.25*z*z)
+
+@defun_wrapped
+def chi(ctx, z):
+    nz = ctx.fneg(z, exact=True)
+    v = 0.5*(ctx.ei(z) + ctx.ei(nz))
+    zreal = ctx._re(z)
+    zimag = ctx._im(z)
+    if zimag > 0:
+        v += ctx.pi*0.5j
+    elif zimag < 0:
+        v -= ctx.pi*0.5j
+    elif zreal < 0:
+        v += ctx.pi*1j
+    return v
+
+@defun_wrapped
+def shi(ctx, z):
+    # Suffers from cancellation near 0
+    if ctx.mag(z) >= -1:
+        nz = ctx.fneg(z, exact=True)
+        v = 0.5*(ctx.ei(z) - ctx.ei(nz))
+        zimag = ctx._im(z)
+        if zimag > 0: v -= 0.5j*ctx.pi
+        if zimag < 0: v += 0.5j*ctx.pi
+        return v
+    else:
+        return z * ctx.hyp1f2((1,2),(3,2),(3,2),0.25*z*z)
 
 @defun_wrapped
 def fresnels(ctx, z):
@@ -1221,8 +1338,6 @@ def fresnels(ctx, z):
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    #return ctx.pi*z**3/6*ctx.hypsum(1,2,('Q','Q','Q'),\
-    #    [ctx.mpq_3_4,ctx.mpq_3_2,ctx.mpq_7_4],-ctx.pi**2*z**4/16)
     return ctx.pi*z**3/6*ctx.hyp1f2((3,4),(3,2),(7,4),-ctx.pi**2*z**4/16)
 
 @defun_wrapped
@@ -1231,8 +1346,6 @@ def fresnelc(ctx, z):
         return ctx.mpf(0.5)
     if z == ctx.ninf:
         return ctx.mpf(-0.5)
-    #return z*ctx.hypsum(1,2,('Q','Q','Q'),\
-    #    [ctx.mpq_1_4,ctx.mpq_1_2,ctx.mpq_5_4],-ctx.pi**2*z**4/16)
     return z*ctx.hyp1f2((1,4),(1,2),(5,4),-ctx.pi**2*z**4/16)
 
 @defun_wrapped
