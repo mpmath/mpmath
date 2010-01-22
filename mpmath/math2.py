@@ -523,7 +523,7 @@ def ei_taylor(z, _e1=False):
 
 def ei(z, _e1=False):
     typez = type(z)
-    if type(z) not in (float, complex):
+    if typez not in (float, complex):
         try:
             z = float(z)
             typez = float
