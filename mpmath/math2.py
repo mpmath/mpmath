@@ -573,10 +573,3 @@ def e1(z):
         z = complex(z.real, 0.0)
     # end hack
     return -ei(-z, _e1=True)
-
-"""
-from mpmath import *
-fp.e1(-1e-10+0.0j)
-fp.e1(mpc(-1e-10+0.0j))
-
-"""
