@@ -42,7 +42,7 @@ from libelefun import (\
 
 from libmpc import (\
     mpc_zero, mpc_one, mpc_half, mpc_two,
-    mpc_abs, mpc_shift, mpc_pos,
+    mpc_abs, mpc_shift, mpc_pos, mpc_neg,
     mpc_add, mpc_sub, mpc_mul, mpc_div,
     mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf, mpc_mpf_div,
     mpc_mul_int, mpc_pow_int,
@@ -1204,6 +1204,20 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
         pi = mpf_pi(wp+wp2)
         d = mpf_div(mpf_pow(mpf_shift(pi, 1), s, wp2), pi, wp2)
         return mpf_mul(a,mpf_mul(b,mpf_mul(c,d,wp),wp),prec,rnd)
+
+    # Near pole
+    r = mpf_sub(fone, s, wp)
+    asign, aman, aexp, abc = mpf_abs(r)
+    pole_dist = -2*(aexp+abc)
+    if pole_dist > wp:
+        if alt:
+            return mpf_ln2(prec, rnd)
+        else:
+            q = mpf_neg(mpf_div(fone, r, wp))
+            return mpf_add(q, mpf_euler(wp), prec, rnd)
+    else:
+        wp += max(0, pole_dist)
+
     t = MPZ_ZERO
     #wp += 16 - (prec & 15)
     # Use Borwein's algorithm
@@ -1235,7 +1249,29 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
     re, im = s
     if im == fzero:
         return mpf_zeta(re, prec, rnd, alt), fzero
+
     wp = prec + 20
+
+    # Near pole
+    r = mpc_sub(mpc_one, s, wp)
+    asign, aman, aexp, abc = mpc_abs(r, 10)
+    pole_dist = -2*(aexp+abc)
+    if pole_dist > wp:
+        if alt:
+            q = mpf_ln2(wp)
+            y = mpf_mul(q, mpf_euler(wp), wp)
+            g = mpf_shift(mpf_mul(q, q, wp), -1)
+            g = mpf_sub(y, g)
+            z = mpc_mul_mpf(r, mpf_neg(g), wp)
+            z = mpc_add_mpf(z, q, wp)
+            return mpc_pos(z, prec, rnd)
+        else:
+            q = mpc_neg(mpc_div(mpc_one, r, wp))
+            q = mpc_add_mpf(q, mpf_euler(wp), wp)
+            return mpc_pos(q, prec, rnd)
+    else:
+        wp += max(0, pole_dist)
+
     # Reflection formula. To be rigorous, we should reflect to the left of
     # re = 1/2 (see comments for mpf_zeta), but this leads to unnecessary
     # slowdown for interesting values of s
@@ -1289,7 +1325,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0):
     if alt:
         return mpc_pos((tre, tim), prec, rnd)
     else:
-        q = mpc_sub(mpc_one, mpc_pow(mpc_two, mpc_sub(mpc_one, s, wp), wp), wp)
+        q = mpc_sub(mpc_one, mpc_pow(mpc_two, r, wp), wp)
         return mpc_div((tre, tim), q, prec, rnd)
 
 def mpf_altzeta(s, prec, rnd=round_fast):
