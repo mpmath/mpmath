@@ -182,20 +182,47 @@ def test_fp_psi():
     assert ae(fp.harmonic(2+3j), (1.9390425294578375875 + 0.87336044981834544043j))
     assert ae(fp.harmonic(-5-4j), (2.3725754822349437733 - 2.4160904444801621j))
 
-def test_fp_fp_zeta():
-    assert ae(fp.zeta(-2+3j, 1), (0.13297115587929864827 + 0.12305330040458776494j))
-    assert ae(fp.zeta(-2+3j, 5), (18.384866151867576927 - 11.377015110597711009j))
+def test_fp_zeta():
     assert ae(fp.zeta(1e100), 1.0)
     assert ae(fp.zeta(3), 1.2020569031595942854)
+    assert ae(fp.zeta(2+0j), (1.6449340668482264365 + 0.0j))
+    assert ae(fp.zeta(0.93), -13.713619351638164784)
+    assert ae(fp.zeta(1.74), 1.9796863545771774095)
+    assert ae(fp.zeta(0.0), -0.5)
+    assert ae(fp.zeta(-1.0), -0.083333333333333333333)
+    assert ae(fp.zeta(-2.0), 0.0)
+    assert ae(fp.zeta(-3.0), 0.0083333333333333333333)
+    assert ae(fp.zeta(-500.0), 0.0)
+    assert ae(fp.zeta(-7.4), 0.0036537321227995882447)
+    assert ae(fp.zeta(2.1), 1.5602165335033620158)
+    assert ae(fp.zeta(26.9), 1.0000000079854809935)
+    assert ae(fp.zeta(26), 1.0000000149015548284)
+    assert ae(fp.zeta(27), 1.0000000074507117898)
+    assert ae(fp.zeta(28), 1.0000000037253340248)
+    assert ae(fp.zeta(27.1), 1.000000006951755045)
+    assert ae(fp.zeta(32.7), 1.0000000001433243232)
+    assert ae(fp.zeta(100), 1.0)
+    assert ae(fp.altzeta(3.5), 0.92755357777394803511)
+    assert ae(fp.altzeta(1), 0.69314718055994530942)
+    assert ae(fp.altzeta(2), 0.82246703342411321824)
+    assert ae(fp.altzeta(0), 0.5)
+    assert ae(fp.zeta(-2+3j, 1), (0.13297115587929864827 + 0.12305330040458776494j))
+    assert ae(fp.zeta(-2+3j, 5), (18.384866151867576927 - 11.377015110597711009j))
+    assert ae(fp.zeta(1.0000000001), 9999999173.1735741337)
+    assert ae(fp.zeta(0.9999999999), -9999999172.0191428039)
+    assert ae(fp.zeta(1+0.000000001j), (0.57721566490153286061 - 999999999.99999993765j))
     assert ae(fp.primezeta(2.5+4j), (-0.16922458243438033385 - 0.010847965298387727811j))
     assert ae(fp.primezeta(4), 0.076993139764246844943)
+    assert ae(fp.riemannr(3.7), 2.3034079839110855717)
+    assert ae(fp.riemannr(8), 3.9011860449341499474)
+    assert ae(fp.riemannr(3+4j), (2.2369653314259991796 + 1.6339943856990281694j))
 
-def test_fp_fp_hyp2f1():
+def test_fp_hyp2f1():
     assert ae(fp.hyp2f1(1, (3,2), 3.25, 5.0), (-0.46600275923108143059 - 0.74393667908854842325j))
     assert ae(fp.hyp2f1(1+1j, (3,2), 3.25, 5.0), (-5.9208875603806515987 - 2.3813557707889590686j))
     assert ae(fp.hyp2f1(1+1j, (3,2), 3.25, 2+3j), (0.17174552030925080445 + 0.19589781970539389999j))
 
-def test_fp_fp_erf():
+def test_fp_erf():
     assert fp.erf(2) == fp.erf(2.0) == fp.erf(2.0+0.0j)
     assert fp.erf(fp.inf) == 1.0
     assert fp.erf(fp.ninf) == -1.0

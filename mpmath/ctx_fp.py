@@ -70,6 +70,15 @@ class FPContext(StandardBaseContext):
     pi = math2.pi
     e = math2.e
     euler = math2.euler
+    sqrt2 = 1.4142135623730950488
+    sqrt5 = 2.2360679774997896964
+    phi = 1.6180339887498948482
+    ln2 = 0.69314718055994530942
+    ln10 = 2.302585092994045684
+    euler = 0.57721566490153286061
+    catalan = 0.91596559417721901505
+    khinchin = 2.6854520010653064453
+    apery = 1.2020569031595942854
 
     absmin = absmax = abs
 
@@ -154,6 +163,7 @@ class FPContext(StandardBaseContext):
     _nthroot = staticmethod(math2.nthroot)
     _ei = staticmethod(math2.ei)
     _e1 = staticmethod(math2.e1)
+    _zeta = _zeta_int = staticmethod(math2.zeta)
 
     # XXX: math2
     def arg(ctx, z):

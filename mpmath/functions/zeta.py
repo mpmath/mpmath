@@ -127,7 +127,7 @@ def riemannr(ctx, x):
     k = 1
     while abs(t) > abs(s)*ctx.eps:
         t = t * u / k
-        s += t / (k * ctx.zeta(k+1))
+        s += t / (k * ctx._zeta_int(k+1))
         k += 1
     return s
 
@@ -417,25 +417,42 @@ def clcos(ctx, s, z, pi=False):
     return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
 
 @defun
-def zeta(ctx, s, a=1, derivative=0, **kwargs):
+def altzeta(ctx, s, **kwargs):
+    try:
+        return ctx._altzeta(s, **kwargs)
+    except NotImplementedError:
+        return ctx._altzeta_generic(s)
+
+@defun_wrapped
+def _altzeta_generic(ctx, s):
+    if s == 1:
+        return ctx.ln2 + 0*s
+    return -ctx.powm1(2, 1-s) * ctx.zeta(s)
+
+@defun
+def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
     d = int(derivative)
+    if a == 1 and not (d or method):
+        try:
+            return ctx._zeta(s, **kwargs)
+        except NotImplementedError:
+            pass
     s = ctx.convert(s)
     prec = ctx.prec
     method = kwargs.get('method')
     verbose = kwargs.get('verbose')
     if a == 1 and method != 'euler-maclaurin':
-        # Try to use fast code for Riemann zeta
         im = abs(ctx._im(s))
         re = abs(ctx._re(s))
-        if (im < prec or method == 'borwein') and not derivative:
-            try:
-                if verbose:
-                    print "zeta: Attempting to use the Borwein algorithm"
-                return ctx._zeta(s, **kwargs)
-            except NotImplementedError:
-                if verbose:
-                    print "zeta: Could not use the Borwein algorithm"
-                pass
+        #if (im < prec or method == 'borwein') and not derivative:
+        #    try:
+        #        if verbose:
+        #            print "zeta: Attempting to use the Borwein algorithm"
+        #        return ctx._zeta(s, **kwargs)
+        #    except NotImplementedError:
+        #        if verbose:
+        #            print "zeta: Could not use the Borwein algorithm"
+        #        pass
         if abs(im) > 60*prec and 10*re < prec and derivative <= 4 or \
             method == 'riemann-siegel':
             try:   #  py2.4 compatible try block

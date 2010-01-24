@@ -317,3 +317,5 @@ class StandardBaseContext(Context,
     def power(ctx, x, y):
         return ctx.convert(x) ** ctx.convert(y)
 
+    def _zeta_int(ctx, n):
+        return ctx.zeta(n)

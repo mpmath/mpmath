@@ -28,7 +28,7 @@ from libmpf import (\
     mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
     mpf_mul, mpf_mul_int, mpf_div, mpf_sqrt, mpf_pow_int,
     mpf_rdiv_int,
-    mpf_perturb, mpf_le, mpf_lt, mpf_shift,
+    mpf_perturb, mpf_le, mpf_lt, mpf_gt, mpf_shift,
     negative_rnd, reciprocal_rnd,
 )
 
@@ -1245,10 +1245,14 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
         q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
         return mpf_div(t, q, prec, rnd)
 
-def mpc_zeta(s, prec, rnd=round_fast, alt=0):
+def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
     re, im = s
     if im == fzero:
         return mpf_zeta(re, prec, rnd, alt), fzero
+
+    # slow for large s
+    if (not force) and mpf_gt(mpc_abs(s, 10), from_int(prec)):
+        raise NotImplementedError
 
     wp = prec + 20
 

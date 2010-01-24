@@ -810,7 +810,6 @@ class MPContext(StandardBaseContext):
         ctx.floor = ctx.def_mp_function(libmp.mpf_floor, libmp.mpc_floor)
         ctx.ceil = ctx.def_mp_function(libmp.mpf_ceil, libmp.mpc_ceil)
         ctx.fib = ctx.fibonacci = ctx.def_mp_function(libmp.mpf_fibonacci, libmp.mpc_fibonacci)
-        ctx.altzeta = ctx.def_mp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
         ctx.gamma = ctx.def_mp_function(libmp.mpf_gamma, libmp.mpc_gamma)
         ctx.digamma = ctx.def_mp_function(libmp.mpf_psi0, libmp.mpc_psi0)
         ctx.fac = ctx.factorial = ctx.def_mp_function(libmp.mpf_factorial, libmp.mpc_factorial)
@@ -825,6 +824,7 @@ class MPContext(StandardBaseContext):
         ctx._erf = ctx.def_mp_function(libmp.mpf_erf, None)
         ctx._erfc = ctx.def_mp_function(libmp.mpf_erfc, None)
         ctx._zeta = ctx.def_mp_function(libmp.mpf_zeta, libmp.mpc_zeta)
+        ctx._altzeta = ctx.def_mp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
 
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)
@@ -898,6 +898,9 @@ class MPContext(StandardBaseContext):
 
     def bernoulli(ctx, n):
         return ctx.make_mpf(libmp.mpf_bernoulli(int(n), *ctx._prec_rounding))
+
+    def _zeta_int(ctx, n):
+        return ctx.make_mpf(libmp.mpf_zeta_int(int(n), *ctx._prec_rounding))
 
     def atan2(ctx, y, x):
         x = ctx.convert(x)

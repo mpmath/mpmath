@@ -2147,7 +2147,7 @@ Some more values are::
 
 An alternative way to compute `\gamma_1`::
 
-    >>> diff(extradps(25)(lambda x: 1/(x-1) - zeta(x)), 1)
+    >>> diff(extradps(15)(lambda x: 1/(x-1) - zeta(x)), 1)
     -0.0728158454836767
 
 :func:`stieltjes` supports arbitrary precision evaluation::

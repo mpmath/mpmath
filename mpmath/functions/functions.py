@@ -64,6 +64,7 @@ class SpecialFunctions(object):
     def _e1(ctx, z): raise NotImplementedError
     def _ci(ctx, z): raise NotImplementedError
     def _si(ctx, z): raise NotImplementedError
+    def _altzeta(ctx, s): raise NotImplementedError
 
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True
