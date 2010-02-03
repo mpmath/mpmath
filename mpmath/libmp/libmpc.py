@@ -6,8 +6,8 @@ from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO
 
 from libmpf import (\
     round_floor, round_ceiling, round_down, round_up,
-    round_nearest, round_fast,
-    bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
+    round_nearest, round_fast, bitcount,
+    bctable, normalize, normalize1, reciprocal_rnd, rshift, lshift, giant_steps,
     negative_rnd,
     to_str, to_fixed, from_man_exp, from_float, to_float, from_int, to_int,
     fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,

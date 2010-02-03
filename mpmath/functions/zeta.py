@@ -60,7 +60,7 @@ def grampoint(ctx, n):
 @defun_wrapped
 def siegelz(ctx, t):
     v = ctx.expj(ctx.siegeltheta(t))*ctx.zeta(0.5+ctx.j*t)
-    if ctx.is_real_type(t):
+    if ctx._is_real_type(t):
         return ctx._re(v)
     return v
 
@@ -304,7 +304,7 @@ def polylog_continuation(ctx, n, z):
         return z*0
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
-    if ctx.is_real_type(z) and z < 0:
+    if ctx._is_real_type(z) and z < 0:
         a = ctx._re(a)
     if ctx._im(z) < 0 or (ctx._im(z) == 0 and ctx._re(z) >= 1):
         a -= twopij*ctx.ln(z)**(n-1)/ctx.fac(n-1)
@@ -342,7 +342,7 @@ def polylog_unitcircle(ctx, n, z):
             k += 1
     else:
         raise ValueError
-    if ctx.is_real_type(z) and z < 0:
+    if ctx._is_real_type(z) and z < 0:
         l = ctx._re(l)
     return l
 
@@ -398,7 +398,7 @@ def clsin(ctx, s, z, pi=False):
         a = ctx.expjpi(z)
     else:
         a = ctx.expj(z)
-    if ctx.is_real_type(z) and ctx.is_real_type(s):
+    if ctx._is_real_type(z) and ctx._is_real_type(s):
         return ctx.im(ctx.polylog(s,a))
     b = 1/a
     return (-0.5j)*(ctx.polylog(s,a) - ctx.polylog(s,b))
@@ -411,7 +411,7 @@ def clcos(ctx, s, z, pi=False):
         a = ctx.expjpi(z)
     else:
         a = ctx.expj(z)
-    if ctx.is_real_type(z) and ctx.is_real_type(s):
+    if ctx._is_real_type(z) and ctx._is_real_type(s):
         return ctx.re(ctx.polylog(s,a))
     b = 1/a
     return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
@@ -492,7 +492,7 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
 @defun
 def _hurwitz(ctx, s, a=1, d=0):
     # We strongly want to special-case rational a
-    a, atype = ctx.convert_maybe_rational(a)
+    a, atype = ctx._convert_param(a)
     prec = ctx.prec
     # TODO: implement reflection for derivatives
     res = ctx.re(s)

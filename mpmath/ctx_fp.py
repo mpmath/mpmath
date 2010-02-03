@@ -49,7 +49,7 @@ class FPContext(StandardBaseContext):
 
     # Called by SpecialFunctions.__init__()
     @classmethod
-    def wrap_specfun(cls, name, f, wrap):
+    def _wrap_specfun(cls, name, f, wrap):
         if wrap:
             def f_wrapped(ctx, *args, **kwargs):
                 convert = ctx.convert
@@ -82,7 +82,7 @@ class FPContext(StandardBaseContext):
 
     absmin = absmax = abs
 
-    def AS_POINTS(ctx, x):
+    def _as_points(ctx, x):
         return x
 
     def fneg(ctx, x, **kwargs):
@@ -203,7 +203,7 @@ class FPContext(StandardBaseContext):
             return n, ctx.ninf
         return n, ctx.mag(abs(z-n))
 
-    def convert_maybe_rational(ctx, z):
+    def _convert_param(ctx, z):
         if type(z) is tuple:
             p, q = z
             return ctx.mpf(p) / q, 'R'
@@ -215,10 +215,10 @@ class FPContext(StandardBaseContext):
             return intz, 'Z'
         return z, 'R'
 
-    def is_real_type(ctx, z):
+    def _is_real_type(ctx, z):
         return isinstance(z, float) or isinstance(z, int_types)
 
-    def is_complex_type(ctx, z):
+    def _is_complex_type(ctx, z):
         return isinstance(z, complex)
 
     def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs):

@@ -194,8 +194,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     z = ctx.convert(z)
     p = len(a_s)
     q = len(b_s)
-    a_s = map(ctx.convert_maybe_rational, a_s)
-    b_s = map(ctx.convert_maybe_rational, b_s)
+    a_s = map(ctx._convert_param, a_s)
+    b_s = map(ctx._convert_param, b_s)
     # Reduce degree by eliminating common parameters
     if kwargs.get('eliminate', True):
         i = 0
@@ -295,7 +295,7 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
                 v = ctx.gamma(b)/(2*ctx.sqrt(ctx.pi))*(H1 + H2)
             finally:
                 ctx.prec = orig
-            if ctx.is_real_type(b) and ctx.is_real_type(z):
+            if ctx._is_real_type(b) and ctx._is_real_type(z):
                 v = ctx._re(v)
             return +v
         except ctx.NoConvergence:
@@ -328,7 +328,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                     T2 = ([ctx.exp(z),z], [1,a-b], [b], [a], [b-a, 1-a], [], rz)
                     return T1, T2
                 v = ctx.hypercomb(h, [a,b], force_series=True)
-                if ctx.is_real_type(a) and ctx.is_real_type(b) and ctx.is_real_type(z):
+                if ctx._is_real_type(a) and ctx._is_real_type(b) and ctx._is_real_type(z):
                     v = ctx._re(v)
                 return +v
             except ctx.NoConvergence:
@@ -697,7 +697,7 @@ def _hyp2f2(ctx, a_s, b_s, z, **kwargs):
                     T3 = [-z],[-a2],[b1,b2,a1-a2],[a1,b1-a2,b2-a2],[a2,a2-b1+1,a2-b2+1],[-a1+a2+1],-1/z
                     return T1, T2, T3
                 v = ctx.hypercomb(h, [a1,a2,b1,b2], force_series=True, maxterms=4*ctx.prec)
-                if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
+                if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
                 return v
             except ctx.NoConvergence:
@@ -778,7 +778,7 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                         [a1,a1-b1+1,a1-b2+1], [], 1/z
                     return T1, T2
                 v = ctx.hypercomb(h, [a1,b1,b2], force_series=True, maxterms=4*ctx.prec)
-                if sum(ctx.is_real_type(u) for u in [a1,b1,b2,z]) == 4:
+                if sum(ctx._is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
                 return v
             except ctx.NoConvergence:
@@ -863,7 +863,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                         [a2,a2-b1+1,a2-b2+1,a2-b3+1],[-a1+a2+1], 1/z
                     return T1, T2, T3
                 v = ctx.hypercomb(h, [a1,a2,b1,b2,b3], force_series=True, maxterms=4*ctx.prec)
-                if sum(ctx.is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
+                if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
                 return v
             except ctx.NoConvergence:
@@ -896,8 +896,8 @@ def _hyp2f0(ctx, a_s, b_s, z, **kwargs):
 
 @defun
 def hyperu(ctx, a, b, z, **kwargs):
-    a, atype = ctx.convert_maybe_rational(a)
-    b, btype = ctx.convert_maybe_rational(b)
+    a, atype = ctx._convert_param(a)
+    b, btype = ctx._convert_param(b)
     z = ctx.convert(z)
     if not z:
         if ctx.re(b) <= 1:
@@ -905,7 +905,7 @@ def hyperu(ctx, a, b, z, **kwargs):
         else:
             return ctx.inf + z
     bb = 1+a-b
-    bb, bbtype = ctx.convert_maybe_rational(bb)
+    bb, bbtype = ctx._convert_param(bb)
     try:
         orig = ctx.prec
         try:
@@ -947,12 +947,12 @@ def _erfc_complex(ctx, z):
 @defun
 def erf(ctx, z):
     z = ctx.convert(z)
-    if ctx.is_real_type(z):
+    if ctx._is_real_type(z):
         try:
             return ctx._erf(z)
         except NotImplementedError:
             pass
-    if ctx.is_complex_type(z) and not z.imag:
+    if ctx._is_complex_type(z) and not z.imag:
         try:
             return type(z)(ctx._erf(z.real))
         except NotImplementedError:
@@ -962,12 +962,12 @@ def erf(ctx, z):
 @defun
 def erfc(ctx, z):
     z = ctx.convert(z)
-    if ctx.is_real_type(z):
+    if ctx._is_real_type(z):
         try:
             return ctx._erfc(z)
         except NotImplementedError:
             pass
-    if ctx.is_complex_type(z) and not z.imag:
+    if ctx._is_complex_type(z) and not z.imag:
         try:
             return type(z)(ctx._erfc(z.real))
         except NotImplementedError:
@@ -1168,7 +1168,7 @@ def _gamma3(ctx, z, a, b, regularized=False):
 
 @defun_wrapped
 def expint(ctx, n, z):
-    if ctx.isint(n) and ctx.is_real_type(z):
+    if ctx.isint(n) and ctx._is_real_type(z):
         try:
             return ctx._expint_int(n, z)
         except NotImplementedError:
@@ -1267,7 +1267,7 @@ def _ci_generic(ctx, z):
     if zreal < 0:
         if zimag >= 0: v += ctx.pi*1j
         if zimag <  0: v -= ctx.pi*1j
-    if ctx.is_real_type(z) and zreal > 0:
+    if ctx._is_real_type(z) and zreal > 0:
         v = ctx._re(v)
     return v
 
@@ -1293,7 +1293,7 @@ def _si_generic(ctx, z):
             v -= 0.5*ctx.pi
         if zreal < 0:
             v += 0.5*ctx.pi
-        if ctx.is_real_type(z):
+        if ctx._is_real_type(z):
             v = ctx._re(v)
         return v
     else:

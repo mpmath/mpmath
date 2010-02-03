@@ -9,7 +9,7 @@ here from settings.py
 import math
 from bisect import bisect
 
-from backend import BACKEND, gmpy, sage, MPZ, MPZ_ONE, MPZ_ZERO
+from backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
 def giant_steps(start, target, n=2):
     """
@@ -85,9 +85,9 @@ def gmpy_bitcount(n):
     if n: return MPZ(n).numdigits(2)
     else: return 0
 
-def sage_bitcount(n):
-    if n: return MPZ(n).nbits()
-    else: return 0
+#def sage_bitcount(n):
+#    if n: return MPZ(n).nbits()
+#    else: return 0
 
 def sage_trailing(n):
     return MPZ(n).trailing_zero_bits()
@@ -96,6 +96,7 @@ if BACKEND == 'gmpy':
     bitcount = gmpy_bitcount
     trailing = gmpy_trailing
 elif BACKEND == 'sage':
+    sage_bitcount = sage_utils.bitcount
     bitcount = sage_bitcount
     trailing = sage_trailing
 else:

@@ -59,6 +59,10 @@ def test_constants():
             assert mertens == mpf(tmertens)
             assert twinprime == mpf(ttwinprime)
     mp.dps = 15
+    assert pi >= -1
+    assert pi > 2
+    assert pi > 3
+    assert pi < 4
 
 def test_exact_sqrts():
     for i in range(20000):

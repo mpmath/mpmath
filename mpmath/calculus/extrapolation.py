@@ -320,7 +320,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
 
     """
     tol = tol or +ctx.eps
-    interval = ctx.AS_POINTS(interval)
+    interval = ctx._as_points(interval)
     a = ctx.convert(interval[0])
     b = ctx.convert(interval[-1])
     err = ctx.zero
@@ -745,7 +745,7 @@ def nsum(ctx, f, interval, **kwargs):
         7.0 -0.166666666666667 -0.166666666666667
 
     """
-    a, b = ctx.AS_POINTS(interval)
+    a, b = ctx._as_points(interval)
     if a == ctx.ninf:
         if b == ctx.inf:
             return f(0) + ctx.nsum(lambda k: f(-k) + f(k), [1, ctx.inf], **kwargs)
@@ -880,7 +880,7 @@ def nprod(ctx, f, interval, **kwargs):
        MathWorld
 
     """
-    a, b = ctx.AS_POINTS(interval)
+    a, b = ctx._as_points(interval)
     if a != ctx.ninf and b != ctx.inf:
         return ctx.fprod(f(ctx.mpf(k)) for k in xrange(int(a), int(b)+1))
 

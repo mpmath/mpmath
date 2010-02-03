@@ -97,7 +97,7 @@ def barnesg(ctx, z):
         v = ctx.j*ctx.pi/12 - ctx.j*ctx.pi*w**2/2 + w*ctx.ln(1-u) - \
             ctx.j*ctx.polylog(2, u)/pi2
         v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
-        if ctx.is_real_type(z):
+        if ctx._is_real_type(z):
             v = ctx._re(v)
         return v
     # Estimate terms for asymptotic expansion
@@ -144,7 +144,7 @@ def hyperfac(ctx, z):
         h = ctx.hyperfac(-n-1)
         if ((n+1)//2) & 1:
             h = -h
-        if ctx.is_complex_type(z):
+        if ctx._is_complex_type(z):
             return h + 0j
         return h
     zp1 = z+1

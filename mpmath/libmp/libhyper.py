@@ -595,8 +595,8 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
             if x == fzero:
                 # Actually gamma function pole
                 if n <= 0:
-                    return finf
-                return mpf_gamma_int(n, prec, rnd)
+                    return finf, None
+                return mpf_gamma_int(n, prec, rnd), None
             if x == finf:
                 return fzero, None
             # TODO: could return finite imaginary value at -inf

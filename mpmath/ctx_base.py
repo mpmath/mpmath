@@ -30,6 +30,9 @@ class StandardBaseContext(Context,
     ODEMethods,
     VisualizationMethods):
 
+    NoConvergence = libmp.NoConvergence
+    ComplexResult = libmp.ComplexResult
+
     def __init__(ctx):
         ctx._aliases = {}
         # Call those that need preinitialization (e.g. for wrappers)
@@ -89,7 +92,7 @@ class StandardBaseContext(Context,
             absx = abs(x)
             if abs(x) < tol:
                 return ctx.zero
-            if ctx.is_complex_type(x):
+            if ctx._is_complex_type(x):
                 if abs(x.imag) < min(tol, absx*tol):
                     return x.real
                 if abs(x.real) < min(tol, absx*tol):

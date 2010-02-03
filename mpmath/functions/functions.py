@@ -17,7 +17,7 @@ class SpecialFunctions(object):
         cls = self.__class__
         for name in cls.defined_functions:
             f, wrap = cls.defined_functions[name]
-            cls.wrap_specfun(name, f, wrap)
+            cls._wrap_specfun(name, f, wrap)
 
         self.mpq_1 = self._mpq((1,1))
         self.mpq_0 = self._mpq((0,1))
@@ -47,7 +47,7 @@ class SpecialFunctions(object):
 
     # Default -- do nothing
     @classmethod
-    def wrap_specfun(cls, name, f, wrap):
+    def _wrap_specfun(cls, name, f, wrap):
         setattr(cls, name, f)
 
     # Optional fast versions of common functions in common cases.
@@ -116,7 +116,7 @@ def sign(ctx, x):
     x = ctx.convert(x)
     if not x or ctx.isnan(x):
         return x
-    if ctx.is_real_type(x):
+    if ctx._is_real_type(x):
         return ctx.mpf(cmp(x, 0))
     return x / abs(x)
 

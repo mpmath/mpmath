@@ -20,6 +20,7 @@ import sys
 # So we can import it from this module
 gmpy = None
 sage = None
+sage_utils = None
 
 BACKEND = 'python'
 MPZ = long
@@ -36,10 +37,11 @@ if 'MPMATH_NOGMPY' not in os.environ:
 if 'MPMATH_NOSAGE' not in os.environ:
     try:
         import sage.all
-        if hasattr(sage.all.Integer, "trailing_zero_bits"):
-            sage = sage.all
-            BACKEND = 'sage'
-            MPZ = sage.Integer
+        import sage.libs.mpmath.utils as _sage_utils
+        sage = sage.all
+        sage_utils = _sage_utils
+        BACKEND = 'sage'
+        MPZ = sage.Integer
     except:
         pass
 

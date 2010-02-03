@@ -27,7 +27,7 @@ one of the arguments in their name are executed.
 
 """
 
-import sys, os
+import sys, os, traceback
 
 if "-psyco" in sys.argv:
     sys.argv.remove('-psyco')
@@ -120,7 +120,16 @@ def testit(importdir='', testdir=''):
                         continue
                     print "   ", f[5:].ljust(25),
                     t1 = clock()
-                    module.__dict__[f]()
+                    try:
+                        module.__dict__[f]()
+                    except:
+                        etype, evalue, trb = sys.exc_info()
+                        if etype in (KeyboardInterrupt, SystemExit):
+                            raise
+                        print
+                        print "TEST FAILED!"
+                        print
+                        traceback.print_exc()
                     t2 = clock()
                     print "ok", "      ", ("%.7f" % (t2-t1)), "s"
         tend = clock()

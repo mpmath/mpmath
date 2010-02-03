@@ -1096,8 +1096,6 @@ http://en.wikipedia.org/wiki/Dirichlet_eta_function
 
 borwein_cache = {}
 
-
-
 def borwein_coefficients(n):
     if n in borwein_cache:
         return borwein_cache[n]
@@ -1112,12 +1110,17 @@ def borwein_coefficients(n):
     borwein_cache[n] = ds
     return ds
 
+ZETA_INT_CACHE_MAX_PREC = 1000
+zeta_int_cache = {}
+
 def mpf_zeta_int(s, prec, rnd=round_fast):
     """
     Optimized computation of zeta(s) for an integer s.
     """
     wp = prec + 20
     s = int(s)
+    if s in zeta_int_cache and zeta_int_cache[s][0] >= wp:
+        return mpf_pos(zeta_int_cache[s][1], prec, rnd)
     if s < 2:
         if s == 1:
             raise ValueError("zeta(1) pole")
@@ -1159,6 +1162,8 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
         t += (((-1)**k * (d[k] - d[n])) << wp) // (k+1)**s
     t = (t << wp) // (-d[n])
     t = (t << wp) // ((1 << wp) - (1 << (wp+1-s)))
+    if (s in zeta_int_cache and zeta_int_cache[s][0] < wp) or (s not in zeta_int_cache):
+        zeta_int_cache[s] = (wp, from_man_exp(t, -wp-wp))
     return from_man_exp(t, -wp-wp, prec, rnd)
 
 def mpf_zeta(s, prec, rnd=round_fast, alt=0):

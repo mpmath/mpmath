@@ -14,9 +14,8 @@ mp._fp = fp
 fp._fp = fp
 
 # XXX: extremely bad pickle hack
-import ctx_mp
-ctx_mp.mpf = mp.mpf
-ctx_mp.mpc = mp.mpc
+ctx_mp._mpf_module.mpf = mp.mpf
+ctx_mp._mpf_module.mpc = mp.mpc
 
 make_mpf = mp.make_mpf
 make_mpc = mp.make_mpc
@@ -352,10 +351,7 @@ def runtests():
     importdir = os.path.abspath(testdir + '/../..')
     tests.testit(importdir, testdir)
 
-
-if __name__ == '__main__':
-    #import doctest
-    #doctest.testmod()
+def doctests():
     try:
         import psyco; psyco.full()
     except ImportError:
@@ -378,4 +374,7 @@ if __name__ == '__main__':
         doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
         t2 = clock()
         print round(t2-t1, 3)
+
+if __name__ == '__main__':
+    doctests()
 

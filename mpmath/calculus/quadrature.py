@@ -714,7 +714,7 @@ class QuadratureMethods:
         1. http://mathworld.wolfram.com/DoubleIntegral.html
 
         """
-        rule = kwargs.get('method', TanhSinh)
+        rule = kwargs.get('method', 'tanh-sinh')
         if type(rule) is str:
             if rule == 'tanh-sinh':
                 rule = ctx._tanh_sinh
@@ -729,7 +729,7 @@ class QuadratureMethods:
         orig = prec = ctx.prec
         epsilon = ctx.eps/8
         m = kwargs.get('maxdegree') or rule.guess_degree(prec)
-        points = [ctx.AS_POINTS(p) for p in points]
+        points = [ctx._as_points(p) for p in points]
         try:
             ctx.prec += 20
             if dim == 1:
@@ -963,7 +963,7 @@ class QuadratureMethods:
             0.5
 
         """
-        a, b = ctx.AS_POINTS(interval)
+        a, b = ctx._as_points(interval)
         a = ctx.convert(a)
         b = ctx.convert(b)
         if [omega, period, zeros].count(None) != 2:

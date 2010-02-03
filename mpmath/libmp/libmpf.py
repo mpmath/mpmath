@@ -13,7 +13,7 @@ from bisect import bisect
 getrandbits = None
 
 from backend import (MPZ, MPZ_TYPE, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
-    BACKEND, STRICT, gmpy, sage)
+    BACKEND, STRICT, gmpy, sage, sage_utils)
 
 from libintmath import (giant_steps,
     trailtable, bctable, lshift, rshift, bitcount, trailing,
@@ -262,6 +262,9 @@ if BACKEND == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
     _normalize = gmpy._mpmath_normalize
     _normalize1 = gmpy._mpmath_normalize
 
+if BACKEND == 'sage':
+    _normalize = _normalize1 = sage_utils.normalize
+
 if STRICT:
     normalize = strict_normalize
     normalize1 = strict_normalize1
@@ -304,12 +307,13 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
         return (sign, man, exp, bc)
     return normalize(sign, man, exp, bc, prec, rnd)
 
-
+int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
 if BACKEND == 'gmpy' and '_mpmath_create' in dir(gmpy):
     from_man_exp = gmpy._mpmath_create
 
-int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
+if BACKEND == 'sage':
+    from_man_exp = sage_utils.from_man_exp
 
 def from_int(n, prec=0, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
@@ -829,11 +833,6 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
 if BACKEND == 'gmpy':
     mpf_mul = gmpy_mpf_mul
     mpf_mul_int = gmpy_mpf_mul_int
-elif BACKEND == 'sage':
-    # Like gmpy, take advantage of fast bitcount. Needs
-    # to be changed if gmpy_mpf_mul implementation changes
-    mpf_mul = gmpy_mpf_mul
-    mpf_mul_int = gmpy_mpf_mul_int
 else:
     mpf_mul = python_mpf_mul
     mpf_mul_int = python_mpf_mul_int
@@ -1228,6 +1227,10 @@ def from_str(x, prec, rnd=round_fast):
     if x in special_str:
         return special_str[x]
 
+    if '/' in x:
+        p, q = x.split('/')
+        return from_rational(int(p), int(q), prec, rnd)
+
     man, exp = str_to_man_exp(x, base=10)
 
     # XXX: appropriate cutoffs & track direction
@@ -1300,3 +1303,15 @@ def mpf_hypot(x, y, prec, rnd=round_fast):
     if x == fzero: return mpf_abs(y, prec, rnd)
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
     return mpf_sqrt(hypot2, prec, rnd)
+
+
+if BACKEND == 'sage':
+    try:
+        import sage.libs.mpmath.ext_libmp as ext_lib
+        mpf_add = ext_lib.mpf_add
+        mpf_sub = ext_lib.mpf_sub
+        mpf_mul = ext_lib.mpf_mul
+        mpf_div = ext_lib.mpf_div
+        mpf_sqrt = ext_lib.mpf_sqrt
+    except ImportError:
+        pass

@@ -110,7 +110,7 @@ def chebyfit(ctx, f, interval, N, error=False):
     nonsmooth features, or by dividing the interval into several
     segments.
     """
-    a, b = ctx.AS_POINTS(interval)
+    a, b = ctx._as_points(interval)
     orig = ctx.prec
     try:
         ctx.prec = orig + int(N**0.5) + 20
@@ -206,7 +206,7 @@ def fourier(ctx, f, interval, N):
         ([0.5], [0.0])
 
     """
-    interval = ctx.AS_POINTS(interval)
+    interval = ctx._as_points(interval)
     a = interval[0]
     b = interval[-1]
     L = b-a
@@ -236,7 +236,7 @@ def fourierval(ctx, series, interval, x):
     need not have the same length.
     """
     cs, ss = series
-    ab = ctx.AS_POINTS(interval)
+    ab = ctx._as_points(interval)
     a = interval[0]
     b = interval[-1]
     m = 2*ctx.pi/(ab[-1]-ab[0])
