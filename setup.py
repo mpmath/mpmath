@@ -9,6 +9,11 @@ setup(name='mpmath',
       author='Fredrik Johansson',
       author_email='fredrik.johansson@gmail.com',
       license = 'BSD',
-      packages=['mpmath', 'mpmath/tests'],
+      packages=['mpmath',
+                'mpmath/libmp',
+                'mpmath/calculus',
+                'mpmath/functions',
+                'mpmath/matrices',
+                'mpmath/tests'],
       classifiers=['Topic :: Scientific/Engineering :: Mathematics']
      )
