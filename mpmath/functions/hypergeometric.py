@@ -460,12 +460,13 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
                 return T1, T2
             v = ctx.hypercomb(h, [a,b], **kwargs)
 
+        # Use z/(z-1) transformation
+        elif abs(z/(z-1)) <= 0.75:
+            v = ctx.hyp2f1(a, c-b, c, z/(z-1)) / (1-z)**a
+
         # Remaining part of unit circle
         else:
             v = _hyp2f1_gosper(ctx,a,b,c,z,**kwargs)
-
-        # TODO: for z ~= -1, we could use a series expansion around -1
-        # using the fact that F(a,b,c,-1) = F(a,c-b,c,0.5)/2^a
 
     finally:
         ctx.prec = orig
