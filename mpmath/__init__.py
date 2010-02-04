@@ -14,8 +14,9 @@ mp._fp = fp
 fp._fp = fp
 
 # XXX: extremely bad pickle hack
-ctx_mp._mpf_module.mpf = mp.mpf
-ctx_mp._mpf_module.mpc = mp.mpc
+import ctx_mp as _ctx_mp
+_ctx_mp._mpf_module.mpf = mp.mpf
+_ctx_mp._mpf_module.mpc = mp.mpc
 
 make_mpf = mp.make_mpf
 make_mpc = mp.make_mpc
@@ -49,8 +50,13 @@ multiplicity = mp.multiplicity
 
 isinf = mp.isinf
 isnan = mp.isnan
+isint = mp.isint
+almosteq = mp.almosteq
 nan = mp.nan
 rand = mp.rand
+
+absmin = mp.absmin
+absmax = mp.absmax
 
 fraction = mp.fraction
 

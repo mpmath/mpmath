@@ -71,8 +71,8 @@ def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
     With ``'quad'`` the result is likely to have a small imaginary
     component even if the derivative is actually real::
 
-        >>> diff(sqrt, 1, method='quad')
-        (0.5 - 9.44048454290863e-27j)
+        >>> diff(sqrt, 1, method='quad')    # doctest:+ELLIPSIS
+        (0.5 - 9.44...e-27j)
 
     **Scale**
 

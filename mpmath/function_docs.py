@@ -706,7 +706,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> nprint(chop(taylor(sec, 0, 6)))
     [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]
     >>> sec(mpi(0,1))
-    [1.0, 1.85081571768092561791175324143]
+    [1.0, 1.85081571768092561791175326276]
     >>> sec(mpi(0,2))  # Interval includes a singularity
     [-inf, +inf]
 """
@@ -729,7 +729,7 @@ arithmetic.
     >>> csc(inf)
     nan
     >>> csc(mpi(0,1))  # Interval includes a singularity
-    [1.18839510577812121626159945235, +inf]
+    [1.18839510577812121626159943988, +inf]
     >>> csc(mpi(0,2))
     [1.0, +inf]
 """
@@ -753,7 +753,7 @@ arithmetic.
     >>> cot(inf)
     nan
     >>> cot(mpi(0,1))  # Interval includes a singularity
-    [0.642092615934330703006419986575, +inf]
+    [0.642092615934330703006419974862, +inf]
     >>> cot(mpi(1,2))
     [-inf, +inf]
 """
@@ -906,8 +906,43 @@ acot = r"""Computes the inverse cotangent of `x`,
 asec = r"""Computes the inverse secant of `x`,
 `\mathrm{sec}^{-1}(x) = \cos^{-1}(1/x)`."""
 
-acsc_ = r"""Computes the inverse cosecant of `x`,
+acsc = r"""Computes the inverse cosecant of `x`,
 `\mathrm{csc}^{-1}(x) = \sin^{-1}(1/x)`."""
+
+coth = r"""Computes the hyperbolic cotangent of `x`,
+`\mathrm{coth}(x) = \frac{\cosh(x)}{\sinh(x)}`.
+"""
+
+sech = r"""Computes the hyperbolic secant of `x`,
+`\mathrm{sech}(x) = \frac{1}{\cosh(x)}`.
+"""
+
+csch = r"""Computes the hyperbolic cosecant of `x`,
+`\mathrm{csch}(x) = \frac{1}{\sinh(x)}`.
+"""
+
+acosh = r"""Computes the inverse hyperbolic cosine of `x`,
+`\mathrm{cosh}^{-1}(x) = \log(x+\sqrt{x+1}\sqrt{x-1})`.
+"""
+
+asinh = r"""Computes the inverse hyperbolic sine of `x`,
+`\mathrm{sinh}^{-1}(x) = \log(x+\sqrt{1+x^2})`.
+"""
+
+atanh = r"""Computes the inverse hyperbolic tangent of `x`,
+`\mathrm{tanh}^{-1}(x) = \frac{1}{2}\left(\log(1+x)-\log(1-x)\right)`.
+"""
+
+acoth = r"""Computes the inverse hyperbolic cotangent of `x`,
+`\mathrm{coth}^{-1}(x) = \tanh^{-1}(1/x)`."""
+
+asech = r"""Computes the inverse hyperbolic secant of `x`,
+`\mathrm{sech}^{-1}(x) = \cosh^{-1}(1/x)`."""
+
+acsch = r"""Computes the inverse hyperbolic cosecant of `x`,
+`\mathrm{csch}^{-1}(x) = \sinh^{-1}(1/x)`."""
+
+
 
 sinpi = r"""
 Computes `\sin(\pi x)`, more accurately than the expression
@@ -1136,12 +1171,12 @@ im = r"""
 Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
 :func:`im` converts `x` to a mpmath number::
 
->>> from mpmath import *
->>> mp.dps = 15; mp.pretty = False
->>> im(3)
-mpf('0.0')
->>> im(-1+4j)
-mpf('4.0')
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = False
+    >>> im(3)
+    mpf('0.0')
+    >>> im(-1+4j)
+    mpf('4.0')
 """
 
 conj = r"""
@@ -1973,6 +2008,10 @@ an entirely real-valued sum::
     >>> (psi(0,-r2)-psi(0,-r1))/(r1-r2)
     (1.694361433907061256154665 + 0.0j)
 
+"""
+
+digamma = r"""
+Shortcut for ``psi(0,z)``.
 """
 
 harmonic = r"""
@@ -3786,8 +3825,8 @@ trigonometric functions::
     9.93383257062542
     >>> chi(3) + shi(3)
     9.93383257062542
-    >>> ci(3j) - j*si(3j) - pi*j/2
-    (9.93383257062542 + 0.0j)
+    >>> chop(ci(3j) - j*si(3j) - pi*j/2)
+    9.93383257062542
 
 Beware that logarithmic corrections, as in the last example
 above, are required to obtain the correct branch in general.

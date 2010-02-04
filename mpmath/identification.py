@@ -33,23 +33,28 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
 
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
-        >>> pslq([pi, 1], tol=0.01)
-        [-7, 22]
-        >>> pslq([pi, 1], tol=0.001)
-        [113, -355]
+        >>> pslq([-1, pi], tol=0.01)
+        [22, 7]
+        >>> pslq([-1, pi], tol=0.001)
+        [355, 113]
+        >>> mpf(22)/7; mpf(355)/113; +pi
+        3.14285714285714
+        3.14159292035398
+        3.14159265358979
 
     Pi is not a rational number with denominator less than 1000::
 
-        >>> pslq([pi, 1])
+        >>> pslq([-1, pi])
         >>>
 
     To within the standard precision, it can however be approximated
     by at least one rational number with denominator less than `10^{12}`::
 
-        >>> pslq([pi, 1], maxcoeff=10**12)
-        [-75888275702L, 238410049439L]
-        >>> mpf(_[1])/_[0]
-        -3.14159265358979
+        >>> p, q = pslq([-1, pi], maxcoeff=10**12)
+        >>> print p, q
+        238410049439 75888275702
+        >>> mpf(p)/q
+        3.14159265358979
 
     The PSLQ algorithm can be applied to long vectors. For example,
     we can investigate the rational (in)dependence of integer square

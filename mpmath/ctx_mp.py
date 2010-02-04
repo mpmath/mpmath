@@ -214,6 +214,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
         # XXX: automate
         ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
         ctx.primepi.im_func.func_doc = function_docs.primepi
+        ctx.psi.im_func.func_doc = function_docs.psi
+        ctx.atan2.im_func.func_doc = function_docs.atan2
+        ctx.digamma.func_doc = function_docs.digamma
+        ctx.cospi.func_doc = function_docs.cospi
+        ctx.sinpi.func_doc = function_docs.sinpi
 
     def init_builtins(ctx):
 
@@ -563,6 +568,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
                 prec = kwargs['prec']
                 if prec == ctx.inf:
                     return 0, 'f'
+                else:
+                    prec = int(prec)
             elif 'dps' in kwargs:
                 dps = kwargs['dps']
                 if dps == ctx.inf:

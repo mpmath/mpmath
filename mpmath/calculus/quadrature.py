@@ -572,7 +572,7 @@ class QuadratureMethods:
         diamond-shaped path from `1` to `+i` to `-1` to `-i` to `1`::
 
             >>> mp.dps = 15
-            >>> quad(lambda z: 1/z, [1,j,-1,-j,1])
+            >>> chop(quad(lambda z: 1/z, [1,j,-1,-j,1]))
             (0.0 + 6.28318530717959j)
 
         **Examples of 2D and 3D integrals**
