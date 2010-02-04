@@ -7317,7 +7317,7 @@ Evaluation for complex `s`, `z` in a nonconvergent case::
     >>> s, z = -1-j, 1+2j
     >>> clcos(s, z)
     (0.9407430121562251476136807 + 0.715826296033590204557054j)
-    >>> extraprec(15)(nsum)(lambda k: cos(k*z)/k**s, [1,inf])
+    >>> extraprec(20)(nsum)(lambda k: cos(k*z)/k**s, [1,inf])
     (0.9407430121562251476136807 + 0.7158262960335902045570541j)
 
 """
