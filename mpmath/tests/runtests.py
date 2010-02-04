@@ -71,6 +71,8 @@ def testit(importdir='', testdir=''):
     import os.path
     import mpmath
     print "mpmath imported from", os.path.dirname(mpmath.__file__)
+    print "mpmath backend:", mpmath.libmp.backend.BACKEND
+    print "mpmath mp class:", repr(mpmath.mp)
     print "mpmath version:", mpmath.__version__
     print "Python version:", sys.version
     print
