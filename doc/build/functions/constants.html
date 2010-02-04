@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Mathematical constants &mdash; mpmath v0.13 documentation</title>
+    <title>Mathematical constants &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Arithmetic and number parts" href="numberparts.html" />
     <link rel="prev" title="Mathematical functions" href="index.html" /> 
@@ -35,7 +37,7 @@
         <li class="right" >
           <a href="index.html" title="Mathematical functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -76,19 +78,19 @@
 <div class="section" id="pi-pi">
 <h2>Pi (<tt class="docutils literal"><span class="pre">pi</span></tt>)<a class="headerlink" href="#pi-pi" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.pi">
-<!--[mpmath.functions.pi]--><tt class="descclassname">functions.</tt><tt class="descname">pi</tt><a class="headerlink" href="#mpmath.functions.pi" title="Permalink to this definition">¶</a></dt>
-<dd><p><img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>, roughly equal to 3.141592654, represents the area of the unit
+<dt id="mpmath.mp.pi">
+<!--[mpmath.mp.pi]--><tt class="descclassname">mp.</tt><tt class="descname">pi</tt><a class="headerlink" href="#mpmath.mp.pi" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />, roughly equal to 3.141592654, represents the area of the unit
 circle, the half-period of trigonometric functions, and many other
 things in mathematics.</p>
-<p>Mpmath can evaluate <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> to arbitrary precision:</p>
+<p>Mpmath can evaluate <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">pi</span>
 <span class="go">3.1415926535897932384626433832795028841971693993751</span>
 </pre></div>
 </div>
-<p>This shows digits 99991-100000 of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
+<p>This shows digits 99991-100000 of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">pi</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
 <span class="go">&#39;5549362464&#39;</span>
@@ -97,7 +99,7 @@ things in mathematics.</p>
 <p><strong>Possible issues</strong></p>
 <p><tt class="xref docutils literal"><span class="pre">pi</span></tt> always rounds to the nearest floating-point
 number when used. This means that exact mathematical identities
-involving <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> will generally not be preserved in floating-point
+involving <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> will generally not be preserved in floating-point
 arithmetic. In particular, multiples of <tt class="xref docutils literal"><span class="pre">pi</span></tt> (except for
 the trivial case <tt class="docutils literal"><span class="pre">0*pi</span></tt>) are <em>not</em> the exact roots of
 <tt class="xref docutils literal"><span class="pre">sin()</span></tt>, but differ roughly by the current epsilon:</p>
@@ -119,9 +121,9 @@ details.</p>
 <div class="section" id="degree-degree">
 <h2>Degree (<tt class="docutils literal"><span class="pre">degree</span></tt>)<a class="headerlink" href="#degree-degree" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.degree">
-<!--[mpmath.functions.degree]--><tt class="descclassname">functions.</tt><tt class="descname">degree</tt><a class="headerlink" href="#mpmath.functions.degree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents one degree of angle, <img class="math" src="../_images/math/3d0e0c46f45a89f29d1436a91263fa08701baee3.png" alt="1^{\circ} = \pi/180"/>, or
+<dt id="mpmath.mp.degree">
+<!--[mpmath.mp.degree]--><tt class="descclassname">mp.</tt><tt class="descname">degree</tt><a class="headerlink" href="#mpmath.mp.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents one degree of angle, <img class="math" src="../_images/math/3d0e0c46f45a89f29d1436a91263fa08701baee3.png" alt="1^{\circ} = \pi/180" />, or
 about 0.01745329. This constant may be evaluated to arbitrary
 precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -144,19 +146,19 @@ to radians:</p>
 <div class="section" id="base-of-the-natural-logarithm-e">
 <h2>Base of the natural logarithm (<tt class="docutils literal"><span class="pre">e</span></tt>)<a class="headerlink" href="#base-of-the-natural-logarithm-e" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.e">
-<!--[mpmath.functions.e]--><tt class="descclassname">functions.</tt><tt class="descname">e</tt><a class="headerlink" href="#mpmath.functions.e" title="Permalink to this definition">¶</a></dt>
-<dd><p>The transcendental number <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> = 2.718281828... is the base of the
+<dt id="mpmath.mp.e">
+<!--[mpmath.mp.e]--><tt class="descclassname">mp.</tt><tt class="descname">e</tt><a class="headerlink" href="#mpmath.mp.e" title="Permalink to this definition">¶</a></dt>
+<dd><p>The transcendental number <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> = 2.718281828... is the base of the
 natural logarithm (<tt class="xref docutils literal"><span class="pre">ln()</span></tt>) and of the exponential function
 (<tt class="xref docutils literal"><span class="pre">exp()</span></tt>).</p>
-<p>Mpmath can be evaluate <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> to arbitrary precision:</p>
+<p>Mpmath can be evaluate <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">e</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
 </pre></div>
 </div>
-<p>This shows digits 99991-100000 of <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>:</p>
+<p>This shows digits 99991-100000 of <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">100000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
 <span class="go">&#39;2100427165&#39;</span>
@@ -164,7 +166,7 @@ natural logarithm (<tt class="xref docutils literal"><span class="pre">ln()</spa
 </div>
 <p><strong>Possible issues</strong></p>
 <p><tt class="xref docutils literal"><span class="pre">e</span></tt> always rounds to the nearest floating-point number
-when used, and mathematical identities involving <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> may not
+when used, and mathematical identities involving <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" /> may not
 hold in floating-point arithmetic. For example, <tt class="docutils literal"><span class="pre">ln(e)</span></tt>
 might not evaluate exactly to 1.</p>
 <p>In particular, don&#8217;t use <tt class="docutils literal"><span class="pre">e**x</span></tt> to compute the exponential
@@ -176,9 +178,9 @@ accurate.</p>
 <div class="section" id="golden-ratio-phi">
 <h2>Golden ratio (<tt class="docutils literal"><span class="pre">phi</span></tt>)<a class="headerlink" href="#golden-ratio-phi" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.phi">
-<!--[mpmath.functions.phi]--><tt class="descclassname">functions.</tt><tt class="descname">phi</tt><a class="headerlink" href="#mpmath.functions.phi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents the golden ratio <img class="math" src="../_images/math/804f54cde269ce01d99e86ef4c37ce6a02f68a18.png" alt="\phi = (1+\sqrt 5)/2"/>,
+<dt id="mpmath.mp.phi">
+<!--[mpmath.mp.phi]--><tt class="descclassname">mp.</tt><tt class="descname">phi</tt><a class="headerlink" href="#mpmath.mp.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the golden ratio <img class="math" src="../_images/math/804f54cde269ce01d99e86ef4c37ce6a02f68a18.png" alt="\phi = (1+\sqrt 5)/2" />,
 approximately equal to 1.6180339887. To high precision,
 its value is:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -202,35 +204,35 @@ its value is:</p>
 <div class="section" id="euler-s-constant-euler">
 <h2>Euler&#8217;s constant (<tt class="docutils literal"><span class="pre">euler</span></tt>)<a class="headerlink" href="#euler-s-constant-euler" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.euler">
-<!--[mpmath.functions.euler]--><tt class="descclassname">functions.</tt><tt class="descname">euler</tt><a class="headerlink" href="#mpmath.functions.euler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Euler&#8217;s constant or the Euler-Mascheroni constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/>
+<dt id="mpmath.mp.euler">
+<!--[mpmath.mp.euler]--><tt class="descclassname">mp.</tt><tt class="descname">euler</tt><a class="headerlink" href="#mpmath.mp.euler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Euler&#8217;s constant or the Euler-Mascheroni constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />
 = 0.57721566... is a number of central importance to
 number theory and special functions. It is defined as the limit</p>
 <div class="math">
 <p><img src="../_images/math/b2fa30c8a0a044ef2c44aa24bd5c354928ffc730.png" alt="\gamma = \lim_{n\to\infty} H_n - \log n" />
-</div></p><p>where <img class="math" src="../_images/math/17d8efce30ecd8b503680a79698c2a145420238b.png" alt="H_n = 1 + \frac{1}{2} + \ldots + \frac{1}{n}"/> is a harmonic
+</div></p><p>where <img class="math" src="../_images/math/17d8efce30ecd8b503680a79698c2a145420238b.png" alt="H_n = 1 + \frac{1}{2} + \ldots + \frac{1}{n}" /> is a harmonic
 number (see <tt class="xref docutils literal"><span class="pre">harmonic()</span></tt>).</p>
-<p>Evaluation of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/> is supported at arbitrary precision:</p>
+<p>Evaluation of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> is supported at arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">euler</span>
 <span class="go">0.57721566490153286060651209008240243104215933593992</span>
 </pre></div>
 </div>
-<p>We can also compute <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/> directly from the definition,
+<p>We can also compute <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> directly from the definition,
 although this is less efficient:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">harmonic</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">0.57721566490153286060651209008240243104215933593992</span>
 </pre></div>
 </div>
-<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/>:</p>
+<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">euler</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
 <span class="go">&#39;4679858165&#39;</span>
 </pre></div>
 </div>
-<p>Integrals, series, and representations for <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/> in terms of
+<p>Integrals, series, and representations for <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" /> in terms of
 special functions include the following (there are many others):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
@@ -252,8 +254,8 @@ special functions include the following (there are many others):</p>
 <span class="go">0.5772156649015328606065121</span>
 </pre></div>
 </div>
-<p>For generalizations of the identities <img class="math" src="../_images/math/1785bf0dc26961e1508e63e1d1b4044aba9d1577.png" alt="\gamma = -\Gamma'(1)"/>
-and <img class="math" src="../_images/math/534509422e9762347396775fe4488d80df1bc4bf.png" alt="\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)"/>, see
+<p>For generalizations of the identities <img class="math" src="../_images/math/1785bf0dc26961e1508e63e1d1b4044aba9d1577.png" alt="\gamma = -\Gamma'(1)" />
+and <img class="math" src="../_images/math/534509422e9762347396775fe4488d80df1bc4bf.png" alt="\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)" />, see
 <tt class="xref docutils literal"><span class="pre">psi()</span></tt> and <tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> respectively.</p>
 </dd></dl>
 
@@ -261,9 +263,9 @@ and <img class="math" src="../_images/math/534509422e9762347396775fe4488d80df1bc
 <div class="section" id="catalan-s-constant-catalan">
 <h2>Catalan&#8217;s constant (<tt class="docutils literal"><span class="pre">catalan</span></tt>)<a class="headerlink" href="#catalan-s-constant-catalan" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.catalan">
-<!--[mpmath.functions.catalan]--><tt class="descclassname">functions.</tt><tt class="descname">catalan</tt><a class="headerlink" href="#mpmath.functions.catalan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Catalan&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K"/> = 0.91596559... is given by the infinite
+<dt id="mpmath.mp.catalan">
+<!--[mpmath.mp.catalan]--><tt class="descclassname">mp.</tt><tt class="descname">catalan</tt><a class="headerlink" href="#mpmath.mp.catalan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Catalan&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> = 0.91596559... is given by the infinite
 series</p>
 <div class="math">
 <p><img src="../_images/math/73256db412f712a118cec432dbabe92fa1af02f2.png" alt="K = \sum_{k=0}^{\infty} \frac{(-1)^k}{(2k+1)^2}." />
@@ -274,13 +276,13 @@ series</p>
 <span class="go">0.91596559417721901505460351493238411077414937428167</span>
 </pre></div>
 </div>
-<p>One can also compute <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K"/> directly from the definition, although
+<p>One can also compute <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> directly from the definition, although
 this is significantly less efficient:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.91596559417721901505460351493238411077414937428167</span>
 </pre></div>
 </div>
-<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K"/>:</p>
+<p>This shows digits 9991-10000 of <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">catalan</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
 <span class="go">&#39;9537871503&#39;</span>
@@ -312,8 +314,8 @@ this is significantly less efficient:</p>
 <div class="section" id="apery-s-constant-apery">
 <h2>Apery&#8217;s constant (<tt class="docutils literal"><span class="pre">apery</span></tt>)<a class="headerlink" href="#apery-s-constant-apery" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.apery">
-<!--[mpmath.functions.apery]--><tt class="descclassname">functions.</tt><tt class="descname">apery</tt><a class="headerlink" href="#mpmath.functions.apery" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.mp.apery">
+<!--[mpmath.mp.apery]--><tt class="descclassname">mp.</tt><tt class="descname">apery</tt><a class="headerlink" href="#mpmath.mp.apery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents Apery&#8217;s constant, which is the irrational number
 approximately equal to 1.2020569 given by</p>
 <div class="math">
@@ -330,7 +332,7 @@ series. To 50 decimal places, the value is given by:</p>
 include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">1.2020569031595942853997381615114499907649862923405</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="n">trigamma</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
 <span class="go">1.2020569031595942853997381615114499907649862923405</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mf">8</span><span class="o">*</span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span><span class="o">/</span><span class="mf">7</span>
 <span class="go">1.2020569031595942853997381615114499907649862923405</span>
@@ -351,9 +353,9 @@ include:</p>
 <div class="section" id="khinchin-s-constant-khinchin">
 <h2>Khinchin&#8217;s constant (<tt class="docutils literal"><span class="pre">khinchin</span></tt>)<a class="headerlink" href="#khinchin-s-constant-khinchin" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.khinchin">
-<!--[mpmath.functions.khinchin]--><tt class="descclassname">functions.</tt><tt class="descname">khinchin</tt><a class="headerlink" href="#mpmath.functions.khinchin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Khinchin&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K"/> = 2.68542... is a number that
+<dt id="mpmath.mp.khinchin">
+<!--[mpmath.mp.khinchin]--><tt class="descclassname">mp.</tt><tt class="descname">khinchin</tt><a class="headerlink" href="#mpmath.mp.khinchin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Khinchin&#8217;s constant <img class="math" src="../_images/math/dfb064112b6c94470339f6571f69d07afc1c024c.png" alt="K" /> = 2.68542... is a number that
 appears in the theory of continued fractions. Mpmath can evaluate
 it to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -382,14 +384,14 @@ implementation of the following series:</p>
 <div class="section" id="glaisher-s-constant-glaisher">
 <h2>Glaisher&#8217;s constant (<tt class="docutils literal"><span class="pre">glaisher</span></tt>)<a class="headerlink" href="#glaisher-s-constant-glaisher" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.glaisher">
-<!--[mpmath.functions.glaisher]--><tt class="descclassname">functions.</tt><tt class="descname">glaisher</tt><a class="headerlink" href="#mpmath.functions.glaisher" title="Permalink to this definition">¶</a></dt>
-<dd><p>Glaisher&#8217;s constant <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>, also known as the Glaisher-Kinkelin
+<dt id="mpmath.mp.glaisher">
+<!--[mpmath.mp.glaisher]--><tt class="descclassname">mp.</tt><tt class="descname">glaisher</tt><a class="headerlink" href="#mpmath.mp.glaisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Glaisher&#8217;s constant <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, also known as the Glaisher-Kinkelin
 constant, is a number approximately equal to 1.282427129 that
 sometimes appears in formulas related to gamma and zeta functions.
 It is also related to the Barnes G-function (see <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>).</p>
-<p>The constant is defined  as <img class="math" src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))"/> where
-<img class="math" src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)"/> denotes the derivative of the Riemann zeta function
+<p>The constant is defined  as <img class="math" src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))" /> where
+<img class="math" src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)" /> denotes the derivative of the Riemann zeta function
 (see <tt class="xref docutils literal"><span class="pre">zeta()</span></tt>).</p>
 <p>Mpmath can evaluate Glaisher&#8217;s constant to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -426,14 +428,14 @@ code for additional details.</p>
 <div class="section" id="mertens-constant-mertens">
 <h2>Mertens constant (<tt class="docutils literal"><span class="pre">mertens</span></tt>)<a class="headerlink" href="#mertens-constant-mertens" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.mertens">
-<!--[mpmath.functions.mertens]--><tt class="descclassname">functions.</tt><tt class="descname">mertens</tt><a class="headerlink" href="#mpmath.functions.mertens" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.mp.mertens">
+<!--[mpmath.mp.mertens]--><tt class="descclassname">mp.</tt><tt class="descname">mertens</tt><a class="headerlink" href="#mpmath.mp.mertens" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents the Mertens or Meissel-Mertens constant, which is the
 prime number analog of Euler&#8217;s constant:</p>
 <div class="math">
 <p><img src="../_images/math/7f6312a2a892d8cc4b75363c592391a19d1acc09.png" alt="B_1 = \lim_{N\to\infty}
     \left(\sum_{p_k \le N} \frac{1}{p_k} - \log \log N \right)" />
-</div></p><p>Here <img class="math" src="../_images/math/4508393135451dc6c41b01f36072dd16674586bc.png" alt="p_k"/> denotes the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>-th prime number. Other names for this
+</div></p><p>Here <img class="math" src="../_images/math/4508393135451dc6c41b01f36072dd16674586bc.png" alt="p_k" /> denotes the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />-th prime number. Other names for this
 constant include the Hadamard-de la Vallee-Poussin constant or
 the prime reciprocal constant.</p>
 <p>The following gives the Mertens constant to 50 digits:</p>
@@ -451,9 +453,9 @@ the prime reciprocal constant.</p>
 <div class="section" id="twin-prime-constant-twinprime">
 <h2>Twin prime constant (<tt class="docutils literal"><span class="pre">twinprime</span></tt>)<a class="headerlink" href="#twin-prime-constant-twinprime" title="Permalink to this headline">¶</a></h2>
 <dl class="attribute">
-<dt id="mpmath.functions.twinprime">
-<!--[mpmath.functions.twinprime]--><tt class="descclassname">functions.</tt><tt class="descname">twinprime</tt><a class="headerlink" href="#mpmath.functions.twinprime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents the twin prime constant, which is the factor <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2"/>
+<dt id="mpmath.mp.twinprime">
+<!--[mpmath.mp.twinprime]--><tt class="descclassname">mp.</tt><tt class="descname">twinprime</tt><a class="headerlink" href="#mpmath.mp.twinprime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the twin prime constant, which is the factor <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2" />
 featuring in the Hardy-Littlewood conjecture for the growth of the
 twin prime counting function,</p>
 <div class="math">
@@ -461,7 +463,7 @@ twin prime counting function,</p>
 </div></p><p>It is given by the product over primes</p>
 <div class="math">
 <p><img src="../_images/math/8ccc55eca89947ba3b851678eea5a3d62101b26b.png" alt="C_2 = \prod_{p\ge3} \frac{p(p-2)}{(p-1)^2} \approx 0.66016" />
-</div></p><p>Computing <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2"/> to 50 digits:</p>
+</div></p><p>Computing <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2" /> to 50 digits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">twinprime</span>
@@ -530,14 +532,14 @@ twin prime counting function,</p>
         <li class="right" >
           <a href="index.html" title="Mathematical functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

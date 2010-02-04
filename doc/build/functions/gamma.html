@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Factorials and gamma functions &mdash; mpmath v0.13 documentation</title>
+    <title>Factorials and gamma functions &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Exponential integrals and error functions" href="expintegrals.html" />
     <link rel="prev" title="Hyperbolic functions" href="hyperbolic.html" /> 
@@ -35,7 +37,7 @@
         <li class="right" >
           <a href="hyperbolic.html" title="Hyperbolic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,11 +54,11 @@
 <div class="section" id="factorial-fac">
 <h3><tt class="xref docutils literal"><span class="pre">factorial()</span></tt>/<tt class="xref docutils literal"><span class="pre">fac()</span></tt><a class="headerlink" href="#factorial-fac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.factorial">
-<!--[mpmath.functions.factorial]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">factorial</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.factorial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the factorial, <img class="math" src="../_images/math/2950e3accfad26309bf1ecf6947061171fd2797f.png" alt="x!"/>. For integers <img class="math" src="../_images/math/e2c7d62172af0e738dd12f47f3f8ad8ef70cd65f.png" alt="n \ge 0"/>, we have
-<img class="math" src="../_images/math/6c0c4ee2888c6e0414e9ab053b8d38f76275c138.png" alt="n! = 1 \cdot 2 \cdots (n-1) \cdot n"/> and more generally the factorial
-is defined for real or complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> by <img class="math" src="../_images/math/1477fc5f4ac968fb66eee11dec059480a0ad146c.png" alt="x! = \Gamma(x+1)"/>.</p>
+<dt id="mpmath.factorial">
+<!--[mpmath.factorial]--><tt class="descclassname">mpmath.</tt><tt class="descname">factorial</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.factorial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the factorial, <img class="math" src="../_images/math/2950e3accfad26309bf1ecf6947061171fd2797f.png" alt="x!" />. For integers <img class="math" src="../_images/math/e2c7d62172af0e738dd12f47f3f8ad8ef70cd65f.png" alt="n \ge 0" />, we have
+<img class="math" src="../_images/math/6c0c4ee2888c6e0414e9ab053b8d38f76275c138.png" alt="n! = 1 \cdot 2 \cdots (n-1) \cdot n" /> and more generally the factorial
+is defined for real or complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> by <img class="math" src="../_images/math/1477fc5f4ac968fb66eee11dec059480a0ad146c.png" alt="x! = \Gamma(x+1)" />.</p>
 <p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -76,7 +78,7 @@ is defined for real or complex <img class="math" src="../_images/math/26eeb5258c
 <span class="go">(0.886226925452758, 0.886226925452758)</span>
 </pre></div>
 </div>
-<p>For large positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/2950e3accfad26309bf1ecf6947061171fd2797f.png" alt="x!"/> can be approximated by
+<p>For large positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/2950e3accfad26309bf1ecf6947061171fd2797f.png" alt="x!" /> can be approximated by
 Stirling&#8217;s formula:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -104,10 +106,10 @@ exponential function (among many other contexts):</p>
 <div class="section" id="fac2">
 <h3><tt class="xref docutils literal"><span class="pre">fac2()</span></tt><a class="headerlink" href="#fac2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.fac2">
-<!--[mpmath.functions.fac2]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">fac2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.fac2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the double factorial <img class="math" src="../_images/math/9dac1ff8fa3c29c29995e14947de1c827e7951ad.png" alt="x!!"/>, defined for integers
-<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0"/> by</p>
+<dt id="mpmath.fac2">
+<!--[mpmath.fac2]--><tt class="descclassname">mpmath.</tt><tt class="descname">fac2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.fac2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the double factorial <img class="math" src="../_images/math/9dac1ff8fa3c29c29995e14947de1c827e7951ad.png" alt="x!!" />, defined for integers
+<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> by</p>
 <div class="math">
 <p><img src="../_images/math/0976200a76e1270d24345b631d6f957aff745b26.png" alt="x!! = \begin{cases}
     1 \cdot 3 \cdots (x-2) \cdot x &amp; x \;\mathrm{odd} \\
@@ -125,7 +127,7 @@ exponential function (among many other contexts):</p>
 <span class="go">[1.0, 1.0, 2.0, 3.0, 8.0, 15.0, 48.0, 105.0, 384.0, 945.0]</span>
 </pre></div>
 </div>
-<p>For large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, double factorials follow a Stirling-like asymptotic
+<p>For large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, double factorials follow a Stirling-like asymptotic
 approximation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10000</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -134,7 +136,7 @@ approximation:</p>
 <span class="go">5.97262736954392e+17830</span>
 </pre></div>
 </div>
-<p>The recurrence formula <img class="math" src="../_images/math/3385eb2e9d54abbd1da197208bd4a0b6dae68ce7.png" alt="x!! = x (x-2)!!"/> can be reversed to
+<p>The recurrence formula <img class="math" src="../_images/math/3385eb2e9d54abbd1da197208bd4a0b6dae68ce7.png" alt="x!! = x (x-2)!!" /> can be reversed to
 define the double factorial of negative odd integers (but
 not negative even integers):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">5</span><span class="p">),</span> <span class="n">fac2</span><span class="p">(</span><span class="o">-</span><span class="mf">7</span><span class="p">)</span>
@@ -196,15 +198,15 @@ include:</p>
 <div class="section" id="binomial">
 <h3><tt class="xref docutils literal"><span class="pre">binomial()</span></tt><a class="headerlink" href="#binomial" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.binomial">
-<!--[mpmath.functions.binomial]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">binomial</tt><big>(</big><em>n</em>, <em>k</em><big>)</big><a class="headerlink" href="#mpmath.functions.binomial" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.binomial">
+<!--[mpmath.binomial]--><tt class="descclassname">mpmath.</tt><tt class="descname">binomial</tt><big>(</big><em>n</em>, <em>k</em><big>)</big><a class="headerlink" href="#mpmath.binomial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the binomial coefficient</p>
 <div class="math">
 <p><img src="../_images/math/bdbb15f258885b2ee7f574265055dbeb86cdebdf.png" alt="{n \choose k} = \frac{n!}{k!(n-k)!}." />
-</div></p><p>The binomial coefficient gives the number of ways that <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> items
-can be chosen from a set of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> items. More generally, the binomial
+</div></p><p>The binomial coefficient gives the number of ways that <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> items
+can be chosen from a set of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> items. More generally, the binomial
 coefficient is a well-defined function of arbitrary real or
-complex <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, via the gamma function.</p>
+complex <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />, via the gamma function.</p>
 <p><strong>Examples</strong></p>
 <p>Generate Pascal&#8217;s triangle:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -237,9 +239,9 @@ select 1 item from the empty set:</p>
 <p>Nonintegral binomial coefficients find use in series
 expansions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">4</span><span class="p">))</span>
-<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
+<span class="go">[1.0, 0.25, -0.09375, 0.0546875, -0.0375977]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">binomial</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">)])</span>
-<span class="go">[1.0, 0.25, -9.375e-2, 5.46875e-2, -3.75977e-2]</span>
+<span class="go">[1.0, 0.25, -0.09375, 0.0546875, -0.0375977]</span>
 </pre></div>
 </div>
 <p>An integral representation:</p>
@@ -260,15 +262,15 @@ expansions:</p>
 <div class="section" id="gamma">
 <h3><tt class="xref docutils literal"><span class="pre">gamma()</span></tt><a class="headerlink" href="#gamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.gamma">
-<!--[mpmath.functions.gamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">gamma</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.functions.gamma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the gamma function, <img class="math" src="../_images/math/36edacaf2ec3d06fb117f981d12f42cdee6cf940.png" alt="\Gamma(x)"/>. The gamma function is a
+<dt id="mpmath.gamma">
+<!--[mpmath.gamma]--><tt class="descclassname">mpmath.</tt><tt class="descname">gamma</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the gamma function, <img class="math" src="../_images/math/36edacaf2ec3d06fb117f981d12f42cdee6cf940.png" alt="\Gamma(x)" />. The gamma function is a
 shifted version of the ordinary factorial, satisfying
-<img class="math" src="../_images/math/556ae5f6a1c0ceaa5e922ce2b174fd8d6f0ff008.png" alt="\Gamma(n) = (n-1)!"/> for integers <img class="math" src="../_images/math/f3d1431ad346632b25a0e7b3f12ebe19723b3960.png" alt="n &gt; 0"/>. More generally, it
+<img class="math" src="../_images/math/556ae5f6a1c0ceaa5e922ce2b174fd8d6f0ff008.png" alt="\Gamma(n) = (n-1)!" /> for integers <img class="math" src="../_images/math/f3d1431ad346632b25a0e7b3f12ebe19723b3960.png" alt="n &gt; 0" />. More generally, it
 is defined by</p>
 <div class="math">
 <p><img src="../_images/math/65fc2d2f449e1140920cedf39abf3763a074de02.png" alt="\Gamma(x) = \int_0^{\infty} t^{x-1} e^{-t}\, dt" />
-</div></p><p>for any real or complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> with <img class="math" src="../_images/math/1c994b344b0ba93fa3d7eb1de7ddbb51c8b57cd7.png" alt="\Re(x) &gt; 0"/> and for <img class="math" src="../_images/math/8123f299b3e71f1d37714e1f3794f955760cfa06.png" alt="\Re(x) &lt; 0"/>
+</div></p><p>for any real or complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> with <img class="math" src="../_images/math/1c994b344b0ba93fa3d7eb1de7ddbb51c8b57cd7.png" alt="\Re(x) &gt; 0" /> and for <img class="math" src="../_images/math/8123f299b3e71f1d37714e1f3794f955760cfa06.png" alt="\Re(x) &lt; 0" />
 by analytic continuation.</p>
 <p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
@@ -291,7 +293,7 @@ by analytic continuation.</p>
 </pre></div>
 </div>
 <p>The gamma function of a half-integer is a rational multiple of
-<img class="math" src="../_images/math/ee0529202bae221e2a886dbd92ecd50e87f90452.png" alt="\sqrt{\pi}"/>:</p>
+<img class="math" src="../_images/math/ee0529202bae221e2a886dbd92ecd50e87f90452.png" alt="\sqrt{\pi}" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">(1.77245385090552, 1.77245385090552)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">1.5</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
@@ -328,9 +330,9 @@ very quickly:</p>
 <div class="section" id="gammaprod">
 <h3><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt><a class="headerlink" href="#gammaprod" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.gammaprod">
-<!--[mpmath.functions.gammaprod]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">gammaprod</tt><big>(</big><em>a</em>, <em>b</em><big>)</big><a class="headerlink" href="#mpmath.functions.gammaprod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given iterables <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>, <tt class="docutils literal"><span class="pre">gammaprod(a,</span> <span class="pre">b)</span></tt> computes the
+<dt id="mpmath.gammaprod">
+<!--[mpmath.gammaprod]--><tt class="descclassname">mpmath.</tt><tt class="descname">gammaprod</tt><big>(</big><em>a</em>, <em>b</em><big>)</big><a class="headerlink" href="#mpmath.gammaprod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given iterables <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, <tt class="docutils literal"><span class="pre">gammaprod(a,</span> <span class="pre">b)</span></tt> computes the
 product / quotient of gamma functions:</p>
 <div class="math">
 <p><img src="../_images/math/ab622d03541d902f5282d1b80c21fc40ce599d6a.png" alt="\frac{\Gamma(a_0) \Gamma(a_1) \cdots \Gamma(a_p)}
@@ -357,7 +359,7 @@ returns <tt class="docutils literal"><span class="pre">+inf</span></tt>.</li>
 returns 0.</li>
 </ul>
 <p><strong>Examples</strong></p>
-<p>The reciprocal gamma function <img class="math" src="../_images/math/88acd233f0e0f03bd54278e4a23d853d82f1df69.png" alt="1/\Gamma(x)"/> evaluated at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/>:</p>
+<p>The reciprocal gamma function <img class="math" src="../_images/math/88acd233f0e0f03bd54278e4a23d853d82f1df69.png" alt="1/\Gamma(x)" /> evaluated at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([],</span> <span class="p">[</span><span class="mf">0</span><span class="p">])</span>
@@ -379,13 +381,13 @@ returns 0.</li>
 <div class="section" id="loggamma">
 <h3><tt class="xref docutils literal"><span class="pre">loggamma()</span></tt><a class="headerlink" href="#loggamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.loggamma">
-<!--[mpmath.functions.loggamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">loggamma</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.functions.loggamma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the log-gamma function. Unlike <img class="math" src="../_images/math/5eeb6d5fe38d952cd99378c691ab37bc50fa75ed.png" alt="\ln(\Gamma(z))"/>, which
+<dt id="mpmath.loggamma">
+<!--[mpmath.loggamma]--><tt class="descclassname">mpmath.</tt><tt class="descname">loggamma</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.loggamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the log-gamma function. Unlike <img class="math" src="../_images/math/5eeb6d5fe38d952cd99378c691ab37bc50fa75ed.png" alt="\ln(\Gamma(z))" />, which
 has infinitely many complex branch cuts, the log-gamma function
 only has a single branch cut along the negative half-axis.
 The functions are identical only on (and very close to) the positive
-half-axis; elsewhere they differ by <img class="math" src="../_images/math/51ab328053373caa3210c85716df41a74bc86c85.png" alt="2 n \pi i"/> (the real parts
+half-axis; elsewhere they differ by <img class="math" src="../_images/math/51ab328053373caa3210c85716df41a74bc86c85.png" alt="2 n \pi i" /> (the real parts
 agree):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -409,14 +411,14 @@ for large arguments.</p>
 <div class="section" id="rf">
 <h3><tt class="xref docutils literal"><span class="pre">rf()</span></tt><a class="headerlink" href="#rf" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.rf">
-<!--[mpmath.functions.rf]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">rf</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.rf" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.rf">
+<!--[mpmath.rf]--><tt class="descclassname">mpmath.</tt><tt class="descname">rf</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.rf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the rising factorial or Pochhammer symbol,</p>
 <div class="math">
 <p><img src="../_images/math/67f964a13dedf170f54b782c302fb461137c0bd5.png" alt="x^{(n)} = x (x+1) \cdots (x+n-1) = \frac{\Gamma(x+n)}{\Gamma(x)}" />
-</div></p><p>where the rightmost expression is valid for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
+</div></p><p>where the rightmost expression is valid for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
 <p><strong>Examples</strong></p>
-<p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the rising factorial is a polynomial:</p>
+<p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the rising factorial is a polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
@@ -440,14 +442,14 @@ for large arguments.</p>
 <div class="section" id="ff">
 <h3><tt class="xref docutils literal"><span class="pre">ff()</span></tt><a class="headerlink" href="#ff" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.ff">
-<!--[mpmath.functions.ff]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">ff</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.functions.ff" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.ff">
+<!--[mpmath.ff]--><tt class="descclassname">mpmath.</tt><tt class="descname">ff</tt><big>(</big><em>x</em>, <em>n</em><big>)</big><a class="headerlink" href="#mpmath.ff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the falling factorial,</p>
 <div class="math">
 <p><img src="../_images/math/7b3b0d6b0118a1fd50e3b2a90eb58ec78b475afc.png" alt="(x)_n = x (x-1) \cdots (x-n+1) = \frac{\Gamma(x+1)}{\Gamma(x-n+1)}" />
-</div></p><p>where the rightmost expression is valid for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
+</div></p><p>where the rightmost expression is valid for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
 <p><strong>Examples</strong></p>
-<p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the falling factorial is a polynomial:</p>
+<p>For integral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the falling factorial is a polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
@@ -474,10 +476,10 @@ for large arguments.</p>
 <div class="section" id="beta">
 <h3><tt class="xref docutils literal"><span class="pre">beta()</span></tt><a class="headerlink" href="#beta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.beta">
-<!--[mpmath.functions.beta]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">beta</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.functions.beta" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.beta">
+<!--[mpmath.beta]--><tt class="descclassname">mpmath.</tt><tt class="descname">beta</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.beta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the beta function,
-<img class="math" src="../_images/math/d581222c803b0c037007450dad532ee5d2d87fea.png" alt="B(x,y) = \Gamma(x) \Gamma(y) / \Gamma(x+y)"/>.
+<img class="math" src="../_images/math/d581222c803b0c037007450dad532ee5d2d87fea.png" alt="B(x,y) = \Gamma(x) \Gamma(y) / \Gamma(x+y)" />.
 The beta function is also commonly defined by the integral
 representation</p>
 <div class="math">
@@ -485,7 +487,7 @@ representation</p>
 </div></p><p><strong>Examples</strong></p>
 <p>For integer and half-integer arguments where all three gamma
 functions are finite, the beta function becomes either rational
-number or a rational multiple of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
+number or a rational multiple of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
@@ -541,22 +543,22 @@ beta function:</p>
 <div class="section" id="betainc">
 <h3><tt class="xref docutils literal"><span class="pre">betainc()</span></tt><a class="headerlink" href="#betainc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.betainc">
-<!--[mpmath.functions.betainc]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">betainc</tt><big>(</big><em>a</em>, <em>b</em>, <em>x1=0</em>, <em>x2=1</em>, <em>regularized=False</em><big>)</big><a class="headerlink" href="#mpmath.functions.betainc" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.betainc">
+<!--[mpmath.betainc]--><tt class="descclassname">mpmath.</tt><tt class="descname">betainc</tt><big>(</big><em>a</em>, <em>b</em>, <em>x1=0</em>, <em>x2=1</em>, <em>regularized=False</em><big>)</big><a class="headerlink" href="#mpmath.betainc" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">betainc(a,</span> <span class="pre">b,</span> <span class="pre">x1=0,</span> <span class="pre">x2=1,</span> <span class="pre">regularized=False)</span></tt> gives the generalized
 incomplete beta function,</p>
 <div class="math">
 <p><img src="../_images/math/56b59a35bb071840738a9c2ad27fc5279d33c099.png" alt="I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} t^{a-1} (1-t)^{b-1} dt." />
-</div></p><p>When <img class="math" src="../_images/math/916c3c50ce6e1b060e76035eb005a42bf34e25b9.png" alt="x_1 = 0, x_2 = 1"/>, this reduces to the ordinary (complete)
-beta function <img class="math" src="../_images/math/1cf8ee743e58a5766b20106b9d3d4b023c2d6bee.png" alt="B(a,b)"/>; see <tt class="xref docutils literal"><span class="pre">beta()</span></tt>.</p>
+</div></p><p>When <img class="math" src="../_images/math/916c3c50ce6e1b060e76035eb005a42bf34e25b9.png" alt="x_1 = 0, x_2 = 1" />, this reduces to the ordinary (complete)
+beta function <img class="math" src="../_images/math/1cf8ee743e58a5766b20106b9d3d4b023c2d6bee.png" alt="B(a,b)" />; see <tt class="xref docutils literal"><span class="pre">beta()</span></tt>.</p>
 <p>With the keyword argument <tt class="docutils literal"><span class="pre">regularized=True</span></tt>, <tt class="xref docutils literal"><span class="pre">betainc()</span></tt>
 computes the regularized incomplete beta function
-<img class="math" src="../_images/math/e67b0e54be60f8dd1bea7f4ac0e84a083fb2d909.png" alt="I_{x_1}^{x_2}(a,b) / B(a,b)"/>. This is the cumulative distribution of the
-beta distribution with parameters <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/>, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>.</p>
+<img class="math" src="../_images/math/e67b0e54be60f8dd1bea7f4ac0e84a083fb2d909.png" alt="I_{x_1}^{x_2}(a,b) / B(a,b)" />. This is the cumulative distribution of the
+beta distribution with parameters <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" />, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />.</p>
 <p>Note: implementations of the incomplete beta function in some other
 software uses a different argument order. For example, Mathematica uses the
 reversed argument order <tt class="docutils literal"><span class="pre">Beta[x1,x2,a,b]</span></tt>. For the equivalent of SciPy&#8217;s
-three-argument incomplete beta integral (implicitly with <img class="math" src="../_images/math/47c09f757b4c952f14c53ffcf6080d79fb331a5f.png" alt="x1 = 0"/>), use
+three-argument incomplete beta integral (implicitly with <img class="math" src="../_images/math/47c09f757b4c952f14c53ffcf6080d79fb331a5f.png" alt="x1 = 0" />), use
 <tt class="docutils literal"><span class="pre">betainc(a,b,0,x2,regularized=True)</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Verifying that <tt class="xref docutils literal"><span class="pre">betainc()</span></tt> computes the integral in the
@@ -610,13 +612,13 @@ simple algebraic-logarithmic expression:</p>
 <div class="section" id="superfac">
 <h3><tt class="xref docutils literal"><span class="pre">superfac()</span></tt><a class="headerlink" href="#superfac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.superfac">
-<!--[mpmath.functions.superfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">superfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.superfac" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.superfac">
+<!--[mpmath.superfac]--><tt class="descclassname">mpmath.</tt><tt class="descname">superfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.superfac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the superfactorial, defined as the product of
 consecutive factorials</p>
 <div class="math">
 <p><img src="../_images/math/0f114b1c06ffaa0decb1a4b6d92652c6105f1a12.png" alt="\mathrm{sf}(n) = \prod_{k=1}^n k!" />
-</div></p><p>For general complex <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, <img class="math" src="../_images/math/33d6454118973a91f8ac36a7fa6ff615d84d6208.png" alt="\mathrm{sf}(z)"/> is defined
+</div></p><p>For general complex <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, <img class="math" src="../_images/math/33d6454118973a91f8ac36a7fa6ff615d84d6208.png" alt="\mathrm{sf}(z)" /> is defined
 in terms of the Barnes G-function (see <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>).</p>
 <p><strong>Examples</strong></p>
 <p>The first few superfactorials are (OEIS A000178):</p>
@@ -664,12 +666,12 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 <div class="section" id="hyperfac">
 <h3><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt><a class="headerlink" href="#hyperfac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.hyperfac">
-<!--[mpmath.functions.hyperfac]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">hyperfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.hyperfac" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.hyperfac">
+<!--[mpmath.hyperfac]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyperfac</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyperfac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the hyperfactorial, defined for integers as the product</p>
 <div class="math">
 <p><img src="../_images/math/7c9e270249c95be726fb6edea3abd3553f3e36f9.png" alt="H(n) = \prod_{k=1}^n k^k." />
-</div></p><p>The hyperfactorial satisfies the recurrence formula <img class="math" src="../_images/math/c9c6eca4808acb529f92e91b9b95feef1f29a3a6.png" alt="H(z) = z^z H(z-1)"/>.
+</div></p><p>The hyperfactorial satisfies the recurrence formula <img class="math" src="../_images/math/c9c6eca4808acb529f92e91b9b95feef1f29a3a6.png" alt="H(z) = z^z H(z-1)" />.
 It can be defined more generally in terms of the Barnes G-function (see
 <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>) and the gamma function by the formula</p>
 <div class="math">
@@ -761,8 +763,8 @@ definition:</p>
 <div class="section" id="barnesg">
 <h3><tt class="xref docutils literal"><span class="pre">barnesg()</span></tt><a class="headerlink" href="#barnesg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.barnesg">
-<!--[mpmath.functions.barnesg]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">barnesg</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.barnesg" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.barnesg">
+<!--[mpmath.barnesg]--><tt class="descclassname">mpmath.</tt><tt class="descname">barnesg</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.barnesg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Barnes G-function, which generalizes the
 superfactorial (<tt class="xref docutils literal"><span class="pre">superfac()</span></tt>) and by extension also the
 hyperfactorial (<tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt>) to the complex numbers
@@ -774,8 +776,8 @@ product:</p>
 <p><img src="../_images/math/8c974f0596f88097153c84389f9ce366596aa1a7.png" alt="G(z+1) = (2\pi)^{z/2} e^{-[z(z+1)+\gamma z^2]/2}
 \prod_{n=1}^\infty
 \left[\left(1+\frac{z}{n}\right)^ne^{-z+z^2/(2n)}\right]" />
-</div></p><p>For positive integers <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, we have have relation to superfactorials
-<img class="math" src="../_images/math/e8bc150856b06ba1d7bebe0dd540c1f2492076be.png" alt="G(n) = \mathrm{sf}(n-2) = 0! \cdot 1! \cdots (n-2)!"/>.</p>
+</div></p><p>For positive integers <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, we have have relation to superfactorials
+<img class="math" src="../_images/math/e8bc150856b06ba1d7bebe0dd540c1f2492076be.png" alt="G(n) = \mathrm{sf}(n-2) = 0! \cdot 1! \cdots (n-2)!" />.</p>
 <p><strong>Examples</strong></p>
 <p>Some elementary values and limits of the Barnes G-function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -811,7 +813,7 @@ product:</p>
 </pre></div>
 </div>
 <p>The Barnes G-function satisfies the functional equation
-<img class="math" src="../_images/math/4c024189ae474f5542591d00f30357a8b14f896c.png" alt="G(z+1) = \Gamma(z) G(z)"/>:</p>
+<img class="math" src="../_images/math/4c024189ae474f5542591d00f30357a8b14f896c.png" alt="G(z+1) = \Gamma(z) G(z)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">pi</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">2.39292119327948</span>
@@ -852,6 +854,19 @@ precision:</p>
 <span class="go">0.000000000021852360840356557241543036724799812371995850552234</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">imag</span>
 <span class="go">-0.00000000000070035335320062304849020654215545839053210041457588</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">3.10361006263698e+6626</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">101</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">10.5</span><span class="p">)</span>
+<span class="go">5.94463017605008e+25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">10000.5</span><span class="p">)</span>
+<span class="go">-6.14322868174828e+167480422</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="mf">1000</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(5.21133054865546e-1173597 + 4.27461836811016e-1173597j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">barnesg</span><span class="p">(</span><span class="o">-</span><span class="mf">1000</span><span class="o">+</span><span class="mf">1000</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(2.43114569750291e+1026623 + 2.24851410674842e+1026623j)</span>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
@@ -867,23 +882,23 @@ Cambridge University Press, 4th edition (1927), p.264</li>
 </div>
 <div class="section" id="polygamma-functions-and-harmonic-numbers">
 <h2>Polygamma functions and harmonic numbers<a class="headerlink" href="#polygamma-functions-and-harmonic-numbers" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="psi-digamma-trigamma">
-<h3><tt class="xref docutils literal"><span class="pre">psi()</span></tt>/<tt class="xref docutils literal"><span class="pre">digamma()</span></tt>/<tt class="xref docutils literal"><span class="pre">trigamma()</span></tt><a class="headerlink" href="#psi-digamma-trigamma" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="psi-digamma">
+<h3><tt class="xref docutils literal"><span class="pre">psi()</span></tt>/<tt class="xref docutils literal"><span class="pre">digamma()</span></tt><a class="headerlink" href="#psi-digamma" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.psi">
-<!--[mpmath.functions.psi]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">psi</tt><big>(</big><em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.psi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the polygamma function of order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, <img class="math" src="../_images/math/380f1b9dc8f1c6d2262593059d498d407e8a4327.png" alt="\psi^{(m)}(z)"/>.
-Special cases are known as the <em>digamma function</em> (<img class="math" src="../_images/math/2c6b796723fa215727ba5de0470faf9a5d568eab.png" alt="\psi^{(0)}(z)"/>),
-the <em>trigamma function</em> (<img class="math" src="../_images/math/aacf591d0489a2375bfcb346d47b5bee410ec7ca.png" alt="\psi^{(1)}(z)"/>), etc. The polygamma
+<dt id="mpmath.psi">
+<!--[mpmath.psi]--><tt class="descclassname">mpmath.</tt><tt class="descname">psi</tt><big>(</big><em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the polygamma function of order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, <img class="math" src="../_images/math/380f1b9dc8f1c6d2262593059d498d407e8a4327.png" alt="\psi^{(m)}(z)" />.
+Special cases are known as the <em>digamma function</em> (<img class="math" src="../_images/math/2c6b796723fa215727ba5de0470faf9a5d568eab.png" alt="\psi^{(0)}(z)" />),
+the <em>trigamma function</em> (<img class="math" src="../_images/math/aacf591d0489a2375bfcb346d47b5bee410ec7ca.png" alt="\psi^{(1)}(z)" />), etc. The polygamma
 functions are defined as the logarithmic derivatives of the gamma
 function:</p>
 <div class="math">
 <p><img src="../_images/math/a2be5745437e13871396118829631608e3379bd7.png" alt="\psi^{(m)}(z) = \left(\frac{d}{dz}\right)^{m+1} \log \Gamma(z)" />
-</div></p><p>In particular, <img class="math" src="../_images/math/03436bc0b10eee4ddfec3cecd03854f41c968103.png" alt="\psi^{(0)}(z) = \Gamma'(z)/\Gamma(z)"/>. In the
-present implementation of <tt class="xref docutils literal"><span class="pre">psi()</span></tt>, the order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> must be a
-nonnegative integer, while the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> may be an arbitrary
+</div></p><p>In particular, <img class="math" src="../_images/math/03436bc0b10eee4ddfec3cecd03854f41c968103.png" alt="\psi^{(0)}(z) = \Gamma'(z)/\Gamma(z)" />. In the
+present implementation of <tt class="xref docutils literal"><span class="pre">psi()</span></tt>, the order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> must be a
+nonnegative integer, while the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> may be an arbitrary
 complex number (with exception for the polygamma function&#8217;s poles
-at <img class="math" src="../_images/math/ce90a96c015fb3135d2870b05a853b3c1196f46d.png" alt="z = 0, -1, -2, \ldots"/>).</p>
+at <img class="math" src="../_images/math/ce90a96c015fb3135d2870b05a853b3c1196f46d.png" alt="z = 0, -1, -2, \ldots" />).</p>
 <p><strong>Examples</strong></p>
 <p>For various rational arguments, the polygamma function reduces to
 a combination of standard mathematical constants:</p>
@@ -904,7 +919,7 @@ a combination of standard mathematical constants:</p>
 <span class="go">(-0.375, -0.375)</span>
 </pre></div>
 </div>
-<p>The digamma function diverges logarithmically as <img class="math" src="../_images/math/7731e6f8dabfbe1c1f8e018d07cd3f107fbe0fdd.png" alt="z \to \infty"/>,
+<p>The digamma function diverges logarithmically as <img class="math" src="../_images/math/7731e6f8dabfbe1c1f8e018d07cd3f107fbe0fdd.png" alt="z \to \infty" />,
 while higher orders tend to zero:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">),</span> <span class="n">psi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">(+inf, 0.0, 0.0)</span>
@@ -915,8 +930,8 @@ while higher orders tend to zero:</p>
 <span class="go">(0.03902435405364952654838445 + 0.1574325240413029954685366j)</span>
 </pre></div>
 </div>
-<p>Evaluation is supported for large orders <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> and/or large
-arguments <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
+<p>Evaluation is supported for large orders <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> and/or large
+arguments <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">2.0e-300</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span><span class="p">(</span><span class="mf">250</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="o">+</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">*</span><span class="n">j</span><span class="p">)</span>
@@ -925,7 +940,7 @@ arguments <img class="math" src="../_images/math/b13f21416d84e13708696f34dea8102
 </div>
 <p><strong>Application to infinite series</strong></p>
 <p>Any infinite series where the summand is a rational function of
-the index <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> can be evaluated in closed form in terms of polygamma
+the index <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> can be evaluated in closed form in terms of polygamma
 functions of the roots and poles of the summand:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
@@ -935,7 +950,7 @@ functions of the roots and poles of the summand:</p>
 <span class="go">0.4049668927517857061917531</span>
 </pre></div>
 </div>
-<p>This follows from the series representation (<img class="math" src="../_images/math/1d4f05dbfb8deab8d418a36643fded9383c604eb.png" alt="m &gt; 0"/>)</p>
+<p>This follows from the series representation (<img class="math" src="../_images/math/1d4f05dbfb8deab8d418a36643fded9383c604eb.png" alt="m &gt; 0" />)</p>
 <div class="math">
 <p><img src="../_images/math/ca9016f3372743eafd7ded23526f4cb86f9991a8.png" alt="\psi^{(m)}(z) = (-1)^{m+1} m! \sum_{k=0}^{\infty}
     \frac{1}{(z+k)^{m+1}}." />
@@ -955,26 +970,21 @@ an entirely real-valued sum:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mpmath.functions.digamma">
-<!--[mpmath.functions.digamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">digamma</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.digamma" title="Permalink to this definition">¶</a></dt>
-<dd>Shortcut for psi(0,z) (the digamma function)</dd></dl>
-
-<dl class="function">
-<dt id="mpmath.functions.trigamma">
-<!--[mpmath.functions.trigamma]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">trigamma</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.trigamma" title="Permalink to this definition">¶</a></dt>
-<dd>Shortcut for psi(1,z) (the trigamma function)</dd></dl>
+<dt id="mpmath.digamma">
+<!--[mpmath.digamma]--><tt class="descclassname">mpmath.</tt><tt class="descname">digamma</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.digamma" title="Permalink to this definition">¶</a></dt>
+<dd>Shortcut for <tt class="docutils literal"><span class="pre">psi(0,z)</span></tt>.</dd></dl>
 
 </div>
 <div class="section" id="harmonic">
 <h3><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt><a class="headerlink" href="#harmonic" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="mpmath.functions.harmonic">
-<!--[mpmath.functions.harmonic]--><tt class="descclassname">mpmath.functions.</tt><tt class="descname">harmonic</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.functions.harmonic" title="Permalink to this definition">¶</a></dt>
-<dd><p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is an integer, <tt class="docutils literal"><span class="pre">harmonic(n)</span></tt> gives a floating-point
-approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th harmonic number <img class="math" src="../_images/math/58a3a829660a9f4760582b6a696c712b9a464abe.png" alt="H(n)"/>, defined as</p>
+<dt id="mpmath.harmonic">
+<!--[mpmath.harmonic]--><tt class="descclassname">mpmath.</tt><tt class="descname">harmonic</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.harmonic" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is an integer, <tt class="docutils literal"><span class="pre">harmonic(n)</span></tt> gives a floating-point
+approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th harmonic number <img class="math" src="../_images/math/58a3a829660a9f4760582b6a696c712b9a464abe.png" alt="H(n)" />, defined as</p>
 <div class="math">
 <p><img src="../_images/math/306186c8a1fd38b3f7ae411184a7538561fed918.png" alt="H(n) = 1 + \frac{1}{2} + \frac{1}{3} + \ldots + \frac{1}{n}" />
-</div></p><p>The firrst few harmonic numbers are:</p>
+</div></p><p>The first few harmonic numbers are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">8</span><span class="p">):</span>
@@ -990,14 +1000,14 @@ approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe28
 <span class="go">7 2.59285714285714</span>
 </pre></div>
 </div>
-<p>The infinite harmonic series <img class="math" src="../_images/math/291e353af0258dda7e14e507fad50acb1acc36d1.png" alt="1 + 1/2 + 1/3 + \ldots"/> diverges:</p>
+<p>The infinite harmonic series <img class="math" src="../_images/math/291e353af0258dda7e14e507fad50acb1acc36d1.png" alt="1 + 1/2 + 1/3 + \ldots" /> diverges:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt> is evaluated using the digamma function rather
 than by summing the harmonic series term by term. It can therefore
-be computed quickly for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, and even for
+be computed quickly for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, and even for
 nonintegral arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">230.835724964306</span>
@@ -1078,7 +1088,7 @@ exceeds a given amount, say 100:</p>
 </ul>
 </li>
 <li><a class="reference external" href="#polygamma-functions-and-harmonic-numbers">Polygamma functions and harmonic numbers</a><ul>
-<li><a class="reference external" href="#psi-digamma-trigamma"><tt class="docutils literal"><span class="pre">psi()</span></tt>/<tt class="docutils literal"><span class="pre">digamma()</span></tt>/<tt class="docutils literal"><span class="pre">trigamma()</span></tt></a></li>
+<li><a class="reference external" href="#psi-digamma"><tt class="docutils literal"><span class="pre">psi()</span></tt>/<tt class="docutils literal"><span class="pre">digamma()</span></tt></a></li>
 <li><a class="reference external" href="#harmonic"><tt class="docutils literal"><span class="pre">harmonic()</span></tt></a></li>
 </ul>
 </li>
@@ -1116,14 +1126,14 @@ exceeds a given amount, say 100:</p>
         <li class="right" >
           <a href="hyperbolic.html" title="Hyperbolic functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

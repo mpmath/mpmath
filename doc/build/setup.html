@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Setting up mpmath &mdash; mpmath v0.13 documentation</title>
+    <title>Setting up mpmath &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="index.html" />
     <link rel="next" title="Mpmath basics" href="basics.html" />
     <link rel="prev" title="Welcome to mpmath&#8217;s documentation!" href="index.html" /> 
   </head>
@@ -34,7 +36,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to mpmath&#8217;s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -96,15 +98,15 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <span class="go">6.2831853071795864769252867665590057683943387987502</span>
 </pre></div>
 </div>
-<p><em>Note: if you have mpmath 0.6 or earlier installed, you may have to either first uninstall the old version, or manually delete the obsolete mpmath/lib directory. Otherwise this directory will be imported erroneously.</em></p>
+<p><em>Note: if you have are upgrading mpmath from an earlier version, you may have to manually uninstall the old version or remove the old files.</em></p>
 </div>
 </div>
 <div class="section" id="using-gmpy-optional">
 <h2>Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
 <p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster, especially at high precision (approximately above 100 digits).</p>
-<p>To verify that mpmath uses gmpy, check the internal MODE variable is not equal to &#8216;python&#8217;:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.settings</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpmath</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">MODE</span>
+<p>To verify that mpmath uses gmpy, check the internal variable <tt class="docutils literal"><span class="pre">BACKEND</span></tt> is not equal to &#8216;python&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.libmp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpmath</span><span class="o">.</span><span class="n">libmp</span><span class="o">.</span><span class="n">BACKEND</span>
 <span class="go">&#39;gmpy&#39;</span>
 </pre></div>
 </div>
@@ -166,17 +168,16 @@ sage: print mpmath.mpf(2) ** 0.5
 </div>
 <p>The mpmath installation under Sage automatically use Sage integers for asymptotically fast arithmetic,
 so there is no need to install GMPY:</p>
-<div class="highlight-python"><pre>sage: mpmath.settings.MODE
+<div class="highlight-python"><pre>sage: mpmath.libmp.BACKEND
 'sage'</pre>
 </div>
-<p>Although mpmath can be imported directly, it is recommended to import the interface library
-<tt class="docutils literal"><span class="pre">sage.libs.mpmath.all</span></tt> instead. For example:</p>
+<p>In Sage, mpmath can alternatively be imported via the interface library
+<tt class="docutils literal"><span class="pre">sage.libs.mpmath.all</span></tt>. For example:</p>
 <div class="highlight-python"><pre>sage: import sage.libs.mpmath.all as mpmath</pre>
 </div>
-<p>Importing this library will load some Cython extension code that may slightly speed up mpmath
-and provide better type compatibility between mpmath and Sage number types.
-The function <tt class="xref docutils literal"><span class="pre">call()</span></tt> defined in this library allows you to call a mpmath
-function with any Sage number as input, and get a Sage <tt class="docutils literal"><span class="pre">RealNumber</span></tt> or <tt class="docutils literal"><span class="pre">ComplexNumber</span></tt>
+<p>This module provides a few extra conversion functions, including <tt class="xref docutils literal"><span class="pre">call()</span></tt>
+which permits calling any mpmath function with Sage numbers as input, and getting
+Sage <tt class="docutils literal"><span class="pre">RealNumber</span></tt> or <tt class="docutils literal"><span class="pre">ComplexNumber</span></tt> instances
 with the appropriate precision back:</p>
 <div class="highlight-python"><pre>sage: w = mpmath.call(mpmath.erf, 2+3*I, prec=100)
 sage: w
@@ -247,13 +248,13 @@ sage: w.prec()
         <li class="right" >
           <a href="index.html" title="Welcome to mpmath&#8217;s documentation!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

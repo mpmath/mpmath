@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Ordinary differential equations &mdash; mpmath v0.13 documentation</title>
+    <title>Ordinary differential equations &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Function approximation" href="approximation.html" />
     <link rel="prev" title="Numerical integration (quadrature)" href="integration.html" /> 
@@ -35,7 +37,7 @@
         <li class="right" >
           <a href="integration.html" title="Numerical integration (quadrature)"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -50,10 +52,10 @@
 <div class="section" id="solving-the-ode-initial-value-problem-odefun">
 <h2>Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odefun</span></tt>)<a class="headerlink" href="#solving-the-ode-initial-value-problem-odefun" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="mpmath.odes.odefun">
-<!--[mpmath.odes.odefun]--><tt class="descclassname">mpmath.odes.</tt><tt class="descname">odefun</tt><big>(</big><em>F</em>, <em>x0</em>, <em>y0</em>, <em>tol=None</em>, <em>degree=None</em>, <em>method='taylor'</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.odes.odefun" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a function <img class="math" src="../_images/math/c95aa1e21f4eaed305033bad7a543b0c1bd49d75.png" alt="y(x) = [y_0(x), y_1(x), \ldots, y_n(x)]"/>
-that is a numerical solution of the <img class="math" src="../_images/math/0e3efd9b14723a92c2ae891fe27780d5f8e2b215.png" alt="n+1"/>-dimensional first-order
+<dt id="mpmath.odefun">
+<!--[mpmath.odefun]--><tt class="descclassname">mpmath.</tt><tt class="descname">odefun</tt><big>(</big><em>ctx</em>, <em>F</em>, <em>x0</em>, <em>y0</em>, <em>tol=None</em>, <em>degree=None</em>, <em>method='taylor'</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.odefun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function <img class="math" src="../_images/math/c95aa1e21f4eaed305033bad7a543b0c1bd49d75.png" alt="y(x) = [y_0(x), y_1(x), \ldots, y_n(x)]" />
+that is a numerical solution of the <img class="math" src="../_images/math/0e3efd9b14723a92c2ae891fe27780d5f8e2b215.png" alt="n+1" />-dimensional first-order
 ordinary differential equation (ODE) system</p>
 <div class="math">
 <p><img src="../_images/math/b64f322a3bbbdd89527d96adedca0ae7e349d750.png" alt="y_0'(x) = F_0(x, [y_0(x), y_1(x), \ldots, y_n(x)])
@@ -65,16 +67,16 @@ y_1'(x) = F_1(x, [y_0(x), y_1(x), \ldots, y_n(x)])
 y_n'(x) = F_n(x, [y_0(x), y_1(x), \ldots, y_n(x)])" />
 </div></p><p>The derivatives are specified by the vector-valued function
 <em>F</em> that evaluates
-<img class="math" src="../_images/math/0cec1de7ac896b916797c29929dc9668d0da9bce.png" alt="[y_0', \ldots, y_n'] = F(x, [y_0, \ldots, y_n])"/>.
-The initial point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0"/> is specified by the scalar argument <em>x0</em>,
-and the initial value <img class="math" src="../_images/math/4152479c1d94cd43ae2e0f114d190e8b1477a282.png" alt="y(x_0) =  [y_0(x_0), \ldots, y_n(x_0)]"/> is
+<img class="math" src="../_images/math/0cec1de7ac896b916797c29929dc9668d0da9bce.png" alt="[y_0', \ldots, y_n'] = F(x, [y_0, \ldots, y_n])" />.
+The initial point <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> is specified by the scalar argument <em>x0</em>,
+and the initial value <img class="math" src="../_images/math/4152479c1d94cd43ae2e0f114d190e8b1477a282.png" alt="y(x_0) =  [y_0(x_0), \ldots, y_n(x_0)]" /> is
 specified by the vector argument <em>y0</em>.</p>
 <p>For convenience, if the system is one-dimensional, you may optionally
 provide just a scalar value for <em>y0</em>. In this case, <em>F</em> should accept
 a scalar <em>y</em> argument and return a scalar. The solution function
 <em>y</em> will return scalar values instead of length-1 vectors.</p>
-<p>Evaluation of the solution function <img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)"/> is permitted
-for any <img class="math" src="../_images/math/f50f6293717aa3975f6a13e30a9c1918c71b66cc.png" alt="x \ge x_0"/>.</p>
+<p>Evaluation of the solution function <img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)" /> is permitted
+for any <img class="math" src="../_images/math/f50f6293717aa3975f6a13e30a9c1918c71b66cc.png" alt="x \ge x_0" />.</p>
 <p>A high-order ODE can be solved by transforming it into first-order
 vector form. This transformation is described in standard texts
 on ODEs. Examples will also be given below.</p>
@@ -92,8 +94,8 @@ want to plot the solution or perform a basic simulation,
 <em>method=&#8217;taylor&#8217;</em>, this is the degree of the Taylor series
 expansion). A higher degree means that a longer step can be taken
 before a new local solution must be generated from <em>F</em>,
-meaning that fewer steps are required to get from <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0"/> to a given
-<img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1"/>. On the other hand, a higher degree also means that each
+meaning that fewer steps are required to get from <img class="math" src="../_images/math/17f1249ad95b7682b8316ad21de8ce4ee9fdcf93.png" alt="x_0" /> to a given
+<img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1" />. On the other hand, a higher degree also means that each
 local solution becomes more expensive (i.e., more evaluations of
 <em>F</em> are required per step, and at higher precision).</p>
 <p>The optimal setting therefore involves a tradeoff. Generally,
@@ -103,12 +105,12 @@ at higher precision.</p>
 <p>The function
 object returned by <tt class="xref docutils literal"><span class="pre">odefun()</span></tt> caches the solutions at all step
 points and uses polynomial interpolation between step points.
-Therefore, once <img class="math" src="../_images/math/7f48e0e8b7e3a5eb9b8af5dd8482abeab9f8062d.png" alt="y(x_1)"/> has been evaluated for some <img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1"/>,
-<img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)"/> can be evaluated very quickly for any <img class="math" src="../_images/math/89b1b114673cf95d4e145003dff953289713c1b9.png" alt="x_0 \le x \le x_1"/>.
-and continuing the evaluation up to <img class="math" src="../_images/math/c8d1cbde73f350fe7638f1e88c54d09bc8d5213f.png" alt="x_2 &gt; x_1"/> is also fast.</p>
+Therefore, once <img class="math" src="../_images/math/7f48e0e8b7e3a5eb9b8af5dd8482abeab9f8062d.png" alt="y(x_1)" /> has been evaluated for some <img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1" />,
+<img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)" /> can be evaluated very quickly for any <img class="math" src="../_images/math/89b1b114673cf95d4e145003dff953289713c1b9.png" alt="x_0 \le x \le x_1" />.
+and continuing the evaluation up to <img class="math" src="../_images/math/c8d1cbde73f350fe7638f1e88c54d09bc8d5213f.png" alt="x_2 &gt; x_1" /> is also fast.</p>
 <p><strong>Examples of first-order ODEs</strong></p>
-<p>We will solve the standard test problem <img class="math" src="../_images/math/556429eac9b1a2f60b76e7e592f149d07992b9f2.png" alt="y'(x) = y(x), y(0) = 1"/>
-which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c43b6a9c897f705544c88bde9e232.png" alt="y(x) = \exp(x)"/>:</p>
+<p>We will solve the standard test problem <img class="math" src="../_images/math/556429eac9b1a2f60b76e7e592f149d07992b9f2.png" alt="y'(x) = y(x), y(0) = 1" />
+which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c43b6a9c897f705544c88bde9e232.png" alt="y(x) = \exp(x)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
@@ -139,10 +141,10 @@ can be input as (note that <em>f</em> returns a 1-element vector):</p>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">odefun()</span></tt> can solve nonlinear ODEs, which are generally
 impossible (and at best difficult) to solve analytically. As
-an example of a nonlinear ODE, we will solve <img class="math" src="../_images/math/c34028f032b7862ef437fd28b823864b93f7e519.png" alt="y'(x) = x \sin(y(x))"/>
-for <img class="math" src="../_images/math/ebe1d8dcde3aca73ffbeadaef782c9260b794a56.png" alt="y(0) = \pi/2"/>. An exact solution happens to be known
+an example of a nonlinear ODE, we will solve <img class="math" src="../_images/math/c34028f032b7862ef437fd28b823864b93f7e519.png" alt="y'(x) = x \sin(y(x))" />
+for <img class="math" src="../_images/math/ebe1d8dcde3aca73ffbeadaef782c9260b794a56.png" alt="y(0) = \pi/2" />. An exact solution happens to be known
 for this problem, and is given by
-<img class="math" src="../_images/math/67cfad187966d79d7cd686fc9cec6ec2aeb01d8c.png" alt="y(x) = 2 \tan^{-1}\left(\exp\left(x^2/2\right)\right)"/>:</p>
+<img class="math" src="../_images/math/67cfad187966d79d7cd686fc9cec6ec2aeb01d8c.png" alt="y(x) = 2 \tan^{-1}\left(\exp\left(x^2/2\right)\right)" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="p">))</span>
@@ -152,7 +154,7 @@ for this problem, and is given by
 <span class="go">3.14159265358979 3.14159265358979</span>
 </pre></div>
 </div>
-<p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F"/> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, an ODE can be solved using direct
+<p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F" /> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" />, an ODE can be solved using direct
 integration. We can therefore obtain a reference solution with
 <tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
@@ -164,9 +166,9 @@ integration. We can therefore obtain a reference solution with
 </pre></div>
 </div>
 <p><strong>Examples of second-order ODEs</strong></p>
-<p>We will solve the harmonic oscillator equation <img class="math" src="../_images/math/235e62ac7d78725e4d80ed91df0757d2342111a2.png" alt="y''(x) + y(x) = 0"/>.
-To do this, we introduce the helper functions <img class="math" src="../_images/math/6a5a5ed65f64703becf652e1bdba8be87f5cc323.png" alt="y_0 = y, y_1 = y_0'"/>
-whereby the original equation can be written as <img class="math" src="../_images/math/e776fc87c854934996b7f55f1cbc989b60fcdce7.png" alt="y_1' + y_0' = 0"/>. Put
+<p>We will solve the harmonic oscillator equation <img class="math" src="../_images/math/235e62ac7d78725e4d80ed91df0757d2342111a2.png" alt="y''(x) + y(x) = 0" />.
+To do this, we introduce the helper functions <img class="math" src="../_images/math/6a5a5ed65f64703becf652e1bdba8be87f5cc323.png" alt="y_0 = y, y_1 = y_0'" />
+whereby the original equation can be written as <img class="math" src="../_images/math/e776fc87c854934996b7f55f1cbc989b60fcdce7.png" alt="y_1' + y_0' = 0" />. Put
 together, we get the first-order, two-dimensional vector ODE</p>
 <div class="math">
 <p><img src="../_images/math/8616b59629d509bab68b88af91bdd6e44702fbaf.png" alt="\begin{cases}
@@ -174,9 +176,9 @@ y_0' = y_1 \\
 y_1' = -y_0
 \end{cases}" />
 </div></p><p>To get a well-defined IVP, we need two initial values. With
-<img class="math" src="../_images/math/4b3550d19ee43e1e918f29d7a95be7d68fadb3c9.png" alt="y(0) = y_0(0) = 1"/> and <img class="math" src="../_images/math/fa7db63185303c596cc57dec52f865d444351e0c.png" alt="-y'(0) = y_1(0) = 0"/>, the problem will of
-course be solved by <img class="math" src="../_images/math/c1fc6376a5338b0caf1e557f9f7e988ba952efa2.png" alt="y(x) = y_0(x) = \cos(x)"/> and
-<img class="math" src="../_images/math/344ab3a288e442d9e4e741f5e41503aee4d4ea5a.png" alt="-y'(x) = y_1(x) = \sin(x)"/>. We check this:</p>
+<img class="math" src="../_images/math/4b3550d19ee43e1e918f29d7a95be7d68fadb3c9.png" alt="y(0) = y_0(0) = 1" /> and <img class="math" src="../_images/math/fa7db63185303c596cc57dec52f865d444351e0c.png" alt="-y'(0) = y_1(0) = 0" />, the problem will of
+course be solved by <img class="math" src="../_images/math/c1fc6376a5338b0caf1e557f9f7e988ba952efa2.png" alt="y(x) = y_0(x) = \cos(x)" /> and
+<img class="math" src="../_images/math/344ab3a288e442d9e4e741f5e41503aee4d4ea5a.png" alt="-y'(x) = y_1(x) = \sin(x)" />. We check this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mf">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">15</span><span class="p">)</span>
@@ -204,8 +206,8 @@ simultaneously.</p>
 <li>Better automatic choice of degree and step size</li>
 <li>Make determination of Taylor series convergence radius
 more robust</li>
-<li>Allow solution for <img class="math" src="../_images/math/11a741227f4f3d08275c94e8b830249bd4516566.png" alt="x &lt; x_0"/></li>
-<li>Allow solution for complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/></li>
+<li>Allow solution for <img class="math" src="../_images/math/11a741227f4f3d08275c94e8b830249bd4516566.png" alt="x &lt; x_0" /></li>
+<li>Allow solution for complex <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /></li>
 <li>Test for difficult (ill-conditioned) problems</li>
 <li>Implement Runge-Kutta and other algorithms</li>
 </ul>
@@ -258,14 +260,14 @@ more robust</li>
         <li class="right" >
           <a href="integration.html" title="Numerical integration (quadrature)"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

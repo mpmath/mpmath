@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Root-finding and optimization &mdash; mpmath v0.13 documentation</title>
+    <title>Root-finding and optimization &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Sums, products, limits and extrapolation" href="sums_limits.html" />
     <link rel="prev" title="Polynomials" href="polynomials.html" /> 
@@ -35,7 +37,7 @@
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -50,13 +52,13 @@
 <div class="section" id="root-finding-findroot">
 <h2>Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)<a class="headerlink" href="#root-finding-findroot" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="mpmath.optimization.findroot">
-<!--[mpmath.optimization.findroot]--><tt class="descclassname">mpmath.optimization.</tt><tt class="descname">findroot</tt><big>(</big><em>f</em>, <em>x0</em>, <em>solver=Secant</em>, <em>tol=None</em>, <em>verbose=False</em>, <em>verify=True</em>, <em>force_type=mpmathify</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.findroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a solution to <img class="math" src="../_images/math/57ccf8d123ba4259e29fba55d9b008874e071492.png" alt="f(x) = 0"/>, using <em>x0</em> as starting point or
+<dt id="mpmath.findroot">
+<!--[mpmath.findroot]--><tt class="descclassname">mpmath.</tt><tt class="descname">findroot</tt><big>(</big><em>f</em>, <em>x0</em>, <em>solver=Secant</em>, <em>tol=None</em>, <em>verbose=False</em>, <em>verify=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.findroot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a solution to <img class="math" src="../_images/math/57ccf8d123ba4259e29fba55d9b008874e071492.png" alt="f(x) = 0" />, using <em>x0</em> as starting point or
 interval for <em>x</em>.</p>
 <p>Multidimensional overdetermined systems are supported.
 You can specify them using a function or a list of functions.</p>
-<p>If the found root does not satisfy <img class="math" src="../_images/math/b6ea5899fdb3a93da1fb6aa7dcbdc16c26bbaabe.png" alt="|f(x)^2 &lt; \mathrm{tol}|"/>,
+<p>If the found root does not satisfy <img class="math" src="../_images/math/b6ea5899fdb3a93da1fb6aa7dcbdc16c26bbaabe.png" alt="|f(x)^2 &lt; \mathrm{tol}|" />,
 an exception is raised (this can be disabled with <em>verify=False</em>).</p>
 <p><strong>Arguments</strong></p>
 <dl class="docutils">
@@ -69,9 +71,7 @@ an exception is raised (this can be disabled with <em>verify=False</em>).</p>
 <dt><em>verbose</em></dt>
 <dd>print additional information for each iteration if true</dd>
 <dt><em>verify</em></dt>
-<dd>verify the solution and raise a ValueError if <img class="math" src="../_images/math/b923875aa965f3600a024ee82ee2088827e55444.png" alt="|f(x) &gt; \mathrm{tol}|"/></dd>
-<dt><em>force_type</em></dt>
-<dd>use specified type constructor on starting points</dd>
+<dd>verify the solution and raise a ValueError if <img class="math" src="../_images/math/b923875aa965f3600a024ee82ee2088827e55444.png" alt="|f(x) &gt; \mathrm{tol}|" /></dd>
 <dt><em>solver</em></dt>
 <dd>a generator for <em>f</em> and <em>x0</em> returning approximative solution and error</dd>
 <dt><em>maxsteps</em></dt>
@@ -97,7 +97,7 @@ You can use the following string aliases:
 <p><strong>Examples</strong></p>
 <p>The function <tt class="xref docutils literal"><span class="pre">findroot()</span></tt> locates a root of a given function using the
 secant method by default. A simple example use of the secant method is to
-compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x"/> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3"/>:</p>
+compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x" /> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3" />:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
@@ -128,7 +128,7 @@ minimum of the gamma function:</p>
 </pre></div>
 </div>
 <p>Finally, a useful application is to compute inverse functions, such as the
-Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w"/>, given the first
+Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w" />, given the first
 term of the solution&#8217;s asymptotic expansion as the initial value. In basic
 cases, this gives identical results to mpmath&#8217;s built-in <tt class="docutils literal"><span class="pre">lambertw</span></tt>
 function:</p>
@@ -148,13 +148,11 @@ function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x2</span><span class="p">,</span>
 <span class="gp">... </span>     <span class="k">lambda</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="mf">5</span><span class="o">*</span><span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">3</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="mf">3</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">))</span>
-<span class="go">matrix(</span>
-<span class="go">[[&#39;-0.618033988749895&#39;],</span>
-<span class="go"> [&#39;-0.381966011250105&#39;]])</span>
+<span class="go">[-0.618033988749895]</span>
+<span class="go">[-0.381966011250105]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">10</span><span class="p">))</span>
-<span class="go">matrix(</span>
-<span class="go">[[&#39;1.61803398874989&#39;],</span>
-<span class="go"> [&#39;-2.61803398874989&#39;]])</span>
+<span class="go">[ 1.61803398874989]</span>
+<span class="go">[-2.61803398874989]</span>
 </pre></div>
 </div>
 <p>You can verify this by solving the system manually.</p>
@@ -163,9 +161,8 @@ function:</p>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="n">x2</span><span class="p">,</span> <span class="mf">5</span><span class="o">*</span><span class="n">x1</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">3</span><span class="o">*</span><span class="n">x1</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x2</span> <span class="o">-</span> <span class="mf">3</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">))</span>
-<span class="go">matrix(</span>
-<span class="go">[[&#39;-0.618033988749895&#39;],</span>
-<span class="go"> [&#39;-0.381966011250105&#39;]])</span>
+<span class="go">[-0.618033988749895]</span>
+<span class="go">[-0.381966011250105]</span>
 </pre></div>
 </div>
 <p><strong>Multiple roots</strong></p>
@@ -190,22 +187,22 @@ not very efficient.</p>
 of the speed of convergence and accelerates it using Steffensen&#8217;s method if
 necessary:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s">&#39;anewton&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">x: -9.88888888888888888889</span>
+<span class="go">x:     -9.88888888888888888889</span>
 <span class="go">error: 0.111111111111111111111</span>
 <span class="go">converging slowly</span>
-<span class="go">x: -9.77890011223344556678</span>
+<span class="go">x:     -9.77890011223344556678</span>
 <span class="go">error: 0.10998877665544332211</span>
 <span class="go">converging slowly</span>
-<span class="go">x: -9.67002233332199662166</span>
+<span class="go">x:     -9.67002233332199662166</span>
 <span class="go">error: 0.108877778911448945119</span>
 <span class="go">converging slowly</span>
 <span class="go">accelerating convergence</span>
-<span class="go">x: -9.5622443299551077669</span>
+<span class="go">x:     -9.5622443299551077669</span>
 <span class="go">error: 0.107778003366888854764</span>
 <span class="go">converging slowly</span>
-<span class="go">x: 0.99999999999999999214</span>
+<span class="go">x:     0.99999999999999999214</span>
 <span class="go">error: 10.562244329955107759</span>
-<span class="go">x: 1.0</span>
+<span class="go">x:     1.0</span>
 <span class="go">error: 7.8598304758094664213e-18</span>
 <span class="go">1.0</span>
 </pre></div>
@@ -246,8 +243,8 @@ with multiple roots and usually need a sign change to find a root:</p>
 <div class="section" id="solvers">
 <h3>Solvers<a class="headerlink" href="#solvers" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="mpmath.optimization.Secant">
-<!--[mpmath.optimization.Secant]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Secant</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Secant" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Secant">
+<!--[mpmath.calculus.optimization.Secant]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Secant</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Secant" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0 and x1 close to the root.
 x1 defaults to x0 + 0.25.</p>
@@ -262,8 +259,8 @@ x1 defaults to x0 + 0.25.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Newton">
-<!--[mpmath.optimization.Newton]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Newton</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Newton" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Newton">
+<!--[mpmath.calculus.optimization.Newton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Newton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Newton" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0 close to the root.</p>
 <p>Pro:</p>
@@ -280,8 +277,8 @@ x1 defaults to x0 + 0.25.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.MNewton">
-<!--[mpmath.optimization.MNewton]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">MNewton</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.MNewton" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.MNewton">
+<!--[mpmath.calculus.optimization.MNewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MNewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting point x0 close to the root.
 Uses modified Newton&#8217;s method that converges fast regardless of the
@@ -298,8 +295,8 @@ multiplicity of the root.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Halley">
-<!--[mpmath.optimization.Halley]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Halley</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Halley" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Halley">
+<!--[mpmath.calculus.optimization.Halley]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Halley</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Halley" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs a starting point x0 close to the root.
 Uses Halley&#8217;s method with cubic convergence rate.</p>
@@ -317,8 +314,8 @@ Uses Halley&#8217;s method with cubic convergence rate.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Muller">
-<!--[mpmath.optimization.Muller]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Muller</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Muller" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Muller">
+<!--[mpmath.calculus.optimization.Muller]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Muller</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Muller" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0, x1 and x2 close to the root.
 x1 defaults to x0 + 0.25; x2 to x1 + 0.25.
@@ -337,8 +334,8 @@ Uses Muller&#8217;s method that converges towards complex roots.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Bisection">
-<!--[mpmath.optimization.Bisection]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Bisection</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Bisection" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Bisection">
+<!--[mpmath.calculus.optimization.Bisection]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Bisection</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Bisection" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses bisection method to find a root of f in [a, b].
 Might fail for multiple roots (needs sign change).</p>
@@ -354,8 +351,8 @@ Might fail for multiple roots (needs sign change).</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Illinois">
-<!--[mpmath.optimization.Illinois]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Illinois</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Illinois" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Illinois">
+<!--[mpmath.calculus.optimization.Illinois]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Illinois</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Illinois" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Illinois method or similar to find a root of f in [a, b].
 Might fail for multiple roots (needs sign change).
@@ -382,24 +379,24 @@ used to ensure convergence (you can choose one using the &#8216;method&#8217; ke
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Pegasus">
-<!--[mpmath.optimization.Pegasus]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Pegasus</tt><a class="headerlink" href="#mpmath.optimization.Pegasus" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Pegasus">
+<!--[mpmath.calculus.optimization.Pegasus]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Pegasus</tt><a class="headerlink" href="#mpmath.calculus.optimization.Pegasus" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Pegasus method to find a root of f in [a, b].
 Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Anderson">
-<!--[mpmath.optimization.Anderson]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Anderson</tt><a class="headerlink" href="#mpmath.optimization.Anderson" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Anderson">
+<!--[mpmath.calculus.optimization.Anderson]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Anderson</tt><a class="headerlink" href="#mpmath.calculus.optimization.Anderson" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Anderson-Bjoerk method to find a root of f in [a, b].
 Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.Ridder">
-<!--[mpmath.optimization.Ridder]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">Ridder</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.Ridder" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.Ridder">
+<!--[mpmath.calculus.optimization.Ridder]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Ridder</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Ridder" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Ridders&#8217; method to find a root of f in [a, b].
 Is told to perform as well as Brent&#8217;s method while being simpler.</p>
@@ -418,20 +415,20 @@ Is told to perform as well as Brent&#8217;s method while being simpler.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.ANewton">
-<!--[mpmath.optimization.ANewton]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">ANewton</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.ANewton" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.ANewton">
+<!--[mpmath.calculus.optimization.ANewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">ANewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.ANewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>EXPERIMENTAL 1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Newton&#8217;s method modified to use Steffensens method when convergence is
 slow. (I.e. for multiple roots.)</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="mpmath.optimization.MDNewton">
-<!--[mpmath.optimization.MDNewton]-->class <tt class="descclassname">mpmath.optimization.</tt><tt class="descname">MDNewton</tt><big>(</big><em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.optimization.MDNewton" title="Permalink to this definition">¶</a></dt>
+<dt id="mpmath.calculus.optimization.MDNewton">
+<!--[mpmath.calculus.optimization.MDNewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MDNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MDNewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the root of a vector function numerically using Newton&#8217;s method.</p>
 <p>f is a vector function representing a nonlinear equation system.</p>
 <p>x0 is the starting point close to the root.</p>
-<p>J is a function returning the jacobian matrix for a point.</p>
+<p>J is a function returning the Jacobian matrix for a point.</p>
 <p>Supports overdetermined systems.</p>
 <p>Use the &#8216;norm&#8217; keyword to specify which norm to use. Defaults to max-norm.
 The function to calculate the Jacobian matrix can be given using the
@@ -497,14 +494,14 @@ root-polishing to any precision.</p>
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.13 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.14-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

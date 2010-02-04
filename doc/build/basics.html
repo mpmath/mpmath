@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Mpmath basics &mdash; mpmath v0.13 documentation</title>
+    <title>Mpmath basics &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="index.html" />
     <link rel="next" title="Mathematical functions" href="functions/index.html" />
     <link rel="prev" title="Setting up mpmath" href="setup.html" /> 
   </head>
@@ -34,7 +36,7 @@
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -262,16 +264,40 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="fast-low-precision-arithmetic">
+<h2>Fast low-precision arithmetic<a class="headerlink" href="#fast-low-precision-arithmetic" title="Permalink to this headline">¶</a></h2>
+<p>Many of the algorithms used in mpmath work perfectly well with ordinary Python <tt class="docutils literal"><span class="pre">float</span></tt> and <tt class="docutils literal"><span class="pre">complex</span></tt> numbers, which use double precision (53 bits). Although the global functions (which are methods of the <tt class="docutils literal"><span class="pre">mp</span></tt> object) always convert inputs to mpmath numbers, the alternative <tt class="docutils literal"><span class="pre">fp</span></tt> object instead converts them to <tt class="docutils literal"><span class="pre">float</span></tt> or <tt class="docutils literal"><span class="pre">complex</span></tt>, and uses internal functions designed for double precision. When large amounts of function evaluations (numerical integration, plotting, etc) are required, and when <tt class="docutils literal"><span class="pre">fp</span></tt> arithmetic provides sufficient accuracy, this can give a significant speedup over <tt class="docutils literal"><span class="pre">mp</span></tt> arithmetic.</p>
+<p>To take advantage of this feature, simply use <tt class="docutils literal"><span class="pre">fp.func</span></tt> instead of <tt class="docutils literal"><span class="pre">func</span></tt> or <tt class="docutils literal"><span class="pre">mp.func</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">u</span>
+<span class="go">0.000406952017445</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="go">&lt;type &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mp</span><span class="o">.</span><span class="n">erfc</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="go">0.000406952017444959</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">]])</span> <span class="o">**</span> <span class="mf">2</span>
+<span class="go">matrix(</span>
+<span class="go">[[&#39;7.0&#39;, &#39;10.0&#39;],</span>
+<span class="go"> [&#39;15.0&#39;, &#39;22.0&#39;]])</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">])</span>
+<span class="go">&lt;type &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fp</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">fp</span><span class="o">.</span><span class="n">pi</span><span class="p">])</span>    <span class="c"># numerical integration</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+<p>Due to intermediate rounding and cancellation errors, results computed with <tt class="docutils literal"><span class="pre">fp</span></tt> arithmetic may be much less accurate than those computed with <tt class="docutils literal"><span class="pre">mp</span></tt> using an equivalent precision (<tt class="docutils literal"><span class="pre">mp.prec</span> <span class="pre">=</span> <span class="pre">53</span></tt>), since the latter often uses increased internal precision. The accuracy is highly problem-dependent: for some functions, <tt class="docutils literal"><span class="pre">fp</span></tt> almost always gives 14-15 correct digits; for others, results can be accurate to only 2-3 digits or even completely wrong. The recommended use for <tt class="docutils literal"><span class="pre">fp</span></tt> is therefore to speed up large-scale computations where accuracy can be verified in advance on a subset of the input set, or where results can be verified afterwards.</p>
+</div>
 <div class="section" id="plotting">
 <h2>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h2>
-<p>If <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a> is available, the functions <tt class="docutils literal"><span class="pre">plot</span></tt> and <tt class="docutils literal"><span class="pre">cplot</span></tt> in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane.</p>
+<p>If <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a> is available, the functions <tt class="docutils literal"><span class="pre">plot</span></tt> and <tt class="docutils literal"><span class="pre">cplot</span></tt> in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane. Also, <tt class="docutils literal"><span class="pre">splot</span></tt> can be used to produce 3D surface plots.</p>
 <img alt="_images/plot.png" src="_images/plot.png" />
 <p>Output of <tt class="docutils literal"><span class="pre">plot([cos,</span> <span class="pre">sin],</span> <span class="pre">[-4,</span> <span class="pre">4])</span></tt></p>
 <dl class="function">
 <dt id="mpmath.plot">
-<!--[mpmath.plot]--><tt class="descclassname">mpmath.</tt><tt class="descname">plot</tt><big>(</big><em>f</em>, <em>xlim=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>ylim=None</em>, <em>points=200</em>, <em>file=None</em>, <em>dpi=None</em>, <em>singularities=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#mpmath.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows a simple 2D plot of a function <img class="math" src="_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/> or list of functions
-<img class="math" src="_images/math/1ad13c4e8c318e9bf1720a2bdbb6094260518fde.png" alt="[f_0(x), f_1(x), \ldots, f_n(x)]"/> over a given interval
+<!--[mpmath.plot]--><tt class="descclassname">mpmath.</tt><tt class="descname">plot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>xlim=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>ylim=None</em>, <em>points=200</em>, <em>file=None</em>, <em>dpi=None</em>, <em>singularities=</em><span class="optional">[</span><span class="optional">]</span>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a simple 2D plot of a function <img class="math" src="_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)" /> or list of functions
+<img class="math" src="_images/math/1ad13c4e8c318e9bf1720a2bdbb6094260518fde.png" alt="[f_0(x), f_1(x), \ldots, f_n(x)]" /> over a given interval
 specified by <em>xlim</em>. Some examples:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">plot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">li</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
 <span class="n">plot</span><span class="p">([</span><span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
@@ -296,10 +322,10 @@ is plotted with dots.</p>
 </dd></dl>
 
 <img alt="_images/cplot.png" src="_images/cplot.png" />
-<p>Output of <tt class="docutils literal"><span class="pre">cplot(gamma,</span> <span class="pre">points=10000)</span></tt></p>
+<p>Output of <tt class="docutils literal"><span class="pre">fp.cplot(fp.gamma,</span> <span class="pre">points=100000)</span></tt></p>
 <dl class="function">
 <dt id="mpmath.cplot">
-<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=&lt;function default_color_function at 0x1c500c8&gt;</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.cplot]--><tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=None</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the given complex-valued function <em>f</em> over a rectangular part
 of the complex plane specified by the pairs of intervals <em>re</em> and <em>im</em>.
 For example:</p>
@@ -320,6 +346,32 @@ option is useful to display progress.</p>
 <p>NOTE: This function requires matplotlib (pylab).</p>
 </dd></dl>
 
+<img alt="_images/splot.png" src="_images/splot.png" />
+<p>Output of <tt class="docutils literal"><span class="pre">splot</span></tt> for the donut example.</p>
+<dl class="function">
+<dt id="mpmath.splot">
+<!--[mpmath.splot]--><tt class="descclassname">mpmath.</tt><tt class="descname">splot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>u=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>v=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=100</em>, <em>keep_aspect=True</em>, <em>wireframe=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.splot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the surface defined by <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" />.</p>
+<p>If <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> returns a single component, then this plots the surface
+defined by <img class="math" src="_images/math/c45f4d6822ca0dd7ea528041bf7079ff62ba3afb.png" alt="z = f(x,y)" /> over the rectangular domain with
+<img class="math" src="_images/math/1a5f9274eefe45963c681d18e88951fd4d855b8d.png" alt="x = u" /> and <img class="math" src="_images/math/7b8577d72dc78ef2d19856895b18f28de3e80e8d.png" alt="y = v" />.</p>
+<p>If <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f" /> returns three components, then this plots the parametric
+surface <img class="math" src="_images/math/4c1c53bd0db4ab53f1731be43bf2e5e96c11e8ec.png" alt="x, y, z = f(u,v)" /> over the pairs of intervals <img class="math" src="_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u" /> and <img class="math" src="_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v" />.</p>
+<p>For example, to plot a simple function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">splot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">])</span>    <span class="c"># doctest: +SKIP</span>
+</pre></div>
+</div>
+<p>Plotting a donut:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="p">[</span><span class="n">r</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="p">(</span><span class="n">R</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">))</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="p">(</span><span class="n">R</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">))</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">splot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>    <span class="c"># doctest: +SKIP</span>
+</pre></div>
+</div>
+<p>NOTE: This function requires matplotlib (pylab) 0.98.5.3 or higher.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="utility-functions">
 <h2>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h2>
@@ -336,7 +388,7 @@ will be performed losslessly.</p>
 working precision. Strings representing fractions or complex
 numbers are permitted.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpmathify</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
 <span class="go">mpf(&#39;3.5&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpmathify</span><span class="p">(</span><span class="s">&#39;2.1&#39;</span><span class="p">)</span>
@@ -352,15 +404,15 @@ numbers are permitted.</p>
 <dl class="function">
 <dt id="mpmath.almosteq">
 <!--[mpmath.almosteq]--><tt class="descclassname">mpmath.</tt><tt class="descname">almosteq</tt><big>(</big><em>s</em>, <em>t</em>, <em>rel_eps=None</em>, <em>abs_eps=None</em><big>)</big><a class="headerlink" href="#mpmath.almosteq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether the difference between <img class="math" src="_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> is smaller
+<dd><p>Determine whether the difference between <img class="math" src="_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" /> is smaller
 than a given epsilon, either relatively or absolutely.</p>
 <p>Both a maximum relative difference and a maximum difference
 (&#8216;epsilons&#8217;) may be specified. The absolute difference is
-defined as <img class="math" src="_images/math/e43336773e09f890830647398e0568b5e3cc6b91.png" alt="|s-t|"/> and the relative difference is defined
-as <img class="math" src="_images/math/1820f9d942344fc3fef9d672d9637900955f5bfd.png" alt="|s-t|/\max(|s|, |t|)"/>.</p>
+defined as <img class="math" src="_images/math/e43336773e09f890830647398e0568b5e3cc6b91.png" alt="|s-t|" /> and the relative difference is defined
+as <img class="math" src="_images/math/1820f9d942344fc3fef9d672d9637900955f5bfd.png" alt="|s-t|/\max(|s|, |t|)" />.</p>
 <p>If only one epsilon is given, both are set to the same value.
-If none is given, both epsilons are set to <img class="math" src="_images/math/92b6afe095bb49d29148db70c844cd6ed78f60a3.png" alt="2^{-p+m}"/> where
-<img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/> is the current working precision and <img class="math" src="_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> is a small
+If none is given, both epsilons are set to <img class="math" src="_images/math/92b6afe095bb49d29148db70c844cd6ed78f60a3.png" alt="2^{-p+m}" /> where
+<img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" /> is the current working precision and <img class="math" src="_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> is a small
 integer. The default setting typically allows <tt class="xref docutils literal"><span class="pre">almosteq()</span></tt>
 to be used to check for mathematical equality
 in the presence of small rounding errors.</p>
@@ -438,7 +490,7 @@ mpmath numbers. For len(terms) &gt; 2, this function is generally
 faster and produces more accurate results than the builtin
 Python function <tt class="xref docutils literal"><span class="pre">sum()</span></tt>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
 <span class="go">mpf(&#39;10.5&#39;)</span>
 </pre></div>
@@ -454,7 +506,7 @@ the absolute value of each term is used.</p>
 infinite products, see <tt class="xref docutils literal"><span class="pre">nprod()</span></tt>). The factors will be
 converted to mpmath numbers.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
 <span class="go">mpf(&#39;7.0&#39;)</span>
 </pre></div>
@@ -464,7 +516,7 @@ converted to mpmath numbers.</p>
 <dl class="function">
 <dt id="mpmath.fdot">
 <!--[mpmath.fdot]--><tt class="descclassname">mpmath.</tt><tt class="descname">fdot</tt><big>(</big><em>A</em>, <em>B=None</em><big>)</big><a class="headerlink" href="#mpmath.fdot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the dot product of the iterables <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/> and <img class="math" src="_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B"/>,</p>
+<dd><p>Computes the dot product of the iterables <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" /> and <img class="math" src="_images/math/ff5fb3d775862e2123b007eb4373ff6cc1a34d4e.png" alt="B" />,</p>
 <div class="math">
 <p><img src="_images/math/37d83206e1394dfe5222549274dd2953399d2b86.png" alt="\sum_{k=0} A_k B_k." />
 </div></p><p>Alternatively, <tt class="xref docutils literal"><span class="pre">fdot()</span></tt> accepts a single iterable of pairs.
@@ -472,7 +524,7 @@ In other words, <tt class="docutils literal"><span class="pre">fdot(A,B)</span><
 <p>The elements are automatically converted to mpmath numbers.</p>
 <p>Examples:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fdot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
@@ -491,9 +543,10 @@ In other words, <tt class="docutils literal"><span class="pre">fdot(A,B)</span><
 <dl class="function">
 <dt id="mpmath.fraction">
 <!--[mpmath.fraction]--><tt class="descclassname">mpmath.</tt><tt class="descname">fraction</tt><big>(</big><em>p</em>, <em>q</em><big>)</big><a class="headerlink" href="#mpmath.fraction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given Python integers <img class="math" src="_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/>, returns a lazy <tt class="docutils literal"><span class="pre">mpf</span></tt> representing
-the fraction <img class="math" src="_images/math/a9868fbf23bed343deebad0af0b21b1ceef79889.png" alt="p/q"/>. The value is updated with the precision.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<dd><p>Given Python integers <img class="math" src="_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)" />, returns a lazy <tt class="docutils literal"><span class="pre">mpf</span></tt> representing
+the fraction <img class="math" src="_images/math/a9868fbf23bed343deebad0af0b21b1ceef79889.png" alt="p/q" />. The value is updated with the precision.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fraction</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">100</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="p">;</span> <span class="k">print</span> <span class="n">b</span>
@@ -511,7 +564,7 @@ the fraction <img class="math" src="_images/math/a9868fbf23bed343deebad0af0b21b1
 <dl class="function">
 <dt id="mpmath.rand">
 <!--[mpmath.rand]--><tt class="descclassname">mpmath.</tt><tt class="descname">rand</tt><big>(</big><big>)</big><a class="headerlink" href="#mpmath.rand" title="Permalink to this definition">¶</a></dt>
-<dd>Returns an <tt class="docutils literal"><span class="pre">mpf</span></tt> with value chosen randomly from <img class="math" src="_images/math/0004bfe2d7fa21b99eaf702d39b6de356c7915a9.png" alt="[0, 1)"/>.
+<dd>Returns an <tt class="docutils literal"><span class="pre">mpf</span></tt> with value chosen randomly from <img class="math" src="_images/math/0004bfe2d7fa21b99eaf702d39b6de356c7915a9.png" alt="[0, 1)" />.
 The number of randomly generated bits in the mantissa is equal
 to the working precision.</dd></dl>
 
@@ -524,19 +577,19 @@ returns a list of <tt class="docutils literal"><span class="pre">mpf</span></tt>
 <tt class="xref docutils literal"><span class="pre">arange()</span></tt> can be called with 1, 2 or 3 arguments:</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">arange(b)</span></tt></dt>
-<dd><img class="math" src="_images/math/f4f3f3da357241ed0fe1de12ae41910fd1fbb1fa.png" alt="[0, 1, 2, \ldots, x]"/></dd>
+<dd><img class="math" src="_images/math/f4f3f3da357241ed0fe1de12ae41910fd1fbb1fa.png" alt="[0, 1, 2, \ldots, x]" /></dd>
 <dt><tt class="docutils literal"><span class="pre">arange(a,</span> <span class="pre">b)</span></tt></dt>
-<dd><img class="math" src="_images/math/3e12c399ade7698c99e1a3cb956f9d043dccbabf.png" alt="[a, a+1, a+2, \ldots, x]"/></dd>
+<dd><img class="math" src="_images/math/3e12c399ade7698c99e1a3cb956f9d043dccbabf.png" alt="[a, a+1, a+2, \ldots, x]" /></dd>
 <dt><tt class="docutils literal"><span class="pre">arange(a,</span> <span class="pre">b,</span> <span class="pre">h)</span></tt></dt>
-<dd><img class="math" src="_images/math/b7d8bef6211ebc4887f58a2c92ebf03926f01dbb.png" alt="[a, a+h, a+h, \ldots, x]"/></dd>
+<dd><img class="math" src="_images/math/b7d8bef6211ebc4887f58a2c92ebf03926f01dbb.png" alt="[a, a+h, a+h, \ldots, x]" /></dd>
 </dl>
-<p>where <img class="math" src="_images/math/9dda2cf8604aa691b7265bf653f0c666dc45cf85.png" alt="b-1 \le x &lt; b"/> (in the third case, <img class="math" src="_images/math/8dd8fd980333869d476d326a6e19831ac9732e4e.png" alt="b-h \le x &lt; b"/>).</p>
+<p>where <img class="math" src="_images/math/9dda2cf8604aa691b7265bf653f0c666dc45cf85.png" alt="b-1 \le x &lt; b" /> (in the third case, <img class="math" src="_images/math/8dd8fd980333869d476d326a6e19831ac9732e4e.png" alt="b-h \le x &lt; b" />).</p>
 <p>Like Python&#8217;s <tt class="xref docutils literal"><span class="pre">range()</span></tt>, the endpoint is not included. To
 produce ranges where the endpoint is included, <tt class="xref docutils literal"><span class="pre">linspace()</span></tt>
 is more convenient.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arange</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
 <span class="go">[mpf(&#39;0.0&#39;), mpf(&#39;1.0&#39;), mpf(&#39;2.0&#39;), mpf(&#39;3.0&#39;)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arange</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
@@ -550,14 +603,14 @@ is more convenient.</p>
 <dl class="function">
 <dt id="mpmath.linspace">
 <!--[mpmath.linspace]--><tt class="descclassname">mpmath.</tt><tt class="descname">linspace</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.linspace" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">linspace(a,</span> <span class="pre">b,</span> <span class="pre">n)</span></tt> returns a list of <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> evenly spaced
-samples from <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> to <img class="math" src="_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>. The syntax <tt class="docutils literal"><span class="pre">linspace(mpi(a,b),</span> <span class="pre">n)</span></tt>
+<dd><p><tt class="docutils literal"><span class="pre">linspace(a,</span> <span class="pre">b,</span> <span class="pre">n)</span></tt> returns a list of <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> evenly spaced
+samples from <img class="math" src="_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> to <img class="math" src="_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />. The syntax <tt class="docutils literal"><span class="pre">linspace(mpi(a,b),</span> <span class="pre">n)</span></tt>
 is also valid.</p>
 <p>This function is often more convenient than <tt class="xref docutils literal"><span class="pre">arange()</span></tt>
 for partitioning an interval into subintervals, since
 the endpoint is included:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">linspace</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
 <span class="go">[mpf(&#39;1.0&#39;), mpf(&#39;2.0&#39;), mpf(&#39;3.0&#39;), mpf(&#39;4.0&#39;)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">linspace</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
@@ -581,7 +634,7 @@ the endpoint is included:</p>
 numbers close to zero to exact zeros. The input can be a
 single number or an iterable:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="mf">5</span><span class="o">+</span><span class="mf">1e-10</span><span class="n">j</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
 <span class="go">mpf(&#39;5.0&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1e-20</span><span class="p">,</span> <span class="mf">3</span><span class="o">+</span><span class="mf">1e-18</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">2</span><span class="p">]))</span>
@@ -690,6 +743,7 @@ repeatedly and the best time is returned.</p>
 </li>
 <li><a class="reference external" href="#providing-correct-input">Providing correct input</a></li>
 <li><a class="reference external" href="#printing">Printing</a></li>
+<li><a class="reference external" href="#fast-low-precision-arithmetic">Fast low-precision arithmetic</a></li>
 <li><a class="reference external" href="#plotting">Plotting</a></li>
 <li><a class="reference external" href="#utility-functions">Utility functions</a><ul>
 <li><a class="reference external" href="#conversion-and-utilities-for-numbers">Conversion and utilities for numbers</a></li>
@@ -733,13 +787,13 @@ repeatedly and the best time is returned.</p>
         <li class="right" >
           <a href="setup.html" title="Setting up mpmath"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

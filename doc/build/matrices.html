@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Matrices &mdash; mpmath v0.13 documentation</title>
+    <title>Matrices &mdash; mpmath v0.14-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.13',
+        VERSION:     '0.14-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -17,7 +17,9 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.13 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="mpmath v0.14-svn documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
     <link rel="prev" title="Interval arithmetic" href="intervals.html" /> 
   </head>
@@ -34,7 +36,7 @@
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -89,22 +91,13 @@ concerning elements are discarded:</p>
 <span class="go"> [&#39;0.0&#39;, &#39;0.0&#39;]])</span>
 </pre></div>
 </div>
-<p>Internally <tt class="docutils literal"><span class="pre">convert_lossless</span></tt> is used every time an element is set. This is
+<p>Internally <tt class="docutils literal"><span class="pre">convert</span></tt> is applied every time an element is set. This is
 done using the syntax A[row,column], counting from 0:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1</span> <span class="o">+</span> <span class="mf">1</span><span class="n">j</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
-<span class="go">matrix(</span>
-<span class="go">[[&#39;0.0&#39;, &#39;0.0&#39;],</span>
-<span class="go"> [&#39;0.0&#39;, &#39;(1.0 + 1.0j)&#39;]])</span>
-</pre></div>
-</div>
-<p>You can use the keyword <tt class="docutils literal"><span class="pre">force_type</span></tt> to change the function which is called on
-every new element:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-<span class="go">matrix(</span>
-<span class="go">[[0, 0, 0, 0, 0],</span>
-<span class="go"> [0, 0, 0, 0, 0]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">A</span>
+<span class="go">[0.0           0.0]</span>
+<span class="go">[0.0  (1.0 + 1.0j)]</span>
 </pre></div>
 </div>
 <p>A more comfortable way to create a matrix lets you use nested lists:</p>
@@ -112,14 +105,6 @@ every new element:</p>
 <span class="go">matrix(</span>
 <span class="go">[[&#39;1.0&#39;, &#39;2.0&#39;],</span>
 <span class="go"> [&#39;3.0&#39;, &#39;4.0&#39;]])</span>
-</pre></div>
-</div>
-<p>If you want to preserve the type of the elements you can use
-<tt class="docutils literal"><span class="pre">force_type=None</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="n">j</span><span class="p">,</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)]],</span> <span class="n">force_type</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="go">matrix(</span>
-<span class="go">[[1, 2.5],</span>
-<span class="go"> [1j, &#39;2.0&#39;]])</span>
 </pre></div>
 </div>
 </div>
@@ -307,10 +292,10 @@ multidimensional nature it&#8217;s not possible to compare them, but there are
 several functions to map a matrix or a vector to a positive real number, the
 so called norms.</p>
 <dl class="function">
-<dt id="mpmath.linalg.norm">
-<!--[mpmath.linalg.norm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">norm</tt><big>(</big><em>x</em>, <em>p=2</em><big>)</big><a class="headerlink" href="#mpmath.linalg.norm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the entrywise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norm of an iterable <em>x</em>, i.e. the vector norm
-<img class="math" src="_images/math/f93d4f96e853780721fd3f0bdbd9c0beff6ac0d9.png" alt="\left(\sum_k |x_k|^p\right)^{1/p}"/>, for any given <img class="math" src="_images/math/fbdfe77d15141724eb478aad6ee4c12fb05ff874.png" alt="1 \le p \le \infty"/>.</p>
+<dt id="mpmath.norm">
+<!--[mpmath.norm]--><tt class="descclassname">mpmath.</tt><tt class="descname">norm</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>p=2</em><big>)</big><a class="headerlink" href="#mpmath.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the entrywise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of an iterable <em>x</em>, i.e. the vector norm
+<img class="math" src="_images/math/f93d4f96e853780721fd3f0bdbd9c0beff6ac0d9.png" alt="\left(\sum_k |x_k|^p\right)^{1/p}" />, for any given <img class="math" src="_images/math/fbdfe77d15141724eb478aad6ee4c12fb05ff874.png" alt="1 \le p \le \infty" />.</p>
 <p>Special cases:</p>
 <p>If <em>x</em> is not iterable, this just returns <tt class="docutils literal"><span class="pre">absmax(x)</span></tt>.</p>
 <p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the sum of absolute values.</p>
@@ -322,7 +307,7 @@ For operator matrix norms, use <tt class="xref docutils literal"><span class="pr
 to specify the infinity norm.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">100</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">mpf(&#39;112.0&#39;)</span>
@@ -335,12 +320,12 @@ to specify the infinity norm.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="mpmath.linalg.mnorm">
-<!--[mpmath.linalg.mnorm]--><tt class="descclassname">mpmath.linalg.</tt><tt class="descname">mnorm</tt><big>(</big><em>A</em>, <em>p=1</em><big>)</big><a class="headerlink" href="#mpmath.linalg.mnorm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the matrix (operator) <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norm of A. Currently <tt class="docutils literal"><span class="pre">p=1</span></tt> and <tt class="docutils literal"><span class="pre">p=inf</span></tt>
+<dt id="mpmath.mnorm">
+<!--[mpmath.mnorm]--><tt class="descclassname">mpmath.</tt><tt class="descname">mnorm</tt><big>(</big><em>ctx</em>, <em>A</em>, <em>p=1</em><big>)</big><a class="headerlink" href="#mpmath.mnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the matrix (operator) <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norm of A. Currently <tt class="docutils literal"><span class="pre">p=1</span></tt> and <tt class="docutils literal"><span class="pre">p=inf</span></tt>
 are supported:</p>
 <p><tt class="docutils literal"><span class="pre">p=1</span></tt> gives the 1-norm (maximal column sum)</p>
-<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty"/>-norm (maximal row sum).
+<p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the <img class="math" src="_images/math/b671f1bb7e4ee86584347d5d22f1dc8abdb5bef2.png" alt="\infty" />-norm (maximal row sum).
 You can use the string &#8216;inf&#8217; as well as float(&#8216;inf&#8217;) or mpf(&#8216;inf&#8217;)</p>
 <p><tt class="docutils literal"><span class="pre">p=2</span></tt> (not implemented) for a square matrix is the usual spectral
 matrix norm, i.e. the largest singular value.</p>
@@ -351,10 +336,10 @@ approximation of the spectral norm and satisfies</p>
 <p><img src="_images/math/424f83eda2a3acdae490f8e78126eb1fb9e63108.png" alt="\frac{1}{\sqrt{\mathrm{rank}(A)}} \|A\|_F \le \|A\|_2 \le \|A\|_F" />
 </div></p><p>The Frobenius norm lacks some mathematical properties that might
 be expected of a norm.</p>
-<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
+<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000</span><span class="p">],</span> <span class="p">[</span><span class="mf">100</span><span class="p">,</span> <span class="mf">50</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">mpf(&#39;1050.0&#39;)</span>
@@ -400,12 +385,14 @@ equation system:</p>
 inaccuracy of the internal floating point arithmetic. Though, it&#8217;s even smaller
 than the current machine epsilon, which basically means you can trust the
 result.</p>
-<p>If you need more speed, use NumPy. Or choose a faster data type using the
-keyword <tt class="docutils literal"><span class="pre">force_type</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lu_solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">force_type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<p>If you need more speed, use NumPy, or use <tt class="docutils literal"><span class="pre">fp</span></tt> instead <tt class="docutils literal"><span class="pre">mp</span></tt> matrices
+and methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">10</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span><span class="o">.</span><span class="n">lu_solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">matrix(</span>
-<span class="go">[[29.999999999999996],</span>
-<span class="go"> [-19.999999999999996]])</span>
+<span class="go">[[&#39;30.0&#39;],</span>
+<span class="go"> [&#39;-20.0&#39;]])</span>
 </pre></div>
 </div>
 <p><tt class="docutils literal"><span class="pre">lu_solve</span></tt> accepts overdetermined systems. It is usually not possible to solve
@@ -451,15 +438,361 @@ and equation solving with rigorous error bounds:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="s">&#39;4&#39;</span><span class="p">,</span><span class="s">&#39;0.6&#39;</span><span class="p">,</span><span class="s">&#39;0.5&#39;</span><span class="p">],</span> <span class="n">force_type</span><span class="o">=</span><span class="n">mpi</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">lu_solve</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span>
-<span class="go">[  [5.2582327113062393041, 5.2582327113062749951]]</span>
-<span class="go">[[-13.155049396267856583, -13.155049396267821167]]</span>
-<span class="go">[  [7.4206915477497212555, 7.4206915477497310922]]</span>
+<span class="go">[ [5.2582327113062393162, 5.2582327113062749448]]</span>
+<span class="go">[[-13.15504939626785654, -13.155049396267821172]]</span>
+<span class="go">[ [7.4206915477497212581, 7.4206915477497310818]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="o">*</span><span class="n">c</span>
 <span class="go">[  [3.9999999999999866773, 4.0000000000000133227]]</span>
 <span class="go">[[0.59999999999972430942, 0.60000000000027142733]]</span>
 <span class="go">[[0.49999999999982236432, 0.50000000000018474111]]</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="matrix-functions">
+<h2>Matrix functions<a class="headerlink" href="#matrix-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.expm">
+<!--[mpmath.expm]--><tt class="descclassname">mpmath.</tt><tt class="descname">expm</tt><big>(</big><em>ctx</em>, <em>A</em>, <em>method='taylor'</em><big>)</big><a class="headerlink" href="#mpmath.expm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the matrix exponential of a square matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, which is defined
+by the power series</p>
+<div class="math">
+<p><img src="_images/math/0b5d6398ab2874e0d2b16245ae32b08ebb195649.png" alt="\exp(A) = I + A + \frac{A^2}{2!} + \frac{A^3}{3!} + \ldots" />
+</div></p><p>With method=&#8217;taylor&#8217;, the matrix exponential is computed
+using the Taylor series. With method=&#8217;pade&#8217;, Pade approximants
+are used instead.</p>
+<p><strong>Examples</strong></p>
+<p>Basic examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">(</span><span class="n">zeros</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="go">[1.0  0.0  0.0]</span>
+<span class="go">[0.0  1.0  0.0]</span>
+<span class="go">[0.0  0.0  1.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">(</span><span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="go">[2.71828182845905               0.0               0.0]</span>
+<span class="go">[             0.0  2.71828182845905               0.0]</span>
+<span class="go">[             0.0               0.0  2.71828182845905]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]])</span>
+<span class="go">[ 3.86814500615414  2.26812870852145  0.841130841230196]</span>
+<span class="go">[ 2.26812870852145  2.44114713886289   1.42699786729125]</span>
+<span class="go">[0.841130841230196  1.42699786729125    1.6000162976327]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;pade&#39;</span><span class="p">)</span>
+<span class="go">[ 3.86814500615414  2.26812870852145  0.841130841230196]</span>
+<span class="go">[ 2.26812870852145  2.44114713886289   1.42699786729125]</span>
+<span class="go">[0.841130841230196  1.42699786729125    1.6000162976327]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">([[</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="mf">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span><span class="mf">1</span><span class="p">]])</span>
+<span class="go">[(1.46869393991589 + 2.28735528717884j)                        0.0]</span>
+<span class="go">[  (1.03776739863568 + 3.536943175722j)  (2.71828182845905 + 0.0j)]</span>
+</pre></div>
+</div>
+<p>Matrices with large entries are allowed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">(</span><span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],[</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">]])</span><span class="o">**</span><span class="mf">25</span><span class="p">)</span>
+<span class="go">[5.65024064048415e+2050488462815550  9.14228140091932e+2050488462815550]</span>
+<span class="go">[9.14228140091932e+2050488462815550  1.47925220414035e+2050488462815551]</span>
+</pre></div>
+</div>
+<p>The identity <img class="math" src="_images/math/e72e6f94282a4ae2cae770064835263bb7c54f52.png" alt="\exp(A+B) = \exp(A) \exp(B)" /> does not hold for
+noncommuting matrices:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">B</span> <span class="o">-</span> <span class="n">B</span><span class="o">*</span><span class="n">A</span><span class="p">))</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">mnorm</span><span class="p">(</span><span class="n">expm</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="p">)</span> <span class="o">-</span> <span class="n">expm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">*</span><span class="n">expm</span><span class="p">(</span><span class="n">B</span><span class="p">)))</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">ones</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">B</span> <span class="o">-</span> <span class="n">B</span><span class="o">*</span><span class="n">A</span><span class="p">)</span>
+<span class="go">1.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">expm</span><span class="p">(</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="p">)</span> <span class="o">-</span> <span class="n">expm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">*</span><span class="n">expm</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
+<span class="go">42.0927851137247</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.cosm">
+<!--[mpmath.cosm]--><tt class="descclassname">mpmath.</tt><tt class="descname">cosm</tt><big>(</big><em>ctx</em>, <em>A</em><big>)</big><a class="headerlink" href="#mpmath.cosm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the cosine of a square matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, defined in analogy
+with the matrix exponential.</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[0.54030230586814               0.0               0.0]</span>
+<span class="go">[             0.0  0.54030230586814               0.0]</span>
+<span class="go">[             0.0               0.0  0.54030230586814]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[ 0.424403834569555  -0.316643413047167  -0.221474945949293]</span>
+<span class="go">[-0.316643413047167   0.820646708837824  -0.127183694770039]</span>
+<span class="go">[-0.221474945949293  -0.127183694770039   0.909236687217541]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">j</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[(0.833730025131149 - 0.988897705762865j)  (1.07485840848393 - 0.17192140544213j)]</span>
+<span class="go">[                                     0.0               (1.54308063481524 + 0.0j)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.sinm">
+<!--[mpmath.sinm]--><tt class="descclassname">mpmath.</tt><tt class="descname">sinm</tt><big>(</big><em>ctx</em>, <em>A</em><big>)</big><a class="headerlink" href="#mpmath.sinm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the sine of a square matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, defined in analogy
+with the matrix exponential.</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[0.841470984807897                0.0                0.0]</span>
+<span class="go">[              0.0  0.841470984807897                0.0]</span>
+<span class="go">[              0.0                0.0  0.841470984807897]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[0.711608512150994  0.339783913247439  0.220742837314741]</span>
+<span class="go">[0.339783913247439  0.244113865695532  0.187231271174372]</span>
+<span class="go">[0.220742837314741  0.187231271174372  0.155816730769635]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="n">j</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sinm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[(1.29845758141598 + 0.634963914784736j)  (-1.96751511930922 + 0.314700021761367j)]</span>
+<span class="go">[                                    0.0                  (0.0 - 1.1752011936438j)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.sqrtm">
+<!--[mpmath.sqrtm]--><tt class="descclassname">mpmath.</tt><tt class="descname">sqrtm</tt><big>(</big><em>ctx</em>, <em>A</em>, <em>_may_rotate=2</em><big>)</big><a class="headerlink" href="#mpmath.sqrtm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a square root of the square matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, i.e. returns
+a matrix <img class="math" src="_images/math/b483873061aab278d8b0e037734d22b865965a07.png" alt="B = A^{1/2}" /> such that <img class="math" src="_images/math/f18be3cebf1a0b71b37566467b5dbcb5465a6302.png" alt="B^2 = A" />. The square root
+of a matrix, if it exists, is not unique.</p>
+<p><strong>Examples</strong></p>
+<p>Square roots of some simple matrices:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">]])</span>
+<span class="go">[1.0  0.0]</span>
+<span class="go">[0.0  1.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">]])</span>
+<span class="go">[0.0  0.0]</span>
+<span class="go">[0.0  0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">]])</span>
+<span class="go">[1.4142135623731  0.0]</span>
+<span class="go">[            0.0  1.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]])</span>
+<span class="go">[ (0.920442065259926 - 0.21728689675164j)  (0.568864481005783 + 0.351577584254143j)]</span>
+<span class="go">[(0.568864481005783 + 0.351577584254143j)  (0.351577584254143 - 0.568864481005783j)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">]])</span>
+<span class="go">[1.0  0.0]</span>
+<span class="go">[0.0  1.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">]])</span>
+<span class="go">[(0.0 - 1.0j)           0.0]</span>
+<span class="go">[         0.0  (1.0 + 0.0j)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="n">j</span><span class="p">,</span><span class="mf">0</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="n">j</span><span class="p">]])</span>
+<span class="go">[(0.707106781186547 + 0.707106781186547j)                                       0.0]</span>
+<span class="go">[                                     0.0  (0.707106781186547 + 0.707106781186547j)]</span>
+</pre></div>
+</div>
+<p>A square root of a rotation matrix, giving the corresponding
+half-angle rotation matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t1</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A1</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="n">cos</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t1</span><span class="p">)],</span> <span class="p">[</span><span class="n">sin</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">t1</span><span class="p">)]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="n">cos</span><span class="p">(</span><span class="n">t2</span><span class="p">),</span> <span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t2</span><span class="p">)],</span> <span class="p">[</span><span class="n">sin</span><span class="p">(</span><span class="n">t2</span><span class="p">),</span> <span class="n">cos</span><span class="p">(</span><span class="n">t2</span><span class="p">)]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+<span class="go">[0.930507621912314  -0.366272529086048]</span>
+<span class="go">[0.366272529086048   0.930507621912314]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A2</span>
+<span class="go">[0.930507621912314  -0.366272529086048]</span>
+<span class="go">[0.366272529086048   0.930507621912314]</span>
+</pre></div>
+</div>
+<p>The identity <img class="math" src="_images/math/9c60eff813d166d3d9b124fcbaefda3f139c8c4a.png" alt="(A^2)^{1/2} = A" /> does not necessarily hold:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">],[</span><span class="mf">7</span><span class="p">,</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">],[</span><span class="mf">10</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">11</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">],[</span><span class="mf">7</span><span class="p">,</span><span class="o">-</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">],[</span><span class="mf">10</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">11</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">[  7.43715112194995  -0.324127569985474   1.8481718827526]</span>
+<span class="go">[-0.251549715716942    9.32699765900402  2.48221180985147]</span>
+<span class="go">[  4.11609388833616   0.775751877098258   13.017955697342]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">[-4.0   1.0   4.0]</span>
+<span class="go">[ 7.0  -8.0   9.0]</span>
+<span class="go">[10.0   2.0  11.0]</span>
+</pre></div>
+</div>
+<p>For some matrices, a square root does not exist:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">]])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ZeroDivisionError</span>: <span class="n-Identifier">matrix is numerically singular</span>
+</pre></div>
+</div>
+<p>Two examples from the documentation for Matlab&#8217;s <tt class="docutils literal"><span class="pre">sqrtm</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrtm</span><span class="p">([[</span><span class="mf">7</span><span class="p">,</span><span class="mf">10</span><span class="p">],[</span><span class="mf">15</span><span class="p">,</span><span class="mf">22</span><span class="p">]])</span>
+<span class="go">[1.56669890360128  1.74077655955698]</span>
+<span class="go">[2.61116483933547  4.17786374293675]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span>\
+<span class="gp">... </span>  <span class="p">[[</span><span class="mf">5</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span>\
+<span class="gp">... </span>  <span class="p">[[</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">[</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mnorm</span><span class="p">(</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="n">Y</span><span class="p">)</span>
+<span class="go">4.53155328326114e-19</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.logm">
+<!--[mpmath.logm]--><tt class="descclassname">mpmath.</tt><tt class="descname">logm</tt><big>(</big><em>ctx</em>, <em>A</em><big>)</big><a class="headerlink" href="#mpmath.logm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a logarithm of the square matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" />, i.e. returns
+a matrix <img class="math" src="_images/math/dee154386ef182cf16601a7eca95119235eab589.png" alt="B = \log(A)" /> such that <img class="math" src="_images/math/5f467ed8bbc7f2ed6ee6377cf20b401f85ce1425.png" alt="\exp(B) = A" />. The logarithm
+of a matrix, if it exists, is not unique.</p>
+<p><strong>Examples</strong></p>
+<p>Logarithms of some simple matrices:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[0.0  0.0  0.0]</span>
+<span class="go">[0.0  0.0  0.0]</span>
+<span class="go">[0.0  0.0  0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">X</span><span class="p">)</span>
+<span class="go">[0.693147180559945                0.0                0.0]</span>
+<span class="go">[              0.0  0.693147180559945                0.0]</span>
+<span class="go">[              0.0                0.0  0.693147180559945]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">(</span><span class="n">expm</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="go">[1.0  0.0  0.0]</span>
+<span class="go">[0.0  1.0  0.0]</span>
+<span class="go">[0.0  0.0  1.0]</span>
+</pre></div>
+</div>
+<p>A logarithm of a complex matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="n">j</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="n">j</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">logm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+<span class="go">[ (0.808757 + 0.107759j)    (2.20752 + 0.202762j)   (1.07376 - 0.773874j)]</span>
+<span class="go">[ (0.905709 - 0.107795j)  (0.0287395 - 0.824993j)  (0.111619 + 0.514272j)]</span>
+<span class="go">[(-0.930151 + 0.399512j)   (-2.06266 - 0.674397j)  (0.791552 + 0.519839j)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">expm</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
+<span class="go">[(2.0 + 1.0j)           1.0           3.0]</span>
+<span class="go">[(1.0 - 1.0j)  (1.0 - 2.0j)           1.0]</span>
+<span class="go">[        -4.0          -5.0  (0.0 + 1.0j)]</span>
+</pre></div>
+</div>
+<p>A matrix <img class="math" src="_images/math/6a47ca0fe7cb276abc022af6ac88ddae1a9d6894.png" alt="X" /> close to the identity matrix, for which
+<img class="math" src="_images/math/09f0e570182f649497cdf108a0c9f7cfb5fd1e3d.png" alt="\log(\exp(X)) = \exp(\log(X)) = X" /> holds:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">eye</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">+</span> <span class="n">hilbert</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span>
+<span class="go">[              1.25             0.125  0.0833333333333333]</span>
+<span class="go">[             0.125  1.08333333333333              0.0625]</span>
+<span class="go">[0.0833333333333333            0.0625                1.05]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">(</span><span class="n">expm</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="go">[              1.25             0.125  0.0833333333333333]</span>
+<span class="go">[             0.125  1.08333333333333              0.0625]</span>
+<span class="go">[0.0833333333333333            0.0625                1.05]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expm</span><span class="p">(</span><span class="n">logm</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="go">[              1.25             0.125  0.0833333333333333]</span>
+<span class="go">[             0.125  1.08333333333333              0.0625]</span>
+<span class="go">[0.0833333333333333            0.0625                1.05]</span>
+</pre></div>
+</div>
+<p>A logarithm of a rotation matrix, giving back the angle of
+the rotation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="mf">3.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)],[</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">logm</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<span class="go">[             0.0  -2.58318530717959]</span>
+<span class="go">[2.58318530717959                0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">-</span><span class="n">t</span><span class="p">)</span>
+<span class="go">2.58318530717959</span>
+</pre></div>
+</div>
+<p>For some matrices, a logarithm does not exist:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">]])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="nc">ZeroDivisionError</span>: <span class="n-Identifier">matrix is numerically singular</span>
+</pre></div>
+</div>
+<p>Logarithm of a matrix with large entries:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">logm</span><span class="p">(</span><span class="n">hilbert</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">re</span><span class="p">)</span>
+<span class="go">[ 45.5597513593433  1.27721006042799  0.317662687717978]</span>
+<span class="go">[ 1.27721006042799  42.5222778973542   2.24003708791604]</span>
+<span class="go">[0.317662687717978  2.24003708791604    42.395212822267]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.powm">
+<!--[mpmath.powm]--><tt class="descclassname">mpmath.</tt><tt class="descname">powm</tt><big>(</big><em>ctx</em>, <em>A</em>, <em>r</em><big>)</big><a class="headerlink" href="#mpmath.powm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <img class="math" src="_images/math/9071a4cdd8398dc7bba0a3b404151e21df7d2eb2.png" alt="A^r = \exp(A \log r)" /> for a matrix <img class="math" src="_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A" /> and complex
+number <img class="math" src="_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" />.</p>
+<p><strong>Examples</strong></p>
+<p>Powers and inverse powers of a matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="mf">4</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">],[</span><span class="mf">7</span><span class="p">,</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">],[</span><span class="mf">10</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">11</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">[ 63.0  20.0   69.0]</span>
+<span class="go">[174.0  89.0  199.0]</span>
+<span class="go">[164.0  48.0  179.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">powm</span><span class="p">(</span><span class="n">powm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">4</span><span class="p">),</span> <span class="mf">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">))</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">(</span><span class="n">extraprec</span><span class="p">(</span><span class="mf">20</span><span class="p">)(</span><span class="n">powm</span><span class="p">)(</span><span class="n">A</span><span class="p">,</span> <span class="o">-</span><span class="mf">4</span><span class="p">),</span> <span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">powm</span><span class="p">(</span><span class="n">powm</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">0.5</span><span class="n">j</span><span class="p">),</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">0.5</span><span class="n">j</span><span class="p">)))</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">(</span><span class="n">extraprec</span><span class="p">(</span><span class="mf">5</span><span class="p">)(</span><span class="n">powm</span><span class="p">)(</span><span class="n">A</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">),</span> <span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.5</span><span class="p">))</span>
+<span class="go">[ 4.0  1.0   4.0]</span>
+<span class="go">[ 7.0  8.0   9.0]</span>
+<span class="go">[10.0  2.0  11.0]</span>
+</pre></div>
+</div>
+<p>A Fibonacci-generating matrix:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">[89.0  55.0]</span>
+<span class="go">[55.0  34.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fib</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">55.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">6.5</span><span class="p">)</span>
+<span class="go">[(16.5166626964253 - 0.0121089837381789j)  (10.2078589271083 + 0.0195927472575932j)]</span>
+<span class="go">[(10.2078589271083 + 0.0195927472575932j)  (6.30880376931698 - 0.0317017309957721j)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">phi</span><span class="o">**</span><span class="mf">6.5</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">phi</span><span class="p">)</span><span class="o">**</span><span class="mf">6.5</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">(10.2078589271083 - 0.0195927472575932j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">6.2</span><span class="p">)</span>
+<span class="go">[ (14.3076953002666 - 0.008222855781077j)  (8.81733464837593 + 0.0133048601383712j)]</span>
+<span class="go">[(8.81733464837593 + 0.0133048601383712j)  (5.49036065189071 - 0.0215277159194482j)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">phi</span><span class="o">**</span><span class="mf">6.2</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">phi</span><span class="p">)</span><span class="o">**</span><span class="mf">6.2</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">(8.81733464837593 - 0.0133048601383712j)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 </div>
 
@@ -489,6 +822,7 @@ and equation solving with rigorous error bounds:</p>
 </ul>
 </li>
 <li><a class="reference external" href="#interval-matrices">Interval matrices</a></li>
+<li><a class="reference external" href="#matrix-functions">Matrix functions</a></li>
 </ul>
 </li>
 </ul>
@@ -523,13 +857,13 @@ and equation solving with rigorous error bounds:</p>
         <li class="right" >
           <a href="intervals.html" title="Interval arithmetic"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.13 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.14-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Aug 13, 2009.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.2.
+      Last updated on Feb 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->
