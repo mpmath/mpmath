@@ -495,6 +495,33 @@ def mpc_sin_pi((a, b), prec, rnd=round_fast):
     im = mpf_mul(c, sh, prec, rnd)
     return re, im
 
+def mpc_cos_sin((a, b), prec, rnd=round_fast):
+    if a == fzero:
+        ch, sh = mpf_cosh_sinh(b, prec, rnd)
+        return (ch, fzero), (sh, fzero)
+    wp = prec + 6
+    c, s = mpf_cos_sin(a, wp)
+    ch, sh = mpf_cosh_sinh(b, wp)
+    cre = mpf_mul(c, ch, prec, rnd)
+    cim = mpf_mul(s, sh, prec, rnd)
+    sre = mpf_mul(s, ch, prec, rnd)
+    sim = mpf_mul(c, sh, prec, rnd)
+    return (cre, mpf_neg(cim)), (sre, sim)
+
+def mpc_cos_sin_pi((a, b), prec, rnd=round_fast):
+    b = mpf_mul(b, mpf_pi(prec+5), prec+5)
+    if a == fzero:
+        ch, sh = mpf_cosh_sinh(b, prec, rnd)
+        return (ch, fzero), (fzero, sh)
+    wp = prec + 6
+    c, s = mpf_cos_sin_pi(a, wp)
+    ch, sh = mpf_cosh_sinh(b, wp)
+    cre = mpf_mul(c, ch, prec, rnd)
+    cim = mpf_mul(s, sh, prec, rnd)
+    sre = mpf_mul(s, ch, prec, rnd)
+    sim = mpf_mul(c, sh, prec, rnd)
+    return (cre, mpf_neg(cim)), (sre, sim)
+
 def mpc_cosh((a, b), prec, rnd=round_fast):
     """Complex hyperbolic cosine. Computed as cosh(z) = cos(z*i)."""
     return mpc_cos((b, mpf_neg(a)), prec, rnd)

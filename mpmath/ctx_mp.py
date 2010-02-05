@@ -382,6 +382,32 @@ class MPContext(BaseMPContext, StandardBaseContext):
         else:
             return ctx.make_mpc(libmp.mpc_psi(m, z._mpc_, *ctx._prec_rounding))
 
+    def cos_sin(ctx, x, **kwargs):
+        if type(x) not in ctx.types:
+            x = ctx.convert(x)
+        prec, rounding = ctx._parse_prec(kwargs)
+        if hasattr(x, '_mpf_'):
+            c, s = libmp.mpf_cos_sin(x._mpf_, prec, rounding)
+            return ctx.make_mpf(c), ctx.make_mpf(s)
+        elif hasattr(x, '_mpc_'):
+            c, s = libmp.mpc_cos_sin(x._mpc_, prec, rounding)
+            return ctx.make_mpc(c), ctx.make_mpc(s)
+        else:
+            return ctx.cos(x, **kwargs), ctx.sin(x, **kwargs)
+
+    def cospi_sinpi(ctx, x, **kwargs):
+        if type(x) not in ctx.types:
+            x = ctx.convert(x)
+        prec, rounding = ctx._parse_prec(kwargs)
+        if hasattr(x, '_mpf_'):
+            c, s = libmp.mpf_cos_sin_pi(x._mpf_, prec, rounding)
+            return ctx.make_mpf(c), ctx.make_mpf(s)
+        elif hasattr(x, '_mpc_'):
+            c, s = libmp.mpc_cos_sin_pi(x._mpc_, prec, rounding)
+            return ctx.make_mpc(c), ctx.make_mpc(s)
+        else:
+            return ctx.cos(x, **kwargs), ctx.sin(x, **kwargs)
+
     def clone(ctx):
         """
         Create a copy of the context, with the same working precision.

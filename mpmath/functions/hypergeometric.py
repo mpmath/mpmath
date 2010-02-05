@@ -1498,8 +1498,9 @@ def legenq(ctx, n, m, z, type=2, **kwargs):
         return ctx.nan
     if type == 2:
         def h(n, m):
-            s = 2 * ctx.sinpi(m) / ctx.pi
-            c = ctx.cospi(m)
+            cos, sin = ctx.cospi_sinpi(m)
+            s = 2 * sin / ctx.pi
+            c = cos
             a = 1+z
             b = 1-z
             u = m/2
@@ -1691,8 +1692,9 @@ def bessely(ctx, n, z, derivative=0, **kwargs):
     elif d < 0:
         ctx.prec -= d
     # TODO: avoid cancellation for imaginary arguments
-    return (ctx.besselj(n,z,derivative,**kwargs)*ctx.cospi(n) - \
-        ctx.besselj(-n,z,derivative,**kwargs))/ctx.sinpi(n)
+    cos, sin = ctx.cospi_sinpi(n)
+    return (ctx.besselj(n,z,derivative,**kwargs)*cos - \
+        ctx.besselj(-n,z,derivative,**kwargs))/sin
 
 @defun_wrapped
 def besselk(ctx, n, z, **kwargs):
@@ -1778,8 +1780,9 @@ def ber(ctx, n, z, **kwargs):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBer2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [ctx.cospi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
-        T2 = [-ctx.sinpi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
+        cos, sin = ctx.cospi_sinpi(-0.75*n)
+        T1 = [cos, z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
+        T2 = [sin, z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
         return T1, T2
     return ctx.hypercomb(h, [n], **kwargs)
 
@@ -1790,8 +1793,9 @@ def bei(ctx, n, z, **kwargs):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBei2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [ctx.cospi(0.75*n), z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
-        T2 = [ctx.sinpi(0.75*n), z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
+        cos, sin = ctx.cospi_sinpi(0.75*n)
+        T1 = [cos, z/2], [1, n+2], [], [n+2], [], [1.5, 0.5*(n+3), 0.5*n+1], r
+        T2 = [sin, z/2], [1, n], [], [n+1], [], [0.5, 0.5*(n+1), 0.5*n+1], r
         return T1, T2
     return ctx.hypercomb(h, [n], **kwargs)
 
@@ -1802,10 +1806,12 @@ def ker(ctx, n, z, **kwargs):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKer2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [2, z, 4*ctx.cospi(0.25*n)], [-n-3, n, 1], [-n], [], [], [0.5, 0.5*(1+n), 0.5*(n+2)], r
-        T2 = [2, z, -ctx.sinpi(0.25*n)], [-n-3, 2+n, 1], [-n-1], [], [], [1.5, 0.5*(3+n), 0.5*(n+2)], r
-        T3 = [2, z, 4*ctx.cospi(0.75*n)], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
-        T4 = [2, z, -ctx.sinpi(0.75*n)], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        cos1, sin1 = ctx.cospi_sinpi(0.25*n)
+        cos2, sin2 = ctx.cospi_sinpi(0.75*n)
+        T1 = [2, z, 4*cos1], [-n-3, n, 1], [-n], [], [], [0.5, 0.5*(1+n), 0.5*(n+2)], r
+        T2 = [2, z, -sin1], [-n-3, 2+n, 1], [-n-1], [], [], [1.5, 0.5*(3+n), 0.5*(n+2)], r
+        T3 = [2, z, 4*cos2], [n-3, -n, 1], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T4 = [2, z, -sin2], [n-3, 2-n, 1], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
         return T1, T2, T3, T4
     return ctx.hypercomb(h, [n], **kwargs)
 
@@ -1816,10 +1822,12 @@ def kei(ctx, n, z, **kwargs):
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKei2/26/01/02/0001/
     def h(n):
         r = -(z/4)**4
-        T1 = [-ctx.cospi(0.75*n), 2, z], [1, n-3, 2-n], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
-        T2 = [-ctx.sinpi(0.75*n), 2, z], [1, n-1, -n], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
-        T3 = [-ctx.sinpi(0.25*n), 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
-        T4 = [-ctx.cospi(0.25*n), 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
+        cos1, sin1 = ctx.cospi_sinpi(0.75*n)
+        cos2, sin2 = ctx.cospi_sinpi(0.25*n)
+        T1 = [-cos1, 2, z], [1, n-3, 2-n], [n-1], [], [], [1.5, 0.5*(3-n), 1-0.5*n], r
+        T2 = [-sin1, 2, z], [1, n-1, -n], [n], [], [], [0.5, 0.5*(1-n), 1-0.5*n], r
+        T3 = [-sin2, 2, z], [1, -n-1, n], [-n], [], [], [0.5, 0.5*(n+1), 0.5*(n+2)], r
+        T4 = [-cos2, 2, z], [1, -n-3, n+2], [-n-1], [], [], [1.5, 0.5*(n+3), 0.5*(n+2)], r
         return T1, T2, T3, T4
     return ctx.hypercomb(h, [n], **kwargs)
 
@@ -2036,12 +2044,13 @@ def spherharm(ctx, l, m, theta, phi, **kwargs):
         # http://functions.wolfram.com/Polynomials/
         #     SphericalHarmonicY/26/01/02/0004/
         def h(l,m):
+            absm = abs(m)
             C = [-1, ctx.expj(m*phi),
-                 (2*l+1)*ctx.fac(l+abs(m))/ctx.pi/ctx.fac(l-abs(m)),
+                 (2*l+1)*ctx.fac(l+absm)/ctx.pi/ctx.fac(l-absm),
                  ctx.sin(theta)**2,
-                 ctx.fac(abs(m)), 2]
-            P = [0.5*m*(ctx.sign(m)+1), 1, 0.5, 0.5*abs(m), -1, -abs(m)-1]
-            return ((C, P, [], [], [abs(m)-l, l+abs(m)+1], [abs(m)+1],
+                 ctx.fac(absm), 2]
+            P = [0.5*m*(ctx.sign(m)+1), 1, 0.5, 0.5*absm, -1, -absm-1]
+            return ((C, P, [], [], [absm-l, l+absm+1], [absm+1],
                 ctx.sin(0.5*theta)**2),)
     else:
         # http://functions.wolfram.com/HypergeometricFunctions/
@@ -2049,12 +2058,10 @@ def spherharm(ctx, l, m, theta, phi, **kwargs):
         def h(l,m):
             if ctx.isnpint(l-m+1) or ctx.isnpint(l+m+1) or ctx.isnpint(1-m):
                 return (([0], [-1], [], [], [], [], 0),)
-            C = [0.5*ctx.expj(m*phi),
-                 (2*l+1)/ctx.pi,
-                 ctx.gamma(l-m+1),
-                 ctx.gamma(l+m+1),
-                 ctx.cos(0.5*theta)**2,
-                 ctx.sin(0.5*theta)**2]
+            cos, sin = ctx.cos_sin(0.5*theta)
+            C = [0.5*ctx.expj(m*phi), (2*l+1)/ctx.pi,
+                 ctx.gamma(l-m+1), ctx.gamma(l+m+1),
+                 cos**2, sin**2]
             P = [1, 0.5, 0.5, -0.5, 0.5*m, -0.5*m]
-            return ((C, P, [], [1-m], [-l,l+1], [1-m], ctx.sin(0.5*theta)**2),)
+            return ((C, P, [], [1-m], [-l,l+1], [1-m], sin**2),)
     return ctx.hypercomb(h, [l,m], **kwargs)

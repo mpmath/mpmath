@@ -24,7 +24,8 @@ from libmpc import (mpc_one, mpc_zero, mpc_two, mpc_half,
   mpc_sqrt, mpc_nthroot, mpc_cbrt, mpc_exp, mpc_log, mpc_cos, mpc_sin,
   mpc_tan, mpc_cos_pi, mpc_sin_pi, mpc_cosh, mpc_sinh, mpc_tanh,
   mpc_atan, mpc_acos, mpc_asin, mpc_asinh, mpc_acosh, mpc_atanh,
-  mpc_fibonacci, mpf_expj, mpf_expjpi, mpc_expj, mpc_expjpi)
+  mpc_fibonacci, mpf_expj, mpf_expjpi, mpc_expj, mpc_expjpi,
+  mpc_cos_sin, mpc_cos_sin_pi)
 
 from libelefun import (ln2_fixed, mpf_ln2, ln10_fixed, mpf_ln10,
   pi_fixed, mpf_pi, e_fixed, mpf_e, phi_fixed, mpf_phi,

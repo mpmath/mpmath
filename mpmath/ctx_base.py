@@ -279,6 +279,9 @@ class StandardBaseContext(Context,
     def cos_sin(ctx, z, **kwargs):
         return ctx.cos(z, **kwargs), ctx.sin(z, **kwargs)
 
+    def cospi_sinpi(ctx, z, **kwargs):
+        return ctx.cospi(z, **kwargs), ctx.sinpi(z, **kwargs)
+
     def _default_hyper_maxprec(ctx, p):
         return int(1000 * p**0.25 + 4*p)
 

@@ -534,8 +534,7 @@ def _hurwitz(ctx, s, a=1, d=0):
                 return v
             # General reflection formula
             else:
-                C1 = ctx.cospi(t/2)
-                C2 = ctx.sinpi(t/2)
+                C1, C2 = ctx.cospi_sinpi(0.5*t)
                 # Clausen functions; could maybe use polylog directly
                 if C1: C1 *= ctx.clcos(t, 2*a, pi=True)
                 if C2: C2 *= ctx.clsin(t, 2*a, pi=True)
