@@ -23,6 +23,8 @@ to mpmath:
 * Mike Taschuk <mtaschuk@ece.ualberta.ca>
 * Case Van Horsen <casevh@gmail.com>
 * Jorn Baayen <jorn.baayen@gmail.com>
+* Chris Smith <smichr@gmail.com>
+* Juan Arias de Reyna <arias@us.es>
 
 For a detailed changelog, including individual contributions,
 see the CHANGES file.
@@ -54,6 +56,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 0.14 released on February 5, 2010
 * Version 0.13 released on August 13, 2009
 * Version 0.12 released on June 9, 2009
 * Version 0.11 released on January 26, 2009

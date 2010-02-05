@@ -1,3 +1,78 @@
+--0.14--
+Released February 5, 2010
+
+General changes:
+
+* Fully separated the code into "low-level" and "high-level", permitting the
+  use of alternative contexts (the mpmath.mp object provides the default
+  implementation)
+* Implemented a context for fast double-precision arithmetic using Python
+  types (mpmath.fp) 
+* Implemented hooks for importing a faster version of mp arithmetic from Sage
+* Implemented optimized fp versions of certain functions (including erf, erfc,
+  gamma, digamma, ei, e1)
+* Renamed and reorganized various internal modules and methods (including
+  merging low-level modules into mpmath.libmp). This should not affect most
+  external code using top-level imports.
+
+Plotting:
+
+* Implemented splot() for 3D surface plots (contributed by Jorn Baayen)
+* Permit calling plot functions with custom axes (contributed by Jorn Baayen)
+
+Matrices:
+
+* Fixed lu_solve for overdetermined systems (contributed by Vinzent Steinberg)
+* Added conjugate matrix transpose (contributed by Vinzent Steinberg)
+* Implemented matrix functions (expm, cosm, sinm, sqrtm, logm, powm)
+
+Miscellaneous:
+
+* Prettier printing of numbers with leading zeros at small precisions
+* Made nstr pass on kwargs, permitting more formatting options
+* Fixed wrong directed rounding of addition of numbers with large magnitude
+  differences
+* Fixed several docstring typos (contributed by Chris Smith)
+* Fixed a bug that prevented caching of quadrature nodes to work optimally.
+
+Special functions:
+
+* Implemented fast evaluation for large imaginary heights of the Riemann zeta
+  function, Z function and derived functions using the Riemann-Siegel
+  (contributed by Juan Arias de Reyna)
+* Unified the zeta() and hurwitz() functions, automatically selecting a fast
+  algorithm
+* Improved altzeta() to fall back to zeta() for large arguments
+* Fixed accuracy of zeta(s) for s ~= 1
+* Implemented exact evaluation of Euler numbers (contributed by Juan Arias
+  de Reyna)
+* Implemented numerical evaluation of Euler numbers and Euler polynomials
+  (eulernum(), eulerpoly())
+* Fixed bernpoly() and eulerpoly() to compute accurate values for large
+  parameters
+* Fixed accuracy problems for hypergeometric functions with large parameters
+* Faster evaluation of hypergeometric series using on-the-fly code generation
+* Optimized hypercomb to detect certain zero terms symbolically
+* Removed the djtheta function (jtheta() accepts a derivative parameter)
+* Implemented li(x, offset=True) to compute the offset logarithmic integral
+* Fixed wrong branch in Lambert W function for certain complex inputs
+* Implemented the reflection formula for the Barnes G-function,
+  superfactorials, hyperfactorials, permitting large arguments in the left
+  half-plane
+* Implemented analytic continuation to |z| >= 1 for hypergeometric functions
+  pFq with p=q+1; added hyp3f2()
+* Implemented Borel summation of divergent pFq functions with p > q+1
+* Implemented automatic degree reduction of hypergeometric functions with
+  repeated parameters
+* Added convenience functions expj(), expjpi()
+* Use Mathematica's convention for the continuation of the Meijer G-function
+* Added phase(), polar(), rect() functions for compatibility with the
+  Python 2.6 cmath module
+* Implemented spherical harmonics (spherharm())
+* Optimized ci(), si(), chi(), shi() for complex arguments by evaluating
+  them in terms of ei()
+* Optimized hyp2f1 for z ~= -1
+
 --0.13--
 Released August 13, 2009
 
