@@ -210,7 +210,7 @@ class LinearAlgebraMethods(object):
                 A = AH * A
                 b = AH * b
                 if (kwargs.get('real', False) or
-                    not any(type(i) is ctx.mpc for i in A)):
+                    not sum(type(i) is ctx.mpc for i in A)):
                     # TODO: necessary to check also b?
                     x = ctx.cholesky_solve(A, b)
                 else:
