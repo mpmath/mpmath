@@ -117,7 +117,10 @@ def sign(ctx, x):
     if not x or ctx.isnan(x):
         return x
     if ctx._is_real_type(x):
-        return ctx.mpf(cmp(x, 0))
+        if x > 0:
+            return ctx.one
+        else:
+            return -ctx.one
     return x / abs(x)
 
 @defun

@@ -519,8 +519,14 @@ def mpf_cmp(s, t):
         return -1
     # This reduces to direct integer comparison
     if sexp == texp:
-        if ssign: return -cmp(sman, tman)
-        else:     return cmp(sman, tman)
+        if sman == tman:
+            return 0
+        if sman > tman:
+            if ssign: return -1
+            else:     return 1
+        else:
+            if ssign: return 1
+            else:     return -1
     # Check position of the highest set bit in each number. If
     # different, there is certainly an inequality.
     a = sbc + sexp
@@ -558,6 +564,13 @@ def mpf_ge(s, t):
     if s == fnan or t == fnan:
         return False
     return mpf_cmp(s, t) >= 0
+
+def mpf_min_max(seq):
+    min = max = seq[0]
+    for x in seq[1:]:
+        if mpf_lt(x, min): min = x
+        if mpf_gt(x, max): max = x
+    return min, max
 
 def mpf_pos(s, prec, rnd=round_fast):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified

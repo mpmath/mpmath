@@ -9,6 +9,7 @@ from libmpf import (
     prec_to_dps, repr_dps,
     fnan, finf, fninf, fzero, fhalf, fone, fnone,
     mpf_sign, mpf_lt, mpf_le, mpf_gt, mpf_ge, mpf_eq, mpf_cmp,
+    mpf_min_max,
     mpf_floor, from_int, to_int, to_str,
     mpf_abs, mpf_neg, mpf_pos, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_shift, mpf_pow_int)
@@ -150,9 +151,9 @@ def mpi_mul(s, t, prec):
         if fnan in cases:
             a, b = (fninf, finf)
         else:
-            cases = sorted(cases, cmp=mpf_cmp)
-            a = mpf_pos(cases[0], prec, round_floor)
-            b = mpf_pos(cases[-1], prec, round_ceiling)
+            a, b = mpf_min_max(cases)
+            a = mpf_pos(a, prec, round_floor)
+            b = mpf_pos(b, prec, round_ceiling)
     return a, b
 
 def mpi_div(s, t, prec):
