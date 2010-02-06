@@ -320,6 +320,36 @@ class StandardBaseContext(Context,
         finally:
             ctx.prec = prec
 
+    def mul_accurately(ctx, factors, check_step=1):
+        prec = ctx.prec
+        try:
+            extraprec = 10
+            while 1:
+                ctx.prec = prec + extraprec + 5
+                max_mag = ctx.ninf
+                one = ctx.one
+                s = one
+                k = 0
+                for factor in factors():
+                    s *= factor
+                    term = factor - one
+                    if (not k % check_step):
+                        term_mag = ctx.mag(term)
+                        max_mag = max(max_mag, term_mag)
+                        sum_mag = ctx.mag(s-one)
+                        if sum_mag - term_mag > ctx.prec:
+                            break
+                    k += 1
+                cancellation = max_mag - sum_mag
+                if cancellation != cancellation:
+                    break
+                if cancellation < extraprec or ctx._fixed_precision:
+                    break
+                extraprec += min(ctx.prec, cancellation)
+            return s
+        finally:
+            ctx.prec = prec
+
     def power(ctx, x, y):
         return ctx.convert(x) ** ctx.convert(y)
 
