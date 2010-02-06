@@ -1,38 +1,233 @@
-"""
-elliptic.py
+r"""
+Elliptic functions historically comprise the elliptic integrals
+and their inverses, and originate from the problem of computing the
+arc length of an ellipse. From a more modern point of view,
+an elliptic function is defined as a doubly periodic function, i.e.
+a function which satisfies
 
-Implements the Jacobi theta and Jacobi elliptic functions, using
-arbitrary precision math library
+.. math ::
 
-Author of the first version: M.T. Taschuk
+    f(z + 2 \omega_1) = f(z + 2 \omega_2) = f(z)
 
-References:
+for some half-periods `\omega_1, \omega_2` with
+`\mathrm{Im}[\omega_1 / \omega_2] > 0`. The canonical elliptic
+functions are the Jacobi elliptic functions. More broadly, this section
+includes  quasi-doubly periodic functions (such as the Jacobi theta
+functions) and other functions useful in the study of elliptic functions.
 
-[1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
-    (Dover duplicate of 1972 edition)
-[2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
-    Cambridge University Press
+Many different conventions for the arguments of
+elliptic functions are in use. It is even standard to use
+different parameterizations for different functions in the same
+text or software (and mpmath is no exception).
+The usual parameters are the elliptic nome `q`, which usually
+must satisfy `|q| < 1`; the elliptic parameter `m` (an arbitrary
+complex number); the elliptic modulus `k` (an arbitrary complex
+number); and the half-period ratio `\tau`, which usually must
+satisfy `\mathrm{Im}[\tau] > 0`.
+These quantities can be expressed in terms of each other
+using the following relations:
+
+.. math ::
+
+    m = k^2
+
+.. math ::
+
+    \tau = -i \frac{K(1-m)}{K(m)}
+
+.. math ::
+
+    q = e^{i \pi \tau}
+
+.. math ::
+
+    k = \frac{\vartheta_2^4(q)}{\vartheta_3^4(q)}
+
+For convenience, mpmath provides functions to convert
+between the various parameters (:func:`qfrom`, :func:`mfrom`,
+:func:`kfrom`, :func:`taufrom`).
+
+**References**
+
+1. [AbramowitzStegun]_
+
+2. [WhittakerWatson]_
+
 """
 
 from functions import defun, defun_wrapped
 
-@defun
-def calculate_nome(ctx, k):
-    k = ctx.convert(k)
-    if abs(k) > ctx.one:             # range error
-        raise ValueError
-    if k == ctx.zero:
-        return ctx.zero
-    elif k == ctx.one:
-        return ctx.one
-    else:
-        kprimesquared = ctx.one - k**2
-        kprime = ctx.sqrt(kprimesquared)
-        top = ctx.ellipk(kprimesquared)
-        bottom = ctx.ellipk(k**2)
-        argument = -ctx.pi*top/bottom
-        nome = ctx.exp(argument)
-        return nome
+def nome(ctx, m):
+    m = ctx.convert(m)
+    if not m:
+        return m
+    if m == ctx.one:
+        return m
+    if ctx.isnan(m):
+        return n
+    if ctx.isinf(m):
+        if m == ctx.ninf:
+            return type(m)(-1)
+        else:
+            return ctx.mpc(-1)
+    a = ctx.ellipk(ctx.one-m)
+    b = ctx.ellipk(m)
+    v = ctx.exp(-ctx.pi*a/b)
+    if not ctx._im(m) and ctx._re(m) < 1:
+        if ctx._is_real_type(m):
+            return v.real
+        else:
+            return v.real + 0j
+    elif m == 2:
+        v = ctx.mpc(0, v.imag)
+    return v
+
+@defun_wrapped
+def qfrom(ctx, q=None, m=None, k=None, tau=None):
+    r"""
+    Returns the elliptic nome `q`, given any of `q, m, k, \tau`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> qfrom(q=0.25)
+        0.25
+        >>> qfrom(m=mfrom(q=0.25))
+        0.25
+        >>> qfrom(k=kfrom(q=0.25))
+        0.25
+        >>> qfrom(tau=taufrom(q=0.25))
+        (0.25 + 0.0j)
+
+    """
+    if q is not None:
+        return ctx.convert(q)
+    if m is not None:
+        return nome(ctx, m)
+    if k is not None:
+        return nome(ctx, ctx.convert(k)**2)
+    if tau is not None:
+        return ctx.expjpi(tau)
+
+@defun_wrapped
+def taufrom(ctx, q=None, m=None, k=None, tau=None):
+    r"""
+    Returns the elliptic half-period ratio `\tau`, given any of
+    `q, m, k, \tau`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> taufrom(tau=0.5j)
+        (0.0 + 0.5j)
+        >>> taufrom(q=qfrom(tau=0.5j))
+        (0.0 + 0.5j)
+        >>> taufrom(m=mfrom(tau=0.5j))
+        (0.0 + 0.5j)
+        >>> taufrom(k=kfrom(tau=0.5j))
+        (0.0 + 0.5j)
+    """
+    if tau is not None:
+        return ctx.convert(tau)
+    if m is not None:
+        m = ctx.convert(m)
+        return ctx.j*ctx.ellipk(1-m)/ctx.ellipk(m)
+    if k is not None:
+        k = ctx.convert(k)
+        return ctx.j*ctx.ellipk(1-k**2)/ctx.ellipk(k**2)
+    if q is not None:
+        q = ctx.convert(q)
+        return ctx.log(q) / (ctx.pi*ctx.j)
+
+@defun_wrapped
+def kfrom(ctx, q=None, m=None, k=None, tau=None):
+    r"""
+    Returns the elliptic modulus `k`, given any of
+    `q, m, k, \tau`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> kfrom(k=0.25)
+        0.25
+        >>> kfrom(m=mfrom(k=0.25))
+        0.25
+        >>> kfrom(q=qfrom(k=0.25))
+        0.25
+        >>> kfrom(tau=taufrom(k=0.25))
+        (0.25 + 0.0j)
+
+    As `q \to 1` and `q \to -1`, `k` rapidly approaches
+    `1` and `i \infty` respectively::
+
+        >>> kfrom(q=0.75)
+        0.9999999999999899166471767
+        >>> kfrom(q=-0.75)
+        (0.0 + 7041781.096692038332790615j)
+        >>> kfrom(q=1)
+        1
+        >>> kfrom(q=-1)
+        (0.0 + +infj)
+    """
+    if k is not None:
+        return ctx.convert(k)
+    if m is not None:
+        return ctx.sqrt(m)
+    if tau is not None:
+        q = ctx.expjpi(tau)
+    if q == 1:
+        return q
+    if q == -1:
+        return ctx.mpc(0,'inf')
+    return (ctx.jtheta(2,0,q)/ctx.jtheta(3,0,q))**2
+
+@defun_wrapped
+def mfrom(ctx, q=None, m=None, k=None, tau=None):
+    r"""
+    Returns the elliptic parameter `m`, given any of
+    `q, m, k, \tau`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> mfrom(m=0.25)
+        0.25
+        >>> mfrom(q=qfrom(m=0.25))
+        0.25
+        >>> mfrom(k=kfrom(m=0.25))
+        0.25
+        >>> mfrom(tau=taufrom(m=0.25))
+        (0.25 + 0.0j)
+
+    As `q \to 1` and `q \to -1`, `m` rapidly approaches
+    `1` and `-\infty` respectively::
+
+        >>> mfrom(q=0.75)
+        0.9999999999999798332943533
+        >>> mfrom(q=-0.75)
+        -49586681013729.32611558353
+        >>> mfrom(q=1)
+        1.0
+        >>> mfrom(q=-1)
+        -inf
+
+    The inverse nome as a function of `q` has an integer
+    Taylor series expansion::
+
+        >>> taylor(lambda q: mfrom(q), 0, 7)
+        [0.0, 16.0, -128.0, 704.0, -3072.0, 11488.0, -38400.0, 117632.0]
+
+    """
+    if m is not None:
+        return m
+    if k is not None:
+        return k**2
+    if tau is not None:
+        q = ctx.expjpi(tau)
+    if q == 1:
+        return ctx.convert(q)
+    if q == -1:
+        return q*ctx.inf
+    v = (ctx.jtheta(2,0,q)/ctx.jtheta(3,0,q))**4
+    if ctx._is_real_type(q) and q < 0:
+        v = v.real
+    return v
 
 @defun
 def _jacobi_theta2(ctx, z, q):
@@ -1082,67 +1277,59 @@ def _djtheta(ctx, n, z, q, derivative=1):
         ctx.prec = prec0
     return +res
 
-@defun
-def jsn(ctx, u, m):
-    if abs(m) < ctx.eps:
-        return ctx.sin(u)
-    elif m == ctx.one:
-        return ctx.tanh(u)
-    else:
-        extra = 10
-    try:
-        ctx.prec += extra
-        q = ctx.calculate_nome(ctx.sqrt(m))
-        v3 = ctx.jtheta(3, 0, q)
-        v2 = ctx.jtheta(2, 0, q)        # mathworld says v4
-        arg1 = u / (v3*v3)
-        v1 = ctx.jtheta(1, arg1, q)
-        v4 = ctx.jtheta(4, arg1, q)
-        sn = (v3/v2)*(v1/v4)
-    finally:
-        ctx.prec -= extra
-    return sn
+jacobi_spec = {
+  'sn' : ([3],[2],[1],[4], 'sin', 'tanh'),
+  'cn' : ([4],[2],[2],[4], 'cos', 'sech'),
+  'dn' : ([4],[3],[3],[4], '1', 'sech'),
+  'ns' : ([2],[3],[4],[1], 'csc', 'coth'),
+  'nc' : ([2],[4],[4],[2], 'sec', 'cosh'),
+  'nd' : ([3],[4],[4],[3], '1', 'cosh'),
+  'sc' : ([3],[4],[1],[2], 'tan', 'sinh'),
+  'sd' : ([3,3],[2,4],[1],[3], 'sin', 'sinh'),
+  'cd' : ([3],[2],[2],[3], 'cos', '1'),
+  'cs' : ([4],[3],[2],[1], 'cot', 'csch'),
+  'dc' : ([2],[3],[3],[2], 'sec', '1'),
+  'ds' : ([2,4],[3,3],[3],[1], 'csc', 'csch'),
+  'cc' : None,
+  'ss' : None,
+  'nn' : None,
+  'dd' : None
+}
 
 @defun
-def jcn(ctx, u, m):
-    if abs(m) < ctx.eps:
-        return ctx.cos(u)
-    elif m == ctx.one:
-        return ctx.sech(u)
-    else:
-        extra = 10
+def ellipfun(ctx, kind, u=None, m=None, q=None, k=None, tau=None):
     try:
-        ctx.prec += extra
-        q = ctx.calculate_nome(ctx.sqrt(m))
-        v3 = ctx.jtheta(3, 0, q)
-        v2 = ctx.jtheta(2, 0, q)
-        v04 = ctx.jtheta(4, 0, q)
-        arg1 = u / (v3*v3)
-        v1 = ctx.jtheta(2, arg1, q)
-        v4 = ctx.jtheta(4, arg1, q)
-        cn = (v04/v2)*(v1/v4)
-    finally:
-        ctx.prec -= extra
-    return +cn
-
-@defun
-def jdn(ctx, u, m):
-    if m == ctx.zero:
-        return ctx.one
-    elif m == ctx.one:
-        return ctx.sech(u)
-    else:
-        extra = 10
+        S = jacobi_spec[kind]
+    except KeyError:
+        raise ValueError("First argument must be a two-character string "
+            "containing 's', 'c', 'd' or 'n', e.g.: 'sn'")
+    if u is None:
+        def f(*args, **kwargs):
+            return ctx.ellipfun(kind, *args, **kwargs)
+        f.__name__ = kind
+        return f
+    prec = ctx.prec
     try:
-        ctx.prec += extra
-        q = ctx.calculate_nome(ctx.sqrt(m))
-        v3 = ctx.jtheta(3, 0, q)
-        v2 = ctx.jtheta(2, 0, q)
-        v04 = ctx.jtheta(4, 0, q)
-        arg1 = u / (v3*v3)
-        v1 = ctx.jtheta(3, arg1, q)
-        v4 = ctx.jtheta(4, arg1, q)
-        cn = (v04/v3)*(v1/v4)
+        ctx.prec += 10
+        u = ctx.convert(u)
+        q = ctx.qfrom(m=m, q=q, k=k, tau=tau)
+        if S is None:
+            v = ctx.one + 0*q*u
+        elif q == ctx.zero:
+            if S[4] == '1': v = ctx.one
+            else:           v = getattr(ctx, S[4])(u)
+            v += 0*q*u
+        elif q == ctx.one:
+            if S[5] == '1': v = ctx.one
+            else:           v = getattr(ctx, S[5])(u)
+            v += 0*q*u
+        else:
+            t = u / ctx.jtheta(3, 0, q)**2
+            v = ctx.one
+            for a in S[0]: v *= ctx.jtheta(a, 0, q)
+            for b in S[1]: v /= ctx.jtheta(b, 0, q)
+            for c in S[2]: v *= ctx.jtheta(c, t, q)
+            for d in S[3]: v /= ctx.jtheta(d, t, q)
     finally:
-        ctx.prec -= extra
-    return +cn
+        ctx.prec = prec
+    return +v

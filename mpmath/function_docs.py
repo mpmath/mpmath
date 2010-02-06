@@ -8191,92 +8191,95 @@ Coulomb wave functions, and automatically cached to make multiple
 evaluations with fixed `l`, `\eta` fast.
 """
 
-jsn =r"""
-Computes of the Jacobi elliptic sn function in terms
-of Jacobi theta functions.
-`u` is any complex number, `m` must be in the unit disk.
+ellipfun = r"""
+Computes any of the Jacobi elliptic functions, defined
+in terms of Jacobi theta functions as
+
+.. math ::
+
+    \mathrm{sn}(u,m) = \frac{\vartheta_3(0,q)}{\vartheta_2(0,q)}
+        \frac{\vartheta_1(t,q)}{\vartheta_4(t,q)}
+
+    \mathrm{cn}(u,m) = \frac{\vartheta_4(0,q)}{\vartheta_2(0,q)}
+        \frac{\vartheta_2(t,q)}{\vartheta_4(t,q)}
+
+    \mathrm{dn}(u,m) = \frac{\vartheta_4(0,q)}{\vartheta_3(0,q)}
+        \frac{\vartheta_3(t,q)}{\vartheta_4(t,q)},
+
+or more generally computes a ratio of two such functions. Here
+`t = u/\vartheta_3(0,q)^2`, and `q = q(m)` denotes the nome (see
+:func:`nome`). Optionally, you can specify the nome directly
+instead of `m` by passing ``q=<value>``, or you can directly
+specify the elliptic parameter `k` with ``k=<value>``.
+
+The first argument should be a two-character string specifying the
+function using any combination of ``'s'``, ``'c'``, ``'d'``, ``'n'``. These
+letters respectively denote the basic functions
+`\mathrm{sn}(u,m)`, `\mathrm{cn}(u,m)`, `\mathrm{dn}(u,m)`, and `1`.
+The identifier specifies the ratio of two such functions.
+For example, ``'ns'`` identifies the function
+
+.. math ::
+
+    \mathrm{ns}(u,m) = \frac{1}{\mathrm{sn}(u,m)}
+
+and ``'cd'`` identifies the function
+
+.. math ::
+
+    \mathrm{cd}(u,m) = \frac{\mathrm{cn}(u,m)}{\mathrm{dn}(u,m)}.
+
+If called with only the first argument, a function object
+evaluating the chosen function for given arguments is returned.
+
+**Examples**
+
+Basic evaluation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> ellipfun('cd', 3.5, 0.5)
+    -0.9891101840595543931308394
+    >>> ellipfun('cd', 3.5, q=0.25)
+    0.07111979240214668158441418
 
 The sn-function is doubly periodic in the complex plane with periods
 `4 K(m)` and `2 i K(1-m)` (see :func:`ellipk`)::
 
-    >>> from mpmath import *
-    >>> mp.dps = 25; mp.pretty = True
-    >>> jsn(2, 0.25)
+    >>> sn = ellipfun('sn')
+    >>> sn(2, 0.25)
     0.9628981775982774425751399
-    >>> jsn(2+4*ellipk(0.25), 0.25)
+    >>> sn(2+4*ellipk(0.25), 0.25)
     0.9628981775982774425751399
-    >>> chop(jsn(2+2*j*ellipk(1-0.25), 0.25))
+    >>> chop(sn(2+2*j*ellipk(1-0.25), 0.25))
     0.9628981775982774425751399
+
+The cn-function is doubly periodic with periods `4 K(m)` and `4 i K(1-m)`::
+
+    >>> cn = ellipfun('cn')
+    >>> cn(2, 0.25)
+    -0.2698649654510865792581416
+    >>> cn(2+4*ellipk(0.25), 0.25)
+    -0.2698649654510865792581416
+    >>> chop(cn(2+4*j*ellipk(1-0.25), 0.25))
+    -0.2698649654510865792581416
+
+The dn-function is doubly periodic with periods `2 K(m)` and `4 i K(1-m)`::
+
+    >>> dn = ellipfun('dn')
+    >>> dn(2, 0.25)
+    0.8764740583123262286931578
+    >>> dn(2+2*ellipk(0.25), 0.25)
+    0.8764740583123262286931578
+    >>> chop(dn(2+4*j*ellipk(1-0.25), 0.25))
+    0.8764740583123262286931578
+
 """
 
-jcn = r"""
-Computes of the Jacobi elliptic cn function in terms
-of Jacobi theta functions.
-`u` is any complex number, `m` must be in the unit disk
-
-The cn-function is doubly periodic in the complex
-plane with periods `4 K(m)` and `4 i K(1-m)`
-(see :func:`ellipk`)::
-
-    >>> from mpmath import *
-    >>> mp.dps = 25; mp.pretty = True
-    >>> jcn(2, 0.25)
-    -0.2698649654510865792581416
-    >>> jcn(2+4*ellipk(0.25), 0.25)
-    -0.2698649654510865792581416
-    >>> chop(jcn(2+4*j*ellipk(1-0.25), 0.25))
-    -0.2698649654510865792581416
-"""
-
-jdn = r"""
-Computes of the Jacobi elliptic dn function in terms
-of Jacobi theta functions.
-`u` is any complex number, `m` must be in the unit disk
-
-The dn-function is doubly periodic in the complex
-plane with periods `2 K(m)` and `4 i K(1-m)`
-(see :func:`ellipk`)::
-
-    >>> from mpmath import *
-    >>> mp.dps = 25; mp.pretty = True
-    >>> jdn(2, 0.25)
-    0.8764740583123262286931578
-    >>> jdn(2+2*ellipk(0.25), 0.25)
-    0.8764740583123262286931578
-    >>> chop(jdn(2+4*j*ellipk(1-0.25), 0.25))
-    0.8764740583123262286931578
-"""
 
 jtheta = r"""
 Computes the Jacobi theta function `\vartheta_n(z, q)`, where
-`n = 1, 2, 3, 4`. The theta functions are functions of two
-variables:
-
-* `z` is the *argument*, an arbitrary real or complex number
-
-* `q` is the *nome*, which must be a real or complex number
-  in the unit disk (i.e. `|q| < 1`)
-
-One also commonly encounters the notation `\vartheta_n(z, \tau)`
-in the literature. The variable `\tau` is called the *parameter*
-and can be converted to a nome using the formula
-`q = \exp(i \pi \tau)`. Note the condition `|q| < 1` requires
-`\Im(\tau) > 0`; i.e. Jacobi theta functions are defined for
-`\tau` in the upper half plane.
-
-Other notations are also in use. For example, some authors use
-the single-argument form `\vartheta_n(x)`. Depending on context,
-this can mean ``jtheta(n, 0, x)``, ``jtheta(n, x, q)``, or possibly
-something else. Needless to say, it is a good idea to cross-check
-the definitions when working with theta functions.
-
-Optionally, ``jtheta(n, z, q, derivative=d)`` with `d > 0` computes
-a `d`-th derivative with respect to `z`.
-
-**Definition**
-
-The four Jacobi theta functions as implemented by :func:`jtheta`
-are defined by the following infinite series:
+`n = 1, 2, 3, 4`, defined by the infinite series:
 
 .. math ::
 
@@ -8292,9 +8295,23 @@ are defined by the following infinite series:
   \vartheta_4(z,q) = 1 + 2 \sum_{n=1}^{\infty}
     (-q)^{n^2\,} \cos(2 n z)
 
-For `|q| \ll 1`, these series converge very quickly, so the
-Jacobi theta functions can efficiently be evaluated to high
-precision.
+The theta functions are functions of two variables:
+
+* `z` is the *argument*, an arbitrary real or complex number
+
+* `q` is the *nome*, which must be a real or complex number
+  in the unit disk (i.e. `|q| < 1`). For `|q| \ll 1`, the
+  series converge very quickly, so the Jacobi theta functions
+  can efficiently be evaluated to high precision.
+
+The compact notations `\vartheta_n(q) = \vartheta_n(0,q)`
+and `\vartheta_n = \vartheta_n(0,q)` are also frequently
+encountered. Finally, Jacobi theta functions are frequently
+considered as functions of the half-period ratio `\tau`
+and then usually denoted by `\vartheta_n(z|\tau)`.
+
+Optionally, ``jtheta(n, z, q, derivative=d)`` with `d > 0` computes
+a `d`-th derivative with respect to `z`.
 
 **Examples and basic properties**
 

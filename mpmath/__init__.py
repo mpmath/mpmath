@@ -30,11 +30,12 @@ mag = mp.mag
 
 bernfrac = mp.bernfrac
 
-jdn = mp.jdn
-jsn = mp.jsn
-jcn = mp.jcn
+qfrom = mp.qfrom
+mfrom = mp.mfrom
+kfrom = mp.kfrom
+taufrom = mp.taufrom
+ellipfun = mp.ellipfun
 jtheta = mp.jtheta
-calculate_nome = mp.calculate_nome
 
 nint_distance = mp.nint_distance
 
