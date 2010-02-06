@@ -57,7 +57,7 @@ class FPContext(StandardBaseContext):
                 return f(ctx, *args, **kwargs)
         else:
             f_wrapped = f
-        f_wrapped.__doc__ = function_docs.__dict__.get(name, "<no doc>")
+        f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
         setattr(cls, name, f_wrapped)
 
     def bernoulli(ctx, n):
