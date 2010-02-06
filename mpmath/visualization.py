@@ -3,9 +3,10 @@ Plotting (requires matplotlib)
 """
 
 from colorsys import hsv_to_rgb, hls_to_rgb
+from libmp import NoConvergence
 
 class VisualizationMethods(object):
-    plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError)
+    plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError, NoConvergence)
 
 def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
     singularities=[], axes=None):
