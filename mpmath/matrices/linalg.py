@@ -392,7 +392,7 @@ class LinearAlgebraMethods(object):
             norm = ctx.norm
         prec = ctx.prec
         try:
-            prec += 10
+            ctx.prec += 10
             # do not overwrite A nor b
             A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
             if A.rows < A.cols:
@@ -446,7 +446,7 @@ class LinearAlgebraMethods(object):
         """
         prec = ctx.prec
         try:
-            prec += 10
+            ctx.prec += 10
             # do not overwrite A nor b
             A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
             if A.rows !=  A.cols:
