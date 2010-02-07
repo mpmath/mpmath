@@ -136,36 +136,6 @@ def qfac(ctx, z, q, **kwargs):
         return ctx.qp(q, q, n, **kwargs) / (1-q)**n
     return ctx.qgamma(z+1, q, **kwargs)
 
-
-
-"""
-from mpmath import *
-mp.dps = 25; mp.pretty = True
-nomeinv(0.75)
-nomeinv(-0.75)
-
-
-
-nomeinv(nome(2+3j))
-
-
-
-from mpmath import *
-mp.qp(0.5,0.5,2.0)
-
-
-mp.qfac(2, 0.5)
-
-
-from mpmath import *
-mp.qgamma(6, 0.5); 9765./1024
-mp.qfac(5, 0.5)
-
-
-"""
-
-
-
 @defun
 def qhyper(ctx, a_s, b_s, q, z, **kwargs):
     r"""
@@ -184,8 +154,6 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
         \frac{z^n}{(q;q)_n}
 
     where `(a;q)_n` denotes the q-Pochhammer symbol (see :func:`qp`).
-
-
     """
     #a_s = [ctx._convert_param(a)[0] for a in a_s]
     #b_s = [ctx._convert_param(b)[0] for b in b_s]
@@ -222,19 +190,3 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
             if k > maxterms:
                 raise ctx.NoConvergence
     return ctx.sum_accurately(terms)
-
-
-"""
-from mpmath import *
-mp.qhyper([0.5],[0.6],0.3-0.2j,0.9)
-mp.qhyper([0.5],[0.6,0.4],0.3-0.2j,0.9)
-mp.qhyper([],['1/3','1/3',0],'1/9',10)
-1/timing(mp.qhyper, [],['1/3','1/3',0],'1/9',10)
-
-
-
-
-
-
-
-"""

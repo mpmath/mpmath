@@ -39,6 +39,11 @@ ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
 
+qp = mp.qp
+qhyper = mp.qhyper
+qgamma = mp.qgamma
+qfac = mp.qfac
+
 nint_distance = mp.nint_distance
 
 plot = mp.plot
