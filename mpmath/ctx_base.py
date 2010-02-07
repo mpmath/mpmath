@@ -93,9 +93,11 @@ class StandardBaseContext(Context,
             if abs(x) < tol:
                 return ctx.zero
             if ctx._is_complex_type(x):
-                if abs(x.imag) < min(tol, absx*tol):
+                #part_tol = min(tol, absx*tol)
+                part_tol = max(tol, absx*tol)
+                if abs(x.imag) < part_tol:
                     return x.real
-                if abs(x.real) < min(tol, absx*tol):
+                if abs(x.real) < part_tol:
                     return ctx.mpc(0, x.imag)
         except TypeError:
             if isinstance(x, ctx.matrix):
