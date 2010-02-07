@@ -34,8 +34,10 @@ qfrom = mp.qfrom
 mfrom = mp.mfrom
 kfrom = mp.kfrom
 taufrom = mp.taufrom
+qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
+kleinj = mp.kleinj
 
 nint_distance = mp.nint_distance
 
@@ -92,6 +94,7 @@ richardson = mp.richardson
 shanks = mp.shanks
 nsum = mp.nsum
 nprod = mp.nprod
+difference = mp.difference
 diff = mp.diff
 diffs = mp.diffs
 diffun = mp.diffun

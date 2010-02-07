@@ -43,9 +43,16 @@ using the following relations:
 
     k = \frac{\vartheta_2^4(q)}{\vartheta_3^4(q)}
 
+In addition, an alternative definition is used for the nome in
+number theory, which we here denote by q-bar:
+
+.. math ::
+
+    \bar{q} = q^2 = e^{2 i \pi \tau}
+
 For convenience, mpmath provides functions to convert
 between the various parameters (:func:`qfrom`, :func:`mfrom`,
-:func:`kfrom`, :func:`taufrom`).
+:func:`kfrom`, :func:`taufrom`, :func:`qbarfrom`).
 
 **References**
 
@@ -83,9 +90,9 @@ def nome(ctx, m):
     return v
 
 @defun_wrapped
-def qfrom(ctx, q=None, m=None, k=None, tau=None):
+def qfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     r"""
-    Returns the elliptic nome `q`, given any of `q, m, k, \tau`::
+    Returns the elliptic nome `q`, given any of `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import *
         >>> mp.dps = 25; mp.pretty = True
@@ -97,6 +104,8 @@ def qfrom(ctx, q=None, m=None, k=None, tau=None):
         0.25
         >>> qfrom(tau=taufrom(q=0.25))
         (0.25 + 0.0j)
+        >>> qfrom(qbar=qbarfrom(q=0.25))
+        0.25
 
     """
     if q is not None:
@@ -107,12 +116,45 @@ def qfrom(ctx, q=None, m=None, k=None, tau=None):
         return nome(ctx, ctx.convert(k)**2)
     if tau is not None:
         return ctx.expjpi(tau)
+    if qbar is not None:
+        return ctx.sqrt(qbar)
 
 @defun_wrapped
-def taufrom(ctx, q=None, m=None, k=None, tau=None):
+def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
+    r"""
+    Returns the number-theoretic nome `\bar q`, given any of
+    `q, m, k, \tau, \bar{q}`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> qbarfrom(qbar=0.25)
+        0.25
+        >>> qbarfrom(q=qfrom(qbar=0.25))
+        0.25
+        >>> qbarfrom(m=extraprec(20)(mfrom)(qbar=0.25))  # ill-conditioned
+        0.25
+        >>> qbarfrom(k=extraprec(20)(kfrom)(qbar=0.25))  # ill-conditioned
+        0.25
+        >>> qbarfrom(tau=taufrom(qbar=0.25))
+        (0.25 + 0.0j)
+
+    """
+    if qbar is not None:
+        return ctx.convert(qbar)
+    if q is not None:
+        return ctx.convert(q) ** 2
+    if m is not None:
+        return nome(ctx, m) ** 2
+    if k is not None:
+        return nome(ctx, ctx.convert(k)**2) ** 2
+    if tau is not None:
+        return ctx.expjpi(2*tau)
+
+@defun_wrapped
+def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     r"""
     Returns the elliptic half-period ratio `\tau`, given any of
-    `q, m, k, \tau`::
+    `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import *
         >>> mp.dps = 25; mp.pretty = True
@@ -124,6 +166,9 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None):
         (0.0 + 0.5j)
         >>> taufrom(k=kfrom(tau=0.5j))
         (0.0 + 0.5j)
+        >>> taufrom(qbar=qbarfrom(tau=0.5j))
+        (0.0 + 0.5j)
+
     """
     if tau is not None:
         return ctx.convert(tau)
@@ -134,14 +179,16 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None):
         k = ctx.convert(k)
         return ctx.j*ctx.ellipk(1-k**2)/ctx.ellipk(k**2)
     if q is not None:
-        q = ctx.convert(q)
         return ctx.log(q) / (ctx.pi*ctx.j)
+    if qbar is not None:
+        qbar = ctx.convert(qbar)
+        return ctx.log(qbar) / (2*ctx.pi*ctx.j)
 
 @defun_wrapped
-def kfrom(ctx, q=None, m=None, k=None, tau=None):
+def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     r"""
     Returns the elliptic modulus `k`, given any of
-    `q, m, k, \tau`::
+    `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import *
         >>> mp.dps = 25; mp.pretty = True
@@ -153,6 +200,8 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None):
         0.25
         >>> kfrom(tau=taufrom(k=0.25))
         (0.25 + 0.0j)
+        >>> kfrom(qbar=qbarfrom(k=0.25))
+        0.25
 
     As `q \to 1` and `q \to -1`, `k` rapidly approaches
     `1` and `i \infty` respectively::
@@ -172,6 +221,8 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None):
         return ctx.sqrt(m)
     if tau is not None:
         q = ctx.expjpi(tau)
+    if qbar is not None:
+        q = ctx.sqrt(qbar)
     if q == 1:
         return q
     if q == -1:
@@ -179,10 +230,10 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None):
     return (ctx.jtheta(2,0,q)/ctx.jtheta(3,0,q))**2
 
 @defun_wrapped
-def mfrom(ctx, q=None, m=None, k=None, tau=None):
+def mfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     r"""
     Returns the elliptic parameter `m`, given any of
-    `q, m, k, \tau`::
+    `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import *
         >>> mp.dps = 25; mp.pretty = True
@@ -194,6 +245,8 @@ def mfrom(ctx, q=None, m=None, k=None, tau=None):
         0.25
         >>> mfrom(tau=taufrom(m=0.25))
         (0.25 + 0.0j)
+        >>> mfrom(qbar=qbarfrom(m=0.25))
+        0.25
 
     As `q \to 1` and `q \to -1`, `m` rapidly approaches
     `1` and `-\infty` respectively::
@@ -220,6 +273,8 @@ def mfrom(ctx, q=None, m=None, k=None, tau=None):
         return k**2
     if tau is not None:
         q = ctx.expjpi(tau)
+    if qbar is not None:
+        q = ctx.sqrt(qbar)
     if q == 1:
         return ctx.convert(q)
     if q == -1:
@@ -1333,3 +1388,91 @@ def ellipfun(ctx, kind, u=None, m=None, q=None, k=None, tau=None):
     finally:
         ctx.prec = prec
     return +v
+
+@defun_wrapped
+def kleinj(ctx, tau=None, **kwargs):
+    r"""
+    Evaluates the Klein j-invariant, which is a modular function defined for
+    `\tau` in the upper half-plane as
+
+    .. math ::
+
+        J(\tau) = \frac{g_2^3(\tau)}{g_2^3(\tau) - 27 g_3^2(\tau)}
+
+    where `g_2` and `g_3` are the modular invariants of the Weierstrass
+    elliptic function,
+
+    .. math ::
+
+        g_2(\tau) = 60 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-4}
+
+        g_3(\tau) = 140 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-6}.
+
+    An alternative, common notation is that of the j-function
+    `j(\tau) = 1728 J(\tau)`.
+
+    **Examples**
+
+    Verifying the functional equation `J(\tau) = J(\tau+1) = J(-\tau^{-1})`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> tau = 0.625+0.75*j
+        >>> tau = 0.625+0.75*j
+        >>> kleinj(tau)
+        (-0.1507492166511182267125242 + 0.07595948379084571927228948j)
+        >>> kleinj(tau+1)
+        (-0.1507492166511182267125242 + 0.07595948379084571927228948j)
+        >>> kleinj(-1/tau)
+        (-0.1507492166511182267125242 + 0.07595948379084571927228946j)
+
+    The j-function has a famous Laurent series expansion in terms of the nome
+    `\bar{q}`, `j(\tau) = \bar{q}^{-1} + 744 + 196884\bar{q} + \ldots`::
+
+        >>> mp.dps = 15
+        >>> taylor(lambda q: 1728*q*kleinj(qbar=q), 0, 5, singular=True)
+        [1.0, 744.0, 196884.0, 21493760.0, 864299970.0, 20245856256.0]
+
+    The j-function admits exact evaluation at special algebraic points
+    related to the Heegner numbers 1, 2, 3, 7, 11, 19, 43, 67, 163::
+
+        >>> @extraprec(10)
+        ... def h(n):
+        ...     v = (1+sqrt(n)*j)
+        ...     if n > 2:
+        ...         v *= 0.5
+        ...     return v
+        ...
+        >>> mp.dps = 25
+        >>> for n in [1,2,3,7,11,19,43,67,163]:
+        ...     n, chop(1728*kleinj(h(n)))
+        ...
+        (1, 1728.0)
+        (2, 8000.0)
+        (3, 0.0)
+        (7, -3375.0)
+        (11, -32768.0)
+        (19, -884736.0)
+        (43, -884736000.0)
+        (67, -147197952000.0)
+        (163, -262537412640768000.0)
+
+    Also at other special points, the j-function assumes explicit
+    algebraic values, e.g.::
+
+        >>> chop(1728*kleinj(j*sqrt(5)))
+        1264538.909475140509320227
+        >>> identify(cbrt(_))      # note: not simplified
+        '((100+sqrt(13520))/2)'
+        >>> (50+26*sqrt(5))**3
+        1264538.909475140509320227
+
+    """
+    q = ctx.qfrom(tau=tau, **kwargs)
+    t2 = ctx.jtheta(2,0,q)
+    t3 = ctx.jtheta(3,0,q)
+    t4 = ctx.jtheta(4,0,q)
+    P = (t2**8 + t3**8 + t4**8)**3
+    Q = 54*(t2*t3*t4)**8
+    return P/Q
+
