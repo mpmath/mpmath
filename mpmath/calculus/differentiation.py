@@ -5,7 +5,7 @@ from calculus import defun
 #----------------------------------------------------------------------------#
 
 @defun
-def difference_delta(ctx, s, n):
+def difference(ctx, s, n):
     r"""
     Given a sequence `(s_k)` containing at least `n+1` items, returns the
     `n`-th forward difference,
@@ -22,15 +22,48 @@ def difference_delta(ctx, s, n):
         b = (b * (k-n)) // (k+1)
     return d
 
+def hsteps(ctx, f, x, n, prec, **options):
+    singular = options.get('singular')
+    addprec = options.get('addprec', 10)
+    direction = options.get('direction', 0)
+    workprec = (prec+2*addprec) * (n+1)
+    orig = ctx.prec
+    try:
+        ctx.prec = workprec
+        h = options.get('h')
+        if h is None:
+            if options.get('relative'):
+                hextramag = int(ctx.mag(x))
+            else:
+                hextramag = 0
+            h = ctx.ldexp(1, -prec-addprec-hextramag)
+        else:
+            h = ctx.convert(h)
+        # Directed: steps x, x+h, ... x+n*h
+        direction = options.get('direction', 0)
+        if direction:
+            h *= ctx.sign(direction)
+            steps = xrange(n+1)
+            norm = h
+        # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
+        else:
+            steps = xrange(-n, n+1, 2)
+            norm = (2*h)
+        # Perturb
+        if singular:
+            x += 0.5*h
+        values = [f(x+k*h) for k in steps]
+        return values, norm, workprec
+    finally:
+        ctx.prec = orig
+
+
 @defun
-def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
+def diff(ctx, f, x, n=1, **options):
     r"""
     Numerically computes the derivative of `f`, `f'(x)`. Optionally,
-    computes the `n`-th derivative, `f^{(n)}(x)`, for any order `n`.
-
-    **Basic examples**
-
-    Derivatives of a simple function::
+    computes the `n`-th derivative, `f^{(n)}(x)`, for any nonnegative
+    integer `n`. A few basic examples are::
 
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
@@ -40,65 +73,53 @@ def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
         2.0
         >>> diff(lambda x: x**2 + x, 1.0, 3)
         0.0
-
-    The exponential function is invariant under differentiation::
-
-        >>> nprint([diff(exp, 3, n) for n in range(5)])
+        >>> nprint([diff(exp, 3, n) for n in range(5)])   # exp'(x) = exp(x)
         [20.0855, 20.0855, 20.0855, 20.0855, 20.0855]
 
-    **Method**
+    **Options**
 
-    One of two differentiation algorithms can be chosen with the
-    ``method`` keyword argument. The two options are ``'step'``,
-    and ``'quad'``. The default method is ``'step'``.
+    The following optional keyword arguments are recognized:
 
-    ``'step'``:
+    ``method``
+        Supported methods are ``'step'`` or ``'quad'``: derivatives may be
+        computed using either a finite difference with a small step
+        size `h` (default), or numerical quadrature.
+    ``direction``
+        Direction of finite difference: can be -1 for a left
+        difference, 0 for a central difference (default), or +1
+        for a right difference; more generally can be any complex number.
+    ``addprec``
+        Extra precision for `h` used to account for the function's
+        sensitivity to perturbations (default = 10).
+    ``relative``
+        Choose `h` relative to the magnitude of `x`, rather than an
+        absolute value; useful for large or tiny `x` (default = False).
+    ``h``
+        As an alternative to ``addprec`` and ``relative``, manually
+        select the step size `h`.
+    ``singular``
+        If True, evaluation exactly at the point `x` is avoided; this is
+        useful for differentiating functions with removable singularities.
+        Default = False.
+    ``radius``
+        Radius of integration contour (with ``method = 'quad'``). 
+        Default = 0.25. A larger radius typically is faster and more
+        accurate, but it must be chosen so that `f` has no
+        singularities within the radius from the evaluation point.
 
-        The derivative is computed using a finite difference
-        approximation, with a small step h. This requires n+1 function
-        evaluations and must be performed at (n+1) times the target
-        precision. Accordingly, f must support fast evaluation at high
-        precision.
+    A finite difference requires `n+1` function evaluations and must be
+    performed at `(n+1)` times the target precision. Accordingly, `f` must
+    support fast evaluation at high precision.
 
-    ``'quad'``:
+    With integration, a larger number of function evaluations is
+    required, but not much extra precision is required. For high order
+    derivatives, this method may thus be faster if f is very expensive to
+    evaluate at high precision.
 
-        The derivative is computed using complex
-        numerical integration. This requires a larger number of function
-        evaluations, but the advantage is that not much extra precision
-        is required. For high order derivatives, this method may thus
-        be faster if f is very expensive to evaluate at high precision.
+    **Further examples**
 
-    With ``'quad'`` the result is likely to have a small imaginary
-    component even if the derivative is actually real::
-
-        >>> diff(sqrt, 1, method='quad')    # doctest:+ELLIPSIS
-        (0.5 - 9.44...e-27j)
-
-    **Scale**
-
-    The scale option specifies the scale of variation of f. The step
-    size in the finite difference is taken to be approximately
-    eps*scale. Thus, for example if `f(x) = \cos(1000 x)`, the scale
-    should be set to 1/1000 and if `f(x) = \cos(x/1000)`, the scale
-    should be 1000. By default, scale = 1.
-
-    (In practice, the default scale will work even for `\cos(1000 x)` or
-    `\cos(x/1000)`. Changing this parameter is a good idea if the scale
-    is something *preposterous*.)
-
-    If numerical integration is used, the radius of integration is
-    taken to be equal to scale/2. Note that f must not have any
-    singularities within the circle of radius scale/2 centered around
-    x. If possible, a larger scale value is preferable because it
-    typically makes the integration faster and more accurate.
-
-    **Direction**
-
-    By default, :func:`diff` uses a central difference approximation.
-    This corresponds to direction=0. Alternatively, it can compute a
-    left difference (direction=-1) or right difference (direction=1).
-    This is useful for computing left- or right-sided derivatives
-    of nonsmooth functions:
+    The direction option is useful for computing left- or right-sided
+    derivatives of nonsmooth functions::
 
         >>> diff(abs, 0, direction=0)
         0.0
@@ -110,36 +131,41 @@ def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
     More generally, if the direction is nonzero, a right difference
     is computed where the step size is multiplied by sign(direction).
     For example, with direction=+j, the derivative from the positive
-    imaginary direction will be computed.
+    imaginary direction will be computed::
 
-    This option only makes sense with method='step'. If integration
-    is used, it is assumed that f is analytic, implying that the
-    derivative is the same in all directions.
+        >>> diff(abs, 0, direction=j)
+        (0.0 - 1.0j)
+
+    With integration, the result may have a small imaginary part
+    even even if the result is purely real::
+
+        >>> diff(sqrt, 1, method='quad')    # doctest:+ELLIPSIS
+        (0.5 - 4.59...e-26j)
+        >>> chop(_)
+        0.5
+
+    Adding precision to obtain an accurate value::
+
+        >>> diff(cos, 1e-30)
+        0.0
+        >>> diff(cos, 1e-30, h=0.0001)
+        -9.99999998328279e-31
+        >>> diff(cos, 1e-30, addprec=100)
+        -1.0e-30
 
     """
-    if n == 0:
+    method = options.get('method', 'step')
+    if n == 0 and method != 'quad' and not options.get('singular'):
         return f(ctx.convert(x))
-    orig = ctx.prec
+    prec = ctx.prec
     try:
         if method == 'step':
-            ctx.prec = (orig+20) * (n+1)
-            h = ctx.ldexp(scale, -orig-10)
-            # Applying the finite difference formula recursively n times,
-            # we get a step sum weighted by a row of binomial coefficients
-            # Directed: steps x, x+h, ... x+n*h
-            if direction:
-                h *= ctx.sign(direction)
-                steps = xrange(n+1)
-                norm = h**n
-            # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
-            else:
-                steps = xrange(-n, n+1, 2)
-                norm = (2*h)**n
-            v = ctx.difference_delta([f(x+k*h) for k in steps], n)
-            v = v / norm
+            values, norm, workprec = hsteps(ctx, f, x, n, prec, **options)
+            ctx.prec = workprec
+            v = ctx.difference(values, n) / norm**n
         elif method == 'quad':
             ctx.prec += 10
-            radius = ctx.mpf(scale)/2
+            radius = ctx.convert(options.get('radius', 0.25))
             def g(t):
                 rei = radius*ctx.expj(t)
                 z = x + rei
@@ -149,11 +175,11 @@ def diff(ctx, f, x, n=1, method='step', scale=1, direction=0):
         else:
             raise ValueError("unknown method: %r" % method)
     finally:
-        ctx.prec = orig
+        ctx.prec = prec
     return +v
 
 @defun
-def diffs(ctx, f, x, n=None, method='step', scale=1, direction=0):
+def diffs(ctx, f, x, n=None, **options):
     r"""
     Returns a generator that yields the sequence of derivatives
 
@@ -170,6 +196,8 @@ def diffs(ctx, f, x, n=None, method='step', scale=1, direction=0):
     `n`-th derivative has been generated. If the exact number of
     needed derivatives is known in advance, this is further
     slightly more efficient.
+
+    Options are the same as for :func:`diff`.
 
     **Examples**
 
@@ -191,48 +219,30 @@ def diffs(ctx, f, x, n=None, method='step', scale=1, direction=0):
         n = ctx.inf
     else:
         n = int(n)
-
-    if method != 'step':
+    if options.get('method', 'step') != 'step':
         k = 0
         while k < n:
-            yield ctx.diff(f, x, k)
+            yield ctx.diff(f, x, k, **options)
             k += 1
         return
-
-    targetprec = ctx.prec
-
-    def getvalues(m):
-        callprec = ctx.prec
-        try:
-            ctx.prec = workprec = (targetprec+20) * (m+1)
-            h = ctx.ldexp(scale, -targetprec-10)
-            if direction:
-                h *= ctx.sign(direction)
-                y = [f(x+h*k) for k in xrange(m+1)]
-                hnorm = h
-            else:
-                y = [f(x+h*k) for k in xrange(-m, m+1, 2)]
-                hnorm = 2*h
-            return y, hnorm, workprec
-        finally:
-            ctx.prec = callprec
-
-    yield f(ctx.convert(x))
+    singular = options.get('singular')
+    if singular:
+        yield ctx.diff(f, x, 0, singular=True)
+    else:
+        yield f(ctx.convert(x))
     if n < 1:
         return
-
     if n == ctx.inf:
         A, B = 1, 2
     else:
         A, B = 1, n+1
-
     while 1:
-        y, hnorm, workprec = getvalues(B)
+        callprec = ctx.prec
+        y, norm, workprec = hsteps(ctx, f, x, B, callprec, **options)
         for k in xrange(A, B):
             try:
-                callprec = ctx.prec
                 ctx.prec = workprec
-                d = ctx.difference_delta(y, k) / hnorm**k
+                d = ctx.difference(y, k) / norm**k
             finally:
                 ctx.prec = callprec
             yield +d
@@ -367,7 +377,11 @@ def taylor(ctx, f, x, n, **options):
         12.1824939607035
 
     """
-    return [d/ctx.factorial(i) for i, d in enumerate(ctx.diffs(f, x, n, **options))]
+    gen = enumerate(ctx.diffs(f, x, n, **options))
+    if options.get("chop", True):
+        return [ctx.chop(d)/ctx.factorial(i) for i, d in gen]
+    else:
+        return [d/ctx.factorial(i) for i, d in gen]
 
 @defun
 def pade(ctx, a, L, M):
