@@ -31,6 +31,8 @@ def qp(ctx, a, q=None, n=None, **kwargs):
         -725305.0
         >>> fprod(1-2*3**k for k in range(5))
         -725305.0
+        >>> qp(2,3,0)
+        1.0
 
     Complex arguments are allowed::
 
@@ -82,6 +84,8 @@ def qp(ctx, a, q=None, n=None, **kwargs):
         q = a
     else:
         q = ctx.convert(q)
+    if n == 0:
+        return ctx.one + 0*(a+q)
     infinite = (n == ctx.inf)
     same = (a == q)
     if infinite:
@@ -154,6 +158,29 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
         \frac{z^n}{(q;q)_n}
 
     where `(a;q)_n` denotes the q-Pochhammer symbol (see :func:`qp`).
+
+    **Examples**
+
+    Evaluation works for real and complex arguments::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> qhyper([0.5], [2.25], 0.25, 4)
+        -0.1975849091263356009534385
+        >>> qhyper([0.5], [2.25], 0.25-0.25j, 4)
+        (2.806330244925716649839237 + 3.568997623337943121769938j)
+        >>> qhyper([1+j], [2,3+0.5j], 0.25, 3+4j)
+        (9.112885171773400017270226 - 1.272756997166375050700388j)
+
+    Comparing with a summation of the defining series, using
+    :func:`nsum`::
+
+        >>> b, q, z = 3, 0.25, 0.5
+        >>> qhyper([], [b], q, z)
+        0.6221136748254495583228324
+        >>> nsum(lambda n: z**n / qp(q,q,n)/qp(b,q,n) * q**(n*(n-1)), [0,inf])
+        0.6221136748254495583228324
+
     """
     #a_s = [ctx._convert_param(a)[0] for a in a_s]
     #b_s = [ctx._convert_param(b)[0] for b in b_s]
