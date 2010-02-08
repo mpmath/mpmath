@@ -1,4 +1,4 @@
-__version__ = '0.14'
+__version__ = '0.15-svn'
 
 from usertools import monitor, timing
 
@@ -285,6 +285,7 @@ hyperu = mp.hyperu
 hypercomb = mp.hypercomb
 meijerg = mp.meijerg
 appellf1 = mp.appellf1
+bihyper = mp.bihyper
 erf = mp.erf
 erfc = mp.erfc
 erfi = mp.erfi
