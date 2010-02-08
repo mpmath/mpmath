@@ -11,6 +11,10 @@ Elliptic arguments
 ^^^^^^^^^^^^^
 .. autofunction:: mpmath.qfrom(**kwargs)
 
+:func:`qbarfrom`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.qbarfrom(**kwargs)
+
 :func:`mfrom`
 ^^^^^^^^^^^^^
 .. autofunction:: mpmath.mfrom(**kwargs)
@@ -50,3 +54,11 @@ Jacobi elliptic functions
 :func:`ellipfun`
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ellipfun(kind,u=None,m=None,q=None,k=None,tau=None)
+
+
+Modular functions
+......................
+
+:func:`kleinj`
+^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.kleinj(tau=None, **kwargs)

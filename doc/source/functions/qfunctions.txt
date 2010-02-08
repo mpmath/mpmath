@@ -1,0 +1,18 @@
+q-functions
+-------------------------------------------
+
+q-Pochhammer symbol
+..................................................
+
+:func:`qp`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.qp(a, q=None, n=None)
+
+
+Hypergeometric q-series
+..................................................
+
+:func:`qhyper`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.qhyper(a_s, b_s, q, z, **kwargs)
+
