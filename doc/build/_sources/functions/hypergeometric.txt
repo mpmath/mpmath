@@ -77,6 +77,13 @@ Meijer G-function
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.meijerg(a_s,b_s,z,r=1,**kwargs)
 
+Bilateral hypergeometric series
+...............................
+
+:func:`bihyper`
+^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.bihyper(a_s,b_s,z,**kwargs)
+
 Appell hypergeometric function of two variables
 ...............................................
 

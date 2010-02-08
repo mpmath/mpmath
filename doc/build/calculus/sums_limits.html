@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.14 documentation</title>
+    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.15-svn documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.14',
+        VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="mpmath v0.14 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Differentiation" href="differentiation.html" />
     <link rel="prev" title="Root-finding and optimization" href="optimization.html" /> 
@@ -32,12 +32,15 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -381,20 +384,26 @@ converted to mpmath numbers.</p>
 
 <dl class="function">
 <dt id="mpmath.nprod">
-<!--[mpmath.nprod]--><tt class="descclassname">mpmath.</tt><tt class="descname">nprod</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprod" title="Permalink to this definition">¶</a></dt>
+<!--[mpmath.nprod]--><tt class="descclassname">mpmath.</tt><tt class="descname">nprod</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>nsum=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the product</p>
 <div class="math">
-<p><img src="../_images/math/32fba9e0834375a3c5e3c9d0c9761158c331f46c.png" alt="P = \prod_{k=a}^b f(k)" />
+<p><img src="../_images/math/e9eee1b79d384398db6e32391e16fd2320cd85d3.png" alt="P = \prod_{k=a}^b f(k)" />
 </div></p><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)" /> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty" /> and/or
 <img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty" /> are allowed.</p>
-<p>This function is essentially equivalent to applying <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>
-to the logarithm of the product (which, of course, becomes a
-series). All keyword arguments passed to <tt class="xref docutils literal"><span class="pre">nprod()</span></tt> are
-forwarded verbatim to <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>.</p>
+<p>By default, <tt class="xref docutils literal"><span class="pre">nprod()</span></tt> uses the same extrapolation methods as
+<tt class="xref docutils literal"><span class="pre">nsum()</span></tt>, except applied to the partial products rather than
+partial sums, and the same keyword options as for <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> are
+supported. If <tt class="docutils literal"><span class="pre">nsum=True</span></tt>, the product is instead computed via
+<tt class="xref docutils literal"><span class="pre">nsum()</span></tt> as</p>
+<div class="math">
+<p><img src="../_images/math/16ac9eff20ee2dde18147042a22fab8e707aa215.png" alt="P = \exp\left( \sum_{k=a}^b \log(f(k)) \right)." />
+</div></p><p>This is slower, but can sometimes yield better results. It is
+also required (and used automatically) when Euler-Maclaurin
+summation is requested.</p>
 <p><strong>Examples</strong></p>
 <p>A simple finite product:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
 <span class="go">24.0</span>
 </pre></div>
@@ -404,72 +413,88 @@ and can therefore be used as a reference. Most of the following
 examples are taken from MathWorld [1].</p>
 <p>A few infinite products with simple values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">3.14159265358979</span>
+<span class="go">3.141592653589793238462643</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.666666666666667</span>
+<span class="go">0.6666666666666666666666667</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.5</span>
 </pre></div>
 </div>
 <p>Next, several more infinite products with more complicated
 values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">5.18066831789712</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">6</span><span class="p">)</span>
-<span class="go">5.18066831789712</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">5.180668317897115748416626</span>
+<span class="go">5.180668317897115748416626</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.272029054982133</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">0.272029054982133</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">pi</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.2720290549821331629502366</span>
+<span class="go">0.2720290549821331629502366</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.8480540493529</span>
+<span class="go">0.8480540493529003921296502</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
-<span class="go">0.8480540493529</span>
+<span class="go">0.8480540493529003921296502</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mf">3</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">1.84893618285824</span>
+<span class="go">1.848936182858244485224927</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mf">3</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">/</span><span class="n">pi</span>
-<span class="go">1.84893618285824</span>
+<span class="go">1.848936182858244485224927</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.919019477593744</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">0.919019477593744</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.9190194775937444301739244</span>
+<span class="go">0.9190194775937444301739244</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">6</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.982684277742192</span>
+<span class="go">0.9826842777421925183244759</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)))</span><span class="o">/</span><span class="p">(</span><span class="mf">12</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
-<span class="go">0.982684277742192</span>
+<span class="go">0.9826842777421925183244759</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">1.83803895518749</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">1.83803895518749</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">1.838038955187488860347849</span>
+<span class="go">1.838038955187488860347849</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">1.44725592689037</span>
+<span class="go">1.447255926890365298959138</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">euler</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">1.44725592689037</span>
+<span class="go">1.447255926890365298959138</span>
 </pre></div>
 </div>
 <p>The following two products are equivalent and can be evaluated in
 terms of a Jacobi theta function. Pi can be replaced by any value
 (as long as convergence is preserved):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.383845120748167</span>
+<span class="go">0.3838451207481672404778686</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">tanh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.383845120748167</span>
+<span class="go">0.3838451207481672404778686</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span>
-<span class="go">0.383845120748167</span>
+<span class="go">0.3838451207481672404778686</span>
 </pre></div>
 </div>
 <p>This product does not have a known closed form value:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">2</span><span class="o">**</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
-<span class="go">0.288788095086602</span>
+<span class="go">0.2887880950866024212788997</span>
+</pre></div>
+</div>
+<p>A product taken from <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">-</span><span class="n">k</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">])</span>
+<span class="go">0.8093965973662901095786805</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="go">0.8093965973662901095786805</span>
+</pre></div>
+</div>
+<p>A doubly infinite product:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="go">23.41432688231864337420035</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="n">tanh</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
+<span class="go">23.41432688231864337420035</span>
+</pre></div>
+</div>
+<p>A product requiring the use of Euler-Maclaurin summation to compute
+an accurate value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;e&#39;</span><span class="p">)</span>
+<span class="go">0.696155111336231052898125</span>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
@@ -798,30 +823,22 @@ Scientists and Engineers&#8221;, Springer 1999, pp. 368-375</li>
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 05, 2010.
+      Last updated on Feb 08, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
-
-<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-if ((""+document.location).match("google"))
-{
-    _uacct = "UA-2697185-2";
-    urchinTracker();
-}
-</script>
   </body>
 </html>

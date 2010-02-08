@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>q-functions &mdash; mpmath v0.15-svn documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
+    <link rel="up" title="Mathematical functions" href="index.html" />
+    <link rel="next" title="Numerical calculus" href="../calculus/index.html" />
+    <link rel="prev" title="Number-theoretical, combinatorial and integer functions" href="numtheory.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="../calculus/index.html" title="Numerical calculus"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="numtheory.html" title="Number-theoretical, combinatorial and integer functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+      </ul>
+    </div>  
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  
+  <div class="section" id="q-functions">
+<h1>q-functions<a class="headerlink" href="#q-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="q-pochhammer-symbol">
+<h2>q-Pochhammer symbol<a class="headerlink" href="#q-pochhammer-symbol" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qp">
+<h3><tt class="xref docutils literal"><span class="pre">qp()</span></tt><a class="headerlink" href="#qp" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.qp">
+<!--[mpmath.qp]--><tt class="descclassname">mpmath.</tt><tt class="descname">qp</tt><big>(</big><em>a</em>, <em>q=None</em>, <em>n=None</em><big>)</big><a class="headerlink" href="#mpmath.qp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the q-Pochhammer symbol (or q-rising factorial)</p>
+<div class="math">
+<p><img src="../_images/math/fc763511f4703ac6549f7e4aeffb74dc5f461c46.png" alt="(a; q)_n = \prod_{k=0}^{n-1} (1-a q^k)" />
+</div></p><p>where <img class="math" src="../_images/math/f24dff9e8b573b740dfe94ec0f515ec397febca2.png" alt="n = \infty" /> is permitted if <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" />. Called with two arguments,
+<tt class="docutils literal"><span class="pre">qp(a,q)</span></tt> computes <img class="math" src="../_images/math/07744e6ccc7038c02383ab1cc180593bc7eca5d6.png" alt="(a;q)_{\infty}" />; with a single argument, <tt class="docutils literal"><span class="pre">qp(q)</span></tt>
+computes <img class="math" src="../_images/math/7d3edb4bff19034d5d9c9ba55849a1e5334602b7.png" alt="(q;q)_{\infty}" />. The special case</p>
+<div class="math">
+<p><img src="../_images/math/aaad2fdb58b63f2db45dc3d4296709293da07f91.png" alt="\phi(q) = (q; q)_{\infty} = \prod_{k=1}^{\infty} (1-q^k) =
+    \sum_{k=-\infty}^{\infty} (-1)^k q^{(3k^2-k)/2}" />
+</div></p><p>is also known as the Euler function, or (up to a factor <img class="math" src="../_images/math/5a4e8132b6c466816240ade9a33ef2b4453f441e.png" alt="q^{-1/24}" />)
+the Dirichlet eta function.</p>
+<p><strong>Examples</strong></p>
+<p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is a positive integer, the function amounts to a finite product:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">-725305.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">2</span><span class="o">*</span><span class="mf">3</span><span class="o">**</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">))</span>
+<span class="go">-725305.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>Complex arguments are allowed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.75</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.4628842231660149089976379 + 4.481821753552703090628793j)</span>
+</pre></div>
+</div>
+<p>The regular Pochhammer symbol <img class="math" src="../_images/math/671243179eef0081e2811f59a14a8e99d0542ffb.png" alt="(a)_n" /> is obtained in the
+following limit as <img class="math" src="../_images/math/9db120b46ade50f2e63c13d506a8ec951e8c6f92.png" alt="q \to 1" />:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">qp</span><span class="p">(</span><span class="n">q</span><span class="o">**</span><span class="n">a</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">604800.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="go">604800.0</span>
+</pre></div>
+</div>
+<p>The Taylor series of the reciprocal Euler function gives
+the partition function <img class="math" src="../_images/math/7dfd17dc4d3100462df726e8eb7f9262783429eb.png" alt="P(n)" />, i.e. the number of ways of writing
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> as a sum of positive integers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">qp</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="go">[1.0, 1.0, 2.0, 3.0, 5.0, 7.0, 11.0, 15.0, 22.0, 30.0, 42.0]</span>
+</pre></div>
+</div>
+<p>Special values include:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">diffun</span><span class="p">(</span><span class="n">qp</span><span class="p">),</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">)</span>   <span class="c"># location of maximum</span>
+<span class="go">-0.4112484791779547734440257</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+<span class="go">1.228348867038575112586878</span>
+</pre></div>
+</div>
+<p>The q-Pochhammer symbol is related to the Jacobi theta functions.
+For example, the following identity holds:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>    <span class="c"># arbitrary</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qp</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">0.2887880950866024212788997</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">root</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="o">-</span><span class="mf">24</span><span class="p">)</span><span class="o">*</span><span class="n">jtheta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">pi</span><span class="o">/</span><span class="mf">6</span><span class="p">,</span><span class="n">root</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="mf">6</span><span class="p">))</span>
+<span class="go">0.2887880950866024212788997</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="hypergeometric-q-series">
+<h2>Hypergeometric q-series<a class="headerlink" href="#hypergeometric-q-series" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qhyper">
+<h3><tt class="xref docutils literal"><span class="pre">qhyper()</span></tt><a class="headerlink" href="#qhyper" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.qhyper">
+<!--[mpmath.qhyper]--><tt class="descclassname">mpmath.</tt><tt class="descname">qhyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>q</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qhyper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the basic hypergeometric series or hypergeometric q-series</p>
+<div class="math">
+<p><img src="../_images/math/a8efaffc0e5fe799f97388cdc4eef302ba675f3f.png" alt="\,_r\phi_s \left[\begin{matrix} 
+    a_1 &amp; a_2 &amp; \ldots &amp; a_r \\ 
+    b_1 &amp; b_2 &amp; \ldots &amp; b_s
+\end{matrix} ; q,z \right] =
+\sum_{n=0}^\infty
+\frac{(a_1;q)_n, \ldots, (a_r;q)_n}
+     {(b_1;q)_n, \ldots, (b_s;q)_n}
+\left((-1)^n q^{n\choose 2}\right)^{1+s-r}
+\frac{z^n}{(q;q)_n}" />
+</div></p><p>where <img class="math" src="../_images/math/b785fe47a412e3791d236225cb0cc77774ca869a.png" alt="(a;q)_n" /> denotes the q-Pochhammer symbol (see <tt class="xref docutils literal"><span class="pre">qp()</span></tt>).</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation works for real and complex arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qhyper</span><span class="p">([</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.25</span><span class="p">],</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
+<span class="go">-0.1975849091263356009534385</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qhyper</span><span class="p">([</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.25</span><span class="p">],</span> <span class="mf">0.25</span><span class="o">-</span><span class="mf">0.25</span><span class="n">j</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
+<span class="go">(2.806330244925716649839237 + 3.568997623337943121769938j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qhyper</span><span class="p">([</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="o">+</span><span class="mf">0.5</span><span class="n">j</span><span class="p">],</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(9.112885171773400017270226 - 1.272756997166375050700388j)</span>
+</pre></div>
+</div>
+<p>Comparing with a summation of the defining series, using
+<tt class="xref docutils literal"><span class="pre">nsum()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qhyper</span><span class="p">([],</span> <span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">q</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<span class="go">0.6221136748254495583228324</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">z</span><span class="o">**</span><span class="n">n</span> <span class="o">/</span> <span class="n">qp</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">qp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">q</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mf">1</span><span class="p">)),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.6221136748254495583228324</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">q-functions</a><ul>
+<li><a class="reference external" href="#q-pochhammer-symbol">q-Pochhammer symbol</a><ul>
+<li><a class="reference external" href="#qp"><tt class="docutils literal"><span class="pre">qp()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#hypergeometric-q-series">Hypergeometric q-series</a><ul>
+<li><a class="reference external" href="#qhyper"><tt class="docutils literal"><span class="pre">qhyper()</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="numtheory.html" title="previous chapter">Number-theoretical, combinatorial and integer functions</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="../calculus/index.html" title="next chapter">Numerical calculus</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/functions/qfunctions.txt">Show Source</a></li>
+            </ul>
+          <h3>Quick search</h3>
+            <form class="search" action="../search.html" method="get">
+              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
+              <input type="hidden" name="check_keywords" value="yes" />
+              <input type="hidden" name="area" value="default" />
+            </form>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="../calculus/index.html" title="Numerical calculus"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="numtheory.html" title="Number-theoretical, combinatorial and integer functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, Fredrik Johansson.
+      Last updated on Feb 08, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+    </div>
+  </body>
+</html>

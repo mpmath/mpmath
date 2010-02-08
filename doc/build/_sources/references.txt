@@ -1,0 +1,13 @@
+References
+===================
+
+.. [AbramowitzStegun] Abramowitz & Stegun. *Handbook of Mathematical Functions, 9th Ed.*,
+    (Dover duplicate of 1972 edition)
+
+.. [WhittakerWatson] Whittaker & Watson. *A Course of Modern Analysis*. 4th Ed. 1946
+    Cambridge University Press
+
+.. [Slater] Slater, L. J. *Generalized Hypergeometric Functions*. Cambridge University Press, 1966
+
+.. [Wikipedia] http://en.wikipedia.org
+

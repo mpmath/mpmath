@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; mpmath v0.14 documentation</title>
+    <title>Index &mdash; mpmath v0.15-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.14',
+        VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="mpmath v0.14 documentation" href="index.html" /> 
+    <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -28,7 +28,10 @@
         <li class="right" style="margin-right: 10px">
           <a href="" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">mpmath v0.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
     <div class="document">
@@ -87,12 +90,13 @@
 <dt><a href="functions/numtheory.html#mpmath.bernfrac">bernfrac() (in module mpmath)</a></dt>
 <dt><a href="functions/numtheory.html#mpmath.bernoulli">bernoulli() (in module mpmath)</a></dt>
 <dt><a href="functions/numtheory.html#mpmath.bernpoly">bernpoly() (in module mpmath)</a></dt>
-<dt><a href="functions/bessel.html#mpmath.besseli">besseli() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="functions/bessel.html#mpmath.besselj">besselj() (in module mpmath)</a></dt>
+<dt><a href="functions/bessel.html#mpmath.besseli">besseli() (in module mpmath)</a></dt>
+<dt><a href="functions/bessel.html#mpmath.besselj">besselj() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/bessel.html#mpmath.besselk">besselk() (in module mpmath)</a></dt>
 <dt><a href="functions/bessel.html#mpmath.bessely">bessely() (in module mpmath)</a></dt>
 <dt><a href="functions/gamma.html#mpmath.beta">beta() (in module mpmath)</a></dt>
 <dt><a href="functions/gamma.html#mpmath.betainc">betainc() (in module mpmath)</a></dt>
+<dt><a href="functions/hypergeometric.html#mpmath.bihyper">bihyper() (in module mpmath)</a></dt>
 <dt><a href="functions/gamma.html#mpmath.binomial">binomial() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Bisection">Bisection (class in mpmath.calculus.optimization)</a></dt>
 </dl></td></tr></table>
@@ -155,6 +159,7 @@
 <dt><a href="functions/expintegrals.html#mpmath.e1">e1() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.ei">ei() (in module mpmath)</a></dt>
 <dt><a href="functions/elliptic.html#mpmath.ellipe">ellipe() (in module mpmath)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.ellipfun">ellipfun() (in module mpmath)</a></dt>
 <dt><a href="functions/elliptic.html#mpmath.ellipk">ellipk() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.erf">erf() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.erfc">erfc() (in module mpmath)</a></dt>
@@ -257,10 +262,7 @@
 
 <dt><a href="functions/bessel.html#mpmath.j0">j0() (in module mpmath)</a></dt>
 <dt><a href="functions/bessel.html#mpmath.j1">j1() (in module mpmath)</a></dt>
-<dt><a href="functions/orthogonal.html#mpmath.jacobi">jacobi() (in module mpmath)</a></dt>
-<dt><a href="functions/elliptic.html#mpmath.jcn">jcn() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="functions/elliptic.html#mpmath.jdn">jdn() (in module mpmath)</a></dt>
-<dt><a href="functions/elliptic.html#mpmath.jsn">jsn() (in module mpmath)</a></dt>
+<dt><a href="functions/orthogonal.html#mpmath.jacobi">jacobi() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/elliptic.html#mpmath.jtheta">jtheta() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
@@ -269,8 +271,10 @@
 <dl>
 
 <dt><a href="functions/bessel.html#mpmath.kei">kei() (in module mpmath)</a></dt>
-<dt><a href="functions/bessel.html#mpmath.ker">ker() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="functions/bessel.html#mpmath.ker">ker() (in module mpmath)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.kfrom">kfrom() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/constants.html#mpmath.mp.khinchin">khinchin (mpmath.mp attribute)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.kleinj">kleinj() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="L">L</h2>
@@ -300,10 +304,12 @@
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.MDNewton">MDNewton (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="functions/hypergeometric.html#mpmath.meijerg">meijerg() (in module mpmath)</a></dt>
 <dt><a href="functions/constants.html#mpmath.mp.mertens">mertens (mpmath.mp attribute)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.mfrom">mfrom() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.MNewton">MNewton (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="matrices.html#mpmath.mnorm">mnorm() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/numberparts.html#mpmath.modf">modf() (in module mpmath)</a></dt>
 <dt><a href="basics.html#mpmath.monitor">monitor() (in module mpmath)</a></dt>
+<dt><a href="functions/elliptic.html#module-mpmath.functions.elliptic">mpmath.functions.elliptic (module)</a></dt>
 <dt><a href="basics.html#mpmath.mpmathify">mpmathify() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Muller">Muller (class in mpmath.calculus.optimization)</a></dt>
 </dl></td></tr></table>
@@ -357,8 +363,12 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
+<dt><a href="functions/elliptic.html#mpmath.qbarfrom">qbarfrom() (in module mpmath)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.qfrom">qfrom() (in module mpmath)</a></dt>
+<dt><a href="functions/qfunctions.html#mpmath.qhyper">qhyper() (in module mpmath)</a></dt>
+<dt><a href="functions/qfunctions.html#mpmath.qp">qp() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="calculus/integration.html#mpmath.quad">quad() (in module mpmath)</a></dt>
-<dt><a href="calculus/integration.html#mpmath.quadosc">quadosc() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="calculus/integration.html#mpmath.quadosc">quadosc() (in module mpmath)</a></dt>
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule">QuadratureRule (class in mpmath.calculus.quadrature)</a></dt>
 </dl></td></tr></table>
 
@@ -419,6 +429,7 @@
 <dt><a href="functions/trigonometric.html#mpmath.tan">tan() (in module mpmath)</a></dt>
 <dt><a href="functions/hyperbolic.html#mpmath.tanh">tanh() (in module mpmath)</a></dt>
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.TanhSinh">TanhSinh (class in mpmath.calculus.quadrature)</a></dt>
+<dt><a href="functions/elliptic.html#mpmath.taufrom">taufrom() (in module mpmath)</a></dt>
 <dt><a href="calculus/approximation.html#mpmath.taylor">taylor() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="basics.html#mpmath.timing">timing() (in module mpmath)</a></dt>
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule.transform_nodes">transform_nodes() (mpmath.calculus.quadrature.QuadratureRule method)</a></dt>
@@ -474,24 +485,16 @@
         <li class="right" style="margin-right: 10px">
           <a href="" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">mpmath v0.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 05, 2010.
+      Last updated on Feb 08, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
     </div>
-
-<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-if ((""+document.location).match("google"))
-{
-    _uacct = "UA-2697185-2";
-    urchinTracker();
-}
-</script>
   </body>
 </html>

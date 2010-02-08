@@ -22,3 +22,4 @@ Contents:
    matrices.txt
    identification.txt
    technical.txt
+   references.txt
