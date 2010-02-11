@@ -251,6 +251,20 @@ mpf_ln2    = def_mpf_constant(ln2_fixed)
 mpf_ln10   = def_mpf_constant(ln10_fixed)
 
 
+@constant_memo
+def ln_sqrt2pi_fixed(prec):
+    wp = prec + 10
+    # ln(sqrt(2*pi)) = ln(2*pi)/2
+    return to_fixed(mpf_log(mpf_shift(mpf_pi(wp), 1), wp), prec-1)
+
+@constant_memo
+def sqrtpi_fixed(prec):
+    return sqrt_fixed(pi_fixed(prec), prec)
+
+mpf_sqrtpi   = def_mpf_constant(sqrtpi_fixed)
+mpf_ln_sqrt2pi   = def_mpf_constant(ln_sqrt2pi_fixed)
+
+
 #----------------------------------------------------------------------------#
 #                                                                            #
 #                                    Powers                                  #

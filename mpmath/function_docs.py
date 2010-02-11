@@ -6012,27 +6012,141 @@ definition::
 
 """
 
+rgamma = r"""
+Computes the reciprocal of the gamma function, `1/\Gamma(z)`. This
+function evaluates to zero at the poles
+of the gamma function, `z = 0, -1, -2, \ldots`.
 
-loggamma = r"""
-Computes the log-gamma function. Unlike `\ln(\Gamma(z))`, which
-has infinitely many complex branch cuts, the log-gamma function
-only has a single branch cut along the negative half-axis.
-The functions are identical only on (and very close to) the positive
-half-axis; elsewhere they differ by `2 n \pi i` (the real parts
-agree)::
+**Examples**
+
+Basic examples::
 
     >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
-    >>> loggamma(13.2), log(gamma(13.2))
-    (20.494004194566, 20.494004194566)
-    >>> loggamma(3+4j)
-    (-1.75662678460378 + 4.74266443803466j)
-    >>> log(gamma(3+4j))
-    (-1.75662678460378 - 1.54052086914493j)
+    >>> mp.dps = 25; mp.pretty = True
+    >>> rgamma(1)
+    1.0
+    >>> rgamma(4)
+    0.1666666666666666666666667
+    >>> rgamma(0); rgamma(-1)
+    0.0
+    0.0
+    >>> rgamma(1000)
+    2.485168143266784862783596e-2565
+    >>> rgamma(inf)
+    0.0
 
-Note: this is a placeholder implementation. It is slower than
-:func:`gamma`, and is in particular *not* faster than :func:`gamma`
-for large arguments.
+A definite integral that can be evaluated in terms of elementary
+integrals::
+
+    >>> quad(rgamma, [0,inf])
+    2.807770242028519365221501
+    >>> e + quad(lambda t: exp(-t)/(pi**2+log(t)**2), [0,inf])
+    2.807770242028519365221501
+"""
+
+loggamma = r"""
+Computes the principal branch of the log-gamma function,
+`\ln \Gamma(z)`. Unlike `\ln(\Gamma(z))`, which has infinitely many
+complex branch cuts, the principal log-gamma function only has a single
+branch cut along the negative half-axis. The principal branch
+continuously matches the asymptotic Stirling expansion
+
+.. math ::
+
+    \ln \Gamma(z) \sim \frac{\ln(2 \pi)}{2} +
+        \left(z-\frac{1}{2}\right) \ln(z) - z + O(z^{-1}).
+
+The real parts of both functions agree, but their imaginary
+parts generally differ by `2 n \pi` for some `n \in \mathbb{Z}`.
+They coincide for `z \in \mathbb{R}, z > 0`.
+
+Computationally, it is advantageous to use :func:`loggamma`
+instead of :func:`gamma` for extremely large arguments.
+
+**Examples**
+
+Comparing with `\ln(\Gamma(z))`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> loggamma('13.2'); log(gamma('13.2'))
+    20.49400419456603678498394
+    20.49400419456603678498394
+    >>> loggamma(3+4j)
+    (-1.756626784603784110530604 + 4.742664438034657928194889j)
+    >>> log(gamma(3+4j))
+    (-1.756626784603784110530604 - 1.540520869144928548730397j)
+    >>> log(gamma(3+4j)) + 2*pi*j
+    (-1.756626784603784110530604 + 4.742664438034657928194889j)
+
+Note the imaginary parts for negative arguments::
+
+    >>> loggamma(-0.5); loggamma(-1.5); loggamma(-2.5)
+    (1.265512123484645396488946 - 3.141592653589793238462643j)
+    (0.8600470153764810145109327 - 6.283185307179586476925287j)
+    (-0.05624371649767405067259453 - 9.42477796076937971538793j)
+
+Some special values::
+
+    >>> loggamma(1); loggamma(2)
+    0.0
+    0.0
+    >>> loggamma(3); +ln2
+    0.6931471805599453094172321
+    0.6931471805599453094172321
+    >>> loggamma(3.5); log(15*sqrt(pi)/8)
+    1.200973602347074224816022
+    1.200973602347074224816022
+    >>> loggamma(inf)
+    +inf
+
+Huge arguments are permitted::
+
+    >>> loggamma('1e30')
+    6.807755278982137052053974e+31
+    >>> loggamma('1e300')
+    6.897755278982137052053974e+302
+    >>> loggamma('1e3000')
+    6.906755278982137052053974e+3003
+    >>> loggamma('1e100000000000000000000')
+    2.302585092994045684007991e+100000000000000000020
+    >>> loggamma('1e30j')
+    (-1.570796326794896619231322e+30 + 6.807755278982137052053974e+31j)
+    >>> loggamma('1e300j')
+    (-1.570796326794896619231322e+300 + 6.897755278982137052053974e+302j)
+    >>> loggamma('1e3000j')
+    (-1.570796326794896619231322e+3000 + 6.906755278982137052053974e+3003j)
+
+The log-gamma function can be integrated analytically
+on any interval of unit length::
+
+    >>> z = 0
+    >>> quad(loggamma, [z,z+1]); log(2*pi)/2
+    0.9189385332046727417803297
+    0.9189385332046727417803297
+    >>> z = 3+4j
+    >>> quad(loggamma, [z,z+1]); (log(z)-1)*z + log(2*pi)/2
+    (-0.9619286014994750641314421 + 5.219637303741238195688575j)
+    (-0.9619286014994750641314421 + 5.219637303741238195688575j)
+
+The derivatives of the log-gamma function are given by the
+polygamma function (:func:`psi`)::
+
+    >>> diff(loggamma, -4+3j); psi(0, -4+3j)
+    (1.688493531222971393607153 + 2.554898911356806978892748j)
+    (1.688493531222971393607153 + 2.554898911356806978892748j)
+    >>> diff(loggamma, -4+3j, 2); psi(1, -4+3j)
+    (-0.1539414829219882371561038 - 0.1020485197430267719746479j)
+    (-0.1539414829219882371561038 - 0.1020485197430267719746479j)
+
+The log-gamma function satisfies an additive form of the
+recurrence relation for the ordinary gamma function::
+
+    >>> z = 2+3j
+    >>> loggamma(z); loggamma(z+1) - log(z)
+    (-2.092851753092733349564189 + 2.302396543466867626153708j)
+    (-2.092851753092733349564189 + 2.302396543466867626153708j)
+
 """
 
 siegeltheta = r"""

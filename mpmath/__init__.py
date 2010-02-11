@@ -240,6 +240,7 @@ lambertw = mp.lambertw
 zeta = mp.zeta
 altzeta = mp.altzeta
 gamma = mp.gamma
+rgamma = mp.rgamma
 factorial = mp.factorial
 fac = mp.fac
 fac2 = mp.fac2

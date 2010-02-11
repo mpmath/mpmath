@@ -277,9 +277,15 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.floor = ctx._wrap_libmp_function(libmp.mpf_floor, libmp.mpc_floor)
         ctx.ceil = ctx._wrap_libmp_function(libmp.mpf_ceil, libmp.mpc_ceil)
         ctx.fib = ctx.fibonacci = ctx._wrap_libmp_function(libmp.mpf_fibonacci, libmp.mpc_fibonacci)
+
         ctx.gamma = ctx._wrap_libmp_function(libmp.mpf_gamma, libmp.mpc_gamma)
-        ctx.digamma = ctx._wrap_libmp_function(libmp.mpf_psi0, libmp.mpc_psi0)
+        ctx.rgamma = ctx._wrap_libmp_function(libmp.mpf_rgamma, libmp.mpc_rgamma)
+        ctx.loggamma = ctx._wrap_libmp_function(libmp.mpf_loggamma, libmp.mpc_loggamma)
         ctx.fac = ctx.factorial = ctx._wrap_libmp_function(libmp.mpf_factorial, libmp.mpc_factorial)
+        ctx.gamma_old = ctx._wrap_libmp_function(libmp.mpf_gamma_old, libmp.mpc_gamma_old)
+        ctx.fac_old = ctx.factorial_old = ctx._wrap_libmp_function(libmp.mpf_factorial_old, libmp.mpc_factorial_old)
+
+        ctx.digamma = ctx._wrap_libmp_function(libmp.mpf_psi0, libmp.mpc_psi0)
         ctx.harmonic = ctx._wrap_libmp_function(libmp.mpf_harmonic, libmp.mpc_harmonic)
         ctx.ei = ctx._wrap_libmp_function(libmp.mpf_ei, libmp.mpc_ei)
         ctx.e1 = ctx._wrap_libmp_function(libmp.mpf_e1, libmp.mpc_e1)

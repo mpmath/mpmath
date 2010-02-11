@@ -117,10 +117,14 @@ def hypercomb(ctx, function, params=[], discard_known_zeros=True, **kwargs):
                     print "    gamma", ctx.nstr(alpha_s), ctx.nstr(beta_s)
                     print "    hyper", ctx.nstr(a_s), ctx.nstr(b_s)
                     print "    z", ctx.nstr(z)
-                v = ctx.hyper(a_s, b_s, z, **kwargs)
-                for a in alpha_s: v *= ctx.gamma(a)
-                for b in beta_s: v /= ctx.gamma(b)
-                for w, c in zip(w_s, c_s): v *= ctx.power(w, c)
+                #v = ctx.hyper(a_s, b_s, z, **kwargs)
+                #for a in alpha_s: v *= ctx.gamma(a)
+                #for b in beta_s: v *= ctx.rgamma(b)
+                #for w, c in zip(w_s, c_s): v *= ctx.power(w, c)
+                v = ctx.fprod([ctx.hyper(a_s, b_s, z, **kwargs)] + \
+                    [ctx.gamma(a) for a in alpha_s] + \
+                    [ctx.rgamma(b) for b in beta_s] + \
+                    [ctx.power(w,c) for (w,c) in zip(w_s,c_s)])
                 if verbose:
                     print "    Value:", v
                 evaluated_terms.append(v)

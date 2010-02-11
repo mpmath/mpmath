@@ -83,12 +83,12 @@ def mpc_add_mpf(z, x, prec, rnd=round_fast):
     a, b = z
     return mpf_add(a, x, prec, rnd), b
 
-def mpc_sub(z, w, prec, rnd=round_fast):
+def mpc_sub(z, w, prec=0, rnd=round_fast):
     a, b = z
     c, d = w
     return mpf_sub(a, c, prec, rnd), mpf_sub(b, d, prec, rnd)
 
-def mpc_sub_mpf(z, p, prec, rnd=round_fast):
+def mpc_sub_mpf(z, p, prec=0, rnd=round_fast):
     a, b = z
     return mpf_sub(a, p, prec, rnd), b
 

@@ -352,25 +352,25 @@ def to_int(s, rnd=None):
     else:
         return round_int(man, -exp, rnd)
 
-def mpf_ceil(s, prec, rnd=round_fast):
+def mpf_ceil(s, prec=0, rnd=round_fast):
     """Calculate ceil of a raw mpf, and round the result in the given
     direction (not necessarily ceiling). Note: returns a raw mpf
     representing an integer, not a Python int."""
     sign, man, exp, bc = s
     if (not man) and exp:
         return s
-    if exp > 0:
+    if exp > 0 and prec:
         return mpf_pos(s, prec, rnd)
     return from_int(to_int(s, round_ceiling), prec, rnd)
 
-def mpf_floor(s, prec, rnd=round_fast):
+def mpf_floor(s, prec=0, rnd=round_fast):
     """Calculate floor of a raw mpf, and round the result in the given
     direction (not necessarily floor). Note: returns a raw mpf
     representing an integer, not a Python int."""
     sign, man, exp, bc = s
     if (not man) and exp:
         return s
-    if exp > 0:
+    if exp > 0 and prec:
         return mpf_pos(s, prec, rnd)
     return from_int(to_int(s, round_floor), prec, rnd)
 

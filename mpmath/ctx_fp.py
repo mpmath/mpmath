@@ -114,6 +114,12 @@ class FPContext(StandardBaseContext):
             xs = zip(xs, ys)
         return sum((x*y for (x,y) in xs), ctx.zero)
 
+    def fprod(ctx, args):
+        prod = 1.0
+        for arg in args:
+            prod *= arg
+        return prod
+
     def is_special(ctx, x):
         return x - x != 0.0
 
@@ -154,6 +160,7 @@ class FPContext(StandardBaseContext):
     sinh = staticmethod(math2.sinh)
     tanh = staticmethod(math2.tanh)
     gamma = staticmethod(math2.gamma)
+    rgamma = staticmethod(math2.rgamma)
     fac = factorial = staticmethod(math2.factorial)
     floor = staticmethod(math2.floor)
     ceil = staticmethod(math2.ceil)

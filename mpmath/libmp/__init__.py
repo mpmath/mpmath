@@ -48,6 +48,8 @@ from gammazeta import (catalan_fixed, mpf_catalan,
   mpf_mertens, twinprime_fixed, mpf_twinprime,
   mpf_bernoulli, bernfrac, mpf_gamma_int,
   mpf_factorial, mpc_factorial, mpf_gamma, mpc_gamma,
+  mpf_loggamma, mpc_loggamma, mpf_rgamma, mpc_rgamma,
+  mpf_gamma_old, mpc_gamma_old, mpf_factorial_old, mpc_factorial_old,
   mpf_harmonic, mpc_harmonic, mpf_psi0, mpc_psi0,
   mpf_psi, mpc_psi, mpf_zeta_int, mpf_zeta, mpc_zeta,
   mpf_altzeta, mpc_altzeta, mpf_zetasum, mpc_zetasum)
