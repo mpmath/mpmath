@@ -496,16 +496,23 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     return best
 
 @defun
-def nsum(ctx, f, interval, **kwargs):
+def nsum(ctx, f, *intervals, **options):
     r"""
     Computes the sum
 
     .. math :: S = \sum_{k=a}^b f(k)
 
     where `(a, b)` = *interval*, and where `a = -\infty` and/or
-    `b = \infty` are allowed. Two examples of
-    infinite series that can be summed by :func:`nsum`, where the
-    first converges rapidly and the second converges slowly, are::
+    `b = \infty` are allowed, or more generally
+
+    .. math :: S = \sum_{k_1=a_1}^{b_1} \cdots
+                   \sum_{k_n=a_n}^{b_n} f(k_1,\ldots,k_n)
+
+    if multiple intervals are given.
+
+    Two examples of infinite series that can be summed by :func:`nsum`,
+    where the first converges rapidly and the second converges slowly,
+    are::
 
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
@@ -515,10 +522,15 @@ def nsum(ctx, f, interval, **kwargs):
         1.64493406684823
 
     When appropriate, :func:`nsum` applies convergence acceleration to
-    accurately estimate the sums of slowly convergent series.
-    If the sum is finite, :func:`nsum` currently does not
-    attempt to perform any extrapolation, and simply calls
-    :func:`fsum`.
+    accurately estimate the sums of slowly convergent series. If the series is
+    finite, :func:`nsum` currently does not attempt to perform any
+    extrapolation, and simply calls :func:`fsum`.
+
+    Multidimensional infinite series are reduced to a single-dimensional
+    series over expanding hypercubes; if both infinite and finite dimensions
+    are present, the finite ranges are moved innermost. For more advanced
+    control over the summation order, use nested calls to :func:`nsum`,
+    or manually rewrite the sum as a single-dimensional series.
 
     **Options**
 
@@ -544,6 +556,12 @@ def nsum(ctx, f, interval, **kwargs):
 
     *verbose*
         Print details about progress.
+
+    *ignore*
+        If enabled, any term that raises ``ArithmeticError``
+        or ``ValueError`` (e.g. through division by zero) is replaced
+        by a zero. This is convenient for lattice sums with
+        a singular term near the origin.
 
     **Methods**
 
@@ -749,16 +767,97 @@ def nsum(ctx, f, interval, **kwargs):
         6.0 -0.2 -0.2
         7.0 -0.166666666666667 -0.166666666666667
 
-    """
-    a, b = ctx._as_points(interval)
-    if a == ctx.ninf:
-        if b == ctx.inf:
-            return f(0) + ctx.nsum(lambda k: f(-k) + f(k), [1, ctx.inf], **kwargs)
-        return ctx.nsum(f, [-b, ctx.inf], **kwargs)
-    elif b != ctx.inf:
-        return ctx.fsum(f(ctx.mpf(k)) for k in xrange(int(a), int(b)+1))
+    **Multidimensional sums**
 
-    a = int(a)
+    Any combination of finite and infinite ranges is allowed for the
+    summation indices::
+
+        >>> mp.dps = 15
+        >>> nsum(lambda x,y: x+y, [2,3], [4,5])
+        28.0
+        >>> nsum(lambda x,y: x/2**y, [1,3], [1,inf])
+        6.0
+        >>> nsum(lambda x,y: y/2**x, [1,inf], [1,3])
+        6.0
+        >>> nsum(lambda x,y,z: z/(2**x*2**y), [1,inf], [1,inf], [3,4])
+        7.0
+        >>> nsum(lambda x,y,z: y/(2**x*2**z), [1,inf], [3,4], [1,inf])
+        7.0
+        >>> nsum(lambda x,y,z: x/(2**z*2**y), [3,4], [1,inf], [1,inf])
+        7.0
+
+    Some nice examples of double series with analytic solutions or
+    reductions to single-dimensional series (see [1])::
+
+        >>> nsum(lambda m, n: 1/2**(m*n), [1,inf], [1,inf])
+        1.60669515241529
+        >>> nsum(lambda n: 1/(2**n-1), [1,inf])
+        1.60669515241529
+
+        >>> nsum(lambda i,j: (-1)**(i+j)/(i**2+j**2), [1,inf], [1,inf])
+        0.278070510848213
+        >>> pi*(pi-3*ln2)/12
+        0.278070510848213
+
+        >>> nsum(lambda i,j: (-1)**(i+j)/(i+j)**2, [1,inf], [1,inf])
+        0.129319852864168
+        >>> altzeta(2) - altzeta(1)
+        0.129319852864168
+
+        >>> nsum(lambda i,j: (-1)**(i+j)/(i+j)**3, [1,inf], [1,inf])
+        0.0790756439455825
+        >>> altzeta(3) - altzeta(2)
+        0.0790756439455825
+
+        >>> nsum(lambda m,n: m**2*n/(3**m*(n*3**m+m*3**n)),
+        ...     [1,inf], [1,inf])
+        0.28125
+        >>> mpf(9)/32
+        0.28125
+
+        >>> nsum(lambda i,j: fac(i-1)*fac(j-1)/fac(i+j),
+        ...     [1,inf], [1,inf], workprec=400)
+        1.64493406684823
+        >>> zeta(2)
+        1.64493406684823
+
+    A hard example of a multidimensional sum is the Madelung constant
+    in three dimensions (see [2]). The defining sum converges very
+    slowly and only conditionally, so :func:`nsum` is lucky to
+    obtain an accurate value through convergence acceleration. The
+    second evaluation below uses a much more efficient, rapidly
+    convergent 2D sum::
+
+        >>> nsum(lambda x,y,z: (-1)**(x+y+z)/(x*x+y*y+z*z)**0.5,
+        ...     [-inf,inf], [-inf,inf], [-inf,inf], ignore=True)
+        -1.74756459463318
+        >>> nsum(lambda x,y: -12*pi*sech(0.5*pi * \
+        ...     sqrt((2*x+1)**2+(2*y+1)**2))**2, [0,inf], [0,inf])
+        -1.74756459463318
+
+    Another example of a lattice sum in 2D::
+
+        >>> nsum(lambda x,y: (-1)**(x+y) / (x**2+y**2), [-inf,inf],
+        ...     [-inf,inf], ignore=True)
+        -2.1775860903036
+        >>> -pi*ln2
+        -2.1775860903036
+
+    An example of an Eisenstein series::
+
+        >>> nsum(lambda m,n: (m+n*1j)**(-4), [-inf,inf], [-inf,inf],
+        ...     ignore=True)
+        (3.1512120021539 + 0.0j)
+
+    **References**
+
+    1. [Weisstein]_ http://mathworld.wolfram.com/DoubleSeries.html,
+    2. [Weisstein]_ http://mathworld.wolfram.com/MadelungConstants.html
+
+    """
+    infinite, g = standardize(ctx, f, intervals, options)
+    if not infinite:
+        return +g()
 
     def update(partial_sums, indices):
         if partial_sums:
@@ -766,7 +865,7 @@ def nsum(ctx, f, interval, **kwargs):
         else:
             psum = ctx.zero
         for k in indices:
-            psum = psum + f(a + ctx.mpf(k))
+            psum = psum + g(ctx.mpf(k))
             partial_sums.append(psum)
 
     prec = ctx.prec
@@ -774,11 +873,127 @@ def nsum(ctx, f, interval, **kwargs):
     def emfun(point, tol):
         workprec = ctx.prec
         ctx.prec = prec + 10
-        v = ctx.sumem(f, [a+point, ctx.inf], tol, error=1)
+        v = ctx.sumem(g, [point, ctx.inf], tol, error=1)
         ctx.prec = workprec
         return v
 
-    return +ctx.adaptive_extrapolation(update, emfun, kwargs)
+    return +ctx.adaptive_extrapolation(update, emfun, options)
+
+
+def wrapsafe(f):
+    def g(*args):
+        try:
+            return f(*args)
+        except (ArithmeticError, ValueError):
+            return 0
+    return g
+
+def standardize(ctx, f, intervals, options):
+    if options.get("ignore"):
+        f = wrapsafe(f)
+    finite = []
+    infinite = []
+    for k, points in enumerate(intervals):
+        a, b = ctx._as_points(points)
+        if b < a:
+            return False, (lambda: ctx.zero)
+        if a == ctx.ninf or b == ctx.inf:
+            infinite.append((k, (a,b)))
+        else:
+            finite.append((k, (int(a), int(b))))
+    if finite:
+        f = fold_finite(ctx, f, finite)
+        if not infinite:
+            return False, lambda: f(*([0]*len(intervals)))
+    if infinite:
+        f = standardize_infinite(ctx, f, infinite)
+        f = fold_infinite(ctx, f, infinite)
+        args = [0] * len(intervals)
+        d = infinite[0][0]
+        def g(k):
+            args[d] = k
+            return f(*args)
+        return True, g
+
+# backwards compatible itertools.product
+def cartesian_product(args):
+    pools = map(tuple, args)
+    result = [[]]
+    for pool in pools:
+        result = [x+[y] for x in result for y in pool]
+    for prod in result:
+        yield tuple(prod)
+
+def fold_finite(ctx, f, intervals):
+    if not intervals:
+        return f
+    indices = [v[0] for v in intervals]
+    points = [v[1] for v in intervals]
+    ranges = [xrange(a, b+1) for (a,b) in points]
+    def g(*args):
+        args = list(args)
+        s = ctx.zero
+        for xs in cartesian_product(ranges):
+            for dim, x in zip(indices, xs):
+                args[dim] = ctx.mpf(x)
+            s += f(*args)
+        return s
+    #print "Folded finite", indices
+    return g
+
+# Standardize each interval to [0,inf]
+def standardize_infinite(ctx, f, intervals):
+    if not intervals:
+        return f
+    dim, [a,b] = intervals[-1]
+    if a == ctx.ninf:
+        if b == ctx.inf:
+            def g(*args):
+                args = list(args)
+                k = args[dim]
+                if k:
+                    s = f(*args)
+                    args[dim] = -k
+                    s += f(*args)
+                    return s
+                else:
+                    return f(*args)
+        else:
+            def g(*args):
+                args = list(args)
+                args[dim] = b - args[dim]
+                return f(*args)
+    else:
+        def g(*args):
+            args = list(args)
+            args[dim] += a
+            return f(*args)
+    #print "Standardized infinity along dimension", dim, a, b
+    return standardize_infinite(ctx, g, intervals[:-1])
+
+def fold_infinite(ctx, f, intervals):
+    if len(intervals) < 2:
+        return f
+    dim1 = intervals[-2][0]
+    dim2 = intervals[-1][0]
+    # Assume intervals are [0,inf] x [0,inf] x ...
+    def g(*args):
+        args = list(args)
+        #args.insert(dim2, None)
+        n = int(args[dim1])
+        s = ctx.zero
+        #y = ctx.mpf(n)
+        args[dim2] = ctx.mpf(n) #y
+        for x in xrange(n+1):
+            args[dim1] = ctx.mpf(x)
+            s += f(*args)
+        args[dim1] = ctx.mpf(n) #ctx.mpf(n)
+        for y in xrange(n):
+            args[dim2] = ctx.mpf(y)
+            s += f(*args)
+        return s
+    #print "Folded infinite from", len(intervals), "to", (len(intervals)-1)
+    return fold_infinite(ctx, g, intervals[:-1])
 
 @defun
 def nprod(ctx, f, interval, nsum=False, **kwargs):
