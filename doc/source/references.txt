@@ -1,13 +1,36 @@
 References
 ===================
 
+The following is a non-comprehensive list of works used in the development of mpmath
+or cited for examples or mathematical definitions used in this documentation.
+
 .. [AbramowitzStegun] Abramowitz & Stegun. *Handbook of Mathematical Functions, 9th Ed.*,
     (Dover duplicate of 1972 edition)
+
+.. [Bailey] D H Bailey. "Tanh-Sinh High-Precision Quadrature", http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
+
+.. [BenderOrszag] C M Bender & S A Orszag *Advanced Mathematical Methods for
+    Scientists and Engineers*. Springer 1999.
+
+.. [BorweinBailey] J Borwein, D H Bailey & R Girgensohn, "Experimentation in Mathematics - Computational Paths to Discovery", A K Peters, 2003
+
+.. [BorweinBorwein] J Borwein & P B Borwein, *Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity*. Wiley 1987
+
+.. [BorweinZeta] P Borwein, "An Efficient Algorithm for the Riemann Zeta Function", http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps
+
+.. [GravesMorris] P R Graves-Morris, D E Roberts & A Salam, "The epsilon
+       algorithm and related topics", *Journal of Computational and
+       Applied Mathematics*, Volume 122, Issue 1-2  (October 2000)
+
+.. [MPFR] The MPFR team, "The MPFR Library: Algorithms and Proofs", http://www.mpfr.org/algorithms.pdf
+
+.. [Slater] L J Slater. *Generalized Hypergeometric Functions*. Cambridge University Press, 1966
+
+.. [Spouge] J L Spouge. "Computation of the gamma, digamma, and trigamma functions", SIAM J. Numer. Anal. Vol. 31, No. 3, pp. 931-944, June 1994.
+
+.. [Weisstein] E W Weisstein. *MathWorld*. http://mathworld.wolfram.com/
 
 .. [WhittakerWatson] Whittaker & Watson. *A Course of Modern Analysis*. 4th Ed. 1946
     Cambridge University Press
 
-.. [Slater] Slater, L. J. *Generalized Hypergeometric Functions*. Cambridge University Press, 1966
-
 .. [Wikipedia] http://en.wikipedia.org
-

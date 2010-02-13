@@ -64,8 +64,7 @@ def richardson(ctx, seq):
 
     **References**
 
-    1. C. M. Bender & S. A. Orszag, "Advanced Mathematical Methods for
-       Scientists and Engineers", Springer 1999, pp. 375-376
+    1. [BenderOrszag]_ pp. 375-376
 
     """
     assert len(seq) >= 3
@@ -209,12 +208,9 @@ def shanks(ctx, seq, table=None, randomized=False):
 
     **References**
 
-    1. P. R. Graves-Morris, D. E. Roberts, A. Salam, "The epsilon
-       algorithm and related topics", Journal of Computational and
-       Applied Mathematics, Volume 122, Issue 1-2  (October 2000)
+    1. [GravesMorris]_
 
-    2. C. M. Bender & S. A. Orszag, "Advanced Mathematical Methods for
-       Scientists and Engineers", Springer 1999, pp. 368-375
+    2. [BenderOrszag]_ pp. 368-375
 
     """
     assert len(seq) >= 2
@@ -1122,9 +1118,7 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
 
     **References**
 
-    1. E. W. Weisstein, "Infinite Product",
-       http://mathworld.wolfram.com/InfiniteProduct.html,
-       MathWorld
+    1. [Weisstein]_ http://mathworld.wolfram.com/InfiniteProduct.html
 
     """
     if nsum or ('e' in kwargs.get('method', '')):
