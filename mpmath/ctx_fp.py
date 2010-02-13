@@ -109,10 +109,14 @@ class FPContext(StandardBaseContext):
             return sum((x**2 for x in args), ctx.zero)
         return sum(args, ctx.zero)
 
-    def fdot(ctx, xs, ys=None):
+    def fdot(ctx, xs, ys=None, conjugate=False):
         if ys is not None:
             xs = zip(xs, ys)
-        return sum((x*y for (x,y) in xs), ctx.zero)
+        if conjugate:
+            cf = ctx.conj
+            return sum((x*cf(y) for (x,y) in xs), ctx.zero)
+        else:
+            return sum((x*y for (x,y) in xs), ctx.zero)
 
     def fprod(ctx, args):
         prod = 1.0

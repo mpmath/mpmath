@@ -767,7 +767,7 @@ class PythonMPContext:
         else:
             return s + other
 
-    def fdot(ctx, A, B=None):
+    def fdot(ctx, A, B=None, conjugate=False):
         r"""
         Computes the dot product of the iterables `A` and `B`,
 
@@ -777,10 +777,16 @@ class PythonMPContext:
 
         Alternatively, :func:`fdot` accepts a single iterable of pairs.
         In other words, ``fdot(A,B)`` and ``fdot(zip(A,B))`` are equivalent.
-
         The elements are automatically converted to mpmath numbers.
 
-        Examples::
+        With ``conjugate=True``, the elements in the second vector
+        will be conjugated:
+
+        .. math ::
+
+            \sum_{k=0} A_k \overline{B_k}
+
+        **Examples**
 
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
@@ -792,6 +798,12 @@ class PythonMPContext:
             [(2, 1), (1.5, -1), (3, 2)]
             >>> fdot(_)
             mpf('6.5')
+            >>> A = [2, 1.5, 3j]
+            >>> B = [1+j, 3, -1-j]
+            >>> fdot(A, B)
+            mpc(real='9.5', imag='-1.0')
+            >>> fdot(A, B, conjugate=True)
+            mpc(real='3.5', imag='-5.0')
 
         """
         if B:
@@ -815,6 +827,8 @@ class PythonMPContext:
             if a_real and b_complex:
                 aval = a._mpf_
                 bre, bim = b._mpc_
+                if conjugate:
+                    bim = mpf_neg(bim)
                 real.append(mpf_mul(aval, bre))
                 imag.append(mpf_mul(aval, bim))
             elif b_real and a_complex:
@@ -823,11 +837,20 @@ class PythonMPContext:
                 real.append(mpf_mul(are, bval))
                 imag.append(mpf_mul(aim, bval))
             elif a_complex and b_complex:
-                re, im = mpc_mul(a._mpc_, b._mpc_, prec+20)
-                real.append(re)
-                imag.append(im)
+                #re, im = mpc_mul(a._mpc_, b._mpc_, prec+20)
+                are, aim = a._mpc_
+                bre, bim = b._mpc_
+                if conjugate:
+                    bim = mpf_neg(bim)
+                real.append(mpf_mul(are, bre))
+                real.append(mpf_neg(mpf_mul(aim, bim)))
+                imag.append(mpf_mul(are, bim))
+                imag.append(mpf_mul(aim, bre))
             else:
-                other += a*b
+                if conjugate:
+                    other += a*ctx.conj(b)
+                else:
+                    other += a*b
         s = mpf_sum(real, prec, rnd)
         if imag:
             s = ctx.make_mpc((s, mpf_sum(imag, prec, rnd)))
