@@ -25,6 +25,8 @@ extraprec = mp.extraprec
 extradps = mp.extradps
 workprec = mp.workprec
 workdps = mp.workdps
+autoprec = mp.autoprec
+maxcalls = mp.maxcalls
 
 mag = mp.mag
 

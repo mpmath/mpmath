@@ -357,3 +357,27 @@ class StandardBaseContext(Context,
 
     def _zeta_int(ctx, n):
         return ctx.zeta(n)
+
+    def maxcalls(ctx, f, N=1000):
+        """
+        Return a wrapped copy of *f* that raises ``NoConvergence`` when *f*
+        has been called more than *N* times::
+
+            >>> from mpmath import *
+            >>> mp.dps = 15
+            >>> f = maxcalls(sin, 10)
+            >>> print sum(f(n) for n in range(8))
+            0.553732750242242
+            >>> print sum(f(n) for n in range(8))
+            Traceback (most recent call last):
+              ...
+            NoConvergence: maxcalls: function evaluated 10 times
+
+        """
+        counter = [0]
+        def f_maxcalls_wrapped(*args, **kwargs):
+            counter[0] += 1
+            if counter[0] > N:
+                raise ctx.NoConvergence("maxcalls: function evaluated %i times" % N)
+            return f(*args, **kwargs)
+        return f_maxcalls_wrapped
