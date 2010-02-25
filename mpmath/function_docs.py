@@ -6310,37 +6310,6 @@ a zero between those points::
 
 """
 
-zetazero = r"""
-Returns the `n`-th nontrivial zero of the Riemann zeta function.
-The zero is computed using :func:`findroot`, using a table lookup
-for the initial point.
-
-The zeros are located on the critical line with real part 1/2::
-
-    >>> from mpmath import *
-    >>> mp.dps = 25; mp.pretty = True
-    >>> zetazero(1)
-    (0.5 + 14.13472514173469379045725j)
-    >>> zetazero(2)
-    (0.5 + 21.02203963877155499262848j)
-    >>> zetazero(20)
-    (0.5 + 77.14484006887480537268266j)
-
-Negative indices give the conjugate zeros (`n = 0` is undefined)::
-
-    >>> zetazero(-1)
-    (0.5 - 14.13472514173469379045725j)
-
-The default table only provides `n` up to 100. For larger `n` up to
-100,000,  :func:`zetazero` will automatically download a table
-(1.8 MB) from the website of Andrew Odlyzko [1]. This requires a
-fast connection to the internet. Alternatively, you can supply the
-url to a custom table. The table should be a file listing the
-imaginary parts as float literals, separated by line breaks.
-
-1. http://www.dtc.umn.edu/~odlyzko/zeta_tables/
-"""
-
 riemannr = r"""
 Evaluates the Riemann R function, a smooth approximation of the
 prime counting function `\pi(x)` (see :func:`primepi`). The Riemann

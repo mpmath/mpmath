@@ -96,7 +96,7 @@ def _load_zeta_zeros(url):
     _zeta_zeros[:] = L
 
 @defun
-def zetazero(ctx, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
+def oldzetazero(ctx, n, url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'):
     n = int(n)
     if n < 0:
         return ctx.zetazero(-n).conjugate()
