@@ -21,9 +21,9 @@ def test_zetazero():
         print "ok =", ok, ("(time = %s)" % round(t2-t1,3))
     print "Now computing two huge zeros (this may take hours)"
     print "Computing zetazero(8637740722917)"
-    ok = zetazero(8637740722917, verbose=True).ae(complex(0.5,2124447368584.39296466152))
+    ok = zetazero(8637740722917).ae(complex(0.5,2124447368584.39296466152))
     print "ok =", ok
-    ok = zetazero(8637740722918, verbose=True).ae(complex(0.5,2124447368584.39298170604))
+    ok = zetazero(8637740722918).ae(complex(0.5,2124447368584.39298170604))
     print "ok =", ok
 
 if __name__ == "__main__":
