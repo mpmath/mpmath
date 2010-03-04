@@ -61,9 +61,9 @@ def hsteps(ctx, f, x, n, prec, **options):
 @defun
 def diff(ctx, f, x, n=1, **options):
     r"""
-    Numerically computes the derivative of `f`, `f'(x)`. Optionally,
-    computes the `n`-th derivative, `f^{(n)}(x)`, for any nonnegative
-    integer `n`. A few basic examples are::
+    Numerically computes the derivative of `f`, `f'(x)`, or generally for
+    an integer `n \ge 0`, the `n`-th derivative `f^{(n)}(x)`.
+    A few basic examples are::
 
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
@@ -75,6 +75,15 @@ def diff(ctx, f, x, n=1, **options):
         0.0
         >>> nprint([diff(exp, 3, n) for n in range(5)])   # exp'(x) = exp(x)
         [20.0855, 20.0855, 20.0855, 20.0855, 20.0855]
+
+    Even more generally, given a tuple of arguments `(x_1, \ldots, x_k)`
+    and order `(n_1, \ldots, n_k)`, the partial derivative
+    `f^{(n_1,\ldots,n_k)}(x_1,\ldots,x_k)` is evaluated. For example::
+
+        >>> diff(lambda x,y: 3*x*y + 2*y - x, (0.25, 0.5), (0,1))
+        2.75
+        >>> diff(lambda x,y: 3*x*y + 2*y - x, (0.25, 0.5), (1,1))
+        3.0
 
     **Options**
 
@@ -154,6 +163,16 @@ def diff(ctx, f, x, n=1, **options):
         -1.0e-30
 
     """
+    partial = False
+    try:
+        orders = list(n)
+        x = list(x)
+        partial = True
+    except TypeError:
+        pass
+    if partial:
+        x = map(ctx.convert, x)
+        return _partial_diff(ctx, f, x, orders, options)
     method = options.get('method', 'step')
     if n == 0 and method != 'quad' and not options.get('singular'):
         return f(ctx.convert(x))
@@ -177,6 +196,23 @@ def diff(ctx, f, x, n=1, **options):
     finally:
         ctx.prec = prec
     return +v
+
+def _partial_diff(ctx, f, xs, orders, options):
+    if not orders:
+        return f()
+    if not sum(orders):
+        return f(*xs)
+    i = 0
+    for i in range(len(orders)):
+        if orders[i]:
+            break
+    order = orders[i]
+    def fdiff_inner(*f_args):
+        def inner(t):
+            return f(*(f_args[:i] + (t,) + f_args[i+1:]))
+        return ctx.diff(inner, f_args[i], order, **options)
+    orders[i] = 0
+    return _partial_diff(ctx, fdiff_inner, xs, orders, options)
 
 @defun
 def diffs(ctx, f, x, n=None, **options):
@@ -326,9 +362,9 @@ def differint(ctx, f, x, n=1, x0=0):
 
 @defun
 def diffun(ctx, f, n=1, **options):
-    """
-    Given a function f, returns a function g(x) that evaluates the nth
-    derivative f^(n)(x)::
+    r"""
+    Given a function `f`, returns a function `g(x)` that evaluates the nth
+    derivative `f^{(n)}(x)`::
 
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
@@ -339,7 +375,7 @@ def diffun(ctx, f, n=1, **options):
         >>> sin(1.3), sin2(1.3)
         (0.963558185417193, 0.963558185417193)
 
-    The function f must support arbitrary precision evaluation.
+    The function `f` must support arbitrary precision evaluation.
     See :func:`diff` for additional details and supported
     keyword options.
     """
