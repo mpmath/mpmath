@@ -255,7 +255,11 @@ def im(ctx, x):
 
 @defun
 def conj(ctx, x):
-    return ctx.convert(x).conjugate()
+    x = ctx.convert(x)
+    try:
+        return x.conjugate()
+    except AttributeError:
+        return x
 
 @defun
 def polar(ctx, z):
