@@ -27,6 +27,7 @@ workprec = mp.workprec
 workdps = mp.workdps
 autoprec = mp.autoprec
 maxcalls = mp.maxcalls
+memoize = mp.memoize
 
 mag = mp.mag
 

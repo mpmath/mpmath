@@ -1488,7 +1488,6 @@ maxterms, or set zeroprec."""
         ys = map(ctx.make_mpc, ys)
         return xs, ys
 
-
 class PrecisionManager:
     def __init__(self, ctx, precfun, dpsfun, normalize_output=False):
         self.ctx = ctx

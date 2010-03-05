@@ -381,3 +381,41 @@ class StandardBaseContext(Context,
                 raise ctx.NoConvergence("maxcalls: function evaluated %i times" % N)
             return f(*args, **kwargs)
         return f_maxcalls_wrapped
+
+    def memoize(ctx, f):
+        """
+        Return a wrapped copy of *f* that caches computed values, i.e.
+        a memoized copy of *f*. Values are only reused if the cached precision
+        is equal to or higher than the working precision::
+
+            >>> from mpmath import *
+            >>> mp.dps = 15; mp.pretty = True
+            >>> f = memoize(maxcalls(sin, 1))
+            >>> f(2)
+            0.909297426825682
+            >>> f(2)
+            0.909297426825682
+            >>> mp.dps = 25
+            >>> f(2)
+            Traceback (most recent call last):
+              ...
+            NoConvergence: maxcalls: function evaluated 1 times
+
+        """
+        f_cache = {}
+        def f_cached(*args, **kwargs):
+            if kwargs:
+                key = args, tuple(kwargs.items())
+            else:
+                key = args
+            prec = ctx.prec
+            if key in f_cache:
+                cprec, cvalue = f_cache[key]
+                if cprec >= prec:
+                    return +cvalue
+            value = f(*args, **kwargs)
+            f_cache[key] = (prec, value)
+            return value
+        f_cached.__name__ = f.__name__
+        f_cached.__doc__ = f.__doc__
+        return f_cached
