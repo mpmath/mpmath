@@ -22,7 +22,7 @@ from libintmath import list_primes, ifac, ifac2, moebius
 from libmpf import (\
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
-    lshift, sqrt_fixed,
+    lshift, sqrt_fixed, isqrt_fast,
     fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
     from_int, to_int, to_fixed, from_man_exp, from_rational,
     mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
@@ -39,7 +39,8 @@ from libelefun import (\
     mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
     mpf_exp, mpf_log, mpf_pow, mpf_cosh,
     mpf_cos_sin, mpf_cosh_sinh, mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi,
-    ln_sqrt2pi_fixed, mpf_ln_sqrt2pi, sqrtpi_fixed, mpf_sqrtpi
+    ln_sqrt2pi_fixed, mpf_ln_sqrt2pi, sqrtpi_fixed, mpf_sqrtpi,
+    cos_sin_fixed, exp_fixed
 )
 
 from libmpc import (\
@@ -1231,14 +1232,17 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
     d = borwein_coefficients(n)
     t = MPZ_ZERO
     sf = to_fixed(s, wp)
+    ln2 = ln2_fixed(wp)
     for k in xrange(n):
-        u = from_man_exp(-sf*log_int_fixed(k+1, wp), -2*wp, wp)
-        esign, eman, eexp, ebc = mpf_exp(u, wp)
-        offset = eexp + wp
-        if offset >= 0:
-            w = ((d[k] - d[n]) * eman) << offset
-        else:
-            w = ((d[k] - d[n]) * eman) >> (-offset)
+        u = (-sf*log_int_fixed(k+1, wp, ln2)) >> wp
+        #esign, eman, eexp, ebc = mpf_exp(u, wp)
+        #offset = eexp + wp
+        #if offset >= 0:
+        #    w = ((d[k] - d[n]) * eman) << offset
+        #else:
+        #    w = ((d[k] - d[n]) * eman) >> (-offset)
+        eman = exp_fixed(u, wp, ln2)
+        w = (d[k] - d[n]) * eman
         if k & 1:
             t -= w
         else:
@@ -1314,20 +1318,23 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
     one = MPZ_ONE << wp
     one_2wp = MPZ_ONE << (2*wp)
     critical_line = re == fhalf
+    ln2 = ln2_fixed(wp)
+    pi2 = pi_fixed(wp-1)
+    wp2 = wp+wp
     for k in xrange(n):
-        log = log_int_fixed(k+1, wp)
+        log = log_int_fixed(k+1, wp, ln2)
         # A square root is much cheaper than an exp
         if critical_line:
-            w = one_2wp // sqrt_fixed((k+1) << wp, wp)
+            w = one_2wp // isqrt_fast((k+1) << wp2)
         else:
-            w = to_fixed(mpf_exp(from_man_exp(-ref*log, -2*wp), wp), wp)
+            w = exp_fixed((-ref*log) >> wp, wp)
         if k & 1:
             w *= (d[n] - d[k])
         else:
             w *= (d[k] - d[n])
-        wre, wim = mpf_cos_sin(from_man_exp(-imf * log, -2*wp), wp)
-        tre += (w * to_fixed(wre, wp)) >> wp
-        tim += (w * to_fixed(wim, wp)) >> wp
+        wre, wim = cos_sin_fixed((-imf*log)>>wp, wp, pi2)
+        tre += (w * wre) >> wp
+        tim += (w * wim) >> wp
     tre //= (-d[n])
     tim //= (-d[n])
     tre = from_man_exp(tre, -wp, wp)
@@ -1347,34 +1354,6 @@ def mpc_altzeta(s, prec, rnd=round_fast):
 # Not optimized currently
 mpf_zetasum = None
 
-def exp_fixed_prod(x, wp):
-    u = from_man_exp(x, -2*wp, wp)
-    esign, eman, eexp, ebc = mpf_exp(u, wp)
-    offset = eexp + wp
-    if offset >= 0:
-        return eman << offset
-    else:
-        return eman >> (-offset)
-
-def cos_sin_fixed_prod(x, wp):
-    cos, sin = mpf_cos_sin(from_man_exp(x, -2*wp), wp)
-    sign, man, exp, bc = cos
-    if sign:
-        man = -man
-    offset = exp + wp
-    if offset >= 0:
-        cos = man << offset
-    else:
-        cos = man >> (-offset)
-    sign, man, exp, bc = sin
-    if sign:
-        man = -man
-    offset = exp + wp
-    if offset >= 0:
-        sin = man << offset
-    else:
-        sin = man >> (-offset)
-    return cos, sin
 
 def pow_fixed(x, n, wp):
     if n == 1:
@@ -1419,13 +1398,17 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     one = MPZ_ONE << wp
     one_2wp = MPZ_ONE << (2*wp)
 
+    ln2 = ln2_fixed(wp)
+    pi2 = pi_fixed(wp-1)
+    wp2 = wp+wp
+
     for w in xrange(a, a+n+1):
-        log = log_int_fixed(w, wp)
-        cos, sin = cos_sin_fixed_prod(-sim*log, wp)
+        log = log_int_fixed(w, wp, ln2)
+        cos, sin = cos_sin_fixed((-sim*log)>>wp, wp, pi2)
         if critical_line:
-            u = one_2wp // sqrt_fixed(w << wp, wp)
+            u = one_2wp // isqrt_fast(w<<wp2)
         else:
-            u = exp_fixed_prod(-sre*log, wp)
+            u = exp_fixed((-sre*log)>>wp, wp)
         xterm_re = (u * cos) >> wp
         xterm_im = (u * sin) >> wp
         if reflect:
