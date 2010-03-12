@@ -98,7 +98,7 @@ math_float_inf = 1e300 * 1e300
 # This function can be used to round a mantissa generally. However,
 # we will try to do most rounding inline for efficiency.
 def round_int(x, n, rnd):
-    if rnd is round_nearest:
+    if rnd == round_nearest:
         if x >= 0:
             t = x >> (n-1)
             if t & 1 and ((t & 2) or (x & h_mask[n<300][n])):
@@ -107,15 +107,15 @@ def round_int(x, n, rnd):
                 return t>>1
         else:
             return -round_int(-x, n, rnd)
-    if rnd is round_floor:
+    if rnd == round_floor:
         return x >> n
-    if rnd is round_ceiling:
+    if rnd == round_ceiling:
         return -((-x) >> n)
-    if rnd is round_down:
+    if rnd == round_down:
         if x >= 0:
             return x >> n
         return -((-x) >> n)
-    if rnd is round_up:
+    if rnd == round_up:
         if x >= 0:
             return -((-x) >> n)
         return x >> n
@@ -166,7 +166,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
     # Cut mantissa down to size if larger than target precision
     n = bc - prec
     if n > 0:
-        if rnd is round_nearest:
+        if rnd == round_nearest:
             t = man >> (n-1)
             if t & 1 and ((t & 2) or (man & h_mask[n<300][n])):
                 man = (t>>1)+1
@@ -207,7 +207,7 @@ def _normalize1(sign, man, exp, bc, prec, rnd):
     if bc <= prec:
         return sign, man, exp, bc
     n = bc - prec
-    if rnd is round_nearest:
+    if rnd == round_nearest:
         t = man >> (n-1)
         if t & 1 and ((t & 2) or (man & h_mask[n<300][n])):
             man = (t>>1)+1
@@ -1003,7 +1003,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
 
     # Use directed rounding all the way through to maintain rigorous
     # bounds for interval arithmetic
-    rounds_down = (rnd is round_nearest) or \
+    rounds_down = (rnd == round_nearest) or \
         shifts_down[rnd][result_sign]
 
     # Now we perform binary exponentiation. Need to estimate precision
@@ -1052,7 +1052,7 @@ def mpf_perturb(x, eps_sign, prec, rnd):
     With rounding to nearest, this is taken to simply normalize
     x to the given precision.
     """
-    if rnd is round_nearest:
+    if rnd == round_nearest:
         return mpf_pos(x, prec, rnd)
     sign, man, exp, bc = x
     eps = (eps_sign, MPZ_ONE, exp+bc-prec-1, 1)
