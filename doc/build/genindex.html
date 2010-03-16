@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -8,7 +10,7 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    '#',
         VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" /> 
   </head>
   <body>
@@ -26,7 +26,7 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="" title="General Index"
+          <a href="#" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
@@ -34,6 +34,7 @@
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
@@ -51,8 +52,8 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="basics.html#mpmath.absmax">absmax() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.absmin">absmin() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.absmax">absmax() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.absmin">absmin() (in module mpmath)</a></dt>
 <dt><a href="functions/trigonometric.html#mpmath.acos">acos() (in module mpmath)</a></dt>
 <dt><a href="functions/hyperbolic.html#mpmath.acosh">acosh() (in module mpmath)</a></dt>
 <dt><a href="functions/trigonometric.html#mpmath.acot">acot() (in module mpmath)</a></dt>
@@ -62,13 +63,16 @@
 <dt><a href="functions/powers.html#mpmath.agm">agm() (in module mpmath)</a></dt>
 <dt><a href="functions/bessel.html#mpmath.airyai">airyai() (in module mpmath)</a></dt>
 <dt><a href="functions/bessel.html#mpmath.airybi">airybi() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.almosteq">almosteq() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.almosteq">almosteq() (in module mpmath)</a></dt>
 <dt><a href="functions/zeta.html#mpmath.altzeta">altzeta() (in module mpmath)</a></dt>
-<dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Anderson">Anderson (class in mpmath.calculus.optimization)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Anderson">Anderson (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.ANewton">ANewton (class in mpmath.calculus.optimization)</a></dt>
-<dt><a href="functions/constants.html#mpmath.mp.apery">apery (mpmath.mp attribute)</a></dt>
+<dt><a href="functions/constants.html#mpmath.mp.apery">apery (mpmath.mp attribute)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/hypergeometric.html#mpmath.appellf1">appellf1() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.arange">arange() (in module mpmath)</a></dt>
+<dt><a href="functions/hypergeometric.html#mpmath.appellf2">appellf2() (in module mpmath)</a></dt>
+<dt><a href="functions/hypergeometric.html#mpmath.appellf3">appellf3() (in module mpmath)</a></dt>
+<dt><a href="functions/hypergeometric.html#mpmath.appellf4">appellf4() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.arange">arange() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.arg">arg() (in module mpmath)</a></dt>
 <dt><a href="functions/trigonometric.html#mpmath.asec">asec() (in module mpmath)</a></dt>
 <dt><a href="functions/hyperbolic.html#mpmath.asech">asech() (in module mpmath)</a></dt>
@@ -77,6 +81,7 @@
 <dt><a href="functions/trigonometric.html#mpmath.atan">atan() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.atan2">atan2() (in module mpmath)</a></dt>
 <dt><a href="functions/hyperbolic.html#mpmath.atanh">atanh() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.autoprec">autoprec() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="B">B</h2>
@@ -117,7 +122,8 @@
 <dt><a href="functions/orthogonal.html#mpmath.chebyt">chebyt() (in module mpmath)</a></dt>
 <dt><a href="functions/orthogonal.html#mpmath.chebyu">chebyu() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.chi">chi() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.chop">chop() (in module mpmath)</a></dt>
+<dt><a href="matrices.html#mpmath.cholesky">cholesky() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.chop">chop() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.ci">ci() (in module mpmath)</a></dt>
 <dt><a href="functions/zeta.html#mpmath.clcos">clcos() (in module mpmath)</a></dt>
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule.clear">clear() (mpmath.calculus.quadrature.QuadratureRule method)</a></dt>
@@ -165,8 +171,8 @@
 <dt><a href="functions/expintegrals.html#mpmath.erfc">erfc() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.erfi">erfi() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.erfinv">erfinv() (in module mpmath)</a></dt>
-<dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule.estimate_error">estimate_error() (mpmath.calculus.quadrature.QuadratureRule method)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="functions/constants.html#mpmath.mp.euler">euler (mpmath.mp attribute)</a></dt>
+<dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule.estimate_error">estimate_error() (mpmath.calculus.quadrature.QuadratureRule method)</a></dt>
+<dt><a href="functions/constants.html#mpmath.mp.euler">euler (mpmath.mp attribute)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="functions/numtheory.html#mpmath.eulernum">eulernum() (in module mpmath)</a></dt>
 <dt><a href="functions/numtheory.html#mpmath.eulerpoly">eulerpoly() (in module mpmath)</a></dt>
 <dt><a href="functions/powers.html#mpmath.exp">exp() (in module mpmath)</a></dt>
@@ -175,6 +181,8 @@
 <dt><a href="functions/powers.html#mpmath.expjpi">expjpi() (in module mpmath)</a></dt>
 <dt><a href="matrices.html#mpmath.expm">expm() (in module mpmath)</a></dt>
 <dt><a href="functions/powers.html#mpmath.expm1">expm1() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.extradps">extradps() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.extraprec">extraprec() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="F">F</h2>
@@ -186,7 +194,7 @@
 <dt><a href="functions/gamma.html#mpmath.factorial">factorial() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.fadd">fadd() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.fdiv">fdiv() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.fdot">fdot() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.fdot">fdot() (in module mpmath)</a></dt>
 <dt><a href="functions/gamma.html#mpmath.ff">ff() (in module mpmath)</a></dt>
 <dt><a href="functions/numtheory.html#mpmath.fibonacci">fibonacci() (in module mpmath)</a></dt>
 <dt><a href="identification.html#mpmath.findpoly">findpoly() (in module mpmath)</a></dt>
@@ -196,13 +204,13 @@
 <dt><a href="functions/numberparts.html#mpmath.fneg">fneg() (in module mpmath)</a></dt>
 <dt><a href="calculus/approximation.html#mpmath.fourier">fourier() (in module mpmath)</a></dt>
 <dt><a href="calculus/approximation.html#mpmath.fourierval">fourierval() (in module mpmath)</a></dt>
-<dt><a href="calculus/sums_limits.html#mpmath.fprod">fprod() (in module mpmath)</a>, <a href="basics.html#mpmath.fprod">[1]</a></dt>
-<dt><a href="basics.html#mpmath.fraction">fraction() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.fprod">fprod() (in module mpmath)</a>, <a href="calculus/sums_limits.html#mpmath.fprod">[1]</a></dt>
+<dt><a href="general.html#mpmath.fraction">fraction() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.fresnelc">fresnelc() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.fresnels">fresnels() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.frexp">frexp() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.fsub">fsub() (in module mpmath)</a></dt>
-<dt><a href="calculus/sums_limits.html#mpmath.fsum">fsum() (in module mpmath)</a>, <a href="basics.html#mpmath.fsum">[1]</a></dt>
+<dt><a href="general.html#mpmath.fsum">fsum() (in module mpmath)</a>, <a href="calculus/sums_limits.html#mpmath.fsum">[1]</a></dt>
 </dl></td></tr></table>
 
 <h2 id="G">G</h2>
@@ -238,9 +246,10 @@
 <dt><a href="functions/hypergeometric.html#mpmath.hyp2f3">hyp2f3() (in module mpmath)</a></dt>
 <dt><a href="functions/hypergeometric.html#mpmath.hyp3f2">hyp3f2() (in module mpmath)</a></dt>
 <dt><a href="functions/hypergeometric.html#mpmath.hyper">hyper() (in module mpmath)</a></dt>
+<dt><a href="functions/hypergeometric.html#mpmath.hyper2d">hyper2d() (in module mpmath)</a></dt>
 <dt><a href="functions/hypergeometric.html#mpmath.hypercomb">hypercomb() (in module mpmath)</a></dt>
 <dt><a href="functions/gamma.html#mpmath.hyperfac">hyperfac() (in module mpmath)</a></dt>
-<dt><a href="functions/hypergeometric.html#mpmath.hyperu">hyperu() (in module mpmath)</a></dt>
+<dt><a href="functions/bessel.html#mpmath.hyperu">hyperu() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.hypot">hypot() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
@@ -251,9 +260,9 @@
 <dt><a href="identification.html#mpmath.identify">identify() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Illinois">Illinois (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.im">im() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.isinf">isinf() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="basics.html#mpmath.isint">isint() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.isnan">isnan() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.isinf">isinf() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="general.html#mpmath.isint">isint() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.isnan">isnan() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="J">J</h2>
@@ -289,7 +298,7 @@
 <dt><a href="functions/orthogonal.html#mpmath.legenq">legenq() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.li">li() (in module mpmath)</a></dt>
 <dt><a href="calculus/sums_limits.html#mpmath.limit">limit() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="basics.html#mpmath.linspace">linspace() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.linspace">linspace() (in module mpmath)</a></dt>
 <dt><a href="functions/powers.html#mpmath.ln">ln() (in module mpmath)</a></dt>
 <dt><a href="functions/powers.html#mpmath.log">log() (in module mpmath)</a></dt>
 <dt><a href="functions/powers.html#mpmath.log10">log10() (in module mpmath)</a></dt>
@@ -301,16 +310,18 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
+<dt><a href="general.html#mpmath.maxcalls">maxcalls() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.MDNewton">MDNewton (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="functions/hypergeometric.html#mpmath.meijerg">meijerg() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.memoize">memoize() (in module mpmath)</a></dt>
 <dt><a href="functions/constants.html#mpmath.mp.mertens">mertens (mpmath.mp attribute)</a></dt>
 <dt><a href="functions/elliptic.html#mpmath.mfrom">mfrom() (in module mpmath)</a></dt>
-<dt><a href="calculus/optimization.html#mpmath.calculus.optimization.MNewton">MNewton (class in mpmath.calculus.optimization)</a></dt>
-<dt><a href="matrices.html#mpmath.mnorm">mnorm() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="calculus/optimization.html#mpmath.calculus.optimization.MNewton">MNewton (class in mpmath.calculus.optimization)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="matrices.html#mpmath.mnorm">mnorm() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.modf">modf() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.monitor">monitor() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.monitor">monitor() (in module mpmath)</a></dt>
 <dt><a href="functions/elliptic.html#module-mpmath.functions.elliptic">mpmath.functions.elliptic (module)</a></dt>
-<dt><a href="basics.html#mpmath.mpmathify">mpmathify() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.mpmathify">mpmathify() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Muller">Muller (class in mpmath.calculus.optimization)</a></dt>
 </dl></td></tr></table>
 
@@ -322,9 +333,9 @@
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Newton">Newton (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="matrices.html#mpmath.norm">norm() (in module mpmath)</a></dt>
 <dt><a href="functions/expintegrals.html#mpmath.npdf">npdf() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.nprint">nprint() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="general.html#mpmath.nprint">nprint() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="calculus/sums_limits.html#mpmath.nprod">nprod() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.nstr">nstr() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.nstr">nstr() (in module mpmath)</a></dt>
 <dt><a href="calculus/sums_limits.html#mpmath.nsum">nsum() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
@@ -377,10 +388,11 @@
 <dl>
 
 <dt><a href="functions/trigonometric.html#mpmath.radians">radians() (in module mpmath)</a></dt>
-<dt><a href="basics.html#mpmath.rand">rand() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.rand">rand() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.re">re() (in module mpmath)</a></dt>
 <dt><a href="functions/numberparts.html#mpmath.rect">rect() (in module mpmath)</a></dt>
-<dt><a href="functions/gamma.html#mpmath.rf">rf() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="functions/gamma.html#mpmath.rf">rf() (in module mpmath)</a></dt>
+<dt><a href="functions/gamma.html#mpmath.rgamma">rgamma() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
 <dt><a href="calculus/sums_limits.html#mpmath.richardson">richardson() (in module mpmath)</a></dt>
 <dt><a href="calculus/optimization.html#mpmath.calculus.optimization.Ridder">Ridder (class in mpmath.calculus.optimization)</a></dt>
 <dt><a href="functions/numtheory.html#mpmath.riemannr">riemannr() (in module mpmath)</a></dt>
@@ -431,7 +443,7 @@
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.TanhSinh">TanhSinh (class in mpmath.calculus.quadrature)</a></dt>
 <dt><a href="functions/elliptic.html#mpmath.taufrom">taufrom() (in module mpmath)</a></dt>
 <dt><a href="calculus/approximation.html#mpmath.taylor">taylor() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
-<dt><a href="basics.html#mpmath.timing">timing() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.timing">timing() (in module mpmath)</a></dt>
 <dt><a href="calculus/integration.html#mpmath.calculus.quadrature.QuadratureRule.transform_nodes">transform_nodes() (mpmath.calculus.quadrature.QuadratureRule method)</a></dt>
 <dt><a href="functions/constants.html#mpmath.mp.twinprime">twinprime (mpmath.mp attribute)</a></dt>
 </dl></td></tr></table>
@@ -447,8 +459,10 @@
 <table width="100%" class="indextable"><tr><td width="33%" valign="top">
 <dl>
 
-<dt><a href="functions/hypergeometric.html#mpmath.whitm">whitm() (in module mpmath)</a></dt>
-<dt><a href="functions/hypergeometric.html#mpmath.whitw">whitw() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="functions/bessel.html#mpmath.whitm">whitm() (in module mpmath)</a></dt>
+<dt><a href="functions/bessel.html#mpmath.whitw">whitw() (in module mpmath)</a></dt>
+<dt><a href="general.html#mpmath.workdps">workdps() (in module mpmath)</a></dt></dl></td><td width="33%" valign="top"><dl>
+<dt><a href="general.html#mpmath.workprec">workprec() (in module mpmath)</a></dt>
 </dl></td></tr></table>
 
 <h2 id="Z">Z</h2>
@@ -469,12 +483,19 @@
 
    
 
-          <h3>Quick search</h3>
-            <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -483,18 +504,29 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="" title="General Index"
-             accesskey="I">index</a></li>
+          <a href="#" title="General Index"
+             >index</a></li>
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

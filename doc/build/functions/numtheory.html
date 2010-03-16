@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="q-functions" href="qfunctions.html" />
@@ -44,12 +44,12 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="number-theoretical-combinatorial-and-integer-functions">
 <h1>Number-theoretical, combinatorial and integer functions<a class="headerlink" href="#number-theoretical-combinatorial-and-integer-functions" title="Permalink to this headline">¶</a></h1>
 <p>For factorial-type functions, including binomial coefficients,
@@ -60,16 +60,16 @@ double factorials, etc., see the separate section of the documentation.</p>
 <h3><tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>/<tt class="xref docutils literal"><span class="pre">fib()</span></tt><a class="headerlink" href="#fibonacci-fib" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.fibonacci">
-<!--[mpmath.fibonacci]--><tt class="descclassname">mpmath.</tt><tt class="descname">fibonacci</tt><big>(</big><em>n</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.fibonacci" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">fibonacci(n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Fibonacci number, <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" />. The
-Fibonacci numbers are defined by the recurrence <img class="math" src="../_images/math/3c80df4dced24d2e083ecaf5eba04730e2abd010.png" alt="F(n) = F(n-1) + F(n-2)" />
-with the initial values <img class="math" src="../_images/math/e1676ed7f6f03f442bbb3620cc13f1d86a018db0.png" alt="F(0) = 0" />, <img class="math" src="../_images/math/0faeea7ef7f0f0e89604b913937e23bd424c7035.png" alt="F(1) = 1" />. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">fibonacci</tt><big>(</big><em>n</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.fibonacci" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">fibonacci(n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Fibonacci number, <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)"/>. The
+Fibonacci numbers are defined by the recurrence <img class="math" src="../_images/math/3c80df4dced24d2e083ecaf5eba04730e2abd010.png" alt="F(n) = F(n-1) + F(n-2)"/>
+with the initial values <img class="math" src="../_images/math/e1676ed7f6f03f442bbb3620cc13f1d86a018db0.png" alt="F(0) = 0"/>, <img class="math" src="../_images/math/0faeea7ef7f0f0e89604b913937e23bd424c7035.png" alt="F(1) = 1"/>. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>
 extends this definition to arbitrary real and complex arguments
 using the formula</p>
 <div class="math">
-<p><img src="../_images/math/bf1d4599e53249947baa0f7b49dd66f187d02ac2.png" alt="F(z) = \frac{\phi^z - \cos(\pi z) \phi^{-z}}{\sqrt 5}" />
-</div></p><p>where <img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi" /> is the golden ratio. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> also uses this
-continuous formula to compute <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> for extremely large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, where
+<p><img src="../_images/math/bf1d4599e53249947baa0f7b49dd66f187d02ac2.png" alt="F(z) = \frac{\phi^z - \cos(\pi z) \phi^{-z}}{\sqrt 5}" /></p>
+</div><p>where <img class="math" src="../_images/math/2c175f60eecef1de7560c3bdea495d69f26f719d.png" alt="\phi"/> is the golden ratio. <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt> also uses this
+continuous formula to compute <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)"/> for extremely large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, where
 calculating the exact integer would be wasteful.</p>
 <p>For convenience, <tt class="xref docutils literal"><span class="pre">fib()</span></tt> is available as an alias for
 <tt class="xref docutils literal"><span class="pre">fibonacci()</span></tt>.</p>
@@ -86,7 +86,7 @@ calculating the exact integer would be wasteful.</p>
 <span class="go">12586269025.0</span>
 </pre></div>
 </div>
-<p>The recurrence for <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)" /> extends backwards to negative <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<p>The recurrence for <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)"/> extends backwards to negative <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">10</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">),</span>
 <span class="gp">...</span>
@@ -111,7 +111,7 @@ of stupendous size:</p>
 </div>
 <p><strong>Real and complex arguments</strong></p>
 <p>The extended Fibonacci function is an analytic function. The
-property <img class="math" src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88fc5b3eff.png" alt="F(z) = F(z-1) + F(z-2)" /> holds for arbitrary <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+property <img class="math" src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88fc5b3eff.png" alt="F(z) = F(z-1) + F(z-2)"/> holds for arbitrary <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fib</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">2.1170270579161</span>
@@ -126,7 +126,7 @@ property <img class="math" src="../_images/math/955ea4f7586d40c1fc76f92e7d448a88
 <p>The Fibonacci function has infinitely many roots on the
 negative half-real axis. The first root is at 0, the second is
 close to -0.18, and then there are infinitely many roots that
-asymptotically approach <img class="math" src="../_images/math/7894a934b6faeaabe216e25c212c048c59c74aa7.png" alt="-n+1/2" />:</p>
+asymptotically approach <img class="math" src="../_images/math/7894a934b6faeaabe216e25c212c048c59c74aa7.png" alt="-n+1/2"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="go">-0.183802359692956</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">fib</span><span class="p">,</span> <span class="o">-</span><span class="mf">2</span><span class="p">)</span>
@@ -138,7 +138,7 @@ asymptotically approach <img class="math" src="../_images/math/7894a934b6faeaabe
 </pre></div>
 </div>
 <p><strong>Mathematical relationships</strong></p>
-<p>For large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img class="math" src="../_images/math/faca141ea81723e491a81891dda2e718140eaa17.png" alt="F(n+1)/F(n)" /> approaches the golden ratio:</p>
+<p>For large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <img class="math" src="../_images/math/faca141ea81723e491a81891dda2e718140eaa17.png" alt="F(n+1)/F(n)"/> approaches the golden ratio:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fibonacci</span><span class="p">(</span><span class="mf">101</span><span class="p">)</span><span class="o">/</span><span class="n">fibonacci</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
 <span class="go">1.6180339887498948482045868343656381177203127439638</span>
@@ -187,8 +187,8 @@ numbers can be expressed in terms of a Jacobi theta function:</p>
 <h3><tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt><a class="headerlink" href="#bernoulli" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bernoulli">
-<!--[mpmath.bernoulli]--><tt class="descclassname">mpmath.</tt><tt class="descname">bernoulli</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.bernoulli" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the nth Bernoulli number, <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" />, for any integer <img class="math" src="../_images/math/e2c7d62172af0e738dd12f47f3f8ad8ef70cd65f.png" alt="n \ge 0" />.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bernoulli</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.bernoulli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the nth Bernoulli number, <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n"/>, for any integer <img class="math" src="../_images/math/e2c7d62172af0e738dd12f47f3f8ad8ef70cd65f.png" alt="n \ge 0"/>.</p>
 <p>The Bernoulli numbers are rational numbers, but this function
 returns a floating-point approximation. To obtain an exact
 fraction, use <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> instead.</p>
@@ -222,7 +222,7 @@ fraction, use <tt class="xref docutils literal"><span class="pre">bernfrac()</sp
 <span class="go">-2.8382249570693706959264156336481764738284680928013e+78</span>
 </pre></div>
 </div>
-<p>Arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> are supported:</p>
+<p>Arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> are supported:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bernoulli</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span> <span class="o">+</span> <span class="mf">2</span><span class="p">)</span>
 <span class="go">3.09136296657021e+1876752564973863312327</span>
@@ -237,11 +237,11 @@ at integer arguments:</p>
 </pre></div>
 </div>
 <p><strong>Algorithm</strong></p>
-<p>For small <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> (<img class="math" src="../_images/math/67569ba3ff78135cda24dd931ebb5817a602a571.png" alt="n &lt; 3000" />) <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt> uses a recurrence
+<p>For small <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> (<img class="math" src="../_images/math/67569ba3ff78135cda24dd931ebb5817a602a571.png" alt="n &lt; 3000"/>) <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt> uses a recurrence
 formula due to Ramanujan. All results in this range are cached,
 so sequential computation of small Bernoulli numbers is
 guaranteed to be fast.</p>
-<p>For larger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" /> is evaluated in terms of the Riemann zeta
+<p>For larger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n"/> is evaluated in terms of the Riemann zeta
 function.</p>
 </dd></dl>
 
@@ -250,11 +250,11 @@ function.</p>
 <h3><tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt><a class="headerlink" href="#bernfrac" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bernfrac">
-<!--[mpmath.bernfrac]--><tt class="descclassname">mpmath.</tt><tt class="descname">bernfrac</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.bernfrac" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a tuple of integers <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)" /> such that <img class="math" src="../_images/math/ed0e40214b4c65391930d730e70ced3aac62cc97.png" alt="p/q = B_n" /> exactly,
-where <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" /> denotes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Bernoulli number. The fraction is
-always reduced to lowest terms. Note that for <img class="math" src="../_images/math/49d98ffe996c0f0d3b82b284cba2113439fefea9.png" alt="n &gt; 1" /> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> odd,
-<img class="math" src="../_images/math/d72198ae318470c88b2114f13302cfcf4e9e9563.png" alt="B_n = 0" />, and <img class="math" src="../_images/math/6457ca2dcd40dc21d9aa0db18c66bbac9af4d899.png" alt="(0, 1)" /> is returned.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bernfrac</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.bernfrac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple of integers <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/> such that <img class="math" src="../_images/math/ed0e40214b4c65391930d730e70ced3aac62cc97.png" alt="p/q = B_n"/> exactly,
+where <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n"/> denotes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Bernoulli number. The fraction is
+always reduced to lowest terms. Note that for <img class="math" src="../_images/math/49d98ffe996c0f0d3b82b284cba2113439fefea9.png" alt="n &gt; 1"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> odd,
+<img class="math" src="../_images/math/d72198ae318470c88b2114f13302cfcf4e9e9563.png" alt="B_n = 0"/>, and <img class="math" src="../_images/math/6457ca2dcd40dc21d9aa0db18c66bbac9af4d899.png" alt="(0, 1)"/> is returned.</p>
 <p><strong>Examples</strong></p>
 <p>The first few Bernoulli numbers are exactly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -279,7 +279,7 @@ always reduced to lowest terms. Note that for <img class="math" src="../_images/
 <span class="go">14 7/6</span>
 </pre></div>
 </div>
-<p>This function works for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<p>This function works for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">bernfrac</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span>
 <span class="go">2338224387510</span>
@@ -294,13 +294,13 @@ always reduced to lowest terms. Note that for <img class="math" src="../_images/
 </div>
 <p>Note: <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt> computes a floating-point approximation
 directly, without computing the exact fraction first.
-This is much faster for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.</p>
+This is much faster for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
 <p><strong>Algorithm</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> works by computing the value of <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" /> numerically
+<p><tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> works by computing the value of <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n"/> numerically
 and then using the von Staudt-Clausen theorem [1] to reconstruct
-the exact fraction. For large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, this is significantly faster than
-computing <img class="math" src="../_images/math/1cd96ae0505c9d2838694d3a5b0aa6d11399258a.png" alt="B_1, B_2, \ldots, B_2" /> recursively with exact arithmetic.
-The implementation has been tested for <img class="math" src="../_images/math/b68ef9ff01dd02bd64b149ecbb2066555a1df67e.png" alt="n = 10^m" /> up to <img class="math" src="../_images/math/970c67d43e2cd7f3e62f1e9afeb5d18508c8dd34.png" alt="m = 6" />.</p>
+the exact fraction. For large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, this is significantly faster than
+computing <img class="math" src="../_images/math/1cd96ae0505c9d2838694d3a5b0aa6d11399258a.png" alt="B_1, B_2, \ldots, B_2"/> recursively with exact arithmetic.
+The implementation has been tested for <img class="math" src="../_images/math/b68ef9ff01dd02bd64b149ecbb2066555a1df67e.png" alt="n = 10^m"/> up to <img class="math" src="../_images/math/970c67d43e2cd7f3e62f1e9afeb5d18508c8dd34.png" alt="m = 6"/>.</p>
 <p>In practice, <tt class="xref docutils literal"><span class="pre">bernfrac()</span></tt> appears to be about three times
 slower than the specialized program calcbn.exe [2]</p>
 <p><strong>References</strong></p>
@@ -317,8 +317,8 @@ slower than the specialized program calcbn.exe [2]</p>
 <h3><tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt><a class="headerlink" href="#bernpoly" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bernpoly">
-<!--[mpmath.bernpoly]--><tt class="descclassname">mpmath.</tt><tt class="descname">bernpoly</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.bernpoly" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the Bernoulli polynomial <img class="math" src="../_images/math/d79269d871ce4723e28967c1f828f909535253d8.png" alt="B_n(z)" />.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bernpoly</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.bernpoly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Bernoulli polynomial <img class="math" src="../_images/math/d79269d871ce4723e28967c1f828f909535253d8.png" alt="B_n(z)"/>.</p>
 <p>The first few Bernoulli polynomials are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -333,7 +333,7 @@ slower than the specialized program calcbn.exe [2]</p>
 <span class="go">[0.0, -0.166667, 0.0, 1.66667, -2.5, 1.0]</span>
 </pre></div>
 </div>
-<p>At <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />, the Bernoulli polynomial evaluates to a
+<p>At <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>, the Bernoulli polynomial evaluates to a
 Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernoulli()</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bernpoly</span><span class="p">(</span><span class="mf">12</span><span class="p">,</span> <span class="mf">0</span><span class="p">),</span> <span class="n">bernoulli</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span>
 <span class="go">(-0.253113553113553, -0.253113553113553)</span>
@@ -341,7 +341,7 @@ Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernou
 <span class="go">(0.0, 0.0)</span>
 </pre></div>
 </div>
-<p>Evaluation is accurate for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and small <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation is accurate for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and small <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bernpoly</span><span class="p">(</span><span class="mf">100</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">2.838224957069370695926416e+78</span>
@@ -359,15 +359,15 @@ Bernoulli number (see <tt class="xref docutils literal"><span class="pre">bernou
 <h3><tt class="xref docutils literal"><span class="pre">eulernum()</span></tt><a class="headerlink" href="#eulernum" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.eulernum">
-<!--[mpmath.eulernum]--><tt class="descclassname">mpmath.</tt><tt class="descname">eulernum</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.eulernum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Euler number, defined as the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th derivative of
-<img class="math" src="../_images/math/a54481a754624cd6f6aa6d88f130415905a83004.png" alt="\mathrm{sech}(t) = 1/\cosh(t)" /> evaluated at <img class="math" src="../_images/math/288e2a39b58d673182c57dc6214b702a448341ea.png" alt="t = 0" />. Equivalently, the
+<tt class="descclassname">mpmath.</tt><tt class="descname">eulernum</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.eulernum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Euler number, defined as the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th derivative of
+<img class="math" src="../_images/math/a54481a754624cd6f6aa6d88f130415905a83004.png" alt="\mathrm{sech}(t) = 1/\cosh(t)"/> evaluated at <img class="math" src="../_images/math/288e2a39b58d673182c57dc6214b702a448341ea.png" alt="t = 0"/>. Equivalently, the
 Euler numbers give the coefficients of the Taylor series</p>
 <div class="math">
-<p><img src="../_images/math/3d79f8156c63633e6dfb072d38f3cf045a5381df.png" alt="\mathrm{sech}(t) = \sum_{n=0}^{\infty} \frac{E_n}{n!} t^n." />
-</div></p><p>The Euler numbers are closely related to Bernoulli numbers
+<p><img src="../_images/math/3d79f8156c63633e6dfb072d38f3cf045a5381df.png" alt="\mathrm{sech}(t) = \sum_{n=0}^{\infty} \frac{E_n}{n!} t^n." /></p>
+</div><p>The Euler numbers are closely related to Bernoulli numbers
 and Bernoulli polynomials. They can also be evaluated in terms of
-Euler polynomials (see <tt class="xref docutils literal"><span class="pre">eulerpoly()</span></tt>) as <img class="math" src="../_images/math/f9912f0eae7855e063b3980ce83501b953668bdf.png" alt="E_n = 2^n E_n(1/2)" />.</p>
+Euler polynomials (see <tt class="xref docutils literal"><span class="pre">eulerpoly()</span></tt>) as <img class="math" src="../_images/math/f9912f0eae7855e063b3980ce83501b953668bdf.png" alt="E_n = 2^n E_n(1/2)"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Computing the first few Euler numbers and verifying that they
 agree with the Taylor series:</p>
@@ -413,19 +413,19 @@ computes numerical approximations for large indices:</p>
 <h3><tt class="xref docutils literal"><span class="pre">eulerpoly()</span></tt><a class="headerlink" href="#eulerpoly" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.eulerpoly">
-<!--[mpmath.eulerpoly]--><tt class="descclassname">mpmath.</tt><tt class="descname">eulerpoly</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.eulerpoly" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the Euler polynomial <img class="math" src="../_images/math/293ac7f9abdef50b197d8a3aee3acdbd1476db34.png" alt="E_n(z)" />, defined by the generating function
+<tt class="descclassname">mpmath.</tt><tt class="descname">eulerpoly</tt><big>(</big><em>n</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.eulerpoly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Euler polynomial <img class="math" src="../_images/math/293ac7f9abdef50b197d8a3aee3acdbd1476db34.png" alt="E_n(z)"/>, defined by the generating function
 representation</p>
 <div class="math">
-<p><img src="../_images/math/92cb5d84a9731bdcee624b4470f7e6f7002462c8.png" alt="\frac{2e^{zt}}{e^t+1} = \sum_{n=0}^\infty E_n(z) \frac{t^n}{n!}." />
-</div></p><p>The Euler polynomials may also be represented in terms of
+<p><img src="../_images/math/92cb5d84a9731bdcee624b4470f7e6f7002462c8.png" alt="\frac{2e^{zt}}{e^t+1} = \sum_{n=0}^\infty E_n(z) \frac{t^n}{n!}." /></p>
+</div><p>The Euler polynomials may also be represented in terms of
 Bernoulli polynomials (see <tt class="xref docutils literal"><span class="pre">bernpoly()</span></tt>) using various formulas, for
 example</p>
 <div class="math">
 <p><img src="../_images/math/fc068cd19f0cb359f3e7fc72d246a210764646e0.png" alt="E_n(z) = \frac{2}{n+1} \left(
     B_n(z)-2^{n+1}B_n\left(\frac{z}{2}\right)
-\right)." />
-</div></p><p>Special values include the Euler numbers <img class="math" src="../_images/math/f9912f0eae7855e063b3980ce83501b953668bdf.png" alt="E_n = 2^n E_n(1/2)" /> (see
+\right)." /></p>
+</div><p>Special values include the Euler numbers <img class="math" src="../_images/math/f9912f0eae7855e063b3980ce83501b953668bdf.png" alt="E_n = 2^n E_n(1/2)"/> (see
 <tt class="xref docutils literal"><span class="pre">eulernum()</span></tt>).</p>
 <p><strong>Examples</strong></p>
 <p>Computing the coefficients of the first few Euler polynomials:</p>
@@ -442,7 +442,7 @@ example</p>
 <span class="go">[-0.5, 0.0, 2.5, 0.0, -2.5, 1.0]</span>
 </pre></div>
 </div>
-<p>Evaluation for arbitrary <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation for arbitrary <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">eulerpoly</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">6.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eulerpoly</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>
@@ -470,7 +470,7 @@ example</p>
 <span class="go">-4087072509293123892361.0</span>
 </pre></div>
 </div>
-<p>Evaluation is accurate for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> and small <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation is accurate for large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and small <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">eulerpoly</span><span class="p">(</span><span class="mf">100</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">2.29047999988194114177943e+108</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eulerpoly</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span> <span class="mf">10.5</span><span class="p">)</span>
@@ -489,9 +489,9 @@ example</p>
 <h3><tt class="xref docutils literal"><span class="pre">bell()</span></tt><a class="headerlink" href="#bell" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bell">
-<!--[mpmath.bell]--><tt class="descclassname">mpmath.</tt><tt class="descname">bell</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.bell" title="Permalink to this definition">¶</a></dt>
-<dd><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> a nonnegative integer, <tt class="docutils literal"><span class="pre">bell(n,x)</span></tt> evaluates the Bell
-polynomial <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" />, the first few of which are</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bell</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.bell" title="Permalink to this definition">¶</a></dt>
+<dd><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> a nonnegative integer, <tt class="docutils literal"><span class="pre">bell(n,x)</span></tt> evaluates the Bell
+polynomial <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/>, the first few of which are</p>
 <div class="math">
 <p><img src="../_images/math/370eaaa999927a40127739b601e85935724735d3.png" alt="B_0(x) = 1
 
@@ -499,19 +499,19 @@ B_1(x) = x
 
 B_2(x) = x^2+x
 
-B_3(x) = x^3+3x^2+x" />
-</div></p><p>If <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> or <tt class="xref docutils literal"><span class="pre">bell()</span></tt> is called with only one argument, it
-gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Bell number <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n" />, which is the number of
-partitions of a set with <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> elements. By setting the precision to
-at least <img class="math" src="../_images/math/816b0b85300fda85bdb84aa1858eadc31859deed.png" alt="\log_{10} B_n" /> digits, <tt class="xref docutils literal"><span class="pre">bell()</span></tt> provides fast
+B_3(x) = x^3+3x^2+x" /></p>
+</div><p>If <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/> or <tt class="xref docutils literal"><span class="pre">bell()</span></tt> is called with only one argument, it
+gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Bell number <img class="math" src="../_images/math/9be2b1de79fff66db67de3b18303bdd2912b7ae6.png" alt="B_n"/>, which is the number of
+partitions of a set with <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> elements. By setting the precision to
+at least <img class="math" src="../_images/math/816b0b85300fda85bdb84aa1858eadc31859deed.png" alt="\log_{10} B_n"/> digits, <tt class="xref docutils literal"><span class="pre">bell()</span></tt> provides fast
 calculation of exact Bell numbers.</p>
 <p>In general, <tt class="xref docutils literal"><span class="pre">bell()</span></tt> computes</p>
 <div class="math">
-<p><img src="../_images/math/14f27b46bfc53a41da9762cad023072e45efb5a0.png" alt="B_n(x) = e^{-x} \left(\mathrm{sinc}(\pi n) + E_n(x)\right)" />
-</div></p><p>where <img class="math" src="../_images/math/65e3e61fce7353dfe4ed8461c9c994afc38c2492.png" alt="E_n(x)" /> is the generalized exponential function implemented
+<p><img src="../_images/math/14f27b46bfc53a41da9762cad023072e45efb5a0.png" alt="B_n(x) = e^{-x} \left(\mathrm{sinc}(\pi n) + E_n(x)\right)" /></p>
+</div><p>where <img class="math" src="../_images/math/65e3e61fce7353dfe4ed8461c9c994afc38c2492.png" alt="E_n(x)"/> is the generalized exponential function implemented
 by <tt class="xref docutils literal"><span class="pre">polyexp()</span></tt>. This is an extension of Dobinski&#8217;s formula [1],
-where the modification is the sinc term ensuring that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> is
-continuous in <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />; <tt class="xref docutils literal"><span class="pre">bell()</span></tt> can thus be evaluated,
+where the modification is the sinc term ensuring that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/> is
+continuous in <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>; <tt class="xref docutils literal"><span class="pre">bell()</span></tt> can thus be evaluated,
 differentiated, etc for arbitrary complex arguments.</p>
 <p><strong>Examples</strong></p>
 <p>Simple evaluations:</p>
@@ -593,12 +593,12 @@ differentiated, etc for arbitrary complex arguments.</p>
 <h3><tt class="xref docutils literal"><span class="pre">primepi()</span></tt><a class="headerlink" href="#primepi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.primepi">
-<!--[mpmath.primepi]--><tt class="descclassname">mpmath.</tt><tt class="descname">primepi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.primepi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the prime counting function, <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" />, which gives
-the number of primes less than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />. The argument
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> may be fractional.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">primepi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.primepi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the prime counting function, <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/>, which gives
+the number of primes less than or equal to <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>. The argument
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> may be fractional.</p>
 <p>The prime counting function is very expensive to evaluate
-precisely for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, and the present implementation is
+precisely for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, and the present implementation is
 not optimized in any way. For numerical approximation of the
 prime counting function, it is better to use <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>
 or <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>.</p>
@@ -619,18 +619,18 @@ or <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>.</
 <h3><tt class="xref docutils literal"><span class="pre">primepi2()</span></tt><a class="headerlink" href="#primepi2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.primepi2">
-<!--[mpmath.primepi2]--><tt class="descclassname">mpmath.</tt><tt class="descname">primepi2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.primepi2" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">primepi2</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.primepi2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an interval (as an <tt class="docutils literal"><span class="pre">mpi</span></tt> instance) providing bounds
-for the value of the prime counting function <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" />. For small
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt> returns an exact interval based on
-the output of <tt class="xref docutils literal"><span class="pre">primepi()</span></tt>. For <img class="math" src="../_images/math/f54fa98073b37791da5e80d6e21a5282536adf29.png" alt="x &gt; 2656" />, a loose interval
+for the value of the prime counting function <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/>. For small
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt> returns an exact interval based on
+the output of <tt class="xref docutils literal"><span class="pre">primepi()</span></tt>. For <img class="math" src="../_images/math/f54fa98073b37791da5e80d6e21a5282536adf29.png" alt="x &gt; 2656"/>, a loose interval
 based on Schoenfeld&#8217;s inequality</p>
 <div class="math">
-<p><img src="../_images/math/ec56afd657455289103a265e4b38ae8ec1a635b4.png" alt="|\pi(x) - \mathrm{li}(x)| &lt; \frac{\sqrt x \log x}{8 \pi}" />
-</div></p><p>is returned. This estimate is rigorous assuming the truth of
+<p><img src="../_images/math/ec56afd657455289103a265e4b38ae8ec1a635b4.png" alt="|\pi(x) - \mathrm{li}(x)| &lt; \frac{\sqrt x \log x}{8 \pi}" /></p>
+</div><p>is returned. This estimate is rigorous assuming the truth of
 the Riemann hypothesis, and can be computed very quickly.</p>
 <p><strong>Examples</strong></p>
-<p>Exact values of the prime counting function for small <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<p>Exact values of the prime counting function for small <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primepi2</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
@@ -641,15 +641,15 @@ the Riemann hypothesis, and can be computed very quickly.</p>
 <span class="go">[168.0, 168.0]</span>
 </pre></div>
 </div>
-<p>Loose intervals are generated for moderately large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<p>Loose intervals are generated for moderately large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">primepi2</span><span class="p">(</span><span class="mf">10000</span><span class="p">),</span> <span class="n">primepi</span><span class="p">(</span><span class="mf">10000</span><span class="p">)</span>
 <span class="go">([1209.0, 1283.0], 1229)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primepi2</span><span class="p">(</span><span class="mf">50000</span><span class="p">),</span> <span class="n">primepi</span><span class="p">(</span><span class="mf">50000</span><span class="p">)</span>
 <span class="go">([5070.0, 5263.0], 5133)</span>
 </pre></div>
 </div>
-<p>As <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> increases, the absolute error gets worse while the relative
-error improves. The exact value of <img class="math" src="../_images/math/11c7d49283e43405ab297a52f1f2aa0de7d32894.png" alt="\pi(10^{23})" /> is
+<p>As <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> increases, the absolute error gets worse while the relative
+error improves. The exact value of <img class="math" src="../_images/math/11c7d49283e43405ab297a52f1f2aa0de7d32894.png" alt="\pi(10^{23})"/> is
 1925320391606803968923, and <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt> gives 9 significant
 digits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">primepi2</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">23</span><span class="p">)</span>
@@ -659,9 +659,9 @@ digits:</p>
 <span class="go">6.9219865355293e-10</span>
 </pre></div>
 </div>
-<p>A more precise, nonrigorous estimate for <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> can be
+<p>A more precise, nonrigorous estimate for <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/> can be
 obtained using the Riemann R function (<tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>).
-For large enough <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, the value returned by <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>
+For large enough <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, the value returned by <tt class="xref docutils literal"><span class="pre">primepi2()</span></tt>
 essentially amounts to a small perturbation of the value returned by
 <tt class="xref docutils literal"><span class="pre">riemannr()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">primepi2</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
@@ -677,28 +677,28 @@ essentially amounts to a small perturbation of the value returned by
 <h3><tt class="xref docutils literal"><span class="pre">riemannr()</span></tt><a class="headerlink" href="#riemannr" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.riemannr">
-<!--[mpmath.riemannr]--><tt class="descclassname">mpmath.</tt><tt class="descname">riemannr</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.riemannr" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">riemannr</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.riemannr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Riemann R function, a smooth approximation of the
-prime counting function <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> (see <tt class="xref docutils literal"><span class="pre">primepi()</span></tt>). The Riemann
+prime counting function <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/> (see <tt class="xref docutils literal"><span class="pre">primepi()</span></tt>). The Riemann
 R function gives a fast numerical approximation useful e.g. to
 roughly estimate the number of primes in a given interval.</p>
 <p>The Riemann R function is computed using the rapidly convergent Gram
 series,</p>
 <div class="math">
 <p><img src="../_images/math/9abdb37e590968789986e9be89fd6487c1dbd72b.png" alt="R(x) = 1 + \sum_{k=1}^{\infty}
-    \frac{\log^k x}{k k! \zeta(k+1)}." />
-</div></p><p>From the Gram series, one sees that the Riemann R function is a
+    \frac{\log^k x}{k k! \zeta(k+1)}." /></p>
+</div><p>From the Gram series, one sees that the Riemann R function is a
 well-defined analytic function (except for a branch cut along
 the negative real half-axis); it can be evaluated for arbitrary
 real or complex arguments.</p>
 <p>The Riemann R function gives a very accurate approximation
 of the prime counting function. For example, it is wrong by at
-most 2 for <img class="math" src="../_images/math/9c7c4e49985884250ef23345752e698d917257d1.png" alt="x &lt; 1000" />, and for <img class="math" src="../_images/math/5135063eaa0d54a454c2af8e685b4af83222a871.png" alt="x = 10^9" /> differs from the exact
-value of <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> by 79, or less than two parts in a million.
+most 2 for <img class="math" src="../_images/math/9c7c4e49985884250ef23345752e698d917257d1.png" alt="x &lt; 1000"/>, and for <img class="math" src="../_images/math/5135063eaa0d54a454c2af8e685b4af83222a871.png" alt="x = 10^9"/> differs from the exact
+value of <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/> by 79, or less than two parts in a million.
 It is about 10 times more accurate than the logarithmic integral
 estimate (see <tt class="xref docutils literal"><span class="pre">li()</span></tt>), which however is even faster to evaluate.
 It is orders of magnitude more accurate than the extremely
-fast <img class="math" src="../_images/math/a07bb8ab7d72be94874de0133e8353cd654b9a11.png" alt="x/\log x" /> estimate.</p>
+fast <img class="math" src="../_images/math/a07bb8ab7d72be94874de0133e8353cd654b9a11.png" alt="x/\log x"/> estimate.</p>
 <p><strong>Examples</strong></p>
 <p>For small arguments, the Riemann R function almost exactly
 gives the prime counting function if rounded to the nearest
@@ -714,7 +714,7 @@ integer:</p>
 </pre></div>
 </div>
 <p>The Riemann R function can be evaluated for arguments far too large
-for exact determination of <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> to be computationally
+for exact determination of <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/> to be computationally
 feasible with any presently known algorithm:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">riemannr</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">1.46923988977204e+28</span>
@@ -725,7 +725,7 @@ feasible with any presently known algorithm:</p>
 </pre></div>
 </div>
 <p>A comparison of the Riemann R function and logarithmic integral estimates
-for <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)" /> using exact values of <img class="math" src="../_images/math/74c776a0c3180f43dd1ce02b63c33af5a9568dc7.png" alt="\pi(10^n)" /> up to <img class="math" src="../_images/math/1819f547a53f667e1a44a49ba2bec08c28d7f222.png" alt="n = 9" />.
+for <img class="math" src="../_images/math/bf5eda8e931643635bbb49a1b8780a45fcba891e.png" alt="\pi(x)"/> using exact values of <img class="math" src="../_images/math/74c776a0c3180f43dd1ce02b63c33af5a9568dc7.png" alt="\pi(10^n)"/> up to <img class="math" src="../_images/math/1819f547a53f667e1a44a49ba2bec08c28d7f222.png" alt="n = 9"/>.
 The fractional error is shown in parentheses:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exact</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4</span><span class="p">,</span><span class="mf">25</span><span class="p">,</span><span class="mf">168</span><span class="p">,</span><span class="mf">1229</span><span class="p">,</span><span class="mf">9592</span><span class="p">,</span><span class="mf">78498</span><span class="p">,</span><span class="mf">664579</span><span class="p">,</span><span class="mf">5761455</span><span class="p">,</span><span class="mf">50847534</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exact</span><span class="p">):</span>
@@ -746,7 +746,7 @@ The fractional error is shown in parentheses:</p>
 </pre></div>
 </div>
 <p>The derivative of the Riemann R function gives the approximate
-probability for a number of magnitude <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> to be prime:</p>
+probability for a number of magnitude <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> to be prime:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">riemannr</span><span class="p">,</span> <span class="mf">1000</span><span class="p">)</span>
 <span class="go">0.141903028110784</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="n">primepi</span><span class="p">(</span><span class="mf">1050</span><span class="p">)</span> <span class="o">-</span> <span class="n">primepi</span><span class="p">(</span><span class="mf">950</span><span class="p">))</span> <span class="o">/</span> <span class="mf">100</span>
@@ -772,16 +772,16 @@ precision:</p>
 <h3><tt class="xref docutils literal"><span class="pre">cyclotomic()</span></tt><a class="headerlink" href="#cyclotomic" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.cyclotomic">
-<!--[mpmath.cyclotomic]--><tt class="descclassname">mpmath.</tt><tt class="descname">cyclotomic</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.cyclotomic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the cyclotomic polynomial <img class="math" src="../_images/math/448d49f4d827bb1e6c7927b2235a00d1abebe582.png" alt="\Phi_n(x)" />, defined by</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">cyclotomic</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.cyclotomic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the cyclotomic polynomial <img class="math" src="../_images/math/448d49f4d827bb1e6c7927b2235a00d1abebe582.png" alt="\Phi_n(x)"/>, defined by</p>
 <div class="math">
-<p><img src="../_images/math/d82a3061f68e10836bed951249787f439dcb1cdb.png" alt="\Phi_n(x) = \prod_{\zeta} (x - \zeta)" />
-</div></p><p>where <img class="math" src="../_images/math/fda38f45a64bbd4451aedeeb4584e01d91239172.png" alt="\zeta" /> ranges over all primitive <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th roots of unity
+<p><img src="../_images/math/d82a3061f68e10836bed951249787f439dcb1cdb.png" alt="\Phi_n(x) = \prod_{\zeta} (x - \zeta)" /></p>
+</div><p>where <img class="math" src="../_images/math/fda38f45a64bbd4451aedeeb4584e01d91239172.png" alt="\zeta"/> ranges over all primitive <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th roots of unity
 (see <tt class="xref docutils literal"><span class="pre">unitroots()</span></tt>). An equivalent representation, used
 for computation, is</p>
 <div class="math">
-<p><img src="../_images/math/da61a04df78eb35d4636f148b159cc74321b5879.png" alt="\Phi_n(x) = \prod_{d\mid n}(x^d-1)^{\mu(n/d)} = \Phi_n(x)" />
-</div></p><p>where <img class="math" src="../_images/math/ad8136a3946faf34a8e134e613b2b4089e91bfa9.png" alt="\mu(m)" /> denotes the Moebius function. The cyclotomic
+<p><img src="../_images/math/da61a04df78eb35d4636f148b159cc74321b5879.png" alt="\Phi_n(x) = \prod_{d\mid n}(x^d-1)^{\mu(n/d)} = \Phi_n(x)" /></p>
+</div><p>where <img class="math" src="../_images/math/ad8136a3946faf34a8e134e613b2b4089e91bfa9.png" alt="\mu(m)"/> denotes the Moebius function. The cyclotomic
 polynomials are integer polynomials, the first of which can be
 written explicitly as</p>
 <div class="math">
@@ -797,8 +797,8 @@ written explicitly as</p>
 
 \Phi_5(x) = x^4 + x^3 + x^2 + x + 1
 
-\Phi_6(x) = x^2 - x + 1" />
-</div></p><p><strong>Examples</strong></p>
+\Phi_6(x) = x^2 - x + 1" /></p>
+</div><p><strong>Examples</strong></p>
 <p>The coefficients of low-order cyclotomic polynomials can be recovered
 using Taylor expansion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -865,7 +865,7 @@ can be checked to agree with the list of primitive roots:</p>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Number-theoretical, combinatorial and integer functions</a><ul>
+<li><a class="reference external" href="#">Number-theoretical, combinatorial and integer functions</a><ul>
 <li><a class="reference external" href="#fibonacci-numbers">Fibonacci numbers</a><ul>
 <li><a class="reference external" href="#fibonacci-fib"><tt class="docutils literal"><span class="pre">fibonacci()</span></tt>/<tt class="docutils literal"><span class="pre">fib()</span></tt></a></li>
 </ul>
@@ -900,19 +900,29 @@ can be checked to agree with the list of primitive roots:</p>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="zeta.html" title="previous chapter">Zeta functions, L-series and polylogarithms</a></p>
+            <p class="topless"><a href="zeta.html"
+                                  title="previous chapter">Zeta functions, L-series and polylogarithms</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="qfunctions.html" title="next chapter">q-functions</a></p>
+            <p class="topless"><a href="qfunctions.html"
+                                  title="next chapter">q-functions</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/numtheory.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/numtheory.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -922,24 +932,35 @@ can be checked to agree with the list of primitive roots:</p>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="qfunctions.html" title="q-functions"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="zeta.html" title="Zeta functions, L-series and polylogarithms"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

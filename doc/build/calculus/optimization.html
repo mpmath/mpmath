@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Sums, products, limits and extrapolation" href="sums_limits.html" />
@@ -44,24 +44,24 @@
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="root-finding-and-optimization">
 <h1>Root-finding and optimization<a class="headerlink" href="#root-finding-and-optimization" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="root-finding-findroot">
 <h2>Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)<a class="headerlink" href="#root-finding-findroot" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.findroot">
-<!--[mpmath.findroot]--><tt class="descclassname">mpmath.</tt><tt class="descname">findroot</tt><big>(</big><em>f</em>, <em>x0</em>, <em>solver=Secant</em>, <em>tol=None</em>, <em>verbose=False</em>, <em>verify=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.findroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find a solution to <img class="math" src="../_images/math/57ccf8d123ba4259e29fba55d9b008874e071492.png" alt="f(x) = 0" />, using <em>x0</em> as starting point or
+<tt class="descclassname">mpmath.</tt><tt class="descname">findroot</tt><big>(</big><em>f</em>, <em>x0</em>, <em>solver=Secant</em>, <em>tol=None</em>, <em>verbose=False</em>, <em>verify=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.findroot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a solution to <img class="math" src="../_images/math/57ccf8d123ba4259e29fba55d9b008874e071492.png" alt="f(x) = 0"/>, using <em>x0</em> as starting point or
 interval for <em>x</em>.</p>
 <p>Multidimensional overdetermined systems are supported.
 You can specify them using a function or a list of functions.</p>
-<p>If the found root does not satisfy <img class="math" src="../_images/math/b6ea5899fdb3a93da1fb6aa7dcbdc16c26bbaabe.png" alt="|f(x)^2 &lt; \mathrm{tol}|" />,
+<p>If the found root does not satisfy <img class="math" src="../_images/math/b6ea5899fdb3a93da1fb6aa7dcbdc16c26bbaabe.png" alt="|f(x)^2 &lt; \mathrm{tol}|"/>,
 an exception is raised (this can be disabled with <em>verify=False</em>).</p>
 <p><strong>Arguments</strong></p>
 <dl class="docutils">
@@ -74,7 +74,7 @@ an exception is raised (this can be disabled with <em>verify=False</em>).</p>
 <dt><em>verbose</em></dt>
 <dd>print additional information for each iteration if true</dd>
 <dt><em>verify</em></dt>
-<dd>verify the solution and raise a ValueError if <img class="math" src="../_images/math/b923875aa965f3600a024ee82ee2088827e55444.png" alt="|f(x) &gt; \mathrm{tol}|" /></dd>
+<dd>verify the solution and raise a ValueError if <img class="math" src="../_images/math/b923875aa965f3600a024ee82ee2088827e55444.png" alt="|f(x) &gt; \mathrm{tol}|"/></dd>
 <dt><em>solver</em></dt>
 <dd>a generator for <em>f</em> and <em>x0</em> returning approximative solution and error</dd>
 <dt><em>maxsteps</em></dt>
@@ -100,7 +100,7 @@ You can use the following string aliases:
 <p><strong>Examples</strong></p>
 <p>The function <tt class="xref docutils literal"><span class="pre">findroot()</span></tt> locates a root of a given function using the
 secant method by default. A simple example use of the secant method is to
-compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x" /> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3" />:</p>
+compute <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> as the root of <img class="math" src="../_images/math/6e8f3a072de64627a11a2df663e577eb43d60c77.png" alt="\sin x"/> closest to <img class="math" src="../_images/math/624fdc3b96c258b9385887727c7b2c3815709b9c.png" alt="x_0 = 3"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
@@ -131,7 +131,7 @@ minimum of the gamma function:</p>
 </pre></div>
 </div>
 <p>Finally, a useful application is to compute inverse functions, such as the
-Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w" />, given the first
+Lambert W function which is the inverse of <img class="math" src="../_images/math/ba7d18b1c8bd44aca81775e0fa7f6cf90d111e64.png" alt="w e^w"/>, given the first
 term of the solution&#8217;s asymptotic expansion as the initial value. In basic
 cases, this gives identical results to mpmath&#8217;s built-in <tt class="docutils literal"><span class="pre">lambertw</span></tt>
 function:</p>
@@ -247,7 +247,7 @@ with multiple roots and usually need a sign change to find a root:</p>
 <h3>Solvers<a class="headerlink" href="#solvers" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Secant">
-<!--[mpmath.calculus.optimization.Secant]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Secant</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Secant" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Secant</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Secant" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0 and x1 close to the root.
 x1 defaults to x0 + 0.25.</p>
@@ -263,7 +263,7 @@ x1 defaults to x0 + 0.25.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Newton">
-<!--[mpmath.calculus.optimization.Newton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Newton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Newton" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Newton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Newton" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0 close to the root.</p>
 <p>Pro:</p>
@@ -281,7 +281,7 @@ x1 defaults to x0 + 0.25.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.MNewton">
-<!--[mpmath.calculus.optimization.MNewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MNewton" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MNewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting point x0 close to the root.
 Uses modified Newton&#8217;s method that converges fast regardless of the
@@ -299,7 +299,7 @@ multiplicity of the root.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Halley">
-<!--[mpmath.calculus.optimization.Halley]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Halley</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Halley" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Halley</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Halley" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs a starting point x0 close to the root.
 Uses Halley&#8217;s method with cubic convergence rate.</p>
@@ -318,7 +318,7 @@ Uses Halley&#8217;s method with cubic convergence rate.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Muller">
-<!--[mpmath.calculus.optimization.Muller]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Muller</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Muller" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Muller</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Muller" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Needs starting points x0, x1 and x2 close to the root.
 x1 defaults to x0 + 0.25; x2 to x1 + 0.25.
@@ -338,7 +338,7 @@ Uses Muller&#8217;s method that converges towards complex roots.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Bisection">
-<!--[mpmath.calculus.optimization.Bisection]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Bisection</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Bisection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Bisection</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Bisection" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses bisection method to find a root of f in [a, b].
 Might fail for multiple roots (needs sign change).</p>
@@ -355,7 +355,7 @@ Might fail for multiple roots (needs sign change).</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Illinois">
-<!--[mpmath.calculus.optimization.Illinois]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Illinois</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Illinois" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Illinois</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Illinois" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Illinois method or similar to find a root of f in [a, b].
 Might fail for multiple roots (needs sign change).
@@ -383,7 +383,7 @@ used to ensure convergence (you can choose one using the &#8216;method&#8217; ke
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Pegasus">
-<!--[mpmath.calculus.optimization.Pegasus]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Pegasus</tt><a class="headerlink" href="#mpmath.calculus.optimization.Pegasus" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Pegasus</tt><a class="headerlink" href="#mpmath.calculus.optimization.Pegasus" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Pegasus method to find a root of f in [a, b].
 Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
@@ -391,7 +391,7 @@ Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Anderson">
-<!--[mpmath.calculus.optimization.Anderson]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Anderson</tt><a class="headerlink" href="#mpmath.calculus.optimization.Anderson" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Anderson</tt><a class="headerlink" href="#mpmath.calculus.optimization.Anderson" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Anderson-Bjoerk method to find a root of f in [a, b].
 Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
@@ -399,7 +399,7 @@ Wrapper for illinois to use method=&#8217;pegasus&#8217;.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.Ridder">
-<!--[mpmath.calculus.optimization.Ridder]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Ridder</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Ridder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">Ridder</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.Ridder" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d-solver generating pairs of approximative root and error.</p>
 <p>Ridders&#8217; method to find a root of f in [a, b].
 Is told to perform as well as Brent&#8217;s method while being simpler.</p>
@@ -419,7 +419,7 @@ Is told to perform as well as Brent&#8217;s method while being simpler.</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.ANewton">
-<!--[mpmath.calculus.optimization.ANewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">ANewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.ANewton" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">ANewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.ANewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>EXPERIMENTAL 1d-solver generating pairs of approximative root and error.</p>
 <p>Uses Newton&#8217;s method modified to use Steffensens method when convergence is
 slow. (I.e. for multiple roots.)</p>
@@ -427,7 +427,7 @@ slow. (I.e. for multiple roots.)</p>
 
 <dl class="class">
 <dt id="mpmath.calculus.optimization.MDNewton">
-<!--[mpmath.calculus.optimization.MDNewton]-->class <tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MDNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MDNewton" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpmath.calculus.optimization.</tt><tt class="descname">MDNewton</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.calculus.optimization.MDNewton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the root of a vector function numerically using Newton&#8217;s method.</p>
 <p>f is a vector function representing a nonlinear equation system.</p>
 <p>x0 is the starting point close to the root.</p>
@@ -458,7 +458,7 @@ root-polishing to any precision.</p>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Root-finding and optimization</a><ul>
+<li><a class="reference external" href="#">Root-finding and optimization</a><ul>
 <li><a class="reference external" href="#root-finding-findroot">Root-finding (<tt class="docutils literal"><span class="pre">findroot</span></tt>)</a><ul>
 <li><a class="reference external" href="#solvers">Solvers</a></li>
 </ul>
@@ -468,19 +468,29 @@ root-polishing to any precision.</p>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="polynomials.html" title="previous chapter">Polynomials</a></p>
+            <p class="topless"><a href="polynomials.html"
+                                  title="previous chapter">Polynomials</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="sums_limits.html" title="next chapter">Sums, products, limits and extrapolation</a></p>
+            <p class="topless"><a href="sums_limits.html"
+                                  title="next chapter">Sums, products, limits and extrapolation</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/calculus/optimization.txt">Show Source</a></li>
+              <li><a href="../_sources/calculus/optimization.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -490,24 +500,35 @@ root-polishing to any precision.</p>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="sums_limits.html" title="Sums, products, limits and extrapolation"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="polynomials.html" title="Polynomials"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
+          <li><a href="index.html" >Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

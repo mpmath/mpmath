@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -8,7 +10,7 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    '#',
         VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
     <link rel="next" title="Matrices" href="matrices.html" />
     <link rel="prev" title="Function approximation" href="calculus/approximation.html" /> 
@@ -42,12 +42,12 @@
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="interval-arithmetic">
 <h1>Interval arithmetic<a class="headerlink" href="#interval-arithmetic" title="Permalink to this headline">¶</a></h1>
 <p>The <tt class="docutils literal"><span class="pre">mpi</span></tt> type holds an interval defined by a pair of <tt class="docutils literal"><span class="pre">mpf</span></tt> values. Arithmetic on intervals uses conservative rounding so that, if an interval is interpreted as a numerical uncertainty interval for a fixed number, any sequence of interval operations will produce an interval that contains what would be the result of applying the same sequence of operations to the exact number.</p>
@@ -168,7 +168,7 @@
 </div>
 <div class="section" id="establishing-inequalities">
 <h2>Establishing inequalities<a class="headerlink" href="#establishing-inequalities" title="Permalink to this headline">¶</a></h2>
-<p>Interval arithmetic can be used to establish inequalities such as <img class="math" src="_images/math/139abec14f3a7179b5113ee469d7bedc4a797cd7.png" alt="\exp(\pi \sqrt{163}) &lt; 640320^3 + 744" />. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
+<p>Interval arithmetic can be used to establish inequalities such as <img class="math" src="_images/math/139abec14f3a7179b5113ee469d7bedc4a797cd7.png" alt="\exp(\pi \sqrt{163}) &lt; 640320^3 + 744"/>. The left-hand and right-hand sides in this inequality agree to over 30 digits, so low-precision arithmetic may give the wrong result:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">163</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">640320</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="mf">744</span><span class="p">)</span>
 <span class="go">False</span>
@@ -202,7 +202,7 @@
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Interval arithmetic</a><ul>
+<li><a class="reference external" href="#">Interval arithmetic</a><ul>
 <li><a class="reference external" href="#basic-operations">Basic operations</a></li>
 <li><a class="reference external" href="#interval-functions">Interval functions</a></li>
 <li><a class="reference external" href="#establishing-inequalities">Establishing inequalities</a></li>
@@ -212,19 +212,29 @@
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="calculus/approximation.html" title="previous chapter">Function approximation</a></p>
+            <p class="topless"><a href="calculus/approximation.html"
+                                  title="previous chapter">Function approximation</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="matrices.html" title="next chapter">Matrices</a></p>
+            <p class="topless"><a href="matrices.html"
+                                  title="next chapter">Matrices</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/intervals.txt">Show Source</a></li>
+              <li><a href="_sources/intervals.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -234,23 +244,34 @@
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="matrices.html" title="Matrices"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="calculus/approximation.html" title="Function approximation"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

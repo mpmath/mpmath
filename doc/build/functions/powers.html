@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Trigonometric functions" href="trigonometric.html" />
@@ -44,12 +44,12 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="powers-and-logarithms">
 <h1>Powers and logarithms<a class="headerlink" href="#powers-and-logarithms" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="nth-roots">
@@ -58,11 +58,11 @@
 <h3><tt class="xref docutils literal"><span class="pre">sqrt()</span></tt><a class="headerlink" href="#sqrt" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.sqrt">
-<!--[mpmath.sqrt]--><tt class="descclassname">mpmath.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.sqrt" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> gives the principal square root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.sqrt" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> gives the principal square root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/4aa027abf288d84604eb02f64f3b9485aa648ed7.png" alt="\sqrt x"/>.
 For positive real numbers, the principal root is simply the
 positive square root. For arbitrary complex numbers, the principal
-square root is defined to satisfy <img class="math" src="../_images/math/c029e0366a469e4e92b174d25c5c98bec0c787e6.png" alt="\sqrt x = \exp(\log(x)/2)" />.
+square root is defined to satisfy <img class="math" src="../_images/math/c029e0366a469e4e92b174d25c5c98bec0c787e6.png" alt="\sqrt x = \exp(\log(x)/2)"/>.
 The function thus has a branch cut along the negative half real axis.</p>
 <p>For all mpmath numbers <tt class="docutils literal"><span class="pre">x</span></tt>, calling <tt class="docutils literal"><span class="pre">sqrt(x)</span></tt> is equivalent to
 performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p>
@@ -106,8 +106,8 @@ performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p
 <h3><tt class="xref docutils literal"><span class="pre">cbrt()</span></tt><a class="headerlink" href="#cbrt" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.cbrt">
-<!--[mpmath.cbrt]--><tt class="descclassname">mpmath.</tt><tt class="descname">cbrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.cbrt" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">cbrt(x)</span></tt> computes the cube root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/211fe368f21e7e87a497012b64962b2dae135c3d.png" alt="x^{1/3}" />. This
+<tt class="descclassname">mpmath.</tt><tt class="descname">cbrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.cbrt" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">cbrt(x)</span></tt> computes the cube root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/211fe368f21e7e87a497012b64962b2dae135c3d.png" alt="x^{1/3}"/>. This
 function is faster and more accurate than raising to a floating-point
 fraction:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -119,7 +119,7 @@ fraction:</p>
 </pre></div>
 </div>
 <p>Every nonzero complex number has three cube roots. This function
-returns the cube root defined by <img class="math" src="../_images/math/595023734d9ab251444ec4facc4d0b56b2d169cd.png" alt="\exp(\log(x)/3)" /> where the
+returns the cube root defined by <img class="math" src="../_images/math/595023734d9ab251444ec4facc4d0b56b2d169cd.png" alt="\exp(\log(x)/3)"/> where the
 principal branch of the natural logarithm is used. Note that this
 does not give a real cube root for negative real numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -134,34 +134,34 @@ does not give a real cube root for negative real numbers:</p>
 <h3><tt class="xref docutils literal"><span class="pre">root()</span></tt><a class="headerlink" href="#root" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.root">
-<!--[mpmath.root]--><tt class="descclassname">mpmath.</tt><tt class="descname">root</tt><big>(</big><em>z</em>, <em>n</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.root" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">root(z,</span> <span class="pre">n,</span> <span class="pre">k=0)</span></tt> computes an <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, i.e. returns a number
-<img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" /> that (up to possible approximation error) satisfies <img class="math" src="../_images/math/ac3a0ed7ca9c9e1363980137c533255ac92010c0.png" alt="r^n = z" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">root</tt><big>(</big><em>z</em>, <em>n</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.root" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">root(z,</span> <span class="pre">n,</span> <span class="pre">k=0)</span></tt> computes an <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, i.e. returns a number
+<img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r"/> that (up to possible approximation error) satisfies <img class="math" src="../_images/math/ac3a0ed7ca9c9e1363980137c533255ac92010c0.png" alt="r^n = z"/>.
 (<tt class="docutils literal"><span class="pre">nthroot</span></tt> is available as an alias for <tt class="docutils literal"><span class="pre">root</span></tt>.)</p>
-<p>Every complex number <img class="math" src="../_images/math/769d369d053ebcc9421b5bc1d3b913b62c888d8f.png" alt="z \ne 0" /> has <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> distinct <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th roots, which are
-equidistant points on a circle with radius <img class="math" src="../_images/math/57cd260d3d04c5a65468c97f968157fe6031b424.png" alt="|z|^{1/n}" />, centered around the
+<p>Every complex number <img class="math" src="../_images/math/769d369d053ebcc9421b5bc1d3b913b62c888d8f.png" alt="z \ne 0"/> has <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> distinct <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th roots, which are
+equidistant points on a circle with radius <img class="math" src="../_images/math/57cd260d3d04c5a65468c97f968157fe6031b424.png" alt="|z|^{1/n}"/>, centered around the
 origin. A specific root may be selected using the optional index
-<img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />. The roots are indexed counterclockwise, starting with <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> for the root
+<img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>. The roots are indexed counterclockwise, starting with <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/> for the root
 closest to the positive real half-axis.</p>
-<p>The <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> root is the so-called principal <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root, often denoted by
-<img class="math" src="../_images/math/f8a433ff3bb0e1b43756c3395a450502a96febe5.png" alt="\sqrt[n]{z}" /> or <img class="math" src="../_images/math/a4950085ba0899ed17232f4e90bd570683b24d85.png" alt="z^{1/n}" />, and also given by <img class="math" src="../_images/math/a2fe9a87acce2d91350c36915cfdfd1a20b89de4.png" alt="\exp(\log(z) / n)" />. If <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> is
+<p>The <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/> root is the so-called principal <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root, often denoted by
+<img class="math" src="../_images/math/f8a433ff3bb0e1b43756c3395a450502a96febe5.png" alt="\sqrt[n]{z}"/> or <img class="math" src="../_images/math/a4950085ba0899ed17232f4e90bd570683b24d85.png" alt="z^{1/n}"/>, and also given by <img class="math" src="../_images/math/a2fe9a87acce2d91350c36915cfdfd1a20b89de4.png" alt="\exp(\log(z) / n)"/>. If <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> is
 a positive real number, the principal root is just the unique positive
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />. Under some circumstances, non-principal real roots exist:
-for positive real <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> even, there is a negative root given by <img class="math" src="../_images/math/540a8f47dc506fc392b4f0fbda5316b193ec69cf.png" alt="k = n/2" />;
-for negative real <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> odd, there is a negative root given by <img class="math" src="../_images/math/43d87ab49c47eca6554d5abfb95263bd23f356f4.png" alt="k = (n-1)/2" />.</p>
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>. Under some circumstances, non-principal real roots exist:
+for positive real <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> even, there is a negative root given by <img class="math" src="../_images/math/540a8f47dc506fc392b4f0fbda5316b193ec69cf.png" alt="k = n/2"/>;
+for negative real <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> odd, there is a negative root given by <img class="math" src="../_images/math/43d87ab49c47eca6554d5abfb95263bd23f356f4.png" alt="k = (n-1)/2"/>.</p>
 <p>To obtain all roots with a simple expression, use
 <tt class="docutils literal"><span class="pre">[root(z,n,k)</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">range(n)]</span></tt>.</p>
-<p>An important special case, <tt class="docutils literal"><span class="pre">root(1,</span> <span class="pre">n,</span> <span class="pre">k)</span></tt> returns the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />-th <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of
-unity, <img class="math" src="../_images/math/c27faf6fb766cc1cf901c46f2ca93b8a034e3d80.png" alt="\zeta_k = e^{2 \pi i k / n}" />. Alternatively, <tt class="xref docutils literal"><span class="pre">unitroots()</span></tt>
+<p>An important special case, <tt class="docutils literal"><span class="pre">root(1,</span> <span class="pre">n,</span> <span class="pre">k)</span></tt> returns the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>-th <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root of
+unity, <img class="math" src="../_images/math/c27faf6fb766cc1cf901c46f2ca93b8a034e3d80.png" alt="\zeta_k = e^{2 \pi i k / n}"/>. Alternatively, <tt class="xref docutils literal"><span class="pre">unitroots()</span></tt>
 provides a slightly more convenient way to obtain the roots of unity,
 including the option to compute only the primitive roots of unity.</p>
-<p>Both <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> should be integers; <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> outside of <tt class="docutils literal"><span class="pre">range(n)</span></tt> will be
-reduced modulo <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is negative, <img class="math" src="../_images/math/2e1e41e1075edaa5c4b4f7a3713596edb708b29d.png" alt="x^{-1/n} = 1/x^{1/n}" /> (or
-the equivalent reciprocal for a non-principal root with <img class="math" src="../_images/math/7433902f1c6bf3e4c381454a4202825ce425f0e0.png" alt="k \ne 0" />) is computed.</p>
+<p>Both <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> should be integers; <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> outside of <tt class="docutils literal"><span class="pre">range(n)</span></tt> will be
+reduced modulo <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is negative, <img class="math" src="../_images/math/2e1e41e1075edaa5c4b4f7a3713596edb708b29d.png" alt="x^{-1/n} = 1/x^{1/n}"/> (or
+the equivalent reciprocal for a non-principal root with <img class="math" src="../_images/math/7433902f1c6bf3e4c381454a4202825ce425f0e0.png" alt="k \ne 0"/>) is computed.</p>
 <p><tt class="xref docutils literal"><span class="pre">root()</span></tt> is implemented to use Newton&#8217;s method for small
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. At high precision, this makes <img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}" /> not much more
-expensive than the regular exponentiation, <img class="math" src="../_images/math/8c72f3acf1f7744cfe76edaf47e45d62432cf28b.png" alt="x^n" />. For very large
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. At high precision, this makes <img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}"/> not much more
+expensive than the regular exponentiation, <img class="math" src="../_images/math/8c72f3acf1f7744cfe76edaf47e45d62432cf28b.png" alt="x^n"/>. For very large
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
 <p><strong>Examples</strong></p>
 <p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt>/<tt class="xref docutils literal"><span class="pre">root()</span></tt> is faster and more accurate than raising to a
 floating-point fraction:</p>
@@ -234,17 +234,17 @@ floating-point fraction:</p>
 <h3><tt class="xref docutils literal"><span class="pre">unitroots()</span></tt><a class="headerlink" href="#unitroots" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.unitroots">
-<!--[mpmath.unitroots]--><tt class="descclassname">mpmath.</tt><tt class="descname">unitroots</tt><big>(</big><em>n</em>, <em>primitive=False</em><big>)</big><a class="headerlink" href="#mpmath.unitroots" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">unitroots(n)</span></tt> returns <img class="math" src="../_images/math/c9c73956dcc128dec9b2f2c357b09b82c863302f.png" alt="\zeta_0, \zeta_1, \ldots, \zeta_{n-1}" />,
-all the distinct <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th roots of unity, as a list. If the option
+<tt class="descclassname">mpmath.</tt><tt class="descname">unitroots</tt><big>(</big><em>n</em>, <em>primitive=False</em><big>)</big><a class="headerlink" href="#mpmath.unitroots" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">unitroots(n)</span></tt> returns <img class="math" src="../_images/math/c9c73956dcc128dec9b2f2c357b09b82c863302f.png" alt="\zeta_0, \zeta_1, \ldots, \zeta_{n-1}"/>,
+all the distinct <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th roots of unity, as a list. If the option
 <em>primitive=True</em> is passed, only the primitive roots are returned.</p>
-<p>Every <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th root of unity satisfies <img class="math" src="../_images/math/0cedb41f560e6168c13dbc132566bc2c9079c46c.png" alt="(\zeta_k)^n = 1" />. There are <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> distinct
-roots for each <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> (<img class="math" src="../_images/math/62bcc94096039059cc863669926ee8bc0ea5e6f4.png" alt="\zeta_k" /> and <img class="math" src="../_images/math/e98169ad5f7dd9742ab178db052d17ed4e2af60b.png" alt="\zeta_j" /> are the same when
-<img class="math" src="../_images/math/5d3c70c80f9f983985bf4720ccf4220fb571c714.png" alt="k = j \pmod n" />), which form a regular polygon with vertices on the unit
-circle. They are ordered counterclockwise with increasing <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />, starting
-with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a860e48.png" alt="\zeta_0 = 1" />.</p>
+<p>Every <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root of unity satisfies <img class="math" src="../_images/math/0cedb41f560e6168c13dbc132566bc2c9079c46c.png" alt="(\zeta_k)^n = 1"/>. There are <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> distinct
+roots for each <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> (<img class="math" src="../_images/math/62bcc94096039059cc863669926ee8bc0ea5e6f4.png" alt="\zeta_k"/> and <img class="math" src="../_images/math/e98169ad5f7dd9742ab178db052d17ed4e2af60b.png" alt="\zeta_j"/> are the same when
+<img class="math" src="../_images/math/5d3c70c80f9f983985bf4720ccf4220fb571c714.png" alt="k = j \pmod n"/>), which form a regular polygon with vertices on the unit
+circle. They are ordered counterclockwise with increasing <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, starting
+with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a860e48.png" alt="\zeta_0 = 1"/>.</p>
 <p><strong>Examples</strong></p>
-<p>The roots of unity up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4" />:</p>
+<p>The roots of unity up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span>
@@ -263,7 +263,7 @@ with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a86
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>Primitive roots up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4" />:</p>
+<p>Primitive roots up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[1.0]</span>
@@ -280,9 +280,9 @@ with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a86
 <span class="go">[(0.866025 + 0.5j), (-0.866025 + 0.5j), (-0.866025 - 0.5j), (0.866025 - 0.5j)]</span>
 </pre></div>
 </div>
-<p>The <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th roots of unity form a group, the cyclic group of order <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.
-Any primitive root <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r" /> is a generator for this group, meaning that
-<img class="math" src="../_images/math/b1daa4d2f67830bf961a8da3d1040af8cd33d84a.png" alt="r^0, r^1, \ldots, r^{n-1}" /> gives the whole set of unit roots (in
+<p>The <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th roots of unity form a group, the cyclic group of order <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.
+Any primitive root <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r"/> is a generator for this group, meaning that
+<img class="math" src="../_images/math/b1daa4d2f67830bf961a8da3d1040af8cd33d84a.png" alt="r^0, r^1, \ldots, r^{n-1}"/> gives the whole set of unit roots (in
 some permuted order):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mf">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">r</span>
 <span class="gp">...</span>
@@ -303,7 +303,7 @@ some permuted order):</p>
 <span class="go">(0.5 + 0.866025403784438j)</span>
 </pre></div>
 </div>
-<p>The number of primitive roots equals the Euler totient function <img class="math" src="../_images/math/edae70ddedf89e790936ed4035c5ca1480212e0f.png" alt="\phi(n)" />:</p>
+<p>The number of primitive roots equals the Euler totient function <img class="math" src="../_images/math/edae70ddedf89e790936ed4035c5ca1480212e0f.png" alt="\phi(n)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">20</span><span class="p">)]</span>
 <span class="go">[1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18]</span>
 </pre></div>
@@ -318,14 +318,14 @@ some permuted order):</p>
 <h3><tt class="xref docutils literal"><span class="pre">exp()</span></tt><a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.exp">
-<!--[mpmath.exp]--><tt class="descclassname">mpmath.</tt><tt class="descname">exp</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.exp" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">exp</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.exp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the exponential function,</p>
 <div class="math">
-<p><img src="../_images/math/191e3b6500085050523a95232a0c311379947732.png" alt="\exp(x) = e^x = \sum_{k=0}^{\infty} \frac{x^k}{k!}." />
-</div></p><p>For complex numbers, the exponential function also satisfies</p>
+<p><img src="../_images/math/191e3b6500085050523a95232a0c311379947732.png" alt="\exp(x) = e^x = \sum_{k=0}^{\infty} \frac{x^k}{k!}." /></p>
+</div><p>For complex numbers, the exponential function also satisfies</p>
 <div class="math">
-<p><img src="../_images/math/82ed5034ab40005bac4264139bc4e1987874dfcf.png" alt="\exp(x+yi) = e^x (\cos y + i \sin y)." />
-</div></p><p><strong>Basic examples</strong></p>
+<p><img src="../_images/math/82ed5034ab40005bac4264139bc4e1987874dfcf.png" alt="\exp(x+yi) = e^x (\cos y + i \sin y)." /></p>
+</div><p><strong>Basic examples</strong></p>
 <p>Some values of the exponential function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -405,16 +405,31 @@ the defining differential equation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">power()</span></tt><a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.power">
-<!--[mpmath.power]--><tt class="descclassname">mpmath.</tt><tt class="descname">power</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.power" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descclassname">mpmath.</tt><tt class="descname">power</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.power" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> to mpmath numbers and evaluates
+<img class="math" src="../_images/math/4c4a6df8d2bc2bfb583c11bc20504938026f6aa8.png" alt="x^y = \exp(y \log(x))"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="go">1.41421356237309504880168872421</span>
+</pre></div>
+</div>
+<p>This shows the leading few digits of a large Mersenne prime
+(performing the exact calculation <tt class="docutils literal"><span class="pre">2**43112609-1</span></tt> and
+displaying the result in Python would be very slow):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">43112609</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span>
+<span class="go">3.16470269330255923143453723949e+12978188</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </div>
 <div class="section" id="expj">
 <h3><tt class="xref docutils literal"><span class="pre">expj()</span></tt><a class="headerlink" href="#expj" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expj">
-<!--[mpmath.expj]--><tt class="descclassname">mpmath.</tt><tt class="descname">expj</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function for computing <img class="math" src="../_images/math/3a05bb2d3214a6f7d27a70c01fb6cb2dbae72138.png" alt="e^{ix}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">expj</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function for computing <img class="math" src="../_images/math/3a05bb2d3214a6f7d27a70c01fb6cb2dbae72138.png" alt="e^{ix}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -434,8 +449,8 @@ the defining differential equation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">expjpi()</span></tt><a class="headerlink" href="#expjpi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expjpi">
-<!--[mpmath.expjpi]--><tt class="descclassname">mpmath.</tt><tt class="descname">expjpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expjpi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience function for computing <img class="math" src="../_images/math/81839687cfd9f7e622b9eae993a6f0fe99669969.png" alt="e^{i \pi x}" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">expjpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expjpi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function for computing <img class="math" src="../_images/math/81839687cfd9f7e622b9eae993a6f0fe99669969.png" alt="e^{i \pi x}"/>.
 Evaluation is accurate near zeros (see also <tt class="xref docutils literal"><span class="pre">cospi()</span></tt>,
 <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -461,8 +476,8 @@ Evaluation is accurate near zeros (see also <tt class="xref docutils literal"><s
 <h3><tt class="xref docutils literal"><span class="pre">expm1()</span></tt><a class="headerlink" href="#expm1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expm1">
-<!--[mpmath.expm1]--><tt class="descclassname">mpmath.</tt><tt class="descname">expm1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.expm1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes <img class="math" src="../_images/math/098c246388f0885ccaf6d2f885703c34f4da2470.png" alt="e^x - 1" />, accurately for small <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">expm1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.expm1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <img class="math" src="../_images/math/098c246388f0885ccaf6d2f885703c34f4da2470.png" alt="e^x - 1"/>, accurately for small <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
 <p>Unlike the expression <tt class="docutils literal"><span class="pre">exp(x)</span> <span class="pre">-</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">expm1(x)</span></tt> does not suffer from
 potentially catastrophic cancellation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -495,8 +510,8 @@ potentially catastrophic cancellation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">powm1()</span></tt><a class="headerlink" href="#powm1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.powm1">
-<!--[mpmath.powm1]--><tt class="descclassname">mpmath.</tt><tt class="descname">powm1</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.powm1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes <img class="math" src="../_images/math/af550b5f60ea00e76399ea6c6d0adbede50b1ef7.png" alt="x^y - 1" />, accurately when <img class="math" src="../_images/math/8f9af910fe749481919573c0dd2b132118f19d19.png" alt="x^y" /> is very close to 1.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">powm1</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.powm1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <img class="math" src="../_images/math/af550b5f60ea00e76399ea6c6d0adbede50b1ef7.png" alt="x^y - 1"/>, accurately when <img class="math" src="../_images/math/8f9af910fe749481919573c0dd2b132118f19d19.png" alt="x^y"/> is very close to 1.</p>
 <p>This avoids potentially catastrophic cancellation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -515,7 +530,7 @@ potentially catastrophic cancellation:</p>
 <span class="go">-4.0e-100</span>
 </pre></div>
 </div>
-<p>Evaluation works for extremely tiny <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y" />:</p>
+<p>Evaluation works for extremely tiny <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;1e-100000&#39;</span><span class="p">)</span>
 <span class="go">6.93147180559945e-100001</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
@@ -532,16 +547,16 @@ potentially catastrophic cancellation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">log()</span></tt><a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.log">
-<!--[mpmath.log]--><tt class="descclassname">mpmath.</tt><tt class="descname">log</tt><big>(</big><em>x</em>, <em>b=None</em><big>)</big><a class="headerlink" href="#mpmath.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)" />. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is
-unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />) logarithm
-and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm
+<tt class="descclassname">mpmath.</tt><tt class="descname">log</tt><big>(</big><em>x</em>, <em>b=None</em><big>)</big><a class="headerlink" href="#mpmath.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)"/>. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is
+unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
+and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
 is defined in terms of the natural logarithm as
-<img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)" />.</p>
-<p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty" />.</p>
-<p>The natural logarithm is real if <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> and complex if <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> or if
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is complex. The principal branch of the complex logarithm is
-used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi" />.</p>
+<img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)"/>.</p>
+<p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty"/>.</p>
+<p>The natural logarithm is real if <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0"/> and complex if <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/> or if
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> is complex. The principal branch of the complex logarithm is
+used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -564,7 +579,7 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 <span class="go">+inf</span>
 </pre></div>
 </div>
-<p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x" />:</p>
+<p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
 <span class="go">1.6094379124341</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
@@ -574,7 +589,7 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 </pre></div>
 </div>
 <p>The Taylor series expansion of the natural logarithm around
-<img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n" />:</p>
+<img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">7</span><span class="p">))</span>
 <span class="go">[0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]</span>
 </pre></div>
@@ -597,16 +612,16 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 <h3><tt class="xref docutils literal"><span class="pre">ln()</span></tt><a class="headerlink" href="#ln" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ln">
-<!--[mpmath.ln]--><tt class="descclassname">mpmath.</tt><tt class="descname">ln</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ln" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)" />. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is
-unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e" />) logarithm
-and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> logarithm
+<tt class="descclassname">mpmath.</tt><tt class="descname">ln</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ln" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)"/>. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is
+unspecified, <tt class="xref docutils literal"><span class="pre">log()</span></tt> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
+and is equivalent to <tt class="xref docutils literal"><span class="pre">ln()</span></tt>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
 is defined in terms of the natural logarithm as
-<img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)" />.</p>
-<p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty" />.</p>
-<p>The natural logarithm is real if <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" /> and complex if <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> or if
-<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" /> is complex. The principal branch of the complex logarithm is
-used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi" />.</p>
+<img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)"/>.</p>
+<p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty"/>.</p>
+<p>The natural logarithm is real if <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0"/> and complex if <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/> or if
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> is complex. The principal branch of the complex logarithm is
+used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -629,7 +644,7 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 <span class="go">+inf</span>
 </pre></div>
 </div>
-<p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x" />:</p>
+<p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
 <span class="go">1.6094379124341</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
@@ -639,7 +654,7 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 </pre></div>
 </div>
 <p>The Taylor series expansion of the natural logarithm around
-<img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1" /> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n" />:</p>
+<img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">7</span><span class="p">))</span>
 <span class="go">[0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]</span>
 </pre></div>
@@ -662,8 +677,8 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 <h3><tt class="xref docutils literal"><span class="pre">log10()</span></tt><a class="headerlink" href="#log10" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.log10">
-<!--[mpmath.log10]--><tt class="descclassname">mpmath.</tt><tt class="descname">log10</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.log10" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the base-10 logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)" />. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">log10</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.log10" title="Permalink to this definition">¶</a></dt>
+<dd>Computes the base-10 logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)"/>. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
 is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <span class="pre">10)</span></tt>.</dd></dl>
 
 </div>
@@ -674,24 +689,24 @@ is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <s
 <h3><tt class="xref docutils literal"><span class="pre">lambertw()</span></tt><a class="headerlink" href="#lambertw" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.lambertw">
-<!--[mpmath.lambertw]--><tt class="descclassname">mpmath.</tt><tt class="descname">lambertw</tt><big>(</big><em>z</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.lambertw" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Lambert W function <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is defined as the inverse function
-of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. In other words, the value of <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)" /> is such that
-<img class="math" src="../_images/math/453b5e9b62a3f5ffa964b35fe3d393cfcd78c6c0.png" alt="z = W(z) \exp(W(z))" /> for any complex number <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">lambertw</tt><big>(</big><em>z</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.lambertw" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Lambert W function <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)"/> is defined as the inverse function
+of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)"/>. In other words, the value of <img class="math" src="../_images/math/d9f092163480eadf6f5084b9223116e5ee02f709.png" alt="W(z)"/> is such that
+<img class="math" src="../_images/math/453b5e9b62a3f5ffa964b35fe3d393cfcd78c6c0.png" alt="z = W(z) \exp(W(z))"/> for any complex number <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>.</p>
 <p>The Lambert W function is a multivalued function with infinitely
 many branches. Each branch gives a separate solution of the
-equation <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />. All branches are supported by
+equation <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)"/>. All branches are supported by
 <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt>:</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">lambertw(z)</span></tt> gives the principal solution (branch 0)</li>
-<li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /></li>
+<li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/></li>
 </ul>
 <p>The Lambert W function has two partially real branches: the
-principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" />) is real for real <img class="math" src="../_images/math/371d182c625a220a79513c1dcaef4adba922738f.png" alt="z &gt; -1/e" />, and the
-<img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branch is real for <img class="math" src="../_images/math/638a0971d2f3dc23d1dcb42c54cfa5b3daa4376c.png" alt="-1/e &lt; z &lt; 0" />. All branches except
-<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> have a logarithmic singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />.</p>
+principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/>) is real for real <img class="math" src="../_images/math/371d182c625a220a79513c1dcaef4adba922738f.png" alt="z &gt; -1/e"/>, and the
+<img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1"/> branch is real for <img class="math" src="../_images/math/638a0971d2f3dc23d1dcb42c54cfa5b3daa4376c.png" alt="-1/e &lt; z &lt; 0"/>. All branches except
+<img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/> have a logarithmic singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>.</p>
 <p><strong>Basic examples</strong></p>
-<p>The Lambert W function is the inverse of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />:</p>
+<p>The Lambert W function is the inverse of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">35</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -713,7 +728,7 @@ principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc520
 <p><strong>Applications to equation-solving</strong></p>
 <p>The Lambert W function may be used to solve various kinds of
 equations, such as finding the value of the infinite power
-tower <img class="math" src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc4970f.png" alt="z^{z^{z^{\ldots}}}" />:</p>
+tower <img class="math" src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc4970f.png" alt="z^{z^{z^{\ldots}}}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">z</span>
@@ -741,7 +756,7 @@ for large arguments:</p>
 </pre></div>
 </div>
 <p>The principal branch of the Lambert W function has a rational
-Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
+Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">[0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]</span>
 </pre></div>
@@ -764,10 +779,10 @@ Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2
 <span class="go">(+inf + 18.8495559215388j)</span>
 </pre></div>
 </div>
-<p>The <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0" /> and <img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1" /> branches join at <img class="math" src="../_images/math/b87eeae0e16a9f455c33ea11b80738764425b62d.png" alt="z = -1/e" /> where
-<img class="math" src="../_images/math/c8f915f0cf1bd473190da32d8ffebe485b7761ae.png" alt="W(z) = -1" /> for both branches. Since <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> can only be represented
+<p>The <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/> and <img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1"/> branches join at <img class="math" src="../_images/math/b87eeae0e16a9f455c33ea11b80738764425b62d.png" alt="z = -1/e"/> where
+<img class="math" src="../_images/math/c8f915f0cf1bd473190da32d8ffebe485b7761ae.png" alt="W(z) = -1"/> for both branches. Since <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/> can only be represented
 approximately with mpmath numbers, evaluating the Lambert W function
-at this point only gives <img class="math" src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1" /> approximately:</p>
+at this point only gives <img class="math" src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1"/> approximately:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
 <span class="go">-0.999999999999837133022867</span>
@@ -775,7 +790,7 @@ at this point only gives <img class="math" src="../_images/math/bae5aba07d37ff6f
 <span class="go">-1.00000000000016286697718</span>
 </pre></div>
 </div>
-<p>If <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> happens to round in the negative direction, there might be
+<p>If <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/> happens to round in the negative direction, there might be
 a small imaginary part:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
@@ -784,18 +799,18 @@ a small imaginary part:</p>
 </div>
 <p><strong>Possible issues</strong></p>
 <p>The evaluation can become inaccurate very close to the branch point
-at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" />. In some corner cases, <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt> might currently
+at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/>. In some corner cases, <tt class="xref docutils literal"><span class="pre">lambertw()</span></tt> might currently
 fail to converge, or can end up on the wrong branch.</p>
 <p><strong>Algorithm</strong></p>
-<p>Halley&#8217;s iteration is used to invert <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)" />, using a first-order
-asymptotic approximation (<img class="math" src="../_images/math/ccca6529a839f6e1a7fb9817199765fbb6deabf4.png" alt="O(\log(w))" /> or <img class="math" src="../_images/math/4631f2d763a4acbfccb2f2aa2f91f4be9850958c.png" alt="O(w)" />) as the initial
+<p>Halley&#8217;s iteration is used to invert <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)"/>, using a first-order
+asymptotic approximation (<img class="math" src="../_images/math/ccca6529a839f6e1a7fb9817199765fbb6deabf4.png" alt="O(\log(w))"/> or <img class="math" src="../_images/math/4631f2d763a4acbfccb2f2aa2f91f4be9850958c.png" alt="O(w)"/>) as the initial
 estimate.</p>
 <p>The definition, implementation and choice of branches is based
 on Corless et al, &#8220;On the Lambert W function&#8221;, Adv. Comp. Math. 5
 (1996) 329-359, available online here:
 <a class="reference external" href="http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf">http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf</a></p>
 <p>TODO: use a series expansion when extremely close to the branch point
-at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e" /> and make sure that the proper branch is chosen there</p>
+at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/> and make sure that the proper branch is chosen there</p>
 </dd></dl>
 
 </div>
@@ -806,9 +821,9 @@ at <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef
 <h3><tt class="xref docutils literal"><span class="pre">agm()</span></tt><a class="headerlink" href="#agm" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.agm">
-<!--[mpmath.agm]--><tt class="descclassname">mpmath.</tt><tt class="descname">agm</tt><big>(</big><em>a</em>, <em>b=1</em><big>)</big><a class="headerlink" href="#mpmath.agm" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and
-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />, defined as the limit of the following iteration:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">agm</tt><big>(</big><em>a</em>, <em>b=1</em><big>)</big><a class="headerlink" href="#mpmath.agm" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">agm(a,</span> <span class="pre">b)</span></tt> computes the arithmetic-geometric mean of <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and
+<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>, defined as the limit of the following iteration:</p>
 <div class="math">
 <p><img src="../_images/math/8a1590a455bc984da91424d957f5f94dff23cac2.png" alt="a_0 = a
 
@@ -816,9 +831,9 @@ b_0 = b
 
 a_{n+1} = \frac{a_n+b_n}{2}
 
-b_{n+1} = \sqrt{a_n b_n}" />
-</div></p><p>This function can be called with a single argument, computing
-<img class="math" src="../_images/math/123faed9086f29247221027e0b0abe89def0c6c5.png" alt="\mathrm{agm}(a,1) = \mathrm{agm}(1,a)" />.</p>
+b_{n+1} = \sqrt{a_n b_n}" /></p>
+</div><p>This function can be called with a single argument, computing
+<img class="math" src="../_images/math/123faed9086f29247221027e0b0abe89def0c6c5.png" alt="\mathrm{agm}(a,1) = \mathrm{agm}(1,a)"/>.</p>
 <p><strong>Examples</strong></p>
 <p>It is a well-known theorem that the geometric mean of
 two distinct positive numbers is less than the arithmetic
@@ -843,15 +858,15 @@ between the two means:</p>
 <span class="go">29.261085515723</span>
 </pre></div>
 </div>
-<p>As an order-of-magnitude estimate, <img class="math" src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x" />
-for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />:</p>
+<p>As an order-of-magnitude estimate, <img class="math" src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x"/>
+for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">643448704.760133</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
 <span class="go">1.34814309345871e+48</span>
 </pre></div>
 </div>
-<p>For tiny <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x" />, <img class="math" src="../_images/math/9713f6e0ad4bc38c4bb9b33c84311828627ad139.png" alt="\mathrm{agm}(1,x) \approx -\pi/(2 \log(x/4))" />:</p>
+<p>For tiny <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/9713f6e0ad4bc38c4bb9b33c84311828627ad139.png" alt="\mathrm{agm}(1,x) \approx -\pi/(2 \log(x/4))"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="s">&#39;0.01&#39;</span><span class="p">)</span>
 <span class="go">0.262166887202249</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;0.0025&#39;</span><span class="p">)</span>
@@ -881,8 +896,8 @@ following two parametric definite integrals:</p>
   \frac{1}{\sqrt{(x^2+a^2)(x^2+b^2)}} \,dx
 
 I_2 = \int_0^{\pi/2}
-  \frac{1}{\sqrt{a^2 \cos^2(x) + b^2 \sin^2(x)}} \,dx" />
-</div></p><p>We have:</p>
+  \frac{1}{\sqrt{a^2 \cos^2(x) + b^2 \sin^2(x)}} \,dx" /></p>
+</div><p>We have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
@@ -896,7 +911,7 @@ I_2 = \int_0^{\pi/2}
 <span class="go">0.451115405388492</span>
 </pre></div>
 </div>
-<p>A formula for <img class="math" src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)" />:</p>
+<p>A formula for <img class="math" src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">3.62560990822191</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)))</span>
@@ -904,7 +919,7 @@ I_2 = \int_0^{\pi/2}
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p>The branch cut chosen for complex <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> is somewhat
+<p>The branch cut chosen for complex <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is somewhat
 arbitrary.</p>
 </dd></dl>
 
@@ -920,7 +935,7 @@ arbitrary.</p>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Powers and logarithms</a><ul>
+<li><a class="reference external" href="#">Powers and logarithms</a><ul>
 <li><a class="reference external" href="#nth-roots">Nth roots</a><ul>
 <li><a class="reference external" href="#sqrt"><tt class="docutils literal"><span class="pre">sqrt()</span></tt></a></li>
 <li><a class="reference external" href="#cbrt"><tt class="docutils literal"><span class="pre">cbrt()</span></tt></a></li>
@@ -956,19 +971,29 @@ arbitrary.</p>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="numberparts.html" title="previous chapter">Arithmetic and number parts</a></p>
+            <p class="topless"><a href="numberparts.html"
+                                  title="previous chapter">Arithmetic and number parts</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="trigonometric.html" title="next chapter">Trigonometric functions</a></p>
+            <p class="topless"><a href="trigonometric.html"
+                                  title="next chapter">Trigonometric functions</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/powers.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/powers.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -978,24 +1003,35 @@ arbitrary.</p>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="trigonometric.html" title="Trigonometric functions"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="numberparts.html" title="Arithmetic and number parts"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

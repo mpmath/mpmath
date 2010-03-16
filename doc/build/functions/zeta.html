@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Number-theoretical, combinatorial and integer functions" href="numtheory.html" />
@@ -44,12 +44,12 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="zeta-functions-l-series-and-polylogarithms">
 <h1>Zeta functions, L-series and polylogarithms<a class="headerlink" href="#zeta-functions-l-series-and-polylogarithms" title="Permalink to this headline">¶</a></h1>
 <p>This section includes the Riemann zeta functions
@@ -60,31 +60,31 @@ and associated functions pertaining to analytic number theory.</p>
 <h3><tt class="xref docutils literal"><span class="pre">zeta()</span></tt><a class="headerlink" href="#zeta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.zeta">
-<!--[mpmath.zeta]--><tt class="descclassname">mpmath.</tt><tt class="descname">zeta</tt><big>(</big><em>s</em>, <em>a=1</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.zeta" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">zeta</tt><big>(</big><em>s</em>, <em>a=1</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.zeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Riemann zeta function</p>
 <div class="math">
-<p><img src="../_images/math/7faaa2da7d5dc9d2a8db850829be0d184de64d4f.png" alt="\zeta(s) = 1+\frac{1}{2^s}+\frac{1}{3^s}+\frac{1}{4^s}+\ldots" />
-</div></p><p>or, with <img class="math" src="../_images/math/cf07d7a786f21a1de54bcc700ef211bcaf4476d2.png" alt="a \ne 1" />, the more general Hurwitz zeta function</p>
+<p><img src="../_images/math/7faaa2da7d5dc9d2a8db850829be0d184de64d4f.png" alt="\zeta(s) = 1+\frac{1}{2^s}+\frac{1}{3^s}+\frac{1}{4^s}+\ldots" /></p>
+</div><p>or, with <img class="math" src="../_images/math/cf07d7a786f21a1de54bcc700ef211bcaf4476d2.png" alt="a \ne 1"/>, the more general Hurwitz zeta function</p>
 <div class="math">
-<p><img src="../_images/math/11501db21c1da0e296845fb20f457b575a356736.png" alt="\zeta(s,a) = \sum_{k=0}^\infty \frac{1}{(a+k)^s}." />
-</div></p><p>Optionally, <tt class="docutils literal"><span class="pre">zeta(s,</span> <span class="pre">a,</span> <span class="pre">n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th derivative with
-respect to <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />,</p>
+<p><img src="../_images/math/11501db21c1da0e296845fb20f457b575a356736.png" alt="\zeta(s,a) = \sum_{k=0}^\infty \frac{1}{(a+k)^s}." /></p>
+</div><p>Optionally, <tt class="docutils literal"><span class="pre">zeta(s,</span> <span class="pre">a,</span> <span class="pre">n)</span></tt> computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th derivative with
+respect to <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>,</p>
 <div class="math">
-<p><img src="../_images/math/add3db8bc4cc0ee0c53dda2ca88aff2633e39c97.png" alt="\zeta^{(n)}(s,a) = (-1)^n \sum_{k=0}^\infty \frac{\log^n(a+k)}{(a+k)^s}." />
-</div></p><p>Although these series only converge for <img class="math" src="../_images/math/0595aab81177f026be8c3d56c543764ac9d0fa1a.png" alt="\Re(s) &gt; 1" />, the Riemann and Hurwitz
+<p><img src="../_images/math/add3db8bc4cc0ee0c53dda2ca88aff2633e39c97.png" alt="\zeta^{(n)}(s,a) = (-1)^n \sum_{k=0}^\infty \frac{\log^n(a+k)}{(a+k)^s}." /></p>
+</div><p>Although these series only converge for <img class="math" src="../_images/math/0595aab81177f026be8c3d56c543764ac9d0fa1a.png" alt="\Re(s) &gt; 1"/>, the Riemann and Hurwitz
 zeta functions are defined through analytic continuation for arbitrary
-complex <img class="math" src="../_images/math/b11e89ca484641ef49d675c86e19e1440774a3f2.png" alt="s \ne 1" /> (<img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" /> is a pole).</p>
+complex <img class="math" src="../_images/math/b11e89ca484641ef49d675c86e19e1440774a3f2.png" alt="s \ne 1"/> (<img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1"/> is a pole).</p>
 <p>The implementation uses three algorithms: the Borwein algorithm for
-the Riemann zeta function when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is close to the real line;
-the Riemann-Siegel formula for the Riemann zeta function when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is
+the Riemann zeta function when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is close to the real line;
+the Riemann-Siegel formula for the Riemann zeta function when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is
 large imaginary, and Euler-Maclaurin summation in all other cases.
-The reflection formula for <img class="math" src="../_images/math/5736698772cbe4277c2c8e76de4583a60ed12f19.png" alt="\Re(s) &lt; 0" /> is implemented in some cases.
+The reflection formula for <img class="math" src="../_images/math/5736698772cbe4277c2c8e76de4583a60ed12f19.png" alt="\Re(s) &lt; 0"/> is implemented in some cases.
 The algorithm can be chosen with <tt class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">'borwein'</span></tt>,
 <tt class="docutils literal"><span class="pre">method='riemann-siegel'</span></tt> or <tt class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">'euler-maclaurin'</span></tt>.</p>
-<p>The parameter <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> is usually a rational number <img class="math" src="../_images/math/e494d8e9573a6bca8464e084d76ac326afa5768a.png" alt="a = p/q" />, and may be specified
-as such by passing an integer tuple <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)" />. Evaluation is supported for
-arbitrary complex <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" />, but may be slow and/or inaccurate when <img class="math" src="../_images/math/5736698772cbe4277c2c8e76de4583a60ed12f19.png" alt="\Re(s) &lt; 0" /> for
-nonrational <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> or when computing derivatives.</p>
+<p>The parameter <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> is usually a rational number <img class="math" src="../_images/math/e494d8e9573a6bca8464e084d76ac326afa5768a.png" alt="a = p/q"/>, and may be specified
+as such by passing an integer tuple <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/>. Evaluation is supported for
+arbitrary complex <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/>, but may be slow and/or inaccurate when <img class="math" src="../_images/math/5736698772cbe4277c2c8e76de4583a60ed12f19.png" alt="\Re(s) &lt; 0"/> for
+nonrational <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> or when computing derivatives.</p>
 <p><strong>Examples</strong></p>
 <p>Some values of the Riemann zeta function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -100,7 +100,7 @@ nonrational <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>For large positive <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)" /> rapidly approaches 1:</p>
+<p>For large positive <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>, <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> rapidly approaches 1:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">50</span><span class="p">)</span>
 <span class="go">1.000000000000000888178421</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
@@ -114,7 +114,7 @@ nonrational <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd
 <span class="go">1.0</span>
 </pre></div>
 </div>
-<p>Evaluation is supported for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" />:</p>
+<p>Evaluation is supported for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.03373057338827757067584698 + 0.2774499251557093745297677j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
@@ -122,7 +122,7 @@ nonrational <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd
 </pre></div>
 </div>
 <p>The Riemann zeta function has so-called nontrivial zeros on
-the critical line <img class="math" src="../_images/math/a96b9c7b2fd49e0d6a36887684ff29da9de559b3.png" alt="s = 1/2 + it" />:</p>
+the critical line <img class="math" src="../_images/math/a96b9c7b2fd49e0d6a36887684ff29da9de559b3.png" alt="s = 1/2 + it"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">14</span><span class="n">j</span><span class="p">);</span> <span class="n">zetazero</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">(0.5 + 14.13472514173469379045725j)</span>
 <span class="go">(0.5 + 14.13472514173469379045725j)</span>
@@ -137,8 +137,8 @@ the critical line <img class="math" src="../_images/math/a96b9c7b2fd49e0d6a36887
 </pre></div>
 </div>
 <p>Evaluation on and near the critical line is supported for large
-heights <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" /> by means of the Riemann-Siegel formula (currently
-for <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa0a3.png" alt="a = 1" />, <img class="math" src="../_images/math/284a7d552c62a162a47664a1a05306babc85bda0.png" alt="n \le 4" />):</p>
+heights <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> by means of the Riemann-Siegel formula (currently
+for <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa0a3.png" alt="a = 1"/>, <img class="math" src="../_images/math/284a7d552c62a162a47664a1a05306babc85bda0.png" alt="n \le 4"/>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">100000</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.073032014857753132114076 + 5.780848544363503984261041j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">0.75</span><span class="o">+</span><span class="mf">1000000</span><span class="n">j</span><span class="p">)</span>
@@ -173,7 +173,7 @@ zeta function directly (see <tt class="xref docutils literal"><span class="pre">
 <span class="go">2.541879647671606498397663</span>
 </pre></div>
 </div>
-<p>For positive integer values of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, the Hurwitz zeta function is
+<p>For positive integer values of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>, the Hurwitz zeta function is
 equivalent to a polygamma function (except for a normalizing factor):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">5</span><span class="p">));</span> <span class="n">psi</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="s">&#39;1/5&#39;</span><span class="p">)</span><span class="o">/</span><span class="mf">6</span>
 <span class="go">625.5408324774542966919938</span>
@@ -192,7 +192,7 @@ equivalent to a polygamma function (except for a normalizing factor):</p>
 <span class="go">(-10407.16081931495861539236 + 13777.78669862804508537384j)</span>
 </pre></div>
 </div>
-<p>Generating a Taylor series at <img class="math" src="../_images/math/d0e9607980bf6edb47c5b72623d1b1f86d148929.png" alt="s = 2" /> using derivatives:</p>
+<p>Generating a Taylor series at <img class="math" src="../_images/math/d0e9607980bf6edb47c5b72623d1b1f86d148929.png" alt="s = 2"/> using derivatives:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">11</span><span class="p">):</span> <span class="k">print</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="s">&quot;(s-2)^</span><span class="si">%i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">k</span>
 <span class="gp">...</span>
 <span class="go">1.644934066848226436472415 * (s-2)^0</span>
@@ -208,7 +208,7 @@ equivalent to a polygamma function (except for a normalizing factor):</p>
 <span class="go">1.000000000004610645020747 * (s-2)^10</span>
 </pre></div>
 </div>
-<p>Evaluation at zero and for negative integer <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />:</p>
+<p>Evaluation at zero and for negative integer <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">-9.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">));</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">81</span>
@@ -247,19 +247,19 @@ equivalent to a polygamma function (except for a normalizing factor):</p>
 <h3><tt class="xref docutils literal"><span class="pre">altzeta()</span></tt><a class="headerlink" href="#altzeta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.altzeta">
-<!--[mpmath.altzeta]--><tt class="descclassname">mpmath.</tt><tt class="descname">altzeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.altzeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the Dirichlet eta function, <img class="math" src="../_images/math/0bc6f3bd7d91d9f60d7f8cf621067d999cc5068b.png" alt="\eta(s)" />, also known as the
+<tt class="descclassname">mpmath.</tt><tt class="descname">altzeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.altzeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Dirichlet eta function, <img class="math" src="../_images/math/0bc6f3bd7d91d9f60d7f8cf621067d999cc5068b.png" alt="\eta(s)"/>, also known as the
 alternating zeta function. This function is defined in analogy
 with the Riemann zeta function as providing the sum of the
 alternating series</p>
 <div class="math">
 <p><img src="../_images/math/fd37fda7b4a38feff8c970a36ab2170ec6f7fec9.png" alt="\eta(s) = \sum_{k=0}^{\infty} \frac{(-1)^k}{k^s}
-    = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots" />
-</div></p><p>The eta function, unlike the Riemann zeta function, is an entire
-function, having a finite value for all complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />. The special case
-<img class="math" src="../_images/math/5858d2e8c7357308e244b4cb97852a3625f9e813.png" alt="\eta(1) = \log(2)" /> gives the value of the alternating harmonic series.</p>
+    = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots" /></p>
+</div><p>The eta function, unlike the Riemann zeta function, is an entire
+function, having a finite value for all complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>. The special case
+<img class="math" src="../_images/math/5858d2e8c7357308e244b4cb97852a3625f9e813.png" alt="\eta(1) = \log(2)"/> gives the value of the alternating harmonic series.</p>
 <p>The alternating zeta function may expressed using the Riemann zeta function
-as <img class="math" src="../_images/math/f86950f34a0d1a3d3a67c626a077893977a6aed0.png" alt="\eta(s) = (1 - 2^{1-s}) \zeta(s)" />. It can also be expressed
+as <img class="math" src="../_images/math/f86950f34a0d1a3d3a67c626a077893977a6aed0.png" alt="\eta(s) = (1 - 2^{1-s}) \zeta(s)"/>. It can also be expressed
 in terms of the Hurwitz zeta function (<tt class="xref docutils literal"><span class="pre">hurwitz()</span></tt>), for example using
 <tt class="xref docutils literal"><span class="pre">dirichlet()</span></tt> (see documentation for that function).</p>
 <p><strong>Examples</strong></p>
@@ -285,15 +285,15 @@ efficiently via <tt class="xref docutils literal"><span class="pre">altzeta()</s
 </pre></div>
 </div>
 <p>At positive even integers, the Dirichlet eta function
-evaluates to a rational multiple of a power of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" />:</p>
+evaluates to a rational multiple of a power of <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">0.822467033424113</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">12</span>
 <span class="go">0.822467033424113</span>
 </pre></div>
 </div>
-<p>Like the Riemann zeta function, <img class="math" src="../_images/math/0bc6f3bd7d91d9f60d7f8cf621067d999cc5068b.png" alt="\eta(s)" />, approaches 1
-as <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> approaches positive infinity, although it does
+<p>Like the Riemann zeta function, <img class="math" src="../_images/math/0bc6f3bd7d91d9f60d7f8cf621067d999cc5068b.png" alt="\eta(s)"/>, approaches 1
+as <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> approaches positive infinity, although it does
 so from below rather than from above:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>
 <span class="go">0.999999999068682</span>
@@ -318,18 +318,18 @@ so from below rather than from above:</p>
 <h3><tt class="xref docutils literal"><span class="pre">dirichletl()</span></tt><a class="headerlink" href="#dirichletl" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.dirichlet">
-<!--[mpmath.dirichlet]--><tt class="descclassname">mpmath.</tt><tt class="descname">dirichlet</tt><big>(</big><em>s</em>, <em>chi</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.dirichlet" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">dirichlet</tt><big>(</big><em>s</em>, <em>chi</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.dirichlet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Dirichlet L-function</p>
 <div class="math">
-<p><img src="../_images/math/00e7da9f79e83038679b3be569fcac367ce39908.png" alt="L(s,\chi) = \sum_{k=1}^\infty \frac{\chi(k)}{k^s}." />
-</div></p><p>where <img class="math" src="../_images/math/6dcb9b88aaa5f14312835145edf06fb2d0823c29.png" alt="\chi" /> is a periodic sequence of length <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> which should be supplied
-in the form of a list <img class="math" src="../_images/math/7f94c0f2abbb6e9220f8c347445a68b404f0a915.png" alt="[\chi(0), \chi(1), \ldots, \chi(q-1)]" />.
-Strictly, <img class="math" src="../_images/math/6dcb9b88aaa5f14312835145edf06fb2d0823c29.png" alt="\chi" /> should be a Dirichlet character, but any periodic
+<p><img src="../_images/math/00e7da9f79e83038679b3be569fcac367ce39908.png" alt="L(s,\chi) = \sum_{k=1}^\infty \frac{\chi(k)}{k^s}." /></p>
+</div><p>where <img class="math" src="../_images/math/6dcb9b88aaa5f14312835145edf06fb2d0823c29.png" alt="\chi"/> is a periodic sequence of length <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> which should be supplied
+in the form of a list <img class="math" src="../_images/math/7f94c0f2abbb6e9220f8c347445a68b404f0a915.png" alt="[\chi(0), \chi(1), \ldots, \chi(q-1)]"/>.
+Strictly, <img class="math" src="../_images/math/6dcb9b88aaa5f14312835145edf06fb2d0823c29.png" alt="\chi"/> should be a Dirichlet character, but any periodic
 sequence will work.</p>
 <p>For example, <tt class="docutils literal"><span class="pre">dirichlet(s,</span> <span class="pre">[1])</span></tt> gives the ordinary
 Riemann zeta function and <tt class="docutils literal"><span class="pre">dirichlet(s,</span> <span class="pre">[-1,1])</span></tt> gives
 the alternating zeta function (Dirichlet eta function).</p>
-<p>Also the derivative with respect to <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> (currently only a first
+<p>Also the derivative with respect to <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> (currently only a first
 derivative) can be evaluated.</p>
 <p><strong>Examples</strong></p>
 <p>The ordinary Riemann zeta function:</p>
@@ -349,7 +349,7 @@ derivative) can be evaluated.</p>
 </pre></div>
 </div>
 <p>The following defines the Dirichlet beta function
-<img class="math" src="../_images/math/b6d8a1aa822e6f66ebeb43a0fd61f46424326198.png" alt="\beta(s) = \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)^s}" /> and verifies
+<img class="math" src="../_images/math/b6d8a1aa822e6f66ebeb43a0fd61f46424326198.png" alt="\beta(s) = \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)^s}"/> and verifies
 several values of this function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">0</span><span class="p">:</span> <span class="n">dirichlet</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span> <span class="mf">1.</span><span class="o">/</span><span class="mf">2</span>
@@ -393,16 +393,16 @@ several values of this function:</p>
 <h3><tt class="xref docutils literal"><span class="pre">primezeta()</span></tt><a class="headerlink" href="#primezeta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.primezeta">
-<!--[mpmath.primezeta]--><tt class="descclassname">mpmath.</tt><tt class="descname">primezeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.primezeta" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">primezeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.primezeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the prime zeta function, which is defined
 in analogy with the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
 as</p>
 <div class="math">
-<p><img src="../_images/math/0226575fda5703d7f9ac0f7aff667e441e45cb02.png" alt="P(s) = \sum_p \frac{1}{p^s}" />
-</div></p><p>where the sum is taken over all prime numbers <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" />. Although
-this sum only converges for <img class="math" src="../_images/math/987815a6cda24b23ceb241d165f933d5c6f6f08f.png" alt="\mathrm{Re}(s) &gt; 1" />, the
+<p><img src="../_images/math/0226575fda5703d7f9ac0f7aff667e441e45cb02.png" alt="P(s) = \sum_p \frac{1}{p^s}" /></p>
+</div><p>where the sum is taken over all prime numbers <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>. Although
+this sum only converges for <img class="math" src="../_images/math/987815a6cda24b23ceb241d165f933d5c6f6f08f.png" alt="\mathrm{Re}(s) &gt; 1"/>, the
 function is defined by analytic continuation in the
-half-plane <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0" />.</p>
+half-plane <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Arbitrary-precision evaluation for real and complex arguments is
 supported:</p>
@@ -420,7 +420,7 @@ supported:</p>
 <span class="go">(-0.12085382601645763295 - 0.013370403397787023602j)</span>
 </pre></div>
 </div>
-<p>The prime zeta function has a logarithmic pole at <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" />,
+<p>The prime zeta function has a logarithmic pole at <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1"/>,
 with residue equal to the difference of the Mertens and
 Euler constants:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">primezeta</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -431,10 +431,10 @@ Euler constants:</p>
 <span class="go">-0.31571845205389007685</span>
 </pre></div>
 </div>
-<p>The analytic continuation to <img class="math" src="../_images/math/b01a6ac8c09ad8380bb653074565be16582adbe2.png" alt="0 &lt; \mathrm{Re}(s) \le 1" />
+<p>The analytic continuation to <img class="math" src="../_images/math/b01a6ac8c09ad8380bb653074565be16582adbe2.png" alt="0 &lt; \mathrm{Re}(s) \le 1"/>
 is implemented. In this strip the function exhibits
 very complex behavior; on the unit interval, it has poles at
-<img class="math" src="../_images/math/75727773d9c4fd9120a7e6337c224dbb405c584f.png" alt="1/n" /> for every squarefree integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />:</p>
+<img class="math" src="../_images/math/75727773d9c4fd9120a7e6337c224dbb405c584f.png" alt="1/n"/> for every squarefree integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">primezeta</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>         <span class="c"># Pole at s = 1/2</span>
 <span class="go">(-inf + 3.1415926535897932385j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primezeta</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
@@ -443,10 +443,10 @@ very complex behavior; on the unit interval, it has poles at
 <span class="go">(0.54892423556409790529 + 0.45626803423487934264j)</span>
 </pre></div>
 </div>
-<p>Although evaluation works in principle for any <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0" />,
+<p>Although evaluation works in principle for any <img class="math" src="../_images/math/7158d342338c8767967d61bdcfdc619b5eb3400f.png" alt="\mathrm{Re}(s) &gt; 0"/>,
 it should be noted that the evaluation time increases exponentially
-as <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> approaches the imaginary axis.</p>
-<p>For large <img class="math" src="../_images/math/bcf0faa38ddd4717cb4a60e935104791339817e1.png" alt="\mathrm{Re}(s)" />, <img class="math" src="../_images/math/5c6c83a7ae943a31fe2d2c9cfb0cf967575634e8.png" alt="P(s)" /> is asymptotic to <img class="math" src="../_images/math/08a2c637ee36c9feba7b71c53dbdbd990ec98533.png" alt="2^{-s}" />:</p>
+as <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> approaches the imaginary axis.</p>
+<p>For large <img class="math" src="../_images/math/bcf0faa38ddd4717cb4a60e935104791339817e1.png" alt="\mathrm{Re}(s)"/>, <img class="math" src="../_images/math/5c6c83a7ae943a31fe2d2c9cfb0cf967575634e8.png" alt="P(s)"/> is asymptotic to <img class="math" src="../_images/math/08a2c637ee36c9feba7b71c53dbdbd990ec98533.png" alt="2^{-s}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">primezeta</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primezeta</span><span class="p">(</span><span class="mf">10</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">10</span>
@@ -470,11 +470,13 @@ BIT 8 (1968), pp. 187-202.</p>
 <h3><tt class="xref docutils literal"><span class="pre">zetazero()</span></tt><a class="headerlink" href="#zetazero" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.zetazero">
-<!--[mpmath.zetazero]--><tt class="descclassname">mpmath.</tt><tt class="descname">zetazero</tt><big>(</big><em>n</em>, <em>url='http://www.dtc.umn.edu/~odlyzko/zeta_tables/zeros1'</em><big>)</big><a class="headerlink" href="#mpmath.zetazero" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th nontrivial zero of the Riemann zeta function.
-The zero is computed using <tt class="xref docutils literal"><span class="pre">findroot()</span></tt>, using a table lookup
-for the initial point.</p>
-<p>The zeros are located on the critical line with real part 1/2:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">zetazero</tt><big>(</big><em>n</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.zetazero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th nontrivial zero of <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> on the critical line,
+i.e. returns an approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th largest complex number
+<img class="math" src="../_images/math/a6ac488ef915997675a83f5361417e803a9535e9.png" alt="s = \frac{1}{2} + ti"/> for which <img class="math" src="../_images/math/5cb3c5c19211d04106e1f725b45e031f6318a542.png" alt="\zeta(s) = 0"/>. Equivalently, the
+imaginary part <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> is a zero of the Z-function (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>).</p>
+<p><strong>Examples</strong></p>
+<p>The first few zeros:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
@@ -485,20 +487,44 @@ for the initial point.</p>
 <span class="go">(0.5 + 77.14484006887480537268266j)</span>
 </pre></div>
 </div>
-<p>Negative indices give the conjugate zeros (<img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0" /> is undefined):</p>
+<p>Verifying that the values are zeros:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">s</span> <span class="o">=</span> <span class="n">zetazero</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">chop</span><span class="p">(</span><span class="n">siegelz</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">imag</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">(0.0, 0.0)</span>
+<span class="go">(0.0, 0.0)</span>
+<span class="go">(0.0, 0.0)</span>
+<span class="go">(0.0, 0.0)</span>
+</pre></div>
+</div>
+<p>Negative indices give the conjugate zeros (<img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0"/> is undefined):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">(0.5 - 14.13472514173469379045725j)</span>
 </pre></div>
 </div>
-<p>The default table only provides <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> up to 100. For larger <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> up to
-100,000,  <tt class="xref docutils literal"><span class="pre">zetazero()</span></tt> will automatically download a table
-(1.8 MB) from the website of Andrew Odlyzko [1]. This requires a
-fast connection to the internet. Alternatively, you can supply the
-url to a custom table. The table should be a file listing the
-imaginary parts as float literals, separated by line breaks.</p>
-<ol class="arabic simple">
-<li><a class="reference external" href="http://www.dtc.umn.edu/~odlyzko/zeta_tables/">http://www.dtc.umn.edu/~odlyzko/zeta_tables/</a></li>
-</ol>
+<p><tt class="xref docutils literal"><span class="pre">zetazero()</span></tt> supports arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and arbitrary precision:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">1234567</span><span class="p">)</span>
+<span class="go">(0.5 + 727690.906948208j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">1234567</span><span class="p">)</span>
+<span class="go">(0.5 + 727690.9069482075392389420041147142092708393819935j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">zeta</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="o">/</span><span class="n">_</span><span class="p">)</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>with <em>info=True</em>, <tt class="xref docutils literal"><span class="pre">zetazero()</span></tt> gives additional information:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">542964976</span><span class="p">,</span><span class="n">info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">((0.5 + 209039046.578535j), [542964969, 542964978], 6, &#39;(013111110)&#39;)</span>
+</pre></div>
+</div>
+<p>This means that the zero is between Gram points 542964969 and 542964978;
+it is the 6-th zero between them. Finally (01311110) is the pattern
+of zeros in this interval. The numbers indicate the number of zeros
+in each Gram interval (Rosser blocks between parenthesis). In this case
+there is only one Rosser block of length nine.</p>
 </dd></dl>
 
 </div>
@@ -511,12 +537,12 @@ in the critical strip.</p>
 <h3><tt class="xref docutils literal"><span class="pre">siegelz()</span></tt><a class="headerlink" href="#siegelz" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.siegelz">
-<!--[mpmath.siegelz]--><tt class="descclassname">mpmath.</tt><tt class="descname">siegelz</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.siegelz" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">siegelz</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.siegelz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Z-function, also known as the Riemann-Siegel Z function,</p>
 <div class="math">
-<p><img src="../_images/math/f0bf6f1bfe9ef2bdea1993df9edab44d0ed7a47c.png" alt="Z(t) = e^{i \theta(t)} \zeta(1/2+it)" />
-</div></p><p>where <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)" /> is the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
-and where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)" /> denotes the Riemann-Siegel theta function
+<p><img src="../_images/math/f0bf6f1bfe9ef2bdea1993df9edab44d0ed7a47c.png" alt="Z(t) = e^{i \theta(t)} \zeta(1/2+it)" /></p>
+</div><p>where <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> is the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
+and where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)"/> denotes the Riemann-Siegel theta function
 (see <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>).</p>
 <p>Evaluation is supported for real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -532,9 +558,9 @@ and where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb87120
 <span class="go">[-1.46035, 0.0, 2.73588, 0.0, -8.39357]</span>
 </pre></div>
 </div>
-<p>The Z-function <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)" /> is equal to <img class="math" src="../_images/math/2e3691e51ec03aea422865326373fb2b1656773b.png" alt="\pm |\zeta(s)|" /> on the
-critical line <img class="math" src="../_images/math/66f08c89f3a095f1153a86b42619fa330bd6d1f5.png" alt="s = 1/2+it" /> (i.e. for real arguments <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" />
-to <img class="math" src="../_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z" />).  Its zeros coincide with those of the Riemann zeta
+<p>The Z-function <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)"/> is equal to <img class="math" src="../_images/math/2e3691e51ec03aea422865326373fb2b1656773b.png" alt="\pm |\zeta(s)|"/> on the
+critical line <img class="math" src="../_images/math/66f08c89f3a095f1153a86b42619fa330bd6d1f5.png" alt="s = 1/2+it"/> (i.e. for real arguments <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/>
+to <img class="math" src="../_images/math/3ead47fb9fb4a4c273feee398f72ff2a09702b84.png" alt="Z"/>).  Its zeros coincide with those of the Riemann zeta
 function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="n">siegelz</span><span class="p">,</span> <span class="mf">14</span><span class="p">)</span>
 <span class="go">14.13472514173469379045725</span>
@@ -547,7 +573,7 @@ function:</p>
 </pre></div>
 </div>
 <p>Since the Z-function is real-valued on the critical line
-(and unlike <img class="math" src="../_images/math/ed558a583ba23a397b5c8f7566aa0f9a4122d0b2.png" alt="|\zeta(s)|" /> analytic), it is useful for
+(and unlike <img class="math" src="../_images/math/ed558a583ba23a397b5c8f7566aa0f9a4122d0b2.png" alt="|\zeta(s)|"/> analytic), it is useful for
 investigating the zeros of the Riemann zeta function.
 For example, one can use a root-finding algorithm based
 on sign changes:</p>
@@ -555,9 +581,9 @@ on sign changes:</p>
 <span class="go">176.4414342977104188888926</span>
 </pre></div>
 </div>
-<p>To locate roots, Gram points <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n" /> which can be computed
-by <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt> are useful. If <img class="math" src="../_images/math/29aa758242e9653c639ae24017f4b953e58e5249.png" alt="(-1)^n Z(g_n)" /> is
-positive for two consecutive <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, then <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)" /> must have
+<p>To locate roots, Gram points <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n"/> which can be computed
+by <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt> are useful. If <img class="math" src="../_images/math/29aa758242e9653c639ae24017f4b953e58e5249.png" alt="(-1)^n Z(g_n)"/> is
+positive for two consecutive <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, then <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)"/> must have
 a zero between those points:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g10</span> <span class="o">=</span> <span class="n">grampoint</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g11</span> <span class="o">=</span> <span class="n">grampoint</span><span class="p">(</span><span class="mf">11</span><span class="p">)</span>
@@ -578,14 +604,14 @@ a zero between those points:</p>
 <h3><tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt><a class="headerlink" href="#siegeltheta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.siegeltheta">
-<!--[mpmath.siegeltheta]--><tt class="descclassname">mpmath.</tt><tt class="descname">siegeltheta</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.siegeltheta" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">siegeltheta</tt><big>(</big><em>t</em><big>)</big><a class="headerlink" href="#mpmath.siegeltheta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Riemann-Siegel theta function,</p>
 <div class="math">
 <p><img src="../_images/math/fd5b18390eba6e4043da03ae0d904356aab2b648.png" alt="\theta(t) = \frac{
 \log\Gamma\left(\frac{1+2it}{4}\right) -
 \log\Gamma\left(\frac{1-2it}{4}\right)
-}{2i} - \frac{\log \pi}{2} t." />
-</div></p><p>The Riemann-Siegel theta function is important in
+}{2i} - \frac{\log \pi}{2} t." /></p>
+</div><p>The Riemann-Siegel theta function is important in
 providing the phase factor for the Z-function
 (see <tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>). Evaluation is supported for real and
 complex arguments:</p>
@@ -603,7 +629,7 @@ complex arguments:</p>
 <span class="go">(-3.068638039426838572528867 + 0.05804937947429712998395177j)</span>
 </pre></div>
 </div>
-<p>The Riemann-Siegel theta function has odd symmetry around <img class="math" src="../_images/math/288e2a39b58d673182c57dc6214b702a448341ea.png" alt="t = 0" />,
+<p>The Riemann-Siegel theta function has odd symmetry around <img class="math" src="../_images/math/288e2a39b58d673182c57dc6214b702a448341ea.png" alt="t = 0"/>,
 two local extreme points and three real roots including 0 (located
 symmetrically):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">siegeltheta</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
@@ -614,8 +640,8 @@ symmetrically):</p>
 <span class="go">17.84559954041086081682634</span>
 </pre></div>
 </div>
-<p>For large <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t" />, there is a famous asymptotic formula
-for <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)" />, to first order given by:</p>
+<p>For large <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/>, there is a famous asymptotic formula
+for <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)"/>, to first order given by:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">siegeltheta</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="go">5488816.353078403444882823</span>
@@ -630,9 +656,9 @@ for <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41e
 <h3><tt class="xref docutils literal"><span class="pre">grampoint()</span></tt><a class="headerlink" href="#grampoint" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.grampoint">
-<!--[mpmath.grampoint]--><tt class="descclassname">mpmath.</tt><tt class="descname">grampoint</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.grampoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Gram point <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n" />, defined as the solution
-to the equation <img class="math" src="../_images/math/ef41f24eb8eeb321f8396e07150e5bd3216b5215.png" alt="\theta(g_n) = \pi n" /> where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)" />
+<tt class="descclassname">mpmath.</tt><tt class="descname">grampoint</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.grampoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Gram point <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n"/>, defined as the solution
+to the equation <img class="math" src="../_images/math/ef41f24eb8eeb321f8396e07150e5bd3216b5215.png" alt="\theta(g_n) = \pi n"/> where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)"/>
 is the Riemann-Siegel theta function (<tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>).</p>
 <p>The first few Gram points are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -663,7 +689,7 @@ is the Riemann-Siegel theta function (<tt class="xref docutils literal"><span cl
 (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>). See the documentation of that function
 for additional examples.</p>
 <p><tt class="xref docutils literal"><span class="pre">grampoint()</span></tt> can solve the defining equation for
-nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />. There is a fixed point where <img class="math" src="../_images/math/ef573a1a60cbf7f8ab3556d42aad39b83bbf8d9e.png" alt="g(x) = x" />:</p>
+nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. There is a fixed point where <img class="math" src="../_images/math/ef573a1a60cbf7f8ab3556d42aad39b83bbf8d9e.png" alt="g(x) = x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">grampoint</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="mf">10000</span><span class="p">)</span>
 <span class="go">9146.698193171459265866198</span>
 </pre></div>
@@ -682,20 +708,20 @@ nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c9
 <h3><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt><a class="headerlink" href="#stieltjes" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.stieltjes">
-<!--[mpmath.stieltjes]--><tt class="descclassname">mpmath.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em>, <em>a=1</em><big>)</big><a class="headerlink" href="#mpmath.stieltjes" title="Permalink to this definition">¶</a></dt>
-<dd><p>For a nonnegative integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <tt class="docutils literal"><span class="pre">stieltjes(n)</span></tt> computes the
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th Stieltjes constant <img class="math" src="../_images/math/55f6b5380d462f954b65d7a2cd05e02ff8cc832e.png" alt="\gamma_n" />, defined as the
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />-th coefficient in the Laurent series expansion of the
-Riemann zeta function around the pole at <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" />. That is,
+<tt class="descclassname">mpmath.</tt><tt class="descname">stieltjes</tt><big>(</big><em>n</em>, <em>a=1</em><big>)</big><a class="headerlink" href="#mpmath.stieltjes" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a nonnegative integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <tt class="docutils literal"><span class="pre">stieltjes(n)</span></tt> computes the
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Stieltjes constant <img class="math" src="../_images/math/55f6b5380d462f954b65d7a2cd05e02ff8cc832e.png" alt="\gamma_n"/>, defined as the
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th coefficient in the Laurent series expansion of the
+Riemann zeta function around the pole at <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1"/>. That is,
 we have:</p>
 <div class="math">
 <p><img src="../_images/math/5e54a4f7913e7906f73ed588cbff7eca0c4649f9.png" alt="\zeta(s) = \frac{1}{s-1} \sum_{n=0}^{\infty}
-    \frac{(-1)^n}{n!} \gamma_n (s-1)^n" />
-</div></p><p>More generally, <tt class="docutils literal"><span class="pre">stieltjes(n,</span> <span class="pre">a)</span></tt> gives the corresponding
-coefficient <img class="math" src="../_images/math/f017aab359e171c4856e0399ffcd19a786ae63ff.png" alt="\gamma_n(a)" /> for the Hurwitz zeta function
-<img class="math" src="../_images/math/e089b859d9ecd07c0abd224e89fc50f9cddbd092.png" alt="\zeta(s,a)" /> (with <img class="math" src="../_images/math/bd617ead510732054d05e59ce021c22dfb1e72ae.png" alt="\gamma_n = \gamma_n(1)" />).</p>
+    \frac{(-1)^n}{n!} \gamma_n (s-1)^n" /></p>
+</div><p>More generally, <tt class="docutils literal"><span class="pre">stieltjes(n,</span> <span class="pre">a)</span></tt> gives the corresponding
+coefficient <img class="math" src="../_images/math/f017aab359e171c4856e0399ffcd19a786ae63ff.png" alt="\gamma_n(a)"/> for the Hurwitz zeta function
+<img class="math" src="../_images/math/e089b859d9ecd07c0abd224e89fc50f9cddbd092.png" alt="\zeta(s,a)"/> (with <img class="math" src="../_images/math/bd617ead510732054d05e59ce021c22dfb1e72ae.png" alt="\gamma_n = \gamma_n(1)"/>).</p>
 <p><strong>Examples</strong></p>
-<p>The zeroth Stieltjes constant is just Euler&#8217;s constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma" />:</p>
+<p>The zeroth Stieltjes constant is just Euler&#8217;s constant <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stieltjes</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
@@ -717,7 +743,7 @@ coefficient <img class="math" src="../_images/math/f017aab359e171c4856e0399ffcd1
 <span class="go">-0.23747539175716</span>
 </pre></div>
 </div>
-<p>An alternative way to compute <img class="math" src="../_images/math/24746dfd17e9188871007307efc793c9be692647.png" alt="\gamma_1" />:</p>
+<p>An alternative way to compute <img class="math" src="../_images/math/24746dfd17e9188871007307efc793c9be692647.png" alt="\gamma_1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">extradps</span><span class="p">(</span><span class="mf">15</span><span class="p">)(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">zeta</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">-0.0728158454836767</span>
 </pre></div>
@@ -735,8 +761,8 @@ Coffey [1], [2]:</p>
 <div class="math">
 <p><img src="../_images/math/514a9d2ef1d0505f4aad47a8795b576c7d178b80.png" alt="\gamma_n(a) = \frac{\log^n a}{2a} - \frac{\log^{n+1}(a)}{n+1} +
     \frac{2}{a} \Re \int_0^{\infty}
-    \frac{(x/a-i)\log^n(a-ix)}{(1+x^2/a^2)(e^{2\pi x}-1)} dx." />
-</div></p><p>For some reference values with <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa0a3.png" alt="a = 1" />, see e.g. [4].</p>
+    \frac{(x/a-i)\log^n(a-ix)}{(1+x^2/a^2)(e^{2\pi x}-1)} dx." /></p>
+</div><p>For some reference values with <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa0a3.png" alt="a = 1"/>, see e.g. [4].</p>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
 <li>O. R. Ainsworth &amp; L. W. Howell, &#8220;An integral representation of
@@ -744,7 +770,7 @@ the generalized Euler-Mascheroni constants&#8221;, NASA Technical
 Paper 2456 (1985),
 <a class="reference external" href="http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf">http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf</a></li>
 <li>M. W. Coffey, &#8220;The Stieltjes constants, their relation to the
-<img class="math" src="../_images/math/d5a512e1ca0922626d453a3702cc06415bc63b3f.png" alt="\eta_j" /> coefficients, and representation of the Hurwitz
+<img class="math" src="../_images/math/d5a512e1ca0922626d453a3702cc06415bc63b3f.png" alt="\eta_j"/> coefficients, and representation of the Hurwitz
 zeta function&#8221;,      arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
 <li><a class="reference external" href="http://mathworld.wolfram.com/StieltjesConstants.html">http://mathworld.wolfram.com/StieltjesConstants.html</a></li>
 <li><a class="reference external" href="http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt">http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt</a></li>
@@ -759,11 +785,11 @@ zeta function&#8221;,      arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
 <h3><tt class="xref docutils literal"><span class="pre">polylog()</span></tt><a class="headerlink" href="#polylog" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.polylog">
-<!--[mpmath.polylog]--><tt class="descclassname">mpmath.</tt><tt class="descname">polylog</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.polylog" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">polylog</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.polylog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the polylogarithm, defined by the sum</p>
 <div class="math">
-<p><img src="../_images/math/1844460c51df730ab47d52800dcc95353705ccba.png" alt="\mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}." />
-</div></p><p>This series is convergent only for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1" />, so elsewhere
+<p><img src="../_images/math/1844460c51df730ab47d52800dcc95353705ccba.png" alt="\mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}." /></p>
+</div><p>This series is convergent only for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1"/>, so elsewhere
 the analytic continuation is implied.</p>
 <p>The polylogarithm should not be confused with the logarithmic
 integral (also denoted by Li or li), which is implemented
@@ -784,7 +810,7 @@ A sample of polylogarithm evaluations is shown below:</p>
 </pre></div>
 </div>
 <p><tt class="xref docutils literal"><span class="pre">polylog()</span></tt> can evaluate the analytic continuation of the
-polylogarithm when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is an integer:</p>
+polylogarithm when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is an integer:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">(0.536301287357863 - 7.23378441241546j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">)</span>
@@ -822,7 +848,7 @@ and differentiation:</p>
 <span class="go">0.517479061673899</span>
 </pre></div>
 </div>
-<p>Taylor series expansions around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" /> are:</p>
+<p>Taylor series expansions around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/> are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">polylog</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">))</span>
 <span class="gp">...</span>
@@ -836,7 +862,7 @@ and differentiation:</p>
 </pre></div>
 </div>
 <p>The series defining the polylogarithm is simultaneously
-a Taylor series and an L-series. For certain values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, the
+a Taylor series and an L-series. For certain values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, the
 polylogarithm reduces to a pure zeta function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1</span><span class="p">),</span> <span class="n">zeta</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">(1.17624173838258, 1.17624173838258)</span>
@@ -844,15 +870,15 @@ polylogarithm reduces to a pure zeta function:</p>
 <span class="go">(-0.909670702980385, -0.909670702980385)</span>
 </pre></div>
 </div>
-<p>Evaluation for arbitrary, nonintegral <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is supported
-for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> within the unit circle:</p>
+<p>Evaluation for arbitrary, nonintegral <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is supported
+for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> within the unit circle:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
 <span class="go">(0.24258605789446 - 0.00222938275488344j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">0.25</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">(0.24258605789446 - 0.00222938275488344j)</span>
 </pre></div>
 </div>
-<p>It is also currently supported outside of the unit circle for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />
+<p>It is also currently supported outside of the unit circle for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>
 not too large in magnitude:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span> <span class="mf">20</span><span class="o">+</span><span class="mf">40</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-7.1421172179728 - 3.92726697721369j)</span>
@@ -879,24 +905,24 @@ not too large in magnitude:</p>
 <h3><tt class="xref docutils literal"><span class="pre">clsin()</span></tt><a class="headerlink" href="#clsin" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.clsin">
-<!--[mpmath.clsin]--><tt class="descclassname">mpmath.</tt><tt class="descname">clsin</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.clsin" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">clsin</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.clsin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Clausen sine function, defined formally by the series</p>
 <div class="math">
-<p><img src="../_images/math/71d044308d0bbbf2587722058e4c590a6fd279e6.png" alt="\mathrm{Cl}_s(z) = \sum_{k=1}^{\infty} \frac{\sin(kz)}{k^s}." />
-</div></p><p>The special case <img class="math" src="../_images/math/418a9a3766f97f030079b1bcba9f2032da8c5f42.png" alt="\mathrm{Cl}_2(z)" /> (i.e. <tt class="docutils literal"><span class="pre">clsin(2,z)</span></tt>) is the classical
+<p><img src="../_images/math/71d044308d0bbbf2587722058e4c590a6fd279e6.png" alt="\mathrm{Cl}_s(z) = \sum_{k=1}^{\infty} \frac{\sin(kz)}{k^s}." /></p>
+</div><p>The special case <img class="math" src="../_images/math/418a9a3766f97f030079b1bcba9f2032da8c5f42.png" alt="\mathrm{Cl}_2(z)"/> (i.e. <tt class="docutils literal"><span class="pre">clsin(2,z)</span></tt>) is the classical
 &#8220;Clausen function&#8221;. More generally, the Clausen function is defined for
-complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, even when the series does not converge. The
+complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, even when the series does not converge. The
 Clausen function is related to the polylogarithm (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>) as</p>
 <div class="math">
 <p><img src="../_images/math/4393960e5ee6adf31d4e00f2f0c769807e3d224f.png" alt="\mathrm{Cl}_s(z) = \frac{1}{2i}\left(\mathrm{Li}_s\left(e^{iz}\right) -
                    \mathrm{Li}_s\left(e^{-iz}\right)\right)
 
-= \mathrm{Im}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R})," />
-</div></p><p>and this representation can be taken to provide the analytic continuation of the
+= \mathrm{Im}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R})," /></p>
+</div><p>and this representation can be taken to provide the analytic continuation of the
 series. The complementary function <tt class="xref docutils literal"><span class="pre">clcos()</span></tt> gives the corresponding
 cosine sum.</p>
 <p><strong>Examples</strong></p>
-<p>Evaluation for arbitrarily chosen <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation for arbitrarily chosen <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span>
@@ -905,14 +931,14 @@ cosine sum.</p>
 <span class="go">-0.6533010136329338746275795</span>
 </pre></div>
 </div>
-<p>Using <img class="math" src="../_images/math/fa6dc1441307969b3b9e89a51a3c30e39d4f286a.png" alt="z + \pi" /> instead of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> gives an alternating series:</p>
+<p>Using <img class="math" src="../_images/math/fa6dc1441307969b3b9e89a51a3c30e39d4f286a.png" alt="z + \pi"/> instead of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> gives an alternating series:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.8860032351260589402871624</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="o">*</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="n">s</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">0.8860032351260589402871624</span>
 </pre></div>
 </div>
-<p>With <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" />, the sum can be expressed in closed form
+<p>With <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1"/>, the sum can be expressed in closed form
 using elementary functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">1</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
@@ -923,9 +949,9 @@ using elementary functions:</p>
 <span class="go">0.2047709230104579724675985</span>
 </pre></div>
 </div>
-<p>The classical Clausen function <img class="math" src="../_images/math/ab30f7f96a834ce448afc93df1874a661fd79860.png" alt="\mathrm{Cl}_2(\theta)" /> gives the
-value of the integral <img class="math" src="../_images/math/8cc0a58b449e38fa27d651e9bac9eb385f3c3ab7.png" alt="\int_0^{\theta} -\ln(2\sin(x/2)) dx" /> for
-<img class="math" src="../_images/math/9a02980b8bc701cd3b3fa00ff4c986649b385cee.png" alt="0 &lt; \theta &lt; 2 \pi" />:</p>
+<p>The classical Clausen function <img class="math" src="../_images/math/ab30f7f96a834ce448afc93df1874a661fd79860.png" alt="\mathrm{Cl}_2(\theta)"/> gives the
+value of the integral <img class="math" src="../_images/math/8cc0a58b449e38fa27d651e9bac9eb385f3c3ab7.png" alt="\int_0^{\theta} -\ln(2\sin(x/2)) dx"/> for
+<img class="math" src="../_images/math/9a02980b8bc701cd3b3fa00ff4c986649b385cee.png" alt="0 &lt; \theta &lt; 2 \pi"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cl2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">clsin</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cl2</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
 <span class="go">-0.2465045302347694216534255</span>
@@ -933,7 +959,7 @@ value of the integral <img class="math" src="../_images/math/8cc0a58b449e38fa27d
 <span class="go">-0.2465045302347694216534255</span>
 </pre></div>
 </div>
-<p>This function is symmetric about <img class="math" src="../_images/math/02ba5933a7d7ed42c7940018bbdbfae5b3f9b9f0.png" alt="\theta = \pi" /> with zeros and extreme
+<p>This function is symmetric about <img class="math" src="../_images/math/02ba5933a7d7ed42c7940018bbdbfae5b3f9b9f0.png" alt="\theta = \pi"/> with zeros and extreme
 points:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cl2</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span> <span class="n">cl2</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">);</span> <span class="n">chop</span><span class="p">(</span><span class="n">cl2</span><span class="p">(</span><span class="n">pi</span><span class="p">));</span> <span class="n">cl2</span><span class="p">(</span><span class="mf">5</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mf">3</span><span class="p">);</span> <span class="n">chop</span><span class="p">(</span><span class="n">cl2</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
 <span class="go">0.0</span>
@@ -951,7 +977,7 @@ points:</p>
 </pre></div>
 </div>
 <p>The Clausen sine function can be expressed in closed form when
-<img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is an odd integer (becoming zero when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> &lt; 0):</p>
+<img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is an odd integer (becoming zero when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> &lt; 0):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">1</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span> <span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
 <span class="go">0.3636895456083490948304773</span>
@@ -965,9 +991,9 @@ points:</p>
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>It can also be expressed in closed form for even integer <img class="math" src="../_images/math/3344b41896e9d5291d62b4acf80071340a6169e3.png" alt="s \le 0" />,
+<p>It can also be expressed in closed form for even integer <img class="math" src="../_images/math/3344b41896e9d5291d62b4acf80071340a6169e3.png" alt="s \le 0"/>,
 providing a finite sum for series such as
-<img class="math" src="../_images/math/69d348e68c63b934825620c1bccf38e54ed32a64.png" alt="\sin(z) + \sin(2z) + \sin(3z) + \ldots" />:</p>
+<img class="math" src="../_images/math/69d348e68c63b934825620c1bccf38e54ed32a64.png" alt="\sin(z) + \sin(2z) + \sin(3z) + \ldots"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">1</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">0.1903105029507513881275865</span>
@@ -979,14 +1005,14 @@ providing a finite sum for series such as
 <span class="go">-0.1089406163841548817581392</span>
 </pre></div>
 </div>
-<p>Call with <tt class="docutils literal"><span class="pre">pi=True</span></tt> to multiply <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> by <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> exactly:</p>
+<p>Call with <tt class="docutils literal"><span class="pre">pi=True</span></tt> to multiply <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> by <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> exactly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">-8.892316224968072424732898e-26</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>Evaluation for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> in a nonconvergent case:</p>
+<p>Evaluation for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> in a nonconvergent case:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clsin</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">(-0.593079480117379002516034 + 0.9038644233367868273362446j)</span>
@@ -1001,20 +1027,20 @@ providing a finite sum for series such as
 <h3><tt class="xref docutils literal"><span class="pre">clcos()</span></tt><a class="headerlink" href="#clcos" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.clcos">
-<!--[mpmath.clcos]--><tt class="descclassname">mpmath.</tt><tt class="descname">clcos</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.clcos" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">clcos</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.clcos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Clausen cosine function, defined formally by the series</p>
 <div class="math">
-<p><img src="../_images/math/5784640b30b43acfdf60537c5ff80e976f60bb22.png" alt="\mathrm{\widetilde{Cl}}_s(z) = \sum_{k=1}^{\infty} \frac{\cos(kz)}{k^s}." />
-</div></p><p>This function is complementary to the Clausen sine function
+<p><img src="../_images/math/5784640b30b43acfdf60537c5ff80e976f60bb22.png" alt="\mathrm{\widetilde{Cl}}_s(z) = \sum_{k=1}^{\infty} \frac{\cos(kz)}{k^s}." /></p>
+</div><p>This function is complementary to the Clausen sine function
 <tt class="xref docutils literal"><span class="pre">clsin()</span></tt>. In terms of the polylogarithm,</p>
 <div class="math">
 <p><img src="../_images/math/78db57c460f9522102ab78cbb7392270629025ea.png" alt="\mathrm{\widetilde{Cl}}_s(z) =
     \frac{1}{2}\left(\mathrm{Li}_s\left(e^{iz}\right) +
     \mathrm{Li}_s\left(e^{-iz}\right)\right)
 
-= \mathrm{Re}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R})." />
-</div></p><p><strong>Examples</strong></p>
-<p>Evaluation for arbitrarily chosen <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+= \mathrm{Re}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R})." /></p>
+</div><p><strong>Examples</strong></p>
+<p>Evaluation for arbitrarily chosen <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span>
@@ -1023,7 +1049,7 @@ providing a finite sum for series such as
 <span class="go">-0.6518926267198991308332759</span>
 </pre></div>
 </div>
-<p>Using <img class="math" src="../_images/math/fa6dc1441307969b3b9e89a51a3c30e39d4f286a.png" alt="z + \pi" /> instead of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> gives an alternating series:</p>
+<p>Using <img class="math" src="../_images/math/fa6dc1441307969b3b9e89a51a3c30e39d4f286a.png" alt="z + \pi"/> instead of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> gives an alternating series:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="o">+</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">-0.8155530586502260817855618</span>
@@ -1031,7 +1057,7 @@ providing a finite sum for series such as
 <span class="go">-0.8155530586502260817855618</span>
 </pre></div>
 </div>
-<p>With <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1" />, the sum can be expressed in closed form
+<p>With <img class="math" src="../_images/math/231cd70adaea591bac095e7290c91c1e9d41d8a3.png" alt="s = 1"/>, the sum can be expressed in closed form
 using elementary functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">1</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
@@ -1044,7 +1070,7 @@ using elementary functions:</p>
 <span class="go">-0.6720334373369714849797918</span>
 </pre></div>
 </div>
-<p>It can also be expressed in closed form when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> is an even integer.
+<p>It can also be expressed in closed form when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is an even integer.
 For example,</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
 <span class="go">-0.7805359025135583118863007</span>
@@ -1052,9 +1078,9 @@ For example,</p>
 <span class="go">-0.7805359025135583118863007</span>
 </pre></div>
 </div>
-<p>The case <img class="math" src="../_images/math/d40a90c6b47ac3e17fe509ea16e9f59d6cfdab32.png" alt="s = 0" /> gives the renormalized sum of
-<img class="math" src="../_images/math/6a07ffd23112992487e718498e534587d090dd8c.png" alt="\cos(z) + \cos(2z) + \cos(3z) + \ldots" /> (which happens to be the same for
-any value of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />):</p>
+<p>The case <img class="math" src="../_images/math/d40a90c6b47ac3e17fe509ea16e9f59d6cfdab32.png" alt="s = 0"/> gives the renormalized sum of
+<img class="math" src="../_images/math/6a07ffd23112992487e718498e534587d090dd8c.png" alt="\cos(z) + \cos(2z) + \cos(3z) + \ldots"/> (which happens to be the same for
+any value of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">-0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">z</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
@@ -1063,12 +1089,12 @@ any value of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea8
 </div>
 <p>Also the sums</p>
 <div class="math">
-<p><img src="../_images/math/adf8d395f4ef06a1376ec851052b7420f9057953.png" alt="\cos(z) + 2\cos(2z) + 3\cos(3z) + \ldots" />
-</div></p><p>and</p>
+<p><img src="../_images/math/adf8d395f4ef06a1376ec851052b7420f9057953.png" alt="\cos(z) + 2\cos(2z) + 3\cos(3z) + \ldots" /></p>
+</div><p>and</p>
 <div class="math">
-<p><img src="../_images/math/db884d2b2907057990ad2212a6fb4dc8314a3470.png" alt="\cos(z) + 2^n \cos(2z) + 3^n \cos(3z) + \ldots" />
-</div></p><p>for higher integer powers <img class="math" src="../_images/math/5cad895dd36f6003047f6f108abbf88410344e1c.png" alt="n = -s" /> can be done in closed form. They are zero
-when <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is positive and even (<img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> negative and even):</p>
+<p><img src="../_images/math/db884d2b2907057990ad2212a6fb4dc8314a3470.png" alt="\cos(z) + 2^n \cos(2z) + 3^n \cos(3z) + \ldots" /></p>
+</div><p>for higher integer powers <img class="math" src="../_images/math/5cad895dd36f6003047f6f108abbf88410344e1c.png" alt="n = -s"/> can be done in closed form. They are zero
+when <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is positive and even (<img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> negative and even):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">-0.2607829375240542480694126</span>
 <span class="go">-0.2607829375240542480694126</span>
@@ -1081,8 +1107,8 @@ when <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>With <img class="math" src="../_images/math/e5cf61157e4009364c03997a7bd3556fe10d46f4.png" alt="z = \pi" />, the series reduces to that of the Riemann zeta function
-(more generally, if <img class="math" src="../_images/math/a00981f90d6ae18dd9d869c84ad746dbd17de88c.png" alt="z = p \pi/q" />, it is a finite sum over Hurwitz zeta
+<p>With <img class="math" src="../_images/math/e5cf61157e4009364c03997a7bd3556fe10d46f4.png" alt="z = \pi"/>, the series reduces to that of the Riemann zeta function
+(more generally, if <img class="math" src="../_images/math/a00981f90d6ae18dd9d869c84ad746dbd17de88c.png" alt="z = p \pi/q"/>, it is a finite sum over Hurwitz zeta
 function values):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">0</span><span class="p">);</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
 <span class="go">1.34148725725091717975677</span>
@@ -1092,14 +1118,14 @@ function values):</p>
 <span class="go">-0.8671998890121841381913472</span>
 </pre></div>
 </div>
-<p>Call with <tt class="docutils literal"><span class="pre">pi=True</span></tt> to multiply <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> by <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi" /> exactly:</p>
+<p>Call with <tt class="docutils literal"><span class="pre">pi=True</span></tt> to multiply <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> by <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> exactly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">2.997921055881167659267063e+102</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">0.008333333333333333333333333</span>
 </pre></div>
 </div>
-<p>Evaluation for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> in a nonconvergent case:</p>
+<p>Evaluation for complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> in a nonconvergent case:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">clcos</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">(0.9407430121562251476136807 + 0.715826296033590204557054j)</span>
@@ -1117,23 +1143,23 @@ function values):</p>
 <h3><tt class="xref docutils literal"><span class="pre">polyexp()</span></tt><a class="headerlink" href="#polyexp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.polyexp">
-<!--[mpmath.polyexp]--><tt class="descclassname">mpmath.</tt><tt class="descname">polyexp</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.polyexp" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">polyexp</tt><big>(</big><em>s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.polyexp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the polyexponential function, defined for arbitrary
-complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" />, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> by the series</p>
+complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/>, <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> by the series</p>
 <div class="math">
-<p><img src="../_images/math/4b40c56593a606a415fbd4530c20a1400c940a4a.png" alt="E_s(z) = \sum_{k=1}^{\infty} \frac{k^s}{k!} z^k." />
-</div></p><p><img class="math" src="../_images/math/e567acf2f26e4fa492b6e310313ea47573c52ce9.png" alt="E_s(z)" /> is constructed from the exponential function analogously
+<p><img src="../_images/math/4b40c56593a606a415fbd4530c20a1400c940a4a.png" alt="E_s(z) = \sum_{k=1}^{\infty} \frac{k^s}{k!} z^k." /></p>
+</div><p><img class="math" src="../_images/math/e567acf2f26e4fa492b6e310313ea47573c52ce9.png" alt="E_s(z)"/> is constructed from the exponential function analogously
 to how the polylogarithm is constructed from the ordinary
-logarithm; as a function of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> (with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> fixed), <img class="math" src="../_images/math/951eec7bf6dd63c58cc159490924cb51eb5a0b6d.png" alt="E_s" /> is an L-series
-It is an entire function of both <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
+logarithm; as a function of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> (with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> fixed), <img class="math" src="../_images/math/951eec7bf6dd63c58cc159490924cb51eb5a0b6d.png" alt="E_s"/> is an L-series
+It is an entire function of both <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>.</p>
 <p>The polyexponential function provides a generalization of the
-Bell polynomials <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> (see <tt class="xref docutils literal"><span class="pre">bell()</span></tt>) to noninteger orders <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />.
+Bell polynomials <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/> (see <tt class="xref docutils literal"><span class="pre">bell()</span></tt>) to noninteger orders <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.
 In terms of the Bell polynomials,</p>
 <div class="math">
-<p><img src="../_images/math/a380f7ed2531fb35c6adaa6b8e56bd5c23240bb4.png" alt="E_s(z) = e^z B_s(z) - \mathrm{sinc}(\pi s)." />
-</div></p><p>Note that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)" /> and <img class="math" src="../_images/math/c47c624139806711c9800c70920de6c85f87481a.png" alt="e^{-x} E_n(x)" /> are identical if <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />
+<p><img src="../_images/math/a380f7ed2531fb35c6adaa6b8e56bd5c23240bb4.png" alt="E_s(z) = e^z B_s(z) - \mathrm{sinc}(\pi s)." /></p>
+</div><p>Note that <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/> and <img class="math" src="../_images/math/c47c624139806711c9800c70920de6c85f87481a.png" alt="e^{-x} E_n(x)"/> are identical if <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>
 is a nonzero integer, but not otherwise. In particular, they differ
-at <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0" />.</p>
+at <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluating a series:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -1154,8 +1180,8 @@ at <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5f
 <span class="go">3.499471750566824369520223e-36</span>
 </pre></div>
 </div>
-<p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> is a nonpositive integer, <img class="math" src="../_images/math/0d3cbf9ab1e976e485e5a8b8459491ffa0b561dc.png" alt="E_n" /> reduces to a special
-instance of the hypergeometric function <img class="math" src="../_images/math/405161549f551ae4e04876e9405fd9a40873733d.png" alt="\,_pF_q" />:</p>
+<p>If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is a nonpositive integer, <img class="math" src="../_images/math/0d3cbf9ab1e976e485e5a8b8459491ffa0b561dc.png" alt="E_n"/> reduces to a special
+instance of the hypergeometric function <img class="math" src="../_images/math/405161549f551ae4e04876e9405fd9a40873733d.png" alt="\,_pF_q"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mf">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">pi</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">polyexp</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
@@ -1178,7 +1204,7 @@ instance of the hypergeometric function <img class="math" src="../_images/math/4
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Zeta functions, L-series and polylogarithms</a><ul>
+<li><a class="reference external" href="#">Zeta functions, L-series and polylogarithms</a><ul>
 <li><a class="reference external" href="#riemann-hurwitz-zeta-function-and-dirichlet-series">Riemann-Hurwitz zeta function and Dirichlet series</a><ul>
 <li><a class="reference external" href="#zeta"><tt class="docutils literal"><span class="pre">zeta()</span></tt></a></li>
 <li><a class="reference external" href="#altzeta"><tt class="docutils literal"><span class="pre">altzeta()</span></tt></a></li>
@@ -1221,19 +1247,29 @@ instance of the hypergeometric function <img class="math" src="../_images/math/4
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="elliptic.html" title="previous chapter">Elliptic functions</a></p>
+            <p class="topless"><a href="elliptic.html"
+                                  title="previous chapter">Elliptic functions</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="numtheory.html" title="next chapter">Number-theoretical, combinatorial and integer functions</a></p>
+            <p class="topless"><a href="numtheory.html"
+                                  title="next chapter">Number-theoretical, combinatorial and integer functions</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/zeta.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/zeta.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1243,24 +1279,35 @@ instance of the hypergeometric function <img class="math" src="../_images/math/4
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="numtheory.html" title="Number-theoretical, combinatorial and integer functions"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="elliptic.html" title="Elliptic functions"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

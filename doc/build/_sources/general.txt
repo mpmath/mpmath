@@ -1,0 +1,49 @@
+General-purpose and utility functions
+=====================================
+
+Conversion and utilities for numbers
+------------------------------------
+.. autofunction:: mpmath.mpmathify(x, strings=True)
+.. autofunction:: mpmath.almosteq(s, t, rel_eps=None, abs_eps=None)
+.. autofunction:: mpmath.isint(x)
+.. autofunction:: mpmath.isinf(x)
+.. autofunction:: mpmath.isnan(x)
+.. autofunction:: mpmath.absmin(x)
+.. autofunction:: mpmath.absmax(x)
+
+Arithmetic
+----------
+.. autofunction:: mpmath.fsum(terms, absolute=False, squared=False)
+.. autofunction:: mpmath.fprod(factors)
+.. autofunction:: mpmath.fdot(A, B=None)
+
+Number generation
+-----------------
+.. autofunction:: mpmath.fraction(p,q)
+.. autofunction:: mpmath.rand()
+.. autofunction:: mpmath.arange(*args)
+.. autofunction:: mpmath.linspace(*args, **kwargs)
+
+Rounding and printing
+---------------------
+.. autofunction:: mpmath.chop(x, tol=None)
+.. autofunction:: mpmath.nstr(x, n=6, **kwargs)
+.. autofunction:: mpmath.nprint(x, n=6, **kwargs)
+
+Precision management
+--------------------
+.. autofunction:: mpmath.autoprec
+.. autofunction:: mpmath.workprec
+.. autofunction:: mpmath.workdps
+.. autofunction:: mpmath.extraprec
+.. autofunction:: mpmath.extradps
+
+Memoization
+-----------------
+.. autofunction:: mpmath.memoize
+
+Debugging
+---------
+.. autofunction:: mpmath.maxcalls
+.. autofunction:: mpmath.monitor
+.. autofunction:: mpmath.timing

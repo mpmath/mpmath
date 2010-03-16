@@ -97,4 +97,17 @@ Coulomb wave functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.coulombc(l,eta)
 
+Confluent U and Whittaker functions
+...................................
 
+:func:`hyperu`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.hyperu(a, b, z)
+
+:func:`whitm`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.whitm(k,m,z)
+
+:func:`whitw`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.whitw(k,m,z)

@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Elliptic functions" href="elliptic.html" />
@@ -44,33 +44,43 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="hypergeometric-functions">
 <h1>Hypergeometric functions<a class="headerlink" href="#hypergeometric-functions" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="common-hypergeometric-series">
-<h2>Common hypergeometric series<a class="headerlink" href="#common-hypergeometric-series" title="Permalink to this headline">¶</a></h2>
+<p>The functions listed in <a class="reference external" href="expintegrals.html"><em>Exponential integrals and error functions</em></a>, <a class="reference external" href="bessel.html"><em>Bessel functions and related functions</em></a> and
+<a class="reference external" href="orthogonal.html"><em>Orthogonal polynomials</em></a>, and many other functions as well, are merely
+particular instances of the generalized hypergeometric function <img class="math" src="../_images/math/405161549f551ae4e04876e9405fd9a40873733d.png" alt="\,_pF_q"/>.
+The functions listed in the following section enable efficient
+direct evaluation of the underlying hypergeometric series, as
+well as linear combinations, limits with respect to parameters,
+and analytic continuations thereof. Extensions to twodimensional
+series are also provided. See also the basic or q-analog of
+the hypergeometric series in <a class="reference external" href="qfunctions.html"><em>q-functions</em></a>.</p>
 <p>For convenience, most of the hypergeometric series of low order are
 provided as standalone functions. They can equivalently be evaluated using
 <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>. As will be demonstrated further in the individual docstrings,
-all the following functions implement analytic continuations and/or asymptotic
-expansions with respect to the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, thereby permitting evaluation
-anywhere in the complex plane. Functions of higher degree can be computed
-via <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>, but generally only in rapidly convergent instances.</p>
+all the <tt class="docutils literal"><span class="pre">hyp#f#</span></tt> functions implement analytic continuations and/or asymptotic
+expansions with respect to the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, thereby permitting evaluation
+for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> anywhere in the complex plane. Functions of higher degree can be
+computed via <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>, but generally only in rapidly convergent
+instances.</p>
+<div class="section" id="common-hypergeometric-series">
+<h2>Common hypergeometric series<a class="headerlink" href="#common-hypergeometric-series" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="hyp0f1">
 <h3><tt class="xref docutils literal"><span class="pre">hyp0f1()</span></tt><a class="headerlink" href="#hyp0f1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp0f1">
-<!--[mpmath.hyp0f1]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp0f1</tt><big>(</big><em>a</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp0f1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/6f7286e42826f1679e79de9429560a0d924791f1.png" alt="\,_0F_1" />, sometimes known as the
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp0f1</tt><big>(</big><em>a</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp0f1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/6f7286e42826f1679e79de9429560a0d924791f1.png" alt="\,_0F_1"/>, sometimes known as the
 confluent limit function, defined as</p>
 <div class="math">
-<p><img src="../_images/math/457cc0f086c7585d6ff68333252769954a3a0603.png" alt="\,_0F_1(a,z) = \sum_{k=0}^{\infty} \frac{1}{(a)_k} \frac{z^k}{k!}." />
-</div></p><p>This function satisfies the differential equation <img class="math" src="../_images/math/b8016bf152ac73658fcb67fdd870abe8913ff556.png" alt="z f''(z) + a f'(z) = f(z)" />,
+<p><img src="../_images/math/457cc0f086c7585d6ff68333252769954a3a0603.png" alt="\,_0F_1(a,z) = \sum_{k=0}^{\infty} \frac{1}{(a)_k} \frac{z^k}{k!}." /></p>
+</div><p>This function satisfies the differential equation <img class="math" src="../_images/math/b8016bf152ac73658fcb67fdd870abe8913ff556.png" alt="z f''(z) + a f'(z) = f(z)"/>,
 and is related to the Bessel function of the first kind (see <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>).</p>
 <p><tt class="docutils literal"><span class="pre">hyp0f1(a,z)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">hyper([],[a],z)</span></tt>; see documentation for
 <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> for more information.</p>
@@ -86,7 +96,7 @@ and is related to the Bessel function of the first kind (see <tt class="xref doc
 <span class="go">(3.905169561300910030267132e+606 + 3.807708544441684513934213e+606j)</span>
 </pre></div>
 </div>
-<p>Evaluation is supported for arbitrarily large values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />,
+<p>Evaluation is supported for arbitrarily large values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>,
 using asymptotic expansions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyp0f1</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
 <span class="go">2.131705322874965310390701e+8685889638065036553022565</span>
@@ -112,23 +122,23 @@ using asymptotic expansions:</p>
 <h3><tt class="xref docutils literal"><span class="pre">hyp1f1()</span></tt><a class="headerlink" href="#hyp1f1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp1f1">
-<!--[mpmath.hyp1f1]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp1f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp1f1" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp1f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp1f1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the confluent hypergeometric function of the first kind,</p>
 <div class="math">
-<p><img src="../_images/math/42abb27709b665b9960744fb30acde08356a25a1.png" alt="\,_1F_1(a,b,z) = \sum_{k=0}^{\infty} \frac{(a)_k}{(b)_k} \frac{z^k}{k!}," />
-</div></p><p>also known as Kummer&#8217;s function and sometimes denoted by <img class="math" src="../_images/math/079306a273b2e1e7d00b4ac1845e86b89b6abd80.png" alt="M(a,b,z)" />. This
+<p><img src="../_images/math/42abb27709b665b9960744fb30acde08356a25a1.png" alt="\,_1F_1(a,b,z) = \sum_{k=0}^{\infty} \frac{(a)_k}{(b)_k} \frac{z^k}{k!}," /></p>
+</div><p>also known as Kummer&#8217;s function and sometimes denoted by <img class="math" src="../_images/math/079306a273b2e1e7d00b4ac1845e86b89b6abd80.png" alt="M(a,b,z)"/>. This
 function gives one solution to the confluent (Kummer&#8217;s) differential equation</p>
 <div class="math">
-<p><img src="../_images/math/6b308cd303a13f3caeefe6421ffc15a59ff7d2b1.png" alt="z f''(z) + (b-z) f'(z) - af(z) = 0." />
-</div></p><p>A second solution is given by the <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" /> function; see <tt class="xref docutils literal"><span class="pre">hyperu()</span></tt>.
+<p><img src="../_images/math/6b308cd303a13f3caeefe6421ffc15a59ff7d2b1.png" alt="z f''(z) + (b-z) f'(z) - af(z) = 0." /></p>
+</div><p>A second solution is given by the <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/> function; see <tt class="xref docutils literal"><span class="pre">hyperu()</span></tt>.
 Solutions are also given in an alternate form by the Whittaker
 functions (<tt class="xref docutils literal"><span class="pre">whitm()</span></tt>, <tt class="xref docutils literal"><span class="pre">whitw()</span></tt>).</p>
 <p><tt class="docutils literal"><span class="pre">hyp1f1(a,b,z)</span></tt> is equivalent
 to <tt class="docutils literal"><span class="pre">hyper([a],[b],z)</span></tt>; see documentation for <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> for more
 information.</p>
 <p><strong>Examples</strong></p>
-<p>Evaluation for real and complex values of the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, with
-fixed parameters <img class="math" src="../_images/math/551d75423e2e2e95b8048ee19d3c502573eab9e1.png" alt="a = 2, b = -1/3" />:</p>
+<p>Evaluation for real and complex values of the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, with
+fixed parameters <img class="math" src="../_images/math/551d75423e2e2e95b8048ee19d3c502573eab9e1.png" alt="a = 2, b = -1/3"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyp1f1</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">),</span> <span class="mf">3.25</span><span class="p">)</span>
@@ -148,7 +158,7 @@ fixed parameters <img class="math" src="../_images/math/551d75423e2e2e95b8048ee1
 <span class="go">(261.8977905181045142673351 + 160.8930312845682213562172j)</span>
 </pre></div>
 </div>
-<p>Arbitrarily large values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> are supported:</p>
+<p>Arbitrarily large values of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> are supported:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyp1f1</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span>
 <span class="go">3.890569218254486878220752e+43429448190325182745</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyp1f1</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">)</span>
@@ -186,8 +196,8 @@ fixed parameters <img class="math" src="../_images/math/551d75423e2e2e95b8048ee1
 <h3><tt class="xref docutils literal"><span class="pre">hyp1f2()</span></tt><a class="headerlink" href="#hyp1f2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp1f2">
-<!--[mpmath.hyp1f2]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp1f2</tt><big>(</big><em>a1</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp1f2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/f5c04fd479f49c4a6769a121c500e5cef642569a.png" alt="\,_1F_2(a_1,a_2;b_1,b_2; z)" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp1f2</tt><big>(</big><em>a1</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp1f2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/f5c04fd479f49c4a6769a121c500e5cef642569a.png" alt="\,_1F_2(a_1,a_2;b_1,b_2; z)"/>.
 The call <tt class="docutils literal"><span class="pre">hyp1f2(a1,b1,b2,z)</span></tt> is equivalent to
 <tt class="docutils literal"><span class="pre">hyper([a1],[b1,b2],z)</span></tt>.</p>
 <p>Evaluation works for complex and arbitrarily large arguments:</p>
@@ -211,18 +221,18 @@ The call <tt class="docutils literal"><span class="pre">hyp1f2(a1,b1,b2,z)</span
 <h3><tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt><a class="headerlink" href="#hyp2f0" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp2f0">
-<!--[mpmath.hyp2f0]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f0</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0" />, defined formally by the
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f0</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0"/>, defined formally by the
 series</p>
 <div class="math">
-<p><img src="../_images/math/45cce43e5a69cbc0f122c3e30cd69e17e32688de.png" alt="\,_2F_0(a,b;;z) = \sum_{n=0}^{\infty} (a)_n (b)_n \frac{z^n}{n!}." />
-</div></p><p>This series usually does not converge. For small enough <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, it can be viewed
+<p><img src="../_images/math/45cce43e5a69cbc0f122c3e30cd69e17e32688de.png" alt="\,_2F_0(a,b;;z) = \sum_{n=0}^{\infty} (a)_n (b)_n \frac{z^n}{n!}." /></p>
+</div><p>This series usually does not converge. For small enough <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, it can be viewed
 as an asymptotic series that may be summed directly with an appropriate
 truncation. When this is not the case, <tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt> gives a regularized sum,
 or equivalently, it uses a representation in terms of the
-hypergeometric U function [1]. The series also converges when either <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a" /> or <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" />
+hypergeometric U function [1]. The series also converges when either <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> or <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>
 is a nonpositive integer, as it then terminates into a polynomial
-after <img class="math" src="../_images/math/5ab0d6b0f629cdfba5b6ce68695ff0c5a2d6fd8d.png" alt="-a" /> or <img class="math" src="../_images/math/2fa30e2beb1820f6b39f6251023709c8165cefc6.png" alt="-b" /> terms.</p>
+after <img class="math" src="../_images/math/5ab0d6b0f629cdfba5b6ce68695ff0c5a2d6fd8d.png" alt="-a"/> or <img class="math" src="../_images/math/2fa30e2beb1820f6b39f6251023709c8165cefc6.png" alt="-b"/> terms.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation is supported for arbitrary complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -236,9 +246,9 @@ after <img class="math" src="../_images/math/5ab0d6b0f629cdfba5b6ce68695ff0c5a2d
 </pre></div>
 </div>
 <p>Even with real arguments, the regularized value of 2F0 is often complex-valued,
-but the imaginary part decreases exponentially as <img class="math" src="../_images/math/dadc522a6eb22c620b2d549edf51b1aedb17590f.png" alt="z \to 0" />. In the following
+but the imaginary part decreases exponentially as <img class="math" src="../_images/math/dadc522a6eb22c620b2d549edf51b1aedb17590f.png" alt="z \to 0"/>. In the following
 example, the first call uses complex evaluation while the second has a small
-enough <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> to evaluate using the direct series and thus the returned value
+enough <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> to evaluate using the direct series and thus the returned value
 is strictly real (this should be taken to indicate that the imaginary
 part is less than <tt class="docutils literal"><span class="pre">eps</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -277,23 +287,23 @@ part is less than <tt class="docutils literal"><span class="pre">eps</span></tt>
 <h3><tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt><a class="headerlink" href="#hyp2f1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp2f1">
-<!--[mpmath.hyp2f1]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>c</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the Gauss hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" /> (often simply referred to as
-<em>the</em> hypergeometric function), defined for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1" /> as</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f1</tt><big>(</big><em>a</em>, <em>b</em>, <em>c</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Gauss hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/> (often simply referred to as
+<em>the</em> hypergeometric function), defined for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1"/> as</p>
 <div class="math">
 <p><img src="../_images/math/6c48c7846124bb3d0c4b5df010917ea5a55145cc.png" alt="\,_2F_1(a,b,c,z) = \sum_{k=0}^{\infty}
-    \frac{(a)_k (b)_k}{(c)_k} \frac{z^k}{k!}." />
-</div></p><p>and for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1" /> by analytic continuation, with a branch cut on <img class="math" src="../_images/math/e639292c6bac8afec032be76b34b4505b4e249c0.png" alt="(1, \infty)" />
+    \frac{(a)_k (b)_k}{(c)_k} \frac{z^k}{k!}." /></p>
+</div><p>and for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1"/> by analytic continuation, with a branch cut on <img class="math" src="../_images/math/e639292c6bac8afec032be76b34b4505b4e249c0.png" alt="(1, \infty)"/>
 when necessary.</p>
 <p>Special cases of this function include many of the orthogonal polynomials as
 well as the incomplete beta function and other functions. Properties of the
 Gauss hypergeometric function are documented comprehensively in many references,
 for example Abramowitz &amp; Stegun, section 15.</p>
 <p>The implementation supports the analytic continuation as well as evaluation
-close to the unit circle where <img class="math" src="../_images/math/47bbb73d5bb3bc0b65a6f0699f30cf8e0f80a5a6.png" alt="|z| \approx 1" />. The syntax <tt class="docutils literal"><span class="pre">hyp2f1(a,b,c,z)</span></tt>
+close to the unit circle where <img class="math" src="../_images/math/47bbb73d5bb3bc0b65a6f0699f30cf8e0f80a5a6.png" alt="|z| \approx 1"/>. The syntax <tt class="docutils literal"><span class="pre">hyp2f1(a,b,c,z)</span></tt>
 is equivalent to <tt class="docutils literal"><span class="pre">hyper([a,b],[c],z)</span></tt>.</p>
 <p><strong>Examples</strong></p>
-<p>Evaluation with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> inside, outside and on the unit circle, for
+<p>Evaluation with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> inside, outside and on the unit circle, for
 fixed parameters:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -320,7 +330,7 @@ fixed parameters:</p>
 <span class="go">(0.8834833319713479923389638 + 0.7053886880648105068343509j)</span>
 </pre></div>
 </div>
-<p>Evaluation with <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1" />:</p>
+<p>Evaluation with <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyp2f1</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyp2f1</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
@@ -360,8 +370,8 @@ fixed parameters:</p>
 <h3><tt class="xref docutils literal"><span class="pre">hyp2f2()</span></tt><a class="headerlink" href="#hyp2f2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp2f2">
-<!--[mpmath.hyp2f2]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f2</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/a8ba59c8aad45362c14812205346428d854e00bd.png" alt="\,_2F_2(a_1,a_2;b_1,b_2; z)" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f2</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/a8ba59c8aad45362c14812205346428d854e00bd.png" alt="\,_2F_2(a_1,a_2;b_1,b_2; z)"/>.
 The call <tt class="docutils literal"><span class="pre">hyp2f2(a1,a2,b1,b2,z)</span></tt> is equivalent to
 <tt class="docutils literal"><span class="pre">hyper([a1,a2],[b1,b2],z)</span></tt>.</p>
 <p>Evaluation works for complex and arbitrarily large arguments:</p>
@@ -385,8 +395,8 @@ The call <tt class="docutils literal"><span class="pre">hyp2f2(a1,a2,b1,b2,z)</s
 <h3><tt class="xref docutils literal"><span class="pre">hyp2f3()</span></tt><a class="headerlink" href="#hyp2f3" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp2f3">
-<!--[mpmath.hyp2f3]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f3</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em>, <em>b3</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/e23ee0d83a0f608ed3b9e75f24825279851405e2.png" alt="\,_2F_3(a_1,a_2;b_1,b_2,b_3; z)" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp2f3</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em>, <em>b3</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp2f3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the hypergeometric function <img class="math" src="../_images/math/e23ee0d83a0f608ed3b9e75f24825279851405e2.png" alt="\,_2F_3(a_1,a_2;b_1,b_2,b_3; z)"/>.
 The call <tt class="docutils literal"><span class="pre">hyp2f3(a1,a2,b1,b2,b3,z)</span></tt> is equivalent to
 <tt class="docutils literal"><span class="pre">hyper([a1,a2],[b1,b2,b3],z)</span></tt>.</p>
 <p>Evaluation works for arbitrarily large arguments:</p>
@@ -412,17 +422,17 @@ The call <tt class="docutils literal"><span class="pre">hyp2f3(a1,a2,b1,b2,b3,z)
 <h3><tt class="xref docutils literal"><span class="pre">hyp3f2()</span></tt><a class="headerlink" href="#hyp3f2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyp3f2">
-<!--[mpmath.hyp3f2]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyp3f2</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>a3</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp3f2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the generalized hypergeometric function <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2" />, defined for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1" />
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyp3f2</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>a3</em>, <em>b1</em>, <em>b2</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyp3f2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the generalized hypergeometric function <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2"/>, defined for <img class="math" src="../_images/math/ade74672574211fc62154f7bf7e7d46c5d62a377.png" alt="|z| &lt; 1"/>
 as</p>
 <div class="math">
 <p><img src="../_images/math/a02d545e700862e863edfb6bf42a61c20f402da9.png" alt="\,_3F_2(a_1,a_2,a_3,b_1,b_2,z) = \sum_{k=0}^{\infty}
-    \frac{(a_1)_k (a_2)_k (a_3)_k}{(b_1)_k (b_2)_k} \frac{z^k}{k!}." />
-</div></p><p>and for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1" /> by analytic continuation. The analytic structure of this
-function is similar to that of <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" />, generally with a singularity at
-<img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1" /> and a branch cut on <img class="math" src="../_images/math/e639292c6bac8afec032be76b34b4505b4e249c0.png" alt="(1, \infty)" />.</p>
+    \frac{(a_1)_k (a_2)_k (a_3)_k}{(b_1)_k (b_2)_k} \frac{z^k}{k!}." /></p>
+</div><p>and for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1"/> by analytic continuation. The analytic structure of this
+function is similar to that of <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>, generally with a singularity at
+<img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1"/> and a branch cut on <img class="math" src="../_images/math/e639292c6bac8afec032be76b34b4505b4e249c0.png" alt="(1, \infty)"/>.</p>
 <p>Evaluation is supported inside, on, and outside
-the circle of convergence <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1" />:</p>
+the circle of convergence <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyp3f2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span>
@@ -458,9 +468,9 @@ the circle of convergence <img class="math" src="../_images/math/83147269611ed30
 <span class="go">0.7823896253461678060196207</span>
 </pre></div>
 </div>
-<p>Note: evaluation for <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|" /> small can currently be inaccurate or slow
+<p>Note: evaluation for <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|"/> small can currently be inaccurate or slow
 for some parameter combinations.</p>
-<p>For various parameter combinations, <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2" /> admits representation in terms
+<p>For various parameter combinations, <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2"/> admits representation in terms
 of hypergeometric functions of lower degree, or in terms of
 simpler functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">1</span><span class="p">)]:</span>
@@ -489,16 +499,16 @@ simpler functions:</p>
 <h3><tt class="xref docutils literal"><span class="pre">hyper()</span></tt><a class="headerlink" href="#hyper" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hyper">
-<!--[mpmath.hyper]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyper" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the generalized hypergeometric function</p>
 <div class="math">
 <p><img src="../_images/math/80b5506302d3e2227a13b9fc50c7947888a89793.png" alt="\,_pF_q(a_1,\ldots,a_p; b_1,\ldots,b_q; z) =
 \sum_{n=0}^\infty \frac{(a_1)_n (a_2)_n \ldots (a_p)_n}
-   {(b_1)_n(b_2)_n\ldots(b_q)_n} \frac{z^n}{n!}" />
-</div></p><p>where <img class="math" src="../_images/math/47746f330c175a38d98099f8002410481661e696.png" alt="(x)_n" /> denotes the rising factorial (see <tt class="xref docutils literal"><span class="pre">rf()</span></tt>).</p>
+   {(b_1)_n(b_2)_n\ldots(b_q)_n} \frac{z^n}{n!}" /></p>
+</div><p>where <img class="math" src="../_images/math/47746f330c175a38d98099f8002410481661e696.png" alt="(x)_n"/> denotes the rising factorial (see <tt class="xref docutils literal"><span class="pre">rf()</span></tt>).</p>
 <p>The parameters lists <tt class="docutils literal"><span class="pre">a_s</span></tt> and <tt class="docutils literal"><span class="pre">b_s</span></tt> may contain integers,
 real numbers, complex numbers, as well as exact fractions given in
-the form of tuples <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)" />. <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> is optimized to handle
+the form of tuples <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/>. <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> is optimized to handle
 integers and fractions more efficiently than arbitrary
 floating-point parameters (since rational parameters are by
 far the most common).</p>
@@ -528,7 +538,7 @@ floats and complex numbers:</p>
 <span class="go">(0.9923571616434024810831887 - 0.005753848733883879742993122j)</span>
 </pre></div>
 </div>
-<p>The <img class="math" src="../_images/math/ffebb10456df346fb9bd1e876c93ca6d08ed897d.png" alt="\,_0F_0" /> and <img class="math" src="../_images/math/e9fb7275512d4188da58ea699a561756550b5114.png" alt="\,_1F_0" /> series are just elementary functions:</p>
+<p>The <img class="math" src="../_images/math/ffebb10456df346fb9bd1e876c93ca6d08ed897d.png" alt="\,_0F_0"/> and <img class="math" src="../_images/math/e9fb7275512d4188da58ea699a561756550b5114.png" alt="\,_1F_0"/> series are just elementary functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="o">+</span><span class="n">pi</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([],[],</span><span class="n">z</span><span class="p">)</span>
 <span class="go">23.14069263277926900572909</span>
@@ -540,7 +550,7 @@ floats and complex numbers:</p>
 <span class="go">(-0.09069132879922920160334114 + 0.3283224323946162083579656j)</span>
 </pre></div>
 </div>
-<p>If any <img class="math" src="../_images/math/bea4d576937a04ec200b1037fc8ee33e8f744cb1.png" alt="a_k" /> coefficient is a nonpositive integer, the series terminates
+<p>If any <img class="math" src="../_images/math/bea4d576937a04ec200b1037fc8ee33e8f744cb1.png" alt="a_k"/> coefficient is a nonpositive integer, the series terminates
 into a finite polynomial:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">],[</span><span class="mf">2</span><span class="p">,</span><span class="mf">5</span><span class="p">],</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.7904761904761904761904762</span>
@@ -548,7 +558,7 @@ into a finite polynomial:</p>
 <span class="go">&#39;(83/105)&#39;</span>
 </pre></div>
 </div>
-<p>If any <img class="math" src="../_images/math/b6bdec4394870e8a713538ce428bea9d41c8775f.png" alt="b_k" /> is a nonpositive integer, the function is undefined (unless the
+<p>If any <img class="math" src="../_images/math/b6bdec4394870e8a713538ce428bea9d41c8775f.png" alt="b_k"/> is a nonpositive integer, the function is undefined (unless the
 series terminates before the division by zero occurs):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">],[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="mf">5</span><span class="p">],</span><span class="mf">1</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
@@ -558,12 +568,12 @@ series terminates before the division by zero occurs):</p>
 <span class="go">1.1</span>
 </pre></div>
 </div>
-<p>Except for polynomial cases, the radius of convergence <img class="math" src="../_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R" /> of the hypergeometric
-series is either <img class="math" src="../_images/math/15c1bc30f2d6af887a97e34320eca5015ac69d6a.png" alt="R = \infty" /> (if <img class="math" src="../_images/math/0e1fd965d851b1c8737295f1a5bc7f3462150544.png" alt="p \le q" />), <img class="math" src="../_images/math/b8d403ff11f7c159633466e7157001edcabbc5d8.png" alt="R = 1" /> (if <img class="math" src="../_images/math/4570811b9cc3df8c73a397f9c611e1f5e320031c.png" alt="p = q+1" />), or
-<img class="math" src="../_images/math/f5dacc8403b2a564811baeb68316fabb2e309c47.png" alt="R = 0" /> (if <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1" />).</p>
-<p>The analytic continuations of the functions with <img class="math" src="../_images/math/4570811b9cc3df8c73a397f9c611e1f5e320031c.png" alt="p = q+1" />, i.e. <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1" />, 
-<img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2" />,  <img class="math" src="../_images/math/78e467ac66cfd4e6d10365293bc7c6c6bd6e8345.png" alt="\,_4F_3" />, etc, are all implemented and therefore these functions
-can be evaluated for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1" />. The shortcuts <tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp3f2()</span></tt>
+<p>Except for polynomial cases, the radius of convergence <img class="math" src="../_images/math/eff43e84f8a3bcf7b6965f0a3248bc4d3a9d0cd4.png" alt="R"/> of the hypergeometric
+series is either <img class="math" src="../_images/math/15c1bc30f2d6af887a97e34320eca5015ac69d6a.png" alt="R = \infty"/> (if <img class="math" src="../_images/math/0e1fd965d851b1c8737295f1a5bc7f3462150544.png" alt="p \le q"/>), <img class="math" src="../_images/math/b8d403ff11f7c159633466e7157001edcabbc5d8.png" alt="R = 1"/> (if <img class="math" src="../_images/math/4570811b9cc3df8c73a397f9c611e1f5e320031c.png" alt="p = q+1"/>), or
+<img class="math" src="../_images/math/f5dacc8403b2a564811baeb68316fabb2e309c47.png" alt="R = 0"/> (if <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1"/>).</p>
+<p>The analytic continuations of the functions with <img class="math" src="../_images/math/4570811b9cc3df8c73a397f9c611e1f5e320031c.png" alt="p = q+1"/>, i.e. <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>, 
+<img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2"/>,  <img class="math" src="../_images/math/78e467ac66cfd4e6d10365293bc7c6c6bd6e8345.png" alt="\,_4F_3"/>, etc, are all implemented and therefore these functions
+can be evaluated for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1"/>. The shortcuts <tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp3f2()</span></tt>
 are available to handle the most common cases (see their documentation),
 but functions of higher degree are also supported via <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">7</span><span class="p">],</span> <span class="mf">1</span><span class="p">)</span>   <span class="c"># 4F3 at finite-valued branch point</span>
@@ -576,14 +586,14 @@ but functions of higher degree are also supported via <tt class="xref docutils l
 <span class="go">(0.9996565821853579063502466 + 0.0129721075905630604445669j)</span>
 </pre></div>
 </div>
-<p>Please note that, as currently implemented, evaluation of <img class="math" src="../_images/math/176cc744317162af05f807c6ee8f3ba09faf3081.png" alt="\,_pF_{p-1}" />
-with <img class="math" src="../_images/math/cfd2a3325b5cadd3241426c21a4f829e915aa864.png" alt="p \ge 3" /> may be slow or inaccurate when <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|" /> is small,
+<p>Please note that, as currently implemented, evaluation of <img class="math" src="../_images/math/176cc744317162af05f807c6ee8f3ba09faf3081.png" alt="\,_pF_{p-1}"/>
+with <img class="math" src="../_images/math/cfd2a3325b5cadd3241426c21a4f829e915aa864.png" alt="p \ge 3"/> may be slow or inaccurate when <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|"/> is small,
 for some parameter values.</p>
-<p>When <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1" />, <tt class="docutils literal"><span class="pre">hyper</span></tt> computes the (iterated) Borel sum of the divergent
-series. For <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0" /> the Borel sum has an analytic solution and can be
+<p>When <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1"/>, <tt class="docutils literal"><span class="pre">hyper</span></tt> computes the (iterated) Borel sum of the divergent
+series. For <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0"/> the Borel sum has an analytic solution and can be
 computed efficiently (see <tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt>). For higher degrees, the functions
 is evaluated first by attempting to sum it directly as an asymptotic
-series (this only works for tiny <img class="math" src="../_images/math/77888cf7d3c4635b8bc8c06ee89dc2a2d2f86538.png" alt="|z|" />), and then by evaluating the Borel
+series (this only works for tiny <img class="math" src="../_images/math/77888cf7d3c4635b8bc8c06ee89dc2a2d2f86538.png" alt="|z|"/>), and then by evaluating the Borel
 regularized sum using numerical integration. Except for
 special parameter combinations, this can be extremely slow.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[],</span> <span class="mf">0.5</span><span class="p">)</span>          <span class="c"># regularization of 2F0</span>
@@ -592,7 +602,7 @@ special parameter combinations, this can be extremely slow.</p>
 <span class="go">(1.108287213689475145830699 + 0.5327107430640678181200491j)</span>
 </pre></div>
 </div>
-<p>With the following magnitude of argument, the asymptotic series for <img class="math" src="../_images/math/82eb04ff4043c7ce04a3800bf3c108bfea6b6bb5.png" alt="\,_3F1" />
+<p>With the following magnitude of argument, the asymptotic series for <img class="math" src="../_images/math/82eb04ff4043c7ce04a3800bf3c108bfea6b6bb5.png" alt="\,_3F1"/>
 gives only a few digits. Using Borel summation, <tt class="docutils literal"><span class="pre">hyper</span></tt> can produce
 a value with full accuracy:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -613,7 +623,7 @@ a value with full accuracy:</p>
 <span class="go">0.9463125037377662296700858</span>
 </pre></div>
 </div>
-<p>Note that with the positive <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> value, there is a complex part in the
+<p>Note that with the positive <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> value, there is a complex part in the
 correct result, which falls below the tolerance of the asymptotic series.</p>
 </dd></dl>
 
@@ -622,23 +632,23 @@ correct result, which falls below the tolerance of the asymptotic series.</p>
 <h3><tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt><a class="headerlink" href="#hypercomb" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hypercomb">
-<!--[mpmath.hypercomb]--><tt class="descclassname">mpmath.</tt><tt class="descname">hypercomb</tt><big>(</big><em>ctx</em>, <em>function</em>, <em>params=</em><span class="optional">[</span><span class="optional">]</span>, <em>discard_known_zeros=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.hypercomb" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hypercomb</tt><big>(</big><em>ctx</em>, <em>function</em>, <em>params=</em><span class="optional">[</span><span class="optional">]</span>, <em>discard_known_zeros=True</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.hypercomb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes a weighted combination of hypergeometric functions</p>
 <div class="math">
 <p><img src="../_images/math/e27fcb391c1d049d96fbb687c549afd0f32eaf5e.png" alt="\sum_{r=1}^N \left[ \prod_{k=1}^{l_r} {w_{r,k}}^{c_{r,k}}
 \frac{\prod_{k=1}^{m_r} \Gamma(\alpha_{r,k})}{\prod_{k=1}^{n_r}
 \Gamma(\beta_{r,k})}
 \,_{p_r}F_{q_r}(a_{r,1},\ldots,a_{r,p}; b_{r,1},    
-\ldots, b_{r,q}; z_r)\right]." />
-</div></p><p>Typically the parameters are linear combinations of a small set of base
+\ldots, b_{r,q}; z_r)\right]." /></p>
+</div><p>Typically the parameters are linear combinations of a small set of base
 parameters; <tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt> permits computing a correct value in
-the case that some of the <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha" />, <img class="math" src="../_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta" />, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b" /> turn out to be
-nonpositive integers, or if division by zero occurs for some <img class="math" src="../_images/math/6fd36d8b01815d26deddb339e925374219817cb2.png" alt="w^c" />,
+the case that some of the <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/>, <img class="math" src="../_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta"/>, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> turn out to be
+nonpositive integers, or if division by zero occurs for some <img class="math" src="../_images/math/6fd36d8b01815d26deddb339e925374219817cb2.png" alt="w^c"/>,
 assuming that there are opposing singularities that cancel out.
 The limit is computed by evaluating the function with the base
 parameters perturbed, at a higher working precision.</p>
 <p>The first argument should be a function that takes the perturbable
-base parameters <tt class="docutils literal"><span class="pre">params</span></tt> as input and returns <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N" /> tuples
+base parameters <tt class="docutils literal"><span class="pre">params</span></tt> as input and returns <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> tuples
 <tt class="docutils literal"><span class="pre">(w,</span> <span class="pre">c,</span> <span class="pre">alpha,</span> <span class="pre">beta,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">z)</span></tt>, where the coefficients <tt class="docutils literal"><span class="pre">w</span></tt>, <tt class="docutils literal"><span class="pre">c</span></tt>,
 gamma factors <tt class="docutils literal"><span class="pre">alpha</span></tt>, <tt class="docutils literal"><span class="pre">beta</span></tt>, and hypergeometric coefficients
 <tt class="docutils literal"><span class="pre">a</span></tt>, <tt class="docutils literal"><span class="pre">b</span></tt> each should be lists of numbers, and <tt class="docutils literal"><span class="pre">z</span></tt> should be a single
@@ -646,8 +656,8 @@ number.</p>
 <p><strong>Examples</strong></p>
 <p>The following evaluates</p>
 <div class="math">
-<p><img src="../_images/math/9b711f253a2abc1bf33fb508c022517a889e9499.png" alt="(a-1) \frac{\Gamma(a-3)}{\Gamma(a-4)} \,_1F_1(a,a-1,z) = e^z(a-4)(a+z-1)" />
-</div></p><p>with <img class="math" src="../_images/math/b566d955cf318d5985af18886957ebd4884dc672.png" alt="a=1, z=3" />. There is a zero factor, two gamma function poles, and
+<p><img src="../_images/math/9b711f253a2abc1bf33fb508c022517a889e9499.png" alt="(a-1) \frac{\Gamma(a-3)}{\Gamma(a-4)} \,_1F_1(a,a-1,z) = e^z(a-4)(a+z-1)" /></p>
+</div><p>with <img class="math" src="../_images/math/b566d955cf318d5985af18886957ebd4884dc672.png" alt="a=1, z=3"/>. There is a zero factor, two gamma function poles, and
 the 1F1 function is singular; all singularities cancel out to give a finite
 value:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -662,185 +672,13 @@ value:</p>
 
 </div>
 </div>
-<div class="section" id="confluent-u-and-whittaker-functions">
-<h2>Confluent U and Whittaker functions<a class="headerlink" href="#confluent-u-and-whittaker-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="hyperu">
-<h3><tt class="xref docutils literal"><span class="pre">hyperu()</span></tt><a class="headerlink" href="#hyperu" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
-<dt id="mpmath.hyperu">
-<!--[mpmath.hyperu]--><tt class="descclassname">mpmath.</tt><tt class="descname">hyperu</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyperu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the Tricomi confluent hypergeometric function <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" />, also known as
-the Kummer or confluent hypergeometric function of the second kind. This
-function gives a second linearly independent solution to the confluent
-hypergeometric differential equation (the first is provided by <img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1" />  &#8211;
-see <tt class="xref docutils literal"><span class="pre">hyp1f1()</span></tt>).</p>
-<p><strong>Examples</strong></p>
-<p>Evaluation for arbitrary complex arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>
-<span class="go">0.0625</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">1000</span><span class="p">)</span>
-<span class="go">0.1779949416140579573763523</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000</span><span class="p">)</span>
-<span class="go">(0.1256256609322773150118907 - 0.1256256609322773150118907j)</span>
-</pre></div>
-</div>
-<p>The <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" /> function may be singular at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="go">0.1719434921288400112603671</span>
-</pre></div>
-</div>
-<p>Verifying the differential equation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">hyperu</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">z</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-<span class="gp">...</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-</pre></div>
-</div>
-<p>An integral representation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
-<span class="go">0.06674960718150520648014567</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="o">-</span><span class="mf">1</span><span class="p">),[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="go">0.06674960718150520648014567</span>
-</pre></div>
-</div>
-<p>[1] <a class="reference external" href="http://www.math.ucla.edu/~cbm/aands/page_504.htm">http://www.math.ucla.edu/~cbm/aands/page_504.htm</a></p>
-</dd></dl>
-
-</div>
-<div class="section" id="whitm">
-<h3><tt class="xref docutils literal"><span class="pre">whitm()</span></tt><a class="headerlink" href="#whitm" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
-<dt id="mpmath.whitm">
-<!--[mpmath.whitm]--><tt class="descclassname">mpmath.</tt><tt class="descname">whitm</tt><big>(</big><em>k</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.whitm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the Whittaker function <img class="math" src="../_images/math/f667b8389bb3a81eb990a2dd11109ff978b31edd.png" alt="M(k,m,z)" />, which gives a solution
-to the Whittaker differential equation</p>
-<div class="math">
-<p><img src="../_images/math/d7363950ed14fc98684745e1e689614201c440da.png" alt="\frac{d^2f}{dz^2} + \left(-\frac{1}{4}+\frac{k}{z}+
-  \frac{(\frac{1}{4}-m^2)}{z^2}\right) f = 0." />
-</div></p><p>A second solution is given by <tt class="xref docutils literal"><span class="pre">whitw()</span></tt>.</p>
-<p>The Whittaker functions are defined in Abramowitz &amp; Stegun, section 13.1.
-They are alternate forms of the confluent hypergeometric functions
-<img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1" /> and <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U" />:</p>
-<div class="math">
-<p><img src="../_images/math/ae4e335d65642c095b55a39216463758b6292363.png" alt="M(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
-    \,_1F_1(\tfrac{1}{2}+m-k, 1+2m, z)
-
-W(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
-    U(\tfrac{1}{2}+m-k, 1+2m, z)." />
-</div></p><p><strong>Examples</strong></p>
-<p>Evaluation for arbitrary real and complex arguments is supported:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="go">0.7302596799460411820509668</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">(0.0 - 1.417977827655098025684246j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
-<span class="go">(3.245477713363581112736478 - 0.822879187542699127327782j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">100000</span><span class="p">)</span>
-<span class="go">4.303985255686378497193063e+21707</span>
-</pre></div>
-</div>
-<p>Evaluation at zero:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">);</span> <span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0</span><span class="p">);</span> <span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
-<span class="go">+inf</span>
-<span class="go">nan</span>
-<span class="go">0.0</span>
-</pre></div>
-</div>
-<p>We can verify that <tt class="xref docutils literal"><span class="pre">whitm()</span></tt> numerically satisfies the
-differential equation for arbitrarily chosen values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">whitm</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.25</span> <span class="o">+</span> <span class="n">k</span><span class="o">/</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.25</span><span class="o">-</span><span class="n">m</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-<span class="gp">...</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-</pre></div>
-</div>
-<p>An integral involving both <tt class="xref docutils literal"><span class="pre">whitm()</span></tt> and <tt class="xref docutils literal"><span class="pre">whitmw()</span></tt>,
-verifying evaluation along the real axis:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">whitm</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
-<span class="go">3.438869842576800225207341</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">128</span><span class="o">/</span><span class="p">(</span><span class="mf">21</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
-<span class="go">3.438869842576800225207341</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
-<div class="section" id="whitw">
-<h3><tt class="xref docutils literal"><span class="pre">whitw()</span></tt><a class="headerlink" href="#whitw" title="Permalink to this headline">¶</a></h3>
-<dl class="function">
-<dt id="mpmath.whitw">
-<!--[mpmath.whitw]--><tt class="descclassname">mpmath.</tt><tt class="descname">whitw</tt><big>(</big><em>k</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.whitw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates the Whittaker function <img class="math" src="../_images/math/8a02d41253012b7698ca872a35b6e043f8214474.png" alt="W(k,m,z)" />, which gives a second
-solution to the Whittaker differential equation. (See <tt class="xref docutils literal"><span class="pre">whitm()</span></tt>.)</p>
-<p><strong>Examples</strong></p>
-<p>Evaluation for arbitrary real and complex arguments is supported:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="go">1.19532063107581155661012</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
-<span class="go">(-0.9424875979222187313924639 - 0.2607738054097702293308689j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
-<span class="go">(0.1782899315111033879430369 - 0.01609578360403649340169406j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">100000</span><span class="p">)</span>
-<span class="go">1.887705114889527446891274e-21705</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">100</span><span class="p">)</span>
-<span class="go">1.905250692824046162462058e-24</span>
-</pre></div>
-</div>
-<p>Evaluation at zero:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="go">+inf</span>
-<span class="go">nan</span>
-<span class="go">0.0</span>
-<span class="go">nan</span>
-<span class="go">+inf</span>
-</pre></div>
-</div>
-<p>We can verify that <tt class="xref docutils literal"><span class="pre">whitw()</span></tt> numerically satisfies the
-differential equation for arbitrarily chosen values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">whitw</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.25</span> <span class="o">+</span> <span class="n">k</span><span class="o">/</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.25</span><span class="o">-</span><span class="n">m</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-<span class="gp">...</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-<span class="go">0.0</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
-</div>
 <div class="section" id="meijer-g-function">
 <h2>Meijer G-function<a class="headerlink" href="#meijer-g-function" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="meijerg">
 <h3><tt class="xref docutils literal"><span class="pre">meijerg()</span></tt><a class="headerlink" href="#meijerg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.meijerg">
-<!--[mpmath.meijerg]--><tt class="descclassname">mpmath.</tt><tt class="descname">meijerg</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em>, <em>r=1</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.meijerg" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">meijerg</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em>, <em>r=1</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.meijerg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Meijer G-function, defined as</p>
 <div class="math">
 <p><img src="../_images/math/70f5f4ec976a900ce1257a8cf5b4270730cdf2ce.png" alt="G^{m,n}_{p,q} \left( \left. \begin{matrix}
@@ -850,17 +688,17 @@ differential equation for arbitrarily chosen values:</p>
 \frac{1}{2 \pi i} \int_L
 \frac{\prod_{j=1}^m \Gamma(b_j+s) \prod_{j=1}^n\Gamma(1-a_j-s)}
      {\prod_{j=n+1}^{p}\Gamma(a_j+s) \prod_{j=m+1}^q \Gamma(1-b_j-s)}
-     z^{-s/r} ds" />
-</div></p><p>for an appropriate choice of the contour <img class="math" src="../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L" /> (see references).</p>
-<p>There are <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p" /> elements <img class="math" src="../_images/math/0785f19824c8b23ab3dfe000b471994078fdf589.png" alt="a_j" />.
+     z^{-s/r} ds" /></p>
+</div><p>for an appropriate choice of the contour <img class="math" src="../_images/math/859ccf4cd60c7bc6b8fa1afc9a42dc811a826d6f.png" alt="L"/> (see references).</p>
+<p>There are <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/> elements <img class="math" src="../_images/math/0785f19824c8b23ab3dfe000b471994078fdf589.png" alt="a_j"/>.
 The argument <em>a_s</em> should be a pair of lists, the first containing the
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> elements <img class="math" src="../_images/math/569dfaaa349865afdd281028e2f06fc9196fb822.png" alt="a_1, \ldots, a_n" /> and the second containing
-the <img class="math" src="../_images/math/303bba596bb43ea6131cd9e2fa03b9d5c18d370d.png" alt="p-n" /> elements <img class="math" src="../_images/math/dcceefde45cb82670b1fb1c4736fbb005f745801.png" alt="a_{n+1}, \ldots a_p" />.</p>
-<p>There are <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> elements <img class="math" src="../_images/math/dfbbf3e10280b5771976f3342b10181e4b31d4fd.png" alt="b_j" />.
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> elements <img class="math" src="../_images/math/569dfaaa349865afdd281028e2f06fc9196fb822.png" alt="a_1, \ldots, a_n"/> and the second containing
+the <img class="math" src="../_images/math/303bba596bb43ea6131cd9e2fa03b9d5c18d370d.png" alt="p-n"/> elements <img class="math" src="../_images/math/dcceefde45cb82670b1fb1c4736fbb005f745801.png" alt="a_{n+1}, \ldots a_p"/>.</p>
+<p>There are <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> elements <img class="math" src="../_images/math/dfbbf3e10280b5771976f3342b10181e4b31d4fd.png" alt="b_j"/>.
 The argument <em>b_s</em> should be a pair of lists, the first containing the
-<img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> elements <img class="math" src="../_images/math/cf15d9cf8d622617639ff135a580744eebdc4a0f.png" alt="b_1, \ldots, b_m" /> and the second containing
-the <img class="math" src="../_images/math/c8178f00a466c2769b4adf41c3413785eaca9352.png" alt="q-m" /> elements <img class="math" src="../_images/math/38ae4a08d3030a25f6df4c01668c48ee0d07f0a7.png" alt="b_{m+1}, \ldots b_q" />.</p>
-<p>The implicit tuple <img class="math" src="../_images/math/a6189e14703f052149675258ce197157446a42f8.png" alt="(m, n, p, q)" /> constitutes the order or degree of the
+<img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> elements <img class="math" src="../_images/math/cf15d9cf8d622617639ff135a580744eebdc4a0f.png" alt="b_1, \ldots, b_m"/> and the second containing
+the <img class="math" src="../_images/math/c8178f00a466c2769b4adf41c3413785eaca9352.png" alt="q-m"/> elements <img class="math" src="../_images/math/38ae4a08d3030a25f6df4c01668c48ee0d07f0a7.png" alt="b_{m+1}, \ldots b_q"/>.</p>
+<p>The implicit tuple <img class="math" src="../_images/math/a6189e14703f052149675258ce197157446a42f8.png" alt="(m, n, p, q)"/> constitutes the order or degree of the
 Meijer G-function, and is determined by the lengths of the coefficient
 vectors. Confusingly, the indices in this tuple appear in a different order
 from the coefficients, but this notation is standard. The many examples
@@ -869,11 +707,11 @@ given below should hopefully clear up any potential confusion.</p>
 <p>The Meijer G-function is evaluated as a combination of hypergeometric series.
 There are two versions of the function, which can be selected with
 the optional <em>series</em> argument.</p>
-<p><em>series=1</em> uses a sum of <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> <img class="math" src="../_images/math/b2ef42176cbca68d16f361c35be6c582ce3d6d18.png" alt="\,_pF_{q-1}" /> functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /></p>
-<p><em>series=2</em> uses a sum of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> <img class="math" src="../_images/math/f21d5655fcf9a44c557e4c9fd04b8d4539530558.png" alt="\,_qF_{p-1}" /> functions of <img class="math" src="../_images/math/d13313d0c14b154544f20ab44394efcae6445964.png" alt="1/z" /></p>
-<p>The default series is chosen based on the degree and <img class="math" src="../_images/math/77888cf7d3c4635b8bc8c06ee89dc2a2d2f86538.png" alt="|z|" /> in order
+<p><em>series=1</em> uses a sum of <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> <img class="math" src="../_images/math/b2ef42176cbca68d16f361c35be6c582ce3d6d18.png" alt="\,_pF_{q-1}"/> functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/></p>
+<p><em>series=2</em> uses a sum of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> <img class="math" src="../_images/math/f21d5655fcf9a44c557e4c9fd04b8d4539530558.png" alt="\,_qF_{p-1}"/> functions of <img class="math" src="../_images/math/d13313d0c14b154544f20ab44394efcae6445964.png" alt="1/z"/></p>
+<p>The default series is chosen based on the degree and <img class="math" src="../_images/math/77888cf7d3c4635b8bc8c06ee89dc2a2d2f86538.png" alt="|z|"/> in order
 to be consistent with Mathematica&#8217;s. This definition of the Meijer G-function
-has a discontinuity at <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1" /> for some orders, which can
+has a discontinuity at <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1"/> for some orders, which can
 be avoided by explicitly specifying a series.</p>
 <p>Keyword arguments are forwarded to <tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt>.</p>
 <p><strong>Examples</strong></p>
@@ -889,7 +727,7 @@ some test parameters:</p>
 </div>
 <p>The exponential function:
 <img class="math" src="../_images/math/2bb647e460be14f3897edfea28d379948f46f500.png" alt="e^z = G^{1,0}_{0,1} \left( \left. \begin{matrix} - \\ 0 \end{matrix} \;
-\right| \; -z \right)" /></p>
+\right| \; -z \right)"/></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[],[]],</span> <span class="p">[[</span><span class="mf">0</span><span class="p">],[]],</span> <span class="o">-</span><span class="n">z</span><span class="p">)</span>
 <span class="go">9.487735836358525720550369</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
@@ -898,7 +736,7 @@ some test parameters:</p>
 </div>
 <p>The natural logarithm:
 <img class="math" src="../_images/math/6da0e4a82b38b5888899b43c4463a3895245472d.png" alt="\log(1+z) = G^{1,2}_{2,2} \left( \left. \begin{matrix} 1, 1 \\ 1, 0
-\end{matrix} \; \right| \; -z \right)" /></p>
+\end{matrix} \; \right| \; -z \right)"/></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[]],</span> <span class="p">[[</span><span class="mf">1</span><span class="p">],[</span><span class="mf">0</span><span class="p">]],</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">1.178654996341646117219023</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">z</span><span class="p">)</span>
@@ -907,7 +745,7 @@ some test parameters:</p>
 </div>
 <p>A rational function:
 <img class="math" src="../_images/math/de2eb16a20a18430c66502b66e2e9a4ec65d330a.png" alt="\frac{z}{z+1} = G^{1,2}_{2,2} \left( \left. \begin{matrix} 1, 1 \\ 1, 1
-\end{matrix} \; \right| \; z \right)" /></p>
+\end{matrix} \; \right| \; z \right)"/></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],[]],</span> <span class="p">[[</span><span class="mf">1</span><span class="p">],[</span><span class="mf">1</span><span class="p">]],</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">0.6923076923076923076923077</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
@@ -916,9 +754,9 @@ some test parameters:</p>
 </div>
 <p>The sine and cosine functions:</p>
 <p><img class="math" src="../_images/math/a39b1e59922bb1fdd0e6a882c9acfe2791a99055.png" alt="\frac{1}{\sqrt \pi} \sin(2 \sqrt z) = G^{1,0}_{0,2} \left( \left. \begin{matrix}
-- \\ \frac{1}{2}, 0 \end{matrix} \; \right| \; z \right)" /></p>
+- \\ \frac{1}{2}, 0 \end{matrix} \; \right| \; z \right)"/></p>
 <p><img class="math" src="../_images/math/61f597dbc69796cbe25e658174ee68769cfc9f06.png" alt="\frac{1}{\sqrt \pi} \cos(2 \sqrt z) = G^{1,0}_{0,2} \left( \left. \begin{matrix}
-- \\ 0, \frac{1}{2} \end{matrix} \; \right| \; z \right)" /></p>
+- \\ 0, \frac{1}{2} \end{matrix} \; \right| \; z \right)"/></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[],[]],</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">],[</span><span class="mf">0</span><span class="p">]],</span> <span class="p">(</span><span class="n">z</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">0.4389807929218676682296453</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
@@ -932,16 +770,16 @@ some test parameters:</p>
 <p>Bessel functions:</p>
 <p><img class="math" src="../_images/math/349c51218691768338bea5a13508845780ed5a76.png" alt="J_a(2 \sqrt z) = G^{1,0}_{0,2} \left( \left.
 \begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
-\end{matrix} \; \right| \; z \right)" /></p>
+\end{matrix} \; \right| \; z \right)"/></p>
 <p><img class="math" src="../_images/math/33cc28f924683d7df2e4a26bd0a5571fe9063ba1.png" alt="Y_a(2 \sqrt z) = G^{2,0}_{1,3} \left( \left.
 \begin{matrix} \frac{-a-1}{2} \\ \frac{a}{2}, -\frac{a}{2}, \frac{-a-1}{2}
-\end{matrix} \; \right| \; z \right)" /></p>
+\end{matrix} \; \right| \; z \right)"/></p>
 <p><img class="math" src="../_images/math/4f1aaf8f8f15b497a533224e81e34dba4905509e.png" alt="(-z)^{a/2} z^{-a/2} I_a(2 \sqrt z) = G^{1,0}_{0,2} \left( \left.
 \begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
-\end{matrix} \; \right| \; -z \right)" /></p>
+\end{matrix} \; \right| \; -z \right)"/></p>
 <p><img class="math" src="../_images/math/2aecafc49c22f32742d55ca91ae1bd9380bbceb3.png" alt="2 K_a(2 \sqrt z) = G^{2,0}_{0,2} \left( \left.
 \begin{matrix} - \\ \frac{a}{2}, -\frac{a}{2}
-\end{matrix} \; \right| \; z \right)" /></p>
+\end{matrix} \; \right| \; z \right)"/></p>
 <p>As the example with the Bessel <em>I</em> function shows, a branch
 factor is required for some arguments when inverting the square root.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[],[]],</span> <span class="p">[[</span><span class="n">a</span><span class="o">/</span><span class="mf">2</span><span class="p">],[</span><span class="o">-</span><span class="n">a</span><span class="o">/</span><span class="mf">2</span><span class="p">]],</span> <span class="p">(</span><span class="n">z</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
@@ -965,7 +803,7 @@ factor is required for some arguments when inverting the square root.</p>
 <p>Error functions:</p>
 <p><img class="math" src="../_images/math/5931e81728823d8984359313cc437f393830491b.png" alt="\sqrt{\pi} z^{2(a-1)} \mathrm{erfc}(z) = G^{2,0}_{1,2} \left( \left.
 \begin{matrix} a \\ a-1, a-\frac{1}{2}
-\end{matrix} \; \right| \; z, \frac{1}{2} \right)" /></p>
+\end{matrix} \; \right| \; z, \frac{1}{2} \right)"/></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">meijerg</span><span class="p">([[],[</span><span class="n">a</span><span class="p">]],</span> <span class="p">[[</span><span class="n">a</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="n">a</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],[]],</span> <span class="n">z</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.00172839843123091957468712</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">z</span><span class="o">**</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">a</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">erfc</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
@@ -1014,20 +852,20 @@ be expanded as a messy combination of exponential integrals:</p>
 <h3><tt class="xref docutils literal"><span class="pre">bihyper()</span></tt><a class="headerlink" href="#bihyper" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bihyper">
-<!--[mpmath.bihyper]--><tt class="descclassname">mpmath.</tt><tt class="descname">bihyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.bihyper" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bihyper</tt><big>(</big><em>a_s</em>, <em>b_s</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.bihyper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the bilateral hypergeometric series</p>
 <div class="math">
 <p><img src="../_images/math/75a6680a08d19b12ed51c10c3f2435c188d4eebe.png" alt="\,_AH_B(a_1, \ldots, a_k; b_1, \ldots, b_B; z) =
     \sum_{n=-\infty}^{\infty}
     \frac{(a_1)_n \ldots (a_A)_n}
-         {(b_1)_n \ldots (b_B)_n} \, z^n" />
-</div></p><p>where, for direct convergence, <img class="math" src="../_images/math/1f78f9368d4ac4bebfb371b8a27e702460e7cde9.png" alt="A = B" /> and <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1" />, although a
+         {(b_1)_n \ldots (b_B)_n} \, z^n" /></p>
+</div><p>where, for direct convergence, <img class="math" src="../_images/math/1f78f9368d4ac4bebfb371b8a27e702460e7cde9.png" alt="A = B"/> and <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1"/>, although a
 regularized sum exists more generally by considering the
 bilateral series as a sum of two ordinary hypergeometric
 functions. In order for the series to make sense, none of the
 parameters may be integers.</p>
 <p><strong>Examples</strong></p>
-<p>The value of <img class="math" src="../_images/math/2844ba9a78fde87de07cedb648598c0f39562f8b.png" alt="\,_2H_2" /> at <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1" /> is given by Dougall&#8217;s formula:</p>
+<p>The value of <img class="math" src="../_images/math/2844ba9a78fde87de07cedb648598c0f39562f8b.png" alt="\,_2H_2"/> at <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1"/> is given by Dougall&#8217;s formula:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">,</span> <span class="mf">3.25</span>
@@ -1037,8 +875,8 @@ parameters may be integers.</p>
 <span class="go">-14.49118026212345786148847</span>
 </pre></div>
 </div>
-<p>The regularized function <img class="math" src="../_images/math/3222a62429532793a7e70886b2046b1d0a3b80da.png" alt="\,_1H_0" /> can be expressed as the
-sum of one <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0" /> function and one <img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1" /> function:</p>
+<p>The regularized function <img class="math" src="../_images/math/3222a62429532793a7e70886b2046b1d0a3b80da.png" alt="\,_1H_0"/> can be expressed as the
+sum of one <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0"/> function and one <img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1"/> function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bihyper</span><span class="p">([</span><span class="n">a</span><span class="p">],</span> <span class="p">[],</span> <span class="n">z</span><span class="p">)</span>
@@ -1058,21 +896,177 @@ sum of one <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70
 
 </div>
 </div>
-<div class="section" id="appell-hypergeometric-function-of-two-variables">
-<h2>Appell hypergeometric function of two variables<a class="headerlink" href="#appell-hypergeometric-function-of-two-variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hypergeometric-functions-of-two-variables">
+<h2>Hypergeometric functions of two variables<a class="headerlink" href="#hypergeometric-functions-of-two-variables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hyper2d">
+<h3><tt class="xref docutils literal"><span class="pre">hyper2d()</span></tt><a class="headerlink" href="#hyper2d" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.hyper2d">
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyper2d</tt><big>(</big><em>a</em>, <em>b</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.hyper2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sums the generalized 2D hypergeometric series</p>
+<div class="math">
+<p><img src="../_images/math/ce76cd3b14eaffb614a64a4f8a008eb900a40a41.png" alt="\sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    \frac{P((a),m,n)}{Q((b),m,n)}
+    \frac{x^m y^n} {m! n!}" /></p>
+</div><p>where <img class="math" src="../_images/math/3899beb48bad9c42b07f765f181cc8145b6152a9.png" alt="(a) = (a_1,\ldots,a_r)"/>, <img class="math" src="../_images/math/165a21b99d0564a3d2d9039fd2cc62b72fdc845a.png" alt="(b) = (b_1,\ldots,b_s)"/> and where
+<img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> are products of rising factorials such as <img class="math" src="../_images/math/7df8e99d9a9bc7fa7c2eb9b557e110f138fa31b6.png" alt="(a_j)_n"/> or
+<img class="math" src="../_images/math/72278312e535c9dc6445cf7fc22d4cfc7e8b3e18.png" alt="(a_j)_{m+n}"/>. <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> are specified in the form of dicts, with
+the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> dependence as keys and parameter lists as values.
+The supported rising factorials are given in the following table
+(note that only a few are supported in <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>):</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="49%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Key</th>
+<th class="head">Rising factorial</th>
+<th class="head"><img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><tt class="docutils literal"><span class="pre">'m'</span></tt></td>
+<td><img class="math" src="../_images/math/c1e309838a1c414c56cc399eb90c3fe926c6eafa.png" alt="(a_j)_m"/></td>
+<td>Yes</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'n'</span></tt></td>
+<td><img class="math" src="../_images/math/7df8e99d9a9bc7fa7c2eb9b557e110f138fa31b6.png" alt="(a_j)_n"/></td>
+<td>Yes</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'m+n'</span></tt></td>
+<td><img class="math" src="../_images/math/72278312e535c9dc6445cf7fc22d4cfc7e8b3e18.png" alt="(a_j)_{m+n}"/></td>
+<td>Yes</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'m-n'</span></tt></td>
+<td><img class="math" src="../_images/math/9cf6a6b149df316b665937ee68f44c8bb4c65271.png" alt="(a_j)_{m-n}"/></td>
+<td>No</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'n-m'</span></tt></td>
+<td><img class="math" src="../_images/math/1822cdab4ffa344af249b27090e213ac2e16152b.png" alt="(a_j)_{n-m}"/></td>
+<td>No</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'2m+n'</span></tt></td>
+<td><img class="math" src="../_images/math/f965ddcb862005b06e70be2ed1ca96d52b4747b1.png" alt="(a_j)_{2m+n}"/></td>
+<td>No</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'2m-n'</span></tt></td>
+<td><img class="math" src="../_images/math/c7e232e4ea6fe31fffd4a4daae27b4fe6ff93dee.png" alt="(a_j)_{2m-n}"/></td>
+<td>No</td>
+</tr>
+<tr><td><tt class="docutils literal"><span class="pre">'2n-m'</span></tt></td>
+<td><img class="math" src="../_images/math/f1220a48a2c348f426396ae14c092f8e1395772a.png" alt="(a_j)_{2n-m}"/></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>For example, the Appell F1 and F4 functions</p>
+<div class="math">
+<p><img src="../_images/math/49fe5fc5a05075893dee39a34f19b14f782c225f.png" alt="F_1 = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+      \frac{(a)_{m+n} (b)_m (c)_n}{(d)_{m+n}}
+      \frac{x^m y^n}{m! n!}
+
+F_4 = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+      \frac{(a)_{m+n} (b)_{m+n}}{(c)_m (d)_{n}}
+      \frac{x^m y^n}{m! n!}" /></p>
+</div><p>can be represented respectively as</p>
+<blockquote>
+<p><tt class="docutils literal"><span class="pre">hyper2d({'m+n':[a],</span> <span class="pre">'m':[b],</span> <span class="pre">'n':[c]},</span> <span class="pre">{'m+n':[d]},</span> <span class="pre">x,</span> <span class="pre">y)</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">hyper2d({'m+n':[a,b]},</span> <span class="pre">{'m':[c],</span> <span class="pre">'n':[d]},</span> <span class="pre">x,</span> <span class="pre">y)</span></tt></p>
+</blockquote>
+<p>More generally, <tt class="xref docutils literal"><span class="pre">hyper2d()</span></tt> can evaluate any of the 34 distinct
+convergent second-order (generalized Gaussian) hypergeometric
+series enumerated by Horn, as well as the Kampe de Feriet
+function.</p>
+<p>The series is computed by rewriting it so that the inner
+series (i.e. the series containing <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>) has the form of an
+ordinary generalized hypergeometric series and thereby can be
+evaluated efficiently using <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>. If possible,
+manually swapping <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> and the corresponding parameters
+can sometimes give better results.</p>
+<p><strong>Examples</strong></p>
+<p>Two separable cases: a product of two geometric series, and a
+product of two Gaussian hypergeometric functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="mf">1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:</span><span class="mf">1</span><span class="p">},</span> <span class="p">{},</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">2.666666666666666666666667</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+<span class="go">2.666666666666666666666667</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m&#39;</span><span class="p">:[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span><span class="s">&#39;n&#39;</span><span class="p">:[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">]},</span> <span class="p">{</span><span class="s">&#39;m&#39;</span><span class="p">:[</span><span class="mf">5</span><span class="p">],</span><span class="s">&#39;n&#39;</span><span class="p">:[</span><span class="mf">6</span><span class="p">]},</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">4.164358531238938319669856</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyp2f1</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">4.164358531238938319669856</span>
+</pre></div>
+</div>
+<p>Some more series that can be done in closed form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="mf">1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:</span><span class="mf">1</span><span class="p">},{</span><span class="s">&#39;m+n&#39;</span><span class="p">:</span><span class="mf">1</span><span class="p">},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">2.013417124712514809623881</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+<span class="go">2.013417124712514809623881</span>
+</pre></div>
+</div>
+<p>Six of the 34 Horn functions, G1-G3 and H1-H3:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">0.0625</span><span class="p">,</span> <span class="mf">0.125</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span><span class="o">-</span><span class="mf">1.2</span><span class="p">,</span><span class="o">-</span><span class="mf">1.3</span><span class="p">,</span><span class="o">-</span><span class="mf">1.4</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="o">-</span><span class="mf">1.6</span><span class="p">,</span><span class="mf">1.7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m+n&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;n-m&#39;</span><span class="p">:</span><span class="n">b1</span><span class="p">,</span><span class="s">&#39;m-n&#39;</span><span class="p">:</span><span class="n">b2</span><span class="p">},{},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># G1</span>
+<span class="go">1.139090746</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">1.139090746</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:</span><span class="n">a2</span><span class="p">,</span><span class="s">&#39;n-m&#39;</span><span class="p">:</span><span class="n">b1</span><span class="p">,</span><span class="s">&#39;m-n&#39;</span><span class="p">:</span><span class="n">b2</span><span class="p">},{},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># G2</span>
+<span class="go">0.9503682696</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b2</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.9503682696</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;2n-m&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;2m-n&#39;</span><span class="p">:</span><span class="n">a2</span><span class="p">},{},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># G3</span>
+<span class="go">1.029372029</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span><span class="mf">2</span><span class="o">*</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">1.029372029</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m-n&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;m+n&#39;</span><span class="p">:</span><span class="n">b1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:</span><span class="n">c1</span><span class="p">},{</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="n">d</span><span class="p">},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># H1</span>
+<span class="go">-1.605331256</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">rf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">m</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">-1.605331256</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;m-n&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="n">b1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:[</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">]},{</span><span class="s">&#39;m&#39;</span><span class="p">:</span><span class="n">d</span><span class="p">},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># H2</span>
+<span class="go">-2.35405404</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">m</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">rf</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">m</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">-2.35405404</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper2d</span><span class="p">({</span><span class="s">&#39;2m+n&#39;</span><span class="p">:</span><span class="n">a1</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">:</span><span class="n">b1</span><span class="p">},{</span><span class="s">&#39;m+n&#39;</span><span class="p">:</span><span class="n">c1</span><span class="p">},</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>  <span class="c"># H3</span>
+<span class="go">0.974479074</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">rf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="mf">2</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">rf</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">rf</span><span class="p">(</span><span class="n">c1</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="p">)</span><span class="o">*</span>\
+<span class="gp">... </span>    <span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="n">y</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">0.974479074</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<ol class="arabic simple">
+<li><a class="reference external" href="../references.html#srivastavakarlsson">[SrivastavaKarlsson]</a></li>
+<li><a class="reference external" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/HornFunction.html">http://mathworld.wolfram.com/HornFunction.html</a></li>
+<li><a class="reference external" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/AppellHypergeometricFunction.html">http://mathworld.wolfram.com/AppellHypergeometricFunction.html</a></li>
+</ol>
+</dd></dl>
+
+</div>
 <div class="section" id="appellf1">
 <h3><tt class="xref docutils literal"><span class="pre">appellf1()</span></tt><a class="headerlink" href="#appellf1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.appellf1">
-<!--[mpmath.appellf1]--><tt class="descclassname">mpmath.</tt><tt class="descname">appellf1</tt><big>(</big><em>a</em>, <em>b1</em>, <em>b2</em>, <em>c</em>, <em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.appellf1" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">appellf1</tt><big>(</big><em>a</em>, <em>b1</em>, <em>b2</em>, <em>c</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.appellf1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the Appell F1 hypergeometric function of two variables,</p>
 <div class="math">
-<p><img src="../_images/math/bef2c57276adc86f0db7388cd76f074ef5641ad9.png" alt="F_1(a,b_1,b_2,c,z_1,z_2) = \sum_{m=0}^{\infty}
-    \sum_{n=0}^{\infty}
-    \frac{(a)_{m+n} (b_1)_m (b_2)_n}{m! \,n! \,(c)_{m+n}} z_1^m z_2^n." />
-</div></p><p>This series is only generally convergent when <img class="math" src="../_images/math/047defc0e5bd3e50af387287a04de1bca4fea768.png" alt="|z_1| &lt; 1" /> and <img class="math" src="../_images/math/8827aa4488e3eb59dd05384cfdf8f63de89b68a5.png" alt="|z_2| &lt; 1" />,
-although <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt> can evaluate the continuation
-in many cases.</p>
+<p><img src="../_images/math/2a732d5aa33892d5768d4c5ab48008ce0ce48ba3.png" alt="F_1(a,b_1,b_2,c,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    \frac{(a)_{m+n} (b_1)_m (b_2)_n}{(c)_{m+n}}
+    \frac{x^m y^n}{m! n!}." /></p>
+</div><p>This series is only generally convergent when <img class="math" src="../_images/math/796af557812a3e6b3f7bff6d89875f9d7721d320.png" alt="|x| &lt; 1"/> and <img class="math" src="../_images/math/2ed3e7ac75dead4473c6f269222e43c92fecf057.png" alt="|y| &lt; 1"/>,
+although <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt> can evaluate an analytic continuation
+with respecto to either variable, and sometimes both.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation is supported for real and complex parameters:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -1090,7 +1084,7 @@ in many cases.</p>
 <span class="go">-20528.0</span>
 </pre></div>
 </div>
-<p>The analytic continuation with respect to either <img class="math" src="../_images/math/9ea31e5c5613f025b5be8aca425d318168491d89.png" alt="z_1" /> or <img class="math" src="../_images/math/29535bc04682b0b477c682ee52dded5983bc41cb.png" alt="z_2" />,
+<p>The analytic continuation with respect to either <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> or <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>,
 and sometimes with respect to both, can be evaluated:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">appellf1</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">100</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">(0.0006231042714165329279738662 + 0.0000005769149277148425774499857j)</span>
@@ -1111,9 +1105,27 @@ and sometimes with respect to both, can be evaluated:</p>
 <span class="go">(-1.717202506168937502740238 - 2.792526803190927323077905j)</span>
 </pre></div>
 </div>
+<p>The F1 function satisfies a system of partial differential equations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">1.125</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="o">-</span><span class="mf">0.25</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">appellf1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b1</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">b1</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b1</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b2</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">b2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b2</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
 <p>The Appell F1 function allows for closed-form evaluation of various
 integrals, such as any integral of the form
-<img class="math" src="../_images/math/f09e177e8480fe9aeb8ffbf5dcf43994407b5967.png" alt="\int x^r (x+a)^p (x+b)^q dx" />:</p>
+<img class="math" src="../_images/math/f09e177e8480fe9aeb8ffbf5dcf43994407b5967.png" alt="\int x^r (x+a)^p (x+b)^q dx"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">integral</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpmathify</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">])</span>
 <span class="gp">... </span>    <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="n">q</span>
@@ -1156,8 +1168,194 @@ integrals, such as any integral of the form
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/">http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/</a></li>
+<li><a class="reference external" href="../references.html#wolframfunctions">[WolframFunctions]</a> <a class="reference external" href="http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/">http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/</a></li>
+<li><a class="reference external" href="../references.html#srivastavakarlsson">[SrivastavaKarlsson]</a></li>
+<li><a class="reference external" href="../references.html#cabralrosetti">[CabralRosetti]</a></li>
+<li><a class="reference external" href="../references.html#vidunas">[Vidunas]</a></li>
+<li><a class="reference external" href="../references.html#slater">[Slater]</a></li>
 </ol>
+</dd></dl>
+
+</div>
+<div class="section" id="appellf2">
+<h3><tt class="xref docutils literal"><span class="pre">appellf2()</span></tt><a class="headerlink" href="#appellf2" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.appellf2">
+<tt class="descclassname">mpmath.</tt><tt class="descname">appellf2</tt><big>(</big><em>a</em>, <em>b1</em>, <em>b2</em>, <em>c1</em>, <em>c2</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.appellf2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Appell F2 hypergeometric function of two variables</p>
+<div class="math">
+<p><img src="../_images/math/00e5b982963d0a68beb322fe29f7866cce013948.png" alt="F_2(a,b_1,b_2,c_1,c_2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    \frac{(a)_{m+n} (b_1)_m (b_2)_n}{(c_1)_m (c_2)_n}
+    \frac{x^m y^n}{m! n!}." /></p>
+</div><p>The series is generally absolutely convergent for <img class="math" src="../_images/math/809c0fff80598e4ae0f9dfba5aa1ac4bfe5c8f16.png" alt="|x| + |y| &lt; 1"/>.</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation for real and complex arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">)</span>
+<span class="go">1.257417193533135344785602</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">-42.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">0.25</span><span class="n">j</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">(0.9880539519421899867041719 + 0.01497616165031102661476978j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">appellf2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span><span class="mf">1</span><span class="o">-</span><span class="n">j</span><span class="p">,</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">))</span>
+<span class="go">1.201311219287411337955192</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">16</span><span class="p">)</span>
+<span class="go">(-0.09455532250274744282125152 - 0.7647282253046207836769297j)</span>
+</pre></div>
+</div>
+<p>A transformation formula:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">1.625</span><span class="p">,</span><span class="o">-</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">0.125</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">0.2299211717841180783309688</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="n">appellf2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">c1</span><span class="o">-</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span><span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+<span class="go">0.2299211717841180783309688</span>
+</pre></div>
+</div>
+<p>A system of partial differential equations satisfied by F2:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">1.125</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">0.0625</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0625</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">appellf2</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c1</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b1</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">b1</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b1</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c2</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b2</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">b2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b2</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="appellf3">
+<h3><tt class="xref docutils literal"><span class="pre">appellf3()</span></tt><a class="headerlink" href="#appellf3" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.appellf3">
+<tt class="descclassname">mpmath.</tt><tt class="descname">appellf3</tt><big>(</big><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em>, <em>c</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.appellf3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Appell F3 hypergeometric function of two variables</p>
+<div class="math">
+<p><img src="../_images/math/101e334f31e2ad44352ed766aa9cacf90e412c00.png" alt="F_3(a_1,a_2,b_1,b_2,c,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    \frac{(a_1)_m (a_2)_n (b_1)_m (b_2)_n}{(c)_{m+n}}
+    \frac{x^m y^n}{m! n!}." /></p>
+</div><p>The series is generally absolutely convergent for <img class="math" src="../_images/math/9488ba20f1aac3603eab4deadb174ef3ccd17b8f.png" alt="|x| &lt; 1, |y| &lt; 1"/>.</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation for various parameters and variables:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">2.221557778107438938158705</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">0</span><span class="p">);</span> <span class="n">hyp2f1</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">(-0.5189554589089861284537389 - 0.1454441043328607980769742j)</span>
+<span class="go">(-0.5189554589089861284537389 - 0.1454441043328607980769742j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">-17.4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">(17.7876136773677356641825 + 19.54768762233649126154534j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>
+<span class="go">(85.02054175067929402953645 + 148.4402528821177305173599j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">1</span><span class="o">-</span><span class="n">j</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">))</span>
+<span class="go">1.719992169545200286696007</span>
+</pre></div>
+</div>
+<p>Many transformations and evaluations for special combinations
+of the parameters are possible, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="o">-</span><span class="mf">0.125</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">1.093432340896087107444363</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+<span class="go">1.093432340896087107444363</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">appellf3</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+<span class="go">0.01568646277445385390945083</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<span class="go">0.01568646277445385390945083</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">4.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf3</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">1.03947361709111140096947</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gammaprod</span><span class="p">([</span><span class="n">c</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">a2</span><span class="o">-</span><span class="n">b2</span><span class="p">],[</span><span class="n">c</span><span class="o">-</span><span class="n">a2</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">b2</span><span class="p">])</span><span class="o">*</span><span class="n">hyp3f2</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">a2</span><span class="o">-</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">a2</span><span class="p">,</span><span class="n">c</span><span class="o">-</span><span class="n">b2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="go">1.03947361709111140096947</span>
+</pre></div>
+</div>
+<p>The Appell F3 function satisfies a pair of partial
+differential equations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.625</span><span class="p">,</span><span class="mf">0.0625</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0625</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">appellf3</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">a2</span><span class="p">,</span><span class="n">b1</span><span class="p">,</span><span class="n">b2</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">a1</span><span class="o">+</span><span class="n">b1</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="n">a1</span><span class="o">*</span><span class="n">b1</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="n">x</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">a2</span><span class="o">+</span><span class="n">b2</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>    <span class="n">a2</span><span class="o">*</span><span class="n">b2</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="appellf4">
+<h3><tt class="xref docutils literal"><span class="pre">appellf4()</span></tt><a class="headerlink" href="#appellf4" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.appellf4">
+<tt class="descclassname">mpmath.</tt><tt class="descname">appellf4</tt><big>(</big><em>a</em>, <em>b</em>, <em>c1</em>, <em>c2</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.appellf4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Appell F3 hypergeometric function of two variables</p>
+<div class="math">
+<p><img src="../_images/math/25ed58d98a744ccc48eca91f18fb1c3343018225.png" alt="F_4(a,b,c1,c2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    \frac{(a)_{m+n} (b)_{m+n}}{(c_1)_m (c_2)_n}
+    \frac{x^m y^n}{m! n!}." /></p>
+</div><p>The series is generally absolutely convergent for
+<img class="math" src="../_images/math/c79b149b2bd313e918c00bae596419459149f173.png" alt="\sqrt{|x|} + \sqrt{|y|} &lt; 1"/>.</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation for various parameters and arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf4</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">)</span>
+<span class="go">1.286182069079718313546608</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf4</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="o">-</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">)</span>
+<span class="go">34.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf4</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">0.25</span><span class="n">j</span><span class="p">,</span><span class="o">-</span><span class="mf">0.125</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-0.2585967215437846642163352 + 2.436102233553582711818743j)</span>
+</pre></div>
+</div>
+<p>Reduction to <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/> in a special case:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="mf">0.125</span><span class="p">,</span><span class="o">-</span><span class="mf">0.125</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">appellf4</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">-</span><span class="n">c</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">),</span><span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+<span class="go">1.129143488466850868248364</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyp2f1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">hyp2f1</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">-</span><span class="n">c</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="go">1.129143488466850868248364</span>
+</pre></div>
+</div>
+<p>A system of partial differential equations satisfied by F4:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">mpf</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">1.125</span><span class="p">,</span><span class="mf">0.0625</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0625</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">appellf4</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">y</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="mf">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c1</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="p">((</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="mf">2</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">+</span>
+<span class="gp">... </span>     <span class="p">(</span><span class="n">c2</span><span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="p">((</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">F</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">))</span> <span class="o">-</span>
+<span class="gp">... </span>     <span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="o">*</span><span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p><strong>References</strong></p>
+<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
 </dd></dl>
 
 </div>
@@ -1172,7 +1370,7 @@ integrals, such as any integral of the form
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Hypergeometric functions</a><ul>
+<li><a class="reference external" href="#">Hypergeometric functions</a><ul>
 <li><a class="reference external" href="#common-hypergeometric-series">Common hypergeometric series</a><ul>
 <li><a class="reference external" href="#hyp0f1"><tt class="docutils literal"><span class="pre">hyp0f1()</span></tt></a></li>
 <li><a class="reference external" href="#hyp1f1"><tt class="docutils literal"><span class="pre">hyp1f1()</span></tt></a></li>
@@ -1189,12 +1387,6 @@ integrals, such as any integral of the form
 <li><a class="reference external" href="#hypercomb"><tt class="docutils literal"><span class="pre">hypercomb()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#confluent-u-and-whittaker-functions">Confluent U and Whittaker functions</a><ul>
-<li><a class="reference external" href="#hyperu"><tt class="docutils literal"><span class="pre">hyperu()</span></tt></a></li>
-<li><a class="reference external" href="#whitm"><tt class="docutils literal"><span class="pre">whitm()</span></tt></a></li>
-<li><a class="reference external" href="#whitw"><tt class="docutils literal"><span class="pre">whitw()</span></tt></a></li>
-</ul>
-</li>
 <li><a class="reference external" href="#meijer-g-function">Meijer G-function</a><ul>
 <li><a class="reference external" href="#meijerg"><tt class="docutils literal"><span class="pre">meijerg()</span></tt></a></li>
 </ul>
@@ -1203,8 +1395,12 @@ integrals, such as any integral of the form
 <li><a class="reference external" href="#bihyper"><tt class="docutils literal"><span class="pre">bihyper()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#appell-hypergeometric-function-of-two-variables">Appell hypergeometric function of two variables</a><ul>
+<li><a class="reference external" href="#hypergeometric-functions-of-two-variables">Hypergeometric functions of two variables</a><ul>
+<li><a class="reference external" href="#hyper2d"><tt class="docutils literal"><span class="pre">hyper2d()</span></tt></a></li>
 <li><a class="reference external" href="#appellf1"><tt class="docutils literal"><span class="pre">appellf1()</span></tt></a></li>
+<li><a class="reference external" href="#appellf2"><tt class="docutils literal"><span class="pre">appellf2()</span></tt></a></li>
+<li><a class="reference external" href="#appellf3"><tt class="docutils literal"><span class="pre">appellf3()</span></tt></a></li>
+<li><a class="reference external" href="#appellf4"><tt class="docutils literal"><span class="pre">appellf4()</span></tt></a></li>
 </ul>
 </li>
 </ul>
@@ -1212,19 +1408,29 @@ integrals, such as any integral of the form
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="orthogonal.html" title="previous chapter">Orthogonal polynomials</a></p>
+            <p class="topless"><a href="orthogonal.html"
+                                  title="previous chapter">Orthogonal polynomials</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="elliptic.html" title="next chapter">Elliptic functions</a></p>
+            <p class="topless"><a href="elliptic.html"
+                                  title="next chapter">Elliptic functions</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/hypergeometric.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/hypergeometric.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1234,24 +1440,35 @@ integrals, such as any integral of the form
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="elliptic.html" title="Elliptic functions"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="orthogonal.html" title="Orthogonal polynomials"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

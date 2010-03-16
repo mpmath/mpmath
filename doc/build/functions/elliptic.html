@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Zeta functions, L-series and polylogarithms" href="zeta.html" />
@@ -44,12 +44,12 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="module-mpmath.functions.elliptic">
 <h1>Elliptic functions<a class="headerlink" href="#module-mpmath.functions.elliptic" title="Permalink to this headline">¶</a></h1>
 <p>Elliptic functions historically comprise the elliptic integrals
@@ -58,9 +58,9 @@ arc length of an ellipse. From a more modern point of view,
 an elliptic function is defined as a doubly periodic function, i.e.
 a function which satisfies</p>
 <div class="math">
-<p><img src="../_images/math/533f8172f1693cd09ab3475f09392497da271a9a.png" alt="f(z + 2 \omega_1) = f(z + 2 \omega_2) = f(z)" />
-</div></p><p>for some half-periods <img class="math" src="../_images/math/178ef0c25cb393195368ae91e70341404562e677.png" alt="\omega_1, \omega_2" /> with
-<img class="math" src="../_images/math/a84d1ba8341d6e90f45b25504738e0578a4990e6.png" alt="\mathrm{Im}[\omega_1 / \omega_2] &gt; 0" />. The canonical elliptic
+<p><img src="../_images/math/533f8172f1693cd09ab3475f09392497da271a9a.png" alt="f(z + 2 \omega_1) = f(z + 2 \omega_2) = f(z)" /></p>
+</div><p>for some half-periods <img class="math" src="../_images/math/178ef0c25cb393195368ae91e70341404562e677.png" alt="\omega_1, \omega_2"/> with
+<img class="math" src="../_images/math/a84d1ba8341d6e90f45b25504738e0578a4990e6.png" alt="\mathrm{Im}[\omega_1 / \omega_2] &gt; 0"/>. The canonical elliptic
 functions are the Jacobi elliptic functions. More broadly, this section
 includes  quasi-doubly periodic functions (such as the Jacobi theta
 functions) and other functions useful in the study of elliptic functions.</p>
@@ -68,26 +68,26 @@ functions) and other functions useful in the study of elliptic functions.</p>
 elliptic functions are in use. It is even standard to use
 different parameterizations for different functions in the same
 text or software (and mpmath is no exception).
-The usual parameters are the elliptic nome <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" />, which usually
-must satisfy <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" />; the elliptic parameter <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> (an arbitrary
-complex number); the elliptic modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> (an arbitrary complex
-number); and the half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />, which usually must
-satisfy <img class="math" src="../_images/math/a7ef44075cbdf48282414af0ac84fababad983c7.png" alt="\mathrm{Im}[\tau] &gt; 0" />.
+The usual parameters are the elliptic nome <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>, which usually
+must satisfy <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1"/>; the elliptic parameter <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> (an arbitrary
+complex number); the elliptic modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> (an arbitrary complex
+number); and the half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/>, which usually must
+satisfy <img class="math" src="../_images/math/a7ef44075cbdf48282414af0ac84fababad983c7.png" alt="\mathrm{Im}[\tau] &gt; 0"/>.
 These quantities can be expressed in terms of each other
 using the following relations:</p>
 <div class="math">
-<p><img src="../_images/math/96994da31f5c27b534e8ef8ace6e04575cc929b6.png" alt="m = k^2" />
-</div></p><div class="math">
-<p><img src="../_images/math/e528643f8b8c0916afe47632f7d93db8c3bdcbd4.png" alt="\tau = -i \frac{K(1-m)}{K(m)}" />
-</div></p><div class="math">
-<p><img src="../_images/math/c2ab4584cc120f5e9e012b0390f291f7513bebc7.png" alt="q = e^{i \pi \tau}" />
-</div></p><div class="math">
-<p><img src="../_images/math/96d65506a243f533894b3f53e6f1022dccb1d278.png" alt="k = \frac{\vartheta_2^4(q)}{\vartheta_3^4(q)}" />
-</div></p><p>In addition, an alternative definition is used for the nome in
+<p><img src="../_images/math/96994da31f5c27b534e8ef8ace6e04575cc929b6.png" alt="m = k^2" /></p>
+</div><div class="math">
+<p><img src="../_images/math/e528643f8b8c0916afe47632f7d93db8c3bdcbd4.png" alt="\tau = -i \frac{K(1-m)}{K(m)}" /></p>
+</div><div class="math">
+<p><img src="../_images/math/c2ab4584cc120f5e9e012b0390f291f7513bebc7.png" alt="q = e^{i \pi \tau}" /></p>
+</div><div class="math">
+<p><img src="../_images/math/96d65506a243f533894b3f53e6f1022dccb1d278.png" alt="k = \frac{\vartheta_2^4(q)}{\vartheta_3^4(q)}" /></p>
+</div><p>In addition, an alternative definition is used for the nome in
 number theory, which we here denote by q-bar:</p>
 <div class="math">
-<p><img src="../_images/math/f3353b80b5e43440a63a9ad9dd0bdc470851e693.png" alt="\bar{q} = q^2 = e^{2 i \pi \tau}" />
-</div></p><p>For convenience, mpmath provides functions to convert
+<p><img src="../_images/math/f3353b80b5e43440a63a9ad9dd0bdc470851e693.png" alt="\bar{q} = q^2 = e^{2 i \pi \tau}" /></p>
+</div><p>For convenience, mpmath provides functions to convert
 between the various parameters (<tt class="xref docutils literal"><span class="pre">qfrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">mfrom()</span></tt>,
 <tt class="xref docutils literal"><span class="pre">kfrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">taufrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">qbarfrom()</span></tt>).</p>
 <p><strong>References</strong></p>
@@ -101,8 +101,8 @@ between the various parameters (<tt class="xref docutils literal"><span class="p
 <h3><tt class="xref docutils literal"><span class="pre">qfrom()</span></tt><a class="headerlink" href="#qfrom" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.qfrom">
-<!--[mpmath.qfrom]--><tt class="descclassname">mpmath.</tt><tt class="descname">qfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qfrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the elliptic nome <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" />, given any of <img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">qfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qfrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the elliptic nome <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>, given any of <img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">qfrom</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
@@ -124,9 +124,9 @@ between the various parameters (<tt class="xref docutils literal"><span class="p
 <h3><tt class="xref docutils literal"><span class="pre">qbarfrom()</span></tt><a class="headerlink" href="#qbarfrom" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.qbarfrom">
-<!--[mpmath.qbarfrom]--><tt class="descclassname">mpmath.</tt><tt class="descname">qbarfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qbarfrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number-theoretic nome <img class="math" src="../_images/math/3a42c26147ee1dc5cfa07f69a86e903ea55cb1c6.png" alt="\bar q" />, given any of
-<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">qbarfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qbarfrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number-theoretic nome <img class="math" src="../_images/math/3a42c26147ee1dc5cfa07f69a86e903ea55cb1c6.png" alt="\bar q"/>, given any of
+<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">qbarfrom</span><span class="p">(</span><span class="n">qbar</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
@@ -148,9 +148,9 @@ between the various parameters (<tt class="xref docutils literal"><span class="p
 <h3><tt class="xref docutils literal"><span class="pre">mfrom()</span></tt><a class="headerlink" href="#mfrom" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.mfrom">
-<!--[mpmath.mfrom]--><tt class="descclassname">mpmath.</tt><tt class="descname">mfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mfrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the elliptic parameter <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />, given any of
-<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">mfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.mfrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the elliptic parameter <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>, given any of
+<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mfrom</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
@@ -165,8 +165,8 @@ between the various parameters (<tt class="xref docutils literal"><span class="p
 <span class="go">0.25</span>
 </pre></div>
 </div>
-<p>As <img class="math" src="../_images/math/9db120b46ade50f2e63c13d506a8ec951e8c6f92.png" alt="q \to 1" /> and <img class="math" src="../_images/math/1f896ba0411e32a5403f664679bc7b6c717b1854.png" alt="q \to -1" />, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> rapidly approaches
-<img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" /> and <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty" /> respectively:</p>
+<p>As <img class="math" src="../_images/math/9db120b46ade50f2e63c13d506a8ec951e8c6f92.png" alt="q \to 1"/> and <img class="math" src="../_images/math/1f896ba0411e32a5403f664679bc7b6c717b1854.png" alt="q \to -1"/>, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> rapidly approaches
+<img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1"/> and <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty"/> respectively:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mfrom</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 <span class="go">0.9999999999999798332943533</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mfrom</span><span class="p">(</span><span class="n">q</span><span class="o">=-</span><span class="mf">0.75</span><span class="p">)</span>
@@ -177,7 +177,7 @@ between the various parameters (<tt class="xref docutils literal"><span class="p
 <span class="go">-inf</span>
 </pre></div>
 </div>
-<p>The inverse nome as a function of <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> has an integer
+<p>The inverse nome as a function of <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> has an integer
 Taylor series expansion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">mfrom</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">7</span><span class="p">)</span>
 <span class="go">[0.0, 16.0, -128.0, 704.0, -3072.0, 11488.0, -38400.0, 117632.0]</span>
@@ -190,9 +190,9 @@ Taylor series expansion:</p>
 <h3><tt class="xref docutils literal"><span class="pre">kfrom()</span></tt><a class="headerlink" href="#kfrom" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.kfrom">
-<!--[mpmath.kfrom]--><tt class="descclassname">mpmath.</tt><tt class="descname">kfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kfrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the elliptic modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" />, given any of
-<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">kfrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kfrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the elliptic modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>, given any of
+<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kfrom</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
@@ -207,8 +207,8 @@ Taylor series expansion:</p>
 <span class="go">0.25</span>
 </pre></div>
 </div>
-<p>As <img class="math" src="../_images/math/9db120b46ade50f2e63c13d506a8ec951e8c6f92.png" alt="q \to 1" /> and <img class="math" src="../_images/math/1f896ba0411e32a5403f664679bc7b6c717b1854.png" alt="q \to -1" />, <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> rapidly approaches
-<img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" /> and <img class="math" src="../_images/math/e357ce6be647b77d5509d0e90837fef3e945cd8d.png" alt="i \infty" /> respectively:</p>
+<p>As <img class="math" src="../_images/math/9db120b46ade50f2e63c13d506a8ec951e8c6f92.png" alt="q \to 1"/> and <img class="math" src="../_images/math/1f896ba0411e32a5403f664679bc7b6c717b1854.png" alt="q \to -1"/>, <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> rapidly approaches
+<img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1"/> and <img class="math" src="../_images/math/e357ce6be647b77d5509d0e90837fef3e945cd8d.png" alt="i \infty"/> respectively:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">kfrom</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 <span class="go">0.9999999999999899166471767</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kfrom</span><span class="p">(</span><span class="n">q</span><span class="o">=-</span><span class="mf">0.75</span><span class="p">)</span>
@@ -226,9 +226,9 @@ Taylor series expansion:</p>
 <h3><tt class="xref docutils literal"><span class="pre">taufrom()</span></tt><a class="headerlink" href="#taufrom" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.taufrom">
-<!--[mpmath.taufrom]--><tt class="descclassname">mpmath.</tt><tt class="descname">taufrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.taufrom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the elliptic half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />, given any of
-<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}" />:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">taufrom</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.taufrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the elliptic half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/>, given any of
+<img class="math" src="../_images/math/a91b73688d1dfb846a77bd40b5563b4eb22f8947.png" alt="q, m, k, \tau, \bar{q}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">taufrom</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="mf">0.5</span><span class="n">j</span><span class="p">)</span>
@@ -253,18 +253,18 @@ Taylor series expansion:</p>
 <h3><tt class="xref docutils literal"><span class="pre">ellipk()</span></tt><a class="headerlink" href="#ellipk" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ellipk">
-<!--[mpmath.ellipk]--><tt class="descclassname">mpmath.</tt><tt class="descname">ellipk</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ellipk" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">ellipk</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ellipk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the complete elliptic integral of the first kind,
-<img class="math" src="../_images/math/1665d5b15ea171ee4ac16d99f646ade489216dfe.png" alt="K(m)" />, defined by</p>
+<img class="math" src="../_images/math/1665d5b15ea171ee4ac16d99f646ade489216dfe.png" alt="K(m)"/>, defined by</p>
 <div class="math">
-<p><img src="../_images/math/48a0fc5ec9e84176c5f25646e0ef98e70da1a2d3.png" alt="K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt." />
-</div></p><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2" />,
-not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> which is sometimes used.</p>
+<p><img src="../_images/math/48a0fc5ec9e84176c5f25646e0ef98e70da1a2d3.png" alt="K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt." /></p>
+</div><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2"/>,
+not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> which is sometimes used.</p>
 <p>Alternatively, in terms of a hypergeometric function,
 we have:</p>
 <div class="math">
-<p><img src="../_images/math/ae3a1b3f89de637827aecd98eaa5a43474139420.png" alt="K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)" />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/ae3a1b3f89de637827aecd98eaa5a43474139420.png" alt="K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)" /></p>
+</div><p><strong>Examples</strong></p>
 <p>Values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -292,7 +292,7 @@ representation:</p>
 <span class="go">1.85407467730137191843385</span>
 </pre></div>
 </div>
-<p>Evaluation is supported for arbitrary complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />:</p>
+<p>Evaluation is supported for arbitrary complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ellipk</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.9111955638049650086562171 + 0.6313342832413452438845091j)</span>
 </pre></div>
@@ -309,18 +309,18 @@ representation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">ellipe()</span></tt><a class="headerlink" href="#ellipe" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ellipe">
-<!--[mpmath.ellipe]--><tt class="descclassname">mpmath.</tt><tt class="descname">ellipe</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ellipe" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">ellipe</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ellipe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the complete elliptic integral of the second kind,
-<img class="math" src="../_images/math/024ee2b592ac8c90f9998bcd1d98bbc365e936f1.png" alt="E(m)" />, defined by</p>
+<img class="math" src="../_images/math/024ee2b592ac8c90f9998bcd1d98bbc365e936f1.png" alt="E(m)"/>, defined by</p>
 <div class="math">
-<p><img src="../_images/math/7ab31be32e0d7fea88d7ebaa4d3cbf1f3e8c1e6e.png" alt="E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt." />
-</div></p><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2" />,
-not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> which is sometimes used.</p>
+<p><img src="../_images/math/7ab31be32e0d7fea88d7ebaa4d3cbf1f3e8c1e6e.png" alt="E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt." /></p>
+</div><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2"/>,
+not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> which is sometimes used.</p>
 <p>Alternatively, in terms of a hypergeometric function,
 we have:</p>
 <div class="math">
-<p><img src="../_images/math/8c37ea3e690ae090f5b00c4899ec390615d5b001.png" alt="E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)" />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/8c37ea3e690ae090f5b00c4899ec390615d5b001.png" alt="E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)" /></p>
+</div><p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -348,7 +348,7 @@ representation:</p>
 <span class="go">1.350643881047675502520175</span>
 </pre></div>
 </div>
-<p>Evaluation is supported for arbitrary complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />:</p>
+<p>Evaluation is supported for arbitrary complex <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ellipe</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">0.25</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.360868682163129682716687 - 0.1238733442561786843557315j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ellipe</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
@@ -370,9 +370,9 @@ representation:</p>
 <h3><tt class="xref docutils literal"><span class="pre">jtheta()</span></tt><a class="headerlink" href="#jtheta" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.jtheta">
-<!--[mpmath.jtheta]--><tt class="descclassname">mpmath.</tt><tt class="descname">jtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.jtheta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Jacobi theta function <img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" />, where
-<img class="math" src="../_images/math/2ccb96c3451d351085035d873b42734c582c37c6.png" alt="n = 1, 2, 3, 4" />, defined by the infinite series:</p>
+<tt class="descclassname">mpmath.</tt><tt class="descname">jtheta</tt><big>(</big><em>n</em>, <em>z</em>, <em>q</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.jtheta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Jacobi theta function <img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)"/>, where
+<img class="math" src="../_images/math/2ccb96c3451d351085035d873b42734c582c37c6.png" alt="n = 1, 2, 3, 4"/>, defined by the infinite series:</p>
 <div class="math">
 <p><img src="../_images/math/1d6462a4086bcc70c1df40c08d404d346f144106.png" alt="\vartheta_1(z,q) = 2 q^{1/4} \sum_{n=0}^{\infty}
   (-1)^n q^{n^2+n\,} \sin((2n+1)z)
@@ -384,24 +384,24 @@ representation:</p>
   q^{n^2\,} \cos(2 n z)
 
 \vartheta_4(z,q) = 1 + 2 \sum_{n=1}^{\infty}
-  (-q)^{n^2\,} \cos(2 n z)" />
-</div></p><p>The theta functions are functions of two variables:</p>
+  (-q)^{n^2\,} \cos(2 n z)" /></p>
+</div><p>The theta functions are functions of two variables:</p>
 <ul class="simple">
-<li><img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> is the <em>argument</em>, an arbitrary real or complex number</li>
-<li><img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" /> is the <em>nome</em>, which must be a real or complex number
-in the unit disk (i.e. <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1" />). For <img class="math" src="../_images/math/90857d9871b7c3fa3da5e460b4dcf28e15010383.png" alt="|q| \ll 1" />, the
+<li><img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> is the <em>argument</em>, an arbitrary real or complex number</li>
+<li><img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/> is the <em>nome</em>, which must be a real or complex number
+in the unit disk (i.e. <img class="math" src="../_images/math/1ac3bec0deb1b3d8164b2938edd7bb85d132b005.png" alt="|q| &lt; 1"/>). For <img class="math" src="../_images/math/90857d9871b7c3fa3da5e460b4dcf28e15010383.png" alt="|q| \ll 1"/>, the
 series converge very quickly, so the Jacobi theta functions
 can efficiently be evaluated to high precision.</li>
 </ul>
-<p>The compact notations <img class="math" src="../_images/math/31facbaea3148747a34c271634f575a0b8f375d6.png" alt="\vartheta_n(q) = \vartheta_n(0,q)" />
-and <img class="math" src="../_images/math/3b667cd19acc01190a00fd75c54ae6c7dac96149.png" alt="\vartheta_n = \vartheta_n(0,q)" /> are also frequently
+<p>The compact notations <img class="math" src="../_images/math/31facbaea3148747a34c271634f575a0b8f375d6.png" alt="\vartheta_n(q) = \vartheta_n(0,q)"/>
+and <img class="math" src="../_images/math/3b667cd19acc01190a00fd75c54ae6c7dac96149.png" alt="\vartheta_n = \vartheta_n(0,q)"/> are also frequently
 encountered. Finally, Jacobi theta functions are frequently
-considered as functions of the half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />
-and then usually denoted by <img class="math" src="../_images/math/8504614f9cdc6601ddec06319e3750c7fa1ed274.png" alt="\vartheta_n(z|\tau)" />.</p>
-<p>Optionally, <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">z,</span> <span class="pre">q,</span> <span class="pre">derivative=d)</span></tt> with <img class="math" src="../_images/math/a0224701c4b2abd86b0caed6287a52296cfa468e.png" alt="d &gt; 0" /> computes
-a <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d" />-th derivative with respect to <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />.</p>
+considered as functions of the half-period ratio <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/>
+and then usually denoted by <img class="math" src="../_images/math/8504614f9cdc6601ddec06319e3750c7fa1ed274.png" alt="\vartheta_n(z|\tau)"/>.</p>
+<p>Optionally, <tt class="docutils literal"><span class="pre">jtheta(n,</span> <span class="pre">z,</span> <span class="pre">q,</span> <span class="pre">derivative=d)</span></tt> with <img class="math" src="../_images/math/a0224701c4b2abd86b0caed6287a52296cfa468e.png" alt="d &gt; 0"/> computes
+a <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d"/>-th derivative with respect to <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>.</p>
 <p><strong>Examples and basic properties</strong></p>
-<p>Considered as functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />, the Jacobi theta functions may be
+<p>Considered as functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, the Jacobi theta functions may be
 viewed as generalizations of the ordinary trigonometric functions
 cos and sin. They are periodic functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -421,8 +421,8 @@ using <tt class="xref docutils literal"><span class="pre">fourier()</span></tt>:
 </pre></div>
 </div>
 <p>The Jacobi theta functions are also so-called quasiperiodic
-functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> and <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />, meaning that for fixed <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" />,
-<img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)" /> and <img class="math" src="../_images/math/8033b3c805ad08f4434c5ce0f3a1e63e8e319a8d.png" alt="\vartheta_n(z+\pi \tau, q)" /> are the same
+functions of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> and <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/>, meaning that for fixed <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/>,
+<img class="math" src="../_images/math/c3cf9a7b93535d07185603a625973776a711146a.png" alt="\vartheta_n(z, q)"/> and <img class="math" src="../_images/math/8033b3c805ad08f4434c5ce0f3a1e63e8e319a8d.png" alt="\vartheta_n(z+\pi \tau, q)"/> are the same
 except for an exponential factor:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">3</span><span class="o">*</span><span class="n">j</span><span class="o">/</span><span class="mf">10</span>
@@ -436,7 +436,7 @@ except for an exponential factor:</p>
 </div>
 <p>The Jacobi theta functions satisfy a huge number of other
 functional equations, such as the following identity (valid for
-any <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q" />):</p>
+any <img class="math" src="../_images/math/0615acc3725de21025457e7d6f7694dab8e2f758.png" alt="q"/>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span>
 <span class="go">6.823744089352763305137427</span>
@@ -493,9 +493,9 @@ arguments:</p>
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p>For <img class="math" src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1" /> or <img class="math" src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0" />, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
-<tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised for <img class="math" src="../_images/math/f3e0d75c3450ca8f389d08d904ed1fc695734539.png" alt="|q|" /> extremely
-close to 1 (or equivalently <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> very close to 0), since the
+<p>For <img class="math" src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1"/> or <img class="math" src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0"/>, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
+<tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised for <img class="math" src="../_images/math/f3e0d75c3450ca8f389d08d904ed1fc695734539.png" alt="|q|"/> extremely
+close to 1 (or equivalently <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/> very close to 0), since the
 series would converge too slowly:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">,</span> <span class="mf">0.99999999</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">j</span><span class="p">))</span>
 <span class="gt">Traceback (most recent call last):</span>
@@ -513,7 +513,7 @@ series would converge too slowly:</p>
 <h3><tt class="xref docutils literal"><span class="pre">ellipfun()</span></tt><a class="headerlink" href="#ellipfun" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ellipfun">
-<!--[mpmath.ellipfun]--><tt class="descclassname">mpmath.</tt><tt class="descname">ellipfun</tt><big>(</big><em>kind</em>, <em>u=None</em>, <em>m=None</em>, <em>q=None</em>, <em>k=None</em>, <em>tau=None</em><big>)</big><a class="headerlink" href="#mpmath.ellipfun" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">ellipfun</tt><big>(</big><em>kind</em>, <em>u=None</em>, <em>m=None</em>, <em>q=None</em>, <em>k=None</em>, <em>tau=None</em><big>)</big><a class="headerlink" href="#mpmath.ellipfun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes any of the Jacobi elliptic functions, defined
 in terms of Jacobi theta functions as</p>
 <div class="math">
@@ -524,24 +524,24 @@ in terms of Jacobi theta functions as</p>
     \frac{\vartheta_2(t,q)}{\vartheta_4(t,q)}
 
 \mathrm{dn}(u,m) = \frac{\vartheta_4(0,q)}{\vartheta_3(0,q)}
-    \frac{\vartheta_3(t,q)}{\vartheta_4(t,q)}," />
-</div></p><p>or more generally computes a ratio of two such functions. Here
-<img class="math" src="../_images/math/ddc26af4580eedb32c3ceb081d263eac3333d4f6.png" alt="t = u/\vartheta_3(0,q)^2" />, and <img class="math" src="../_images/math/f43979d77d5a097ee3837758752d428a0e6af2e9.png" alt="q = q(m)" /> denotes the nome (see
+    \frac{\vartheta_3(t,q)}{\vartheta_4(t,q)}," /></p>
+</div><p>or more generally computes a ratio of two such functions. Here
+<img class="math" src="../_images/math/ddc26af4580eedb32c3ceb081d263eac3333d4f6.png" alt="t = u/\vartheta_3(0,q)^2"/>, and <img class="math" src="../_images/math/f43979d77d5a097ee3837758752d428a0e6af2e9.png" alt="q = q(m)"/> denotes the nome (see
 <tt class="xref docutils literal"><span class="pre">nome()</span></tt>). Optionally, you can specify the nome directly
-instead of <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" /> by passing <tt class="docutils literal"><span class="pre">q=&lt;value&gt;</span></tt>, or you can directly
-specify the elliptic parameter <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k" /> with <tt class="docutils literal"><span class="pre">k=&lt;value&gt;</span></tt>.</p>
+instead of <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> by passing <tt class="docutils literal"><span class="pre">q=&lt;value&gt;</span></tt>, or you can directly
+specify the elliptic parameter <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> with <tt class="docutils literal"><span class="pre">k=&lt;value&gt;</span></tt>.</p>
 <p>The first argument should be a two-character string specifying the
 function using any combination of <tt class="docutils literal"><span class="pre">'s'</span></tt>, <tt class="docutils literal"><span class="pre">'c'</span></tt>, <tt class="docutils literal"><span class="pre">'d'</span></tt>, <tt class="docutils literal"><span class="pre">'n'</span></tt>. These
 letters respectively denote the basic functions
-<img class="math" src="../_images/math/9ff6cec40b3994b7b3ef044b7afc2ac53c30d948.png" alt="\mathrm{sn}(u,m)" />, <img class="math" src="../_images/math/a77093951daa4f61fe9ba30ef262144435796f5b.png" alt="\mathrm{cn}(u,m)" />, <img class="math" src="../_images/math/c1b9eaa599398f0f645821e088b51b880cc0b13c.png" alt="\mathrm{dn}(u,m)" />, and <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1" />.
+<img class="math" src="../_images/math/9ff6cec40b3994b7b3ef044b7afc2ac53c30d948.png" alt="\mathrm{sn}(u,m)"/>, <img class="math" src="../_images/math/a77093951daa4f61fe9ba30ef262144435796f5b.png" alt="\mathrm{cn}(u,m)"/>, <img class="math" src="../_images/math/c1b9eaa599398f0f645821e088b51b880cc0b13c.png" alt="\mathrm{dn}(u,m)"/>, and <img class="math" src="../_images/math/dce34f4dfb2406144304ad0d6106c5382ddd1446.png" alt="1"/>.
 The identifier specifies the ratio of two such functions.
 For example, <tt class="docutils literal"><span class="pre">'ns'</span></tt> identifies the function</p>
 <div class="math">
-<p><img src="../_images/math/1364d2acd9a7ab094fbd4a19a353581deb5a2e44.png" alt="\mathrm{ns}(u,m) = \frac{1}{\mathrm{sn}(u,m)}" />
-</div></p><p>and <tt class="docutils literal"><span class="pre">'cd'</span></tt> identifies the function</p>
+<p><img src="../_images/math/1364d2acd9a7ab094fbd4a19a353581deb5a2e44.png" alt="\mathrm{ns}(u,m) = \frac{1}{\mathrm{sn}(u,m)}" /></p>
+</div><p>and <tt class="docutils literal"><span class="pre">'cd'</span></tt> identifies the function</p>
 <div class="math">
-<p><img src="../_images/math/71fd80ce68755eb1585a0ba0ae6d908f2689047f.png" alt="\mathrm{cd}(u,m) = \frac{\mathrm{cn}(u,m)}{\mathrm{dn}(u,m)}." />
-</div></p><p>If called with only the first argument, a function object
+<p><img src="../_images/math/71fd80ce68755eb1585a0ba0ae6d908f2689047f.png" alt="\mathrm{cd}(u,m) = \frac{\mathrm{cn}(u,m)}{\mathrm{dn}(u,m)}." /></p>
+</div><p>If called with only the first argument, a function object
 evaluating the chosen function for given arguments is returned.</p>
 <p><strong>Examples</strong></p>
 <p>Basic evaluation:</p>
@@ -554,7 +554,7 @@ evaluating the chosen function for given arguments is returned.</p>
 </pre></div>
 </div>
 <p>The sn-function is doubly periodic in the complex plane with periods
-<img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)" /> and <img class="math" src="../_images/math/61df763bbb98a23963bd7678ac9a2449d93cb9d8.png" alt="2 i K(1-m)" /> (see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
+<img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)"/> and <img class="math" src="../_images/math/61df763bbb98a23963bd7678ac9a2449d93cb9d8.png" alt="2 i K(1-m)"/> (see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span> <span class="o">=</span> <span class="n">ellipfun</span><span class="p">(</span><span class="s">&#39;sn&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
 <span class="go">0.9628981775982774425751399</span>
@@ -564,7 +564,7 @@ evaluating the chosen function for given arguments is returned.</p>
 <span class="go">0.9628981775982774425751399</span>
 </pre></div>
 </div>
-<p>The cn-function is doubly periodic with periods <img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)" /> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)" />:</p>
+<p>The cn-function is doubly periodic with periods <img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)"/> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cn</span> <span class="o">=</span> <span class="n">ellipfun</span><span class="p">(</span><span class="s">&#39;cn&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
 <span class="go">-0.2698649654510865792581416</span>
@@ -574,7 +574,7 @@ evaluating the chosen function for given arguments is returned.</p>
 <span class="go">-0.2698649654510865792581416</span>
 </pre></div>
 </div>
-<p>The dn-function is doubly periodic with periods <img class="math" src="../_images/math/19581a1a0b61aa8752b5fc45e389f124d430cdeb.png" alt="2 K(m)" /> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)" />:</p>
+<p>The dn-function is doubly periodic with periods <img class="math" src="../_images/math/19581a1a0b61aa8752b5fc45e389f124d430cdeb.png" alt="2 K(m)"/> and <img class="math" src="../_images/math/97c78b4046b5cc8c8e69da51ed3a0bb91e5c66e1.png" alt="4 i K(1-m)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dn</span> <span class="o">=</span> <span class="n">ellipfun</span><span class="p">(</span><span class="s">&#39;dn&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
 <span class="go">0.8764740583123262286931578</span>
@@ -594,21 +594,21 @@ evaluating the chosen function for given arguments is returned.</p>
 <h3><tt class="xref docutils literal"><span class="pre">kleinj()</span></tt><a class="headerlink" href="#kleinj" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.kleinj">
-<!--[mpmath.kleinj]--><tt class="descclassname">mpmath.</tt><tt class="descname">kleinj</tt><big>(</big><em>tau=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kleinj" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">kleinj</tt><big>(</big><em>tau=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kleinj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Klein j-invariant, which is a modular function defined for
-<img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau" /> in the upper half-plane as</p>
+<img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/> in the upper half-plane as</p>
 <div class="math">
-<p><img src="../_images/math/d356bb7eb198ba53c25f1b335f1cd41b3b965e77.png" alt="J(\tau) = \frac{g_2^3(\tau)}{g_2^3(\tau) - 27 g_3^2(\tau)}" />
-</div></p><p>where <img class="math" src="../_images/math/a6053907b455e0ef20a366e07f007ac4fc0eb002.png" alt="g_2" /> and <img class="math" src="../_images/math/c40081c7061430d2ce8156fd4073dbedaee3ad36.png" alt="g_3" /> are the modular invariants of the Weierstrass
+<p><img src="../_images/math/d356bb7eb198ba53c25f1b335f1cd41b3b965e77.png" alt="J(\tau) = \frac{g_2^3(\tau)}{g_2^3(\tau) - 27 g_3^2(\tau)}" /></p>
+</div><p>where <img class="math" src="../_images/math/a6053907b455e0ef20a366e07f007ac4fc0eb002.png" alt="g_2"/> and <img class="math" src="../_images/math/c40081c7061430d2ce8156fd4073dbedaee3ad36.png" alt="g_3"/> are the modular invariants of the Weierstrass
 elliptic function,</p>
 <div class="math">
 <p><img src="../_images/math/a5367db3d178d46f1927197378b78c49ab0fc8ba.png" alt="g_2(\tau) = 60 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-4}
 
-g_3(\tau) = 140 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-6}." />
-</div></p><p>An alternative, common notation is that of the j-function
-<img class="math" src="../_images/math/0e9150aee4bd61b1224ab7d9482f1889f5a71803.png" alt="j(\tau) = 1728 J(\tau)" />.</p>
+g_3(\tau) = 140 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-6}." /></p>
+</div><p>An alternative, common notation is that of the j-function
+<img class="math" src="../_images/math/0e9150aee4bd61b1224ab7d9482f1889f5a71803.png" alt="j(\tau) = 1728 J(\tau)"/>.</p>
 <p><strong>Examples</strong></p>
-<p>Verifying the functional equation <img class="math" src="../_images/math/5e35bfbbf1629282b4f88402550c537ff5f362d8.png" alt="J(\tau) = J(\tau+1) = J(-\tau^{-1})" />:</p>
+<p>Verifying the functional equation <img class="math" src="../_images/math/5e35bfbbf1629282b4f88402550c537ff5f362d8.png" alt="J(\tau) = J(\tau+1) = J(-\tau^{-1})"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">0.625</span><span class="o">+</span><span class="mf">0.75</span><span class="o">*</span><span class="n">j</span>
@@ -622,7 +622,7 @@ g_3(\tau) = 140 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-6}." 
 </pre></div>
 </div>
 <p>The j-function has a famous Laurent series expansion in terms of the nome
-<img class="math" src="../_images/math/bf527e68a0e92e9bce3a32ca38e006f145e0da19.png" alt="\bar{q}" />, <img class="math" src="../_images/math/faa281e95775b6d3a4eb51c27dd2626503f54f26.png" alt="j(\tau) = \bar{q}^{-1} + 744 + 196884\bar{q} + \ldots" />:</p>
+<img class="math" src="../_images/math/bf527e68a0e92e9bce3a32ca38e006f145e0da19.png" alt="\bar{q}"/>, <img class="math" src="../_images/math/faa281e95775b6d3a4eb51c27dd2626503f54f26.png" alt="j(\tau) = \bar{q}^{-1} + 744 + 196884\bar{q} + \ldots"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="mf">1728</span><span class="o">*</span><span class="n">q</span><span class="o">*</span><span class="n">kleinj</span><span class="p">(</span><span class="n">qbar</span><span class="o">=</span><span class="n">q</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="n">singular</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">[1.0, 744.0, 196884.0, 21493760.0, 864299970.0, 20245856256.0]</span>
@@ -676,7 +676,7 @@ algebraic values, e.g.:</p>
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Elliptic functions</a><ul>
+<li><a class="reference external" href="#">Elliptic functions</a><ul>
 <li><a class="reference external" href="#elliptic-arguments">Elliptic arguments</a><ul>
 <li><a class="reference external" href="#qfrom"><tt class="docutils literal"><span class="pre">qfrom()</span></tt></a></li>
 <li><a class="reference external" href="#qbarfrom"><tt class="docutils literal"><span class="pre">qbarfrom()</span></tt></a></li>
@@ -707,19 +707,29 @@ algebraic values, e.g.:</p>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="hypergeometric.html" title="previous chapter">Hypergeometric functions</a></p>
+            <p class="topless"><a href="hypergeometric.html"
+                                  title="previous chapter">Hypergeometric functions</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="zeta.html" title="next chapter">Zeta functions, L-series and polylogarithms</a></p>
+            <p class="topless"><a href="zeta.html"
+                                  title="next chapter">Zeta functions, L-series and polylogarithms</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/elliptic.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/elliptic.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -729,24 +739,35 @@ algebraic values, e.g.:</p>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="zeta.html" title="Zeta functions, L-series and polylogarithms"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="hypergeometric.html" title="Hypergeometric functions"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -8,7 +10,7 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    '#',
         VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
@@ -17,10 +19,8 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
-    <link rel="prev" title="Technical details" href="technical.html" /> 
+    <link rel="prev" title="Technical information" href="technical.html" /> 
   </head>
   <body>
     <div class="related">
@@ -33,43 +33,126 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="technical.html" title="Technical details"
+          <a href="technical.html" title="Technical information"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="references">
 <h1>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h1>
+<p>The following is a non-comprehensive list of works used in the development of mpmath
+or cited for examples or mathematical definitions used in this documentation.
+References not listed here can be found in the source code.</p>
 <table class="docutils citation" frame="void" id="abramowitzstegun" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[AbramowitzStegun]</td><td>Abramowitz &amp; Stegun. <em>Handbook of Mathematical Functions, 9th Ed.</em>,
-(Dover duplicate of 1972 edition)</td></tr>
+<tr><td class="label">[AbramowitzStegun]</td><td>M Abramowitz &amp; I Stegun. <em>Handbook of Mathematical Functions, 9th Ed.</em>, Tenth Printing, December 1972, with corrections (electronic copy: <a class="reference external" href="http://www.math.ucla.edu/~cbm/aands/">http://www.math.ucla.edu/~cbm/aands/</a>)</td></tr>
 </tbody>
 </table>
-<table class="docutils citation" frame="void" id="whittakerwatson" rules="none">
+<table class="docutils citation" frame="void" id="bailey" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[WhittakerWatson]</td><td>Whittaker &amp; Watson. <em>A Course of Modern Analysis</em>. 4th Ed. 1946
-Cambridge University Press</td></tr>
+<tr><td class="label">[Bailey]</td><td>D H Bailey. &#8220;Tanh-Sinh High-Precision Quadrature&#8221;, <a class="reference external" href="http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf">http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="benderorszag" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BenderOrszag]</td><td>C M Bender &amp; S A Orszag. <em>Advanced Mathematical Methods for
+Scientists and Engineers</em>, Springer 1999</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="borweinbailey" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BorweinBailey]</td><td>J Borwein, D H Bailey &amp; R Girgensohn. <em>Experimentation in Mathematics - Computational Paths to Discovery</em>, A K Peters, 2003</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="borweinborwein" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BorweinBorwein]</td><td>J Borwein &amp; P B Borwein. <em>Pi and the AGM: A Study in Analytic Number Theory and Computational Complexity</em>, Wiley 1987</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="borweinzeta" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[BorweinZeta]</td><td>P Borwein. &#8220;An Efficient Algorithm for the Riemann Zeta Function&#8221;, <a class="reference external" href="http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps">http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="cabralrosetti" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[CabralRosetti]</td><td>L G Cabral-Rosetti &amp; M A Sanchis-Lozano. &#8220;Appell Functions and the Scalar One-Loop Three-point Integrals in Feynman Diagrams&#8221;. <a class="reference external" href="http://arxiv.org/abs/hep-ph/0206081">http://arxiv.org/abs/hep-ph/0206081</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="gravesmorris" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[GravesMorris]</td><td>P R Graves-Morris, D E Roberts &amp; A Salam. &#8220;The epsilon
+algorithm and related topics&#8221;, <em>Journal of Computational and
+Applied Mathematics</em>, Volume 122, Issue 1-2  (October 2000)</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="mpfr" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[MPFR]</td><td>The MPFR team. &#8220;The MPFR Library: Algorithms and Proofs&#8221;, <a class="reference external" href="http://www.mpfr.org/algorithms.pdf">http://www.mpfr.org/algorithms.pdf</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="slater" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Slater]</td><td>Slater, L. J. <em>Generalized Hypergeometric Functions</em>. Cambridge University Press, 1966</td></tr>
+<tr><td class="label">[Slater]</td><td>L J Slater. <em>Generalized Hypergeometric Functions</em>. Cambridge University Press, 1966</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="spouge" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Spouge]</td><td>J L Spouge. &#8220;Computation of the gamma, digamma, and trigamma functions&#8221;, SIAM J. Numer. Anal. Vol. 31, No. 3, pp. 931-944, June 1994.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="srivastavakarlsson" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[SrivastavaKarlsson]</td><td>H M Srivastava &amp; P W Karlsson. <em>Multiple Gaussian Hypergeometric Series</em>. Ellis Horwood, 1985.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="vidunas" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Vidunas]</td><td>R Vidunas. &#8220;Identities between Appell&#8217;s and hypergeometric functions&#8221;. <a class="reference external" href="http://arxiv.org/abs/0804.0655">http://arxiv.org/abs/0804.0655</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="weisstein" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Weisstein]</td><td>E W Weisstein. <em>MathWorld</em>. <a class="reference external" href="http://mathworld.wolfram.com/">http://mathworld.wolfram.com/</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="whittakerwatson" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[WhittakerWatson]</td><td>E T Whittaker &amp; G N Watson. <em>A Course of Modern Analysis</em>. 4th Ed. 1946
+Cambridge University Press</td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="wikipedia" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[Wikipedia]</td><td><a class="reference external" href="http://en.wikipedia.org">http://en.wikipedia.org</a></td></tr>
+<tr><td class="label">[Wikipedia]</td><td><em>Wikipedia, the free encyclopedia</em>. <a class="reference external" href="http://en.wikipedia.org">http://en.wikipedia.org</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="wolframfunctions" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[WolframFunctions]</td><td>Wolfram Research, Inc. <em>The Wolfram Functions Site</em>. <a class="reference external" href="http://functions.wolfram.com/">http://functions.wolfram.com/</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -81,17 +164,26 @@ Cambridge University Press</td></tr>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <h4>Previous topic</h4>
-            <p class="topless"><a href="technical.html" title="previous chapter">Technical details</a></p>
+            <p class="topless"><a href="technical.html"
+                                  title="previous chapter">Technical information</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/references.txt">Show Source</a></li>
+              <li><a href="_sources/references.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -101,20 +193,31 @@ Cambridge University Press</td></tr>
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
-          <a href="technical.html" title="Technical details"
-             accesskey="P">previous</a> |</li>
+          <a href="technical.html" title="Technical information"
+             >previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

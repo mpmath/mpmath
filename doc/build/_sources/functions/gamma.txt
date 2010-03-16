@@ -28,6 +28,10 @@ Gamma function
 ^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.gamma(x, **kwargs)
 
+:func:`rgamma`
+^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.rgamma(x, **kwargs)
+
 :func:`gammaprod`
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.gammaprod(a, b)

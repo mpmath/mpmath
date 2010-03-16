@@ -16,6 +16,7 @@ Contents:
 
    setup.txt
    basics.txt
+   general.txt
    functions/index.txt
    calculus/index.txt
    intervals.txt

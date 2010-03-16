@@ -1,14 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Technical details &mdash; mpmath v0.15-svn documentation</title>
+    <title>Technical information &mdash; mpmath v0.15-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    '#',
         VERSION:     '0.15-svn',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
     <link rel="next" title="References" href="references.html" />
     <link rel="prev" title="Number identification" href="identification.html" /> 
@@ -42,18 +42,18 @@
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
-  <div class="section" id="technical-details">
-<h1>Technical details<a class="headerlink" href="#technical-details" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="technical-information">
+<h1>Technical information<a class="headerlink" href="#technical-information" title="Permalink to this headline">¶</a></h1>
 <p>Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some more details of mpmath&#8217;s terminology and internal number model can be useful to avoid common errors, and is recommended for trying more advanced calculations.</p>
 <div class="section" id="representation-of-numbers">
 <h2>Representation of numbers<a class="headerlink" href="#representation-of-numbers" title="Permalink to this headline">¶</a></h2>
-<p>Mpmath uses binary arithmetic. A binary floating-point number is a number of the form <tt class="docutils literal"><span class="pre">man</span> <span class="pre">*</span> <span class="pre">2^exp</span></tt> where both <tt class="docutils literal"><span class="pre">man</span></tt> (the <em>mantissa</em>) and <tt class="docutils literal"><span class="pre">exp</span></tt> (the <em>exponent</em>) are integers. Some examples of floating-point numbers are given in the following table.</p>
+<p>Mpmath uses binary arithmetic. A binary floating-point number is a number of the form <img class="math" src="_images/math/d94ac6e37dab3f88d122b45d857b89a589b4ef30.png" alt="man \times 2^{exp}"/> where both <em>man</em> (the <em>mantissa</em>) and <em>exp</em> (the <em>exponent</em>) are integers. Some examples of floating-point numbers are given in the following table.</p>
 <blockquote>
 <table border="1" class="docutils">
 <colgroup>
@@ -87,11 +87,11 @@
 </tbody>
 </table>
 </blockquote>
-<p>The representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that <tt class="docutils literal"><span class="pre">man</span></tt> is an odd number, with the exception of zero which is always taken to have <tt class="docutils literal"><span class="pre">man</span> <span class="pre">=</span> <span class="pre">exp</span> <span class="pre">=</span> <span class="pre">0</span></tt>. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)</p>
-<p>Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: (m*2^e) * (n*2^f) = (m*n) * 2^(e+f). Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.</p>
-<p>More technically, mpmath represents a floating-point number as a 4-tuple <tt class="docutils literal"><span class="pre">(sign,</span> <span class="pre">man,</span> <span class="pre">exp,</span> <span class="pre">bc)</span></tt> where <img class="math" src="_images/math/aa1cc54f7e3278ef2cfec9886514fa54fcb0b766.png" alt="sign" /> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <tt class="docutils literal"><span class="pre">bc</span></tt> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
+<p>The representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that <em>man</em> is an odd number, with the exception of zero which is always taken to have <em>man = exp = 0</em>. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)</p>
+<p>Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: <img class="math" src="_images/math/62544c4955e98bd894d847642366cef36f2c8582.png" alt="(m 2^e) \times (n 2^f) = (m n) \times 2^{e+f}"/>. Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.</p>
+<p>More technically, mpmath represents a floating-point number as a 4-tuple <em>(sign, man, exp, bc)</em> where <em>sign</em> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <em>bc</em> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
 <p>The special numbers <tt class="docutils literal"><span class="pre">+inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> are represented internally by a zero mantissa and a nonzero exponent.</p>
-<p>For further details on how the arithmetic is implemented, refer to the mpmath source code. The basic arithmetic operations are found in the <tt class="docutils literal"><span class="pre">lib.py</span></tt> module; many functions there are commented extensively.</p>
+<p>For further details on how the arithmetic is implemented, refer to the mpmath source code. The basic arithmetic operations are found in the <tt class="docutils literal"><span class="pre">libmp</span></tt> directory; many functions there are commented extensively.</p>
 </div>
 <div class="section" id="precision-and-accuracy">
 <h2>Precision and accuracy<a class="headerlink" href="#precision-and-accuracy" title="Permalink to this headline">¶</a></h2>
@@ -166,13 +166,13 @@
 <p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method. Directed rounding is currently only available via interval arithmetic or via the interface in the <tt class="docutils literal"><span class="pre">libmpf</span></tt> module.</p>
 <p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> and <tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don&#8217;t round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
 <p>Evaluation of transcendental functions is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
-<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than <img class="math" src="_images/math/7154f5f73a687b60aeca86cfdbe58239c25b97bc.png" alt="10^{-100}" /> and smaller than <img class="math" src="_images/math/97b41aee75eee4f322b88a22ab66cf7565f94e27.png" alt="10^{100}" />), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
+<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than <img class="math" src="_images/math/7154f5f73a687b60aeca86cfdbe58239c25b97bc.png" alt="10^{-100}"/> and smaller than <img class="math" src="_images/math/97b41aee75eee4f322b88a22ab66cf7565f94e27.png" alt="10^{100}"/>), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
 <p>When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0&#8217;s and 9&#8217;s, and finally rounds to nearest, rounding up (away from zero) on a tie. The <tt class="docutils literal"><span class="pre">decimal</span></tt> library could be used to provide more control over the rounding in the binary-to-decimal conversion, and mpmath did do radix conversions via <tt class="docutils literal"><span class="pre">decimal</span></tt> in older versions, but this was far too slow compared to using a custom algorithm.</p>
 </div>
 <div class="section" id="exponent-range">
 <h2>Exponent range<a class="headerlink" href="#exponent-range" title="Permalink to this headline">¶</a></h2>
-<p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly <img class="math" src="_images/math/20aff77c46a0bdeea25af0edb85fdff922923b94.png" alt="10^{-300}" /> and <img class="math" src="_images/math/7aa5f707dadd9b22c982bdab9dae7f5a7891af81.png" alt="10^{300}" />. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory.</p>
-<p>Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of <img class="math" src="_images/math/bfc92368b446ad26b9b4718f0042e9893cea1fb8.png" alt="10^{100000}" />. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
+<p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly <img class="math" src="_images/math/20aff77c46a0bdeea25af0edb85fdff922923b94.png" alt="10^{-300}"/> and <img class="math" src="_images/math/7aa5f707dadd9b22c982bdab9dae7f5a7891af81.png" alt="10^{300}"/>. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory.</p>
+<p>Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of <img class="math" src="_images/math/bfc92368b446ad26b9b4718f0042e9893cea1fb8.png" alt="10^{100000}"/>. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
 <p>In some situations, it might be more convenient if mpmath could &#8220;round&#8221; extremely small numbers to 0 and extremely large numbers to <tt class="docutils literal"><span class="pre">inf</span></tt>, and directly raise an exception or return <tt class="docutils literal"><span class="pre">nan</span></tt> if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.</p>
 </div>
 <div class="section" id="compatibility">
@@ -184,6 +184,27 @@
 <li>Mpmath is able to produce more accurate results for transcendental functions.</li>
 </ul>
 </div>
+<div class="section" id="error-terminology">
+<h2>Error terminology<a class="headerlink" href="#error-terminology" title="Permalink to this headline">¶</a></h2>
+<p>Error is the difference between a computed value and the exact result;
+accuracy is the inverse of error. The error is usually measured
+directly, in bits, or in digits. Specifically, if a <img class="math" src="_images/math/4146abdd0eafdf22247980a62b9c03d69aab792b.png" alt="\hat y"/> is
+an approximation for <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, then</p>
+<ul class="simple">
+<li>Absolute error = <img class="math" src="_images/math/b0ae1c682a1269ef38013b6ecadb45a1eaf14860.png" alt="|\hat y - y|"/></li>
+<li>Relative error = <img class="math" src="_images/math/ac0ec1afa8ea63f716d8494fb798d14b46781e03.png" alt="|\hat y - y| |y|^{-1}"/></li>
+<li>Absolute accuracy = <img class="math" src="_images/math/78f9d885f2388c4798e4552a28c35ff979cfda95.png" alt="|\hat y - y|^{-1}"/></li>
+<li>Relative accuracy = <img class="math" src="_images/math/42577c887d8b186afc2c09a18fb6adfa01b0b0bf.png" alt="|\hat y - y|^{-1} |y|"/></li>
+</ul>
+<p>Or, logarithmically:</p>
+<ul class="simple">
+<li>Absolute error = <img class="math" src="_images/math/3838c87350e2fbefc9da6603b8b1b07981814597.png" alt="\log_b |\hat y - y|"/></li>
+<li>Relative error = <img class="math" src="_images/math/d016ad360cfebbb437b66aabd96ca53e503a545c.png" alt="\log_b |\hat y - y| - \log_b |y|"/></li>
+<li>Absolute accuracy = <img class="math" src="_images/math/1a9d2c0cf96714f1432b78b7ed0a964dc9f913c1.png" alt="-\log_b |\hat y - y|"/></li>
+<li>Relative accuracy = <img class="math" src="_images/math/a4f64a102525e38195b041019dd4520c72efa5b1.png" alt="-\log_b |\hat y - y| + \log_b |y|"/></li>
+</ul>
+<p>where <img class="math" src="_images/math/197213da9d06b2c5b59a10ad17f6a4aeb43d6697.png" alt="b = 2"/> and <img class="math" src="_images/math/a7203b7e6f070ba402b9cd45dee2bfc125164fd4.png" alt="b = 10"/> for bits and digits respectively.</p>
+</div>
 </div>
 
 
@@ -194,7 +215,7 @@
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Technical details</a><ul>
+<li><a class="reference external" href="#">Technical information</a><ul>
 <li><a class="reference external" href="#representation-of-numbers">Representation of numbers</a></li>
 <li><a class="reference external" href="#precision-and-accuracy">Precision and accuracy</a><ul>
 <li><a class="reference external" href="#decimal-issues">Decimal issues</a></li>
@@ -203,24 +224,35 @@
 <li><a class="reference external" href="#rounding">Rounding</a></li>
 <li><a class="reference external" href="#exponent-range">Exponent range</a></li>
 <li><a class="reference external" href="#compatibility">Compatibility</a></li>
+<li><a class="reference external" href="#error-terminology">Error terminology</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="identification.html" title="previous chapter">Number identification</a></p>
+            <p class="topless"><a href="identification.html"
+                                  title="previous chapter">Number identification</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="references.html" title="next chapter">References</a></p>
+            <p class="topless"><a href="references.html"
+                                  title="next chapter">References</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="_sources/technical.txt">Show Source</a></li>
+              <li><a href="_sources/technical.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -230,23 +262,34 @@
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="references.html" title="References"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="identification.html" title="Number identification"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>

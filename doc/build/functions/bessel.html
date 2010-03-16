@@ -1,5 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
@@ -17,8 +19,6 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Orthogonal polynomials" href="orthogonal.html" />
@@ -44,12 +44,12 @@
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
+
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
             
-  
   <div class="section" id="bessel-functions-and-related-functions">
 <h1>Bessel functions and related functions<a class="headerlink" href="#bessel-functions-and-related-functions" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="bessel-functions">
@@ -58,28 +58,28 @@
 <h3><tt class="xref docutils literal"><span class="pre">besselj()</span></tt> / <tt class="xref docutils literal"><span class="pre">j0()</span></tt> / <tt class="xref docutils literal"><span class="pre">j1()</span></tt><a class="headerlink" href="#besselj-j0-j1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.besselj">
-<!--[mpmath.besselj]--><tt class="descclassname">mpmath.</tt><tt class="descname">besselj</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.besselj" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">besselj</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.besselj" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">besselj(n,</span> <span class="pre">x,</span> <span class="pre">derivative=0)</span></tt> gives the Bessel function of the first kind
-<img class="math" src="../_images/math/ea647045ebedb7454bd92eccace37cb7cc3860aa.png" alt="J_n(x)" />. Bessel functions of the first kind are defined as
+<img class="math" src="../_images/math/ea647045ebedb7454bd92eccace37cb7cc3860aa.png" alt="J_n(x)"/>. Bessel functions of the first kind are defined as
 solutions of the differential equation</p>
 <div class="math">
-<p><img src="../_images/math/488c15966ba5f720b21f05ac84680a642c8618eb.png" alt="x^2 y'' + x y' + (x^2 - n^2) y = 0" />
-</div></p><p>which appears, among other things, when solving the radial
+<p><img src="../_images/math/488c15966ba5f720b21f05ac84680a642c8618eb.png" alt="x^2 y'' + x y' + (x^2 - n^2) y = 0" /></p>
+</div><p>which appears, among other things, when solving the radial
 part of Laplace&#8217;s equation in cylindrical coordinates. This
-equation has two solutions for given <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, where the
-<img class="math" src="../_images/math/8f1b0885911594adf0ef17ebf948221471a4998c.png" alt="J_n" />-function is the solution that is nonsingular at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />.
-For positive integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, <img class="math" src="../_images/math/ea647045ebedb7454bd92eccace37cb7cc3860aa.png" alt="J_n(x)" /> behaves roughly like a sine
-(odd <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />) or cosine (even <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />) multiplied by a magnitude factor
-that decays slowly as <img class="math" src="../_images/math/29660397659889f0872376af2cc3808491f75e77.png" alt="x \to \pm\infty" />.</p>
-<p>Generally, <img class="math" src="../_images/math/8f1b0885911594adf0ef17ebf948221471a4998c.png" alt="J_n" /> is a special case of the hypergeometric
-function <img class="math" src="../_images/math/6f7286e42826f1679e79de9429560a0d924791f1.png" alt="\,_0F_1" />:</p>
+equation has two solutions for given <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, where the
+<img class="math" src="../_images/math/8f1b0885911594adf0ef17ebf948221471a4998c.png" alt="J_n"/>-function is the solution that is nonsingular at <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/>.
+For positive integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <img class="math" src="../_images/math/ea647045ebedb7454bd92eccace37cb7cc3860aa.png" alt="J_n(x)"/> behaves roughly like a sine
+(odd <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>) or cosine (even <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>) multiplied by a magnitude factor
+that decays slowly as <img class="math" src="../_images/math/29660397659889f0872376af2cc3808491f75e77.png" alt="x \to \pm\infty"/>.</p>
+<p>Generally, <img class="math" src="../_images/math/8f1b0885911594adf0ef17ebf948221471a4998c.png" alt="J_n"/> is a special case of the hypergeometric
+function <img class="math" src="../_images/math/6f7286e42826f1679e79de9429560a0d924791f1.png" alt="\,_0F_1"/>:</p>
 <div class="math">
 <p><img src="../_images/math/c59553c7c68863ac0915a7d3b385d5cad5c41422.png" alt="J_n(x) = \frac{x^n}{2^n \Gamma(n+1)}
-         \,_0F_1\left(n+1,-\frac{x^2}{4}\right)" />
-</div></p><p>With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0" />, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />-th derivative</p>
+         \,_0F_1\left(n+1,-\frac{x^2}{4}\right)" /></p>
+</div><p>With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0"/>, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>-th derivative</p>
 <div class="math">
-<p><img src="../_images/math/567d030c4e0843c5be65fd513a10ba77bb2a2a9d.png" alt="\frac{d^m}{dx^m} J_n(x)" />
-</div></p><p>is computed.</p>
+<p><img src="../_images/math/567d030c4e0843c5be65fd513a10ba77bb2a2a9d.png" alt="\frac{d^m}{dx^m} J_n(x)" /></p>
+</div><p>is computed.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation is supported for arbitrary arguments, and at
 arbitrary precision:</p>
@@ -112,7 +112,7 @@ arbitrary precision:</p>
 </pre></div>
 </div>
 <p>The Bessel functions of the first kind satisfy simple
-symmetries around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" />:</p>
+symmetries around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">besselj</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">)])</span>
 <span class="go">[1.0, 0.0, 0.0, 0.0, 0.0]</span>
@@ -130,7 +130,7 @@ symmetries around <img class="math" src="../_images/math/2d348bde3e15456e71734dc
 </pre></div>
 </div>
 <p>The roots are not periodic, but the distance between successive
-roots asymptotically approaches <img class="math" src="../_images/math/9b9e16f8af4a3f8dd5091648bd482ba311843d25.png" alt="2 \pi" />. Bessel functions of
+roots asymptotically approaches <img class="math" src="../_images/math/9b9e16f8af4a3f8dd5091648bd482ba311843d25.png" alt="2 \pi"/>. Bessel functions of
 the first kind have the following normalization:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">j0</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">period</span><span class="o">=</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.0</span>
@@ -138,7 +138,7 @@ the first kind have the following normalization:</p>
 <span class="go">1.0</span>
 </pre></div>
 </div>
-<p>For <img class="math" src="../_images/math/655abd0f4599d39449ed205b7366d023536bc4b8.png" alt="n = 1/2" /> or <img class="math" src="../_images/math/23496841b8b71cf72681ab8cff52898bf0d3c6f3.png" alt="n = -1/2" />, the Bessel function reduces to a
+<p>For <img class="math" src="../_images/math/655abd0f4599d39449ed205b7366d023536bc4b8.png" alt="n = 1/2"/> or <img class="math" src="../_images/math/23496841b8b71cf72681ab8cff52898bf0d3c6f3.png" alt="n = -1/2"/>, the Bessel function reduces to a
 trigonometric function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">besselj</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -178,30 +178,30 @@ in the sense of the Riemann-Liouville differintegral, as computed by
 
 <dl class="function">
 <dt id="mpmath.j0">
-<!--[mpmath.j0]--><tt class="descclassname">mpmath.</tt><tt class="descname">j0</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.j0" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the Bessel function <img class="math" src="../_images/math/b132af25d497e487a2dc5039ace4083a421e27c2.png" alt="J_0(x)" />. See <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>.</dd></dl>
+<tt class="descclassname">mpmath.</tt><tt class="descname">j0</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.j0" title="Permalink to this definition">¶</a></dt>
+<dd>Computes the Bessel function <img class="math" src="../_images/math/b132af25d497e487a2dc5039ace4083a421e27c2.png" alt="J_0(x)"/>. See <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>.</dd></dl>
 
 <dl class="function">
 <dt id="mpmath.j1">
-<!--[mpmath.j1]--><tt class="descclassname">mpmath.</tt><tt class="descname">j1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.j1" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the Bessel function <img class="math" src="../_images/math/697a8b6212c15dabf7a1bcddae7bd8b28fc3a733.png" alt="J_1(x)" />.  See <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>.</dd></dl>
+<tt class="descclassname">mpmath.</tt><tt class="descname">j1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.j1" title="Permalink to this definition">¶</a></dt>
+<dd>Computes the Bessel function <img class="math" src="../_images/math/697a8b6212c15dabf7a1bcddae7bd8b28fc3a733.png" alt="J_1(x)"/>.  See <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>.</dd></dl>
 
 </div>
 <div class="section" id="bessely">
 <h3><tt class="xref docutils literal"><span class="pre">bessely()</span></tt><a class="headerlink" href="#bessely" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bessely">
-<!--[mpmath.bessely]--><tt class="descclassname">mpmath.</tt><tt class="descname">bessely</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.bessely" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bessely</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.bessely" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">bessely(n,</span> <span class="pre">x,</span> <span class="pre">derivative=0)</span></tt> gives the Bessel function of the second kind,</p>
 <div class="math">
-<p><img src="../_images/math/8ab8d5d6e975d4bfa57aa7bd8ba776b90ccfcc80.png" alt="Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}." />
-</div></p><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> an integer, this formula should be understood as a
-limit. With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0" />, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />-th derivative</p>
+<p><img src="../_images/math/8ab8d5d6e975d4bfa57aa7bd8ba776b90ccfcc80.png" alt="Y_n(x) = \frac{J_n(x) \cos(\pi n) - J_{-n}(x)}{\sin(\pi n)}." /></p>
+</div><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> an integer, this formula should be understood as a
+limit. With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0"/>, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>-th derivative</p>
 <div class="math">
-<p><img src="../_images/math/3e4d9f3b8d33c2d717ce3c0e0fc96b9c328cbd9c.png" alt="\frac{d^m}{dx^m} Y_n(x)" />
-</div></p><p>is computed.</p>
+<p><img src="../_images/math/3e4d9f3b8d33c2d717ce3c0e0fc96b9c328cbd9c.png" alt="\frac{d^m}{dx^m} Y_n(x)" /></p>
+</div><p>is computed.</p>
 <p><strong>Examples</strong></p>
-<p>Some values of <img class="math" src="../_images/math/c02490e6584ade52848d2e75949f467d62b09feb.png" alt="Y_n(x)" />:</p>
+<p>Some values of <img class="math" src="../_images/math/c02490e6584ade52848d2e75949f467d62b09feb.png" alt="Y_n(x)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bessely</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">),</span> <span class="n">bessely</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">),</span> <span class="n">bessely</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
@@ -249,17 +249,17 @@ limit. With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c
 <h3><tt class="xref docutils literal"><span class="pre">besseli()</span></tt><a class="headerlink" href="#besseli" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.besseli">
-<!--[mpmath.besseli]--><tt class="descclassname">mpmath.</tt><tt class="descname">besseli</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.besseli" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">besseli</tt><big>(</big><em>n</em>, <em>x</em>, <em>derivative=0</em><big>)</big><a class="headerlink" href="#mpmath.besseli" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">besseli(n,</span> <span class="pre">x,</span> <span class="pre">derivative=0)</span></tt> gives the modified Bessel function of the
 first kind,</p>
 <div class="math">
-<p><img src="../_images/math/90d56cf187a3844f21ebb24cadefae4606e44f95.png" alt="I_n(x) = i^{-n} J_n(ix)." />
-</div></p><p>With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0" />, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m" />-th derivative</p>
+<p><img src="../_images/math/90d56cf187a3844f21ebb24cadefae4606e44f95.png" alt="I_n(x) = i^{-n} J_n(ix)." /></p>
+</div><p>With <em>derivative</em> = <img class="math" src="../_images/math/12b6f7c7839947d01728cbb9e7d8c78d91f4eff5.png" alt="m \ne 0"/>, the <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>-th derivative</p>
 <div class="math">
-<p><img src="../_images/math/9f949a951cb6c5eb1c11590e3b3fb00ae44b1b03.png" alt="\frac{d^m}{dx^m} I_n(x)" />
-</div></p><p>is computed.</p>
+<p><img src="../_images/math/9f949a951cb6c5eb1c11590e3b3fb00ae44b1b03.png" alt="\frac{d^m}{dx^m} I_n(x)" /></p>
+</div><p>is computed.</p>
 <p><strong>Examples</strong></p>
-<p>Some values of <img class="math" src="../_images/math/4f48b18123c5cde1775959baed7933a17f8d58f7.png" alt="I_n(x)" />:</p>
+<p>Some values of <img class="math" src="../_images/math/4f48b18123c5cde1775959baed7933a17f8d58f7.png" alt="I_n(x)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">besseli</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
@@ -281,7 +281,7 @@ first kind,</p>
 <span class="go">(-2.114650753239580827144204e+2603 + 4.385040221241629041351886e+2602j)</span>
 </pre></div>
 </div>
-<p>For integers <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" />, the following integral representation holds:</p>
+<p>For integers <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, the following integral representation holds:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mf">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">2.3</span>
@@ -314,12 +314,12 @@ first kind,</p>
 <h3><tt class="xref docutils literal"><span class="pre">besselk()</span></tt><a class="headerlink" href="#besselk" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.besselk">
-<!--[mpmath.besselk]--><tt class="descclassname">mpmath.</tt><tt class="descname">besselk</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.besselk" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">besselk</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.besselk" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">besselk(n,</span> <span class="pre">x)</span></tt> gives the modified Bessel function of the
 second kind,</p>
 <div class="math">
-<p><img src="../_images/math/c7bd979e358f199bdb7bd5dd3d66447f8fb2e348.png" alt="K_n(x) = \frac{\pi}{2} \frac{I_{-n}(x)-I_{n}(x)}{\sin(\pi n)}" />
-</div></p><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n" /> an integer, this formula should be understood as a
+<p><img src="../_images/math/c7bd979e358f199bdb7bd5dd3d66447f8fb2e348.png" alt="K_n(x) = \frac{\pi}{2} \frac{I_{-n}(x)-I_{n}(x)}{\sin(\pi n)}" /></p>
+</div><p>For <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> an integer, this formula should be understood as a
 limit.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation is supported for arbitrary complex arguments:</p>
@@ -346,7 +346,7 @@ limit.</p>
 <span class="go">(1.561034538142413947789221e-26 + 1.243554598118700063281496e-25j)</span>
 </pre></div>
 </div>
-<p>The point <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" /> is a singularity (logarithmic if <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0" />):</p>
+<p>The point <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/> is a singularity (logarithmic if <img class="math" src="../_images/math/2d6fc266463b33c8b1c079a50909f3fd03ed5ffd.png" alt="n = 0"/>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">besselk</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
 <span class="go">+inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">besselk</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
@@ -375,12 +375,12 @@ limit.</p>
 <h3><tt class="xref docutils literal"><span class="pre">hankel1()</span></tt><a class="headerlink" href="#hankel1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hankel1">
-<!--[mpmath.hankel1]--><tt class="descclassname">mpmath.</tt><tt class="descname">hankel1</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.hankel1" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hankel1</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.hankel1" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">hankel1(n,x)</span></tt> computes the Hankel function of the first kind,
 which is the complex combination of Bessel functions given by</p>
 <div class="math">
-<p><img src="../_images/math/8e7d93429a85ca90218c19c862111817816501b5.png" alt="H_n^{(1)}(x) = J_n(x) + i Y_n(x)." />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/8e7d93429a85ca90218c19c862111817816501b5.png" alt="H_n^{(1)}(x) = J_n(x) + i Y_n(x)." /></p>
+</div><p><strong>Examples</strong></p>
 <p>The Hankel function is generally complex-valued:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -397,12 +397,12 @@ which is the complex combination of Bessel functions given by</p>
 <h3><tt class="xref docutils literal"><span class="pre">hankel2()</span></tt><a class="headerlink" href="#hankel2" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hankel2">
-<!--[mpmath.hankel2]--><tt class="descclassname">mpmath.</tt><tt class="descname">hankel2</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.hankel2" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">hankel2</tt><big>(</big><em>n</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.hankel2" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">hankel2(n,x)</span></tt> computes the Hankel function of the second kind,
 which is the complex combination of Bessel functions given by</p>
 <div class="math">
-<p><img src="../_images/math/af57e9a9e268f0523c7f7b8631a1c3f11e3593bd.png" alt="H_n^{(2)}(x) = J_n(x) - i Y_n(x)." />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/af57e9a9e268f0523c7f7b8631a1c3f11e3593bd.png" alt="H_n^{(2)}(x) = J_n(x) - i Y_n(x)." /></p>
+</div><p><strong>Examples</strong></p>
 <p>The Hankel function is generally complex-valued:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -422,12 +422,12 @@ which is the complex combination of Bessel functions given by</p>
 <h3><tt class="xref docutils literal"><span class="pre">ber()</span></tt><a class="headerlink" href="#ber" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ber">
-<!--[mpmath.ber]--><tt class="descclassname">mpmath.</tt><tt class="descname">ber</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ber" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">ber</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ber" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Kelvin function ber, which for real arguments gives the real part
 of the Bessel J function of a rotated argument</p>
 <div class="math">
-<p><img src="../_images/math/ab279e41abc242f2fe94083dc6d22fc657ee21ee.png" alt="J_n\left(x e^{3\pi i/4}\right) = \mathrm{ber}_n(x) + i \mathrm{bei}_n(x)." />
-</div></p><p>The imaginary part is given by <tt class="xref docutils literal"><span class="pre">bei()</span></tt>.</p>
+<p><img src="../_images/math/ab279e41abc242f2fe94083dc6d22fc657ee21ee.png" alt="J_n\left(x e^{3\pi i/4}\right) = \mathrm{ber}_n(x) + i \mathrm{bei}_n(x)." /></p>
+</div><p>The imaginary part is given by <tt class="xref docutils literal"><span class="pre">bei()</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Verifying the defining relation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -456,7 +456,7 @@ for complex arguments:</p>
 <h3><tt class="xref docutils literal"><span class="pre">bei()</span></tt><a class="headerlink" href="#bei" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.bei">
-<!--[mpmath.bei]--><tt class="descclassname">mpmath.</tt><tt class="descname">bei</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.bei" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">bei</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.bei" title="Permalink to this definition">¶</a></dt>
 <dd>Computes the Kelvin function bei, which for real arguments gives the
 imaginary part of the Bessel J function of a rotated argument.
 See <tt class="xref docutils literal"><span class="pre">ber()</span></tt>.</dd></dl>
@@ -466,12 +466,12 @@ See <tt class="xref docutils literal"><span class="pre">ber()</span></tt>.</dd><
 <h3><tt class="xref docutils literal"><span class="pre">ker()</span></tt><a class="headerlink" href="#ker" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ker">
-<!--[mpmath.ker]--><tt class="descclassname">mpmath.</tt><tt class="descname">ker</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ker" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">ker</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Kelvin function ker, which for real arguments gives the real part
 of the (rescaled) Bessel K function of a rotated argument</p>
 <div class="math">
-<p><img src="../_images/math/6835a9effd204ccf7d99d29b02276163f571e1de.png" alt="e^{-\pi i/2} K_n\left(x e^{3\pi i/4}\right) = \mathrm{ker}_n(x) + i \mathrm{kei}_n(x)." />
-</div></p><p>The imaginary part is given by <tt class="xref docutils literal"><span class="pre">kei()</span></tt>.</p>
+<p><img src="../_images/math/6835a9effd204ccf7d99d29b02276163f571e1de.png" alt="e^{-\pi i/2} K_n\left(x e^{3\pi i/4}\right) = \mathrm{ker}_n(x) + i \mathrm{kei}_n(x)." /></p>
+</div><p>The imaginary part is given by <tt class="xref docutils literal"><span class="pre">kei()</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Verifying the defining relation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -500,7 +500,7 @@ for complex arguments:</p>
 <h3><tt class="xref docutils literal"><span class="pre">kei()</span></tt><a class="headerlink" href="#kei" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.kei">
-<!--[mpmath.kei]--><tt class="descclassname">mpmath.</tt><tt class="descname">kei</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kei" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">kei</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.kei" title="Permalink to this definition">¶</a></dt>
 <dd>Computes the Kelvin function kei, which for real arguments gives the
 imaginary part of the (rescaled) Bessel K function of a rotated argument.
 See <tt class="xref docutils literal"><span class="pre">ker()</span></tt>.</dd></dl>
@@ -513,16 +513,16 @@ See <tt class="xref docutils literal"><span class="pre">ker()</span></tt>.</dd><
 <h3><tt class="xref docutils literal"><span class="pre">struveh()</span></tt><a class="headerlink" href="#struveh" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.struveh">
-<!--[mpmath.struveh]--><tt class="descclassname">mpmath.</tt><tt class="descname">struveh</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.struveh" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">struveh</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.struveh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the Struve function</p>
 <div class="math">
 <p><img src="../_images/math/7b333eaed164a4783eeb108fd97bcaf11571c97f.png" alt="\,\mathbf{H}_n(z) = 
 \sum_{k=0}^\infty \frac{(-1)^k}{\Gamma(k+\frac{3}{2})
-    \Gamma(k+n+\frac{3}{2})} {\left({\frac{z}{2}}\right)}^{2k+n+1}" />
-</div></p><p>which is a solution to the Struve differential equation</p>
+    \Gamma(k+n+\frac{3}{2})} {\left({\frac{z}{2}}\right)}^{2k+n+1}" /></p>
+</div><p>which is a solution to the Struve differential equation</p>
 <div class="math">
-<p><img src="../_images/math/2328be0e93e0e602950202978444ff812b5eaf72.png" alt="z^2 f''(z) + z f'(z) + (z^2-n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}." />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/2328be0e93e0e602950202978444ff812b5eaf72.png" alt="z^2 f''(z) + z f'(z) + (z^2-n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}." /></p>
+</div><p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -567,14 +567,14 @@ See <tt class="xref docutils literal"><span class="pre">ker()</span></tt>.</dd><
 <h3><tt class="xref docutils literal"><span class="pre">struvel()</span></tt><a class="headerlink" href="#struvel" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.struvel">
-<!--[mpmath.struvel]--><tt class="descclassname">mpmath.</tt><tt class="descname">struvel</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.struvel" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">struvel</tt><big>(</big><em>ctx</em>, <em>n</em>, <em>z</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.struvel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the modified Struve function</p>
 <div class="math">
-<p><img src="../_images/math/a985f5e56e4575ebad6974c7f99149e13b51d98d.png" alt="\,\mathbf{L}_n(z) = -i e^{-n\pi i/2} \mathbf{H}_n(i z)" />
-</div></p><p>which solves to the modified Struve differential equation</p>
+<p><img src="../_images/math/a985f5e56e4575ebad6974c7f99149e13b51d98d.png" alt="\,\mathbf{L}_n(z) = -i e^{-n\pi i/2} \mathbf{H}_n(i z)" /></p>
+</div><p>which solves to the modified Struve differential equation</p>
 <div class="math">
-<p><img src="../_images/math/95a82208859bd36392c8a63aae6e3f3258138f49.png" alt="z^2 f''(z) + z f'(z) - (z^2+n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}." />
-</div></p><p><strong>Examples</strong></p>
+<p><img src="../_images/math/95a82208859bd36392c8a63aae6e3f3258138f49.png" alt="z^2 f''(z) + z f'(z) - (z^2+n^2) f(z) = \frac{2 z^{n+1}}{\pi (2n-1)!!}." /></p>
+</div><p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -616,12 +616,12 @@ See <tt class="xref docutils literal"><span class="pre">ker()</span></tt>.</dd><
 <h3><tt class="xref docutils literal"><span class="pre">airyai()</span></tt><a class="headerlink" href="#airyai" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.airyai">
-<!--[mpmath.airyai]--><tt class="descclassname">mpmath.</tt><tt class="descname">airyai</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.airyai" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Airy function <img class="math" src="../_images/math/66d39ec6233672a4f352aa04a6211c98ae50a0fa.png" alt="\mathrm{Ai}(x)" />, which is
-a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">airyai</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.airyai" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Airy function <img class="math" src="../_images/math/66d39ec6233672a4f352aa04a6211c98ae50a0fa.png" alt="\mathrm{Ai}(x)"/>, which is
+a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0"/>.
 The Ai-function behaves roughly like a slowly decaying
-sine wave for <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> and like a decreasing exponential for
-<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" />.</p>
+sine wave for <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/> and like a decreasing exponential for
+<img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0"/>.</p>
 <p>Limits and values include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -672,7 +672,7 @@ sine wave for <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a485
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>The Taylor series expansion around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" /> starts with
+<p>The Taylor series expansion around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/> starts with
 the following coefficients (note that every third term
 is zero):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">airyai</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
@@ -680,7 +680,7 @@ is zero):</p>
 </pre></div>
 </div>
 <p>The Airy functions are a special case of Bessel functions.
-For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" />, we have:</p>
+For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/>, we have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">airyai</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
 <span class="go">-0.378814293677658</span>
@@ -696,12 +696,12 @@ For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf64
 <h3><tt class="xref docutils literal"><span class="pre">airybi()</span></tt><a class="headerlink" href="#airybi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.airybi">
-<!--[mpmath.airybi]--><tt class="descclassname">mpmath.</tt><tt class="descname">airybi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.airybi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the Airy function <img class="math" src="../_images/math/ba535c7012921d4c545958cf8234030338a1cfe6.png" alt="\mathrm{Bi}(x)" />, which is
-a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0" />.
+<tt class="descclassname">mpmath.</tt><tt class="descname">airybi</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.airybi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Airy function <img class="math" src="../_images/math/ba535c7012921d4c545958cf8234030338a1cfe6.png" alt="\mathrm{Bi}(x)"/>, which is
+a solution of the Airy differential equation <img class="math" src="../_images/math/c75ae2b99976d7b0e9b5a5134ade9f15db8fcbf6.png" alt="y''-xy=0"/>.
 The Bi-function behaves roughly like a slowly decaying
-sine wave for <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" /> and like an increasing exponential
-for <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0" />.</p>
+sine wave for <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/> and like an increasing exponential
+for <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb45b.png" alt="x &gt; 0"/>.</p>
 <p>Limits and values include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -753,7 +753,7 @@ for <img class="math" src="../_images/math/cae4fd68f44ac9b909f8d91f9d498de5759bb
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>The Taylor series expansion around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0" /> starts with
+<p>The Taylor series expansion around <img class="math" src="../_images/math/2d348bde3e15456e71734dc2c56fc7425c95927f.png" alt="x = 0"/> starts with
 the following coefficients (note that every third term
 is zero):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">airybi</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
@@ -761,7 +761,7 @@ is zero):</p>
 </pre></div>
 </div>
 <p>The Airy functions are a special case of Bessel functions.
-For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0" />, we have:</p>
+For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf641b3.png" alt="x &lt; 0"/>, we have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">airybi</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
 <span class="go">-0.198289626374927</span>
@@ -780,27 +780,27 @@ For <img class="math" src="../_images/math/36a68e8aa6ec6f48231ad80a4851f84bacf64
 <h3><tt class="xref docutils literal"><span class="pre">coulombf()</span></tt><a class="headerlink" href="#coulombf" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.coulombf">
-<!--[mpmath.coulombf]--><tt class="descclassname">mpmath.</tt><tt class="descname">coulombf</tt><big>(</big><em>l</em>, <em>eta</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.coulombf" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">coulombf</tt><big>(</big><em>l</em>, <em>eta</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.coulombf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the regular Coulomb wave function</p>
 <div class="math">
-<p><img src="../_images/math/a283b8ab62fae81fb619684a0e66d3e6bfe3a8b5.png" alt="F_l(\eta,z) = C_l(\eta) z^{l+1} e^{-iz} \,_1F_1(l+1-i\eta, 2l+2, 2iz)" />
-</div></p><p>where the normalization constant <img class="math" src="../_images/math/ef1e239b81b7e33781f3acc96f651ebc3e611e92.png" alt="C_l(\eta)" /> is as calculated by
+<p><img src="../_images/math/a283b8ab62fae81fb619684a0e66d3e6bfe3a8b5.png" alt="F_l(\eta,z) = C_l(\eta) z^{l+1} e^{-iz} \,_1F_1(l+1-i\eta, 2l+2, 2iz)" /></p>
+</div><p>where the normalization constant <img class="math" src="../_images/math/ef1e239b81b7e33781f3acc96f651ebc3e611e92.png" alt="C_l(\eta)"/> is as calculated by
 <tt class="xref docutils literal"><span class="pre">coulombc()</span></tt>. This function solves the differential equation</p>
 <div class="math">
-<p><img src="../_images/math/891948d264024bc981d13563beb41c78d9ce05a2.png" alt="f''(z) + \left(1-\frac{2\eta}{z}-\frac{l(l+1)}{z^2}\right) f(z) = 0." />
-</div></p><p>A second linearly independent solution is given by the irregular
-Coulomb wave function <img class="math" src="../_images/math/199aaa88a228d74f2bb4939a64e2e63130284634.png" alt="G_l(\eta,z)" /> (see <tt class="xref docutils literal"><span class="pre">coulombg()</span></tt>)
+<p><img src="../_images/math/891948d264024bc981d13563beb41c78d9ce05a2.png" alt="f''(z) + \left(1-\frac{2\eta}{z}-\frac{l(l+1)}{z^2}\right) f(z) = 0." /></p>
+</div><p>A second linearly independent solution is given by the irregular
+Coulomb wave function <img class="math" src="../_images/math/199aaa88a228d74f2bb4939a64e2e63130284634.png" alt="G_l(\eta,z)"/> (see <tt class="xref docutils literal"><span class="pre">coulombg()</span></tt>)
 and thus the general solution is
-<img class="math" src="../_images/math/2ea86802c72956bcc750e677f83d5c8e3a8ad736.png" alt="f(z) = C_1 F_l(\eta,z) + C_2 G_l(\eta,z)" /> for arbitrary
-constants <img class="math" src="../_images/math/70b97eb4ad6e4e7a5a97e2547d9ed6e965960d0c.png" alt="C_1" />, <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2" />.
+<img class="math" src="../_images/math/2ea86802c72956bcc750e677f83d5c8e3a8ad736.png" alt="f(z) = C_1 F_l(\eta,z) + C_2 G_l(\eta,z)"/> for arbitrary
+constants <img class="math" src="../_images/math/70b97eb4ad6e4e7a5a97e2547d9ed6e965960d0c.png" alt="C_1"/>, <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2"/>.
 Physically, the Coulomb wave functions give the radial solution
-to the Schrodinger equation for a point particle in a <img class="math" src="../_images/math/d13313d0c14b154544f20ab44394efcae6445964.png" alt="1/z" /> potential; <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" /> is
-then the radius and <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l" />, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta" /> are quantum numbers.</p>
+to the Schrodinger equation for a point particle in a <img class="math" src="../_images/math/d13313d0c14b154544f20ab44394efcae6445964.png" alt="1/z"/> potential; <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> is
+then the radius and <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta"/> are quantum numbers.</p>
 <p>The Coulomb wave functions with real parameters are defined
 in Abramowitz &amp; Stegun, section 14. However, all parameters are permitted
 to be complex in this implementation (see references).</p>
 <p><strong>Examples</strong></p>
-<p>Evaluation is supported for arbitrary magnitudes of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation is supported for arbitrary magnitudes of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">coulombf</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">)</span>
@@ -888,7 +888,7 @@ the precision:</p>
 <li>I.J. Thompson &amp; A.R. Barnett, &#8220;Coulomb and Bessel Functions of Complex
 Arguments and Order&#8221;, J. Comp. Phys., vol 64, no. 2, June 1986.</li>
 <li>N. Michel, &#8220;Precise Coulomb wave functions for a wide range of
-complex <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l" />, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta" /> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />&#8220;, <a class="reference external" href="http://arxiv.org/abs/physics/0702051v1">http://arxiv.org/abs/physics/0702051v1</a></li>
+complex <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>&#8220;, <a class="reference external" href="http://arxiv.org/abs/physics/0702051v1">http://arxiv.org/abs/physics/0702051v1</a></li>
 </ol>
 </dd></dl>
 
@@ -897,15 +897,15 @@ complex <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad45342
 <h3><tt class="xref docutils literal"><span class="pre">coulombg()</span></tt><a class="headerlink" href="#coulombg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.coulombg">
-<!--[mpmath.coulombg]--><tt class="descclassname">mpmath.</tt><tt class="descname">coulombg</tt><big>(</big><em>l</em>, <em>eta</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.coulombg" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">coulombg</tt><big>(</big><em>l</em>, <em>eta</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.coulombg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the irregular Coulomb wave function</p>
 <div class="math">
-<p><img src="../_images/math/e3061cc807e8e45364e20ea9937ba4c6f4903fdf.png" alt="G_l(\eta,z) = \frac{F_l(\eta,z) \cos(\chi) - F_{-l-1}(\eta,z)}{\sin(\chi)}" />
-</div></p><p>where <img class="math" src="../_images/math/3d69b2aac14535042a5118dd762d76bc924541dc.png" alt="\chi = \sigma_l - \sigma_{-l-1} - (l+1/2) \pi" />
-and <img class="math" src="../_images/math/1e5f2cda9f30e017ceef9b0e1d0940e6d442b101.png" alt="\sigma_l(\eta) = (\ln \Gamma(1+l+i\eta)-\ln \Gamma(1+l-i\eta))/(2i)" />.</p>
+<p><img src="../_images/math/e3061cc807e8e45364e20ea9937ba4c6f4903fdf.png" alt="G_l(\eta,z) = \frac{F_l(\eta,z) \cos(\chi) - F_{-l-1}(\eta,z)}{\sin(\chi)}" /></p>
+</div><p>where <img class="math" src="../_images/math/3d69b2aac14535042a5118dd762d76bc924541dc.png" alt="\chi = \sigma_l - \sigma_{-l-1} - (l+1/2) \pi"/>
+and <img class="math" src="../_images/math/1e5f2cda9f30e017ceef9b0e1d0940e6d442b101.png" alt="\sigma_l(\eta) = (\ln \Gamma(1+l+i\eta)-\ln \Gamma(1+l-i\eta))/(2i)"/>.</p>
 <p>See <tt class="xref docutils literal"><span class="pre">coulombf()</span></tt> for additional information.</p>
 <p><strong>Examples</strong></p>
-<p>Evaluation is supported for arbitrary magnitudes of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z" />:</p>
+<p>Evaluation is supported for arbitrary magnitudes of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">coulombg</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">)</span>
@@ -934,7 +934,7 @@ at twice the precision:</p>
 <span class="go">5 5.629840456 4.549343289</span>
 </pre></div>
 </div>
-<p>Evaluation close to the singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0" />:</p>
+<p>Evaluation close to the singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">coulombg</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">10</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">3088184933.67358</span>
@@ -944,7 +944,7 @@ at twice the precision:</p>
 <span class="go">5554866221524.1</span>
 </pre></div>
 </div>
-<p>Evaluation with a half-integer value for <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l" />:</p>
+<p>Evaluation with a half-integer value for <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">coulombg</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">0.852320038297334</span>
 </pre></div>
@@ -956,16 +956,188 @@ at twice the precision:</p>
 <h3><tt class="xref docutils literal"><span class="pre">coulombc()</span></tt><a class="headerlink" href="#coulombc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.coulombc">
-<!--[mpmath.coulombc]--><tt class="descclassname">mpmath.</tt><tt class="descname">coulombc</tt><big>(</big><em>l</em>, <em>eta</em><big>)</big><a class="headerlink" href="#mpmath.coulombc" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">coulombc</tt><big>(</big><em>l</em>, <em>eta</em><big>)</big><a class="headerlink" href="#mpmath.coulombc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the normalizing Gamow constant for Coulomb wave functions,</p>
 <div class="math">
 <p><img src="../_images/math/26d0b364726fbe56802ea8af9b4d5ad755594b7f.png" alt="C_l(\eta) = 2^l \exp\left(-\pi \eta/2 + [\ln \Gamma(1+l+i\eta) +
-    \ln \Gamma(1+l-i\eta)]/2 - \ln \Gamma(2l+2)\right)," />
-</div></p><p>where the log gamma function with continuous imaginary part
+    \ln \Gamma(1+l-i\eta)]/2 - \ln \Gamma(2l+2)\right)," /></p>
+</div><p>where the log gamma function with continuous imaginary part
 away from the negative half axis (see <tt class="xref docutils literal"><span class="pre">loggamma()</span></tt>) is implied.</p>
 <p>This function is used internally for the calculation of
 Coulomb wave functions, and automatically cached to make multiple
-evaluations with fixed <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l" />, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta" /> fast.</p>
+evaluations with fixed <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta"/> fast.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="confluent-u-and-whittaker-functions">
+<h2>Confluent U and Whittaker functions<a class="headerlink" href="#confluent-u-and-whittaker-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hyperu">
+<h3><tt class="xref docutils literal"><span class="pre">hyperu()</span></tt><a class="headerlink" href="#hyperu" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.hyperu">
+<tt class="descclassname">mpmath.</tt><tt class="descname">hyperu</tt><big>(</big><em>a</em>, <em>b</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.hyperu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives the Tricomi confluent hypergeometric function <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/>, also known as
+the Kummer or confluent hypergeometric function of the second kind. This
+function gives a second linearly independent solution to the confluent
+hypergeometric differential equation (the first is provided by <img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1"/>  &#8211;
+see <tt class="xref docutils literal"><span class="pre">hyp1f1()</span></tt>).</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation for arbitrary complex arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">)</span>
+<span class="go">0.0625</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">1000</span><span class="p">)</span>
+<span class="go">0.1779949416140579573763523</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000</span><span class="p">)</span>
+<span class="go">(0.1256256609322773150118907 - 0.1256256609322773150118907j)</span>
+</pre></div>
+</div>
+<p>The <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/> function may be singular at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="go">0.1719434921288400112603671</span>
+</pre></div>
+</div>
+<p>Verifying the differential equation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">hyperu</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">z</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">z</span><span class="p">)</span><span class="o">*</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>An integral representation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperu</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="go">0.06674960718150520648014567</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="o">-</span><span class="mf">1</span><span class="p">),[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">0.06674960718150520648014567</span>
+</pre></div>
+</div>
+<p>[1] <a class="reference external" href="http://www.math.ucla.edu/~cbm/aands/page_504.htm">http://www.math.ucla.edu/~cbm/aands/page_504.htm</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="whitm">
+<h3><tt class="xref docutils literal"><span class="pre">whitm()</span></tt><a class="headerlink" href="#whitm" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.whitm">
+<tt class="descclassname">mpmath.</tt><tt class="descname">whitm</tt><big>(</big><em>k</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.whitm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Whittaker function <img class="math" src="../_images/math/f667b8389bb3a81eb990a2dd11109ff978b31edd.png" alt="M(k,m,z)"/>, which gives a solution
+to the Whittaker differential equation</p>
+<div class="math">
+<p><img src="../_images/math/d7363950ed14fc98684745e1e689614201c440da.png" alt="\frac{d^2f}{dz^2} + \left(-\frac{1}{4}+\frac{k}{z}+
+  \frac{(\frac{1}{4}-m^2)}{z^2}\right) f = 0." /></p>
+</div><p>A second solution is given by <tt class="xref docutils literal"><span class="pre">whitw()</span></tt>.</p>
+<p>The Whittaker functions are defined in Abramowitz &amp; Stegun, section 13.1.
+They are alternate forms of the confluent hypergeometric functions
+<img class="math" src="../_images/math/ba4af6c1dfcc5d743f9d1fe0958e045fe27b68db.png" alt="\,_1F_1"/> and <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/>:</p>
+<div class="math">
+<p><img src="../_images/math/ae4e335d65642c095b55a39216463758b6292363.png" alt="M(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
+    \,_1F_1(\tfrac{1}{2}+m-k, 1+2m, z)
+
+W(k,m,z) = e^{-\frac{1}{2}z} z^{\frac{1}{2}+m}
+    U(\tfrac{1}{2}+m-k, 1+2m, z)." /></p>
+</div><p><strong>Examples</strong></p>
+<p>Evaluation for arbitrary real and complex arguments is supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">0.7302596799460411820509668</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">(0.0 - 1.417977827655098025684246j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(3.245477713363581112736478 - 0.822879187542699127327782j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">100000</span><span class="p">)</span>
+<span class="go">4.303985255686378497193063e+21707</span>
+</pre></div>
+</div>
+<p>Evaluation at zero:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">);</span> <span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0</span><span class="p">);</span> <span class="n">whitm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="go">nan</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>We can verify that <tt class="xref docutils literal"><span class="pre">whitm()</span></tt> numerically satisfies the
+differential equation for arbitrarily chosen values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">whitm</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.25</span> <span class="o">+</span> <span class="n">k</span><span class="o">/</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.25</span><span class="o">-</span><span class="n">m</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
+<p>An integral involving both <tt class="xref docutils literal"><span class="pre">whitm()</span></tt> and <tt class="xref docutils literal"><span class="pre">whitmw()</span></tt>,
+verifying evaluation along the real axis:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">whitm</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">3.438869842576800225207341</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">128</span><span class="o">/</span><span class="p">(</span><span class="mf">21</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
+<span class="go">3.438869842576800225207341</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="whitw">
+<h3><tt class="xref docutils literal"><span class="pre">whitw()</span></tt><a class="headerlink" href="#whitw" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.whitw">
+<tt class="descclassname">mpmath.</tt><tt class="descname">whitw</tt><big>(</big><em>k</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.whitw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the Whittaker function <img class="math" src="../_images/math/8a02d41253012b7698ca872a35b6e043f8214474.png" alt="W(k,m,z)"/>, which gives a second
+solution to the Whittaker differential equation. (See <tt class="xref docutils literal"><span class="pre">whitm()</span></tt>.)</p>
+<p><strong>Examples</strong></p>
+<p>Evaluation for arbitrary real and complex arguments is supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="go">1.19532063107581155661012</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="go">(-0.9424875979222187313924639 - 0.2607738054097702293308689j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span><span class="o">/</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.1782899315111033879430369 - 0.01609578360403649340169406j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">100000</span><span class="p">)</span>
+<span class="go">1.887705114889527446891274e-21705</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">whitw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">100</span><span class="p">)</span>
+<span class="go">1.905250692824046162462058e-24</span>
+</pre></div>
+</div>
+<p>Evaluation at zero:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">whitw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">+inf</span>
+<span class="go">nan</span>
+<span class="go">0.0</span>
+<span class="go">nan</span>
+<span class="go">+inf</span>
+</pre></div>
+</div>
+<p>We can verify that <tt class="xref docutils literal"><span class="pre">whitw()</span></tt> numerically satisfies the
+differential equation for arbitrarily chosen values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">k</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">whitw</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">chop</span><span class="p">(</span><span class="n">diff</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.25</span> <span class="o">+</span> <span class="n">k</span><span class="o">/</span><span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.25</span><span class="o">-</span><span class="n">m</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">z</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+<span class="gp">...</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+<span class="go">0.0</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -980,7 +1152,7 @@ evaluations with fixed <img class="math" src="../_images/math/9b25f8e64b484493fd
         <div class="sphinxsidebarwrapper">
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="">Bessel functions and related functions</a><ul>
+<li><a class="reference external" href="#">Bessel functions and related functions</a><ul>
 <li><a class="reference external" href="#bessel-functions">Bessel functions</a><ul>
 <li><a class="reference external" href="#besselj-j0-j1"><tt class="docutils literal"><span class="pre">besselj()</span></tt> / <tt class="docutils literal"><span class="pre">j0()</span></tt> / <tt class="docutils literal"><span class="pre">j1()</span></tt></a></li>
 <li><a class="reference external" href="#bessely"><tt class="docutils literal"><span class="pre">bessely()</span></tt></a></li>
@@ -1016,24 +1188,40 @@ evaluations with fixed <img class="math" src="../_images/math/9b25f8e64b484493fd
 <li><a class="reference external" href="#coulombc"><tt class="docutils literal"><span class="pre">coulombc()</span></tt></a></li>
 </ul>
 </li>
+<li><a class="reference external" href="#confluent-u-and-whittaker-functions">Confluent U and Whittaker functions</a><ul>
+<li><a class="reference external" href="#hyperu"><tt class="docutils literal"><span class="pre">hyperu()</span></tt></a></li>
+<li><a class="reference external" href="#whitm"><tt class="docutils literal"><span class="pre">whitm()</span></tt></a></li>
+<li><a class="reference external" href="#whitw"><tt class="docutils literal"><span class="pre">whitw()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="expintegrals.html" title="previous chapter">Exponential integrals and error functions</a></p>
+            <p class="topless"><a href="expintegrals.html"
+                                  title="previous chapter">Exponential integrals and error functions</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="orthogonal.html" title="next chapter">Orthogonal polynomials</a></p>
+            <p class="topless"><a href="orthogonal.html"
+                                  title="next chapter">Orthogonal polynomials</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
-              <li><a href="../_sources/functions/bessel.txt">Show Source</a></li>
+              <li><a href="../_sources/functions/bessel.txt"
+                     rel="nofollow">Show Source</a></li>
             </ul>
-          <h3>Quick search</h3>
-            <form class="search" action="../search.html" method="get">
-              <input type="text" name="q" size="18" /> <input type="submit" value="Go" />
-              <input type="hidden" name="check_keywords" value="yes" />
-              <input type="hidden" name="area" value="default" />
-            </form>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1043,24 +1231,35 @@ evaluations with fixed <img class="math" src="../_images/math/9b25f8e64b484493fd
       <ul>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+             >index</a></li>
         <li class="right" >
           <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+             >modules</a> |</li>
         <li class="right" >
           <a href="orthogonal.html" title="Orthogonal polynomials"
-             accesskey="N">next</a> |</li>
+             >next</a> |</li>
         <li class="right" >
           <a href="expintegrals.html" title="Exponential integrals and error functions"
-             accesskey="P">previous</a> |</li>
+             >previous</a> |</li>
         <li><a href="../index.html">mpmath v0.15-svn documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
+          <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Feb 08, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.5.1.
+      Last updated on Mar 16, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
   </body>
 </html>
