@@ -260,6 +260,12 @@ so called norms.
 Linear algebra
 --------------
 
+Decompositions
+..............
+
+.. autofunction :: mpmath.cholesky
+
+
 Linear equations
 ................
 
