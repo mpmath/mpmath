@@ -1898,11 +1898,11 @@ def meijerg(ctx, a_s, b_s, z, r=1, series=None, **kwargs):
     return ctx.hypercomb(h, a+b, **kwargs)
 
 @defun_wrapped
-def appellf1(ctx,a,b1,b2,c,z1,z2,**kwargs):
-    # Assume z1 smaller
-    # We will use z1 for the outer loop
-    if abs(z1) > abs(z2):
-        z1, z2 = z2, z1
+def appellf1(ctx,a,b1,b2,c,x,y,**kwargs):
+    # Assume x smaller
+    # We will use x for the outer loop
+    if abs(x) > abs(y):
+        x, y = y, x
         b1, b2 = b2, b1
     def ok(x):
         return abs(x) < 0.99
@@ -1912,35 +1912,278 @@ def appellf1(ctx,a,b1,b2,c,z1,z2,**kwargs):
     elif ctx.isnpint(b1):
         pass
     elif ctx.isnpint(b2):
-        z1, z2, b1, b2 = z2, z1, b2, b1
+        x, y, b1, b2 = y, x, b2, b1
     else:
-        #print z1, z2
-        # Note: ok if |z2| > 1, because
+        #print x, y
+        # Note: ok if |y| > 1, because
         # 2F1 implements analytic continuation
-        if not ok(z1):
-            u1 = (z1-z2)/(z1-1)
+        if not ok(x):
+            u1 = (x-y)/(x-1)
             if not ok(u1):
                 raise ValueError("Analytic continuation not implemented")
             #print "Using analytic continuation"
-            return (1-z1)**(-b1)*(1-z2)**(c-a-b2)*\
-                ctx.appellf1(c-a,b1,c-b1-b2,c,u1,z2,**kwargs)
-    #print "inner is", a, b2, c
-    one = ctx.one
+            return (1-x)**(-b1)*(1-y)**(c-a-b2)*\
+                ctx.appellf1(c-a,b1,c-b1-b2,c,u1,y,**kwargs)
+    return ctx.hyper2d({'m+n':[a],'m':[b1],'n':[b2]}, {'m+n':[c]}, x,y, **kwargs)
+
+@defun
+def appellf2(ctx,a,b1,b2,c1,c2,x,y,**kwargs):
+    # TODO: continuation
+    return ctx.hyper2d({'m+n':[a],'m':[b1],'n':[b2]},
+        {'m':[c1],'n':[c2]}, x,y, **kwargs)
+
+@defun
+def appellf3(ctx,a1,a2,b1,b2,c,x,y,**kwargs):
+    outer_polynomial = ctx.isnpint(a1) or ctx.isnpint(b1)
+    inner_polynomial = ctx.isnpint(a2) or ctx.isnpint(b2)
+    if not outer_polynomial:
+        if inner_polynomial or abs(x) > abs(y):
+            x, y = y, x
+            a1,a2,b1,b2 = a2,a1,b2,b1
+    return ctx.hyper2d({'m':[a1,b1],'n':[a2,b2]}, {'m+n':[c]},x,y,**kwargs)
+
+@defun
+def appellf4(ctx,a,b,c1,c2,x,y,**kwargs):
+    # TODO: continuation
+    return ctx.hyper2d({'m+n':[a,b]}, {'m':[c1],'n':[c2]},x,y,**kwargs)
+
+@defun
+def hyper2d(ctx, a, b, x, y, **kwargs):
+    r"""
+    Sums the generalized 2D hypergeometric series
+
+    .. math ::
+
+        \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+            \frac{P((a),m,n)}{Q((b),m,n)}
+            \frac{x^m y^n} {m! n!}
+
+    where `(a) = (a_1,\ldots,a_r)`, `(b) = (b_1,\ldots,b_s)` and where
+    `P` and `Q` are products of rising factorials such as `(a_j)_n` or
+    `(a_j)_{m+n}`. `P` and `Q` are specified in the form of dicts, with
+    the `m` and `n` dependence as keys and parameter lists as values.
+    The supported rising factorials are given in the following table
+    (note that only a few are supported in `Q`):
+
+    +------------+-------------------+--------+
+    | Key        |  Rising factorial | `Q`    |
+    +============+===================+========+
+    | ``'m'``    |   `(a_j)_m`       | Yes    |
+    +------------+-------------------+--------+
+    | ``'n'``    |   `(a_j)_n`       | Yes    |
+    +------------+-------------------+--------+
+    | ``'m+n'``  |   `(a_j)_{m+n}`   | Yes    |
+    +------------+-------------------+--------+
+    | ``'m-n'``  |   `(a_j)_{m-n}`   | No     |
+    +------------+-------------------+--------+
+    | ``'n-m'``  |   `(a_j)_{n-m}`   | No     |
+    +------------+-------------------+--------+
+    | ``'2m+n'`` |   `(a_j)_{2m+n}`  | No     |
+    +------------+-------------------+--------+
+    | ``'2m-n'`` |   `(a_j)_{2m-n}`  | No     |
+    +------------+-------------------+--------+
+    | ``'2n-m'`` |   `(a_j)_{2n-m}`  | No     |
+    +------------+-------------------+--------+
+
+    For example, the Appell F1 and F4 functions
+
+    .. math ::
+
+        F_1 = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+              \frac{(a)_{m+n} (b)_m (c)_n}{(d)_{m+n}}
+              \frac{x^m y^n}{m! n!}
+
+        F_4 = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+              \frac{(a)_{m+n} (b)_{m+n}}{(c)_m (d)_{n}}
+              \frac{x^m y^n}{m! n!}
+
+    can be represented respectively as
+
+        ``hyper2d({'m+n':[a], 'm':[b], 'n':[c]}, {'m+n':[d]}, x, y)``
+
+        ``hyper2d({'m+n':[a,b]}, {'m':[c], 'n':[d]}, x, y)``
+
+    More generally, :func:`hyper2d` can evaluate any of the 34 distinct
+    convergent second-order (generalized Gaussian) hypergeometric
+    series enumerated by Horn, as well as the Kampe de Feriet
+    function.
+
+    The series is computed by rewriting it so that the inner
+    series (i.e. the series containing `n` and `y`) has the form of an
+    ordinary generalized hypergeometric series and thereby can be
+    evaluated efficiently using :func:`hyper`. If possible,
+    manually swapping `x` and `y` and the corresponding parameters
+    can sometimes give better results.
+
+    **Examples**
+
+    Two separable cases: a product of two geometric series, and a
+    product of two Gaussian hypergeometric functions::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> x, y = mpf(0.25), mpf(0.5)
+        >>> hyper2d({'m':1,'n':1}, {}, x,y)
+        2.666666666666666666666667
+        >>> 1/(1-x)/(1-y)
+        2.666666666666666666666667
+        >>> hyper2d({'m':[1,2],'n':[3,4]}, {'m':[5],'n':[6]}, x,y)
+        4.164358531238938319669856
+        >>> hyp2f1(1,2,5,x)*hyp2f1(3,4,6,y)
+        4.164358531238938319669856
+
+    Some more series that can be done in closed form::
+
+        >>> hyper2d({'m':1,'n':1},{'m+n':1},x,y)
+        2.013417124712514809623881
+        >>> (exp(x)*x-exp(y)*y)/(x-y)
+        2.013417124712514809623881
+
+    Six of the 34 Horn functions, G1-G3 and H1-H3::
+
+        >>> from mpmath import *
+        >>> mp.dps = 10; mp.pretty = True
+        >>> x, y = 0.0625, 0.125
+        >>> a1,a2,b1,b2,c1,c2,d = 1.1,-1.2,-1.3,-1.4,1.5,-1.6,1.7
+        >>> hyper2d({'m+n':a1,'n-m':b1,'m-n':b2},{},x,y)  # G1
+        1.139090746
+        >>> nsum(lambda m,n: rf(a1,m+n)*rf(b1,n-m)*rf(b2,m-n)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        1.139090746
+        >>> hyper2d({'m':a1,'n':a2,'n-m':b1,'m-n':b2},{},x,y)  # G2
+        0.9503682696
+        >>> nsum(lambda m,n: rf(a1,m)*rf(a2,n)*rf(b1,n-m)*rf(b2,m-n)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        0.9503682696
+        >>> hyper2d({'2n-m':a1,'2m-n':a2},{},x,y)  # G3
+        1.029372029
+        >>> nsum(lambda m,n: rf(a1,2*n-m)*rf(a2,2*m-n)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        1.029372029
+        >>> hyper2d({'m-n':a1,'m+n':b1,'n':c1},{'m':d},x,y)  # H1
+        -1.605331256
+        >>> nsum(lambda m,n: rf(a1,m-n)*rf(b1,m+n)*rf(c1,n)/rf(d,m)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        -1.605331256
+        >>> hyper2d({'m-n':a1,'m':b1,'n':[c1,c2]},{'m':d},x,y)  # H2
+        -2.35405404
+        >>> nsum(lambda m,n: rf(a1,m-n)*rf(b1,m)*rf(c1,n)*rf(c2,n)/rf(d,m)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        -2.35405404
+        >>> hyper2d({'2m+n':a1,'n':b1},{'m+n':c1},x,y)  # H3
+        0.974479074
+        >>> nsum(lambda m,n: rf(a1,2*m+n)*rf(b1,n)/rf(c1,m+n)*\
+        ...     x**m*y**n/fac(m)/fac(n), [0,inf], [0,inf])
+        0.974479074
+
+    **References**
+
+    1. [SrivastavaKarlsson]_
+    2. [Weisstein]_ http://mathworld.wolfram.com/HornFunction.html
+    3. [Weisstein]_ http://mathworld.wolfram.com/AppellHypergeometricFunction.html
+
+    """
+    x = ctx.convert(x)
+    y = ctx.convert(y)
+    def parse(dct, key):
+        args = dct.pop(key, [])
+        try:
+            args = list(args)
+        except TypeError:
+            args = [args]
+        return map(ctx.convert, args)
+    a_s = dict(a)
+    b_s = dict(b)
+    a_m = parse(a, 'm')
+    a_n = parse(a, 'n')
+    a_m_add_n = parse(a, 'm+n')
+    a_m_sub_n = parse(a, 'm-n')
+    a_n_sub_m = parse(a, 'n-m')
+    a_2m_add_n = parse(a, '2m+n')
+    a_2m_sub_n = parse(a, '2m-n')
+    a_2n_sub_m = parse(a, '2n-m')
+    b_m = parse(b, 'm')
+    b_n = parse(b, 'n')
+    b_m_add_n = parse(b, 'm+n')
+    if a: raise ValueError("unsupported key: %r" % a.keys()[0])
+    if b: raise ValueError("unsupported key: %r" % b.keys()[0])
     s = 0
-    t = 1
-    k = 0
-    while 1:
-        h = ctx.hyp2f1(a,b2,c,z2,zeroprec=ctx.prec,**kwargs)
-        term = t * h
-        if abs(term) < ctx.eps and abs(h) > 10*ctx.eps:
-            break
-        s += term
-        k += 1
-        t = (t*a*b1*z1) / (c*k)
-        c += one
-        a += one
-        b1 += one
-    return s
+    outer = ctx.one
+    m = ctx.mpf(0)
+    ok_count = 0
+    prec = ctx.prec
+    maxterms = kwargs.get('maxterms', 20*prec)
+    try:
+        ctx.prec += 10
+        tol = +ctx.eps
+        while 1:
+            inner_sign = 1
+            outer_sign = 1
+            inner_a = list(a_n)
+            inner_b = list(b_n)
+            outer_a = [a+m for a in a_m]
+            outer_b = [b+m for b in b_m]
+            # (a)_{m+n} = (a)_m (a+m)_n
+            for a in a_m_add_n:
+                a = a+m
+                inner_a.append(a)
+                outer_a.append(a)
+            # (b)_{m+n} = (b)_m (b+m)_n
+            for b in b_m_add_n:
+                b = b+m
+                inner_b.append(b)
+                outer_b.append(b)
+            # (a)_{n-m} = (a-m)_n / (a-m)_m
+            for a in a_n_sub_m:
+                inner_a.append(a-m)
+                outer_b.append(a-m-1)
+            # (a)_{m-n} = (-1)^(m+n) (1-a-m)_m / (1-a-m)_n
+            for a in a_m_sub_n:
+                inner_sign *= (-1)
+                outer_sign *= (-1)**(m)
+                inner_b.append(1-a-m)
+                outer_a.append(-a-m)
+            # (a)_{2m+n} = (a)_{2m} (a+2m)_n
+            for a in a_2m_add_n:
+                inner_a.append(a+2*m)
+                outer_a.append((a+2*m)*(1+a+2*m))
+            # (a)_{2m-n} = (-1)^(2m+n) (1-a-2m)_{2m} / (1-a-2m)_n
+            for a in a_2m_sub_n:
+                inner_sign *= (-1)
+                inner_b.append(1-a-2*m)
+                outer_a.append((a+2*m)*(1+a+2*m))
+            # (a)_{2n-m} = 4^n ((a-m)/2)_n ((a-m+1)/2)_n / (a-m)_m
+            for a in a_2n_sub_m:
+                inner_sign *= 4
+                inner_a.append(0.5*(a-m))
+                inner_a.append(0.5*(a-m+1))
+                outer_b.append(a-m-1)
+            inner = ctx.hyper(inner_a, inner_b, inner_sign*y,
+                zeroprec=ctx.prec, **kwargs)
+            term = outer * inner * outer_sign
+            if abs(term) < tol:
+                ok_count += 1
+            else:
+                ok_count = 0
+            if ok_count >= 3 or not outer:
+                break
+            s += term
+            for a in outer_a: outer *= a
+            for b in outer_b: outer /= b
+            m += 1
+            outer = outer * x / m
+            if m > maxterms:
+                raise ctx.NoConvergence("maxterms exceeded in hyper2d")
+    finally:
+        ctx.prec = prec
+    return +s
+
+"""
+@defun
+def kampe_de_feriet(ctx,a,b,c,d,e,f,x,y,**kwargs):
+    return ctx.hyper2d({'m+n':a,'m':b,'n':c},
+        {'m+n':d,'m':e,'n':f}, x,y, **kwargs)
+"""
 
 @defun_wrapped
 def coulombc(ctx, l, eta, _cache={}):

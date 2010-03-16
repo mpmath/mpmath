@@ -1526,23 +1526,6 @@ Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
 is equivalent to ``log(x, 10)``.
 """
 
-power = r"""
-Converts `x` and `y` to mpmath numbers and evaluates
-`x^y = \exp(y \log(x))`::
-
-    >>> from mpmath import *
-    >>> mp.dps = 30; mp.pretty = True
-    >>> power(2, 0.5)
-    1.41421356237309504880168872421
-
-This shows the leading few digits of a large Mersenne prime
-(performing the exact calculation ``2**43112609-1`` and
-displaying the result in Python would be very slow)::
-
-    >>> power(2, 43112609)-1
-    3.16470269330255923143453723949e+12978188
-"""
-
 modf = r"""
 Converts `x` and `y` to mpmath numbers and returns `x \mod y`.
 For mpmath numbers, this is equivalent to ``x % y``.
@@ -7710,13 +7693,13 @@ Gives the Appell F1 hypergeometric function of two variables,
 
 .. math ::
 
-    F_1(a,b_1,b_2,c,z_1,z_2) = \sum_{m=0}^{\infty}
-        \sum_{n=0}^{\infty}
-        \frac{(a)_{m+n} (b_1)_m (b_2)_n}{m! \,n! \,(c)_{m+n}} z_1^m z_2^n.
+    F_1(a,b_1,b_2,c,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+        \frac{(a)_{m+n} (b_1)_m (b_2)_n}{(c)_{m+n}}
+        \frac{x^m y^n}{m! n!}.
 
-This series is only generally convergent when `|z_1| < 1` and `|z_2| < 1`,
-although :func:`appellf1` can evaluate the continuation
-in many cases.
+This series is only generally convergent when `|x| < 1` and `|y| < 1`,
+although :func:`appellf1` can evaluate an analytic continuation
+with respecto to either variable, and sometimes both.
 
 **Examples**
 
@@ -7736,7 +7719,7 @@ For some integer parameters, the F1 series reduces to a polynomial::
     >>> appellf1(-5,1,2,1,4,5)
     -20528.0
 
-The analytic continuation with respect to either `z_1` or `z_2`,
+The analytic continuation with respect to either `x` or `y`,
 and sometimes with respect to both, can be evaluated::
 
     >>> appellf1(2,3,4,5,100,0.5)
@@ -7756,6 +7739,24 @@ For certain arguments, F1 reduces to an ordinary hypergeometric function::
     (-1.717202506168937502740238 - 2.792526803190927323077905j)
     >>> hyp2f1(1,3,4,1.5)
     (-1.717202506168937502740238 - 2.792526803190927323077905j)
+
+The F1 function satisfies a system of partial differential equations::
+
+    >>> a,b1,b2,c,x,y = map(mpf, [1,0.5,0.25,1.125,0.25,-0.25])
+    >>> F = lambda x,y: appellf1(a,b1,b2,c,x,y)
+    >>> chop(x*(1-x)*diff(F,(x,y),(2,0)) +
+    ...      y*(1-x)*diff(F,(x,y),(1,1)) +
+    ...      (c-(a+b1+1)*x)*diff(F,(x,y),(1,0)) -
+    ...      b1*y*diff(F,(x,y),(0,1)) -
+    ...      a*b1*F(x,y))
+    0.0
+    >>>
+    >>> chop(y*(1-y)*diff(F,(x,y),(0,2)) +
+    ...      x*(1-y)*diff(F,(x,y),(1,1)) +
+    ...      (c-(a+b2+1)*y)*diff(F,(x,y),(0,1)) -
+    ...      b2*x*diff(F,(x,y),(1,0)) -
+    ...      a*b2*F(x,y))
+    0.0
 
 The Appell F1 function allows for closed-form evaluation of various
 integrals, such as any integral of the form
@@ -7802,7 +7803,198 @@ Also incomplete elliptic integrals fall into this category [1]::
 
 **References**
 
-1. http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/
+1. [WolframFunctions]_ http://functions.wolfram.com/EllipticIntegrals/EllipticE2/26/01/
+2. [SrivastavaKarlsson]_
+3. [CabralRosetti]_
+4. [Vidunas]_
+5. [Slater]_
+
+"""
+
+
+appellf2 = r"""
+Gives the Appell F2 hypergeometric function of two variables
+
+.. math ::
+
+    F_2(a,b_1,b_2,c_1,c_2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+        \frac{(a)_{m+n} (b_1)_m (b_2)_n}{(c_1)_m (c_2)_n}
+        \frac{x^m y^n}{m! n!}.
+
+The series is generally absolutely convergent for `|x| + |y| < 1`.
+
+**Examples**
+
+Evaluation for real and complex arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> appellf2(1,2,3,4,5,0.25,0.125)
+    1.257417193533135344785602
+    >>> appellf2(1,-3,-4,2,3,2,3)
+    -42.8
+    >>> appellf2(0.5,0.25,-0.25,2,3,0.25j,0.25)
+    (0.9880539519421899867041719 + 0.01497616165031102661476978j)
+    >>> chop(appellf2(1,1+j,1-j,3j,-3j,0.25,0.25))
+    1.201311219287411337955192
+    >>> appellf2(1,1,1,4,6,0.125,16)
+    (-0.09455532250274744282125152 - 0.7647282253046207836769297j)
+
+A transformation formula::
+
+    >>> a,b1,b2,c1,c2,x,y = map(mpf, [1,2,0.5,0.25,1.625,-0.125,0.125])
+    >>> appellf2(a,b1,b2,c1,c2,x,y)
+    0.2299211717841180783309688
+    >>> (1-x)**(-a)*appellf2(a,c1-b1,b2,c1,c2,x/(x-1),y/(1-x))
+    0.2299211717841180783309688
+
+A system of partial differential equations satisfied by F2::
+
+    >>> a,b1,b2,c1,c2,x,y = map(mpf, [1,0.5,0.25,1.125,1.5,0.0625,-0.0625])
+    >>> F = lambda x,y: appellf2(a,b1,b2,c1,c2,x,y)
+    >>> chop(x*(1-x)*diff(F,(x,y),(2,0)) -
+    ...      x*y*diff(F,(x,y),(1,1)) +
+    ...      (c1-(a+b1+1)*x)*diff(F,(x,y),(1,0)) -
+    ...      b1*y*diff(F,(x,y),(0,1)) -
+    ...      a*b1*F(x,y))
+    0.0
+    >>> chop(y*(1-y)*diff(F,(x,y),(0,2)) -
+    ...      x*y*diff(F,(x,y),(1,1)) +
+    ...      (c2-(a+b2+1)*y)*diff(F,(x,y),(0,1)) -
+    ...      b2*x*diff(F,(x,y),(1,0)) -
+    ...      a*b2*F(x,y))
+    0.0
+
+**References**
+
+See references for :func:`appellf1`.
+"""
+
+appellf3 = r"""
+Gives the Appell F3 hypergeometric function of two variables
+
+.. math ::
+
+    F_3(a_1,a_2,b_1,b_2,c,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+        \frac{(a_1)_m (a_2)_n (b_1)_m (b_2)_n}{(c)_{m+n}}
+        \frac{x^m y^n}{m! n!}.
+
+The series is generally absolutely convergent for `|x| < 1, |y| < 1`.
+
+**Examples**
+
+Evaluation for various parameters and variables::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> appellf3(1,2,3,4,5,0.5,0.25)
+    2.221557778107438938158705
+    >>> appellf3(1,2,3,4,5,6,0); hyp2f1(1,3,5,6)
+    (-0.5189554589089861284537389 - 0.1454441043328607980769742j)
+    (-0.5189554589089861284537389 - 0.1454441043328607980769742j)
+    >>> appellf3(1,-2,-3,1,1,4,6)
+    -17.4
+    >>> appellf3(1,2,-3,1,1,4,6)
+    (17.7876136773677356641825 + 19.54768762233649126154534j)
+    >>> appellf3(1,2,-3,1,1,6,4)
+    (85.02054175067929402953645 + 148.4402528821177305173599j)
+    >>> chop(appellf3(1+j,2,1-j,2,3,0.25,0.25))
+    1.719992169545200286696007
+
+Many transformations and evaluations for special combinations
+of the parameters are possible, e.g.:
+
+    >>> a,b,c,x,y = map(mpf, [0.5,0.25,0.125,0.125,-0.125])
+    >>> appellf3(a,c-a,b,c-b,c,x,y)
+    1.093432340896087107444363
+    >>> (1-y)**(a+b-c)*hyp2f1(a,b,c,x+y-x*y)
+    1.093432340896087107444363
+    >>> x**2*appellf3(1,1,1,1,3,x,-x)
+    0.01568646277445385390945083
+    >>> polylog(2,x**2)
+    0.01568646277445385390945083
+    >>> a1,a2,b1,b2,c,x = map(mpf, [0.5,0.25,0.125,0.5,4.25,0.125])
+    >>> appellf3(a1,a2,b1,b2,c,x,1)
+    1.03947361709111140096947
+    >>> gammaprod([c,c-a2-b2],[c-a2,c-b2])*hyp3f2(a1,b1,c-a2-b2,c-a2,c-b2,x)
+    1.03947361709111140096947
+
+The Appell F3 function satisfies a pair of partial
+differential equations::
+
+    >>> a1,a2,b1,b2,c,x,y = map(mpf, [0.5,0.25,0.125,0.5,0.625,0.0625,-0.0625])
+    >>> F = lambda x,y: appellf3(a1,a2,b1,b2,c,x,y)
+    >>> chop(x*(1-x)*diff(F,(x,y),(2,0)) +
+    ...      y*diff(F,(x,y),(1,1)) +
+    ...     (c-(a1+b1+1)*x)*diff(F,(x,y),(1,0)) -
+    ...     a1*b1*F(x,y))
+    0.0
+    >>> chop(y*(1-y)*diff(F,(x,y),(0,2)) +
+    ...     x*diff(F,(x,y),(1,1)) +
+    ...     (c-(a2+b2+1)*y)*diff(F,(x,y),(0,1)) -
+    ...     a2*b2*F(x,y))
+    0.0
+
+**References**
+
+See references for :func:`appellf1`.
+"""
+
+appellf4 = r"""
+Gives the Appell F3 hypergeometric function of two variables
+
+.. math ::
+
+    F_4(a,b,c1,c2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+        \frac{(a)_{m+n} (b)_{m+n}}{(c_1)_m (c_2)_n}
+        \frac{x^m y^n}{m! n!}.
+
+The series is generally absolutely convergent for
+`\sqrt{|x|} + \sqrt{|y|} < 1`.
+
+**Examples**
+
+Evaluation for various parameters and arguments::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> appellf4(1,1,2,2,0.25,0.125)
+    1.286182069079718313546608
+    >>> appellf4(-2,-3,4,5,4,5)
+    34.8
+    >>> appellf4(5,4,2,3,0.25j,-0.125j)
+    (-0.2585967215437846642163352 + 2.436102233553582711818743j)
+
+Reduction to `\,_2F_1` in a special case::
+
+    >>> a,b,c,x,y = map(mpf, [0.5,0.25,0.125,0.125,-0.125])
+    >>> appellf4(a,b,c,a+b-c+1,x*(1-y),y*(1-x))
+    1.129143488466850868248364
+    >>> hyp2f1(a,b,c,x)*hyp2f1(a,b,a+b-c+1,y)
+    1.129143488466850868248364
+
+A system of partial differential equations satisfied by F4::
+
+    >>> a,b,c1,c2,x,y = map(mpf, [1,0.5,0.25,1.125,0.0625,-0.0625])
+    >>> F = lambda x,y: appellf4(a,b,c1,c2,x,y)
+    >>> chop(x*(1-x)*diff(F,(x,y),(2,0)) -
+    ...      y**2*diff(F,(x,y),(0,2)) -
+    ...      2*x*y*diff(F,(x,y),(1,1)) +
+    ...      (c1-(a+b+1)*x)*diff(F,(x,y),(1,0)) -
+    ...      ((a+b+1)*y)*diff(F,(x,y),(0,1)) -
+    ...      a*b*F(x,y))
+    0.0
+    >>> chop(y*(1-y)*diff(F,(x,y),(0,2)) -
+    ...      x**2*diff(F,(x,y),(2,0)) -
+    ...      2*x*y*diff(F,(x,y),(1,1)) +
+    ...      (c2-(a+b+1)*y)*diff(F,(x,y),(0,1)) -
+    ...      ((a+b+1)*x)*diff(F,(x,y),(1,0)) -
+    ...      a*b*F(x,y))
+    0.0
+
+**References**
+
+See references for :func:`appellf1`.
 """
 
 zeta = r"""
