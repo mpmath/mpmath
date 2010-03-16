@@ -1,13 +1,12 @@
 """
-The function newzetazero(n) computes the gamma_n  ordinate of the
-n-th non trivial zero of zeta(s).
+The function zetazero(n) computes the n-th nontrivial zero of zeta(s).
 
 The general strategy is to locate a block of Gram intervals B where we
 know exactly the number of zeros contained and which of those zeros
 is that which we search.
 
 If n <= 400 000 000  we know exactly the Rosser exceptions, contained
-in a file  'RosserExceptions.py'. Hence for n<=400 000 000 we simply
+in a list in this file. Hence for n<=400 000 000 we simply
 look at these list of exceptions. If our zero is implicated in one of
 these exceptions we have our block B.  In other case we simply locate
 the good Rosser block containing our zero.
@@ -353,18 +352,17 @@ def zetazero(ctx, n, info=False, round=True):
         >>> chop(zeta(_)/_)
         0.0
         
-    with info = True `zetazero` gives information additional::
-    
+    with *info=True*, :func:`zetazero` gives additional information::
+
+        >>> mp.dps = 15
         >>> zetazero(542964976,info=True)
-        (mpc(real='0.5', imag='209039046.57853526'), [542964969, 542964978], 6, 
-        '(013111110)')
-        
-    meaning that our zero is between Gram points 542964969 and 542964978,
+        ((0.5 + 209039046.578535j), [542964969, 542964978], 6, '(013111110)')
+
+    This means that the zero is between Gram points 542964969 and 542964978;
     it is the 6-th zero between them. Finally (01311110) is the pattern
     of zeros in this interval. The numbers indicate the number of zeros
-    in each Gram interval, (Rosser Blocks between parenthesis). In this case
-    only one Rosser Block of length nine. 
-    
+    in each Gram interval (Rosser blocks between parenthesis). In this case
+    there is only one Rosser block of length nine. 
     """
     n = int(n)
     if n < 0:
