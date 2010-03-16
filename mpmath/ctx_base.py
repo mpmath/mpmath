@@ -353,12 +353,27 @@ class StandardBaseContext(Context,
             ctx.prec = prec
 
     def power(ctx, x, y):
+        r"""Converts `x` and `y` to mpmath numbers and evaluates
+        `x^y = \exp(y \log(x))`::
+
+            >>> from mpmath import *
+            >>> mp.dps = 30; mp.pretty = True
+            >>> power(2, 0.5)
+            1.41421356237309504880168872421
+
+        This shows the leading few digits of a large Mersenne prime
+        (performing the exact calculation ``2**43112609-1`` and
+        displaying the result in Python would be very slow)::
+
+            >>> power(2, 43112609)-1
+            3.16470269330255923143453723949e+12978188
+        """
         return ctx.convert(x) ** ctx.convert(y)
 
     def _zeta_int(ctx, n):
         return ctx.zeta(n)
 
-    def maxcalls(ctx, f, N=1000):
+    def maxcalls(ctx, f, N):
         """
         Return a wrapped copy of *f* that raises ``NoConvergence`` when *f*
         has been called more than *N* times::
@@ -366,9 +381,9 @@ class StandardBaseContext(Context,
             >>> from mpmath import *
             >>> mp.dps = 15
             >>> f = maxcalls(sin, 10)
-            >>> print sum(f(n) for n in range(8))
-            0.553732750242242
-            >>> print sum(f(n) for n in range(8))
+            >>> print sum(f(n) for n in range(10))
+            1.95520948210738
+            >>> f(10)
             Traceback (most recent call last):
               ...
             NoConvergence: maxcalls: function evaluated 10 times
