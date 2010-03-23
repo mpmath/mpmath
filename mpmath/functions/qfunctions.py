@@ -157,7 +157,7 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
         \left((-1)^n q^{n\choose 2}\right)^{1+s-r}
         \frac{z^n}{(q;q)_n}
 
-    where `(a;q)_n` denotes the q-Pochhammer symbol (see :func:`qp`).
+    where `(a;q)_n` denotes the q-Pochhammer symbol (see :func:`~mpmath.qp`).
 
     **Examples**
 
@@ -173,7 +173,7 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
         (9.112885171773400017270226 - 1.272756997166375050700388j)
 
     Comparing with a summation of the defining series, using
-    :func:`nsum`::
+    :func:`~mpmath.nsum`::
 
         >>> b, q, z = 3, 0.25, 0.5
         >>> qhyper([], [b], q, z)

@@ -801,10 +801,10 @@ class PythonMPContext:
     def fsum(ctx, terms, absolute=False, squared=False):
         """
         Calculates a sum containing a finite number of terms (for infinite
-        series, see :func:`nsum`). The terms will be converted to
+        series, see :func:`~mpmath.nsum`). The terms will be converted to
         mpmath numbers. For len(terms) > 2, this function is generally
         faster and produces more accurate results than the builtin
-        Python function :func:`sum`.
+        Python function :func:`~mpmath.sum`.
 
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
@@ -873,7 +873,7 @@ class PythonMPContext:
 
             \sum_{k=0} A_k B_k.
 
-        Alternatively, :func:`fdot` accepts a single iterable of pairs.
+        Alternatively, :func:`~mpmath.fdot` accepts a single iterable of pairs.
         In other words, ``fdot(A,B)`` and ``fdot(zip(A,B))`` are equivalent.
         The elements are automatically converted to mpmath numbers.
 

@@ -310,7 +310,7 @@ def zetazero(ctx, n, info=False, round=True):
     Computes the `n`-th nontrivial zero of `\zeta(s)` on the critical line,
     i.e. returns an approximation of the `n`-th largest complex number
     `s = \frac{1}{2} + ti` for which `\zeta(s) = 0`. Equivalently, the
-    imaginary part `t` is a zero of the Z-function (:func:`siegelz`).
+    imaginary part `t` is a zero of the Z-function (:func:`~mpmath.siegelz`).
 
     **Examples**
 
@@ -341,7 +341,7 @@ def zetazero(ctx, n, info=False, round=True):
         >>> zetazero(-1)
         (0.5 - 14.13472514173469379045725j)
 
-    :func:`zetazero` supports arbitrarily large `n` and arbitrary precision::
+    :func:`~mpmath.zetazero` supports arbitrarily large `n` and arbitrary precision::
 
         >>> mp.dps = 15
         >>> zetazero(1234567)
@@ -352,7 +352,7 @@ def zetazero(ctx, n, info=False, round=True):
         >>> chop(zeta(_)/_)
         0.0
         
-    with *info=True*, :func:`zetazero` gives additional information::
+    with *info=True*, :func:`~mpmath.zetazero` gives additional information::
 
         >>> mp.dps = 15
         >>> zetazero(542964976,info=True)

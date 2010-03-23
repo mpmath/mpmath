@@ -528,19 +528,19 @@ def bernfrac(n):
         >>> print bernoulli(10**4)
         -9.04942396360948e+27677
 
-    Note: :func:`bernoulli` computes a floating-point approximation
+    Note: :func:`~mpmath.bernoulli` computes a floating-point approximation
     directly, without computing the exact fraction first.
     This is much faster for large `n`.
 
     **Algorithm**
 
-    :func:`bernfrac` works by computing the value of `B_n` numerically
+    :func:`~mpmath.bernfrac` works by computing the value of `B_n` numerically
     and then using the von Staudt-Clausen theorem [1] to reconstruct
     the exact fraction. For large `n`, this is significantly faster than
     computing `B_1, B_2, \ldots, B_2` recursively with exact arithmetic.
     The implementation has been tested for `n = 10^m` up to `m = 6`.
 
-    In practice, :func:`bernfrac` appears to be about three times
+    In practice, :func:`~mpmath.bernfrac` appears to be about three times
     slower than the specialized program calcbn.exe [2]
 
     **References**

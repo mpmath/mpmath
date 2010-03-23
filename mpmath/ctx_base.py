@@ -119,7 +119,7 @@ class StandardBaseContext(Context,
         If only one epsilon is given, both are set to the same value.
         If none is given, both epsilons are set to `2^{-p+m}` where
         `p` is the current working precision and `m` is a small
-        integer. The default setting typically allows :func:`almosteq`
+        integer. The default setting typically allows :func:`~mpmath.almosteq`
         to be used to check for mathematical equality
         in the presence of small rounding errors.
 
@@ -159,10 +159,10 @@ class StandardBaseContext(Context,
 
     def arange(ctx, *args):
         r"""
-        This is a generalized version of Python's :func:`range` function
+        This is a generalized version of Python's :func:`~mpmath.range` function
         that accepts fractional endpoints and step sizes and
-        returns a list of ``mpf`` instances. Like :func:`range`,
-        :func:`arange` can be called with 1, 2 or 3 arguments:
+        returns a list of ``mpf`` instances. Like :func:`~mpmath.range`,
+        :func:`~mpmath.arange` can be called with 1, 2 or 3 arguments:
 
         ``arange(b)``
             `[0, 1, 2, \ldots, x]`
@@ -173,8 +173,8 @@ class StandardBaseContext(Context,
 
         where `b-1 \le x < b` (in the third case, `b-h \le x < b`).
 
-        Like Python's :func:`range`, the endpoint is not included. To
-        produce ranges where the endpoint is included, :func:`linspace`
+        Like Python's :func:`~mpmath.range`, the endpoint is not included. To
+        produce ranges where the endpoint is included, :func:`~mpmath.linspace`
         is more convenient.
 
         **Examples**
@@ -236,7 +236,7 @@ class StandardBaseContext(Context,
         samples from `a` to `b`. The syntax ``linspace(mpi(a,b), n)``
         is also valid.
 
-        This function is often more convenient than :func:`arange`
+        This function is often more convenient than :func:`~mpmath.arange`
         for partitioning an interval into subintervals, since
         the endpoint is included::
 

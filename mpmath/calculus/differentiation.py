@@ -223,17 +223,17 @@ def diffs(ctx, f, x, n=None, **options):
 
         f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots
 
-    With ``method='step'``, :func:`diffs` uses only `O(k)`
+    With ``method='step'``, :func:`~mpmath.diffs` uses only `O(k)`
     function evaluations to generate the first `k` derivatives,
     rather than the roughly `O(k^2)` evaluations
-    required if one calls :func:`diff` `k` separate times.
+    required if one calls :func:`~mpmath.diff` `k` separate times.
 
     With `n < \infty`, the generator stops as soon as the
     `n`-th derivative has been generated. If the exact number of
     needed derivatives is known in advance, this is further
     slightly more efficient.
 
-    Options are the same as for :func:`diff`.
+    Options are the same as for :func:`~mpmath.diff`.
 
     **Examples**
 
@@ -376,7 +376,7 @@ def diffun(ctx, f, n=1, **options):
         (0.963558185417193, 0.963558185417193)
 
     The function `f` must support arbitrary precision evaluation.
-    See :func:`diff` for additional details and supported
+    See :func:`~mpmath.diff` for additional details and supported
     keyword options.
     """
     if n == 0:
@@ -398,11 +398,11 @@ def taylor(ctx, f, x, n, **options):
 
     The coefficients are computed using high-order numerical
     differentiation. The function must be possible to evaluate
-    to arbitrary precision. See :func:`diff` for additional details
+    to arbitrary precision. See :func:`~mpmath.diff` for additional details
     and supported keyword options.
 
     Note that to evaluate the Taylor polynomial as an approximation
-    of `f`, e.g. with :func:`polyval`, the coefficients must be reversed,
+    of `f`, e.g. with :func:`~mpmath.polyval`, the coefficients must be reversed,
     and the point of the Taylor expansion must be subtracted from
     the argument:
 
@@ -424,7 +424,7 @@ def pade(ctx, a, L, M):
     r"""
     Computes a Pade approximation of degree `(L, M)` to a function.
     Given at least `L+M+1` Taylor coefficients `a` approximating
-    a function `A(x)`, :func:`pade` returns coefficients of
+    a function `A(x)`, :func:`~mpmath.pade` returns coefficients of
     polynomials `P, Q` satisfying
 
     .. math ::

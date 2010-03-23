@@ -51,8 +51,8 @@ number theory, which we here denote by q-bar:
     \bar{q} = q^2 = e^{2 i \pi \tau}
 
 For convenience, mpmath provides functions to convert
-between the various parameters (:func:`qfrom`, :func:`mfrom`,
-:func:`kfrom`, :func:`taufrom`, :func:`qbarfrom`).
+between the various parameters (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
+:func:`~mpmath.kfrom`, :func:`~mpmath.taufrom`, :func:`~mpmath.qbarfrom`).
 
 **References**
 

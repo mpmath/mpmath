@@ -535,7 +535,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         roughly a 2x slowdown compared to manually setting the optimal
         precision. This method can, however, easily be fooled if the results
         from *f* depend "discontinuously" on the precision, for instance
-        if catastrophic cancellation can occur. Therefore, :func:`autoprec`
+        if catastrophic cancellation can occur. Therefore, :func:`~mpmath.autoprec`
         should be used judiciously.
 
         **Examples**
@@ -543,7 +543,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         Many functions are sensitive to perturbations of the input arguments.
         If the arguments are decimal numbers, they may have to be converted
         to binary at a much higher precision. If the amount of required
-        extra precision is unknown, :func:`autoprec` is convenient::
+        extra precision is unknown, :func:`~mpmath.autoprec` is convenient::
 
             >>> from mpmath import *
             >>> mp.dps = 15
@@ -563,7 +563,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
               ...
             NoConvergence: autoprec: prec increased to 2910 without convergence
 
-        As the following example shows, :func:`autoprec` can protect against
+        As the following example shows, :func:`~mpmath.autoprec` can protect against
         cancellation, but is fooled by too severe cancellation::
 
             >>> x = 1e-10
@@ -643,11 +643,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
         can be 'brackets', 'diff', 'plusminus' or 'percent'. See ``mpi_to_str`` for
         a more complete documentation.
 
-        If *x* is a list or tuple, :func:`nstr` is applied recursively
-        to each element. For unrecognized classes, :func:`nstr`
+        If *x* is a list or tuple, :func:`~mpmath.nstr` is applied recursively
+        to each element. For unrecognized classes, :func:`~mpmath.nstr`
         simply returns ``str(x)``.
 
-        The companion function :func:`nprint` prints the result
+        The companion function :func:`~mpmath.nprint` prints the result
         instead of returning it.
 
             >>> from mpmath import *
@@ -846,7 +846,7 @@ maxterms, or set zeroprec."""
         Negates the number *x*, giving a floating-point result, optionally
         using a custom precision and rounding mode.
 
-        See the documentation of :func:`fadd` for a detailed description
+        See the documentation of :func:`~mpmath.fadd` for a detailed description
         of how to specify precision and rounding.
 
         **Examples**
@@ -913,7 +913,7 @@ maxterms, or set zeroprec."""
 
         **Examples**
 
-        Using :func:`fadd` with precision and rounding control::
+        Using :func:`~mpmath.fadd` with precision and rounding control::
 
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
@@ -974,12 +974,12 @@ maxterms, or set zeroprec."""
         Subtracts the numbers *x* and *y*, giving a floating-point result,
         optionally using a custom precision and rounding mode.
 
-        See the documentation of :func:`fadd` for a detailed description
+        See the documentation of :func:`~mpmath.fadd` for a detailed description
         of how to specify precision and rounding.
 
         **Examples**
 
-        Using :func:`fsub` with precision and rounding control::
+        Using :func:`~mpmath.fsub` with precision and rounding control::
 
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
@@ -1040,7 +1040,7 @@ maxterms, or set zeroprec."""
         Multiplies the numbers *x* and *y*, giving a floating-point result,
         optionally using a custom precision and rounding mode.
 
-        See the documentation of :func:`fadd` for a detailed description
+        See the documentation of :func:`~mpmath.fadd` for a detailed description
         of how to specify precision and rounding.
 
         **Examples**
@@ -1109,7 +1109,7 @@ maxterms, or set zeroprec."""
         Divides the numbers *x* and *y*, giving a floating-point result,
         optionally using a custom precision and rounding mode.
 
-        See the documentation of :func:`fadd` for a detailed description
+        See the documentation of :func:`~mpmath.fadd` for a detailed description
         of how to specify precision and rounding.
 
         **Examples**
@@ -1141,7 +1141,7 @@ maxterms, or set zeroprec."""
             >>> fdiv(2, 3) - fdiv(2, 3, prec=100)
             mpf('-3.7007434154172148e-17')
 
-        Unlike :func:`fadd`, :func:`fmul`, etc., exact division is not
+        Unlike :func:`~mpmath.fadd`, :func:`~mpmath.fmul`, etc., exact division is not
         allowed since the quotient of two floating-point numbers generally
         does not have an exact floating-point representation. (In the
         future this might be changed to allow the case where the division
@@ -1267,7 +1267,7 @@ maxterms, or set zeroprec."""
     def fprod(ctx, factors):
         r"""
         Calculates a product containing a finite number of factors (for
-        infinite products, see :func:`nprod`). The factors will be
+        infinite products, see :func:`~mpmath.nprod`). The factors will be
         converted to mpmath numbers.
 
             >>> from mpmath import *

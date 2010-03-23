@@ -1553,12 +1553,12 @@ def chebyu(ctx, n, x, **kwargs):
 
 @defun
 def j0(ctx, x):
-    """Computes the Bessel function `J_0(x)`. See :func:`besselj`."""
+    """Computes the Bessel function `J_0(x)`. See :func:`~mpmath.besselj`."""
     return ctx.besselj(0, x)
 
 @defun
 def j1(ctx, x):
-    """Computes the Bessel function `J_1(x)`.  See :func:`besselj`."""
+    """Computes the Bessel function `J_1(x)`.  See :func:`~mpmath.besselj`."""
     return ctx.besselj(1, x)
 
 @defun
@@ -2003,7 +2003,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
 
         ``hyper2d({'m+n':[a,b]}, {'m':[c], 'n':[d]}, x, y)``
 
-    More generally, :func:`hyper2d` can evaluate any of the 34 distinct
+    More generally, :func:`~mpmath.hyper2d` can evaluate any of the 34 distinct
     convergent second-order (generalized Gaussian) hypergeometric
     series enumerated by Horn, as well as the Kampe de Feriet
     function.
@@ -2011,7 +2011,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
     The series is computed by rewriting it so that the inner
     series (i.e. the series containing `n` and `y`) has the form of an
     ordinary generalized hypergeometric series and thereby can be
-    evaluated efficiently using :func:`hyper`. If possible,
+    evaluated efficiently using :func:`~mpmath.hyper`. If possible,
     manually swapping `x` and `y` and the corresponding parameters
     can sometimes give better results.
 
