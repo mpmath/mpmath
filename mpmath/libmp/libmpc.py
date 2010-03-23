@@ -13,7 +13,7 @@ from libmpf import (\
     fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
-    mpf_rdiv_int, mpf_floor, mpf_ceil,
+    mpf_rdiv_int, mpf_floor, mpf_ceil, mpf_nint, mpf_frac,
     mpf_sign,
     ComplexResult
 )
@@ -122,6 +122,15 @@ def mpc_floor(z, prec, rnd=round_fast):
 def mpc_ceil(z, prec, rnd=round_fast):
     a, b = z
     return mpf_ceil(a, prec, rnd), mpf_ceil(b, prec, rnd)
+
+def mpc_nint(z, prec, rnd=round_fast):
+    a, b = z
+    return mpf_nint(a, prec, rnd), mpf_nint(b, prec, rnd)
+
+def mpc_frac(z, prec, rnd=round_fast):
+    a, b = z
+    return mpf_frac(a, prec, rnd), mpf_frac(b, prec, rnd)
+
 
 def mpc_mul(z, w, prec, rnd=round_fast):
     """

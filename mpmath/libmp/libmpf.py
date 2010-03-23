@@ -352,27 +352,48 @@ def to_int(s, rnd=None):
     else:
         return round_int(man, -exp, rnd)
 
-def mpf_ceil(s, prec=0, rnd=round_fast):
-    """Calculate ceil of a raw mpf, and round the result in the given
-    direction (not necessarily ceiling). Note: returns a raw mpf
-    representing an integer, not a Python int."""
+def mpf_round_int(s, rnd):
     sign, man, exp, bc = s
     if (not man) and exp:
         return s
-    if exp > 0 and prec:
-        return mpf_pos(s, prec, rnd)
-    return from_int(to_int(s, round_ceiling), prec, rnd)
+    if exp >= 0:
+        return s
+    mag = exp+bc
+    if mag < 1:
+        if rnd == round_ceiling:
+            if sign: return fzero
+            else:    return fone
+        elif rnd == round_floor:
+            if sign: return fnone
+            else:    return fzero
+        elif rnd == round_nearest:
+            if mag < 0 or man == MPZ_ONE: return fzero
+            elif sign: return fnone
+            else:      return fone
+        else:
+            raise NotImplementedError
+    return mpf_pos(s, min(bc, mag), rnd)
 
 def mpf_floor(s, prec=0, rnd=round_fast):
-    """Calculate floor of a raw mpf, and round the result in the given
-    direction (not necessarily floor). Note: returns a raw mpf
-    representing an integer, not a Python int."""
-    sign, man, exp, bc = s
-    if (not man) and exp:
-        return s
-    if exp > 0 and prec:
-        return mpf_pos(s, prec, rnd)
-    return from_int(to_int(s, round_floor), prec, rnd)
+    v = mpf_round_int(s, round_floor)
+    if prec:
+        v = mpf_pos(v, prec, rnd)
+    return v
+
+def mpf_ceil(s, prec=0, rnd=round_fast):
+    v = mpf_round_int(s, round_ceiling)
+    if prec:
+        v = mpf_pos(v, prec, rnd)
+    return v
+
+def mpf_nint(s, prec=0, rnd=round_fast):
+    v = mpf_round_int(s, round_nearest)
+    if prec:
+        v = mpf_pos(v, prec, rnd)
+    return v
+
+def mpf_frac(s, prec=0, rnd=round_fast):
+    return mpf_sub(s, mpf_floor(s), prec, rnd)
 
 def from_float(x, prec=53, rnd=round_fast):
     """Create a raw mpf from a Python float, rounding if necessary.

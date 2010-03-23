@@ -276,6 +276,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.cospi = ctx._wrap_libmp_function(libmp.mpf_cos_pi, libmp.mpc_cos_pi)
         ctx.floor = ctx._wrap_libmp_function(libmp.mpf_floor, libmp.mpc_floor)
         ctx.ceil = ctx._wrap_libmp_function(libmp.mpf_ceil, libmp.mpc_ceil)
+        ctx.nint = ctx._wrap_libmp_function(libmp.mpf_nint, libmp.mpc_nint)
+        ctx.frac = ctx._wrap_libmp_function(libmp.mpf_frac, libmp.mpc_frac)
         ctx.fib = ctx.fibonacci = ctx._wrap_libmp_function(libmp.mpf_fibonacci, libmp.mpc_fibonacci)
 
         ctx.gamma = ctx._wrap_libmp_function(libmp.mpf_gamma, libmp.mpc_gamma)
@@ -1169,12 +1171,31 @@ maxterms, or set zeroprec."""
         raise ValueError("Arguments need to be mpf or mpc compatible numbers")
 
     def nint_distance(ctx, x):
-        """
-        Returns (n, d) where n is the nearest integer to x and d is the
-        log-2 distance (i.e. distance in bits) of n from x. If d < 0,
-        (-d) gives the bits of cancellation when n is subtracted from x.
-        This function is intended to be used to check for cancellation
-        at poles.
+        r"""
+        Return `(n,d)` where `n` is the nearest integer to `x` and `d` is
+        an estimate of `\log_2(|x-n|)`. If `d < 0`, `-d` gives the precision
+        (measured in bits) lost to cancellation when computing `x-n`.
+
+            >>> from mpmath import *
+            >>> n, d = nint_distance(5)
+            >>> print n, d
+            5 -inf
+            >>> n, d = nint_distance(mpf(5))
+            >>> print n, d
+            5 -inf
+            >>> n, d = nint_distance(mpf(5.00000001))
+            >>> print n, d
+            5 -26
+            >>> n, d = nint_distance(mpf(4.99999999))
+            >>> print n, d
+            5 -26
+            >>> n, d = nint_distance(mpc(5,10))
+            >>> print n, d
+            5 4
+            >>> n, d = nint_distance(mpc(5,0.000001))
+            >>> print n, d
+            5 -19
+
         """
         if hasattr(x, "_mpf_"):
             re = x._mpf_

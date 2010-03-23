@@ -653,52 +653,150 @@ class PythonMPContext:
 
     def isnan(ctx, x):
         """
-        For an ``mpf`` *x*, determines whether *x* is not-a-number (nan)::
+        Return *True* if *x* is a NaN (not-a-number), or for a complex
+        number, whether either the real or complex part is NaN;
+        otherwise return *False*::
 
             >>> from mpmath import *
-            >>> isnan(nan), isnan(3)
-            (True, False)
+            >>> isnan(3.14)
+            False
+            >>> isnan(nan)
+            True
+            >>> isnan(mpc(3.14,2.72))
+            False
+            >>> isnan(mpc(3.14,nan))
+            True
+
         """
-        if not hasattr(x, '_mpf_'):
+        if hasattr(x, "_mpf_"):
+            return x._mpf_ == fnan
+        if hasattr(x, "_mpc_"):
+            return fnan in x._mpc_
+        if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return False
-        return x._mpf_ == fnan
+        x = ctx.convert(x)
+        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
+            return ctx.isnan(x)
+        raise TypeError("isnan() needs a number as input")
 
     def isinf(ctx, x):
         """
-        For an ``mpf`` *x*, determines whether *x* is infinite::
+        Return *True* if the absolute value of *x* is infinite;
+        otherwise return *False*::
 
             >>> from mpmath import *
-            >>> isinf(inf), isinf(-inf), isinf(3)
-            (True, True, False)
+            >>> isinf(inf)
+            True
+            >>> isinf(-inf)
+            True
+            >>> isinf(3)
+            False
+            >>> isinf(3+4j)
+            False
+            >>> isinf(mpc(3,inf))
+            True
+            >>> isinf(mpc(inf,3))
+            True
+
         """
-        if not hasattr(x, '_mpf_'):
+        if hasattr(x, "_mpf_"):
+            return x._mpf_ in (finf, fninf)
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            return re in (finf, fninf) or im in (finf, fninf)
+        if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return False
-        return x._mpf_ in (finf, fninf)
+        x = ctx.convert(x)
+        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
+            return ctx.isinf(x)
+        raise TypeError("isinf() needs a number as input")
 
-    def isint(ctx, x):
+    def isnormal(ctx, x):
         """
-        For an ``mpf`` *x*, or any type that can be converted
-        to ``mpf``, determines whether *x* is exactly
-        integer-valued::
+        Determine whether *x* is "normal" in the sense of floating-point
+        representation; that is, return *False* if *x* is zero, an
+        infinity or NaN; otherwise return *True*. By extension, a
+        complex number *x* is considered "normal" if its magnitude is
+        normal::
 
             >>> from mpmath import *
-            >>> isint(3), isint(mpf(3)), isint(3.2)
-            (True, True, False)
+            >>> isnormal(3)
+            True
+            >>> isnormal(0)
+            False
+            >>> isnormal(inf); isnormal(-inf); isnormal(nan)
+            False
+            False
+            False
+            >>> isnormal(0+0j)
+            False
+            >>> isnormal(0+3j)
+            True
+            >>> isnormal(mpc(2,nan))
+            False
+        """
+        if hasattr(x, "_mpf_"):
+            return bool(x._mpf_[1])
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            re_normal = bool(re[1])
+            im_normal = bool(im[1])
+            if re == fzero: return im_normal
+            if im == fzero: return re_normal
+            return re_normal and im_normal
+        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+            return bool(x)
+        x = ctx.convert(x)
+        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
+            return ctx.isnormal(x)
+        raise TypeError("isnormal() needs a number as input")
+
+    def isint(ctx, x, gaussian=False):
+        """
+        Return *True* if *x* is integer-valued; otherwise return
+        *False*::
+
+            >>> from mpmath import *
+            >>> isint(3)
+            True
+            >>> isint(mpf(3))
+            True
+            >>> isint(3.2)
+            False
+            >>> isint(inf)
+            False
+
+        Optionally, Gaussian integers can be checked for::
+
+            >>> isint(3+0j)
+            True
+            >>> isint(3+2j)
+            False
+            >>> isint(3+2j, gaussian=True)
+            True
+
         """
         if isinstance(x, int_types):
             return True
-        try:
-            x = ctx.convert(x)
-        except:
-            return False
-        if hasattr(x, '_mpf_'):
-            if ctx.isnan(x) or ctx.isinf(x):
-                return False
-            return x == int(x)
-        if isinstance(x, ctx.mpq):
+        if hasattr(x, "_mpf_"):
+            sign, man, exp, bc = xval = x._mpf_
+            return bool((man and exp >= 0) or xval == fzero)
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            rsign, rman, rexp, rbc = re
+            isign, iman, iexp, ibc = im
+            re_isint = (rman and rexp >= 0) or re == fzero
+            if gaussian:
+                im_isint = (iman and iexp >= 0) or im == fzero
+                return re_isint and im_isint
+            return re_isint and im == fzero
+        if isinstance(x, rational.mpq):
             p, q = x
-            return not (p % q)
-        return False
+            return p % q == 0
+        x = ctx.convert(x)
+        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
+            return ctx.isint(x, gaussian)
+        raise TypeError("isint() needs a number as input")
 
     def fsum(ctx, terms, absolute=False, squared=False):
         """
@@ -976,11 +1074,24 @@ class PythonMPContext:
 
     def mag(ctx, x):
         """
-        Quick logarithmic magnitude estimate of a number.
-        Returns an integer or infinity `m` such that `|x| <= 2^m`.
-        It is not guaranteed that `m` is an optimal bound,
-        but it will never be off by more than 2 (and probably not
-        more than 1).
+        Quick logarithmic magnitude estimate of a number. Returns an
+        integer or infinity `m` such that `|x| <= 2^m`. It is not
+        guaranteed that `m` is an optimal bound, but it will never
+        be too large by more than 2 (and probably not more than 1).
+
+        **Examples**
+
+            >>> from mpmath import *
+            >>> mp.pretty = True
+            >>> mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
+            (4, 4, 4, 4)
+            >>> mag(10j), mag(10+10j)
+            (4, 5)
+            >>> mag(0.01), int(ceil(log(0.01,2)))
+            (-6, -6)
+            >>> mag(0), mag(inf), mag(-inf), mag(nan)
+            (-inf, +inf, +inf, nan)
+
         """
         if hasattr(x, "_mpf_"):
             return ctx._mpf_mag(x._mpf_)

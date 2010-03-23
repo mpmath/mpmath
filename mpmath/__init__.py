@@ -61,6 +61,7 @@ multiplicity = mp.multiplicity
 
 isinf = mp.isinf
 isnan = mp.isnan
+isnormal = mp.isnormal
 isint = mp.isint
 almosteq = mp.almosteq
 nan = mp.nan
@@ -223,6 +224,8 @@ im = mp.im
 conj = mp.conj
 floor = mp.floor
 ceil = mp.ceil
+nint = mp.nint
+frac = mp.frac
 root = mp.root
 nthroot = mp.nthroot
 hypot = mp.hypot

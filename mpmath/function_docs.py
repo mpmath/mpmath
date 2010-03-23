@@ -1072,11 +1072,28 @@ the largest integer less than or equal to `x`::
     >>> floor(3.5)
     mpf('3.0')
 
-Note: :func:`floor` returns a floating-point number, not a
-Python ``int``. If `\lfloor x \rfloor` is too large to be
-represented exactly at the present working precision, the
-result will be rounded, not necessarily in the floor
-direction."""
+.. note ::
+
+    :func:`floor`, :func:`ceil` and :func:`nint` return a
+    floating-point number, not a Python ``int``. If `\lfloor x \rfloor` is
+    too large to be represented exactly at the present working precision,
+    the result will be rounded, not necessarily in the direction
+    implied by the mathematical definition of the function.
+
+To avoid rounding, use *prec=0*::
+
+    >>> mp.dps = 15
+    >>> int(floor(10**30+1))
+    1000000000000000019884624838656L
+    >>> int(floor(10**30+1, prec=0))
+    1000000000000000000000000000001L
+
+The floor function is defined for complex numbers and
+acts on the real and imaginary parts separately::
+
+    >>> floor(3.25+4.75j)
+    mpc(real='3.0', imag='4.0')
+"""
 
 ceil = r"""
 Computes the ceiling of `x`, `\lceil x \rceil`, defined as
@@ -1087,11 +1104,79 @@ the smallest integer greater than or equal to `x`::
     >>> ceil(3.5)
     mpf('4.0')
 
-Note: :func:`ceil` returns a floating-point number, not a
-Python ``int``. If `\lceil x \rceil` is too large to be
-represented exactly at the present working precision, the
-result will be rounded, not necessarily in the ceiling
-direction."""
+The ceiling function is defined for complex numbers and
+acts on the real and imaginary parts separately::
+
+    >>> ceil(3.25+4.75j)
+    mpc(real='4.0', imag='5.0')
+
+See notes about rounding for :func:`floor`.
+"""
+
+nint = r"""
+Evaluates the nearest integer function, `\mathrm{nint}(x)`.
+This gives the nearest integer to `x`; on a tie, it
+gives the nearest even integer::
+
+    >>> from mpmath import *
+    >>> mp.pretty = False
+    >>> nint(3.2)
+    mpf('3.0')
+    >>> nint(3.8)
+    mpf('4.0')
+    >>> nint(3.5)
+    mpf('4.0')
+    >>> nint(4.5)
+    mpf('4.0')
+
+The nearest integer function is defined for complex numbers and
+acts on the real and imaginary parts separately::
+
+    >>> nint(3.25+4.75j)
+    mpc(real='3.0', imag='5.0')
+
+See notes about rounding for :func:`floor`.
+"""
+
+frac = r"""
+Gives the fractional part of `x`, defined as
+`\mathrm{frac}(x) = x - \lfloor x \rfloor` (see :func:`floor`).
+In effect, this computes `x` modulo 1, or `x+n` where
+`n \in \mathbb{Z}` is such that `x+n \in [0,1)`::
+
+    >>> from mpmath import *
+    >>> mp.pretty = False
+    >>> frac(1.25)
+    mpf('0.25')
+    >>> frac(3)
+    mpf('0.0')
+    >>> frac(-1.25)
+    mpf('0.75')
+
+For a complex number, the fractional part function applies to
+the real and imaginary parts separately::
+
+    >>> frac(2.25+3.75j)
+    mpc(real='0.25', imag='0.75')
+
+Plotted, the fractional part function gives a sawtooth
+wave. The Fourier series coefficients have a simple
+form::
+
+    >>> mp.dps = 15
+    >>> nprint(fourier(lambda x: frac(x)-0.5, [0,1], 4))
+    ([0.0, 0.0, 0.0, 0.0, 0.0], [0.0, -0.31831, -0.159155, -0.106103, -0.0795775])
+    >>> nprint([-1/(pi*k) for k in range(1,5)])
+    [-0.31831, -0.159155, -0.106103, -0.0795775]
+
+.. note::
+
+    The fractional part is sometimes defined as a symmetric
+    function, i.e. returning `-\mathrm{frac}(-x)` if `x < 0`.
+    This convention is used, for instance, by Mathematica's
+    ``FractionalPart``.
+
+"""
 
 sign = r"""
 Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
