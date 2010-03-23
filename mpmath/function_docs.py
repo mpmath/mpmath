@@ -2722,7 +2722,7 @@ special parameter combinations, this can be extremely slow.
     >>> hyper([1,1,1,1], [1], 0.5)     # regularization of 4F1
     (1.108287213689475145830699 + 0.5327107430640678181200491j)
 
-With the following magnitude of argument, the asymptotic series for `\,_3F1`
+With the following magnitude of argument, the asymptotic series for `\,_3F_1`
 gives only a few digits. Using Borel summation, ``hyper`` can produce
 a value with full accuracy::
 
@@ -7945,7 +7945,7 @@ Gives the Appell F3 hypergeometric function of two variables
 
 .. math ::
 
-    F_4(a,b,c1,c2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+    F_4(a,b,c_1,c_2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
         \frac{(a)_{m+n} (b)_{m+n}}{(c_1)_m (c_2)_n}
         \frac{x^m y^n}{m! n!}.
 
