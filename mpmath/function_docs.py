@@ -1226,7 +1226,7 @@ The value returned by :func:`~mpmath.arg` is an ``mpf`` instance.
 """
 
 fabs = r"""
-Returns the absolute value of `x`, `|x|`. Unlike :func:`~mpmath.abs`,
+Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
 :func:`~mpmath.fabs` converts non-mpmath numbers (such as ``int``)
 into mpmath numbers::
 

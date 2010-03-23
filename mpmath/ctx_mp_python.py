@@ -804,7 +804,7 @@ class PythonMPContext:
         series, see :func:`~mpmath.nsum`). The terms will be converted to
         mpmath numbers. For len(terms) > 2, this function is generally
         faster and produces more accurate results than the builtin
-        Python function :func:`~mpmath.sum`.
+        Python function :func:`sum`.
 
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
