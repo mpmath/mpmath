@@ -1369,6 +1369,86 @@ def pow_fixed(x, n, wp):
         n //= 2
     return y
 
+# TODO: optimize / cleanup interface / unify with list_primes
+sieve_cache = []
+primes_cache = []
+mult_cache = []
+
+def primesieve(n):
+    global sieve_cache, primes_cache, mult_cache
+    if n < len(sieve_cache):
+        sieve = sieve_cache[:n+1]
+        primes = primes_cache[:primes_cache.index(max(sieve))+1]
+        mult = mult_cache[:n+1]
+        return sieve, primes, mult
+    sieve = [0] * (n+1)
+    mult = [0] * (n+1)
+    primes = list_primes(n)
+    for p in primes:
+        #sieve[p::p] = p
+        for k in xrange(p,n+1,p):
+            sieve[k] = p
+    for i, p in enumerate(sieve):
+        if i >= 2:
+            m = 1
+            n = i // p
+            while not n % p:
+                n //= p
+                m += 1
+            mult[i] = m
+    sieve_cache = sieve
+    primes_cache = primes
+    mult_cache = mult
+    return sieve, primes, mult
+
+def zetasum_sieved(critical_line, sre, sim, a, n, wp):
+    assert a >= 1
+    sieve, primes, mult = primesieve(a+n)
+    basic_powers = {}
+    one = MPZ_ONE << wp
+    one_2wp = MPZ_ONE << (2*wp)
+    wp2 = wp+wp
+    ln2 = ln2_fixed(wp)
+    pi2 = pi_fixed(wp-1)
+    for p in primes:
+        log = log_int_fixed(p, wp, ln2)
+        cos, sin = cos_sin_fixed((-sim*log)>>wp, wp, pi2)
+        if critical_line:
+            u = one_2wp // isqrt_fast(p<<wp2)
+        else:
+            u = exp_fixed((-sre*log)>>wp, wp)
+        pre = (u*cos) >> wp
+        pim = (u*sin) >> wp
+        basic_powers[p] = [(pre, pim)]
+        tre, tim = pre, pim
+        for m in range(1,int(math.log(a+n,p)+0.01)+1):
+            tre, tim = ((pre*tre-pim*tim)>>wp), ((pim*tre+pre*tim)>>wp)
+            basic_powers[p].append((tre,tim))
+    xre = MPZ_ZERO
+    xim = MPZ_ZERO
+    if a == 1:
+        xre += one
+    aa = max(a,2)
+    for k, p in enumerate(sieve[max(2,a):a+n+1]):
+        k += aa
+        orgk = k
+        m = mult[k]
+        tre, tim = basic_powers[p][m-1]
+        while 1:
+            k //= p**m
+            if k == 1:
+                break
+            p = sieve[k]
+            m = mult[k]
+            pre, pim = basic_powers[p][m-1]
+            tre, tim = ((pre*tre-pim*tim)>>wp), ((pim*tre+pre*tim)>>wp)
+        xre += tre
+        xim += tim
+    return xre, xim
+
+# Set to something large to disable
+ZETASUM_SIEVE_CUTOFF = 10
+
 def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     """
     Fast version of mp._zetasum, assuming s = complex, a = integer.
@@ -1383,6 +1463,11 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     critical_line = (sre == fhalf)
     sre = to_fixed(sre, wp)
     sim = to_fixed(sim, wp)
+
+    if a > 0 and n > ZETASUM_SIEVE_CUTOFF and not have_derivatives and not reflect:
+        re, im = zetasum_sieved(critical_line, sre, sim, a, n, wp)
+        xs = [(from_man_exp(re, -wp, prec, 'n'), from_man_exp(im, -wp, prec, 'n'))]
+        return xs, []
 
     maxd = max(derivatives)
     if not have_one_derivative:

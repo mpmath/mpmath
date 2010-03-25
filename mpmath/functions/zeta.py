@@ -611,6 +611,7 @@ def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
     derivatives (which should consist of either a single element
     or a range 0,1,...r). If reflect=False, the ydks are not computed.
     """
+    #print "zetasum", s, a, n
     try:
         return ctx._zetasum_fast(s, a, n, derivatives, reflect)
     except NotImplementedError:
