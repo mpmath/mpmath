@@ -562,7 +562,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     formula:value pairs.
 
     In order not to produce spurious results, :func:`~mpmath.identify` should
-    be used with high precision; preferrably 50 digits or more.
+    be used with high precision; preferably 50 digits or more.
 
     **Examples**
 
@@ -667,7 +667,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         ((3/20) + (21/20)*e + (3/20)*catalan)
         ...
 
-    The numerical values are roughly as close to pi as permitted by the
+    The numerical values are roughly as close to `\pi` as permitted by the
     specified tolerance:
 
         >>> e/log(6-4*e/3)

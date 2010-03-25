@@ -2431,11 +2431,13 @@ computes the regularized incomplete beta function
 `I_{x_1}^{x_2}(a,b) / B(a,b)`. This is the cumulative distribution of the
 beta distribution with parameters `a`, `b`.
 
-Note: implementations of the incomplete beta function in some other
-software uses a different argument order. For example, Mathematica uses the
-reversed argument order ``Beta[x1,x2,a,b]``. For the equivalent of SciPy's
-three-argument incomplete beta integral (implicitly with `x1 = 0`), use
-``betainc(a,b,0,x2,regularized=True)``.
+.. note :
+
+    Implementations of the incomplete beta function in some other
+    software uses a different argument order. For example, Mathematica uses the
+    reversed argument order ``Beta[x1,x2,a,b]``. For the equivalent of SciPy's
+    three-argument incomplete beta integral (implicitly with `x1 = 0`), use
+    ``betainc(a,b,0,x2,regularized=True)``.
 
 **Examples**
 
@@ -3207,8 +3209,10 @@ Evaluation very close to the unit circle::
     >>> hyp3f2(1,2,3,4,5,'-0.9999')
     0.7823896253461678060196207
 
-Note: evaluation for `|z-1|` small can currently be inaccurate or slow
-for some parameter combinations.
+.. note ::
+
+    Evaluation for `|z-1|` small can currently be inaccurate or slow
+    for some parameter combinations.
 
 For various parameter combinations, `\,_3F_2` admits representation in terms
 of hypergeometric functions of lower degree, or in terms of
@@ -5672,8 +5676,8 @@ of `w \exp(w)`. In other words, the value of `W(z)` is such that
 `z = W(z) \exp(W(z))` for any complex number `z`.
 
 The Lambert W function is a multivalued function with infinitely
-many branches. Each branch gives a separate solution of the
-equation `w \exp(w)`. All branches are supported by
+many branches. Each branch gives a separate solution `w` of the
+equation `z = w \exp(w)`. All branches are supported by
 :func:`~mpmath.lambertw`:
 
 * ``lambertw(z)`` gives the principal solution (branch 0)
@@ -5684,6 +5688,9 @@ The Lambert W function has two partially real branches: the
 principal branch (`k = 0`) is real for real `z > -1/e`, and the
 `k = -1` branch is real for `-1/e < z < 0`. All branches except
 `k = 0` have a logarithmic singularity at `z = 0`.
+
+The definition, implementation and choice of branches
+is based on [Corless]_.
 
 **Basic examples**
 
@@ -5782,9 +5789,11 @@ a small imaginary part::
 
 **Possible issues**
 
-The evaluation can become inaccurate very close to the branch point
-at `-1/e`. In some corner cases, :func:`~mpmath.lambertw` might currently
-fail to converge, or can end up on the wrong branch.
+.. warning ::
+
+    The evaluation can become inaccurate very close to the branch point
+    at `-1/e`. In some corner cases, :func:`~mpmath.lambertw` might currently
+    fail to converge, or can end up on the wrong branch.
 
 **Algorithm**
 
@@ -5792,13 +5801,9 @@ Halley's iteration is used to invert `w \exp(w)`, using a first-order
 asymptotic approximation (`O(\log(w))` or `O(w)`) as the initial
 estimate.
 
-The definition, implementation and choice of branches is based
-on Corless et al, "On the Lambert W function", Adv. Comp. Math. 5
-(1996) 329-359, available online here:
-http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
+**References**
 
-TODO: use a series expansion when extremely close to the branch point
-at `-1/e` and make sure that the proper branch is chosen there
+1. [Corless]_
 """
 
 barnesg = r"""
@@ -8196,7 +8201,7 @@ for `a = 1`, `n \le 4`)::
     >>> print zeta(1+10000000j, derivative=4)
     (453.2764822702057701894278 - 581.963625832768189140995j)
 
-Note: for investigation of the zeta function zeros, the Riemann-Siegel
+For investigation of the zeta function zeros, the Riemann-Siegel
 Z-function is often more convenient than working with the Riemann
 zeta function directly (see :func:`~mpmath.siegelz`).
 
@@ -8928,8 +8933,10 @@ Usually spherical harmonics are considered for `l \in \mathbb{N}`,
 `m \in \mathbb{Z}`, `|m| \le l`. More generally, `l,m,\theta,\phi`
 are permitted to be complex numbers.
 
-Note: :func:`~mpmath.spherharm` returns a complex number, even the value is
-purely real.
+.. note ::
+
+    :func:`~mpmath.spherharm` returns a complex number, even the value is
+    purely real.
 
 **Examples**
 

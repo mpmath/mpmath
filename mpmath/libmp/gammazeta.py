@@ -528,9 +528,11 @@ def bernfrac(n):
         >>> print bernoulli(10**4)
         -9.04942396360948e+27677
 
-    Note: :func:`~mpmath.bernoulli` computes a floating-point approximation
-    directly, without computing the exact fraction first.
-    This is much faster for large `n`.
+    .. note ::
+
+        :func:`~mpmath.bernoulli` computes a floating-point approximation
+        directly, without computing the exact fraction first.
+        This is much faster for large `n`.
 
     **Algorithm**
 
