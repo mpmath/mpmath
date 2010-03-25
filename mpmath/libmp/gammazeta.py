@@ -1377,9 +1377,9 @@ mult_cache = []
 def primesieve(n):
     global sieve_cache, primes_cache, mult_cache
     if n < len(sieve_cache):
-        sieve = sieve_cache[:n+1]
+        sieve = sieve_cache#[:n+1]
         primes = primes_cache[:primes_cache.index(max(sieve))+1]
-        mult = mult_cache[:n+1]
+        mult = mult_cache#[:n+1]
         return sieve, primes, mult
     sieve = [0] * (n+1)
     mult = [0] * (n+1)
@@ -1411,6 +1411,8 @@ def zetasum_sieved(critical_line, sre, sim, a, n, wp):
     ln2 = ln2_fixed(wp)
     pi2 = pi_fixed(wp-1)
     for p in primes:
+        if p*2 > a+n:
+            break
         log = log_int_fixed(p, wp, ln2)
         cos, sin = cos_sin_fixed((-sim*log)>>wp, wp, pi2)
         if critical_line:
@@ -1429,19 +1431,28 @@ def zetasum_sieved(critical_line, sre, sim, a, n, wp):
     if a == 1:
         xre += one
     aa = max(a,2)
-    for k, p in enumerate(sieve[max(2,a):a+n+1]):
-        k += aa
-        orgk = k
-        m = mult[k]
-        tre, tim = basic_powers[p][m-1]
-        while 1:
-            k //= p**m
-            if k == 1:
-                break
-            p = sieve[k]
+    for k in xrange(aa, a+n+1):
+        p = sieve[k]
+        if p in basic_powers:
             m = mult[k]
-            pre, pim = basic_powers[p][m-1]
-            tre, tim = ((pre*tre-pim*tim)>>wp), ((pim*tre+pre*tim)>>wp)
+            tre, tim = basic_powers[p][m-1]
+            while 1:
+                k //= p**m
+                if k == 1:
+                    break
+                p = sieve[k]
+                m = mult[k]
+                pre, pim = basic_powers[p][m-1]
+                tre, tim = ((pre*tre-pim*tim)>>wp), ((pim*tre+pre*tim)>>wp)
+        else:
+            log = log_int_fixed(k, wp, ln2)
+            cos, sin = cos_sin_fixed((-sim*log)>>wp, wp, pi2)
+            if critical_line:
+                u = one_2wp // isqrt_fast(k<<wp2)
+            else:
+                u = exp_fixed((-sre*log)>>wp, wp)
+            tre = (u*cos) >> wp
+            tim = (u*sin) >> wp
         xre += tre
         xim += tim
     return xre, xim
