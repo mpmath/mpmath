@@ -204,9 +204,9 @@ def bernpoly(ctx, n, z):
         if n == 1: return z - 0.5
         if n == 2: return (6*z*(z-1)+1)/6
         if n == 3: return z*(z*(z-1.5)+0.5)
-    if abs(z) == ctx.inf:
+    if ctx.isinf(z):
         return z ** n
-    if z != z:
+    if ctx.isnan(z):
         return z
     if abs(z) > 2:
         def terms():
@@ -242,9 +242,9 @@ def eulerpoly(ctx, n, z):
         if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return z*(z-1)
-    if abs(z) == ctx.inf:
+    if ctx.isinf(z):
         return z**n
-    if z != z:
+    if ctx.isnan(z):
         return z
     m = n+1
     if z == 0:
@@ -520,7 +520,7 @@ def _hurwitz(ctx, s, a=1, d=0):
             # Rational reflection formula
             if atype == 'Q' or atype == 'Z':
                 try:
-                    p, q = a
+                    p, q = a._mpq_
                 except:
                     assert a == int(a)
                     p = int(a)

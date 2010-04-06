@@ -97,7 +97,7 @@ class _mpf(mpnumeric):
         if isinstance(x, float): return from_float(x)
         if isinstance(x, complex_types): return cls.context.mpc(x)
         if isinstance(x, rational.mpq):
-            p, q = x
+            p, q = x._mpq_
             return from_rational(p, q, cls.context.prec)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
@@ -637,7 +637,7 @@ class PythonMPContext:
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
         prec, rounding = ctx._prec_rounding
         if isinstance(x, rational.mpq):
-            p, q = x
+            p, q = x._mpq_
             return ctx.make_mpf(from_rational(p, q, prec))
         if strings and isinstance(x, basestring):
             try:
@@ -791,7 +791,7 @@ class PythonMPContext:
                 return re_isint and im_isint
             return re_isint and im == fzero
         if isinstance(x, rational.mpq):
-            p, q = x
+            p, q = x._mpq_
             return p % q == 0
         x = ctx.convert(x)
         if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
@@ -1028,6 +1028,8 @@ class PythonMPContext:
             p = None
             if isinstance(x, tuple):
                 p, q = x
+            elif hasattr(x, '_mpq_'):
+                p, q = x._mpq_
             elif isinstance(x, basestring) and '/' in x:
                 p, q = x.split('/')
                 p = int(p)
@@ -1035,7 +1037,7 @@ class PythonMPContext:
             if p is not None:
                 if not p % q:
                     return p // q, 'Z'
-                return ctx.mpq((p,q)), 'Q'
+                return ctx.mpq(p,q), 'Q'
             x = ctx.convert(x)
             if hasattr(x, "_mpc_"):
                 v, im = x._mpc_
@@ -1054,7 +1056,7 @@ class PythonMPContext:
                     return int(man) << exp, 'Z'
                 if exp >= -4:
                     p, q = int(man), (1<<(-exp))
-                    return ctx.mpq((p,q)), 'Q'
+                    return ctx.mpq(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
         elif not exp:
@@ -1107,9 +1109,9 @@ class PythonMPContext:
                 return bitcount(abs(x))
             return ctx.ninf
         elif isinstance(x, rational.mpq):
-            p, q = x
+            p, q = x._mpq_
             if p:
-                return 1 + bitcount(abs(p)) - bitcount(abs(q))
+                return 1 + bitcount(abs(p)) - bitcount(q)
             return ctx.ninf
         else:
             x = ctx.convert(x)

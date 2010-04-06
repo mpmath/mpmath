@@ -454,7 +454,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return x <= 0
         if isinstance(x, ctx.mpq):
             # XXX: WRONG
-            p, q = x
+            p, q = x._mpq_
             if not p:
                 return True
             return (not (q % p)) and p <= 0
@@ -1212,7 +1212,7 @@ maxterms, or set zeroprec."""
         elif isinstance(x, int_types):
             return int(x), ctx.ninf
         elif isinstance(x, rational.mpq):
-            p, q = x
+            p, q = x._mpq_
             n, r = divmod(p, q)
             if 2*r >= q:
                 n += 1
