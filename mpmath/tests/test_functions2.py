@@ -463,6 +463,8 @@ def test_hyper_1f1():
     assert (hyp1f1(2,3,1e10j)*10**10).ae(-0.97501205020039745852 - 1.7462392454512132074j)
     # Shouldn't use asymptotic expansion
     assert hyp1f1(-2, 1, 10000).ae(49980001)
+    # Bug
+    assert hyp1f1(1j,fraction(1,3),0.415-69.739j).ae(25.857588206024346592 + 15.738060264515292063j)
 
 def test_hyper_2f1():
     mp.dps = 15
@@ -1060,6 +1062,9 @@ def test_erf():
     assert erfc(inf) == 0
     assert isnan(erfc(nan))
     assert (erfc(10**4)*mpf(10)**43429453).ae('3.63998738656420')
+    assert erf(8+9j).ae(-1072004.2525062051158 + 364149.91954310255423j)
+    assert erfc(8+9j).ae(1072005.2525062051158 - 364149.91954310255423j)
+    assert erfc(-8-9j).ae(-1072003.2525062051158 + 364149.91954310255423j)
     mp.dps = 50
     # This one does not use the asymptotic series
     assert (erfc(10)*10**45).ae('2.0884875837625447570007862949577886115608181193212')

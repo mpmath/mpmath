@@ -321,7 +321,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         try:
             try:
                 ctx.prec += magz
-                sector = ctx._im(z) < 0 and ctx._re(z) <= 0
+                sector = ctx._im(z) < 0
                 def h(a,b):
                     if sector:
                         E = ctx.expjpi(ctx.fneg(a, exact=True))
