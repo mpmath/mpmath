@@ -4,14 +4,20 @@ from usertools import monitor, timing
 
 from ctx_fp import FPContext
 from ctx_mp import MPContext
+from ctx_iv import MPIntervalContext
 
 fp = FPContext()
 mp = MPContext()
+iv = MPIntervalContext()
 
 fp._mp = mp
 mp._mp = mp
+iv._mp = mp
 mp._fp = fp
 fp._fp = fp
+mp._iv = iv
+fp._iv = iv
+iv._iv = iv
 
 # XXX: extremely bad pickle hack
 import ctx_mp as _ctx_mp
@@ -77,7 +83,8 @@ arange = mp.arange
 
 mpmathify = convert = mp.convert
 mpc = mp.mpc
-mpi = mp.mpi
+
+mpi = iv._mpi
 
 nstr = mp.nstr
 nprint = mp.nprint

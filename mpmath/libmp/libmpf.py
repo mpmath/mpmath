@@ -593,13 +593,15 @@ def mpf_min_max(seq):
         if mpf_gt(x, max): max = x
     return min, max
 
-def mpf_pos(s, prec, rnd=round_fast):
+def mpf_pos(s, prec=0, rnd=round_fast):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision)."""
-    sign, man, exp, bc = s
-    if (not man) and exp:
-        return s
-    return normalize1(sign, man, exp, bc, prec, rnd)
+    if prec:
+        sign, man, exp, bc = s
+        if (not man) and exp:
+            return s
+        return normalize1(sign, man, exp, bc, prec, rnd)
+    return s
 
 def mpf_neg(s, prec=None, rnd=round_fast):
     """Negate a raw mpf (return -s), rounding the result to the

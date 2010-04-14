@@ -55,10 +55,17 @@ from gammazeta import (catalan_fixed, mpf_catalan,
   mpf_psi, mpc_psi, mpf_zeta_int, mpf_zeta, mpc_zeta,
   mpf_altzeta, mpc_altzeta, mpf_zetasum, mpc_zetasum)
 
-from libmpi import (mpi_str, mpi_add, mpi_sub, mpi_delta, mpi_mid,
+from libmpi import (mpi_str,
+  mpi_from_str, mpi_to_str,
+  mpi_eq, mpi_ne,
+  mpi_lt, mpi_le, mpi_gt, mpi_ge,
+  mpi_add, mpi_sub, mpi_delta, mpi_mid,
   mpi_pos, mpi_neg, mpi_abs, mpi_mul, mpi_div, mpi_exp,
   mpi_log, mpi_sqrt, mpi_pow_int, mpi_pow, mpi_cos_sin,
-  mpi_cos, mpi_sin, mpi_tan, mpi_cot)
+  mpi_cos, mpi_sin, mpi_tan, mpi_cot,
+  mpi_atan, mpi_atan2,
+  mpci_pos, mpci_neg, mpci_add, mpci_sub, mpci_mul, mpci_div, mpci_pow,
+  mpci_abs, mpci_pow, mpci_exp, mpci_log)
 
 from libintmath import (trailing, bitcount, numeral, bin_to_radix,
   isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,

@@ -18,9 +18,6 @@ from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
     mpc_mpf_div,
     mpf_pow,
-    mpi_mid, mpi_delta, mpi_str,
-    mpi_abs, mpi_pos, mpi_neg, mpi_add, mpi_sub,
-    mpi_mul, mpi_div, mpi_pow_int, mpi_pow,
     mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10,
     mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin,
     mpf_glaisher, mpf_twinprime, mpf_mertens,
@@ -89,6 +86,11 @@ class _mpf(mpnumeric):
             t = cls.context.convert(x._mpmath_(prec, rounding))
             if hasattr(t, '_mpf_'):
                 return t._mpf_
+        if hasattr(x, '_mpi_'):
+            a, b = x._mpi_
+            if a == b:
+                return a
+            raise ValueError("can only create mpf from zero-width interval")
         raise TypeError("cannot create mpf from " + repr(x))
 
     @classmethod
@@ -610,7 +612,7 @@ class PythonMPContext:
 
     def convert(ctx, x, strings=True):
         """
-        Converts *x* to an ``mpf``, ``mpc`` or ``mpi``. If *x* is of type ``mpf``,
+        Converts *x* to an ``mpf`` or ``mpc``. If *x* is of type ``mpf``,
         ``mpc``, ``int``, ``float``, ``complex``, the conversion
         will be performed losslessly.
 
@@ -988,9 +990,6 @@ class PythonMPContext:
                     return ctx.make_mpc(mpc_f((x._mpf_, fzero), prec, rounding))
             elif hasattr(x, '_mpc_'):
                 return ctx.make_mpc(mpc_f(x._mpc_, prec, rounding))
-            elif hasattr(x, '_mpi_'):
-                if mpi_f:
-                    return ctx.make_mpi(mpi_f(x._mpi_, prec))
             raise NotImplementedError("%s of a %s" % (name, type(x)))
         name = mpf_f.__name__[4:]
         f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)

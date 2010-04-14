@@ -409,14 +409,14 @@ Square root evaluation is fast at huge precision::
     >>> str(a)[-10:]
     '9329332814'
 
-:func:`~mpmath.sqrt` supports interval arguments::
+:func:`~mpmath.iv.sqrt` supports interval arguments::
 
-    >>> mp.dps = 15
-    >>> sqrt(mpi(16, 100))
+    >>> iv.dps = 15; iv.pretty = True
+    >>> iv.sqrt([16,100])
     [4.0, 10.0]
-    >>> sqrt(mpi(2))
+    >>> iv.sqrt(2)
     [1.4142135623730949234, 1.4142135623730951455]
-    >>> sqrt(mpi(2)) ** 2
+    >>> iv.sqrt(2) ** 2
     [1.9999999999999995559, 2.0000000000000004441]
 
 """
@@ -480,11 +480,13 @@ Arguments can be arbitrarily large::
     >>> exp(-10000)
     1.135483865314736098540939e-4343
 
-Evaluation is supported for interval arguments::
+Evaluation is supported for interval arguments via
+:func:`mpmath.iv.exp`::
 
-    >>> exp(mpi(-inf,0))
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.exp([-inf,0])
     [0.0, 1.0]
-    >>> exp(mpi(0,1))
+    >>> iv.exp([0,1])
     [1.0, 2.71828182845904523536028749558]
 
 The exponential function can be evaluated efficiently to arbitrary
@@ -636,9 +638,13 @@ Computes the cosine of `x`, `\cos(x)`.
     nan
     >>> nprint(chop(taylor(cos, 0, 6)))
     [1.0, 0.0, -0.5, 0.0, 0.0416667, 0.0, -0.00138889]
-    >>> cos(mpi(0,1))
+
+Intervals are supported via :func:`mpmath.iv.cos`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.cos([0,1])
     [0.540302305868139717400936602301, 1.0]
-    >>> cos(mpi(0,2))
+    >>> iv.cos([0,2])
     [-0.41614683654714238699756823214, 1.0]
 """
 
@@ -657,9 +663,13 @@ Computes the sine of `x`, `\sin(x)`.
     nan
     >>> nprint(chop(taylor(sin, 0, 6)))
     [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333, 0.0]
-    >>> sin(mpi(0,1))
+
+Intervals are supported via :func:`mpmath.iv.sin`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.sin([0,1])
     [0.0, 0.841470984807896506652502331201]
-    >>> sin(mpi(0,2))
+    >>> iv.sin([0,2])
     [0.0, 1.0]
 """
 
@@ -681,9 +691,13 @@ cannot be represented exactly using floating-point arithmetic.
     nan
     >>> nprint(chop(taylor(tan, 0, 6)))
     [0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]
-    >>> tan(mpi(0,1))
+
+Intervals are supported via :func:`mpmath.iv.tan`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.tan([0,1])
     [0.0, 1.55740772465490223050697482944]
-    >>> tan(mpi(0,2))  # Interval includes a singularity
+    >>> iv.tan([0,2])  # Interval includes a singularity
     [-inf, +inf]
 """
 
@@ -705,9 +719,13 @@ cannot be represented exactly using floating-point arithmetic.
     nan
     >>> nprint(chop(taylor(sec, 0, 6)))
     [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]
-    >>> sec(mpi(0,1))
+
+Intervals are supported via :func:`mpmath.iv.sec`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.sec([0,1])
     [1.0, 1.85081571768092561791175326276]
-    >>> sec(mpi(0,2))  # Interval includes a singularity
+    >>> iv.sec([0,2])  # Interval includes a singularity
     [-inf, +inf]
 """
 
@@ -728,9 +746,13 @@ arithmetic.
     (0.09047320975320743980579048 + 0.04120098628857412646300981j)
     >>> csc(inf)
     nan
-    >>> csc(mpi(0,1))  # Interval includes a singularity
+
+Intervals are supported via :func:`mpmath.iv.csc`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.csc([0,1])  # Interval includes a singularity
     [1.18839510577812121626159943988, +inf]
-    >>> csc(mpi(0,2))
+    >>> iv.csc([0,2])
     [1.0, +inf]
 """
 
@@ -752,9 +774,13 @@ arithmetic.
     (-0.003739710376336956660117409 - 0.9967577965693583104609688j)
     >>> cot(inf)
     nan
-    >>> cot(mpi(0,1))  # Interval includes a singularity
+
+Intervals are supported via :func:`mpmath.iv.cot`::
+
+    >>> iv.dps = 25; iv.pretty = True
+    >>> iv.cot([0,1])  # Interval includes a singularity
     [0.642092615934330703006419974862, +inf]
-    >>> cot(mpi(1,2))
+    >>> iv.cot([1,2])
     [-inf, +inf]
 """
 
@@ -856,8 +882,8 @@ This is a real-valued function for all real `x`, with range
 Basic values are::
 
     >>> from mpmath import *
-    >>> mp.dps = 25
-    >>> atan(-inf); mp.pretty = True
+    >>> mp.dps = 25; mp.pretty = True
+    >>> atan(-inf)
     -1.570796326794896619231322
     >>> atan(-1)
     -0.7853981633974483096156609
@@ -6520,6 +6546,7 @@ Exact values of the prime counting function for small `x`::
 
     >>> from mpmath import *
     >>> mp.dps = 15; mp.pretty = True
+    >>> iv.dps = 15; iv.pretty = True
     >>> primepi2(10)
     [4.0, 4.0]
     >>> primepi2(100)
@@ -6542,7 +6569,7 @@ digits::
     >>> p = primepi2(10**23)
     >>> p
     [1.9253203909477020467e+21, 1.925320392280406229e+21]
-    >>> p.delta / p.a
+    >>> mpf(p.delta) / mpf(p.a)
     6.9219865355293e-10
 
 A more precise, nonrigorous estimate for `\pi(x)` can be
@@ -8031,7 +8058,7 @@ See references for :func:`~mpmath.appellf1`.
 """
 
 appellf4 = r"""
-Gives the Appell F3 hypergeometric function of two variables
+Gives the Appell F4 hypergeometric function of two variables
 
 .. math ::
 

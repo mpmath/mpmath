@@ -82,48 +82,6 @@ class FPContext(StandardBaseContext):
 
     absmin = absmax = abs
 
-    def _as_points(ctx, x):
-        return x
-
-    def fneg(ctx, x, **kwargs):
-        return -ctx.convert(x)
-
-    def fadd(ctx, x, y, **kwargs):
-        return ctx.convert(x)+ctx.convert(y)
-
-    def fsub(ctx, x, y, **kwargs):
-        return ctx.convert(x)-ctx.convert(y)
-
-    def fmul(ctx, x, y, **kwargs):
-        return ctx.convert(x)*ctx.convert(y)
-
-    def fdiv(ctx, x, y, **kwargs):
-        return ctx.convert(x)/ctx.convert(y)
-
-    def fsum(ctx, args, absolute=False, squared=False):
-        if absolute:
-            if squared:
-                return sum((abs(x)**2 for x in args), ctx.zero)
-            return sum((abs(x) for x in args), ctx.zero)
-        if squared:
-            return sum((x**2 for x in args), ctx.zero)
-        return sum(args, ctx.zero)
-
-    def fdot(ctx, xs, ys=None, conjugate=False):
-        if ys is not None:
-            xs = zip(xs, ys)
-        if conjugate:
-            cf = ctx.conj
-            return sum((x*cf(y) for (x,y) in xs), ctx.zero)
-        else:
-            return sum((x*y for (x,y) in xs), ctx.zero)
-
-    def fprod(ctx, args):
-        prod = 1.0
-        for arg in args:
-            prod *= arg
-        return prod
-
     def is_special(ctx, x):
         return x - x != 0.0
 

@@ -776,234 +776,6 @@ def mpf_log_hypot(a, b, prec, rnd):
     return mpf_shift(mpf_log(h2, prec, rnd), -1)
 
 
-#----------------------------------------------------------------------------#
-#                                                                            #
-#                        Trigonometric functions (OLD)                       #
-#                                                                            #
-#----------------------------------------------------------------------------#
-
-# Note: the following code for sin/cos is only kept for the
-# interval arithmetic interface. The main implementations of
-# trigonometric functions are found further below.
-
-def sin_taylor(x, prec):
-    x = MPZ(x)
-    x2 = (x*x) >> prec
-    s = a = x
-    k = 3
-    while a:
-        a = ((a * x2) >> prec) // (k*(1-k))
-        s += a
-        k += 2
-    return s
-
-def cos_taylor(x, prec):
-    x = MPZ(x)
-    x2 = (x*x) >> prec
-    a = c = (MPZ_ONE<<prec)
-    k = 2
-    while a:
-        a = ((a * x2) >> prec) // (k*(1-k))
-        c += a
-        k += 2
-    return c
-
-# Input: x * 2**prec
-# Output: c * 2**(prec + r), s * 2**(prec + r)
-def expi_series(x, prec, r):
-    x >>= r
-    one = MPZ_ONE << prec
-    x2 = (x*x) >> prec
-    s = x
-    a = x
-    k = 2
-    while a:
-        a = ((a * x2) >> prec) // (-k*(k+1))
-        s += a
-        k += 2
-    c = isqrt_fast((MPZ_ONE<<(2*prec)) - (s*s))
-    # Calculate (c + j*s)**(2**r) by repeated squaring
-    for j in range(r):
-        c, s =  (c*c-s*s) >> prec, (2*c*s ) >> prec
-    return c, s
-
-def reduce_angle(x, prec):
-    """
-    Let x be a nonzero, finite mpf value defining angle (measured in
-    radians). Then reduce_trig(x, prec) returns (y, swaps, n) where:
-
-      y = (man, wp) is the reduced angle as a scaled fixed-point
-        number with precision wp, i.e. a floating-point number with
-        exponent -wp. The mantissa is positive and has width ~equal
-        to the input prec.
-
-      swaps = (swap_cos_sin, cos_sign, sin_sign)
-        Flags indicating the swaps that need to be applied
-        to (cos(y), sin(y)) to obtain (cos(x), sin(x))
-
-      n is an integer giving the original quadrant of x
-
-    Calculation of the quadrant
-    ===========================
-
-    The integer n indices the quadrant of x. That is:
-
-        ...
-        -pi     <   x  < -pi/2     n = -2
-        -pi/2   <   x  <  0        n = -1
-        0       <   x  <  pi/2     n = 0
-        pi/2    <   x  <  pi       n = 1
-        pi      <   x  <  3*pi/2   n = 2
-        3*pi/2  <   x  <  2*pi     n = 3
-        2*pi    <   x  <  5*pi/2   n = 4
-        ...
-
-    Note that n does not wrap around. A quadrant index normalized to
-    lie in [0, 1, 2, 3] can be found easily later on by computing
-    n % 4. Keeping the extended information in n is crucial for
-    interval arithmetic, as it allows one to distinguish between
-    whether two points of a sine wave lie next to each other on
-    a monotonic segment or are actually separated by a full
-    period (or several periods).
-
-    Note also that because is x is guaranteed to be rational, and
-    all roots of the sine/cosine are irrational, all inequalities are
-    strict. That is, we can always compute the correct quadrant.
-    Care is required to do ensure that this is done right.
-
-    Swaps
-    =====
-
-    The number y is a reduction of x to the first quadrant. This is
-    essentially x mod pi/2. In fact, we reduce y further, to the first
-    octant, by computing pi/2-x if x > pi/4.
-
-    Due to the translation and mirror symmetries of trigonometric
-    functions, this allows us to compute sin(x) or cos(x) by computing
-    +/-sin(y) or +/-cos(y). The point, of course, is that if x
-    is large, the Taylor series for y converges much more quickly
-    than the one for x.
-
-    """
-    sign, man, exp, bc = x
-    magnitude = exp + bc
-
-    if not man:
-        return (0, 0), (0, 0, 0), 0
-
-    # Here we have abs(x) < 0.5. In this case no reduction is necessary.
-    # TODO: could also handle abs(x) < 1
-    if magnitude < 0:
-        # Quadrant is 0 or -1
-        n = -sign
-        swaps = (0, 0, sign)
-        fixed_exp = exp + bc - prec
-        delta = fixed_exp - exp
-        if delta < 0:
-            man <<= (-delta)
-        elif delta > 0:
-            man >>= delta
-        y = (man, -fixed_exp)
-        return y, swaps, n
-
-    i = 0
-    while 1:
-        cancellation_prec = 20 * 2**i
-        wp = prec + abs(magnitude) + cancellation_prec
-        pi1 = pi_fixed(wp)
-        pi2 = pi1 >> 1
-        pi4 = pi1 >> 2
-        # Find nearest multiple
-        n, y = divmod(to_fixed(x, wp), pi2)
-        # Interchange cos/sin ?
-        if y > pi4:
-            swap_cos_sin = 1
-            y = pi2 - y
-        else:
-            swap_cos_sin = 0
-        # Now, the catch is that x might be extremely close to a
-        # multiple of pi/2. This means accuracy is lost, and we may
-        # even end up in the wrong quadrant, which is bad news
-        # for interval arithmetic. This effect manifests by the
-        # fixed-point value of y becoming small.  This is easy to check for.
-        if y >> (prec + magnitude - 10):
-            n = int(n)
-            swaps = swap_table[swap_cos_sin^(n%2)][n%4]
-            return (y>>magnitude, wp-magnitude), swaps, n
-        i += 1
-
-swap_table = ((0,0,0),(0,1,0),(0,1,1),(0,0,1)), ((1,0,0),(1,1,0),(1,1,1),(1,0,1))
-
-def calc_cos_sin(which, y, swaps, prec, cos_rnd, sin_rnd):
-    """
-    Simultaneous computation of cos and sin (internal function).
-    """
-    y, wp = y
-    swap_cos_sin, cos_sign, sin_sign = swaps
-    if swap_cos_sin:
-        which_compute = -which
-    else:
-        which_compute = which
-    # XXX: assumes no swaps
-    if not y:
-        return fone, fzero
-    # Tiny nonzero argument
-    if wp > prec*2 + 30:
-        y = from_man_exp(y, -wp)
-        if swap_cos_sin:
-            cos_rnd, sin_rnd = sin_rnd, cos_rnd
-            cos_sign, sin_sign = sin_sign, cos_sign
-        if cos_sign: cos = mpf_perturb(fnone, 0, prec, cos_rnd)
-        else:        cos = mpf_perturb(fone, 1, prec, cos_rnd)
-        if sin_sign: sin = mpf_perturb(mpf_neg(y), 0, prec, sin_rnd)
-        else:        sin = mpf_perturb(y, 1, prec, sin_rnd)
-        if swap_cos_sin:
-            cos, sin = sin, cos
-        return cos, sin
-    # Use standard Taylor series
-    if prec < 600:
-        if which_compute == 0:
-            sin = sin_taylor(y, wp)
-            # only need to evaluate one of the series
-            cos = isqrt_fast((MPZ_ONE<<(2*wp)) - sin*sin)
-        elif which_compute == 1:
-            sin = 0
-            cos = cos_taylor(y, wp)
-        elif which_compute == -1:
-            sin = sin_taylor(y, wp)
-            cos = 0
-    # Use exp(i*x) with Brent's trick
-    else:
-        r = int(0.137 * prec**0.579)
-        ep = r+20
-        cos, sin = expi_series(y<<ep, wp+ep, r)
-        cos >>= ep
-        sin >>= ep
-    if swap_cos_sin:
-        cos, sin = sin, cos
-    if cos_rnd is not round_nearest:
-        # Round and set correct signs
-        # XXX: this logic needs a second look
-        ONE = MPZ_ONE << wp
-        if cos_sign:
-            cos += (-1)**(cos_rnd in (round_ceiling, round_down))
-            cos = min(ONE, cos)
-        else:
-            cos += (-1)**(cos_rnd in (round_ceiling, round_up))
-            cos = min(ONE, cos)
-        if sin_sign:
-            sin += (-1)**(sin_rnd in (round_ceiling, round_down))
-            sin = min(ONE, sin)
-        else:
-            sin += (-1)**(sin_rnd in (round_ceiling, round_up))
-            sin = min(ONE, sin)
-    if which != -1:
-        cos = normalize(cos_sign, cos, -wp, bitcount(cos), prec, cos_rnd)
-    if which != 1:
-        sin = normalize(sin_sign, sin, -wp, bitcount(sin), prec, sin_rnd)
-    return cos, sin
-
-
 #----------------------------------------------------------------------
 # Inverse tangent
 #
@@ -1487,6 +1259,42 @@ def mpf_cosh_sinh(x, prec, rnd=round_fast, tanh=0):
         return cosh, sinh
 
 
+def mod_pi2(man, exp, mag, wp):
+    # Reduce to standard interval
+    if mag > 0:
+        i = 0
+        while 1:
+            cancellation_prec = 20 << i
+            wpmod = wp + mag + cancellation_prec
+            pi2 = pi_fixed(wpmod-1)
+            pi4 = pi2 >> 1
+            offset = wpmod + exp
+            if offset >= 0:
+                t = man << offset
+            else:
+                t = man >> (-offset)
+            n, y = divmod(t, pi2)
+            if y > pi4:
+                small = pi2 - y
+            else:
+                small = y
+            if small >> (wp+mag-10):
+                n = int(n)
+                t = y >> mag
+                wp = wpmod - mag
+                break
+            i += 1
+    else:
+        wp += (-mag)
+        offset = exp + wp
+        if offset >= 0:
+            t = man << offset
+        else:
+            t = man >> (-offset)
+        n = 0
+    return t, n, wp
+
+
 def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
     """
     which:
@@ -1522,9 +1330,6 @@ def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
             if which == 1: return c
             if which == 2: return s
             if which == 3: return mpf_perturb(x, sign, prec, rnd)
-        absmag = -mag
-    else:
-        absmag = mag
     if pi:
         if exp >= -1:
             if exp == -1:
@@ -1550,38 +1355,7 @@ def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
             t = man >> (-offset)
         t = (t*pi_fixed(wp)) >> wp
     else:
-        # Reduce to standard interval
-        if mag > 0:
-            i = 0
-            while 1:
-                cancellation_prec = 20 << i
-                wpmod = wp + mag + cancellation_prec
-                pi2 = pi_fixed(wpmod-1)
-                pi4 = pi2 >> 1
-                offset = wpmod + exp
-                if offset >= 0:
-                    t = man << offset
-                else:
-                    t = man >> (-offset)
-                n, y = divmod(t, pi2)
-                if y > pi4:
-                    small = pi2 - y
-                else:
-                    small = y
-                if small >> (wp+mag-10):
-                    n = int(n)
-                    t = y >> mag
-                    wp = wpmod - mag
-                    break
-                i += 1
-        else:
-            wp += absmag
-            offset = exp + wp
-            if offset >= 0:
-                t = man << offset
-            else:
-                t = man >> (-offset)
-            n = 0
+        t, n, wp = mod_pi2(man, exp, mag, wp)
     c, s = cos_sin_basecase(t, wp)
     m = n & 3
     if   m == 1: c, s = -s, c

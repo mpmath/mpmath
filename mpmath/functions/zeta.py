@@ -138,19 +138,20 @@ def primepi(ctx, x):
         return 0
     return len(ctx.list_primes(x))
 
+# TODO: fix the interface wrt contexts
 @defun_wrapped
 def primepi2(ctx, x):
     x = int(x)
     if x < 2:
-        return ctx.mpi(0,0)
+        return ctx._iv.zero
     if x < 2657:
-        return ctx.mpi(ctx.primepi(x))
+        return ctx._iv.mpf(ctx.primepi(x))
     mid = ctx.li(x)
     # Schoenfeld's estimate for x >= 2657, assuming RH
     err = ctx.sqrt(x,rounding='u')*ctx.ln(x,rounding='u')/8/ctx.pi(rounding='d')
-    a = ctx.floor((ctx.mpi(mid)-err).a, rounding='d')
-    b = ctx.ceil((ctx.mpi(mid)+err).b, rounding='u')
-    return ctx.mpi(a, b)
+    a = ctx.floor((ctx._iv.mpf(mid)-err).a, rounding='d')
+    b = ctx.ceil((ctx._iv.mpf(mid)+err).b, rounding='u')
+    return ctx._iv.mpf([a,b])
 
 @defun_wrapped
 def primezeta(ctx, s):

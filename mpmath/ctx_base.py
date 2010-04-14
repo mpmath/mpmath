@@ -70,6 +70,54 @@ class StandardBaseContext(Context,
             return x.imag
         return ctx.zero
 
+    def _as_points(ctx, x):
+        return x
+
+    def fneg(ctx, x, **kwargs):
+        return -ctx.convert(x)
+
+    def fadd(ctx, x, y, **kwargs):
+        return ctx.convert(x)+ctx.convert(y)
+
+    def fsub(ctx, x, y, **kwargs):
+        return ctx.convert(x)-ctx.convert(y)
+
+    def fmul(ctx, x, y, **kwargs):
+        return ctx.convert(x)*ctx.convert(y)
+
+    def fdiv(ctx, x, y, **kwargs):
+        return ctx.convert(x)/ctx.convert(y)
+
+    def fsum(ctx, args, absolute=False, squared=False):
+        if absolute:
+            if squared:
+                return sum((abs(x)**2 for x in args), ctx.zero)
+            return sum((abs(x) for x in args), ctx.zero)
+        if squared:
+            return sum((x**2 for x in args), ctx.zero)
+        return sum(args, ctx.zero)
+
+    def fdot(ctx, xs, ys=None, conjugate=False):
+        if ys is not None:
+            xs = zip(xs, ys)
+        if conjugate:
+            cf = ctx.conj
+            return sum((x*cf(y) for (x,y) in xs), ctx.zero)
+        else:
+            return sum((x*y for (x,y) in xs), ctx.zero)
+
+    def fprod(ctx, args):
+        prod = ctx.one
+        for arg in args:
+            prod *= arg
+        return prod
+
+    def nprint(ctx, x, n=6, **kwargs):
+        """
+        Equivalent to ``print nstr(x, n)``.
+        """
+        print ctx.nstr(x, n, **kwargs)
+
     def chop(ctx, x, tol=None):
         """
         Chops off small real or imaginary parts, or converts
@@ -243,8 +291,6 @@ class StandardBaseContext(Context,
             >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = False
             >>> linspace(1, 4, 4)
-            [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
-            >>> linspace(mpi(1,4), 4)
             [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
 
         You may also provide the keyword argument ``endpoint=False``::
