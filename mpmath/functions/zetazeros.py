@@ -70,13 +70,7 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
     if limitloop is None:
         limitloop = ctx.inf
     loopnumber = 0
-    variations = 0
-    v0 = V[0]
-    for k in range(1,len(V)):
-        v1 = V[k]
-        if v0*v1 < 0:
-            variations += 1
-        v0 = v1
+    variations = count_variations(V)
     while ((variations < zero_number_block) and (loopnumber <limitloop)):
         a = T[0]
         v = V[0]
@@ -91,9 +85,12 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
                 b= (alpha*a+b2)/(alpha+1)
             else:
                 b = (a+b2)/2
-            w = ctx._fp.siegelz(b)
-            if abs(w)<fp_tolerance:
-                w = ctx.siegelz(b)
+            if fp_tolerance < 10:
+                w = ctx._fp.siegelz(b)
+                if abs(w)<fp_tolerance:
+                    w = ctx.siegelz(b)
+            else:
+                w=ctx.siegelz(b)
             if v*w<0:
                 variations += 1
             newT.append(b)
@@ -108,6 +105,28 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
         T = newT
         V = newV
         loopnumber +=1
+        if (limitloop>ITERATION_LIMIT)and(loopnumber>2)and(variations+2==zero_number_block):
+            dtMax=0
+            dtSec=0
+            kMax = 0
+            for k1 in range(1,len(T)):
+                dt = T[k1]-T[k1-1]
+                if dt > dtMax:
+                    kMax=k1
+                    dtSec = dtMax
+                    dtMax = dt
+                elif  (dt<dtMax) and(dt >dtSec):
+                    dtSec = dt
+            if dtMax>3*dtSec:
+                f = lambda x: ctx.rs_z(x,derivative=1)
+                t0=T[kMax-1]
+                t1 = T[kMax]
+                t=ctx.findroot(f,  (t0,t1), solver ='illinois',verify=False, verbose=False)
+                v = ctx.siegelz(t)
+                if (t0<t) and (t<t1) and (v*V[kMax]<0):
+                    T.insert(kMax,t)
+                    V.insert(kMax,v)
+        variations = count_variations(V)
     if variations == zero_number_block:
         separated = True
     else:
@@ -153,16 +172,13 @@ def sure_number_block(ctx, n):
 
 def compute_triple_tvb(ctx, n):
     t = ctx.grampoint(n)
-    if t > 10**12:
-        v = ctx.siegelz(t)
-    else:
-        v = ctx._fp.siegelz(t)
-    if abs(v) < 0.0005:
-        if t > 10**12:
-            ctx.dps = 24
+    v = ctx._fp.siegelz(t)
+    if ctx.mag(abs(v))<ctx.mag(t)-45: 
         v = ctx.siegelz(t)
     b = v*(-1)**n
     return t,v,b
+
+
 
 ITERATION_LIMIT = 4
 
@@ -374,8 +390,10 @@ def zetazero(ctx, n, info=False, round=True):
         wpz = wpzeros(n * ctx.log(n))
         if n < 15*10**8:
             fp_tolerance = 0.0005
-        else:
+        elif n <= 10**14:
             fp_tolerance = 0.1
+        else:
+            fp_tolerance = 100
         ctx.prec = wpz
         if n < 400000000:
             my_zero_number, block, T, V =\

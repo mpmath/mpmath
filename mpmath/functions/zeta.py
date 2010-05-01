@@ -454,7 +454,7 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
         #        if verbose:
         #            print "zeta: Could not use the Borwein algorithm"
         #        pass
-        if abs(im) > 60*prec and 10*re < prec and derivative <= 4 or \
+        if abs(im) > 500*prec and 10*re < prec and derivative <= 4 or \
             method == 'riemann-siegel':
             try:   #  py2.4 compatible try block
                 try:
