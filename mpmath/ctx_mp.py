@@ -177,7 +177,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         return ctx.make_mpf(libmp.mpf_hypot(x._mpf_, y._mpf_, *ctx._prec_rounding))
 
     def _gamma_upper_int(ctx, n, z):
-        n = int(n)
+        n = int(ctx._re(n))
         if n == 0:
             return ctx.e1(z)
         if not hasattr(z, '_mpf_'):
