@@ -7564,7 +7564,7 @@ differential equation for arbitrarily chosen values::
     0.0
     0.0
 
-An integral involving both :func:`~mpmath.whitm` and :func:`~mpmath.whitmw`,
+An integral involving both :func:`~mpmath.whitm` and :func:`~mpmath.whitw`,
 verifying evaluation along the real axis::
 
     >>> quad(lambda x: exp(-x)*whitm(3,2,x)*whitw(1,-2,x), [0,inf])
