@@ -385,7 +385,9 @@ class StandardBaseContext(Context,
                         term_mag = ctx.mag(term)
                         max_mag = max(max_mag, term_mag)
                         sum_mag = ctx.mag(s-one)
-                        if sum_mag - term_mag > ctx.prec:
+                        #if sum_mag - term_mag > ctx.prec:
+                        #    break
+                        if -term_mag > ctx.prec:
                             break
                     k += 1
                 cancellation = max_mag - sum_mag

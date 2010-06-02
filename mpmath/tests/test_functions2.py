@@ -1276,3 +1276,7 @@ def test_spherharm():
     assert spherharm(3,0,0,1).ae(0.74635266518023078283)
     assert spherharm(3,-2,0,1) == 0
     assert spherharm(3,-2,1,1).ae(-0.16270707338254028971 - 0.35552144137546777097j)
+
+def test_qfunctions():
+    mp.dps = 15
+    assert qp(2,3,100).ae('2.7291482267247332183e2391')
