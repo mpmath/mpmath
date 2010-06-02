@@ -95,29 +95,34 @@ class QuadratureRule(object):
             return nodes
         half = ctx.mpf(0.5)
         new_nodes = []
-        if (a, b) == (ctx.ninf, ctx.inf):
-            p05 = -half
-            for x, w in nodes:
-                x2 = x*x
-                px1 = one-x2
-                spx1 = px1**p05
-                x = x*spx1
-                w *= spx1/px1
-                new_nodes.append((x, w))
-        elif a == ctx.ninf:
-            b1 = b+1
-            for x, w in nodes:
-                u = 2/(x+one)
-                x = b1-u
-                w *= half*u**2
-                new_nodes.append((x, w))
-        elif b == ctx.inf:
-            a1 = a-1
-            for x, w in nodes:
-                u = 2/(x+one)
-                x = a1+u
-                w *= half*u**2
-                new_nodes.append((x, w))
+        if ctx.isinf(a) or ctx.isinf(b):
+            if (a, b) == (ctx.ninf, ctx.inf):
+                p05 = -half
+                for x, w in nodes:
+                    x2 = x*x
+                    px1 = one-x2
+                    spx1 = px1**p05
+                    x = x*spx1
+                    w *= spx1/px1
+                    new_nodes.append((x, w))
+            elif a == ctx.ninf:
+                b1 = b+1
+                for x, w in nodes:
+                    u = 2/(x+one)
+                    x = b1-u
+                    w *= half*u**2
+                    new_nodes.append((x, w))
+            elif b == ctx.inf:
+                a1 = a-1
+                for x, w in nodes:
+                    u = 2/(x+one)
+                    x = a1+u
+                    w *= half*u**2
+                    new_nodes.append((x, w))
+            elif a == ctx.inf or b == ctx.ninf:
+                return [(x,-w) for (x,w) in self.transform_nodes(nodes, b, a, verbose)]
+            else:
+                raise NotImplementedError
         else:
             # Simple linear change of variables
             C = (b-a)/2
