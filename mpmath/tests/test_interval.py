@@ -289,6 +289,18 @@ def test_interval_complex():
     assert abs(iv.mpc(0,[-3,2])) == iv.mpf([0,3])
     assert abs(iv.mpc([3,5],[4,12])) == iv.mpf([5,13])
     assert abs(iv.mpc([3,5],[-4,12])) == iv.mpf([3,13])
+    assert iv.mpc(2,3) ** 0 == 1
+    assert iv.mpc(2,3) ** 1 == (2+3j)
+    assert iv.mpc(2,3) ** 2 == (2+3j)**2
+    assert iv.mpc(2,3) ** 3 == (2+3j)**3
+    assert iv.mpc(2,3) ** 4 == (2+3j)**4
+    assert iv.mpc(2,3) ** 5 == (2+3j)**5
+    assert iv.mpc(2,2) ** (-1) == (2+2j) ** (-1)
+    assert iv.mpc(2,2) ** (-2) == (2+2j) ** (-2)
+    assert iv.cos(2).ae(mp.cos(2))
+    assert iv.sin(2).ae(mp.sin(2))
+    assert iv.cos(2+3j).ae(mp.cos(2+3j))
+    assert iv.sin(2+3j).ae(mp.sin(2+3j))
 
 def test_interval_complex_arg():
     assert iv.arg(3) == 0

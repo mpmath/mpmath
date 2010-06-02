@@ -144,6 +144,26 @@ class ivmpc(object):
         return "(%s + %s*j)" % (str(s.real), str(s.imag))
 
     @property
+    def a(self):
+        (a, b), (c,d) = self._mpci_
+        return self.ctx.make_mpf((a, a))
+
+    @property
+    def b(self):
+        (a, b), (c,d) = self._mpci_
+        return self.ctx.make_mpf((b, b))
+
+    @property
+    def c(self):
+        (a, b), (c,d) = self._mpci_
+        return self.ctx.make_mpf((c, c))
+
+    @property
+    def d(self):
+        (a, b), (c,d) = self._mpci_
+        return self.ctx.make_mpf((d, d))
+
+    @property
     def real(s):
         return s.ctx.make_mpf(s._mpci_[0])
 
@@ -154,6 +174,12 @@ class ivmpc(object):
     def conjugate(s):
         a, b = s._mpci_
         return s.ctx.make_mpc((a, mpf_neg(b)))
+
+    def overlap(s, t):
+        t = s.ctx.convert(t)
+        real_overlap = (s.a <= t.a <= s.b) or (s.a <= t.b <= s.b) or (t.a <= s.a <= t.b) or (t.a <= s.b <= t.b)
+        imag_overlap = (s.c <= t.c <= s.d) or (s.c <= t.d <= s.d) or (t.c <= s.c <= t.d) or (t.c <= s.d <= t.d)
+        return real_overlap and imag_overlap
 
     def __contains__(s, t):
         t = s.ctx.convert(t)
@@ -272,9 +298,9 @@ class MPIntervalContext(StandardBaseContext):
         ctx.j = ctx.mpc(0,1)
         ctx.exp = ctx._wrap_mpi_function(libmp.mpi_exp, libmp.mpci_exp)
         ctx.sqrt = ctx._wrap_mpi_function(libmp.mpi_sqrt)
-        ctx.log = ctx.ln = ctx._wrap_mpi_function(libmp.mpi_log, libmp.mpci_log)
-        ctx.cos = ctx._wrap_mpi_function(libmp.mpi_cos)
-        ctx.sin = ctx._wrap_mpi_function(libmp.mpi_sin)
+        ctx.ln = ctx._wrap_mpi_function(libmp.mpi_log, libmp.mpci_log)
+        ctx.cos = ctx._wrap_mpi_function(libmp.mpi_cos, libmp.mpci_cos)
+        ctx.sin = ctx._wrap_mpi_function(libmp.mpi_sin, libmp.mpci_sin)
         ctx.tan = ctx._wrap_mpi_function(libmp.mpi_tan)
 
         ctx.eps = ctx._constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1))
@@ -290,12 +316,16 @@ class MPIntervalContext(StandardBaseContext):
         ctx.twinprime = ctx._constant(libmp.mpf_twinprime)
 
     def _wrap_mpi_function(ctx, f_real, f_complex=None):
-        def g(x):
+        def g(x, **kwargs):
+            if kwargs:
+                prec = kwargs.get('prec', ctx._prec[0])
+            else:
+                prec = ctx._prec[0]
             x = ctx.convert(x)
             if hasattr(x, "_mpi_"):
-                return ctx.make_mpf(f_real(x._mpi_, ctx._prec[0]))
+                return ctx.make_mpf(f_real(x._mpi_, prec))
             if hasattr(x, "_mpci_"):
-                return ctx.make_mpc(f_complex(x._mpci_, ctx._prec[0]))
+                return ctx.make_mpc(f_complex(x._mpci_, prec))
             raise ValueError
         return g
 
@@ -362,8 +392,14 @@ class MPIntervalContext(StandardBaseContext):
                 a, b = x
             except (TypeError, ValueError):
                 a = b = x
-            a = convert_mpf_(a, ctx.prec, round_floor)
-            b = convert_mpf_(b, ctx.prec, round_ceiling)
+            if hasattr(a, "_mpi_"):
+                a = a._mpi_[0]
+            else:
+                a = convert_mpf_(a, ctx.prec, round_floor)
+            if hasattr(b, "_mpi_"):
+                b = b._mpi_[1]
+            else:
+                b = convert_mpf_(b, ctx.prec, round_ceiling)
         if a == fnan or b == fnan:
             a = fninf
             b = finf
@@ -462,3 +498,9 @@ class MPIntervalContext(StandardBaseContext):
             #    return s
             if k > maxterms:
                 raise ctx.NoConvergence
+
+    # XXX: need proper interval factorial/gamma
+    def factorial(ctx, n):
+        return ctx.convert(ctx._mp.fac(n))
+
+    fac = factorial

@@ -30,6 +30,7 @@ def mpi_str(s, prec):
     #return "%s +/- %s" % (to_str(m, dps), to_str(d, 3))
 
 mpi_zero = (fzero, fzero)
+mpi_one = (fone, fone)
 
 def mpi_eq(s, t):
     return s == t
@@ -655,6 +656,39 @@ def mpci_exp(x, prec):
     b = mpi_mul(r, s, prec)
     return a, b
 
+def mpi_shift(x, n):
+    a, b = x
+    return mpf_shift(a,n), mpf_shift(b,n)
+
+def mpi_cosh_sinh(x, prec):
+    # TODO: accuracy for small x
+    wp = prec+20
+    e1 = mpi_exp(x, wp)
+    e2 = mpi_div(mpi_one, e1, wp)
+    c = mpi_add(e1, e2, prec)
+    s = mpi_sub(e1, e2, prec)
+    c = mpi_shift(c, -1)
+    s = mpi_shift(s, -1)
+    return c, s
+
+def mpci_cos(x, prec):
+    a, b = x
+    wp = prec+10
+    c, s = mpi_cos_sin(a, wp)
+    ch, sh = mpi_cosh_sinh(b, wp)
+    re = mpi_mul(c, ch, prec)
+    im = mpi_mul(s, sh, prec)
+    return re, mpi_neg(im)
+
+def mpci_sin(x, prec):
+    a, b = x
+    wp = prec+10
+    c, s = mpi_cos_sin(a, wp)
+    ch, sh = mpi_cosh_sinh(b, wp)
+    re = mpi_mul(s, ch, prec)
+    im = mpi_mul(c, sh, prec)
+    return re, im
+
 def mpci_abs(x, prec):
     a, b = x
     if a == mpi_zero:
@@ -717,5 +751,42 @@ def mpci_log(z, prec):
 
 def mpci_pow(x, y, prec):
     # TODO: recognize/speed up real cases, integer y
+    yre, yim = y
+    if yim == mpi_zero:
+        ya, yb = yre
+        if ya == yb:
+            sign, man, exp, bc = yb
+            if man and exp >= 0:
+                return mpci_pow_int(x, (-1)**sign * int(man<<exp), prec)
+            # x^0
+            if yb == fzero:
+                return mpci_pow_int(x, 0, prec)
     wp = prec+20
     return mpci_exp(mpci_mul(y, mpci_log(x, wp), wp), prec)
+
+def mpci_square(x, prec):
+    a, b = x
+    # (a+bi)^2 = (a^2-b^2) + 2abi
+    re = mpi_sub(mpi_square(a), mpi_square(b), prec)
+    im = mpi_mul(a, b, prec)
+    im = mpi_shift(im, 1)
+    return re, im
+
+def mpci_pow_int(x, n, prec):
+    if n < 0:
+        return mpci_div((mpi_one,mpi_zero), mpci_pow_int(x, -n, prec+20), prec)
+    if n == 0:
+        return mpi_one, mpi_zero
+    if n == 1:
+        return mpci_pos(x, prec)
+    if n == 2:
+        return mpci_square(x, prec)
+    wp = prec + 20
+    result = (mpi_one, mpi_zero)
+    while n:
+        if n & 1:
+            result = mpci_mul(result, x, wp)
+            n -= 1
+        x = mpci_square(x, wp)
+        n >>= 1
+    return mpci_pos(result, prec)

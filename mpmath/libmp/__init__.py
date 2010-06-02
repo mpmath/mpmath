@@ -65,7 +65,7 @@ from libmpi import (mpi_str,
   mpi_cos, mpi_sin, mpi_tan, mpi_cot,
   mpi_atan, mpi_atan2,
   mpci_pos, mpci_neg, mpci_add, mpci_sub, mpci_mul, mpci_div, mpci_pow,
-  mpci_abs, mpci_pow, mpci_exp, mpci_log)
+  mpci_abs, mpci_pow, mpci_exp, mpci_log, mpci_cos, mpci_sin)
 
 from libintmath import (trailing, bitcount, numeral, bin_to_radix,
   isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,
