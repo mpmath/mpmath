@@ -281,7 +281,7 @@ def log10(ctx, x):
     return ctx.log(x, 10)
 
 @defun
-def modf(ctx, x, y):
+def fmod(ctx, x, y):
     return ctx.convert(x) % ctx.convert(y)
 
 @defun

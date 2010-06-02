@@ -458,7 +458,7 @@ def test_aliases():
     assert degrees(5.6) == 5.6 / degree
     assert radians(5.6) == 5.6 * degree
     assert power(-1,0.5) == j
-    assert modf(25,7) == 4.0 and isinstance(modf(25,7), mpf)
+    assert fmod(25,7) == 4.0 and isinstance(fmod(25,7), mpf)
 
 def test_arg_sign():
     assert arg(3) == 0

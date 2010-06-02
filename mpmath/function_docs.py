@@ -1637,18 +1637,18 @@ Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
 is equivalent to ``log(x, 10)``.
 """
 
-modf = r"""
+fmod = r"""
 Converts `x` and `y` to mpmath numbers and returns `x \mod y`.
 For mpmath numbers, this is equivalent to ``x % y``.
 
     >>> from mpmath import *
     >>> mp.dps = 15; mp.pretty = True
-    >>> modf(100, pi)
+    >>> fmod(100, pi)
     2.61062773871641
 
-You can use :func:`~mpmath.modf` to compute fractional parts of numbers::
+You can use :func:`~mpmath.fmod` to compute fractional parts of numbers::
 
-    >>> modf(10.25, 1)
+    >>> fmod(10.25, 1)
     0.25
 
 """
