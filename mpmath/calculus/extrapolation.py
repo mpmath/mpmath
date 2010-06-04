@@ -1246,7 +1246,7 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
 
         >>> f = lambda x: sqrt(x**3+x**2)/(sqrt(x**3)+x)
         >>> limit(f, inf)
-        0.992518488562331431132360378669
+        0.992831158558330281129249686491
         >>> limit(f, inf, exp=True)
         1.0
 

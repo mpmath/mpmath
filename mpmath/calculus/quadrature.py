@@ -949,7 +949,7 @@ class QuadratureMethods:
 
             >>> f = lambda x: 1/x**2+sin(x)/x**4
             >>> quadosc(f, [1,inf], omega=1)  # Bad
-            1.28642190869921
+            1.28642190869861
             >>> quadosc(f, [1,inf], omega=0.5)  # Perfect
             1.28652953559617
             >>> 1+(cos(1)+ci(1)+sin(1))/6
