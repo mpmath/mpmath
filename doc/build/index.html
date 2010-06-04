@@ -46,9 +46,11 @@
             
   <div class="section" id="welcome-to-mpmath-s-documentation">
 <h1>Welcome to mpmath&#8217;s documentation!<a class="headerlink" href="#welcome-to-mpmath-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Mpmath is a Python library for arbitrary-precision floating-point arithmetic. These pages documents mpmath&#8217;s main features, with extensive use of examples that can be run in the interactive Python interpreter.</p>
-<p>For general information about mpmath, see the main page <a class="reference external" href="http://code.google.com/p/mpmath/">http://code.google.com/p/mpmath/</a></p>
-<p>Contents:</p>
+<p>Mpmath is a Python library for arbitrary-precision floating-point arithmetic.
+For general information about mpmath, see the project website <a class="reference external" href="http://code.google.com/p/mpmath/">http://code.google.com/p/mpmath/</a></p>
+<p>These documentation pages include general information as well as docstring listing with extensive use of examples that can be run in the interactive Python interpreter. For quick access to the docstrings of individual functions, use the <a class="reference external" href="genindex.html">index listing</a>, or type <tt class="docutils literal"><span class="pre">help(mpmath.function_name)</span></tt> in the Python interactive prompt.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="setup.html">Setting up mpmath</a><ul>
 <li class="toctree-l2"><a class="reference external" href="setup.html#download-and-installation">Download and installation</a></li>
@@ -59,28 +61,52 @@
 <li class="toctree-l2"><a class="reference external" href="setup.html#mpmath-under-sage">Mpmath under Sage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="basics.html">Mpmath basics</a><ul>
+<li class="toctree-l1"><a class="reference external" href="basics.html">Basic usage</a><ul>
 <li class="toctree-l2"><a class="reference external" href="basics.html#number-types">Number types</a></li>
 <li class="toctree-l2"><a class="reference external" href="basics.html#setting-the-precision">Setting the precision</a></li>
 <li class="toctree-l2"><a class="reference external" href="basics.html#providing-correct-input">Providing correct input</a></li>
 <li class="toctree-l2"><a class="reference external" href="basics.html#printing">Printing</a></li>
-<li class="toctree-l2"><a class="reference external" href="basics.html#fast-low-precision-arithmetic">Fast low-precision arithmetic</a></li>
-<li class="toctree-l2"><a class="reference external" href="basics.html#plotting">Plotting</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="general.html">General-purpose and utility functions</a><ul>
-<li class="toctree-l2"><a class="reference external" href="general.html#conversion-and-utilities-for-numbers">Conversion and utilities for numbers</a></li>
-<li class="toctree-l2"><a class="reference external" href="general.html#arithmetic">Arithmetic</a></li>
+</ul>
+</div>
+<div class="section" id="basic-features">
+<h2>Basic features<a class="headerlink" href="#basic-features" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="contexts.html">Contexts</a><ul>
+<li class="toctree-l2"><a class="reference external" href="contexts.html#common-interface">Common interface</a></li>
+<li class="toctree-l2"><a class="reference external" href="contexts.html#arbitrary-precision-floating-point-mp">Arbitrary-precision floating-point (<tt class="docutils literal"><span class="pre">mp</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="contexts.html#arbitrary-precision-interval-arithmetic-iv">Arbitrary-precision interval arithmetic (<tt class="docutils literal"><span class="pre">iv</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="contexts.html#fast-low-precision-arithmetic-fp">Fast low-precision arithmetic (<tt class="docutils literal"><span class="pre">fp</span></tt>)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="general.html">Utility functions</a><ul>
+<li class="toctree-l2"><a class="reference external" href="general.html#conversion-and-printing">Conversion and printing</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#arithmetic-operations">Arithmetic operations</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#complex-components">Complex components</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#integer-and-fractional-parts">Integer and fractional parts</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#tolerances-and-approximate-comparisons">Tolerances and approximate comparisons</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#properties-of-numbers">Properties of numbers</a></li>
 <li class="toctree-l2"><a class="reference external" href="general.html#number-generation">Number generation</a></li>
-<li class="toctree-l2"><a class="reference external" href="general.html#rounding-and-printing">Rounding and printing</a></li>
 <li class="toctree-l2"><a class="reference external" href="general.html#precision-management">Precision management</a></li>
-<li class="toctree-l2"><a class="reference external" href="general.html#memoization">Memoization</a></li>
-<li class="toctree-l2"><a class="reference external" href="general.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference external" href="general.html#performance-and-debugging">Performance and debugging</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference external" href="plotting.html">Plotting</a><ul>
+<li class="toctree-l2"><a class="reference external" href="plotting.html#function-curve-plots">Function curve plots</a></li>
+<li class="toctree-l2"><a class="reference external" href="plotting.html#complex-function-plots">Complex function plots</a></li>
+<li class="toctree-l2"><a class="reference external" href="plotting.html#d-surface-plots">3D surface plots</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="advanced-mathematics">
+<h2>Advanced mathematics<a class="headerlink" href="#advanced-mathematics" title="Permalink to this headline">¶</a></h2>
+<p>On top of its support for arbitrary-precision arithmetic, mpmath
+provides extensive support for transcendental functions, evaluation of sums, integrals, limits, roots, and so on.</p>
+<ul>
 <li class="toctree-l1"><a class="reference external" href="functions/index.html">Mathematical functions</a><ul>
 <li class="toctree-l2"><a class="reference external" href="functions/constants.html">Mathematical constants</a></li>
-<li class="toctree-l2"><a class="reference external" href="functions/numberparts.html">Arithmetic and number parts</a></li>
 <li class="toctree-l2"><a class="reference external" href="functions/powers.html">Powers and logarithms</a></li>
 <li class="toctree-l2"><a class="reference external" href="functions/trigonometric.html">Trigonometric functions</a></li>
 <li class="toctree-l2"><a class="reference external" href="functions/hyperbolic.html">Hyperbolic functions</a></li>
@@ -105,38 +131,37 @@
 <li class="toctree-l2"><a class="reference external" href="calculus/approximation.html">Function approximation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="intervals.html">Interval arithmetic</a><ul>
-<li class="toctree-l2"><a class="reference external" href="intervals.html#basic-operations">Basic operations</a></li>
-<li class="toctree-l2"><a class="reference external" href="intervals.html#interval-functions">Interval functions</a></li>
-<li class="toctree-l2"><a class="reference external" href="intervals.html#establishing-inequalities">Establishing inequalities</a></li>
-<li class="toctree-l2"><a class="reference external" href="intervals.html#linear-algebra">Linear algebra</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference external" href="matrices.html">Matrices</a><ul>
 <li class="toctree-l2"><a class="reference external" href="matrices.html#creating-matrices">Creating matrices</a></li>
 <li class="toctree-l2"><a class="reference external" href="matrices.html#matrix-operations">Matrix operations</a></li>
 <li class="toctree-l2"><a class="reference external" href="matrices.html#linear-algebra">Linear algebra</a></li>
-<li class="toctree-l2"><a class="reference external" href="matrices.html#interval-matrices">Interval matrices</a></li>
+<li class="toctree-l2"><a class="reference external" href="matrices.html#interval-and-double-precision-matrices">Interval and double-precision matrices</a></li>
 <li class="toctree-l2"><a class="reference external" href="matrices.html#matrix-functions">Matrix functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="identification.html">Number identification</a><ul>
-<li class="toctree-l2"><a class="reference external" href="identification.html#constant-recognition-identify">Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)</a></li>
-<li class="toctree-l2"><a class="reference external" href="identification.html#algebraic-identification-findpoly">Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)</a></li>
-<li class="toctree-l2"><a class="reference external" href="identification.html#integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)</a></li>
+<li class="toctree-l2"><a class="reference external" href="identification.html#constant-recognition">Constant recognition</a></li>
+<li class="toctree-l2"><a class="reference external" href="identification.html#algebraic-identification">Algebraic identification</a></li>
+<li class="toctree-l2"><a class="reference external" href="identification.html#integer-relations-pslq">Integer relations (PSLQ)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="technical.html">Technical information</a><ul>
+</ul>
+</div>
+<div class="section" id="end-matter">
+<h2>End matter<a class="headerlink" href="#end-matter" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="technical.html">Precision and representation issues</a><ul>
+<li class="toctree-l2"><a class="reference external" href="technical.html#precision-error-and-tolerance">Precision, error and tolerance</a></li>
 <li class="toctree-l2"><a class="reference external" href="technical.html#representation-of-numbers">Representation of numbers</a></li>
-<li class="toctree-l2"><a class="reference external" href="technical.html#precision-and-accuracy">Precision and accuracy</a></li>
-<li class="toctree-l2"><a class="reference external" href="technical.html#rounding">Rounding</a></li>
-<li class="toctree-l2"><a class="reference external" href="technical.html#exponent-range">Exponent range</a></li>
-<li class="toctree-l2"><a class="reference external" href="technical.html#compatibility">Compatibility</a></li>
-<li class="toctree-l2"><a class="reference external" href="technical.html#error-terminology">Error terminology</a></li>
+<li class="toctree-l2"><a class="reference external" href="technical.html#decimal-issues">Decimal issues</a></li>
+<li class="toctree-l2"><a class="reference external" href="technical.html#correctness-guarantees">Correctness guarantees</a></li>
+<li class="toctree-l2"><a class="reference external" href="technical.html#double-precision-emulation">Double precision emulation</a></li>
+<li class="toctree-l2"><a class="reference external" href="technical.html#further-reading">Further reading</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="references.html">References</a></li>
 </ul>
+</div>
 </div>
 
 
@@ -145,6 +170,25 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <h3><a href="#">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">Welcome to mpmath&#8217;s documentation!</a><ul>
+<li><a class="reference external" href="#introduction">Introduction</a><ul>
+</ul>
+</li>
+<li><a class="reference external" href="#basic-features">Basic features</a><ul>
+</ul>
+</li>
+<li><a class="reference external" href="#advanced-mathematics">Advanced mathematics</a><ul>
+</ul>
+</li>
+<li><a class="reference external" href="#end-matter">End matter</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
             <h4>Next topic</h4>
             <p class="topless"><a href="setup.html"
                                   title="next chapter">Setting up mpmath</a></p>
@@ -186,8 +230,8 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

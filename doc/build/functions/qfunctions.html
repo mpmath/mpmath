@@ -143,7 +143,7 @@ For example, the following identity holds:</p>
      {(b_1;q)_n, \ldots, (b_s;q)_n}
 \left((-1)^n q^{n\choose 2}\right)^{1+s-r}
 \frac{z^n}{(q;q)_n}" /></p>
-</div><p>where <img class="math" src="../_images/math/b785fe47a412e3791d236225cb0cc77774ca869a.png" alt="(a;q)_n"/> denotes the q-Pochhammer symbol (see <tt class="xref docutils literal"><span class="pre">qp()</span></tt>).</p>
+</div><p>where <img class="math" src="../_images/math/b785fe47a412e3791d236225cb0cc77774ca869a.png" alt="(a;q)_n"/> denotes the q-Pochhammer symbol (see <a title="mpmath.qp" class="reference internal" href="#mpmath.qp"><tt class="xref docutils literal"><span class="pre">qp()</span></tt></a>).</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation works for real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -157,7 +157,7 @@ For example, the following identity holds:</p>
 </pre></div>
 </div>
 <p>Comparing with a summation of the defining series, using
-<tt class="xref docutils literal"><span class="pre">nsum()</span></tt>:</p>
+<a title="mpmath.nsum" class="reference external" href="../calculus/sums_limits.html#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">qhyper</span><span class="p">([],</span> <span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">q</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 <span class="go">0.6221136748254495583228324</span>
@@ -240,8 +240,8 @@ For example, the following identity holds:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

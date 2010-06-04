@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plotting &mdash; mpmath v0.15-svn documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '#',
+        VERSION:     '0.15-svn',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
+    <link rel="next" title="Mathematical functions" href="functions/index.html" />
+    <link rel="prev" title="Utility functions" href="general.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="functions/index.html" title="Mathematical functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="general.html" title="Utility functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="plotting">
+<h1>Plotting<a class="headerlink" href="#plotting" title="Permalink to this headline">¶</a></h1>
+<p>If <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a> is available, the functions <tt class="docutils literal"><span class="pre">plot</span></tt> and <tt class="docutils literal"><span class="pre">cplot</span></tt> in mpmath can be used to plot functions respectively as x-y graphs and in the complex plane. Also, <tt class="docutils literal"><span class="pre">splot</span></tt> can be used to produce 3D surface plots.</p>
+<div class="section" id="function-curve-plots">
+<h2>Function curve plots<a class="headerlink" href="#function-curve-plots" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/plot.png" src="_images/plot.png" />
+<p>Output of <tt class="docutils literal"><span class="pre">plot([cos,</span> <span class="pre">sin],</span> <span class="pre">[-4,</span> <span class="pre">4])</span></tt></p>
+<dl class="function">
+<dt id="mpmath.plot">
+<tt class="descclassname">mpmath.</tt><tt class="descname">plot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>xlim=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>ylim=None</em>, <em>points=200</em>, <em>file=None</em>, <em>dpi=None</em>, <em>singularities=</em><span class="optional">[</span><span class="optional">]</span>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a simple 2D plot of a function <img class="math" src="_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/> or list of functions
+<img class="math" src="_images/math/1ad13c4e8c318e9bf1720a2bdbb6094260518fde.png" alt="[f_0(x), f_1(x), \ldots, f_n(x)]"/> over a given interval
+specified by <em>xlim</em>. Some examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">plot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">li</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">cos</span><span class="p">,</span> <span class="n">sin</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">fresnels</span><span class="p">,</span> <span class="n">fresnelc</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">sqrt</span><span class="p">,</span> <span class="n">cbrt</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">4</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">zeta</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="n">t</span><span class="o">*</span><span class="n">j</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">20</span><span class="p">,</span> <span class="mf">20</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">floor</span><span class="p">,</span> <span class="n">ceil</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">sign</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Points where the function raises a numerical exception or
+returns an infinite value are removed from the graph.
+Singularities can also be excluded explicitly
+as follows (useful for removing erroneous vertical lines):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">plot</span><span class="p">(</span><span class="n">cot</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>   <span class="c"># bad</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">cot</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">5</span><span class="p">],</span> <span class="n">singularities</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">])</span>  <span class="c"># good</span>
+</pre></div>
+</div>
+<p>For parts where the function assumes complex values, the
+real part is plotted with dashes and the imaginary part
+is plotted with dots.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function requires matplotlib (pylab).</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="complex-function-plots">
+<h2>Complex function plots<a class="headerlink" href="#complex-function-plots" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/cplot.png" src="_images/cplot.png" />
+<p>Output of <tt class="docutils literal"><span class="pre">fp.cplot(fp.gamma,</span> <span class="pre">points=100000)</span></tt></p>
+<dl class="function">
+<dt id="mpmath.cplot">
+<tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=None</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the given complex-valued function <em>f</em> over a rectangular part
+of the complex plane specified by the pairs of intervals <em>re</em> and <em>im</em>.
+For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">cplot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">10</span><span class="p">])</span>
+<span class="n">cplot</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+<span class="n">cplot</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">50</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>By default, the complex argument (phase) is shown as color (hue) and
+the magnitude is show as brightness. You can also supply a
+custom color function (<em>color</em>). This function should take a
+complex number as input and return an RGB 3-tuple containing
+floats in the range 0.0-1.0.</p>
+<p>To obtain a sharp image, the number of points may need to be
+increased to 100,000 or thereabout. Since evaluating the
+function that many times is likely to be slow, the &#8216;verbose&#8217;
+option is useful to display progress.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function requires matplotlib (pylab).</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="d-surface-plots">
+<h2>3D surface plots<a class="headerlink" href="#d-surface-plots" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/splot.png" src="_images/splot.png" />
+<p>Output of <tt class="docutils literal"><span class="pre">splot</span></tt> for the donut example.</p>
+<dl class="function">
+<dt id="mpmath.splot">
+<tt class="descclassname">mpmath.</tt><tt class="descname">splot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>u=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>v=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=100</em>, <em>keep_aspect=True</em>, <em>wireframe=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.splot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the surface defined by <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>.</p>
+<p>If <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> returns a single component, then this plots the surface
+defined by <img class="math" src="_images/math/c45f4d6822ca0dd7ea528041bf7079ff62ba3afb.png" alt="z = f(x,y)"/> over the rectangular domain with
+<img class="math" src="_images/math/1a5f9274eefe45963c681d18e88951fd4d855b8d.png" alt="x = u"/> and <img class="math" src="_images/math/7b8577d72dc78ef2d19856895b18f28de3e80e8d.png" alt="y = v"/>.</p>
+<p>If <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> returns three components, then this plots the parametric
+surface <img class="math" src="_images/math/4c1c53bd0db4ab53f1731be43bf2e5e96c11e8ec.png" alt="x, y, z = f(u,v)"/> over the pairs of intervals <img class="math" src="_images/math/9ad99798ec4c38e165cf517cb9e02b1c9e824103.png" alt="u"/> and <img class="math" src="_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/>.</p>
+<p>For example, to plot a simple function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">splot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">])</span>    <span class="c"># doctest: +SKIP</span>
+</pre></div>
+</div>
+<p>Plotting a donut:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="p">[</span><span class="n">r</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="p">(</span><span class="n">R</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">))</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="p">(</span><span class="n">R</span><span class="o">+</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">))</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">splot</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>    <span class="c"># doctest: +SKIP</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function requires matplotlib (pylab) 0.98.5.3 or higher.</p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">Plotting</a><ul>
+<li><a class="reference external" href="#function-curve-plots">Function curve plots</a></li>
+<li><a class="reference external" href="#complex-function-plots">Complex function plots</a></li>
+<li><a class="reference external" href="#d-surface-plots">3D surface plots</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="general.html"
+                                  title="previous chapter">Utility functions</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="functions/index.html"
+                                  title="next chapter">Mathematical functions</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/plotting.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="functions/index.html" title="Mathematical functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="general.html" title="Utility functions"
+             >previous</a> |</li>
+        <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+    </div>
+
+<!-- Generate pageview statistics when this document is viewed on the mpmath website -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+if ((""+document.location).match("google"))
+{
+    _uacct = "UA-2697185-2";
+    urchinTracker();
+}
+</script>
+  </body>
+</html>

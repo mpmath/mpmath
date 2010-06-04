@@ -162,15 +162,15 @@ even even if the result is purely real:</p>
 <dd><p>Returns a generator that yields the sequence of derivatives</p>
 <div class="math">
 <p><img src="../_images/math/3c0032274f8c788ae74a9e8bc21d0f3584b7d55c.png" alt="f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots" /></p>
-</div><p>With <tt class="docutils literal"><span class="pre">method='step'</span></tt>, <tt class="xref docutils literal"><span class="pre">diffs()</span></tt> uses only <img class="math" src="../_images/math/5a1380a26be4f09590e6a602879375d89631623a.png" alt="O(k)"/>
+</div><p>With <tt class="docutils literal"><span class="pre">method='step'</span></tt>, <a title="mpmath.diffs" class="reference internal" href="#mpmath.diffs"><tt class="xref docutils literal"><span class="pre">diffs()</span></tt></a> uses only <img class="math" src="../_images/math/5a1380a26be4f09590e6a602879375d89631623a.png" alt="O(k)"/>
 function evaluations to generate the first <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> derivatives,
 rather than the roughly <img class="math" src="../_images/math/7997d6cebe4296b1ac5139dce990c5eff08ec23b.png" alt="O(k^2)"/> evaluations
-required if one calls <tt class="xref docutils literal"><span class="pre">diff()</span></tt> <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> separate times.</p>
+required if one calls <a title="mpmath.diff" class="reference internal" href="#mpmath.diff"><tt class="xref docutils literal"><span class="pre">diff()</span></tt></a> <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> separate times.</p>
 <p>With <img class="math" src="../_images/math/2d8bddb244f84c26228b4846d5c63730b5f3d9d5.png" alt="n &lt; \infty"/>, the generator stops as soon as the
 <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th derivative has been generated. If the exact number of
 needed derivatives is known in advance, this is further
 slightly more efficient.</p>
-<p>Options are the same as for <tt class="xref docutils literal"><span class="pre">diff()</span></tt>.</p>
+<p>Options are the same as for <a title="mpmath.diff" class="reference internal" href="#mpmath.diff"><tt class="xref docutils literal"><span class="pre">diff()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -318,8 +318,8 @@ Riemann-Liouville differintegral:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

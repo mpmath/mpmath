@@ -20,9 +20,9 @@ References not listed here can be found in the source code.
 
 .. [CabralRosetti] L G Cabral-Rosetti & M A Sanchis-Lozano. "Appell Functions and the Scalar One-Loop Three-point Integrals in Feynman Diagrams". http://arxiv.org/abs/hep-ph/0206081
 
-.. [GravesMorris] P R Graves-Morris, D E Roberts & A Salam. "The epsilon
-       algorithm and related topics", *Journal of Computational and
-       Applied Mathematics*, Volume 122, Issue 1-2  (October 2000)
+.. [Corless] R M Corless et al. "On the Lambert W function", Adv. Comp. Math. 5 (1996) 329-359. http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
+
+.. [GravesMorris] P R Graves-Morris, D E Roberts & A Salam. "The epsilon algorithm and related topics", *Journal of Computational and Applied Mathematics*, Volume 122, Issue 1-2  (October 2000)
 
 .. [MPFR] The MPFR team. "The MPFR Library: Algorithms and Proofs", http://www.mpfr.org/algorithms.pdf
 

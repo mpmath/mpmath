@@ -124,9 +124,13 @@ erroneously).</p>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[1.0, 0.0, -0.5, 0.0, 0.0416667, 0.0, -0.00138889]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.cos()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">cos</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">[0.540302305868139717400936602301, 1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cos</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">cos</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>
 <span class="go">[-0.41614683654714238699756823214, 1.0]</span>
 </pre></div>
 </div>
@@ -151,9 +155,13 @@ erroneously).</p>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.sin()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sin</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">[0.0, 0.841470984807896506652502331201]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sin</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>
 <span class="go">[0.0, 1.0]</span>
 </pre></div>
 </div>
@@ -181,9 +189,13 @@ cannot be represented exactly using floating-point arithmetic.</p>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">tan</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.tan()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">tan</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">[0.0, 1.55740772465490223050697482944]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tan</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">tan</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
@@ -211,9 +223,13 @@ cannot be represented exactly using floating-point arithmetic.</p>
 <span class="go">nan</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)))</span>
 <span class="go">[1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.sec()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sec</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
 <span class="go">[1.0, 1.85081571768092561791175326276]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sec</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sec</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
@@ -240,9 +256,13 @@ arithmetic.</p>
 <span class="go">(0.09047320975320743980579048 + 0.04120098628857412646300981j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.csc()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">csc</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[1.18839510577812121626159943988, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">csc</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">csc</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>
 <span class="go">[1.0, +inf]</span>
 </pre></div>
 </div>
@@ -270,9 +290,13 @@ arithmetic.</p>
 <span class="go">(-0.003739710376336956660117409 - 0.9967577965693583104609688j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">nan</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>  <span class="c"># Interval includes a singularity</span>
+</pre></div>
+</div>
+<p>Intervals are supported via <tt class="xref docutils literal"><span class="pre">mpmath.iv.cot()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">cot</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>  <span class="c"># Interval includes a singularity</span>
 <span class="go">[0.642092615934330703006419974862, +inf]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cot</span><span class="p">(</span><span class="n">mpi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">cot</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">])</span>
 <span class="go">[-inf, +inf]</span>
 </pre></div>
 </div>
@@ -329,7 +353,7 @@ arithmetic.</p>
 <dd><p>Computes the inverse cosine or arccosine of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/42047524eb9efe8ffc20cac3c0f5291ad27e379c.png" alt="\cos^{-1}(x)"/>.
 Since <img class="math" src="../_images/math/fc4162d019d241cabb62fd2c1d3a02213b8a9301.png" alt="-1 \le \cos(x) \le 1"/> for real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, the inverse
 cosine is real-valued only for <img class="math" src="../_images/math/f260c78fb4c935f83297e9c2cb2cf7c3c3e3adfc.png" alt="-1 \le x \le 1"/>. On this interval,
-<tt class="xref docutils literal"><span class="pre">acos()</span></tt> is defined to be a monotonically decreasing
+<a title="mpmath.acos" class="reference internal" href="#mpmath.acos"><tt class="xref docutils literal"><span class="pre">acos()</span></tt></a> is defined to be a monotonically decreasing
 function assuming values between <img class="math" src="../_images/math/08e02a30b63dba4891fe31161e3c4a2dc4dc4b2e.png" alt="+\pi"/> and <img class="math" src="../_images/math/bc1f9d9bf8a1b606a4188b5ce9a2af1809e27a89.png" alt="0"/>.</p>
 <p>Basic values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -344,7 +368,7 @@ function assuming values between <img class="math" src="../_images/math/08e02a30
 <span class="go">[1.5708, -1.0, 0.0, -0.166667, 0.0, -0.075, 0.0]</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">acos()</span></tt> is defined so as to be a proper inverse function of
+<p><a title="mpmath.acos" class="reference internal" href="#mpmath.acos"><tt class="xref docutils literal"><span class="pre">acos()</span></tt></a> is defined so as to be a proper inverse function of
 <img class="math" src="../_images/math/42781e6e22b30f45c904fcccdaffa1124d6a2d77.png" alt="\cos(\theta)"/> for <img class="math" src="../_images/math/30087b20a659037731297991d312a356f34b51b8.png" alt="0 \le \theta &lt; \pi"/>.
 We have <img class="math" src="../_images/math/933d47d8f3212606cd793a36c87f02106a33a3c7.png" alt="\cos(\cos^{-1}(x)) = x"/> for all <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, but
 <img class="math" src="../_images/math/60ccf6533f56deddecfab2df154dc80d132f4bdf.png" alt="\cos^{-1}(\cos(x)) = x"/> only for <img class="math" src="../_images/math/05d953a5eb14edccbb3765e404eca691e5f6b4d2.png" alt="0 \le \Re[x] &lt; \pi"/>:</p>
@@ -358,7 +382,7 @@ We have <img class="math" src="../_images/math/933d47d8f3212606cd793a36c87f02106
 <span class="go">(10.0 + 3.0j) (2.566370614359172953850574 - 3.0j)</span>
 </pre></div>
 </div>
-<p>The inverse cosine has two branch points: <img class="math" src="../_images/math/4f424f1753ba66a66c48a233c5afe322d41467a0.png" alt="x = \pm 1"/>. <tt class="xref docutils literal"><span class="pre">acos()</span></tt>
+<p>The inverse cosine has two branch points: <img class="math" src="../_images/math/4f424f1753ba66a66c48a233c5afe322d41467a0.png" alt="x = \pm 1"/>. <a title="mpmath.acos" class="reference internal" href="#mpmath.acos"><tt class="xref docutils literal"><span class="pre">acos()</span></tt></a>
 places the branch cuts along the line segments <img class="math" src="../_images/math/9f498d2ffdafc7d28bbba71b26b37477a7fe0868.png" alt="(-\infty, -1)"/> and
 <img class="math" src="../_images/math/eb5a1e1dd7a49594090b2131d83e208c46d1f9b7.png" alt="(+1, +\infty)"/>. In general,</p>
 <div class="math">
@@ -390,7 +414,7 @@ function assuming values between <img class="math" src="../_images/math/d45899b4
 <span class="go">[0.0, 1.0, 0.0, 0.166667, 0.0, 0.075, 0.0]</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">asin()</span></tt> is defined so as to be a proper inverse function of
+<p><a title="mpmath.asin" class="reference internal" href="#mpmath.asin"><tt class="xref docutils literal"><span class="pre">asin()</span></tt></a> is defined so as to be a proper inverse function of
 <img class="math" src="../_images/math/3ea19187c412da5e82c8ca0aacda5402d14ae7e2.png" alt="\sin(\theta)"/> for <img class="math" src="../_images/math/1bc41b3f5ce30d2cf0e5c41e3462065323d6792d.png" alt="-\pi/2 &lt; \theta &lt; \pi/2"/>.
 We have <img class="math" src="../_images/math/0652bcfc2ad09ab1a7200a122ca1f5edee2690cb.png" alt="\sin(\sin^{-1}(x)) = x"/> for all <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, but
 <img class="math" src="../_images/math/2b1ce7f6d5340aa14eae4db5b113e400c0b6fc23.png" alt="\sin^{-1}(\sin(x)) = x"/> only for <img class="math" src="../_images/math/74204fcd1d32ab2b5a7d5963f2fe82470746e23b.png" alt="-\pi/2 &lt; \Re[x] &lt; \pi/2"/>:</p>
@@ -404,7 +428,7 @@ We have <img class="math" src="../_images/math/0652bcfc2ad09ab1a7200a122ca1f5ede
 <span class="go">(-2.0 + 3.0j) (-1.141592653589793238462643 - 3.0j)</span>
 </pre></div>
 </div>
-<p>The inverse sine has two branch points: <img class="math" src="../_images/math/4f424f1753ba66a66c48a233c5afe322d41467a0.png" alt="x = \pm 1"/>. <tt class="xref docutils literal"><span class="pre">asin()</span></tt>
+<p>The inverse sine has two branch points: <img class="math" src="../_images/math/4f424f1753ba66a66c48a233c5afe322d41467a0.png" alt="x = \pm 1"/>. <a title="mpmath.asin" class="reference internal" href="#mpmath.asin"><tt class="xref docutils literal"><span class="pre">asin()</span></tt></a>
 places the branch cuts along the line segments <img class="math" src="../_images/math/9f498d2ffdafc7d28bbba71b26b37477a7fe0868.png" alt="(-\infty, -1)"/> and
 <img class="math" src="../_images/math/eb5a1e1dd7a49594090b2131d83e208c46d1f9b7.png" alt="(+1, +\infty)"/>. In general,</p>
 <div class="math">
@@ -423,8 +447,8 @@ This is a real-valued function for all real <img class="math" src="../_images/ma
 <img class="math" src="../_images/math/33fed50d641d8348a942f5d152134facaa22e6ad.png" alt="(-\pi/2, \pi/2)"/>.</p>
 <p>Basic values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">);</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">-1.570796326794896619231322</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">-0.7853981633974483096156609</span>
@@ -440,8 +464,8 @@ This is a real-valued function for all real <img class="math" src="../_images/ma
 </div>
 <p>The inverse tangent is often used to compute angles. However,
 the atan2 function is often better for this as it preserves sign
-(see <tt class="xref docutils literal"><span class="pre">atan2()</span></tt>).</p>
-<p><tt class="xref docutils literal"><span class="pre">atan()</span></tt> is defined so as to be a proper inverse function of
+(see <a title="mpmath.atan2" class="reference internal" href="#mpmath.atan2"><tt class="xref docutils literal"><span class="pre">atan2()</span></tt></a>).</p>
+<p><a title="mpmath.atan" class="reference internal" href="#mpmath.atan"><tt class="xref docutils literal"><span class="pre">atan()</span></tt></a> is defined so as to be a proper inverse function of
 <img class="math" src="../_images/math/6c44768bb83598451c904bb196761ce4b1d1348f.png" alt="\tan(\theta)"/> for <img class="math" src="../_images/math/1bc41b3f5ce30d2cf0e5c41e3462065323d6792d.png" alt="-\pi/2 &lt; \theta &lt; \pi/2"/>.
 We have <img class="math" src="../_images/math/563618bb10a5e9cc2ee74b186f6c3444c663d7f3.png" alt="\tan(\tan^{-1}(x)) = x"/> for all <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, but
 <img class="math" src="../_images/math/b5e209118b4e9bb13d5fb0fd66f775fbcbaf92aa.png" alt="\tan^{-1}(\tan(x)) = x"/> only for <img class="math" src="../_images/math/74204fcd1d32ab2b5a7d5963f2fe82470746e23b.png" alt="-\pi/2 &lt; \Re[x] &lt; \pi/2"/>:</p>
@@ -456,12 +480,42 @@ We have <img class="math" src="../_images/math/563618bb10a5e9cc2ee74b186f6c3444c
 <span class="go">(-2.0 + 3.0j) (1.141592653589793238462644 + 3.0j)</span>
 </pre></div>
 </div>
-<p>The inverse tangent has two branch points: <img class="math" src="../_images/math/63dcbd342180d4abe6948600ffc7305606b40201.png" alt="x = \pm i"/>. <tt class="xref docutils literal"><span class="pre">atan()</span></tt>
+<p>The inverse tangent has two branch points: <img class="math" src="../_images/math/63dcbd342180d4abe6948600ffc7305606b40201.png" alt="x = \pm i"/>. <a title="mpmath.atan" class="reference internal" href="#mpmath.atan"><tt class="xref docutils literal"><span class="pre">atan()</span></tt></a>
 places the branch cuts along the line segments <img class="math" src="../_images/math/d8090a02c41ef2b54224a16d8cb3c14cfed57cae.png" alt="(-i \infty, -i)"/> and
 <img class="math" src="../_images/math/b188655f5108667683e6de308ac83a0a3def08c9.png" alt="(+i, +i \infty)"/>. In general,</p>
 <div class="math">
 <p><img src="../_images/math/fe81327370a3e4a45ab6e1765a1cb80a1f67437d.png" alt="\tan^{-1}(x) = \frac{i}{2}\left(\log(1-ix)-\log(1+ix)\right)" /></p>
 </div><p>where the principal-branch log is implied.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="atan2">
+<h3><tt class="xref docutils literal"><span class="pre">atan2()</span></tt><a class="headerlink" href="#atan2" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.atan2">
+<tt class="descclassname">mpmath.</tt><tt class="descname">atan2</tt><big>(</big><em>y</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.atan2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the two-argument arctangent, <img class="math" src="../_images/math/9dc6015dd5641eb929664202273a3d3f879f9e51.png" alt="\mathrm{atan2}(y, x)"/>,
+giving the signed angle between the positive <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>-axis and the
+point <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)"/> in the 2D plane. This function is defined for
+real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> only.</p>
+<p>The two-argument arctangent essentially computes
+<img class="math" src="../_images/math/8dad02890d0db27747cedab53775c0d00798e9ff.png" alt="\mathrm{atan}(y/x)"/>, but accounts for the signs of both
+<img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> to give the angle for the correct quadrant. The
+following examples illustrate the difference:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(0.785398163397448, 0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(2.35619449019234, -0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(-0.785398163397448, -0.785398163397448)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atan2</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="n">atan</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/-</span><span class="mf">1.</span><span class="p">)</span>
+<span class="go">(-2.35619449019234, 0.785398163397448)</span>
+</pre></div>
+</div>
+<p>The angle convention is the same as that used for the complex
+argument; see <a title="mpmath.arg" class="reference external" href="../general.html#mpmath.arg"><tt class="xref docutils literal"><span class="pre">arg()</span></tt></a>.</p>
 </dd></dl>
 
 </div>
@@ -506,7 +560,7 @@ places the branch cuts along the line segments <img class="math" src="../_images
     \sin(x)/x, &amp; \mbox{if } x \ne 0 \\
     1,         &amp; \mbox{if } x = 0.
 \end{cases}" /></p>
-</div><p>See <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> for the normalized sinc function.</p>
+</div><p>See <a title="mpmath.sincpi" class="reference internal" href="#mpmath.sincpi"><tt class="xref docutils literal"><span class="pre">sincpi()</span></tt></a> for the normalized sinc function.</p>
 <p>Simple values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -549,7 +603,7 @@ to unity over the entire real line:</p>
 <span class="go">1.0</span>
 </pre></div>
 </div>
-<p>Like, <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt>, <tt class="xref docutils literal"><span class="pre">sincpi()</span></tt> is evaluated accurately
+<p>Like, <a title="mpmath.sinpi" class="reference internal" href="#mpmath.sinpi"><tt class="xref docutils literal"><span class="pre">sinpi()</span></tt></a>, <a title="mpmath.sincpi" class="reference internal" href="#mpmath.sincpi"><tt class="xref docutils literal"><span class="pre">sincpi()</span></tt></a> is evaluated accurately
 at its roots:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sincpi</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">0.0</span>
@@ -593,6 +647,7 @@ at its roots:</p>
 <li><a class="reference external" href="#acos"><tt class="docutils literal"><span class="pre">acos()</span></tt></a></li>
 <li><a class="reference external" href="#asin"><tt class="docutils literal"><span class="pre">asin()</span></tt></a></li>
 <li><a class="reference external" href="#atan"><tt class="docutils literal"><span class="pre">atan()</span></tt></a></li>
+<li><a class="reference external" href="#atan2"><tt class="docutils literal"><span class="pre">atan2()</span></tt></a></li>
 <li><a class="reference external" href="#asec"><tt class="docutils literal"><span class="pre">asec()</span></tt></a></li>
 <li><a class="reference external" href="#acsc"><tt class="docutils literal"><span class="pre">acsc()</span></tt></a></li>
 <li><a class="reference external" href="#acot"><tt class="docutils literal"><span class="pre">acot()</span></tt></a></li>
@@ -655,8 +710,8 @@ at its roots:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

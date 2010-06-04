@@ -52,6 +52,16 @@
             
   <div class="section" id="orthogonal-polynomials">
 <h1>Orthogonal polynomials<a class="headerlink" href="#orthogonal-polynomials" title="Permalink to this headline">¶</a></h1>
+<p>An orthogonal polynomial sequence is a sequence of polynomials <img class="math" src="../_images/math/d26d6755d1ba55b7c33c13a32226df5c64bc8b95.png" alt="P_0(x), P_1(x), \ldots"/> of degree <img class="math" src="../_images/math/3f5ec7bff9454a5deecb5b6340d98a6e9ab97801.png" alt="0, 1, \ldots"/>, which are mutually orthogonal in the sense that</p>
+<div class="math">
+<p><img src="../_images/math/45dfa8b0de5579f275740c1f1bb2f69813fe8256.png" alt="\int_S P_n(x) P_m(x) w(x) dx =
+\begin{cases}
+c_n \ne 0 &amp; \text{if $m = n$} \\
+0         &amp; \text{if $m \ne n$}
+\end{cases}" /></p>
+</div><p>where <img class="math" src="../_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/> is some domain (e.g. an interval <img class="math" src="../_images/math/3b76e28a88e5404196d7722767713b9ba940020a.png" alt="[a,b] \in \mathbb{R}"/>) and <img class="math" src="../_images/math/1fbf2dc9f4233f5839c7f4334e8eedda044ea649.png" alt="w(x)"/> is a fixed <em>weight function</em>. A sequence of orthogonal polynomials is determined completely by <img class="math" src="../_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png" alt="w"/>, <img class="math" src="../_images/math/ad28c83c99a8fd0dd2e2e594c9d02ee532765a0a.png" alt="S"/>, and a normalization convention (e.g. <img class="math" src="../_images/math/5932fc6cd01c1eda6d154917ff9fd2c2b6a786a9.png" alt="c_n = 1"/>). Applications of orthogonal polynomials include function approximation and solution of differential equations.</p>
+<p>Orthogonal polynomials are sometimes defined using the differential equations they satisfy (as functions of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>) or the recurrence relations they satisfy with respect to the order <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. Other ways of defining orthogonal polynomials include differentiation formulas and generating functions. The standard orthogonal polynomials can also be represented as hypergeometric series (see <a class="reference external" href="hypergeometric.html"><em>Hypergeometric functions</em></a>), more specifically using the Gauss hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/> in most cases. The following functions are generally implemented using hypergeometric functions since this is computationally efficient and easily generalizes.</p>
+<p>For more information, see the <a class="reference external" href="http://en.wikipedia.org/wiki/Orthogonal_polynomials">Wikipedia article on orthogonal polynomials</a>.</p>
 <div class="section" id="legendre-functions">
 <h2>Legendre functions<a class="headerlink" href="#legendre-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="legendre">
@@ -147,7 +157,7 @@ integrates to zero if <img class="math" src="../_images/math/45e3b3079da1f5ad7cc
 <h3><tt class="xref docutils literal"><span class="pre">legenp()</span></tt><a class="headerlink" href="#legenp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.legenp">
-<tt class="descclassname">mpmath.</tt><tt class="descname">legenp</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em><big>)</big><a class="headerlink" href="#mpmath.legenp" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">legenp</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em>, <em>type=2</em><big>)</big><a class="headerlink" href="#mpmath.legenp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the (associated) Legendre function of the first kind of
 degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/df26d26618564cc9d53e98ffad13b8db3cd84f5a.png" alt="P_n^m(z)"/>. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0"/> gives the ordinary
 Legendre function of the first kind, <img class="math" src="../_images/math/31519e614892fb7e7f8b443fa15ac68149839215.png" alt="P_n(z)"/>. The parameters may be
@@ -169,7 +179,7 @@ and <tt class="docutils literal"><span class="pre">LegendreP[n,m,3,z]</span></tt
 <p><img src="../_images/math/7e4a9c802eebd1e8eede8a5e520bd6b5480c9996.png" alt="(1-z^2) f''(z) - 2zf'(z) + \left(n(n+1)-\frac{m^2}{1-z^2}\right)f(z) = 0" /></p>
 </div><p>is given by <img class="math" src="../_images/math/e1acb1603031612de2f742eaa69a8f86e2cd9229.png" alt="C_1 P_n^m(z) + C_2 Q_n^m(z)"/> for arbitrary constants
 <img class="math" src="../_images/math/70b97eb4ad6e4e7a5a97e2547d9ed6e965960d0c.png" alt="C_1"/>, <img class="math" src="../_images/math/b65e6facfe122c182fe14d503aeace2c52a9739d.png" alt="C_2"/>, where <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)"/> is a Legendre function of the
-second kind as implemented by <tt class="xref docutils literal"><span class="pre">legenq()</span></tt>.</p>
+second kind as implemented by <a title="mpmath.legenq" class="reference internal" href="#mpmath.legenq"><tt class="xref docutils literal"><span class="pre">legenq()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary parameters and arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -209,14 +219,14 @@ second kind as implemented by <tt class="xref docutils literal"><span class="pre
 <h3><tt class="xref docutils literal"><span class="pre">legenq()</span></tt><a class="headerlink" href="#legenq" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.legenq">
-<tt class="descclassname">mpmath.</tt><tt class="descname">legenq</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em>, <em>version=2</em><big>)</big><a class="headerlink" href="#mpmath.legenq" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">legenq</tt><big>(</big><em>n</em>, <em>m</em>, <em>z</em>, <em>type=2</em><big>)</big><a class="headerlink" href="#mpmath.legenq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the (associated) Legendre function of the second kind of
 degree <em>n</em> and order <em>m</em>, <img class="math" src="../_images/math/459b2f4f0c552216e54b0c076a6064fed7120049.png" alt="Q_n^m(z)"/>. Taking <img class="math" src="../_images/math/f5507214a312b4e8009e11bba68cd7453d4ba0cf.png" alt="m = 0"/> gives the ordinary
 Legendre function of the second kind, <img class="math" src="../_images/math/f182d870432fbf0f8135a048b1b5ff6b4f5f1ad1.png" alt="Q_n(z)"/>. The parameters may
 complex numbers.</p>
 <p>The Legendre functions of the second kind give a second set of
 solutions to the (associated) Legendre differential equation.
-(See <tt class="xref docutils literal"><span class="pre">legenp()</span></tt>.)
+(See <a title="mpmath.legenp" class="reference internal" href="#mpmath.legenp"><tt class="xref docutils literal"><span class="pre">legenp()</span></tt></a>.)
 Unlike the Legendre functions of the first kind, they are not
 polynomials of <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> for integer <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> but rational or logarithmic
 functions with poles at <img class="math" src="../_images/math/0d1d3efda3e96b7763cf2660767f837c3c1c5f52.png" alt="z = \pm 1"/>.</p>
@@ -388,7 +398,7 @@ a polynomial in <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2
 <p>A Jacobi polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is equal to its
 Taylor polynomial of degree <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. The explicit
 coefficients of Jacobi polynomials can therefore
-be recovered easily using <tt class="xref docutils literal"><span class="pre">taylor()</span></tt>:</p>
+be recovered easily using <a title="mpmath.taylor" class="reference external" href="../calculus/approximation.html#mpmath.taylor"><tt class="xref docutils literal"><span class="pre">taylor()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">5</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jacobi</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 <span class="gp">...</span>
@@ -430,7 +440,7 @@ quadrature:</p>
 equation</p>
 <div class="math">
 <p><img src="../_images/math/a96ce75376e38b9ab152e89cae52bd733c918c79.png" alt="(1-x^2) y'' + (b-a-(a+b+2)x) y' + n (n+a+b+1) y = 0." /></p>
-</div><p>We can verify that <tt class="xref docutils literal"><span class="pre">jacobi()</span></tt> approximately satisfies
+</div><p>We can verify that <a title="mpmath.jacobi" class="reference internal" href="#mpmath.jacobi"><tt class="xref docutils literal"><span class="pre">jacobi()</span></tt></a> approximately satisfies
 this equation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -693,7 +703,7 @@ coefficients:</p>
 <div class="math">
 <p><img src="../_images/math/e368cb6772c14753dd2f73ae503399c0455595d0.png" alt="Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi}\frac{(l-m)!}{(l+m)!}}
     P_l^m(\cos \theta) e^{i m \phi}" /></p>
-</div><p>where <img class="math" src="../_images/math/d8a3014951eb2ea04abd44b40541cac5a0fa4925.png" alt="P_l^m"/> is an associated Legendre function (see <tt class="xref docutils literal"><span class="pre">legenp()</span></tt>).</p>
+</div><p>where <img class="math" src="../_images/math/d8a3014951eb2ea04abd44b40541cac5a0fa4925.png" alt="P_l^m"/> is an associated Legendre function (see <a title="mpmath.legenp" class="reference internal" href="#mpmath.legenp"><tt class="xref docutils literal"><span class="pre">legenp()</span></tt></a>).</p>
 <p>Here <img class="math" src="../_images/math/2881d0a92b53eb5568e81d2c74ea8ade94faa9fe.png" alt="\theta \in [0, \pi]"/> denotes the polar coordinate (ranging
 from the north pole to the south pole) and <img class="math" src="../_images/math/c7371cd9a7326bd7e49ea7b4e35c8a84f40c76da.png" alt="\phi \in [0, 2 \pi]"/> denotes the
 azimuthal coordinate on a sphere. Care should be used since many different
@@ -701,8 +711,11 @@ conventions for spherical coordinate variables are used.</p>
 <p>Usually spherical harmonics are considered for <img class="math" src="../_images/math/237dcc5205c860f4c8e784f3ee130f9d9d991c94.png" alt="l \in \mathbb{N}"/>,
 <img class="math" src="../_images/math/66f3365ae75a053eb41dbdff1a4d79415c1e8b22.png" alt="m \in \mathbb{Z}"/>, <img class="math" src="../_images/math/4e092c1d72ab491868c4fb6a9f469439ee524565.png" alt="|m| \le l"/>. More generally, <img class="math" src="../_images/math/c315ce0762c031bf8d8c1f4f45daaaab50cd46cc.png" alt="l,m,\theta,\phi"/>
 are permitted to be complex numbers.</p>
-<p>Note: <tt class="xref docutils literal"><span class="pre">spherharm()</span></tt> returns a complex number, even the value is
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a title="mpmath.spherharm" class="reference internal" href="#mpmath.spherharm"><tt class="xref docutils literal"><span class="pre">spherharm()</span></tt></a> returns a complex number, even the value is
 purely real.</p>
+</div>
 <p><strong>Examples</strong></p>
 <p>Some low-order spherical harmonics with reference values:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -845,8 +858,8 @@ on the unit sphere:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

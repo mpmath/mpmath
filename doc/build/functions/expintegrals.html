@@ -52,6 +52,8 @@
             
   <div class="section" id="exponential-integrals-and-error-functions">
 <h1>Exponential integrals and error functions<a class="headerlink" href="#exponential-integrals-and-error-functions" title="Permalink to this headline">¶</a></h1>
+<p>Exponential integrals give closed-form solutions to a large class of commonly occurring transcendental integrals that cannot be evaluated using elementary functions. Integrals of this type include those with an integrand of the form <img class="math" src="../_images/math/462d300df961dc8a9f6cdffea7a6b17f3fc6aea9.png" alt="t^a e^{t}"/> or <img class="math" src="../_images/math/1416120cf059226aaa74a003c2f78fee7310e8ed.png" alt="e^{-x^2}"/>, the latter giving rise to the Gaussian (or normal) probability distribution.</p>
+<p>The most general function in this section is the incomplete gamma function, to which all others can be reduced. The incomplete gamma function, in turn, can be expressed using hypergeometric functions (see <a class="reference external" href="hypergeometric.html"><em>Hypergeometric functions</em></a>).</p>
 <div class="section" id="incomplete-gamma-functions">
 <h2>Incomplete gamma functions<a class="headerlink" href="#incomplete-gamma-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="gammainc">
@@ -68,7 +70,7 @@ following special cases when one or both endpoints are fixed:</p>
 <ul class="simple">
 <li><img class="math" src="../_images/math/de26bc44efa7144cd4e6a60ee93f4e5f7c39d8e1.png" alt="\Gamma(z,0,\infty)"/> is the standard (&#8220;complete&#8221;)
 gamma function, <img class="math" src="../_images/math/f3bdf82eb6ddbd7c4870a75d6652ffbbb8f9224b.png" alt="\Gamma(z)"/> (available directly
-as the mpmath function <tt class="xref docutils literal"><span class="pre">gamma()</span></tt>)</li>
+as the mpmath function <a title="mpmath.gamma" class="reference external" href="gamma.html#mpmath.gamma"><tt class="xref docutils literal"><span class="pre">gamma()</span></tt></a>)</li>
 <li><img class="math" src="../_images/math/341baca0e80ef692894416999286ebd67b090b3b.png" alt="\Gamma(z,a,\infty)"/> is the &#8220;upper&#8221; incomplete gamma
 function, <img class="math" src="../_images/math/4f0145b57fff1fcb4af69a8f4a7af00e525b11d4.png" alt="\Gamma(z,a)"/></li>
 <li><img class="math" src="../_images/math/9ee8563ab8c1fe0852edb67920855aff8c2dd80b.png" alt="\Gamma(z,0,b)"/> is the &#8220;lower&#8221; incomplete gamma
@@ -82,13 +84,13 @@ arguments when defining the lower and upper incomplete
 gamma function, so one should be careful to get the correct
 definition.</p>
 <p>If also given the keyword argument <tt class="docutils literal"><span class="pre">regularized=True</span></tt>,
-<tt class="xref docutils literal"><span class="pre">gammainc()</span></tt> computes the &#8220;regularized&#8221; incomplete gamma
+<a title="mpmath.gammainc" class="reference internal" href="#mpmath.gammainc"><tt class="xref docutils literal"><span class="pre">gammainc()</span></tt></a> computes the &#8220;regularized&#8221; incomplete gamma
 function</p>
 <div class="math">
 <p><img src="../_images/math/4e50287e68f70409610b11ce66b425056b08cf2c.png" alt="P(z,a,b) = \frac{\Gamma(z,a,b)}{\Gamma(z)}." /></p>
 </div><p><strong>Examples</strong></p>
 <p>We can compare with numerical quadrature to verify that
-<tt class="xref docutils literal"><span class="pre">gammainc()</span></tt> computes the integral in the definition:</p>
+<a title="mpmath.gammainc" class="reference internal" href="#mpmath.gammainc"><tt class="xref docutils literal"><span class="pre">gammainc()</span></tt></a> computes the integral in the definition:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gammainc</span><span class="p">(</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
@@ -191,7 +193,7 @@ integral is interpreted as providing the Cauchy principal value.</p>
 <p>For real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, the Ei-function behaves roughly like
 <img class="math" src="../_images/math/bfa32ad8fa62d527d51b3594a987c41477327f46.png" alt="\mathrm{Ei}(x) \approx \exp(x) + \log(|x|)"/>.</p>
 <p>The Ei-function is related to the more general family of exponential
-integral functions denoted by <img class="math" src="../_images/math/0d3cbf9ab1e976e485e5a8b8459491ffa0b561dc.png" alt="E_n"/>, which are available as <tt class="xref docutils literal"><span class="pre">expint()</span></tt>.</p>
+integral functions denoted by <img class="math" src="../_images/math/0d3cbf9ab1e976e485e5a8b8459491ffa0b561dc.png" alt="E_n"/>, which are available as <a title="mpmath.expint" class="reference internal" href="#mpmath.expint"><tt class="xref docutils literal"><span class="pre">expint()</span></tt></a>.</p>
 <p><strong>Basic examples</strong></p>
 <p>Some basic values and limits are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -214,7 +216,7 @@ numerically as a reference:</p>
 <span class="go">-0.00377935240984891</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">ei()</span></tt> supports complex arguments and arbitrary
+<p><a title="mpmath.ei" class="reference internal" href="#mpmath.ei"><tt class="xref docutils literal"><span class="pre">ei()</span></tt></a> supports complex arguments and arbitrary
 precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ei</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
@@ -226,10 +228,10 @@ precision evaluation:</p>
 </div>
 <p><strong>Related functions</strong></p>
 <p>The exponential integral is closely related to the logarithmic
-integral. See <tt class="xref docutils literal"><span class="pre">li()</span></tt> for additional information.</p>
+integral. See <a title="mpmath.li" class="reference internal" href="#mpmath.li"><tt class="xref docutils literal"><span class="pre">li()</span></tt></a> for additional information.</p>
 <p>The exponential integral is related to the hyperbolic
-and trigonometric integrals (see <tt class="xref docutils literal"><span class="pre">chi()</span></tt>, <tt class="xref docutils literal"><span class="pre">shi()</span></tt>,
-<tt class="xref docutils literal"><span class="pre">ci()</span></tt>, <tt class="xref docutils literal"><span class="pre">si()</span></tt>) similarly to how the ordinary
+and trigonometric integrals (see <a title="mpmath.chi" class="reference internal" href="#mpmath.chi"><tt class="xref docutils literal"><span class="pre">chi()</span></tt></a>, <a title="mpmath.shi" class="reference internal" href="#mpmath.shi"><tt class="xref docutils literal"><span class="pre">shi()</span></tt></a>,
+<a title="mpmath.ci" class="reference internal" href="#mpmath.ci"><tt class="xref docutils literal"><span class="pre">ci()</span></tt></a>, <a title="mpmath.si" class="reference internal" href="#mpmath.si"><tt class="xref docutils literal"><span class="pre">si()</span></tt></a>) similarly to how the ordinary
 exponential function is related to the hyperbolic and
 trigonometric functions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -273,7 +275,7 @@ hypergeometric function <img class="math" src="../_images/math/1f6fb6dd6d16bd0ea
 <dd><p>Computes the exponential integral <img class="math" src="../_images/math/2cca7336acceec044052743bc80eb0c775702420.png" alt="\mathrm{E}_1(z)"/>, given by</p>
 <div class="math">
 <p><img src="../_images/math/29a66a0fefdb5f734d89dd12e5bd3e1428de70bf.png" alt="\mathrm{E}_1(z) = \int_z^{\infty} \frac{e^{-t}}{t} dt." /></p>
-</div><p>This is equivalent to <tt class="xref docutils literal"><span class="pre">expint()</span></tt> with <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/>.</p>
+</div><p>This is equivalent to <a title="mpmath.expint" class="reference internal" href="#mpmath.expint"><tt class="xref docutils literal"><span class="pre">expint()</span></tt></a> with <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Two ways to evaluate this function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -284,7 +286,7 @@ hypergeometric function <img class="math" src="../_images/math/1f6fb6dd6d16bd0ea
 <span class="go">0.0002704758872637179088496194</span>
 </pre></div>
 </div>
-<p>The E1-function is essentially the same as the Ei-function (<tt class="xref docutils literal"><span class="pre">ei()</span></tt>)
+<p>The E1-function is essentially the same as the Ei-function (<a title="mpmath.ei" class="reference internal" href="#mpmath.ei"><tt class="xref docutils literal"><span class="pre">ei()</span></tt></a>)
 with negated argument, except for an imaginary branch cut term:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">e1</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
 <span class="go">0.02491491787026973549562801</span>
@@ -309,7 +311,7 @@ or En-function,</p>
 <div class="math">
 <p><img src="../_images/math/b1fcac81169f1d6a27095d4eb2fa5070cd52be0b.png" alt="\mathrm{E}_n(z) = \int_1^{\infty} \frac{e^{-zt}}{t^n} dt," /></p>
 </div><p>where <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> may both be complex numbers. The case with <img class="math" src="../_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/> is
-also given by <tt class="xref docutils literal"><span class="pre">e1()</span></tt>.</p>
+also given by <a title="mpmath.e1" class="reference internal" href="#mpmath.e1"><tt class="xref docutils literal"><span class="pre">e1()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation at real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -363,7 +365,7 @@ logarithmic integral (used in number theory)</p>
 <img class="math" src="../_images/math/afd2720cc15b5e1df0fc0dbcdd26f48aa1cf6aca.png" alt="\mathrm{Li}(x) = \mathrm{li}(x) - \mathrm{li}(2)"/>.</p>
 <p>The logarithmic integral should also not be confused with
 the polylogarithm (also denoted by Li), which is implemented
-as <tt class="xref docutils literal"><span class="pre">polylog()</span></tt>.</p>
+as <a title="mpmath.polylog" class="reference external" href="zeta.html#mpmath.polylog"><tt class="xref docutils literal"><span class="pre">polylog()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -469,7 +471,7 @@ accurate estimate:</p>
 </pre></div>
 </div>
 <p>The cosine integral behaves roughly like the sinc function
-(see <tt class="xref docutils literal"><span class="pre">sinc()</span></tt>) for large real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
+(see <a title="mpmath.sinc" class="reference external" href="trigonometric.html#mpmath.sinc"><tt class="xref docutils literal"><span class="pre">sinc()</span></tt></a>) for large real <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ci</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">-4.875060251748226537857298e-11</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sinc</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
@@ -518,7 +520,7 @@ cosine integral:</p>
 <div class="math">
 <p><img src="../_images/math/c6f4de1fa90d03021c350326a1de82372fcc8486.png" alt="\mathrm{Si}(x) = \int_0^x \frac{\sin t}{t}\,dt." /></p>
 </div><p>The sine integral is thus the antiderivative of the sinc
-function (see <tt class="xref docutils literal"><span class="pre">sinc()</span></tt>).</p>
+function (see <a title="mpmath.sinc" class="reference external" href="trigonometric.html#mpmath.sinc"><tt class="xref docutils literal"><span class="pre">sinc()</span></tt></a>).</p>
 <p><strong>Examples</strong></p>
 <p>Some values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -579,7 +581,7 @@ sine integral:</p>
 <dt id="mpmath.chi">
 <tt class="descclassname">mpmath.</tt><tt class="descname">chi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.chi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the hyperbolic cosine integral, defined
-in analogy with the cosine integral (see <tt class="xref docutils literal"><span class="pre">ci()</span></tt>) as</p>
+in analogy with the cosine integral (see <a title="mpmath.ci" class="reference internal" href="#mpmath.ci"><tt class="xref docutils literal"><span class="pre">ci()</span></tt></a>) as</p>
 <div class="math">
 <p><img src="../_images/math/a1ba2d9e8191139ad1ef2a63a2601774b544321f.png" alt="\mathrm{Chi}(x) = -\int_x^{\infty} \frac{\cosh t}{t}\,dt
 = \gamma + \log x + \int_0^x \frac{\cosh t - 1}{t}\,dt" /></p>
@@ -612,7 +614,7 @@ in analogy with the cosine integral (see <tt class="xref docutils literal"><span
 <dt id="mpmath.shi">
 <tt class="descclassname">mpmath.</tt><tt class="descname">shi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.shi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the hyperbolic sine integral, defined
-in analogy with the sine integral (see <tt class="xref docutils literal"><span class="pre">si()</span></tt>) as</p>
+in analogy with the sine integral (see <a title="mpmath.si" class="reference internal" href="#mpmath.si"><tt class="xref docutils literal"><span class="pre">si()</span></tt></a>) as</p>
 <div class="math">
 <p><img src="../_images/math/71770811bdc4686450bc654f03f550e9dcac3f18.png" alt="\mathrm{Shi}(x) = \int_0^x \frac{\sinh t}{t}\,dt." /></p>
 </div><p>Some values and limits:</p>
@@ -680,7 +682,7 @@ rapidly:</p>
 <span class="go">[0.0, 1.12838, 0.0, -0.376126, 0.0, 0.112838]</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">erf()</span></tt> implements arbitrary-precision evaluation and
+<p><a title="mpmath.erf" class="reference internal" href="#mpmath.erf"><tt class="xref docutils literal"><span class="pre">erf()</span></tt></a> implements arbitrary-precision evaluation and
 supports complex numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">erf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
@@ -705,10 +707,10 @@ supports complex numbers:</p>
 </pre></div>
 </div>
 <p><strong>Related functions</strong></p>
-<p>See also <tt class="xref docutils literal"><span class="pre">erfc()</span></tt>, which is more accurate for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
-and <tt class="xref docutils literal"><span class="pre">erfi()</span></tt> which gives the antiderivative of
+<p>See also <a title="mpmath.erfc" class="reference internal" href="#mpmath.erfc"><tt class="xref docutils literal"><span class="pre">erfc()</span></tt></a>, which is more accurate for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
+and <a title="mpmath.erfi" class="reference internal" href="#mpmath.erfi"><tt class="xref docutils literal"><span class="pre">erfi()</span></tt></a> which gives the antiderivative of
 <img class="math" src="../_images/math/b133c76827decf65dd75b6f1a1a38dcf7c9476bf.png" alt="\exp(t^2)"/>.</p>
-<p>The Fresnel integrals <tt class="xref docutils literal"><span class="pre">fresnels()</span></tt> and <tt class="xref docutils literal"><span class="pre">fresnelc()</span></tt>
+<p>The Fresnel integrals <a title="mpmath.fresnels" class="reference internal" href="#mpmath.fresnels"><tt class="xref docutils literal"><span class="pre">fresnels()</span></tt></a> and <a title="mpmath.fresnelc" class="reference internal" href="#mpmath.fresnelc"><tt class="xref docutils literal"><span class="pre">fresnelc()</span></tt></a>
 are also related to the error function.</p>
 </dd></dl>
 
@@ -730,7 +732,7 @@ computing the complementary error function as <tt class="docutils literal"><span
 <span class="go">2.08848758376254e-45</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">erfc()</span></tt> works accurately even for ludicrously large
+<p><a title="mpmath.erfc" class="reference internal" href="#mpmath.erfc"><tt class="xref docutils literal"><span class="pre">erfc()</span></tt></a> works accurately even for ludicrously large
 arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">erfc</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">4.3504398860243e-43429448190325182776</span>
@@ -833,15 +835,15 @@ numbers <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48
 <span class="nc">ValueError</span>: <span class="n-Identifier">erfinv(x) is defined only for -1 &lt;= x &lt;= 1</span>
 </pre></div>
 </div>
-<p>It is simple to check that <tt class="xref docutils literal"><span class="pre">erfinv()</span></tt> computes inverse values of
-<tt class="xref docutils literal"><span class="pre">erf()</span></tt> as promised:</p>
+<p>It is simple to check that <a title="mpmath.erfinv" class="reference internal" href="#mpmath.erfinv"><tt class="xref docutils literal"><span class="pre">erfinv()</span></tt></a> computes inverse values of
+<a title="mpmath.erf" class="reference internal" href="#mpmath.erf"><tt class="xref docutils literal"><span class="pre">erf()</span></tt></a> as promised:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">erf</span><span class="p">(</span><span class="n">erfinv</span><span class="p">(</span><span class="mf">0.75</span><span class="p">))</span>
 <span class="go">0.75</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">erf</span><span class="p">(</span><span class="n">erfinv</span><span class="p">(</span><span class="o">-</span><span class="mf">0.995</span><span class="p">))</span>
 <span class="go">-0.995</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">erfinv()</span></tt> supports arbitrary-precision evaluation:</p>
+<p><a title="mpmath.erfinv" class="reference internal" href="#mpmath.erfinv"><tt class="xref docutils literal"><span class="pre">erfinv()</span></tt></a> supports arbitrary-precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">erf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
@@ -891,7 +893,7 @@ be verified using numerical integration:</p>
 <span class="go">0.5</span>
 </pre></div>
 </div>
-<p>See also <tt class="xref docutils literal"><span class="pre">ncdf()</span></tt>, which gives the cumulative
+<p>See also <a title="mpmath.ncdf" class="reference internal" href="#mpmath.ncdf"><tt class="xref docutils literal"><span class="pre">ncdf()</span></tt></a>, which gives the cumulative
 distribution.</p>
 </dd></dl>
 
@@ -904,7 +906,7 @@ distribution.</p>
 <dd><p><tt class="docutils literal"><span class="pre">ncdf(x,</span> <span class="pre">mu=0,</span> <span class="pre">sigma=1)</span></tt> evaluates the cumulative distribution
 function of a normal distribution with mean value <img class="math" src="../_images/math/2d8c833ed800824727cd7bd2fb9de1a12ad7e674.png" alt="\mu"/>
 and variance <img class="math" src="../_images/math/741fb9098efcb98055f467f87630a5d0ca599b6b.png" alt="\sigma^2"/>.</p>
-<p>See also <tt class="xref docutils literal"><span class="pre">npdf()</span></tt>, which gives the probability density.</p>
+<p>See also <a title="mpmath.npdf" class="reference internal" href="#mpmath.npdf"><tt class="xref docutils literal"><span class="pre">npdf()</span></tt></a>, which gives the probability density.</p>
 <p>Elementary properties include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -1112,8 +1114,8 @@ without the normalization factor <img class="math" src="../_images/math/039bf945
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

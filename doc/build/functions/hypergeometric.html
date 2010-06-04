@@ -63,12 +63,21 @@ series are also provided. See also the basic or q-analog of
 the hypergeometric series in <a class="reference external" href="qfunctions.html"><em>q-functions</em></a>.</p>
 <p>For convenience, most of the hypergeometric series of low order are
 provided as standalone functions. They can equivalently be evaluated using
-<tt class="xref docutils literal"><span class="pre">hyper()</span></tt>. As will be demonstrated further in the individual docstrings,
+<a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a>. As will be demonstrated in the respective docstrings,
 all the <tt class="docutils literal"><span class="pre">hyp#f#</span></tt> functions implement analytic continuations and/or asymptotic
 expansions with respect to the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, thereby permitting evaluation
 for <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> anywhere in the complex plane. Functions of higher degree can be
-computed via <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>, but generally only in rapidly convergent
+computed via <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a>, but generally only in rapidly convergent
 instances.</p>
+<p>Most hypergeometric and hypergeometric-derived functions accept optional
+keyword arguments to specify options for <tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt> or
+<tt class="xref docutils literal"><span class="pre">hyper()</span></tt>. Some useful options are <em>maxprec</em>, <em>maxterms</em>,
+<em>zeroprec</em>, <em>accurate_small</em>, <em>hmag</em>, <em>force_series</em>,
+<em>asymp_tol</em> and <em>eliminate</em>. These options give control over what to
+do in case of slow convergence, extreme loss of accuracy or
+evaluation at zeros (these two cases cannot generally be
+distinguished from each other automatically),
+and singular parameter combinations.</p>
 <div class="section" id="common-hypergeometric-series">
 <h2>Common hypergeometric series<a class="headerlink" href="#common-hypergeometric-series" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="hyp0f1">
@@ -81,9 +90,9 @@ confluent limit function, defined as</p>
 <div class="math">
 <p><img src="../_images/math/457cc0f086c7585d6ff68333252769954a3a0603.png" alt="\,_0F_1(a,z) = \sum_{k=0}^{\infty} \frac{1}{(a)_k} \frac{z^k}{k!}." /></p>
 </div><p>This function satisfies the differential equation <img class="math" src="../_images/math/b8016bf152ac73658fcb67fdd870abe8913ff556.png" alt="z f''(z) + a f'(z) = f(z)"/>,
-and is related to the Bessel function of the first kind (see <tt class="xref docutils literal"><span class="pre">besselj()</span></tt>).</p>
+and is related to the Bessel function of the first kind (see <a title="mpmath.besselj" class="reference external" href="bessel.html#mpmath.besselj"><tt class="xref docutils literal"><span class="pre">besselj()</span></tt></a>).</p>
 <p><tt class="docutils literal"><span class="pre">hyp0f1(a,z)</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">hyper([],[a],z)</span></tt>; see documentation for
-<tt class="xref docutils literal"><span class="pre">hyper()</span></tt> for more information.</p>
+<a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a> for more information.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -130,11 +139,11 @@ using asymptotic expansions:</p>
 function gives one solution to the confluent (Kummer&#8217;s) differential equation</p>
 <div class="math">
 <p><img src="../_images/math/6b308cd303a13f3caeefe6421ffc15a59ff7d2b1.png" alt="z f''(z) + (b-z) f'(z) - af(z) = 0." /></p>
-</div><p>A second solution is given by the <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/> function; see <tt class="xref docutils literal"><span class="pre">hyperu()</span></tt>.
+</div><p>A second solution is given by the <img class="math" src="../_images/math/e2bbebb3bd73f1ae5c64098ab0244f739abf7ca4.png" alt="U"/> function; see <a title="mpmath.hyperu" class="reference external" href="bessel.html#mpmath.hyperu"><tt class="xref docutils literal"><span class="pre">hyperu()</span></tt></a>.
 Solutions are also given in an alternate form by the Whittaker
-functions (<tt class="xref docutils literal"><span class="pre">whitm()</span></tt>, <tt class="xref docutils literal"><span class="pre">whitw()</span></tt>).</p>
+functions (<a title="mpmath.whitm" class="reference external" href="bessel.html#mpmath.whitm"><tt class="xref docutils literal"><span class="pre">whitm()</span></tt></a>, <a title="mpmath.whitw" class="reference external" href="bessel.html#mpmath.whitw"><tt class="xref docutils literal"><span class="pre">whitw()</span></tt></a>).</p>
 <p><tt class="docutils literal"><span class="pre">hyp1f1(a,b,z)</span></tt> is equivalent
-to <tt class="docutils literal"><span class="pre">hyper([a],[b],z)</span></tt>; see documentation for <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> for more
+to <tt class="docutils literal"><span class="pre">hyper([a],[b],z)</span></tt>; see documentation for <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a> for more
 information.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for real and complex values of the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, with
@@ -228,7 +237,7 @@ series</p>
 <p><img src="../_images/math/45cce43e5a69cbc0f122c3e30cd69e17e32688de.png" alt="\,_2F_0(a,b;;z) = \sum_{n=0}^{\infty} (a)_n (b)_n \frac{z^n}{n!}." /></p>
 </div><p>This series usually does not converge. For small enough <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, it can be viewed
 as an asymptotic series that may be summed directly with an appropriate
-truncation. When this is not the case, <tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt> gives a regularized sum,
+truncation. When this is not the case, <a title="mpmath.hyp2f0" class="reference internal" href="#mpmath.hyp2f0"><tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt></a> gives a regularized sum,
 or equivalently, it uses a representation in terms of the
 hypergeometric U function [1]. The series also converges when either <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> or <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>
 is a nonpositive integer, as it then terminates into a polynomial
@@ -468,8 +477,11 @@ the circle of convergence <img class="math" src="../_images/math/83147269611ed30
 <span class="go">0.7823896253461678060196207</span>
 </pre></div>
 </div>
-<p>Note: evaluation for <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|"/> small can currently be inaccurate or slow
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Evaluation for <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|"/> small can currently be inaccurate or slow
 for some parameter combinations.</p>
+</div>
 <p>For various parameter combinations, <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2"/> admits representation in terms
 of hypergeometric functions of lower degree, or in terms of
 simpler functions:</p>
@@ -505,16 +517,16 @@ simpler functions:</p>
 <p><img src="../_images/math/80b5506302d3e2227a13b9fc50c7947888a89793.png" alt="\,_pF_q(a_1,\ldots,a_p; b_1,\ldots,b_q; z) =
 \sum_{n=0}^\infty \frac{(a_1)_n (a_2)_n \ldots (a_p)_n}
    {(b_1)_n(b_2)_n\ldots(b_q)_n} \frac{z^n}{n!}" /></p>
-</div><p>where <img class="math" src="../_images/math/47746f330c175a38d98099f8002410481661e696.png" alt="(x)_n"/> denotes the rising factorial (see <tt class="xref docutils literal"><span class="pre">rf()</span></tt>).</p>
+</div><p>where <img class="math" src="../_images/math/47746f330c175a38d98099f8002410481661e696.png" alt="(x)_n"/> denotes the rising factorial (see <a title="mpmath.rf" class="reference external" href="gamma.html#mpmath.rf"><tt class="xref docutils literal"><span class="pre">rf()</span></tt></a>).</p>
 <p>The parameters lists <tt class="docutils literal"><span class="pre">a_s</span></tt> and <tt class="docutils literal"><span class="pre">b_s</span></tt> may contain integers,
 real numbers, complex numbers, as well as exact fractions given in
-the form of tuples <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/>. <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> is optimized to handle
+the form of tuples <img class="math" src="../_images/math/e148d95e9a2349eff0d0ccd1ec50ace5fa25269b.png" alt="(p, q)"/>. <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a> is optimized to handle
 integers and fractions more efficiently than arbitrary
 floating-point parameters (since rational parameters are by
 far the most common).</p>
 <p><strong>Examples</strong></p>
-<p>Verifying that <tt class="xref docutils literal"><span class="pre">hyper()</span></tt> gives the sum in the definition, by
-comparison with <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>:</p>
+<p>Verifying that <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a> gives the sum in the definition, by
+comparison with <a title="mpmath.nsum" class="reference external" href="../calculus/sums_limits.html#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span>
@@ -573,9 +585,9 @@ series is either <img class="math" src="../_images/math/15c1bc30f2d6af887a97e343
 <img class="math" src="../_images/math/f5dacc8403b2a564811baeb68316fabb2e309c47.png" alt="R = 0"/> (if <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1"/>).</p>
 <p>The analytic continuations of the functions with <img class="math" src="../_images/math/4570811b9cc3df8c73a397f9c611e1f5e320031c.png" alt="p = q+1"/>, i.e. <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>, 
 <img class="math" src="../_images/math/7c995e1fce566eae381916b3f209ecbde83ce7f7.png" alt="\,_3F_2"/>,  <img class="math" src="../_images/math/78e467ac66cfd4e6d10365293bc7c6c6bd6e8345.png" alt="\,_4F_3"/>, etc, are all implemented and therefore these functions
-can be evaluated for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1"/>. The shortcuts <tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt>, <tt class="xref docutils literal"><span class="pre">hyp3f2()</span></tt>
+can be evaluated for <img class="math" src="../_images/math/ce22fc4b843c9a372ec1f6c428859ed4265d5d4a.png" alt="|z| \ge 1"/>. The shortcuts <a title="mpmath.hyp2f1" class="reference internal" href="#mpmath.hyp2f1"><tt class="xref docutils literal"><span class="pre">hyp2f1()</span></tt></a>, <a title="mpmath.hyp3f2" class="reference internal" href="#mpmath.hyp3f2"><tt class="xref docutils literal"><span class="pre">hyp3f2()</span></tt></a>
 are available to handle the most common cases (see their documentation),
-but functions of higher degree are also supported via <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>:</p>
+but functions of higher degree are also supported via <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">7</span><span class="p">],</span> <span class="mf">1</span><span class="p">)</span>   <span class="c"># 4F3 at finite-valued branch point</span>
 <span class="go">1.141783505526870731311423</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">,</span><span class="mf">7</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],</span> <span class="mf">1</span><span class="p">)</span>   <span class="c"># 4F3 at pole</span>
@@ -591,7 +603,7 @@ with <img class="math" src="../_images/math/cfd2a3325b5cadd3241426c21a4f829e915a
 for some parameter values.</p>
 <p>When <img class="math" src="../_images/math/b4698ca8d24bd2dabbbfc9b3ac90975d055c0e7f.png" alt="p &gt; q+1"/>, <tt class="docutils literal"><span class="pre">hyper</span></tt> computes the (iterated) Borel sum of the divergent
 series. For <img class="math" src="../_images/math/8b49fdd59c5eec8dbc5c7cff519b70d040456796.png" alt="\,_2F_0"/> the Borel sum has an analytic solution and can be
-computed efficiently (see <tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt>). For higher degrees, the functions
+computed efficiently (see <a title="mpmath.hyp2f0" class="reference internal" href="#mpmath.hyp2f0"><tt class="xref docutils literal"><span class="pre">hyp2f0()</span></tt></a>). For higher degrees, the functions
 is evaluated first by attempting to sum it directly as an asymptotic
 series (this only works for tiny <img class="math" src="../_images/math/77888cf7d3c4635b8bc8c06ee89dc2a2d2f86538.png" alt="|z|"/>), and then by evaluating the Borel
 regularized sum using numerical integration. Except for
@@ -602,7 +614,7 @@ special parameter combinations, this can be extremely slow.</p>
 <span class="go">(1.108287213689475145830699 + 0.5327107430640678181200491j)</span>
 </pre></div>
 </div>
-<p>With the following magnitude of argument, the asymptotic series for <img class="math" src="../_images/math/82eb04ff4043c7ce04a3800bf3c108bfea6b6bb5.png" alt="\,_3F1"/>
+<p>With the following magnitude of argument, the asymptotic series for <img class="math" src="../_images/math/c780d570354901e2dff5b579dd08ff706859fe7c.png" alt="\,_3F_1"/>
 gives only a few digits. Using Borel summation, <tt class="docutils literal"><span class="pre">hyper</span></tt> can produce
 a value with full accuracy:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
@@ -641,7 +653,7 @@ correct result, which falls below the tolerance of the asymptotic series.</p>
 \,_{p_r}F_{q_r}(a_{r,1},\ldots,a_{r,p}; b_{r,1},    
 \ldots, b_{r,q}; z_r)\right]." /></p>
 </div><p>Typically the parameters are linear combinations of a small set of base
-parameters; <tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt> permits computing a correct value in
+parameters; <a title="mpmath.hypercomb" class="reference internal" href="#mpmath.hypercomb"><tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt></a> permits computing a correct value in
 the case that some of the <img class="math" src="../_images/math/10f32377ac67d94f764f12a15ea987e88c85d3e1.png" alt="\alpha"/>, <img class="math" src="../_images/math/fdb63b9e51abe6bbb16acfb5d7b773ddbb5bf4a8.png" alt="\beta"/>, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> turn out to be
 nonpositive integers, or if division by zero occurs for some <img class="math" src="../_images/math/6fd36d8b01815d26deddb339e925374219817cb2.png" alt="w^c"/>,
 assuming that there are opposing singularities that cancel out.
@@ -713,7 +725,7 @@ the optional <em>series</em> argument.</p>
 to be consistent with Mathematica&#8217;s. This definition of the Meijer G-function
 has a discontinuity at <img class="math" src="../_images/math/83147269611ed30c50eb2ddeb1b275003b3ab032.png" alt="|z| = 1"/> for some orders, which can
 be avoided by explicitly specifying a series.</p>
-<p>Keyword arguments are forwarded to <tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt>.</p>
+<p>Keyword arguments are forwarded to <a title="mpmath.hypercomb" class="reference internal" href="#mpmath.hypercomb"><tt class="xref docutils literal"><span class="pre">hypercomb()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>Many standard functions are special cases of the Meijer G-function
 (possibly rescaled and/or with branch cut corrections). We define
@@ -975,14 +987,14 @@ F_4 = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
 <p><tt class="docutils literal"><span class="pre">hyper2d({'m+n':[a],</span> <span class="pre">'m':[b],</span> <span class="pre">'n':[c]},</span> <span class="pre">{'m+n':[d]},</span> <span class="pre">x,</span> <span class="pre">y)</span></tt></p>
 <p><tt class="docutils literal"><span class="pre">hyper2d({'m+n':[a,b]},</span> <span class="pre">{'m':[c],</span> <span class="pre">'n':[d]},</span> <span class="pre">x,</span> <span class="pre">y)</span></tt></p>
 </blockquote>
-<p>More generally, <tt class="xref docutils literal"><span class="pre">hyper2d()</span></tt> can evaluate any of the 34 distinct
+<p>More generally, <a title="mpmath.hyper2d" class="reference internal" href="#mpmath.hyper2d"><tt class="xref docutils literal"><span class="pre">hyper2d()</span></tt></a> can evaluate any of the 34 distinct
 convergent second-order (generalized Gaussian) hypergeometric
 series enumerated by Horn, as well as the Kampe de Feriet
 function.</p>
 <p>The series is computed by rewriting it so that the inner
 series (i.e. the series containing <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>) has the form of an
 ordinary generalized hypergeometric series and thereby can be
-evaluated efficiently using <tt class="xref docutils literal"><span class="pre">hyper()</span></tt>. If possible,
+evaluated efficiently using <a title="mpmath.hyper" class="reference internal" href="#mpmath.hyper"><tt class="xref docutils literal"><span class="pre">hyper()</span></tt></a>. If possible,
 manually swapping <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> and the corresponding parameters
 can sometimes give better results.</p>
 <p><strong>Examples</strong></p>
@@ -1065,7 +1077,7 @@ product of two Gaussian hypergeometric functions:</p>
     \frac{(a)_{m+n} (b_1)_m (b_2)_n}{(c)_{m+n}}
     \frac{x^m y^n}{m! n!}." /></p>
 </div><p>This series is only generally convergent when <img class="math" src="../_images/math/796af557812a3e6b3f7bff6d89875f9d7721d320.png" alt="|x| &lt; 1"/> and <img class="math" src="../_images/math/2ed3e7ac75dead4473c6f269222e43c92fecf057.png" alt="|y| &lt; 1"/>,
-although <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt> can evaluate an analytic continuation
+although <a title="mpmath.appellf1" class="reference internal" href="#mpmath.appellf1"><tt class="xref docutils literal"><span class="pre">appellf1()</span></tt></a> can evaluate an analytic continuation
 with respecto to either variable, and sometimes both.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation is supported for real and complex parameters:</p>
@@ -1230,7 +1242,7 @@ integrals, such as any integral of the form
 </pre></div>
 </div>
 <p><strong>References</strong></p>
-<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
+<p>See references for <a title="mpmath.appellf1" class="reference internal" href="#mpmath.appellf1"><tt class="xref docutils literal"><span class="pre">appellf1()</span></tt></a>.</p>
 </dd></dl>
 
 </div>
@@ -1299,7 +1311,7 @@ differential equations:</p>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
-<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
+<p>See references for <a title="mpmath.appellf1" class="reference internal" href="#mpmath.appellf1"><tt class="xref docutils literal"><span class="pre">appellf1()</span></tt></a>.</p>
 </dd></dl>
 
 </div>
@@ -1308,9 +1320,9 @@ differential equations:</p>
 <dl class="function">
 <dt id="mpmath.appellf4">
 <tt class="descclassname">mpmath.</tt><tt class="descname">appellf4</tt><big>(</big><em>a</em>, <em>b</em>, <em>c1</em>, <em>c2</em>, <em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.appellf4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gives the Appell F3 hypergeometric function of two variables</p>
+<dd><p>Gives the Appell F4 hypergeometric function of two variables</p>
 <div class="math">
-<p><img src="../_images/math/25ed58d98a744ccc48eca91f18fb1c3343018225.png" alt="F_4(a,b,c1,c2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
+<p><img src="../_images/math/95644627816dbc2ad38f14324bd5a165c4051175.png" alt="F_4(a,b,c_1,c_2,x,y) = \sum_{m=0}^{\infty} \sum_{n=0}^{\infty}
     \frac{(a)_{m+n} (b)_{m+n}}{(c_1)_m (c_2)_n}
     \frac{x^m y^n}{m! n!}." /></p>
 </div><p>The series is generally absolutely convergent for
@@ -1355,7 +1367,7 @@ differential equations:</p>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
-<p>See references for <tt class="xref docutils literal"><span class="pre">appellf1()</span></tt>.</p>
+<p>See references for <a title="mpmath.appellf1" class="reference internal" href="#mpmath.appellf1"><tt class="xref docutils literal"><span class="pre">appellf1()</span></tt></a>.</p>
 </dd></dl>
 
 </div>
@@ -1455,8 +1467,8 @@ differential equations:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

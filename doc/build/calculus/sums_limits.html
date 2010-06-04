@@ -52,26 +52,12 @@
             
   <div class="section" id="sums-products-limits-and-extrapolation">
 <h1>Sums, products, limits and extrapolation<a class="headerlink" href="#sums-products-limits-and-extrapolation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="summation-fsum-nsum-sumem">
-<h2>Summation (<tt class="docutils literal"><span class="pre">fsum</span></tt>, <tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-fsum-nsum-sumem" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="mpmath.fsum">
-<tt class="descclassname">mpmath.</tt><tt class="descname">fsum</tt><big>(</big><em>ctx</em>, <em>terms</em>, <em>absolute=False</em>, <em>squared=False</em><big>)</big><a class="headerlink" href="#mpmath.fsum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates a sum containing a finite number of terms (for infinite
-series, see <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>). The terms will be converted to
-mpmath numbers. For len(terms) &gt; 2, this function is generally
-faster and produces more accurate results than the builtin
-Python function <tt class="xref docutils literal"><span class="pre">sum()</span></tt>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
-<span class="go">mpf(&#39;10.5&#39;)</span>
-</pre></div>
-</div>
-<p>With squared=True each term is squared, and with absolute=True
-the absolute value of each term is used.</p>
-</dd></dl>
-
+<p>The functions listed here permit approximation of infinite
+sums, products, and other sequence limits.
+Use <a title="mpmath.fsum" class="reference external" href="../general.html#mpmath.fsum"><tt class="xref docutils literal"><span class="pre">mpmath.fsum()</span></tt></a> and <a title="mpmath.fprod" class="reference external" href="../general.html#mpmath.fprod"><tt class="xref docutils literal"><span class="pre">mpmath.fprod()</span></tt></a>
+for summation and multiplication of finite sequences.</p>
+<div class="section" id="summation-nsum-sumem">
+<h2>Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-nsum-sumem" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.nsum">
 <tt class="descclassname">mpmath.</tt><tt class="descname">nsum</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>*intervals</em>, <em>**options</em><big>)</big><a class="headerlink" href="#mpmath.nsum" title="Permalink to this definition">¶</a></dt>
@@ -84,7 +70,7 @@ the absolute value of each term is used.</p>
 <p><img src="../_images/math/a6b79a889ab192a55d0633f65d690641c6928ade.png" alt="S = \sum_{k_1=a_1}^{b_1} \cdots
 \sum_{k_n=a_n}^{b_n} f(k_1,\ldots,k_n)" /></p>
 </div><p>if multiple intervals are given.</p>
-<p>Two examples of infinite series that can be summed by <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>,
+<p>Two examples of infinite series that can be summed by <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>,
 where the first converges rapidly and the second converges slowly,
 are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -95,14 +81,14 @@ are:</p>
 <span class="go">1.64493406684823</span>
 </pre></div>
 </div>
-<p>When appropriate, <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> applies convergence acceleration to
+<p>When appropriate, <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> applies convergence acceleration to
 accurately estimate the sums of slowly convergent series. If the series is
-finite, <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> currently does not attempt to perform any
-extrapolation, and simply calls <tt class="xref docutils literal"><span class="pre">fsum()</span></tt>.</p>
+finite, <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> currently does not attempt to perform any
+extrapolation, and simply calls <a title="mpmath.fsum" class="reference external" href="../general.html#mpmath.fsum"><tt class="xref docutils literal"><span class="pre">fsum()</span></tt></a>.</p>
 <p>Multidimensional infinite series are reduced to a single-dimensional
 series over expanding hypercubes; if both infinite and finite dimensions
 are present, the finite ranges are moved innermost. For more advanced
-control over the summation order, use nested calls to <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>,
+control over the summation order, use nested calls to <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>,
 or manually rewrite the sum as a single-dimensional series.</p>
 <p><strong>Options</strong></p>
 <dl class="docutils">
@@ -132,7 +118,7 @@ a singular term near the origin.</dd>
 </dl>
 <p><strong>Methods</strong></p>
 <p>Unfortunately, an algorithm that can efficiently sum any infinite
-series does not exist. <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> implements several different
+series does not exist. <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> implements several different
 algorithms that each work well in different cases. The <em>method</em>
 keyword argument selects a method.</p>
 <p>The default method is <tt class="docutils literal"><span class="pre">'r+s'</span></tt>, i.e. both Richardson extrapolation
@@ -145,20 +131,20 @@ investigate which one method works best and only use that.</p>
 <dt><tt class="docutils literal"><span class="pre">'richardson'</span></tt> / <tt class="docutils literal"><span class="pre">'r'</span></tt>:</dt>
 <dd>Uses Richardson extrapolation. Provides useful extrapolation
 when <img class="math" src="../_images/math/caac9e452e2ed15bfa46562f29fc396d18058fc6.png" alt="f(k) \sim P(k)/Q(k)"/> or when <img class="math" src="../_images/math/87a15186cf512bb557e8b525189618097d79cb91.png" alt="f(k) \sim (-1)^k P(k)/Q(k)"/>
-for polynomials <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>. See <tt class="xref docutils literal"><span class="pre">richardson()</span></tt> for
+for polynomials <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>. See <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> for
 additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'shanks'</span></tt> / <tt class="docutils literal"><span class="pre">'s'</span></tt>:</dt>
 <dd>Uses Shanks transformation. Typically provides useful
 extrapolation when <img class="math" src="../_images/math/af24f10a2b97f2bad39e25387e42d6464b58d8a4.png" alt="f(k) \sim c^k"/> or when successive terms
 alternate signs. Is able to sum some divergent series.
-See <tt class="xref docutils literal"><span class="pre">shanks()</span></tt> for additional information.</dd>
+See <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> for additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'euler-maclaurin'</span></tt> / <tt class="docutils literal"><span class="pre">'e'</span></tt>:</dt>
 <dd>Uses the Euler-Maclaurin summation formula to approximate
 the remainder sum by an integral. This requires high-order
 numerical derivatives and numerical integration. The advantage
 of this algorithm is that it works regardless of the
 decay rate of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, as long as <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> is sufficiently smooth.
-See <tt class="xref docutils literal"><span class="pre">sumem()</span></tt> for additional information.</dd>
+See <a title="mpmath.sumem" class="reference internal" href="#mpmath.sumem"><tt class="xref docutils literal"><span class="pre">sumem()</span></tt></a> for additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'direct'</span></tt> / <tt class="docutils literal"><span class="pre">'d'</span></tt>:</dt>
 <dd>Does not perform any extrapolation. This can be used
 (and should only be used for) rapidly convergent series.
@@ -179,7 +165,7 @@ infinite series:</p>
 <span class="go">3.15334809493716</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">nsum()</span></tt> handles sums of complex numbers:</p>
+<p><a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> handles sums of complex numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">0.25</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">(1.6 + 0.8j)</span>
 </pre></div>
@@ -283,7 +269,7 @@ for either Richardson or Shanks to be effective.</p>
 series. In particular, it is often able to sum Taylor series
 beyond their radius of convergence (this is due to a relation
 between the Shanks transformation and Pade approximations;
-see <tt class="xref docutils literal"><span class="pre">pade()</span></tt> for an alternative way to evaluate divergent
+see <a title="mpmath.pade" class="reference external" href="approximation.html#mpmath.pade"><tt class="xref docutils literal"><span class="pre">pade()</span></tt></a> for an alternative way to evaluate divergent
 Taylor series).</p>
 <p>Here we apply it to <img class="math" src="../_images/math/7c6e7d04224d2993e1d6ef6e9b36cfbdc9a11cd5.png" alt="\log(1+x)"/> far outside the region of
 convergence:</p>
@@ -378,7 +364,7 @@ reductions to single-dimensional series (see [1]):</p>
 </div>
 <p>A hard example of a multidimensional sum is the Madelung constant
 in three dimensions (see [2]). The defining sum converges very
-slowly and only conditionally, so <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> is lucky to
+slowly and only conditionally, so <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> is lucky to
 obtain an accurate value through convergence acceleration. The
 second evaluation below uses a much more efficient, rapidly
 convergent 2D sum:</p>
@@ -435,7 +421,7 @@ term adds at least one decimal.</p>
 often be &#8220;forced&#8221; if <img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty"/> by summing up to <img class="math" src="../_images/math/03a9fee3e72e1d00b7ad8bff6aa9a368bc93cb4c.png" alt="a+N"/> and then
 applying the Euler-Maclaurin formula to the sum over the range
 <img class="math" src="../_images/math/f7a68cfdd36caa316a4e4260589fbcc6f46f79d4.png" alt="(a+N+1, \ldots, \infty)"/>. This procedure is implemented by
-<tt class="xref docutils literal"><span class="pre">nsum()</span></tt>.</p>
+<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>.</p>
 <p>By default numerical quadrature and differentiation is used.
 If the symbolic values of the integral and endpoint derivatives
 are known, it is more efficient to pass the value of the
@@ -466,22 +452,8 @@ integral and derivative values (the second should be much faster):</p>
 </dd></dl>
 
 </div>
-<div class="section" id="products-fprod-nprod">
-<h2>Products (<tt class="docutils literal"><span class="pre">fprod</span></tt>, <tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-fprod-nprod" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="mpmath.fprod">
-<tt class="descclassname">mpmath.</tt><tt class="descname">fprod</tt><big>(</big><em>ctx</em>, <em>factors</em><big>)</big><a class="headerlink" href="#mpmath.fprod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates a product containing a finite number of factors (for
-infinite products, see <tt class="xref docutils literal"><span class="pre">nprod()</span></tt>). The factors will be
-converted to mpmath numbers.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fprod</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">7</span><span class="p">])</span>
-<span class="go">mpf(&#39;7.0&#39;)</span>
-</pre></div>
-</div>
-</dd></dl>
-
+<div class="section" id="products-nprod">
+<h2>Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-nprod" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="mpmath.nprod">
 <tt class="descclassname">mpmath.</tt><tt class="descname">nprod</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>nsum=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprod" title="Permalink to this definition">¶</a></dt>
@@ -490,11 +462,11 @@ converted to mpmath numbers.</p>
 <p><img src="../_images/math/e9eee1b79d384398db6e32391e16fd2320cd85d3.png" alt="P = \prod_{k=a}^b f(k)" /></p>
 </div><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)"/> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty"/> and/or
 <img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty"/> are allowed.</p>
-<p>By default, <tt class="xref docutils literal"><span class="pre">nprod()</span></tt> uses the same extrapolation methods as
-<tt class="xref docutils literal"><span class="pre">nsum()</span></tt>, except applied to the partial products rather than
-partial sums, and the same keyword options as for <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> are
+<p>By default, <a title="mpmath.nprod" class="reference internal" href="#mpmath.nprod"><tt class="xref docutils literal"><span class="pre">nprod()</span></tt></a> uses the same extrapolation methods as
+<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>, except applied to the partial products rather than
+partial sums, and the same keyword options as for <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> are
 supported. If <tt class="docutils literal"><span class="pre">nsum=True</span></tt>, the product is instead computed via
-<tt class="xref docutils literal"><span class="pre">nsum()</span></tt> as</p>
+<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> as</p>
 <div class="math">
 <p><img src="../_images/math/16ac9eff20ee2dde18147042a22fab8e707aa215.png" alt="P = \exp\left( \sum_{k=a}^b \log(f(k)) \right)." /></p>
 </div><p>This is slower, but can sometimes yield better results. It is
@@ -613,26 +585,26 @@ an accurate value:</p>
 <div class="math">
 <p><img src="../_images/math/cdc38757e233a2705b574193d6c812110c3b26f4.png" alt="\lim_{t \to x} f(t)" /></p>
 </div><p>where <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> may be finite or infinite.</p>
-<p>For finite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <tt class="xref docutils literal"><span class="pre">limit()</span></tt> evaluates <img class="math" src="../_images/math/b838ddda5d44211e5dbdd573145118be91ffdd79.png" alt="f(x + d/n)"/> for
+<p>For finite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> evaluates <img class="math" src="../_images/math/b838ddda5d44211e5dbdd573145118be91ffdd79.png" alt="f(x + d/n)"/> for
 consecutive integer values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, where the approach direction
 <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d"/> may be specified using the <em>direction</em> keyword argument.
-For infinite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <tt class="xref docutils literal"><span class="pre">limit()</span></tt> evaluates values of
+For infinite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> evaluates values of
 <img class="math" src="../_images/math/6225ad473aa44244f458afe10131f1f62cd1379f.png" alt="f(\mathrm{sign}(x) \cdot n)"/>.</p>
 <p>If the approach to the limit is not sufficiently fast to give
-an accurate estimate directly, <tt class="xref docutils literal"><span class="pre">limit()</span></tt> attempts to find
+an accurate estimate directly, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> attempts to find
 the limit using Richardson extrapolation or the Shanks
 transformation. You can select between these methods using
-the <em>method</em> keyword (see documentation of <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> for
+the <em>method</em> keyword (see documentation of <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> for
 more information).</p>
 <p><strong>Options</strong></p>
 <p>The following options are available with essentially the
-same meaning as for <tt class="xref docutils literal"><span class="pre">nsum()</span></tt>: <em>tol</em>, <em>method</em>, <em>maxterms</em>,
+same meaning as for <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>: <em>tol</em>, <em>method</em>, <em>maxterms</em>,
 <em>steps</em>, <em>verbose</em>.</p>
 <p>If the option <em>exp=True</em> is set, <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> will be
 sampled at exponentially spaced points <img class="math" src="../_images/math/22a2c28e2a054a187ca36466c64af3c364d0882e.png" alt="n = 2^1, 2^2, 2^3, \ldots"/>
 instead of the linearly spaced points <img class="math" src="../_images/math/b429711f69d8049be8bedf32cd67791e8bdf1ce6.png" alt="n = 1, 2, 3, \ldots"/>.
 This can sometimes improve the rate of convergence so that
-<tt class="xref docutils literal"><span class="pre">limit()</span></tt> may return a more accurate answer (and faster).
+<a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> may return a more accurate answer (and faster).
 However, do note that this can only be used if <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>
 supports fast and accurate evaluation for arguments that
 are extremely close to the limit point (or if infinite,
@@ -704,9 +676,9 @@ properties of the algorithms.</p>
 <dt id="mpmath.richardson">
 <tt class="descclassname">mpmath.</tt><tt class="descname">richardson</tt><big>(</big><em>ctx</em>, <em>seq</em><big>)</big><a class="headerlink" href="#mpmath.richardson" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list <tt class="docutils literal"><span class="pre">seq</span></tt> of the first <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> elements of a slowly convergent
-infinite sequence, <tt class="xref docutils literal"><span class="pre">richardson()</span></tt> computes the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
+infinite sequence, <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> computes the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
 Richardson extrapolate for the limit.</p>
-<p><tt class="xref docutils literal"><span class="pre">richardson()</span></tt> returns <img class="math" src="../_images/math/c3cefa38a6ce0f1f4342b3214f9696945b6afece.png" alt="(v, c)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the estimated
+<p><a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> returns <img class="math" src="../_images/math/c3cefa38a6ce0f1f4342b3214f9696945b6afece.png" alt="(v, c)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the estimated
 limit and <img class="math" src="../_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/> is the magnitude of the largest weight used during the
 computation. The weight provides an estimate of the precision
 lost to cancellation. Due to cancellation effects, the sequence must
@@ -714,23 +686,23 @@ be typically be computed at a much higher precision than the target
 accuracy of the extrapolation.</p>
 <p><strong>Applicability and issues</strong></p>
 <p>The <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-step Richardson extrapolation algorithm used by
-<tt class="xref docutils literal"><span class="pre">richardson()</span></tt> is described in [1].</p>
+<a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> is described in [1].</p>
 <p>Richardson extrapolation only works for a specific type of sequence,
 namely one converging like partial sums of
 <img class="math" src="../_images/math/85e969116939190c593935147a8d09fccdb6c064.png" alt="P(1)/Q(1) + P(2)/Q(2) + \ldots"/> where <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> are polynomials.
 When the sequence does not convergence at such a rate
-<tt class="xref docutils literal"><span class="pre">richardson()</span></tt> generally produces garbage.</p>
+<a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> generally produces garbage.</p>
 <p>Richardson extrapolation has the advantage of being fast: the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
 extrapolate requires only <img class="math" src="../_images/math/b9d0fa8c3afe5b2fc32d90e0c5b2d65f69b9ebf8.png" alt="O(N)"/> arithmetic operations, and usually
 produces an estimate that is accurate to <img class="math" src="../_images/math/b9d0fa8c3afe5b2fc32d90e0c5b2d65f69b9ebf8.png" alt="O(N)"/> digits. Contrast with
-the Shanks transformation (see <tt class="xref docutils literal"><span class="pre">shanks()</span></tt>), which requires
+the Shanks transformation (see <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a>), which requires
 <img class="math" src="../_images/math/6de05613abfee2f5068c82eeb927eb0f7beb0568.png" alt="O(N^2)"/> operations.</p>
-<p><tt class="xref docutils literal"><span class="pre">richardson()</span></tt> is unable to produce an estimate for the
+<p><a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> is unable to produce an estimate for the
 approximation error. One way to estimate the error is to perform
 two extrapolations with slightly different <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> and comparing the
 results.</p>
 <p>Richardson extrapolation does not work for oscillating sequences.
-As a simple workaround, <tt class="xref docutils literal"><span class="pre">richardson()</span></tt> detects if the last
+As a simple workaround, <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> detects if the last
 three elements do not differ monotonically, and in that case
 applies extrapolation only to the even-index elements.</p>
 <p><strong>Example</strong></p>
@@ -762,12 +734,12 @@ applies extrapolation only to the even-index elements.</p>
 <dt id="mpmath.shanks">
 <tt class="descclassname">mpmath.</tt><tt class="descname">shanks</tt><big>(</big><em>ctx</em>, <em>seq</em>, <em>table=None</em>, <em>randomized=False</em><big>)</big><a class="headerlink" href="#mpmath.shanks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list <tt class="docutils literal"><span class="pre">seq</span></tt> of the first <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> elements of a slowly
-convergent infinite sequence <img class="math" src="../_images/math/97f9119959da61ef8a6b139768255edc25ea5ed8.png" alt="(A_k)"/>, <tt class="xref docutils literal"><span class="pre">shanks()</span></tt> computes the iterated
+convergent infinite sequence <img class="math" src="../_images/math/97f9119959da61ef8a6b139768255edc25ea5ed8.png" alt="(A_k)"/>, <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> computes the iterated
 Shanks transformation <img class="math" src="../_images/math/8eaa7d0a492ab59d3724787ce66170d475c81365.png" alt="S(A), S(S(A)), \ldots, S^{N/2}(A)"/>. The Shanks
 transformation often provides strong convergence acceleration,
 especially if the sequence is oscillating.</p>
 <p>The iterated Shanks transformation is computed using the Wynn
-epsilon algorithm (see [1]). <tt class="xref docutils literal"><span class="pre">shanks()</span></tt> returns the full
+epsilon algorithm (see [1]). <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> returns the full
 epsilon table generated by Wynn&#8217;s algorithm, which can be read
 off as follows:</p>
 <ul class="simple">
@@ -787,7 +759,7 @@ of the numerical accuracy lost to cancellation.</li>
 <p>For convenience, so the extrapolation is stopped at an odd index
 so that <tt class="docutils literal"><span class="pre">shanks(seq)[-1][-1]</span></tt> always gives an estimate of the
 limit.</p>
-<p>Optionally, an existing table can be passed to <tt class="xref docutils literal"><span class="pre">shanks()</span></tt>.
+<p>Optionally, an existing table can be passed to <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a>.
 This can be used to efficiently extend a previous computation after
 new elements have been appended to the sequence. The table will
 then be updated in-place.</p>
@@ -815,7 +787,7 @@ computed at a much higher precision than the target accuracy
 of the extrapolation.</p>
 <p>If the Shanks transformation converges to the exact limit (such
 as if the sequence is a geometric series), then a division by
-zero occurs. By default, <tt class="xref docutils literal"><span class="pre">shanks()</span></tt> handles this case by
+zero occurs. By default, <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> handles this case by
 terminating the iteration and returning the table it has
 generated so far. With <em>randomized=True</em>, it will instead
 replace the zero by a pseudorandom number close to zero.
@@ -884,8 +856,8 @@ is immediate (the sum is exactly 1):</p>
             <h3><a href="../index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">Sums, products, limits and extrapolation</a><ul>
-<li><a class="reference external" href="#summation-fsum-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">fsum</span></tt>, <tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
-<li><a class="reference external" href="#products-fprod-nprod">Products (<tt class="docutils literal"><span class="pre">fprod</span></tt>, <tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
+<li><a class="reference external" href="#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
+<li><a class="reference external" href="#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
 <li><a class="reference external" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
 <li><a class="reference external" href="#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
 </ul>
@@ -940,8 +912,8 @@ is immediate (the sum is exactly 1):</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

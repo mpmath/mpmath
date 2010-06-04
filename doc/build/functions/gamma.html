@@ -52,6 +52,21 @@
             
   <div class="section" id="factorials-and-gamma-functions">
 <h1>Factorials and gamma functions<a class="headerlink" href="#factorials-and-gamma-functions" title="Permalink to this headline">¶</a></h1>
+<p>Factorials and factorial-like sums and products are basic tools of combinatorics and number theory. Much like the exponential function is fundamental to differential equations and analysis in general, the factorial function (and its extension to complex numbers, the gamma function) is fundamental to difference equations and functional equations.</p>
+<p>A large selection of factorial-like functions is implemented in mpmath. All functions support complex arguments, and arguments may be arbitrarily large. Results are numerical approximations, so to compute <em>exact</em> values a high enough precision must be set manually:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">9.33262154439442e+157</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>    <span class="c"># most digits are wrong</span>
+<span class="go">93326215443944150965646704795953882578400970373184098831012889540582227238570431</span>
+<span class="go">295066113089288327277825849664006524270554535976289719382852181865895959724032</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">160</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fac</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="go">93326215443944152681699238856266700490715968264381621468592963895217599993229915</span>
+<span class="go">608941463976156518286253697920827223758251185210916864000000000000000000000000.0</span>
+</pre></div>
+</div>
+<p>The gamma and polygamma functions are closely related to <a class="reference external" href="zeta.html"><em>Zeta functions, L-series and polylogarithms</em></a>. See also <a class="reference external" href="qfunctions.html"><em>q-functions</em></a> for q-analogs of factorial-like functions.</p>
 <div class="section" id="factorials">
 <h2>Factorials<a class="headerlink" href="#factorials" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="factorial-fac">
@@ -151,7 +166,7 @@ not negative even integers):</p>
 </pre></div>
 </div>
 <p>With the exception of the poles at negative even integers,
-<tt class="xref docutils literal"><span class="pre">fac2()</span></tt> supports evaluation for arbitrary complex arguments.
+<a title="mpmath.fac2" class="reference internal" href="#mpmath.fac2"><tt class="xref docutils literal"><span class="pre">fac2()</span></tt></a> supports evaluation for arbitrary complex arguments.
 The recurrence formula is valid generally:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fac2</span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-1.3697207890154e-12 + 3.93665300979176e-12j)</span>
@@ -232,7 +247,7 @@ select 1 item from the empty set:</p>
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">binomial()</span></tt> supports large arguments:</p>
+<p><a title="mpmath.binomial" class="reference internal" href="#mpmath.binomial"><tt class="xref docutils literal"><span class="pre">binomial()</span></tt></a> supports large arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="o">-</span><span class="mf">5</span><span class="p">)</span>
 <span class="go">8.33333333333333e+97</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binomial</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">20</span><span class="p">,</span> <span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
@@ -310,7 +325,7 @@ by analytic continuation.</p>
 <span class="go">3.32335097044784</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">gamma()</span></tt> supports arbitrary-precision evaluation and
+<p><a title="mpmath.gamma" class="reference internal" href="#mpmath.gamma"><tt class="xref docutils literal"><span class="pre">gamma()</span></tt></a> supports arbitrary-precision evaluation and
 complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
@@ -376,11 +391,11 @@ product / quotient of gamma functions:</p>
 <div class="math">
 <p><img src="../_images/math/ab622d03541d902f5282d1b80c21fc40ce599d6a.png" alt="\frac{\Gamma(a_0) \Gamma(a_1) \cdots \Gamma(a_p)}
      {\Gamma(b_0) \Gamma(b_1) \cdots \Gamma(b_q)}" /></p>
-</div><p>Unlike direct calls to <tt class="xref docutils literal"><span class="pre">gamma()</span></tt>, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt> considers
+</div><p>Unlike direct calls to <a title="mpmath.gamma" class="reference internal" href="#mpmath.gamma"><tt class="xref docutils literal"><span class="pre">gamma()</span></tt></a>, <a title="mpmath.gammaprod" class="reference internal" href="#mpmath.gammaprod"><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt></a> considers
 the entire product as a limit and evaluates this limit properly if
 any of the numerator or denominator arguments are nonpositive
 integers such that poles of the gamma function are encountered.
-That is, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt> evaluates</p>
+That is, <a title="mpmath.gammaprod" class="reference internal" href="#mpmath.gammaprod"><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt></a> evaluates</p>
 <div class="math">
 <p><img src="../_images/math/e37b86e9baef6c51fae50cdb13aba2e3fec400ac.png" alt="\lim_{\epsilon \to 0}
 \frac{\Gamma(a_0+\epsilon) \Gamma(a_1+\epsilon) \cdots
@@ -392,9 +407,9 @@ That is, <tt class="xref docutils literal"><span class="pre">gammaprod()</span><
 <li>If there are equally many poles in the numerator and the
 denominator, the limit is a rational number times the remaining,
 regular part of the product.</li>
-<li>If there are more poles in the numerator, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt>
+<li>If there are more poles in the numerator, <a title="mpmath.gammaprod" class="reference internal" href="#mpmath.gammaprod"><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt></a>
 returns <tt class="docutils literal"><span class="pre">+inf</span></tt>.</li>
-<li>If there are more poles in the denominator, <tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt>
+<li>If there are more poles in the denominator, <a title="mpmath.gammaprod" class="reference internal" href="#mpmath.gammaprod"><tt class="xref docutils literal"><span class="pre">gammaprod()</span></tt></a>
 returns 0.</li>
 </ul>
 <p><strong>Examples</strong></p>
@@ -433,8 +448,8 @@ continuously matches the asymptotic Stirling expansion</p>
 </div><p>The real parts of both functions agree, but their imaginary
 parts generally differ by <img class="math" src="../_images/math/f473903036b5a8ba507a9031527374de69966e85.png" alt="2 n \pi"/> for some <img class="math" src="../_images/math/deb2f72d06607835f0e9e8af5587ba8f9abb2cfa.png" alt="n \in \mathbb{Z}"/>.
 They coincide for <img class="math" src="../_images/math/3dfc77fff24207d06082b2d9b49b49b23fafd9dd.png" alt="z \in \mathbb{R}, z &gt; 0"/>.</p>
-<p>Computationally, it is advantageous to use <tt class="xref docutils literal"><span class="pre">loggamma()</span></tt>
-instead of <tt class="xref docutils literal"><span class="pre">gamma()</span></tt> for extremely large arguments.</p>
+<p>Computationally, it is advantageous to use <a title="mpmath.loggamma" class="reference internal" href="#mpmath.loggamma"><tt class="xref docutils literal"><span class="pre">loggamma()</span></tt></a>
+instead of <a title="mpmath.gamma" class="reference internal" href="#mpmath.gamma"><tt class="xref docutils literal"><span class="pre">gamma()</span></tt></a> for extremely large arguments.</p>
 <p><strong>Examples</strong></p>
 <p>Comparing with <img class="math" src="../_images/math/5eeb6d5fe38d952cd99378c691ab37bc50fa75ed.png" alt="\ln(\Gamma(z))"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -501,7 +516,7 @@ on any interval of unit length:</p>
 </pre></div>
 </div>
 <p>The derivatives of the log-gamma function are given by the
-polygamma function (<tt class="xref docutils literal"><span class="pre">psi()</span></tt>):</p>
+polygamma function (<a title="mpmath.psi" class="reference internal" href="#mpmath.psi"><tt class="xref docutils literal"><span class="pre">psi()</span></tt></a>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">loggamma</span><span class="p">,</span> <span class="o">-</span><span class="mf">4</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">);</span> <span class="n">psi</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4</span><span class="o">+</span><span class="mf">3</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.688493531222971393607153 + 2.554898911356806978892748j)</span>
 <span class="go">(1.688493531222971393607153 + 2.554898911356806978892748j)</span>
@@ -614,7 +629,7 @@ number or a rational multiple of <img class="math" src="../_images/math/f2ca003a
 <span class="go">3.14159265358979</span>
 </pre></div>
 </div>
-<p>Where appropriate, <tt class="xref docutils literal"><span class="pre">beta()</span></tt> evaluates limits. A pole
+<p>Where appropriate, <a title="mpmath.beta" class="reference internal" href="#mpmath.beta"><tt class="xref docutils literal"><span class="pre">beta()</span></tt></a> evaluates limits. A pole
 of the beta function is taken to result in <tt class="docutils literal"><span class="pre">+inf</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.0</span>
@@ -628,7 +643,7 @@ of the beta function is taken to result in <tt class="docutils literal"><span cl
 <span class="go">nan</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">beta()</span></tt> supports complex numbers and arbitrary precision
+<p><a title="mpmath.beta" class="reference internal" href="#mpmath.beta"><tt class="xref docutils literal"><span class="pre">beta()</span></tt></a> supports complex numbers and arbitrary precision
 evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.4 - 0.2j)</span>
@@ -666,18 +681,13 @@ incomplete beta function,</p>
 <div class="math">
 <p><img src="../_images/math/56b59a35bb071840738a9c2ad27fc5279d33c099.png" alt="I_{x_1}^{x_2}(a,b) = \int_{x_1}^{x_2} t^{a-1} (1-t)^{b-1} dt." /></p>
 </div><p>When <img class="math" src="../_images/math/916c3c50ce6e1b060e76035eb005a42bf34e25b9.png" alt="x_1 = 0, x_2 = 1"/>, this reduces to the ordinary (complete)
-beta function <img class="math" src="../_images/math/1cf8ee743e58a5766b20106b9d3d4b023c2d6bee.png" alt="B(a,b)"/>; see <tt class="xref docutils literal"><span class="pre">beta()</span></tt>.</p>
-<p>With the keyword argument <tt class="docutils literal"><span class="pre">regularized=True</span></tt>, <tt class="xref docutils literal"><span class="pre">betainc()</span></tt>
+beta function <img class="math" src="../_images/math/1cf8ee743e58a5766b20106b9d3d4b023c2d6bee.png" alt="B(a,b)"/>; see <a title="mpmath.beta" class="reference internal" href="#mpmath.beta"><tt class="xref docutils literal"><span class="pre">beta()</span></tt></a>.</p>
+<p>With the keyword argument <tt class="docutils literal"><span class="pre">regularized=True</span></tt>, <a title="mpmath.betainc" class="reference internal" href="#mpmath.betainc"><tt class="xref docutils literal"><span class="pre">betainc()</span></tt></a>
 computes the regularized incomplete beta function
 <img class="math" src="../_images/math/e67b0e54be60f8dd1bea7f4ac0e84a083fb2d909.png" alt="I_{x_1}^{x_2}(a,b) / B(a,b)"/>. This is the cumulative distribution of the
 beta distribution with parameters <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/>, <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/>.</p>
-<p>Note: implementations of the incomplete beta function in some other
-software uses a different argument order. For example, Mathematica uses the
-reversed argument order <tt class="docutils literal"><span class="pre">Beta[x1,x2,a,b]</span></tt>. For the equivalent of SciPy&#8217;s
-three-argument incomplete beta integral (implicitly with <img class="math" src="../_images/math/47c09f757b4c952f14c53ffcf6080d79fb331a5f.png" alt="x1 = 0"/>), use
-<tt class="docutils literal"><span class="pre">betainc(a,b,0,x2,regularized=True)</span></tt>.</p>
 <p><strong>Examples</strong></p>
-<p>Verifying that <tt class="xref docutils literal"><span class="pre">betainc()</span></tt> computes the integral in the
+<p>Verifying that <a title="mpmath.betainc" class="reference internal" href="#mpmath.betainc"><tt class="xref docutils literal"><span class="pre">betainc()</span></tt></a> computes the integral in the
 definition:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -735,7 +745,7 @@ consecutive factorials</p>
 <div class="math">
 <p><img src="../_images/math/0f114b1c06ffaa0decb1a4b6d92652c6105f1a12.png" alt="\mathrm{sf}(n) = \prod_{k=1}^n k!" /></p>
 </div><p>For general complex <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, <img class="math" src="../_images/math/33d6454118973a91f8ac36a7fa6ff615d84d6208.png" alt="\mathrm{sf}(z)"/> is defined
-in terms of the Barnes G-function (see <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>).</p>
+in terms of the Barnes G-function (see <a title="mpmath.barnesg" class="reference internal" href="#mpmath.barnesg"><tt class="xref docutils literal"><span class="pre">barnesg()</span></tt></a>).</p>
 <p><strong>Examples</strong></p>
 <p>The first few superfactorials are (OEIS A000178):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -789,7 +799,7 @@ in terms of the Barnes G-function (see <tt class="xref docutils literal"><span c
 <p><img src="../_images/math/7c9e270249c95be726fb6edea3abd3553f3e36f9.png" alt="H(n) = \prod_{k=1}^n k^k." /></p>
 </div><p>The hyperfactorial satisfies the recurrence formula <img class="math" src="../_images/math/c9c6eca4808acb529f92e91b9b95feef1f29a3a6.png" alt="H(z) = z^z H(z-1)"/>.
 It can be defined more generally in terms of the Barnes G-function (see
-<tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>) and the gamma function by the formula</p>
+<a title="mpmath.barnesg" class="reference internal" href="#mpmath.barnesg"><tt class="xref docutils literal"><span class="pre">barnesg()</span></tt></a>) and the gamma function by the formula</p>
 <div class="math">
 <p><img src="../_images/math/c78c3d470b9110d6f199b46a2a0739054755396e.png" alt="H(z) = \frac{\Gamma(z+1)^z}{G(z)}." /></p>
 </div><p>The extension to complex numbers can also be done via
@@ -860,7 +870,7 @@ definition:</p>
 <span class="go">15.9842119922237</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt> supports arbitrary-precision evaluation:</p>
+<p><a title="mpmath.hyperfac" class="reference internal" href="#mpmath.hyperfac"><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt></a> supports arbitrary-precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hyperfac</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
 <span class="go">215779412229418562091680268288000000000000000.0</span>
@@ -882,8 +892,8 @@ definition:</p>
 <dt id="mpmath.barnesg">
 <tt class="descclassname">mpmath.</tt><tt class="descname">barnesg</tt><big>(</big><em>z</em><big>)</big><a class="headerlink" href="#mpmath.barnesg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the Barnes G-function, which generalizes the
-superfactorial (<tt class="xref docutils literal"><span class="pre">superfac()</span></tt>) and by extension also the
-hyperfactorial (<tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt>) to the complex numbers
+superfactorial (<a title="mpmath.superfac" class="reference internal" href="#mpmath.superfac"><tt class="xref docutils literal"><span class="pre">superfac()</span></tt></a>) and by extension also the
+hyperfactorial (<a title="mpmath.hyperfac" class="reference internal" href="#mpmath.hyperfac"><tt class="xref docutils literal"><span class="pre">hyperfac()</span></tt></a>) to the complex numbers
 in an analogous way to how the gamma function generalizes
 the ordinary factorial.</p>
 <p>The Barnes G-function may be defined in terms of a Weierstrass
@@ -1011,7 +1021,7 @@ function:</p>
 <div class="math">
 <p><img src="../_images/math/a2be5745437e13871396118829631608e3379bd7.png" alt="\psi^{(m)}(z) = \left(\frac{d}{dz}\right)^{m+1} \log \Gamma(z)" /></p>
 </div><p>In particular, <img class="math" src="../_images/math/03436bc0b10eee4ddfec3cecd03854f41c968103.png" alt="\psi^{(0)}(z) = \Gamma'(z)/\Gamma(z)"/>. In the
-present implementation of <tt class="xref docutils literal"><span class="pre">psi()</span></tt>, the order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> must be a
+present implementation of <a title="mpmath.psi" class="reference internal" href="#mpmath.psi"><tt class="xref docutils literal"><span class="pre">psi()</span></tt></a>, the order <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> must be a
 nonnegative integer, while the argument <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> may be an arbitrary
 complex number (with exception for the polygamma function&#8217;s poles
 at <img class="math" src="../_images/math/ce90a96c015fb3135d2870b05a853b3c1196f46d.png" alt="z = 0, -1, -2, \ldots"/>).</p>
@@ -1121,7 +1131,7 @@ approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe28
 <span class="go">+inf</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt> is evaluated using the digamma function rather
+<p><a title="mpmath.harmonic" class="reference internal" href="#mpmath.harmonic"><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt></a> is evaluated using the digamma function rather
 than by summing the harmonic series term by term. It can therefore
 be computed quickly for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, and even for
 nonintegral arguments:</p>
@@ -1133,7 +1143,7 @@ nonintegral arguments:</p>
 <span class="go">(2.24757548223494 + 0.850502209186044j)</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt> supports arbitrary precision evaluation:</p>
+<p><a title="mpmath.harmonic" class="reference internal" href="#mpmath.harmonic"><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt></a> supports arbitrary precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">harmonic</span><span class="p">(</span><span class="mf">11</span><span class="p">)</span>
 <span class="go">3.0198773448773448773448773448773448773448773448773</span>
@@ -1261,8 +1271,8 @@ exceeds a given amount, say 100:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

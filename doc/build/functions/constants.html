@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15-svn documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
-    <link rel="next" title="Arithmetic and number parts" href="numberparts.html" />
+    <link rel="next" title="Powers and logarithms" href="powers.html" />
     <link rel="prev" title="Mathematical functions" href="index.html" /> 
   </head>
   <body>
@@ -35,7 +35,7 @@
           <a href="../modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="numberparts.html" title="Arithmetic and number parts"
+          <a href="powers.html" title="Powers and logarithms"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Mathematical functions"
@@ -105,13 +105,13 @@ number when used. This means that exact mathematical identities
 involving <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> will generally not be preserved in floating-point
 arithmetic. In particular, multiples of <tt class="xref docutils literal"><span class="pre">pi</span></tt> (except for
 the trivial case <tt class="docutils literal"><span class="pre">0*pi</span></tt>) are <em>not</em> the exact roots of
-<tt class="xref docutils literal"><span class="pre">sin()</span></tt>, but differ roughly by the current epsilon:</p>
+<a title="mpmath.sin" class="reference external" href="trigonometric.html#mpmath.sin"><tt class="xref docutils literal"><span class="pre">sin()</span></tt></a>, but differ roughly by the current epsilon:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sin</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.22464679914735e-16</span>
 </pre></div>
 </div>
-<p>One solution is to use the <tt class="xref docutils literal"><span class="pre">sinpi()</span></tt> function instead:</p>
+<p>One solution is to use the <a title="mpmath.sinpi" class="reference external" href="trigonometric.html#mpmath.sinpi"><tt class="xref docutils literal"><span class="pre">sinpi()</span></tt></a> function instead:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sinpi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
@@ -152,8 +152,8 @@ to radians:</p>
 <dt id="mpmath.mp.e">
 <tt class="descclassname">mp.</tt><tt class="descname">e</tt><a class="headerlink" href="#mpmath.mp.e" title="Permalink to this definition">¶</a></dt>
 <dd><p>The transcendental number <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> = 2.718281828... is the base of the
-natural logarithm (<tt class="xref docutils literal"><span class="pre">ln()</span></tt>) and of the exponential function
-(<tt class="xref docutils literal"><span class="pre">exp()</span></tt>).</p>
+natural logarithm (<a title="mpmath.ln" class="reference external" href="powers.html#mpmath.ln"><tt class="xref docutils literal"><span class="pre">ln()</span></tt></a>) and of the exponential function
+(<a title="mpmath.exp" class="reference external" href="powers.html#mpmath.exp"><tt class="xref docutils literal"><span class="pre">exp()</span></tt></a>).</p>
 <p>Mpmath can be evaluate <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -215,7 +215,7 @@ number theory and special functions. It is defined as the limit</p>
 <div class="math">
 <p><img src="../_images/math/b2fa30c8a0a044ef2c44aa24bd5c354928ffc730.png" alt="\gamma = \lim_{n\to\infty} H_n - \log n" /></p>
 </div><p>where <img class="math" src="../_images/math/17d8efce30ecd8b503680a79698c2a145420238b.png" alt="H_n = 1 + \frac{1}{2} + \ldots + \frac{1}{n}"/> is a harmonic
-number (see <tt class="xref docutils literal"><span class="pre">harmonic()</span></tt>).</p>
+number (see <a title="mpmath.harmonic" class="reference external" href="gamma.html#mpmath.harmonic"><tt class="xref docutils literal"><span class="pre">harmonic()</span></tt></a>).</p>
 <p>Evaluation of <img class="math" src="../_images/math/66981fa3920210c6ad8dbe5e968783d5dd7520c3.png" alt="\gamma"/> is supported at arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -259,7 +259,7 @@ special functions include the following (there are many others):</p>
 </div>
 <p>For generalizations of the identities <img class="math" src="../_images/math/1785bf0dc26961e1508e63e1d1b4044aba9d1577.png" alt="\gamma = -\Gamma'(1)"/>
 and <img class="math" src="../_images/math/534509422e9762347396775fe4488d80df1bc4bf.png" alt="\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)"/>, see
-<tt class="xref docutils literal"><span class="pre">psi()</span></tt> and <tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> respectively.</p>
+<a title="mpmath.psi" class="reference external" href="gamma.html#mpmath.psi"><tt class="xref docutils literal"><span class="pre">psi()</span></tt></a> and <a title="mpmath.stieltjes" class="reference external" href="zeta.html#mpmath.stieltjes"><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt></a> respectively.</p>
 </dd></dl>
 
 </div>
@@ -392,10 +392,10 @@ implementation of the following series:</p>
 <dd><p>Glaisher&#8217;s constant <img class="math" src="../_images/math/019e9892786e493964e145e7c5cf7b700314e53b.png" alt="A"/>, also known as the Glaisher-Kinkelin
 constant, is a number approximately equal to 1.282427129 that
 sometimes appears in formulas related to gamma and zeta functions.
-It is also related to the Barnes G-function (see <tt class="xref docutils literal"><span class="pre">barnesg()</span></tt>).</p>
+It is also related to the Barnes G-function (see <a title="mpmath.barnesg" class="reference external" href="gamma.html#mpmath.barnesg"><tt class="xref docutils literal"><span class="pre">barnesg()</span></tt></a>).</p>
 <p>The constant is defined  as <img class="math" src="../_images/math/ca366fb250c213a523d294a283999904601f0c43.png" alt="A = \exp(1/12-\zeta'(-1))"/> where
 <img class="math" src="../_images/math/ce75e53a83aafa6697a9648449aca4193ef9a060.png" alt="\zeta'(s)"/> denotes the derivative of the Riemann zeta function
-(see <tt class="xref docutils literal"><span class="pre">zeta()</span></tt>).</p>
+(see <a title="mpmath.zeta" class="reference external" href="zeta.html#mpmath.zeta"><tt class="xref docutils literal"><span class="pre">zeta()</span></tt></a>).</p>
 <p>Mpmath can evaluate Glaisher&#8217;s constant to arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -509,8 +509,8 @@ twin prime counting function,</p>
             <p class="topless"><a href="index.html"
                                   title="previous chapter">Mathematical functions</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="numberparts.html"
-                                  title="next chapter">Arithmetic and number parts</a></p>
+            <p class="topless"><a href="powers.html"
+                                  title="next chapter">Powers and logarithms</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/functions/constants.txt"
@@ -543,7 +543,7 @@ twin prime counting function,</p>
           <a href="../modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="numberparts.html" title="Arithmetic and number parts"
+          <a href="powers.html" title="Powers and logarithms"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Mathematical functions"
@@ -553,8 +553,8 @@ twin prime counting function,</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

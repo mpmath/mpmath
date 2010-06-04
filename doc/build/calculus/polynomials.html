@@ -60,10 +60,10 @@ approximation of functions by polynomials.</p>
 <dt id="mpmath.polyval">
 <tt class="descclassname">mpmath.</tt><tt class="descname">polyval</tt><big>(</big><em>ctx</em>, <em>coeffs</em>, <em>x</em>, <em>derivative=False</em><big>)</big><a class="headerlink" href="#mpmath.polyval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given coefficients <img class="math" src="../_images/math/e85767b01085c03d58551308d1311ceb02a27b66.png" alt="[c_n, \ldots, c_2, c_1, c_0]"/> and a number <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>,
-<tt class="xref docutils literal"><span class="pre">polyval()</span></tt> evaluates the polynomial</p>
+<a title="mpmath.polyval" class="reference internal" href="#mpmath.polyval"><tt class="xref docutils literal"><span class="pre">polyval()</span></tt></a> evaluates the polynomial</p>
 <div class="math">
 <p><img src="../_images/math/94320b9db2068abc23f45eee611fa8337ce3fa80.png" alt="P(x) = c_n x^n + \ldots + c_2 x^2 + c_1 x + c_0." /></p>
-</div><p>If <em>derivative=True</em> is set, <tt class="xref docutils literal"><span class="pre">polyval()</span></tt> simultaneously
+</div><p>If <em>derivative=True</em> is set, <a title="mpmath.polyval" class="reference internal" href="#mpmath.polyval"><tt class="xref docutils literal"><span class="pre">polyval()</span></tt></a> simultaneously
 evaluates <img class="math" src="../_images/math/6efaaf74e576202fad965134bc49c6a34aac4c30.png" alt="P(x)"/> with the derivative, <img class="math" src="../_images/math/114477bf2e4ec5b619df543200769762d6f6b6ff.png" alt="P'(x)"/>, and returns the
 tuple <img class="math" src="../_images/math/f8555cde64ef604799506511246ac30f334668eb.png" alt="(P(x), P'(x))"/>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -87,9 +87,9 @@ of real or complex numbers.</p>
 <dd><p>Computes all roots (real or complex) of a given polynomial. The roots are
 returned as a sorted list, where real roots appear first followed by
 complex conjugate roots as adjacent elements. The polynomial should be
-given as a list of coefficients, in the format used by <tt class="xref docutils literal"><span class="pre">polyval()</span></tt>.
+given as a list of coefficients, in the format used by <a title="mpmath.polyval" class="reference internal" href="#mpmath.polyval"><tt class="xref docutils literal"><span class="pre">polyval()</span></tt></a>.
 The leading coefficient must be nonzero.</p>
-<p>With <em>error=True</em>, <tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> returns a tuple <em>(roots, err)</em> where
+<p>With <em>error=True</em>, <a title="mpmath.polyroots" class="reference internal" href="#mpmath.polyroots"><tt class="xref docutils literal"><span class="pre">polyroots()</span></tt></a> returns a tuple <em>(roots, err)</em> where
 <em>err</em> is an estimate of the maximum error among the computed roots.</p>
 <p><strong>Examples</strong></p>
 <p>Finding the three real roots of <img class="math" src="../_images/math/fb83f0cdce06ec900df1fe1b5751ce1044068bf8.png" alt="x^3 - x^2 - 14x + 24"/>:</p>
@@ -131,7 +131,7 @@ the roots of <img class="math" src="../_images/math/3cabbad4bddb20b0b984d787b76a
 </pre></div>
 </div>
 <p><strong>Precision and conditioning</strong></p>
-<p>Provided there are no repeated roots, <tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> can typically
+<p>Provided there are no repeated roots, <a title="mpmath.polyroots" class="reference internal" href="#mpmath.polyroots"><tt class="xref docutils literal"><span class="pre">polyroots()</span></tt></a> can typically
 compute all roots of an arbitrary polynomial to high precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">60</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">]):</span>
@@ -149,7 +149,7 @@ compute all roots of an arbitrary polynomial to high precision:</p>
 </pre></div>
 </div>
 <p><strong>Algorithm</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">polyroots()</span></tt> implements the Durand-Kerner method [1], which
+<p><a title="mpmath.polyroots" class="reference internal" href="#mpmath.polyroots"><tt class="xref docutils literal"><span class="pre">polyroots()</span></tt></a> implements the Durand-Kerner method [1], which
 uses complex arithmetic to locate all roots simultaneously.
 The Durand-Kerner method can be viewed as approximately performing
 simultaneous Newton iteration for all the roots. In particular,
@@ -233,8 +233,8 @@ next to each other.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

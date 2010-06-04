@@ -20,7 +20,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
-    <link rel="next" title="Technical information" href="technical.html" />
+    <link rel="next" title="Precision and representation issues" href="technical.html" />
     <link rel="prev" title="Matrices" href="matrices.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="technical.html" title="Technical information"
+          <a href="technical.html" title="Precision and representation issues"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="matrices.html" title="Matrices"
@@ -54,8 +54,10 @@
 <p>Subject to certain restrictions, such &#8220;reverse engineering&#8221; is indeed possible thanks to the existence of <em>integer relation algorithms</em>. Mpmath implements the PSLQ algorithm (developed by H. Ferguson), which is one such algorithm.</p>
 <p>Automated number recognition based on PSLQ is not a silver bullet. Any occurring transcendental constants (<img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>, <img class="math" src="_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>, etc) must be guessed by the user, and the relation between those constants in the formula must be linear (such as <img class="math" src="_images/math/227e92d11b8143a62e10154c0b62bb50aeddbfcf.png" alt="x = 3 \pi + 4 e"/>). More complex formulas can be found by combining PSLQ with functional transformations; however, this is only feasible to a limited extent since the computation time grows exponentially with the number of operations that need to be combined.</p>
 <p>The number identification facilities in mpmath are inspired by the <a class="reference external" href="http://oldweb.cecm.sfu.ca/projects/ISC/ISCmain.html">Inverse Symbolic Calculator</a> (ISC). The ISC is more powerful than mpmath, as it uses a lookup table of millions of precomputed constants (thereby mitigating the problem with exponential complexity).</p>
-<div class="section" id="constant-recognition-identify">
-<h2>Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)<a class="headerlink" href="#constant-recognition-identify" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="constant-recognition">
+<h2>Constant recognition<a class="headerlink" href="#constant-recognition" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="identify">
+<h3><tt class="xref docutils literal"><span class="pre">identify()</span></tt><a class="headerlink" href="#identify" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.identify">
 <tt class="descclassname">mpmath.</tt><tt class="descname">identify</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>constants=</em><span class="optional">[</span><span class="optional">]</span>, <em>tol=None</em>, <em>maxcoeff=1000</em>, <em>full=False</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.identify" title="Permalink to this definition">¶</a></dt>
@@ -63,7 +65,7 @@
 formula for <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>. This formula is returned as a string. If no match
 is found, <tt class="xref docutils literal"><span class="pre">None</span></tt> is returned. With <tt class="docutils literal"><span class="pre">full=True</span></tt>, a list of
 matching formulas is returned.</p>
-<p>As a simple example, <tt class="xref docutils literal"><span class="pre">identify()</span></tt> will find an algebraic
+<p>As a simple example, <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> will find an algebraic
 formula for the golden ratio:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -71,9 +73,9 @@ formula for the golden ratio:</p>
 <span class="go">&#39;((1+sqrt(5))/2)&#39;</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">identify()</span></tt> can identify simple algebraic numbers and simple
+<p><a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> can identify simple algebraic numbers and simple
 combinations of given base constants, as well as certain basic
-transformations thereof. More specifically, <tt class="xref docutils literal"><span class="pre">identify()</span></tt>
+transformations thereof. More specifically, <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a>
 looks for the following:</p>
 <blockquote>
 <ol class="arabic simple">
@@ -89,11 +91,11 @@ small integers</li>
 </ol>
 </blockquote>
 <p>Base constants can be given as a list of strings representing mpmath
-expressions (<tt class="xref docutils literal"><span class="pre">identify()</span></tt> will <tt class="docutils literal"><span class="pre">eval</span></tt> the strings to numerical
+expressions (<a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> will <tt class="docutils literal"><span class="pre">eval</span></tt> the strings to numerical
 values and use the original strings for the output), or as a dict of
 formula:value pairs.</p>
-<p>In order not to produce spurious results, <tt class="xref docutils literal"><span class="pre">identify()</span></tt> should
-be used with high precision; preferrably 50 digits or more.</p>
+<p>In order not to produce spurious results, <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> should
+be used with high precision; preferably 50 digits or more.</p>
 <p><strong>Examples</strong></p>
 <p>Simple identifications can be performed safely at standard
 precision. Here the default recognition of rational, algebraic,
@@ -109,10 +111,10 @@ and exp/log of algebraic numbers is demonstrated:</p>
 <span class="go">&#39;log(((2+sqrt(8))/2))&#39;</span>
 </pre></div>
 </div>
-<p>By default, <tt class="xref docutils literal"><span class="pre">identify()</span></tt> does not recognize <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>. At standard
+<p>By default, <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> does not recognize <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>. At standard
 precision it finds a not too useful approximation. At slightly
 increased precision, this approximation is no longer accurate
-enough and <tt class="xref docutils literal"><span class="pre">identify()</span></tt> more correctly returns <tt class="xref docutils literal"><span class="pre">None</span></tt>:</p>
+enough and <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> more correctly returns <tt class="xref docutils literal"><span class="pre">None</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">&#39;(2**(176/117)*3**(20/117)*5**(35/39))/(7**(92/117))&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
@@ -127,7 +129,7 @@ constants, can be identified if they are provided explicitly:</p>
 </pre></div>
 </div>
 <p>Here is an example using a dict of constants. Note that the
-constants need not be &#8220;atomic&#8221;; <tt class="xref docutils literal"><span class="pre">identify()</span></tt> can just
+constants need not be &#8220;atomic&#8221;; <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> can just
 as well express the given number in terms of expressions
 given by formulas:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="o">+</span><span class="n">e</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="n">pi</span><span class="o">+</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span><span class="mf">2</span><span class="o">*</span><span class="n">e</span><span class="p">})</span>
@@ -195,7 +197,7 @@ the first few):</p>
 <span class="gp">...</span>
 </pre></div>
 </div>
-<p>The numerical values are roughly as close to pi as permitted by the
+<p>The numerical values are roughly as close to <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> as permitted by the
 specified tolerance:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">6</span><span class="o">-</span><span class="mf">4</span><span class="o">*</span><span class="n">e</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
 <span class="go">3.14157719846001</span>
@@ -226,7 +228,7 @@ symbolically:</p>
 <span class="go">2**(1/2)</span>
 </pre></div>
 </div>
-<p>Sometimes <tt class="xref docutils literal"><span class="pre">identify()</span></tt> can simplify an expression further than
+<p>Sometimes <a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> can simplify an expression further than
 a symbolic algorithm:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">sympy</span> <span class="k">import</span> <span class="n">simplify</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">sympify</span><span class="p">(</span><span class="s">&#39;-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)&#39;</span><span class="p">)</span>
@@ -243,16 +245,16 @@ a symbolic algorithm:</p>
 </div>
 <p>(In fact, this functionality is available directly in SymPy as the
 function <tt class="xref docutils literal"><span class="pre">nsimplify()</span></tt>, which is essentially a wrapper for
-<tt class="xref docutils literal"><span class="pre">identify()</span></tt>.)</p>
+<a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a>.)</p>
 <p><strong>Miscellaneous issues and limitations</strong></p>
 <p>The input <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> must be a real number. All base constants must be
 positive real numbers and must not be rationals or rational linear
 combinations of each other.</p>
 <p>The worst-case computation time grows quickly with the number of
 base constants. Already with 3 or 4 base constants,
-<tt class="xref docutils literal"><span class="pre">identify()</span></tt> may require several seconds to finish. To search
+<a title="mpmath.identify" class="reference internal" href="#mpmath.identify"><tt class="xref docutils literal"><span class="pre">identify()</span></tt></a> may require several seconds to finish. To search
 for relations among a large number of constants, you should
-consider using <tt class="xref docutils literal"><span class="pre">pslq()</span></tt> directly.</p>
+consider using <a title="mpmath.pslq" class="reference internal" href="#mpmath.pslq"><tt class="xref docutils literal"><span class="pre">pslq()</span></tt></a> directly.</p>
 <p>The extended transformations are applied to x, not the constants
 separately. As a result, <tt class="docutils literal"><span class="pre">identify</span></tt> will for example be able to
 recognize <tt class="docutils literal"><span class="pre">exp(2*pi+3)</span></tt> with <tt class="docutils literal"><span class="pre">pi</span></tt> given as a base constant, but
@@ -261,25 +263,28 @@ not <tt class="docutils literal"><span class="pre">2*exp(pi)+3</span></tt>. It w
 </dd></dl>
 
 </div>
-<div class="section" id="algebraic-identification-findpoly">
-<h2>Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)<a class="headerlink" href="#algebraic-identification-findpoly" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="algebraic-identification">
+<h2>Algebraic identification<a class="headerlink" href="#algebraic-identification" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="findpoly">
+<h3><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt><a class="headerlink" href="#findpoly" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.findpoly">
 <tt class="descclassname">mpmath.</tt><tt class="descname">findpoly</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>n=1</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.findpoly" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">findpoly(x,</span> <span class="pre">n)</span></tt> returns the coefficients of an integer
 polynomial <img class="math" src="_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> of degree at most <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> such that <img class="math" src="_images/math/7432a017e5e68affbfab6d9d0dbfc70b0261e42f.png" alt="P(x) \approx 0"/>.
 If no polynomial having <img class="math" src="_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> as a root can be found,
-<tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> returns <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
-<p><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> works by successively calling <tt class="xref docutils literal"><span class="pre">pslq()</span></tt> with
+<a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> returns <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+<p><a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> works by successively calling <a title="mpmath.pslq" class="reference internal" href="#mpmath.pslq"><tt class="xref docutils literal"><span class="pre">pslq()</span></tt></a> with
 the vectors <img class="math" src="_images/math/82c624937a75943fff85c58d5c06ec7d843e67f4.png" alt="[1, x]"/>, <img class="math" src="_images/math/1a1fa4ebcd7e0619a93ef5493b181b595f5be4e8.png" alt="[1, x, x^2]"/>, <img class="math" src="_images/math/abc8f982623ab3aaccff1a773dfe9a5b774bef22.png" alt="[1, x, x^2, x^3]"/>, ...,
 <img class="math" src="_images/math/775231f9a3a58321b54035c38f9575f2b3914349.png" alt="[1, x, x^2, .., x^n]"/> as input. Keyword arguments given to
-<tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> are forwarded verbatim to <tt class="xref docutils literal"><span class="pre">pslq()</span></tt>. In
+<a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> are forwarded verbatim to <a title="mpmath.pslq" class="reference internal" href="#mpmath.pslq"><tt class="xref docutils literal"><span class="pre">pslq()</span></tt></a>. In
 particular, you can specify a tolerance for <img class="math" src="_images/math/6efaaf74e576202fad965134bc49c6a34aac4c30.png" alt="P(x)"/> with <tt class="docutils literal"><span class="pre">tol</span></tt>
 and a maximum permitted coefficient size with <tt class="docutils literal"><span class="pre">maxcoeff</span></tt>.</p>
-<p>For large values of <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, it is recommended to run <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt>
+<p>For large values of <img class="math" src="_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, it is recommended to run <a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a>
 at high precision; preferably 50 digits or more.</p>
 <p><strong>Examples</strong></p>
-<p>By default (degree <img class="math" src="_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/>), <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> simply finds a linear
+<p>By default (degree <img class="math" src="_images/math/c766f9fce6070981e62f805a7cf7294baed4498e.png" alt="n = 1"/>), <a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> simply finds a linear
 polynomial with a rational root:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -316,10 +321,10 @@ in a polynomial of degree 4:</p>
 <p>In fact, <img class="math" src="_images/math/1c3c90179eabedd90f3d3c2ae2f6391e8ed4993c.png" alt="x^4 - 10x^2 + 1"/> is the <em>minimal polynomial</em> of
 <img class="math" src="_images/math/b31b6d8fa4fe204cc936f25c4fd0695ce50f05fa.png" alt="r = \sqrt 2 + \sqrt 3"/>, meaning that a rational polynomial of
 lower degree having <img class="math" src="_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r"/> as a root does not exist. Given sufficient
-precision, <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> will usually find the correct
+precision, <a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> will usually find the correct
 minimal polynomial of a given algebraic number.</p>
 <p><strong>Non-algebraic numbers</strong></p>
-<p>If <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> fails to find a polynomial with given
+<p>If <a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> fails to find a polynomial with given
 coefficient size and tolerance constraints, that means no such
 polynomial exists.</p>
 <p>We can verify that <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> is not an algebraic number of degree 3 with
@@ -349,7 +354,7 @@ using one (or several) of the following methods:</p>
 </pre></div>
 </div>
 <p>It is unknown whether Euler&#8217;s constant is transcendental (or even
-irrational). We can use <tt class="xref docutils literal"><span class="pre">findpoly()</span></tt> to check that if is
+irrational). We can use <a title="mpmath.findpoly" class="reference internal" href="#mpmath.findpoly"><tt class="xref docutils literal"><span class="pre">findpoly()</span></tt></a> to check that if is
 an algebraic number, its minimal polynomial must have degree
 at least 7 and a coefficient of magnitude at least 1000000:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">200</span>
@@ -366,8 +371,11 @@ idea what is happening can be useful.</p>
 </dd></dl>
 
 </div>
+</div>
 <div class="section" id="integer-relations-pslq">
-<h2>Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
+<h2>Integer relations (PSLQ)<a class="headerlink" href="#integer-relations-pslq" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pslq">
+<h3><tt class="xref docutils literal"><span class="pre">pslq()</span></tt><a class="headerlink" href="#pslq" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.pslq">
 <tt class="descclassname">mpmath.</tt><tt class="descname">pslq</tt><big>(</big><em>ctx</em>, <em>x</em>, <em>tol=None</em>, <em>maxcoeff=1000</em>, <em>maxsteps=100</em>, <em>verbose=False</em><big>)</big><a class="headerlink" href="#mpmath.pslq" title="Permalink to this definition">¶</a></dt>
@@ -377,7 +385,7 @@ uses the PSLQ algorithm to find a list of integers
 <div class="math">
 <p><img src="_images/math/ffe9248fa77b0fd006278abfe40d8c03ef53214d.png" alt="|c_1 x_1 + c_2 x_2 + ... + c_n x_n| &lt; \mathrm{tol}" /></p>
 </div><p>and such that <img class="math" src="_images/math/b839e0395b25d653acf3bd586de0e8f7e54a3424.png" alt="\max |c_k| &lt; \mathrm{maxcoeff}"/>. If no such vector
-exists, <tt class="xref docutils literal"><span class="pre">pslq()</span></tt> returns <tt class="xref docutils literal"><span class="pre">None</span></tt>. The tolerance defaults to
+exists, <a title="mpmath.pslq" class="reference internal" href="#mpmath.pslq"><tt class="xref docutils literal"><span class="pre">pslq()</span></tt></a> returns <tt class="xref docutils literal"><span class="pre">None</span></tt>. The tolerance defaults to
 3/4 of the working precision.</p>
 <p><strong>Examples</strong></p>
 <p>Find rational approximations for <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
@@ -471,6 +479,7 @@ arithmetic, since this is significantly (about 7x) faster.</p>
 
 </div>
 </div>
+</div>
 
 
           </div>
@@ -481,9 +490,18 @@ arithmetic, since this is significantly (about 7x) faster.</p>
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
 <li><a class="reference external" href="#">Number identification</a><ul>
-<li><a class="reference external" href="#constant-recognition-identify">Constant recognition (<tt class="docutils literal"><span class="pre">identify</span></tt>)</a></li>
-<li><a class="reference external" href="#algebraic-identification-findpoly">Algebraic identification (<tt class="docutils literal"><span class="pre">findpoly</span></tt>)</a></li>
-<li><a class="reference external" href="#integer-relations-pslq">Integer relations (<tt class="docutils literal"><span class="pre">pslq</span></tt>)</a></li>
+<li><a class="reference external" href="#constant-recognition">Constant recognition</a><ul>
+<li><a class="reference external" href="#identify"><tt class="docutils literal"><span class="pre">identify()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#algebraic-identification">Algebraic identification</a><ul>
+<li><a class="reference external" href="#findpoly"><tt class="docutils literal"><span class="pre">findpoly()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#integer-relations-pslq">Integer relations (PSLQ)</a><ul>
+<li><a class="reference external" href="#pslq"><tt class="docutils literal"><span class="pre">pslq()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -493,7 +511,7 @@ arithmetic, since this is significantly (about 7x) faster.</p>
                                   title="previous chapter">Matrices</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="technical.html"
-                                  title="next chapter">Technical information</a></p>
+                                  title="next chapter">Precision and representation issues</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="_sources/identification.txt"
@@ -526,7 +544,7 @@ arithmetic, since this is significantly (about 7x) faster.</p>
           <a href="modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="technical.html" title="Technical information"
+          <a href="technical.html" title="Precision and representation issues"
              >next</a> |</li>
         <li class="right" >
           <a href="matrices.html" title="Matrices"
@@ -535,8 +553,8 @@ arithmetic, since this is significantly (about 7x) faster.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

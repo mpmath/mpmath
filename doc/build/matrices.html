@@ -21,7 +21,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15-svn documentation" href="index.html" />
     <link rel="next" title="Number identification" href="identification.html" />
-    <link rel="prev" title="Interval arithmetic" href="intervals.html" /> 
+    <link rel="prev" title="Function approximation" href="calculus/approximation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
           <a href="identification.html" title="Number identification"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="intervals.html" title="Interval arithmetic"
+          <a href="calculus/approximation.html" title="Function approximation"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@ stored, so it is cheap to represent sparse matrices.</p>
 <p>The most basic way to create one is to use the <tt class="docutils literal"><span class="pre">matrix</span></tt> class directly. You
 can create an empty matrix specifying the dimensions:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">matrix(</span>
 <span class="go">[[&#39;0.0&#39;, &#39;0.0&#39;],</span>
@@ -305,7 +305,7 @@ so called norms.</p>
 <p><tt class="docutils literal"><span class="pre">p=2</span></tt> is the standard Euclidean vector norm.</p>
 <p><tt class="docutils literal"><span class="pre">p=inf</span></tt> gives the magnitude of the largest element.</p>
 <p>For <em>x</em> a matrix, <tt class="docutils literal"><span class="pre">p=2</span></tt> is the Frobenius norm.
-For operator matrix norms, use <tt class="xref docutils literal"><span class="pre">mnorm()</span></tt> instead.</p>
+For operator matrix norms, use <a title="mpmath.mnorm" class="reference internal" href="#mpmath.mnorm"><tt class="xref docutils literal"><span class="pre">mnorm()</span></tt></a> instead.</p>
 <p>You can use the string &#8216;inf&#8217; as well as float(&#8216;inf&#8217;) or mpf(&#8216;inf&#8217;)
 to specify the infinity norm.</p>
 <p><strong>Examples</strong></p>
@@ -339,7 +339,7 @@ approximation of the spectral norm and satisfies</p>
 <p><img src="_images/math/424f83eda2a3acdae490f8e78126eb1fb9e63108.png" alt="\frac{1}{\sqrt{\mathrm{rank}(A)}} \|A\|_F \le \|A\|_2 \le \|A\|_F" /></p>
 </div><p>The Frobenius norm lacks some mathematical properties that might
 be expected of a norm.</p>
-<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norms, use <tt class="xref docutils literal"><span class="pre">norm()</span></tt> instead.</p>
+<p>For general elementwise <img class="math" src="_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/>-norms, use <a title="mpmath.norm" class="reference internal" href="#mpmath.norm"><tt class="xref docutils literal"><span class="pre">norm()</span></tt></a> instead.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
@@ -492,21 +492,22 @@ the residual automatically.</p>
 </div>
 </div>
 </div>
-<div class="section" id="interval-matrices">
-<h2>Interval matrices<a class="headerlink" href="#interval-matrices" title="Permalink to this headline">¶</a></h2>
-<p>Matrices may contain interval elements. This allows for performing
-basic linear algebra operations such as matrix multiplication
-and equation solving with rigorous error bounds:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([[</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span><span class="s">&#39;0.3&#39;</span><span class="p">,</span><span class="s">&#39;1.0&#39;</span><span class="p">],</span>
-<span class="gp">... </span>            <span class="p">[</span><span class="s">&#39;7.1&#39;</span><span class="p">,</span><span class="s">&#39;5.5&#39;</span><span class="p">,</span><span class="s">&#39;4.8&#39;</span><span class="p">],</span>
-<span class="gp">... </span>            <span class="p">[</span><span class="s">&#39;3.2&#39;</span><span class="p">,</span><span class="s">&#39;4.4&#39;</span><span class="p">,</span><span class="s">&#39;5.6&#39;</span><span class="p">]],</span> <span class="n">force_type</span><span class="o">=</span><span class="n">mpi</span><span class="p">)</span>
+<div class="section" id="interval-and-double-precision-matrices">
+<h2>Interval and double-precision matrices<a class="headerlink" href="#interval-and-double-precision-matrices" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">iv.matrix</span></tt> and <tt class="docutils literal"><span class="pre">fp.matrix</span></tt> classes convert inputs
+to intervals and Python floating-point numbers respectively.</p>
+<p>Interval matrices can be used to perform linear algebra operations
+with rigorous error tracking:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">iv</span><span class="o">.</span><span class="n">matrix</span><span class="p">([[</span><span class="s">&#39;0.1&#39;</span><span class="p">,</span><span class="s">&#39;0.3&#39;</span><span class="p">,</span><span class="s">&#39;1.0&#39;</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s">&#39;7.1&#39;</span><span class="p">,</span><span class="s">&#39;5.5&#39;</span><span class="p">,</span><span class="s">&#39;4.8&#39;</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="p">[</span><span class="s">&#39;3.2&#39;</span><span class="p">,</span><span class="s">&#39;4.4&#39;</span><span class="p">,</span><span class="s">&#39;5.6&#39;</span><span class="p">]])</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">([</span><span class="s">&#39;4&#39;</span><span class="p">,</span><span class="s">&#39;0.6&#39;</span><span class="p">,</span><span class="s">&#39;0.5&#39;</span><span class="p">],</span> <span class="n">force_type</span><span class="o">=</span><span class="n">mpi</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">lu_solve</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">iv</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="s">&#39;4&#39;</span><span class="p">,</span><span class="s">&#39;0.6&#39;</span><span class="p">,</span><span class="s">&#39;0.5&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">iv</span><span class="o">.</span><span class="n">lu_solve</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span>
-<span class="go">[ [5.2582327113062393162, 5.2582327113062749448]]</span>
-<span class="go">[[-13.15504939626785654, -13.155049396267821172]]</span>
-<span class="go">[ [7.4206915477497212581, 7.4206915477497310818]]</span>
+<span class="go">[  [5.2582327113062393041, 5.2582327113062749951]]</span>
+<span class="go">[[-13.155049396267856583, -13.155049396267821167]]</span>
+<span class="go">[  [7.4206915477497212555, 7.4206915477497310922]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="o">*</span><span class="n">c</span>
 <span class="go">[  [3.9999999999999866773, 4.0000000000000133227]]</span>
 <span class="go">[[0.59999999999972430942, 0.60000000000027142733]]</span>
@@ -888,15 +889,15 @@ number <img class="math" src="_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17
 <li><a class="reference external" href="#matrix-factorization">Matrix factorization</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#interval-matrices">Interval matrices</a></li>
+<li><a class="reference external" href="#interval-and-double-precision-matrices">Interval and double-precision matrices</a></li>
 <li><a class="reference external" href="#matrix-functions">Matrix functions</a></li>
 </ul>
 </li>
 </ul>
 
             <h4>Previous topic</h4>
-            <p class="topless"><a href="intervals.html"
-                                  title="previous chapter">Interval arithmetic</a></p>
+            <p class="topless"><a href="calculus/approximation.html"
+                                  title="previous chapter">Function approximation</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="identification.html"
                                   title="next chapter">Number identification</a></p>
@@ -935,14 +936,14 @@ number <img class="math" src="_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17
           <a href="identification.html" title="Number identification"
              >next</a> |</li>
         <li class="right" >
-          <a href="intervals.html" title="Interval arithmetic"
+          <a href="calculus/approximation.html" title="Function approximation"
              >previous</a> |</li>
         <li><a href="index.html">mpmath v0.15-svn documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

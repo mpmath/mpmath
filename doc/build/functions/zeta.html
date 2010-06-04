@@ -161,9 +161,9 @@ for <img class="math" src="../_images/math/48d02444a59b917b64e8bd0963b88712fc7fa
 <span class="go">(453.2764822702057701894278 - 581.963625832768189140995j)</span>
 </pre></div>
 </div>
-<p>Note: for investigation of the zeta function zeros, the Riemann-Siegel
+<p>For investigation of the zeta function zeros, the Riemann-Siegel
 Z-function is often more convenient than working with the Riemann
-zeta function directly (see <tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>).</p>
+zeta function directly (see <a title="mpmath.siegelz" class="reference internal" href="#mpmath.siegelz"><tt class="xref docutils literal"><span class="pre">siegelz()</span></tt></a>).</p>
 <p>Some values of the Hurwitz zeta function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">);</span> <span class="o">-</span><span class="mf">5.</span><span class="o">/</span><span class="mf">4</span> <span class="o">+</span> <span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">6</span>
 <span class="go">0.3949340668482264364724152</span>
@@ -261,7 +261,7 @@ function, having a finite value for all complex <img class="math" src="../_image
 <p>The alternating zeta function may expressed using the Riemann zeta function
 as <img class="math" src="../_images/math/f86950f34a0d1a3d3a67c626a077893977a6aed0.png" alt="\eta(s) = (1 - 2^{1-s}) \zeta(s)"/>. It can also be expressed
 in terms of the Hurwitz zeta function (<tt class="xref docutils literal"><span class="pre">hurwitz()</span></tt>), for example using
-<tt class="xref docutils literal"><span class="pre">dirichlet()</span></tt> (see documentation for that function).</p>
+<a title="mpmath.dirichlet" class="reference internal" href="#mpmath.dirichlet"><tt class="xref docutils literal"><span class="pre">dirichlet()</span></tt></a> (see documentation for that function).</p>
 <p><strong>Examples</strong></p>
 <p>Some special values are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -277,7 +277,7 @@ in terms of the Hurwitz zeta function (<tt class="xref docutils literal"><span c
 </pre></div>
 </div>
 <p>An example of a sum that can be computed more accurately and
-efficiently via <tt class="xref docutils literal"><span class="pre">altzeta()</span></tt> than via numerical summation:</p>
+efficiently via <a title="mpmath.altzeta" class="reference internal" href="#mpmath.altzeta"><tt class="xref docutils literal"><span class="pre">altzeta()</span></tt></a> than via numerical summation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">/</span> <span class="n">n</span><span class="o">**</span><span class="mf">2.5</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">100</span><span class="p">))</span>
 <span class="go">0.86720495150398402</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
@@ -395,7 +395,7 @@ several values of this function:</p>
 <dt id="mpmath.primezeta">
 <tt class="descclassname">mpmath.</tt><tt class="descname">primezeta</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#mpmath.primezeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the prime zeta function, which is defined
-in analogy with the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
+in analogy with the Riemann zeta function (<a title="mpmath.zeta" class="reference internal" href="#mpmath.zeta"><tt class="xref docutils literal"><span class="pre">zeta()</span></tt></a>)
 as</p>
 <div class="math">
 <p><img src="../_images/math/0226575fda5703d7f9ac0f7aff667e441e45cb02.png" alt="P(s) = \sum_p \frac{1}{p^s}" /></p>
@@ -474,7 +474,7 @@ BIT 8 (1968), pp. 187-202.</p>
 <dd><p>Computes the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th nontrivial zero of <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> on the critical line,
 i.e. returns an approximation of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th largest complex number
 <img class="math" src="../_images/math/a6ac488ef915997675a83f5361417e803a9535e9.png" alt="s = \frac{1}{2} + ti"/> for which <img class="math" src="../_images/math/5cb3c5c19211d04106e1f725b45e031f6318a542.png" alt="\zeta(s) = 0"/>. Equivalently, the
-imaginary part <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> is a zero of the Z-function (<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>).</p>
+imaginary part <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/> is a zero of the Z-function (<a title="mpmath.siegelz" class="reference internal" href="#mpmath.siegelz"><tt class="xref docutils literal"><span class="pre">siegelz()</span></tt></a>).</p>
 <p><strong>Examples</strong></p>
 <p>The first few zeros:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -503,7 +503,7 @@ imaginary part <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e76
 <span class="go">(0.5 - 14.13472514173469379045725j)</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">zetazero()</span></tt> supports arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and arbitrary precision:</p>
+<p><a title="mpmath.zetazero" class="reference internal" href="#mpmath.zetazero"><tt class="xref docutils literal"><span class="pre">zetazero()</span></tt></a> supports arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> and arbitrary precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">1234567</span><span class="p">)</span>
 <span class="go">(0.5 + 727690.906948208j)</span>
@@ -514,7 +514,7 @@ imaginary part <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e76
 <span class="go">0.0</span>
 </pre></div>
 </div>
-<p>with <em>info=True</em>, <tt class="xref docutils literal"><span class="pre">zetazero()</span></tt> gives additional information:</p>
+<p>with <em>info=True</em>, <a title="mpmath.zetazero" class="reference internal" href="#mpmath.zetazero"><tt class="xref docutils literal"><span class="pre">zetazero()</span></tt></a> gives additional information:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zetazero</span><span class="p">(</span><span class="mf">542964976</span><span class="p">,</span><span class="n">info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">((0.5 + 209039046.578535j), [542964969, 542964978], 6, &#39;(013111110)&#39;)</span>
@@ -541,9 +541,9 @@ in the critical strip.</p>
 <dd><p>Computes the Z-function, also known as the Riemann-Siegel Z function,</p>
 <div class="math">
 <p><img src="../_images/math/f0bf6f1bfe9ef2bdea1993df9edab44d0ed7a47c.png" alt="Z(t) = e^{i \theta(t)} \zeta(1/2+it)" /></p>
-</div><p>where <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> is the Riemann zeta function (<tt class="xref docutils literal"><span class="pre">zeta()</span></tt>)
+</div><p>where <img class="math" src="../_images/math/031cb95fe26028bb28c91f9ba046b40eca3bc5f1.png" alt="\zeta(s)"/> is the Riemann zeta function (<a title="mpmath.zeta" class="reference internal" href="#mpmath.zeta"><tt class="xref docutils literal"><span class="pre">zeta()</span></tt></a>)
 and where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)"/> denotes the Riemann-Siegel theta function
-(see <tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>).</p>
+(see <a title="mpmath.siegeltheta" class="reference internal" href="#mpmath.siegeltheta"><tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt></a>).</p>
 <p>Evaluation is supported for real and complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -582,7 +582,7 @@ on sign changes:</p>
 </pre></div>
 </div>
 <p>To locate roots, Gram points <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n"/> which can be computed
-by <tt class="xref docutils literal"><span class="pre">grampoint()</span></tt> are useful. If <img class="math" src="../_images/math/29aa758242e9653c639ae24017f4b953e58e5249.png" alt="(-1)^n Z(g_n)"/> is
+by <a title="mpmath.grampoint" class="reference internal" href="#mpmath.grampoint"><tt class="xref docutils literal"><span class="pre">grampoint()</span></tt></a> are useful. If <img class="math" src="../_images/math/29aa758242e9653c639ae24017f4b953e58e5249.png" alt="(-1)^n Z(g_n)"/> is
 positive for two consecutive <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, then <img class="math" src="../_images/math/d5f653dcc35171cb617829f6ff13f9f44094a405.png" alt="Z(t)"/> must have
 a zero between those points:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g10</span> <span class="o">=</span> <span class="n">grampoint</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
@@ -613,7 +613,7 @@ a zero between those points:</p>
 }{2i} - \frac{\log \pi}{2} t." /></p>
 </div><p>The Riemann-Siegel theta function is important in
 providing the phase factor for the Z-function
-(see <tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>). Evaluation is supported for real and
+(see <a title="mpmath.siegelz" class="reference internal" href="#mpmath.siegelz"><tt class="xref docutils literal"><span class="pre">siegelz()</span></tt></a>). Evaluation is supported for real and
 complex arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -659,7 +659,7 @@ for <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41e
 <tt class="descclassname">mpmath.</tt><tt class="descname">grampoint</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.grampoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th Gram point <img class="math" src="../_images/math/8050bf3d2e471a0dad6ad8820093caa08262af43.png" alt="g_n"/>, defined as the solution
 to the equation <img class="math" src="../_images/math/ef41f24eb8eeb321f8396e07150e5bd3216b5215.png" alt="\theta(g_n) = \pi n"/> where <img class="math" src="../_images/math/4ae78c56b94d7a89e5eeba5ffb8712072b41eb28.png" alt="\theta(t)"/>
-is the Riemann-Siegel theta function (<tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt>).</p>
+is the Riemann-Siegel theta function (<a title="mpmath.siegeltheta" class="reference internal" href="#mpmath.siegeltheta"><tt class="xref docutils literal"><span class="pre">siegeltheta()</span></tt></a>).</p>
 <p>The first few Gram points are:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -686,9 +686,9 @@ is the Riemann-Siegel theta function (<tt class="xref docutils literal"><span cl
 </pre></div>
 </div>
 <p>Gram points are useful when studying the Z-function
-(<tt class="xref docutils literal"><span class="pre">siegelz()</span></tt>). See the documentation of that function
+(<a title="mpmath.siegelz" class="reference internal" href="#mpmath.siegelz"><tt class="xref docutils literal"><span class="pre">siegelz()</span></tt></a>). See the documentation of that function
 for additional examples.</p>
-<p><tt class="xref docutils literal"><span class="pre">grampoint()</span></tt> can solve the defining equation for
+<p><a title="mpmath.grampoint" class="reference internal" href="#mpmath.grampoint"><tt class="xref docutils literal"><span class="pre">grampoint()</span></tt></a> can solve the defining equation for
 nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. There is a fixed point where <img class="math" src="../_images/math/ef573a1a60cbf7f8ab3556d42aad39b83bbf8d9e.png" alt="g(x) = x"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">findroot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">grampoint</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="mf">10000</span><span class="p">)</span>
 <span class="go">9146.698193171459265866198</span>
@@ -748,14 +748,14 @@ coefficient <img class="math" src="../_images/math/f017aab359e171c4856e0399ffcd1
 <span class="go">-0.0728158454836767</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> supports arbitrary precision evaluation:</p>
+<p><a title="mpmath.stieltjes" class="reference internal" href="#mpmath.stieltjes"><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt></a> supports arbitrary precision evaluation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stieltjes</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
 <span class="go">-0.0096903631928723184845303860352125293590658061013408</span>
 </pre></div>
 </div>
 <p><strong>Algorithm</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt> numerically evaluates the integral in
+<p><a title="mpmath.stieltjes" class="reference internal" href="#mpmath.stieltjes"><tt class="xref docutils literal"><span class="pre">stieltjes()</span></tt></a> numerically evaluates the integral in
 the following representation due to Ainsworth, Howell and
 Coffey [1], [2]:</p>
 <div class="math">
@@ -793,7 +793,7 @@ zeta function&#8221;,      arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343</li>
 the analytic continuation is implied.</p>
 <p>The polylogarithm should not be confused with the logarithmic
 integral (also denoted by Li or li), which is implemented
-as <tt class="xref docutils literal"><span class="pre">li()</span></tt>.</p>
+as <a title="mpmath.li" class="reference external" href="expintegrals.html#mpmath.li"><tt class="xref docutils literal"><span class="pre">li()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>The polylogarithm satisfies a huge number of functional identities.
 A sample of polylogarithm evaluations is shown below:</p>
@@ -809,7 +809,7 @@ A sample of polylogarithm evaluations is shown below:</p>
 <span class="go">(0.53721319360804, 0.53721319360804)</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">polylog()</span></tt> can evaluate the analytic continuation of the
+<p><a title="mpmath.polylog" class="reference internal" href="#mpmath.polylog"><tt class="xref docutils literal"><span class="pre">polylog()</span></tt></a> can evaluate the analytic continuation of the
 polylogarithm when <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is an integer:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
 <span class="go">(0.536301287357863 - 7.23378441241546j)</span>
@@ -912,14 +912,14 @@ not too large in magnitude:</p>
 </div><p>The special case <img class="math" src="../_images/math/418a9a3766f97f030079b1bcba9f2032da8c5f42.png" alt="\mathrm{Cl}_2(z)"/> (i.e. <tt class="docutils literal"><span class="pre">clsin(2,z)</span></tt>) is the classical
 &#8220;Clausen function&#8221;. More generally, the Clausen function is defined for
 complex <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>, even when the series does not converge. The
-Clausen function is related to the polylogarithm (<tt class="xref docutils literal"><span class="pre">polylog()</span></tt>) as</p>
+Clausen function is related to the polylogarithm (<a title="mpmath.polylog" class="reference internal" href="#mpmath.polylog"><tt class="xref docutils literal"><span class="pre">polylog()</span></tt></a>) as</p>
 <div class="math">
 <p><img src="../_images/math/4393960e5ee6adf31d4e00f2f0c769807e3d224f.png" alt="\mathrm{Cl}_s(z) = \frac{1}{2i}\left(\mathrm{Li}_s\left(e^{iz}\right) -
                    \mathrm{Li}_s\left(e^{-iz}\right)\right)
 
 = \mathrm{Im}\left[\mathrm{Li}_s(e^{iz})\right] \quad (s, z \in \mathbb{R})," /></p>
 </div><p>and this representation can be taken to provide the analytic continuation of the
-series. The complementary function <tt class="xref docutils literal"><span class="pre">clcos()</span></tt> gives the corresponding
+series. The complementary function <a title="mpmath.clcos" class="reference internal" href="#mpmath.clcos"><tt class="xref docutils literal"><span class="pre">clcos()</span></tt></a> gives the corresponding
 cosine sum.</p>
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrarily chosen <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>:</p>
@@ -1032,7 +1032,7 @@ providing a finite sum for series such as
 <div class="math">
 <p><img src="../_images/math/5784640b30b43acfdf60537c5ff80e976f60bb22.png" alt="\mathrm{\widetilde{Cl}}_s(z) = \sum_{k=1}^{\infty} \frac{\cos(kz)}{k^s}." /></p>
 </div><p>This function is complementary to the Clausen sine function
-<tt class="xref docutils literal"><span class="pre">clsin()</span></tt>. In terms of the polylogarithm,</p>
+<a title="mpmath.clsin" class="reference internal" href="#mpmath.clsin"><tt class="xref docutils literal"><span class="pre">clsin()</span></tt></a>. In terms of the polylogarithm,</p>
 <div class="math">
 <p><img src="../_images/math/78db57c460f9522102ab78cbb7392270629025ea.png" alt="\mathrm{\widetilde{Cl}}_s(z) =
     \frac{1}{2}\left(\mathrm{Li}_s\left(e^{iz}\right) +
@@ -1153,7 +1153,7 @@ to how the polylogarithm is constructed from the ordinary
 logarithm; as a function of <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> (with <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/> fixed), <img class="math" src="../_images/math/951eec7bf6dd63c58cc159490924cb51eb5a0b6d.png" alt="E_s"/> is an L-series
 It is an entire function of both <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>.</p>
 <p>The polyexponential function provides a generalization of the
-Bell polynomials <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/> (see <tt class="xref docutils literal"><span class="pre">bell()</span></tt>) to noninteger orders <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.
+Bell polynomials <img class="math" src="../_images/math/6343a0dfcc1bb7d992dcdf886dc7c3947e1a3239.png" alt="B_n(x)"/> (see <a title="mpmath.bell" class="reference external" href="numtheory.html#mpmath.bell"><tt class="xref docutils literal"><span class="pre">bell()</span></tt></a>) to noninteger orders <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.
 In terms of the Bell polynomials,</p>
 <div class="math">
 <p><img src="../_images/math/a380f7ed2531fb35c6adaa6b8e56bd5c23240bb4.png" alt="E_s(z) = e^z B_s(z) - \mathrm{sinc}(\pi s)." /></p>
@@ -1294,8 +1294,8 @@ instance of the hypergeometric function <img class="math" src="../_images/math/4
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

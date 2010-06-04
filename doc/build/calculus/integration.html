@@ -89,12 +89,12 @@ dealing with mid-interval discontinuities, or integrating
 over large intervals where the function is irregular or
 oscillates.</p>
 <p><strong>Options</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">quad()</span></tt> recognizes the following keyword arguments:</p>
+<p><a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> recognizes the following keyword arguments:</p>
 <dl class="docutils">
 <dt><em>method</em></dt>
 <dd>Chooses integration algorithm (described below).</dd>
 <dt><em>error</em></dt>
-<dd>If set to true, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> returns <img class="math" src="../_images/math/cc8877b37ecb041cbfa875ec771ce90175874bc4.png" alt="(v, e)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the
+<dd>If set to true, <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> returns <img class="math" src="../_images/math/cc8877b37ecb041cbfa875ec771ce90175874bc4.png" alt="(v, e)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the
 integral and <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/> is the estimated error.</dd>
 <dt><em>maxdegree</em></dt>
 <dd>Maximum degree of the quadrature rule to try before
@@ -119,7 +119,7 @@ are automatically cached.</p>
 <p>The advantages of the tanh-sinh algorithm are that it tends to
 handle endpoint singularities well, and that the nodes are cheap
 to compute on the first run. For these reasons, it is used by
-<tt class="xref docutils literal"><span class="pre">quad()</span></tt> as the default algorithm.</p>
+<a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> as the default algorithm.</p>
 <p>Gauss-Legendre quadrature often requires fewer function
 evaluations, and is therefore often faster for repeated use, but
 the algorithm does not handle endpoint singularities as well and
@@ -166,7 +166,7 @@ diamond-shaped path from <img class="math" src="../_images/math/dce34f4dfb240614
 <p><strong>Examples of 2D and 3D integrals</strong></p>
 <p>Here are several nice examples of analytically solvable
 2D integrals (taken from MathWorld [1]) that can be evaluated
-to high precision fairly rapidly by <tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
+to high precision fairly rapidly by <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mf">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">])</span>
@@ -200,7 +200,7 @@ to high precision fairly rapidly by <tt class="xref docutils literal"><span clas
 <span class="go">0.367879441171442</span>
 </pre></div>
 </div>
-<p>For nonrectangular areas, one can call <tt class="xref docutils literal"><span class="pre">quad()</span></tt> recursively.
+<p>For nonrectangular areas, one can call <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> recursively.
 For example, we can replicate the earlier example of calculating
 <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/> by integrating over the unit-circle, and actually use double
 quadrature to actually measure the area circle:</p>
@@ -258,8 +258,8 @@ circumvented by temporarily increasing the precision:</p>
 <p><strong>Highly variable functions</strong></p>
 <p>For functions that are smooth (in the sense of being infinitely
 differentiable) but contain sharp mid-interval peaks or many
-&#8220;bumps&#8221;, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> may fail to provide full accuracy. For
-example, with default settings, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> is able to integrate
+&#8220;bumps&#8221;, <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> may fail to provide full accuracy. For
+example, with default settings, <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> is able to integrate
 <img class="math" src="../_images/math/081bf0417da2140657aad909a14ca6c3ff8b77d5.png" alt="\sin(x)"/> accurately over an interval of length 100 but not over
 length 1000:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">100</span><span class="p">]);</span> <span class="mf">1</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>   <span class="c"># Good</span>
@@ -311,17 +311,17 @@ function <img class="math" src="../_images/math/9e304d281d5bb66802cb88a03ebfb328
 <p><img src="../_images/math/faa759cbb4bff58ffe7cb487a95808076380f36d.png" alt="I = \int_a^b f(x) dx" /></p>
 </div><p>where at least one of <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> and <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is infinite and where
 <img class="math" src="../_images/math/7ec57f0e091bf11c1a0afb6a3b36eb314f44af3f.png" alt="f(x) = g(x) \cos(\omega x  + \phi)"/> for some slowly
-decreasing function <img class="math" src="../_images/math/659a6a2610357101d77dbae8eb9bf0b3100c08fd.png" alt="g(x)"/>. With proper input, <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt>
+decreasing function <img class="math" src="../_images/math/659a6a2610357101d77dbae8eb9bf0b3100c08fd.png" alt="g(x)"/>. With proper input, <a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a>
 can also handle oscillatory integrals where the oscillation
 rate is different from a pure sine or cosine wave.</p>
 <p>In the standard case when <img class="math" src="../_images/math/df4eccc09cea597a3f814f8d9d58ae052961d6e6.png" alt="|a| &lt; \infty, b = \infty"/>,
-<tt class="xref docutils literal"><span class="pre">quadosc()</span></tt> works by evaluating the infinite series</p>
+<a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a> works by evaluating the infinite series</p>
 <div class="math">
 <p><img src="../_images/math/cb1f62664824a1320f8446ac20a12e7d117094e7.png" alt="I = \int_a^{x_1} f(x) dx +
 \sum_{k=1}^{\infty} \int_{x_k}^{x_{k+1}} f(x) dx" /></p>
 </div><p>where <img class="math" src="../_images/math/f5d3dead9cb8d5f6327c737e014850be7a29d0f0.png" alt="x_k"/> are consecutive zeros (alternatively
 some other periodic reference point) of <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/>.
-Accordingly, <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt> requires information about the
+Accordingly, <a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a> requires information about the
 zeros of <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/>. For a periodic function, you can specify
 the zeros by either providing the angular frequency <img class="math" src="../_images/math/54d7d48553f4d9e7ab418118607ea324cbfddfda.png" alt="\omega"/>
 (<em>omega</em>) or the <em>period</em> <img class="math" src="../_images/math/07476a4927fd27f658fee67885db2c05fca2c298.png" alt="2 \pi/\omega"/>. In general, you can
@@ -344,7 +344,7 @@ Below is an example of each:</p>
 <em>half-period</em>, not the full period. In theory, it does not matter
 whether each partial integral is done over a half period or a full
 period. However, if done over half-periods, the infinite series
-passed to <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> becomes an <em>alternating series</em> and this
+passed to <a title="mpmath.nsum" class="reference external" href="sums_limits.html#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> becomes an <em>alternating series</em> and this
 typically makes the extrapolation much more efficient.</p>
 <p>Here is an example of an integration over the entire real line,
 and a half-infinite integration starting at <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty"/>:</p>
@@ -400,7 +400,7 @@ rate increases (causing consecutive periods to asymptotically
 cancel out). These integrals are virtually impossible to calculate
 to any kind of accuracy using standard quadrature rules. However,
 if one provides the correct asymptotic distribution of zeros
-(<img class="math" src="../_images/math/234066a9d63a3b077620a87c2e47f7ab5d421941.png" alt="x_n \sim \sqrt{n}"/>), <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt> works:</p>
+(<img class="math" src="../_images/math/234066a9d63a3b077620a87c2e47f7ab5d421941.png" alt="x_n \sim \sqrt{n}"/>), <a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a> works:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">zeros</span><span class="o">=</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span><span class="n">sqrt</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">n</span><span class="p">))</span>
@@ -438,10 +438,10 @@ that sometimes works is to multiply or divide the frequency by 2:</p>
 </pre></div>
 </div>
 <p><strong>Fast decay</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt> is primarily useful for slowly decaying
+<p><a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a> is primarily useful for slowly decaying
 integrands. If the integrand decreases exponentially or faster,
-<tt class="xref docutils literal"><span class="pre">quad()</span></tt> will likely handle it without trouble (and generally be
-much faster than <tt class="xref docutils literal"><span class="pre">quadosc()</span></tt>):</p>
+<a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> will likely handle it without trouble (and generally be
+much faster than <a title="mpmath.quadosc" class="reference internal" href="#mpmath.quadosc"><tt class="xref docutils literal"><span class="pre">quadosc()</span></tt></a>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quadosc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">omega</span><span class="o">=</span><span class="mf">1</span><span class="p">)</span>
 <span class="go">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
@@ -461,7 +461,7 @@ simplify the code and provide a common infrastructure
 for tasks such as error estimation and node caching.</p>
 <p>You can implement a custom quadrature rule by subclassing
 <tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> and implementing the appropriate
-methods. The subclass can then be used by <tt class="xref docutils literal"><span class="pre">quad()</span></tt> by
+methods. The subclass can then be used by <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> by
 passing it as the <em>method</em> argument.</p>
 <p><tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> instances are supposed to be singletons.
 <tt class="xref docutils literal"><span class="pre">QuadratureRule</span></tt> therefore implements instance caching
@@ -511,11 +511,11 @@ node computation.</p>
 <tt class="descname">guess_degree</tt><big>(</big><em>prec</em><big>)</big><a class="headerlink" href="#mpmath.calculus.quadrature.QuadratureRule.guess_degree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a desired precision <img class="math" src="../_images/math/36f73fc1312ee0349b3f3a0f3bd9eb5504339011.png" alt="p"/> in bits, estimate the degree <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/>
 of the quadrature required to accomplish full accuracy for
-typical integrals. By default, <tt class="xref docutils literal"><span class="pre">quad()</span></tt> will perform up
+typical integrals. By default, <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> will perform up
 to <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> iterations. The value of <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> should be a slight
 overestimate, so that &#8220;slightly bad&#8221; integrals can be dealt
 with automatically using a few extra iterations. On the
-other hand, it should not be too big, so <tt class="xref docutils literal"><span class="pre">quad()</span></tt> can
+other hand, it should not be too big, so <a title="mpmath.quad" class="reference internal" href="#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a> can
 quit within a reasonable amount of time when it is given
 an &#8220;unsolvable&#8221; integral.</p>
 <p>The default formula used by <tt class="xref docutils literal"><span class="pre">guess_degree()</span></tt> is tuned
@@ -669,7 +669,7 @@ very smooth) integrands.</p>
 <p>The abscissas and weights are given by roots and values of
 Legendre polynomials, which are the orthogonal polynomials
 on <img class="math" src="../_images/math/5c3818b9565a33fd3aadba10026d32c5e3eea90f.png" alt="[-1, 1]"/> with respect to the unit weight
-(see <tt class="xref docutils literal"><span class="pre">legendre()</span></tt>).</p>
+(see <a title="mpmath.legendre" class="reference external" href="../functions/orthogonal.html#mpmath.legendre"><tt class="xref docutils literal"><span class="pre">legendre()</span></tt></a>).</p>
 <p>In this implementation, we take the &#8220;degree&#8221; <img class="math" src="../_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.png" alt="m"/> of the quadrature
 to denote a Gauss-Legendre rule of degree <img class="math" src="../_images/math/79ed1d781e90030a3e1bc71b11f5b05262bccde5.png" alt="3 \cdot 2^m"/> (following
 Borwein, Bailey &amp; Girgensohn). This way we get quadratic, rather
@@ -764,8 +764,8 @@ quadrature of degree of given degree (actually <img class="math" src="../_images
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

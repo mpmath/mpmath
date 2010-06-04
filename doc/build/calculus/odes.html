@@ -84,7 +84,7 @@ for any <img class="math" src="../_images/math/f50f6293717aa3975f6a13e30a9c1918c
 vector form. This transformation is described in standard texts
 on ODEs. Examples will also be given below.</p>
 <p><strong>Options, speed and accuracy</strong></p>
-<p>By default, <tt class="xref docutils literal"><span class="pre">odefun()</span></tt> uses a high-order Taylor series
+<p>By default, <a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> uses a high-order Taylor series
 method. For reasonably well-behaved problems, the solution will
 be fully accurate to within the working precision. Note that
 <em>F</em> must be possible to evaluate to very high precision
@@ -106,7 +106,7 @@ decreasing the <em>degree</em> for Taylor series is likely to give faster
 solution at low precision, while increasing is likely to be better
 at higher precision.</p>
 <p>The function
-object returned by <tt class="xref docutils literal"><span class="pre">odefun()</span></tt> caches the solutions at all step
+object returned by <a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> caches the solutions at all step
 points and uses polynomial interpolation between step points.
 Therefore, once <img class="math" src="../_images/math/7f48e0e8b7e3a5eb9b8af5dd8482abeab9f8062d.png" alt="y(x_1)"/> has been evaluated for some <img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1"/>,
 <img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)"/> can be evaluated very quickly for any <img class="math" src="../_images/math/89b1b114673cf95d4e145003dff953289713c1b9.png" alt="x_0 \le x \le x_1"/>.
@@ -142,7 +142,7 @@ can be input as (note that <em>f</em> returns a 1-element vector):</p>
 <span class="go">[2.71828182845905]</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">odefun()</span></tt> can solve nonlinear ODEs, which are generally
+<p><a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> can solve nonlinear ODEs, which are generally
 impossible (and at best difficult) to solve analytically. As
 an example of a nonlinear ODE, we will solve <img class="math" src="../_images/math/c34028f032b7862ef437fd28b823864b93f7e519.png" alt="y'(x) = x \sin(y(x))"/>
 for <img class="math" src="../_images/math/ebe1d8dcde3aca73ffbeadaef782c9260b794a56.png" alt="y(0) = \pi/2"/>. An exact solution happens to be known
@@ -159,7 +159,7 @@ for this problem, and is given by
 </div>
 <p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F"/> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, an ODE can be solved using direct
 integration. We can therefore obtain a reference solution with
-<tt class="xref docutils literal"><span class="pre">quad()</span></tt>:</p>
+<a title="mpmath.quad" class="reference external" href="integration.html#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
@@ -281,8 +281,8 @@ more robust</li>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

@@ -88,8 +88,8 @@ number theory, which we here denote by q-bar:</p>
 <div class="math">
 <p><img src="../_images/math/f3353b80b5e43440a63a9ad9dd0bdc470851e693.png" alt="\bar{q} = q^2 = e^{2 i \pi \tau}" /></p>
 </div><p>For convenience, mpmath provides functions to convert
-between the various parameters (<tt class="xref docutils literal"><span class="pre">qfrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">mfrom()</span></tt>,
-<tt class="xref docutils literal"><span class="pre">kfrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">taufrom()</span></tt>, <tt class="xref docutils literal"><span class="pre">qbarfrom()</span></tt>).</p>
+between the various parameters (<a title="mpmath.qfrom" class="reference internal" href="#mpmath.qfrom"><tt class="xref docutils literal"><span class="pre">qfrom()</span></tt></a>, <a title="mpmath.mfrom" class="reference internal" href="#mpmath.mfrom"><tt class="xref docutils literal"><span class="pre">mfrom()</span></tt></a>,
+<a title="mpmath.kfrom" class="reference internal" href="#mpmath.kfrom"><tt class="xref docutils literal"><span class="pre">kfrom()</span></tt></a>, <a title="mpmath.taufrom" class="reference internal" href="#mpmath.taufrom"><tt class="xref docutils literal"><span class="pre">taufrom()</span></tt></a>, <a title="mpmath.qbarfrom" class="reference internal" href="#mpmath.qbarfrom"><tt class="xref docutils literal"><span class="pre">qbarfrom()</span></tt></a>).</p>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
 <li><a class="reference external" href="../references.html#abramowitzstegun">[AbramowitzStegun]</a></li>
@@ -414,7 +414,7 @@ cos and sin. They are periodic functions:</p>
 </div>
 <p>Indeed, the series defining the theta functions are essentially
 trigonometric Fourier series. The coefficients can be retrieved
-using <tt class="xref docutils literal"><span class="pre">fourier()</span></tt>:</p>
+using <a title="mpmath.fourier" class="reference external" href="../calculus/approximation.html#mpmath.fourier"><tt class="xref docutils literal"><span class="pre">fourier()</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">jtheta</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mf">4</span><span class="p">))</span>
 <span class="go">([0.0, 1.68179, 0.0, 0.420448, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0])</span>
@@ -454,7 +454,7 @@ for special arguments:</p>
 <span class="go">1.086434811213308014575316</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> supports arbitrary precision evaluation and complex
+<p><a title="mpmath.jtheta" class="reference internal" href="#mpmath.jtheta"><tt class="xref docutils literal"><span class="pre">jtheta()</span></tt></a> supports arbitrary precision evaluation and complex
 arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -493,7 +493,7 @@ arguments:</p>
 </pre></div>
 </div>
 <p><strong>Possible issues</strong></p>
-<p>For <img class="math" src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1"/> or <img class="math" src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0"/>, <tt class="xref docutils literal"><span class="pre">jtheta()</span></tt> raises
+<p>For <img class="math" src="../_images/math/e7f46a50bae4c4ba199b8f1eba5497c4d8751d40.png" alt="|q| \ge 1"/> or <img class="math" src="../_images/math/22a257eca6d85bb59e15945d8ac6309a92cbe915.png" alt="\Im(\tau) \le 0"/>, <a title="mpmath.jtheta" class="reference internal" href="#mpmath.jtheta"><tt class="xref docutils literal"><span class="pre">jtheta()</span></tt></a> raises
 <tt class="docutils literal"><span class="pre">ValueError</span></tt>. This exception is also raised for <img class="math" src="../_images/math/f3e0d75c3450ca8f389d08d904ed1fc695734539.png" alt="|q|"/> extremely
 close to 1 (or equivalently <img class="math" src="../_images/math/1dc1c0119a604b91be9142370dc3159b6a9bbcb9.png" alt="\tau"/> very close to 0), since the
 series would converge too slowly:</p>
@@ -554,7 +554,7 @@ evaluating the chosen function for given arguments is returned.</p>
 </pre></div>
 </div>
 <p>The sn-function is doubly periodic in the complex plane with periods
-<img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)"/> and <img class="math" src="../_images/math/61df763bbb98a23963bd7678ac9a2449d93cb9d8.png" alt="2 i K(1-m)"/> (see <tt class="xref docutils literal"><span class="pre">ellipk()</span></tt>):</p>
+<img class="math" src="../_images/math/06f1dddb3f8dc6bc1be20dfa3d96014ffb755016.png" alt="4 K(m)"/> and <img class="math" src="../_images/math/61df763bbb98a23963bd7678ac9a2449d93cb9d8.png" alt="2 i K(1-m)"/> (see <a title="mpmath.ellipk" class="reference internal" href="#mpmath.ellipk"><tt class="xref docutils literal"><span class="pre">ellipk()</span></tt></a>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span> <span class="o">=</span> <span class="n">ellipfun</span><span class="p">(</span><span class="s">&#39;sn&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sn</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)</span>
 <span class="go">0.9628981775982774425751399</span>
@@ -754,8 +754,8 @@ algebraic values, e.g.:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

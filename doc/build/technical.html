@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Technical information &mdash; mpmath v0.15-svn documentation</title>
+    <title>Precision and representation issues &mdash; mpmath v0.15-svn documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -48,9 +48,45 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="technical-information">
-<h1>Technical information<a class="headerlink" href="#technical-information" title="Permalink to this headline">¶</a></h1>
-<p>Doing a high-precision calculation in mpmath typically just amounts to setting the precision and entering a formula. However, some more details of mpmath&#8217;s terminology and internal number model can be useful to avoid common errors, and is recommended for trying more advanced calculations.</p>
+  <div class="section" id="precision-and-representation-issues">
+<h1>Precision and representation issues<a class="headerlink" href="#precision-and-representation-issues" title="Permalink to this headline">¶</a></h1>
+<p>Most of the time, using mpmath is simply a matter of setting the desired precision and entering a formula. For verification purposes, a quite (but not always!) reliable technique is to calculate the same thing a second time at a higher precision and verifying that the results agree.</p>
+<p>To perform more advanced calculations, it is important to have some understanding of how mpmath works internally and what the possible sources of error are. This section gives an overview of arbitrary-precision binary floating-point arithmetic and some concepts from numerical analysis.</p>
+<p>The following concepts are important to understand:</p>
+<ul class="simple">
+<li>The main sources of numerical errors are rounding and cancellation, which are due to the use of finite-precision arithmetic, and truncation or approximation errors, which are due to approximating infinite sequences or continuous functions by a finite number of samples.</li>
+<li>Errors propagate between calculations. A small error in the input may result in a large error in the output.</li>
+<li>Most numerical algorithms for complex problems (e.g. integrals, derivatives) give wrong answers for sufficiently ill-behaved input. Sometimes virtually the only way to get a wrong answer is to design some very contrived input, but at other times the chance of accidentally obtaining a wrong result even for reasonable-looking input is quite high.</li>
+<li>Like any complex numerical software, mpmath has implementation bugs. You should be reasonably suspicious about any results computed by mpmath, even those it claims to be able to compute correctly! If possible, verify results analytically, try different algorithms, and cross-compare with other software.</li>
+</ul>
+<div class="section" id="precision-error-and-tolerance">
+<h2>Precision, error and tolerance<a class="headerlink" href="#precision-error-and-tolerance" title="Permalink to this headline">¶</a></h2>
+<p>The following terms are common in this documentation:</p>
+<ul class="simple">
+<li><em>Precision</em> (or <em>working precision</em>) is the precision at which floating-point arithmetic operations are performed.</li>
+<li><em>Error</em> is the difference between a computed approximation and the exact result.</li>
+<li><em>Accuracy</em> is the inverse of error.</li>
+<li><em>Tolerance</em> is the maximum error (or minimum accuracy) desired in a result.</li>
+</ul>
+<p>Error and accuracy can be measured either directly, or logarithmically in bits or digits. Specifically, if a <img class="math" src="_images/math/4146abdd0eafdf22247980a62b9c03d69aab792b.png" alt="\hat y"/> is an approximation for <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, then</p>
+<ul class="simple">
+<li>(Direct) absolute error = <img class="math" src="_images/math/b0ae1c682a1269ef38013b6ecadb45a1eaf14860.png" alt="|\hat y - y|"/></li>
+<li>(Direct) relative error = <img class="math" src="_images/math/ac0ec1afa8ea63f716d8494fb798d14b46781e03.png" alt="|\hat y - y| |y|^{-1}"/></li>
+<li>(Direct) absolute accuracy = <img class="math" src="_images/math/78f9d885f2388c4798e4552a28c35ff979cfda95.png" alt="|\hat y - y|^{-1}"/></li>
+<li>(Direct) relative accuracy = <img class="math" src="_images/math/42577c887d8b186afc2c09a18fb6adfa01b0b0bf.png" alt="|\hat y - y|^{-1} |y|"/></li>
+<li>(Logarithmic) absolute error = <img class="math" src="_images/math/3838c87350e2fbefc9da6603b8b1b07981814597.png" alt="\log_b |\hat y - y|"/></li>
+<li>(Logarithmic) relative error = <img class="math" src="_images/math/d016ad360cfebbb437b66aabd96ca53e503a545c.png" alt="\log_b |\hat y - y| - \log_b |y|"/></li>
+<li>(Logarithmic) absolute accuracy = <img class="math" src="_images/math/1a9d2c0cf96714f1432b78b7ed0a964dc9f913c1.png" alt="-\log_b |\hat y - y|"/></li>
+<li>(Logarithmic) relative accuracy = <img class="math" src="_images/math/a4f64a102525e38195b041019dd4520c72efa5b1.png" alt="-\log_b |\hat y - y| + \log_b |y|"/></li>
+</ul>
+<p>where <img class="math" src="_images/math/197213da9d06b2c5b59a10ad17f6a4aeb43d6697.png" alt="b = 2"/> and <img class="math" src="_images/math/a7203b7e6f070ba402b9cd45dee2bfc125164fd4.png" alt="b = 10"/> for bits and digits respectively. Note that:</p>
+<ul class="simple">
+<li>The logarithmic error roughly equals the position of the first incorrect bit or digit</li>
+<li>The logarithmic accuracy roughly equals the number of correct bits or digits in the result</li>
+</ul>
+<p>These definitions also hold for complex numbers, using <img class="math" src="_images/math/a0ede81cc3ee0bac21d9ffe052a89e59e3d348b0.png" alt="|a+bi| = \sqrt{a^2+b^2}"/>.</p>
+<p><em>Full accuracy</em> means that the accuracy of a result at least equals <em>prec</em>-1, i.e. it is correct except possibly for the last bit.</p>
+</div>
 <div class="section" id="representation-of-numbers">
 <h2>Representation of numbers<a class="headerlink" href="#representation-of-numbers" title="Permalink to this headline">¶</a></h2>
 <p>Mpmath uses binary arithmetic. A binary floating-point number is a number of the form <img class="math" src="_images/math/d94ac6e37dab3f88d122b45d857b89a589b4ef30.png" alt="man \times 2^{exp}"/> where both <em>man</em> (the <em>mantissa</em>) and <em>exp</em> (the <em>exponent</em>) are integers. Some examples of floating-point numbers are given in the following table.</p>
@@ -90,30 +126,29 @@
 <p>The representation as defined so far is not unique; one can always multiply the mantissa by 2 and subtract 1 from the exponent with no change in the numerical value. In mpmath, numbers are always normalized so that <em>man</em> is an odd number, with the exception of zero which is always taken to have <em>man = exp = 0</em>. With these conventions, every representable number has a unique representation. (Mpmath does not currently distinguish between positive and negative zero.)</p>
 <p>Simple mathematical operations are now easy to define. Due to uniqueness, equality testing of two numbers simply amounts to separately checking equality of the mantissas and the exponents. Multiplication of nonzero numbers is straightforward: <img class="math" src="_images/math/62544c4955e98bd894d847642366cef36f2c8582.png" alt="(m 2^e) \times (n 2^f) = (m n) \times 2^{e+f}"/>. Addition is a bit more involved: we first need to multiply the mantissa of one of the operands by a suitable power of 2 to obtain equal exponents.</p>
 <p>More technically, mpmath represents a floating-point number as a 4-tuple <em>(sign, man, exp, bc)</em> where <em>sign</em> is 0 or 1 (indicating positive vs negative) and the mantissa is nonnegative; <em>bc</em> (<em>bitcount</em>) is the size of the absolute value of the mantissa as measured in bits. Though redundant, keeping a separate sign field and explicitly keeping track of the bitcount significantly speeds up arithmetic (the bitcount, especially, is frequently needed but slow to compute from scratch due to the lack of a Python built-in function for the purpose).</p>
+<p>Contrary to popular belief, floating-point <em>numbers</em> do not come with an inherent &#8220;small uncertainty&#8221;, although floating-point <em>arithmetic</em> generally is inexact. Every binary floating-point number is an exact rational number. With arbitrary-precision integers used for the mantissa and exponent, floating-point numbers can be added, subtracted and multiplied <em>exactly</em>. In particular, integers and integer multiples of 1/2, 1/4, 1/8, 1/16, etc. can be represented, added and multiplied exactly in binary floating-point arithmetic.</p>
+<p>Floating-point arithmetic is generally approximate because the size of the mantissa must be limited for efficiency reasons. The maximum allowed width (bitcount) of the mantissa is called the precision or <em>prec</em> for short. Sums and products of floating-point numbers are exact as long as the absolute value of the mantissa is smaller than <img class="math" src="_images/math/5f91a4cc13c7eeb8d38c62ffe73f8ecc52854018.png" alt="2^{prec}"/>. As soon as the mantissa becomes larger than this, it is truncated to contain at most <em>prec</em> bits (the exponent is incremented accordingly to preserve the magnitude of the number), and this operation introduces a rounding error. Division is also generally inexact; although we can add and multiply exactly by setting the precision high enough, no precision is high enough to represent for example 1/3 exactly (the same obviously applies for roots, trigonometric functions, etc).</p>
 <p>The special numbers <tt class="docutils literal"><span class="pre">+inf</span></tt>, <tt class="docutils literal"><span class="pre">-inf</span></tt> and <tt class="docutils literal"><span class="pre">nan</span></tt> are represented internally by a zero mantissa and a nonzero exponent.</p>
+<p>Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory. Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of <img class="math" src="_images/math/bfc92368b446ad26b9b4718f0042e9893cea1fb8.png" alt="10^{100000}"/>. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
 <p>For further details on how the arithmetic is implemented, refer to the mpmath source code. The basic arithmetic operations are found in the <tt class="docutils literal"><span class="pre">libmp</span></tt> directory; many functions there are commented extensively.</p>
 </div>
-<div class="section" id="precision-and-accuracy">
-<h2>Precision and accuracy<a class="headerlink" href="#precision-and-accuracy" title="Permalink to this headline">¶</a></h2>
-<p>Contrary to popular superstition, floating-point numbers  do not come with an inherent &#8220;small uncertainty&#8221;. Every binary floating-point number is an exact rational number. With arbitrary-precision integers used for the mantissa and exponent, floating-point numbers can be added, subtracted and multiplied <em>exactly</em>. In particular, integers and integer multiples of 1/2, 1/4, 1/8, 1/16, etc. can be represented, added and multiplied exactly in binary floating-point.</p>
-<p>The reason why floating-point arithmetic is generally approximate is that we set a limit to the size of the mantissa for efficiency reasons. The maximum allowed width (bitcount) of the mantissa is called the precision or <tt class="docutils literal"><span class="pre">prec</span></tt> for short. Sums and products are exact as long as the absolute value of the mantissa is smaller than 2^prec. As soon as the mantissa becomes larger than this threshold, we truncate it to have at most  <tt class="docutils literal"><span class="pre">prec</span></tt> bits (the exponent is incremented accordingly to preserve the magnitude of the number), and it is this operation that typically introduces numerical errors. Division is also not generally exact; although we can add and multiply exactly by setting the precision high enough, no precision is high enough to represent for example 1/3 exactly (the same obviously applies for roots, trigonometric functions, etc).</p>
 <div class="section" id="decimal-issues">
-<h3>Decimal issues<a class="headerlink" href="#decimal-issues" title="Permalink to this headline">¶</a></h3>
+<h2>Decimal issues<a class="headerlink" href="#decimal-issues" title="Permalink to this headline">¶</a></h2>
 <p>Mpmath uses binary arithmetic internally, while most interaction with the user is done via the decimal number system. Translating between binary and decimal numbers is a somewhat subtle matter; many Python novices run into the following &#8220;bug&#8221; (addressed in the <a class="reference external" href="http://www.python.org/doc/faq/general/#why-are-floating-point-calculations-so-inaccurate">General Python FAQ</a>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">0.1</span>
 <span class="go">0.10000000000000001</span>
 </pre></div>
 </div>
 <p>Decimal fractions fall into the category of numbers that generally cannot be represented exactly in binary floating-point form. For example, none of the numbers 0.1, 0.01, 0.001 has an exact representation as a binary floating-point number. Although mpmath can approximate decimal fractions with any accuracy, it does not solve this problem for all uses; users who need <em>exact</em> decimal fractions should look at the <tt class="docutils literal"><span class="pre">decimal</span></tt> module in Python&#8217;s standard library (or perhaps use fractions, which are much faster).</p>
-<p>With <tt class="docutils literal"><span class="pre">prec</span></tt> bits of precision, an arbitrary number can be approximated to within 2^(-prec). With <tt class="docutils literal"><span class="pre">dps</span></tt> decimal digits, the corresponding error is 10^(-dps). The equivalent values for <tt class="docutils literal"><span class="pre">prec</span></tt> and <tt class="docutils literal"><span class="pre">dps</span></tt> are therefore related proportionally via the factor C = log(10)/log(2), or roughly 3.32. For example, the standard (binary) precision in mpmath is 53 bits, which corresponds to a decimal precision of 15.95 digits.</p>
-<p>More precisely, mpmath uses the following formulas to translate between <tt class="docutils literal"><span class="pre">prec</span></tt> and <tt class="docutils literal"><span class="pre">dps</span></tt>:</p>
+<p>With <em>prec</em> bits of precision, an arbitrary number can be approximated relatively to within <img class="math" src="_images/math/7040760c61094e29727ade81ff77665ce6f75449.png" alt="2^{-prec}"/>, or within <img class="math" src="_images/math/1918376758fe60850009f1d7dc5567131cf86960.png" alt="10^{-dps}"/> for <em>dps</em> decimal digits. The equivalent values for <em>prec</em> and <em>dps</em> are therefore related proportionally via the factor <img class="math" src="_images/math/a007218d3ef83696054b73af9d4b4be18dd211ec.png" alt="C = \log(10)/\log(2)"/>, or roughly 3.32. For example, the standard (binary) precision in mpmath is 53 bits, which corresponds to a decimal precision of 15.95 digits.</p>
+<p>More precisely, mpmath uses the following formulas to translate between <em>prec</em> and <em>dps</em>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">dps</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">prec</span><span class="p">)</span> <span class="o">/</span> <span class="n">C</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)))</span>
 
 <span class="n">prec</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">dps</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">C</span><span class="p">)))</span>
 </pre></div>
 </div>
 <p>Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This is done to hide minor rounding errors and artifacts resulting from binary-decimal conversion. As a result, mpmath interprets 53 bits as giving 15 digits of decimal precision, not 16.</p>
-<p>The <tt class="docutils literal"><span class="pre">dps</span></tt> value controls the number of digits to display when printing numbers with <tt class="docutils literal"><span class="pre">str</span></tt>, while the decimal precision used by <tt class="docutils literal"><span class="pre">repr</span></tt> is set two or three digits higher. For example, with 15 dps we have:</p>
+<p>The <em>dps</em> value controls the number of digits to display when printing numbers with <tt class="xref docutils literal"><span class="pre">str()</span></tt>, while the decimal precision used by <tt class="xref docutils literal"><span class="pre">repr()</span></tt> is set two or three digits higher. For example, with 15 dps we have:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
@@ -123,87 +158,53 @@
 </pre></div>
 </div>
 <p>The extra digits in the output from <tt class="docutils literal"><span class="pre">repr</span></tt> ensure that <tt class="docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">eval(repr(x))</span></tt> holds, i.e. that numbers can be converted to strings and back losslessly.</p>
-<p>It should be noted that precision and accuracy do not always correlate when translating from binary to decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number 2^(-50) has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits:</p>
+<p>It should be noted that precision and accuracy do not always correlate when translating between binary and decimal. As a simple example, the number 0.1 has a decimal precision of 1 digit but is an infinitely accurate representation of 1/10. Conversely, the number <img class="math" src="_images/math/66d0974506f016cc60665a7420b87a3df0be9bf0.png" alt="2^{-50}"/> has a binary representation with 1 bit of precision that is infinitely accurate; the same number can actually be represented exactly as a decimal, but doing so requires 35 significant digits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="mf">0.00000000000000088817841970012523233890533447265625</span>
 </pre></div>
 </div>
-<p>In fact, all binary floating-point numbers can be represented exactly as decimals (despite the converse not being true), but displaying more than <tt class="docutils literal"><span class="pre">dps</span></tt> digits is usually not useful, since typically only at most <tt class="docutils literal"><span class="pre">dps</span></tt> digits will be correct when the floating-point number is an approximation for some computed quantity.</p>
+<p>All binary floating-point numbers can be represented exactly as decimals (possibly requiring many digits), but the converse is false.</p>
 </div>
-</div>
-<div class="section" id="rounding">
-<h2>Rounding<a class="headerlink" href="#rounding" title="Permalink to this headline">¶</a></h2>
-<p>There are several different strategies for rounding a too large mantissa or a result that cannot at all be represented exactly in binary floating-point form (such as 1/3 or log(2)). Mpmath supports the following rounding modes:</p>
-<blockquote>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="84%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Name</th>
-<th class="head">Direction</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>Floor</td>
-<td>Towards negative infinity</td>
-</tr>
-<tr><td>Ceiling</td>
-<td>Towards positive infinity</td>
-</tr>
-<tr><td>Down</td>
-<td>Towards 0</td>
-</tr>
-<tr><td>Up</td>
-<td>Away from 0</td>
-</tr>
-<tr><td>Nearest</td>
-<td>To nearest; to the nearest even number on a tie</td>
-</tr>
-</tbody>
-</table>
-</blockquote>
-<p>The first four modes are called <em>directed</em> rounding schemes and are useful for implementing interval arithmetic; they are also fast. Rounding to nearest, which mpmath uses by default, is the slowest but most accurate method. Directed rounding is currently only available via interval arithmetic or via the interface in the <tt class="docutils literal"><span class="pre">libmpf</span></tt> module.</p>
-<p>The arithmetic operations <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> and <tt class="xref docutils literal"><span class="pre">sqrt()</span></tt> acting on real floating-point numbers always round their results <em>correctly</em> in mpmath; that is, they are guaranteed to give exact results when possible, they always round in the intended direction, and they don&#8217;t round to a number farther away than necessary. Exponentiation by an integer <em>n</em> preserves directions but may round too far if either the mantissa or <em>n</em> is very large.</p>
-<p>Evaluation of transcendental functions is generally performed by computing an approximation with finite precision slightly higher than the target precision, and rounding the result. This gives correctly rounded results with a high probability, but can be wrong in exceptional cases.</p>
-<p>Rounding for radix conversion is a slightly tricky business. When converting to a binary floating-point number from a decimal string, mpmath writes the number as an exact fraction and performs correct rounding division if the number is of reasonable size (roughly, larger than <img class="math" src="_images/math/7154f5f73a687b60aeca86cfdbe58239c25b97bc.png" alt="10^{-100}"/> and smaller than <img class="math" src="_images/math/97b41aee75eee4f322b88a22ab66cf7565f94e27.png" alt="10^{100}"/>), guaranteeing correct rounding. If the exponent is enormous, mpmath first performs a floating-point division to reduce it to a manageable size; this can produce a (tiny) rounding error.</p>
-<p>When converting from binary to decimal, mpmath first performs an approximate radix conversion with slightly increased precision, then truncates the resulting decimal number to remove long sequences of trailing 0&#8217;s and 9&#8217;s, and finally rounds to nearest, rounding up (away from zero) on a tie. The <tt class="docutils literal"><span class="pre">decimal</span></tt> library could be used to provide more control over the rounding in the binary-to-decimal conversion, and mpmath did do radix conversions via <tt class="docutils literal"><span class="pre">decimal</span></tt> in older versions, but this was far too slow compared to using a custom algorithm.</p>
-</div>
-<div class="section" id="exponent-range">
-<h2>Exponent range<a class="headerlink" href="#exponent-range" title="Permalink to this headline">¶</a></h2>
-<p>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly <img class="math" src="_images/math/20aff77c46a0bdeea25af0edb85fdff922923b94.png" alt="10^{-300}"/> and <img class="math" src="_images/math/7aa5f707dadd9b22c982bdab9dae7f5a7891af81.png" alt="10^{300}"/>. Mpmath uses arbitrary precision integers for both the mantissa and the exponent, so numbers can be as large in magnitude as permitted by the computer&#8217;s memory.</p>
-<p>Some care may be necessary when working with extremely large numbers. Although standard arithmetic operators are safe, it is for example futile to attempt to compute the exponential function of of <img class="math" src="_images/math/bfc92368b446ad26b9b4718f0042e9893cea1fb8.png" alt="10^{100000}"/>. Mpmath does not complain when asked to perform such a calculation, but instead chugs away on the problem to the best of its ability, assuming that computer resources are infinite. In the worst case, this will be slow and allocate a huge amount of memory; if entirely impossible Python will at some point raise <tt class="docutils literal"><span class="pre">OverflowError:</span> <span class="pre">long</span> <span class="pre">int</span> <span class="pre">too</span> <span class="pre">large</span> <span class="pre">to</span> <span class="pre">convert</span> <span class="pre">to</span> <span class="pre">int</span></tt>.</p>
-<p>In some situations, it might be more convenient if mpmath could &#8220;round&#8221; extremely small numbers to 0 and extremely large numbers to <tt class="docutils literal"><span class="pre">inf</span></tt>, and directly raise an exception or return <tt class="docutils literal"><span class="pre">nan</span></tt> if there is no reasonable chance of finishing a computation. This option is not available, but could be implemented in the future on demand.</p>
-</div>
-<div class="section" id="compatibility">
-<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
-<p>On most systems, Python&#8217;s <tt class="docutils literal"><span class="pre">float</span></tt> type represents an IEEE 754 <em>double precision</em> number, with a precision of 53 bits and rounding-to-nearest. With default precision and rounding settings, mpmath <tt class="docutils literal"><span class="pre">mpf</span></tt> numbers roughly emulate the behavior of the <tt class="docutils literal"><span class="pre">float</span></tt> type. Sources of incompatibility include the following:</p>
+<div class="section" id="correctness-guarantees">
+<h2>Correctness guarantees<a class="headerlink" href="#correctness-guarantees" title="Permalink to this headline">¶</a></h2>
+<p>Basic arithmetic operations (with the <tt class="docutils literal"><span class="pre">mp</span></tt> context) are always performed with correct rounding. Results that can be represented exactly are guranteed to be exact, and results from single inexact operations are guaranteed to be the best possible rounded values. For higher-level operations, mpmath does not generally guarantee correct rounding. In general, mpmath only guarantees that it will use at least the user-set precision to perform a given calculation. <em>The user may have to manually set the working precision higher than the desired accuracy for the result, possibly much higher.</em></p>
+<p>Functions for evaluation of transcendental functions, linear algebra operations, numerical integration, etc., usually automatically increase the working precision and use a stricter tolerance to give a correctly rounded result with high probability: for example, at 50 bits the temporary precision might be set to 70 bits and the tolerance might be set to 60 bits. It can often be assumed that such functions return values that have full accuracy, given inputs that are exact (or sufficiently precise approximations of exact values), but the user must exercise judgement about whether to trust mpmath.</p>
+<p>The level of rigor in mpmath covers the entire spectrum from &#8220;always correct by design&#8221; through &#8220;nearly always correct&#8221; and &#8220;handling the most common errors&#8221; to &#8220;just computing blindly and hoping for the best&#8221;. Of course, a long-term development goal is to successively increase the rigor where possible. The following list might give an idea of the current state.</p>
+<p>Operations that are correctly rounded:</p>
 <ul class="simple">
-<li>On some systems, Python uses 80-bit (extended double) registers for floating-point operations. Due to truncation effects, this makes the <tt class="docutils literal"><span class="pre">float</span></tt> type less accurate. This problem is only known to occur with Python versions compiled with GCC on 32-bit systems.</li>
+<li>Addition, subtraction and multiplication of real and complex numbers.</li>
+<li>Division and square roots of real numbers.</li>
+<li>Powers of real numbers, assuming sufficiently small integer exponents (huge powers are rounded in the right direction, but possibly farther than necessary).</li>
+<li>Conversion from decimal to binary, for reasonably sized numbers (roughly between <img class="math" src="_images/math/7154f5f73a687b60aeca86cfdbe58239c25b97bc.png" alt="10^{-100}"/> and <img class="math" src="_images/math/97b41aee75eee4f322b88a22ab66cf7565f94e27.png" alt="10^{100}"/>).</li>
+<li>Typically, transcendental functions for exact input-output pairs.</li>
+</ul>
+<p>Operations that should be fully accurate (however, the current implementation may be based on a heuristic error analysis):</p>
+<ul class="simple">
+<li>Radix conversion (large or small numbers).</li>
+<li>Mathematical constants like <img class="math" src="_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>.</li>
+<li>Both real and imaginary parts of exp, cos, sin, cosh, sinh, log.</li>
+<li>Other elementary functions (the largest of the real and imaginary part).</li>
+<li>The gamma and log-gamma functions (the largest of the real and the imaginary part; both, when close to real axis).</li>
+<li>Some functions based on hypergeometric series (the largest of the real and imaginary part).</li>
+</ul>
+<p>Correctness of root-finding, numerical integration, etc. largely depends on the well-behavedness of the input functions. Specific limitations are sometimes noted in the respective sections of the documentation.</p>
+</div>
+<div class="section" id="double-precision-emulation">
+<h2>Double precision emulation<a class="headerlink" href="#double-precision-emulation" title="Permalink to this headline">¶</a></h2>
+<p>On most systems, Python&#8217;s <tt class="docutils literal"><span class="pre">float</span></tt> type represents an IEEE 754 <em>double precision</em> number, with a precision of 53 bits and rounding-to-nearest. With default precision (<tt class="docutils literal"><span class="pre">mp.prec</span> <span class="pre">=</span> <span class="pre">53</span></tt>), the mpmath <tt class="docutils literal"><span class="pre">mpf</span></tt> type roughly emulates the behavior of the <tt class="docutils literal"><span class="pre">float</span></tt> type. Sources of incompatibility include the following:</p>
+<ul class="simple">
+<li>In hardware floating-point arithmetic, the size of the exponent is restricted to a fixed range: regular Python floats have a range between roughly <img class="math" src="_images/math/20aff77c46a0bdeea25af0edb85fdff922923b94.png" alt="10^{-300}"/> and <img class="math" src="_images/math/7aa5f707dadd9b22c982bdab9dae7f5a7891af81.png" alt="10^{300}"/>. Mpmath does not emulate overflow or underflow when exponents fall outside this range.</li>
+<li>On some systems, Python uses 80-bit (extended double) registers for floating-point operations. Due to double rounding, this makes the <tt class="docutils literal"><span class="pre">float</span></tt> type less accurate. This problem is only known to occur with Python versions compiled with GCC on 32-bit systems.</li>
 <li>Machine floats very close to the exponent limit round subnormally, meaning that they lose accuracy (Python may raise an exception instead of rounding a <tt class="docutils literal"><span class="pre">float</span></tt> subnormally).</li>
 <li>Mpmath is able to produce more accurate results for transcendental functions.</li>
 </ul>
 </div>
-<div class="section" id="error-terminology">
-<h2>Error terminology<a class="headerlink" href="#error-terminology" title="Permalink to this headline">¶</a></h2>
-<p>Error is the difference between a computed value and the exact result;
-accuracy is the inverse of error. The error is usually measured
-directly, in bits, or in digits. Specifically, if a <img class="math" src="_images/math/4146abdd0eafdf22247980a62b9c03d69aab792b.png" alt="\hat y"/> is
-an approximation for <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, then</p>
+<div class="section" id="further-reading">
+<h2>Further reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h2>
+<p>There are many excellent textbooks on numerical analysis and floating-point arithmetic. Some good web resources are:</p>
 <ul class="simple">
-<li>Absolute error = <img class="math" src="_images/math/b0ae1c682a1269ef38013b6ecadb45a1eaf14860.png" alt="|\hat y - y|"/></li>
-<li>Relative error = <img class="math" src="_images/math/ac0ec1afa8ea63f716d8494fb798d14b46781e03.png" alt="|\hat y - y| |y|^{-1}"/></li>
-<li>Absolute accuracy = <img class="math" src="_images/math/78f9d885f2388c4798e4552a28c35ff979cfda95.png" alt="|\hat y - y|^{-1}"/></li>
-<li>Relative accuracy = <img class="math" src="_images/math/42577c887d8b186afc2c09a18fb6adfa01b0b0bf.png" alt="|\hat y - y|^{-1} |y|"/></li>
+<li><a class="reference external" href="http://docs.sun.com/source/806-3568/ncg_goldberg.html">David Goldberg, What Every Computer Scientist Should Know About Floating-Point Arithmetic</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Numerical_analysis">The Wikipedia article about numerical analysis</a></li>
 </ul>
-<p>Or, logarithmically:</p>
-<ul class="simple">
-<li>Absolute error = <img class="math" src="_images/math/3838c87350e2fbefc9da6603b8b1b07981814597.png" alt="\log_b |\hat y - y|"/></li>
-<li>Relative error = <img class="math" src="_images/math/d016ad360cfebbb437b66aabd96ca53e503a545c.png" alt="\log_b |\hat y - y| - \log_b |y|"/></li>
-<li>Absolute accuracy = <img class="math" src="_images/math/1a9d2c0cf96714f1432b78b7ed0a964dc9f913c1.png" alt="-\log_b |\hat y - y|"/></li>
-<li>Relative accuracy = <img class="math" src="_images/math/a4f64a102525e38195b041019dd4520c72efa5b1.png" alt="-\log_b |\hat y - y| + \log_b |y|"/></li>
-</ul>
-<p>where <img class="math" src="_images/math/197213da9d06b2c5b59a10ad17f6a4aeb43d6697.png" alt="b = 2"/> and <img class="math" src="_images/math/a7203b7e6f070ba402b9cd45dee2bfc125164fd4.png" alt="b = 10"/> for bits and digits respectively.</p>
 </div>
 </div>
 
@@ -215,16 +216,13 @@ an approximation for <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b
         <div class="sphinxsidebarwrapper">
             <h3><a href="index.html">Table Of Contents</a></h3>
             <ul>
-<li><a class="reference external" href="#">Technical information</a><ul>
+<li><a class="reference external" href="#">Precision and representation issues</a><ul>
+<li><a class="reference external" href="#precision-error-and-tolerance">Precision, error and tolerance</a></li>
 <li><a class="reference external" href="#representation-of-numbers">Representation of numbers</a></li>
-<li><a class="reference external" href="#precision-and-accuracy">Precision and accuracy</a><ul>
 <li><a class="reference external" href="#decimal-issues">Decimal issues</a></li>
-</ul>
-</li>
-<li><a class="reference external" href="#rounding">Rounding</a></li>
-<li><a class="reference external" href="#exponent-range">Exponent range</a></li>
-<li><a class="reference external" href="#compatibility">Compatibility</a></li>
-<li><a class="reference external" href="#error-terminology">Error terminology</a></li>
+<li><a class="reference external" href="#correctness-guarantees">Correctness guarantees</a></li>
+<li><a class="reference external" href="#double-precision-emulation">Double precision emulation</a></li>
+<li><a class="reference external" href="#further-reading">Further reading</a></li>
 </ul>
 </li>
 </ul>
@@ -276,8 +274,8 @@ an approximation for <img class="math" src="_images/math/092e364e1d9d19ad5fffb0b
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2009, Fredrik Johansson.
-      Last updated on Mar 16, 2010.
+      &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jun 04, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 
