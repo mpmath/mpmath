@@ -7,7 +7,6 @@ Mpmath implements the standard functions from Python's ``math`` and ``cmath`` mo
    :maxdepth: 2
 
    constants.txt
-   numberparts.txt
    powers.txt
    trigonometric.txt
    hyperbolic.txt
