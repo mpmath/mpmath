@@ -6,8 +6,19 @@ q-Pochhammer symbol
 
 :func:`qp`
 ^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.qp(a, q=None, n=None)
+.. autofunction:: mpmath.qp(a, q=None, n=None, **kwargs)
 
+
+q-gamma and factorial
+..................................................
+
+:func:`qgamma`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.qgamma(z, q, **kwargs)
+
+:func:`qfac`
+^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.qfac(z, q, **kwargs)
 
 Hypergeometric q-series
 ..................................................

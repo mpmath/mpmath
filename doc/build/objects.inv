@@ -58,6 +58,7 @@ mpmath.gammainc function functions/expintegrals.html
 mpmath.meijerg function functions/hypergeometric.html
 mpmath.plot function plotting.html
 mpmath.fourier function calculus/approximation.html
+mpmath.rand function general.html
 mpmath.fresnelc function functions/expintegrals.html
 mpmath.barnesg function functions/gamma.html
 mpmath.mag function general.html
@@ -100,6 +101,7 @@ mpmath.hermite function functions/orthogonal.html
 mpmath.acsc function functions/trigonometric.html
 mpmath.taylor function calculus/approximation.html
 mpmath.kleinj function functions/elliptic.html
+mpmath.qgamma function functions/qfunctions.html
 mpmath.altzeta function functions/zeta.html
 mpmath.calculus.quadrature.QuadratureRule.summation method calculus/integration.html
 mpmath.mp.apery attribute functions/constants.html
@@ -222,7 +224,7 @@ mpmath.clcos function functions/zeta.html
 mpmath.acoth function functions/hyperbolic.html
 mpmath.cosh function functions/hyperbolic.html
 mpmath.zetazero function functions/zeta.html
-mpmath.rand function general.html
+mpmath.qfac function functions/qfunctions.html
 mpmath.cosm function matrices.html
 mpmath.fourierval function calculus/approximation.html
 mpmath.psi function functions/gamma.html

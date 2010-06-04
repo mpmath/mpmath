@@ -58,7 +58,7 @@
 <h3><tt class="xref docutils literal"><span class="pre">qp()</span></tt><a class="headerlink" href="#qp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.qp">
-<tt class="descclassname">mpmath.</tt><tt class="descname">qp</tt><big>(</big><em>a</em>, <em>q=None</em>, <em>n=None</em><big>)</big><a class="headerlink" href="#mpmath.qp" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">qp</tt><big>(</big><em>a</em>, <em>q=None</em>, <em>n=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the q-Pochhammer symbol (or q-rising factorial)</p>
 <div class="math">
 <p><img src="../_images/math/fc763511f4703ac6549f7e4aeffb74dc5f461c46.png" alt="(a; q)_n = \prod_{k=0}^{n-1} (1-a q^k)" /></p>
@@ -125,6 +125,69 @@ For example, the following identity holds:</p>
 
 </div>
 </div>
+<div class="section" id="q-gamma-and-factorial">
+<h2>q-gamma and factorial<a class="headerlink" href="#q-gamma-and-factorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qgamma">
+<h3><tt class="xref docutils literal"><span class="pre">qgamma()</span></tt><a class="headerlink" href="#qgamma" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.qgamma">
+<tt class="descclassname">mpmath.</tt><tt class="descname">qgamma</tt><big>(</big><em>z</em>, <em>q</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qgamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the q-gamma function</p>
+<div class="math">
+<p><img src="../_images/math/2105c28decf1bb8f0d13c5d68a29cb44997dd0a1.png" alt="\Gamma_q(z) = \frac{(q; q)_{\infty}}{(q^z; q)_{\infty}} (1-q)^{1-z}." /></p>
+</div><p><strong>Examples</strong></p>
+<p>Evaluation for real and complex arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qgamma</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="go">4.046875</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qgamma</span><span class="p">(</span><span class="mf">6</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">121226245.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qgamma</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">0.5</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.1663082382255199834630088 + 0.01952474576025952984418217j)</span>
+</pre></div>
+</div>
+<p>The q-gamma function satisfies a functional equation similar
+to that of the ordinary gamma function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qgamma</span><span class="p">(</span><span class="n">z</span><span class="o">+</span><span class="mf">1</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+<span class="go">1.428277424823760954685912</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">q</span><span class="o">**</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">qgamma</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+<span class="go">1.428277424823760954685912</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="qfac">
+<h3><tt class="xref docutils literal"><span class="pre">qfac()</span></tt><a class="headerlink" href="#qfac" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.qfac">
+<tt class="descclassname">mpmath.</tt><tt class="descname">qfac</tt><big>(</big><em>z</em>, <em>q</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.qfac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the q-factorial,</p>
+<div class="math">
+<p><img src="../_images/math/3e50edea0eb21ef537c4f26a2fc230aafd973ecb.png" alt="[n]_q! = (1+q)(1+q+q^2)\cdots(1+q+\cdots+q^{n-1})" /></p>
+</div><p>or more generally</p>
+<div class="math">
+<p><img src="../_images/math/41d27f52860f33422bbc768f64238f0d9d3167ed.png" alt="[z]_q! = \frac{(q;q)_z}{(1-q)^z}." /></p>
+</div><p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qfac</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qfac</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">3</span><span class="p">)</span>
+<span class="go">2080.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qfac</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="mf">6</span><span class="p">)</span>
+<span class="go">121226245.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qfac</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(0.4370556551322672478613695 + 0.2609739839216039203708921j)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="hypergeometric-q-series">
 <h2>Hypergeometric q-series<a class="headerlink" href="#hypergeometric-q-series" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="qhyper">
@@ -182,6 +245,11 @@ For example, the following identity holds:</p>
 <li><a class="reference external" href="#">q-functions</a><ul>
 <li><a class="reference external" href="#q-pochhammer-symbol">q-Pochhammer symbol</a><ul>
 <li><a class="reference external" href="#qp"><tt class="docutils literal"><span class="pre">qp()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#q-gamma-and-factorial">q-gamma and factorial</a><ul>
+<li><a class="reference external" href="#qgamma"><tt class="docutils literal"><span class="pre">qgamma()</span></tt></a></li>
+<li><a class="reference external" href="#qfac"><tt class="docutils literal"><span class="pre">qfac()</span></tt></a></li>
 </ul>
 </li>
 <li><a class="reference external" href="#hypergeometric-q-series">Hypergeometric q-series</a><ul>
