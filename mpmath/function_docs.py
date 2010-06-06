@@ -7928,6 +7928,131 @@ Also incomplete elliptic integrals fall into this category [1]::
 
 """
 
+angerj = r"""
+Gives the Anger function
+
+.. math ::
+
+    \mathbf{J}_{\nu}(z) = \frac{1}{\pi}
+        \int_0^{\pi} \cos(\nu t - z \sin t) dt
+
+which is an entire function of both the parameter `\nu` and
+the argument `z`. It solves the inhomogeneous Bessel differential
+equation
+
+.. math ::
+
+    f''(z) + \frac{1}{z}f'(z) + \left(1-\frac{\nu^2}{z^2}\right) f(z)
+        = \frac{(z-\nu)}{\pi z^2} \sin(\pi \nu).
+
+**Examples**
+
+Evaluation for real and complex parameter and argument::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> angerj(2,3)
+    0.4860912605858910769078311
+    >>> angerj(-3+4j, 2+5j)
+    (-5033.358320403384472395612 + 585.8011892476145118551756j)
+    >>> angerj(3.25, 1e6j)
+    (4.630743639715893346570743e+434290 - 1.117960409887505906848456e+434291j)
+    >>> angerj(-1.5, 1e6)
+    0.0002795719747073879393087011
+
+The Anger function coincides with the Bessel J-function when `\nu`
+is an integer::
+
+    >>> angerj(1,3); besselj(1,3)
+    0.3390589585259364589255146
+    0.3390589585259364589255146
+    >>> angerj(1.5,3); besselj(1.5,3)
+    0.4088969848691080859328847
+    0.4777182150870917715515015
+
+Verifying the differential equation::
+
+    >>> v,z = mpf(2.25), 0.75
+    >>> f = lambda z: angerj(v,z)
+    >>> diff(f,z,2) + diff(f,z)/z + (1-(v/z)**2)*f(z)
+    -0.6002108774380707130367995
+    >>> (z-v)/(pi*z**2) * sinpi(v)
+    -0.6002108774380707130367995
+
+Verifying the integral representation::
+
+    >>> angerj(v,z)
+    0.1145380759919333180900501
+    >>> quad(lambda t: cos(v*t-z*sin(t))/pi, [0,pi])
+    0.1145380759919333180900501
+
+**References**
+
+1. [DLMF]_ section 11.10: Anger-Weber Functions
+"""
+
+webere = r"""
+Gives the Weber function
+
+.. math ::
+
+    \mathbf{E}_{\nu}(z) = \frac{1}{\pi}
+        \int_0^{\pi} \sin(\nu t - z \sin t) dt
+
+which is an entire function of both the parameter `\nu` and
+the argument `z`. It solves the inhomogeneous Bessel differential
+equation
+
+.. math ::
+
+    f''(z) + \frac{1}{z}f'(z) + \left(1-\frac{\nu^2}{z^2}\right) f(z)
+        = -\frac{1}{\pi z^2} (z+\nu+(z-\nu)\cos(\pi \nu)).
+
+**Examples**
+
+Evaluation for real and complex parameter and argument::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> webere(2,3)
+    -0.1057668973099018425662646
+    >>> webere(-3+4j, 2+5j)
+    (-585.8081418209852019290498 - 5033.314488899926921597203j)
+    >>> webere(3.25, 1e6j)
+    (-1.117960409887505906848456e+434291 - 4.630743639715893346570743e+434290j)
+    >>> webere(3.25, 1e6)
+    -0.00002812518265894315604914453
+
+Up to addition of a rational function of `z`, the Weber function coincides
+with the Struve H-function when `\nu` is an integer::
+
+    >>> webere(1,3); 2/pi-struveh(1,3)
+    -0.3834897968188690177372881
+    -0.3834897968188690177372881
+    >>> webere(5,3); 26/(35*pi)-struveh(5,3)
+    0.2009680659308154011878075
+    0.2009680659308154011878075
+
+Verifying the differential equation::
+
+    >>> v,z = mpf(2.25), 0.75
+    >>> f = lambda z: webere(v,z)
+    >>> diff(f,z,2) + diff(f,z)/z + (1-(v/z)**2)*f(z)
+    -1.097441848875479535164627
+    >>> -(z+v+(z-v)*cospi(v))/(pi*z**2)
+    -1.097441848875479535164627
+
+Verifying the integral representation::
+
+    >>> webere(v,z)
+    0.1486507351534283744485421
+    >>> quad(lambda t: sin(v*t-z*sin(t))/pi, [0,pi])
+    0.1486507351534283744485421
+
+**References**
+
+1. [DLMF]_ section 11.10: Anger-Weber Functions
+"""
 
 appellf2 = r"""
 Gives the Appell F2 hypergeometric function of two variables

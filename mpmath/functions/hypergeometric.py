@@ -1777,6 +1777,33 @@ def struvel(ctx,n,z, **kwargs):
         return [([z/2, 0.5*ctx.sqrt(ctx.pi)], [n+1, -1], [], [n+1.5], [1], [1.5, n+1.5], (z/2)**2)]
     return ctx.hypercomb(h, [n], **kwargs)
 
+def _anger(ctx,which,v,z,**kwargs):
+    v = ctx._convert_param(v)[0]
+    z = ctx.convert(z)
+    def h(v):
+        b = ctx.mpq_1_2
+        u = v*b
+        m = b*3
+        a1,a2,b1,b2 = m-u, m+u, 1-u, 1+u
+        c, s = ctx.cospi_sinpi(u)
+        if which == 0:
+            A, B = [b*z, s], [c]
+        if which == 1:
+            A, B = [b*z, -c], [s]
+        w = ctx.square_exp_arg(z, mult=-0.25)
+        T1 = A, [1, 1], [], [a1,a2], [1], [a1,a2], w
+        T2 = B, [1], [], [b1,b2], [1], [b1,b2], w
+        return T1, T2
+    return ctx.hypercomb(h, [v], **kwargs)
+
+@defun
+def angerj(ctx, v, z, **kwargs):
+    return _anger(ctx, 0, v, z, **kwargs)
+
+@defun
+def webere(ctx, v, z, **kwargs):
+    return _anger(ctx, 1, v, z, **kwargs)
+
 @defun
 def ber(ctx, n, z, **kwargs):
     n = ctx.convert(n)
