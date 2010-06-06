@@ -1,3 +1,84 @@
+--0.15--
+Released June 6, 2010
+
+Basic transcendental functions:
+
+* Reimplemented all elementary functions except log, reducing
+  overhead and giving asymptotic speedups at high precision
+* Reimplemented gamma() and loggamma(), improving speed and
+  fixing accuracy in corner cases
+* Added rgamma() (reciprocal gamma function)
+* Added a stress test suite for the gamma function
+* Provided top-level functions cos_sin() and cospi_sinpi() for fast
+  simultaneous computation
+
+Riemann zeta function:
+
+* New zetazeros() implementation, supporting arbitrarily large indices
+  (contributed by Juan Arias de Reyna)
+* Tuned algorithm selection in zeta() for complex arguments
+  (contributed by Juan Arias de Reyna)
+* Accelerated computation of zeta function series using sieving
+
+Special functions:
+
+* Added qfrom(), qbarfrom(), mfrom(), kfrom(), taufrom() for elliptic
+  argument conversion
+* Merged jsn(), jcn(), jdn() -> ellipfun() and generalized it to compute
+  all 12 Jacobi elliptic functions
+* Implemented the Klein j-invariant (kleinj())
+* Implemented the q-Pochhammer symbol (qp())
+* Implemented q-factorial (qfac()) and q--gamma (qgamma())
+* Implemented q-hypergeometric series (qhyper())
+* Implemented bilateral hypergeometric series (bihyper())
+* Implemented Appell 2D hypergeometric series F2-F4 (appellf2()-appellf4())
+* Implemented generalized 2D hypergeometric series (hyper2d())
+* Fixed gammainc() for integer-valued complex argument (contributed by
+  Juan Arias de Reyna)
+* Fixed asymptotic expansion of hyp1f1() (contributed by Juan Arias de Reyna)
+
+Numerical calculus:
+
+* Added support for multidimensional series in nsum()
+* Made nprod() faster by default by extrapolating directly instead of
+  calling nsum()
+* Changed some options for diff()/diffs()
+* Made taylor() chop tiny coefficients by default
+* Added support for partial derivatives in diff()
+
+Interval arithmetic:
+
+* All interval arithmetic functionality moved to a separate context
+  namespace (iv)
+* Preliminary support for complex intervals (iv.mpc)
+* Fixed interval cos/sin to support intervals overlapping zeros/extreme points
+* Implemented interval atan2
+* Implemented exp/log/cos/sin for complex intervals
+* Some other interface changes to interval code
+
+Utility functions:
+
+* Made chop() use relative rather than absolute tolerance for
+  real/imaginary parts
+* Optimized floor(), ceil(), isinf(), isnan(), isint()
+* Implemented nint(), frac(), isnormal()
+* Fixed and documented semantics for isinf(), isin(), isnan()
+* Added utility functions autoprec(), maxcalls(), memoize()
+
+Miscellaneous tweaks and fixes:
+
+* Support complex conjugation in fdot()
+* Added support for Cholesky decomposition of complex matrices
+* Fixed a small precision bug in linear algebra functions
+* Suppress NoConvergence exception when plotting
+* Removed some dirty code to improve PyPy compatibility
+* Fixed plotting to work with mpmath numbers in the interval specification
+* Fixed fp arithmetic on systems where math.log and math.sqrt return NaN
+  instead of raising an exception
+* Fixed fp.conj for Python 2.4 and 2.5
+* Fixed quadrature to work with reversed infinite intervals such as [0,-inf]
+* Renamed modf() -> fmod() for consistency
+
 --0.14--
 Released February 5, 2010
 

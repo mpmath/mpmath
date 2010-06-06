@@ -1,6 +1,6 @@
 # Sphinx inventory version 1
 # Project: mpmath
-# Version: 0.15-svn
+# Version: 0.15
 mpmath.functions.elliptic mod functions/elliptic.html
 mpmath.si function functions/expintegrals.html
 mpmath.csc function functions/trigonometric.html
