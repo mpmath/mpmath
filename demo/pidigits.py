@@ -35,6 +35,8 @@ def display_fraction(digits, skip=0, colwidth=10, columns=5):
 def calculateit(base, n, tofile):
     intpart = numeral(3, base)
     skip = 1
+    if base <= 3:
+        skip = 2
 
     prec = int(n*math.log(base,2))+10
 
