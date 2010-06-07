@@ -72,6 +72,29 @@ Struve functions
 .. autofunction:: mpmath.struvel
 
 
+Anger-Weber functions
+...................................................
+
+:func:`angerj`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.angerj
+
+:func:`webere`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.webere
+
+
+Lommel functions
+...................................................
+
+:func:`lommels1`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.lommels1
+
+:func:`lommels2`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.lommels2
+
 Airy functions
 ...............................................
 
