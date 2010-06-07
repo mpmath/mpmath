@@ -8059,7 +8059,7 @@ Gives the Lommel function `s_{\mu,\nu}` or `s^{(1)}_{\mu,\nu}`
 
 .. math ::
 
-    s_{\mu,\nu} = \frac{z^{\mu+1}}{(\mu-\nu+1)(\mu+\nu+1)}
+    s_{\mu,\nu}(z) = \frac{z^{\mu+1}}{(\mu-\nu+1)(\mu+\nu+1)}
         \,_1F_2\left(1; \frac{\mu-\nu+3}{2}, \frac{\mu+\nu+3}{2};
         -\frac{z^2}{4} \right)
 
@@ -8110,14 +8110,15 @@ Gives the second Lommel function `S_{\mu,\nu}` or `s^{(2)}_{\mu,\nu}`
 
 .. math ::
 
-    S_{\mu,\nu} = s_{\mu,\nu} + 2^{\mu-1}
-        \Gamma(\frac{1}{2}(\mu-\nu+1))
-        \Gamma(\frac{1}{2}(\mu+\nu+1))
-        \left[\sin(\frac{1}{2}(\mu-\nu)\pi) J_{\nu}(z) -
-              \cos(\frac{1}{2}(\mu-\nu)\pi) Y_{\nu}(z) -
+    S_{\mu,\nu}(z) = s_{\mu,\nu}(z) + 2^{\mu-1}
+        \Gamma\left(\tfrac{1}{2}(\mu-\nu+1)\right)
+        \Gamma\left(\tfrac{1}{2}(\mu+\nu+1)\right) \times
+
+        \left[\sin(\tfrac{1}{2}(\mu-\nu)\pi) J_{\nu}(z) -
+              \cos(\tfrac{1}{2}(\mu-\nu)\pi) Y_{\nu}(z)
         \right]
 
-which solves the same as differential equation as
+which solves the same differential equation as
 :func:`mpmath.lommels1`.
 
 **Examples**
