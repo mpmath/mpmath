@@ -8054,6 +8054,105 @@ Verifying the integral representation::
 1. [DLMF]_ section 11.10: Anger-Weber Functions
 """
 
+lommels1 = r"""
+Gives the Lommel function `s_{\mu,\nu}` or `s^{(1)}_{\mu,\nu}`
+
+.. math ::
+
+    s_{\mu,\nu} = \frac{z^{\mu+1}}{(\mu-\nu+1)(\mu+\nu+1)}
+        \,_1F_2\left(1; \frac{\mu-\nu+3}{2}, \frac{\mu+\nu+3}{2};
+        -\frac{z^2}{4} \right)
+
+which solves the inhomogeneous Bessel equation
+
+.. math ::
+
+    z^2 f''(z) + z f'(z) + (z^2-\nu^2) f(z) = z^{\mu+1}.
+
+A second solution is given by :func:`mpmath.lommels2`.
+
+**Examples**
+
+An integral representation::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> u,v,z = 0.25, 0.125, mpf(0.75)
+    >>> lommels1(u,v,z)
+    0.4276243877565150372999126
+    >>> (bessely(v,z)*quad(lambda t: t**u*besselj(v,t), [0,z]) - \
+    ...  besselj(v,z)*quad(lambda t: t**u*bessely(v,t), [0,z]))*(pi/2)
+    0.4276243877565150372999126
+
+A special value::
+
+    >>> lommels1(v,v,z)
+    0.5461221367746048054932553
+    >>> gamma(v+0.5)*sqrt(pi)*power(2,v-1)*struveh(v,z)
+    0.5461221367746048054932553
+
+Verifying the differential equation::
+
+    >>> f = lambda z: lommels1(u,v,z)
+    >>> z**2*diff(f,z,2) + z*diff(f,z) + (z**2-v**2)*f(z)
+    0.6979536443265746992059141
+    >>> z**(u+1)
+    0.6979536443265746992059141
+
+**References**
+
+1. [GradshteynRyzhik]_ 
+2. [Weisstein]_ http://mathworld.wolfram.com/LommelFunction.html
+"""
+
+lommels2 = r"""
+Gives the second Lommel function `S_{\mu,\nu}` or `s^{(2)}_{\mu,\nu}`
+
+.. math ::
+
+    S_{\mu,\nu} = s_{\mu,\nu} + 2^{\mu-1}
+        \Gamma(\frac{1}{2}(\mu-\nu+1))
+        \Gamma(\frac{1}{2}(\mu+\nu+1))
+        \left[\sin(\frac{1}{2}(\mu-\nu)\pi) J_{\nu}(z) -
+              \cos(\frac{1}{2}(\mu-\nu)\pi) Y_{\nu}(z) -
+        \right]
+
+which solves the same as differential equation as
+:func:`mpmath.lommels1`.
+
+**Examples**
+
+For large `|z|`, `S_{\mu,\nu} \sim z^{\mu-1}`::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> lommels2(10,2,30000)
+    1.968299831601008419949804e+40
+    >>> power(30000,9)
+    1.9683e+40
+
+A special value::
+
+    >>> u,v,z = 0.5, 0.125, mpf(0.75)
+    >>> lommels2(v,v,z)
+    0.9589683199624672099969765
+    >>> (struveh(v,z)-bessely(v,z))*power(2,v-1)*sqrt(pi)*gamma(v+0.5)
+    0.9589683199624672099969765
+
+Verifying the differential equation::
+
+    >>> f = lambda z: lommels2(u,v,z)
+    >>> z**2*diff(f,z,2) + z*diff(f,z) + (z**2-v**2)*f(z)
+    0.6495190528383289850727924
+    >>> z**(u+1)
+    0.6495190528383289850727924
+
+**References**
+
+1. [GradshteynRyzhik]_ 
+2. [Weisstein]_ http://mathworld.wolfram.com/LommelFunction.html
+"""
+
 appellf2 = r"""
 Gives the Appell F2 hypergeometric function of two variables
 
