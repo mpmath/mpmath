@@ -302,6 +302,11 @@ class MPIntervalContext(StandardBaseContext):
         ctx.cos = ctx._wrap_mpi_function(libmp.mpi_cos, libmp.mpci_cos)
         ctx.sin = ctx._wrap_mpi_function(libmp.mpi_sin, libmp.mpci_sin)
         ctx.tan = ctx._wrap_mpi_function(libmp.mpi_tan)
+        ctx.gamma = ctx._wrap_mpi_function(libmp.mpi_gamma, libmp.mpci_gamma)
+        ctx.loggamma = ctx._wrap_mpi_function(libmp.mpi_loggamma, libmp.mpci_loggamma)
+        ctx.rgamma = ctx._wrap_mpi_function(libmp.mpi_rgamma, libmp.mpci_rgamma)
+        ctx.factorial = ctx._wrap_mpi_function(libmp.mpi_factorial, libmp.mpci_factorial)
+        ctx.fac = ctx.factorial
 
         ctx.eps = ctx._constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1))
         ctx.pi = ctx._constant(libmp.mpf_pi)
@@ -498,9 +503,3 @@ class MPIntervalContext(StandardBaseContext):
             #    return s
             if k > maxterms:
                 raise ctx.NoConvergence
-
-    # XXX: need proper interval factorial/gamma
-    def factorial(ctx, n):
-        return ctx.convert(ctx._mp.fac(n))
-
-    fac = factorial
