@@ -1045,6 +1045,19 @@ maxterms, or set zeroprec."""
             5 -19
 
         """
+        typx = type(x)
+        if typx in int_types:
+            return int(x), ctx.ninf
+        elif typx is rational.mpq:
+            p, q = x._mpq_
+            n, r = divmod(p, q)
+            if 2*r >= q:
+                n += 1
+            elif not r:
+                return n, ctx.ninf
+            # log(p/q-n) = log((p-nq)/q) = log(p-nq) - log(q)
+            d = bitcount(abs(p-n*q)) - bitcount(q)
+            return n, d
         if hasattr(x, "_mpf_"):
             re = x._mpf_
             im_dist = ctx.ninf
@@ -1057,18 +1070,6 @@ maxterms, or set zeroprec."""
                 im_dist = ctx.ninf
             else:
                 raise ValueError("requires a finite number")
-        elif isinstance(x, int_types):
-            return int(x), ctx.ninf
-        elif isinstance(x, rational.mpq):
-            p, q = x._mpq_
-            n, r = divmod(p, q)
-            if 2*r >= q:
-                n += 1
-            elif not r:
-                return n, ctx.ninf
-            # log(p/q-n) = log((p-nq)/q) = log(p-nq) - log(q)
-            d = bitcount(abs(p-n*q)) - bitcount(q)
-            return n, d
         else:
             x = ctx.convert(x)
             if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
@@ -1076,35 +1077,32 @@ maxterms, or set zeroprec."""
             else:
                 raise TypeError("requires an mpf/mpc")
         sign, man, exp, bc = re
-        shift = exp+bc
-        if sign:
-            man = -man
-        if shift < -1:
+        mag = exp+bc
+        # |x| < 0.5
+        if mag < 0:
             n = 0
-            re_dist = shift
+            re_dist = mag
         elif man:
+            # exact integer
             if exp >= 0:
                 n = man << exp
                 re_dist = ctx.ninf
+            # exact half-integer
+            elif exp == -1:
+                n = (man>>1)+1
+                re_dist = 0
             else:
-                if shift >= 0:
-                    xfixed = man << shift
+                d = (-exp-1)
+                t = man >> d
+                if t & 1:
+                    t += 1
+                    man = (t<<d) - man
                 else:
-                    xfixed = man >> (-shift)
-                n1 = xfixed >> bc
-                n2 = -((-xfixed) >> bc)
-                dist1 = abs(xfixed - (n1<<bc))
-                dist2 = abs(xfixed - (n2<<bc))
-                if dist1 < dist2:
-                    re_dist = dist1
-                    n = n1
-                else:
-                    re_dist = dist2
-                    n = n2
-                if re_dist:
-                    re_dist = bitcount(re_dist) - bc
-                else:
-                    re_dist = ctx.ninf
+                    man -= (t<<d)
+                n = t>>1   # int(t)>>1
+                re_dist = exp+bitcount(man)
+            if sign:
+                n = -n
         elif re == fzero:
             re_dist = ctx.ninf
             n = 0
