@@ -1347,45 +1347,269 @@ def fresnelc(ctx, z):
         return ctx.mpf(-0.5)
     return z*ctx.hyp1f2((1,4),(1,2),(5,4),-ctx.pi**2*z**4/16)
 
-@defun_wrapped
-def airyai(ctx, z):
-    if z == ctx.inf or z == ctx.ninf:
-        return ctx.zero
-    if z:
-        # Account for exponential scaling
-        ctx.prec += max(0, int(1.5*ctx.mag(z)))
-    if ctx._re(z) > 4:
-        # We could still use 1F1, but it results in huge cancellation;
-        # the following expansion is better
-        w = z**1.5
-        r = -ctx.mpf(3)/(4*w)
-        v = ctx.exp(-2*w/3)/(2*ctx.sqrt(ctx.pi)*ctx.nthroot(z,4))
-        v *= ctx.hyp2f0((1,6),(5,6),r)
-        return v
-    elif ctx._re(z) > 1:
-        # If not using asymptotic series:
-        # cancellation: both terms are ~ 2^(z^1.5),
-        # result is ~ 2^(-z^1.5), so need ~2*z^1.5 extra bits
-        ctx.prec += 2*int(ctx._re(z)**1.5)
-    z3 = z**3 / 9
-    a = ctx.hyp0f1((2,3), z3) / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
-    b = z * ctx.hyp0f1((4,3), z3) / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
-    return a - b
+# TODO: do this more generically?
+def c_memo(f):
+    name = f.__name__
+    def f_wrapped(ctx):
+        cache = ctx._misc_const_cache
+        prec = ctx.prec
+        p,v = cache.get(name, (-1,0))
+        if p >= prec:
+            return +v
+        else:
+            cache[name] = (prec, f(ctx))
+            return cache[name][1]
+    return f_wrapped
 
-@defun_wrapped
-def airybi(ctx, z):
-    if z == ctx.inf:
-        return z
-    if z == ctx.ninf:
-        return 1/z
+@c_memo
+def _airyai_C1(ctx):
+    return 1 / (ctx.cbrt(9) * ctx.gamma(ctx.mpf(2)/3))
+
+@c_memo
+def _airyai_C2(ctx):
+    return -1 / (ctx.cbrt(3) * ctx.gamma(ctx.mpf(1)/3))
+
+@c_memo
+def _airybi_C1(ctx):
+    return 1 / (ctx.nthroot(3,6) * ctx.gamma(ctx.mpf(2)/3))
+
+@c_memo
+def _airybi_C2(ctx):
+    return ctx.nthroot(3,6) / ctx.gamma(ctx.mpf(1)/3)
+
+def _airybi_n2_inf(ctx):
+    prec = ctx.prec
+    try:
+        v = ctx.power(3,'2/3')*ctx.gamma('2/3')/(2*ctx.pi)
+    finally:
+        ctx.prec = prec
+    return +v
+
+# Derivatives at z = 0
+# TODO: could be expressed more elegantly using triple factorials
+def _airyderiv_0(ctx, z, n, ntype, which):
+    if ntype == 'Z':
+        if n < 0:
+            return z
+        r = ctx.mpq_1_3
+        prec = ctx.prec
+        try:
+            ctx.prec += 10
+            v = ctx.gamma((n+1)*r) * ctx.power(3,n*r) / ctx.pi
+            if which == 0:
+                v *= ctx.sinpi(2*(n+1)*r)
+                v /= ctx.power(3,'2/3')
+            else:
+                v *= abs(ctx.sinpi(2*(n+1)*r))
+                v /= ctx.power(3,'1/6')
+        finally:
+            ctx.prec = prec
+        return +v + z
+    else:
+        # singular (does the limit exist?)
+        raise NotImplementedError
+
+@defun
+def airyai(ctx, z, derivative=0, **kwargs):
+    z = ctx.convert(z)
+    if derivative:
+        n, ntype = ctx._convert_param(derivative)
+    else:
+        n = 0
+    # Values at infinities
+    if not ctx.isnormal(z) and z:
+        if n and ntype == 'Z':
+            if n == -1:
+                if z == ctx.inf:
+                    return ctx.mpf(1)/3 + 1/z
+                if z == ctx.ninf:
+                    return ctx.mpf(-2)/3 + 1/z
+            if n < -1:
+                if z == ctx.inf:
+                    return z
+                if z == ctx.ninf:
+                    return (-1)**n * (-z)
+        if (not n) and z == ctx.inf or z == ctx.ninf:
+            return 1/z
+        # TODO: limits
+        raise ValueError("essential singularity of Ai(z)")
+    # Account for exponential scaling
     if z:
-        # Account for exponential scaling
-        ctx.prec += max(0, int(1.5*ctx.mag(z)))
-    z3 = z**3 / 9
-    rt = ctx.nthroot(3, 6)
-    a = ctx.hyp0f1((2,3), z3) / (rt * ctx.gamma(ctx.mpf(2)/3))
-    b = z * rt * ctx.hyp0f1((4,3), z3) / ctx.gamma(ctx.mpf(1)/3)
-    return a + b
+        extraprec = max(0, int(1.5*ctx.mag(z)))
+    else:
+        extraprec = 0
+    if n:
+        if n == 1:
+            def h():
+                # http://functions.wolfram.com/03.07.06.0005.01
+                if ctx._re(z) > 4:
+                    ctx.prec += extraprec
+                    w = z**1.5; r = -0.75/w; u = -2*w/3
+                    ctx.prec -= extraprec
+                    C = -ctx.exp(u)/(2*ctx.sqrt(ctx.pi))*ctx.nthroot(z,4)
+                    return ([C],[1],[],[],[(-1,6),(7,6)],[],r),
+                # http://functions.wolfram.com/03.07.26.0001.01
+                else:
+                    ctx.prec += extraprec
+                    w = z**3 / 9
+                    ctx.prec -= extraprec
+                    C1 = _airyai_C1(ctx) * 0.5
+                    C2 = _airyai_C2(ctx)
+                    T1 = [C1,z],[1,2],[],[],[],[ctx.mpq_5_3],w
+                    T2 = [C2],[1],[],[],[],[ctx.mpq_1_3],w
+                    return T1, T2
+            return ctx.hypercomb(h, [], **kwargs)
+        else:
+            if z == 0:
+                return _airyderiv_0(ctx, z, n, ntype, 0)
+            # http://functions.wolfram.com/03.05.20.0004.01
+            def h(n):
+                ctx.prec += extraprec
+                w = z**3/9
+                ctx.prec -= extraprec
+                q13,q23,q43 = ctx.mpq_1_3, ctx.mpq_2_3, ctx.mpq_4_3
+                a1=q13; a2=1; b1=(1-n)*q13; b2=(2-n)*q13; b3=1-n*q13
+                T1 = [3, z], [n-q23, -n], [a1], [b1,b2,b3], \
+                    [a1,a2], [b1,b2,b3], w
+                a1=q23; b1=(2-n)*q13; b2=1-n*q13; b3=(4-n)*q13
+                T2 = [3, z, -z], [n-q43, -n, 1], [a1], [b1,b2,b3], \
+                    [a1,a2], [b1,b2,b3], w
+                return T1, T2
+            v = ctx.hypercomb(h, [n], **kwargs)
+            if ctx._is_real_type(z) and ctx.isint(n):
+                v = ctx._re(v)
+            return v
+    else:
+        def h():
+            if ctx._re(z) > 4:
+                # We could use 1F1, but it results in huge cancellation;
+                # the following expansion is better.
+                # TODO: asymptotic series for derivatives
+                ctx.prec += extraprec
+                w = z**1.5; r = -0.75/w; u = -2*w/3
+                ctx.prec -= extraprec
+                C = ctx.exp(u)/(2*ctx.sqrt(ctx.pi)*ctx.nthroot(z,4))
+                return ([C],[1],[],[],[(1,6),(5,6)],[],r),
+            else:
+                ctx.prec += extraprec
+                w = z**3 / 9
+                ctx.prec -= extraprec
+                C1 = _airyai_C1(ctx)
+                C2 = _airyai_C2(ctx)
+                T1 = [C1],[1],[],[],[],[ctx.mpq_2_3],w
+                T2 = [z*C2],[1],[],[],[],[ctx.mpq_4_3],w
+                return T1, T2
+        return ctx.hypercomb(h, [], **kwargs)
+
+@defun
+def airybi(ctx, z, derivative=0, **kwargs):
+    z = ctx.convert(z)
+    if derivative:
+        n, ntype = ctx._convert_param(derivative)
+    else:
+        n = 0
+    # Values at infinities
+    if not ctx.isnormal(z) and z:
+        if n and ntype == 'Z':
+            if z == ctx.inf:
+                return z
+            if z == ctx.ninf:
+                if n == -1:
+                    return 1/z
+                if n == -2:
+                    return _airybi_n2_inf(ctx)
+                if n < -2:
+                    return (-1)**n * (-z)
+        if not n:
+            if z == ctx.inf:
+                return z
+            if z == ctx.ninf:
+                return 1/z
+        # TODO: limits
+        raise ValueError("essential singularity of Bi(z)")
+    if z:
+        extraprec = max(0, int(1.5*ctx.mag(z)))
+    else:
+        extraprec = 0
+    if n:
+        if n == 1:
+            # http://functions.wolfram.com/03.08.26.0001.01
+            def h():
+                ctx.prec += extraprec
+                w = z**3 / 9
+                ctx.prec -= extraprec
+                C1 = _airybi_C1(ctx)*0.5
+                C2 = _airybi_C2(ctx)
+                T1 = [C1,z],[1,2],[],[],[],[ctx.mpq_5_3],w
+                T2 = [C2],[1],[],[],[],[ctx.mpq_1_3],w
+                return T1, T2
+            return ctx.hypercomb(h, [], **kwargs)
+        else:
+            if z == 0:
+                return _airyderiv_0(ctx, z, n, ntype, 1)
+            def h(n):
+                ctx.prec += extraprec
+                w = z**3/9
+                ctx.prec -= extraprec
+                q13,q23,q43 = ctx.mpq_1_3, ctx.mpq_2_3, ctx.mpq_4_3
+                q16 = ctx.mpq_1_6
+                q56 = ctx.mpq_5_6
+                a1=q13; a2=1; b1=(1-n)*q13; b2=(2-n)*q13; b3=1-n*q13
+                T1 = [3, z], [n-q16, -n], [a1], [b1,b2,b3], \
+                    [a1,a2], [b1,b2,b3], w
+                a1=q23; b1=(2-n)*q13; b2=1-n*q13; b3=(4-n)*q13
+                T2 = [3, z], [n-q56, 1-n], [a1], [b1,b2,b3], \
+                    [a1,a2], [b1,b2,b3], w
+                return T1, T2
+            v = ctx.hypercomb(h, [n], **kwargs)
+            if ctx._is_real_type(z) and ctx.isint(n):
+                v = ctx._re(v)
+            return v
+    else:
+        def h():
+            ctx.prec += extraprec
+            w = z**3 / 9
+            ctx.prec -= extraprec
+            C1 = _airybi_C1(ctx)
+            C2 = _airybi_C2(ctx)
+            T1 = [C1],[1],[],[],[],[ctx.mpq_2_3],w
+            T2 = [z*C2],[1],[],[],[],[ctx.mpq_4_3],w
+            return T1, T2
+        return ctx.hypercomb(h, [], **kwargs)
+
+def _airy_zero(ctx, which, k, derivative, complex=False):
+    # Asymptotic formulas are given in DLMF section 9.9
+    def U(t): return t**(2/3.)*(1-7/(t**2*48))
+    def T(t): return t**(2/3.)*(1+5/(t**2*48))
+    k = int(k)
+    assert k >= 1
+    assert derivative in (0,1)
+    if which == 0:
+        if derivative:
+            return ctx.findroot(lambda z: ctx.airyai(z,1),
+                -U(3*ctx.pi*(4*k-3)/8))
+        return ctx.findroot(ctx.airyai, -T(3*ctx.pi*(4*k-1)/8))
+    if which == 1 and complex == False:
+        if derivative:
+            return ctx.findroot(lambda z: ctx.airybi(z,1),
+                -U(3*ctx.pi*(4*k-1)/8))
+        return ctx.findroot(ctx.airybi, -T(3*ctx.pi*(4*k-3)/8))
+    if which == 1 and complex == True:
+        if derivative:
+            t = 3*ctx.pi*(4*k-3)/8 + 0.75j*ctx.ln2
+            s = ctx.expjpi(ctx.mpf(1)/3) * T(t)
+            return ctx.findroot(lambda z: ctx.airybi(z,1), s)
+        t = 3*ctx.pi*(4*k-1)/8 + 0.75j*ctx.ln2
+        s = ctx.expjpi(ctx.mpf(1)/3) * U(t)
+        return ctx.findroot(ctx.airybi, s)
+
+@defun
+def airyaizero(ctx, k, derivative=0):
+    return _airy_zero(ctx, 0, k, derivative, False)
+
+@defun
+def airybizero(ctx, k, derivative=0, complex=False):
+    return _airy_zero(ctx, 1, k, derivative, complex)
 
 @defun_wrapped
 def hermite(ctx, n, z, **kwargs):

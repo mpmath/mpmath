@@ -30,6 +30,14 @@ class SpecialFunctions(object):
         self.mpq_3_4 = self._mpq((3,4))
         self.mpq_7_4 = self._mpq((7,4))
         self.mpq_5_4 = self._mpq((5,4))
+        self.mpq_1_3 = self._mpq((1,3))
+        self.mpq_2_3 = self._mpq((2,3))
+        self.mpq_4_3 = self._mpq((4,3))
+        self.mpq_1_6 = self._mpq((1,6))
+        self.mpq_5_6 = self._mpq((5,6))
+        self.mpq_5_3 = self._mpq((5,3))
+
+        self._misc_const_cache = {}
 
         self._aliases.update({
             'phase' : 'arg',
