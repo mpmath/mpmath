@@ -4311,7 +4311,7 @@ Comparing with the definition::
 
 airyai = r"""
 Computes the Airy function `\operatorname{Ai}(z)`, which is
-the solution of the Airy differential equation `f''-zf=0`
+the solution of the Airy differential equation `f''(z) - z f(z) = 0`
 with initial conditions
 
 .. math ::
@@ -4520,7 +4520,7 @@ Integrals of the Ai-function can be evaluated at limit points::
 
 airybi = r"""
 Computes the Airy function `\operatorname{Bi}(z)`, which is
-the solution of the Airy differential equation `f''-zf=0`
+the solution of the Airy differential equation `f''(z) - z f(z) = 0`
 with initial conditions
 
 .. math ::
@@ -9599,4 +9599,166 @@ Evaluation works with complex parameter values::
 
     >>> spherharm(1+j, 2j, 2+3j, -0.5j)
     (64.44922331113759992154992 + 1981.693919841408089681743j)
+"""
+
+scorergi = r"""
+Evaluates the Scorer function
+
+.. math ::
+
+    \operatorname{Gi}(z) =
+    \operatorname{Ai}(z) \int_0^z \operatorname{Bi}(t) dt +
+    \operatorname{Bi}(z) \int_z^{\infty} \operatorname{Ai}(t) dt
+
+which gives a particular solution to the inhomogeneous Airy
+differential equation `f''(z) - z f(z) = 1/\pi`. Another
+particular solution is given by the Scorer Hi-function
+(:func:`~mpmath.scorerhi`). The two functions are related as
+`\operatorname{Gi}(z) + \operatorname{Hi}(z) = \operatorname{Bi}(z)`.
+
+**Examples**
+
+Some values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> scorergi(0); 1/(power(3,'7/6')*gamma('2/3'))
+    0.2049755424820002450503075
+    0.2049755424820002450503075
+    >>> diff(scorergi, 0); 1/(power(3,'5/6')*gamma('1/3'))
+    0.1494294524512754526382746
+    0.1494294524512754526382746
+    >>> scorergi(+inf); scorergi(-inf)
+    0.0
+    0.0
+    >>> scorergi(1)
+    0.2352184398104379375986902
+    >>> scorergi(-1)
+    -0.1166722172960152826494198
+
+Evaluation for large arguments::
+
+    >>> scorergi(10)
+    0.03189600510067958798062034
+    >>> scorergi(100)
+    0.003183105228162961476590531
+    >>> scorergi(1000000)
+    0.0000003183098861837906721743873
+    >>> 1/(pi*1000000)
+    0.0000003183098861837906715377675
+    >>> scorergi(-1000)
+    -0.08358288400262780392338014
+    >>> scorergi(-100000)
+    0.02886866118619660226809581
+    >>> scorergi(50+10j)
+    (0.0061214102799778578790984 - 0.001224335676457532180747917j)
+    >>> scorergi(-50-10j)
+    (5.236047850352252236372551e+29 - 3.08254224233701381482228e+29j)
+    >>> scorergi(100000j)
+    (-8.806659285336231052679025e+6474077 + 8.684731303500835514850962e+6474077j)
+
+Verifying the connection between Gi and Hi::
+
+    >>> z = 0.25
+    >>> scorergi(z) + scorerhi(z)
+    0.7287469039362150078694543
+    >>> airybi(z)
+    0.7287469039362150078694543
+
+Verifying the differential equation::
+
+    >>> for z in [-3.4, 0, 2.5, 1+2j]:
+    ...     chop(diff(scorergi,z,2) - z*scorergi(z))
+    ...
+    -0.3183098861837906715377675
+    -0.3183098861837906715377675
+    -0.3183098861837906715377675
+    -0.3183098861837906715377675
+
+Verifying the integral representation::
+
+    >>> z = 0.5
+    >>> scorergi(z)
+    0.2447210432765581976910539
+    >>> Ai,Bi = airyai,airybi
+    >>> Bi(z)*(Ai(inf,-1)-Ai(z,-1)) + Ai(z)*(Bi(z,-1)-Bi(0,-1))
+    0.2447210432765581976910539
+
+**References**
+
+1. [DLMF]_ section 9.12: Scorer Functions
+
+"""
+
+scorerhi = r"""
+Evaluates the second Scorer function
+
+.. math ::
+
+    \operatorname{Hi}(z) =
+    \operatorname{Bi}(z) \int_{-\infty}^z \operatorname{Ai}(t) dt -
+    \operatorname{Ai}(z) \int_{-\infty}^z \operatorname{Bi}(t) dt
+
+which gives a particular solution to the inhomogeneous Airy
+differential equation `f''(z) - z f(z) = 1/\pi`. See also
+:func:`~mpmath.scorergi`.
+
+**Examples**
+
+Some values and limits::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> scorerhi(0); 2/(power(3,'7/6')*gamma('2/3'))
+    0.4099510849640004901006149
+    0.4099510849640004901006149
+    >>> diff(scorerhi,0); 2/(power(3,'5/6')*gamma('1/3'))
+    0.2988589049025509052765491
+    0.2988589049025509052765491
+    >>> scorerhi(+inf); scorerhi(-inf)
+    +inf
+    0.0
+    >>> scorerhi(1)
+    0.9722051551424333218376886
+    >>> scorerhi(-1)
+    0.2206696067929598945381098
+
+Evaluation for large arguments::
+
+    >>> scorerhi(10)
+    455641153.5163291358991077
+    >>> scorerhi(100)
+    6.041223996670201399005265e+288
+    >>> scorerhi(1000000)
+    7.138269638197858094311122e+289529652
+    >>> scorerhi(-10)
+    0.0317685352825022727415011
+    >>> scorerhi(-100)
+    0.003183092495767499864680483
+    >>> scorerhi(100j)
+    (-6.366197716545672122983857e-9 + 0.003183098861710582761688475j)
+    >>> scorerhi(50+50j)
+    (-5.322076267321435669290334e+63 + 1.478450291165243789749427e+65j)
+    >>> scorerhi(-1000-1000j)
+    (0.0001591549432510502796565538 - 0.000159154943091895334973109j)
+
+Verifying the differential equation::
+
+    >>> for z in [-3.4, 0, 2, 1+2j]:
+    ...     chop(diff(scorerhi,z,2) - z*scorerhi(z))
+    ...
+    0.3183098861837906715377675
+    0.3183098861837906715377675
+    0.3183098861837906715377675
+    0.3183098861837906715377675
+
+Verifying the integral representation::
+
+    >>> z = 0.5
+    >>> scorerhi(z)
+    0.6095559998265972956089949
+    >>> Ai,Bi = airyai,airybi
+    >>> Bi(z)*(Ai(z,-1)-Ai(-inf,-1)) - Ai(z)*(Bi(z,-1)-Bi(-inf,-1))
+    0.6095559998265972956089949
+
 """
