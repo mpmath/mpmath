@@ -8,9 +8,12 @@ from mpmath import mp, fp
 
 def test_axes():
     try:
+        import matplotlib
+        if map(int, matplotlib.__version__.split(".")) < [0,99]:
+            raise ImportError
         import pylab
     except ImportError:
-        print "\nSkipping test (pylab not available)\n"
+        print "\nSkipping test (pylab not available or too old version)\n"
         return
     fig = pylab.figure()
     axes = fig.add_subplot(111)
