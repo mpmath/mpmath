@@ -305,7 +305,7 @@ def lambertw(ctx, z, k=0):
     k = int(k)
     if ctx.isnan(z):
         return z
-    ctx.prec += 20
+    ctx.prec += 20 + ctx.mag(k or 1)
     mag = ctx.mag(z)
     # Start from fp approximation
     if ctx is ctx._mp and abs(mag) < 900 and abs(k) < 10000 and \

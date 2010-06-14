@@ -1166,6 +1166,10 @@ def test_lambertw():
     assert lambertw(-0.5-0.002j).ae(-0.78917138132659918344 - 0.76743539379990327749j)
     assert lambertw(-0.448+0.4j).ae(-0.11855133765652382241 + 0.66570534313583423116j)
     assert lambertw(-0.448-0.4j).ae(-0.11855133765652382241 - 0.66570534313583423116j)
+    # Huge branch index
+    w = lambertw(1,10**20)
+    assert w.real.ae(-47.889578926290259164)
+    assert w.imag.ae(6.2831853071795864769e+20)
 
 def test_meijerg():
     mp.dps = 15
