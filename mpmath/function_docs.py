@@ -4357,6 +4357,13 @@ The Ai-function has infinitely many zeros, all located along the
 negative half of the real axis. They can be computed with
 :func:`~mpmath.airyaizero`.
 
+**Plots**
+
+.. literalinclude :: /plots/ai.py
+.. image :: /plots/ai.png
+.. literalinclude :: /plots/ai_c.py
+.. image :: /plots/ai_c.png
+
 **Basic examples**
 
 Limits and values include::
@@ -4542,6 +4549,13 @@ parameter.
 The Bi-function has infinitely many zeros along the negative
 half-axis, as well as complex zeros, which can all be computed
 with :func:`~mpmath.airybizero`.
+
+**Plots**
+
+.. literalinclude :: /plots/bi.py
+.. image :: /plots/bi.png
+.. literalinclude :: /plots/bi_c.py
+.. image :: /plots/bi_c.png
 
 **Basic examples**
 
@@ -5140,6 +5154,11 @@ Laguerre polynomial, the sequence of which begins
 The Laguerre polynomials are orthogonal with respect to the weight
 `z^a e^{-z}` on `[0, \infty)`.
 
+**Plots**
+
+.. literalinclude :: /plots/laguerre.py
+.. image :: /plots/laguerre.png
+
 **Examples**
 
 Evaluation for arbitrary arguments::
@@ -5211,6 +5230,11 @@ for `\Re{z} > 0`, or generally
         \frac{2z}{\Gamma\left(-\frac{n}{2}\right)}
         \,_1F_1\left(\frac{1-n}{2}, \frac{3}{2}, z^2\right)
     \right).
+
+**Plots**
+
+.. literalinclude :: /plots/hermite.py
+.. image :: /plots/hermite.png
 
 **Examples**
 
@@ -5406,6 +5430,11 @@ A third definition is in terms of the hypergeometric function
 .. math ::
 
     P_n(x) = \,_2F_1\left(-n, n+1, 1, \frac{1-x}{2}\right)
+
+**Plots**
+
+.. literalinclude :: /plots/legendre.py
+.. image :: /plots/legendre.png
 
 **Basic evaluation**
 
@@ -5628,6 +5657,11 @@ case of the Jacobi polynomials, and by extension of the
 hypergeometric function `\,_2F_1`. They can thus also be
 evaluated for nonintegral `n`.
 
+**Plots**
+
+.. literalinclude :: /plots/chebyt.py
+.. image :: /plots/chebyt.png
+
 **Basic evaluation**
 
 The coefficients of the `n`-th polynomial can be recovered
@@ -5672,6 +5706,11 @@ The Chebyshev polynomials of the second kind are a special
 case of the Jacobi polynomials, and by extension of the
 hypergeometric function `\,_2F_1`. They can thus also be
 evaluated for nonintegral `n`.
+
+**Plots**
+
+.. literalinclude :: /plots/chebyu.py
+.. image :: /plots/chebyu.png
 
 **Basic evaluation**
 
@@ -5736,6 +5775,13 @@ With *derivative* = `m \ne 0`, the `m`-th derivative
     \frac{d^m}{dx^m} J_n(x)
 
 is computed.
+
+**Plots**
+
+.. literalinclude :: /plots/besselj.py
+.. image :: /plots/besselj.png
+.. literalinclude :: /plots/besselj_c.py
+.. image :: /plots/besselj_c.png
 
 **Examples**
 
@@ -5850,6 +5896,13 @@ With *derivative* = `m \ne 0`, the `m`-th derivative
 
 is computed.
 
+**Plots**
+
+.. literalinclude :: /plots/besseli.py
+.. image :: /plots/besseli.png
+.. literalinclude :: /plots/besseli_c.py
+.. image :: /plots/besseli_c.png
+
 **Examples**
 
 Some values of `I_n(x)`::
@@ -5918,6 +5971,13 @@ limit. With *derivative* = `m \ne 0`, the `m`-th derivative
 
 is computed.
 
+**Plots**
+
+.. literalinclude :: /plots/bessely.py
+.. image :: /plots/bessely.png
+.. literalinclude :: /plots/bessely_c.py
+.. image :: /plots/bessely_c.png
+
 **Examples**
 
 Some values of `Y_n(x)`::
@@ -5974,6 +6034,13 @@ second kind,
 For `n` an integer, this formula should be understood as a
 limit.
 
+**Plots**
+
+.. literalinclude :: /plots/besselk.py
+.. image :: /plots/besselk.png
+.. literalinclude :: /plots/besselk_c.py
+.. image :: /plots/besselk_c.png
+
 **Examples**
 
 Evaluation is supported for arbitrary complex arguments::
@@ -6029,6 +6096,13 @@ which is the complex combination of Bessel functions given by
 
     H_n^{(1)}(x) = J_n(x) + i Y_n(x).
 
+**Plots**
+
+.. literalinclude :: /plots/hankel1.py
+.. image :: /plots/hankel1.png
+.. literalinclude :: /plots/hankel1_c.py
+.. image :: /plots/hankel1_c.png
+
 **Examples**
 
 The Hankel function is generally complex-valued::
@@ -6048,6 +6122,13 @@ which is the complex combination of Bessel functions given by
 .. math ::
 
     H_n^{(2)}(x) = J_n(x) - i Y_n(x).
+
+**Plots**
+
+.. literalinclude :: /plots/hankel2.py
+.. image :: /plots/hankel2.png
+.. literalinclude :: /plots/hankel2_c.py
+.. image :: /plots/hankel2_c.png
 
 **Examples**
 
@@ -7997,6 +8078,11 @@ of the Bessel J function of a rotated argument
 
 The imaginary part is given by :func:`~mpmath.bei`.
 
+**Plots**
+
+.. literalinclude :: /plots/ber.py
+.. image :: /plots/ber.png
+
 **Examples**
 
 Verifying the defining relation::
@@ -8036,6 +8122,11 @@ of the (rescaled) Bessel K function of a rotated argument
     e^{-\pi i/2} K_n\left(x e^{3\pi i/4}\right) = \mathrm{ker}_n(x) + i \mathrm{kei}_n(x).
 
 The imaginary part is given by :func:`~mpmath.kei`.
+
+**Plots**
+
+.. literalinclude :: /plots/ker.py
+.. image :: /plots/ker.png
 
 **Examples**
 
@@ -8436,6 +8527,11 @@ which solves the inhomogeneous Bessel equation
 
 A second solution is given by :func:`~mpmath.lommels2`.
 
+**Plots**
+
+.. literalinclude :: /plots/lommels1.py
+.. image :: /plots/lommels1.png
+
 **Examples**
 
 An integral representation::
@@ -8485,6 +8581,11 @@ Gives the second Lommel function `S_{\mu,\nu}` or `s^{(2)}_{\mu,\nu}`
 
 which solves the same differential equation as
 :func:`~mpmath.lommels1`.
+
+**Plots**
+
+.. literalinclude :: /plots/lommels2.py
+.. image :: /plots/lommels2.png
 
 **Examples**
 
@@ -9003,6 +9104,13 @@ The Coulomb wave functions with real parameters are defined
 in Abramowitz & Stegun, section 14. However, all parameters are permitted
 to be complex in this implementation (see references).
 
+**Plots**
+
+.. literalinclude :: /plots/coulombf.py
+.. image :: /plots/coulombf.png
+.. literalinclude :: /plots/coulombf_c.py
+.. image :: /plots/coulombf_c.png
+
 **Examples**
 
 Evaluation is supported for arbitrary magnitudes of `z`::
@@ -9109,6 +9217,13 @@ where `\chi = \sigma_l - \sigma_{-l-1} - (l+1/2) \pi`
 and `\sigma_l(\eta) = (\ln \Gamma(1+l+i\eta)-\ln \Gamma(1+l-i\eta))/(2i)`.
 
 See :func:`~mpmath.coulombf` for additional information.
+
+**Plots**
+
+.. literalinclude :: /plots/coulombg.py
+.. image :: /plots/coulombg.png
+.. literalinclude :: /plots/coulombg_c.py
+.. image :: /plots/coulombg_c.png
 
 **Examples**
 
@@ -9555,6 +9670,30 @@ are permitted to be complex numbers.
     :func:`~mpmath.spherharm` returns a complex number, even the value is
     purely real.
 
+**Plots**
+
+.. literalinclude :: /plots/spherharm40.py
+
+`Y_{4,0}`:
+
+.. image :: /plots/spherharm40.png
+
+`Y_{4,1}`:
+
+.. image :: /plots/spherharm41.png
+
+`Y_{4,2}`:
+
+.. image :: /plots/spherharm42.png
+
+`Y_{4,3}`:
+
+.. image :: /plots/spherharm43.png
+
+`Y_{4,4}`:
+
+.. image :: /plots/spherharm44.png
+
 **Examples**
 
 Some low-order spherical harmonics with reference values::
@@ -9615,6 +9754,13 @@ differential equation `f''(z) - z f(z) = 1/\pi`. Another
 particular solution is given by the Scorer Hi-function
 (:func:`~mpmath.scorerhi`). The two functions are related as
 `\operatorname{Gi}(z) + \operatorname{Hi}(z) = \operatorname{Bi}(z)`.
+
+**Plots**
+
+.. literalinclude :: /plots/gi.py
+.. image :: /plots/gi.png
+.. literalinclude :: /plots/gi_c.py
+.. image :: /plots/gi_c.png
 
 **Examples**
 
@@ -9702,6 +9848,13 @@ Evaluates the second Scorer function
 which gives a particular solution to the inhomogeneous Airy
 differential equation `f''(z) - z f(z) = 1/\pi`. See also
 :func:`~mpmath.scorergi`.
+
+**Plots**
+
+.. literalinclude :: /plots/hi.py
+.. image :: /plots/hi.png
+.. literalinclude :: /plots/hi_c.py
+.. image :: /plots/hi_c.png
 
 **Examples**
 

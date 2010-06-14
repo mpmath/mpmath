@@ -84,7 +84,18 @@ P_1(x) = x
 <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>, whereby they can be generalized to arbitrary <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="math">
 <p><img src="../_images/math/4a8af3820475912ebd06768ac74171c27fe276f5.png" alt="P_n(x) = \,_2F_1\left(-n, n+1, 1, \frac{1-x}{2}\right)" /></p>
-</div><p><strong>Basic evaluation</strong></p>
+</div><p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Legendre polynomials P_n(x) on [-1,1] for n=0,1,2,3,4</span>
+<span class="n">f0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">legendre</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">],[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/legendre.png" src="../_images/legendre.png" />
+<p><strong>Basic evaluation</strong></p>
 <p>The Legendre polynomials assume fixed values at the points
 <img class="math" src="../_images/math/8d4c38a419ae56f13a202216dd45a1978bc91a54.png" alt="x = -1"/> and <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -292,6 +303,17 @@ kind <img class="math" src="../_images/math/e4fe51661da2eabbd80cb6c7080652f96263
 case of the Jacobi polynomials, and by extension of the
 hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>. They can thus also be
 evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Chebyshev polynomials T_n(x) on [-1,1] for n=0,1,2,3,4</span>
+<span class="n">f0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyt</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">],[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/chebyt.png" src="../_images/chebyt.png" />
 <p><strong>Basic evaluation</strong></p>
 <p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th polynomial can be recovered
 using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor expansion:</p>
@@ -336,6 +358,17 @@ kind <img class="math" src="../_images/math/bc224bf0d5fd957095a282940921bd63fc68
 case of the Jacobi polynomials, and by extension of the
 hypergeometric function <img class="math" src="../_images/math/88949b5db676bcd9b635abe892e514d84a12f031.png" alt="\,_2F_1"/>. They can thus also be
 evaluated for nonintegral <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>.</p>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Chebyshev polynomials U_n(x) on [-1,1] for n=0,1,2,3,4</span>
+<span class="n">f0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">chebyu</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">],[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/chebyu.png" src="../_images/chebyu.png" />
 <p><strong>Basic evaluation</strong></p>
 <p>The coefficients of the <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th polynomial can be recovered
 using using degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor expansion:</p>
@@ -567,7 +600,18 @@ values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e
     \frac{2z}{\Gamma\left(-\frac{n}{2}\right)}
     \,_1F_1\left(\frac{1-n}{2}, \frac{3}{2}, z^2\right)
 \right)." /></p>
-</div><p><strong>Examples</strong></p>
+</div><p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Hermite polynomials H_n(x) on the real line for n=0,1,2,3,4</span>
+<span class="n">f0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hermite</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hermite</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hermite</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hermite</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">hermite</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">],[</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span><span class="mf">5</span><span class="p">],[</span><span class="o">-</span><span class="mf">15</span><span class="p">,</span><span class="mf">15</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/hermite.png" src="../_images/hermite.png" />
+<p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
@@ -652,6 +696,17 @@ Laguerre polynomial, the sequence of which begins
 <img class="math" src="../_images/math/08424294ec8b0ce0f433a848518546edc44844f0.png" alt="L_0(z) = 1, L_1(z) = 1-z, L_2(z) = z^2-2z+1, \ldots"/>.</p>
 <p>The Laguerre polynomials are orthogonal with respect to the weight
 <img class="math" src="../_images/math/ced4c2d88cf637d4b56a416bdf8c2faca7bd73f4.png" alt="z^a e^{-z}"/> on <img class="math" src="../_images/math/a86f243b13e6ed9b3b2934d2dd9024dc39cdc6b8.png" alt="[0, \infty)"/>.</p>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Hermite polynomials L_n(x) on the real line for n=0,1,2,3,4</span>
+<span class="n">f0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">laguerre</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">laguerre</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">laguerre</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">laguerre</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">laguerre</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f0</span><span class="p">,</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">],[</span><span class="mf">0</span><span class="p">,</span><span class="mf">10</span><span class="p">],[</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span><span class="mf">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/laguerre.png" src="../_images/laguerre.png" />
 <p><strong>Examples</strong></p>
 <p>Evaluation for arbitrary arguments:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -716,6 +771,34 @@ are permitted to be complex numbers.</p>
 <p class="last"><a title="mpmath.spherharm" class="reference internal" href="#mpmath.spherharm"><tt class="xref docutils literal"><span class="pre">spherharm()</span></tt></a> returns a complex number, even the value is
 purely real.</p>
 </div>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Real part of spherical harmonic Y_(4,0)(theta,phi)</span>
+<span class="k">def</span> <span class="nf">Y</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">m</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span><span class="n">phi</span><span class="p">):</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">re</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">spherharm</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">theta</span><span class="p">,</span><span class="n">phi</span><span class="p">)))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">R</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">g</span>
+
+<span class="n">fp</span><span class="o">.</span><span class="n">splot</span><span class="p">(</span><span class="n">Y</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">fp</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">2</span><span class="o">*</span><span class="n">fp</span><span class="o">.</span><span class="n">pi</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">300</span><span class="p">)</span>
+<span class="c"># fp.splot(Y(4,0), [0,fp.pi], [0,2*fp.pi], points=300)</span>
+<span class="c"># fp.splot(Y(4,1), [0,fp.pi], [0,2*fp.pi], points=300)</span>
+<span class="c"># fp.splot(Y(4,2), [0,fp.pi], [0,2*fp.pi], points=300)</span>
+<span class="c"># fp.splot(Y(4,3), [0,fp.pi], [0,2*fp.pi], points=300)</span>
+</pre></div>
+</div>
+<p><img class="math" src="../_images/math/67786de490601eb00f46371c76a516dd9aef5671.png" alt="Y_{4,0}"/>:</p>
+<img alt="../_images/spherharm40.png" src="../_images/spherharm40.png" />
+<p><img class="math" src="../_images/math/265d32f4a740077e5033b0db988576a66a033cff.png" alt="Y_{4,1}"/>:</p>
+<img alt="../_images/spherharm41.png" src="../_images/spherharm41.png" />
+<p><img class="math" src="../_images/math/4e63d2bc0094880bdce17dfc76bb01e0eb1471aa.png" alt="Y_{4,2}"/>:</p>
+<img alt="../_images/spherharm42.png" src="../_images/spherharm42.png" />
+<p><img class="math" src="../_images/math/5c345066c4d6201db89c4fd497f5071be9e58d3b.png" alt="Y_{4,3}"/>:</p>
+<img alt="../_images/spherharm43.png" src="../_images/spherharm43.png" />
+<p><img class="math" src="../_images/math/2104cca93a9078baa3699486688f344bd0e68f95.png" alt="Y_{4,4}"/>:</p>
+<img alt="../_images/spherharm44.png" src="../_images/spherharm44.png" />
 <p><strong>Examples</strong></p>
 <p>Some low-order spherical harmonics with reference values:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -859,7 +942,7 @@ on the unit sphere:</p>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 06, 2010.
+      Last updated on Jun 14, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
     </div>
 

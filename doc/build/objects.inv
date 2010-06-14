@@ -34,13 +34,16 @@ mpmath.quad function calculus/integration.html
 mpmath.hyper function functions/hypergeometric.html
 mpmath.diff function calculus/differentiation.html
 mpmath.eulerpoly function functions/numtheory.html
+mpmath.lommels1 function functions/bessel.html
 mpmath.bernfrac function functions/numtheory.html
 mpmath.erfinv function functions/expintegrals.html
+mpmath.lommels2 function functions/bessel.html
 mpmath.log10 function functions/powers.html
 mpmath.sqrt function functions/powers.html
 mpmath.mp.e attribute functions/constants.html
 mpmath.sin function functions/trigonometric.html
 mpmath.mp.degree attribute functions/constants.html
+mpmath.siegeltheta function functions/zeta.html
 mpmath.ei function functions/expintegrals.html
 mpmath.mp.euler attribute functions/constants.html
 mpmath.mfrom function functions/elliptic.html
@@ -106,7 +109,9 @@ mpmath.altzeta function functions/zeta.html
 mpmath.calculus.quadrature.QuadratureRule.summation method calculus/integration.html
 mpmath.mp.apery attribute functions/constants.html
 mpmath.fdiv function general.html
+mpmath.scorergi function functions/bessel.html
 mpmath.calculus.optimization.Anderson class calculus/optimization.html
+mpmath.airybizero function functions/bessel.html
 mpmath.hypot function functions/powers.html
 mpmath.airybi function functions/bessel.html
 mpmath.fadd function general.html
@@ -129,7 +134,7 @@ mpmath.hyp2f1 function functions/hypergeometric.html
 mpmath.hyp2f0 function functions/hypergeometric.html
 mpmath.coulombc function functions/bessel.html
 mpmath.hyp2f2 function functions/hypergeometric.html
-mpmath.log function functions/powers.html
+mpmath.scorerhi function functions/bessel.html
 mpmath.appellf2 function functions/hypergeometric.html
 mpmath.polyroots function calculus/polynomials.html
 mpmath.ellipk function functions/elliptic.html
@@ -144,7 +149,7 @@ mpmath.j1 function functions/bessel.html
 mpmath.agm function functions/powers.html
 mpmath.bernoulli function functions/numtheory.html
 mpmath.differint function calculus/differentiation.html
-mpmath.chebyfit function calculus/approximation.html
+mpmath.kfrom function functions/elliptic.html
 mpmath.mpmathify function general.html
 mpmath.calculus.quadrature.QuadratureRule.guess_degree method calculus/integration.html
 mpmath.expint function functions/expintegrals.html
@@ -157,6 +162,7 @@ mpmath.gamma function functions/gamma.html
 mpmath.hyp2f3 function functions/hypergeometric.html
 mpmath.qbarfrom function functions/elliptic.html
 mpmath.acsch function functions/hyperbolic.html
+mpmath.fneg function general.html
 mpmath.hankel1 function functions/bessel.html
 mpmath.hankel2 function functions/bessel.html
 mpmath.mp.catalan attribute functions/constants.html
@@ -166,6 +172,7 @@ mpmath.expm function matrices.html
 mpmath.ber function functions/bessel.html
 mpmath.ceil function general.html
 mpmath.erfi function functions/expintegrals.html
+mpmath.log function functions/powers.html
 mpmath.identify function identification.html
 mpmath.appellf1 function functions/hypergeometric.html
 mpmath.betainc function functions/gamma.html
@@ -195,13 +202,14 @@ mpmath.asech function functions/hyperbolic.html
 mpmath.tanh function functions/hyperbolic.html
 mpmath.calculus.quadrature.QuadratureRule.sum_next method calculus/integration.html
 mpmath.conj function general.html
+mpmath.angerj function functions/bessel.html
 mpmath.jacobi function functions/orthogonal.html
 mpmath.calculus.quadrature.TanhSinh class calculus/integration.html
 mpmath.pslq function identification.html
 mpmath.mnorm function matrices.html
 mpmath.bihyper function functions/hypergeometric.html
 mpmath.chebyu function functions/orthogonal.html
-mpmath.siegeltheta function functions/zeta.html
+mpmath.webere function functions/bessel.html
 mpmath.degrees function functions/trigonometric.html
 mpmath.harmonic function functions/gamma.html
 mpmath.calculus.quadrature.QuadratureRule.clear method calculus/integration.html
@@ -266,8 +274,8 @@ mpmath.acosh function functions/hyperbolic.html
 mpmath.fmod function general.html
 mpmath.coth function functions/hyperbolic.html
 mpmath.shanks function calculus/sums_limits.html
-mpmath.kfrom function functions/elliptic.html
-mpmath.fneg function general.html
+mpmath.chebyfit function calculus/approximation.html
+mpmath.lambertw function functions/powers.html
 mpmath.clsin function functions/zeta.html
 mpmath.hyperu function functions/bessel.html
 mpmath.floor function general.html
@@ -279,7 +287,7 @@ mpmath.mp.glaisher attribute functions/constants.html
 mpmath.powm1 function functions/powers.html
 mpmath.ncdf function functions/expintegrals.html
 mpmath.nprod function calculus/sums_limits.html
-mpmath.lambertw function functions/powers.html
+mpmath.airyaizero function functions/bessel.html
 mpmath.fmul function general.html
 mpmath.loggamma function functions/gamma.html
 mpmath.acos function functions/trigonometric.html

@@ -7,7 +7,7 @@ The functions in this section arise as solutions to various differential equatio
 Bessel functions
 ...................................................
 
-:func:`besselj` / :func:`j0` / :func:`j1`
+:func:`besselj`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.besselj(n,x,derivative=0)
@@ -95,16 +95,32 @@ Lommel functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.lommels2
 
-Airy functions
+Airy and Scorer functions
 ...............................................
 
 :func:`airyai`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.airyai(x)
+.. autofunction:: mpmath.airyai(z, derivative=0, **kwargs)
 
 :func:`airybi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.airybi(x)
+.. autofunction:: mpmath.airybi(z, derivative=0, **kwargs)
+
+:func:`airyaizero`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.airyaizero(k, derivative=0)
+
+:func:`airybizero`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.airybizero(k, derivative=0, complex=0)
+
+:func:`scorergi`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.scorergi(z, **kwargs)
+
+:func:`scorerhi`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.scorerhi(z, **kwargs)
 
 
 Coulomb wave functions
