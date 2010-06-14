@@ -74,6 +74,8 @@ def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
                         in_complex = False
                         segments.append(segment)
                         segment = []
+                    if hasattr(v, "real"):
+                        v = v.real
                     segment.append((float(x[i]), v))
             except ctx.plot_ignore:
                 if segment:
