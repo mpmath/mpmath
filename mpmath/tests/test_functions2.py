@@ -1290,6 +1290,18 @@ def test_lambertw_hard():
     assert check(lambertw(subj(a,d80),-1), -3.088843015613043855957087 - 7.461489285654254556906117j)
     assert check(lambertw(subj(a,d300),-1), -3.088843015613043855957087 - 7.461489285654254556906117j)
     assert check(lambertw(subj(a,d1000),-1), -3.088843015613043855957087 - 7.461489285654254556906117j)
+    # One more case, testing higher precision
+    mp.dps = 500
+    x = -1/e + mpf('1e-13')
+    ans = "-0.99999926266961377166355784455394913638782494543377383"\
+    "744978844374498153493943725364881490261187530235150668593869563"\
+    "168276697689459394902153960200361935311512317183678882"
+    mp.dps = 15
+    assert lambertw(x).ae(ans)
+    mp.dps = 50
+    assert lambertw(x).ae(ans)
+    mp.dps = 150
+    assert lambertw(x).ae(ans)
 
 def test_meijerg():
     mp.dps = 15
