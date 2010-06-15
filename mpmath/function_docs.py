@@ -6148,9 +6148,9 @@ of `w \exp(w)`. In other words, the value of `W(z)` is such that
 `z = W(z) \exp(W(z))` for any complex number `z`.
 
 The Lambert W function is a multivalued function with infinitely
-many branches. Each branch gives a separate solution `w` of the
-equation `z = w \exp(w)`. All branches are supported by
-:func:`~mpmath.lambertw`:
+many branches `W_k(z)`, indexed by `k \in \mathbb{Z}`. Each branch
+gives a different solution `w` of the equation `z = w \exp(w)`.
+All branches are supported by :func:`~mpmath.lambertw`:
 
 * ``lambertw(z)`` gives the principal solution (branch 0)
 
@@ -6164,26 +6164,35 @@ principal branch (`k = 0`) is real for real `z > -1/e`, and the
 The definition, implementation and choice of branches
 is based on [Corless]_.
 
+**Plots**
+
+.. literalinclude :: /plots/lambertw.py
+.. image :: /plots/lambertw.png
+.. literalinclude :: /plots/lambertw_c.py
+.. image :: /plots/lambertw_c.png
+
 **Basic examples**
 
 The Lambert W function is the inverse of `w \exp(w)`::
 
     >>> from mpmath import *
-    >>> mp.dps = 35; mp.pretty = True
+    >>> mp.dps = 25; mp.pretty = True
     >>> w = lambertw(1)
     >>> w
-    0.56714329040978387299996866221035555
+    0.5671432904097838729999687
     >>> w*exp(w)
     1.0
 
 Any branch gives a valid inverse::
 
     >>> w = lambertw(1, k=3)
-    >>> w    # doctest: +NORMALIZE_WHITESPACE
-    (-2.8535817554090378072068187234910812 +
-      17.113535539412145912607826671159289j)
-    >>> w*exp(w)
-    (1.0 + 3.5075477124212226194278700785075126e-36j)
+    >>> w
+    (-2.853581755409037807206819 + 17.11353553941214591260783j)
+    >>> w = lambertw(1, k=25)
+    >>> w
+    (-5.047020464221569709378686 + 155.4763860949415867162066j)
+    >>> chop(w*exp(w))
+    1.0
 
 **Applications to equation-solving**
 
@@ -6196,26 +6205,22 @@ tower `z^{z^{z^{\ldots}}}`::
     ...         return z
     ...     return z ** tower(z, n-1)
     ...
-    >>> tower(0.5, 100)
-    0.641185744504986
-    >>> mp.dps = 50
+    >>> tower(mpf(0.5), 100)
+    0.6411857445049859844862005
     >>> -lambertw(-log(0.5))/log(0.5)
-    0.6411857445049859844862004821148236665628209571911
+    0.6411857445049859844862005
 
 **Properties**
 
 The Lambert W function grows roughly like the natural logarithm
 for large arguments::
 
-    >>> mp.dps = 15
-    >>> lambertw(1000)
-    5.2496028524016
-    >>> log(1000)
-    6.90775527898214
-    >>> lambertw(10**100)
-    224.843106445119
-    >>> log(10**100)
-    230.258509299405
+    >>> lambertw(1000); log(1000)
+    5.249602852401596227126056
+    6.907755278982137052053974
+    >>> lambertw(10**100); log(10**100)
+    224.8431064451185015393731
+    230.2585092994045684017991
 
 The principal branch of the Lambert W function has a rational
 Taylor series expansion around `z = 0`::
@@ -6225,11 +6230,10 @@ Taylor series expansion around `z = 0`::
 
 Some special values and limits are::
 
-    >>> mp.dps = 15
     >>> lambertw(0)
     0.0
     >>> lambertw(1)
-    0.567143290409784
+    0.5671432904097838729999687
     >>> lambertw(e)
     1.0
     >>> lambertw(inf)
@@ -6238,40 +6242,31 @@ Some special values and limits are::
     -inf
     >>> lambertw(0, k=3)
     -inf
+    >>> lambertw(inf, k=2)
+    (+inf + 12.56637061435917295385057j)
     >>> lambertw(inf, k=3)
-    (+inf + 18.8495559215388j)
+    (+inf + 18.84955592153875943077586j)
+    >>> lambertw(-inf, k=3)
+    (+inf + 21.9911485751285526692385j)
 
 The `k = 0` and `k = -1` branches join at `z = -1/e` where
 `W(z) = -1` for both branches. Since `-1/e` can only be represented
-approximately with mpmath numbers, evaluating the Lambert W function
-at this point only gives `-1` approximately::
+approximately with binary floating-point numbers, evaluating the
+Lambert W function at this point only gives `-1` approximately::
 
-    >>> mp.dps = 25
     >>> lambertw(-1/e, 0)
-    -0.999999999999837133022867
+    -0.9999999999998371330228251
     >>> lambertw(-1/e, -1)
-    -1.00000000000016286697718
+    -1.000000000000162866977175
 
 If `-1/e` happens to round in the negative direction, there might be
 a small imaginary part::
 
     >>> mp.dps = 15
     >>> lambertw(-1/e)
-    (-1.0 + 8.22007971511612e-9j)
-
-**Possible issues**
-
-.. warning ::
-
-    The evaluation can become inaccurate very close to the branch point
-    at `-1/e`. In some corner cases, :func:`~mpmath.lambertw` might currently
-    fail to converge, or can end up on the wrong branch.
-
-**Algorithm**
-
-Halley's iteration is used to invert `w \exp(w)`, using a first-order
-asymptotic approximation (`O(\log(w))` or `O(w)`) as the initial
-estimate.
+    (-1.0 + 8.22007971483662e-9j)
+    >>> lambertw(-1/e+eps)
+    -0.999999966242188
 
 **References**
 
