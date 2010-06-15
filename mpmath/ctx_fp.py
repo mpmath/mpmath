@@ -91,6 +91,11 @@ class FPContext(StandardBaseContext):
     def isinf(ctx, x):
         return abs(x) == math2.INF
 
+    def isnormal(ctx, x):
+        if x:
+            return x - x == 0.0
+        return False
+
     def isnpint(ctx, x):
         if type(x) is complex:
             if x.imag:
