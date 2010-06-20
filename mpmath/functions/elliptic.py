@@ -634,9 +634,19 @@ def elliprf(ctx, x, y, z):
         >>> -q(f, [0,0.5]) + q(f, [0.5,inf])
         (0.7961258658423391329305694 - 1.213856669836495986430094j)
 
+    The so-called *first lemniscate constant*, a transcendental number::
+
+        >>> elliprf(0,1,2)
+        1.31102877714605990523242
+        >>> extradps(25)(quad)(lambda t: 1/sqrt(1-t**4), [0,1])
+        1.31102877714605990523242
+        >>> gamma('1/4')**2/(4*sqrt(2*pi))
+        1.31102877714605990523242
+
     **References**
 
     1. [Carlson]_
+    2. [DLMF]_ Chapter 19. Elliptic Integrals
 
     """
     x = ctx.convert(x)
@@ -823,6 +833,15 @@ def elliprd(ctx, x, y, z):
         0.2904602810289906442326534
         >>> elliprj(1,2,3,3)
         0.2904602810289906442326534
+
+    The so-called *second lemniscate constant*, a transcendental number::
+
+        >>> elliprd(0,2,1)/3
+        0.5990701173677961037199612
+        >>> extradps(25)(quad)(lambda t: t**2/sqrt(1-t**4), [0,1])
+        0.5990701173677961037199612
+        >>> gamma('3/4')**2/sqrt(2*pi)
+        0.5990701173677961037199612
 
     """
     return ctx.elliprj(x,y,z,z)
