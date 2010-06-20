@@ -328,6 +328,13 @@ scorergi = mp.scorergi
 scorerhi = mp.scorerhi
 ellipe = mp.ellipe
 ellipk = mp.ellipk
+
+elliprc = mp.elliprc
+elliprj = mp.elliprj
+elliprf = mp.elliprf
+elliprd = mp.elliprd
+elliprg = mp.elliprg
+
 agm = mp.agm
 jacobi = mp.jacobi
 chebyt = mp.chebyt
