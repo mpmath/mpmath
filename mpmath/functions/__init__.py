@@ -5,6 +5,7 @@ import hypergeometric
 import expintegrals
 import bessel
 import orthogonal
+import theta
 import elliptic
 import zeta
 import rszeta
