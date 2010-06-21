@@ -9,7 +9,9 @@ from mpmath import mp, fp
 def test_axes():
     try:
         import matplotlib
-        if map(int, matplotlib.__version__.split(".")) < [0,99]:
+        version = matplotlib.__version__.split("-")[0]
+        version = version.split(".")[:2]
+        if map(int, version) < [0,99]:
             raise ImportError
         import pylab
     except ImportError:
