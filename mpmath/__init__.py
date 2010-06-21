@@ -326,15 +326,15 @@ airyaizero = mp.airyaizero
 airybizero = mp.airybizero
 scorergi = mp.scorergi
 scorerhi = mp.scorerhi
-ellipe = mp.ellipe
 ellipk = mp.ellipk
-
+ellipe = mp.ellipe
+ellipf = mp.ellipf
+ellippi = mp.ellippi
 elliprc = mp.elliprc
 elliprj = mp.elliprj
 elliprf = mp.elliprf
 elliprd = mp.elliprd
 elliprg = mp.elliprg
-
 agm = mp.agm
 jacobi = mp.jacobi
 chebyt = mp.chebyt

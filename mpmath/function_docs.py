@@ -4846,17 +4846,11 @@ Evaluates the complete elliptic integral of the first kind,
 
 .. math ::
 
-    K(m) = \int_0^{\pi/2} \frac{1}{\sqrt{1-m \sin^2 t}} dt.
+    K(m) = \int_0^{\pi/2} \frac{dt}{\sqrt{1-m \sin^2 t}} \, = \,
+    \frac{\pi}{2} \,_2F_1\left(\frac{1}{2}, \frac{1}{2}, 1, m\right).
 
 Note that the argument is the parameter `m = k^2`,
 not the modulus `k` which is sometimes used.
-
-Alternatively, in terms of a hypergeometric function,
-we have:
-
-.. math ::
-
-    K(m) = \frac{\pi}{2} \,_2F_1(1/2, 1/2, 1, m)
 
 **Examples**
 
@@ -4896,67 +4890,6 @@ A definite integral::
 
     >>> quad(ellipk, [0, 1])
     2.0
-"""
-
-ellipe = r"""
-Evaluates the complete elliptic integral of the second kind,
-`E(m)`, defined by
-
-.. math ::
-
-    E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} dt.
-
-Note that the argument is the parameter `m = k^2`,
-not the modulus `k` which is sometimes used.
-
-Alternatively, in terms of a hypergeometric function,
-we have:
-
-.. math ::
-
-    E(m) = \frac{\pi}{2} \,_2F_1(1/2, -1/2, 1, m)
-
-**Examples**
-
-Basic values and limits::
-
-    >>> from mpmath import *
-    >>> mp.dps = 25; mp.pretty = True
-    >>> ellipe(0)
-    1.570796326794896619231322
-    >>> ellipe(1)
-    1.0
-    >>> ellipe(-1)
-    1.910098894513856008952381
-    >>> ellipe(2)
-    (0.5990701173677961037199612 + 0.5990701173677961037199612j)
-    >>> ellipe(inf)
-    (0.0 + +infj)
-    >>> ellipe(-inf)
-    +inf
-
-Verifying the defining integral and hypergeometric
-representation::
-
-    >>> ellipe(0.5)
-    1.350643881047675502520175
-    >>> quad(lambda t: sqrt(1-0.5*sin(t)**2), [0, pi/2])
-    1.350643881047675502520175
-    >>> pi/2*hyp2f1(0.5,-0.5,1,0.5)
-    1.350643881047675502520175
-
-Evaluation is supported for arbitrary complex `m`::
-
-    >>> ellipe(0.5+0.25j)
-    (1.360868682163129682716687 - 0.1238733442561786843557315j)
-    >>> ellipe(3+4j)
-    (1.499553520933346954333612 - 1.577879007912758274533309j)
-
-A definite integral::
-
-    >>> quad(ellipe, [0,1])
-    1.333333333333333333333333
-
 """
 
 agm = r"""

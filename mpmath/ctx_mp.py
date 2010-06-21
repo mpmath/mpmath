@@ -158,7 +158,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx._ci = ctx._wrap_libmp_function(libmp.mpf_ci, libmp.mpc_ci)
         ctx._si = ctx._wrap_libmp_function(libmp.mpf_si, libmp.mpc_si)
         ctx.ellipk = ctx._wrap_libmp_function(libmp.mpf_ellipk, libmp.mpc_ellipk)
-        ctx.ellipe = ctx._wrap_libmp_function(libmp.mpf_ellipe, libmp.mpc_ellipe)
+        ctx._ellipe = ctx._wrap_libmp_function(libmp.mpf_ellipe, libmp.mpc_ellipe)
         ctx.agm1 = ctx._wrap_libmp_function(libmp.mpf_agm1, libmp.mpc_agm1)
         ctx._erf = ctx._wrap_libmp_function(libmp.mpf_erf, None)
         ctx._erfc = ctx._wrap_libmp_function(libmp.mpf_erfc, None)

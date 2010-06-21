@@ -898,3 +898,397 @@ def elliprg(ctx, x, y, z):
         T3 = 0.5*ctx.sqrt(x*y/z)
         return T1,T2,T3
     return ctx.sum_accurately(terms)
+
+
+@defun_wrapped
+def ellipf(ctx, phi, m):
+    r"""
+    Evaluates the Legendre incomplete elliptic integral of the first kind
+
+     .. math ::
+
+        F(\phi,m) = \int_0^{\phi} \frac{dt}{\sqrt{1-m \sin^2 t}}
+
+    or equivalently
+
+    .. math ::
+
+        F(\phi,m) = \int_0^{\sin z}
+        \frac{dt}{\left(\sqrt{1-t^2}\right)\left(\sqrt{1-mt^2}\right)}.
+
+    The function reduces to a complete elliptic integral of the first kind
+    (see :func:`~mpmath.ellipk`) when `\phi = \frac{\pi}{2}`; that is,
+
+    .. math ::
+
+        F\left(\frac{\pi}{2}, m\right) = K(m).
+
+    The integral representations above are valid when
+    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellipf`
+    defines the function to be extended by the periodicity relation
+    `F(\phi + n \pi, m) = 2 n K(m) + F(\phi,m), n \in \mathbb{Z}`.
+
+    **Examples**
+
+    Basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> ellipf(0,1)
+        0.0
+        >>> ellipf(0,0)
+        0.0
+        >>> ellipf(1,0); ellipf(2+3j,0)
+        1.0
+        (2.0 + 3.0j)
+        >>> ellipf(1,1); log(sec(1)+tan(1))
+        1.226191170883517070813061
+        1.226191170883517070813061
+        >>> ellipf(pi/2, -0.5); ellipk(-0.5)
+        1.415737208425956198892166
+        1.415737208425956198892166
+        >>> ellipf(pi/2+eps, 1); ellipf(-pi/2-eps, 1)
+        +inf
+        +inf
+        >>> ellipf(1.5, 1)
+        3.340677542798311003320813
+
+    Comparing with numerical integration::
+
+        >>> z,m = 0.5, 1.25
+        >>> ellipf(z,m)
+        0.5287219202206327872978255
+        >>> quad(lambda t: (1-m*sin(t)**2)**(-0.5), [0,z])
+        0.5287219202206327872978255
+
+    The arguments may be complex numbers::
+
+        >>> ellipf(3j, 0.5)
+        (0.0 + 1.713602407841590234804143j)
+        >>> ellipf(3+4j, 5-6j)
+        (1.269131241950351323305741 - 0.3561052815014558335412538j)
+        >>> z,m = 2+3j, 1.25
+        >>> k = 1011
+        >>> ellipf(z+pi*k,m); ellipf(z,m) + 2*k*ellipk(m)
+        (4086.184383622179764082821 - 3003.003538923749396546871j)
+        (4086.184383622179764082821 - 3003.003538923749396546871j)
+
+    For `|\Re(z)| < \pi/2`, the function can be expressed as a
+    hypergeometric series of two variables
+    (see :func:`~mpmath.appellf1`)::
+
+        >>> z,m = 0.5, 0.25
+        >>> ellipf(z,m)
+        0.5050887275786480788831083
+        >>> sin(z)*appellf1(0.5,0.5,0.5,1.5,sin(z)**2,m*sin(z)**2)
+        0.5050887275786480788831083
+
+    """
+    z = phi
+    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+        if m == 0:
+            return z + m
+        if z == 0:
+            return z * m
+        if m == ctx.inf or m == ctx.ninf: return z/m
+        raise ValueError
+    x = z.real
+    ctx.prec += max(0, ctx.mag(x))
+    pi = +ctx.pi
+    away = abs(x) > pi/2
+    if m == 1:
+        if away:
+            return ctx.inf
+    if away:
+        d = ctx.nint(x/pi)
+        z = z-pi*d
+        P = 2*d*ctx.ellipk(m)
+    else:
+        P = 0
+    c, s = ctx.cos_sin(z)
+    return s * ctx.elliprf(c**2, 1-m*s**2, 1) + P
+
+@defun_wrapped
+def ellipe(ctx, *args):
+    r"""
+    Called with a single argument `m`, evaluates the Legendre complete
+    elliptic integral of the second kind, `E(m)`, defined by
+
+        .. math :: E(m) = \int_0^{\pi/2} \sqrt{1-m \sin^2 t} \, dt \,=\,
+            \frac{\pi}{2}
+            \,_2F_1\left(\frac{1}{2}, -\frac{1}{2}, 1, m\right).
+
+    Called with two arguments `\phi, m`, evaluates the incomplete elliptic
+    integral of the second kind
+
+     .. math ::
+
+        E(\phi,m) = \int_0^{\phi} \sqrt{1-m \sin^2 t} \, dt =
+                    \int_0^{\sin z}
+                    \frac{\sqrt{1-mt^2}}{\sqrt{1-t^2}} \, dt.
+
+    The incomplete integral reduces to a complete integral when
+    `\phi = \frac{\pi}{2}`; that is,
+
+    .. math ::
+
+        E\left(\frac{\pi}{2}, m\right) = E(m).
+
+    The integral representations above are valid when
+    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellipe`
+    defines the function to be extended by the periodicity relation
+    `E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}`.
+
+    **Examples for the complete integral**
+
+    Basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> ellipe(0)
+        1.570796326794896619231322
+        >>> ellipe(1)
+        1.0
+        >>> ellipe(-1)
+        1.910098894513856008952381
+        >>> ellipe(2)
+        (0.5990701173677961037199612 + 0.5990701173677961037199612j)
+        >>> ellipe(inf)
+        (0.0 + +infj)
+        >>> ellipe(-inf)
+        +inf
+
+    Verifying the defining integral and hypergeometric
+    representation::
+
+        >>> ellipe(0.5)
+        1.350643881047675502520175
+        >>> quad(lambda t: sqrt(1-0.5*sin(t)**2), [0, pi/2])
+        1.350643881047675502520175
+        >>> pi/2*hyp2f1(0.5,-0.5,1,0.5)
+        1.350643881047675502520175
+
+    Evaluation is supported for arbitrary complex `m`::
+
+        >>> ellipe(0.5+0.25j)
+        (1.360868682163129682716687 - 0.1238733442561786843557315j)
+        >>> ellipe(3+4j)
+        (1.499553520933346954333612 - 1.577879007912758274533309j)
+
+    A definite integral::
+
+        >>> quad(ellipe, [0,1])
+        1.333333333333333333333333
+
+    **Examples for the incomplete integral**
+
+    Basic values and limits::
+
+        >>> ellipe(0,1)
+        0.0
+        >>> ellipe(0,0)
+        0.0
+        >>> ellipe(1,0)
+        1.0
+        >>> ellipe(2+3j,0)
+        (2.0 + 3.0j)
+        >>> ellipe(1,1); sin(1)
+        0.8414709848078965066525023
+        0.8414709848078965066525023
+        >>> ellipe(pi/2, -0.5); ellipe(-0.5)
+        1.751771275694817862026502
+        1.751771275694817862026502
+        >>> ellipe(pi/2, 1); ellipe(-pi/2, 1)
+        1.0
+        -1.0
+        >>> ellipe(1.5, 1)
+        0.9974949866040544309417234
+
+    Comparing with numerical integration::
+
+        >>> z,m = 0.5, 1.25
+        >>> ellipe(z,m)
+        0.4740152182652628394264449
+        >>> quad(lambda t: sqrt(1-m*sin(t)**2), [0,z])
+        0.4740152182652628394264449
+
+    The arguments may be complex numbers::
+
+        >>> ellipe(3j, 0.5)
+        (0.0 + 7.551991234890371873502105j)
+        >>> ellipe(3+4j, 5-6j)
+        (24.15299022574220502424466 + 75.2503670480325997418156j)
+        >>> k = 35
+        >>> z,m = 2+3j, 1.25
+        >>> ellipe(z+pi*k,m); ellipe(z,m) + 2*k*ellipe(m)
+        (48.30138799412005235090766 + 17.47255216721987688224357j)
+        (48.30138799412005235090766 + 17.47255216721987688224357j)
+
+    For `|\Re(z)| < \pi/2`, the function can be expressed as a
+    hypergeometric series of two variables
+    (see :func:`~mpmath.appellf1`)::
+
+        >>> z,m = 0.5, 0.25
+        >>> ellipe(z,m)
+        0.4950017030164151928870375
+        >>> sin(z)*appellf1(0.5,0.5,-0.5,1.5,sin(z)**2,m*sin(z)**2)
+        0.4950017030164151928870376
+
+    """
+    if len(args) == 1:
+        return ctx._ellipe(args[0])
+    else:
+        phi, m = args
+    z = phi
+    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+        if m == 0:
+            return z + m
+        if z == 0:
+            return z * m
+        if m == ctx.inf or m == ctx.ninf:
+            return ctx.inf
+        raise ValueError
+    x = z.real
+    ctx.prec += max(0, ctx.mag(x))
+    pi = +ctx.pi
+    away = abs(x) > pi/2
+    if away:
+        d = ctx.nint(x/pi)
+        z = z-pi*d
+        P = 2*d*ctx.ellipe(m)
+    else:
+        P = 0
+    def terms():
+        c, s = ctx.cos_sin(z)
+        x = c**2
+        y = 1-m*s**2
+        RF = ctx.elliprf(x, y, 1)
+        RD = ctx.elliprd(x, y, 1)
+        return s*RF, -m*s**3*RD/3
+    return ctx.sum_accurately(terms) + P
+
+@defun_wrapped
+def ellippi(ctx, *args):
+    r"""
+    Called with three arguments `n, \phi, m`, evaluates the Legendre
+    incomplete elliptic integral of the third kind
+
+    .. math ::
+
+        \Pi(n; \phi, m) = \int_0^{\phi}
+            \frac{dt}{(1-n \sin^2 t) \sqrt{1-m \sin^2 t}} =
+            \int_0^{\sin \phi}
+            \frac{dt}{(1-nt^2) \sqrt{1-t^2} \sqrt{1-mt^2}}.
+
+    Called with two arguments `n, m`, evaluates the complete
+    elliptic integral of the third kind
+    `\Pi(n,m) = \Pi(n; \frac{\pi}{2},m)`.
+
+    The integral representations above are valid when
+    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellippi`
+    defines the function to be extended by the periodicity relation
+    `\Pi(n,\phi+k\pi,m) = 2k\Pi(n,m) + \Pi(n,\phi,m), k \in \mathbb{Z}`.
+
+    **Examples for the complete integral**
+
+    Some basic values and limits::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> ellippi(0,-5); ellipk(-5)
+        0.9555039270640439337379334
+        0.9555039270640439337379334
+        >>> ellippi(inf,2)
+        0.0
+        >>> ellippi(2,inf)
+        0.0
+        >>> abs(ellippi(1,5))
+        +inf
+
+    Evaluation in terms of simpler functions::
+
+        >>> ellippi(0.25,0.25); ellipe(0.25)/(1-0.25)
+        1.956616279119236207279727
+        1.956616279119236207279727
+        >>> ellippi(3,0); pi/(2*sqrt(-2))
+        (0.0 - 1.11072073453959156175397j)
+        (0.0 - 1.11072073453959156175397j)
+        >>> ellippi(-3,0); pi/(2*sqrt(4))
+        0.7853981633974483096156609
+        0.7853981633974483096156609
+
+    **Examples for the incomplete integral**
+
+    Basic values and limits::
+
+        >>> ellippi(0.25,-0.5); ellippi(0.25,pi/2,-0.5)
+        1.622944760954741603710555
+        1.622944760954741603710555
+        >>> ellippi(1,0,1)
+        0.0
+        >>> ellippi(inf,0,1)
+        0.0
+        >>> ellippi(0,0.25,0.5); ellipf(0.25,0.5)
+        0.2513040086544925794134591
+        0.2513040086544925794134591
+        >>> ellippi(1,1,1); (log(sec(1)+tan(1))+sec(1)*tan(1))/2
+        2.054332933256248668692452
+        2.054332933256248668692452
+        >>> ellippi(0.25, 53*pi/2, 0.75); 53*ellippi(0.25,0.75)
+        135.240868757890840755058
+        135.240868757890840755058
+        >>> ellippi(0.5,pi/4,0.5); 2*ellipe(pi/4,0.5)-1/sqrt(3)
+        0.9190227391656969903987269
+        0.9190227391656969903987269
+
+    Complex arguments are supported::
+
+        >>> ellippi(0.5, 5+6j-2*pi, -7-8j)
+        (-0.3612856620076747660410167 + 0.5217735339984807829755815j)
+
+    """
+    if len(args) == 2:
+        n, m = args
+        complete = True
+        z = phi = ctx.pi/2
+    else:
+        n, phi, m = args
+        complete = False
+        z = phi
+    if not (ctx.isnormal(n) and ctx.isnormal(z) and ctx.isnormal(m)):
+        if ctx.isnan(n) or ctx.isnan(z) or ctx.isnan(m):
+            raise ValueError
+        if complete:
+            if m == 0: return ctx.pi/(2*ctx.sqrt(1-n))
+            if n == 0: return ctx.ellipk(m)
+            if ctx.isinf(n) or ctx.isinf(m): return ctx.zero
+        else:
+            if z == 0: return z
+            if ctx.isinf(n): return ctx.zero
+            if ctx.isinf(m): return ctx.zero
+        if ctx.isinf(n) or ctx.isinf(z) or ctx.isinf(m):
+            raise ValueError
+    if complete:
+        away = False
+    else:
+        x = z.real
+        ctx.prec += max(0, ctx.mag(x))
+        pi = +ctx.pi
+        away = abs(x) > pi/2
+    if away:
+        d = ctx.nint(x/pi)
+        z = z-pi*d
+        P = 2*d*ctx.ellippi(n,m)
+    else:
+        P = 0
+    def terms():
+        if complete:
+            c, s = ctx.zero, ctx.one
+        else:
+            c, s = ctx.cos_sin(z)
+        x = c**2
+        y = 1-m*s**2
+        RF = ctx.elliprf(x, y, 1)
+        RJ = ctx.elliprj(x, y, 1, 1-n*s**2)
+        return s*RF, n*s**3*RJ/3
+    return ctx.sum_accurately(terms) + P
