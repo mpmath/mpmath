@@ -123,6 +123,7 @@ mpmath.hyp0f1 function functions/hypergeometric.html
 mpmath.spherharm function functions/orthogonal.html
 mpmath.norm function matrices.html
 mpmath.powm function matrices.html
+mpmath.elliprj function functions/elliptic.html
 mpmath.rf function functions/gamma.html
 mpmath.autoprec function general.html
 mpmath.re function general.html
@@ -133,12 +134,13 @@ mpmath.coulombf function functions/bessel.html
 mpmath.hyp2f1 function functions/hypergeometric.html
 mpmath.hyp2f0 function functions/hypergeometric.html
 mpmath.coulombc function functions/bessel.html
-mpmath.hyp2f2 function functions/hypergeometric.html
+mpmath.elliprd function functions/elliptic.html
 mpmath.scorerhi function functions/bessel.html
 mpmath.appellf2 function functions/hypergeometric.html
 mpmath.polyroots function calculus/polynomials.html
 mpmath.ellipk function functions/elliptic.html
 mpmath.sech function functions/hyperbolic.html
+mpmath.ellipf function functions/elliptic.html
 mpmath.polylog function functions/zeta.html
 mpmath.ellipe function functions/elliptic.html
 mpmath.calculus.optimization.Bisection class calculus/optimization.html
@@ -147,6 +149,7 @@ mpmath.ci function functions/expintegrals.html
 mpmath.fac2 function functions/gamma.html
 mpmath.j1 function functions/bessel.html
 mpmath.agm function functions/powers.html
+mpmath.elliprc function functions/elliptic.html
 mpmath.bernoulli function functions/numtheory.html
 mpmath.differint function calculus/differentiation.html
 mpmath.kfrom function functions/elliptic.html
@@ -160,6 +163,7 @@ mpmath.nint function general.html
 mpmath.cospi function functions/trigonometric.html
 mpmath.gamma function functions/gamma.html
 mpmath.hyp2f3 function functions/hypergeometric.html
+mpmath.hyp2f2 function functions/hypergeometric.html
 mpmath.qbarfrom function functions/elliptic.html
 mpmath.acsch function functions/hyperbolic.html
 mpmath.fneg function general.html
@@ -222,6 +226,8 @@ mpmath.memoize function general.html
 mpmath.whitm function functions/bessel.html
 mpmath.findroot function calculus/optimization.html
 mpmath.mp.mertens attribute functions/constants.html
+mpmath.elliprg function functions/elliptic.html
+mpmath.elliprf function functions/elliptic.html
 mpmath.almosteq function general.html
 mpmath.bessely function functions/bessel.html
 mpmath.appellf4 function functions/hypergeometric.html
@@ -297,3 +303,4 @@ mpmath.fsum function general.html
 mpmath.limit function calculus/sums_limits.html
 mpmath.fsub function general.html
 mpmath.csch function functions/hyperbolic.html
+mpmath.ellippi function functions/elliptic.html
