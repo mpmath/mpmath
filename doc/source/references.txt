@@ -20,6 +20,8 @@ References not listed here can be found in the source code.
 
 .. [CabralRosetti] L G Cabral-Rosetti & M A Sanchis-Lozano. "Appell Functions and the Scalar One-Loop Three-point Integrals in Feynman Diagrams". http://arxiv.org/abs/hep-ph/0206081
 
+.. [Carlson] B C Carlson. "Numerical computation of real or complex elliptic integrals". http://arxiv.org/abs/math/9409227v1
+
 .. [Corless] R M Corless et al. "On the Lambert W function", Adv. Comp. Math. 5 (1996) 329-359. http://www.apmaths.uwo.ca/~djeffrey/Offprints/W-adv-cm.pdf
 
 .. [DLMF] NIST Digital Library of Mathematical Functions. http://dlmf.nist.gov/
