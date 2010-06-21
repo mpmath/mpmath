@@ -4852,6 +4852,11 @@ Evaluates the complete elliptic integral of the first kind,
 Note that the argument is the parameter `m = k^2`,
 not the modulus `k` which is sometimes used.
 
+**Plots**
+
+.. literalinclude :: /plots/ellipk.py
+.. image :: /plots/ellipk.png
+
 **Examples**
 
 Values and limits include::

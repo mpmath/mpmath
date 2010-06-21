@@ -363,6 +363,13 @@ def kleinj(ctx, tau=None, **kwargs):
     An alternative, common notation is that of the j-function
     `j(\tau) = 1728 J(\tau)`.
 
+    **Plots**
+
+    .. literalinclude :: /plots/kleinj.py
+    .. image :: /plots/kleinj.png
+    .. literalinclude :: /plots/kleinj2.py
+    .. image :: /plots/kleinj2.png
+
     **Examples**
 
     Verifying the functional equation `J(\tau) = J(\tau+1) = J(-\tau^{-1})`::
@@ -923,10 +930,19 @@ def ellipf(ctx, phi, m):
 
         F\left(\frac{\pi}{2}, m\right) = K(m).
 
-    The integral representations above are valid when
-    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellipf`
-    defines the function to be extended by the periodicity relation
-    `F(\phi + n \pi, m) = 2 n K(m) + F(\phi,m), n \in \mathbb{Z}`.
+    In the defining integral, it is assumed that the principal branch
+    of the square root is taken and that the path of integration avoids
+    crossing any branch cuts. Outside `-\pi/2 \le \Re(z) \le \pi/2`,
+    the function extends quasi-periodically as
+
+    .. math ::
+
+        F(\phi + n \pi, m) = 2 n K(m) + F(\phi,m), n \in \mathbb{Z}.
+
+    **Plots**
+
+    .. literalinclude :: /plots/ellipf.py
+    .. image :: /plots/ellipf.png
 
     **Examples**
 
@@ -1034,10 +1050,19 @@ def ellipe(ctx, *args):
 
         E\left(\frac{\pi}{2}, m\right) = E(m).
 
-    The integral representations above are valid when
-    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellipe`
-    defines the function to be extended by the periodicity relation
-    `E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}`.
+    In the defining integral, it is assumed that the principal branch
+    of the square root is taken and that the path of integration avoids
+    crossing any branch cuts. Outside `-\pi/2 \le \Re(z) \le \pi/2`,
+    the function extends quasi-periodically as
+
+    .. math ::
+
+        E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}.
+
+    **Plots**
+
+    .. literalinclude :: /plots/ellipe.py
+    .. image :: /plots/ellipe.png
 
     **Examples for the complete integral**
 
@@ -1184,10 +1209,19 @@ def ellippi(ctx, *args):
     elliptic integral of the third kind
     `\Pi(n,m) = \Pi(n; \frac{\pi}{2},m)`.
 
-    The integral representations above are valid when
-    `-\pi/2 \le \Re(z) \le \pi/2`. Elsewhere, :func:`~mpmath.ellippi`
-    defines the function to be extended by the periodicity relation
-    `\Pi(n,\phi+k\pi,m) = 2k\Pi(n,m) + \Pi(n,\phi,m), k \in \mathbb{Z}`.
+    In the defining integral, it is assumed that the principal branch
+    of the square root is taken and that the path of integration avoids
+    crossing any branch cuts. Outside `-\pi/2 \le \Re(z) \le \pi/2`,
+    the function extends quasi-periodically as
+
+    .. math ::
+
+        \Pi(n,\phi+k\pi,m) = 2k\Pi(n,m) + \Pi(n,\phi,m), k \in \mathbb{Z}.
+
+    **Plots**
+
+    .. literalinclude :: /plots/ellippi.py
+    .. image :: /plots/ellippi.png
 
     **Examples for the complete integral**
 
@@ -1203,6 +1237,8 @@ def ellippi(ctx, *args):
         >>> ellippi(2,inf)
         0.0
         >>> abs(ellippi(1,5))
+        +inf
+        >>> abs(ellippi(0.25,1))
         +inf
 
     Evaluation in terms of simpler functions::
@@ -1269,6 +1305,7 @@ def ellippi(ctx, *args):
         if ctx.isinf(n) or ctx.isinf(z) or ctx.isinf(m):
             raise ValueError
     if complete:
+        if m == 1: return -ctx.inf/ctx.sign(n-1)
         away = False
     else:
         x = z.real
