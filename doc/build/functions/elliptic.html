@@ -261,6 +261,12 @@ Taylor series expansion:</p>
 \frac{\pi}{2} \,_2F_1\left(\frac{1}{2}, \frac{1}{2}, 1, m\right)." /></p>
 </div><p>Note that the argument is the parameter <img class="math" src="../_images/math/cb19452d1ea001143cb433f0705278859f021e2a.png" alt="m = k^2"/>,
 not the modulus <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> which is sometimes used.</p>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Complete elliptic integrals K(m) and E(m)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">ellipk</span><span class="p">,</span> <span class="n">ellipe</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">600</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/ellipk.png" src="../_images/ellipk.png" />
 <p><strong>Examples</strong></p>
 <p>Values and limits include:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -320,10 +326,23 @@ representation:</p>
 (see <a title="mpmath.ellipk" class="reference internal" href="#mpmath.ellipk"><tt class="xref docutils literal"><span class="pre">ellipk()</span></tt></a>) when <img class="math" src="../_images/math/cb165bb419a3b9316db921e9f050a8a8905521a6.png" alt="\phi = \frac{\pi}{2}"/>; that is,</p>
 <div class="math">
 <p><img src="../_images/math/85e515410817bdd91c57e196c5853946db7c5e01.png" alt="F\left(\frac{\pi}{2}, m\right) = K(m)." /></p>
-</div><p>The integral representations above are valid when
-<img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>. Elsewhere, <a title="mpmath.ellipf" class="reference internal" href="#mpmath.ellipf"><tt class="xref docutils literal"><span class="pre">ellipf()</span></tt></a>
-defines the function to be extended by the periodicity relation
-<img class="math" src="../_images/math/6e797d1aca45e46d89d444402b83d2b93f748195.png" alt="F(\phi + n \pi, m) = 2 n K(m) + F(\phi,m), n \in \mathbb{Z}"/>.</p>
+</div><p>In the defining integral, it is assumed that the principal branch
+of the square root is taken and that the path of integration avoids
+crossing any branch cuts. Outside <img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>,
+the function extends quasi-periodically as</p>
+<div class="math">
+<p><img src="../_images/math/2bfb34eb927e461fde7be479fe854774d5ebe367.png" alt="F(\phi + n \pi, m) = 2 n K(m) + F(\phi,m), n \in \mathbb{Z}." /></p>
+</div><p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Elliptic integral F(z,m) for some different m</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">f5</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">,</span><span class="n">f5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/ellipf.png" src="../_images/ellipf.png" />
 <p><strong>Examples</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -406,10 +425,23 @@ integral of the second kind</p>
 <img class="math" src="../_images/math/cb165bb419a3b9316db921e9f050a8a8905521a6.png" alt="\phi = \frac{\pi}{2}"/>; that is,</p>
 <div class="math">
 <p><img src="../_images/math/fbb189178c35f6810865686b2d9a083a220101ca.png" alt="E\left(\frac{\pi}{2}, m\right) = E(m)." /></p>
-</div><p>The integral representations above are valid when
-<img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>. Elsewhere, <a title="mpmath.ellipe" class="reference internal" href="#mpmath.ellipe"><tt class="xref docutils literal"><span class="pre">ellipe()</span></tt></a>
-defines the function to be extended by the periodicity relation
-<img class="math" src="../_images/math/3e509a35870529663591ce4a38842ae6ea142b53.png" alt="E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}"/>.</p>
+</div><p>In the defining integral, it is assumed that the principal branch
+of the square root is taken and that the path of integration avoids
+crossing any branch cuts. Outside <img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>,
+the function extends quasi-periodically as</p>
+<div class="math">
+<p><img src="../_images/math/fd752948f11202fec6df4c7d23796c46553b02c6.png" alt="E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}." /></p>
+</div><p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Elliptic integral E(z,m) for some different m</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">0</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">1</span><span class="p">)</span>
+<span class="n">f5</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellipe</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">,</span><span class="n">f5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/ellipe.png" src="../_images/ellipe.png" />
 <p><strong>Examples for the complete integral</strong></p>
 <p>Basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -521,10 +553,23 @@ incomplete elliptic integral of the third kind</p>
 </div><p>Called with two arguments <img class="math" src="../_images/math/c5be19edae9196ae8f8106e8133e0bf69ca909c8.png" alt="n, m"/>, evaluates the complete
 elliptic integral of the third kind
 <img class="math" src="../_images/math/0fa582bfee51ae4091ed0dafd79b14e274d0e51c.png" alt="\Pi(n,m) = \Pi(n; \frac{\pi}{2},m)"/>.</p>
-<p>The integral representations above are valid when
-<img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>. Elsewhere, <a title="mpmath.ellippi" class="reference internal" href="#mpmath.ellippi"><tt class="xref docutils literal"><span class="pre">ellippi()</span></tt></a>
-defines the function to be extended by the periodicity relation
-<img class="math" src="../_images/math/093e0346ed03e8d82ab7a44fb2bd37c2dec8abe2.png" alt="\Pi(n,\phi+k\pi,m) = 2k\Pi(n,m) + \Pi(n,\phi,m), k \in \mathbb{Z}"/>.</p>
+<p>In the defining integral, it is assumed that the principal branch
+of the square root is taken and that the path of integration avoids
+crossing any branch cuts. Outside <img class="math" src="../_images/math/5e349edb3ab0ea5c5c7adc0ccffb39ae650362b7.png" alt="-\pi/2 \le \Re(z) \le \pi/2"/>,
+the function extends quasi-periodically as</p>
+<div class="math">
+<p><img src="../_images/math/6b30c7c209cf75b4a0ef8fda32e896dc526bce29.png" alt="\Pi(n,\phi+k\pi,m) = 2k\Pi(n,m) + \Pi(n,\phi,m), k \in \mathbb{Z}." /></p>
+</div><p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Elliptic integral Pi(n,z,m) for some different n, m</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellippi</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellippi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">f3</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellippi</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="o">-</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">f4</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellippi</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">f5</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">ellippi</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">,</span><span class="n">f3</span><span class="p">,</span><span class="n">f4</span><span class="p">,</span><span class="n">f5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">pi</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<img alt="../_images/ellippi.png" src="../_images/ellippi.png" />
 <p><strong>Examples for the complete integral</strong></p>
 <p>Some basic values and limits:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
@@ -537,6 +582,8 @@ defines the function to be extended by the periodicity relation
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ellippi</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">ellippi</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">5</span><span class="p">))</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">ellippi</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">1</span><span class="p">))</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
@@ -1127,6 +1174,17 @@ elliptic function,</p>
 g_3(\tau) = 140 \sum_{(m,n) \in \mathbb{Z}^2 \setminus (0,0)} (m \tau+n)^{-6}." /></p>
 </div><p>An alternative, common notation is that of the j-function
 <img class="math" src="../_images/math/0e9150aee4bd61b1224ab7d9482f1889f5a71803.png" alt="j(\tau) = 1728 J(\tau)"/>.</p>
+<p><strong>Plots</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Klein J-function as function of the number-theoretic nome</span>
+<span class="n">fp</span><span class="o">.</span><span class="n">cplot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">fp</span><span class="o">.</span><span class="n">kleinj</span><span class="p">(</span><span class="n">qbar</span><span class="o">=</span><span class="n">q</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">50000</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/kleinj.png" src="../_images/kleinj.png" />
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Klein J-function as function of the half-period ratio</span>
+<span class="n">fp</span><span class="o">.</span><span class="n">cplot</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">fp</span><span class="o">.</span><span class="n">kleinj</span><span class="p">(</span><span class="n">tau</span><span class="o">=</span><span class="n">t</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">50000</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/kleinj2.png" src="../_images/kleinj2.png" />
 <p><strong>Examples</strong></p>
 <p>Verifying the functional equation <img class="math" src="../_images/math/5e35bfbbf1629282b4f88402550c537ff5f362d8.png" alt="J(\tau) = J(\tau+1) = J(-\tau^{-1})"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
