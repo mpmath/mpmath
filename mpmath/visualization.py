@@ -271,4 +271,3 @@ VisualizationMethods.plot = plot
 VisualizationMethods.default_color_function = default_color_function
 VisualizationMethods.cplot = cplot
 VisualizationMethods.splot = splot
-
