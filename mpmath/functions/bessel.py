@@ -18,7 +18,7 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
         n = ctx.convert(n)
         n_isint = ctx.isint(n)
         if n_isint:
-            n = int(n)
+            n = int(ctx._re(n))
     if n_isint and n < 0:
         return (-1)**n * ctx.besselj(-n, z, derivative, **kwargs)
     z = ctx.convert(z)

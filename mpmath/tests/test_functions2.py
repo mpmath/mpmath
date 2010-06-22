@@ -12,6 +12,7 @@ def test_bessel():
     assert j1(1000).ae(0.00472831190708952392)
     assert j1(-25).ae(0.125350249580289905)
     assert besselj(5,1).ae(0.000249757730211234431)
+    assert besselj(5+0j,1).ae(0.000249757730211234431)
     assert besselj(5,pi).ae(0.0521411843671184747)
     assert besselj(5,1000).ae(0.00502540694523318607)
     assert besselj(5,-25).ae(0.0660079953984229934)
