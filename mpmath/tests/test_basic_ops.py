@@ -134,6 +134,13 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
+    from mpmath.rational import mpq
+    assert hash(mp.mpq(1,3))
+    assert hash(mp.mpq(0,1)) == 0
+    assert hash(mp.mpq(-1,1)) == hash(-1)
+    assert hash(mp.mpq(1,1)) == hash(1)
+    assert hash(mp.mpq(5,1)) == hash(5)
+    assert hash(mp.mpq(1,2)) == hash(0.5)
 
 # Advanced rounding test
 def test_add_rounding():
