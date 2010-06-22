@@ -328,9 +328,12 @@ def _lambertw_approx_hybrid(z, k):
             imag_sign = (-1) ** (y < 0)
         y = float(y)
     else:
-        x = float(x)
+        x = float(z)
         y = 0.0
         imag_sign = 0
+    # hack to work regardless of whether Python supports -0.0
+    if not y:
+        y = 0.0
     z = complex(x,y)
     if k == 0:
         if -4.0 < y < 4.0 and -1.0 < x < 2.5:
@@ -372,7 +375,10 @@ def _lambertw_approx_hybrid(z, k):
             L1 = math.log(-x)
             return L1 - math.log(-L1)
         else:
-            L1 = cmath.log(z) - 6.2831853071795865j
+            if imag_sign == -1 and (not y) and x < 0.0:
+                L1 = cmath.log(z) - 3.1415926535897932j
+            else:
+                L1 = cmath.log(z) - 6.2831853071795865j
             L2 = cmath.log(L1)
     return L1 - L2 + L2/L1 + L2*(L2-2)/(2*L1**2)
 
