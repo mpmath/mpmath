@@ -782,3 +782,321 @@ def coulombg(ctx, l, eta, z, w=1, chop=True, **kwargs):
         (ctx._re(z) >= 0):
         v = ctx._re(v)
     return v
+
+def mcmahon(ctx,kind,prime,v,m):
+    """
+    Computes an estimate for the location of the Bessel function zero
+    j_{v,m}, y_{v,m}, j'_{v,m} or y'_{v,m} using McMahon's asymptotic
+    expansion (Abramowitz & Stegun 9.5.12-13, DLMF 20.21(vi)).
+
+    Returns (r,err) where r is the estimated location of the root
+    and err is a positive number estimating the error of the
+    asymptotic expansion.
+    """
+    u = 4*v**2
+    if kind == 1 and not prime: b = (4*m+2*v-1)*ctx.pi/4
+    if kind == 2 and not prime: b = (4*m+2*v-3)*ctx.pi/4
+    if kind == 1 and prime: b = (4*m+2*v-3)*ctx.pi/4
+    if kind == 2 and prime: b = (4*m+2*v-1)*ctx.pi/4
+    if not prime:
+        s1 = b
+        s2 = -(u-1)/(8*b)
+        s3 = -4*(u-1)*(7*u-31)/(3*(8*b)**3)
+        s4 = -32*(u-1)*(83*u**2-982*u+3779)/(15*(8*b)**5)
+        s5 = -64*(u-1)*(6949*u**3-153855*u**2+1585743*u-6277237)/(105*(8*b)**7)
+    if prime:
+        s1 = b
+        s2 = -(u+3)/(8*b)
+        s3 = -4*(7*u**2+82*u-9)/(3*(8*b)**3)
+        s4 = -32*(83*u**3+2075*u**2-3039*u+3537)/(15*(8*b)**5)
+        s5 = -64*(6949*u**4+296492*u**3-1248002*u**2+7414380*u-5853627)/(105*(8*b)**7)
+    terms = [s1,s2,s3,s4,s5]
+    s = s1
+    err = 0.0
+    for i in range(1,len(terms)):
+        if abs(terms[i]) < abs(terms[i-1]):
+            s += terms[i]
+        else:
+            err = abs(terms[i])
+    if i == len(terms)-1:
+        err = abs(terms[-1])
+    return s, err
+
+def generalized_bisection(ctx,f,a,b,n):
+    """
+    Given f known to have exactly n simple roots within [a,b],
+    return a list of n intervals isolating the roots
+    and having opposite signs at the endpoints.
+
+    TODO: this can be optimized, e.g. by reusing evaluation points.
+    """
+    assert n >= 1
+    N = n+1
+    points = []
+    signs = []
+    while 1:
+        points = ctx.linspace(a,b,N)
+        signs = [ctx.sign(f(x)) for x in points]
+        ok_intervals = [(points[i],points[i+1]) for i in range(N-1) \
+            if signs[i]*signs[i+1] == -1]
+        if len(ok_intervals) == n:
+            return ok_intervals
+        N = N*2
+
+def find_in_interval(ctx, f, ab):
+    return ctx.findroot(f, ab, solver='illinois', verify=False)
+
+def bessel_zero(ctx, kind, prime, v, m, isoltol=0.01, _interval_cache={}):
+    prec = ctx.prec
+    workprec = max(prec, ctx.mag(v), ctx.mag(m))+10
+    try:
+        ctx.prec = workprec
+        v = ctx.mpf(v)
+        m = int(m)
+        prime = int(prime)
+        assert v >= 0
+        assert m >= 1
+        assert prime in (0,1)
+        if kind == 1:
+            if prime: f = lambda x: ctx.besselj(v,x,derivative=1)
+            else:     f = lambda x: ctx.besselj(v,x)
+        if kind == 2:
+            if prime: f = lambda x: ctx.bessely(v,x,derivative=1)
+            else:     f = lambda x: ctx.bessely(v,x)
+        # The first root of J' is very close to 0 for small
+        # orders, and this needs to be special-cased
+        if kind == 1 and prime and m == 1:
+            if v == 0:
+                return ctx.zero
+            if v <= 1:
+                # TODO: use v <= j'_{v,1} < y_{v,1}?
+                r = 2*ctx.sqrt(v*(1+v)/(v+2))
+                return find_in_interval(ctx, f, (r/10, 2*r))
+        if (kind,prime,v,m) in _interval_cache:
+            return find_in_interval(ctx, f, _interval_cache[kind,prime,v,m])
+        r, err = mcmahon(ctx, kind, prime, v, m)
+        if err < isoltol:
+            return find_in_interval(ctx, f, (r-isoltol, r+isoltol))
+        # An x such that 0 < x < r_{v,1}
+        if kind == 1 and not prime: low = 2.4
+        if kind == 1 and prime: low = 1.8
+        if kind == 2 and not prime: low = 0.8
+        if kind == 2 and prime: low = 2.0
+        n = m+1
+        while 1:
+            r1, err = mcmahon(ctx, kind, prime, v, n)
+            if err < isoltol:
+                r2, err2 = mcmahon(ctx, kind, prime, v, n+1)
+                intervals = generalized_bisection(ctx, f, low, 0.5*(r1+r2), n)
+                for k, ab in enumerate(intervals):
+                    _interval_cache[kind,prime,v,k+1] = ab
+                return find_in_interval(ctx, f, intervals[m-1])
+            else:
+                n = n*2
+    finally:
+        ctx.prec = prec
+
+@defun
+def besseljzero(ctx, v, m, derivative=0):
+    r"""
+    For a real order `\nu \ge 0` and a positive integer `m`, returns
+    `j_{\nu,m}`, the `m`-th positive zero of the Bessel function of the
+    first kind `J_{\nu}(z)` (see :func:`~mpmath.besselj`). Alternatively,
+    with *derivative=1*, gives the first nonnegative simple zero
+    `j'_{\nu,m}` of `J'_{\nu}(z)`.
+
+    The indexing convention is that used by Abramowitz & Stegun
+    and the DLMF. Note the special case `j'_{0,1} = 0`, while all other
+    zeros are positive. In effect, only simple zeros are counted
+    (all zeros of Bessel functions are simple except possibly `z = 0`)
+    and `j_{\nu,m}` becomes a monotonic function of both `\nu`
+    and `m`.
+
+    The zeros are interlaced according to the inequalities
+
+    .. math ::
+
+        j'_{\nu,k} < j_{\nu,k} < j'_{\nu,k+1}
+
+        j_{\nu,1} < j_{\nu+1,2} < j_{\nu,2} < j_{\nu+1,2} < j_{\nu,3} < \cdots
+
+    **Examples**
+
+    Initial zeros of the Bessel functions `J_0(z), J_1(z), J_2(z)`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> besseljzero(0,1); besseljzero(0,2); besseljzero(0,3)
+        2.404825557695772768621632
+        5.520078110286310649596604
+        8.653727912911012216954199
+        >>> besseljzero(1,1); besseljzero(1,2); besseljzero(1,3)
+        3.831705970207512315614436
+        7.01558666981561875353705
+        10.17346813506272207718571
+        >>> besseljzero(2,1); besseljzero(2,2); besseljzero(2,3)
+        5.135622301840682556301402
+        8.417244140399864857783614
+        11.61984117214905942709415
+
+    Initial zeros of `J'_0(z), J'_1(z), J'_2(z)`::
+
+        0.0
+        3.831705970207512315614436
+        7.01558666981561875353705
+        >>> besseljzero(1,1,1); besseljzero(1,2,1); besseljzero(1,3,1)
+        1.84118378134065930264363
+        5.331442773525032636884016
+        8.536316366346285834358961
+        >>> besseljzero(2,1,1); besseljzero(2,2,1); besseljzero(2,3,1)
+        3.054236928227140322755932
+        6.706133194158459146634394
+        9.969467823087595793179143
+
+    Zeros with large index::
+
+        >>> besseljzero(0,100); besseljzero(0,1000); besseljzero(0,10000)
+        313.3742660775278447196902
+        3140.807295225078628895545
+        31415.14114171350798533666
+        >>> besseljzero(5,100); besseljzero(5,1000); besseljzero(5,10000)
+        321.1893195676003157339222
+        3148.657306813047523500494
+        31422.9947255486291798943
+        >>> besseljzero(0,100,1); besseljzero(0,1000,1); besseljzero(0,10000,1)
+        311.8018681873704508125112
+        3139.236339643802482833973
+        31413.57032947022399485808
+
+    Zeros of functions with large order::
+
+        >>> besseljzero(50,1)
+        57.11689916011917411936228
+        >>> besseljzero(50,2)
+        62.80769876483536093435393
+        >>> besseljzero(50,100)
+        388.6936600656058834640981
+        >>> besseljzero(50,1,1)
+        52.99764038731665010944037
+        >>> besseljzero(50,2,1)
+        60.02631933279942589882363
+        >>> besseljzero(50,100,1)
+        387.1083151608726181086283
+
+    Zeros of functions with fractional order::
+
+        >>> besseljzero(0.5,1); besseljzero(1.5,1); besseljzero(2.25,4)
+        3.141592653589793238462643
+        4.493409457909064175307881
+        15.15657692957458622921634
+
+    Both `J_{\nu}(z)` and `J'_{\nu}(z)` can be expressed as infinite
+    products over their zeros::
+
+        >>> v,z = 2, mpf(1)
+        >>> (z/2)**v/gamma(v+1) * \
+        ...     nprod(lambda k: 1-(z/besseljzero(v,k))**2, [1,inf])
+        ...
+        0.1149034849319004804696469
+        >>> besselj(v,z)
+        0.1149034849319004804696469
+        >>> (z/2)**(v-1)/2/gamma(v) * \
+        ...     nprod(lambda k: 1-(z/besseljzero(v,k,1))**2, [1,inf])
+        ...
+        0.2102436158811325550203884
+        >>> besselj(v,z,1)
+        0.2102436158811325550203884
+
+    """
+    return +bessel_zero(ctx, 1, derivative, v, m)
+
+@defun
+def besselyzero(ctx, v, m, derivative=0):
+    r"""
+    For a real order `\nu \ge 0` and a positive integer `m`, returns
+    `y_{\nu,m}`, the `m`-th positive zero of the Bessel function of the
+    second kind `Y_{\nu}(z)` (see :func:`~mpmath.bessely`). Alternatively,
+    with *derivative=1*, gives the first positive zero `y'_{\nu,m}` of
+    `Y'_{\nu}(z)`.
+
+    The zeros are interlaced according to the inequalities
+
+    .. math ::
+
+        y_{\nu,k} < y'_{\nu,k} < y_{\nu,k+1}
+
+        y_{\nu,1} < y_{\nu+1,2} < y_{\nu,2} < y_{\nu+1,2} < y_{\nu,3} < \cdots
+
+    **Examples**
+
+    Initial zeros of the Bessel functions `Y_0(z), Y_1(z), Y_2(z)`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> besselyzero(0,1); besselyzero(0,2); besselyzero(0,3)
+        0.8935769662791675215848871
+        3.957678419314857868375677
+        7.086051060301772697623625
+        >>> besselyzero(1,1); besselyzero(1,2); besselyzero(1,3)
+        2.197141326031017035149034
+        5.429681040794135132772005
+        8.596005868331168926429606
+        >>> besselyzero(2,1); besselyzero(2,2); besselyzero(2,3)
+        3.384241767149593472701426
+        6.793807513268267538291167
+        10.02347797936003797850539
+
+    Initial zeros of `Y'_0(z), Y'_1(z), Y'_2(z)`::
+
+        >>> besselyzero(0,1,1); besselyzero(0,2,1); besselyzero(0,3,1)
+        2.197141326031017035149034
+        5.429681040794135132772005
+        8.596005868331168926429606
+        >>> besselyzero(1,1,1); besselyzero(1,2,1); besselyzero(1,3,1)
+        3.683022856585177699898967
+        6.941499953654175655751944
+        10.12340465543661307978775
+        >>> besselyzero(2,1,1); besselyzero(2,2,1); besselyzero(2,3,1)
+        5.002582931446063945200176
+        8.350724701413079526349714
+        11.57419546521764654624265
+
+    Zeros with large index::
+
+        >>> besselyzero(0,100); besselyzero(0,1000); besselyzero(0,10000)
+        311.8034717601871549333419
+        3139.236498918198006794026
+        31413.57034538691205229188
+        >>> besselyzero(5,100); besselyzero(5,1000); besselyzero(5,10000)
+        319.6183338562782156235062
+        3147.086508524556404473186
+        31421.42392920214673402828
+        >>> besselyzero(0,100,1); besselyzero(0,1000,1); besselyzero(0,10000,1)
+        313.3726705426359345050449
+        3140.807136030340213610065
+        31415.14112579761578220175
+
+    Zeros of functions with large order::
+
+        >>> besselyzero(50,1)
+        53.50285882040036394680237
+        >>> besselyzero(50,2)
+        60.11244442774058114686022
+        >>> besselyzero(50,100)
+        387.1096509824943957706835
+        >>> besselyzero(50,1,1)
+        56.96290427516751320063605
+        >>> besselyzero(50,2,1)
+        62.74888166945933944036623
+        >>> besselyzero(50,100,1)
+        388.6923300548309258355475
+
+    Zeros of functions with fractional order::
+
+        >>> besselyzero(0.5,1); besselyzero(1.5,1); besselyzero(2.25,4)
+        1.570796326794896619231322
+        2.798386045783887136720249
+        13.56721208770735123376018
+
+    """
+    return +bessel_zero(ctx, 2, derivative, v, m)
