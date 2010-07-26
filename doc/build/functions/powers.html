@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.15',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
@@ -32,8 +35,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="trigonometric.html" title="Trigonometric functions"
              accesskey="N">next</a> |</li>
@@ -55,7 +58,7 @@
 <div class="section" id="nth-roots">
 <h2>Nth roots<a class="headerlink" href="#nth-roots" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="sqrt">
-<h3><tt class="xref docutils literal"><span class="pre">sqrt()</span></tt><a class="headerlink" href="#sqrt" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">sqrt()</span></tt><a class="headerlink" href="#sqrt" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.sqrt">
 <tt class="descclassname">mpmath.</tt><tt class="descname">sqrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.sqrt" title="Permalink to this definition">¶</a></dt>
@@ -68,34 +71,34 @@ The function thus has a branch cut along the negative half real axis.</p>
 performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p>
 <p><strong>Examples</strong></p>
 <p>Basic examples and limits:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">3.16227766016838</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 <span class="go">10.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mf">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
 <span class="go">(0.0 + 2.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.09868411346781 + 0.455089860562227j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
 <p>Square root evaluation is fast at huge precision:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
 <span class="go">&#39;9329332814&#39;</span>
 </pre></div>
 </div>
-<p><tt class="xref docutils literal"><span class="pre">mpmath.iv.sqrt()</span></tt> supports interval arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">([</span><span class="mf">16</span><span class="p">,</span><span class="mf">100</span><span class="p">])</span>
+<p><tt class="xref py py-func docutils literal"><span class="pre">mpmath.iv.sqrt()</span></tt> supports interval arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">([</span><span class="mi">16</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
 <span class="go">[4.0, 10.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">[1.4142135623730949234, 1.4142135623730951455]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 <span class="go">[1.9999999999999995559, 2.0000000000000004441]</span>
 </pre></div>
 </div>
@@ -103,27 +106,28 @@ performing <tt class="docutils literal"><span class="pre">x**0.5</span></tt>.</p
 
 </div>
 <div class="section" id="hypot">
-<h3><tt class="xref docutils literal"><span class="pre">hypot()</span></tt><a class="headerlink" href="#hypot" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">hypot()</span></tt><a class="headerlink" href="#hypot" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.hypot">
 <tt class="descclassname">mpmath.</tt><tt class="descname">hypot</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.hypot" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the Euclidean norm of the vector <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)"/>, equal
-to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c94.png" alt="\sqrt{x^2 + y^2}"/>. Both <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> must be real.</dd></dl>
+<dd><p>Computes the Euclidean norm of the vector <img class="math" src="../_images/math/adfd9ae8a3fac031d3b8b470a52a709a23d4d6d2.png" alt="(x, y)"/>, equal
+to <img class="math" src="../_images/math/c0688227c7a4c52edfc3dfbb79cf828c9e555c94.png" alt="\sqrt{x^2 + y^2}"/>. Both <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> must be real.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="cbrt">
-<h3><tt class="xref docutils literal"><span class="pre">cbrt()</span></tt><a class="headerlink" href="#cbrt" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">cbrt()</span></tt><a class="headerlink" href="#cbrt" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.cbrt">
 <tt class="descclassname">mpmath.</tt><tt class="descname">cbrt</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.cbrt" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">cbrt(x)</span></tt> computes the cube root of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/211fe368f21e7e87a497012b64962b2dae135c3d.png" alt="x^{1/3}"/>. This
 function is faster and more accurate than raising to a floating-point
 fraction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">125</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">125</span><span class="o">**</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">mpf(&#39;4.9999999999999991&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cbrt</span><span class="p">(</span><span class="mf">125</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cbrt</span><span class="p">(</span><span class="mi">125</span><span class="p">)</span>
 <span class="go">mpf(&#39;5.0&#39;)</span>
 </pre></div>
 </div>
@@ -132,7 +136,7 @@ returns the cube root defined by <img class="math" src="../_images/math/59502373
 principal branch of the natural logarithm is used. Note that this
 does not give a real cube root for negative real numbers:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cbrt</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cbrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(0.5 + 0.866025403784439j)</span>
 </pre></div>
 </div>
@@ -140,7 +144,7 @@ does not give a real cube root for negative real numbers:</p>
 
 </div>
 <div class="section" id="root">
-<h3><tt class="xref docutils literal"><span class="pre">root()</span></tt><a class="headerlink" href="#root" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">root()</span></tt><a class="headerlink" href="#root" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.root">
 <tt class="descclassname">mpmath.</tt><tt class="descname">root</tt><big>(</big><em>z</em>, <em>n</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.root" title="Permalink to this definition">¶</a></dt>
@@ -161,54 +165,54 @@ for negative real <img class="math" src="../_images/math/b13f21416d84e13708696f3
 <p>To obtain all roots with a simple expression, use
 <tt class="docutils literal"><span class="pre">[root(z,n,k)</span> <span class="pre">for</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">range(n)]</span></tt>.</p>
 <p>An important special case, <tt class="docutils literal"><span class="pre">root(1,</span> <span class="pre">n,</span> <span class="pre">k)</span></tt> returns the <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>-th <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>-th root of
-unity, <img class="math" src="../_images/math/c27faf6fb766cc1cf901c46f2ca93b8a034e3d80.png" alt="\zeta_k = e^{2 \pi i k / n}"/>. Alternatively, <a title="mpmath.unitroots" class="reference internal" href="#mpmath.unitroots"><tt class="xref docutils literal"><span class="pre">unitroots()</span></tt></a>
+unity, <img class="math" src="../_images/math/c27faf6fb766cc1cf901c46f2ca93b8a034e3d80.png" alt="\zeta_k = e^{2 \pi i k / n}"/>. Alternatively, <a class="reference internal" href="#mpmath.unitroots" title="mpmath.unitroots"><tt class="xref py py-func docutils literal"><span class="pre">unitroots()</span></tt></a>
 provides a slightly more convenient way to obtain the roots of unity,
 including the option to compute only the primitive roots of unity.</p>
 <p>Both <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> and <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> should be integers; <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/> outside of <tt class="docutils literal"><span class="pre">range(n)</span></tt> will be
 reduced modulo <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. If <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> is negative, <img class="math" src="../_images/math/2e1e41e1075edaa5c4b4f7a3713596edb708b29d.png" alt="x^{-1/n} = 1/x^{1/n}"/> (or
 the equivalent reciprocal for a non-principal root with <img class="math" src="../_images/math/7433902f1c6bf3e4c381454a4202825ce425f0e0.png" alt="k \ne 0"/>) is computed.</p>
-<p><a title="mpmath.root" class="reference internal" href="#mpmath.root"><tt class="xref docutils literal"><span class="pre">root()</span></tt></a> is implemented to use Newton&#8217;s method for small
+<p><a class="reference internal" href="#mpmath.root" title="mpmath.root"><tt class="xref py py-func docutils literal"><span class="pre">root()</span></tt></a> is implemented to use Newton&#8217;s method for small
 <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>. At high precision, this makes <img class="math" src="../_images/math/150f22361f31a17a5319a3984b1708b9978fec12.png" alt="x^{1/n}"/> not much more
 expensive than the regular exponentiation, <img class="math" src="../_images/math/8c72f3acf1f7744cfe76edaf47e45d62432cf28b.png" alt="x^n"/>. For very large
-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <tt class="xref docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
+<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, <tt class="xref py py-func docutils literal"><span class="pre">nthroot()</span></tt> falls back to use the exponential function.</p>
 <p><strong>Examples</strong></p>
-<p><tt class="xref docutils literal"><span class="pre">nthroot()</span></tt>/<a title="mpmath.root" class="reference internal" href="#mpmath.root"><tt class="xref docutils literal"><span class="pre">root()</span></tt></a> is faster and more accurate than raising to a
+<p><tt class="xref py py-func docutils literal"><span class="pre">nthroot()</span></tt>/<a class="reference internal" href="#mpmath.root" title="mpmath.root"><tt class="xref py py-func docutils literal"><span class="pre">root()</span></tt></a> is faster and more accurate than raising to a
 floating-point fraction:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">16807</span> <span class="o">**</span> <span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">16807</span> <span class="o">**</span> <span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">mpf(&#39;7.0000000000000009&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">16807</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">16807</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="go">mpf(&#39;7.0&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mf">16807</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>    <span class="c"># Alias</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mi">16807</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>    <span class="c"># Alias</span>
 <span class="go">mpf(&#39;7.0&#39;)</span>
 </pre></div>
 </div>
 <p>A high-precision root:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="go">1.584893192461113485202101373391507013269442133825</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span> <span class="o">**</span> <span class="mf">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nthroot</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">5</span>
 <span class="go">10.0</span>
 </pre></div>
 </div>
 <p>Computing principal and non-principal square and cube roots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="go">3.16227766016838</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">10</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="go">-3.16227766016838</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">(1.07721734501594 + 1.86579517236206j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="go">-2.15443469003188</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mf">10</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="go">(1.07721734501594 - 1.86579517236206j)</span>
 </pre></div>
 </div>
 <p>All the 7th roots of a complex number:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">,</span> <span class="mf">7</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">7</span><span class="p">)]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">**</span><span class="mf">7</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="n">j</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">**</span><span class="mi">7</span>
 <span class="gp">...</span>
 <span class="go">(1.24747270589553 + 0.166227124177353j) (3.0 + 4.0j)</span>
 <span class="go">(0.647824911301003 + 1.07895435170559j) (3.0 + 4.0j)</span>
@@ -220,7 +224,7 @@ floating-point fraction:</p>
 </pre></div>
 </div>
 <p>Cube roots of unity:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">3</span><span class="p">):</span> <span class="k">print</span> <span class="n">root</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="k">print</span> <span class="n">root</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(-0.5 + 0.866025403784439j)</span>
@@ -228,11 +232,11 @@ floating-point fraction:</p>
 </pre></div>
 </div>
 <p>Some exact high order roots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">75</span><span class="o">**</span><span class="mf">210</span><span class="p">,</span> <span class="mf">105</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">75</span><span class="o">**</span><span class="mi">210</span><span class="p">,</span> <span class="mi">105</span><span class="p">)</span>
 <span class="go">5625.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">128</span><span class="p">,</span> <span class="mf">96</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
 <span class="go">(0.0 - 1.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mf">4</span><span class="o">**</span><span class="mf">128</span><span class="p">,</span> <span class="mf">128</span><span class="p">,</span> <span class="mf">96</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="p">(</span><span class="mi">4</span><span class="o">**</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
 <span class="go">(0.0 - 4.0j)</span>
 </pre></div>
 </div>
@@ -240,7 +244,7 @@ floating-point fraction:</p>
 
 </div>
 <div class="section" id="unitroots">
-<h3><tt class="xref docutils literal"><span class="pre">unitroots()</span></tt><a class="headerlink" href="#unitroots" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">unitroots()</span></tt><a class="headerlink" href="#unitroots" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.unitroots">
 <tt class="descclassname">mpmath.</tt><tt class="descname">unitroots</tt><big>(</big><em>n</em>, <em>primitive=False</em><big>)</big><a class="headerlink" href="#mpmath.unitroots" title="Permalink to this definition">¶</a></dt>
@@ -254,38 +258,38 @@ circle. They are ordered counterclockwise with increasing <img class="math" src=
 with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a860e48.png" alt="\zeta_0 = 1"/>.</p>
 <p><strong>Examples</strong></p>
 <p>The roots of unity up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="go">[1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 <span class="go">[1.0, -1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="go">[1.0, (-0.5 + 0.866025j), (-0.5 - 0.866025j)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
 <span class="go">[1.0, (0.0 + 1.0j), -1.0, (0.0 - 1.0j)]</span>
 </pre></div>
 </div>
 <p>Roots of unity form a geometric series that sums to 0:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">fsum</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">25</span><span class="p">)))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">fsum</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">25</span><span class="p">)))</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
 <p>Primitive roots up to <img class="math" src="../_images/math/5218af40079081e694d8b82eeac2d368ef6ea76a.png" alt="n = 4"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[-1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[(-0.5 + 0.866025j), (-0.5 - 0.866025j)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[(0.0 + 1.0j), (0.0 - 1.0j)]</span>
 </pre></div>
 </div>
 <p>There are only four primitive 12th roots:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mf">12</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">[(0.866025 + 0.5j), (-0.866025 + 0.5j), (-0.866025 - 0.5j), (0.866025 - 0.5j)]</span>
 </pre></div>
 </div>
@@ -293,7 +297,7 @@ with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a86
 Any primitive root <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r"/> is a generator for this group, meaning that
 <img class="math" src="../_images/math/b1daa4d2f67830bf961a8da3d1040af8cd33d84a.png" alt="r^0, r^1, \ldots, r^{n-1}"/> gives the whole set of unit roots (in
 some permuted order):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mf">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">r</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">r</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(0.5 + 0.866025403784439j)</span>
@@ -301,8 +305,8 @@ some permuted order):</p>
 <span class="go">-1.0</span>
 <span class="go">(-0.5 - 0.866025403784439j)</span>
 <span class="go">(0.5 - 0.866025403784439j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">unitroots</span><span class="p">(</span><span class="mf">6</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mf">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="n">k</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="n">k</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(0.5 - 0.866025403784439j)</span>
@@ -313,7 +317,7 @@ some permuted order):</p>
 </pre></div>
 </div>
 <p>The number of primitive roots equals the Euler totient function <img class="math" src="../_images/math/edae70ddedf89e790936ed4035c5ca1480212e0f.png" alt="\phi(n)"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">20</span><span class="p">)]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">unitroots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">)]</span>
 <span class="go">[1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18]</span>
 </pre></div>
 </div>
@@ -324,7 +328,7 @@ some permuted order):</p>
 <div class="section" id="exponentiation">
 <h2>Exponentiation<a class="headerlink" href="#exponentiation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="exp">
-<h3><tt class="xref docutils literal"><span class="pre">exp()</span></tt><a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">exp()</span></tt><a class="headerlink" href="#exp" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.exp">
 <tt class="descclassname">mpmath.</tt><tt class="descname">exp</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.exp" title="Permalink to this definition">¶</a></dt>
@@ -336,13 +340,13 @@ some permuted order):</p>
 <p><img src="../_images/math/82ed5034ab40005bac4264139bc4e1987874dfcf.png" alt="\exp(x+yi) = e^x (\cos y + i \sin y)." /></p>
 </div><p><strong>Basic examples</strong></p>
 <p>Some values of the exponential function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">2.718281828459045235360287</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.3678794411714423215955238</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
@@ -351,41 +355,41 @@ some permuted order):</p>
 </pre></div>
 </div>
 <p>Arguments can be arbitrarily large:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">10000</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
 <span class="go">8.806818225662921587261496e+4342</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">)</span>
 <span class="go">1.135483865314736098540939e-4343</span>
 </pre></div>
 </div>
 <p>Evaluation is supported for interval arguments via
-<tt class="xref docutils literal"><span class="pre">mpmath.iv.exp()</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">exp</span><span class="p">([</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="mf">0</span><span class="p">])</span>
+<tt class="xref py py-func docutils literal"><span class="pre">mpmath.iv.exp()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">iv</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">exp</span><span class="p">([</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">[0.0, 1.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">exp</span><span class="p">([</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span><span class="o">.</span><span class="n">exp</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="go">[1.0, 2.71828182845904523536028749558]</span>
 </pre></div>
 </div>
 <p>The exponential function can be evaluated efficiently to arbitrary
 precision:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>  <span class="c">#doctest: +ELLIPSIS</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>  
 <span class="go">23.140692632779269005729...8984304016040616</span>
 </pre></div>
 </div>
 <p><strong>Functional properties</strong></p>
 <p>Numerical verification of Euler&#8217;s identity for the complex
 exponential function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
 <span class="go">(0.0 + 1.22464679914735e-16j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.0</span>
 </pre></div>
 </div>
 <p>This recovers the coefficients (reciprocal factorials) in the
 Maclaurin series expansion of exp:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="go">[1.0, 1.0, 0.5, 0.166667, 0.0416667, 0.00833333]</span>
 </pre></div>
 </div>
@@ -401,11 +405,11 @@ Maclaurin series expansion of exp:</p>
 <p>The exponential function can be evaluated using various methods,
 including direct summation of the series, limits, and solving
 the defining differential equation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">pi</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">pi</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">23.1406926327793</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">pi</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">pi</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">23.1406926327793</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)(</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">23.1406926327793</span>
 </pre></div>
 </div>
@@ -413,22 +417,22 @@ the defining differential equation:</p>
 
 </div>
 <div class="section" id="power">
-<h3><tt class="xref docutils literal"><span class="pre">power()</span></tt><a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">power()</span></tt><a class="headerlink" href="#power" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.power">
 <tt class="descclassname">mpmath.</tt><tt class="descname">power</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> and <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/> to mpmath numbers and evaluates
 <img class="math" src="../_images/math/4c4a6df8d2bc2bfb583c11bc20504938026f6aa8.png" alt="x^y = \exp(y \log(x))"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
 <span class="go">1.41421356237309504880168872421</span>
 </pre></div>
 </div>
 <p>This shows the leading few digits of a large Mersenne prime
 (performing the exact calculation <tt class="docutils literal"><span class="pre">2**43112609-1</span></tt> and
 displaying the result in Python would be very slow):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="mf">43112609</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">43112609</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 <span class="go">3.16470269330255923143453723949e+12978188</span>
 </pre></div>
 </div>
@@ -436,20 +440,20 @@ displaying the result in Python would be very slow):</p>
 
 </div>
 <div class="section" id="expj">
-<h3><tt class="xref docutils literal"><span class="pre">expj()</span></tt><a class="headerlink" href="#expj" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">expj()</span></tt><a class="headerlink" href="#expj" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expj">
 <tt class="descclassname">mpmath.</tt><tt class="descname">expj</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for computing <img class="math" src="../_images/math/3a05bb2d3214a6f7d27a70c01fb6cb2dbae72138.png" alt="e^{ix}"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">(1.0 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(0.5403023058681397174009366 - 0.8414709848078965066525023j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.3678794411714423215955238 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expj</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.1987661103464129406288032 + 0.3095598756531121984439128j)</span>
 </pre></div>
 </div>
@@ -457,26 +461,26 @@ displaying the result in Python would be very slow):</p>
 
 </div>
 <div class="section" id="expjpi">
-<h3><tt class="xref docutils literal"><span class="pre">expjpi()</span></tt><a class="headerlink" href="#expjpi" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">expjpi()</span></tt><a class="headerlink" href="#expjpi" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expjpi">
 <tt class="descclassname">mpmath.</tt><tt class="descname">expjpi</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.expjpi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convenience function for computing <img class="math" src="../_images/math/81839687cfd9f7e622b9eae993a6f0fe99669969.png" alt="e^{i \pi x}"/>.
-Evaluation is accurate near zeros (see also <a title="mpmath.cospi" class="reference external" href="trigonometric.html#mpmath.cospi"><tt class="xref docutils literal"><span class="pre">cospi()</span></tt></a>,
-<a title="mpmath.sinpi" class="reference external" href="trigonometric.html#mpmath.sinpi"><tt class="xref docutils literal"><span class="pre">sinpi()</span></tt></a>):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+Evaluation is accurate near zeros (see also <a class="reference internal" href="trigonometric.html#mpmath.cospi" title="mpmath.cospi"><tt class="xref py py-func docutils literal"><span class="pre">cospi()</span></tt></a>,
+<a class="reference internal" href="trigonometric.html#mpmath.sinpi" title="mpmath.sinpi"><tt class="xref py py-func docutils literal"><span class="pre">sinpi()</span></tt></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">(1.0 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(-1.0 + 0.0j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">(0.0 + 1.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(-1.0 + 0.0j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.04321391826377224977441774 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expjpi</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(-0.04321391826377224977441774 + 0.0j)</span>
 </pre></div>
 </div>
@@ -484,31 +488,31 @@ Evaluation is accurate near zeros (see also <a title="mpmath.cospi" class="refer
 
 </div>
 <div class="section" id="expm1">
-<h3><tt class="xref docutils literal"><span class="pre">expm1()</span></tt><a class="headerlink" href="#expm1" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">expm1()</span></tt><a class="headerlink" href="#expm1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.expm1">
 <tt class="descclassname">mpmath.</tt><tt class="descname">expm1</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.expm1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <img class="math" src="../_images/math/098c246388f0885ccaf6d2f885703c34f4da2470.png" alt="e^x - 1"/>, accurately for small <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
 <p>Unlike the expression <tt class="docutils literal"><span class="pre">exp(x)</span> <span class="pre">-</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">expm1(x)</span></tt> does not suffer from
 potentially catastrophic cancellation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span>
 <span class="go">1.00000008274037e-10</span>
 <span class="go">1.00000000005e-10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="go">1.0e-20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
-<span class="c">...</span>
+  <span class="c">...</span>
 <span class="nc">ZeroDivisionError</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span><span class="o">/</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span><span class="o">/</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span>
 <span class="go">1.0e+20</span>
 </pre></div>
 </div>
 <p>Evaluation works for extremely tiny values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">expm1</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">expm1</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expm1</span><span class="p">(</span><span class="s">&#39;1e-10000000&#39;</span><span class="p">)</span>
 <span class="go">1.0e-10000000</span>
@@ -518,31 +522,31 @@ potentially catastrophic cancellation:</p>
 
 </div>
 <div class="section" id="powm1">
-<h3><tt class="xref docutils literal"><span class="pre">powm1()</span></tt><a class="headerlink" href="#powm1" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">powm1()</span></tt><a class="headerlink" href="#powm1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.powm1">
 <tt class="descclassname">mpmath.</tt><tt class="descname">powm1</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#mpmath.powm1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <img class="math" src="../_images/math/af550b5f60ea00e76399ea6c6d0adbede50b1ef7.png" alt="x^y - 1"/>, accurately when <img class="math" src="../_images/math/8f9af910fe749481919573c0dd2b132118f19d19.png" alt="x^y"/> is very close to 1.</p>
 <p>This avoids potentially catastrophic cancellation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">0.99999995</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">power</span><span class="p">(</span><span class="mf">0.99999995</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mf">0.99999995</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">)</span>
 <span class="go">-5.00000012791934e-18</span>
 </pre></div>
 </div>
 <p>Powers exactly equal to 1, and only those powers, yield 0 exactly:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">(0.0 + 0.0j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1e-100</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="mf">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-100</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">-4.0e-100</span>
 </pre></div>
 </div>
 <p>Evaluation works for extremely tiny <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="s">&#39;1e-100000&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;1e-100000&#39;</span><span class="p">)</span>
 <span class="go">6.93147180559945e-100001</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">powm1</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
 <span class="go">(-1.23370055013617e-2000 + 1.5707963267949e-1000j)</span>
@@ -555,13 +559,13 @@ potentially catastrophic cancellation:</p>
 <div class="section" id="logarithms">
 <h2>Logarithms<a class="headerlink" href="#logarithms" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="log">
-<h3><tt class="xref docutils literal"><span class="pre">log()</span></tt><a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">log()</span></tt><a class="headerlink" href="#log" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.log">
 <tt class="descclassname">mpmath.</tt><tt class="descname">log</tt><big>(</big><em>x</em>, <em>b=None</em><big>)</big><a class="headerlink" href="#mpmath.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)"/>. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is
-unspecified, <a title="mpmath.log" class="reference internal" href="#mpmath.log"><tt class="xref docutils literal"><span class="pre">log()</span></tt></a> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
-and is equivalent to <a title="mpmath.ln" class="reference internal" href="#mpmath.ln"><tt class="xref docutils literal"><span class="pre">ln()</span></tt></a>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
+unspecified, <a class="reference internal" href="#mpmath.log" title="mpmath.log"><tt class="xref py py-func docutils literal"><span class="pre">log()</span></tt></a> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
+and is equivalent to <a class="reference internal" href="#mpmath.ln" title="mpmath.ln"><tt class="xref py py-func docutils literal"><span class="pre">ln()</span></tt></a>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
 is defined in terms of the natural logarithm as
 <img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)"/>.</p>
 <p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty"/>.</p>
@@ -570,49 +574,49 @@ is defined in terms of the natural logarithm as
 used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">0.693147180559945</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">3.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="mf">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
 <span class="go">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.0 + 1.5707963267949j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(0.0 + 3.14159265358979j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">-inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
 <p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 <span class="go">1.6094379124341</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">1.6094379124341</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">0.1</span>
 </pre></div>
 </div>
 <p>The Taylor series expansion of the natural logarithm around
 <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">7</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="go">[0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]</span>
 </pre></div>
 </div>
-<p><a title="mpmath.log" class="reference internal" href="#mpmath.log"><tt class="xref docutils literal"><span class="pre">log()</span></tt></a> supports arbitrary precision evaluation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<p><a class="reference internal" href="#mpmath.log" title="mpmath.log"><tt class="xref py py-func docutils literal"><span class="pre">log()</span></tt></a> supports arbitrary precision evaluation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.1447298858494001741434273513530587116472948129153</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">0.33333333333333333333333333333333333333333333333333</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.609437912434100374600759 + 0.9272952180016122324285125j)</span>
 </pre></div>
 </div>
@@ -620,13 +624,13 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 
 </div>
 <div class="section" id="ln">
-<h3><tt class="xref docutils literal"><span class="pre">ln()</span></tt><a class="headerlink" href="#ln" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">ln()</span></tt><a class="headerlink" href="#ln" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.ln">
 <tt class="descclassname">mpmath.</tt><tt class="descname">ln</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.ln" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the base-<img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/7d77c6dd8aa838083121ba5452c6a3d65b9388ae.png" alt="\log_b(x)"/>. If <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> is
-unspecified, <a title="mpmath.log" class="reference internal" href="#mpmath.log"><tt class="xref docutils literal"><span class="pre">log()</span></tt></a> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
-and is equivalent to <a title="mpmath.ln" class="reference internal" href="#mpmath.ln"><tt class="xref docutils literal"><span class="pre">ln()</span></tt></a>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
+unspecified, <a class="reference internal" href="#mpmath.log" title="mpmath.log"><tt class="xref py py-func docutils literal"><span class="pre">log()</span></tt></a> computes the natural (base <img class="math" src="../_images/math/a3a59bb1293ee3f6dec19de4019a7178874219ae.png" alt="e"/>) logarithm
+and is equivalent to <a class="reference internal" href="#mpmath.ln" title="mpmath.ln"><tt class="xref py py-func docutils literal"><span class="pre">ln()</span></tt></a>. In general, the base <img class="math" src="../_images/math/8136a7ef6a03334a7246df9097e5bcc31ba33fd2.png" alt="b"/> logarithm
 is defined in terms of the natural logarithm as
 <img class="math" src="../_images/math/15cd1efc4e2252c7a722d2a13386b43ce6ecfa10.png" alt="\log_b(x) = \ln(x)/\ln(b)"/>.</p>
 <p>By convention, we take <img class="math" src="../_images/math/831e4536400418726f42c728d469c9ac9457c65e.png" alt="\log(0) = -\infty"/>.</p>
@@ -635,49 +639,49 @@ is defined in terms of the natural logarithm as
 used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0a4ac5a4efbd4087987.png" alt="\Im(\ln(x)) = -\pi &lt; \arg(x) \le \pi"/>.</p>
 <p><strong>Examples</strong></p>
 <p>Some basic values and limits:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">0.693147180559945</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">1000</span><span class="p">,</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">3.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span> <span class="mf">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
 <span class="go">0.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(0.0 + 1.5707963267949j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(0.0 + 3.14159265358979j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">-inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
 </pre></div>
 </div>
 <p>The natural logarithm is the antiderivative of <img class="math" src="../_images/math/d172d3d8333a9c1740b123ea13d5b44f22446869.png" alt="1/x"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">5</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
 <span class="go">1.6094379124341</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">1.6094379124341</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">0.1</span>
 </pre></div>
 </div>
 <p>The Taylor series expansion of the natural logarithm around
 <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/> has coefficients <img class="math" src="../_images/math/b8d4b1feff73224a9c61996d83573e0fdc6ab673.png" alt="(-1)^{n+1}/n"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">7</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
 <span class="go">[0.0, 1.0, -0.5, 0.333333, -0.25, 0.2, -0.166667, 0.142857]</span>
 </pre></div>
 </div>
-<p><a title="mpmath.log" class="reference internal" href="#mpmath.log"><tt class="xref docutils literal"><span class="pre">log()</span></tt></a> supports arbitrary precision evaluation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
+<p><a class="reference internal" href="#mpmath.log" title="mpmath.log"><tt class="xref py py-func docutils literal"><span class="pre">log()</span></tt></a> supports arbitrary precision evaluation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.1447298858494001741434273513530587116472948129153</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">0.33333333333333333333333333333333333333333333333333</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">3</span><span class="o">+</span><span class="mf">4</span><span class="n">j</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(1.609437912434100374600759 + 0.9272952180016122324285125j)</span>
 </pre></div>
 </div>
@@ -685,19 +689,20 @@ used, meaning that <img class="math" src="../_images/math/e56f17c32f52ac3c0c98c0
 
 </div>
 <div class="section" id="log10">
-<h3><tt class="xref docutils literal"><span class="pre">log10()</span></tt><a class="headerlink" href="#log10" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">log10()</span></tt><a class="headerlink" href="#log10" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.log10">
 <tt class="descclassname">mpmath.</tt><tt class="descname">log10</tt><big>(</big><em>x</em><big>)</big><a class="headerlink" href="#mpmath.log10" title="Permalink to this definition">¶</a></dt>
-<dd>Computes the base-10 logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)"/>. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
-is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <span class="pre">10)</span></tt>.</dd></dl>
+<dd><p>Computes the base-10 logarithm of <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/c179b3d2cf0aedab4cf71b933222a1ad8ae14ad4.png" alt="\log_{10}(x)"/>. <tt class="docutils literal"><span class="pre">log10(x)</span></tt>
+is equivalent to <tt class="docutils literal"><span class="pre">log(x,</span> <span class="pre">10)</span></tt>.</p>
+</dd></dl>
 
 </div>
 </div>
 <div class="section" id="lambert-w-function">
 <h2>Lambert W function<a class="headerlink" href="#lambert-w-function" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="lambertw">
-<h3><tt class="xref docutils literal"><span class="pre">lambertw()</span></tt><a class="headerlink" href="#lambertw" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">lambertw()</span></tt><a class="headerlink" href="#lambertw" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.lambertw">
 <tt class="descclassname">mpmath.</tt><tt class="descname">lambertw</tt><big>(</big><em>z</em>, <em>k=0</em><big>)</big><a class="headerlink" href="#mpmath.lambertw" title="Permalink to this definition">¶</a></dt>
@@ -707,7 +712,7 @@ of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c946857
 <p>The Lambert W function is a multivalued function with infinitely
 many branches <img class="math" src="../_images/math/578e4ec96360467f116bebdd930be0937ebb8ce4.png" alt="W_k(z)"/>, indexed by <img class="math" src="../_images/math/29238f408d8cb5806f06cc03446dde0084ffe09d.png" alt="k \in \mathbb{Z}"/>. Each branch
 gives a different solution <img class="math" src="../_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png" alt="w"/> of the equation <img class="math" src="../_images/math/1f1003d7c208af706b64150dfa07610b53e0e40d.png" alt="z = w \exp(w)"/>.
-All branches are supported by <a title="mpmath.lambertw" class="reference internal" href="#mpmath.lambertw"><tt class="xref docutils literal"><span class="pre">lambertw()</span></tt></a>:</p>
+All branches are supported by <a class="reference internal" href="#mpmath.lambertw" title="mpmath.lambertw"><tt class="xref py py-func docutils literal"><span class="pre">lambertw()</span></tt></a>:</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">lambertw(z)</span></tt> gives the principal solution (branch 0)</li>
 <li><tt class="docutils literal"><span class="pre">lambertw(z,</span> <span class="pre">k)</span></tt> gives the solution on branch <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/></li>
@@ -717,23 +722,23 @@ principal branch (<img class="math" src="../_images/math/84574de7797bc7b4e1fc520
 <img class="math" src="../_images/math/a82f7b76d2e16054f75df1ea45cb2a043f09ffad.png" alt="k = -1"/> branch is real for <img class="math" src="../_images/math/638a0971d2f3dc23d1dcb42c54cfa5b3daa4376c.png" alt="-1/e &lt; z &lt; 0"/>. All branches except
 <img class="math" src="../_images/math/84574de7797bc7b4e1fc52075f4d265ba60a8bce.png" alt="k = 0"/> have a logarithmic singularity at <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>.</p>
 <p>The definition, implementation and choice of branches
-is based on <a class="reference external" href="../references.html#corless">[Corless]</a>.</p>
+is based on <a class="reference internal" href="../references.html#corless">[Corless]</a>.</p>
 <p><strong>Plots</strong></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Branches 0 and -1 of the Lambert W function</span>
-<span class="n">plot</span><span class="p">([</span><span class="n">lambertw</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lambertw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">-</span><span class="mf">1</span><span class="p">)],</span> <span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">5</span><span class="p">,</span><span class="mf">2</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">2000</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">lambertw</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">lambertw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)],</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../_images/lambertw.png" src="../_images/lambertw.png" />
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Principal branch of the Lambert W function W(z)</span>
-<span class="n">cplot</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mf">50000</span><span class="p">)</span>
+<span class="n">cplot</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="o">=</span><span class="mi">50000</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../_images/lambertw_c.png" src="../_images/lambertw_c.png" />
 <p><strong>Basic examples</strong></p>
 <p>The Lambert W function is the inverse of <img class="math" src="../_images/math/4f14b8f56034ac47a737c7a68d61849c9468570f.png" alt="w \exp(w)"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span>
 <span class="go">0.5671432904097838729999687</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -741,10 +746,10 @@ is based on <a class="reference external" href="../references.html#corless">[Cor
 </pre></div>
 </div>
 <p>Any branch gives a valid inverse:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span>
 <span class="go">(-2.853581755409037807206819 + 17.11353553941214591260783j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">lambertw</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">w</span>
 <span class="go">(-5.047020464221569709378686 + 155.4763860949415867162066j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">w</span><span class="p">))</span>
@@ -756,11 +761,11 @@ is based on <a class="reference external" href="../references.html#corless">[Cor
 equations, such as finding the value of the infinite power
 tower <img class="math" src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc4970f.png" alt="z^{z^{z^{\ldots}}}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">z</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">z</span> <span class="o">**</span> <span class="n">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">z</span> <span class="o">**</span> <span class="n">tower</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tower</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="mf">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tower</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
 <span class="go">0.6411857445049859844862005</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">0.6411857445049859844862005</span>
@@ -769,38 +774,38 @@ tower <img class="math" src="../_images/math/addf38dabe925cedd5b0dd1ec0f4ebf76bc
 <p><strong>Properties</strong></p>
 <p>The Lambert W function grows roughly like the natural logarithm
 for large arguments:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">1000</span><span class="p">);</span> <span class="n">log</span><span class="p">(</span><span class="mf">1000</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span> <span class="n">log</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 <span class="go">5.249602852401596227126056</span>
 <span class="go">6.907755278982137052053974</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">);</span> <span class="n">log</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">100</span><span class="p">);</span> <span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">100</span><span class="p">)</span>
 <span class="go">224.8431064451185015393731</span>
 <span class="go">230.2585092994045684017991</span>
 </pre></div>
 </div>
 <p>The principal branch of the Lambert W function has a rational
 Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2f39f78f05e05da40bf04f5a7c0726c.png" alt="z = 0"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">lambertw</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">[0.0, 1.0, -1.0, 1.5, -2.666666667, 5.208333333, -10.8]</span>
 </pre></div>
 </div>
 <p>Some special values and limits are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.5671432904097838729999687</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 <span class="go">1.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
 <span class="go">+inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">-inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">-inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">(+inf + 12.56637061435917295385057j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">(+inf + 18.84955592153875943077586j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">(+inf + 21.9911485751285526692385j)</span>
 </pre></div>
 </div>
@@ -808,24 +813,24 @@ Taylor series expansion around <img class="math" src="../_images/math/aa9f0d97d2
 <img class="math" src="../_images/math/c8f915f0cf1bd473190da32d8ffebe485b7761ae.png" alt="W(z) = -1"/> for both branches. Since <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/> can only be represented
 approximately with binary floating-point numbers, evaluating the
 Lambert W function at this point only gives <img class="math" src="../_images/math/bae5aba07d37ff6ff813107e76260fb31ad5794e.png" alt="-1"/> approximately:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">-0.9999999999998371330228251</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">e</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">-1.000000000000162866977175</span>
 </pre></div>
 </div>
 <p>If <img class="math" src="../_images/math/57f1ee23691a5f2ed1e11109820ee928ceaeef65.png" alt="-1/e"/> happens to round in the negative direction, there might be
 a small imaginary part:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
 <span class="go">(-1.0 + 8.22007971483662e-9j)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">e</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lambertw</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">e</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span>
 <span class="go">-0.999999966242188</span>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="../references.html#corless">[Corless]</a></li>
+<li><a class="reference internal" href="../references.html#corless">[Corless]</a></li>
 </ol>
 </dd></dl>
 
@@ -834,7 +839,7 @@ a small imaginary part:</p>
 <div class="section" id="arithmetic-geometric-mean">
 <h2>Arithmetic-geometric mean<a class="headerlink" href="#arithmetic-geometric-mean" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="agm">
-<h3><tt class="xref docutils literal"><span class="pre">agm()</span></tt><a class="headerlink" href="#agm" title="Permalink to this headline">¶</a></h3>
+<h3><tt class="xref py py-func docutils literal"><span class="pre">agm()</span></tt><a class="headerlink" href="#agm" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.agm">
 <tt class="descclassname">mpmath.</tt><tt class="descname">agm</tt><big>(</big><em>a</em>, <em>b=1</em><big>)</big><a class="headerlink" href="#mpmath.agm" title="Permalink to this definition">¶</a></dt>
@@ -855,52 +860,52 @@ b_{n+1} = \sqrt{a_n b_n}" /></p>
 two distinct positive numbers is less than the arithmetic
 mean. It follows that the arithmetic-geometric mean lies
 between the two means:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
 <span class="go">3.46410161513775</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
 <span class="go">3.48202767635957</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 <span class="go">3.5</span>
 </pre></div>
 </div>
 <p>The arithmetic-geometric mean is scale-invariant:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">*</span><span class="n">e</span><span class="p">,</span> <span class="mf">10</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">e</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">29.261085515723</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">10</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">10</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
 <span class="go">29.261085515723</span>
 </pre></div>
 </div>
 <p>As an order-of-magnitude estimate, <img class="math" src="../_images/math/2e042873df5ea9063793fa27d00ca660862a7806.png" alt="\mathrm{agm}(1,x) \approx x"/>
 for large <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">643448704.760133</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">10</span><span class="o">**</span><span class="mf">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">50</span><span class="p">)</span>
 <span class="go">1.34814309345871e+48</span>
 </pre></div>
 </div>
 <p>For tiny <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <img class="math" src="../_images/math/9713f6e0ad4bc38c4bb9b33c84311828627ad139.png" alt="\mathrm{agm}(1,x) \approx -\pi/(2 \log(x/4))"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="s">&#39;0.01&#39;</span><span class="p">)</span>
 <span class="go">0.262166887202249</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;0.0025&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;0.0025&#39;</span><span class="p">)</span>
 <span class="go">0.262172347753122</span>
 </pre></div>
 </div>
 <p>The arithmetic-geometric mean can also be computed for complex
 numbers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">agm</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
 <span class="go">(2.51055133276184 + 0.547394054060638j)</span>
 </pre></div>
 </div>
 <p>The AGM iteration converges very quickly (each step doubles
-the number of correct digits), so <a title="mpmath.agm" class="reference internal" href="#mpmath.agm"><tt class="xref docutils literal"><span class="pre">agm()</span></tt></a> supports efficient
+the number of correct digits), so <a class="reference internal" href="#mpmath.agm" title="mpmath.agm"><tt class="xref py py-func docutils literal"><span class="pre">agm()</span></tt></a> supports efficient
 high-precision evaluation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">10000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mf">10</span><span class="p">:]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">agm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
 <span class="go">&#39;1679581912&#39;</span>
 </pre></div>
 </div>
@@ -914,23 +919,23 @@ following two parametric definite integrals:</p>
 I_2 = \int_0^{\pi/2}
   \frac{1}{\sqrt{a^2 \cos^2(x) + b^2 \sin^2(x)}} \,dx" /></p>
 </div><p>We have:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">a</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">b</span><span class="o">**</span><span class="mf">2</span><span class="p">))</span><span class="o">**-</span><span class="mf">0.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**-</span><span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f2</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">a</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**-</span><span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.451115405388492</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">0.451115405388492</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">agm</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>
 <span class="go">0.451115405388492</span>
 </pre></div>
 </div>
 <p>A formula for <img class="math" src="../_images/math/c13d390a75aea6c20cb4b2d0ba24cfe0582fa13a.png" alt="\Gamma(1/4)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gamma</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">3.62560990822191</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">agm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
 <span class="go">3.62560990822191</span>
 </pre></div>
 </div>
@@ -949,68 +954,68 @@ arbitrary.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Powers and logarithms</a><ul>
-<li><a class="reference external" href="#nth-roots">Nth roots</a><ul>
-<li><a class="reference external" href="#sqrt"><tt class="docutils literal"><span class="pre">sqrt()</span></tt></a></li>
-<li><a class="reference external" href="#hypot"><tt class="docutils literal"><span class="pre">hypot()</span></tt></a></li>
-<li><a class="reference external" href="#cbrt"><tt class="docutils literal"><span class="pre">cbrt()</span></tt></a></li>
-<li><a class="reference external" href="#root"><tt class="docutils literal"><span class="pre">root()</span></tt></a></li>
-<li><a class="reference external" href="#unitroots"><tt class="docutils literal"><span class="pre">unitroots()</span></tt></a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Powers and logarithms</a><ul>
+<li><a class="reference internal" href="#nth-roots">Nth roots</a><ul>
+<li><a class="reference internal" href="#sqrt"><tt class="docutils literal"><span class="pre">sqrt()</span></tt></a></li>
+<li><a class="reference internal" href="#hypot"><tt class="docutils literal"><span class="pre">hypot()</span></tt></a></li>
+<li><a class="reference internal" href="#cbrt"><tt class="docutils literal"><span class="pre">cbrt()</span></tt></a></li>
+<li><a class="reference internal" href="#root"><tt class="docutils literal"><span class="pre">root()</span></tt></a></li>
+<li><a class="reference internal" href="#unitroots"><tt class="docutils literal"><span class="pre">unitroots()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#exponentiation">Exponentiation</a><ul>
-<li><a class="reference external" href="#exp"><tt class="docutils literal"><span class="pre">exp()</span></tt></a></li>
-<li><a class="reference external" href="#power"><tt class="docutils literal"><span class="pre">power()</span></tt></a></li>
-<li><a class="reference external" href="#expj"><tt class="docutils literal"><span class="pre">expj()</span></tt></a></li>
-<li><a class="reference external" href="#expjpi"><tt class="docutils literal"><span class="pre">expjpi()</span></tt></a></li>
-<li><a class="reference external" href="#expm1"><tt class="docutils literal"><span class="pre">expm1()</span></tt></a></li>
-<li><a class="reference external" href="#powm1"><tt class="docutils literal"><span class="pre">powm1()</span></tt></a></li>
+<li><a class="reference internal" href="#exponentiation">Exponentiation</a><ul>
+<li><a class="reference internal" href="#exp"><tt class="docutils literal"><span class="pre">exp()</span></tt></a></li>
+<li><a class="reference internal" href="#power"><tt class="docutils literal"><span class="pre">power()</span></tt></a></li>
+<li><a class="reference internal" href="#expj"><tt class="docutils literal"><span class="pre">expj()</span></tt></a></li>
+<li><a class="reference internal" href="#expjpi"><tt class="docutils literal"><span class="pre">expjpi()</span></tt></a></li>
+<li><a class="reference internal" href="#expm1"><tt class="docutils literal"><span class="pre">expm1()</span></tt></a></li>
+<li><a class="reference internal" href="#powm1"><tt class="docutils literal"><span class="pre">powm1()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#logarithms">Logarithms</a><ul>
-<li><a class="reference external" href="#log"><tt class="docutils literal"><span class="pre">log()</span></tt></a></li>
-<li><a class="reference external" href="#ln"><tt class="docutils literal"><span class="pre">ln()</span></tt></a></li>
-<li><a class="reference external" href="#log10"><tt class="docutils literal"><span class="pre">log10()</span></tt></a></li>
+<li><a class="reference internal" href="#logarithms">Logarithms</a><ul>
+<li><a class="reference internal" href="#log"><tt class="docutils literal"><span class="pre">log()</span></tt></a></li>
+<li><a class="reference internal" href="#ln"><tt class="docutils literal"><span class="pre">ln()</span></tt></a></li>
+<li><a class="reference internal" href="#log10"><tt class="docutils literal"><span class="pre">log10()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#lambert-w-function">Lambert W function</a><ul>
-<li><a class="reference external" href="#lambertw"><tt class="docutils literal"><span class="pre">lambertw()</span></tt></a></li>
+<li><a class="reference internal" href="#lambert-w-function">Lambert W function</a><ul>
+<li><a class="reference internal" href="#lambertw"><tt class="docutils literal"><span class="pre">lambertw()</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#arithmetic-geometric-mean">Arithmetic-geometric mean</a><ul>
-<li><a class="reference external" href="#agm"><tt class="docutils literal"><span class="pre">agm()</span></tt></a></li>
+<li><a class="reference internal" href="#arithmetic-geometric-mean">Arithmetic-geometric mean</a><ul>
+<li><a class="reference internal" href="#agm"><tt class="docutils literal"><span class="pre">agm()</span></tt></a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="constants.html"
-                                  title="previous chapter">Mathematical constants</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="trigonometric.html"
-                                  title="next chapter">Trigonometric functions</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/functions/powers.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="constants.html"
+                        title="previous chapter">Mathematical constants</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="trigonometric.html"
+                        title="next chapter">Trigonometric functions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/functions/powers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1022,7 +1027,7 @@ arbitrary.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="trigonometric.html" title="Trigonometric functions"
@@ -1035,9 +1040,9 @@ arbitrary.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 21, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jul 26, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

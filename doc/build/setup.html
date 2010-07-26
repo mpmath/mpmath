@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,14 +12,15 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '#',
+        URL_ROOT:    '',
         VERSION:     '0.15',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15 documentation" href="index.html" />
     <link rel="next" title="Basic usage" href="basics.html" />
@@ -31,8 +34,8 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="basics.html" title="Basic usage"
              accesskey="N">next</a> |</li>
@@ -93,11 +96,11 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <div class="section" id="checking-that-it-works">
 <h3>Checking that it works<a class="headerlink" href="#checking-that-it-works" title="Permalink to this headline">¶</a></h3>
 <p>After the setup has completed, you should be able to fire up the interactive Python interpreter and do the following:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">**</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;0.5&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;0.5&#39;</span><span class="p">)</span>
 <span class="go">1.4142135623730950488016887242096980785696718753769</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span>
 <span class="go">6.2831853071795864769252867665590057683943387987502</span>
 </pre></div>
 </div>
@@ -108,7 +111,7 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <h2>Using gmpy (optional)<a class="headerlink" href="#using-gmpy-optional" title="Permalink to this headline">¶</a></h2>
 <p>By default, mpmath uses Python integers internally. If <a class="reference external" href="http://code.google.com/p/gmpy/">gmpy</a> version 1.03 or later is installed on your system, mpmath will automatically detect it and transparently use gmpy integers intead. This makes mpmath much faster, especially at high precision (approximately above 100 digits).</p>
 <p>To verify that mpmath uses gmpy, check the internal variable <tt class="docutils literal"><span class="pre">BACKEND</span></tt> is not equal to &#8216;python&#8217;:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">mpmath.libmp</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">mpmath.libmp</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpmath</span><span class="o">.</span><span class="n">libmp</span><span class="o">.</span><span class="n">BACKEND</span>
 <span class="go">&#39;gmpy&#39;</span>
 </pre></div>
@@ -118,7 +121,7 @@ of supported OpenSUSE versions and use <a class="reference external" href="http:
 <div class="section" id="running-tests">
 <h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
 <p>It is recommended that you run mpmath&#8217;s full set of unit tests to make sure everything works. The tests are located in the <tt class="docutils literal"><span class="pre">tests</span></tt> subdirectory of the main mpmath directory. They can be run in the interactive interpreter using the <tt class="docutils literal"><span class="pre">runtests()</span></tt> function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">import</span> <span class="nn">mpmath</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">mpmath</span>
 <span class="n">mpmath</span><span class="o">.</span><span class="n">runtests</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -178,7 +181,7 @@ so there is no need to install GMPY:</p>
 <tt class="docutils literal"><span class="pre">sage.libs.mpmath.all</span></tt>. For example:</p>
 <div class="highlight-python"><pre>sage: import sage.libs.mpmath.all as mpmath</pre>
 </div>
-<p>This module provides a few extra conversion functions, including <tt class="xref docutils literal"><span class="pre">call()</span></tt>
+<p>This module provides a few extra conversion functions, including <tt class="xref py py-func docutils literal"><span class="pre">call()</span></tt>
 which permits calling any mpmath function with Sage numbers as input, and getting
 Sage <tt class="docutils literal"><span class="pre">RealNumber</span></tt> or <tt class="docutils literal"><span class="pre">ComplexNumber</span></tt> instances
 with the appropriate precision back:</p>
@@ -200,51 +203,51 @@ sage: w.prec()
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Setting up mpmath</a><ul>
-<li><a class="reference external" href="#download-and-installation">Download and installation</a><ul>
-<li><a class="reference external" href="#installer">Installer</a></li>
-<li><a class="reference external" href="#using-setuptools">Using setuptools</a></li>
-<li><a class="reference external" href="#debian-ubuntu">Debian/Ubuntu</a></li>
-<li><a class="reference external" href="#opensuse">OpenSUSE</a></li>
-<li><a class="reference external" href="#current-development-version">Current development version</a></li>
-<li><a class="reference external" href="#checking-that-it-works">Checking that it works</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting up mpmath</a><ul>
+<li><a class="reference internal" href="#download-and-installation">Download and installation</a><ul>
+<li><a class="reference internal" href="#installer">Installer</a></li>
+<li><a class="reference internal" href="#using-setuptools">Using setuptools</a></li>
+<li><a class="reference internal" href="#debian-ubuntu">Debian/Ubuntu</a></li>
+<li><a class="reference internal" href="#opensuse">OpenSUSE</a></li>
+<li><a class="reference internal" href="#current-development-version">Current development version</a></li>
+<li><a class="reference internal" href="#checking-that-it-works">Checking that it works</a></li>
 </ul>
 </li>
-<li><a class="reference external" href="#using-gmpy-optional">Using gmpy (optional)</a></li>
-<li><a class="reference external" href="#running-tests">Running tests</a></li>
-<li><a class="reference external" href="#compiling-the-documentation">Compiling the documentation</a></li>
-<li><a class="reference external" href="#mpmath-under-sympy">Mpmath under SymPy</a></li>
-<li><a class="reference external" href="#mpmath-under-sage">Mpmath under Sage</a></li>
+<li><a class="reference internal" href="#using-gmpy-optional">Using gmpy (optional)</a></li>
+<li><a class="reference internal" href="#running-tests">Running tests</a></li>
+<li><a class="reference internal" href="#compiling-the-documentation">Compiling the documentation</a></li>
+<li><a class="reference internal" href="#mpmath-under-sympy">Mpmath under SymPy</a></li>
+<li><a class="reference internal" href="#mpmath-under-sage">Mpmath under Sage</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">Welcome to mpmath&#8217;s documentation!</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="basics.html"
-                                  title="next chapter">Basic usage</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/setup.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to mpmath&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="basics.html"
+                        title="next chapter">Basic usage</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/setup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -256,7 +259,7 @@ sage: w.prec()
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
+          <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="basics.html" title="Basic usage"
@@ -268,9 +271,9 @@ sage: w.prec()
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 21, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jul 26, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

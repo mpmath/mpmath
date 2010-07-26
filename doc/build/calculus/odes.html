@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.15',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
@@ -32,8 +35,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="approximation.html" title="Function approximation"
              accesskey="N">next</a> |</li>
@@ -84,7 +87,7 @@ for any <img class="math" src="../_images/math/f50f6293717aa3975f6a13e30a9c1918c
 vector form. This transformation is described in standard texts
 on ODEs. Examples will also be given below.</p>
 <p><strong>Options, speed and accuracy</strong></p>
-<p>By default, <a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> uses a high-order Taylor series
+<p>By default, <a class="reference internal" href="#mpmath.odefun" title="mpmath.odefun"><tt class="xref py py-func docutils literal"><span class="pre">odefun()</span></tt></a> uses a high-order Taylor series
 method. For reasonably well-behaved problems, the solution will
 be fully accurate to within the working precision. Note that
 <em>F</em> must be possible to evaluate to very high precision
@@ -106,7 +109,7 @@ decreasing the <em>degree</em> for Taylor series is likely to give faster
 solution at low precision, while increasing is likely to be better
 at higher precision.</p>
 <p>The function
-object returned by <a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> caches the solutions at all step
+object returned by <a class="reference internal" href="#mpmath.odefun" title="mpmath.odefun"><tt class="xref py py-func docutils literal"><span class="pre">odefun()</span></tt></a> caches the solutions at all step
 points and uses polynomial interpolation between step points.
 Therefore, once <img class="math" src="../_images/math/7f48e0e8b7e3a5eb9b8af5dd8482abeab9f8062d.png" alt="y(x_1)"/> has been evaluated for some <img class="math" src="../_images/math/ccada11db7b2b90693e2fac4f887a57fce6f96bf.png" alt="x_1"/>,
 <img class="math" src="../_images/math/cb3e3aafaf565634f3a17951361f66b1ca3609f8.png" alt="y(x)"/> can be evaluated very quickly for any <img class="math" src="../_images/math/89b1b114673cf95d4e145003dff953289713c1b9.png" alt="x_0 \le x \le x_1"/>.
@@ -114,10 +117,10 @@ and continuing the evaluation up to <img class="math" src="../_images/math/c8d1c
 <p><strong>Examples of first-order ODEs</strong></p>
 <p>We will solve the standard test problem <img class="math" src="../_images/math/556429eac9b1a2f60b76e7e592f149d07992b9f2.png" alt="y'(x) = y(x), y(0) = 1"/>
 which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c43b6a9c897f705544c88bde9e232.png" alt="y(x) = \exp(x)"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]:</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">1.0 1.0</span>
@@ -126,31 +129,31 @@ which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c4
 </pre></div>
 </div>
 <p>The solution with high precision:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">2.7182818284590452353602874713526624977572470937</span>
 </pre></div>
 </div>
 <p>Using the more general vectorized form, the test problem
 can be input as (note that <em>f</em> returns a 1-element vector):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">[2.71828182845905]</span>
 </pre></div>
 </div>
-<p><a title="mpmath.odefun" class="reference internal" href="#mpmath.odefun"><tt class="xref docutils literal"><span class="pre">odefun()</span></tt></a> can solve nonlinear ODEs, which are generally
+<p><a class="reference internal" href="#mpmath.odefun" title="mpmath.odefun"><tt class="xref py py-func docutils literal"><span class="pre">odefun()</span></tt></a> can solve nonlinear ODEs, which are generally
 impossible (and at best difficult) to solve analytically. As
 an example of a nonlinear ODE, we will solve <img class="math" src="../_images/math/c34028f032b7862ef437fd28b823864b93f7e519.png" alt="y'(x) = x \sin(y(x))"/>
 for <img class="math" src="../_images/math/ebe1d8dcde3aca73ffbeadaef782c9260b794a56.png" alt="y(0) = \pi/2"/>. An exact solution happens to be known
 for this problem, and is given by
 <img class="math" src="../_images/math/67cfad187966d79d7cd686fc9cec6ec2aeb01d8c.png" alt="y(x) = 2 \tan^{-1}\left(\exp\left(x^2/2\right)\right)"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mf">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">2.87255666284091 2.87255666284091</span>
 <span class="go">3.14158520028345 3.14158520028345</span>
@@ -159,12 +162,12 @@ for this problem, and is given by
 </div>
 <p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F"/> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, an ODE can be solved using direct
 integration. We can therefore obtain a reference solution with
-<a title="mpmath.quad" class="reference external" href="integration.html#mpmath.quad"><tt class="xref docutils literal"><span class="pre">quad()</span></tt></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<a class="reference internal" href="integration.html#mpmath.quad" title="mpmath.quad"><tt class="xref py py-func docutils literal"><span class="pre">quad()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.72128263801696</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">])</span>
 <span class="go">0.72128263801696</span>
 </pre></div>
 </div>
@@ -182,10 +185,10 @@ y_1' = -y_0
 <img class="math" src="../_images/math/4b3550d19ee43e1e918f29d7a95be7d68fadb3c9.png" alt="y(0) = y_0(0) = 1"/> and <img class="math" src="../_images/math/fa7db63185303c596cc57dec52f865d444351e0c.png" alt="-y'(0) = y_1(0) = 0"/>, the problem will of
 course be solved by <img class="math" src="../_images/math/c1fc6376a5338b0caf1e557f9f7e988ba952efa2.png" alt="y(x) = y_0(x) = \cos(x)"/> and
 <img class="math" src="../_images/math/344ab3a288e442d9e4e741f5e41503aee4d4ea5a.png" alt="-y'(x) = y_1(x) = \sin(x)"/>. We check this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mf">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mf">0</span><span class="p">]],</span> <span class="mf">0</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">10</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mf">15</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mf">15</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">15</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">15</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;---&quot;</span>
 <span class="gp">...</span>
 <span class="go">[1.0, 0.0]</span>
@@ -225,38 +228,38 @@ more robust</li>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Ordinary differential equations</a><ul>
-<li><a class="reference external" href="#solving-the-ode-initial-value-problem-odefun">Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odefun</span></tt>)</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ordinary differential equations</a><ul>
+<li><a class="reference internal" href="#solving-the-ode-initial-value-problem-odefun">Solving the ODE initial value problem (<tt class="docutils literal"><span class="pre">odefun</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="integration.html"
-                                  title="previous chapter">Numerical integration (quadrature)</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="approximation.html"
-                                  title="next chapter">Function approximation</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/calculus/odes.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="integration.html"
+                        title="previous chapter">Numerical integration (quadrature)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="approximation.html"
+                        title="next chapter">Function approximation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/calculus/odes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -268,7 +271,7 @@ more robust</li>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="approximation.html" title="Function approximation"
@@ -281,9 +284,9 @@ more robust</li>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 21, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jul 26, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.15',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
@@ -32,8 +35,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="../matrices.html" title="Matrices"
              accesskey="N">next</a> |</li>
@@ -59,22 +62,22 @@
 <tt class="descclassname">mpmath.</tt><tt class="descname">taylor</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x</em>, <em>n</em>, <em>**options</em><big>)</big><a class="headerlink" href="#mpmath.taylor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces a degree-<img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/> Taylor polynomial around the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> of the
 given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>. The coefficients are returned as a list.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">5</span><span class="p">)))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)))</span>
 <span class="go">[0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333]</span>
 </pre></div>
 </div>
 <p>The coefficients are computed using high-order numerical
 differentiation. The function must be possible to evaluate
-to arbitrary precision. See <a title="mpmath.diff" class="reference external" href="differentiation.html#mpmath.diff"><tt class="xref docutils literal"><span class="pre">diff()</span></tt></a> for additional details
+to arbitrary precision. See <a class="reference internal" href="differentiation.html#mpmath.diff" title="mpmath.diff"><tt class="xref py py-func docutils literal"><span class="pre">diff()</span></tt></a> for additional details
 and supported keyword options.</p>
 <p>Note that to evaluate the Taylor polynomial as an approximation
-of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, e.g. with <a title="mpmath.polyval" class="reference external" href="polynomials.html#mpmath.polyval"><tt class="xref docutils literal"><span class="pre">polyval()</span></tt></a>, the coefficients must be reversed,
+of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, e.g. with <a class="reference internal" href="polynomials.html#mpmath.polyval" title="mpmath.polyval"><tt class="xref py py-func docutils literal"><span class="pre">polyval()</span></tt></a>, the coefficients must be reversed,
 and the point of the Taylor expansion must be subtracted from
 the argument:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span>
 <span class="go">12.1824939606092</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
 <span class="go">12.1824939607035</span>
@@ -90,7 +93,7 @@ the argument:</p>
 <tt class="descclassname">mpmath.</tt><tt class="descname">pade</tt><big>(</big><em>ctx</em>, <em>a</em>, <em>L</em>, <em>M</em><big>)</big><a class="headerlink" href="#mpmath.pade" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes a Pade approximation of degree <img class="math" src="../_images/math/a2cc450ebacef8e05cc6ade46aea6a86708d6494.png" alt="(L, M)"/> to a function.
 Given at least <img class="math" src="../_images/math/e73609e829d32a9e767c52e3dd564e4d3d8b66b7.png" alt="L+M+1"/> Taylor coefficients <img class="math" src="../_images/math/c7d457e388298246adb06c587bccd419ea67f7e8.png" alt="a"/> approximating
-a function <img class="math" src="../_images/math/133abca2101afa88a51f60a6747c47e699a858e5.png" alt="A(x)"/>, <a title="mpmath.pade" class="reference internal" href="#mpmath.pade"><tt class="xref docutils literal"><span class="pre">pade()</span></tt></a> returns coefficients of
+a function <img class="math" src="../_images/math/133abca2101afa88a51f60a6747c47e699a858e5.png" alt="A(x)"/>, <a class="reference internal" href="#mpmath.pade" title="mpmath.pade"><tt class="xref py py-func docutils literal"><span class="pre">pade()</span></tt></a> returns coefficients of
 polynomials <img class="math" src="../_images/math/41bd81b0ae820e8ae1ecb70cb3f2ebfde5a42b4a.png" alt="P, Q"/> satisfying</p>
 <div class="math">
 <p><img src="../_images/math/c250a438f776950177437773eafd535d96f5f71b.png" alt="P = \sum_{k=0}^L p_k x^k
@@ -104,16 +107,16 @@ A(x) Q(x) = P(x) + O(x^{L+M+1})" /></p>
 beyond the radius of convergence of its Taylor series (example
 from G.A. Baker &#8216;Essentials of Pade Approximants&#8217; Academic Press,
 Ch.1A):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">one</span> <span class="o">+</span> <span class="mf">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">x</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">one</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">one</span> <span class="o">+</span> <span class="n">x</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">6</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">pade</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">polyval</span><span class="p">(</span><span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mf">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">pade</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">polyval</span><span class="p">(</span><span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
 <span class="go">1.38169105566806</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">1.38169855941551</span>
@@ -129,10 +132,10 @@ Ch.1A):</p>
 <tt class="descclassname">mpmath.</tt><tt class="descname">chebyfit</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>N</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#mpmath.chebyfit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes a polynomial of degree <img class="math" src="../_images/math/a256c70ad4c46ec1127c5be68f8bb3075e9ced31.png" alt="N-1"/> that approximates the
 given function <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. With <tt class="docutils literal"><span class="pre">error=True</span></tt>,
-<a title="mpmath.chebyfit" class="reference internal" href="#mpmath.chebyfit"><tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt></a> also returns an accurate estimate of the
+<a class="reference internal" href="#mpmath.chebyfit" title="mpmath.chebyfit"><tt class="xref py py-func docutils literal"><span class="pre">chebyfit()</span></tt></a> also returns an accurate estimate of the
 maximum absolute error; that is, the maximum value of
 <img class="math" src="../_images/math/275078e7919d5cd6715724004e7013ddbe0b4973.png" alt="|f(x) - P(x)|"/> for <img class="math" src="../_images/math/ef57ada8ccf733fecb08daf2503f42216a801934.png" alt="x \in [a, b]"/>.</p>
-<p><a title="mpmath.chebyfit" class="reference internal" href="#mpmath.chebyfit"><tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt></a> uses the Chebyshev approximation formula,
+<p><a class="reference internal" href="#mpmath.chebyfit" title="mpmath.chebyfit"><tt class="xref py py-func docutils literal"><span class="pre">chebyfit()</span></tt></a> uses the Chebyshev approximation formula,
 which gives a nearly optimal solution: that is, the maximum
 error of the approximating polynomial is very close to
 the smallest possible for any polynomial of the same degree.</p>
@@ -142,28 +145,28 @@ implicitly by an integral or a differential equation. (For
 example, it could be used to turn a slow mpmath function
 into a fast machine-precision version of the same.)</p>
 <p><strong>Examples</strong></p>
-<p>Here we use <a title="mpmath.chebyfit" class="reference internal" href="#mpmath.chebyfit"><tt class="xref docutils literal"><span class="pre">chebyfit()</span></tt></a> to generate a low-degree approximation
+<p>Here we use <a class="reference internal" href="#mpmath.chebyfit" title="mpmath.chebyfit"><tt class="xref py py-func docutils literal"><span class="pre">chebyfit()</span></tt></a> to generate a low-degree approximation
 of <img class="math" src="../_images/math/c2644cc9ce7c9379a1398bed5ce9626ba5491d9f.png" alt="f(x) = \cos(x)"/>, valid on the interval <img class="math" src="../_images/math/f6e0fb93486b514b62f25bbf3c4724b4e53b3d36.png" alt="[1, 2]"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">],</span> <span class="mf">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poly</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">chebyfit</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="mi">5</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
 <span class="go">[0.00291682, 0.146166, -0.732491, 0.174141, 0.949553]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mf">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
 <span class="go">1.61351758081e-5</span>
 </pre></div>
 </div>
 <p>The polynomial can be evaluated using <tt class="docutils literal"><span class="pre">polyval</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">),</span> <span class="mf">12</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
 <span class="go">-0.0291858904138</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1.6</span><span class="p">),</span> <span class="mf">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1.6</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
 <span class="go">-0.0291995223013</span>
 </pre></div>
 </div>
 <p>Sampling the true error at 1000 points shows that the error
 estimate generated by <tt class="docutils literal"><span class="pre">chebyfit</span></tt> is remarkably good:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">polyval</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="n">error</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">n</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1000</span><span class="p">)]),</span> <span class="mf">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="n">error</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">n</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)]),</span> <span class="mi">12</span><span class="p">)</span>
 <span class="go">1.61349954245e-5</span>
 </pre></div>
 </div>
@@ -200,7 +203,7 @@ segments.</p>
 <dt id="mpmath.fourier">
 <tt class="descclassname">mpmath.</tt><tt class="descname">fourier</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>N</em><big>)</big><a class="headerlink" href="#mpmath.fourier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Fourier series of degree <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> of the given function
-on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. More precisely, <a title="mpmath.fourier" class="reference internal" href="#mpmath.fourier"><tt class="xref docutils literal"><span class="pre">fourier()</span></tt></a> returns
+on the interval <img class="math" src="../_images/math/da2e551d2ca2155b8d8f4935d2e9757722c9bab6.png" alt="[a, b]"/>. More precisely, <a class="reference internal" href="#mpmath.fourier" title="mpmath.fourier"><tt class="xref py py-func docutils literal"><span class="pre">fourier()</span></tt></a> returns
 two lists <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)"/> of coefficients (the cosine series and sine
 series, respectively), such that</p>
 <div class="math">
@@ -209,15 +212,15 @@ series, respectively), such that</p>
 </div><p>where <img class="math" src="../_images/math/b84bf9ebba38660860b353958230b555d0917674.png" alt="m = 2 \pi / (b-a)"/>.</p>
 <p>Note that many texts define the first coefficient as <img class="math" src="../_images/math/f41ba6f0a01ad7e9a1451a2863d2f5e68bdce1ff.png" alt="2 c_0"/> instead
 of <img class="math" src="../_images/math/0134af18ca53751c9f9ec73d48b7fa0ff8da9ea6.png" alt="c_0"/>. The easiest way to evaluate the computed series correctly
-is to pass it to <a title="mpmath.fourierval" class="reference internal" href="#mpmath.fourierval"><tt class="xref docutils literal"><span class="pre">fourierval()</span></tt></a>.</p>
+is to pass it to <a class="reference internal" href="#mpmath.fourierval" title="mpmath.fourierval"><tt class="xref py py-func docutils literal"><span class="pre">fourierval()</span></tt></a>.</p>
 <p><strong>Examples</strong></p>
 <p>The function <img class="math" src="../_images/math/427c0ee5f10895f708b681a16c4f5799b31f41a7.png" alt="f(x) = x"/> has a simple Fourier series on the standard
 interval <img class="math" src="../_images/math/b35e10ec8f56c704d87c8b856a08c455e2f91ee3.png" alt="[-\pi, \pi]"/>. The cosine coefficients are all zero (because
 the function has odd symmetry), and the sine coefficients are
 rational numbers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mf">5</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
@@ -226,36 +229,36 @@ rational numbers:</p>
 </div>
 <p>This computes a Fourier series of a nonsymmetric function on
 a nonstandard interval:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mf">2</span> <span class="o">-</span> <span class="mf">4</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mf">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mf">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">[0.583333, 1.12479, -1.27552, 0.904708, -0.441296]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="go">[0.0, -2.6255, 0.580905, 0.219974, -0.540057]</span>
 </pre></div>
 </div>
 <p>It is instructive to plot a function along with its truncated
 Fourier series:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">)],</span> <span class="n">I</span><span class="p">)</span> <span class="c">#doctest: +SKIP</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">plot</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">)],</span> <span class="n">I</span><span class="p">)</span> 
 </pre></div>
 </div>
 <p>Fourier series generally converge slowly (and may not converge
 pointwise). For example, if <img class="math" src="../_images/math/98b7d89d080d3b48db075f5288db991f97bb0380.png" alt="f(x) = \cosh(x)"/>, a 10-term Fourier
 series gives an <img class="math" src="../_images/math/07c3de5211dc08b13546363f8b139700a16dd963.png" alt="L^2"/> error corresponding to 2-digit accuracy:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mf">9</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">fourier</span><span class="p">(</span><span class="n">cosh</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">fourierval</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">I</span><span class="p">)))</span>
 <span class="go">0.00467963</span>
 </pre></div>
 </div>
-<p><a title="mpmath.fourier" class="reference internal" href="#mpmath.fourier"><tt class="xref docutils literal"><span class="pre">fourier()</span></tt></a> uses numerical quadrature. For nonsmooth functions,
+<p><a class="reference internal" href="#mpmath.fourier" title="mpmath.fourier"><tt class="xref py py-func docutils literal"><span class="pre">fourier()</span></tt></a> uses numerical quadrature. For nonsmooth functions,
 the accuracy (and speed) can be improved by including all singular
 points in the interval specification:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="mf">0</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">([0.5000441648], [0.0])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">1</span><span class="p">],</span> <span class="mf">0</span><span class="p">),</span> <span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">fourier</span><span class="p">(</span><span class="nb">abs</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
 <span class="go">([0.5], [0.0])</span>
 </pre></div>
 </div>
@@ -265,7 +268,7 @@ points in the interval specification:</p>
 <dt id="mpmath.fourierval">
 <tt class="descclassname">mpmath.</tt><tt class="descname">fourierval</tt><big>(</big><em>ctx</em>, <em>series</em>, <em>interval</em>, <em>x</em><big>)</big><a class="headerlink" href="#mpmath.fourierval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates a Fourier series (in the format computed by
-by <a title="mpmath.fourier" class="reference internal" href="#mpmath.fourier"><tt class="xref docutils literal"><span class="pre">fourier()</span></tt></a> for the given interval) at the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
+by <a class="reference internal" href="#mpmath.fourier" title="mpmath.fourier"><tt class="xref py py-func docutils literal"><span class="pre">fourier()</span></tt></a> for the given interval) at the point <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>.</p>
 <p>The series should be a pair <img class="math" src="../_images/math/6d3fe2ec7aa586eb870dffb5f076b05714ca91bb.png" alt="(c, s)"/> where <img class="math" src="../_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/> is the
 cosine series and <img class="math" src="../_images/math/f37bba504894945c07a32f5496d74299a37aa51c.png" alt="s"/> is the sine series. The two lists
 need not have the same length.</p>
@@ -280,41 +283,41 @@ need not have the same length.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Function approximation</a><ul>
-<li><a class="reference external" href="#taylor-series-taylor">Taylor series (<tt class="docutils literal"><span class="pre">taylor</span></tt>)</a></li>
-<li><a class="reference external" href="#pade-approximation-pade">Pade approximation (<tt class="docutils literal"><span class="pre">pade</span></tt>)</a></li>
-<li><a class="reference external" href="#chebyshev-approximation-chebyfit">Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)</a></li>
-<li><a class="reference external" href="#fourier-series-fourier-fourierval">Fourier series (<tt class="docutils literal"><span class="pre">fourier</span></tt>, <tt class="docutils literal"><span class="pre">fourierval</span></tt>)</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Function approximation</a><ul>
+<li><a class="reference internal" href="#taylor-series-taylor">Taylor series (<tt class="docutils literal"><span class="pre">taylor</span></tt>)</a></li>
+<li><a class="reference internal" href="#pade-approximation-pade">Pade approximation (<tt class="docutils literal"><span class="pre">pade</span></tt>)</a></li>
+<li><a class="reference internal" href="#chebyshev-approximation-chebyfit">Chebyshev approximation (<tt class="docutils literal"><span class="pre">chebyfit</span></tt>)</a></li>
+<li><a class="reference internal" href="#fourier-series-fourier-fourierval">Fourier series (<tt class="docutils literal"><span class="pre">fourier</span></tt>, <tt class="docutils literal"><span class="pre">fourierval</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="odes.html"
-                                  title="previous chapter">Ordinary differential equations</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="../matrices.html"
-                                  title="next chapter">Matrices</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/calculus/approximation.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="odes.html"
+                        title="previous chapter">Ordinary differential equations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../matrices.html"
+                        title="next chapter">Matrices</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/calculus/approximation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -326,7 +329,7 @@ need not have the same length.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="../matrices.html" title="Matrices"
@@ -339,9 +342,9 @@ need not have the same length.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 21, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jul 26, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

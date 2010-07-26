@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +14,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.15',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="mpmath v0.15 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
@@ -32,8 +35,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="N">next</a> |</li>
@@ -54,7 +57,7 @@
 <h1>Sums, products, limits and extrapolation<a class="headerlink" href="#sums-products-limits-and-extrapolation" title="Permalink to this headline">¶</a></h1>
 <p>The functions listed here permit approximation of infinite
 sums, products, and other sequence limits.
-Use <a title="mpmath.fsum" class="reference external" href="../general.html#mpmath.fsum"><tt class="xref docutils literal"><span class="pre">mpmath.fsum()</span></tt></a> and <a title="mpmath.fprod" class="reference external" href="../general.html#mpmath.fprod"><tt class="xref docutils literal"><span class="pre">mpmath.fprod()</span></tt></a>
+Use <a class="reference internal" href="../general.html#mpmath.fsum" title="mpmath.fsum"><tt class="xref py py-func docutils literal"><span class="pre">mpmath.fsum()</span></tt></a> and <a class="reference internal" href="../general.html#mpmath.fprod" title="mpmath.fprod"><tt class="xref py py-func docutils literal"><span class="pre">mpmath.fprod()</span></tt></a>
 for summation and multiplication of finite sequences.</p>
 <div class="section" id="summation-nsum-sumem">
 <h2>Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-nsum-sumem" title="Permalink to this headline">¶</a></h2>
@@ -70,25 +73,25 @@ for summation and multiplication of finite sequences.</p>
 <p><img src="../_images/math/a6b79a889ab192a55d0633f65d690641c6928ade.png" alt="S = \sum_{k_1=a_1}^{b_1} \cdots
 \sum_{k_n=a_n}^{b_n} f(k_1,\ldots,k_n)" /></p>
 </div><p>if multiple intervals are given.</p>
-<p>Two examples of infinite series that can be summed by <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>,
+<p>Two examples of infinite series that can be summed by <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a>,
 where the first converges rapidly and the second converges slowly,
 are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">2.71828182845905</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.64493406684823</span>
 </pre></div>
 </div>
-<p>When appropriate, <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> applies convergence acceleration to
+<p>When appropriate, <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> applies convergence acceleration to
 accurately estimate the sums of slowly convergent series. If the series is
-finite, <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> currently does not attempt to perform any
-extrapolation, and simply calls <a title="mpmath.fsum" class="reference external" href="../general.html#mpmath.fsum"><tt class="xref docutils literal"><span class="pre">fsum()</span></tt></a>.</p>
+finite, <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> currently does not attempt to perform any
+extrapolation, and simply calls <a class="reference internal" href="../general.html#mpmath.fsum" title="mpmath.fsum"><tt class="xref py py-func docutils literal"><span class="pre">fsum()</span></tt></a>.</p>
 <p>Multidimensional infinite series are reduced to a single-dimensional
 series over expanding hypercubes; if both infinite and finite dimensions
 are present, the finite ranges are moved innermost. For more advanced
-control over the summation order, use nested calls to <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>,
+control over the summation order, use nested calls to <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a>,
 or manually rewrite the sum as a single-dimensional series.</p>
 <p><strong>Options</strong></p>
 <dl class="docutils">
@@ -118,7 +121,7 @@ a singular term near the origin.</dd>
 </dl>
 <p><strong>Methods</strong></p>
 <p>Unfortunately, an algorithm that can efficiently sum any infinite
-series does not exist. <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> implements several different
+series does not exist. <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> implements several different
 algorithms that each work well in different cases. The <em>method</em>
 keyword argument selects a method.</p>
 <p>The default method is <tt class="docutils literal"><span class="pre">'r+s'</span></tt>, i.e. both Richardson extrapolation
@@ -131,20 +134,20 @@ investigate which one method works best and only use that.</p>
 <dt><tt class="docutils literal"><span class="pre">'richardson'</span></tt> / <tt class="docutils literal"><span class="pre">'r'</span></tt>:</dt>
 <dd>Uses Richardson extrapolation. Provides useful extrapolation
 when <img class="math" src="../_images/math/caac9e452e2ed15bfa46562f29fc396d18058fc6.png" alt="f(k) \sim P(k)/Q(k)"/> or when <img class="math" src="../_images/math/87a15186cf512bb557e8b525189618097d79cb91.png" alt="f(k) \sim (-1)^k P(k)/Q(k)"/>
-for polynomials <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>. See <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> for
+for polynomials <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/>. See <a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> for
 additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'shanks'</span></tt> / <tt class="docutils literal"><span class="pre">'s'</span></tt>:</dt>
 <dd>Uses Shanks transformation. Typically provides useful
 extrapolation when <img class="math" src="../_images/math/af24f10a2b97f2bad39e25387e42d6464b58d8a4.png" alt="f(k) \sim c^k"/> or when successive terms
 alternate signs. Is able to sum some divergent series.
-See <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> for additional information.</dd>
+See <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a> for additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'euler-maclaurin'</span></tt> / <tt class="docutils literal"><span class="pre">'e'</span></tt>:</dt>
 <dd>Uses the Euler-Maclaurin summation formula to approximate
 the remainder sum by an integral. This requires high-order
 numerical derivatives and numerical integration. The advantage
 of this algorithm is that it works regardless of the
 decay rate of <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>, as long as <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> is sufficiently smooth.
-See <a title="mpmath.sumem" class="reference internal" href="#mpmath.sumem"><tt class="xref docutils literal"><span class="pre">sumem()</span></tt></a> for additional information.</dd>
+See <a class="reference internal" href="#mpmath.sumem" title="mpmath.sumem"><tt class="xref py py-func docutils literal"><span class="pre">sumem()</span></tt></a> for additional information.</dd>
 <dt><tt class="docutils literal"><span class="pre">'direct'</span></tt> / <tt class="docutils literal"><span class="pre">'d'</span></tt>:</dt>
 <dd>Does not perform any extrapolation. This can be used
 (and should only be used for) rapidly convergent series.
@@ -153,29 +156,29 @@ decrease below the target tolerance.</dd>
 </dl>
 <p><strong>Basic examples</strong></p>
 <p>A finite sum:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">6</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
 <span class="go">2.45</span>
 </pre></div>
 </div>
 <p>Summation of a series going to negative infinity and a doubly
 infinite series:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">1</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="go">1.64493406684823</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">3.15334809493716</span>
 </pre></div>
 </div>
-<p><a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> handles sums of complex numbers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">0.25</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<p><a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> handles sums of complex numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="o">+</span><span class="mf">0.25</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">(1.6 + 0.8j)</span>
 </pre></div>
 </div>
 <p>The following sum converges very rapidly, so it is most
 efficient to sum it by disabling convergence acceleration:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">1000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">k</span><span class="o">**</span><span class="mf">2</span> <span class="o">/</span> <span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">k</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">fac</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;direct&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="mf">1</span><span class="p">))</span><span class="o">/</span><span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="mi">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e-998&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
@@ -183,23 +186,23 @@ efficient to sum it by disabling convergence acceleration:</p>
 <p><strong>Examples with Richardson extrapolation</strong></p>
 <p>Richardson extrapolation works well for sums over rational
 functions, as well as their alternating counterparts:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;richardson&#39;</span><span class="p">)</span>
 <span class="go">1.2020569031595942853997381615114499907649862923405</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">1.2020569031595942853997381615114499907649862923405</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mf">3</span> <span class="o">+</span> <span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;richardson&#39;</span><span class="p">)</span>
 <span class="go">2.9348022005446793094172454999380755676568497036204</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">2</span><span class="o">-</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="mi">2</span>
 <span class="go">2.9348022005446793094172454999380755676568497036204</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;richardson&#39;</span><span class="p">)</span>
 <span class="go">-0.90154267736969571404980362113358749307373971925537</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="mf">3</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
 <span class="go">-0.90154267736969571404980362113358749307373971925538</span>
 </pre></div>
 </div>
@@ -209,15 +212,15 @@ and typically provides excellent acceleration for Taylor
 series near the border of their disk of convergence.
 Here we apply it to a series for <img class="math" src="../_images/math/3efbba50605ab81108fac93029eb47bd346879e4.png" alt="\log(2)"/>, which can be
 seen as the Taylor series for <img class="math" src="../_images/math/7c6e7d04224d2993e1d6ef6e9b36cfbdc9a11cd5.png" alt="\log(1+x)"/> with <img class="math" src="../_images/math/34310f2f36ed6d724838edb08788ee62acb33386.png" alt="x = 1"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">0.69314718055994530941723212145817656807550013436025</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">0.69314718055994530941723212145817656807550013436025</span>
 </pre></div>
 </div>
 <p>Here we apply it to a slowly convergent geometric series:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;0.995&#39;</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;0.995&#39;</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">200.0</span>
 </pre></div>
@@ -225,22 +228,22 @@ seen as the Taylor series for <img class="math" src="../_images/math/7c6e7d04224
 <p>Finally, Shanks&#8217; method works very well for alternating series
 where <img class="math" src="../_images/math/23b4bda6536c29bf534378846a7396ed32321554.png" alt="f(k) = (-1)^k g(k)"/>, and often does so regardless of
 the exact decay rate of <img class="math" src="../_images/math/bdb456d42c18b6aa55c9819037c9fba65298614b.png" alt="g(k)"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mf">1.5</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="mf">1.5</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">0.765147024625408</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">2</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">zeta</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 <span class="go">0.765147024625408</span>
 </pre></div>
 </div>
 <p>The following slowly convergent alternating series has no known
 closed-form value. Evaluating the sum a second time at higher
 precision indicates that the value is probably correct:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">0.924299897222939</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">0.92429989722293885595957018136</span>
 </pre></div>
@@ -249,16 +252,16 @@ precision indicates that the value is probably correct:</p>
 <p>The sum in the following example has the wrong rate of convergence
 for either Richardson or Shanks to be effective.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2.5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;euler-maclaurin&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;euler-maclaurin&#39;</span><span class="p">)</span>
 <span class="go">0.38734195032621</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
 <span class="go">0.38734195032621</span>
 </pre></div>
 </div>
 <p>Increasing <tt class="docutils literal"><span class="pre">steps</span></tt> improves speed at higher precision:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;euler-maclaurin&#39;</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="p">[</span><span class="mf">250</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;euler-maclaurin&#39;</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="p">[</span><span class="mi">250</span><span class="p">])</span>
 <span class="go">0.38734195032620997271199237593105101319948228874688</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="n">zeta</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
 <span class="go">0.38734195032620997271199237593105101319948228874688</span>
@@ -269,15 +272,15 @@ for either Richardson or Shanks to be effective.</p>
 series. In particular, it is often able to sum Taylor series
 beyond their radius of convergence (this is due to a relation
 between the Shanks transformation and Pade approximations;
-see <a title="mpmath.pade" class="reference external" href="approximation.html#mpmath.pade"><tt class="xref docutils literal"><span class="pre">pade()</span></tt></a> for an alternative way to evaluate divergent
+see <a class="reference internal" href="approximation.html#mpmath.pade" title="mpmath.pade"><tt class="xref py py-func docutils literal"><span class="pre">pade()</span></tt></a> for an alternative way to evaluate divergent
 Taylor series).</p>
 <p>Here we apply it to <img class="math" src="../_images/math/7c6e7d04224d2993e1d6ef6e9b36cfbdc9a11cd5.png" alt="\log(1+x)"/> far outside the region of
 convergence:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">9</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span><span class="o">**</span><span class="n">k</span><span class="o">/</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="go">2.3025850929940456840179914546843642076011014886288</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">2.3025850929940456840179914546843642076011014886288</span>
 </pre></div>
 </div>
@@ -285,11 +288,11 @@ convergence:</p>
 using the Shanks transformation is geometric series.
 The result is the same as using the closed-form formula
 for an infinite geometric series:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mf">8</span><span class="p">,</span> <span class="mf">8</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mf">1</span><span class="p">:</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">continue</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">n</span><span class="p">),</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">n</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">n</span><span class="p">),</span> <span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">n</span><span class="o">**</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>        <span class="n">method</span><span class="o">=</span><span class="s">&#39;shanks&#39;</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">-8.0 0.111111111111111 0.111111111111111</span>
@@ -312,72 +315,72 @@ for an infinite geometric series:</p>
 <p><strong>Multidimensional sums</strong></p>
 <p>Any combination of finite and infinite ranges is allowed for the
 summation indices:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
 <span class="go">28.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">/</span><span class="mf">2</span><span class="o">**</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">6.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">/</span><span class="mf">2</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="go">6.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">**</span><span class="n">x</span><span class="o">*</span><span class="mf">2</span><span class="o">**</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
 <span class="go">7.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">**</span><span class="n">x</span><span class="o">*</span><span class="mf">2</span><span class="o">**</span><span class="n">z</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">y</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">z</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">7.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">**</span><span class="n">z</span><span class="o">*</span><span class="mf">2</span><span class="o">**</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">z</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">7.0</span>
 </pre></div>
 </div>
 <p>Some nice examples of double series with analytic solutions or
 reductions to single-dimensional series (see [1]):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">1.60669515241529</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">**</span><span class="n">n</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">1.60669515241529</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">j</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">j</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">0.278070510848213</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mf">3</span><span class="o">*</span><span class="n">ln2</span><span class="p">)</span><span class="o">/</span><span class="mf">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="p">(</span><span class="n">pi</span><span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">ln2</span><span class="p">)</span><span class="o">/</span><span class="mi">12</span>
 <span class="go">0.278070510848213</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">0.129319852864168</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">altzeta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.129319852864168</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">0.0790756439455825</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">altzeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">altzeta</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">altzeta</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">0.0790756439455825</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">m</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mf">3</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="mf">3</span><span class="o">**</span><span class="n">m</span><span class="o">+</span><span class="n">m</span><span class="o">*</span><span class="mf">3</span><span class="o">**</span><span class="n">n</span><span class="p">)),</span>
-<span class="gp">... </span>    <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="n">m</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mi">3</span><span class="o">**</span><span class="n">m</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="mi">3</span><span class="o">**</span><span class="n">m</span><span class="o">+</span><span class="n">m</span><span class="o">*</span><span class="mi">3</span><span class="o">**</span><span class="n">n</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">0.28125</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mf">9</span><span class="p">)</span><span class="o">/</span><span class="mf">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">/</span><span class="mi">32</span>
 <span class="go">0.28125</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="n">fac</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">workprec</span><span class="o">=</span><span class="mf">400</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">:</span> <span class="n">fac</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">workprec</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
 <span class="go">1.64493406684823</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">1.64493406684823</span>
 </pre></div>
 </div>
 <p>A hard example of a multidimensional sum is the Madelung constant
 in three dimensions (see [2]). The defining sum converges very
-slowly and only conditionally, so <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> is lucky to
+slowly and only conditionally, so <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> is lucky to
 obtain an accurate value through convergence acceleration. The
 second evaluation below uses a much more efficient, rapidly
 convergent 2D sum:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="o">*</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="o">*</span><span class="n">z</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">-1.74756459463318</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="o">-</span><span class="mf">12</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sech</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">pi</span> <span class="o">*</span> \
-<span class="gp">... </span>    <span class="n">sqrt</span><span class="p">((</span><span class="mf">2</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">))</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="o">-</span><span class="mi">12</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">sech</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">pi</span> <span class="o">*</span> \
+<span class="gp">... </span>    <span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
 <span class="go">-1.74756459463318</span>
 </pre></div>
 </div>
 <p>Another example of a lattice sum in 2D:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">-2.1775860903036</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="n">pi</span><span class="o">*</span><span class="n">ln2</span>
@@ -385,15 +388,15 @@ convergent 2D sum:</p>
 </pre></div>
 </div>
 <p>An example of an Eisenstein series:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="o">*</span><span class="mf">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">4</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="o">*</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">ignore</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">(3.1512120021539 + 0.0j)</span>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/DoubleSeries.html">http://mathworld.wolfram.com/DoubleSeries.html</a>,</li>
-<li><a class="reference external" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/MadelungConstants.html">http://mathworld.wolfram.com/MadelungConstants.html</a></li>
+<li><a class="reference internal" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/DoubleSeries.html">http://mathworld.wolfram.com/DoubleSeries.html</a>,</li>
+<li><a class="reference internal" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/MadelungConstants.html">http://mathworld.wolfram.com/MadelungConstants.html</a></li>
 </ol>
 </dd></dl>
 
@@ -421,7 +424,7 @@ term adds at least one decimal.</p>
 often be &#8220;forced&#8221; if <img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty"/> by summing up to <img class="math" src="../_images/math/03a9fee3e72e1d00b7ad8bff6aa9a368bc93cb4c.png" alt="a+N"/> and then
 applying the Euler-Maclaurin formula to the sum over the range
 <img class="math" src="../_images/math/f7a68cfdd36caa316a4e4260589fbcc6f46f79d4.png" alt="(a+N+1, \ldots, \infty)"/>. This procedure is implemented by
-<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>.</p>
+<a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a>.</p>
 <p>By default numerical quadrature and differentiation is used.
 If the symbolic values of the integral and endpoint derivatives
 are known, it is more efficient to pass the value of the
@@ -432,20 +435,20 @@ should be given as iterables that yield
 <p><strong>Examples</strong></p>
 <p>Summation of an infinite series, with automatic and symbolic
 integral and derivative values (the second should be much faster):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">32</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.03174336652030209012658168043874142714132886413417</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="mf">32</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">adiffs</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="mf">32</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="o">-</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mf">999</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="p">,</span> <span class="p">[</span><span class="mf">32</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">integral</span><span class="o">=</span><span class="n">I</span><span class="p">,</span> <span class="n">adiffs</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span> <span class="o">=</span> <span class="n">adiffs</span><span class="o">=</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">32</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">999</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">integral</span><span class="o">=</span><span class="n">I</span><span class="p">,</span> <span class="n">adiffs</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>
 <span class="go">0.03174336652030209012658168043874142714132886413417</span>
 </pre></div>
 </div>
 <p>An exact evaluation of a finite polynomial sum:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">**</span><span class="mf">5</span><span class="o">-</span><span class="mf">12</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">100000</span><span class="p">,</span> <span class="mf">200000</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sumem</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">**</span><span class="mi">5</span><span class="o">-</span><span class="mi">12</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">100000</span><span class="p">,</span> <span class="mi">200000</span><span class="p">])</span>
 <span class="go">10500155000624963999742499550000.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mf">5</span><span class="o">-</span><span class="mf">12</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">3</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="o">-</span><span class="mf">100000</span><span class="p">,</span> <span class="mf">200001</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">5</span><span class="o">-</span><span class="mi">12</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="o">-</span><span class="mi">100000</span><span class="p">,</span> <span class="mi">200001</span><span class="p">))</span>
 <span class="go">10500155000624963999742499550000</span>
 </pre></div>
 </div>
@@ -462,11 +465,11 @@ integral and derivative values (the second should be much faster):</p>
 <p><img src="../_images/math/e9eee1b79d384398db6e32391e16fd2320cd85d3.png" alt="P = \prod_{k=a}^b f(k)" /></p>
 </div><p>where <img class="math" src="../_images/math/28e24c43456d95b5ab8d4f2f8f85a644e98b7ed3.png" alt="(a, b)"/> = <em>interval</em>, and where <img class="math" src="../_images/math/7f09226b83b54b32554d562dadbb93cea7750e3b.png" alt="a = -\infty"/> and/or
 <img class="math" src="../_images/math/1dd9b0d13ce2b67ebc639ec3311bddf3c53be1e5.png" alt="b = \infty"/> are allowed.</p>
-<p>By default, <a title="mpmath.nprod" class="reference internal" href="#mpmath.nprod"><tt class="xref docutils literal"><span class="pre">nprod()</span></tt></a> uses the same extrapolation methods as
-<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>, except applied to the partial products rather than
-partial sums, and the same keyword options as for <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> are
+<p>By default, <a class="reference internal" href="#mpmath.nprod" title="mpmath.nprod"><tt class="xref py py-func docutils literal"><span class="pre">nprod()</span></tt></a> uses the same extrapolation methods as
+<a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a>, except applied to the partial products rather than
+partial sums, and the same keyword options as for <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> are
 supported. If <tt class="docutils literal"><span class="pre">nsum=True</span></tt>, the product is instead computed via
-<a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> as</p>
+<a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> as</p>
 <div class="math">
 <p><img src="../_images/math/16ac9eff20ee2dde18147042a22fab8e707aa215.png" alt="P = \exp\left( \sum_{k=a}^b \log(f(k)) \right)." /></p>
 </div><p>This is slower, but can sometimes yield better results. It is
@@ -474,9 +477,9 @@ also required (and used automatically) when Euler-Maclaurin
 summation is requested.</p>
 <p><strong>Examples</strong></p>
 <p>A simple finite product:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">4</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
 <span class="go">24.0</span>
 </pre></div>
 </div>
@@ -484,80 +487,80 @@ summation is requested.</p>
 and can therefore be used as a reference. Most of the following
 examples are taken from MathWorld [1].</p>
 <p>A few infinite products with simple values are:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span><span class="o">*</span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">3.141592653589793238462643</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">/</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">2.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">3</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">3</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.6666666666666666666666667</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.5</span>
 </pre></div>
 </div>
 <p>Next, several more infinite products with more complicated
 values:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="mf">6</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
 <span class="go">5.180668317897115748416626</span>
 <span class="go">5.180668317897115748416626</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">pi</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">pi</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.2720290549821331629502366</span>
 <span class="go">0.2720290549821331629502366</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="o">+</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">4</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">**</span><span class="mi">4</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.8480540493529003921296502</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pi</span><span class="o">*</span><span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">cosh</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span><span class="o">-</span><span class="n">cos</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">))</span>
 <span class="go">0.8480540493529003921296502</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mf">3</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">/</span><span class="n">k</span><span class="o">+</span><span class="mi">3</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.848936182858244485224927</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mf">3</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">)</span><span class="o">*</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span><span class="o">/</span><span class="n">pi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">csch</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="n">pi</span>
 <span class="go">1.848936182858244485224927</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">4</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">4</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.9190194775937444301739244</span>
 <span class="go">0.9190194775937444301739244</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">6</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">6</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.9826842777421925183244759</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)))</span><span class="o">/</span><span class="p">(</span><span class="mf">12</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span><span class="o">/</span><span class="p">(</span><span class="mi">12</span><span class="o">*</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">0.9826842777421925183244759</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">]);</span> <span class="n">sinh</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.838038955187488860347849</span>
 <span class="go">1.838038955187488860347849</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="mf">1</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">1.447255926890365298959138</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">euler</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">euler</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">1.447255926890365298959138</span>
 </pre></div>
 </div>
 <p>The following two products are equivalent and can be evaluated in
 terms of a Jacobi theta function. Pi can be replaced by any value
 (as long as convergence is preserved):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">pi</span><span class="o">**-</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.3838451207481672404778686</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">tanh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">tanh</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.3838451207481672404778686</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mf">4</span><span class="p">,</span><span class="mf">0</span><span class="p">,</span><span class="mf">1</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jtheta</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.3838451207481672404778686</span>
 </pre></div>
 </div>
 <p>This product does not have a known closed form value:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="mf">2</span><span class="o">**</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="n">k</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.2887880950866024212788997</span>
 </pre></div>
 </div>
 <p>A product taken from <img class="math" src="../_images/math/afac538740054d4786c170ef0123850adea5cdf9.png" alt="-\infty"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mf">1</span><span class="o">-</span><span class="n">k</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="o">-</span><span class="mf">2</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">k</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">0.8093965973662901095786805</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span><span class="o">/</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">3</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosh</span><span class="p">(</span><span class="n">pi</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">0.8093965973662901095786805</span>
 </pre></div>
 </div>
 <p>A doubly infinite product:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mf">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="n">k</span><span class="o">**</span><span class="mf">2</span><span class="p">)),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">k</span><span class="o">**</span><span class="mi">2</span><span class="p">)),</span> <span class="p">[</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">23.41432688231864337420035</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="n">pi</span><span class="o">/</span><span class="n">tanh</span><span class="p">(</span><span class="n">pi</span><span class="p">))</span>
 <span class="go">23.41432688231864337420035</span>
@@ -565,13 +568,13 @@ terms of a Jacobi theta function. Pi can be replaced by any value
 </div>
 <p>A product requiring the use of Euler-Maclaurin summation to compute
 an accurate value:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">-</span><span class="mf">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;e&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprod</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2.5</span><span class="p">),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;e&#39;</span><span class="p">)</span>
 <span class="go">0.696155111336231052898125</span>
 </pre></div>
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/InfiniteProduct.html">http://mathworld.wolfram.com/InfiniteProduct.html</a></li>
+<li><a class="reference internal" href="../references.html#weisstein">[Weisstein]</a> <a class="reference external" href="http://mathworld.wolfram.com/InfiniteProduct.html">http://mathworld.wolfram.com/InfiniteProduct.html</a></li>
 </ol>
 </dd></dl>
 
@@ -585,47 +588,47 @@ an accurate value:</p>
 <div class="math">
 <p><img src="../_images/math/cdc38757e233a2705b574193d6c812110c3b26f4.png" alt="\lim_{t \to x} f(t)" /></p>
 </div><p>where <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/> may be finite or infinite.</p>
-<p>For finite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> evaluates <img class="math" src="../_images/math/b838ddda5d44211e5dbdd573145118be91ffdd79.png" alt="f(x + d/n)"/> for
+<p>For finite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a class="reference internal" href="#mpmath.limit" title="mpmath.limit"><tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt></a> evaluates <img class="math" src="../_images/math/b838ddda5d44211e5dbdd573145118be91ffdd79.png" alt="f(x + d/n)"/> for
 consecutive integer values of <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>, where the approach direction
 <img class="math" src="../_images/math/96ab646de7704969b91c76a214126b45f2b07b25.png" alt="d"/> may be specified using the <em>direction</em> keyword argument.
-For infinite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> evaluates values of
+For infinite <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, <a class="reference internal" href="#mpmath.limit" title="mpmath.limit"><tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt></a> evaluates values of
 <img class="math" src="../_images/math/6225ad473aa44244f458afe10131f1f62cd1379f.png" alt="f(\mathrm{sign}(x) \cdot n)"/>.</p>
 <p>If the approach to the limit is not sufficiently fast to give
-an accurate estimate directly, <a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> attempts to find
+an accurate estimate directly, <a class="reference internal" href="#mpmath.limit" title="mpmath.limit"><tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt></a> attempts to find
 the limit using Richardson extrapolation or the Shanks
 transformation. You can select between these methods using
-the <em>method</em> keyword (see documentation of <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a> for
+the <em>method</em> keyword (see documentation of <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a> for
 more information).</p>
 <p><strong>Options</strong></p>
 <p>The following options are available with essentially the
-same meaning as for <a title="mpmath.nsum" class="reference internal" href="#mpmath.nsum"><tt class="xref docutils literal"><span class="pre">nsum()</span></tt></a>: <em>tol</em>, <em>method</em>, <em>maxterms</em>,
+same meaning as for <a class="reference internal" href="#mpmath.nsum" title="mpmath.nsum"><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt></a>: <em>tol</em>, <em>method</em>, <em>maxterms</em>,
 <em>steps</em>, <em>verbose</em>.</p>
 <p>If the option <em>exp=True</em> is set, <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> will be
 sampled at exponentially spaced points <img class="math" src="../_images/math/22a2c28e2a054a187ca36466c64af3c364d0882e.png" alt="n = 2^1, 2^2, 2^3, \ldots"/>
 instead of the linearly spaced points <img class="math" src="../_images/math/b429711f69d8049be8bedf32cd67791e8bdf1ce6.png" alt="n = 1, 2, 3, \ldots"/>.
 This can sometimes improve the rate of convergence so that
-<a title="mpmath.limit" class="reference internal" href="#mpmath.limit"><tt class="xref docutils literal"><span class="pre">limit()</span></tt></a> may return a more accurate answer (and faster).
+<a class="reference internal" href="#mpmath.limit" title="mpmath.limit"><tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt></a> may return a more accurate answer (and faster).
 However, do note that this can only be used if <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>
 supports fast and accurate evaluation for arguments that
 are extremely close to the limit point (or if infinite,
 very large arguments).</p>
 <p><strong>Examples</strong></p>
 <p>A basic evaluation of a removable singularity:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">,</span> <span class="mf">0</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">0.166666666666666666666666666667</span>
 </pre></div>
 </div>
 <p>Computing the exponential function using its limit definition:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="o">+</span><span class="mf">3</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">3</span><span class="o">/</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">20.0855369231876677409285296546</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">20.0855369231876677409285296546</span>
 </pre></div>
 </div>
 <p>A limit for <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mf">2</span><span class="o">**</span><span class="p">(</span><span class="mf">4</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">4</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">fac</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">3.14159265358979323846264338328</span>
 </pre></div>
@@ -633,7 +636,7 @@ very large arguments).</p>
 <p>Calculating the coefficient in Stirling&#8217;s formula:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">fac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">e</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">2.50662827463100050241576528481</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
 <span class="go">2.50662827463100050241576528481</span>
 </pre></div>
 </div>
@@ -642,7 +645,7 @@ very large arguments).</p>
 <p><img src="../_images/math/0d13693e9c7ebb8a4826916fa52025cde41ba954.png" alt="\gamma = \lim_{n \rightarrow \infty } \left[ \left(
 \sum_{k=1}^n \frac{1}{k} \right) - \log(n) \right]" /></p>
 </div><p>(which converges notoriously slowly):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">mpf</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span><span class="o">/</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)])</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span> <span class="o">-</span> <span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">0.577215664901532860606512090082</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">+</span><span class="n">euler</span>
@@ -652,7 +655,7 @@ very large arguments).</p>
 <p>With default settings, the following limit converges too slowly
 to be evaluated accurately. Changing to exponential sampling
 however gives a perfect result:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mf">3</span><span class="p">)</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="o">+</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">+</span><span class="n">x</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
 <span class="go">0.992831158558330281129249686491</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">limit</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">exp</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -665,7 +668,7 @@ however gives a perfect result:</p>
 <div class="section" id="extrapolation-richardson-shanks">
 <h2>Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)<a class="headerlink" href="#extrapolation-richardson-shanks" title="Permalink to this headline">¶</a></h2>
 <p>The following functions provide a direct interface to
-extrapolation algorithms. <tt class="xref docutils literal"><span class="pre">nsum()</span></tt> and <tt class="xref docutils literal"><span class="pre">limit()</span></tt> essentially
+extrapolation algorithms. <tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt> essentially
 work by calling the following functions with an increasing
 number of terms until the extrapolated limit is accurate enough.</p>
 <p>The following functions may be useful to call directly if the
@@ -676,9 +679,9 @@ properties of the algorithms.</p>
 <dt id="mpmath.richardson">
 <tt class="descclassname">mpmath.</tt><tt class="descname">richardson</tt><big>(</big><em>ctx</em>, <em>seq</em><big>)</big><a class="headerlink" href="#mpmath.richardson" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list <tt class="docutils literal"><span class="pre">seq</span></tt> of the first <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> elements of a slowly convergent
-infinite sequence, <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> computes the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
+infinite sequence, <a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> computes the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
 Richardson extrapolate for the limit.</p>
-<p><a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> returns <img class="math" src="../_images/math/c3cefa38a6ce0f1f4342b3214f9696945b6afece.png" alt="(v, c)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the estimated
+<p><a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> returns <img class="math" src="../_images/math/c3cefa38a6ce0f1f4342b3214f9696945b6afece.png" alt="(v, c)"/> where <img class="math" src="../_images/math/a9f23bf124b6b2b2a993eb313c72e678664ac74a.png" alt="v"/> is the estimated
 limit and <img class="math" src="../_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9ed04cc.png" alt="c"/> is the magnitude of the largest weight used during the
 computation. The weight provides an estimate of the precision
 lost to cancellation. Due to cancellation effects, the sequence must
@@ -686,38 +689,38 @@ be typically be computed at a much higher precision than the target
 accuracy of the extrapolation.</p>
 <p><strong>Applicability and issues</strong></p>
 <p>The <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-step Richardson extrapolation algorithm used by
-<a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> is described in [1].</p>
+<a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> is described in [1].</p>
 <p>Richardson extrapolation only works for a specific type of sequence,
 namely one converging like partial sums of
 <img class="math" src="../_images/math/85e969116939190c593935147a8d09fccdb6c064.png" alt="P(1)/Q(1) + P(2)/Q(2) + \ldots"/> where <img class="math" src="../_images/math/4b4cade9ca8a2c8311fafcf040bc5b15ca507f52.png" alt="P"/> and <img class="math" src="../_images/math/9866e3a998d628ba0941eb4fea0666ac391d149a.png" alt="Q"/> are polynomials.
 When the sequence does not convergence at such a rate
-<a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> generally produces garbage.</p>
+<a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> generally produces garbage.</p>
 <p>Richardson extrapolation has the advantage of being fast: the <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/>-term
 extrapolate requires only <img class="math" src="../_images/math/b9d0fa8c3afe5b2fc32d90e0c5b2d65f69b9ebf8.png" alt="O(N)"/> arithmetic operations, and usually
 produces an estimate that is accurate to <img class="math" src="../_images/math/b9d0fa8c3afe5b2fc32d90e0c5b2d65f69b9ebf8.png" alt="O(N)"/> digits. Contrast with
-the Shanks transformation (see <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a>), which requires
+the Shanks transformation (see <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a>), which requires
 <img class="math" src="../_images/math/6de05613abfee2f5068c82eeb927eb0f7beb0568.png" alt="O(N^2)"/> operations.</p>
-<p><a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> is unable to produce an estimate for the
+<p><a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> is unable to produce an estimate for the
 approximation error. One way to estimate the error is to perform
 two extrapolations with slightly different <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> and comparing the
 results.</p>
 <p>Richardson extrapolation does not work for oscillating sequences.
-As a simple workaround, <a title="mpmath.richardson" class="reference internal" href="#mpmath.richardson"><tt class="xref docutils literal"><span class="pre">richardson()</span></tt></a> detects if the last
+As a simple workaround, <a class="reference internal" href="#mpmath.richardson" title="mpmath.richardson"><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt></a> detects if the last
 three elements do not differ monotonically, and in that case
 applies extrapolation only to the even-index elements.</p>
 <p><strong>Example</strong></p>
 <p>Applying Richardson extrapolation to the Leibniz series for <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">30</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">richardson</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mf">10</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">richardson</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
 <span class="go">3.2126984126984126984126984127</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">v</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
 <span class="go">[0.0711058, 2.0]</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">richardson</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mf">30</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">richardson</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mi">30</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
 <span class="go">3.14159265468624052829954206226</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="n">v</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span> <span class="n">c</span><span class="p">])</span>
@@ -726,7 +729,7 @@ applies extrapolation only to the even-index elements.</p>
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="../references.html#benderorszag">[BenderOrszag]</a> pp. 375-376</li>
+<li><a class="reference internal" href="../references.html#benderorszag">[BenderOrszag]</a> pp. 375-376</li>
 </ol>
 </dd></dl>
 
@@ -734,12 +737,12 @@ applies extrapolation only to the even-index elements.</p>
 <dt id="mpmath.shanks">
 <tt class="descclassname">mpmath.</tt><tt class="descname">shanks</tt><big>(</big><em>ctx</em>, <em>seq</em>, <em>table=None</em>, <em>randomized=False</em><big>)</big><a class="headerlink" href="#mpmath.shanks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list <tt class="docutils literal"><span class="pre">seq</span></tt> of the first <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> elements of a slowly
-convergent infinite sequence <img class="math" src="../_images/math/97f9119959da61ef8a6b139768255edc25ea5ed8.png" alt="(A_k)"/>, <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> computes the iterated
+convergent infinite sequence <img class="math" src="../_images/math/97f9119959da61ef8a6b139768255edc25ea5ed8.png" alt="(A_k)"/>, <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a> computes the iterated
 Shanks transformation <img class="math" src="../_images/math/8eaa7d0a492ab59d3724787ce66170d475c81365.png" alt="S(A), S(S(A)), \ldots, S^{N/2}(A)"/>. The Shanks
 transformation often provides strong convergence acceleration,
 especially if the sequence is oscillating.</p>
 <p>The iterated Shanks transformation is computed using the Wynn
-epsilon algorithm (see [1]). <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> returns the full
+epsilon algorithm (see [1]). <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a> returns the full
 epsilon table generated by Wynn&#8217;s algorithm, which can be read
 off as follows:</p>
 <ul class="simple">
@@ -759,7 +762,7 @@ of the numerical accuracy lost to cancellation.</li>
 <p>For convenience, so the extrapolation is stopped at an odd index
 so that <tt class="docutils literal"><span class="pre">shanks(seq)[-1][-1]</span></tt> always gives an estimate of the
 limit.</p>
-<p>Optionally, an existing table can be passed to <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a>.
+<p>Optionally, an existing table can be passed to <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a>.
 This can be used to efficiently extend a previous computation after
 new elements have been appended to the sequence. The table will
 then be updated in-place.</p>
@@ -787,7 +790,7 @@ computed at a much higher precision than the target accuracy
 of the extrapolation.</p>
 <p>If the Shanks transformation converges to the exact limit (such
 as if the sequence is a geometric series), then a division by
-zero occurs. By default, <a title="mpmath.shanks" class="reference internal" href="#mpmath.shanks"><tt class="xref docutils literal"><span class="pre">shanks()</span></tt></a> handles this case by
+zero occurs. By default, <a class="reference internal" href="#mpmath.shanks" title="mpmath.shanks"><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt></a> handles this case by
 terminating the iteration and returning the table it has
 generated so far. With <em>randomized=True</em>, it will instead
 replace the zero by a pseudorandom number close to zero.
@@ -795,12 +798,12 @@ replace the zero by a pseudorandom number close to zero.
 <p><strong>Examples</strong></p>
 <p>We illustrate by applying Shanks transformation to the Leibniz
 series for <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74ff52d42553.png" alt="\pi"/>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">from</span> <span class="nn">mpmath</span> <span class="k">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">50</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mf">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mf">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">30</span><span class="p">)]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="o">*</span><span class="nb">sum</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">)]</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="n">shanks</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mf">7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="n">shanks</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mi">7</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">T</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 <span class="gp">...</span>
@@ -814,15 +817,15 @@ series for <img class="math" src="../_images/math/f2ca003a7da0de4994b4733e203b74
 </div>
 <p>The extrapolated accuracy is about 4 digits, and about 4 digits
 may have been lost due to cancellation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pi</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">3</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">])])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pi</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])])</span>
 <span class="go">[2.22532e-5, 4.78309e-5, 3515.06]</span>
 </pre></div>
 </div>
 <p>Now we extend the computation:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="n">shanks</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mf">25</span><span class="p">],</span> <span class="n">T</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pi</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">3</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mf">2</span><span class="p">])])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="n">shanks</span><span class="p">(</span><span class="n">S</span><span class="p">[:</span><span class="mi">25</span><span class="p">],</span> <span class="n">T</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">L</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pi</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])])</span>
 <span class="go">[3.75527e-19, 1.48478e-19, 2.96014e+17]</span>
 </pre></div>
 </div>
@@ -830,7 +833,7 @@ may have been lost due to cancellation:</p>
 also have been lost to cancellation.</p>
 <p>Here is an example with a geometric series, where the convergence
 is immediate (the sum is exactly 1):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mf">15</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">shanks</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.9375</span><span class="p">,</span> <span class="mf">0.96875</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 <span class="go">[4.0]</span>
@@ -839,8 +842,8 @@ is immediate (the sum is exactly 1):</p>
 </div>
 <p><strong>References</strong></p>
 <ol class="arabic simple">
-<li><a class="reference external" href="../references.html#gravesmorris">[GravesMorris]</a></li>
-<li><a class="reference external" href="../references.html#benderorszag">[BenderOrszag]</a> pp. 368-375</li>
+<li><a class="reference internal" href="../references.html#gravesmorris">[GravesMorris]</a></li>
+<li><a class="reference internal" href="../references.html#benderorszag">[BenderOrszag]</a> pp. 368-375</li>
 </ol>
 </dd></dl>
 
@@ -853,41 +856,41 @@ is immediate (the sum is exactly 1):</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Sums, products, limits and extrapolation</a><ul>
-<li><a class="reference external" href="#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
-<li><a class="reference external" href="#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
-<li><a class="reference external" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
-<li><a class="reference external" href="#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sums, products, limits and extrapolation</a><ul>
+<li><a class="reference internal" href="#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
+<li><a class="reference internal" href="#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
+<li><a class="reference internal" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
+<li><a class="reference internal" href="#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="optimization.html"
-                                  title="previous chapter">Root-finding and optimization</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="differentiation.html"
-                                  title="next chapter">Differentiation</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/calculus/sums_limits.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="optimization.html"
+                        title="previous chapter">Root-finding and optimization</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="differentiation.html"
+                        title="next chapter">Differentiation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/calculus/sums_limits.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -899,7 +902,7 @@ is immediate (the sum is exactly 1):</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
@@ -912,9 +915,9 @@ is immediate (the sum is exactly 1):</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jun 21, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.5.
+        &copy; Copyright 2010, Fredrik Johansson.
+      Last updated on Jul 26, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

@@ -27,6 +27,18 @@ Bessel functions
 .. autofunction:: mpmath.besselk(n,x)
 
 
+Bessel function zeros
+...............................
+
+:func:`besseljzero`
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.besseljzero(v,m,derivative=0)
+
+:func:`besselyzero`
+^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.besselyzero(v,m,derivative=0)
+
+
 Hankel functions
 ................
 
@@ -152,3 +164,22 @@ Confluent U and Whittaker functions
 :func:`whitw`
 ^^^^^^^^^^^^^^
 .. autofunction:: mpmath.whitw(k,m,z)
+
+Parabolic cylinder functions
+.................................
+
+:func:`pcfd`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.pcfd(n,z,**kwargs)
+
+:func:`pcfu`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.pcfu(a,z,**kwargs)
+
+:func:`pcfv`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.pcfv(a,z,**kwargs)
+
+:func:`pcfw`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.pcfw(a,z,**kwargs)
