@@ -2803,7 +2803,7 @@ Except for polynomial cases, the radius of convergence `R` of the hypergeometric
 series is either `R = \infty` (if `p \le q`), `R = 1` (if `p = q+1`), or
 `R = 0` (if `p > q+1`).
 
-The analytic continuations of the functions with `p = q+1`, i.e. `\,_2F_1`, 
+The analytic continuations of the functions with `p = q+1`, i.e. `\,_2F_1`,
 `\,_3F_2`,  `\,_4F_3`, etc, are all implemented and therefore these functions
 can be evaluated for `|z| \ge 1`. The shortcuts :func:`~mpmath.hyp2f1`, :func:`~mpmath.hyp3f2`
 are available to handle the most common cases (see their documentation),
@@ -2869,7 +2869,7 @@ Computes a weighted combination of hypergeometric functions
     \sum_{r=1}^N \left[ \prod_{k=1}^{l_r} {w_{r,k}}^{c_{r,k}}
     \frac{\prod_{k=1}^{m_r} \Gamma(\alpha_{r,k})}{\prod_{k=1}^{n_r}
     \Gamma(\beta_{r,k})}
-    \,_{p_r}F_{q_r}(a_{r,1},\ldots,a_{r,p}; b_{r,1},    
+    \,_{p_r}F_{q_r}(a_{r,1},\ldots,a_{r,p}; b_{r,1},
     \ldots, b_{r,q}; z_r)\right].
 
 Typically the parameters are linear combinations of a small set of base
@@ -5192,7 +5192,7 @@ Evaluation for arbitrary arguments::
     >>> hermite(-3, -10**8)
     1.675159751729877682920301e+4342944819032534
     >>> hermite(2+3j, -1+2j)
-    (-0.076521306029935133894219 - 0.1084662449961914580276007j)
+    (-0.07652130602993513389421901 - 0.1084662449961914580276007j)
 
 Coefficients of the first few Hermite polynomials are::
 
@@ -7483,7 +7483,7 @@ given below should hopefully clear up any potential confusion.
 
 The Meijer G-function is evaluated as a combination of hypergeometric series.
 There are two versions of the function, which can be selected with
-the optional *series* argument. 
+the optional *series* argument.
 
 *series=1* uses a sum of `m` `\,_pF_{q-1}` functions of `z`
 
@@ -8096,7 +8096,7 @@ Gives the Struve function
 
 .. math ::
 
-    \,\mathbf{H}_n(z) = 
+    \,\mathbf{H}_n(z) =
     \sum_{k=0}^\infty \frac{(-1)^k}{\Gamma(k+\frac{3}{2})
         \Gamma(k+n+\frac{3}{2})} {\left({\frac{z}{2}}\right)}^{2k+n+1}
 
@@ -8495,7 +8495,7 @@ Verifying the differential equation::
 
 **References**
 
-1. [GradshteynRyzhik]_ 
+1. [GradshteynRyzhik]_
 2. [Weisstein]_ http://mathworld.wolfram.com/LommelFunction.html
 """
 
@@ -8549,7 +8549,7 @@ Verifying the differential equation::
 
 **References**
 
-1. [GradshteynRyzhik]_ 
+1. [GradshteynRyzhik]_
 2. [Weisstein]_ http://mathworld.wolfram.com/LommelFunction.html
 """
 

@@ -1,25 +1,292 @@
 from functions import defun, defun_wrapped
 
-@defun_wrapped
-def hermite(ctx, n, z, **kwargs):
+def _hermite_param(ctx, n, z, parabolic_cylinder):
+    """
+    Combined calculation of the Hermite polynomial H_n(z) (and its
+    generalization to complex n) and the parabolic cylinder
+    function D.
+    """
+    n, ntyp = ctx._convert_param(n)
+    z = ctx.convert(z)
+    q = -ctx.mpq_1_2
     if not z:
-        try:
-            return 2**n * ctx.sqrt(ctx.pi) / ctx.gamma(0.5*(1-n))
-        except ValueError:
-            return 0.0*(n+z)
-    if ctx.re(z) > 0 or (ctx.re(z) == 0 and ctx.im(z) > 0) or ctx.isnpint(-n):
-        prec = ctx.prec
-        ctx.prec = ctx.prec*4+20
-        z2 = -z**(-2)
-        ctx.prec = prec
-        return (2*z)**n * ctx.hyp2f0(-0.5*n, -0.5*(n-1), z2, **kwargs)
+        T1 = [2, ctx.pi], [n, 0.5], [], [q*(n-1)], [], [], 0
+        if parabolic_cylinder:
+            T1[1][0] += q*n
+        return T1,
+    can_use_2f0 = ctx.isnpint(-n) or ctx.re(z) > 0 or \
+        (ctx.re(z) == 0 and ctx.im(z) > 0)
+    expprec = ctx.prec*4 + 20
+    if parabolic_cylinder:
+        u = ctx.fmul(ctx.fmul(z,z,prec=expprec), -0.25, exact=True)
+        w = ctx.fmul(z, ctx.sqrt(0.5,prec=expprec), prec=expprec)
     else:
-        prec = ctx.prec
-        ctx.prec = ctx.prec*4+20
-        z2 = z**2
-        ctx.prec = prec
-        return ctx.hermite(n,-z) + 2**(n+2)*ctx.sqrt(ctx.pi) * (-z) / \
-            ctx.gamma(-0.5*n) * ctx.hyp1f1((1-n)*0.5, 1.5, z2, **kwargs)
+        w = z
+    w2 = ctx.fmul(w, w, prec=expprec)
+    rw2 = ctx.fdiv(1, w2, prec=expprec)
+    nrw2 = ctx.fneg(rw2, exact=True)
+    nw = ctx.fneg(w, exact=True)
+    if can_use_2f0:
+        T1 = [2, w], [n, n], [], [], [q*n, q*(n-1)], [], nrw2
+        terms = [T1]
+    else:
+        T1 = [2, nw], [n, n], [], [], [q*n, q*(n-1)], [], nrw2
+        T2 = [2, ctx.pi, nw], [n+2, 0.5, 1], [], [q*n], [q*(n-1)], [1-q], w2
+        terms = [T1,T2]
+    if parabolic_cylinder:
+        expu = ctx.exp(u)
+        for i in range(len(terms)):
+            terms[i][1][0] += q*n
+            terms[i][0].append(expu)
+            terms[i][1].append(1)
+    return tuple(terms)
+
+@defun
+def hermite(ctx, n, z, **kwargs):
+    return ctx.hypercomb(lambda: _hermite_param(ctx, n, z, 0), [], **kwargs)
+
+@defun
+def pcfd(ctx, n, z, **kwargs):
+    r"""
+    Gives the parabolic cylinder function in Whittaker's notation
+    `D_n(z) = U(-n-1/2, z)` (see :func:`~mpmath.pcfu`).
+    It solves the differential equation
+
+    .. math ::
+
+        y'' + \left(n + \frac{1}{2} - \frac{1}{4} z^2\right) y = 0.
+
+    and can be represented in terms of Hermite polynomials
+    (see :func:`~mpmath.hermite`) as
+
+    .. math ::
+
+        D_n(z) = 2^{-n/2} e^{-z^2/4} H_n\left(\frac{z}{\sqrt{2}}\right).
+
+    **Plots**
+
+    .. literalinclude :: /plots/pcfd.py
+    .. image :: /plots/pcfd.png
+
+    **Examples**
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> pcfd(0,0); pcfd(1,0); pcfd(2,0); pcfd(3,0)
+        1.0
+        0.0
+        -1.0
+        0.0
+        >>> pcfd(4,0); pcfd(-3,0)
+        3.0
+        0.6266570686577501256039413
+        >>> pcfd('1/2', 2+3j)
+        (-5.363331161232920734849056 - 3.858877821790010714163487j)
+        >>> pcfd(2, -10)
+        1.374906442631438038871515e-9
+
+    Verifying the differential equation::
+
+        >>> n = mpf(2.5)
+        >>> y = lambda z: pcfd(n,z)
+        >>> z = 1.75
+        >>> chop(diff(y,z,2) + (n+0.5-0.25*z**2)*y(z))
+        0.0
+
+    Rational Taylor series expansion when `n` is an integer::
+
+        >>> taylor(lambda z: pcfd(5,z), 0, 7)
+        [0.0, 15.0, 0.0, -13.75, 0.0, 3.96875, 0.0, -0.6015625]
+
+    """
+    return ctx.hypercomb(lambda: _hermite_param(ctx, n, z, 1), [], **kwargs)
+
+@defun
+def pcfu(ctx, a, z, **kwargs):
+    r"""
+    Gives the parabolic cylinder function `U(a,z)`, which may be
+    defined for `\Re(z) > 0` in terms of the confluent
+    U-function (see :func:`~mpmath.hyperu`) by
+
+    .. math ::
+
+        U(a,z) = 2^{-\frac{1}{4}-\frac{a}{2}} e^{-\frac{1}{4} z^2}
+            U\left(\frac{a}{2}+\frac{1}{4},
+            \frac{1}{2}, \frac{1}{2}z^2\right)
+
+    or, for arbitrary `z`,
+
+    .. math ::
+
+        e^{-\frac{1}{4}z^2} U(a,z) =
+            U(a,0) \,_1F_1\left(-\tfrac{a}{2}+\tfrac{1}{4};
+            \tfrac{1}{2}; -\tfrac{1}{2}z^2\right) +
+            U'(a,0) z \,_1F_1\left(-\tfrac{a}{2}+\tfrac{3}{4};
+            \tfrac{3}{2}; -\tfrac{1}{2}z^2\right).
+
+    **Examples**
+
+    Connection to other functions::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> z = mpf(3)
+        >>> pcfu(0.5,z)
+        0.03210358129311151450551963
+        >>> sqrt(pi/2)*exp(z**2/4)*erfc(z/sqrt(2))
+        0.03210358129311151450551963
+        >>> pcfu(0.5,-z)
+        23.75012332835297233711255
+        >>> sqrt(pi/2)*exp(z**2/4)*erfc(-z/sqrt(2))
+        23.75012332835297233711255
+        >>> pcfu(0.5,-z)
+        23.75012332835297233711255
+        >>> sqrt(pi/2)*exp(z**2/4)*erfc(-z/sqrt(2))
+        23.75012332835297233711255
+
+    """
+    n, _ = ctx._convert_param(a)
+    return ctx.pcfd(-n-ctx.mpq_1_2, z)
+
+@defun
+def pcfv(ctx, a, z, **kwargs):
+    r"""
+    Gives the parabolic cylinder function `V(a,z)`, which can be
+    represented in terms of :func:`~mpmath.pcfu` as
+
+    .. math ::
+
+        V(a,z) = \frac{\Gamma(a+\tfrac{1}{2}) (U(a,-z)-\sin(\pi a) U(a,z)}{\pi}.
+
+    **Examples**
+
+    Wronskian relation between `U` and `V`::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> a, z = 2, 3
+        >>> pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z)
+        0.7978845608028653558798921
+        >>> sqrt(2/pi)
+        0.7978845608028653558798921
+        >>> a, z = 2.5, 3
+        >>> pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z)
+        0.7978845608028653558798921
+        >>> a, z = 0.25, -1
+        >>> pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z)
+        0.7978845608028653558798921
+        >>> a, z = 2+1j, 2+3j
+        >>> chop(pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z))
+        0.7978845608028653558798921
+
+    """
+    n, ntype = ctx._convert_param(a)
+    z = ctx.convert(z)
+    q = ctx.mpq_1_2
+    r = ctx.mpq_1_4
+    if ntype == 'Q' and ctx.isint(n*2):
+        # Faster for half-integers
+        def h():
+            jz = ctx.fmul(z, -1j, exact=True)
+            T1terms = _hermite_param(ctx, -n-q, z, 1)
+            T2terms = _hermite_param(ctx, n-q, jz, 1)
+            for T in T1terms:
+                T[0].append(1j)
+                T[1].append(1)
+                T[3].append(q-n)
+            u = ctx.expjpi((q*n-r)) * ctx.sqrt(2/ctx.pi)
+            for T in T2terms:
+                T[0].append(u)
+                T[1].append(1)
+            return T1terms + T2terms
+        v = ctx.hypercomb(h, [], **kwargs)
+        if ctx._is_real_type(n) and ctx._is_real_type(z):
+            v = ctx._re(v)
+        return v
+    else:
+        def h(n):
+            w = ctx.square_exp_arg(z, -0.25)
+            u = ctx.square_exp_arg(z, 0.5)
+            e = ctx.exp(w)
+            l = [ctx.pi, q, ctx.exp(w)]
+            Y1 = l, [-q, n*q+r, 1], [r-q*n], [], [q*n+r], [q], u
+            Y2 = l + [z], [-q, n*q-r, 1, 1], [1-r-q*n], [], [q*n+1-r], [1+q], u
+            c, s = ctx.cospi_sinpi(r+q*n)
+            Y1[0].append(s)
+            Y2[0].append(c)
+            for Y in (Y1, Y2):
+                Y[1].append(1)
+                Y[3].append(q-n)
+            return Y1, Y2
+        return ctx.hypercomb(h, [n], **kwargs)
+
+
+@defun
+def pcfw(ctx, a, z, **kwargs):
+    r"""
+    Gives the parabolic cylinder function `W(a,z)` defined in (DLMF 12.14).
+
+    **Examples**
+
+    Value at the origin::
+
+        >>> from mpmath import *
+        >>> mp.dps = 25; mp.pretty = True
+        >>> a = mpf(0.25)
+        >>> pcfw(a,0)
+        0.9722833245718180765617104
+        >>> power(2,-0.75)*sqrt(abs(gamma(0.25+0.5j*a)/gamma(0.75+0.5j*a)))
+        0.9722833245718180765617104
+        >>> diff(pcfw,(a,0),(0,1))
+        -0.5142533944210078966003624
+        >>> -power(2,-0.25)*sqrt(abs(gamma(0.75+0.5j*a)/gamma(0.25+0.5j*a)))
+        -0.5142533944210078966003624
+
+    """
+    n, _ = ctx._convert_param(a)
+    z = ctx.convert(z)
+    def terms():
+        phi2 = ctx.arg(ctx.gamma(0.5 + ctx.j*n))
+        phi2 = (ctx.loggamma(0.5+ctx.j*n) - ctx.loggamma(0.5-ctx.j*n))/2j
+        rho = ctx.pi/8 + 0.5*phi2
+        # XXX: cancellation computing k
+        k = ctx.sqrt(1 + ctx.exp(2*ctx.pi*n)) - ctx.exp(ctx.pi*n)
+        C = ctx.sqrt(k/2) * ctx.exp(0.25*ctx.pi*n)
+        yield C * ctx.expj(rho) * ctx.pcfu(ctx.j*n, z*ctx.expjpi(-0.25))
+        yield C * ctx.expj(-rho) * ctx.pcfu(-ctx.j*n, z*ctx.expjpi(0.25))
+    v = ctx.sum_accurately(terms)
+    if ctx._is_real_type(n) and ctx._is_real_type(z):
+        v = ctx._re(v)
+    return v
+
+"""
+Even/odd PCFs. Useful?
+
+@defun
+def pcfy1(ctx, a, z, **kwargs):
+    a, _ = ctx._convert_param(n)
+    z = ctx.convert(z)
+    def h():
+        w = ctx.square_exp_arg(z)
+        w1 = ctx.fmul(w, -0.25, exact=True)
+        w2 = ctx.fmul(w, 0.5, exact=True)
+        e = ctx.exp(w1)
+        return [e], [1], [], [], [ctx.mpq_1_2*a+ctx.mpq_1_4], [ctx.mpq_1_2], w2
+    return ctx.hypercomb(h, [], **kwargs)
+
+@defun
+def pcfy2(ctx, a, z, **kwargs):
+    a, _ = ctx._convert_param(n)
+    z = ctx.convert(z)
+    def h():
+        w = ctx.square_exp_arg(z)
+        w1 = ctx.fmul(w, -0.25, exact=True)
+        w2 = ctx.fmul(w, 0.5, exact=True)
+        e = ctx.exp(w1)
+        return [e, z], [1, 1], [], [], [ctx.mpq_1_2*a+ctx.mpq_3_4], \
+            [ctx.mpq_3_2], w2
+    return ctx.hypercomb(h, [], **kwargs)
+"""
 
 @defun_wrapped
 def gegenbauer(ctx, n, a, z, **kwargs):
