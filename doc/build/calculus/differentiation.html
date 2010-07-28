@@ -109,7 +109,7 @@ select the step size <img class="math" src="../_images/math/8189a5b5a0917b8c9335
 useful for differentiating functions with removable singularities.
 Default = False.</dd>
 <dt><tt class="docutils literal"><span class="pre">radius</span></tt></dt>
-<dd>Radius of integration contour (with <tt class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">'quad'</span></tt>). 
+<dd>Radius of integration contour (with <tt class="docutils literal"><span class="pre">method</span> <span class="pre">=</span> <span class="pre">'quad'</span></tt>).
 Default = 0.25. A larger radius typically is faster and more
 accurate, but it must be chosen so that <img class="math" src="../_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> has no
 singularities within the radius from the evaluation point.</dd>
@@ -192,6 +192,84 @@ slightly more efficient.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="composition-of-derivatives-diffs-prod-diffs-exp">
+<h2>Composition of derivatives (<tt class="docutils literal"><span class="pre">diffs_prod</span></tt>, <tt class="docutils literal"><span class="pre">diffs_exp</span></tt>)<a class="headerlink" href="#composition-of-derivatives-diffs-prod-diffs-exp" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="mpmath.diffs_prod">
+<tt class="descclassname">mpmath.</tt><tt class="descname">diffs_prod</tt><big>(</big><em>ctx</em>, <em>factors</em><big>)</big><a class="headerlink" href="#mpmath.diffs_prod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of <img class="math" src="../_images/math/fc97ef67268cd4e91bacdf12b8901d7036c9a056.png" alt="N"/> iterables or generators yielding
+<img class="math" src="../_images/math/1ecbc0edfd35a2c9616534ca23ba4b5e61c06da9.png" alt="f_k(x), f'_k(x), f''_k(x), \ldots"/> for <img class="math" src="../_images/math/c7c927d8ade4b3bb37ab8f3160422c53cb686bde.png" alt="k = 1, \ldots, N"/>,
+generate <img class="math" src="../_images/math/35335f5aa2da6f8f18cb9b63b7a80e5cc169b6e1.png" alt="g(x), g'(x), g''(x), \ldots"/> where
+<img class="math" src="../_images/math/94c00e05fa0172e4d6e514b793a7ba38aa0d1ccf.png" alt="g(x) = f_1(x) f_2(x) \cdots f_N(x)"/>.</p>
+<p>At high precision and for large orders, this is typically more efficient
+than numerical differentiation if the derivatives of each <img class="math" src="../_images/math/5adb41b6d0d7dec9195b2ce3dd1aa799dfcd0636.png" alt="f_k(x)"/>
+admit direct computation.</p>
+<p>Note: This function does not increase the working precision internally,
+so guard digits may have to be added externally for full accuracy.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">diffs</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">diffs_prod</span><span class="p">([</span><span class="n">diffs</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">diffs</span><span class="p">(</span><span class="n">cos</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">diffs</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span><span class="mi">1</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">1.23586333600241</span>
+<span class="go">1.23586333600241</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">0.104658952245596</span>
+<span class="go">0.104658952245596</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">-5.96999877552086</span>
+<span class="go">-5.96999877552086</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">-12.4632923122697</span>
+<span class="go">-12.4632923122697</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mpmath.diffs_exp">
+<tt class="descclassname">mpmath.</tt><tt class="descname">diffs_exp</tt><big>(</big><em>ctx</em>, <em>fdiffs</em><big>)</big><a class="headerlink" href="#mpmath.diffs_exp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an iterable or generator yielding <img class="math" src="../_images/math/6eaeec858cabeaf778756f042ae201eda0876509.png" alt="f(x), f'(x), f''(x), \ldots"/>
+generate <img class="math" src="../_images/math/35335f5aa2da6f8f18cb9b63b7a80e5cc169b6e1.png" alt="g(x), g'(x), g''(x), \ldots"/> where <img class="math" src="../_images/math/9ca600c38df28ae43abec44b4302583841bde3b4.png" alt="g(x) = \exp(f(x))"/>.</p>
+<p>At high precision and for large orders, this is typically more efficient
+than numerical differentiation if the derivatives of <img class="math" src="../_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/>
+admit direct computation.</p>
+<p>Note: This function does not increase the working precision internally,
+so guard digits may have to be added externally for full accuracy.</p>
+<p><strong>Examples</strong></p>
+<p>The derivatives of the gamma function can be computed using
+logarithmic differentiation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">diffs_loggamma</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">yield</span> <span class="n">loggamma</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">yield</span> <span class="n">psi</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">diffs_exp</span><span class="p">(</span><span class="n">diffs_loggamma</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">diffs</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">2.0</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">1.84556867019693</span>
+<span class="go">1.84556867019693</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">2.49292999190269</span>
+<span class="go">2.49292999190269</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">u</span><span class="p">);</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">3.44996501352367</span>
+<span class="go">3.44996501352367</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
 <div class="section" id="fractional-derivatives-differintegration-differint">
 <h2>Fractional derivatives / differintegration (<tt class="docutils literal"><span class="pre">differint</span></tt>)<a class="headerlink" href="#fractional-derivatives-differintegration-differint" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -268,6 +346,7 @@ Riemann-Liouville differintegral:</p>
   <ul>
 <li><a class="reference internal" href="#">Differentiation</a><ul>
 <li><a class="reference internal" href="#numerical-derivatives-diff-diffs">Numerical derivatives (<tt class="docutils literal"><span class="pre">diff</span></tt>, <tt class="docutils literal"><span class="pre">diffs</span></tt>)</a></li>
+<li><a class="reference internal" href="#composition-of-derivatives-diffs-prod-diffs-exp">Composition of derivatives (<tt class="docutils literal"><span class="pre">diffs_prod</span></tt>, <tt class="docutils literal"><span class="pre">diffs_exp</span></tt>)</a></li>
 <li><a class="reference internal" href="#fractional-derivatives-differintegration-differint">Fractional derivatives / differintegration (<tt class="docutils literal"><span class="pre">differint</span></tt>)</a></li>
 </ul>
 </li>
@@ -322,7 +401,7 @@ Riemann-Liouville differintegral:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jul 26, 2010.
+      Last updated on Jul 28, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 

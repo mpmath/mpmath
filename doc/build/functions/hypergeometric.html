@@ -601,6 +601,16 @@ but functions of higher degree are also supported via <a class="reference intern
 <span class="go">(0.9996565821853579063502466 + 0.0129721075905630604445669j)</span>
 </pre></div>
 </div>
+<p>Near <img class="math" src="../_images/math/5990d6cf0dcf5df54109c8d7814b7b8676659cef.png" alt="z = 1"/> with noninteger parameters::s</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="s">&#39;1/3&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;3/2&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;1/5&#39;</span><span class="p">,</span><span class="s">&#39;11/6&#39;</span><span class="p">,</span><span class="s">&#39;41/8&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">2.219433352235586121250027</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="s">&#39;1/3&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;3/2&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;1/5&#39;</span><span class="p">,</span><span class="s">&#39;11/6&#39;</span><span class="p">,</span><span class="s">&#39;5/4&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">+inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">eps1</span> <span class="o">=</span> <span class="n">extradps</span><span class="p">(</span><span class="mi">6</span><span class="p">)(</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e-6&#39;</span><span class="p">))()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyper</span><span class="p">([</span><span class="s">&#39;1/3&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;3/2&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;1/5&#39;</span><span class="p">,</span><span class="s">&#39;11/6&#39;</span><span class="p">,</span><span class="s">&#39;5/4&#39;</span><span class="p">],</span> <span class="n">eps1</span><span class="p">)</span>
+<span class="go">2923978034.412973409330956</span>
+</pre></div>
+</div>
 <p>Please note that, as currently implemented, evaluation of <img class="math" src="../_images/math/176cc744317162af05f807c6ee8f3ba09faf3081.png" alt="\,_pF_{p-1}"/>
 with <img class="math" src="../_images/math/cfd2a3325b5cadd3241426c21a4f829e915aa864.png" alt="p \ge 3"/> may be slow or inaccurate when <img class="math" src="../_images/math/cb9fdb0109880d84a63c9757afd06ea821fe1b53.png" alt="|z-1|"/> is small,
 for some parameter values.</p>
@@ -1471,7 +1481,7 @@ differential equations:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jul 26, 2010.
+      Last updated on Jul 28, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
