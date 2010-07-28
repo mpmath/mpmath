@@ -2818,6 +2818,16 @@ but functions of higher degree are also supported via :func:`~mpmath.hyper`::
     >>> hyper([1,2,3,4,5,6], [7,8,9,10,11], 1j)   # 6F5
     (0.9996565821853579063502466 + 0.0129721075905630604445669j)
 
+Near `z = 1` with noninteger parameters::s
+
+    >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','41/8'], 1)
+    2.219433352235586121250027
+    >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','5/4'], 1)
+    +inf
+    >>> eps1 = extradps(6)(lambda: 1 - mpf('1e-6'))()
+    >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','5/4'], eps1)
+    2923978034.412973409330956
+
 Please note that, as currently implemented, evaluation of `\,_pF_{p-1}`
 with `p \ge 3` may be slow or inaccurate when `|z-1|` is small,
 for some parameter values.

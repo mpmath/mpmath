@@ -547,11 +547,17 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     # except for special cases. Everywhere else, the Shanks transformation
     # is very efficient.
     if absz < 1.1 and ctx._re(z) <= 1:
-        def term(k, _cache={0:ctx.one}):
-            k = int(k)
+
+        def term(kk, _cache={0:ctx.one}):
+            k = int(kk)
+            if k != kk:
+                t = z ** ctx.mpf(kk) / ctx.fac(kk)
+                for a in a_s: t *= ctx.rf(a,kk)
+                for b in b_s: t /= ctx.rf(b,kk)
+                return t
             if k in _cache:
                 return _cache[k]
-            t = _cache[k-1]
+            t = term(k-1)
             m = k-1
             for j in xrange(p): t *= (a_s[j]+m)
             for j in xrange(q): t /= (b_s[j]+m)
@@ -559,8 +565,98 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             t /= k
             _cache[k] = t
             return t
-        return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
-            strict=kwargs.get('strict', True))
+
+        sum_method = kwargs.get('sum_method', 'r+s+e')
+
+        try:
+            return ctx.nsum(term, [0,ctx.inf], verbose=kwargs.get('verbose'),
+                strict=kwargs.get('strict', True),
+                method=sum_method.replace('e',''))
+        except ctx.NoConvergence:
+            if 'e' not in sum_method:
+                raise
+            pass
+
+        if kwargs.get('verbose'):
+            print "Attempting Euler-Maclaurin summation"
+
+
+        """
+        Somewhat slower version (one diffs_exp for each factor).
+        However, this would be faster with fast direct derivatives
+        of the gamma function.
+
+        def power_diffs(k0):
+            r = 0
+            l = ctx.log(z)
+            while 1:
+                yield z**ctx.mpf(k0) * l**r
+                r += 1
+
+        def loggamma_diffs(x, reciprocal=False):
+            sign = (-1) ** reciprocal
+            yield sign * ctx.loggamma(x)
+            i = 0
+            while 1:
+                yield sign * ctx.psi(i,x)
+                i += 1
+
+        def hyper_diffs(k0):
+            b2 = b_s + [1]
+            A = [ctx.diffs_exp(loggamma_diffs(a+k0)) for a in a_s]
+            B = [ctx.diffs_exp(loggamma_diffs(b+k0,True)) for b in b2]
+            Z = [power_diffs(k0)]
+            C = ctx.gammaprod([b for b in b2], [a for a in a_s])
+            for d in ctx.diffs_prod(A + B + Z):
+                v = C * d
+                yield v
+        """
+
+        def log_diffs(k0):
+            b2 = b_s + [1]
+            yield sum(ctx.loggamma(a+k0) for a in a_s) - \
+                sum(ctx.loggamma(b+k0) for b in b2) + k0*ctx.log(z)
+            i = 0
+            while 1:
+                v = sum(ctx.psi(i,a+k0) for a in a_s) - \
+                    sum(ctx.psi(i,b+k0) for b in b2)
+                if i == 0:
+                    v += ctx.log(z)
+                yield v
+                i += 1
+
+        def hyper_diffs(k0):
+            C = ctx.gammaprod([b for b in b_s], [a for a in a_s])
+            for d in ctx.diffs_exp(log_diffs(k0)):
+                v = C * d
+                yield v
+
+        tol = ctx.eps / 1024
+        prec = ctx.prec
+        try:
+            trunc = 50 * ctx.dps
+            ctx.prec += 20
+            for i in xrange(5):
+                head = ctx.fsum(term(k) for k in xrange(trunc))
+                tail, err = ctx.sumem(term, [trunc, ctx.inf], tol=tol,
+                    adiffs=hyper_diffs(trunc),
+                    verbose=kwargs.get('verbose'),
+                    error=True,
+                    _fast_abort=True)
+                if err < tol:
+                    v = head + tail
+                    break
+                trunc *= 2
+                # Need to increase precision because calculation of
+                # derivatives may be inaccurate
+                ctx.prec += ctx.prec//2
+                if i == 4:
+                    raise ctx.NoConvergence(\
+                        "Euler-Maclaurin summation did not converge")
+        finally:
+            ctx.prec = prec
+        return +v
+
     # Use 1/z transformation
     # http://functions.wolfram.com/HypergeometricFunctions/
     #   HypergeometricPFQ/06/01/05/02/0004/
@@ -881,7 +977,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
 @defun
 def _hyp2f0(ctx, a_s, b_s, z, **kwargs):
     (a, atype), (b, btype) = a_s
-    # We want to try aggressively to use the asymptotic expansion,  
+    # We want to try aggressively to use the asymptotic expansion,
     # and fall back only when absolutely necessary
     try:
         kwargsb = kwargs.copy()

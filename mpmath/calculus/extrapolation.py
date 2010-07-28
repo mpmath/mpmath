@@ -252,7 +252,8 @@ def shanks(ctx, seq, table=None, randomized=False):
 
 @defun
 def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
-    adiffs=None, bdiffs=None, verbose=False, error=False):
+    adiffs=None, bdiffs=None, verbose=False, error=False,
+    _fast_abort=False):
     r"""
     Uses the Euler-Maclaurin formula to compute an approximation accurate
     to within ``tol`` (which defaults to the present epsilon) of the sum
@@ -341,9 +342,11 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
                     s += term
                     break
                 elif k > 4 and abs(prev) / mag < reject:
+                    err += mag
+                    if _fast_abort:
+                        return [s, (s, err)][error]
                     if verbose:
                         print "Failed to converge"
-                    err += mag
                     break
                 else:
                     s += term
