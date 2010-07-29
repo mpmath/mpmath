@@ -9,6 +9,21 @@ def _hermite_param(ctx, n, z, parabolic_cylinder):
     n, ntyp = ctx._convert_param(n)
     z = ctx.convert(z)
     q = -ctx.mpq_1_2
+    # For re(z) > 0, 2F0 -- http://functions.wolfram.com/
+    #     HypergeometricFunctions/HermiteHGeneral/06/02/0009/
+    # Otherwise, there is a reflection formula
+    # 2F0 + http://functions.wolfram.com/HypergeometricFunctions/
+    #           HermiteHGeneral/16/01/01/0006/
+    #
+    # TODO:
+    # An alternative would be to use
+    # http://functions.wolfram.com/HypergeometricFunctions/
+    #     HermiteHGeneral/06/02/0006/
+    #
+    # Also, the 1F1 expansion
+    # http://functions.wolfram.com/HypergeometricFunctions/
+    #     HermiteHGeneral/26/01/02/0001/
+    # should probably be used for tiny z
     if not z:
         T1 = [2, ctx.pi], [n, 0.5], [], [q*(n-1)], [], [], 0
         if parabolic_cylinder:
@@ -33,6 +48,7 @@ def _hermite_param(ctx, n, z, parabolic_cylinder):
         T1 = [2, nw], [n, n], [], [], [q*n, q*(n-1)], [], nrw2
         T2 = [2, ctx.pi, nw], [n+2, 0.5, 1], [], [q*n], [q*(n-1)], [1-q], w2
         terms = [T1,T2]
+    # Multiply by prefactor for D_n
     if parabolic_cylinder:
         expu = ctx.exp(u)
         for i in range(len(terms)):
