@@ -419,3 +419,18 @@ def test_isnan_etc():
     assert isint(mpq((0,4))) == True
     assert isint(mpq((1,1))) == True
     assert isint(mpq((-1,1))) == True
+    assert mp.isnpint(0) == True
+    assert mp.isnpint(1) == False
+    assert mp.isnpint(-1) == True
+    assert mp.isnpint(-1.1) == False
+    assert mp.isnpint(-1.0) == True
+    assert mp.isnpint(mp.mpq(1,2)) == False
+    assert mp.isnpint(mp.mpq(-1,2)) == False
+    assert mp.isnpint(mp.mpq(-3,1)) == True
+    assert mp.isnpint(mp.mpq(0,1)) == True
+    assert mp.isnpint(mp.mpq(1,1)) == False
+    assert mp.isnpint(0+0j) == True
+    assert mp.isnpint(-1+0j) == True
+    assert mp.isnpint(-1.1+0j) == False
+    assert mp.isnpint(-1+0.1j) == False
+    assert mp.isnpint(0+0.1j) == False

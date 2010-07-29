@@ -302,6 +302,9 @@ class MPContext(BaseMPContext, StandardBaseContext):
         return False
 
     def isnpint(ctx, x):
+        """
+        Determine if *x* is a nonpositive integer.
+        """
         if not x:
             return True
         if hasattr(x, '_mpf_'):
@@ -312,11 +315,10 @@ class MPContext(BaseMPContext, StandardBaseContext):
         if type(x) in int_types:
             return x <= 0
         if isinstance(x, ctx.mpq):
-            # XXX: WRONG
             p, q = x._mpq_
             if not p:
                 return True
-            return (not (q % p)) and p <= 0
+            return q == 1 and p <= 0
         return ctx.isnpint(ctx.convert(x))
 
     def __str__(ctx):
