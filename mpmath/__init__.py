@@ -124,6 +124,7 @@ polyroots = mp.polyroots
 fourier = mp.fourier
 fourierval = mp.fourierval
 sumem = mp.sumem
+sumap = mp.sumap
 chebyfit = mp.chebyfit
 limit = mp.limit
 

@@ -2818,7 +2818,7 @@ but functions of higher degree are also supported via :func:`~mpmath.hyper`::
     >>> hyper([1,2,3,4,5,6], [7,8,9,10,11], 1j)   # 6F5
     (0.9996565821853579063502466 + 0.0129721075905630604445669j)
 
-Near `z = 1` with noninteger parameters::s
+Near `z = 1` with noninteger parameters::
 
     >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','41/8'], 1)
     2.219433352235586121250027
