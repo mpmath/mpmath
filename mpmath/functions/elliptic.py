@@ -71,7 +71,7 @@ def nome(ctx, m):
     if m == ctx.one:
         return m
     if ctx.isnan(m):
-        return n
+        return m
     if ctx.isinf(m):
         if m == ctx.ninf:
             return type(m)(-1)
