@@ -64,10 +64,17 @@ def python_trailing(n):
         t += 1
     return t
 
-def gmpy_trailing(n):
-    """Count the number of trailing zero bits in abs(n) using gmpy."""
-    if n: return MPZ(n).scan1()
-    else: return 0
+if BACKEND == 'gmpy':
+    if gmpy.version() >= '2':
+        def gmpy_trailing(n):
+            """Count the number of trailing zero bits in abs(n) using gmpy."""
+            if n: return MPZ(n).bit_scan1()
+            else: return 0
+    else:
+        def gmpy_trailing(n):
+            """Count the number of trailing zero bits in abs(n) using gmpy."""
+            if n: return MPZ(n).scan1()
+            else: return 0
 
 # Small powers of 2
 powers = [1<<_ for _ in range(300)]
