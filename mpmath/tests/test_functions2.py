@@ -621,8 +621,8 @@ def test_hyper_2f0():
     # Important: cancellation check
     assert hyp2f0((1,6),(5,6),-0.02371708245126284498).ae(0.996785723120804309)
     # Should be exact; polynomial case
-    assert hyp2f0(-2,1,0.5+0.5j) == 0
-    assert hyp2f0(1,-2,0.5+0.5j) == 0
+    assert hyp2f0(-2,1,0.5+0.5j,zeroprec=200) == 0
+    assert hyp2f0(1,-2,0.5+0.5j,zeroprec=200) == 0
     # There used to be a bug in thresholds that made one of the following hang
     for d in [15, 50, 80]:
         mp.dps = d
@@ -1432,3 +1432,9 @@ def test_spherharm():
 def test_qfunctions():
     mp.dps = 15
     assert qp(2,3,100).ae('2.7291482267247332183e2391')
+
+def test_issue199():
+    mp.prec = 150
+    x = ldexp(2476979795053773,-52)
+    assert betainc(206, 385, 0, 0.55, True).ae('0.99999999999999999999996570910644857895771110649954')
+    mp.dps = 15

@@ -283,7 +283,7 @@ def make_hyp_summator(key):
         add("elif SIM:")
         add("    magn = b[2]+b[3]")
         add("else:")
-        add("    magn = -prec")
+        add("    magn = -wp+1")
 
         add("return (a, b), True, magn")
     else:
@@ -292,7 +292,7 @@ def make_hyp_summator(key):
         add("if SRE:")
         add("    magn = a[2]+a[3]")
         add("else:")
-        add("    magn = -prec")
+        add("    magn = -wp+1")
 
         add("return a, False, magn")
 
