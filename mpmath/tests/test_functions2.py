@@ -1436,5 +1436,10 @@ def test_qfunctions():
 def test_issue199():
     mp.prec = 150
     x = ldexp(2476979795053773,-52)
-    assert betainc(206, 385, 0, 0.55, True).ae('0.99999999999999999999996570910644857895771110649954')
+    assert betainc(206, 385, 0, 0.55, 1).ae('0.99999999999999999999996570910644857895771110649954')
     mp.dps = 15
+    try:
+        u = hyp2f1(-5,5,0.5,0.5)
+        raise AssertionError("hyp2f1(-5,5,0.5,0.5) (failed zero detection)")
+    except (mp.NoConvergence, ValueError):
+        pass

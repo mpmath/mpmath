@@ -165,6 +165,13 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx._zeta = ctx._wrap_libmp_function(libmp.mpf_zeta, libmp.mpc_zeta)
         ctx._altzeta = ctx._wrap_libmp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
 
+        # Faster versions
+        ctx.sqrt = getattr(ctx, "_sage_sqrt", ctx.sqrt)
+        ctx.exp = getattr(ctx, "_sage_exp", ctx.exp)
+        ctx.ln = getattr(ctx, "_sage_ln", ctx.ln)
+        ctx.cos = getattr(ctx, "_sage_cos", ctx.cos)
+        ctx.sin = getattr(ctx, "_sage_sin", ctx.sin)
+
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)
 
@@ -652,11 +659,13 @@ maxterms, or set zeroprec."""
             epsshift += 5
             extraprec += 5
 
-        if have_complex:
-            z = ctx.make_mpc(zv)
+        if type(zv) is tuple:
+            if have_complex:
+                return ctx.make_mpc(zv)
+            else:
+                return ctx.make_mpf(zv)
         else:
-            z = ctx.make_mpf(zv)
-        return z
+            return zv
 
     def ldexp(ctx, x, n):
         r"""

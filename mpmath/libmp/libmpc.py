@@ -2,7 +2,7 @@
 Low-level functions for complex arithmetic.
 """
 
-from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO
+from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, BACKEND
 
 from libmpf import (\
     round_floor, round_ceiling, round_down, round_up,
@@ -815,3 +815,12 @@ def mpc_expjpi(z, prec, rnd='f'):
     re = mpf_mul(ey, c, prec, rnd)
     im = mpf_mul(ey, s, prec, rnd)
     return re, im
+
+
+if BACKEND == 'sage':
+    try:
+        import sage.libs.mpmath.ext_libmp as _lbmp
+        mpc_exp = _lbmp.mpc_exp
+        mpc_sqrt = _lbmp.mpc_sqrt
+    except (ImportError, AttributeError):
+        print "Warning: Sage imports in libmpc failed"
