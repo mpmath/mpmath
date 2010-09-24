@@ -9,6 +9,7 @@ Backends and distribution:
 * Removed documentation from main mpmath package to save space (a separate
   tar.gz file is now provided for the documentation sources)
 * Fixed matplotlib version detection
+* Converted files to Unix line endings
 
 Special functions:
 
