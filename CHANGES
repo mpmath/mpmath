@@ -1,3 +1,66 @@
+--0.16--
+Released September 24, 2010
+
+Backends and distribution:
+
+* Added Sage hooks for Cython versions of exp, ln, cos, sin,
+  hypergeometric series, and some related functions
+* Fixed imports for gmpy2 compatibility (contributed by Case Van Horsen)
+* Removed documentation from main mpmath package to save space (a separate
+  tar.gz file is now provided for the documentation sources)
+* Fixed matplotlib version detection
+
+Special functions:
+
+* Started adding plots of special functions to the documentation
+* Added Anger and Weber functions (angerj(), webere())
+* Added Lommel functions (lommels1(), lommels2())
+* Added interval versions of gamma(), loggamma(), rgamma() and
+  factorial()
+* Rewritten Airy functions to improve speed and accuracy
+* Support for arbitrary-order derivatives of airyai(), airybi()
+* Added Airy function zeros (airyaizero(), airybizero())
+* Added Scorer functions (scorergi(), scorerhi())
+* Added computation of Bessel function zeros and Bessel function
+  derivative zeros (besseljzero(), besselyzero())
+* Fixed besselj(mpc(n), z)
+* Rewritten lambertw() to fix various subtle bugs and robustly handle
+  numerical difficulties near branch cuts and branch points.
+* Fixed fp.lambertw() to behave the same on branch cuts on systems with
+  and without signed-zero floats
+* Added Carlson symmetric incomplete elliptic integrals
+  (elliprf(), elliprc(), elliprj(), elliprd(), elliprg())
+* Added Legendre incomplete elliptic integrals (ellipf(), ellippi(),
+  ellipe() with two arguments)
+* Implemented Parabolic cylinder functions (pcfd(), pcfu(), pcfv(),
+  pcfw())
+* Implemented Euler-Maclaurin summation for hypergeometric functions
+  of order (p,p-1) to support evaluation with z close to 1 in remaining cases
+* Fixed a bug in hypergeometric series summation, causing occasional
+  inaccurate results and incorrect detection of zeros
+* Fixed qfrom(m=...)
+
+Calculus:
+
+* Implemented generators diffs_exp(), diffs_prod() for composing
+  derivatives
+* Implemented Abel-Plana summation for infinite series (sumap())
+
+Basic arithmetic and functions:
+
+* Implemented matrix slice indexing, supporting submatrix
+  extraction and assignment (contributed by Ioannis Tziakos)
+* Added missing constant fp.glaisher
+* Fixed a bug preventing internal rational numbers from being
+  hashable
+* Fixed bug in isnpint()
+* Fixed a bug in cos_sin() for pure imaginary argument
+* Slightly improved performance for elementary functions of pure
+  real or pure imaginary mpc inputs
+* Fixed plot() with real-valued mpc instances
+* Fixed cplot() to work with endpoints of other type than float/int
+
+
 --0.15--
 Released June 6, 2010
 

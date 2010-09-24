@@ -25,6 +25,7 @@ to mpmath:
 * Jorn Baayen <jorn.baayen@gmail.com>
 * Chris Smith <smichr@gmail.com>
 * Juan Arias de Reyna <arias@us.es>
+* Ioannis Tziakos <itziakos@gmail.com>
 
 For a detailed changelog, including individual contributions,
 see the CHANGES file.
@@ -56,6 +57,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 0.16 released on September 24, 2010
 * Version 0.15 released on June 6, 2010
 * Version 0.14 released on February 5, 2010
 * Version 0.13 released on August 13, 2009
