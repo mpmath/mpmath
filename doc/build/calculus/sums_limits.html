@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.15 documentation</title>
+    <title>Sums, products, limits and extrapolation &mdash; mpmath v0.16 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15',
+        VERSION:     '0.16',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.15 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Differentiation" href="differentiation.html" />
     <link rel="prev" title="Root-finding and optimization" href="optimization.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.15 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -59,8 +59,10 @@
 sums, products, and other sequence limits.
 Use <a class="reference internal" href="../general.html#mpmath.fsum" title="mpmath.fsum"><tt class="xref py py-func docutils literal"><span class="pre">mpmath.fsum()</span></tt></a> and <a class="reference internal" href="../general.html#mpmath.fprod" title="mpmath.fprod"><tt class="xref py py-func docutils literal"><span class="pre">mpmath.fprod()</span></tt></a>
 for summation and multiplication of finite sequences.</p>
-<div class="section" id="summation-nsum-sumem">
-<h2>Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)<a class="headerlink" href="#summation-nsum-sumem" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="summation">
+<h2>Summation<a class="headerlink" href="#summation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nsum">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt><a class="headerlink" href="#nsum" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.nsum">
 <tt class="descclassname">mpmath.</tt><tt class="descname">nsum</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>*intervals</em>, <em>**options</em><big>)</big><a class="headerlink" href="#mpmath.nsum" title="Permalink to this definition">¶</a></dt>
@@ -400,6 +402,9 @@ convergent 2D sum:</p>
 </ol>
 </dd></dl>
 
+</div>
+<div class="section" id="sumem">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">sumem()</span></tt><a class="headerlink" href="#sumem" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.sumem">
 <tt class="descclassname">mpmath.</tt><tt class="descname">sumem</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>tol=None</em>, <em>reject=10</em>, <em>integral=None</em>, <em>adiffs=None</em>, <em>bdiffs=None</em>, <em>verbose=False</em>, <em>error=False</em>, <em>_fast_abort=False</em><big>)</big><a class="headerlink" href="#mpmath.sumem" title="Permalink to this definition">¶</a></dt>
@@ -455,8 +460,55 @@ integral and derivative values (the second should be much faster):</p>
 </dd></dl>
 
 </div>
-<div class="section" id="products-nprod">
-<h2>Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)<a class="headerlink" href="#products-nprod" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sumap">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">sumap()</span></tt><a class="headerlink" href="#sumap" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.sumap">
+<tt class="descclassname">mpmath.</tt><tt class="descname">sumap</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>integral=None</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#mpmath.sumap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates an infinite series of an analytic summand <em>f</em> using the
+Abel-Plana formula</p>
+<div class="math">
+<p><img src="../_images/math/a64f18994cb5c3a8dfe7efc7619f26bcd3b9db31.png" alt="\sum_{k=0}^{\infty} f(k) = \int_0^{\infty} f(t) dt + \frac{1}{2} f(0) +
+    i \int_0^{\infty} \frac{f(it)-f(-it)}{e^{2\pi t}-1} dt." /></p>
+</div><p>Unlike the Euler-Maclaurin formula (see <a class="reference internal" href="#mpmath.sumem" title="mpmath.sumem"><tt class="xref py py-func docutils literal"><span class="pre">sumem()</span></tt></a>),
+the Abel-Plana formula does not require derivatives. However,
+it only works when <img class="math" src="../_images/math/f9a247e561298398b0a118b3c7ae76a30632584d.png" alt="|f(it)-f(-it)|"/> does not
+increase too rapidly with <img class="math" src="../_images/math/e0d2bf360290fd61d1c1557e763f2622363b3d35.png" alt="t"/>.</p>
+<p><strong>Examples</strong></p>
+<p>The Abel-Plana formula is particularly useful when the summand
+decreases like a power of <img class="math" src="../_images/math/8c325612684d41304b9751c175df7bcc0f61f64f.png" alt="k"/>; for example when the sum is a pure
+zeta function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sumap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">k</span><span class="o">**</span><span class="mf">2.5</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">1.34148725725091717975677</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="go">1.34148725725091717975677</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sumap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">2.5</span><span class="o">+</span><span class="mf">2.5</span><span class="n">j</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">])</span>
+<span class="go">(-3.385361068546473342286084 - 0.7432082105196321803869551j)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span><span class="p">(</span><span class="mf">2.5</span><span class="o">+</span><span class="mf">2.5</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span>
+<span class="go">(-3.385361068546473342286084 - 0.7432082105196321803869551j)</span>
+</pre></div>
+</div>
+<p>If the series is alternating, numerical quadrature along the real
+line is likely to give poor results, so it is better to evaluate
+the first term symbolically whenever possible:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span> <span class="n">z</span><span class="o">=-</span><span class="mf">0.75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">I</span> <span class="o">=</span> <span class="n">expint</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chop</span><span class="p">(</span><span class="n">sumap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">z</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="n">k</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">inf</span><span class="p">],</span> <span class="n">integral</span><span class="o">=</span><span class="n">I</span><span class="p">))</span>
+<span class="go">-0.6917036036904594510141448</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">polylog</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+<span class="go">-0.6917036036904594510141448</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="products">
+<h2>Products<a class="headerlink" href="#products" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nprod">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">nprod()</span></tt><a class="headerlink" href="#nprod" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.nprod">
 <tt class="descclassname">mpmath.</tt><tt class="descname">nprod</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>interval</em>, <em>nsum=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprod" title="Permalink to this definition">¶</a></dt>
@@ -579,8 +631,11 @@ an accurate value:</p>
 </dd></dl>
 
 </div>
+</div>
 <div class="section" id="limits-limit">
 <h2>Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)<a class="headerlink" href="#limits-limit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="limit">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt><a class="headerlink" href="#limit" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.limit">
 <tt class="descclassname">mpmath.</tt><tt class="descname">limit</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>x</em>, <em>direction=1</em>, <em>exp=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.limit" title="Permalink to this definition">¶</a></dt>
@@ -665,8 +720,9 @@ however gives a perfect result:</p>
 </dd></dl>
 
 </div>
-<div class="section" id="extrapolation-richardson-shanks">
-<h2>Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)<a class="headerlink" href="#extrapolation-richardson-shanks" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="extrapolation">
+<h2>Extrapolation<a class="headerlink" href="#extrapolation" title="Permalink to this headline">¶</a></h2>
 <p>The following functions provide a direct interface to
 extrapolation algorithms. <tt class="xref py py-func docutils literal"><span class="pre">nsum()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">limit()</span></tt> essentially
 work by calling the following functions with an increasing
@@ -675,6 +731,8 @@ number of terms until the extrapolated limit is accurate enough.</p>
 precise number of terms needed to achieve a desired accuracy is
 known in advance, or if one wishes to study the convergence
 properties of the algorithms.</p>
+<div class="section" id="richardson">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">richardson()</span></tt><a class="headerlink" href="#richardson" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.richardson">
 <tt class="descclassname">mpmath.</tt><tt class="descname">richardson</tt><big>(</big><em>ctx</em>, <em>seq</em><big>)</big><a class="headerlink" href="#mpmath.richardson" title="Permalink to this definition">¶</a></dt>
@@ -733,6 +791,9 @@ applies extrapolation only to the even-index elements.</p>
 </ol>
 </dd></dl>
 
+</div>
+<div class="section" id="shanks">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">shanks()</span></tt><a class="headerlink" href="#shanks" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="mpmath.shanks">
 <tt class="descclassname">mpmath.</tt><tt class="descname">shanks</tt><big>(</big><em>ctx</em>, <em>seq</em>, <em>table=None</em>, <em>randomized=False</em><big>)</big><a class="headerlink" href="#mpmath.shanks" title="Permalink to this definition">¶</a></dt>
@@ -849,6 +910,7 @@ is immediate (the sum is exactly 1):</p>
 
 </div>
 </div>
+</div>
 
 
           </div>
@@ -859,10 +921,25 @@ is immediate (the sum is exactly 1):</p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Sums, products, limits and extrapolation</a><ul>
-<li><a class="reference internal" href="#summation-nsum-sumem">Summation (<tt class="docutils literal"><span class="pre">nsum</span></tt>, <tt class="docutils literal"><span class="pre">sumem</span></tt>)</a></li>
-<li><a class="reference internal" href="#products-nprod">Products (<tt class="docutils literal"><span class="pre">nprod</span></tt>)</a></li>
-<li><a class="reference internal" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a></li>
-<li><a class="reference internal" href="#extrapolation-richardson-shanks">Extrapolation (<tt class="docutils literal"><span class="pre">richardson</span></tt>, <tt class="docutils literal"><span class="pre">shanks</span></tt>)</a></li>
+<li><a class="reference internal" href="#summation">Summation</a><ul>
+<li><a class="reference internal" href="#nsum"><tt class="docutils literal"><span class="pre">nsum()</span></tt></a></li>
+<li><a class="reference internal" href="#sumem"><tt class="docutils literal"><span class="pre">sumem()</span></tt></a></li>
+<li><a class="reference internal" href="#sumap"><tt class="docutils literal"><span class="pre">sumap()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#products">Products</a><ul>
+<li><a class="reference internal" href="#nprod"><tt class="docutils literal"><span class="pre">nprod()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#limits-limit">Limits (<tt class="docutils literal"><span class="pre">limit</span></tt>)</a><ul>
+<li><a class="reference internal" href="#limit"><tt class="docutils literal"><span class="pre">limit()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extrapolation">Extrapolation</a><ul>
+<li><a class="reference internal" href="#richardson"><tt class="docutils literal"><span class="pre">richardson()</span></tt></a></li>
+<li><a class="reference internal" href="#shanks"><tt class="docutils literal"><span class="pre">shanks()</span></tt></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -910,13 +987,13 @@ is immediate (the sum is exactly 1):</p>
         <li class="right" >
           <a href="optimization.html" title="Root-finding and optimization"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.15 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
           <li><a href="index.html" >Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Jul 28, 2010.
+      Last updated on Sep 24, 2010.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
     </div>
 
