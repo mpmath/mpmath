@@ -397,6 +397,7 @@ expm1 = mp.expm1
 powm1 = mp.powm1
 unitroots = mp.unitroots
 cyclotomic = mp.cyclotomic
+mangoldt = mp.mangoldt
 
 
 # be careful when changing this name, don't use test*!

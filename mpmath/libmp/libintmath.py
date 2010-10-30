@@ -390,6 +390,53 @@ if BACKEND == 'sage':
     def list_primes(n):
         return map(int, sage.primes(n+1))
 
+small_odd_primes = (3,5,7,11,13,17,19,23,29,31,37,41,43,47)
+small_odd_primes_set = set(small_odd_primes)
+
+def isprime(n):
+    """
+    Determines whether n is a prime number. A probabilistic test is
+    performed if n is very large. No special trick is used for detecting
+    perfect powers.
+
+        >>> sum(list_primes(100000))
+        454396537
+        >>> sum(n*isprime(n) for n in range(100000))
+        454396537
+
+    """
+    n = int(n)
+    if not n & 1:
+        return n == 2
+    if n < 50:
+        return n in small_odd_primes_set
+    for p in small_odd_primes:
+        if not n % p:
+            return False
+    m = n-1
+    s = trailing(m)
+    d = m >> s
+    def test(a):
+        x = pow(a,d,n)
+        if x == 1 or x == m:
+            return True
+        for r in xrange(1,s):
+            x = x**2 % n
+            if x == m:
+                return True
+        return False
+    # See http://primes.utm.edu/prove/prove2_3.html
+    if n < 1373653:
+        witnesses = [2,3]
+    elif n < 341550071728321:
+        witnesses = [2,3,5,7,11,13,17]
+    else:
+        witnesses = small_odd_primes
+    for a in witnesses:
+        if not test(a):
+            return False
+    return True
+
 def moebius(n):
     """
     Evaluates the Moebius function which is `mu(n) = (-1)^k` if `n`

@@ -335,6 +335,7 @@ class StandardBaseContext(Context,
 
     _gcd = staticmethod(libmp.gcd)
     list_primes = staticmethod(libmp.list_primes)
+    isprime = staticmethod(libmp.isprime)
     bernfrac = staticmethod(libmp.bernfrac)
     moebius = staticmethod(libmp.moebius)
     _ifac = staticmethod(libmp.ifac)

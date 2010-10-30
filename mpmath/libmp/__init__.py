@@ -71,7 +71,7 @@ from libmpi import (mpi_str,
 
 from libintmath import (trailing, bitcount, numeral, bin_to_radix,
   isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,
-  list_primes, moebius, gcd, eulernum)
+  list_primes, isprime, moebius, gcd, eulernum)
 
 from backend import (gmpy, sage, BACKEND, STRICT, MPZ, MPZ_TYPE,
   MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_THREE, MPZ_FIVE, int_types)
