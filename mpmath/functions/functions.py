@@ -53,6 +53,8 @@ class SpecialFunctions(object):
             'factorial' : 'fac',
         })
 
+        self.zetazero_memoized = self.memoize(self.zetazero)
+
     # Default -- do nothing
     @classmethod
     def _wrap_specfun(cls, name, f, wrap):
