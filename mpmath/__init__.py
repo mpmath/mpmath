@@ -399,6 +399,8 @@ unitroots = mp.unitroots
 cyclotomic = mp.cyclotomic
 mangoldt = mp.mangoldt
 secondzeta = mp.secondzeta
+nzeros = mp.nzeros
+backlunds = mp.backlunds
 
 # be careful when changing this name, don't use test*!
 def runtests():

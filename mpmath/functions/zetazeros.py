@@ -387,13 +387,7 @@ def zetazero(ctx, n, info=False, round=True):
         raise ValueError("n must be nonzero")
     wpinitial = ctx.prec
     try:
-        wpz = wpzeros(n * ctx.log(n))
-        if n < 15*10**8:
-            fp_tolerance = 0.0005
-        elif n <= 10**14:
-            fp_tolerance = 0.1
-        else:
-            fp_tolerance = 100
+        wpz, fp_tolerance = comp_fp_tolerance(ctx, n)
         ctx.prec = wpz
         if n < 400000000:
             my_zero_number, block, T, V =\
@@ -418,6 +412,132 @@ def zetazero(ctx, n, info=False, round=True):
     else:
         return v
 
+def gram_index(ctx, t):
+    if t > 10**13:
+        wp = 3*ctx.log(t, 10)
+    else:
+        wp = 0
+    prec = ctx.prec
+    try:
+        ctx.prec += wp
+        x0 = (t/(2*ctx.pi))*ctx.log(t/(2*ctx.pi))
+        h = ctx.findroot(lambda x:ctx.siegeltheta(t)-ctx.pi*x, x0)
+        h = int(h)
+    finally:
+        ctx.prec = prec
+    return(h)
+
+def count_to(ctx, t, T, V):
+    count = 0
+    vold = V[0]
+    told = T[0]
+    tnew = T[1]
+    k = 1
+    while tnew < t:
+        vnew = V[k]
+        if vold*vnew < 0:
+            count += 1
+        vold = vnew
+        k += 1
+        tnew = T[k]
+    a = ctx.siegelz(t)
+    if a*vold < 0:
+        count += 1
+    return count
+
+def comp_fp_tolerance(ctx, n):
+    wpz = wpzeros(n*ctx.log(n))
+    if n < 15*10**8:
+        fp_tolerance = 0.0005
+    elif n <= 10**14:
+        fp_tolerance = 0.1
+    else:
+        fp_tolerance = 100
+    return wpz, fp_tolerance
+
+@defun
+def nzeros(ctx, t):
+    r"""
+    Computes the number of zeros of zeta in (0,1)x(0,t]
+    usually denoted by N(t)
+    **Examples**
+        >>> nzeros(10**7)
+        21136125
+        >>> zetazero(21136125)
+        (0.5 + 9999999.32718175j)
+        >>> zetazero(21136126)
+        (0.5 + 10000000.2400236j)
+
+        >>> nzeros(545439823.215)
+        1500000001
+        zetazero(1500000001)
+        mpc(real='0.5', imag='545439823.20198464')
+        zetazero(1500000002)
+        mpc(real='0.5', imag='545439823.32569659')
+    this confirm the data given by J. van de Lune,
+    H. J. J. te Riele and D. T. Winter in 1986.
+    """
+    if t < 14.1347251417347:
+        return 0
+    x = gram_index(ctx, t)
+    k = int(ctx.floor(x))
+    wpinitial = ctx.prec
+    wpz, fp_tolerance = comp_fp_tolerance(ctx, k)
+    ctx.prec = wpz
+    a = ctx.siegelz(t)
+    if k == -1 and a < 0:
+        return 0
+    elif k == -1 and a > 0:
+        return 1
+    if k+2 < 400000000:
+        Rblock = find_rosser_block_zero(ctx, k+2)
+    else:
+        Rblock = search_supergood_block(ctx, k+2, fp_tolerance)
+    n1, n2 = Rblock[1]
+    if n2-n1 == 1:
+        b = Rblock[3][0]
+        if a*b > 0:
+            ctx.prec = wpinitial
+            return k+1
+        else:
+            ctx.prec = wpinitial
+            return k+2
+    my_zero_number,block, T, V = Rblock
+    zero_number_block = n2-n1
+    T, V, separated = separate_zeros_in_block(ctx,\
+                                              zero_number_block, T, V,\
+                                              limitloop=ctx.inf,\
+                                            fp_tolerance=fp_tolerance)
+    n = count_to(ctx, t, T, V)
+    ctx.prec = wpinitial
+    return n+n1+1
+
+@defun
+def backlunds(ctx, t):
+    r"""
+    Computes the S(t) function =arg zeta(0.5+j*t)/pi
+    (see Titchmarsh Section 9.3 for details of the
+    definition
+    **Examples**
+
+        >>> backlunds(217.3)
+        0.163022054311824
+    generally it is a small numbers. At Gram points
+    it is an integer, frequently equal 0
+        >>> a = grampoint(1000)
+        >>> backlunds(a)
+        1.13686837721616e-13
+    N(t) = siegeltheta(t)/pi+1+backlunds(t)
+        >>> t= 1234.55
+        >>> nzeros(t)
+        842
+        >>> siegeltheta(t)/pi+1+backlunds(t)
+        842.0
+
+
+
+    """
+    return ctx.nzeros(t)-1-ctx.siegeltheta(t)/ctx.pi
 
 
 """
