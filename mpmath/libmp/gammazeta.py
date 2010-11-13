@@ -1000,11 +1000,14 @@ def mpc_psi(m, z, prec, rnd=round_fast):
     re, im = z
     wp = prec + 20
     sign, man, exp, bc = re
+    if not im[1]:
+        if im in (finf, fninf, fnan):
+            return (fnan, fnan)
     if not man:
         if re == finf and im == fzero:
             return (fzero, fzero)
         if re == fnan:
-            return fnan
+            return (fnan, fnan)
     # Recurrence
     w = to_int(re)
     n = int(0.4*wp + 4*m)

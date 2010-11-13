@@ -350,6 +350,15 @@ def test_polygamma():
     assert psi0(-100.5).ae(4.615124601338064)
     assert psi0(3+0j).ae(psi0(3))
     assert psi0(-100+3j).ae(4.6106071768714086321+3.1117510556817394626j)
+    assert isnan(psi(2,mpc(0,inf)))
+    assert isnan(psi(2,mpc(0,nan)))
+    assert isnan(psi(2,mpc(0,-inf)))
+    assert isnan(psi(2,mpc(1,inf)))
+    assert isnan(psi(2,mpc(1,nan)))
+    assert isnan(psi(2,mpc(1,-inf)))
+    assert isnan(psi(2,mpc(inf,inf)))
+    assert isnan(psi(2,mpc(nan,nan)))
+    assert isnan(psi(2,mpc(-inf,-inf)))
 
 def test_polygamma_high_prec():
     mp.dps = 100
