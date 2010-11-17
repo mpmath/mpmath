@@ -6665,6 +6665,14 @@ complex arguments::
     >>> siegeltheta(10+0.25j)
     (-3.068638039426838572528867 + 0.05804937947429712998395177j)
 
+Arbitrary derivatives may be computed with derivative = k
+
+    >>> siegeltheta(1234, derivative=2)
+    0.0004051864079114053109473741
+    >>> diff(siegeltheta, 1234, n=2)
+    0.0004051864079114053109473741
+
+
 The Riemann-Siegel theta function has odd symmetry around `t = 0`,
 two local extreme points and three real roots including 0 (located
 symmetrically)::
@@ -6751,6 +6759,14 @@ Evaluation is supported for real and complex arguments::
     -0.7363054628673177346778998
     >>> siegelz(3+4j)
     (-0.1852895764366314976003936 - 0.2773099198055652246992479j)
+    
+The first four derivatives are supported:
+
+    >>> siegelz(1234567, derivative=3)
+    56.89689348495089294249178
+    >>> diff(siegelz, 1234567, n=3)
+    56.89689348495089294249178
+    
 
 The Z-function has a Maclaurin expansion::
 

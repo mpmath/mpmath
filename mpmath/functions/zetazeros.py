@@ -150,7 +150,7 @@ def separate_my_zero(ctx, my_zero_number, zero_number_block, T, V, prec):
     t1 = T[k0]
     t0 = T[k0-1]
     ctx.prec = prec
-    r = ctx.findroot(ctx.siegelz, (t0,t1), solver ='illinois', verbose=False)
+    r = ctx.findroot(lambda x:ctx.siegelz(x), (t0,t1), solver ='illinois', verbose=False)
     return r
 
 def sure_number_block(ctx, n):
