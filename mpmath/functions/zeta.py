@@ -574,69 +574,96 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
         return 1/s
     if ctx.re(s) > 2*ctx.prec and a == 1 and not derivative:
         return ctx.one + ctx.power(2, -s)
-    if verbose:
-        print "zeta: Using the Euler-Maclaurin algorithm"
-    prec = ctx.prec
-    try:
-        ctx.prec += 10
-        v = ctx._hurwitz(s, a, d)
-    finally:
-        ctx.prec = prec
-    return +v
+    return +ctx._hurwitz(s, a, d, **kwargs)
 
 @defun
-def _hurwitz(ctx, s, a=1, d=0):
-    # We strongly want to special-case rational a
-    a, atype = ctx._convert_param(a)
+def _hurwitz(ctx, s, a=1, d=0, **kwargs):
     prec = ctx.prec
-    # TODO: implement reflection for derivatives
+    verbose = kwargs.get('verbose')
+    try:
+        extraprec = 10
+        ctx.prec += extraprec
+        # We strongly want to special-case rational a
+        a, atype = ctx._convert_param(a)
+        if ctx.re(s) < 0:
+            if verbose:
+                print "zeta: Attempting reflection formula"
+            try:
+                return _hurwitz_reflection(ctx, s, a, d, atype)
+            except NotImplementedError:
+                pass
+            if verbose:
+                print "zeta: Reflection formula failed"
+        if verbose:
+            print "zeta: Using the Euler-Maclaurin algorithm"
+        while 1:
+            ctx.prec = prec + extraprec
+            T1, T2 = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
+            cancellation = ctx.mag(T1) - ctx.mag(T1+T2)
+            if verbose:
+                print "Term 1:", T1
+                print "Term 2:", T2
+                print "Cancellation:", cancellation, "bits"
+            if cancellation < extraprec:
+                return T1 + T2
+            else:
+                extraprec = max(2*extraprec, min(cancellation + 5, 100*prec))
+                if extraprec > kwargs.get('maxprec', 100*prec):
+                    raise ctx.NoConvergence("zeta: too much cancellation")
+    finally:
+        ctx.prec = prec
+
+def _hurwitz_reflection(ctx, s, a, d, atype):
+    # TODO: implement for derivatives
+    if d != 0:
+        raise NotImplementedError
     res = ctx.re(s)
     negs = -s
-    try:
-        if res < 0 and not d:
-            # Integer reflection formula
-            if ctx.isnpint(s):
-                n = int(res)
-                if n <= 0:
-                    return ctx.bernpoly(1-n, a) / (n-1)
-            t = 1-s
-            # We now require a to be standardized
-            v = 0
-            shift = 0
-            b = a
-            while ctx.re(b) > 1:
-                b -= 1
-                v -= b**negs
-                shift -= 1
-            while ctx.re(b) <= 0:
-                v += b**negs
-                b += 1
-                shift += 1
-            # Rational reflection formula
-            if atype == 'Q' or atype == 'Z':
-                try:
-                    p, q = a._mpq_
-                except:
-                    assert a == int(a)
-                    p = int(a)
-                    q = 1
-                p += shift*q
-                assert 1 <= p <= q
-                g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
-                    for k in range(1,q+1))
-                g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
-                v += g
-                return v
-            # General reflection formula
-            else:
-                C1, C2 = ctx.cospi_sinpi(0.5*t)
-                # Clausen functions; could maybe use polylog directly
-                if C1: C1 *= ctx.clcos(t, 2*a, pi=True)
-                if C2: C2 *= ctx.clsin(t, 2*a, pi=True)
-                v += 2*ctx.gamma(t)/(2*ctx.pi)**t*(C1+C2)
-                return v
-    except NotImplementedError:
-        pass
+    # Integer reflection formula
+    if ctx.isnpint(s):
+        n = int(res)
+        if n <= 0:
+            return ctx.bernpoly(1-n, a) / (n-1)
+    t = 1-s
+    # We now require a to be standardized
+    v = 0
+    shift = 0
+    b = a
+    while ctx.re(b) > 1:
+        b -= 1
+        v -= b**negs
+        shift -= 1
+    while ctx.re(b) <= 0:
+        v += b**negs
+        b += 1
+        shift += 1
+    # Rational reflection formula
+    if atype == 'Q' or atype == 'Z':
+        try:
+            p, q = a._mpq_
+        except:
+            assert a == int(a)
+            p = int(a)
+            q = 1
+        p += shift*q
+        assert 1 <= p <= q
+        g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
+            for k in range(1,q+1))
+        g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
+        v += g
+        return v
+    # General reflection formula
+    # Note: clcos/clsin can raise NotImplementedError
+    else:
+        C1, C2 = ctx.cospi_sinpi(0.5*t)
+        # Clausen functions; could maybe use polylog directly
+        if C1: C1 *= ctx.clcos(t, 2*a, pi=True)
+        if C2: C2 *= ctx.clsin(t, 2*a, pi=True)
+        v += 2*ctx.gamma(t)/(2*ctx.pi)**t*(C1+C2)
+        return v
+
+def _hurwitz_em(ctx, s, a, d, prec, verbose):
+    # May not be converted at this point
     a = ctx.convert(a)
     tol = -prec
     # Estimate number of terms for Euler-Maclaurin summation; could be improved
@@ -690,9 +717,14 @@ def _hurwitz(ctx, s, a=1, d=0):
             t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
             tailsum += t
             if ctx.mag(t) < tol:
-                return lsum + (-1)**d * tailsum
+                return lsum, (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
+        if verbose:
+            print "Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol
         M1, M2 = M2, M2*2
+        N += N//2
+
+
 
 @defun
 def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
