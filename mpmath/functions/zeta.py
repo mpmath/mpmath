@@ -722,7 +722,8 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
         if verbose:
             print "Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol
         M1, M2 = M2, M2*2
-        N += N//2
+        if ctx.re(s) < 0:
+            N += N//2
 
 
 
