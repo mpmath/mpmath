@@ -15,7 +15,7 @@ For n > 400 000 000 we apply the method of Turing, as complemented by
 Lehman, Brent and Trudgian  to find a suitable B.
 """
 
-from functions import defun
+from functions import defun, defun_wrapped
 
 def find_rosser_block_zero(ctx, n):
     """for n<400 000 000 determines a block were one find our zero"""
@@ -458,23 +458,38 @@ def comp_fp_tolerance(ctx, n):
 @defun
 def nzeros(ctx, t):
     r"""
-    Computes the number of zeros of zeta in (0,1)x(0,t]
-    usually denoted by N(t)
+    Computes the number of zeros of the Riemann zeta function in
+    `(0,1) \times (0,t]`, usually denoted by `N(t)`.
+
     **Examples**
+
+    The first zero has imaginary part between 14 and 15::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = True
+        >>> nzeros(14)
+        0
+        >>> nzeros(15)
+        1
+        >>> zetazero(1)
+        (0.5 + 14.1347251417347j)
+
+    Some closely spaced zeros::
+
         >>> nzeros(10**7)
         21136125
         >>> zetazero(21136125)
         (0.5 + 9999999.32718175j)
         >>> zetazero(21136126)
         (0.5 + 10000000.2400236j)
-
         >>> nzeros(545439823.215)
         1500000001
-        zetazero(1500000001)
-        mpc(real='0.5', imag='545439823.20198464')
-        zetazero(1500000002)
-        mpc(real='0.5', imag='545439823.32569659')
-    this confirm the data given by J. van de Lune,
+        >>> zetazero(1500000001)
+        (0.5 + 545439823.201985j)
+        >>> zetazero(1500000002)
+        (0.5 + 545439823.325697j)
+
+    This confirms the data given by J. van de Lune,
     H. J. J. te Riele and D. T. Winter in 1986.
     """
     if t < 14.1347251417347:
@@ -512,29 +527,40 @@ def nzeros(ctx, t):
     ctx.prec = wpinitial
     return n+n1+1
 
-@defun
+@defun_wrapped
 def backlunds(ctx, t):
     r"""
-    Computes the S(t) function =arg zeta(0.5+j*t)/pi
-    (see Titchmarsh Section 9.3 for details of the
-    definition
+    Computes the function
+    `S(t) = \operatorname{arg} \zeta(\frac{1}{2} + it) / \pi`.
+
+    See Titchmarsh Section 9.3 for details of the definition.
+
     **Examples**
 
+        >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = True
         >>> backlunds(217.3)
         0.163022054311824
-    generally it is a small numbers. At Gram points
-    it is an integer, frequently equal 0
-        >>> a = grampoint(1000)
-        >>> backlunds(a)
-        1.13686837721616e-13
-    N(t) = siegeltheta(t)/pi+1+backlunds(t)
-        >>> t= 1234.55
+
+    Generally, the value is a small number. At Gram points it is an integer,
+    frequently equal to 0::
+
+        >>> chop(backlunds(grampoint(200)))
+        0.0
+        >>> backlunds(extraprec(10)(grampoint)(211))
+        1.0
+        >>> backlunds(extraprec(10)(grampoint)(232))
+        -1.0
+
+    The number of zeros of the Riemann zeta function up to height `t`
+    satisfies `N(t) = \theta(t)/\pi + 1 + S(t)` (see :func:nzeros` and
+    :func:`siegeltheta`)::
+
+        >>> t = 1234.55
         >>> nzeros(t)
         842
         >>> siegeltheta(t)/pi+1+backlunds(t)
         842.0
-
-
 
     """
     return ctx.nzeros(t)-1-ctx.siegeltheta(t)/ctx.pi

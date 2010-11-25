@@ -1840,7 +1840,7 @@ function, having a finite value for all complex `s`. The special case
 
 The alternating zeta function may expressed using the Riemann zeta function
 as `\eta(s) = (1 - 2^{1-s}) \zeta(s)`. It can also be expressed
-in terms of the Hurwitz zeta function (:func:`~mpmath.hurwitz`), for example using
+in terms of the Hurwitz zeta function, for example using
 :func:`~mpmath.dirichlet` (see documentation for that function).
 
 **Examples**

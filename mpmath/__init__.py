@@ -401,6 +401,7 @@ mangoldt = mp.mangoldt
 secondzeta = mp.secondzeta
 nzeros = mp.nzeros
 backlunds = mp.backlunds
+lerchphi = mp.lerchphi
 
 # be careful when changing this name, don't use test*!
 def runtests():
