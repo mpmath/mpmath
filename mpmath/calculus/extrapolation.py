@@ -6,6 +6,11 @@ except ImportError:
 from ..libmp.backend import xrange
 from .calculus import defun
 
+try:
+    next = next
+except NameError:
+    next = lambda _: _.next()
+
 @defun
 def richardson(ctx, seq):
     r"""
@@ -490,7 +495,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
 
             # Get new batch of terms
             try:
-                step = steps.next()
+                step = next(steps)
             except StopIteration:
                 pass
             if verbose:

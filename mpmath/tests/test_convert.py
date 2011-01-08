@@ -45,8 +45,12 @@ def test_str_whitespace():
 
 def test_unicode():
     mp.dps = 15
-    assert mpf(u'2.76') == 2.76
-    assert mpf(u'inf') == inf
+    try:
+        unicode = unicode
+    except NameError:
+        unicode = str
+    assert mpf(unicode('2.76')) == 2.76
+    assert mpf(unicode('inf')) == inf
 
 def test_str_format():
     assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'

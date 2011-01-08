@@ -377,7 +377,7 @@ elif BACKEND == 'sage':
 
 def list_primes(n):
     n = n + 1
-    sieve = range(n)
+    sieve = list(xrange(n))
     sieve[:2] = [0, 0]
     for i in xrange(2, int(n**0.5)+1):
         if sieve[i]:
@@ -389,7 +389,7 @@ if BACKEND == 'sage':
     # Note: it is *VERY* important for performance that we convert
     # the list to Python ints.
     def list_primes(n):
-        return map(int, sage.primes(n+1))
+        return [int(_) for _ in sage.primes(n+1)]
 
 small_odd_primes = (3,5,7,11,13,17,19,23,29,31,37,41,43,47)
 small_odd_primes_set = set(small_odd_primes)
@@ -521,7 +521,7 @@ def eulernum(m, _cache={0:MPZ_ONE}):
         return f
     MAX = MAX_EULER_CACHE
     n = m
-    a = map(MPZ, [0,0,1,0,0,0])
+    a = [MPZ(_) for _ in [0,0,1,0,0,0]]
     for  n in range(1, m+1):
         for j in range(n+1, -1, -2):
             a[j+1] = (j-1)*a[j] + (j+1)*a[j+2]

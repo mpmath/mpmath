@@ -144,6 +144,8 @@ class _mpf(mpnumeric):
     def __complex__(s): return complex(float(s))
     def __nonzero__(s): return s._mpf_ != fzero
 
+    __bool__ = __nonzero__
+
     def __abs__(s):
         cls, new, (prec, rounding) = s._ctxdata
         v = new(cls)
@@ -226,6 +228,8 @@ class _mpf(mpnumeric):
     def to_fixed(self, prec):
         return to_fixed(self._mpf_, prec)
 
+    def __round__(self, *args):
+        return round(float(self), *args)
 
 mpf_binary_op = """
 def %NAME%(self, other):
@@ -419,6 +423,8 @@ class _mpc(mpnumeric):
 
     def __nonzero__(s):
         return mpc_is_nonzero(s._mpc_)
+
+    __bool__ = __nonzero__
 
     def __hash__(s):
         return mpc_hash(s._mpc_)

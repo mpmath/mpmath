@@ -172,7 +172,7 @@ def diff(ctx, f, x, n=1, **options):
     except TypeError:
         pass
     if partial:
-        x = map(ctx.convert, x)
+        x = [ctx.convert(_) for _ in x]
         return _partial_diff(ctx, f, x, orders, options)
     method = options.get('method', 'step')
     if n == 0 and method != 'quad' and not options.get('singular'):

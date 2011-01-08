@@ -115,7 +115,7 @@ def test_householder():
         # similiar to Hilbert matrix
         A = []
         for i in range(1, 13):
-            A.append([1. / (i + j - 1) for j in xrange(1, n + 1)])
+            A.append([1. / (i + j - 1) for j in range(1, n + 1)])
         return matrix(A)
 
     residuals = []

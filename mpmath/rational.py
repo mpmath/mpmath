@@ -47,6 +47,8 @@ class mpq(object):
     def __nonzero__(s):
         return bool(s._mpq_[0])
 
+    __bool__ = __nonzero__
+
     def __hash__(s):
         a, b = s._mpq_
         if b == 1:

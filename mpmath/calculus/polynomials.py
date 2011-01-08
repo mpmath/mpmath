@@ -150,7 +150,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         # Must be monic
         lead = ctx.convert(coeffs[0])
         if lead == 1:
-            coeffs = map(ctx.convert, coeffs)
+            coeffs = [ctx.convert(c) for c in coeffs]
         else:
             coeffs = [c/lead for c in coeffs]
         f = lambda x: ctx.polyval(coeffs, x)

@@ -1215,8 +1215,8 @@ maxterms, or set zeroprec."""
         a = int(a)
         prec = ctx._prec
         xs, ys = libmp.mpc_zetasum(s._mpc_, a, n, derivatives, reflect, prec)
-        xs = map(ctx.make_mpc, xs)
-        ys = map(ctx.make_mpc, ys)
+        xs = [ctx.make_mpc(x) for x in xs]
+        ys = [ctx.make_mpc(y) for y in ys]
         return xs, ys
 
 class PrecisionManager:

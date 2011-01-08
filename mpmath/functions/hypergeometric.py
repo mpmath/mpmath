@@ -199,8 +199,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     z = ctx.convert(z)
     p = len(a_s)
     q = len(b_s)
-    a_s = map(ctx._convert_param, a_s)
-    b_s = map(ctx._convert_param, b_s)
+    a_s = [ctx._convert_param(a) for a in a_s]
+    b_s = [ctx._convert_param(b) for b in b_s]
     # Reduce degree by eliminating common parameters
     if kwargs.get('eliminate', True):
         i = 0
@@ -1006,8 +1006,8 @@ def meijerg(ctx, a_s, b_s, z, r=1, series=None, **kwargs):
     q = m + len(bq)
     a = an+ap
     b = bm+bq
-    a = map(ctx.convert, a)
-    b = map(ctx.convert, b)
+    a = [ctx.convert(_) for _ in a]
+    b = [ctx.convert(_) for _ in b]
     z = ctx.convert(z)
     if series is None:
         if p < q: series = 1
@@ -1252,7 +1252,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
             args = list(args)
         except TypeError:
             args = [args]
-        return map(ctx.convert, args)
+        return [ctx.convert(arg) for arg in args]
     a_s = dict(a)
     b_s = dict(b)
     a_m = parse(a, 'm')

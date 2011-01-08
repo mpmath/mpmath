@@ -450,8 +450,8 @@ class _matrix(object):
             #Rows
             if isinstance(key[0],slice):
                 #Check bounds
-                if (key[0].start >= 0 or key[0].start is None) and \
-                    (key[0].stop <= self.__rows+1 or key[0].stop is None):
+                if (key[0].start is None or key[0].start >= 0) and \
+                    (key[0].stop is None or key[0].stop <= self.__rows+1):
                     # Generate indices
                     rows = xrange(*key[0].indices(self.__rows))
                 else:
@@ -463,8 +463,8 @@ class _matrix(object):
             # Columns
             if isinstance(key[1],slice):
                 # Check bounds
-                if (key[1].start >= 0 or key[1].start is None) and \
-                    (key[1].stop <= self.__cols+1 or key[1].stop is None):
+                if (key[1].start is None or key[1].start >= 0) and \
+                    (key[1].stop is None or key[1].stop <= self.__cols+1):
                     # Generate indices
                     columns = xrange(*key[1].indices(self.__cols))
                 else:
@@ -514,8 +514,8 @@ class _matrix(object):
             # Rows
             if isinstance(key[0],slice):
                 # Check bounds
-                if (key[0].start >= 0 or key[0].start is None) and \
-                    (key[0].stop <= self.__rows+1 or key[0].stop is None):
+                if (key[0].start is None or key[0].start >= 0) and \
+                    (key[0].stop is None or key[0].stop <= self.__rows+1):
                     # generate row indices
                     rows = xrange(*key[0].indices(self.__rows))
                 else:
@@ -526,8 +526,8 @@ class _matrix(object):
             # Columns
             if isinstance(key[1],slice):
                 # Check bounds
-                if (key[1].start >= 0 or key[1].start is None) and \
-                    (key[1].stop <= self.__cols+1 or key[1].stop is None):
+                if (key[1].start is None or key[1].start >= 0) and \
+                    (key[1].stop is None or key[1].stop <= self.__cols+1):
                     # Generate column indices
                     columns = xrange(*key[1].indices(self.__cols))
                 else:
@@ -682,7 +682,7 @@ class _matrix(object):
         return self.__rows
 
     def __setrows(self, value):
-        for key in self.__data.copy().iterkeys():
+        for key in self.__data.copy():
             if key[0] >= value:
                 del self.__data[key]
         self.__rows = value
@@ -693,7 +693,7 @@ class _matrix(object):
         return self.__cols
 
     def __setcols(self, value):
-        for key in self.__data.copy().iterkeys():
+        for key in self.__data.copy():
             if key[1] >= value:
                 del self.__data[key]
         self.__cols = value

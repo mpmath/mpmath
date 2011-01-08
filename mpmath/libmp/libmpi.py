@@ -3,6 +3,8 @@ Computational functions for interval arithmetic.
 
 """
 
+from .backend import xrange
+
 from .libmpf import (
     ComplexResult,
     round_down, round_up, round_floor, round_ceiling, round_nearest,
