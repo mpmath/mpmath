@@ -438,7 +438,7 @@ def Pegasus(*args, **kwargs):
     return Illinois(*args, **kwargs)
 
 def Anderson(*args, **kwargs):
-    u"""
+    """
     1d-solver generating pairs of approximative root and error.
 
     Uses Anderson-Bjoerk method to find a root of f in [a, b].
