@@ -1,4 +1,4 @@
-__version__ = '0.16'
+__version__ = '0.17-svn'
 
 from usertools import monitor, timing
 
