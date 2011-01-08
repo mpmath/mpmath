@@ -1,4 +1,4 @@
-from functions import defun, defun_wrapped
+from .functions import defun, defun_wrapped
 
 @defun
 def qp(ctx, a, q=None, n=None, **kwargs):

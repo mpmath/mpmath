@@ -12,9 +12,9 @@ see libmpc and libmpi.
 import math
 from bisect import bisect
 
-from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE, BACKEND
+from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE, BACKEND
 
-from libmpf import (
+from .libmpf import (
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
     ComplexResult,
@@ -29,7 +29,7 @@ from libmpf import (
     isqrt_fast
 )
 
-from libintmath import ifib
+from .libintmath import ifib
 
 
 #-------------------------------------------------------------------------------

@@ -2,9 +2,9 @@
 Low-level functions for complex arithmetic.
 """
 
-from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, BACKEND
+from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, BACKEND
 
-from libmpf import (\
+from .libmpf import (\
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast, bitcount,
     bctable, normalize, normalize1, reciprocal_rnd, rshift, lshift, giant_steps,
@@ -18,7 +18,7 @@ from libmpf import (\
     ComplexResult
 )
 
-from libelefun import (\
+from .libelefun import (\
     mpf_pi, mpf_exp, mpf_log, mpf_cos_sin, mpf_cosh_sinh, mpf_tan, mpf_pow_int,
     mpf_log_hypot,
     mpf_cos_sin_pi, mpf_phi,

@@ -15,7 +15,7 @@ For n > 400 000 000 we apply the method of Turing, as complemented by
 Lehman, Brent and Trudgian  to find a suitable B.
 """
 
-from functions import defun, defun_wrapped
+from .functions import defun, defun_wrapped
 
 def find_rosser_block_zero(ctx, n):
     """for n<400 000 000 determines a block were one find our zero"""

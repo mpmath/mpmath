@@ -1,5 +1,4 @@
-from functions import defun, defun_wrapped, defun_static
-
+from .functions import defun, defun_wrapped, defun_static
 
 @defun
 def stieltjes(ctx, n, a=1):

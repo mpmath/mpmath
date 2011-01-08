@@ -8,11 +8,11 @@ import re
 
 from string import strip
 
-from ctx_base import StandardBaseContext
+from .ctx_base import StandardBaseContext
 
-import libmp
+from . import libmp
 
-from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
+from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
@@ -35,8 +35,8 @@ from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     mpf_glaisher, mpf_twinprime, mpf_mertens,
     int_types)
 
-import function_docs
-import rational
+from . import function_docs
+from . import rational
 
 new = object.__new__
 
@@ -49,10 +49,10 @@ try:
     # pickle hack
     import sage.libs.mpmath.ext_main as _mpf_module
 except ImportError:
-    from ctx_mp_python import PythonMPContext as BaseMPContext
-    import ctx_mp_python as _mpf_module
+    from .ctx_mp_python import PythonMPContext as BaseMPContext
+    from . import ctx_mp_python as _mpf_module
 
-from ctx_mp_python import _mpf, _mpc, mpnumeric
+from .ctx_mp_python import _mpf, _mpc, mpnumeric
 
 class MPContext(BaseMPContext, StandardBaseContext):
     """

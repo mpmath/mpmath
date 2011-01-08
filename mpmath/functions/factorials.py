@@ -1,4 +1,4 @@
-from functions import defun, defun_wrapped
+from .functions import defun, defun_wrapped
 
 @defun
 def gammaprod(ctx, a, b, _infsign=False):

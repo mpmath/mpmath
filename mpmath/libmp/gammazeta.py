@@ -15,11 +15,11 @@ This module implements gamma- and zeta-related functions:
 
 import math
 
-from backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
+from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
 
-from libintmath import list_primes, ifac, ifac2, moebius
+from .libintmath import list_primes, ifac, ifac2, moebius
 
-from libmpf import (\
+from .libmpf import (\
     round_floor, round_ceiling, round_down, round_up,
     round_nearest, round_fast,
     lshift, sqrt_fixed, isqrt_fast,
@@ -33,7 +33,7 @@ from libmpf import (\
     bitcount, to_float, mpf_floor, mpf_sign, ComplexResult
 )
 
-from libelefun import (\
+from .libelefun import (\
     constant_memo,
     def_mpf_constant,
     mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
@@ -43,7 +43,7 @@ from libelefun import (\
     cos_sin_fixed, exp_fixed
 )
 
-from libmpc import (\
+from .libmpc import (\
     mpc_zero, mpc_one, mpc_half, mpc_two,
     mpc_abs, mpc_shift, mpc_pos, mpc_neg,
     mpc_add, mpc_sub, mpc_mul, mpc_div,

@@ -1,10 +1,10 @@
 __version__ = '0.17-svn'
 
-from usertools import monitor, timing
+from .usertools import monitor, timing
 
-from ctx_fp import FPContext
-from ctx_mp import MPContext
-from ctx_iv import MPIntervalContext
+from .ctx_fp import FPContext
+from .ctx_mp import MPContext
+from .ctx_iv import MPIntervalContext
 
 fp = FPContext()
 mp = MPContext()
@@ -20,7 +20,7 @@ fp._iv = iv
 iv._iv = iv
 
 # XXX: extremely bad pickle hack
-import ctx_mp as _ctx_mp
+from . import ctx_mp as _ctx_mp
 _ctx_mp._mpf_module.mpf = mp.mpf
 _ctx_mp._mpf_module.mpc = mp.mpc
 

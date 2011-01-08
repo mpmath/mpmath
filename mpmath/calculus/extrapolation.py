@@ -1,5 +1,6 @@
-from calculus import defun
 from itertools import izip
+
+from .calculus import defun
 
 @defun
 def richardson(ctx, seq):

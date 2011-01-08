@@ -12,10 +12,10 @@ from bisect import bisect
 #from random import getrandbits
 getrandbits = None
 
-from backend import (MPZ, MPZ_TYPE, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
+from .backend import (MPZ, MPZ_TYPE, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
     BACKEND, STRICT, gmpy, sage, sage_utils)
 
-from libintmath import (giant_steps,
+from .libintmath import (giant_steps,
     trailtable, bctable, lshift, rshift, bitcount, trailing,
     sqrt_fixed, numeral, isqrt, isqrt_fast, sqrtrem,
     bin_to_radix)
@@ -1118,7 +1118,7 @@ def to_digits_exp(s, dps):
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
     if abs(exp_from_1) > 3500:
-        from libelefun import mpf_ln2, mpf_ln10
+        from .libelefun import mpf_ln2, mpf_ln10
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten

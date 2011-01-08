@@ -9,7 +9,7 @@ here from settings.py
 import math
 from bisect import bisect
 
-from backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
+from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
 def giant_steps(start, target, n=2):
     """

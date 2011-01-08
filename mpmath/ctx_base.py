@@ -1,18 +1,18 @@
 from operator import gt, lt
 
-from functions.functions import SpecialFunctions
-from functions.rszeta import RSCache
-from calculus.quadrature import QuadratureMethods
-from calculus.calculus import CalculusMethods
-from calculus.optimization import OptimizationMethods
-from calculus.odes import ODEMethods
-from matrices.matrices import MatrixMethods
-from matrices.calculus import MatrixCalculusMethods
-from matrices.linalg import LinearAlgebraMethods
-from identification import IdentificationMethods
-from visualization import VisualizationMethods
+from .functions.functions import SpecialFunctions
+from .functions.rszeta import RSCache
+from .calculus.quadrature import QuadratureMethods
+from .calculus.calculus import CalculusMethods
+from .calculus.optimization import OptimizationMethods
+from .calculus.odes import ODEMethods
+from .matrices.matrices import MatrixMethods
+from .matrices.calculus import MatrixCalculusMethods
+from .matrices.linalg import LinearAlgebraMethods
+from .identification import IdentificationMethods
+from .visualization import VisualizationMethods
 
-import libmp
+from . import libmp
 
 class Context(object):
     pass

@@ -1,7 +1,8 @@
 import operator
-import libmp
 
-from libmp import (
+from . import libmp
+
+from .libmp import (
     int_types, MPZ_ONE,
     prec_to_dps, dps_to_prec, repr_dps,
     round_floor, round_ceiling,
@@ -18,7 +19,7 @@ from libmp import (
 
 mpi_zero = (fzero, fzero)
 
-from ctx_base import StandardBaseContext
+from .ctx_base import StandardBaseContext
 
 new = object.__new__
 

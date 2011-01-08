@@ -1,6 +1,6 @@
 #from ctx_base import StandardBaseContext
 
-from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
+from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
@@ -23,8 +23,8 @@ from libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     mpf_glaisher, mpf_twinprime, mpf_mertens,
     int_types)
 
-import rational
-import function_docs
+from . import rational
+from . import function_docs
 
 new = object.__new__
 

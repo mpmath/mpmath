@@ -1,4 +1,4 @@
-from calculus import defun
+from .calculus import defun
 
 #----------------------------------------------------------------------------#
 #                                Differentiation                             #
