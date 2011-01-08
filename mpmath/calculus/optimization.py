@@ -344,7 +344,7 @@ def _getm(method):
             else:
                 return 0.5
     else:
-        raise ValueError, "method '%s' not recognized" % method
+        raise ValueError("method '%s' not recognized" % method)
     return getm
 
 class Illinois:
