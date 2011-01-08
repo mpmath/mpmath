@@ -256,7 +256,7 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         while 1:
             ser, xa, xb = series_data[-1]
             if verbose:
-                print "Computing Taylor series for [%f, %f]" % (xa, xb)
+                print("Computing Taylor series for [%f, %f]" % (xa, xb))
             y = mpolyval(ser, xb-xa)
             xa = xb
             ser, xb = ode_taylor(ctx, F, xb, y, tol_prec, degree)

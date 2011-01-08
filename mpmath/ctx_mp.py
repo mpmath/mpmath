@@ -486,8 +486,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
                     if err < (-prec):
                         break
                     if verbose:
-                        print "autoprec: target=%s, prec=%s, accuracy=%s" \
-                            % (prec, prec2, -err)
+                        print("autoprec: target=%s, prec=%s, accuracy=%s" \
+                            % (prec, prec2, -err))
                     v1 = v2
                     if prec2 >= maxprec2:
                         raise ctx.NoConvergence(\

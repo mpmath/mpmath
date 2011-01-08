@@ -173,7 +173,7 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
                 v = (0.5, 0.5, 0.5)
             w[n,m] = v
         if verbose:
-            print n, "of", N
+            print(n, "of", N)
     rea, reb, ima, imb = map(float, [rea, reb, ima, imb])
     axes.imshow(w, extent=(rea, reb, ima, imb), origin='lower')
     axes.set_xlabel('Re(z)')

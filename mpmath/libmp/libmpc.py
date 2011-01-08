@@ -823,4 +823,4 @@ if BACKEND == 'sage':
         mpc_exp = _lbmp.mpc_exp
         mpc_sqrt = _lbmp.mpc_sqrt
     except (ImportError, AttributeError):
-        print "Warning: Sage imports in libmpc failed"
+        print("Warning: Sage imports in libmpc failed")

@@ -225,19 +225,19 @@ class QuadratureRule(object):
             for degree in xrange(1, max_degree+1):
                 nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
-                    print "Integrating from %s to %s (degree %s of %s)" % \
-                        (ctx.nstr(a), ctx.nstr(b), degree, max_degree)
+                    print("Integrating from %s to %s (degree %s of %s)" % \
+                        (ctx.nstr(a), ctx.nstr(b), degree, max_degree))
                 results.append(self.sum_next(f, nodes, degree, prec, results, verbose))
                 if degree > 1:
                     err = self.estimate_error(results, prec, epsilon)
                     if err <= epsilon:
                         break
                     if verbose:
-                        print "Estimated error:", ctx.nstr(err)
+                        print("Estimated error:", ctx.nstr(err))
             I += results[-1]
         if err > epsilon:
             if verbose:
-                print "Failed to reach full accuracy. Estimated error:", ctx.nstr(err)
+                print("Failed to reach full accuracy. Estimated error:", ctx.nstr(err))
         return I, err
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
@@ -374,7 +374,7 @@ class TanhSinh(QuadratureRule):
                 # Note: the number displayed is rather arbitrary. Should
                 # figure out how to print something that looks more like a
                 # percentage
-                print "Calculating nodes:", ctx.nstr(-ctx.log(diff, 10) / prec)
+                print("Calculating nodes:", ctx.nstr(-ctx.log(diff, 10) / prec))
 
         ctx.prec -= extra
         return nodes
@@ -445,7 +445,7 @@ class GaussLegendre(QuadratureRule):
             x = r
             w = 2/((1-r**2)*t4**2)
             if verbose  and j % 30 == 15:
-                print "Computing nodes (%i of %i)" % (j, upto)
+                print("Computing nodes (%i of %i)" % (j, upto))
             nodes.append((x, w))
             nodes.append((-x, w))
         ctx.prec = orig

@@ -552,11 +552,11 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
             try:   #  py2.4 compatible try block
                 try:
                     if verbose:
-                        print "zeta: Attempting to use the Riemann-Siegel algorithm"
+                        print("zeta: Attempting to use the Riemann-Siegel algorithm")
                     return ctx.rs_zeta(s, derivative, **kwargs)
                 except NotImplementedError:
                     if verbose:
-                        print "zeta: Could not use the Riemann-Siegel algorithm"
+                        print("zeta: Could not use the Riemann-Siegel algorithm")
                     pass
             finally:
                 ctx.prec = prec
@@ -586,23 +586,23 @@ def _hurwitz(ctx, s, a=1, d=0, **kwargs):
         a, atype = ctx._convert_param(a)
         if ctx.re(s) < 0:
             if verbose:
-                print "zeta: Attempting reflection formula"
+                print("zeta: Attempting reflection formula")
             try:
                 return _hurwitz_reflection(ctx, s, a, d, atype)
             except NotImplementedError:
                 pass
             if verbose:
-                print "zeta: Reflection formula failed"
+                print("zeta: Reflection formula failed")
         if verbose:
-            print "zeta: Using the Euler-Maclaurin algorithm"
+            print("zeta: Using the Euler-Maclaurin algorithm")
         while 1:
             ctx.prec = prec + extraprec
             T1, T2 = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
             cancellation = ctx.mag(T1) - ctx.mag(T1+T2)
             if verbose:
-                print "Term 1:", T1
-                print "Term 2:", T2
-                print "Cancellation:", cancellation, "bits"
+                print("Term 1:", T1)
+                print("Term 2:", T2)
+                print("Cancellation:", cancellation, "bits")
             if cancellation < extraprec:
                 return T1 + T2
             else:
@@ -719,7 +719,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 return lsum, (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
         if verbose:
-            print "Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol
+            print("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
         M1, M2 = M2, M2*2
         if ctx.re(s) < 0:
             N += N//2
@@ -1031,12 +1031,12 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         err = r1+r2+r4
         t = t1-t2+t3-t4
         if kwargs.get("verbose"):
-            print 'main term =', t1
-            print '    computed using', gt, 'zeros of zeta'
-            print 'prime term =', t2
-            print '    computed using', pt, 'values of the von Mangoldt function'
-            print 'exponential term =', t3
-            print 'singular term =', t4
+            print('main term =', t1)
+            print('    computed using', gt, 'zeros of zeta')
+            print('prime term =', t2)
+            print('    computed using', pt, 'values of the von Mangoldt function')
+            print('exponential term =', t3)
+            print('singular term =', t4)
     finally:
         ctx.prec = prec
     if kwargs.get("error"):

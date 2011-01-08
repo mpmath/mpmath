@@ -135,7 +135,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     assert prec >= 53
 
     if verbose and prec // max(2,n) < 5:
-        print "Warning: precision for PSLQ may be too low"
+        print("Warning: precision for PSLQ may be too low")
 
     target = int(prec * 0.75)
 
@@ -148,7 +148,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     prec += extra
 
     if verbose:
-        print "PSLQ using prec %i and tol %s" % (prec, ctx.nstr(tol))
+        print("PSLQ using prec %i and tol %s" % (prec, ctx.nstr(tol)))
 
     tol = ctx.to_fixed(tol, prec)
     assert tol
@@ -165,7 +165,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         raise ValueError("PSLQ requires a vector of nonzero numbers")
     if minx < tol//100:
         if verbose:
-            print "STOPPING: (one number is too small)"
+            print("STOPPING: (one number is too small)")
         return None
 
     g = sqrt_fixed((4<<prec)//3, prec)
@@ -282,8 +282,8 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 range(1,n+1)]
                 if max(abs(v) for v in vec) < maxcoeff:
                     if verbose:
-                        print "FOUND relation at iter %i/%i, error: %s" % \
-                            (REP, maxsteps, ctx.nstr(err / ctx.mpf(2)**prec, 1))
+                        print("FOUND relation at iter %i/%i, error: %s" % \
+                            (REP, maxsteps, ctx.nstr(err / ctx.mpf(2)**prec, 1)))
                     return vec
             best_err = min(err, best_err)
         # Calculate a lower bound for the norm. We could do this
@@ -296,13 +296,13 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         else:
             norm = ctx.inf
         if verbose:
-            print "%i/%i:  Error: %8s   Norm: %s" % \
-                (REP, maxsteps, ctx.nstr(best_err / ctx.mpf(2)**prec, 1), norm)
+            print("%i/%i:  Error: %8s   Norm: %s" % \
+                (REP, maxsteps, ctx.nstr(best_err / ctx.mpf(2)**prec, 1), norm))
         if norm >= maxcoeff:
             break
     if verbose:
-        print "CANCELLING after step %i/%i." % (REP, maxsteps)
-        print "Could not find an integer relation. Norm bound: %s" % norm
+        print("CANCELLING after step %i/%i." % (REP, maxsteps))
+        print("Could not find an integer relation. Norm bound: %s" % norm)
     return None
 
 def findpoly(ctx, x, n=1, **kwargs):
@@ -741,7 +741,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     solutions = []
 
     def addsolution(s):
-        if verbose: print "Found: ", s
+        if verbose: print("Found: ", s)
         solutions.append(s)
 
     x = ctx.mpf(x)
@@ -808,7 +808,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
                 if not full: return solutions[0]
 
             if verbose:
-                print "."
+                print(".")
 
     # Check for a direct multiplicative formula
     if x != 1:

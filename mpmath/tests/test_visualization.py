@@ -15,7 +15,7 @@ def test_axes():
             raise ImportError
         import pylab
     except ImportError:
-        print "\nSkipping test (pylab not available or too old version)\n"
+        print("\nSkipping test (pylab not available or too old version)\n")
         return
     fig = pylab.figure()
     axes = fig.add_subplot(111)

@@ -409,7 +409,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
                 term = (db-da) * ctx.bernoulli(k+1) / ctx.factorial(k+1)
                 mag = abs(term)
                 if verbose:
-                    print "term", k, "magnitude =", ctx.nstr(mag)
+                    print("term", k, "magnitude =", ctx.nstr(mag))
                 if k > 4 and mag < tol:
                     s += term
                     break
@@ -418,7 +418,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
                     if _fast_abort:
                         return [s, (s, err)][error]
                     if verbose:
-                        print "Failed to converge"
+                        print("Failed to converge")
                     break
                 else:
                     s += term
@@ -428,13 +428,13 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
         if b != ctx.inf: s += f(b)/2
         # Tail integral
         if verbose:
-            print "Integrating f(x) from x = %s to %s" % (ctx.nstr(a), ctx.nstr(b))
+            print("Integrating f(x) from x = %s to %s" % (ctx.nstr(a), ctx.nstr(b)))
         if integral:
             s += integral
         else:
             integral, ierr = ctx.quad(f, interval, error=True)
             if verbose:
-                print "Integration error:", ierr
+                print("Integration error:", ierr)
             s += integral
             err += ierr
     finally:
@@ -490,8 +490,8 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             except StopIteration:
                 pass
             if verbose:
-                print "-"*70
-                print "Adding terms #%i-#%i" % (index, index+step)
+                print("-"*70)
+                print("Adding terms #%i-#%i" % (index, index+step))
             update(partial, xrange(index, index+step))
             index += step
 
@@ -499,7 +499,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             best = partial[-1]
             error = abs(best - partial[-2])
             if verbose:
-                print "Direct error: %s" % ctx.nstr(error)
+                print("Direct error: %s" % ctx.nstr(error))
             if error <= tol:
                 return best
 
@@ -509,7 +509,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 # Convergence
                 richardson_error = abs(value - last_richardson_value)
                 if verbose:
-                    print "Richardson error: %s" % ctx.nstr(richardson_error)
+                    print("Richardson error: %s" % ctx.nstr(richardson_error))
                 # Convergence
                 if richardson_error <= tol:
                     return value
@@ -517,7 +517,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 # Unreliable due to cancellation
                 if ctx.eps*maxc > tol:
                     if verbose:
-                        print "Ran out of precision for Richardson"
+                        print("Ran out of precision for Richardson")
                     TRY_RICHARDSON = False
                 if richardson_error < error:
                     error = richardson_error
@@ -532,12 +532,12 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                     est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
                     shanks_error = abs(est1-est2)
                 if verbose:
-                    print "Shanks error: %s" % ctx.nstr(shanks_error)
+                    print("Shanks error: %s" % ctx.nstr(shanks_error))
                 if shanks_error <= tol:
                     return est1
                 if ctx.eps*maxc > tol:
                     if verbose:
-                        print "Ran out of precision for Shanks"
+                        print("Ran out of precision for Shanks")
                     TRY_SHANKS = False
                 if shanks_error < error:
                     error = shanks_error
@@ -553,7 +553,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                     value, em_error = emfun(index, tol)
                     value += partial[-1]
                     if verbose:
-                        print "Euler-Maclaurin error: %s" % ctx.nstr(em_error)
+                        print("Euler-Maclaurin error: %s" % ctx.nstr(em_error))
                     if em_error <= tol:
                         return value
                     if em_error < error:
@@ -563,7 +563,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     if strict:
         raise ctx.NoConvergence
     if verbose:
-        print "Warning: failed to converge to target accuracy"
+        print("Warning: failed to converge to target accuracy")
     return best
 
 @defun

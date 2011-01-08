@@ -433,11 +433,11 @@ def doctests():
         if filter:
             if not sum([pat in obj for pat in filter]):
                 continue
-        print obj,
+        sys.stdout.write(str(obj) + " ")
         t1 = clock()
         doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
         t2 = clock()
-        print round(t2-t1, 3)
+        print(round(t2-t1, 3))
 
 if __name__ == '__main__':
     doctests()

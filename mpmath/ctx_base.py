@@ -55,7 +55,7 @@ class StandardBaseContext(Context,
     verbose = False
 
     def warn(ctx, msg):
-        print "Warning:", msg
+        print("Warning:", msg)
 
     def bad_domain(ctx, msg):
         raise ValueError(msg)
@@ -116,7 +116,7 @@ class StandardBaseContext(Context,
         """
         Equivalent to ``print nstr(x, n)``.
         """
-        print ctx.nstr(x, n, **kwargs)
+        print(ctx.nstr(x, n, **kwargs))
 
     def chop(ctx, x, tol=None):
         """
