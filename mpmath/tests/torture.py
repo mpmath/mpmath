@@ -55,6 +55,7 @@ if not sys.argv[-1].endswith(".py"):
     filt = sys.argv[-1]
 
 from mpmath import *
+from mpmath.libmp.backend import exec_
 
 def test_asymp(f, maxdps=150, verbose=False, huge_range=False):
     dps = [5,15,25,50,90,150,500,1500,5000,10000]
@@ -208,7 +209,7 @@ def testit(line):
     if filt in line:
         print(line)
         t1 = clock()
-        exec line
+        exec_(line)
         t2 = clock()
         elapsed = t2-t1
         print("Time:", elapsed, "for", line, "(OK)")

@@ -8,7 +8,7 @@ cases are also provided.
 import operator
 import math
 
-from .backend import MPZ_ZERO, MPZ_ONE, BACKEND, xrange
+from .backend import MPZ_ZERO, MPZ_ONE, BACKEND, xrange, exec_
 
 from .libintmath import gcd
 
@@ -301,9 +301,9 @@ def make_hyp_summator(key):
 
     namespace = {}
 
-    exec source in globals(), namespace
-    #print source
+    exec_(source, globals(), namespace)
 
+    #print source
     return source, namespace[fname]
 
 

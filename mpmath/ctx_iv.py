@@ -2,6 +2,8 @@ import operator
 
 from . import libmp
 
+from .libmp.backend import basestring
+
 from .libmp import (
     int_types, MPZ_ONE,
     prec_to_dps, dps_to_prec, repr_dps,

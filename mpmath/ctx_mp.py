@@ -6,9 +6,9 @@ __docformat__ = 'plaintext'
 
 import re
 
-from string import strip
-
 from .ctx_base import StandardBaseContext
+
+from .libmp.backend import basestring
 
 from . import libmp
 
@@ -76,10 +76,18 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx._init_aliases()
 
         # XXX: automate
-        ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
-        ctx.primepi.im_func.func_doc = function_docs.primepi
-        ctx.psi.im_func.func_doc = function_docs.psi
-        ctx.atan2.im_func.func_doc = function_docs.atan2
+        try:
+            ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
+            ctx.primepi.im_func.func_doc = function_docs.primepi
+            ctx.psi.im_func.func_doc = function_docs.psi
+            ctx.atan2.im_func.func_doc = function_docs.atan2
+        except AttributeError:
+            # python 3
+            ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
+            ctx.primepi.__func__.func_doc = function_docs.primepi
+            ctx.psi.__func__.func_doc = function_docs.psi
+            ctx.atan2.__func__.func_doc = function_docs.atan2
+
         ctx.digamma.func_doc = function_docs.digamma
         ctx.cospi.func_doc = function_docs.cospi
         ctx.sinpi.func_doc = function_docs.sinpi

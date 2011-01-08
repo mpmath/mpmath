@@ -22,16 +22,24 @@ gmpy = None
 sage = None
 sage_utils = None
 
-BACKEND = 'python'
 try:
-    MPZ = long
+    xrange
+    python3 = False
 except NameError:
-    MPZ = int
+    python3 = True
 
-try:
+BACKEND = 'python'
+
+if not python3:
+    MPZ = long
     xrange = xrange
-except NameError:
+    basestring = basestring
+    from .exec_py2 import exec_
+else:
+    MPZ = int
     xrange = range
+    basestring = str
+    from .exec_py3 import exec_
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
