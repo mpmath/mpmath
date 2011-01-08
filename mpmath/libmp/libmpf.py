@@ -239,12 +239,17 @@ def _normalize1(sign, man, exp, bc, prec, rnd):
         bc = 1
     return sign, man, exp, bc
 
+try:
+    _exp_types = (int, long)
+except NameError:
+    _exp_types = (int,)
+
 def strict_normalize(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MPZ_TYPE
-    assert type(bc) in (int, long)
-    assert type(exp) in (int, long)
+    assert type(bc) in _exp_types
+    assert type(exp) in _exp_types
     assert bc == bitcount(man)
     return _normalize(sign, man, exp, bc, prec, rnd)
 
@@ -252,8 +257,8 @@ def strict_normalize1(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
     assert type(man) == MPZ_TYPE
-    assert type(bc) in (int, long)
-    assert type(exp) in (int, long)
+    assert type(bc) in _exp_types
+    assert type(exp) in _exp_types
     assert bc == bitcount(man)
     assert (not man) or (man & 1)
     return _normalize1(sign, man, exp, bc, prec, rnd)
