@@ -410,7 +410,7 @@ def runtests():
     """
     import os.path
     from inspect import getsourcefile
-    import tests.runtests as tests
+    from .tests import runtests as tests
     testdir = os.path.dirname(os.path.abspath(getsourcefile(tests)))
     importdir = os.path.abspath(testdir + '/../..')
     tests.testit(importdir, testdir)
