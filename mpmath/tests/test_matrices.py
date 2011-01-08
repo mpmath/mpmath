@@ -2,7 +2,7 @@ from mpmath import *
 
 def test_matrix_basic():
     A1 = matrix(3)
-    for i in xrange(3):
+    for i in range(3):
         A1[i,i] = 1
     assert A1 == eye(3)
     assert A1 == matrix(A1)

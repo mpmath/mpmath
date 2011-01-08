@@ -9,6 +9,7 @@ here from settings.py
 import math
 from bisect import bisect
 
+from .backend import xrange
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
 def giant_steps(start, target, n=2):
@@ -114,8 +115,8 @@ if BACKEND == 'gmpy' and 'bit_length' in dir(gmpy):
     bitcount = gmpy.bit_length
 
 # Used to avoid slow function calls as far as possible
-trailtable = map(trailing, range(256))
-bctable = map(bitcount, range(1024))
+trailtable = [trailing(n) for n in range(256)]
+bctable = [bitcount(n) for n in range(1024)]
 
 # TODO: speed up for bases 2, 4, 8, 16, ...
 

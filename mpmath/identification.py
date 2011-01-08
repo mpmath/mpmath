@@ -3,6 +3,7 @@ Implements the PSLQ algorithm for integer relation detection,
 and derivative algorithms for constant recognition.
 """
 
+from .libmp.backend import xrange
 from .libmp import int_types, sqrt_fixed
 
 # round to nearest integer (can be done more elegantly...)

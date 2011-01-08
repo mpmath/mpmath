@@ -8,7 +8,7 @@ cases are also provided.
 import operator
 import math
 
-from .backend import MPZ_ZERO, MPZ_ONE, BACKEND
+from .backend import MPZ_ZERO, MPZ_ONE, BACKEND, xrange
 
 from .libintmath import gcd
 

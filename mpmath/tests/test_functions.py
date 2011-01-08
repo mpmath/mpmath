@@ -568,7 +568,7 @@ def test_root():
         mp.rounding = rnd
         for n in [-5, -3, 3, 5]:
             prec = 50
-            for i in xrange(10):
+            for i in range(10):
                 mp.prec = prec
                 a = rand()
                 mp.prec = 2*prec

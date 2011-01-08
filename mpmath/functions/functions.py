@@ -1,3 +1,5 @@
+from ..libmp.backend import xrange
+
 class SpecialFunctions(object):
     """
     This class implements special functions using high-level code.

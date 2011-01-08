@@ -3,6 +3,7 @@ try:
 except ImportError:
     izip = zip
 
+from ..libmp.backend import xrange
 from .calculus import defun
 
 @defun

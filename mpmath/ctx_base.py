@@ -1,5 +1,7 @@
 from operator import gt, lt
 
+from .libmp.backend import xrange
+
 from .functions.functions import SpecialFunctions
 from .functions.rszeta import RSCache
 from .calculus.quadrature import QuadratureMethods

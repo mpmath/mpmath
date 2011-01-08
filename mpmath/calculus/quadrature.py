@@ -1,5 +1,7 @@
 import math
 
+from ..libmp.backend import xrange
+
 class QuadratureRule(object):
     """
     Quadrature rules are implemented using this class, in order to

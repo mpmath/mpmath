@@ -15,6 +15,7 @@ This module implements gamma- and zeta-related functions:
 
 import math
 
+from .backend import xrange
 from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
 
 from .libintmath import list_primes, ifac, ifac2, moebius

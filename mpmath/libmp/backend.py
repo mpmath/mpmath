@@ -28,6 +28,11 @@ try:
 except NameError:
     MPZ = int
 
+try:
+    xrange = xrange
+except NameError:
+    xrange = range
+
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
         try:
