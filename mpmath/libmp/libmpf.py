@@ -41,6 +41,11 @@ def from_pickable(x):
 class ComplexResult(ValueError):
     pass
 
+try:
+    intern
+except NameError:
+    intern = lambda x: x
+
 # All supported rounding modes
 round_nearest = intern('n')
 round_floor = intern('f')
