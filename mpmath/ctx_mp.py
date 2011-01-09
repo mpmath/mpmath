@@ -738,19 +738,19 @@ maxterms, or set zeroprec."""
         Negating with and without roundoff::
 
             >>> n = 200000000000000000000001
-            >>> print int(-mpf(n))
+            >>> print(int(-mpf(n)))
             -200000000000000016777216
-            >>> print int(fneg(n))
+            >>> print(int(fneg(n)))
             -200000000000000016777216
-            >>> print int(fneg(n, prec=log(n,2)+1))
+            >>> print(int(fneg(n, prec=log(n,2)+1)))
             -200000000000000000000001
-            >>> print int(fneg(n, dps=log(n,10)+1))
+            >>> print(int(fneg(n, dps=log(n,10)+1)))
             -200000000000000000000001
-            >>> print int(fneg(n, prec=inf))
+            >>> print(int(fneg(n, prec=inf)))
             -200000000000000000000001
-            >>> print int(fneg(n, dps=inf))
+            >>> print(int(fneg(n, dps=inf)))
             -200000000000000000000001
-            >>> print int(fneg(n, exact=True))
+            >>> print(int(fneg(n, exact=True)))
             -200000000000000000000001
 
         """
@@ -802,11 +802,11 @@ maxterms, or set zeroprec."""
         arithmetic with finite precision::
 
             >>> x, y = mpf(2), mpf('1e-1000')
-            >>> print x + y - x
+            >>> print(x + y - x)
             0.0
-            >>> print fadd(x, y, prec=inf) - x
+            >>> print(fadd(x, y, prec=inf) - x)
             1.0e-1000
-            >>> print fadd(x, y, exact=True) - x
+            >>> print(fadd(x, y, exact=True) - x)
             1.0e-1000
 
         Exact addition can be inefficient and may be impossible to perform
@@ -868,11 +868,11 @@ maxterms, or set zeroprec."""
         arithmetic with finite precision::
 
             >>> x, y = mpf(2), mpf('1e1000')
-            >>> print x - y + y
+            >>> print(x - y + y)
             0.0
-            >>> print fsub(x, y, prec=inf) + y
+            >>> print(fsub(x, y, prec=inf) + y)
             2.0
-            >>> print fsub(x, y, exact=True) + y
+            >>> print(fsub(x, y, exact=True) + y)
             2.0
 
         Exact addition can be inefficient and may be impossible to perform
@@ -924,17 +924,17 @@ maxterms, or set zeroprec."""
         Avoiding roundoff::
 
             >>> x, y = 10**10+1, 10**15+1
-            >>> print x*y
+            >>> print(x*y
             10000000001000010000000001
-            >>> print mpf(x) * mpf(y)
+            >>> print(mpf(x) * mpf(y))
             1.0000000001e+25
-            >>> print int(mpf(x) * mpf(y))
+            >>> print(int(mpf(x) * mpf(y)))
             10000000001000011026399232
-            >>> print int(fmul(x, y))
+            >>> print(int(fmul(x, y)))
             10000000001000011026399232
-            >>> print int(fmul(x, y, dps=25))
+            >>> print(int(fmul(x, y, dps=25)))
             10000000001000010000000001
-            >>> print int(fmul(x, y, exact=True))
+            >>> print(int(fmul(x, y, exact=True)))
             10000000001000010000000001
 
         Exact multiplication with complex numbers can be inefficient and may
@@ -1045,23 +1045,29 @@ maxterms, or set zeroprec."""
 
             >>> from mpmath import *
             >>> n, d = nint_distance(5)
-            >>> print n, d
-            5 -inf
+            >>> print(n); print(d)
+            5
+            -inf
             >>> n, d = nint_distance(mpf(5))
-            >>> print n, d
-            5 -inf
+            >>> print(n); print(d)
+            5
+            -inf
             >>> n, d = nint_distance(mpf(5.00000001))
-            >>> print n, d
-            5 -26
+            >>> print(n); print(d)
+            5
+            -26
             >>> n, d = nint_distance(mpf(4.99999999))
-            >>> print n, d
-            5 -26
+            >>> print(n); print(d)
+            5
+            -26
             >>> n, d = nint_distance(mpc(5,10))
-            >>> print n, d
-            5 4
+            >>> print(n); print(d)
+            5
+            4
             >>> n, d = nint_distance(mpc(5,0.000001))
-            >>> print n, d
-            5 -19
+            >>> print(n); print(d)
+            5
+            -19
 
         """
         typx = type(x)
@@ -1167,11 +1173,11 @@ maxterms, or set zeroprec."""
             >>> mp.dps = 15
             >>> a = fraction(1,100)
             >>> b = mpf(1)/100
-            >>> print a; print b
+            >>> print(a); print(b)
             0.01
             0.01
             >>> mp.dps = 30
-            >>> print a; print b      # a will be accurate
+            >>> print(a); print(b)      # a will be accurate
             0.01
             0.0100000000000000002081668171172
             >>> mp.dps = 15

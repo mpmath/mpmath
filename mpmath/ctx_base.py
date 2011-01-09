@@ -116,7 +116,7 @@ class StandardBaseContext(Context,
 
     def nprint(ctx, x, n=6, **kwargs):
         """
-        Equivalent to ``print nstr(x, n)``.
+        Equivalent to ``print(nstr(x, n))``.
         """
         print(ctx.nstr(x, n, **kwargs))
 
@@ -432,7 +432,7 @@ class StandardBaseContext(Context,
             >>> from mpmath import *
             >>> mp.dps = 15
             >>> f = maxcalls(sin, 10)
-            >>> print sum(f(n) for n in range(10))
+            >>> print(sum(f(n) for n in range(10)))
             1.95520948210738
             >>> f(10)
             Traceback (most recent call last):

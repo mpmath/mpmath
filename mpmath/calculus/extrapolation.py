@@ -393,7 +393,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
 
         >>> sumem(lambda n: n**5-12*n**2+3*n, [-100000, 200000])
         10500155000624963999742499550000.0
-        >>> print sum(n**5-12*n**2+3*n for n in xrange(-100000, 200001))
+        >>> print(sum(n**5-12*n**2+3*n for n in xrange(-100000, 200001)))
         10500155000624963999742499550000
 
     """
@@ -828,8 +828,8 @@ def nsum(ctx, f, *intervals, **options):
         >>> for n in range(-8, 8):
         ...     if n == 1:
         ...         continue
-        ...     print mpf(n), mpf(1)/(1-n), nsum(lambda k: n**k, [0, inf],
-        ...         method='shanks')
+        ...     print("%s %s %s" % (mpf(n), mpf(1)/(1-n),
+        ...         nsum(lambda k: n**k, [0, inf], method='shanks')))
         ...
         -8.0 0.111111111111111 0.111111111111111
         -7.0 0.125 0.125

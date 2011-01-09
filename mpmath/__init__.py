@@ -434,6 +434,7 @@ def doctests():
             if not sum([pat in obj for pat in filter]):
                 continue
         sys.stdout.write(str(obj) + " ")
+        sys.stdout.flush()
         t1 = clock()
         doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
         t2 = clock()

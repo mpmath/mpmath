@@ -80,15 +80,15 @@ def grampoint(ctx, n):
 
 
 @defun_wrapped
-def siegelz(ctx, t, derivative=0):
-    d = int(derivative)
+def siegelz(ctx, t, **kwargs):
+    d = int(kwargs.get("derivative", 0))
     t = ctx.convert(t)
     t1 = ctx._re(t)
     t2 = ctx._im(t)
-    prec=ctx.prec
+    prec = ctx.prec
     try:
         if abs(t1) > 500*prec and t2**2 < t1:
-            v = ctx.rs_z(t, derivative)
+            v = ctx.rs_z(t, d)
             if ctx._is_real_type(t):
                 return ctx._re(v)
             return v
@@ -1125,7 +1125,7 @@ def lerchphi(ctx, z, s, a):
     if ctx.re(a) < 1:
         if ctx.isnpint(a):
             raise ValueError("Lerch transcendent complex infinity")
-        m = ctx.ceil(1-ctx.re(a))
+        m = int(ctx.ceil(1-ctx.re(a)))
         v = ctx.zero
         zpow = ctx.one
         for n in xrange(m):

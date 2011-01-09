@@ -498,7 +498,7 @@ def bernfrac(n):
         >>> from mpmath import *
         >>> for n in range(15):
         ...     p, q = bernfrac(n)
-        ...     print n, "%s/%s" % (p, q)
+        ...     print("%s %s/%s" % (n, p, q))
         ...
         0 1/1
         1 -1/2
@@ -519,14 +519,14 @@ def bernfrac(n):
     This function works for arbitrarily large `n`::
 
         >>> p, q = bernfrac(10**4)
-        >>> print q
+        >>> print(q)
         2338224387510
-        >>> print len(str(p))
+        >>> print(len(str(p)))
         27692
         >>> mp.dps = 15
-        >>> print mpf(p) / q
+        >>> print(mpf(p) / q)
         -9.04942396360948e+27677
-        >>> print bernoulli(10**4)
+        >>> print(bernoulli(10**4))
         -9.04942396360948e+27677
 
     .. note ::

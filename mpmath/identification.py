@@ -52,8 +52,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     by at least one rational number with denominator less than `10^{12}`::
 
         >>> p, q = pslq([-1, pi], maxcoeff=10**12)
-        >>> print p, q
-        238410049439 75888275702
+        >>> print(p); print(q)
+        238410049439
+        75888275702
         >>> mpf(p)/q
         3.14159265358979
 
@@ -339,7 +340,7 @@ def findpoly(ctx, x, n=1, **kwargs):
         >>> nprint(polyval(findpoly(phi, 2), phi), 1)
         -2.0e-16
         >>> for r in polyroots(findpoly(phi, 2)):
-        ...     print r
+        ...     print(r)
         ...
         -0.618033988749895
         1.61803398874989
@@ -654,7 +655,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     the first few)::
 
         >>> for p in identify(pi, ['e', 'catalan'], tol=1e-5, full=True):
-        ...     print p
+        ...     print(p)
         ...  # doctest: +ELLIPSIS
         e/log((6 + (-4/3)*e))
         (3**3*5*e*catalan**2)/(2*7**2)
