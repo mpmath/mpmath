@@ -2,6 +2,8 @@
 Low-level functions for complex arithmetic.
 """
 
+import sys
+
 from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, BACKEND
 
 from .libmpf import (\
@@ -14,7 +16,7 @@ from .libmpf import (\
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
     mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
     mpf_rdiv_int, mpf_floor, mpf_ceil, mpf_nint, mpf_frac,
-    mpf_sign,
+    mpf_sign, mpf_hash,
     ComplexResult
 )
 
@@ -63,10 +65,17 @@ def mpc_to_complex(z, strict=False):
     return complex(to_float(re, strict), to_float(im, strict))
 
 def mpc_hash(z):
-    try:
-        return hash(mpc_to_complex(z, strict=True))
-    except OverflowError:
-        return hash(z)
+    if sys.version >= "3.2":
+        re, im = z
+        h = mpf_hash(re) + sys.hash_info.imag * mpf_hash(im)
+        # Need to reduce either module 2^32 or 2^64
+        h = h % (2**sys.hash_info.width)
+        return int(h)
+    else:
+        try:
+            return hash(mpc_to_complex(z, strict=True))
+        except OverflowError:
+            return hash(z)
 
 def mpc_conjugate(z, prec, rnd=round_fast):
     re, im = z

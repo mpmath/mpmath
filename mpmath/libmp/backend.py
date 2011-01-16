@@ -41,6 +41,17 @@ else:
     basestring = str
     from .exec_py3 import exec_
 
+# Define constants for calculating hash on Python 3.2.
+if sys.version >= "3.2":
+    HASH_MODULUS = sys.hash_info.modulus
+    if sys.hash_info.width == 32:
+        HASH_BITS = 31
+    else:
+        HASH_BITS = 61
+else:
+    HASH_MODULUS = None
+    HASH_BITS = None
+
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
         try:
