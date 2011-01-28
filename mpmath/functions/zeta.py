@@ -42,8 +42,10 @@ def stieltjes(ctx, n, a=1):
 @defun_wrapped
 def siegeltheta(ctx, t, derivative=0):
     d = int(derivative)
-    if  (t == ctx.inf or t == -ctx.inf):
+    if  (t == ctx.inf or t == ctx.ninf):
         if d < 2:
+            if t == ctx.ninf and d == 0:
+                return ctx.ninf
             return ctx.inf
         else:
             return ctx.zero

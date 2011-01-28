@@ -385,7 +385,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
         >>> sumem(lambda n: 1/n**2, [32, inf])
         0.03174336652030209012658168043874142714132886413417
         >>> I = mpf(1)/32
-        >>> D = adiffs=((-1)**n*fac(n+1)*32**(-2-n) for n in xrange(999))
+        >>> D = adiffs=((-1)**n*fac(n+1)*32**(-2-n) for n in range(999))
         >>> sumem(lambda n: 1/n**2, [32, inf], integral=I, adiffs=D)
         0.03174336652030209012658168043874142714132886413417
 
@@ -393,7 +393,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
 
         >>> sumem(lambda n: n**5-12*n**2+3*n, [-100000, 200000])
         10500155000624963999742499550000.0
-        >>> print(sum(n**5-12*n**2+3*n for n in xrange(-100000, 200001)))
+        >>> print(sum(n**5-12*n**2+3*n for n in range(-100000, 200001)))
         10500155000624963999742499550000
 
     """
@@ -1318,7 +1318,7 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
 
     (which converges notoriously slowly)::
 
-        >>> f = lambda n: sum([mpf(1)/k for k in range(1,n+1)]) - log(n)
+        >>> f = lambda n: sum([mpf(1)/k for k in range(1,int(n)+1)]) - log(n)
         >>> limit(f, inf)
         0.577215664901532860606512090082
         >>> +euler

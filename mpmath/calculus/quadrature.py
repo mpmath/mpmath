@@ -615,9 +615,9 @@ class QuadratureMethods:
         Multiple integrals may be done over infinite ranges::
 
             >>> mp.dps = 15
-            >>> print quad(lambda x,y: exp(-x-y), [0, inf], [1, inf])
+            >>> print(quad(lambda x,y: exp(-x-y), [0, inf], [1, inf]))
             0.367879441171442
-            >>> print 1/e
+            >>> print(1/e)
             0.367879441171442
 
         For nonrectangular areas, one can call :func:`~mpmath.quad` recursively.

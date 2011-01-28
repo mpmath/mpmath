@@ -540,7 +540,7 @@ def backlunds(ctx, t):
         >>> from mpmath import *
         >>> mp.dps = 15; mp.pretty = True
         >>> backlunds(217.3)
-        0.163022054311824
+        0.16302205431184
 
     Generally, the value is a small number. At Gram points it is an integer,
     frequently equal to 0::

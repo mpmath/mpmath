@@ -902,7 +902,7 @@ class PythonMPContext:
             >>> B = [1, -1, 2]
             >>> fdot(A, B)
             mpf('6.5')
-            >>> zip(A, B)
+            >>> list(zip(A, B))
             [(2, 1), (1.5, -1), (3, 2)]
             >>> fdot(_)
             mpf('6.5')

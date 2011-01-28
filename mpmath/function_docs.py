@@ -1109,10 +1109,10 @@ the largest integer less than or equal to `x`::
 To avoid rounding, use *prec=0*::
 
     >>> mp.dps = 15
-    >>> int(floor(10**30+1))
-    1000000000000000019884624838656L
-    >>> int(floor(10**30+1, prec=0))
-    1000000000000000000000000000001L
+    >>> print(int(floor(10**30+1)))
+    1000000000000000019884624838656
+    >>> print(int(floor(10**30+1, prec=0)))
+    1000000000000000000000000000001
 
 The floor function is defined for complex numbers and
 acts on the real and imaginary parts separately::

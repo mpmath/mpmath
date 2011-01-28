@@ -69,7 +69,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
 
         >>> roots, err = polyroots([4,3,2], error=True)
         >>> for r in roots:
-        ...     print r
+        ...     print(r)
         ...
         (-0.375 + 0.59947894041409j)
         (-0.375 - 0.59947894041409j)
@@ -87,7 +87,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
 
         >>> mp.dps = 20
         >>> for r in polyroots([1, 0, 0, 0, 0, -1]):
-        ...     print r
+        ...     print(r)
         ...
         1.0
         (-0.8090169943749474241 + 0.58778525229247312917j)

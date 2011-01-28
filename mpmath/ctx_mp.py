@@ -924,7 +924,7 @@ maxterms, or set zeroprec."""
         Avoiding roundoff::
 
             >>> x, y = 10**10+1, 10**15+1
-            >>> print(x*y
+            >>> print(x*y)
             10000000001000010000000001
             >>> print(mpf(x) * mpf(y))
             1.0000000001e+25
