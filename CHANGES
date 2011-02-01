@@ -1,3 +1,32 @@
+--0.17--
+Released February 1, 2011
+
+Compatibility:
+
+* Python 3 is now supported
+* Dropped Python 2.4 compatibility
+* Fixed Python 2.5 compatibility in matrix slicing code
+* Implemented Python 3.2-compatible hashing, making mpmath numbers
+  hash compatible with extremely large integers and with fractions
+  in Python versions >= 3.2 (contributed by Case Vanhorsen)
+
+Special functions:
+
+* Implemented the von Mangoldt function (mangoldt())
+* Implemented the "secondary zeta function" (secondzeta()) (contributed
+  by Juan Arias de Reyna).
+* Implemented zeta zero counting (nzeros()) and the Backlund S function
+  (backlunds()) (contributed by Juan Arias de Reyna)
+* Implemented derivatives of order 1-4 for siegelz() and siegeltheta()
+  (contributed by Juan Arias de Reyna)
+* Improved Euler-Maclaurin summation for zeta() to give more accurate
+  results in the right half-plane when the reflection formula
+  cannot be used
+* Implemented the Lerch transcendent (lerchphi())
+* Fixed polygamma function to return a complex NaN at complex
+  infinity or NaN, instead of raising an unrelated exception.
+
+
 --0.16--
 Released September 24, 2010
 

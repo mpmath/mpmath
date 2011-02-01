@@ -57,6 +57,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 0.17 released on February 1, 2011
 * Version 0.16 released on September 24, 2010
 * Version 0.15 released on June 6, 2010
 * Version 0.14 released on February 5, 2010
@@ -77,8 +78,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires a recent version of Python. It should work with
-Python 2.4, 2.5 and 2.6.
+Mpmath requires Python 2.5 or later. It has been tested
+with Python 2.5, 2.6, 2.7, 3.1 and 3.2.
 
 The latest release of mpmath can be downloaded from the mpmath
 website. It should also be available in the Python Package Index at
