@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Number-theoretical, combinatorial and integer functions &mdash; mpmath v0.16 documentation</title>
+    <title>Number-theoretical, combinatorial and integer functions &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="q-functions" href="qfunctions.html" />
     <link rel="prev" title="Zeta functions, L-series and polylogarithms" href="zeta.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="zeta.html" title="Zeta functions, L-series and polylogarithms"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -82,19 +82,36 @@ calculating the exact integer would be wasteful.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="go">0.0 1.0 1.0 2.0 3.0 5.0 8.0 13.0 21.0 34.0</span>
-
+<span class="go">0.0</span>
+<span class="go">1.0</span>
+<span class="go">1.0</span>
+<span class="go">2.0</span>
+<span class="go">3.0</span>
+<span class="go">5.0</span>
+<span class="go">8.0</span>
+<span class="go">13.0</span>
+<span class="go">21.0</span>
+<span class="go">34.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
 <span class="go">12586269025.0</span>
 </pre></div>
 </div>
 <p>The recurrence for <img class="math" src="../_images/math/2663041fd2b9fbd85c85ad832f67c7a743a09c52.png" alt="F(n)"/> extends backwards to negative <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">fibonacci</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="o">-</span><span class="n">i</span><span class="p">))</span>
 <span class="gp">...</span>
-<span class="go">0.0 1.0 -1.0 2.0 -3.0 5.0 -8.0 13.0 -21.0 34.0</span>
+<span class="go">0.0</span>
+<span class="go">1.0</span>
+<span class="go">-1.0</span>
+<span class="go">2.0</span>
+<span class="go">-3.0</span>
+<span class="go">5.0</span>
+<span class="go">-8.0</span>
+<span class="go">13.0</span>
+<span class="go">-21.0</span>
+<span class="go">34.0</span>
 </pre></div>
 </div>
 <p>Large Fibonacci numbers will be computed approximately unless
@@ -170,7 +187,7 @@ numbers can be expressed in terms of a Jacobi theta function:</p>
 <span class="go">1.11803398874989</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">phi</span> <span class="o">-</span> <span class="mf">0.5</span>
 <span class="go">1.11803398874989</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nsum</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
 <span class="go">0.618033988749895</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">phi</span><span class="o">-</span><span class="mi">1</span>
@@ -201,7 +218,7 @@ fraction, use <a class="reference internal" href="#mpmath.bernfrac" title="mpmat
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
 <span class="gp">...</span>
 <span class="go">0 1.0</span>
 <span class="go">1 -0.5</span>
@@ -264,7 +281,7 @@ always reduced to lowest terms. Note that for <img class="math" src="../_images/
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">15</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">bernfrac</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">0 1/1</span>
 <span class="go">1 -1/2</span>
@@ -285,14 +302,14 @@ always reduced to lowest terms. Note that for <img class="math" src="../_images/
 </div>
 <p>This function works for arbitrarily large <img class="math" src="../_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png" alt="n"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">bernfrac</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">2338224387510</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
 <span class="go">27692</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">q</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span>
 <span class="go">-9.04942396360948e+27677</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">bernoulli</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">bernoulli</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">))</span>
 <span class="go">-9.04942396360948e+27677</span>
 </pre></div>
 </div>
@@ -405,9 +422,9 @@ computes numerical approximations for large indices:</p>
 </pre></div>
 </div>
 <p>Pass <tt class="docutils literal"><span class="pre">exact=True</span></tt> to obtain exact values of Euler numbers as integers:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">eulernum</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">eulernum</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
 <span class="go">-6053285248188621896314383785111649088103498225146815121</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">eulernum</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span><span class="o">**</span><span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">eulernum</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">1925859625</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eulernum</span><span class="p">(</span><span class="mi">1001</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">0</span>
@@ -715,10 +732,10 @@ integer:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">primepi</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">riemannr</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
 <span class="go">(15, 14.9757023241462)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">primepi</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">riemannr</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
-<span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">primepi</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">riemannr</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">))</span>
-<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">primepi</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">riemannr</span><span class="p">(</span><span class="n">n</span><span class="p">))))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">primepi</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">riemannr</span><span class="p">(</span><span class="n">n</span><span class="p">))))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">300</span><span class="p">))</span>
+<span class="go">2</span>
 </pre></div>
 </div>
 <p>The Riemann R function can be evaluated for arguments far too large
@@ -740,7 +757,7 @@ The fractional error is shown in parentheses:</p>
 <span class="gp">... </span>    <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="gp">... </span>    <span class="n">r</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">riemannr</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span><span class="p">),</span> <span class="n">li</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">rerr</span><span class="p">,</span> <span class="n">lerr</span> <span class="o">=</span> <span class="n">nstr</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="n">p</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">nstr</span><span class="p">((</span><span class="n">l</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="n">p</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;</span><span class="si">%i</span><span class="s"> </span><span class="si">%i</span><span class="s"> </span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">rerr</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">lerr</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%i</span><span class="s"> </span><span class="si">%i</span><span class="s"> </span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">rerr</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">lerr</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">1 4 4.56458314100509(0.141) 6.1655995047873(0.541)</span>
 <span class="go">2 25 25.6616332669242(0.0265) 30.1261415840796(0.205)</span>
@@ -813,7 +830,7 @@ using Taylor expansion:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">p</span> <span class="o">=</span> <span class="n">chop</span><span class="p">(</span><span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cyclotomic</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">n</span><span class="p">,;</span> <span class="n">nprint</span><span class="p">(</span><span class="n">p</span><span class="p">[:</span><span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nstr</span><span class="p">(</span><span class="n">p</span><span class="p">[:</span><span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">)])))</span>
 <span class="gp">...</span>
 <span class="go">0 [1.0]</span>
 <span class="go">1 [-1.0, 1.0]</span>
@@ -847,16 +864,46 @@ part):</p>
 can be checked to agree with the list of primitive roots:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">taylor</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cyclotomic</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">p</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">(0.5 - 0.8660254037844386467637232j)</span>
 <span class="go">(0.5 + 0.8660254037844386467637232j)</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">(0.5 + 0.8660254037844386467637232j)</span>
 <span class="go">(0.5 - 0.8660254037844386467637232j)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="arithmetic-functions">
+<h2>Arithmetic functions<a class="headerlink" href="#arithmetic-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mangoldt">
+<h3><tt class="xref py py-func docutils literal"><span class="pre">mangoldt()</span></tt><a class="headerlink" href="#mangoldt" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="mpmath.mangoldt">
+<tt class="descclassname">mpmath.</tt><tt class="descname">mangoldt</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#mpmath.mangoldt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the von Mangoldt function <img class="math" src="../_images/math/962d7bd72e1c61e68bafaacfcfdefc37e46e884d.png" alt="\Lambda(n) = \log p"/>
+if <img class="math" src="../_images/math/4879efbc807f21af3d3a83d8a3c1dbac4800e229.png" alt="n = p^k"/> a power of a prime, and <img class="math" src="../_images/math/6174a5cd45901b03273c42033ed99cf936a516c7.png" alt="\Lambda(n) = 0"/> otherwise.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">mangoldt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+<span class="go">[0.0, 0.0, 0.0, 0.0, 0.6931471805599453094172321]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mangoldt</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mangoldt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">1.945910149055313305105353</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mangoldt</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">0.6931471805599453094172321</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">(</span><span class="n">mangoldt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">101</span><span class="p">))</span>
+<span class="go">94.04531122935739224600493</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fsum</span><span class="p">(</span><span class="n">mangoldt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10001</span><span class="p">))</span>
+<span class="go">10013.39669326311478372032</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -901,6 +948,10 @@ can be checked to agree with the list of primitive roots:</p>
 </li>
 <li><a class="reference internal" href="#cyclotomic-polynomials">Cyclotomic polynomials</a><ul>
 <li><a class="reference internal" href="#cyclotomic"><tt class="docutils literal"><span class="pre">cyclotomic()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arithmetic-functions">Arithmetic functions</a><ul>
+<li><a class="reference internal" href="#mangoldt"><tt class="docutils literal"><span class="pre">mangoldt()</span></tt></a></li>
 </ul>
 </li>
 </ul>
@@ -950,14 +1001,14 @@ can be checked to agree with the list of primitive roots:</p>
         <li class="right" >
           <a href="zeta.html" title="Zeta functions, L-series and polylogarithms"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

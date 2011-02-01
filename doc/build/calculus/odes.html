@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Ordinary differential equations &mdash; mpmath v0.16 documentation</title>
+    <title>Ordinary differential equations &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Function approximation" href="approximation.html" />
     <link rel="prev" title="Numerical integration (quadrature)" href="integration.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="integration.html" title="Numerical integration (quadrature)"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -121,11 +121,11 @@ which has explicit solution <img class="math" src="../_images/math/b2dfe8f19c4c4
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">((</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 <span class="gp">...</span>
-<span class="go">1.0 1.0</span>
-<span class="go">2.71828182845905 2.71828182845905</span>
-<span class="go">12.1824939607035 12.1824939607035</span>
+<span class="go">(1.0, 1.0)</span>
+<span class="go">(2.71828182845905, 2.71828182845905)</span>
+<span class="go">(12.1824939607035, 12.1824939607035)</span>
 </pre></div>
 </div>
 <p>The solution with high precision:</p>
@@ -153,11 +153,11 @@ for this problem, and is given by
 <img class="math" src="../_images/math/67cfad187966d79d7cd686fc9cec6ec2aeb01d8c.png" alt="y(x) = 2 \tan^{-1}\left(\exp\left(x^2/2\right)\right)"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">odefun</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">((</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">atan</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span><span class="p">))))</span>
 <span class="gp">...</span>
-<span class="go">2.87255666284091 2.87255666284091</span>
-<span class="go">3.14158520028345 3.14158520028345</span>
-<span class="go">3.14159265358979 3.14159265358979</span>
+<span class="go">(2.87255666284091, 2.87255666284091)</span>
+<span class="go">(3.14158520028345, 3.14158520028345)</span>
+<span class="go">(3.14159265358979, 3.14159265358979)</span>
 </pre></div>
 </div>
 <p>If <img class="math" src="../_images/math/a055f405829e64a3b70253ab67cb45ed6ed5bb29.png" alt="F"/> is independent of <img class="math" src="../_images/math/092e364e1d9d19ad5fffb0b46ef4cc7f2da02c1c.png" alt="y"/>, an ODE can be solved using direct
@@ -189,7 +189,7 @@ course be solved by <img class="math" src="../_images/math/c1fc6376a5338b0caf1e5
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">15</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">nprint</span><span class="p">([</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">15</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;---&quot;</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;---&quot;</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">[1.0, 0.0]</span>
 <span class="go">[1.0, 0.0]</span>
@@ -279,14 +279,14 @@ more robust</li>
         <li class="right" >
           <a href="integration.html" title="Numerical integration (quadrature)"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

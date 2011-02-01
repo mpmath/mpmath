@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Number identification &mdash; mpmath v0.16 documentation</title>
+    <title>Number identification &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="index.html" />
     <link rel="next" title="Precision and representation issues" href="technical.html" />
     <link rel="prev" title="Matrices" href="matrices.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="matrices.html" title="Matrices"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -185,7 +185,7 @@ We can for example try to generate approximations for pi:</p>
 for any number (the output below has been truncated to show only
 the first few):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">identify</span><span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;catalan&#39;</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">p</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="gp">... </span> 
 <span class="go">e/log((6 + (-4/3)*e))</span>
 <span class="go">(3**3*5*e*catalan**2)/(2*7**2)</span>
@@ -300,7 +300,7 @@ polynomial with a rational root:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nprint</span><span class="p">(</span><span class="n">polyval</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">phi</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 <span class="go">-2.0e-16</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">polyroots</span><span class="p">(</span><span class="n">findpoly</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">2</span><span class="p">)):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">-0.618033988749895</span>
 <span class="go">1.61803398874989</span>
@@ -412,8 +412,9 @@ exists, <a class="reference internal" href="#mpmath.pslq" title="mpmath.pslq"><t
 <p>To within the standard precision, it can however be approximated
 by at least one rational number with denominator less than <img class="math" src="_images/math/424bc9c16dd44c6587d3169db64109837aa146ec.png" alt="10^{12}"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">pslq</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">pi</span><span class="p">],</span> <span class="n">maxcoeff</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">12</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span>
-<span class="go">238410049439 75888275702</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">238410049439</span>
+<span class="go">75888275702</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mpf</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">/</span><span class="n">q</span>
 <span class="go">3.14159265358979</span>
 </pre></div>
@@ -552,13 +553,13 @@ arithmetic, since this is significantly (about 7x) faster.</p>
         <li class="right" >
           <a href="matrices.html" title="Matrices"
              >previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

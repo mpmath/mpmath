@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Powers and logarithms &mdash; mpmath v0.16 documentation</title>
+    <title>Powers and logarithms &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Trigonometric functions" href="trigonometric.html" />
     <link rel="prev" title="Mathematical constants" href="constants.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="constants.html" title="Mathematical constants"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -212,7 +212,7 @@ floating-point fraction:</p>
 </div>
 <p>All the 7th roots of a complex number:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="n">j</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">**</span><span class="mi">7</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">r</span><span class="o">**</span><span class="mi">7</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">(1.24747270589553 + 0.166227124177353j) (3.0 + 4.0j)</span>
 <span class="go">(0.647824911301003 + 1.07895435170559j) (3.0 + 4.0j)</span>
@@ -224,7 +224,7 @@ floating-point fraction:</p>
 </pre></div>
 </div>
 <p>Cube roots of unity:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="k">print</span> <span class="n">root</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="k">print</span><span class="p">(</span><span class="n">root</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(-0.5 + 0.866025403784439j)</span>
@@ -297,7 +297,7 @@ with <img class="math" src="../_images/math/d3549fbbb212be66a763533518cfe04c5a86
 Any primitive root <img class="math" src="../_images/math/b55ca7a0aa88ab7d58f4fc035317fdac39b17861.png" alt="r"/> is a generator for this group, meaning that
 <img class="math" src="../_images/math/b1daa4d2f67830bf961a8da3d1040af8cd33d84a.png" alt="r^0, r^1, \ldots, r^{n-1}"/> gives the whole set of unit roots (in
 some permuted order):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">r</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(0.5 + 0.866025403784439j)</span>
@@ -306,7 +306,7 @@ some permuted order):</p>
 <span class="go">(-0.5 - 0.866025403784439j)</span>
 <span class="go">(0.5 - 0.866025403784439j)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">unitroots</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">primitive</span><span class="o">=</span><span class="bp">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="n">k</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="k">print</span><span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">r</span><span class="o">**</span><span class="n">k</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">1.0</span>
 <span class="go">(0.5 - 0.866025403784439j)</span>
@@ -497,10 +497,10 @@ Evaluation is accurate near zeros (see also <a class="reference internal" href="
 potentially catastrophic cancellation:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">mp</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span><span class="p">(</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1e-10</span><span class="p">))</span>
 <span class="go">1.00000008274037e-10</span>
 <span class="go">1.00000000005e-10</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span> <span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="k">print</span><span class="p">(</span><span class="n">expm1</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">))</span>
 <span class="go">0.0</span>
 <span class="go">1.0e-20</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="mf">1e-20</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -1035,14 +1035,14 @@ arbitrary.</p>
         <li class="right" >
           <a href="constants.html" title="Mathematical constants"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

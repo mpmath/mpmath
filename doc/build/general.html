@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Utility functions &mdash; mpmath v0.16 documentation</title>
+    <title>Utility functions &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="index.html" />
     <link rel="next" title="Plotting" href="plotting.html" />
     <link rel="prev" title="Contexts" href="contexts.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="contexts.html" title="Contexts"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -112,7 +112,7 @@ instead of returning it.</p>
 <dl class="function">
 <dt id="mpmath.nprint">
 <tt class="descclassname">mpmath.</tt><tt class="descname">nprint</tt><big>(</big><em>x</em>, <em>n=6</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpmath.nprint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Equivalent to <tt class="docutils literal"><span class="pre">print</span> <span class="pre">nstr(x,</span> <span class="pre">n)</span></tt>.</p>
+<dd><p>Equivalent to <tt class="docutils literal"><span class="pre">print(nstr(x,</span> <span class="pre">n))</span></tt>.</p>
 </dd></dl>
 
 </div>
@@ -159,11 +159,11 @@ for down, <tt class="docutils literal"><span class="pre">'u'</span></tt> for up.
 of numbers such as <img class="math" src="_images/math/9d20854c1e9786fca3250a226216e9f14da61388.png" alt="x+y-x = y"/>, which don&#8217;t hold in floating-point
 arithmetic with finite precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
 <span class="go">1.0e-1000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fadd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
 <span class="go">1.0e-1000</span>
 </pre></div>
 </div>
@@ -209,11 +209,11 @@ of how to specify precision and rounding.</p>
 of numbers such as <img class="math" src="_images/math/47cedb5a22095cef482c3ac986b8cc5eb9831628.png" alt="x-y+y = x"/>, which don&#8217;t hold in floating-point
 arithmetic with finite precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">mpf</span><span class="p">(</span><span class="s">&#39;1e1000&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
 <span class="go">0.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
 <span class="go">2.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fsub</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
 <span class="go">2.0</span>
 </pre></div>
 </div>
@@ -257,19 +257,19 @@ of how to specify precision and rounding.</p>
 </div>
 <p>Negating with and without roundoff:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">200000000000000000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">mpf</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="o">-</span><span class="n">mpf</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
 <span class="go">-200000000000000016777216</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
 <span class="go">-200000000000000016777216</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
 <span class="go">-200000000000000000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">log</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
 <span class="go">-200000000000000000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="n">inf</span><span class="p">)))</span>
 <span class="go">-200000000000000000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">inf</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="n">inf</span><span class="p">)))</span>
 <span class="go">-200000000000000000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fneg</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)))</span>
 <span class="go">-200000000000000000000001</span>
 </pre></div>
 </div>
@@ -297,17 +297,17 @@ of how to specify precision and rounding.</p>
 </div>
 <p>Avoiding roundoff:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">15</span><span class="o">+</span><span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
 <span class="go">10000000001000010000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 <span class="go">1.0000000001e+25</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">mpf</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
 <span class="go">10000000001000011026399232</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
 <span class="go">10000000001000011026399232</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">25</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">25</span><span class="p">)))</span>
 <span class="go">10000000001000010000000001</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">fmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">True</span><span class="p">)))</span>
 <span class="go">10000000001000010000000001</span>
 </pre></div>
 </div>
@@ -461,7 +461,7 @@ will be conjugated:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fdot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 <span class="go">mpf(&#39;6.5&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">zip</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
 <span class="go">[(2, 1), (1.5, -1), (3, 2)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fdot</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
 <span class="go">mpf(&#39;6.5&#39;)</span>
@@ -672,10 +672,10 @@ implied by the mathematical definition of the function.</p>
 </div>
 <p>To avoid rounding, use <em>prec=0</em>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">30</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">1000000000000000019884624838656L</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">30</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<span class="go">1000000000000000000000000000001L</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">30</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+<span class="go">1000000000000000019884624838656</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">30</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+<span class="go">1000000000000000000000000000001</span>
 </pre></div>
 </div>
 <p>The floor function is defined for complex numbers and
@@ -1024,23 +1024,29 @@ an estimate of <img class="math" src="_images/math/c4f44765615a6dfb72a993d9b6c0a
 (measured in bits) lost to cancellation when computing <img class="math" src="_images/math/a14d33f93b7df89cb2b6370779eeccbff13faaa7.png" alt="x-n"/>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 -inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">-inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 -inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">-inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">5.00000001</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 -26</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">-26</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="n">mpf</span><span class="p">(</span><span class="mf">4.99999999</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 -26</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">-26</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="n">mpc</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">nint_distance</span><span class="p">(</span><span class="n">mpc</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mf">0.000001</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span>
-<span class="go">5 -19</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="go">-19</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1060,11 +1066,11 @@ the fraction <img class="math" src="_images/math/a9868fbf23bed343deebad0af0b21b1
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fraction</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">mpf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="p">;</span> <span class="k">print</span> <span class="n">b</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">0.01</span>
 <span class="go">0.01</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">30</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span><span class="p">;</span> <span class="k">print</span> <span class="n">b</span>      <span class="c"># a will be accurate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">);</span> <span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>      <span class="c"># a will be accurate</span>
 <span class="go">0.01</span>
 <span class="go">0.0100000000000000002081668171172</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
@@ -1317,7 +1323,7 @@ has been called more than <em>N</em> times:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpmath</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">maxcalls</span><span class="p">(</span><span class="n">sin</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
 <span class="go">1.95520948210738</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
@@ -1360,10 +1366,12 @@ results for later analysis:</p>
 <span class="go">mpf(&#39;3.1415926535897932&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>  <span class="c"># Count number of evaluations</span>
 <span class="go">9</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">input</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="go">((mpf(&#39;3.1415076583334066&#39;),), {}) 8.49952562843408e-5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="nb">input</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-<span class="go">((mpf(&#39;3.1415928201669122&#39;),), {}) -1.66577118985331e-7</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span> <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">((mpf(&#39;3.1415076583334066&#39;),), {})</span>
+<span class="go">8.49952562843408e-5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span> <span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="go">((mpf(&#39;3.1415928201669122&#39;),), {})</span>
+<span class="go">-1.66577118985331e-7</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1514,13 +1522,13 @@ repeatedly and the best time is returned.</p>
         <li class="right" >
           <a href="contexts.html" title="Contexts"
              >previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

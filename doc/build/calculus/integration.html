@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Numerical integration (quadrature) &mdash; mpmath v0.16 documentation</title>
+    <title>Numerical integration (quadrature) &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Numerical calculus" href="index.html" />
     <link rel="next" title="Ordinary differential equations" href="odes.html" />
     <link rel="prev" title="Differentiation" href="differentiation.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>  
@@ -197,9 +197,9 @@ to high precision fairly rapidly by <a class="reference internal" href="#mpmath.
 </div>
 <p>Multiple integrals may be done over infinite ranges:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inf</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">inf</span><span class="p">]))</span>
 <span class="go">0.367879441171442</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="mi">1</span><span class="o">/</span><span class="n">e</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">e</span><span class="p">)</span>
 <span class="go">0.367879441171442</span>
 </pre></div>
 </div>
@@ -766,14 +766,14 @@ quadrature of degree of given degree (actually <img class="math" src="../_images
         <li class="right" >
           <a href="differentiation.html" title="Differentiation"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Numerical calculus</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

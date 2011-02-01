@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plotting &mdash; mpmath v0.16 documentation</title>
+    <title>Plotting &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="index.html" />
     <link rel="next" title="Mathematical functions" href="functions/index.html" />
     <link rel="prev" title="Utility functions" href="general.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="general.html" title="Utility functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,7 +60,7 @@
 <p>Output of <tt class="docutils literal"><span class="pre">plot([cos,</span> <span class="pre">sin],</span> <span class="pre">[-4,</span> <span class="pre">4])</span></tt></p>
 <dl class="function">
 <dt id="mpmath.plot">
-<tt class="descclassname">mpmath.</tt><tt class="descname">plot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>xlim=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>ylim=None</em>, <em>points=200</em>, <em>file=None</em>, <em>dpi=None</em>, <em>singularities=</em><span class="optional">[</span><span class="optional">]</span>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.plot" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">plot</tt><big>(</big><em>ctx, f, xlim=[-5, 5], ylim=None, points=200, file=None, dpi=None, singularities=[], axes=None</em><big>)</big><a class="headerlink" href="#mpmath.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a simple 2D plot of a function <img class="math" src="_images/math/c96dd6ec1dc4ad7520fbdc78fcdbec9edd068d0c.png" alt="f(x)"/> or list of functions
 <img class="math" src="_images/math/1ad13c4e8c318e9bf1720a2bdbb6094260518fde.png" alt="[f_0(x), f_1(x), \ldots, f_n(x)]"/> over a given interval
 specified by <em>xlim</em>. Some examples:</p>
@@ -96,7 +96,7 @@ is plotted with dots.</p>
 <p>Output of <tt class="docutils literal"><span class="pre">fp.cplot(fp.gamma,</span> <span class="pre">points=100000)</span></tt></p>
 <dl class="function">
 <dt id="mpmath.cplot">
-<tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>re=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>im=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=2000</em>, <em>color=None</em>, <em>verbose=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">cplot</tt><big>(</big><em>ctx, f, re=[-5, 5], im=[-5, 5], points=2000, color=None, verbose=False, file=None, dpi=None, axes=None</em><big>)</big><a class="headerlink" href="#mpmath.cplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the given complex-valued function <em>f</em> over a rectangular part
 of the complex plane specified by the pairs of intervals <em>re</em> and <em>im</em>.
 For example:</p>
@@ -127,7 +127,7 @@ option is useful to display progress.</p>
 <p>Output of <tt class="docutils literal"><span class="pre">splot</span></tt> for the donut example.</p>
 <dl class="function">
 <dt id="mpmath.splot">
-<tt class="descclassname">mpmath.</tt><tt class="descname">splot</tt><big>(</big><em>ctx</em>, <em>f</em>, <em>u=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>v=</em><span class="optional">[</span>, <em>-5</em>, <em>5</em><span class="optional">]</span>, <em>points=100</em>, <em>keep_aspect=True</em>, <em>wireframe=False</em>, <em>file=None</em>, <em>dpi=None</em>, <em>axes=None</em><big>)</big><a class="headerlink" href="#mpmath.splot" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">mpmath.</tt><tt class="descname">splot</tt><big>(</big><em>ctx, f, u=[-5, 5], v=[-5, 5], points=100, keep_aspect=True, wireframe=False, file=None, dpi=None, axes=None</em><big>)</big><a class="headerlink" href="#mpmath.splot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the surface defined by <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/>.</p>
 <p>If <img class="math" src="_images/math/bb2c93730dbb48558bb3c4738c956c4e8f816437.png" alt="f"/> returns a single component, then this plots the surface
 defined by <img class="math" src="_images/math/c45f4d6822ca0dd7ea528041bf7079ff62ba3afb.png" alt="z = f(x,y)"/> over the rectangular domain with
@@ -214,13 +214,13 @@ surface <img class="math" src="_images/math/4c1c53bd0db4ab53f1731be43bf2e5e96c11
         <li class="right" >
           <a href="general.html" title="Utility functions"
              >previous</a> |</li>
-        <li><a href="index.html">mpmath v0.16 documentation</a> &raquo;</li> 
+        <li><a href="index.html">mpmath v0.17 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

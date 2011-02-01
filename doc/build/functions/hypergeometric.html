@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hypergeometric functions &mdash; mpmath v0.16 documentation</title>
+    <title>Hypergeometric functions &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Elliptic functions" href="elliptic.html" />
     <link rel="prev" title="Orthogonal polynomials" href="orthogonal.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="orthogonal.html" title="Orthogonal polynomials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -1160,8 +1160,8 @@ integrals, such as any integral of the form
 <span class="gp">... </span>        <span class="n">v</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="o">/</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="n">v</span> <span class="o">*=</span> <span class="n">appellf1</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="n">p</span><span class="p">,</span><span class="o">-</span><span class="n">q</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="n">r</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">a</span><span class="p">,</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">b</span><span class="p">)</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">v</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Num. quad:&quot;</span><span class="p">,</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">])</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Appell F1:&quot;</span><span class="p">,</span> <span class="n">F</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span><span class="o">-</span><span class="n">F</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Num. quad: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">]))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Appell F1: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">F</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span><span class="o">-</span><span class="n">F</span><span class="p">(</span><span class="n">x1</span><span class="p">)))</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">integral</span><span class="p">(</span><span class="s">&#39;1/5&#39;</span><span class="p">,</span><span class="s">&#39;4/3&#39;</span><span class="p">,</span><span class="s">&#39;-2&#39;</span><span class="p">,</span><span class="s">&#39;3&#39;</span><span class="p">,</span><span class="s">&#39;1/2&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">Num. quad: 9.073335358785776206576981</span>
@@ -1475,14 +1475,14 @@ differential equations:</p>
         <li class="right" >
           <a href="orthogonal.html" title="Orthogonal polynomials"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

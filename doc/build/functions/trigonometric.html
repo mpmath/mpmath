@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Trigonometric functions &mdash; mpmath v0.16 documentation</title>
+    <title>Trigonometric functions &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Hyperbolic functions" href="hyperbolic.html" />
     <link rel="prev" title="Powers and logarithms" href="powers.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="powers.html" title="Powers and logarithms"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -376,7 +376,7 @@ function assuming values between <img class="math" src="../_images/math/08e02a30
 We have <img class="math" src="../_images/math/933d47d8f3212606cd793a36c87f02106a33a3c7.png" alt="\cos(\cos^{-1}(x)) = x"/> for all <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, but
 <img class="math" src="../_images/math/60ccf6533f56deddecfab2df154dc80d132f4bdf.png" alt="\cos^{-1}(\cos(x)) = x"/> only for <img class="math" src="../_images/math/05d953a5eb14edccbb3765e404eca691e5f6b4d2.png" alt="0 \le \Re[x] &lt; \pi"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">,</span> <span class="mi">10</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">cos</span><span class="p">(</span><span class="n">acos</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">acos</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">acos</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">acos</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
 <span class="gp">...</span>
 <span class="go">1.0 1.0</span>
 <span class="go">(10.0 + 0.0j) 2.566370614359172953850574</span>
@@ -422,7 +422,7 @@ function assuming values between <img class="math" src="../_images/math/d45899b4
 We have <img class="math" src="../_images/math/0652bcfc2ad09ab1a7200a122ca1f5edee2690cb.png" alt="\sin(\sin^{-1}(x)) = x"/> for all <img class="math" src="../_images/math/26eeb5258ca5099acf8fe96b2a1049c48c89a5e6.png" alt="x"/>, but
 <img class="math" src="../_images/math/2b1ce7f6d5340aa14eae4db5b113e400c0b6fc23.png" alt="\sin^{-1}(\sin(x)) = x"/> only for <img class="math" src="../_images/math/74204fcd1d32ab2b5a7d5963f2fe82470746e23b.png" alt="-\pi/2 &lt; \Re[x] &lt; \pi/2"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">chop</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">asin</span><span class="p">(</span><span class="n">x</span><span class="p">))),</span> <span class="n">asin</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">chop</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">asin</span><span class="p">(</span><span class="n">x</span><span class="p">))),</span> <span class="n">asin</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
 <span class="gp">...</span>
 <span class="go">1.0 1.0</span>
 <span class="go">10.0 -0.5752220392306202846120698</span>
@@ -474,7 +474,7 @@ We have <img class="math" src="../_images/math/563618bb10a5e9cc2ee74b186f6c3444c
 <img class="math" src="../_images/math/b5e209118b4e9bb13d5fb0fd66f775fbcbaf92aa.png" alt="\tan^{-1}(\tan(x)) = x"/> only for <img class="math" src="../_images/math/74204fcd1d32ab2b5a7d5963f2fe82470746e23b.png" alt="-\pi/2 &lt; \Re[x] &lt; \pi/2"/>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">25</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="n">j</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">tan</span><span class="p">(</span><span class="n">atan</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">atan</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">atan</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">atan</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
 <span class="gp">...</span>
 <span class="go">1.0 1.0</span>
 <span class="go">10.0 0.5752220392306202846120698</span>
@@ -711,14 +711,14 @@ at its roots:</p>
         <li class="right" >
           <a href="powers.html" title="Powers and logarithms"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->

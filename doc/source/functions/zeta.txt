@@ -12,11 +12,15 @@ Riemann and Hurwitz zeta functions
 ^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.zeta(s,a=1,derivative=0)
 
+
+Dirichlet L-series
+..................................................
+
 :func:`altzeta`
 ^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.altzeta(s)
 
-:func:`dirichletl`
+:func:`dirichlet`
 ^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.dirichlet(s,chi,derivative=0)
 

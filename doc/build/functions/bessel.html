@@ -7,13 +7,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Bessel functions and related functions &mdash; mpmath v0.16 documentation</title>
+    <title>Bessel functions and related functions &mdash; mpmath v0.17 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.16',
+        VERSION:     '0.17',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="mpmath v0.16 documentation" href="../index.html" />
+    <link rel="top" title="mpmath v0.17 documentation" href="../index.html" />
     <link rel="up" title="Mathematical functions" href="index.html" />
     <link rel="next" title="Orthogonal polynomials" href="orthogonal.html" />
     <link rel="prev" title="Exponential integrals and error functions" href="expintegrals.html" /> 
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="expintegrals.html" title="Exponential integrals and error functions"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>  
@@ -418,7 +418,7 @@ limit.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">besselk</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">+inf</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">besselk</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="s">&#39;1e-1000&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">besselk</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="s">&#39;1e-1000&#39;</span><span class="p">))</span>
 <span class="gp">...</span>
 <span class="go">4.8e+4001</span>
 <span class="go">8.0e+3000</span>
@@ -2013,7 +2013,8 @@ the precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">l</span><span class="p">,</span> <span class="n">coulombf</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">coulombf</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">z</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">coulombf</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">coulombf</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">z</span><span class="p">)))</span>
 <span class="gp">...</span>
 <span class="go">5 0.09079533488 0.1042553261</span>
 <span class="go">4 0.2148205331 0.2029591779</span>
@@ -2028,7 +2029,7 @@ the precision:</p>
 <li>I.J. Thompson &amp; A.R. Barnett, &#8220;Coulomb and Bessel Functions of Complex
 Arguments and Order&#8221;, J. Comp. Phys., vol 64, no. 2, June 1986.</li>
 <li>N. Michel, &#8220;Precise Coulomb wave functions for a wide range of
-complex <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>&#8220;, <a class="reference external" href="http://arxiv.org/abs/physics/0702051v1">http://arxiv.org/abs/physics/0702051v1</a></li>
+complex <img class="math" src="../_images/math/9b25f8e64b484493fda944d25cad453423041fe6.png" alt="l"/>, <img class="math" src="../_images/math/03a45952f8115322d2879f7d090126f059757ba0.png" alt="\eta"/> and <img class="math" src="../_images/math/b13f21416d84e13708696f34dea81026cda583c9.png" alt="z"/>&#8221;, <a class="reference external" href="http://arxiv.org/abs/physics/0702051v1">http://arxiv.org/abs/physics/0702051v1</a></li>
 </ol>
 </dd></dl>
 
@@ -2081,7 +2082,8 @@ at twice the precision:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp</span><span class="o">.</span><span class="n">dps</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">eta</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="n">l</span><span class="p">,</span> <span class="n">coulombg</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">coulombg</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">z</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">coulombg</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span>
+<span class="gp">... </span>        <span class="o">-</span><span class="n">diff</span><span class="p">(</span><span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">coulombg</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">eta</span><span class="p">,</span><span class="n">z</span><span class="p">),</span> <span class="n">z</span><span class="p">)))</span>
 <span class="gp">...</span>
 <span class="go">1 1.08148276 0.6028279961</span>
 <span class="go">2 1.496877075 0.5661803178</span>
@@ -2581,14 +2583,14 @@ represented in terms of <a class="reference internal" href="#mpmath.pcfu" title=
         <li class="right" >
           <a href="expintegrals.html" title="Exponential integrals and error functions"
              >previous</a> |</li>
-        <li><a href="../index.html">mpmath v0.16 documentation</a> &raquo;</li>
+        <li><a href="../index.html">mpmath v0.17 documentation</a> &raquo;</li>
           <li><a href="index.html" >Mathematical functions</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Fredrik Johansson.
-      Last updated on Sep 24, 2010.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.
+      Last updated on Feb 01, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
 
 <!-- Generate pageview statistics when this document is viewed on the mpmath website -->
