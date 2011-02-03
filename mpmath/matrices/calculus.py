@@ -2,7 +2,7 @@ from ..libmp.backend import xrange
 
 # TODO: should use diagonalization-based algorithms
 
-class MatrixCalculusMethods:
+class MatrixCalculusMethods(object):
 
     def _exp_pade(ctx, a):
         """

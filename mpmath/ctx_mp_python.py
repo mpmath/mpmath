@@ -578,7 +578,7 @@ class _mpc(mpnumeric):
 complex_types = (complex, _mpc)
 
 
-class PythonMPContext:
+class PythonMPContext(object):
 
     def __init__(ctx):
         ctx._prec_rounding = [53, round_nearest]
