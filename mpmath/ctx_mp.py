@@ -8,7 +8,7 @@ import re
 
 from .ctx_base import StandardBaseContext
 
-from .libmp.backend import basestring
+from .libmp.backend import basestring, BACKEND
 
 from . import libmp
 
@@ -43,12 +43,11 @@ new = object.__new__
 get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
                          r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
 
-
-try:
+if BACKEND == 'sage':
     from sage.libs.mpmath.ext_main import Context as BaseMPContext
     # pickle hack
     import sage.libs.mpmath.ext_main as _mpf_module
-except ImportError:
+else:
     from .ctx_mp_python import PythonMPContext as BaseMPContext
     from . import ctx_mp_python as _mpf_module
 
