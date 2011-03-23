@@ -620,7 +620,7 @@ class MDNewton:
 
     [1] http://scipy.org
 
-    [2] http://openopt.org
+    [2] http://openopt.org/Welcome
     """
     maxsteps = 10
 

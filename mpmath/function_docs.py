@@ -3335,7 +3335,7 @@ An integral representation::
     0.06674960718150520648014567
 
 
-[1] http://www.math.ucla.edu/~cbm/aands/page_504.htm
+[1] http://people.math.sfu.ca/~cbm/aands/page_504.htm
 """
 
 hyp2f0 = r"""
@@ -3402,7 +3402,7 @@ The coefficients of the polynomials can be recovered using Taylor expansion::
     [1.0, -2.0, 4.5, -7.5, 6.5625, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
-[1] http://www.math.ucla.edu/~cbm/aands/page_504.htm
+[1] http://people.math.sfu.ca/~cbm/aands/page_504.htm
 """
 
 
@@ -3972,7 +3972,7 @@ hypergeometric function `\,_2F_2`::
    http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
 
 2. Abramowitz & Stegun, section 5:
-   http://www.math.sfu.ca/~cbm/aands/page_228.htm
+   http://people.math.sfu.ca/~cbm/aands/page_228.htm
 
 3. Asymptotic expansion for Ei:
    http://mathworld.wolfram.com/En-Function.html
@@ -6409,7 +6409,7 @@ Evaluation is supported for arbitrary arguments::
 
 **References**
 
-1. http://www.research.att.com/~njas/sequences/A000178
+1. http://oeis.org/A000178
 
 """
 
@@ -6512,7 +6512,7 @@ definition::
 
 **References**
 
-1. http://www.research.att.com/~njas/sequences/A002109
+1. http://oeis.org/A002109
 2. http://mathworld.wolfram.com/Hyperfactorial.html
 
 """
