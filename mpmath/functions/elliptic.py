@@ -920,7 +920,7 @@ def ellipf(ctx, phi, m):
 
     .. math ::
 
-        F(\phi,m) = \int_0^{\sin z}
+        F(\phi,m) = \int_0^{\sin \phi}
         \frac{dt}{\left(\sqrt{1-t^2}\right)\left(\sqrt{1-mt^2}\right)}.
 
     The function reduces to a complete elliptic integral of the first kind
@@ -932,7 +932,7 @@ def ellipf(ctx, phi, m):
 
     In the defining integral, it is assumed that the principal branch
     of the square root is taken and that the path of integration avoids
-    crossing any branch cuts. Outside `-\pi/2 \le \Re(z) \le \pi/2`,
+    crossing any branch cuts. Outside `-\pi/2 \le \Re(\phi) \le \pi/2`,
     the function extends quasi-periodically as
 
     .. math ::
@@ -1211,7 +1211,7 @@ def ellippi(ctx, *args):
 
     In the defining integral, it is assumed that the principal branch
     of the square root is taken and that the path of integration avoids
-    crossing any branch cuts. Outside `-\pi/2 \le \Re(z) \le \pi/2`,
+    crossing any branch cuts. Outside `-\pi/2 \le \Re(\phi) \le \pi/2`,
     the function extends quasi-periodically as
 
     .. math ::
