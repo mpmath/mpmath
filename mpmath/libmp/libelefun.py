@@ -783,9 +783,9 @@ def mpf_log_hypot(a, b, prec, rnd):
 
 def atan_newton(x, prec):
     if prec >= 100:
-        r = math.atan(long((x>>(prec-53)))/2.0**53)
+        r = math.atan(int((x>>(prec-53)))/2.0**53)
     else:
-        r = math.atan(long(x)/2.0**prec)
+        r = math.atan(int(x)/2.0**prec)
     prevp = 50
     r = MPZ(int(r * 2.0**53) >> (53-prevp))
     extra_p = 50
