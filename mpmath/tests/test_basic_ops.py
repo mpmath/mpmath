@@ -148,8 +148,8 @@ def test_hash():
     assert hash(mp.mpq(5,1)) == hash(5)
     assert hash(mp.mpq(1,2)) == hash(0.5)
     if sys.version >= "3.2":
-        assert hash(mpf(1))*2**2000 == hash(2**2000)
-        assert hash(mpf(1))/2**2000 == hash(mpq(1,2**2000))
+        assert hash(mpf(1)*2**2000) == hash(2**2000)
+        assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
 
 # Advanced rounding test
 def test_add_rounding():
