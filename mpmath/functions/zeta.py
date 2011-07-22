@@ -1110,6 +1110,21 @@ def lerchphi(ctx, z, s, a):
         >>> lerchphi(0,1,-2)
         -0.5
 
+    Reduction to simpler functions::
+
+        >>> lerchphi(1, 4.25+1j, 1)
+        (1.044674457556746668033975 - 0.04674508654012658932271226j)
+        >>> zeta(4.25+1j)
+        (1.044674457556746668033975 - 0.04674508654012658932271226j)
+        >>> lerchphi(1 - 0.5**10, 4.25+1j, 1)
+        (1.044629338021507546737197 - 0.04667768813963388181708101j)
+        >>> lerchphi(3, 4, 1)
+        (1.249503297023366545192592 - 0.2314252413375664776474462j)
+        >>> polylog(4, 3) / 3
+        (1.249503297023366545192592 - 0.2314252413375664776474462j)
+        >>> lerchphi(3, 4, 1 - 0.5**10)
+        (1.253978063946663945672674 + 0.2316736622836535468765376j)
+
     **References**
 
     1. [DLMF]_ section 25.14
@@ -1117,13 +1132,11 @@ def lerchphi(ctx, z, s, a):
     """
     if z == 0:
         return a ** (-s)
-    """
     # Faster, but these cases are useful for testing right now
     if z == 1:
         return ctx.zeta(s, a)
     if a == 1:
-        return z * ctx.polylog(s, z)
-    """
+        return ctx.polylog(s, z) / z
     if ctx.re(a) < 1:
         if ctx.isnpint(a):
             raise ValueError("Lerch transcendent complex infinity")
