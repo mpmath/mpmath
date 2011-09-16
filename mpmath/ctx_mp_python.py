@@ -351,7 +351,7 @@ class _constant(_mpf):
         return self.func(prec, rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, self.context.nstr(self))
+        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=15)))
 
 
 class _mpc(mpnumeric):
