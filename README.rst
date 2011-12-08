@@ -42,6 +42,7 @@ material are those of the author(s) and do not necessarily reflect the
 views of the sponsors.
 
 Credit also goes to:
+
 * The authors of the GMP library and the Python wrapper
   gmpy, enabling mpmath to become much faster at
   high precision
@@ -87,14 +88,15 @@ http://pypi.python.org/pypi
 
 To install, unpack the mpmath archive and run
 
-  python setup.py install
+``python setup.py install``
 
 Mpmath can also be installed using
 
-  python -m easy_install mpmath
+``python -m easy_install mpmath``
 
 The latest development code is available from
-http://code.google.com/p/mpmath/source/checkout
+http://code.google.com/p/mpmath/source/checkout or at
+https://github.com/fredrik-johansson/mpmath.
 
 See the main documentation for more detailed instructions.
 
