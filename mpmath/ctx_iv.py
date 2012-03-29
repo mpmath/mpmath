@@ -17,7 +17,8 @@ from .libmp import (
     mpi_from_str,
     mpci_pos, mpci_neg, mpci_add, mpci_sub, mpci_mul, mpci_div, mpci_pow,
     mpci_abs, mpci_pow, mpci_exp, mpci_log,
-    ComplexResult)
+    ComplexResult,
+    mpf_hash, mpc_hash)
 
 mpi_zero = (fzero, fzero)
 
@@ -45,6 +46,13 @@ class ivmpf(object):
         if a == b:
             return int(libmp.to_int(a))
         raise ValueError
+
+    def __hash__(self):
+        a, b = self._mpi_
+        if a == b:
+            return mpf_hash(a)
+        else:
+            return hash(self._mpi_)
 
     @property
     def real(self): return self
@@ -137,6 +145,13 @@ class ivmpc(object):
         y = new(cls)
         y._mpci_ = re._mpi_, im._mpi_
         return y
+
+    def __hash__(self):
+        (a, b), (c,d) = self._mpci_
+        if a == b and c == d:
+            return mpc_hash((a, c))
+        else:
+            return hash(self._mpci_)
 
     def __repr__(s):
         if s.ctx.pretty:
