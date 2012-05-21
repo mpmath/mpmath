@@ -142,6 +142,7 @@ mnorm = mp.mnorm
 
 lu_solve = mp.lu_solve
 lu = mp.lu
+qr = mp.qr
 unitvector = mp.unitvector
 inverse = mp.inverse
 residual = mp.residual

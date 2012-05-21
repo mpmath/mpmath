@@ -26,6 +26,7 @@ to mpmath:
 * Chris Smith <smichr@gmail.com>
 * Juan Arias de Reyna <arias@us.es>
 * Ioannis Tziakos <itziakos@gmail.com>
+* Ken Allen <ken.allen@sbcglobal.net>
 
 For a detailed changelog, including individual contributions,
 see the CHANGES file.
