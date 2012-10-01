@@ -742,10 +742,12 @@ def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
     or a range 0,1,...r). If reflect=False, the ydks are not computed.
     """
     #print "zetasum", s, a, n
-    try:
-        return ctx._zetasum_fast(s, a, n, derivatives, reflect)
-    except NotImplementedError:
-        pass
+    # don't use the fixed-point code if there are large exponentials
+    if abs(ctx.re(s)) < 0.5 * ctx.prec:
+        try:
+            return ctx._zetasum_fast(s, a, n, derivatives, reflect)
+        except NotImplementedError:
+            pass
     negs = ctx.fneg(s, exact=True)
     have_derivatives = derivatives != [0]
     have_one_derivative = len(derivatives) == 1
