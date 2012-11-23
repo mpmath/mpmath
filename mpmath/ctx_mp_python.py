@@ -1134,6 +1134,9 @@ class PythonMPContext(object):
 #     parts of the expected interfaces.  See
 #     http://docs.python.org/2/library/numbers.html for list of abstract
 #     methods.
-import numbers
-numbers.Complex.register(_mpc)
-numbers.Real.register(_mpf)
+try:
+    import numbers
+    numbers.Complex.register(_mpc)
+    numbers.Real.register(_mpf)
+except ImportError:
+    pass

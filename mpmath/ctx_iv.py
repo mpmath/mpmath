@@ -530,6 +530,9 @@ class MPIntervalContext(StandardBaseContext):
 #     parts of the expected interfaces.  See
 #     http://docs.python.org/2/library/numbers.html for list of abstract
 #     methods.
-import numbers
-numbers.Complex.register(ivmpc)
-numbers.Real.register(ivmpf)
+try:
+    import numbers
+    numbers.Complex.register(ivmpc)
+    numbers.Real.register(ivmpf)
+except ImportError:
+    pass

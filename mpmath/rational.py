@@ -233,5 +233,8 @@ mpq_5_4 = mpq((5,4))
 #     parts of the expected interfaces.  See
 #     http://docs.python.org/2/library/numbers.html for list of abstract
 #     methods.
-import numbers
-numbers.Rational.register(mpq)
+try:
+    import numbers
+    numbers.Rational.register(mpq)
+except ImportError:
+    pass
