@@ -1127,3 +1127,16 @@ class PythonMPContext(object):
             else:
                 raise TypeError("requires an mpf/mpc")
 
+
+# Register with "numbers" ABC
+#     We do not subclass, hence we do not use the @abstractmethod checks. While
+#     this is less invasive it may turn out that we do not actually support
+#     parts of the expected interfaces.  See
+#     http://docs.python.org/2/library/numbers.html for list of abstract
+#     methods.
+try:
+    import numbers
+    numbers.Complex.register(_mpc)
+    numbers.Real.register(_mpf)
+except ImportError:
+    pass

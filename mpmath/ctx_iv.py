@@ -522,3 +522,17 @@ class MPIntervalContext(StandardBaseContext):
             #    return s
             if k > maxterms:
                 raise ctx.NoConvergence
+
+
+# Register with "numbers" ABC
+#     We do not subclass, hence we do not use the @abstractmethod checks. While
+#     this is less invasive it may turn out that we do not actually support
+#     parts of the expected interfaces.  See
+#     http://docs.python.org/2/library/numbers.html for list of abstract
+#     methods.
+try:
+    import numbers
+    numbers.Complex.register(ivmpc)
+    numbers.Real.register(ivmpf)
+except ImportError:
+    pass
