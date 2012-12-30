@@ -1,4 +1,4 @@
-from ..libmp.backend import xrange
+from ..libmp.backend import xrange, print_
 from .functions import defun, defun_wrapped, defun_static
 
 @defun
@@ -603,9 +603,9 @@ def _hurwitz(ctx, s, a=1, d=0, **kwargs):
             T1, T2 = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
             cancellation = ctx.mag(T1) - ctx.mag(T1+T2)
             if verbose:
-                print("Term 1:", T1)
-                print("Term 2:", T2)
-                print("Cancellation:", cancellation, "bits")
+                print_("Term 1:", T1)
+                print_("Term 2:", T2)
+                print_("Cancellation:", cancellation, "bits")
             if cancellation < extraprec:
                 return T1 + T2
             else:
@@ -722,7 +722,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 return lsum, (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
         if verbose:
-            print("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
+            print_("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
         M1, M2 = M2, M2*2
         if ctx.re(s) < 0:
             N += N//2
@@ -1036,12 +1036,12 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         err = r1+r2+r4
         t = t1-t2+t3-t4
         if kwargs.get("verbose"):
-            print('main term =', t1)
-            print('    computed using', gt, 'zeros of zeta')
-            print('prime term =', t2)
-            print('    computed using', pt, 'values of the von Mangoldt function')
-            print('exponential term =', t3)
-            print('singular term =', t4)
+            print_('main term =', t1)
+            print_('    computed using', gt, 'zeros of zeta')
+            print_('prime term =', t2)
+            print_('    computed using', pt, 'values of the von Mangoldt function')
+            print_('exponential term =', t3)
+            print_('singular term =', t4)
     finally:
         ctx.prec = prec
     if kwargs.get("error"):

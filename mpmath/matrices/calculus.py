@@ -113,9 +113,12 @@ class MatrixCalculusMethods(object):
         """
         if method == 'pade':
             prec = ctx.prec
-            ctx.prec += 2*A.rows
-            A = ctx.matrix(A)
-            res = ctx._exp_pade(A)
+            try:
+                A = ctx.matrix(A)
+                ctx.prec += 2*A.rows
+                res = ctx._exp_pade(A)
+            finally:
+                ctx.prec = prec
             return res
         A = ctx.matrix(A)
         prec = ctx.prec

@@ -1878,8 +1878,8 @@ Some special values are::
 An example of a sum that can be computed more accurately and
 efficiently via :func:`~mpmath.altzeta` than via numerical summation::
 
-    >>> sum(-(-1)**n / n**2.5 for n in range(1, 100))
-    0.86720495150398402
+    >>> sum(-(-1)**n / mpf(n)**2.5 for n in range(1, 100))
+    0.867204951503984
     >>> altzeta(2.5)
     0.867199889012184
 
