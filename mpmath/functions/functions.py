@@ -606,3 +606,19 @@ def mangoldt(ctx, n):
             if ctx.isprime(p):
                 return ctx.ln(p)
         k += 1
+
+@defun
+def stirling1(ctx, n, k, exact=False):
+    v = ctx._stirling1(int(n), int(k))
+    if exact:
+        return int(v)
+    else:
+        return ctx.mpf(v)
+
+@defun
+def stirling2(ctx, n, k, exact=False):
+    v = ctx._stirling2(int(n), int(k))
+    if exact:
+        return int(v)
+    else:
+        return ctx.mpf(v)

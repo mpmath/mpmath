@@ -403,6 +403,8 @@ secondzeta = mp.secondzeta
 nzeros = mp.nzeros
 backlunds = mp.backlunds
 lerchphi = mp.lerchphi
+stirling1 = mp.stirling1
+stirling2 = mp.stirling2
 
 # be careful when changing this name, don't use test*!
 def runtests():
@@ -416,14 +418,13 @@ def runtests():
     importdir = os.path.abspath(testdir + '/../..')
     tests.testit(importdir, testdir)
 
-def doctests():
+def doctests(filter=[]):
     try:
         import psyco; psyco.full()
     except ImportError:
         pass
     import sys
     from timeit import default_timer as clock
-    filter = []
     for i, arg in enumerate(sys.argv):
         if '__init__.py' in arg:
             filter = [sn for sn in sys.argv[i+1:] if not sn.startswith("-")]

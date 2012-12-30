@@ -342,6 +342,8 @@ class StandardBaseContext(Context,
     moebius = staticmethod(libmp.moebius)
     _ifac = staticmethod(libmp.ifac)
     _eulernum = staticmethod(libmp.eulernum)
+    _stirling1 = staticmethod(libmp.stirling1)
+    _stirling2 = staticmethod(libmp.stirling2)
 
     def sum_accurately(ctx, terms, check_step=1):
         prec = ctx.prec
