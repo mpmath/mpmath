@@ -28,6 +28,10 @@ def test_findroot():
     assert isinstance(fp.findroot(f, 1, tol=1e-10), float)
     assert isinstance(fp.findroot(f, 1+0j, tol=1e-10), complex)
 
+def test_bisection():
+    # issue 233
+    assert findroot(lambda x: x**2-1,(0,2),solver='bisect') == 1
+
 def test_mnewton():
     f = lambda x: polyval([1,3,3,1],x)
     x = findroot(f, -0.9, solver='mnewton')

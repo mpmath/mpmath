@@ -320,11 +320,14 @@ class Bisection:
         while True:
             m = self.ctx.ldexp(a + b, -1)
             fm = f(m)
-            if fm * fb < 0:
+            sign = fm * fb
+            if sign < 0:
                 a = m
-            else:
+            elif sign > 0:
                 b = m
                 fb = fm
+            else:
+                yield m, self.ctx.zero
             l /= 2
             yield (a + b)/2, abs(l)
 
