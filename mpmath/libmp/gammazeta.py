@@ -1213,7 +1213,7 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
         a = mpf_gamma(y, wp)
         b = mpf_zeta(y, wp)
         c = mpf_sin_pi(mpf_shift(s, -1), wp)
-        wp2 = wp + (exp+bc)
+        wp2 = wp + max(0,exp+bc)
         pi = mpf_pi(wp+wp2)
         d = mpf_div(mpf_pow(mpf_shift(pi, 1), s, wp2), pi, wp2)
         return mpf_mul(a,mpf_mul(b,mpf_mul(c,d,wp),wp),prec,rnd)
@@ -1309,7 +1309,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
         rsign, rman, rexp, rbc = re
         isign, iman, iexp, ibc = im
         mag = max(rexp+rbc, iexp+ibc)
-        wp2 = wp + mag
+        wp2 = wp + max(0, mag)
         pi = mpf_pi(wp+wp2)
         pi2 = (mpf_shift(pi, 1), fzero)
         d = mpc_div_mpf(mpc_pow(pi2, s, wp2), pi, wp2)

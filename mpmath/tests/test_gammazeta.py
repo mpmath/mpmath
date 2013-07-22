@@ -262,10 +262,14 @@ def test_zeta():
     assert zeta(-4) == 0
     assert zeta(-100) == 0
     assert isnan(zeta(nan))
+    assert zeta(1e-30).ae(-0.5)
+    assert zeta(-1e-30).ae(-0.5)
     # Zeros in the critical strip
     assert zeta(mpc(0.5, 14.1347251417346937904)).ae(0)
     assert zeta(mpc(0.5, 21.0220396387715549926)).ae(0)
     assert zeta(mpc(0.5, 25.0108575801456887632)).ae(0)
+    assert zeta(mpc(1e-30,1e-40)).ae(-0.5)
+    assert zeta(mpc(-1e-30,1e-40)).ae(-0.5)
     mp.dps = 50
     im = '236.5242296658162058024755079556629786895294952121891237'
     assert zeta(mpc(0.5, im)).ae(0, 1e-46)
@@ -298,6 +302,10 @@ def test_altzeta():
     assert altzeta(s).ae((1-2**(1-s))*zeta(s))
     assert altzeta(-100.5).ae(4.58595480083585913e+108)
     assert altzeta(1.3).ae(0.73821404216623045)
+    assert altzeta(1e-30).ae(0.5)
+    assert altzeta(-1e-30).ae(0.5)
+    assert altzeta(mpc(1e-30,1e-40)).ae(0.5)
+    assert altzeta(mpc(-1e-30,1e-40)).ae(0.5)
 
 def test_zeta_huge():
     mp.dps = 15
