@@ -3,6 +3,7 @@
 from __future__ import division
 
 from mpmath import *
+xrange = libmp.backend.xrange
 
 # XXX: these shouldn't be visible(?)
 LU_decomp = mp.LU_decomp
