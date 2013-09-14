@@ -151,6 +151,8 @@ cholesky = mp.cholesky
 cholesky_solve = mp.cholesky_solve
 det = mp.det
 cond = mp.cond
+eigsy = mp.eigsy
+eighe = mp.eighe
 
 expm = mp.expm
 sqrtm = mp.sqrtm
