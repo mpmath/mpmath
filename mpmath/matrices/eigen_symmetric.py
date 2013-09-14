@@ -379,7 +379,7 @@ def c_he_tridiag_2(ctx,A,T,B):
 
 
 
-def tridiag_eigen(ctx,d,e,z=None):
+def tridiag_eigen(ctx,d,e,z=False):
   """
   This subroutine find the eigenvalues and the first components of the
   eigenvectors of a real symmetric tridiagonal matrix using the implicit
@@ -395,7 +395,7 @@ def tridiag_eigen(ctx,d,e,z=None):
       elements of the input matrix in e[0:(n-1)]. On output, e has been
       destroyed.
 
-    z (input/output) If z is equal to None, no eigenvectors will be computed.
+    z (input/output) If z is equal to False, no eigenvectors will be computed.
       Otherwise on input z should have the format z[0:m,0:n] (i.e. a real or
       complex matrix of dimension (m,n) ). On output this matrix will be
       multiplied by the matrix of the eigenvectors (i.e. the columns of this
@@ -471,7 +471,7 @@ def tridiag_eigen(ctx,d,e,z=None):
         d[i+1]=g+p
         g=c*r-b
 
-        if z!=None:
+        if not isinstance(z,bool):
           # calculate eigenvectors
           for w in xrange(z.rows):
             f=         z[w,i+1]
@@ -497,7 +497,7 @@ def tridiag_eigen(ctx,d,e,z=None):
     d[k]=d[i]
     d[i]=p
 
-    if z!=None:
+    if not isinstance(z,bool):
       for w in xrange(z.rows):
         p=     z[w,i];
         z[w,i]=z[w,k];
@@ -562,7 +562,7 @@ def eigsy(ctx,A,eigvals_only=False,overwrite_a=False):
 
   if eigvals_only:
     r_sy_tridiag(ctx,A,d,e,calc_ev=False)
-    tridiag_eigen(ctx,d,e,None)
+    tridiag_eigen(ctx,d,e,False)
     return d
   else:
     r_sy_tridiag(ctx,A,d,e,calc_ev=True)
@@ -628,7 +628,7 @@ def eighe(ctx,A,eigvals_only=False,overwrite_a=False):
 
   if eigvals_only:
     c_he_tridiag_0(ctx,A,d,e,t)
-    tridiag_eigen(ctx,d,e,None)
+    tridiag_eigen(ctx,d,e,False)
     return d
   else:
     c_he_tridiag_0(ctx,A,d,e,t)
