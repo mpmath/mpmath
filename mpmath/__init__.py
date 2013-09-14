@@ -153,6 +153,7 @@ det = mp.det
 cond = mp.cond
 eigsy = mp.eigsy
 eighe = mp.eighe
+eigh = mp.eigh
 
 expm = mp.expm
 sqrtm = mp.sqrtm

@@ -383,19 +383,20 @@ The columns of Q are the eigenvectors of A and E contains the eigenvalues:
 
         A Q[:,i]=E[i] Q[:,i]
 
-examples:
+Examples::
 
     >>> from mpmath import mp
     >>> A = mp.matrix([[1, 2], [2, 3]])
     >>> E, Q = mp.eigsy(A)                     # alternative: E, Q = mp.eigh(A)
-    >>> mp.chop(A * Q[:,0] - E[0] * Q[:,0])
-    matrix([['0.0'],['0.0']])
+    >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    [0.0]
+    [0.0]
 
     >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
     >>> E, Q = mp.eighe(A)                     # alternative: E, Q = mp.eigh(A)
-    >>> mp.chop(A * Q[:,0] - E[0] * Q[:,0])
-    matrix([['0.0'],['0.0']])
-
+    >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    [0.0]
+    [0.0]
 
 
 Interval and double-precision matrices
