@@ -667,6 +667,7 @@ class _matrix(object):
         return -self + other
 
     def __eq__(self, other):
+        if not isinstance(other,_matrix): return NotImplemented
         return self.__rows == other.__rows and self.__cols == other.__cols \
                and self.__data == other.__data
 

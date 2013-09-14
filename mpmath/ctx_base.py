@@ -11,6 +11,7 @@ from .calculus.odes import ODEMethods
 from .matrices.matrices import MatrixMethods
 from .matrices.calculus import MatrixCalculusMethods
 from .matrices.linalg import LinearAlgebraMethods
+from .matrices.eigen_symmetric import EigenSymmetric
 from .identification import IdentificationMethods
 from .visualization import VisualizationMethods
 
@@ -27,6 +28,7 @@ class StandardBaseContext(Context,
     MatrixMethods,
     MatrixCalculusMethods,
     LinearAlgebraMethods,
+    EigenSymmetric,
     IdentificationMethods,
     OptimizationMethods,
     ODEMethods,
