@@ -361,6 +361,43 @@ The function ``qr`` computes a QR factorization of a matrix::
     [0.0  1.0  0.0]
     [0.0  0.0  1.0]
 
+
+The symmetric eigenvalue problem
+................................
+
+The routines ``eigsy`` and ``eighe`` solve the (ordinary) eigenvalue problem
+for a real symmetric or complex hermitian square matrix A.
+``eigh`` is a unified interface for this two functions calling either
+``eigsy`` or ``eighe`` depending on whether A is real or complex.
+
+Given A, an orthogonal (A real) or unitary matrix Q (A complex) is
+calculated which diagonalizes A:
+
+        Q' A Q = diag(E)
+
+Here diag(E) a is diagonal matrix whose diagonal is E.
+' denotes the hermitian transpose (i.e. ordinary transposition and
+complex conjugation).
+
+The columns of Q are the eigenvectors of A and E contains the eigenvalues:
+
+        A Q[:,i]=E[i] Q[:,i]
+
+examples:
+
+    >>> from mpmath import mp
+    >>> A = mp.matrix([[1, 2], [2, 3]])
+    >>> E, Q = mp.eigsy(A)                     # alternative: E, Q = mp.eigh(A)
+    >>> mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    matrix([['0.0'],['0.0']])
+
+    >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
+    >>> E, Q = mp.eighe(A)                     # alternative: E, Q = mp.eigh(A)
+    >>> mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    matrix([['0.0'],['0.0']])
+
+
+
 Interval and double-precision matrices
 --------------------------------------
 
