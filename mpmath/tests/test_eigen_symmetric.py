@@ -138,6 +138,16 @@ def run_svd_c(A, full_matrices = False, verbose = True):
         print("E:\n", str(E), "\n", err)
     assert err < eps
 
+def run_gauss(qtype, a, b):
+    eps = 1e-5
+
+    d, e = mp.gauss_quadrature(len(a), qtype)
+    d -= mp.matrix(a)
+    e -= mp.matrix(b)
+
+    assert mp.mnorm(d) < eps
+    assert mp.mnorm(e) < eps
+
 def irandmatrix(n, range = 10):
     """
     random matrix with integer entries
@@ -283,3 +293,65 @@ def test_svd_test_case():
     S = mp.svd_c(a, compute_uv = False)
     S -= b
     assert mp.mnorm(S) < eps
+
+
+def test_gauss_quadrature_static():
+    a = [-0.57735027,  0.57735027]
+    b = [ 1,  1]
+    run_gauss("legendre", a , b)
+
+    a = [ -0.906179846,  -0.538469310,   0,           0.538469310,   0.906179846]
+    b = [  0.23692689,    0.47862867,    0.56888889,  0.47862867,    0.23692689]
+    run_gauss("legendre", a , b)
+
+    a = [ 0.06943184,  0.33000948,  0.66999052,  0.93056816]
+    b = [ 0.17392742,  0.32607258,  0.32607258,  0.17392742]
+    run_gauss("legendre01", a , b)
+
+    a = [-0.70710678,  0.70710678]
+    b = [ 0.88622693,  0.88622693]
+    run_gauss("hermite", a , b)
+
+    a = [ -2.02018287,  -0.958572465,   0,           0.958572465,   2.02018287]
+    b = [  0.01995324,   0.39361932,    0.94530872,  0.39361932,    0.01995324]
+    run_gauss("hermite", a , b)
+
+    a = [ 0.41577456,  2.29428036,  6.28994508]
+    b = [ 0.71109301,  0.27851773,  0.01038926]
+    run_gauss("laguerre", a , b)
+
+def test_gauss_quadrature_dynamic(verbose = False):
+  n = 5
+
+  A = mp.randmatrix(2 * n, 1)
+
+  def F(x):
+      r = 0
+      for i in xrange(len(A) - 1, -1, -1):
+          r = r * x + A[i]
+      return r
+
+  def run(qtype, FW, R, alpha = 0, beta = 0):
+    X, W = mp.gauss_quadrature(n, qtype, alpha = alpha, beta = beta)
+
+    a = 0
+    for i in xrange(len(X)):
+      a += W[i] * F(X[i])
+
+    b = mp.quad(lambda x: FW(x) * F(x), R)
+
+    c = mp.fabs(a - b)
+
+    if verbose:
+        print(qtype, c, a, b)
+
+    assert c < 1e-5
+
+  run("legendre", lambda x: 1, [-1, 1])
+  run("legendre01", lambda x: 1, [0, 1])
+  run("hermite", lambda x: mp.exp(-x*x), [-mp.inf, mp.inf])
+  run("laguerre", lambda x: mp.exp(-x), [0, mp.inf])
+  run("glaguerre", lambda x: mp.sqrt(x)*mp.exp(-x), [0, mp.inf], alpha = 1 / mp.mpf(2))
+  run("chebychev1", lambda x: 1/mp.sqrt(1-x*x), [-1, 1])
+  run("chebychev2", lambda x: mp.sqrt(1-x*x), [-1, 1])
+  run("jacobi", lambda x: (1-x)**(1/mp.mpf(3)) * (1+x)**(1/mp.mpf(5)), [-1, 1], alpha = 1 / mp.mpf(3), beta = 1 / mp.mpf(5) )

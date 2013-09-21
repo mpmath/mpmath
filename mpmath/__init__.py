@@ -157,7 +157,7 @@ eigh = mp.eigh
 svd_r = mp.svd_r
 svd_c = mp.svd_c
 svd = mp.svd
-
+gauss_quadrature = mp.gauss_quadrature
 
 expm = mp.expm
 sqrtm = mp.sqrtm

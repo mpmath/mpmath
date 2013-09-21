@@ -746,6 +746,149 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
     else:
         return ctx.eigsy(A, eigvals_only = eigvals_only, overwrite_a = overwrite_a)
 
+
+@defun
+def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
+    """
+    This routine calulates gaussian quadrature rules for different
+    families of orthogonal polynomials. Let (a, b) be an interval,
+    W(x) a positive weight function and n a positive integer.
+    Then the purpose of this routine is to calculate pairs (x_k, w_k)
+    for k=0, 1, 2, ... (n-1) which give
+
+      int(W(x) * F(x), x = a..b) = sum(w_k * F(x_k),k = 0..(n-1))
+
+    exact for all polynomials F(x) of degree 2*n. For all integrable
+    functions F(x) the sum is a (more or less) good approximation to the
+    integral. The x_k are called nodes (which are the zeros of the
+    related orthogonal polynomials) and the w_k are called the weights.
+
+    parameters
+       n        (input) The degree of the quadrature rule, i.e. its number of
+                nodes.
+
+       qtype    (input) The family of orthogonal polynmomials for which to
+                compute the quadrature rule. See the list below.
+
+       alpha    (input) real number, used as parameter for some orthogonal
+                polynomials
+
+       beta     (input) real number, used as parameter for some orthogonal
+                polynomials.
+
+    return value
+
+      (X, W)    a pair of two real arrays where x_k = X[k] and w_k = W[k].
+
+
+    orthogonal polynomials:
+
+      qtype           polynomial
+      -----           ----------
+
+      "legendre"      Legendre polynomials, W(x)=1 on the interval (-1, +1)
+      "legendre01"    shifted Legendre polynomials, W(x)=1 on the interval (0, +1)
+      "hermite"       Hermite polynomials, W(x)=exp(-x*x) on (-infinity,+infinity)
+      "laguerre"      Laguerre polynomials, W(x)=exp(-x) on (0,+infinity)
+      "glaguerre"     generalized Laguerre polynomials, W(x)=exp(-x)*x**alpha
+                      on (0, +infinity)
+      "chebychev1"    Chebychev polynomials of the first kind, W(x)=1/sqrt(1-x*x)
+                      on (-1, +1)
+      "chebychev2"    Chebychev polynomials of the second kind, W(x)=sqrt(1-x*x)
+                      on (-1, +1)
+      "jacobi"        Jacobi polynomials, W(x)=(1-x)**alpha * (1+x)**beta on (-1, +1)
+                      with alpha>-1 and beta>-1
+
+    references:
+      - golub and welsch, "calculations of gaussian quadrature rules", mathematics of
+        computation 23, p. 221-230 (1969)
+      - golub, "some modified matrix eigenvalue problems", siam review 15, p. 318-334 (1973)
+      - stroud and secrest, "gaussian quadrature formulas", prentice-hall (1966)
+
+    See also the routine gaussq.f in netlog.org or ACM Transactions on
+    Mathematical Software algorithm 726.
+    """
+
+    d = ctx.zeros(n, 1)
+    e = ctx.zeros(n, 1)
+    z = ctx.zeros(1, n)
+
+    z[0,0] = 1
+
+    if qtype == "legendre":
+        # legendre on the range -1 +1 , abramowitz, table 25.4, p.916
+        w = 2
+        for i in xrange(n):
+            j = i + 1
+            e[i] = ctx.sqrt(j * j / (4 * j * j - ctx.mpf(1)))
+    elif qtype == "legendre01":
+        # legendre shifted to 0 1        , abramowitz, table 25.8, p.921
+        w = 1
+        for i in xrange(n):
+            d[i] = 1 / ctx.mpf(2)
+            j = i + 1
+            e[i] = ctx.sqrt(j * j / (16 * j * j - ctx.mpf(4)))
+    elif qtype == "hermite":
+        # hermite on the range -inf +inf , abramowitz, table 25.10,p.924
+        w = ctx.sqrt(ctx.pi)
+        for i in xrange(n):
+            j = i + 1
+            e[i] = ctx.sqrt(j / ctx.mpf(2))
+    elif qtype == "laguerre":
+        # laguerre on the range 0 +inf , abramowitz, table 25.9, p. 923
+        w = 1
+        for i in xrange(n):
+            j = i + 1
+            d[i] = 2 * j - 1
+            e[i] = j
+    elif qtype=="chebychev1":
+        # chebychev polynimials of the first kind
+        w = ctx.pi
+        for i in xrange(n):
+            e[i] = 1 / ctx.mpf(2)
+        e[0] = ctx.sqrt(1 / ctx.mpf(2))
+    elif qtype == "chebychev2":
+        # chebychev polynimials of the second kind
+        w = ctx.pi / 2
+        for i in xrange(n):
+            e[i] = 1 / ctx.mpf(2)
+    elif qtype == "glaguerre":
+        # generalized laguerre on the range 0 +inf
+        w = ctx.gamma(1 + alpha)
+        for i in xrange(n):
+            j = i + 1
+            d[i] = 2 * j - 1 + alpha
+            e[i] = ctx.sqrt(j * (j + alpha))
+    elif qtype == "jacobi":
+        # jacobi polynomials
+        alpha = ctx.mpf(alpha)
+        beta = ctx.mpf(beta)
+        ab = alpha + beta
+        abi = ab + 2
+        w = (2**(ab+1)) * ctx.gamma(alpha + 1) * ctx.gamma(beta + 1) / ctx.gamma(abi)
+        d[0] = (beta - alpha) / abi
+        e[0] = ctx.sqrt(4 * (1 + alpha) * (1 + beta) / ((abi + 1) * (abi * abi)))
+        a2b2 = beta * beta - alpha * alpha
+        for i in xrange(1, n):
+            j = i + 1
+            abi = 2 * j + ab
+            d[i] = a2b2 / ((abi - 2) * abi)
+            e[i] = ctx.sqrt(4 * j * (j + alpha) * (j + beta) * (j + ab) / ((abi * abi - 1) * abi * abi))
+    elif isinstance(qtype, str):
+        raise ValueError("unknown quadrature rule \"%s\"" % qtype)
+    elif not isinstance(qtype, str):
+        w = qtype(d, e)
+    else:
+        assert 0
+
+    tridiag_eigen(ctx, d, e, z)
+
+    for i in xrange(len(z)):
+      z[i] *= z[i]
+
+    z = z.transpose()
+    return (d, w * z)
+
 ##################################################################################################
 ##################################################################################################
 ##################################################################################################
