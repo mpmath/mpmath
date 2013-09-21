@@ -26,8 +26,10 @@ def run_eigsy(A, verbose = False):
         print("difference:", NC, "\n", C, "\n")
         print("difference:", NE, "\n", E, "\n")
 
-    assert NC < mp.exp( 0.8 * mp.log(mp.eps))
-    assert NE < mp.exp( 0.8 * mp.log(mp.eps))
+    eps = mp.exp( 0.8 * mp.log(mp.eps))
+
+    assert NC < eps
+    assert NE < eps
 
     return NC
 
@@ -51,10 +53,90 @@ def run_eighe(A, verbose = False):
         print("difference:", NC, "\n", C, "\n")
         print("difference:", NE, "\n", E, "\n")
 
-    assert NC < mp.exp( 0.8 * mp.log(mp.eps))
-    assert NE < mp.exp( 0.8 * mp.log(mp.eps))
+    eps = mp.exp( 0.8 * mp.log(mp.eps))
+
+    assert NC < eps
+    assert NE < eps
 
     return NC
+
+def run_svd_r(A, full_matrices = False, verbose = True):
+
+    m, n = A.rows, A.cols
+
+    eps = mp.exp(0.8 * mp.log(mp.eps))
+
+    if verbose:
+        print("original matrix:\n", str(A))
+        print("full", full_matrices)
+
+    U, S0, V = mp.svd_r(A, full_matrices = full_matrices)
+
+    S = mp.zeros(U.cols, V.rows)
+    for j in xrange(min(m, n)):
+        S[j,j] = S0[j]
+
+    if verbose:
+        print("U:\n", str(U))
+        print("S:\n", str(S0))
+        print("V:\n", str(V))
+
+    C = U * S * V - A
+    err = mp.mnorm(C)
+    if verbose:
+        print("C\n", str(C), "\n", err)
+    assert err < eps
+
+    D = V * V.transpose() - mp.eye(V.rows)
+    err = mp.mnorm(D)
+    if verbose:
+        print("D:\n", str(D), "\n", err)
+    assert err < eps
+
+    E = U.transpose() * U - mp.eye(U.cols)
+    err = mp.mnorm(E)
+    if verbose:
+        print("E:\n", str(E), "\n", err)
+    assert err < eps
+
+def run_svd_c(A, full_matrices = False, verbose = True):
+
+    m, n = A.rows, A.cols
+
+    eps = mp.exp(0.8 * mp.log(mp.eps))
+
+    if verbose:
+        print("original matrix:\n", str(A))
+        print("full", full_matrices)
+
+    U, S0, V = mp.svd_c(A, full_matrices = full_matrices)
+
+    S = mp.zeros(U.cols, V.rows)
+    for j in xrange(min(m, n)):
+        S[j,j] = S0[j]
+
+    if verbose:
+        print("U:\n", str(U))
+        print("S:\n", str(S0))
+        print("V:\n", str(V))
+
+    C = U * S * V - A
+    err = mp.mnorm(C)
+    if verbose:
+        print("C\n", str(C), "\n", err)
+    assert err  < eps
+
+    D = V * V.transpose_conj() - mp.eye(V.rows)
+    err = mp.mnorm(D)
+    if verbose:
+        print("D:\n", str(D), "\n", err)
+    assert err < eps
+
+    E = U.transpose_conj() * U - mp.eye(U.cols)
+    err = mp.mnorm(E)
+    if verbose:
+        print("E:\n", str(E), "\n", err)
+    assert err < eps
 
 def irandmatrix(n, range = 10):
     """
@@ -68,31 +150,21 @@ def irandmatrix(n, range = 10):
 
 #######################
 
-def test_eigsy_fixed_matrix():
-    A = mp.matrix([[2, 3], [3, 5]])
-    run_eigsy(A)
-
-    A = mp.matrix([[7, -11], [-11, 13]])
-    run_eigsy(A)
-
-    A = mp.matrix([[2, 11, 7], [11, 3, 13], [7, 13, 5]])
-    run_eigsy(A)
-
-    A = mp.matrix([[2, 0, 7], [0, 3, 1], [7, 1, 5]])
-    run_eigsy(A)
-
-
 def test_eighe_fixed_matrix():
     A = mp.matrix([[2, 3], [3, 5]])
+    run_eigsy(A)
     run_eighe(A)
 
     A = mp.matrix([[7, -11], [-11, 13]])
+    run_eigsy(A)
     run_eighe(A)
 
     A = mp.matrix([[2, 11, 7], [11, 3, 13], [7, 13, 5]])
+    run_eigsy(A)
     run_eighe(A)
 
     A = mp.matrix([[2, 0, 7], [0, 3, 1], [7, 1, 5]])
+    run_eigsy(A)
     run_eighe(A)
 
     #
@@ -110,7 +182,7 @@ def test_eigsy_randmatrix():
     N = 5
 
     for a in xrange(10):
-        A=mp.randmatrix(N, N)
+        A = 2 * mp.randmatrix(N, N) - 1
 
         for i in xrange(0, N):
             for j in xrange(i + 1, N):
@@ -122,7 +194,7 @@ def test_eighe_randmatrix():
     N = 5
 
     for a in xrange(10):
-        A = mp.randmatrix(N, N) + 1j * mp.randmatrix(N, N)
+        A = (2 * mp.randmatrix(N, N) - 1) + 1j * (2 * mp.randmatrix(N, N) - 1)
 
         for i in xrange(0, N):
             A[i,i] = mp.re(A[i,i])
@@ -158,3 +230,56 @@ def test_eighe_irandmatrix():
 
         run_eighe(A)
 
+def test_svd_r_rand():
+    for i in xrange(5):
+        full = mp.rand() > 0.5
+        m = 1 + int(mp.rand() * 10)
+        n = 1 + int(mp.rand() * 10)
+        A = 2 * mp.randmatrix(m, n) - 1
+        if mp.rand() > 0.5:
+            A *= 10
+            for x in xrange(m):
+                for y in xrange(n):
+                    A[x,y]=int(A[x,y])
+
+        run_svd_r(A, full_matrices = full, verbose = False)
+
+def test_svd_c_rand():
+    for i in xrange(5):
+        full = mp.rand() > 0.5
+        m = 1 + int(mp.rand() * 10)
+        n = 1 + int(mp.rand() * 10)
+        A = (2 * mp.randmatrix(m, n) - 1) + 1j * (2 * mp.randmatrix(m, n) - 1)
+        if mp.rand() > 0.5:
+            A *= 10
+            for x in xrange(m):
+                for y in xrange(n):
+                    A[x,y]=int(mp.re(A[x,y])) + 1j * int(mp.im(A[x,y]))
+
+        run_svd_c(A, full_matrices=full, verbose=False)
+
+def test_svd_test_case():
+    # a test case from Golub and Reinsch
+    #  (see wilkinson/reinsch: handbook for auto. comp., vol ii-linear algebra, 134-151(1971).)
+
+    eps = mp.exp(0.8 * mp.log(mp.eps))
+
+    a = [[22, 10,  2,   3,  7],
+         [14,  7, 10,   0,  8],
+         [-1, 13, -1, -11,  3],
+         [-3, -2, 13,  -2,  4],
+         [ 9,  8,  1,  -2,  4],
+         [ 9,  1, -7,   5, -1],
+         [ 2, -6,  6,   5,  1],
+         [ 4,  5,  0,  -2,  2]]
+
+    a = mp.matrix(a)
+    b = mp.matrix([mp.sqrt(1248), 20, mp.sqrt(384), 0, 0])
+
+    S = mp.svd_r(a, compute_uv = False)
+    S -= b
+    assert mp.mnorm(S) < eps
+
+    S = mp.svd_c(a, compute_uv = False)
+    S -= b
+    assert mp.mnorm(S) < eps
