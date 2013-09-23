@@ -5,23 +5,6 @@
 #     module for the symmetric eigenvalue problem
 #       Copyright 2013 Timo Hartmann (thartmann15 at googlemail.com)
 #
-# Permission is hereby granted, free of charge, to any person obtaining a copy of
-# this software and associated documentation files (the "Software"), to deal in
-# the Software without restriction, including without limitation the rights to
-# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-# the Software, and to permit persons to whom the Software is furnished to do so,
-# subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#
 # todo:
 #  - implement balancing
 #
@@ -554,7 +537,7 @@ def eigsy(ctx, A, eigvals_only = False, overwrite_a = False):
 
     output:
 
-      E: vector of format (n). contains the eigenvalues of A.
+      E: vector of format (n). contains the eigenvalues of A in ascending order.
 
       Q: orthogonal matrix of format (n,n). contains the eigenvectors
          of A as columns.
@@ -628,7 +611,7 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
 
     output:
 
-      E: vector of format (n). contains the eigenvalues of A.
+      E: vector of format (n). contains the eigenvalues of A in ascending order.
 
       Q: unitary matrix of format (n,n). contains the eigenvectors
          of A as columns.
@@ -706,7 +689,7 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
 
     output:
 
-      E: vector of format (n). contains the eigenvalues of A.
+      E: vector of format (n). contains the eigenvalues of A in ascending order.
 
       Q: an orthogonal or unitary matrix of format (n,n). contains the
          eigenvectors of A as columns.
@@ -758,9 +741,9 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
 
       int(W(x) * F(x), x = a..b) = sum(w_k * F(x_k),k = 0..(n-1))
 
-    exact for all polynomials F(x) of degree 2*n. For all integrable
-    functions F(x) the sum is a (more or less) good approximation to the
-    integral. The x_k are called nodes (which are the zeros of the
+    exact for all polynomials F(x) of degree (strictly) less than 2*n. For all
+    integrable functions F(x) the sum is a (more or less) good approximation to
+    the integral. The x_k are called nodes (which are the zeros of the
     related orthogonal polynomials) and the w_k are called the weights.
 
     parameters
@@ -792,12 +775,37 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
       "laguerre"      Laguerre polynomials, W(x)=exp(-x) on (0,+infinity)
       "glaguerre"     generalized Laguerre polynomials, W(x)=exp(-x)*x**alpha
                       on (0, +infinity)
-      "chebychev1"    Chebychev polynomials of the first kind, W(x)=1/sqrt(1-x*x)
+      "chebyshev1"    Chebyshev polynomials of the first kind, W(x)=1/sqrt(1-x*x)
                       on (-1, +1)
-      "chebychev2"    Chebychev polynomials of the second kind, W(x)=sqrt(1-x*x)
+      "chebyshev2"    Chebyshev polynomials of the second kind, W(x)=sqrt(1-x*x)
                       on (-1, +1)
       "jacobi"        Jacobi polynomials, W(x)=(1-x)**alpha * (1+x)**beta on (-1, +1)
                       with alpha>-1 and beta>-1
+
+    examples:
+      >>> from mpmath import mp
+      >>> f = lambda x: x**8 + 2 * x**6 - 3 * x**4 + 5 * x**2 - 7
+      >>> X, W = mp.gauss_quadrature(5, "hermite")
+      >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
+      >>> B = mp.sqrt(mp.pi) * 57 / 16
+      >>> C = mp.quad(lambda x: mp.exp(- x * x) * f(x), [-mp.inf, +mp.inf])
+      >>> print mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10)
+      0.0 0.0
+
+      >>> f = lambda x: x**5 - 2 * x**4 + 3 * x**3 - 5 * x**2 + 7 * x - 11
+      >>> X, W = mp.gauss_quadrature(3, "laguerre")
+      >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
+      >>> B = 76
+      >>> C = mp.quad(lambda x: mp.exp(-x) * f(x), [0, +mp.inf])
+      >>> print mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10)
+      0.0 0.0
+
+      # orthogonality of the chebyshev polynomials:
+      >>> f = lambda x: mp.chebyt(3, x) * mp.chebyt(2, x)
+      >>> X, W = mp.gauss_quadrature(3, "chebyshev1")
+      >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
+      >>> print mp.chop(A, tol = 1e-10)
+      0.0
 
     references:
       - golub and welsch, "calculations of gaussian quadrature rules", mathematics of
@@ -841,14 +849,14 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
             j = i + 1
             d[i] = 2 * j - 1
             e[i] = j
-    elif qtype=="chebychev1":
-        # chebychev polynimials of the first kind
+    elif qtype=="chebyshev1":
+        # chebyshev polynimials of the first kind
         w = ctx.pi
         for i in xrange(n):
             e[i] = 1 / ctx.mpf(2)
         e[0] = ctx.sqrt(1 / ctx.mpf(2))
-    elif qtype == "chebychev2":
-        # chebychev polynimials of the second kind
+    elif qtype == "chebyshev2":
+        # chebyshev polynimials of the second kind
         w = ctx.pi / 2
         for i in xrange(n):
             e[i] = 1 / ctx.mpf(2)

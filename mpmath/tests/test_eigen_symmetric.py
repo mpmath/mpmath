@@ -352,6 +352,6 @@ def test_gauss_quadrature_dynamic(verbose = False):
   run("hermite", lambda x: mp.exp(-x*x), [-mp.inf, mp.inf])
   run("laguerre", lambda x: mp.exp(-x), [0, mp.inf])
   run("glaguerre", lambda x: mp.sqrt(x)*mp.exp(-x), [0, mp.inf], alpha = 1 / mp.mpf(2))
-  run("chebychev1", lambda x: 1/mp.sqrt(1-x*x), [-1, 1])
-  run("chebychev2", lambda x: mp.sqrt(1-x*x), [-1, 1])
+  run("chebyshev1", lambda x: 1/mp.sqrt(1-x*x), [-1, 1])
+  run("chebyshev2", lambda x: mp.sqrt(1-x*x), [-1, 1])
   run("jacobi", lambda x: (1-x)**(1/mp.mpf(3)) * (1+x)**(1/mp.mpf(5)), [-1, 1], alpha = 1 / mp.mpf(3), beta = 1 / mp.mpf(5) )
