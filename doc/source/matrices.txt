@@ -396,6 +396,66 @@ Examples::
    [0.0  0.0  0.0]
 
 
+The Schur decomposition
+.......................
+
+This routine computes the Schur decomposition of a square matrix A.
+Given A, an unitary matrix Q is determined such that
+
+      Q' A Q = R                and               Q' Q = Q Q' = 1
+
+where R is an upper right triangular matrix.
+
+Examples::
+
+    >>> from mpmath import mp
+    >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
+    >>> Q, R = mp.schur(A)
+    >>> mp.nprint(R, 3) # doctest:+SKIP
+    [2.0  0.417  -2.53]
+    [0.0    4.0  -4.74]
+    [0.0    0.0    9.0]
+    >>> print(mp.chop(A - Q * R * Q.transpose_conj()))
+    [0.0  0.0  0.0]
+    [0.0  0.0  0.0]
+    [0.0  0.0  0.0]
+
+
+The eigenvalue problem
+......................
+
+The routine ``eig`` solve the (ordinary) eigenvalue problem for a real or complex
+square matrix A. Given A, a vector E and matrices ER and EL are calculated such that
+
+              A ER[:,i] =         E[i] ER[:,i]
+      EL[i,:] A         = EL[i,:] E[i]
+
+E contains the eigenvalues of A. The columns of ER contain the right eigenvectors
+of A whereas the rows of EL contain the left eigenvectors.
+
+
+Examples::
+
+    >>> from mpmath import mp
+    >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
+    >>> E, ER = mp.eig(A)
+    >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
+    [0.0]
+    [0.0]
+    [0.0]
+
+    >>> E, EL, ER = mp.eig(A,left = True, right = True)
+    >>> E, EL, ER = mp.eig_sort(E, EL, ER)
+    >>> mp.nprint(E)
+    [2.0, 4.0, 9.0]
+    >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
+    [0.0]
+    [0.0]
+    [0.0]
+    >>> print(mp.chop( EL[0,:] * A - EL[0,:] * E[0]))
+    [0.0  0.0  0.0]
+
+
 The symmetric eigenvalue problem
 ................................
 
