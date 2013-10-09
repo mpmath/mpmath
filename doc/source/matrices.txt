@@ -404,7 +404,8 @@ Given A, an unitary matrix Q is determined such that
 
       Q' A Q = R                and               Q' Q = Q Q' = 1
 
-where R is an upper right triangular matrix.
+where R is an upper right triangular matrix. Here ' denotes the
+hermitian transpose (i.e. transposition and conjugation).
 
 Examples::
 

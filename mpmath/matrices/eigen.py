@@ -485,7 +485,8 @@ def schur(ctx, A, overwrite_a = False):
 
           Q' A Q = R                and               Q' Q = Q Q' = 1
 
-    where R is an upper right triangular matrix.
+    where R is an upper right triangular matrix. Here ' denotes the
+    hermitian transpose (i.e. transposition and conjugation).
 
     input:
       A            : a real or complex square matrix
