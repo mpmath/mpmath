@@ -38,12 +38,7 @@ low level routines:
 """
 
 from ..libmp.backend import xrange
-
-class EigenSymmetric(object):
-    pass
-
-def defun(f):
-    setattr(EigenSymmetric,f.__name__,f)
+from .eigen import defun
 
 
 def r_sy_tridiag(ctx, A, D, E, calc_ev = True):
@@ -147,10 +142,10 @@ def r_sy_tridiag(ctx, A, D, E, calc_ev = True):
 
     for i in xrange(1, n):         # better for compatibility
         E[i-1] = E[i]
-    E[n-1]=0
+    E[n-1] = 0
 
     if calc_ev:
-        D[0]=0
+        D[0] = 0
         for i in xrange(0, n):
             if D[i] != 0:
                 for j in xrange(0, i):     # accumulate transformation matrices
@@ -485,7 +480,7 @@ def tridiag_eigen(ctx, d, e, z = False):
             e[m] = 0
 
     for ii in xrange(1, n):
-        # order eigenvalues and eigenvectors
+        # sort eigenvalues and eigenvectors (bubble-sort)
         i = ii - 1
         k = i
         p = d[i]
@@ -521,7 +516,7 @@ def eigsy(ctx, A, eigvals_only = False, overwrite_a = False):
 
     The columns of Q are the eigenvectors of A and E contains the eigenvalues:
 
-          A Q[:,i]=E[i] Q[:,i]
+          A Q[:,i] = E[i] Q[:,i]
 
 
     input:
@@ -561,7 +556,7 @@ def eigsy(ctx, A, eigvals_only = False, overwrite_a = False):
       [0.0]
       [0.0]
 
-    see also: eighe, eigh
+    see also: eighe, eigh, eig
     """
 
     if not overwrite_a:
@@ -595,7 +590,7 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
 
     The columns of Q are the eigenvectors of A and E contains the eigenvalues:
 
-        A Q[:,i]=E[i] Q[:,i]
+        A Q[:,i] = E[i] Q[:,i]
 
 
     input:
@@ -635,7 +630,7 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
       [0.0]
       [0.0]
 
-    see also: eigsy, eigh
+    see also: eigsy, eigh, eig
     """
 
     if not overwrite_a:
@@ -674,7 +669,7 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
 
     The columns of Q are the eigenvectors of A and E contains the eigenvalues:
 
-        A Q[:,i]=E[i] Q[:,i]
+        A Q[:,i] = E[i] Q[:,i]
 
     input:
 
@@ -719,7 +714,7 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
       [0.0]
       [0.0]
 
-    see also: eigsy, eighe
+    see also: eigsy, eighe, eig
     """
 
     iscomplex = any(type(x) is ctx.mpc for x in A)
@@ -1139,8 +1134,8 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
                 y *= c
                 if not isinstance(V, bool):
                     for jj in xrange(n):
-                        x=V[j  ,jj]
-                        z=V[j+1,jj]
+                        x = V[j  ,jj]
+                        z = V[j+1,jj]
                         V[j    ,jj]= x * c + z * s
                         V[j+1  ,jj]= z * c - x * s
                 z = ctx.hypot(f, h)
@@ -1154,8 +1149,8 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
 
                 if calc_u:
                     for jj in xrange(m):
-                        y=A[jj,j  ]
-                        z=A[jj,j+1]
+                        y = A[jj,j  ]
+                        z = A[jj,j+1]
                         A[jj,j    ] = y * c + z * s
                         A[jj,j+1  ] = z * c - y * s
 
@@ -1171,7 +1166,7 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
         imax = i
         s = ctx.fabs(S[i])         # s is the current maximal element
 
-        for j in xrange(i+1, n):
+        for j in xrange(i + 1, n):
             c = ctx.fabs(S[j])
             if c > s:
                 s = c
@@ -1325,7 +1320,7 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
                 rbeta[i] = (beta / scale) / scale
 
                 for k in xrange(i+1, n):
-                    work[k]=A[i, k]
+                    work[k] = A[i, k]
 
                 for j in xrange(i+1, m):
                     s = 0
@@ -1445,8 +1440,8 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
             h = dwork[k]
             f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2 * h * y)
             g = ctx.hypot(f, 1)
-            if f>=0: f=(( x - z) *( x + z) + h *((y / (f + g)) - h)) / x
-            else:    f=(( x - z) *( x + z) + h *((y / (f - g)) - h)) / x
+            if f >=0: f = (( x - z) *( x + z) + h *((y / (f + g)) - h)) / x
+            else:     f = (( x - z) *( x + z) + h *((y / (f - g)) - h)) / x
 
             c = s = 1         # next qt transformation
 
@@ -1465,8 +1460,8 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
                 y *= c
                 if not isinstance(V, bool):
                     for jj in xrange(n):
-                        x=V[j  ,jj]
-                        z=V[j+1,jj]
+                        x = V[j  ,jj]
+                        z = V[j+1,jj]
                         V[j    ,jj]= x * c + z * s
                         V[j+1,jj  ]= z * c - x * s
                 z = ctx.hypot(f, h)
@@ -1479,8 +1474,8 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
                 x = c * y - s * g
                 if calc_u:
                     for jj in xrange(m):
-                        y=A[jj,j  ]
-                        z=A[jj,j+1]
+                        y = A[jj,j  ]
+                        z = A[jj,j+1]
                         A[jj,j    ]= y * c + z * s
                         A[jj,j+1  ]= z * c - y * s
 
@@ -1496,7 +1491,7 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
         imax = i
         s = ctx.fabs(S[i])         # s is the current maximal element
 
-        for j in xrange(i+1, n):
+        for j in xrange(i + 1, n):
             c = ctx.fabs(S[j])
             if c > s:
                 s = c
