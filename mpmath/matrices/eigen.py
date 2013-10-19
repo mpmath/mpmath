@@ -3,7 +3,7 @@
 
 ##################################################################################################
 #     module for the eigenvalue problem
-#       Copyright 2013 Timo Hartmann (thartmann15 at googlemail.com)
+#       Copyright 2013 Timo Hartmann (thartmann15 at gmail.com)
 #
 # todo:
 #  - implement balancing
@@ -49,7 +49,8 @@ def hessenberg_reduce_0(ctx, A, T):
                Q' A Q = H              and             Q' Q = Q Q' = 1
 
     where H is an upper Hessenberg matrix, meaning that it only contains zeros
-    below the first subdiagonal.
+    below the first subdiagonal. Here ' denotes the hermitian transpose (i.e. 
+    transposition and conjugation).
 
     parameters:
       A         (input/output) On input, A contains the square matrix A of
@@ -191,7 +192,8 @@ def hessenberg(ctx, A, overwrite_a = False):
 
           Q' A Q = H                and               Q' Q = Q Q' = 1
 
-    where H is an upper right Hessenberg matrix.
+    where H is an upper right Hessenberg matrix. Here ' denotes the hermitian 
+    transpose (i.e. transposition and conjugation).
 
     input:
       A            : a real or complex square matrix
@@ -272,7 +274,8 @@ def qr_step(ctx, n0, n1, A, Q, shift):
       Kresser : Numerical Methods for General and Structured Eigenvalue Problems
     """
 
-    # implicitly shifted and bulg chasing is explained at p.398/399 in "Stoer, Bulirsch - Introduction to Numerical Analysis"
+    # implicitly shifted and bulge chasing is explained at p.398/399 in "Stoer, Bulirsch - Introduction to Numerical Analysis"
+    # for bulge chasing see also "Watkins - The Matrix Eigenvalue Problem" sec.4.5,p.173
 
     # the Givens rotation we used is determined as follows: let c,s be two complex
     # numbers. then we have following relation:
@@ -377,7 +380,8 @@ def hessenberg_qr(ctx, A, Q):
 
           Q' A Q = R                   and                  Q' Q = Q Q' = 1
 
-    where R is an upper right triangular matrix.
+    where R is an upper right triangular matrix. Here ' denotes the hermitian 
+    transpose (i.e. transposition and conjugation).
 
     parameters:
       A         (input/output) On input, A contains an upper Hessenberg matrix.
@@ -801,6 +805,7 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
       >>> mp.nprint(E)
       [2.0, 4.0, 9.0]
       >>> E, EL, ER = mp.eig_sort(E, EL, ER,f = lambda x: -mp.re(x))
+      >>> mp.nprint(E)
       [9.0, 4.0, 2.0]
       >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
       [0.0]

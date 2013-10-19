@@ -27,6 +27,7 @@ to mpmath:
 * Juan Arias de Reyna <arias@us.es>
 * Ioannis Tziakos <itziakos@gmail.com>
 * Ken Allen <ken.allen@sbcglobal.net>
+* Timo Hartmann <thartmann15@gmail.com>
 
 Mpmath includes a copy of Benjamin Peterson's six.py for
 Python 2/3 compatibility. six.py is provided under the MIT license

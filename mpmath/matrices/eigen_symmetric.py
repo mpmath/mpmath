@@ -3,7 +3,7 @@
 
 ##################################################################################################
 #     module for the symmetric eigenvalue problem
-#       Copyright 2013 Timo Hartmann (thartmann15 at googlemail.com)
+#       Copyright 2013 Timo Hartmann (thartmann15 at gmail.com)
 #
 # todo:
 #  - implement balancing
@@ -799,7 +799,7 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
       >>> f = lambda x: mp.chebyt(3, x) * mp.chebyt(2, x)
       >>> X, W = mp.gauss_quadrature(3, "chebyshev1")
       >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
-      >>> print mp.chop(A, tol = 1e-10)
+      >>> print(mp.chop(A, tol = 1e-10))
       0.0
 
     references:
@@ -1574,7 +1574,7 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
        >>> from mpmath import mp
        >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
        >>> S = mp.svd_r(A, compute_uv = False)
-       >>> print S
+       >>> print(S)
        [6.0]
        [3.0]
        [1.0]
