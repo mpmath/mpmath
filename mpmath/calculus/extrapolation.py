@@ -1185,22 +1185,15 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 if shanks_error < error:
                     error = shanks_error
                     best = est1
-            for k, L in enumerate(summer):
-                try:
-                    est, lerror = L.update_psum(partial)
-                    if verbose:
-                        print("%s error: %s" % (L.name, ctx.nstr(lerror)))
-                    if lerror <= tol:
-                       return est
-                    if lerror < error:
-                        error = lerror
-                        best = est
-                except KeyboardInterrupt:
-                  raise
-                except:
-                  if verbose:
-                      print("%s error" % L.name)
-                  del summer[k]
+            for L in summer:
+                est, lerror = L.update_psum(partial)
+                if verbose:
+                    print("%s error: %s" % (L.name, ctx.nstr(lerror)))
+                if lerror <= tol:
+                   return est
+                if lerror < error:
+                    error = lerror
+                    best = est
             if TRY_EULER_MACLAURIN:
                 if ctx.mpc(ctx.sign(partial[-1]) / ctx.sign(partial[-2])).ae(-1):
                     if verbose:
