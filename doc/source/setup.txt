@@ -76,7 +76,7 @@ By default, mpmath uses Python integers internally. If `gmpy <http://code.google
 To verify that mpmath uses gmpy, check the internal variable ``BACKEND`` is not equal to 'python':
 
     >>> import mpmath.libmp
-    >>> mpmath.libmp.BACKEND
+    >>> mpmath.libmp.BACKEND # doctest:+SKIP
     'gmpy'
 
 The gmpy mode can be disabled by setting the MPMATH_NOGMPY environment variable. Note that the mode cannot be switched during runtime; mpmath must be re-imported for this change to take effect.

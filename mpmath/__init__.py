@@ -108,6 +108,8 @@ findpoly = mp.findpoly
 
 richardson = mp.richardson
 shanks = mp.shanks
+levin = mp.levin
+cohen_alt = mp.cohen_alt
 nsum = mp.nsum
 nprod = mp.nprod
 difference = mp.difference

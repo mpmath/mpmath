@@ -2,6 +2,9 @@
 
 import os
 import os.path
+import sys
+
+sys.path.insert(0, '..')
 
 path = "source"
 
