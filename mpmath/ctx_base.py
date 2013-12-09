@@ -5,6 +5,7 @@ from .libmp.backend import xrange
 from .functions.functions import SpecialFunctions
 from .functions.rszeta import RSCache
 from .calculus.quadrature import QuadratureMethods
+from .calculus.inverselaplace import LaplaceTransformInversionMethods
 from .calculus.calculus import CalculusMethods
 from .calculus.optimization import OptimizationMethods
 from .calculus.odes import ODEMethods
@@ -24,6 +25,7 @@ class StandardBaseContext(Context,
     SpecialFunctions,
     RSCache,
     QuadratureMethods,
+    LaplaceTransformInversionMethods,
     CalculusMethods,
     MatrixMethods,
     MatrixCalculusMethods,
@@ -43,6 +45,7 @@ class StandardBaseContext(Context,
         SpecialFunctions.__init__(ctx)
         RSCache.__init__(ctx)
         QuadratureMethods.__init__(ctx)
+        LaplaceTransformInversionMethods.__init__(ctx)
         CalculusMethods.__init__(ctx)
         MatrixMethods.__init__(ctx)
 
