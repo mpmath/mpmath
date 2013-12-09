@@ -428,9 +428,11 @@ class deHoog(InverseLaplaceTransform):
         self.degree = int(kwargs.get('degree',self.degree)/2.0)
 
         # abcissa of convergence (rightmost pole)
+        tmp = min(1.0E-8,self.ctx.power(10.0,-(self.dps_goal/4.0)))
         self.alpha = self.ctx.convert(kwargs.get('alpha',1.0E-8))
 
         # desired tolerance
+        tmp = min(1.0E-7,self.alpha*10.0)
         self.tol =   self.ctx.convert(kwargs.get('tol',1.0E-7))
         self.np = 2*self.degree+1
 
