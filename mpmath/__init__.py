@@ -69,6 +69,7 @@ isinf = mp.isinf
 isnan = mp.isnan
 isnormal = mp.isnormal
 isint = mp.isint
+isfinite = mp.isfinite
 almosteq = mp.almosteq
 nan = mp.nan
 rand = mp.rand
