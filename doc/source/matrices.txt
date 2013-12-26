@@ -367,17 +367,19 @@ The singular value decomposition
 
 The routines ``svd_r`` and ``svd_c`` compute the singular value decomposition
 of a real or complex matrix A. ``svd`` is an unified interface calling
-either ``svd_r`` or ``svd_c`` depending on whether A is real or complex.
+either ``svd_r`` or ``svd_c`` depending on whether *A* is real or complex.
 
-Given A, two orthogonal (A real) or unitary (A complex) matrices U and V
+Given *A*, two orthogonal (*A* real) or unitary (*A* complex) matrices *U* and *V*
 are calculated such that
 
-       A = U S V        and        U' U = 1         and         V V' = 1
+.. math ::
 
-where S is a suitable shaped matrix whose off-diagonal elements are zero.
+       A = U S V, \quad U' U = 1, \quad V V' = 1
+
+where *S* is a suitable shaped matrix whose off-diagonal elements are zero.
 Here ' denotes the hermitian transpose (i.e. transposition and complex
-conjugation). The diagonal elements of S are the singular values of A,
-i.e. the squareroots of the eigenvalues of A' A or A A'.
+conjugation). The diagonal elements of *S* are the singular values of *A*,
+i.e. the square roots of the eigenvalues of `A' A` or `A A'`.
 
 Examples::
 
@@ -388,7 +390,6 @@ Examples::
    [6.0]
    [3.0]
    [1.0]
-
    >>> U, S, V = mp.svd_r(A)
    >>> print mp.chop(A - U * mp.diag(S) * V)
    [0.0  0.0  0.0]
@@ -399,12 +400,14 @@ Examples::
 The Schur decomposition
 .......................
 
-This routine computes the Schur decomposition of a square matrix A.
-Given A, an unitary matrix Q is determined such that
+This routine computes the Schur decomposition of a square matrix *A*.
+Given *A*, a unitary matrix *Q* is determined such that
 
-      Q' A Q = R                and               Q' Q = Q Q' = 1
+.. math ::
 
-where R is an upper right triangular matrix. Here ' denotes the
+      Q' A Q = R, \quad Q' Q = Q Q' = 1
+
+where *R* is an upper right triangular matrix. Here ' denotes the
 hermitian transpose (i.e. transposition and conjugation).
 
 Examples::
@@ -425,14 +428,16 @@ Examples::
 The eigenvalue problem
 ......................
 
-The routine ``eig`` solve the (ordinary) eigenvalue problem for a real or complex
-square matrix A. Given A, a vector E and matrices ER and EL are calculated such that
+The routine ``eig`` solves the (ordinary) eigenvalue problem for a real or complex
+square matrix *A*. Given *A*, a vector *E* and matrices *ER* and *EL* are calculated such that
+
+.. code ::
 
               A ER[:,i] =         E[i] ER[:,i]
       EL[i,:] A         = EL[i,:] E[i]
 
-E contains the eigenvalues of A. The columns of ER contain the right eigenvectors
-of A whereas the rows of EL contain the left eigenvectors.
+*E* contains the eigenvalues of *A*. The columns of *ER* contain the right eigenvectors
+of *A* whereas the rows of *EL* contain the left eigenvectors.
 
 
 Examples::
@@ -444,7 +449,6 @@ Examples::
     [0.0]
     [0.0]
     [0.0]
-
     >>> E, EL, ER = mp.eig(A,left = True, right = True)
     >>> E, EL, ER = mp.eig_sort(E, EL, ER)
     >>> mp.nprint(E)
@@ -461,22 +465,26 @@ The symmetric eigenvalue problem
 ................................
 
 The routines ``eigsy`` and ``eighe`` solve the (ordinary) eigenvalue problem
-for a real symmetric or complex hermitian square matrix A.
+for a real symmetric or complex hermitian square matrix *A*.
 ``eigh`` is an unified interface for this two functions calling either
-``eigsy`` or ``eighe`` depending on whether A is real or complex.
+``eigsy`` or ``eighe`` depending on whether *A* is real or complex.
 
-Given A, an orthogonal (A real) or unitary matrix Q (A complex) is
+Given *A*, an orthogonal (*A* real) or unitary matrix *Q* (*A* complex) is
 calculated which diagonalizes A:
 
-        Q' A Q = diag(E)               and                Q Q' = Q' Q = 1
+.. math ::
 
-Here diag(E) a is diagonal matrix whose diagonal is E.
+        Q' A Q = \operatorname{diag}(E), \quad Q Q' = Q' Q = 1
+
+Here diag(*E*) a is diagonal matrix whose diagonal is *E*.
 ' denotes the hermitian transpose (i.e. ordinary transposition and
 complex conjugation).
 
-The columns of Q are the eigenvectors of A and E contains the eigenvalues:
+The columns of *Q* are the eigenvectors of *A* and *E* contains the eigenvalues:
 
-        A Q[:,i]=E[i] Q[:,i]
+.. code ::
+
+        A Q[:,i] = E[i] Q[:,i]
 
 Examples::
 
@@ -486,13 +494,11 @@ Examples::
     >>> print E
     [-1.0]
     [ 4.0]
-
     >>> A = mp.matrix([[1, 2], [2, 3]])
     >>> E, Q = mp.eigsy(A)                     # alternative: E, Q = mp.eigh(A)
     >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
     [0.0]
     [0.0]
-
     >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
     >>> E, Q = mp.eighe(A)                     # alternative: E, Q = mp.eigh(A)
     >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
