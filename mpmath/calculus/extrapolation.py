@@ -263,56 +263,71 @@ def shanks(ctx, seq, table=None, randomized=False):
 
 class levin_class:
     # levin: Copyright 2013 Timo Hartmann (thartmann15 at gmail.com)
-    """
+    r"""
     This interface implements Levin's (nonlinear) sequence transformation for
     convergence acceleration and summation of divergent series. It performs
     better than the Shanks/Wynn-epsilon algorithm for logarithmic convergent
     or alternating divergent series.
 
-    Let A be the series we want to sum:
+    Let *A* be the series we want to sum:
 
-      A = sum(a_k, k = 0..infinity)
+    .. math ::
 
-    Attention: all a_k must be non-zero!
+        A = \sum_{k=0}^{\infty} a_k
 
-    Let s_n be the partial sums of this series:
+    Attention: all `a_k` must be non-zero!
 
-      s_n = sum(a_k, k = 0..n)
+    Let `s_n` be the partial sums of this series:
 
-    Then update(...) works with the list of individual terms a_k of A and
-    update_step(...) works with the list of partial sums s_k of A:
+    .. math ::
 
-      v, e = ...update([a_0, a_1,..., a_k])
-      v, e = ...update_psum([s_0, s_1,..., s_k])
+        s_n = \sum_{k=0}^n a_k.
 
-    step(...) works with the individual terms a_k of A and step_psum(...)
-    works with the partial sums s_k of A:
+    **Methods**
 
-      v, e = ...step(a_k)
-      v, e = ...step_psum(s_k)
+    Calling ``levin`` returns an object with the following methods.
 
-    v is the current estimate for A and e is an error estimate which is
+    ``update(...)`` works with the list of individual terms `a_k` of *A*, and
+    ``update_step(...)`` works with the list of partial sums `s_k` of *A*:
+
+    .. code ::
+
+        v, e = ...update([a_0, a_1,..., a_k])
+        v, e = ...update_psum([s_0, s_1,..., s_k])
+
+    ``step(...)`` works with the individual terms `a_k` and ``step_psum(...)``
+    works with the partial sums `s_k`:
+
+    .. code ::
+
+        v, e = ...step(a_k)
+        v, e = ...step_psum(s_k)
+
+    *v* is the current estimate for *A*, and *e* is an error estimate which is
     simply the difference between the current estimate and the last estimate.
-    One should not mix update, update_psum, step and step_psum.
+    One should not mix ``update``, ``update_psum``, ``step`` and ``step_psum``.
 
-    A word of caution:
-      One can only hope for good results (i.e. convergence acceleration or
-      resummation) if the s_n have some well defind asymptotic behavior for
-      large n and are not erratic or random. Furthermore one usually needs very
-      high working precision because of the numerical cancellation. If the working
-      precision is insufficient, levin may produce silently numerical garbage.
-      Furthermore even if the Levin-transformation converges, in the general case
-      there is no proof that the result is mathematical sound. Only for very
-      special classes of problems one can prove that the Levin-transformation
-      converges to the expected result (for example Stieltjes-type integrals).
-      Furthermore the Levin-transform is quite expensive (i.e. slow) in comparison
-      to Shanks/Wynn-epsilon, Richardson & co.
-      In summary one can say that the Levin-transformation is powerful but
-      unrelyable and that it may need a copious amount of working precision.
+    **A word of caution**
+
+    One can only hope for good results (i.e. convergence acceleration or
+    resummation) if the `s_n` have some well defind asymptotic behavior for
+    large `n` and are not erratic or random. Furthermore one usually needs very
+    high working precision because of the numerical cancellation. If the working
+    precision is insufficient, levin may produce silently numerical garbage.
+    Furthermore even if the Levin-transformation converges, in the general case
+    there is no proof that the result is mathematically sound. Only for very
+    special classes of problems one can prove that the Levin-transformation
+    converges to the expected result (for example Stieltjes-type integrals).
+    Furthermore the Levin-transform is quite expensive (i.e. slow) in comparison
+    to Shanks/Wynn-epsilon, Richardson & co.
+    In summary one can say that the Levin-transformation is powerful but
+    unreliable and that it may need a copious amount of working precision.
 
     The Levin transform has several variants differing in the choice of weights.
     Some variants are better suited for the possible flavours of convergence
-    behaviour of A than other variants:
+    behaviour of *A* than other variants:
+
+    .. code ::
 
        convergence behaviour   levin-u   levin-t   levin-v   shanks/wynn-epsilon
 
@@ -323,162 +338,161 @@ class levin_class:
          "+" means the variant is suitable,"-" means the variant is not suitable;
          for comparison the Shanks/Wynn-epsilon transform is listed, too.
 
-    The variant is controlled though the variant keyword (i.e. variant="u", variant="t"
-    or variant="v"). Overall "u" is probably the best choice.
+    The variant is controlled though the variant keyword (i.e. ``variant="u"``,
+    ``variant="t"`` or ``variant="v"``). Overall "u" is probably the best choice.
 
     Finally it is possible to use the Sidi-S transform instead of the Levin transform
-    by using the keyword method='sidi'. The Sidi-S transform works better than the
+    by using the keyword ``method='sidi'``. The Sidi-S transform works better than the
     Levin transformation for some divergent series (see the examples).
 
-    parameters:
+    Parameters:
+
+    .. code ::
 
        method      "levin" or "sidi" chooses either the Levin or the Sidi-S transformation
        variant     "u","t" or "v" chooses the weight variant.
 
     The Levin transform is also accessible through the nsum interface.
-    method="l" or method="levin" select the normal Levin transform while method="sidi"
+    ``method="l"`` or ``method="levin"`` select the normal Levin transform while
+    ``method="sidi"``
     selects the Sidi-S transform. The variant is in both cases selected through the
-    levin_variant keyword. The stepsize in nsum must not be chosen to large, otherwise
-    nsum will miss the point where the Levin transform converges resulting in numerical
+    levin_variant keyword. The stepsize in :func:`~mpmath.nsum` must not be chosen too large, otherwise
+    it will miss the point where the Levin transform converges resulting in numerical
     overflow/garbage. For highly divergent series a copious amount of working precision
     must be chosen.
 
-    examples:
+    **Examples**
 
-      First we sum the zeta function:
+    First we sum the zeta function::
 
-      >>> from mpmath import mp
-      >>> mp.prec = 53
-      >>> eps = mp.mpf(mp.eps)
-      >>> with mp.extraprec(2 * mp.prec): # levin needs a high working precision
-      ...     L = mp.levin(method = "levin", variant = "u")
-      ...     S, s, n = [], 0, 1
-      ...     while 1:
-      ...         s += mp.one / (n * n)
-      ...         n += 1
-      ...         S.append(s)
-      ...         v, e = L.update_psum(S)
-      ...         if e < eps:
-      ...             break
-      ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> print(mp.chop(v - mp.pi ** 2 / 6))
-      0.0
-      >>> w = mp.nsum(lambda n: 1 / (n*n), [1, mp.inf], method = "levin", levin_variant = "u")
-      >>> print(mp.chop(v - w))
-      0.0
+        >>> from mpmath import mp
+        >>> mp.prec = 53
+        >>> eps = mp.mpf(mp.eps)
+        >>> with mp.extraprec(2 * mp.prec): # levin needs a high working precision
+        ...     L = mp.levin(method = "levin", variant = "u")
+        ...     S, s, n = [], 0, 1
+        ...     while 1:
+        ...         s += mp.one / (n * n)
+        ...         n += 1
+        ...         S.append(s)
+        ...         v, e = L.update_psum(S)
+        ...         if e < eps:
+        ...             break
+        ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> print(mp.chop(v - mp.pi ** 2 / 6))
+        0.0
+        >>> w = mp.nsum(lambda n: 1 / (n*n), [1, mp.inf], method = "levin", levin_variant = "u")
+        >>> print(mp.chop(v - w))
+        0.0
 
+    Now we sum the zeta function outside its range of convergence
+    (attention: This does not work at the negative integers!)::
 
-      Now we sum the zeta function outside its range of convergence
-      (attention: This does not work at the negative integers!):
+        >>> eps = mp.mpf(mp.eps)
+        >>> with mp.extraprec(2 * mp.prec): # levin needs a high working precision
+        ...     L = mp.levin(method = "levin", variant = "v")
+        ...     A, n = [], 1
+        ...     while 1:
+        ...         s = mp.mpf(n) ** (2 + 3j)
+        ...         n += 1
+        ...         A.append(s)
+        ...         v, e = L.update(A)
+        ...         if e < eps:
+        ...             break
+        ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> print(mp.chop(v - mp.zeta(-2-3j)))
+        0.0
+        >>> w = mp.nsum(lambda n: n ** (2 + 3j), [1, mp.inf], method = "levin", levin_variant = "v")
+        >>> print(mp.chop(v - w))
+        0.0
 
-      >>> eps = mp.mpf(mp.eps)
-      >>> with mp.extraprec(2 * mp.prec): # levin needs a high working precision
-      ...     L = mp.levin(method = "levin", variant = "v")
-      ...     A, n = [], 1
-      ...     while 1:
-      ...         s = mp.mpf(n) ** (2 + 3j)
-      ...         n += 1
-      ...         A.append(s)
-      ...         v, e = L.update(A)
-      ...         if e < eps:
-      ...             break
-      ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> print(mp.chop(v - mp.zeta(-2-3j)))
-      0.0
-      >>> w = mp.nsum(lambda n: n ** (2 + 3j), [1, mp.inf], method = "levin", levin_variant = "v")
-      >>> print(mp.chop(v - w))
-      0.0
+    Now we sum the divergent asymptotic expansion of an integral related to the
+    exponential integral (see also [2] p.373). The Sidi-S transform works best here::
 
+        >>> z = mp.mpf(10)
+        >>> exact = mp.quad(lambda x: mp.exp(-x)/(1+x/z),[0,mp.inf])
+        >>> # exact = z * mp.exp(z) * mp.expint(1,z) # this is the symbolic expression for the integral
+        >>> eps = mp.mpf(mp.eps)
+        >>> with mp.extraprec(2 * mp.prec): # high working precisions are mandatory for divergent resummation
+        ...     L = mp.levin(method = "sidi", variant = "t")
+        ...     n = 0
+        ...     while 1:
+        ...         s = (-1)**n * mp.fac(n) * z ** (-n)
+        ...         v, e = L.step(s)
+        ...         n += 1
+        ...         if e < eps:
+        ...             break
+        ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> print(mp.chop(v - exact))
+        0.0
+        >>> w = mp.nsum(lambda n: (-1) ** n * mp.fac(n) * z ** (-n), [0, mp.inf], method = "sidi", levin_variant = "t")
+        >>> print(mp.chop(v - w))
+        0.0
 
-      Now we sum the divergent asymptotic expansion of an integral related to the
-      exponential integral (see also [2] p.373). The Sidi-S transform works best here:
+    Another highly divergent integral is also summable::
 
-      >>> z = mp.mpf(10)
-      >>> exact = mp.quad(lambda x: mp.exp(-x)/(1+x/z),[0,mp.inf])
-      >>> # exact = z * mp.exp(z) * mp.expint(1,z) # this is the symbolic expression for the integral
-      >>> eps = mp.mpf(mp.eps)
-      >>> with mp.extraprec(2 * mp.prec): # high working precisions are mandatory for divergent resummation
-      ...     L = mp.levin(method = "sidi", variant = "t")
-      ...     n = 0
-      ...     while 1:
-      ...         s = (-1)**n * mp.fac(n) * z ** (-n)
-      ...         v, e = L.step(s)
-      ...         n += 1
-      ...         if e < eps:
-      ...             break
-      ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> print(mp.chop(v - exact))
-      0.0
-      >>> w = mp.nsum(lambda n: (-1) ** n * mp.fac(n) * z ** (-n), [0, mp.inf], method = "sidi", levin_variant = "t")
-      >>> print(mp.chop(v - w))
-      0.0
+        >>> z = mp.mpf(2)
+        >>> eps = mp.mpf(mp.eps)
+        >>> exact = mp.quad(lambda x: mp.exp( -x * x / 2 - z * x ** 4), [0,mp.inf]) * 2 / mp.sqrt(2 * mp.pi)
+        >>> # exact = mp.exp(mp.one / (32 * z)) * mp.besselk(mp.one / 4, mp.one / (32 * z)) / (4 * mp.sqrt(z * mp.pi)) # this is the symbolic expression for the integral
+        >>> with mp.extraprec(7 * mp.prec):  # we need copious amount of precision to sum this highly divergent series
+        ...     L = mp.levin(method = "levin", variant = "t")
+        ...     n, s = 0, 0
+        ...     while 1:
+        ...         s += (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n))
+        ...         n += 1
+        ...         v, e = L.step_psum(s)
+        ...         if e < eps:
+        ...             break
+        ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> print(mp.chop(v - exact))
+        0.0
+        >>> w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)),
+        ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in xrange(1000)])
+        >>> print(mp.chop(v - w))
+        0.0
 
+    These examples run with 15-20 decimal digits precision. For higher precision the
+    working precision must be raised.
 
-      Another highly divergent integral is also summable:
+    **Examples for nsum**
 
-      >>> z = mp.mpf(2)
-      >>> eps = mp.mpf(mp.eps)
-      >>> exact = mp.quad(lambda x: mp.exp( -x * x / 2 - z * x ** 4), [0,mp.inf]) * 2 / mp.sqrt(2 * mp.pi)
-      >>> # exact = mp.exp(mp.one / (32 * z)) * mp.besselk(mp.one / 4, mp.one / (32 * z)) / (4 * mp.sqrt(z * mp.pi)) # this is the symbolic expression for the integral
-      >>> with mp.extraprec(7 * mp.prec):  # we need copious amount of precision to sum this highly divergent series
-      ...     L = mp.levin(method = "levin", variant = "t")
-      ...     n, s = 0, 0
-      ...     while 1:
-      ...         s += (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n))
-      ...         n += 1
-      ...         v, e = L.step_psum(s)
-      ...         if e < eps:
-      ...             break
-      ...         if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> print(mp.chop(v - exact))
-      0.0
-      >>> w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)),
-      ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in xrange(1000)])
-      >>> print(mp.chop(v - w))
-      0.0
+    Here we calculate Euler's constant as the constant term in the Laurent
+    expansion of `\zeta(s)` at `s=1`. This sum converges extremly slowly because of
+    the logarithmic convergence behaviour of the Dirichlet series for zeta::
 
-    Attention:
-      These examples run with 15-20 decimal digits precision. For higher precision the
-      working precision must be raised.
+        >>> mp.dps = 30
+        >>> z = mp.mpf(10) ** (-10)
+        >>> a = mp.nsum(lambda n: n**(-(1+z)), [1, mp.inf], method = "l") - 1 / z
+        >>> print(mp.chop(a - mp.euler, tol = 1e-10))
+        0.0
 
+    The Sidi-S transform performs excellently for the alternating series of `\log(2)`::
 
-    examples for nsum:
+        >>> a = mp.nsum(lambda n: (-1)**(n-1) / n, [1, mp.inf], method = "sidi")
+        >>> print(mp.chop(a - mp.log(2)))
+        0.0
 
-      Here we calculate Euler's constant as the constant term in the Laurent
-      expansion of zeta(s) at s=1. This sum converges extremly slow because of
-      the logarithmic convergence behaviour of the Dirichlet series for zeta.
+    Hypergeometric series can also be summed outside their range of convergence.
+    The stepsize in :func:`~mpmath.nsum` must not be chosen too large, otherwise it will miss the
+    point where the Levin transform converges resulting in numerical overflow/garbage::
 
-      >>> mp.dps = 30
-      >>> z = mp.mpf(10) ** (-10)
-      >>> a = mp.nsum(lambda n: n**(-(1+z)), [1, mp.inf], method = "l") - 1 / z
-      >>> print(mp.chop(a - mp.euler, tol = 1e-10))
-      0.0
+        >>> z = 2 + 1j
+        >>> exact = mp.hyp2f1(2 / mp.mpf(3), 4 / mp.mpf(3), 1 / mp.mpf(3), z)
+        >>> f = lambda n: mp.rf(2 / mp.mpf(3), n) * mp.rf(4 / mp.mpf(3), n) * z**n / (mp.rf(1 / mp.mpf(3), n) * mp.fac(n))
+        >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in xrange(1000)])
+        >>> print(mp.chop(exact-v))
+        0.0
 
+    References:
 
-      The Sidi-S transform performs excellently for the alternating series of log(2):
-
-      >>> a = mp.nsum(lambda n: (-1)**(n-1) / n, [1, mp.inf], method = "sidi")
-      >>> print(mp.chop(a - mp.log(2)))
-      0.0
-
-
-      Hypergeometric series can also be summed outside their range of convergence.
-      The stepsize in nsum must not be chosen to large, otherwise nsum will miss the
-      point where the Levin transform converges resulting in numerical overflow/garbage.
-
-      >>> z = 2 + 1j
-      >>> exact = mp.hyp2f1(2 / mp.mpf(3), 4 / mp.mpf(3), 1 / mp.mpf(3), z)
-      >>> f = lambda n: mp.rf(2 / mp.mpf(3), n) * mp.rf(4 / mp.mpf(3), n) * z**n / (mp.rf(1 / mp.mpf(3), n) * mp.fac(n))
-      >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in xrange(1000)])
-      >>> print(mp.chop(exact-v))
-      0.0
-
-
-    references:
       [1] E.J. Weniger - "Nonlinear Sequence Transformations for the Acceleration of
           Convergence and the Summation of Divergent Series" arXiv:math/0306302
+
       [2] A. Sidi - "Pratical Extrapolation Methods"
+
       [3] H.H.H. Homeier - "Scalar Levin-Type Sequence Transformations" arXiv:math/0005209
+
     """
 
     def __init__(self, method = "levin", variant = "u"):
@@ -721,72 +735,82 @@ class cohen_alt_class:
     of divergent series. See the paper under which conditions this resummation is
     mathematical sound.
 
-    Let A be the series one wants to sum:
+    Let *A* be the series we want to sum:
 
-      A = sum(a_k, k = 0..infinity)
+    .. math ::
 
-    Let s_n be the partial sums of this series:
+        A = \sum_{k=0}^{\infty} a_k
 
-      s_n = sum(a_k, k = 0..n)
+    Let `s_n` be the partial sums of this series:
 
-    Then update(...) works with the list of individual terms a_k of A and
-    update_psum(...) works with the list of partial sums s_k of A:
+    .. math ::
 
-      v, e = ...update([a_0, a_1,..., a_k])
-      v, e = ...update_psum([s_0, s_1,..., s_k])
+        s_n = \sum_{k=0}^n a_k.
 
-    v is the current estimate for A and e is an error estimate which is
+
+    **Interface**
+
+    Calling ``cohen_alt`` returns an object with the following methods.
+
+    Then ``update(...)`` works with the list of individual terms `a_k` and
+    ``update_psum(...)`` works with the list of partial sums `s_k`:
+
+    .. code ::
+
+        v, e = ...update([a_0, a_1,..., a_k])
+        v, e = ...update_psum([s_0, s_1,..., s_k])
+
+    *v* is the current estimate for *A*, and *e* is an error estimate which is
     simply the difference between the current estimate and the last estimate.
 
-    examples:
+    **Examples**
 
-      Here we compute the alternating zeta function using update_psum:
+    Here we compute the alternating zeta function using ``update_psum``::
 
-      >>> from mpmath import mp
-      >>> AC = mp.cohen_alt()
-      >>> S, s, n = [], 0, 1
-      >>> while 1:
-      ...     s += -((-1) ** n) * mp.one / (n * n)
-      ...     n += 1
-      ...     S.append(s)
-      ...     v, e = AC.update_psum(S)
-      ...     if e < mp.eps:
-      ...         break
-      ...     if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> print(mp.chop(v - mp.pi ** 2 / 12))
-      0.0
+        >>> from mpmath import mp
+        >>> AC = mp.cohen_alt()
+        >>> S, s, n = [], 0, 1
+        >>> while 1:
+        ...     s += -((-1) ** n) * mp.one / (n * n)
+        ...     n += 1
+        ...     S.append(s)
+        ...     v, e = AC.update_psum(S)
+        ...     if e < mp.eps:
+        ...         break
+        ...     if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> print(mp.chop(v - mp.pi ** 2 / 12))
+        0.0
 
-      Here we compute the product prod(gamma(1+1/(2*n-1))/gamma(1+1/(2*n)),n=1..infinity):
+    Here we compute the product `\prod_{n=1}^{\infty} \Gamma(1+1/(2n-1)) / \Gamma(1+1/(2n))`::
 
-      >>> A = []
-      >>> AC = mp.cohen_alt()
-      >>> n = 1
-      >>> while 1:
-      ...     A.append( mp.loggamma(1 + mp.one / (2 * n - 1)))
-      ...     A.append(-mp.loggamma(1 + mp.one / (2 * n)))
-      ...     n += 1
-      ...     v, e = AC.update(A)
-      ...     if e < mp.eps:
-      ...         break
-      ...     if n > 1000: raise RuntimeError("iteration limit exceeded")
-      >>> v = mp.exp(v)
-      >>> print(mp.chop(v - 1.06215090557106, tol = 1e-12))
-      0.0
+        >>> A = []
+        >>> AC = mp.cohen_alt()
+        >>> n = 1
+        >>> while 1:
+        ...     A.append( mp.loggamma(1 + mp.one / (2 * n - 1)))
+        ...     A.append(-mp.loggamma(1 + mp.one / (2 * n)))
+        ...     n += 1
+        ...     v, e = AC.update(A)
+        ...     if e < mp.eps:
+        ...         break
+        ...     if n > 1000: raise RuntimeError("iteration limit exceeded")
+        >>> v = mp.exp(v)
+        >>> print(mp.chop(v - 1.06215090557106, tol = 1e-12))
+        0.0
 
-    cohen_alt is also accessible through the nsum interface:
+    ``cohen_alt`` is also accessible through the :func:`~mpmath.nsum` interface::
 
-      >>> v = mp.nsum(lambda n: (-1)**(n-1) / n, [1, mp.inf], method = "a")
-      >>> print(mp.chop(v - mp.log(2)))
-      0.0
+        >>> v = mp.nsum(lambda n: (-1)**(n-1) / n, [1, mp.inf], method = "a")
+        >>> print(mp.chop(v - mp.log(2)))
+        0.0
+        >>> v = mp.nsum(lambda n: (-1)**n / (2 * n + 1), [0, mp.inf], method = "a")
+        >>> print(mp.chop(v - mp.pi / 4))
+        0.0
+        >>> v = mp.nsum(lambda n: (-1)**n * mp.log(n) * n, [1, mp.inf], method = "a")
+        >>> print(mp.chop(v - mp.diff(lambda s: mp.altzeta(s), -1)))
+        0.0
 
-      >>> v = mp.nsum(lambda n: (-1)**n / (2 * n + 1), [0, mp.inf], method = "a")
-      >>> print(mp.chop(v - mp.pi / 4))
-      0.0
-
-      >>> v = mp.nsum(lambda n: (-1)**n * mp.log(n) * n, [1, mp.inf], method = "a")
-      >>> print(mp.chop(v - mp.diff(lambda s: mp.altzeta(s), -1)))
-      0.0
-      """
+    """
 
     def __init__(self):
         self.last=0
