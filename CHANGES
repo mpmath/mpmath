@@ -1,3 +1,47 @@
+--0.18--
+Released December XX, 2013
+
+Linear algebra:
+* added qr() for matrix QR factorization (contributed by Ken Allen)
+* added functions eigsy(), eighe(), eig() to compute matrix
+  eigenvalues (contributed by Timo Hartmann)
+* added functions svd(), svd_r(), svd_c() for singular value
+  decomposition of matrices (contributed by Timo Hartmann)
+* added calculation of Gaussian quadrature rules for various weight
+  functions (contributed by Timo Hartmann)
+* improved precision selection in exp_pade() (contributed by
+  Mario Pernici)
+
+Special functions:
+* fixed ellippi() to return an inf instead of raising an exception
+* fixed a crash in zeta() with huge arguments
+* added functions for computing Stirling numbers
+  (stirling1(), stirling2())
+* improved the computation of zeros of zeta at high precision
+  (contributed by Juan Arias de Reyna)
+* fixed zeta(-x) raising an exception for tiny x
+* recognize when lerchphi() can call zeta() or polylog(),
+  handling those cases faster
+
+Compatibility:
+* fixed gmpy2 compatibility issues (contributed by Case Van Horsen)
+* better solutions for python 2/3 compatibility,
+  using Benjamin Peterson's six.py
+* fixes to allow mpmath to run in non-sage mode when sage is available
+* support abstract base classes (contributed by Stefan Krastanov)
+* use new-style classes to improve pypy performance
+
+Other:
+* added Levin, Sidi-S and Cohen/Villegas/Zagier series
+  transformations (contributed by Timo Hartmann)
+* added isfinite() utility function
+* fixed a problem with bisection root-finding
+* fixed several documentation errors
+* corrected number of coefficients returned by diffs() with
+  method='quad'
+* fixed repr(constant) being slow at high precision
+* made intervals hashable
+
 --0.17--
 Released February 1, 2011
 
