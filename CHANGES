@@ -1,5 +1,5 @@
 --0.18--
-Released December XX, 2013
+Released December 31, 2013
 
 Linear algebra:
 * added qr() for matrix QR factorization (contributed by Ken Allen)
