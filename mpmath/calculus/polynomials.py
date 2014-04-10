@@ -142,9 +142,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         return []
 
     orig = ctx.prec
-    # Important: we need to multiply by 1, otherwise the 'tol' will change as
-    # we assign to `ctx.prec` below.
-    tol = ctx.eps*1
+    tol = +ctx.eps
     try:
         ctx.prec += extraprec
         deg = len(coeffs) - 1
