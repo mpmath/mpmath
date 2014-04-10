@@ -73,9 +73,7 @@ def test_polyroots_legendre():
         -1905929106580294155360, 0,
         916312070471295267]
 
-    dps = mp.dps
-    mp.dps = 3
-    try:
+    with mp.workdps(3):
         try:
             roots = polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
                         extraprec=n*10)
@@ -97,8 +95,6 @@ def test_polyroots_legendre():
             '0.572', '0.611', '0.649', '0.685', '0.72', '0.753', '0.784',
             '0.813', '0.841', '0.866', '0.889', '0.911', '0.93', '0.946',
             '0.961', '0.973', '0.983', '0.991', '0.996', '0.999']
-    finally:
-        mp.dps = dps
 
 def test_pade():
     one = mpf(1)
