@@ -141,10 +141,8 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
         # Constant polynomial with no roots
         return []
 
-    orig = ctx.prec
     tol = +ctx.eps
-    try:
-        ctx.prec += extraprec
+    with ctx.extraprec(extraprec):
         deg = len(coeffs) - 1
         # Must be monic
         lead = ctx.convert(coeffs[0])
@@ -183,8 +181,6 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10, error=False)
                 elif abs(ctx._re(roots[i])) < tol:
                     roots[i] = roots[i].imag * 1j
         roots.sort(key=lambda x: (abs(ctx._im(x)), ctx._re(x)))
-    finally:
-        ctx.prec = orig
     if error:
         err = max(err)
         err = max(err, ctx.ldexp(1, -orig+1))
