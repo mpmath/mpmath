@@ -76,6 +76,13 @@ def test_polyroots_legendre():
     dps = mp.dps
     mp.dps = 3
     try:
+        try:
+            roots = polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
+                        extraprec=n*10)
+            raise AssertionError("polyroots() didn't raise NoConvergence")
+        except (mp.NoConvergence):
+            pass
+
         roots = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
                     extraprec=n*10)
         roots = [str(r) for r in roots]
