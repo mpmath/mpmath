@@ -108,6 +108,10 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
     `maxsteps` (in which case increasing `maxsteps` should fix the problem), or
     a combination of both.
 
+    The user should always do a convergence study with regards to `extraprec`
+    to ensure accurate results. It is possible to get convergence to a wrong
+    answer with too low `extraprec`.
+
     Provided there are no repeated roots, :func:`~mpmath.polyroots` can
     typically compute all roots of an arbitrary polynomial to high precision::
 
