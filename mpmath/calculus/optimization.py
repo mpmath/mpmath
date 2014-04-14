@@ -734,7 +734,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
     'ridder', 'anewton', 'bisect'
 
-    See mpmath.optimization for their documentation.
+    See mpmath.calculus.optimization for their documentation.
 
     **Examples**
 
@@ -1029,7 +1029,7 @@ def steffensen(f):
     Let's try Steffensen's method:
 
     >>> f = lambda x: x**2
-    >>> from mpmath.optimization import steffensen
+    >>> from mpmath.calculus.optimization import steffensen
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
