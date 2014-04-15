@@ -438,7 +438,7 @@ class StandardBaseContext(Context,
             >>> f = maxcalls(sin, 10)
             >>> print(sum(f(n) for n in range(10)))
             1.95520948210738
-            >>> f(10)
+            >>> f(10) # doctest: +IGNORE_EXCEPTION_DETAIL
             Traceback (most recent call last):
               ...
             NoConvergence: maxcalls: function evaluated 10 times
@@ -466,7 +466,7 @@ class StandardBaseContext(Context,
             >>> f(2)
             0.909297426825682
             >>> mp.dps = 25
-            >>> f(2)
+            >>> f(2) # doctest: +IGNORE_EXCEPTION_DETAIL
             Traceback (most recent call last):
               ...
             NoConvergence: maxcalls: function evaluated 1 times

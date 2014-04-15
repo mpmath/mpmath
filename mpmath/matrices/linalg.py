@@ -59,19 +59,19 @@ Matrix factorization
 The function ``lu`` computes an explicit LU factorization of a matrix::
 
     >>> P, L, U = lu(matrix([[0,2,3],[4,5,6],[7,8,9]]))
-    >>> print P
+    >>> print(P)
     [0.0  0.0  1.0]
     [1.0  0.0  0.0]
     [0.0  1.0  0.0]
-    >>> print L
+    >>> print(L)
     [              1.0                0.0  0.0]
     [              0.0                1.0  0.0]
     [0.571428571428571  0.214285714285714  1.0]
-    >>> print U
+    >>> print(U)
     [7.0  8.0                9.0]
     [0.0  2.0                3.0]
     [0.0  0.0  0.214285714285714]
-    >>> print P.T*L*U
+    >>> print(P.T*L*U)
     [0.0  2.0  3.0]
     [4.0  5.0  6.0]
     [7.0  8.0  9.0]
