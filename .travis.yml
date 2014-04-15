@@ -6,6 +6,6 @@ python:
   - 3.3
   - "pypy"
 script:
-  - py.test --doctest-modules mpmath
+  - py.test --doctest-modules --color no mpmath
 notifications:
   email: false
