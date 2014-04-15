@@ -1,1 +1,2 @@
-*.py    diff=python
+*       text=auto
+*.py    diff=python text
