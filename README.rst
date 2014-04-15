@@ -108,8 +108,7 @@ Mpmath can also be installed using
 ``python -m easy_install mpmath``
 
 The latest development code is available from
-http://code.google.com/p/mpmath/source/checkout or at
-https://github.com/fredrik-johansson/mpmath.
+https://github.com/fredrik-johansson/mpmath
 
 See the main documentation for more detailed instructions.
 
@@ -140,10 +139,9 @@ the build.py script (requires Sphinx, http://sphinx.pocoo.org/).
 
 See setup.txt in the documentation for more information.
 
-The most recent documentation is also available in HTML
-format on the mpmath website:
+The most recent documentation is also available in HTML format:
 
-http://mpmath.googlecode.com/svn/trunk/doc/build/index.html
+http://sage.math.washington.edu/home/fredrik/mpmath/doc/0.18/
 
 4. Known problems
 -----------------
