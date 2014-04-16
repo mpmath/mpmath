@@ -769,7 +769,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
     if constants:
         if isinstance(constants, dict):
-            constants = [(ctx.mpf(v), name) for (name, v) in constants.items()]
+            constants = [(ctx.mpf(v), name) for (name, v) in sorted(constants.items())]
         else:
             namespace = dict((name, getattr(ctx,name)) for name in dir(ctx))
             constants = [(eval(p, namespace), p) for p in constants]
