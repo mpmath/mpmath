@@ -70,12 +70,12 @@ class _matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-         ['0.0', '(1.0 + 1.0j)']])
+         ['0.0', mpc(real='1.0', imag='1.0')]])
 
     You can use the keyword ``force_type`` to change the function which is
     called on every new element:
 
-        >>> matrix(2, 5, force_type=int)
+        >>> matrix(2, 5, force_type=int) # doctest: +SKIP
         matrix(
         [[0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0]])
@@ -92,8 +92,8 @@ class _matrix(object):
 
         >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
         matrix(
-        [[1, 2.5],
-         [1j, '2.0']])
+        [['1.0', '2.5'],
+         [mpc(real='0.0', imag='1.0'), '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -290,6 +290,8 @@ class _matrix(object):
         # determinant
         self._LU = None
         convert = kwargs.get('force_type', self.ctx.convert)
+        if not convert:
+            convert = lambda x: x
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
@@ -319,7 +321,6 @@ class _matrix(object):
             self.__data = A._matrix__data
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
-            convert = kwargs.get('force_type', self.ctx.convert)
             for i in xrange(A.__rows):
                 for j in xrange(A.__cols):
                     A[i,j] = convert(A[i,j])

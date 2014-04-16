@@ -80,7 +80,7 @@ def testcase(case):
 testcases = []
 
 # Basic values
-for n in range(1,200) + range(201,2000,17):
+for n in list(range(1,200)) + list(range(201,2000,17)):
     testcases.append(["%s" % n, None])
 for n in range(-200,200):
     testcases.append(["%s+0.5" % n, None])

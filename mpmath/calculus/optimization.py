@@ -734,7 +734,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
     'ridder', 'anewton', 'bisect'
 
-    See mpmath.optimization for their documentation.
+    See mpmath.calculus.optimization for their documentation.
 
     **Examples**
 
@@ -1029,11 +1029,11 @@ def steffensen(f):
     Let's try Steffensen's method:
 
     >>> f = lambda x: x**2
-    >>> from mpmath.optimization import steffensen
+    >>> from mpmath.calculus.optimization import steffensen
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
-    ...     for i in xrange(10):
+    ...     for i in xrange(9):
     ...         try:
     ...             fx = f(fx)
     ...         except OverflowError:
@@ -1042,36 +1042,33 @@ def steffensen(f):
     ...             Fx = F(Fx)
     ...         except ZeroDivisionError:
     ...             pass
-    ...         print '%20g  %20g' % (fx, Fx)
+    ...         print('%20g  %20g' % (fx, Fx))
                     0.25                  -0.5
                   0.0625                   0.1
               0.00390625            -0.0011236
-            1.52588e-005          1.41691e-009
-            2.32831e-010         -2.84465e-027
-            5.42101e-020          2.30189e-080
-            2.93874e-039          -1.2197e-239
-            8.63617e-078                     0
+             1.52588e-05           1.41691e-09
+             2.32831e-10          -2.84465e-27
+             5.42101e-20           2.30189e-80
+             2.93874e-39          -1.2197e-239
+             8.63617e-78                     0
             7.45834e-155                     0
-            5.56268e-309                     0
                     0.81               1.02676
                   0.6561               1.00134
                 0.430467                     1
                 0.185302                     1
                0.0343368                     1
               0.00117902                     1
-            1.39008e-006                     1
-            1.93233e-012                     1
-            3.73392e-024                     1
-            1.39421e-047                     1
+             1.39008e-06                     1
+             1.93233e-12                     1
+             3.73392e-24                     1
                        4                   1.6
                       16                1.2962
                      256               1.10194
                    65536               1.01659
-            4.29497e+009               1.00053
-            1.84467e+019                     1
-            3.40282e+038                     1
-            1.15792e+077                     1
-            1.34078e+154                     1
+             4.29497e+09               1.00053
+             1.84467e+19                     1
+             3.40282e+38                     1
+             1.15792e+77                     1
             1.34078e+154                     1
 
     Unmodified, the iteration converges only towards 0. Modified it converges

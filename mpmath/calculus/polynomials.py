@@ -190,7 +190,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
         if cleanup:
             for i in xrange(deg):
                 if abs(roots[i]) < tol:
-                    roots[i] = 0
+                    roots[i] = ctx.zero
                 elif abs(ctx._im(roots[i])) < tol:
                     roots[i] = roots[i].real
                 elif abs(ctx._re(roots[i])) < tol:
