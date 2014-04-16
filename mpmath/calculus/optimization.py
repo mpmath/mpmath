@@ -1033,7 +1033,7 @@ def steffensen(f):
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
-    ...     for i in xrange(10):
+    ...     for i in xrange(9):
     ...         try:
     ...             fx = f(fx)
     ...         except OverflowError:
@@ -1052,7 +1052,6 @@ def steffensen(f):
              2.93874e-39          -1.2197e-239
              8.63617e-78                     0
             7.45834e-155                     0
-            5.56268e-309                     0
                     0.81               1.02676
                   0.6561               1.00134
                 0.430467                     1
@@ -1062,7 +1061,6 @@ def steffensen(f):
              1.39008e-06                     1
              1.93233e-12                     1
              3.73392e-24                     1
-             1.39421e-47                     1
                        4                   1.6
                       16                1.2962
                      256               1.10194
@@ -1071,7 +1069,6 @@ def steffensen(f):
              1.84467e+19                     1
              3.40282e+38                     1
              1.15792e+77                     1
-            1.34078e+154                     1
             1.34078e+154                     1
 
     Unmodified, the iteration converges only towards 0. Modified it converges
