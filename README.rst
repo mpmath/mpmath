@@ -30,6 +30,7 @@ to mpmath:
 * Stefan Krastanov <krastanov.stefan@gmail.com>
 * Ken Allen <ken.allen@sbcglobal.net>
 * Timo Hartmann <thartmann15@gmail.com>
+* Sergey B Kirpichev <skirpichev@gmail.com>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
