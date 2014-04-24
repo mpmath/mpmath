@@ -82,7 +82,7 @@ def test_rounding_bugs():
     assert from_man_exp(255, 0, 7, round_up) == (0, 1, 8, 1)
     assert from_man_exp(-255, 0, 7, round_floor) == (1, 1, 8, 1)
 
-def test_rounding_issue160():
+def test_rounding_issue_200():
     a = from_man_exp(9867,-100)
     b = from_man_exp(9867,-200)
     c = from_man_exp(-1,0)

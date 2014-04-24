@@ -170,4 +170,4 @@ General questions and comments can be sent to the mpmath mailinglist,
 mpmath@googlegroups.com
 
 You can also report bugs and send patches to the mpmath issue tracker,
-http://code.google.com/p/mpmath/issues/list
+https://github.com/fredrik-johansson/mpmath/issues

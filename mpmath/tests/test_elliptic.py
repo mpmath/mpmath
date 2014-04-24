@@ -161,7 +161,7 @@ def test_jtheta():
     mp.dps = 15
 
 
-def test_jtheta_issue39():
+def test_jtheta_issue_79():
     # near the circle of covergence |q| = 1 the convergence slows
     # down; for |q| > Q_LIM the theta functions raise ValueError
     mp.dps = 30
@@ -186,7 +186,7 @@ def test_jtheta_issue39():
     else:
         assert(False)
 
-    # bug reported in issue39
+    # bug reported in issue 79
     mp.dps = 100
     z = (1+j)/3
     q = mpf(368983957219251)/10**15 + mpf(636363636363636)/10**15 * j
@@ -216,7 +216,7 @@ def test_jtheta_issue39():
         r2 = jtheta(1, z, q)
     assert r1.ae(r2)
     mp.dps = 15
-    # issue 39 about high derivatives
+    # issue 79 about high derivatives
     assert jtheta(3, 4.5, 0.25, 9).ae(1359.04892680683)
     assert jtheta(3, 4.5, 0.25, 50).ae(-6.14832772630905e+33)
     mp.dps = 50
@@ -640,5 +640,5 @@ def test_elliptic_integrals():
         assert elliprg(0, mpf('0.0796'), 4).ae('1.0284758090288040009838871385180217366569777284430590125081211090574701293154645750017813190805144572673802094')
     mp.dps = 15
 
-def test_issue198():
+def test_issue_238():
     assert isnan(qfrom(m=nan))
