@@ -3,7 +3,7 @@ mpmath
 
 A Python library for arbitrary-precision floating-point arithmetic.
 
-Website: http://code.google.com/p/mpmath
+Website: http://mpmath.org/
 Main author: Fredrik Johansson <fredrik.johansson@gmail.com>
 
 Mpmath is free software released under the New BSD License (see the
@@ -142,7 +142,7 @@ See setup.txt in the documentation for more information.
 
 The most recent documentation is also available in HTML format:
 
-http://sage.math.washington.edu/home/fredrik/mpmath/doc/0.18/
+http://mpmath.org/doc/current/
 
 4. Known problems
 -----------------
