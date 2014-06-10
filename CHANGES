@@ -1,3 +1,14 @@
+--0.19--
+Released June 10, 2014
+
+* Moved issue tracking to github and the main website to mpmath.org.
+  Several URLs and issue numbers were updated in the documentation
+  (Sergey B Kirpichev)
+* Enabled automatic testing with Travis CI (Sergey B Kirpichev)
+* Fixed many doctest issues (Sergey B Kirpichev)
+* Converted line endings to LF (Ondrej Certik)
+* Made polyroots() more robust (Ondrej Certik)
+
 --0.18--
 Released December 31, 2013
 

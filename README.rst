@@ -71,6 +71,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 0.19 released on June 10, 2014
 * Version 0.18 released on December 31, 2013
 * Version 0.17 released on February 1, 2011
 * Version 0.16 released on September 24, 2010
