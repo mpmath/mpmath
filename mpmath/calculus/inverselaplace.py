@@ -39,7 +39,7 @@ class FixedTalbot(InverseLaplaceTransform):
 
         # rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,self.degree))
+        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,self.degree))
 
         # Abate & Valko rule of thumb
         self.r = kwargs.get('r',2*self.degree/(5*self.tmax))
@@ -111,7 +111,7 @@ class Weeks(InverseLaplaceTransform):
 
         # no real rule of thumb for increasing precsion as 
         # degree of approximation increases
-        self.dps_goal = kwargs.get('dps',self.dps_goal)
+        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -195,14 +195,19 @@ class Piessens(InverseLaplaceTransform):
         self.N = kwargs.get('N',self.degree)
 
         # F(p) ~ p**(-s), as p -> infinity (and as t -> 0)
+        # this is "a" in Piessens (1971)
         self.s = self.ctx.convert(kwargs.get('s',1))
 
-        # Piessens didn't have a good "rule of thumb"?
-        self.b = self.ctx.convert(kwargs.get('b',1/(self.N*self.tmax)))
+        # Piessens didn't have a good "rule of thumb"?  it should be
+        # small (2x larger than right-most pole), but the smaller it
+        # is, the more terms are required for convergence
+        # over-estimation is better than under-estimation, though (see
+        # page 338 Davies chap 19)
+        self.b = self.ctx.convert(kwargs.get('b',1/(self.t*self.N)))
 
         # no real rule of thumb for increasing precsion as 
         # degree of approximation increases
-        self.dps_goal = kwargs.get('dps',self.dps_goal)
+        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -214,7 +219,7 @@ class Piessens(InverseLaplaceTransform):
         with self.ctx.workdps(self.dps_goal):
 
             for i in range(M+1):
-                self.theta[i] = self.ctx.fraction(2*i+1,(M+1)*2)
+                self.theta[i] = (2.0*i+1)/((M+1)*2.0)
                 # pi included in fcn
                 self.z[i] = self.ctx.cospi(self.theta[i]) 
     
@@ -228,7 +233,8 @@ class Piessens(InverseLaplaceTransform):
                    self.tmax,self.degree,self.N,self.s,self.b,self.dps_goal)
 
     def _coeff(self,n,fp):
-        """use quadrature rule for calculating coefficients."""
+        """use quadrature rule for calculating coefficients.
+        n = order of coefficient requested"""
 
         M = self.degree
         s = self.s
@@ -242,7 +248,32 @@ class Piessens(InverseLaplaceTransform):
             arg[i] = (self.ctx.power(b/(1-z[i]),s)*
                       fp[i]*self.ctx.cospi(theta[i]*n))
 
-        return self.ctx.fraction(2,M+1)*self.ctx.fsum(arg)
+        return 2.0/(M+1)*self.ctx.fsum(arg)
+
+    def _2f2recurrence(self,x):
+        """stable recurrence for 2f2 hypergeometric series
+        which is accurate for large order even at moderate precision"""
+        s = self.s
+        M = self.degree
+
+        phi = self.ctx.matrix(M+1,1)
+
+        phi[0] = self.ctx.mpf(1)
+        phi[1] = 1 - self.ctx.mpf(2*x/s)
+        phi[2] = 1 - self.ctx.mpf(8*x/s) + self.ctx.mpf(8/(s*(s+1))*x*x)
+
+        for n in range(3,M+1):
+            denom = self.ctx.mpf((n-2)*(s+n-1))
+
+            A = (3*n*n - 9*n + s*n - 3*s + 6)/denom
+            B = -4/self.ctx.mpf(s+n-1)
+            C = -(3*n*n - 9*n - s*n + 6)/denom
+            D = -4*(n-1)/denom
+            E = -(n-1)*(s-n+2)/denom
+
+            phi[n] = (A + B*x)*phi[n-1] + (C + D*x)*phi[n-2] + E*phi[n-3]
+
+        return phi
 
     def calc_time_domain_solution(self,fp):
 
@@ -254,9 +285,12 @@ class Piessens(InverseLaplaceTransform):
 
         with self.ctx.workdps(self.dps_goal):
 
+            # equivalent to hyp2f2(-n,n,0.5,s,b*t/2)
+            # but doesn't diverge for large n
+            hyp2f2 = self._2f2recurrence(b*t/2)
+
             for n in range(N):
-                arg[n] = (self._coeff(n,fp)*
-                          self.ctx.hyp2f2(-n,n,0.5,s,b*t))
+                arg[n] = self._coeff(n,fp)*hyp2f2[n]
     
             arg[0] /= 2.0
             result = (self.ctx.power(t,s-1)/self.ctx.gamma(s)*
@@ -276,10 +310,9 @@ class Stehfest(InverseLaplaceTransform):
 
         self.degree = kwargs.get('degree',self.degree)
 
-        # rule for extended precision from Abate & Valko (2004)
+        # 2.1 = rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,
-                                               2.1*self.degree))
+        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,2.1*self.degree))
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -314,10 +347,9 @@ class Stehfest(InverseLaplaceTransform):
         for k in range(1,M+1):
             z = self.ctx.matrix(int(min(k,M2)+1),1)
             for j in range(int(self.ctx.floor((k+1)/2.0)),min(k,M2)+1):
-                z[j] = (j**M2*self.ctx.fac(2*j)/
+                z[j] = (self.ctx.power(j,M2)*self.ctx.fac(2*j)/
                         (self.ctx.fac(M2-j)*self.ctx.fac(j)*
-                         self.ctx.fac(j-1)*
-                         self.ctx.fac(k-j)*self.ctx.fac(2*j-k)))
+                         self.ctx.fac(j-1)*self.ctx.fac(k-j)*self.ctx.fac(2*j-k)))
             self.V[k-1] = self.ctx.power(-1,k+M2)*self.ctx.fsum(z)
 
     def calc_time_domain_solution(self,fp):
@@ -338,7 +370,7 @@ class Stehfest(InverseLaplaceTransform):
 
 # ****************************************
 
-class GaverRho(InverseLaplaceTransform):
+class GaverWynnRho(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self, t, **kwargs):
 
@@ -349,8 +381,7 @@ class GaverRho(InverseLaplaceTransform):
 
         # rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,
-                                               2.1*self.degree))
+        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,2.1*self.degree))
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -384,9 +415,9 @@ class GaverRho(InverseLaplaceTransform):
             arg = self.ctx.matrix(M2+1,1)
        
             for k in range(1,M2+1):
-                arg[:] = 0.0 
+                arg[0] = 0.0 
                 for j in range(k+1):
-                    print M,M2,k,j,fp.rows
+                    #print M,M2,k,j,fp.rows
                     arg[j] = (self.ctx.power(-1,j)*
                               self.ctx.binomial(k,j)*fp[j+k-1])
        
@@ -397,24 +428,27 @@ class GaverRho(InverseLaplaceTransform):
             # sequence transformation 
             rho = self.ctx.matrix(M2,M2+2)
            
-            # rho[:,0] = 0.0
-            rho[:,1] = fkt
+            rho[:,0] = 0.0 # \rho_{-1}^{(n)}=0
+            rho[:,1] = fkt[:] # \rho_{0}^{(n)}=f_n(t) (n >= 0)
            
-            print M,M2,rho.rows,rho.cols
+            #print M,M2,rho.rows,rho.cols
 
             for k in range(2,M2+2):
                 for n in range(M2-(k-2)*2 - 1):
                     denom = rho[n+1,k-1] - rho[n,k-1]
-                    print k,n,M2-(k-2)*2 - 1,denom
-                    print rho
+                    #print k,n,M2-(k-2)*2 - 1,denom
+                    #print rho
                     if abs(denom) > self.ctx.eps:
                         rho[n,k] = rho[n+1,k-2] + k/denom
+                        #print "Wynn's appeared to work"
                     else:
                         print "Wynn's Rho cancellation at ",k,n
                         return rho[n-1,k-1+2]
 
         # ignore any small imaginary part
-        return rho[0,M2+2].real
+        return rho[0,M2+1].real
+
+        # this method is still quite broken
 
 # ****************************************
 
@@ -427,13 +461,13 @@ class deHoog(InverseLaplaceTransform):
         # 2*M+1 terms are used below
         self.degree = int(kwargs.get('degree',self.degree)/2.0)
 
-        # abcissa of convergence (rightmost pole)
-        tmp = min(1.0E-8,self.ctx.power(10.0,-(self.dps_goal/4.0)))
-        self.alpha = self.ctx.convert(kwargs.get('alpha',1.0E-8))
+        # abcissa of convergence (rightmost pole) -- assuming it is zero
+        tmp = min(1.0E-13,self.ctx.power(10.0,-(self.dps_goal/4.0)))
+        self.alpha = self.ctx.convert(kwargs.get('alpha',1.0E-13))
 
         # desired tolerance
-        tmp = min(1.0E-7,self.alpha*10.0)
-        self.tol =   self.ctx.convert(kwargs.get('tol',1.0E-7))
+        tmp = min(1.0E-12,self.alpha*10.0)
+        self.tol = self.ctx.convert(kwargs.get('tol',1.0E-12))
         self.np = 2*self.degree+1
 
         # scaling factor
@@ -441,7 +475,7 @@ class deHoog(InverseLaplaceTransform):
 
         # no real rule of thumb for increasing precsion as 
         # degree of approximation increases
-        self.dps_goal = kwargs.get('dps',self.dps_goal)
+        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -543,7 +577,7 @@ class LaplaceTransformInversionMethods:
         ctx._weeks = Weeks(ctx)
         ctx._piessens = Piessens(ctx)
         ctx._stehfest = Stehfest(ctx)
-        ctx._gaverrho = GaverRho(ctx)
+        ctx._gaverrho = GaverWynnRho(ctx)
         ctx._de_hoog = deHoog(ctx)
 
     def invertlaplace(ctx, f, t, **kwargs):
@@ -557,7 +591,7 @@ class LaplaceTransformInversionMethods:
         if type(rule) is str:
             lrule = rule.lower()
             lrule = lrule.replace(' ','-')
-            if lrule == 'talbot' or lrule == 'fixed-talbot':
+            if lrule == 'talbot':
                 rule = ctx._fixed_talbot
             elif lrule == 'weeks':
                 rule = ctx._weeks
@@ -565,9 +599,9 @@ class LaplaceTransformInversionMethods:
                 rule = ctx._piessens
             elif lrule == 'stehfest':
                 rule = ctx._stehfest
-            elif lrule == 'gaverrho':
+            elif lrule == 'gaverrho' or lrule == 'gaverwynnrho':
                 rule = ctx._gaverrho
-            elif lrule == 'dehoog' or lrule == 'de-hoog':
+            elif lrule == 'dehoog':
                 rule = ctx._de_hoog
             else:
                 raise ValueError("unknown inversion method: %s" % rule)
