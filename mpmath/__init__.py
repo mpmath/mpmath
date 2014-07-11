@@ -1,4 +1,4 @@
-__version__ = '0.18-svn'
+__version__ = '0.19'
 
 from .usertools import monitor, timing
 
@@ -69,6 +69,7 @@ isinf = mp.isinf
 isnan = mp.isnan
 isnormal = mp.isnormal
 isint = mp.isint
+isfinite = mp.isfinite
 almosteq = mp.almosteq
 nan = mp.nan
 rand = mp.rand

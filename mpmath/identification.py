@@ -130,11 +130,13 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     """
 
     n = len(x)
-    assert n >= 2
+    if n < 2:
+        raise ValueError("n cannot be less than 2")
 
     # At too low precision, the algorithm becomes meaningless
     prec = ctx.prec
-    assert prec >= 53
+    if prec < 53:
+        raise ValueError("prec cannot be less than 53")
 
     if verbose and prec // max(2,n) < 5:
         print("Warning: precision for PSLQ may be too low")
@@ -413,7 +415,8 @@ def findpoly(ctx, x, n=1, **kwargs):
     idea what is happening can be useful.
     """
     x = ctx.mpf(x)
-    assert n >= 1
+    if n < 1:
+        raise ValueError("n cannot be less than 1")
     if x == 0:
         return [1, 0]
     xs = [ctx.mpf(1)]
@@ -697,23 +700,23 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     SymPy can be used to pretty-print or further simplify the formula
     symbolically::
 
-        >>> from sympy import sympify
-        >>> sympify(identify(sqrt(2)))
+        >>> from sympy import sympify # doctest: +SKIP
+        >>> sympify(identify(sqrt(2))) # doctest: +SKIP
         2**(1/2)
 
     Sometimes :func:`~mpmath.identify` can simplify an expression further than
     a symbolic algorithm::
 
-        >>> from sympy import simplify
-        >>> x = sympify('-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)')
-        >>> x
+        >>> from sympy import simplify # doctest: +SKIP
+        >>> x = sympify('-1/(-3/2+(1/2)*5**(1/2))*(3/2-1/2*5**(1/2))**(1/2)') # doctest: +SKIP
+        >>> x # doctest: +SKIP
         (3/2 - 5**(1/2)/2)**(-1/2)
-        >>> x = simplify(x)
-        >>> x
+        >>> x = simplify(x) # doctest: +SKIP
+        >>> x # doctest: +SKIP
         2/(6 - 2*5**(1/2))**(1/2)
-        >>> mp.dps = 30
-        >>> x = sympify(identify(x.evalf(30)))
-        >>> x
+        >>> mp.dps = 30 # doctest: +SKIP
+        >>> x = sympify(identify(x.evalf(30))) # doctest: +SKIP
+        >>> x # doctest: +SKIP
         1/2 + 5**(1/2)/2
 
     (In fact, this functionality is available directly in SymPy as the
@@ -769,7 +772,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
     if constants:
         if isinstance(constants, dict):
-            constants = [(ctx.mpf(v), name) for (name, v) in constants.items()]
+            constants = [(ctx.mpf(v), name) for (name, v) in sorted(constants.items())]
         else:
             namespace = dict((name, getattr(ctx,name)) for name in dir(ctx))
             constants = [(eval(p, namespace), p) for p in constants]

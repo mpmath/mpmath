@@ -541,20 +541,20 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
 
         >>> from mpmath import mpi, mp
         >>> mp.dps = 30
-        >>> x = mpi(1, 2)
-        >>> mpi_to_str(x, mode='plusminus')
-        '1.5 +- 5.0e-1'
-        >>> mpi_to_str(x, mode='percent')
+        >>> x = mpi(1, 2)._mpi_
+        >>> mpi_to_str(x, 2, mode='plusminus')
+        '1.5 +- 0.5'
+        >>> mpi_to_str(x, 2, mode='percent')
         '1.5 (33.33%)'
-        >>> mpi_to_str(x, mode='brackets')
+        >>> mpi_to_str(x, 2, mode='brackets')
         '[1.0, 2.0]'
-        >>> mpi_to_str(x, mode='brackets' , brackets=('<', '>'))
+        >>> mpi_to_str(x, 2, mode='brackets' , brackets=('<', '>'))
         '<1.0, 2.0>'
-        >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')
-        >>> mpi_to_str(x, mode='diff')
+        >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')._mpi_
+        >>> mpi_to_str(x, 15, mode='diff')
         '5.2582327113062[4, 7]'
-        >>> mpi_to_str(mpi(0), mode='percent')
-        '0.0 (0%)'
+        >>> mpi_to_str(mpi(0)._mpi_, 2, mode='percent')
+        '0.0 (0.0%)'
 
     """
     prec = dps_to_prec(dps)

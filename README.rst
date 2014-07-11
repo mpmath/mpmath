@@ -3,7 +3,7 @@ mpmath
 
 A Python library for arbitrary-precision floating-point arithmetic.
 
-Website: http://code.google.com/p/mpmath
+Website: http://mpmath.org/
 Main author: Fredrik Johansson <fredrik.johansson@gmail.com>
 
 Mpmath is free software released under the New BSD License (see the
@@ -26,8 +26,15 @@ to mpmath:
 * Chris Smith <smichr@gmail.com>
 * Juan Arias de Reyna <arias@us.es>
 * Ioannis Tziakos <itziakos@gmail.com>
+* Aaron Meurer <asmeurer@gmail.com>
+* Stefan Krastanov <krastanov.stefan@gmail.com>
 * Ken Allen <ken.allen@sbcglobal.net>
 * Timo Hartmann <thartmann15@gmail.com>
+* Sergey B Kirpichev <skirpichev@gmail.com>
+
+Numerous other people have contributed by reporting bugs,
+requesting new features, or suggesting improvements to the
+documentation.
 
 Mpmath includes a copy of Benjamin Peterson's six.py for
 Python 2/3 compatibility. six.py is provided under the MIT license
@@ -64,6 +71,8 @@ Credit also goes to:
 
 Release history:
 
+* Version 0.19 released on June 10, 2014
+* Version 0.18 released on December 31, 2013
 * Version 0.17 released on February 1, 2011
 * Version 0.16 released on September 24, 2010
 * Version 0.15 released on June 6, 2010
@@ -101,8 +110,7 @@ Mpmath can also be installed using
 ``python -m easy_install mpmath``
 
 The latest development code is available from
-http://code.google.com/p/mpmath/source/checkout or at
-https://github.com/fredrik-johansson/mpmath.
+https://github.com/fredrik-johansson/mpmath
 
 See the main documentation for more detailed instructions.
 
@@ -117,6 +125,12 @@ to generate more useful reports in case there are failures.
 You may also want to check out the demo scripts in the demo
 directory.
 
+The master branch is automatically tested by Travis CI, the
+results can be seen here:
+
+.. image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.png?branch=master
+    :target: http://travis-ci.org/fredrik-johansson/mpmath
+
 3. Documentation
 ----------------
 
@@ -127,10 +141,9 @@ the build.py script (requires Sphinx, http://sphinx.pocoo.org/).
 
 See setup.txt in the documentation for more information.
 
-The most recent documentation is also available in HTML
-format on the mpmath website:
+The most recent documentation is also available in HTML format:
 
-http://mpmath.googlecode.com/svn/trunk/doc/build/index.html
+http://mpmath.org/doc/current/
 
 4. Known problems
 -----------------
@@ -158,4 +171,4 @@ General questions and comments can be sent to the mpmath mailinglist,
 mpmath@googlegroups.com
 
 You can also report bugs and send patches to the mpmath issue tracker,
-http://code.google.com/p/mpmath/issues/list
+https://github.com/fredrik-johansson/mpmath/issues

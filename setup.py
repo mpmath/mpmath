@@ -4,8 +4,8 @@ from distutils.core import setup
 
 setup(name='mpmath-invlap',
       description = 'Python library for arbitrary-precision floating-point arithmetic',
-      version='0.17a',
-      url='http://mpmath.googlecode.com',
+      version='0.19',
+      url='http://mpmath.org',
       author='Fredrik Johansson',
       author_email='fredrik.johansson@gmail.com',
       license = 'BSD',

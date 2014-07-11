@@ -70,12 +70,12 @@ class _matrix(object):
         >>> A
         matrix(
         [['0.0', '0.0'],
-         ['0.0', '(1.0 + 1.0j)']])
+         ['0.0', mpc(real='1.0', imag='1.0')]])
 
     You can use the keyword ``force_type`` to change the function which is
     called on every new element:
 
-        >>> matrix(2, 5, force_type=int)
+        >>> matrix(2, 5, force_type=int) # doctest: +SKIP
         matrix(
         [[0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0]])
@@ -92,8 +92,8 @@ class _matrix(object):
 
         >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
         matrix(
-        [[1, 2.5],
-         [1j, '2.0']])
+        [['1.0', '2.5'],
+         [mpc(real='0.0', imag='1.0'), '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -290,6 +290,8 @@ class _matrix(object):
         # determinant
         self._LU = None
         convert = kwargs.get('force_type', self.ctx.convert)
+        if not convert:
+            convert = lambda x: x
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
@@ -311,7 +313,8 @@ class _matrix(object):
             if len(args) == 1:
                 self.__rows = self.__cols = args[0]
             else:
-                assert isinstance(args[1], int), 'expected int'
+                if not isinstance(args[1], int):
+                    raise TypeError("expected int")
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], _matrix):
@@ -319,7 +322,6 @@ class _matrix(object):
             self.__data = A._matrix__data
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
-            convert = kwargs.get('force_type', self.ctx.convert)
             for i in xrange(A.__rows):
                 for j in xrange(A.__cols):
                     A[i,j] = convert(A[i,j])
@@ -593,7 +595,8 @@ class _matrix(object):
 
     def __rmul__(self, other):
         # assume other is scalar and thus commutative
-        assert not isinstance(other, self.ctx.matrix)
+        if isinstance(other, self.ctx.matrix):
+            raise TypeError("other should not be type of ctx.matrix")
         return self.__mul__(other)
 
     def __pow__(self, other):
@@ -873,8 +876,10 @@ class MatrixMethods(object):
         """
         Extend matrix A with column b and return result.
         """
-        assert isinstance(A, ctx.matrix)
-        assert A.rows == len(b)
+        if not isinstance(A, ctx.matrix):
+            raise TypeError("A should be a type of ctx.matrix")
+        if A.rows != len(b):
+            raise ValueError("Value should be equal to len(b)")
         A = A.copy()
         A.cols += 1
         for i in xrange(A.rows):

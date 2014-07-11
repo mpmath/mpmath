@@ -1,3 +1,5 @@
+from mpmath import fp
+
 # Real part of spherical harmonic Y_(4,4)(theta,phi)
 def Y(l,m):
     def g(theta,phi):
@@ -8,4 +10,5 @@ def Y(l,m):
         return [x,y,z]
     return g
 
-fp.splot(Y(4,4), [0,fp.pi], [0,2*fp.pi], points=300)
+fp.splot(Y(4,4), [0,fp.pi], [0,2*fp.pi], points=300,
+    dpi=45, file="spherharm44.png")

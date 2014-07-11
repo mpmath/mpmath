@@ -13,6 +13,8 @@ equation system::
 
 using ``lu_solve``::
 
+    >>> from mpmath import *
+    >>> mp.pretty = False
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
     >>> x = lu_solve(A, b)
@@ -40,8 +42,8 @@ keyword ``force_type``::
 
     >>> lu_solve(A, b, force_type=float)
     matrix(
-    [[29.999999999999996],
-     [-19.999999999999996]])
+    [['30.0'],
+     ['-20.0']])
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
 such systems, so the residual is minimized instead. Internally this is done
@@ -57,19 +59,19 @@ Matrix factorization
 The function ``lu`` computes an explicit LU factorization of a matrix::
 
     >>> P, L, U = lu(matrix([[0,2,3],[4,5,6],[7,8,9]]))
-    >>> print P
+    >>> print(P)
     [0.0  0.0  1.0]
     [1.0  0.0  0.0]
     [0.0  1.0  0.0]
-    >>> print L
+    >>> print(L)
     [              1.0                0.0  0.0]
     [              0.0                1.0  0.0]
     [0.571428571428571  0.214285714285714  1.0]
-    >>> print U
+    >>> print(U)
     [7.0  8.0                9.0]
     [0.0  2.0                3.0]
     [0.0  0.0  0.214285714285714]
-    >>> print P.T*L*U
+    >>> print(P.T*L*U)
     [0.0  2.0  3.0]
     [4.0  5.0  6.0]
     [7.0  8.0  9.0]
@@ -81,21 +83,20 @@ Matrices may contain interval elements. This allows one to perform
 basic linear algebra operations such as matrix multiplication
 and equation solving with rigorous error bounds::
 
-    >>> a = matrix([['0.1','0.3','1.0'],
+    >>> a = iv.matrix([['0.1','0.3','1.0'],
     ...             ['7.1','5.5','4.8'],
     ...             ['3.2','4.4','5.6']], force_type=mpi)
     >>>
-    >>> b = matrix(['4','0.6','0.5'], force_type=mpi)
-    >>> c = lu_solve(a, b)
-    >>> c
-    matrix(
-    [[[5.2582327113062393041, 5.2582327113062749951]],
-     [[-13.155049396267856583, -13.155049396267821167]],
-     [[7.4206915477497212555, 7.4206915477497310922]]])
-    >>> print a*c
-    [  [3.9999999999999866773, 4.0000000000000133227]]
-    [[0.59999999999972430942, 0.60000000000027142733]]
-    [[0.49999999999982236432, 0.50000000000018474111]]
+    >>> b = iv.matrix(['4','0.6','0.5'], force_type=mpi)
+    >>> c = iv.lu_solve(a, b)
+    >>> print(c)
+    [   [5.2582327113062568605927528666, 5.25823271130625686059275702219]]
+    [[-13.1550493962678375411635581388, -13.1550493962678375411635540152]]
+    [  [7.42069154774972557628979076189, 7.42069154774972557628979190734]]
+    >>> print(a*c)
+    [  [3.99999999999999999999999844904, 4.00000000000000000000000155096]]
+    [[0.599999999999999999999968898009, 0.600000000000000000000031763736]]
+    [[0.499999999999999999999979320485, 0.500000000000000000000020679515]]
 """
 
 # TODO:
@@ -158,9 +159,11 @@ class LinearAlgebraMethods(object):
         """
         Solve the lower part of a LU factorized matrix for y.
         """
-        assert L.rows == L.cols, 'need n*n matrix'
+        if L.rows != L.cols:
+            raise RuntimeError("need n*n matrix")
         n = L.rows
-        assert len(b) == n
+        if len(b) != n:
+            raise ValueError("Value should be equal to n")
         b = copy(b)
         if p: # swap b according to p
             for k in xrange(0, len(p)):
@@ -175,9 +178,11 @@ class LinearAlgebraMethods(object):
         """
         Solve the upper part of a LU factorized matrix for x.
         """
-        assert U.rows == U.cols, 'need n*n matrix'
+        if U.rows != U.cols:
+            raise RuntimeError("need n*n matrix")
         n = U.rows
-        assert len(y) == n
+        if len(y) != n:
+            raise ValueError("Value should be equal to n")
         x = copy(y)
         for i in xrange(n - 1, -1, -1):
             for j in xrange(i + 1, n):
@@ -233,7 +238,8 @@ class LinearAlgebraMethods(object):
         This re-uses the LU decomposition and is thus cheap.
         Usually 3 up to 4 iterations are giving the maximal improvement.
         """
-        assert A.rows == A.cols, 'need n*n matrix' # TODO: really?
+        if A.rows != A.cols:
+            raise RuntimeError("need n*n matrix") # TODO: really?
         for _ in xrange(maxsteps):
             r = ctx.residual(A, x, b)
             if ctx.norm(r, 2) < 10*ctx.eps:
@@ -324,10 +330,12 @@ class LinearAlgebraMethods(object):
         H and p contain all information about the transformation matrices.
         x is the solution, res the residual.
         """
-        assert isinstance(A, ctx.matrix)
+        if not isinstance(A, ctx.matrix):
+            raise TypeError("A should be a type of ctx.matrix")
         m = A.rows
         n = A.cols
-        assert m >= n - 1
+        if m < n - 1:
+            raise RuntimeError("Columns should not be less than rows")
         # calculate Householder matrix
         p = []
         for j in xrange(0, n - 1):
@@ -470,7 +478,8 @@ class LinearAlgebraMethods(object):
         1. [Wikipedia]_ http://en.wikipedia.org/wiki/Cholesky_decomposition
 
         """
-        assert isinstance(A, ctx.matrix)
+        if not isinstance(A, ctx.matrix):
+            raise RuntimeError("A should be a type of ctx.matrix")
         if not A.rows == A.cols:
             raise ValueError('need n*n matrix')
         if tol is None:
@@ -516,7 +525,8 @@ class LinearAlgebraMethods(object):
             L = ctx.cholesky(A)
             # solve
             n = L.rows
-            assert len(b) == n
+            if len(b) != n:
+                raise ValueError("Value should be equal to n")
             for i in xrange(n):
                 b[i] -= ctx.fsum(L[i,j] * b[j] for j in xrange(i))
                 b[i] /= L[i,i]
