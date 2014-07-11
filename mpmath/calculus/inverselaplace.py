@@ -556,6 +556,7 @@ class LaplaceTransformInversionMethods:
         rule = kwargs.get('method','stehfest')
         if type(rule) is str:
             lrule = rule.lower()
+            lrule = lrule.replace(' ','-')
             if lrule == 'talbot' or lrule == 'fixed-talbot':
                 rule = ctx._fixed_talbot
             elif lrule == 'weeks':
