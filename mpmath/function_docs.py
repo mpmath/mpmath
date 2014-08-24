@@ -5548,7 +5548,7 @@ Verifying the associated Legendre differential equation::
 legenq = r"""
 Calculates the (associated) Legendre function of the second kind of
 degree *n* and order *m*, `Q_n^m(z)`. Taking `m = 0` gives the ordinary
-Legendre function of the second kind, `Q_n(z)`. The parameters may
+Legendre function of the second kind, `Q_n(z)`. The parameters may be
 complex numbers.
 
 The Legendre functions of the second kind give a second set of
