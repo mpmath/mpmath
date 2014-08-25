@@ -165,6 +165,8 @@ svd_r = mp.svd_r
 svd_c = mp.svd_c
 svd = mp.svd
 gauss_quadrature = mp.gauss_quadrature
+stoch_eig = mp.stoch_eig
+gth_solve = mp.gth_solve
 
 expm = mp.expm
 sqrtm = mp.sqrtm
@@ -458,4 +460,3 @@ def doctests(filter=[]):
 
 if __name__ == '__main__':
     doctests()
-
