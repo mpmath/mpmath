@@ -64,22 +64,22 @@ def stoch_eig(ctx, P, overwrite=False):
     equals one. Internally, the routine passes the input to the
     ``gth_solve`` routine.
 
-    Parameters
-    ----------
+    **Parameters**
+
     P : matrix of shape (n, n)
         Stochastic matrix.
     overwrite : bool, optional(default=False)
         If True, allows modification of P which may improve performance;
         if False, P is not modified.
 
-    Returns
-    -------
+    **Returns**
+
     matrix of shape (1, n)
         Stochastic eigenvalue (stationary distribution) of P, i.e., the
         solution to x P = x, normalized so that its 1-norm equals one.
 
-    Examples
-    --------
+    **Examples**
+
     >>> import mpmath as mp
     >>> from eigen_markov import stoch_eig
     >>> P = mp.matrix([[0.9, 0.075, 0.025], [0.15, 0.8, 0.05], [0.25, 0.25, 0.5]])
@@ -110,22 +110,22 @@ def gth_solve(ctx, A, overwrite=False):
     variant of Gaussian elimination. The solution is normalized so that
     its 1-norm equals one.
 
-    Parameters
-    ----------
+    **Parameters**
+
     A : matrix of shape (n, n)
         Transition rate matrix.
     overwrite : bool, optional(default=False)
         If True, allows modification of A which may improve performance;
         if False, A is not modified.
 
-    Returns
-    -------
+    **Returns**
+
     matrix of shape (1, n)
         Non-zero solution to x A = 0, normalized so that its 1-norm
         equals one.
 
-    Examples
-    --------
+    **Examples**
+
     >>> import mpmath as mp
     >>> from eigen_markov import gth_solve
     >>> A = mp.matrix([[-0.1, 0.075, 0.025], [0.15, -0.2, 0.05], [0.25, 0.25, -0.5]])
