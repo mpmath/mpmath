@@ -204,9 +204,9 @@ def test_gth_solve_fp():
 
 
 def test_stoch_eig_iv():
-    P = mp.iv.matrix([[0.9 , 0.075, 0.025],
-                      [0.15, 0.8  , 0.05 ],
-                      [0.25, 0.25 , 0.5  ]])
+    P = mp.iv.matrix([['0.9' , '0.075', '0.025'],
+                      ['0.15', '0.8'  , '0.05' ],
+                      ['0.25', '0.25' , '0.5'  ]])
     x_expected = mp.matrix([[0.625, 0.3125, 0.0625]])
     x_iv = mp.iv.stoch_eig(P)
     for value, interval in zip(x_expected, x_iv):
@@ -214,9 +214,9 @@ def test_stoch_eig_iv():
 
 
 def test_gth_solve_iv():
-    P = mp.iv.matrix([[-0.1, 0.075, 0.025],
-                      [0.15, -0.2 , 0.05 ],
-                      [0.25, 0.25 , -0.5 ]])
+    P = mp.iv.matrix([['-0.1', '0.075', '0.025'],
+                      ['0.15', '-0.2' , '0.05' ],
+                      ['0.25', '0.25' , '-0.5' ]])
     x_expected = mp.matrix([[0.625, 0.3125, 0.0625]])
     x_iv = mp.iv.gth_solve(P)
     for value, interval in zip(x_expected, x_iv):
