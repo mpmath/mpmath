@@ -5,7 +5,10 @@ python:
   - 3.2
   - 3.3
   - "pypy"
+install:
+  - pip install pep8 --use-mirrors
 script:
+  - pep8
   - py.test --doctest-modules --color no mpmath
 notifications:
   email: false
