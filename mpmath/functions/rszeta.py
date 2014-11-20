@@ -51,7 +51,7 @@ formula can not compute to the wanted precision.
 import math
 
 class RSCache(object):
-     def __init__(ctx):
+    def __init__(ctx):
         ctx._rs_cache = [0, 10, {}, {}]
 
 from .functions import defun
@@ -105,8 +105,7 @@ def _coef(ctx, J, eps):
     """
 
     newJ = J+2        # compute more coefficients that are needed
-    neweps6 = eps/2.  # compute with a slight more precision
-                      # that are needed
+    neweps6 = eps/2.  # compute with a slight more precision that are needed
 
     #  PREPARATION FOR THE COMPUTATION OF V(N) AND W(N)
     #    See II Section 3.16
@@ -412,9 +411,8 @@ def Rzeta_simul(ctx, s, der=0):
     cc = {}
     cont = {}
     cont, pipowers = coef(ctx, J, eps6)
-    cc=cont.copy()   # we need a copy since we have
-                    # to change his values.
-    Fp={}                        # this is the adequate locus of this
+    cc=cont.copy()   # we need a copy since we have to change his values.
+    Fp={}            # this is the adequate locus of this
     for n in range(M, 3*L-2):
         Fp[n] = 0
     Fp={}
@@ -560,11 +558,11 @@ def Rzeta_simul(ctx, s, der=0):
                 xfortcoef[mu,k,ell]=xfortcoef[mu,k,ell]/((2*ctx.j)**ell)
 
     def trunc_a(t):
-       wp = ctx.prec
-       ctx.prec = wp + 2
-       aa = ctx.sqrt(t/(2*ctx.pi))
-       ctx.prec = wp
-       return aa
+        wp = ctx.prec
+        ctx.prec = wp + 2
+        aa = ctx.sqrt(t/(2*ctx.pi))
+        ctx.prec = wp
+        return aa
 
     # computing the tcoef[k,ell]
     xtcoef={}
@@ -1012,11 +1010,11 @@ def Rzeta_set(ctx, s, derivatives=[0]):
                 fortcoef[mu,k,ell]=fortcoef[mu,k,ell]/((2*ctx.j)**ell)
 
     def trunc_a(t):
-       wp = ctx.prec
-       ctx.prec = wp + 2
-       aa = ctx.sqrt(t/(2*ctx.pi))
-       ctx.prec = wp
-       return aa
+        wp = ctx.prec
+        ctx.prec = wp + 2
+        aa = ctx.sqrt(t/(2*ctx.pi))
+        ctx.prec = wp
+        return aa
 
     # computing the tcoef[chi,k,ell]
     tcoef={}
@@ -1403,4 +1401,3 @@ def rs_z(ctx, w, derivative=0):
         return z_half(ctx, w, derivative)
     else:
         return z_offline(ctx, w, derivative)
-

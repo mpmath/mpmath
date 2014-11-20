@@ -717,9 +717,9 @@ class levin_class:
         return value,err
 
 def levin(ctx, method = "levin", variant = "u"):
-  L = levin_class(method = method, variant = variant)
-  L.ctx = ctx
-  return L
+    L = levin_class(method = method, variant = variant)
+    L.ctx = ctx
+    return L
 
 levin.__doc__ = levin_class.__doc__
 defun(levin)
@@ -1217,7 +1217,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 if verbose:
                     print("%s error: %s" % (L.name, ctx.nstr(lerror)))
                 if lerror <= tol:
-                   return est
+                    return est
                 if lerror < error:
                     error = lerror
                     best = est

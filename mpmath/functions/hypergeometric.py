@@ -826,9 +826,9 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
     # Asymptotic series is in terms of 3F0
     can_use_asymptotic = (not kwargs.get('force_series')) and \
         (ctx.mag(absz) > 19) and \
-        (ctx.sqrt(absz) > 1.5*orig) #and \
-        #ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [],
-        #    1/absz, orig+40+asymp_extraprec)
+        (ctx.sqrt(absz) > 1.5*orig)  # and \
+    #   ctx._hyp_check_convergence([a1, a1-b1+1, a1-b2+1], [],
+    #                              1/absz, orig+40+asymp_extraprec)
 
     # TODO: much of the following could be shared with 2F3 instead of
     # copypasted
