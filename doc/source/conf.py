@@ -125,7 +125,7 @@ latex_documents = [(master_doc, 'main.tex', 'mpmath documentation',
                     r'Fredrik Johansson \and mpmath contributors', 'manual')]
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = r'\usepackage{amsfonts}'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
