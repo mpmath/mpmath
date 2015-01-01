@@ -15,7 +15,19 @@ If you are using Windows, you can download the binary installer
 
     ``mpmath-(version).win32.exe``
 
-from the mpmath website or the Python Package Index. Run the installer and follow the instructions.
+from the mpmath website or the Python Package Index (PyPI). Run the installer and follow the instructions.
+
+Using pip
+.........
+
+Releases are registered on PyPI, so you can install latest release
+of the Mpmath with pip
+
+    ``pip install mpmath``
+
+or some specific version with
+
+    ``pip install mpmath==0.19``
 
 Using setuptools
 ................
