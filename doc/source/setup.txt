@@ -15,7 +15,19 @@ If you are using Windows, you can download the binary installer
 
     ``mpmath-(version).win32.exe``
 
-from the mpmath website or the Python Package Index. Run the installer and follow the instructions.
+from the mpmath website or the Python Package Index (PyPI). Run the installer and follow the instructions.
+
+Using pip
+.........
+
+Releases are registered on PyPI, so you can install latest release
+of the Mpmath with pip
+
+    ``pip install mpmath``
+
+or some specific version with
+
+    ``pip install mpmath==0.19``
 
 Using setuptools
 ................
@@ -125,15 +137,6 @@ and by running the individual ``.py`` files in the mpmath source.
 (The doctests may take several minutes.)
 
 Finally, some additional demo scripts are available in the ``demo`` directory included in the source package.
-
-Mpmath under SymPy
---------------------
-
-Mpmath is available as a subpackage of `SymPy <http://sympy.org>`_. With SymPy installed, you can just do
-
-    ``import sympy.mpmath as mpmath``
-
-instead of ``import mpmath``. Note that the SymPy version of mpmath might not be the most recent. You can make a separate mpmath installation even if SymPy is installed; the two mpmath packages will not interfere with each other.
 
 Mpmath under Sage
 -------------------
