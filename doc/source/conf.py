@@ -121,11 +121,11 @@ htmlhelp_basename = 'mpmathdoc'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
-latex_documents = [master_doc, 'main.tex', 'mpmath documentation',
-                   'Fredrik Johansson \and mpmath contributors', 'manual']
+latex_documents = [(master_doc, 'main.tex', 'mpmath documentation',
+                    r'Fredrik Johansson \and mpmath contributors', 'manual')]
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = r'\usepackage{amsfonts}'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
