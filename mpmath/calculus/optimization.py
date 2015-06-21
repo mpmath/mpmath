@@ -697,7 +697,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
     Multidimensional overdetermined systems are supported.
     You can specify them using a function or a list of functions.
 
-    If the found root does not satisfy `|f(x)^2 < \mathrm{tol}|`,
+    If the found root does not satisfy `|f(x)|^2 \leq \mathrm{tol}`,
     an exception is raised (this can be disabled with *verify=False*).
 
     **Arguments**
@@ -711,7 +711,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
     *verbose*
         print additional information for each iteration if true
     *verify*
-        verify the solution and raise a ValueError if `|f(x) > \mathrm{tol}|`
+        verify the solution and raise a ValueError if `|f(x)|^2 > \mathrm{tol}`
     *solver*
         a generator for *f* and *x0* returning approximative solution and error
     *maxsteps*
