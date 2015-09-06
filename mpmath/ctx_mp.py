@@ -575,11 +575,31 @@ class MPContext(BaseMPContext, StandardBaseContext):
         The companion function :func:`~mpmath.nprint` prints the result
         instead of returning it.
 
+        The keyword arguments *strip_zeros*, *min_fixed*, *max_fixed*
+        and *show_zero_exponent* are forwarded to :func:`~mpmath.libmp.to_str`.
+
+        The number will be printed in fixed-point format if the position
+        of the leading digit is strictly between min_fixed
+        (default = min(-dps/3,-5)) and max_fixed (default = dps).
+
+        To force fixed-point format always, set min_fixed = -inf,
+        max_fixed = +inf. To force floating-point format, set
+        min_fixed >= max_fixed.
+
             >>> from mpmath import *
             >>> nstr([+pi, ldexp(1,-500)])
             '[3.14159, 3.05494e-151]'
             >>> nprint([+pi, ldexp(1,-500)])
             [3.14159, 3.05494e-151]
+            >>> nstr(mpf("5e-10"), 5)
+            '5.0e-10'
+            >>> nstr(mpf("5e-10"), 5, strip_zeros=False)
+            '5.0000e-10'
+            >>> nstr(mpf("5e-10"), 5, strip_zeros=False, min_fixed=-11)
+            '0.00000000050000'
+            >>> nstr(mpf(0), 5, show_zero_exponent=True)
+            '0.0e+0'
+
         """
         if isinstance(x, list):
             return "[%s]" % (", ".join(ctx.nstr(c, n, **kwargs) for c in x))
