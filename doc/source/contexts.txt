@@ -278,13 +278,13 @@ To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp
 
 The ``fp`` context wraps Python's ``math`` and ``cmath`` modules for elementary functions. It supports both real and complex numbers and automatically generates complex results for real inputs (``math`` raises an exception)::
 
-    >>> fp.sqrt(5)
+    >>> fp.sqrt(5)  # doctest:+SKIP
     2.23606797749979
-    >>> fp.sqrt(-5)
+    >>> fp.sqrt(-5)  # doctest:+SKIP
     2.23606797749979j
-    >>> fp.sin(10)
+    >>> fp.sin(10)  # doctest:+SKIP
     -0.5440211108893698
-    >>> fp.power(-1, 0.25)
+    >>> fp.power(-1, 0.25)  # doctest:+SKIP
     (0.7071067811865476+0.7071067811865475j)
     >>> (-1) ** 0.25  # doctest:+SKIP
     Traceback (most recent call last):
