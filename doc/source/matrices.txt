@@ -54,7 +54,7 @@ done using the syntax A[row,column], counting from 0::
 
     >>> A = matrix(2)
     >>> A[1,1] = 1 + 1j
-    >>> print A
+    >>> print(A)
     [0.0           0.0]
     [0.0  (1.0 + 1.0j)]
 
@@ -124,7 +124,7 @@ Other
 
 Like you probably expected, matrices can be printed::
 
-    >>> print randmatrix(3) # doctest:+SKIP
+    >>> print(randmatrix(3)) # doctest:+SKIP
     [ 0.782963853573023  0.802057689719883  0.427895717335467]
     [0.0541876859348597  0.708243266653103  0.615134039977379]
     [ 0.856151514955773  0.544759264818486  0.686210904770947]
@@ -323,19 +323,19 @@ Matrix factorization
 The function ``lu`` computes an explicit LU factorization of a matrix::
 
     >>> P, L, U = lu(matrix([[0,2,3],[4,5,6],[7,8,9]]))
-    >>> print P
+    >>> print(P)
     [0.0  0.0  1.0]
     [1.0  0.0  0.0]
     [0.0  1.0  0.0]
-    >>> print L
+    >>> print(L)
     [              1.0                0.0  0.0]
     [              0.0                1.0  0.0]
     [0.571428571428571  0.214285714285714  1.0]
-    >>> print U
+    >>> print(U)
     [7.0  8.0                9.0]
     [0.0  2.0                3.0]
     [0.0  0.0  0.214285714285714]
-    >>> print P.T*L*U
+    >>> print(P.T*L*U)
     [0.0  2.0  3.0]
     [4.0  5.0  6.0]
     [7.0  8.0  9.0]
@@ -344,19 +344,19 @@ The function ``qr`` computes a QR factorization of a matrix::
 
     >>> A = matrix([[1, 2], [3, 4], [1, 1]])
     >>> Q, R = qr(A)
-    >>> print Q
+    >>> print(Q)
     [-0.301511344577764   0.861640436855329   0.408248290463863]
     [-0.904534033733291  -0.123091490979333  -0.408248290463863]
     [-0.301511344577764  -0.492365963917331   0.816496580927726]
-    >>> print R
+    >>> print(R)
     [-3.3166247903554  -4.52267016866645]
     [             0.0  0.738548945875996]
     [             0.0                0.0]
-    >>> print Q * R
+    >>> print(Q * R)
     [1.0  2.0]
     [3.0  4.0]
     [1.0  1.0]
-    >>> print chop(Q.T * Q)
+    >>> print(chop(Q.T * Q))
     [1.0  0.0  0.0]
     [0.0  1.0  0.0]
     [0.0  0.0  1.0]
@@ -386,12 +386,12 @@ Examples::
    >>> from mpmath import mp
    >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
    >>> S = mp.svd_r(A, compute_uv = False)
-   >>> print S
+   >>> print(S)
    [6.0]
    [3.0]
    [1.0]
    >>> U, S, V = mp.svd_r(A)
-   >>> print mp.chop(A - U * mp.diag(S) * V)
+   >>> print(mp.chop(A - U * mp.diag(S) * V))
    [0.0  0.0  0.0]
    [0.0  0.0  0.0]
    [0.0  0.0  0.0]
@@ -491,17 +491,17 @@ Examples::
     >>> from mpmath import mp
     >>> A = mp.matrix([[3, 2], [2, 0]])
     >>> E = mp.eigsy(A, eigvals_only = True)
-    >>> print E
+    >>> print(E)
     [-1.0]
     [ 4.0]
     >>> A = mp.matrix([[1, 2], [2, 3]])
     >>> E, Q = mp.eigsy(A)                     # alternative: E, Q = mp.eigh(A)
-    >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
     [0.0]
     [0.0]
     >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
     >>> E, Q = mp.eighe(A)                     # alternative: E, Q = mp.eigh(A)
-    >>> print mp.chop(A * Q[:,0] - E[0] * Q[:,0])
+    >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
     [0.0]
     [0.0]
 
@@ -521,11 +521,11 @@ with rigorous error tracking::
     >>>
     >>> b = iv.matrix(['4','0.6','0.5'])
     >>> c = iv.lu_solve(a, b)
-    >>> print c
+    >>> print(c)
     [  [5.2582327113062393041, 5.2582327113062749951]]
     [[-13.155049396267856583, -13.155049396267821167]]
     [  [7.4206915477497212555, 7.4206915477497310922]]
-    >>> print a*c
+    >>> print(a*c)
     [  [3.9999999999999866773, 4.0000000000000133227]]
     [[0.59999999999972430942, 0.60000000000027142733]]
     [[0.49999999999982236432, 0.50000000000018474111]]

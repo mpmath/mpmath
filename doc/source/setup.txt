@@ -73,9 +73,9 @@ After the setup has completed, you should be able to fire up the interactive Pyt
 
     >>> from mpmath import *
     >>> mp.dps = 50
-    >>> print mpf(2) ** mpf('0.5')
+    >>> print(mpf(2) ** mpf('0.5'))
     1.4142135623730950488016887242096980785696718753769
-    >>> print 2*pi
+    >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
 *Note: if you have are upgrading mpmath from an earlier version, you may have to manually uninstall the old version or remove the old files.*

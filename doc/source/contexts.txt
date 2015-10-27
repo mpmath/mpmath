@@ -128,7 +128,7 @@ Intervals can be created from single numbers (treated as zero-width intervals) o
     >>> iv.dps = 15; iv.pretty = False
     >>> iv.mpf(3)
     mpi('3.0', '3.0')
-    >>> print iv.mpf(3)
+    >>> print(iv.mpf(3))
     [3.0, 3.0]
     >>> iv.pretty = True
     >>> iv.mpf([2,3])
@@ -144,7 +144,7 @@ The fact that ``'0.1'`` results in an interval of nonzero width indicates that 1
 
 Intervals may be infinite or half-infinite::
 
-    >>> print 1 / iv.mpf([2, 'inf'])
+    >>> print(1 / iv.mpf([2, 'inf']))
     [0.0, 0.5]
 
 The equality testing operators ``==`` and ``!=`` check whether their operands are identical as intervals; that is, have the same endpoints. The ordering operators ``< <= > >=`` permit inequality testing using triple-valued logic: a guaranteed inequality returns ``True`` or ``False`` while an indeterminate inequality returns ``None``::
@@ -225,9 +225,9 @@ Naive use of ``mp`` arithmetic may result in wrong conclusions, such as the foll
     >>> mp.dps = 25
     >>> x = mp.exp(mp.pi*mp.sqrt(163))
     >>> y = mp.mpf(640320**3+744)
-    >>> print x
+    >>> print(x)
     262537412640768744.0000001
-    >>> print y
+    >>> print(y)
     262537412640768744.0
     >>> x > y
     True
@@ -236,7 +236,7 @@ But the correct result is `e^{\pi \sqrt{163}} < 262537412640768744`, as can be
 seen by increasing the precision::
 
     >>> mp.dps = 50
-    >>> print mp.exp(mp.pi*mp.sqrt(163))
+    >>> print(mp.exp(mp.pi*mp.sqrt(163)))
     262537412640768743.99999999999925007259719818568888
 
 With interval arithmetic, the comparison returns ``None`` until the precision
@@ -259,12 +259,12 @@ Although mpmath is generally designed for arbitrary-precision arithmetic, many o
 To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp.func`` instead of ``func`` or ``mp.func``::
 
     >>> u = fp.erfc(2.5)
-    >>> print u
+    >>> print(u)
     0.000406952017445
     >>> type(u)
     <type 'float'>
     >>> mp.dps = 15
-    >>> print mp.erfc(2.5)
+    >>> print(mp.erfc(2.5))
     0.000406952017444959
     >>> fp.matrix([[1,2],[3,4]]) ** 2
     matrix(
@@ -273,7 +273,7 @@ To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp
     >>> 
     >>> type(_[0,0])
     <type 'float'>
-    >>> print fp.quad(fp.sin, [0, fp.pi])    # numerical integration
+    >>> print(fp.quad(fp.sin, [0, fp.pi]))    # numerical integration
     2.0
 
 The ``fp`` context wraps Python's ``math`` and ``cmath`` modules for elementary functions. It supports both real and complex numbers and automatically generates complex results for real inputs (``math`` raises an exception)::

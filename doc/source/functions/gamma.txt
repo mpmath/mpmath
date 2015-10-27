@@ -9,7 +9,7 @@ A large selection of factorial-like functions is implemented in mpmath. All func
     >>> mp.dps = 15; mp.pretty = True
     >>> fac(100)
     9.33262154439442e+157
-    >>> print int(_)    # most digits are wrong
+    >>> print(int(_))    # most digits are wrong
     93326215443944150965646704795953882578400970373184098831012889540582227238570431295066113089288327277825849664006524270554535976289719382852181865895959724032
     >>> mp.dps = 160
     >>> fac(100)
