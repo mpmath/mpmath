@@ -259,9 +259,9 @@ Although mpmath is generally designed for arbitrary-precision arithmetic, many o
 To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp.func`` instead of ``func`` or ``mp.func``::
 
     >>> u = fp.erfc(2.5)
-    >>> print(u)
+    >>> print(u)  # doctest:+SKIP
     0.000406952017445
-    >>> type(u)
+    >>> type(u)  # doctest:+SKIP
     <type 'float'>
     >>> mp.dps = 15
     >>> print(mp.erfc(2.5))
@@ -271,7 +271,7 @@ To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp
     [['7.0', '10.0'],
      ['15.0', '22.0']])
     >>> 
-    >>> type(_[0,0])
+    >>> type(_[0,0])  # doctest:+SKIP
     <type 'float'>
     >>> print(fp.quad(fp.sin, [0, fp.pi]))    # numerical integration
     2.0
@@ -286,7 +286,7 @@ The ``fp`` context wraps Python's ``math`` and ``cmath`` modules for elementary 
     -0.5440211108893698
     >>> fp.power(-1, 0.25)
     (0.7071067811865476+0.7071067811865475j)
-    >>> (-1) ** 0.25
+    >>> (-1) ** 0.25  # doctest:+SKIP
     Traceback (most recent call last):
       ...
     ValueError: negative number cannot be raised to a fractional power

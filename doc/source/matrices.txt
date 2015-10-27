@@ -304,7 +304,7 @@ and methods::
 
     >>> A = fp.matrix([[1, 2], [3, 4]])
     >>> b = fp.matrix([-10, 10])
-    >>> fp.lu_solve(A, b)
+    >>> fp.lu_solve(A, b)  # doctest:+SKIP
     matrix(
     [['30.0'],
      ['-20.0']])
