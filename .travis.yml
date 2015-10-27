@@ -10,6 +10,6 @@ install:
   - pip install pep8
 script:
   - pep8
-  - py.test --doctest-modules --color no mpmath
+  - py.test
 notifications:
   email: false
