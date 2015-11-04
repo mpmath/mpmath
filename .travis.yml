@@ -1,14 +1,17 @@
 language: python
+sudo: false
 python:
   - 2.6
   - 2.7
   - 3.2
   - 3.3
+  - 3.4
+  - 3.5
   - "pypy"
 install:
-  - pip install pep8 --use-mirrors
+  - pip install pep8
 script:
   - pep8
-  - py.test --doctest-modules --color no mpmath
+  - py.test
 notifications:
   email: false
