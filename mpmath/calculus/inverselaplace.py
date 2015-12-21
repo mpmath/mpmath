@@ -178,129 +178,6 @@ class Weeks(InverseLaplaceTransform):
 
 # ****************************************
 
-class Piessens(InverseLaplaceTransform):
-
-    def calc_laplace_parameter(self, t, **kwargs):
-
-        # time of desired approximation
-        self.t = self.ctx.convert(t)
-        
-        # maximum time desired (used for scaling)
-        self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
-
-        # M+1 terms are used below
-        self.degree = kwargs.get('degree',self.degree)
-
-        # highest 2F2 degree
-        self.N = kwargs.get('N',self.degree)
-
-        # F(p) ~ p**(-s), as p -> infinity (and as t -> 0)
-        # this is "a" in Piessens (1971)
-        self.s = self.ctx.convert(kwargs.get('s',1))
-
-        # Piessens didn't have a good "rule of thumb"?  it should be
-        # small (2x larger than right-most pole), but the smaller it
-        # is, the more terms are required for convergence
-        # over-estimation is better than under-estimation, though (see
-        # page 338 Davies chap 19)
-        self.b = self.ctx.convert(kwargs.get('b',1/(self.t*self.N)))
-
-        # no real rule of thumb for increasing precsion as 
-        # degree of approximation increases
-        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
-
-        self.debug = kwargs.get('debug',self.debug)
-
-        M = self.degree
-        self.theta = self.ctx.matrix(M+1,1)
-        self.z = self.ctx.matrix(M+1,1)
-        self.p = self.ctx.matrix(M+1,1)
-        
-        with self.ctx.workdps(self.dps_goal):
-
-            for i in range(M+1):
-                self.theta[i] = (2.0*i+1)/((M+1)*2.0)
-                # pi included in fcn
-                self.z[i] = self.ctx.cospi(self.theta[i]) 
-    
-            for j in range(M+1):
-                self.p[j] = self.b/(1-self.z[j])
-
-        if self.debug > 1:
-            print 'Piessens p:',self.p
-        if self.debug > 2:
-            print ('Piessens tmax,degree,N,s,b,dps_goal:',
-                   self.tmax,self.degree,self.N,self.s,self.b,self.dps_goal)
-
-    def _coeff(self,n,fp):
-        """use quadrature rule for calculating coefficients.
-        n = order of coefficient requested"""
-
-        M = self.degree
-        s = self.s
-        b = self.b
-        z = self.z
-        theta = self.theta
-        arg = self.ctx.matrix(M+1,1)
-
-        for i in range(M+1):
-            # pi included in fcn
-            arg[i] = (self.ctx.power(b/(1-z[i]),s)*
-                      fp[i]*self.ctx.cospi(theta[i]*n))
-
-        return 2.0/(M+1)*self.ctx.fsum(arg)
-
-    def _2f2recurrence(self,x):
-        """stable recurrence for 2f2 hypergeometric series
-        which is accurate for large order even at moderate precision"""
-        s = self.s
-        M = self.degree
-
-        phi = self.ctx.matrix(M+1,1)
-
-        phi[0] = self.ctx.mpf(1)
-        phi[1] = 1 - self.ctx.mpf(2*x/s)
-        phi[2] = 1 - self.ctx.mpf(8*x/s) + self.ctx.mpf(8/(s*(s+1))*x*x)
-
-        for n in range(3,M+1):
-            denom = self.ctx.mpf((n-2)*(s+n-1))
-
-            A = (3*n*n - 9*n + s*n - 3*s + 6)/denom
-            B = -4/self.ctx.mpf(s+n-1)
-            C = -(3*n*n - 9*n - s*n + 6)/denom
-            D = -4*(n-1)/denom
-            E = -(n-1)*(s-n+2)/denom
-
-            phi[n] = (A + B*x)*phi[n-1] + (C + D*x)*phi[n-2] + E*phi[n-3]
-
-        return phi
-
-    def calc_time_domain_solution(self,fp):
-
-        s = self.s
-        b = self.b
-        N = self.N
-        t = self.t
-        arg = self.ctx.matrix(N,1)
-
-        with self.ctx.workdps(self.dps_goal):
-
-            # equivalent to hyp2f2(-n,n,0.5,s,b*t/2)
-            # but doesn't diverge for large n
-            hyp2f2 = self._2f2recurrence(b*t/2)
-
-            for n in range(N):
-                arg[n] = self._coeff(n,fp)*hyp2f2[n]
-    
-            arg[0] /= 2.0
-            result = (self.ctx.power(t,s-1)/self.ctx.gamma(s)*
-                      self.ctx.fsum(arg))
-
-        # ignore any small imaginary part
-        return result.real
-
-# ****************************************
-
 class Stehfest(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self, t, **kwargs):
@@ -367,88 +244,6 @@ class Stehfest(InverseLaplaceTransform):
 
         # ignore any small imaginary part
         return result.real
-
-# ****************************************
-
-class GaverWynnRho(InverseLaplaceTransform):
-
-    def calc_laplace_parameter(self, t, **kwargs):
-
-        # time of desired approximation
-        self.t = self.ctx.convert(t)
-
-        self.degree = kwargs.get('degree',self.degree)
-
-        # rule for extended precision from Abate & Valko (2004)
-        # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,2.1*self.degree))
-
-        self.debug = kwargs.get('debug',self.debug)
-
-        M = self.degree
-        if M%2 == 1:
-            M += 1
-            self.degree = M
-
-        with self.ctx.workdps(self.dps_goal):
-            self.tau = self.ctx.ln2/self.t
-            
-            self.p = (self.ctx.matrix(self.ctx.arange(1,M+1))*self.tau)
-    
-        if self.debug > 1:
-            print 'Stehfest p:',self.p
-        if self.debug > 2:
-            print ('Stehfest degree,dps_goal:',
-            self.tmax,self.degree,self.dps_goal)
-
-    def calc_time_domain_solution(self,fp):
-        """Compute time-domain solution using f(p)
-        and coefficients"""
-
-        M = self.degree
-        M2 = M/2
-
-        with self.ctx.workdps(self.dps_goal):
-       
-            # compute Gaver functionals 
-            fkt = self.ctx.matrix(M2,1)
-            arg = self.ctx.matrix(M2+1,1)
-       
-            for k in range(1,M2+1):
-                arg[0] = 0.0 
-                for j in range(k+1):
-                    #print M,M2,k,j,fp.rows
-                    arg[j] = (self.ctx.power(-1,j)*
-                              self.ctx.binomial(k,j)*fp[j+k-1])
-       
-                fkt[k-1] = (k*self.tau*self.ctx.binomial(2*k,k)*
-                            self.ctx.fsum(arg[0:k+1]))
-           
-            # apply Wynn's Rho non-linear 
-            # sequence transformation 
-            rho = self.ctx.matrix(M2,M2+2)
-           
-            rho[:,0] = 0.0 # \rho_{-1}^{(n)}=0
-            rho[:,1] = fkt[:] # \rho_{0}^{(n)}=f_n(t) (n >= 0)
-           
-            #print M,M2,rho.rows,rho.cols
-
-            for k in range(2,M2+2):
-                for n in range(M2-(k-2)*2 - 1):
-                    denom = rho[n+1,k-1] - rho[n,k-1]
-                    #print k,n,M2-(k-2)*2 - 1,denom
-                    #print rho
-                    if abs(denom) > self.ctx.eps:
-                        rho[n,k] = rho[n+1,k-2] + k/denom
-                        #print "Wynn's appeared to work"
-                    else:
-                        print "Wynn's Rho cancellation at ",k,n
-                        return rho[n-1,k-1+2]
-
-        # ignore any small imaginary part
-        return rho[0,M2+1].real
-
-        # this method is still quite broken
 
 # ****************************************
 
@@ -575,9 +370,7 @@ class LaplaceTransformInversionMethods:
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
         ctx._weeks = Weeks(ctx)
-        ctx._piessens = Piessens(ctx)
         ctx._stehfest = Stehfest(ctx)
-        ctx._gaverrho = GaverWynnRho(ctx)
         ctx._de_hoog = deHoog(ctx)
 
     def invertlaplace(ctx, f, t, **kwargs):
@@ -595,12 +388,8 @@ class LaplaceTransformInversionMethods:
                 rule = ctx._fixed_talbot
             elif lrule == 'weeks':
                 rule = ctx._weeks
-            elif lrule == 'piessens':
-                rule = ctx._piessens
             elif lrule == 'stehfest':
                 rule = ctx._stehfest
-            elif lrule == 'gaverrho' or lrule == 'gaverwynnrho':
-                rule = ctx._gaverrho
             elif lrule == 'dehoog':
                 rule = ctx._de_hoog
             else:
@@ -624,16 +413,8 @@ class LaplaceTransformInversionMethods:
         kwargs['method'] = 'weeks'
         return ctx.invertlaplace(*args, **kwargs)
 
-    def invlappiessens(ctx, *args, **kwargs):
-        kwargs['method'] = 'piessens'
-        return ctx.invertlaplace(*args, **kwargs)
-    
     def invlapstehfest(ctx, *args, **kwargs):
         kwargs['method'] = 'stehfest'
-        return ctx.invertlaplace(*args, **kwargs)
-
-    def invlapgaverrho(ctx, *args, **kwargs):
-        kwargs['method'] = 'gaverrho'
         return ctx.invertlaplace(*args, **kwargs)
 
     def invlapdehoog(ctx, *args, **kwargs):
