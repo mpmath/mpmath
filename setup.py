@@ -4,16 +4,16 @@ from distutils.core import setup
 
 setup(name='mpmath-invlap',
       description = 'Python library for arbitrary-precision floating-point arithmetic',
-      version='0.19',
+      version='0.20-git',
       url='http://mpmath.org',
       author='Fredrik Johansson',
       author_email='fredrik.johansson@gmail.com',
       license = 'BSD',
       packages=['mpmath',
-                'mpmath/libmp',
-                'mpmath/calculus',
-                'mpmath/functions',
-                'mpmath/matrices',
-                'mpmath/tests'],
+                'mpmath.libmp',
+                'mpmath.calculus',
+                'mpmath.functions',
+                'mpmath.matrices',
+                'mpmath.tests'],
       classifiers=['Topic :: Scientific/Engineering :: Mathematics']
      )

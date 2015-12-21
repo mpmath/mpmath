@@ -49,7 +49,7 @@ def hessenberg_reduce_0(ctx, A, T):
                Q' A Q = H              and             Q' Q = Q Q' = 1
 
     where H is an upper Hessenberg matrix, meaning that it only contains zeros
-    below the first subdiagonal. Here ' denotes the hermitian transpose (i.e. 
+    below the first subdiagonal. Here ' denotes the hermitian transpose (i.e.
     transposition and conjugation).
 
     parameters:
@@ -192,7 +192,7 @@ def hessenberg(ctx, A, overwrite_a = False):
 
           Q' A Q = H                and               Q' Q = Q Q' = 1
 
-    where H is an upper right Hessenberg matrix. Here ' denotes the hermitian 
+    where H is an upper right Hessenberg matrix. Here ' denotes the hermitian
     transpose (i.e. transposition and conjugation).
 
     input:
@@ -380,7 +380,7 @@ def hessenberg_qr(ctx, A, Q):
 
           Q' A Q = R                   and                  Q' Q = Q Q' = 1
 
-    where R is an upper right triangular matrix. Here ' denotes the hermitian 
+    where R is an upper right triangular matrix. Here ' denotes the hermitian
     transpose (i.e. transposition and conjugation).
 
     parameters:
@@ -593,12 +593,12 @@ def eig_tr_r(ctx, A):
             rmax = max(rmax, abs(r))
             if rmax > simin:
                 for k in xrange(j, i+1):
-                     ER[k,i] /= rmax
+                    ER[k,i] /= rmax
                 rmax = 1
 
         if rmax != 1:
             for k in xrange(0, i + 1):
-                 ER[k,i] /= rmax
+                ER[k,i] /= rmax
 
     return ER
 
@@ -651,12 +651,12 @@ def eig_tr_l(ctx, A):
             rmax = max(rmax, abs(r))
             if rmax > simin:
                 for k in xrange(i, j + 1):
-                     EL[i,k] /= rmax
+                    EL[i,k] /= rmax
                 rmax = 1
 
         if rmax != 1:
             for k in xrange(i, n):
-                 EL[i,k] /= rmax
+                EL[i,k] /= rmax
 
     return EL
 
@@ -816,14 +816,14 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
     """
 
     if isinstance(f, str):
-      if f == "real":
-          f = ctx.re
-      elif f == "imag":
-          f = ctx.im
-      elif cmp == "abs":
-          f = abs
-      else:
-          raise RuntimeError("unknown function %s" % f)
+        if f == "real":
+            f = ctx.re
+        elif f == "imag":
+            f = ctx.im
+        elif cmp == "abs":
+            f = abs
+        else:
+            raise RuntimeError("unknown function %s" % f)
 
     n = len(E)
 

@@ -99,9 +99,13 @@ with Python 2.5, 2.6, 2.7, 3.1 and 3.2.
 
 The latest release of mpmath can be downloaded from the mpmath
 website. It should also be available in the Python Package Index at
-http://pypi.python.org/pypi
+https://pypi.python.org/pypi/mpmath
 
-To install, unpack the mpmath archive and run
+To install latest release of Mpmath with pip, simply run
+
+``pip install mpmath``
+
+Or unpack the mpmath archive and run
 
 ``python setup.py install``
 

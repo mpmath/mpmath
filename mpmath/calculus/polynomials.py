@@ -156,6 +156,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
         # Constant polynomial with no roots
         return []
 
+    orig = ctx.prec
     tol = +ctx.eps
     with ctx.extraprec(extraprec):
         deg = len(coeffs) - 1

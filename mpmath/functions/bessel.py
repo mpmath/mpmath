@@ -47,7 +47,7 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
                 return T
             v = ctx.hypercomb(h, [n,d], **kwargs)
     else:
-    # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
+        # Fast case: J_n(x), n int, appropriate magnitude for fixed-point calculation
         if (not derivative) and n_isint and abs(M) < 10 and abs(n) < 20:
             try:
                 return ctx._besselj(n, z)

@@ -21,7 +21,10 @@ sys.path.insert(0, '../..')
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.pngmath']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
+
+# MathJax file, which is free to use.  See http://www.mathjax.org/docs/2.0/start.html
+mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
@@ -72,10 +75,8 @@ pygments_style = 'sphinx'
 # Options for HTML output
 # -----------------------
 
-# The style sheet to use for HTML and HTML Help pages. A file of that name
-# must exist either in Sphinx' static/ path, or in one of the custom paths
-# given in html_static_path.
-html_style = 'default.css'
+# The "theme" that the HTML output should use.
+html_theme = 'classic'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -121,11 +122,11 @@ htmlhelp_basename = 'mpmathdoc'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
-latex_documents = [master_doc, 'main.tex', 'mpmath documentation',
-                   'Fredrik Johansson \and mpmath contributors', 'manual']
+latex_documents = [(master_doc, 'main.tex', 'mpmath documentation',
+                    r'Fredrik Johansson \and mpmath contributors', 'manual')]
 
 # Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
+latex_preamble = r'\usepackage{amsfonts}'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
