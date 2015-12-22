@@ -85,99 +85,6 @@ class FixedTalbot(InverseLaplaceTransform):
 
 # ****************************************
 
-class Weeks(InverseLaplaceTransform):
-    
-    def calc_laplace_parameter(self, t, **kwargs):
-
-        # time of desired approximation
-        self.t = self.ctx.convert(t)
-
-        # maximum time desired (used for scaling)
-        self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
-
-        # equations defined in terms of 2M below;
-        # number of quadrature points
-        self.degree = int(kwargs.get('degree',self.degree)/2.0)
-
-        # highest Laguerre polynomial degree
-        self.N = kwargs.get('N',self.degree)
-
-        # F(p) ~ p**(-s), as p -> infinity (also as t -> 0)
-        self.s = self.ctx.convert(kwargs.get('s',1))    
-
-        # Weeks' rules of thumb (can improve on these?)
-        self.kappa = self.ctx.convert(kwargs.get('kappa',1/self.tmax))
-        self.b = self.ctx.convert(kwargs.get('b',self.N*self.kappa))
-
-        # no real rule of thumb for increasing precsion as 
-        # degree of approximation increases
-        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
-
-        self.debug = kwargs.get('debug',self.debug)
-
-        M = self.degree
-        self.z = self.ctx.matrix(2*M,1)
-        self.p = self.ctx.matrix(2*M,1)
-        self.theta = self.ctx.matrix(2*M,1)
-
-        with self.ctx.workdps(self.dps_goal):
-
-            for i in range(2*M):
-                self.theta[i] = ((i-M)+0.5)/M
-                # midpoint rule around unit circle
-                self.z[i] = self.ctx.expjpi(self.theta[i]) # fcn includes i*pi
-    
-            for j in range(2*M):
-                # Mobius mapping back onto right half plane
-                self.p[j] = self.kappa - self.b/2 + self.b/(1-self.z[j])
-
-        if self.debug > 1:
-            print 'Weeks p:',self.p
-        if self.debug > 2:
-            print ('Weeks tmax,degree,N,s,kappa,b,dps_goal:',
-            self.tmax,self.degree,self.N,self.s,
-            self.kappa,self.b,self.dps_goal)
-
-    def _coeff(self,n,fp):
-        """use midpoint rule for calculating a_n coefficients
-        this is the approach of Weideman (1999)."""
-
-        M = self.degree
-        b = self.b
-        s = self.s
-        z = self.z
-        theta = self.theta
-        arg = self.ctx.matrix(2*M,1)
-
-        for i in range(2*M):
-            # fcn includes i*pi
-            arg[i] = (self.ctx.power(b/(1-z[i]),s)*
-                      fp[i]*self.ctx.expjpi(-theta[i]*n))
-
-        return self.ctx.fsum(arg)/(2*M)
-
-    def calc_time_domain_solution(self,fp):
-
-        b = self.b
-        s = self.s
-        kappa = self.kappa
-        N = self.N
-        t = self.t
-        arg = self.ctx.matrix(N,1)
-
-        with self.ctx.workdps(self.dps_goal):
-
-            for n in range(N):
-                arg[n] = (self._coeff(n,fp)*self.ctx.fac(n)/
-                          self.ctx.fac(s+n-1)*self.ctx.laguerre(n,s-1,b*t))
-    
-            result = (self.ctx.exp(t*(kappa - b/2))*
-                      self.ctx.power(t,s-1)*self.ctx.fsum(arg))
-
-        return result.real
-
-# ****************************************
-
 class Stehfest(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self, t, **kwargs):
@@ -369,7 +276,6 @@ class deHoog(InverseLaplaceTransform):
 class LaplaceTransformInversionMethods:
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
-        ctx._weeks = Weeks(ctx)
         ctx._stehfest = Stehfest(ctx)
         ctx._de_hoog = deHoog(ctx)
 
@@ -386,8 +292,6 @@ class LaplaceTransformInversionMethods:
             lrule = lrule.replace(' ','-')
             if lrule == 'talbot':
                 rule = ctx._fixed_talbot
-            elif lrule == 'weeks':
-                rule = ctx._weeks
             elif lrule == 'stehfest':
                 rule = ctx._stehfest
             elif lrule == 'dehoog':
@@ -407,10 +311,6 @@ class LaplaceTransformInversionMethods:
 
     def invlaptalbot(ctx, *args, **kwargs):
         kwargs['method'] = 'talbot'
-        return ctx.invertlaplace(*args, **kwargs)
-
-    def invlapweeks(ctx, *args, **kwargs):
-        kwargs['method'] = 'weeks'
         return ctx.invertlaplace(*args, **kwargs)
 
     def invlapstehfest(ctx, *args, **kwargs):

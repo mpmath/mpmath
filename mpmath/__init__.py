@@ -105,8 +105,6 @@ quadosc = mp.quadosc
 
 invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot
-invlapweeks = mp.invlapweeks
-invlappiessens = mp.invlappiessens
 invlapstehfest = mp.invlapstehfest
 invlapdehoog = mp.invlapdehoog
 
