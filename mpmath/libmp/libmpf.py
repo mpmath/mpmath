@@ -348,7 +348,7 @@ def to_int(s, rnd=None):
     input is inf/nan, an exception is raised."""
     sign, man, exp, bc = s
     if (not man) and exp:
-        raise ValueError("cannot convert %s to int" % man)
+        raise ValueError("cannot convert inf or nan to int")
     if exp >= 0:
         if sign:
             return (-man) << exp
