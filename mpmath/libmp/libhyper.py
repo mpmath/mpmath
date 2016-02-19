@@ -704,6 +704,8 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
         M = from_int(-ifac(n-1))
         if gamma:
             im = mpf_div(mpf_pi(wp), M, prec, rnd)
+            if n_orig & 1:
+                im = mpf_neg(im)
         else:
             im = mpf_div(mpf_mul(mpf_pi(wp), mpf_pow_int(negx, n_orig-1, wp), wp), M, prec, rnd)
         return re, im
