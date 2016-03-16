@@ -9,9 +9,11 @@ python:
   - 3.5
   - "pypy"
 install:
-  - pip install pep8
+  - pip install pep8 pytest-cov codecov
 script:
   - pep8
-  - py.test
+  - py.test --cov mpmath
+after_success:
+  - codecov
 notifications:
   email: false
