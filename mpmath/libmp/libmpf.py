@@ -426,7 +426,7 @@ def from_float(x, prec=53, rnd=round_fast):
     if x == -math_float_inf: return fninf
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
-def to_float(s, strict=False):
+def to_float(s, strict=False, rnd=round_fast):
     """
     Convert a raw mpf to a Python float. The result is exact if the
     bitcount of s is <= 53 and no underflow/overflow occurs.
@@ -434,6 +434,10 @@ def to_float(s, strict=False):
     If the number is too large or too small to represent as a regular
     float, it will be converted to inf or 0.0. Setting strict=True
     forces an OverflowError to be raised instead.
+
+    Warning: with a directed rounding mode, the correct nearest representable
+    floating-point number in the specified direction might not be computed
+    in case of overflow or (gradual) underflow.
     """
     sign, man, exp, bc = s
     if not man:
@@ -441,6 +445,8 @@ def to_float(s, strict=False):
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
         return math_float_inf/math_float_inf
+    if bc > 53 and rnd is not round_fast:
+        sign, man, exp, bc = normalize1(sign, man, exp, bc, 53, rnd)
     if sign:
         man = -man
     try:
