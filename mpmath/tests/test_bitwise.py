@@ -186,4 +186,3 @@ def test_float_rounding():
             fb = to_float(fadd(x,0,prec=53,rounding=rnd)._mpf_, rnd=rnd)
             assert fa == fb
     mp.prec = 53
-
