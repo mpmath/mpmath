@@ -445,17 +445,12 @@ def to_float(s, strict=False, rnd=round_fast):
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
         return math_float_inf/math_float_inf
-    if bc > 53 and rnd is not round_fast:
+    if bc > 53:
         sign, man, exp, bc = normalize1(sign, man, exp, bc, 53, rnd)
     if sign:
         man = -man
     try:
-        if bc < 100:
-            return math.ldexp(man, exp)
-        # Try resizing the mantissa. Overflow may still happen here.
-        n = bc - 53
-        m = man >> n
-        return math.ldexp(m, exp + n)
+        return math.ldexp(man, exp)
     except OverflowError:
         if strict:
             raise
