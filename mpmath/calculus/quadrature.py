@@ -196,7 +196,7 @@ class QuadratureRule(object):
             D2 = self.ctx.log(abs(results[-1]-results[-3]), 10)
         except ValueError:
             return epsilon
-        D3 = -prec
+        D3 = -prec*log(10)/log(2)
         D4 = min(0, max(D1**2/D2, 2*D1, D3))
         return self.ctx.mpf(10) ** int(D4)
 
