@@ -918,6 +918,12 @@ def test_gammainc():
     assert gammainc(5, 10000, 12000).ae('1.1359381951461801687e-4327', abs_eps=0, rel_eps=8*eps)
     # Should use lower gammas
     assert gammainc(10000, 2, 3).ae('8.1244514125995785934e4765')
+    # GH issue 306
+    assert gammainc(3,-1-1j) == 0
+    assert gammainc(3,-1+1j) == 0
+    assert gammainc(2,-1) == 0
+    assert gammainc(2,-1+0j) == 0
+    assert gammainc(2+0j,-1) == 0
 
 def test_gammainc_expint_n():
     # These tests are intended to check all cases of the low-level code
