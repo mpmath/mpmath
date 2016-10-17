@@ -7,15 +7,9 @@ Download and installation
 Installer
 .........
 
-The mpmath setup files can be downloaded from the `mpmath download page <http://code.google.com/p/mpmath/downloads/list>`_ or the `Python Package Index <http://pypi.python.org/pypi/mpmath/>`_. Download the source package (available as both .zip and .tar.gz), extract it, open the extracted directory, and run
+The mpmath setup files can be downloaded from the `Python Package Index <http://pypi.python.org/pypi/mpmath/>`_. Download the source package (available as both .zip and .tar.gz), extract it, open the extracted directory, and run
 
     ``python setup.py install``
-
-If you are using Windows, you can download the binary installer
-
-    ``mpmath-(version).win32.exe``
-
-from the mpmath website or the Python Package Index (PyPI). Run the installer and follow the instructions.
 
 Using pip
 .........
@@ -64,7 +58,7 @@ of supported OpenSUSE versions and use http://download.opensuse.org/repositories
 Current development version
 ...........................
 
-See  http://code.google.com/p/mpmath/source/checkout for instructions on how to check out the mpmath Subversion repository. The source code can also be browsed online from the Google Code page.
+The git repository is https://github.com/fredrik-johansson/mpmath
 
 Checking that it works
 ......................
