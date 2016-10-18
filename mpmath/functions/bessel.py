@@ -123,7 +123,7 @@ def bessely(ctx, n, z, derivative=0, **kwargs):
             # ~ log(z/2)
             return -ctx.inf + (n+z)
         if ctx.im(n):
-            return nan * (n+z)
+            return ctx.nan * (n+z)
         r = ctx.re(n)
         q = n+0.5
         if ctx.isint(q):
