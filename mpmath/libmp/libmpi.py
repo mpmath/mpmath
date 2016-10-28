@@ -136,14 +136,10 @@ def mpi_mul(s, t, prec=0):
     tas = mpf_sign(ta)
     tbs = mpf_sign(tb)
     if sas == sbs == 0:
-        # Should maybe be undefined
-        if ta == fninf or tb == finf:
-            return fninf, finf
+        # for any x in R, 0*x=0
         return fzero, fzero
     if tas == tbs == 0:
-        # Should maybe be undefined
-        if sa == fninf or sb == finf:
-            return fninf, finf
+        # for any x in R, x*0=0
         return fzero, fzero
     if sas >= 0:
         # positive * positive
