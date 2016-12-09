@@ -41,8 +41,6 @@ class FixedTalbot(InverseLaplaceTransform):
         # "Multi-precision Laplace Transform Inversion"
         self.dps_goal = kwargs.get('dps',max(self.dps_goal,self.degree))
 
-        self.pole = self.ctx.convert(kwargs.get('pole',0.0))
-        
         # Abate & Valko rule of thumb
         self.r = kwargs.get('r',2*self.degree/(5*self.tmax))
         
@@ -50,13 +48,13 @@ class FixedTalbot(InverseLaplaceTransform):
 
         M = self.degree
         self.p = self.ctx.matrix(M,1)
-        self.p[0] = self.r + self.pole
+        self.p[0] = self.r
 
         with self.ctx.workdps(self.dps_goal):
             self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
 
             for i in range(1,M):
-                self.p[i] = self.pole + self.r*self.theta[i]*( 
+                self.p[i] = self.r*self.theta[i]*( 
                     self.ctx.cot(self.theta[i]) + 1j)
     
         if self.debug > 1:
@@ -165,11 +163,8 @@ class deHoog(InverseLaplaceTransform):
         # 2*M+1 terms are used below
         self.degree = kwargs.get('degree',self.degree)
 
-        # abcissa of convergence (> rightmost pole)
-        self.pole = self.ctx.convert(kwargs.get('pole',0.0))
-
         # heuristic based on desired precision
-        tmp = self.pole + self.ctx.power(10.0,-self.dps_goal)
+        tmp = self.ctx.power(10.0,-self.dps_goal)
         self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
 
         # desired tolerance
