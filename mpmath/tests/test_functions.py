@@ -438,6 +438,8 @@ def test_reciprocal_functions():
     assert asech(0.5).ae(1.31695789692481671)
     assert acsch(3).ae(0.327450150237258443)
     assert acoth(3).ae(0.346573590279972655)
+    assert acot(0).ae(1.5707963267948966192)
+    assert acoth(0).ae(1.5707963267948966192j)
 
 def test_ldexp():
     mp.dps = 15

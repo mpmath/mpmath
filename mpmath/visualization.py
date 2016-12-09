@@ -119,6 +119,34 @@ def default_color_function(ctx, z):
     b = 1.0 - float(1/(1.0+abs(z)**0.3))
     return hls_to_rgb(a, b, 0.8)
 
+blue_orange_colors = [
+  (-1.0,  (0.0, 0.0, 0.0)),
+  (-0.95, (0.1, 0.2, 0.5)),   # dark blue
+  (-0.5,  (0.0, 0.5, 1.0)),   # blueish
+  (-0.05, (0.4, 0.8, 0.8)),   # cyanish
+  ( 0.0,  (1.0, 1.0, 1.0)),
+  ( 0.05, (1.0, 0.9, 0.3)),   # yellowish
+  ( 0.5,  (0.9, 0.5, 0.0)),   # orangeish
+  ( 0.95, (0.7, 0.1, 0.0)),   # redish
+  ( 1.0,  (0.0, 0.0, 0.0)),
+  ( 2.0,  (0.0, 0.0, 0.0)),
+]
+
+def phase_color_function(ctx, z):
+    if ctx.isinf(z):
+        return (1.0, 1.0, 1.0)
+    if ctx.isnan(z):
+        return (0.5, 0.5, 0.5)
+    pi = 3.1415926535898
+    w = float(ctx.arg(z)) / pi
+    w = max(min(w, 1.0), -1.0)
+    for i in range(1,len(blue_orange_colors)):
+        if blue_orange_colors[i][0] > w:
+            a, (ra, ga, ba) = blue_orange_colors[i-1]
+            b, (rb, gb, bb) = blue_orange_colors[i]
+            s = (w-a) / (b-a)
+            return ra+(rb-ra)*s, ga+(gb-ga)*s, ba+(bb-ba)*s
+
 def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     verbose=False, file=None, dpi=None, axes=None):
     """
@@ -136,6 +164,14 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     complex number as input and return an RGB 3-tuple containing
     floats in the range 0.0-1.0.
 
+    Alternatively, you can select a builtin color function by passing
+    a string as *color*:
+
+      * "default" - default color scheme
+      * "phase" - a color scheme that only renders the phase of the function,
+         with white for positive reals, black for negative reals, gold in the
+         upper half plane, and blue in the lower half plane.
+
     To obtain a sharp image, the number of points may need to be
     increased to 100,000 or thereabout. Since evaluating the
     function that many times is likely to be slow, the 'verbose'
@@ -143,8 +179,10 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
 
     .. note :: This function requires matplotlib (pylab).
     """
-    if color is None:
+    if color is None or color == "default":
         color = ctx.default_color_function
+    if color == "phase":
+        color = ctx.phase_color_function
     import pylab
     if file:
         axes = None
@@ -270,5 +308,6 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
 
 VisualizationMethods.plot = plot
 VisualizationMethods.default_color_function = default_color_function
+VisualizationMethods.phase_color_function = phase_color_function
 VisualizationMethods.cplot = cplot
 VisualizationMethods.splot = splot

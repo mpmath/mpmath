@@ -106,7 +106,11 @@ def sech(ctx, z): return ctx.one / ctx.cosh(z)
 def csch(ctx, z): return ctx.one / ctx.sinh(z)
 
 @defun_wrapped
-def acot(ctx, z): return ctx.atan(ctx.one / z)
+def acot(ctx, z):
+    if not z:
+        return ctx.pi * 0.5
+    else:
+        return ctx.atan(ctx.one / z)
 
 @defun_wrapped
 def asec(ctx, z): return ctx.acos(ctx.one / z)
@@ -115,7 +119,12 @@ def asec(ctx, z): return ctx.acos(ctx.one / z)
 def acsc(ctx, z): return ctx.asin(ctx.one / z)
 
 @defun_wrapped
-def acoth(ctx, z): return ctx.atanh(ctx.one / z)
+def acoth(ctx, z):
+    if not z:
+        return ctx.pi * 0.5j
+    else:
+        return ctx.atanh(ctx.one / z)
+
 
 @defun_wrapped
 def asech(ctx, z): return ctx.acosh(ctx.one / z)

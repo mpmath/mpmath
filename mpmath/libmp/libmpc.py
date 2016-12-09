@@ -60,9 +60,9 @@ def mpc_to_str(z, dps, **kwargs):
     else:
         return rs + " + " + to_str(im, dps, **kwargs) + "j"
 
-def mpc_to_complex(z, strict=False):
+def mpc_to_complex(z, strict=False, rnd=round_fast):
     re, im = z
-    return complex(to_float(re, strict), to_float(im, strict))
+    return complex(to_float(re, strict, rnd), to_float(im, strict, rnd))
 
 def mpc_hash(z):
     if sys.version >= "3.2":

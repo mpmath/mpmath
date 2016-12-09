@@ -14,6 +14,7 @@ This module implements gamma- and zeta-related functions:
 """
 
 import math
+import sys
 
 from .backend import xrange
 from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
@@ -1471,6 +1472,7 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     """
 
     wp = prec + 10
+    derivatives = list(derivatives)
     have_derivatives = derivatives != [0]
     have_one_derivative = len(derivatives) == 1
 
@@ -1480,7 +1482,8 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     sre = to_fixed(sre, wp)
     sim = to_fixed(sim, wp)
 
-    if a > 0 and n > ZETASUM_SIEVE_CUTOFF and not have_derivatives and not reflect:
+    if a > 0 and n > ZETASUM_SIEVE_CUTOFF and not have_derivatives \
+            and not reflect and (n < 4e7 or sys.maxsize > 2**32):
         re, im = zetasum_sieved(critical_line, sre, sim, a, n, wp)
         xs = [(from_man_exp(re, -wp, prec, 'n'), from_man_exp(im, -wp, prec, 'n'))]
         return xs, []

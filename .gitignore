@@ -40,3 +40,8 @@ build/
 
 # Backup files
 *~
+
+.cache/
+.coverage
+doc/source/_build/
+
