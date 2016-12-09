@@ -39,8 +39,10 @@ class FixedTalbot(InverseLaplaceTransform):
 
         # rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,self.degree))
+        self.dps_goal = kwargs.get('dps',max(self.dps_goal,self.degree))
 
+        self.pole = self.ctx.convert(kwargs.get('pole',0.0))
+        
         # Abate & Valko rule of thumb
         self.r = kwargs.get('r',2*self.degree/(5*self.tmax))
         
@@ -48,13 +50,13 @@ class FixedTalbot(InverseLaplaceTransform):
 
         M = self.degree
         self.p = self.ctx.matrix(M,1)
-        self.p[0] = self.r
+        self.p[0] = self.r + self.pole
 
         with self.ctx.workdps(self.dps_goal):
             self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
 
             for i in range(1,M):
-                self.p[i] = self.r*self.theta[i]*( 
+                self.p[i] = self.pole + self.r*self.theta[i]*( 
                     self.ctx.cot(self.theta[i]) + 1j)
     
         if self.debug > 1:
@@ -96,7 +98,7 @@ class Stehfest(InverseLaplaceTransform):
 
         # 2.1 = rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = 2*kwargs.get('dps',max(self.dps_goal,2.1*self.degree))
+        self.dps_goal = kwargs.get('dps',max(self.dps_goal,2.1*self.degree))
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -161,23 +163,26 @@ class deHoog(InverseLaplaceTransform):
         self.t = self.ctx.convert(t)
 
         # 2*M+1 terms are used below
-        self.degree = int(kwargs.get('degree',self.degree)/2.0)
+        self.degree = kwargs.get('degree',self.degree)
 
-        # abcissa of convergence (rightmost pole) -- assuming it is zero
-        tmp = min(1.0E-13,self.ctx.power(10.0,-(self.dps_goal/4.0)))
-        self.alpha = self.ctx.convert(kwargs.get('alpha',1.0E-13))
+        # abcissa of convergence (> rightmost pole)
+        self.pole = self.ctx.convert(kwargs.get('pole',0.0))
+
+        # heuristic based on desired precision
+        tmp = self.pole + self.ctx.power(10.0,-self.dps_goal)
+        self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
 
         # desired tolerance
-        tmp = min(1.0E-12,self.alpha*10.0)
-        self.tol = self.ctx.convert(kwargs.get('tol',1.0E-12))
+        self.tol = self.ctx.convert(kwargs.get('tol',self.alpha*10.0))
         self.np = 2*self.degree+1
 
-        # scaling factor
-        self.T = self.ctx.convert(kwargs.get('T',2*self.t))        
+        # scaling factor (this is likely tunable)
+        self.scale = kwargs.get('scale',2)
+        self.T = self.ctx.convert(kwargs.get('T',self.scale*self.t))        
 
-        # no real rule of thumb for increasing precsion as 
-        # degree of approximation increases
-        self.dps_goal = 2*kwargs.get('dps',self.dps_goal)
+        # no widely-used rule of thumb for increasing precsion as 
+        # degree of approximation increases, this based on limited experience
+        self.dps_goal = kwargs.get('dps',max(self.dps_goal,1.8*self.degree))
 
         self.debug = kwargs.get('debug',self.debug)
 
@@ -189,7 +194,7 @@ class deHoog(InverseLaplaceTransform):
 
             for i in range(2*M+1):
                 self.p[i] = (self.alpha - 
-                             self.ctx.log(self.tol)/(2*T) + 
+                             self.ctx.log(self.tol)/(self.scale*T) + 
                              self.ctx.pi*i/T*1j)
 
         if self.debug > 1:
@@ -207,7 +212,7 @@ class deHoog(InverseLaplaceTransform):
         alpha = self.alpha
         tol = self.tol
 
-        gamma = alpha - self.ctx.log(tol)/(2*T)
+        gamma = alpha - self.ctx.log(tol)/(self.scale*T)
 
         e = self.ctx.matrix(np,M+1)
         q = self.ctx.matrix(np,M)
