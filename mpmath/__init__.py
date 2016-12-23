@@ -107,7 +107,6 @@ invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot
 invlapstehfest = mp.invlapstehfest
 invlapdehoog = mp.invlapdehoog
-invlapweeks = mp.invlapweeks
 
 pslq = mp.pslq
 identify = mp.identify

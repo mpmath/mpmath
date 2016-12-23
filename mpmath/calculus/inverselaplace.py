@@ -270,95 +270,10 @@ class deHoog(InverseLaplaceTransform):
         return result
 
 # ****************************************
-    
-class Weeks(InverseLaplaceTransform):
-    
-    def calc_laplace_parameter(self, t, **kwargs):
-
-        # time of desired approximation
-        self.t = self.ctx.convert(t)
-
-        # maximum time desired (used for scaling)
-        self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
-
-        # equations defined in terms of 2M below;
-        # number of quadrature points
-        self.degree = int(kwargs.get('degree',self.degree))
-
-        # highest Laguerre polynomial degree
-        self.N = kwargs.get('N',self.degree)
-
-        # Weeks' rules of thumb (possible to improve on these?)
-        self.sigma = self.ctx.convert(kwargs.get('sigma',1/self.tmax))
-        self.b = self.ctx.convert(kwargs.get('b',self.N*self.sigma*2))
-
-        # no real rule of thumb for increasing precsion as 
-        # degree of approximation increases
-        self.dps_goal = kwargs.get('dps',self.dps_goal)
-
-        self.debug = kwargs.get('debug',self.debug)
-
-        N = self.degree
-        self.w = self.ctx.matrix(2*N,1)
-        self.p = self.ctx.matrix(2*N,1)
-
-        with self.ctx.workdps(self.dps_goal):
-
-            for i in range(2*N):
-                # from -N to N; midpoint rule around unit circle
-                # argument of G() in Eqn 2.9
-                j = i-N
-                self.w[i] = self.ctx.expjpi((j + self.ctx.fraction(1,2))/N)
-    
-                # Mobius mapping back onto right half plane (eqn 2.6)
-                self.p[i] = self.sigma + 2*self.b/(1 - self.w[i]) - self.b
-
-        if self.debug > 1:
-            print 'Weeks p:',self.p
-        if self.debug > 2:
-            print ('Weeks tmax,degree,N,sigma,b,dps_goal:',
-                   self.tmax,self.degree,self.N,
-                   self.sigma,self.b,self.dps_goal)
-
-    def _coeff(self,n,fp):
-        """use midpoint rule for calculating a_n coefficients
-        this is the approach of Weideman (1999), Equation 2.9."""
-
-        N = self.degree
-        b = self.b
-        w = self.w
-        arg = self.ctx.matrix(2*N,1)
-
-        for i in range(2*N):
-            j = i-N
-            arg[i] = fp[i]*2*self.b/(1 - self.w[i])*self.ctx.expjpi(-n*j/N)
-
-        return self.ctx.expjpi(-n/(2*N))*self.ctx.fsum(arg)/(2*N)
-
-    def calc_time_domain_solution(self,fp):
-
-        b = self.b
-        sigma = self.sigma
-        N = self.N
-        t = self.t
-        arg = self.ctx.matrix(N,1)
-
-        with self.ctx.workdps(self.dps_goal):
-
-            # Weidman (1999) eqn 1.3
-            for n in range(N):
-                arg[n] = self._coeff(n,fp)*self.ctx.laguerre(n,0,2*b*t)
-
-            result = self.ctx.exp(t*(sigma - b))*self.ctx.fsum(arg)
-
-        return result.real
-
-# ****************************************
 
 class LaplaceTransformInversionMethods:
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
-        ctx._weeks = Weeks(ctx)
         ctx._stehfest = Stehfest(ctx)
         ctx._de_hoog = deHoog(ctx)
 
@@ -374,8 +289,6 @@ class LaplaceTransformInversionMethods:
             lrule = rule.lower()
             if lrule == 'talbot':
                 rule = ctx._fixed_talbot
-            elif lrule == 'weeks':
-                rule = ctx._weeks
             elif lrule == 'stehfest':
                 rule = ctx._stehfest
             elif lrule == 'dehoog':
@@ -395,10 +308,6 @@ class LaplaceTransformInversionMethods:
 
     def invlaptalbot(ctx, *args, **kwargs):
         kwargs['method'] = 'talbot'
-        return ctx.invertlaplace(*args, **kwargs)
-
-    def invlapweeks(ctx, *args, **kwargs):
-        kwargs['method'] = 'weeks'
         return ctx.invertlaplace(*args, **kwargs)
 
     def invlapstehfest(ctx, *args, **kwargs):
