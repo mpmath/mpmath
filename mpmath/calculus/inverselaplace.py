@@ -215,67 +215,150 @@ class deHoog(InverseLaplaceTransform):
         A = self.ctx.matrix(np+2,1)
         B = self.ctx.matrix(np+2,1)
 
-        self.dps_orig = self.ctx.dps
-        self.ctx.dps = self.dps_goal
+        with self.ctx.workdps(self.dps_goal):
+        
+            # initialize Q-D table
+            e[0:2*M,0] = 0.0
+            q[0,0] = fp[1]/(fp[0]/2)
+            for i in range(1,2*M):
+                q[i,0] = fp[i+1]/fp[i]
 
-        # initialize Q-D table
-        e[0:2*M,0] = 0.0
-        q[0,0] = fp[1]/(fp[0]/2)
-        for i in range(1,2*M):
-            q[i,0] = fp[i+1]/fp[i]
+            # rhombus rule for filling triangular Q-D table
+            for r in range(1,M+1):
+                # start with e, column 1, 0:2*M-2
+                mr = 2*(M-r)
+                e[0:mr,r] = q[1:mr+1,r-1] - q[0:mr,r-1] + e[1:mr+1,r-1]
+                if not r == M:
+                    rq = r+1
+                    mr = 2*(M-rq)+1
+                    for i in range(mr):
+                        q[i,rq-1] = q[i+1,rq-2]*e[i+1,rq-1]/e[i,rq-1]
 
-        # rhombus rule for filling triangular Q-D table
-        for r in range(1,M+1):
-            # start with e, column 1, 0:2*M-2
-            mr = 2*(M-r)
-            e[0:mr,r] = q[1:mr+1,r-1] - q[0:mr,r-1] + e[1:mr+1,r-1]
-            if not r == M:
-                rq = r+1
-                mr = 2*(M-rq)+1
-                for i in range(mr):
-                    q[i,rq-1] = q[i+1,rq-2]*e[i+1,rq-1]/e[i,rq-1]
+            # build up continued fraction coefficients
+            d[0] = fp[0]/2
+            for r in range(1,M+1):
+                d[2*r-1] = -q[0,r-1] # even terms
+                d[2*r]   = -e[0,r]   # odd terms
 
-        # build up continued fraction coefficients
-        d[0] = fp[0]/2
-        for r in range(1,M+1):
-            d[2*r-1] = -q[0,r-1] # even terms
-            d[2*r]   = -e[0,r]   # odd terms
+            # seed A and B for recurrence
+            A[0] = 0.0
+            A[1] = d[0]
+            B[0:2] = 1.0
 
-        # seed A and B for recurrence
-        A[0] = 0.0
-        A[1] = d[0]
-        B[0:2] = 1.0
+            # base of the power series
+            z = self.ctx.expjpi(t/T) # i*pi is already in fcn
 
-        # base of the power series
-        z = self.ctx.expjpi(t/T) # i*pi is already in fcn
+            # coefficients of Pade approximation
+            # using recurrence for all but last term
+            for i in range(1,2*M):
+                A[i+1] = A[i] + d[i]*A[i-1]*z
+                B[i+1] = B[i] + d[i]*B[i-1]*z
 
-        # coefficients of Pade approximation
-        # using recurrence for all but last term
-        for i in range(1,2*M):
-            A[i+1] = A[i] + d[i]*A[i-1]*z
-            B[i+1] = B[i] + d[i]*B[i-1]*z
+            # "improved remainder" to continued fraction
+            brem  = (1 + (d[2*M-1] - d[2*M])*z)/2
+            # powm1(x,y) computes x^y - 1 more accurately near zero
+            rem = brem*self.ctx.powm1(1 + d[2*M]*z/brem,self.ctx.fraction(1,2))
 
-        # "improved remainder" to continued fraction
-        brem  = (1 + (d[2*M-1] - d[2*M])*z)/2
-        # powm1(x,y) computes x^y - 1 more accurately near zero
-        rem = brem*self.ctx.powm1(1 + d[2*M]*z/brem,0.5)
+            # last term of recurrence using new remainder
+            A[np] = A[2*M] + rem*A[2*M-1]
+            B[np] = B[2*M] + rem*B[2*M-1]
 
-        # last term of recurrence using new remainder
-        A[np] = A[2*M] + rem*A[2*M-1]
-        B[np] = B[2*M] + rem*B[2*M-1]
+            # diagonal Pade approximation
+            # F=A/B represents accelerated trapezoid rule
+            result = self.ctx.exp(gamma*t)/T*(A[np]/B[np]).real
 
-        # diagonal Pade approximation
-        # F=A/B represents accelerated trapezoid rule
-        result = self.ctx.exp(gamma*t)/T*(A[np]/B[np]).real
-
-        self.ctx.dps = self.dps_orig
         return result
+
+# ****************************************
+    
+class Weeks(InverseLaplaceTransform):
+    
+    def calc_laplace_parameter(self, t, **kwargs):
+
+        # time of desired approximation
+        self.t = self.ctx.convert(t)
+
+        # maximum time desired (used for scaling)
+        self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
+
+        # equations defined in terms of 2M below;
+        # number of quadrature points
+        self.degree = int(kwargs.get('degree',self.degree))
+
+        # highest Laguerre polynomial degree
+        self.N = kwargs.get('N',self.degree)
+
+        # Weeks' rules of thumb (possible to improve on these?)
+        self.sigma = self.ctx.convert(kwargs.get('sigma',1/self.tmax))
+        self.b = self.ctx.convert(kwargs.get('b',self.N*self.sigma*2))
+
+        # no real rule of thumb for increasing precsion as 
+        # degree of approximation increases
+        self.dps_goal = kwargs.get('dps',self.dps_goal)
+
+        self.debug = kwargs.get('debug',self.debug)
+
+        N = self.degree
+        self.w = self.ctx.matrix(2*N,1)
+        self.p = self.ctx.matrix(2*N,1)
+
+        with self.ctx.workdps(self.dps_goal):
+
+            for i in range(2*N):
+                # from -N to N; midpoint rule around unit circle
+                # argument of G() in Eqn 2.9
+                j = i-N
+                self.w[i] = self.ctx.expjpi((j + self.ctx.fraction(1,2))/N)
+    
+                # Mobius mapping back onto right half plane (eqn 2.6)
+                self.p[i] = self.sigma + 2*self.b/(1 - self.w[i]) - self.b
+
+        if self.debug > 1:
+            print 'Weeks p:',self.p
+        if self.debug > 2:
+            print ('Weeks tmax,degree,N,sigma,b,dps_goal:',
+                   self.tmax,self.degree,self.N,
+                   self.sigma,self.b,self.dps_goal)
+
+    def _coeff(self,n,fp):
+        """use midpoint rule for calculating a_n coefficients
+        this is the approach of Weideman (1999), Equation 2.9."""
+
+        N = self.degree
+        b = self.b
+        w = self.w
+        arg = self.ctx.matrix(2*N,1)
+
+        for i in range(2*N):
+            j = i-N
+            arg[i] = fp[i]*2*self.b/(1 - self.w[i])*self.ctx.expjpi(-n*j/N)
+
+        return self.ctx.expjpi(-n/(2*N))*self.ctx.fsum(arg)/(2*N)
+
+    def calc_time_domain_solution(self,fp):
+
+        b = self.b
+        sigma = self.sigma
+        N = self.N
+        t = self.t
+        arg = self.ctx.matrix(N,1)
+
+        with self.ctx.workdps(self.dps_goal):
+
+            # Weidman (1999) eqn 1.3
+            for n in range(N):
+                arg[n] = self._coeff(n,fp)*self.ctx.laguerre(n,0,2*b*t)
+
+            result = self.ctx.exp(t*(sigma - b))*self.ctx.fsum(arg)
+
+        return result.real
 
 # ****************************************
 
 class LaplaceTransformInversionMethods:
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
+        ctx._weeks = Weeks(ctx)
         ctx._stehfest = Stehfest(ctx)
         ctx._de_hoog = deHoog(ctx)
 
@@ -286,12 +369,13 @@ class LaplaceTransformInversionMethods:
         estimated is assumed to be a real-only function of time.
         """
         
-        rule = kwargs.get('method','stehfest')
+        rule = kwargs.get('method','dehoog')
         if type(rule) is str:
             lrule = rule.lower()
-            lrule = lrule.replace(' ','-')
             if lrule == 'talbot':
                 rule = ctx._fixed_talbot
+            elif lrule == 'weeks':
+                rule = ctx._weeks
             elif lrule == 'stehfest':
                 rule = ctx._stehfest
             elif lrule == 'dehoog':
@@ -311,6 +395,10 @@ class LaplaceTransformInversionMethods:
 
     def invlaptalbot(ctx, *args, **kwargs):
         kwargs['method'] = 'talbot'
+        return ctx.invertlaplace(*args, **kwargs)
+
+    def invlapweeks(ctx, *args, **kwargs):
+        kwargs['method'] = 'weeks'
         return ctx.invertlaplace(*args, **kwargs)
 
     def invlapstehfest(ctx, *args, **kwargs):
