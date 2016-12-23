@@ -1,7 +1,13 @@
 
 class InverseLaplaceTransform(object):
-    """
-    Inverse Laplace transform is implemented using this class
+    r"""
+    Inverse Lapalce Transform method are implemented using this class, 
+    in order to simplify the code and provide a common infrastructure.
+
+    You can implement a custom inverse Laplace transform algorithm by subclassing
+    :class:`InverseLaplaceTransform` and implementing the appropriate
+    methods. The subclass can then be used by :func:`~mpmath.invertlaplace` by
+    passing it as the *method* argument.
     """
 
     def __init__(self, ctx):
@@ -19,9 +25,19 @@ class InverseLaplaceTransform(object):
         self.debug = 0
 
     def calc_laplace_parameter(self,t,**kwargs):
+        """
+        Determine the vector of Laplace parameter values
+        needed for an algorithm, this will depend on the 
+        parameters passed (or default ones), and desired time.
+        """
         raise NotImplementedError
 
     def calc_time_domain_solution(self,fp):
+        """
+        Compute the time domain solution, after computing the
+        Laplace-space function evalutations at the abcissa 
+        required for the method.
+        """
         raise NotImplementedError
 
 class FixedTalbot(InverseLaplaceTransform):
@@ -122,7 +138,10 @@ class Stehfest(InverseLaplaceTransform):
 
         M = self.degree
         # order must be odd
-        assert M%2 == 0
+        if M%2 > 0:
+            self.degree += 1
+            M = self.degree
+            
         M2 = M/2
 
         self.V = self.ctx.matrix(M,1)
@@ -280,8 +299,149 @@ class LaplaceTransformInversionMethods:
     def invertlaplace(ctx, f, t, **kwargs):
         r"""
         Computes the numerical inverse Laplace transform for a 
-        Laplace-space function at a given time.  The function being
-        estimated is assumed to be a real-only function of time.
+        Laplace-space function at a given time.  The function being 
+        evalutated is assumed to be a real-valued function of time.
+
+        The user must supply a Laplace-space function (`\bar{f}(p)`), 
+        and a desired time to estimate the time-domain solution (`f(t)`) at.
+
+        A few basic examples of Laplace-space functions with known 
+        inverses (see references [1,2]) ::
+
+        >>> from mpmath import *
+        >>> mp.dps = 15
+        >>> tvec = [0.001, 0.01, 0.1, 1, 10]       
+
+        `\bar{f}(p) = \frac{1}{p+1}^2`
+        `\mathcal{L}^{-1}\left\lbrace \bar{f}(p) \right\rbrace = f(t)`
+        `f(t) = t e^{-t}`
+
+        >>> fp = lambda p: 1/(p+1)**2
+        >>> ft = labmda t: t*exp(-t)
+        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t)) for t in tvec]
+        [(0.001, 0.000999000499833375, 3.66645177352691e-14),
+        (0.01, 0.00990049833749168, 1.85540141845894e-14),
+        (0.1, 0.090483741803596, 2.04666254170337e-12),
+        (1.0, 0.367879441171442, 1.49428280490678e-11),
+        (10.0, 0.000453999297624849, -1.34042555175552e-10)]
+
+        `\bar{f}(p) = \frac{1}{p^2+1}`
+        `f(t) = \mathrm{J}_0(t)`
+
+        >>> fp = lambda p: 1/sqrt(p*p + 1)
+        >>> ft = lambda t: besselj(0,t)
+        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t)) for t in tvec]
+        [(0.001, 0.999999750000016, 7.65046554765067e-10),
+        (0.01, 0.99997500015625, -7.68641303866616e-10),
+        (0.1, 0.99750156206604, 2.5249371516145e-10),
+        (1.0, 0.765197686557967, -2.35601046132965e-10),
+        (10.0, -0.245935764451348, 8.00007627560062e-10)]
+
+        `\bar{f}(p) = \frac{\log p}{p}`
+        `f(t) = -\gamma -\log t`
+
+        >>> fp = lambda p: log(p)/p
+        >>> ft = lambda t: -euler-log(t)
+        [(0.001, 6.3305396140806, 1.33936103728218e-9),
+        (0.01, 4.02795452108656, 5.02676075666929e-10),
+        (0.1, 1.72536942809251, -8.78157818978427e-10),
+        (1.0, -0.577215664901533, 1.31568888918193e-9),
+        (10.0, -2.87980075789558, 7.0671105477838e-10)]
+
+
+        **Options**
+
+        :func:`~mpmath.invertlaplace` recognizes the following keywords valid
+        for all methods:
+
+        *method*
+            Choses numerical inverse Laplace transform algorithm (described below).
+        *degree*
+            Number of terms used in the approximation 
+        *dps_goal*
+            Goal for precision of the approximation
+
+        **Algorithms**
+
+        Mpmath implements three numerical inverse Laplace transform
+        algorithms, attributed to: Talbot, Stehfest, and de Hoog, Knight and Stokes.
+        These can be selected by using *method='talbot'*, *method='stehfest'*, or 
+        *method='dehoog'* or by passing the classes *method=FixedTalbot*, 
+        *method=Stehfest*, or *method=deHoog*. The functions 
+        :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`, and 
+        :func:`~mpmath.invlapdehoog` are also available as shortcuts.
+
+        All three algorithms have the property that doubling the number of 
+        evaluation points roughly doubles the accuracy (with some additional 
+        limitations outlined below), so the methods work for high precision. The 
+        Laplace transform converts behavior for time (i.e., along a line) into
+        the entire complex `p`-plane. Singularities, poles, and branch cuts 
+        in the complex `p`-plane contain all the information regarding the 
+        time behavior of the function of interest. Any numerical method must
+        therefore sample `p`-plane "close enough" to the singularities to accurately 
+        characterize them, while not getting too close to have catastrophic
+        cancellation issues. If one or more of the singularities in the `p`-plane
+        is not on the left side of the Bromwich contour, its effects will be 
+        left out of the computed solution, and the answer will be wrong.
+
+        The fixed Talbot method is high accuracy, except when the time-domain
+        function has a Heaviside step function for positive time (e.g., `H(t-2)`). 
+        The Talbot method usually has adjustable parameters, but the "fixed" 
+        variety implemented here does not. This function is not defined for 
+        small time (in this case `t<2`). This method deforms the Bromwich integral
+        contour in the shape of a parabola headed towards `-infty`, which
+        leads to problems when the solution has a decaying exponential in it (e.g., 
+        a Heaviside step function is equivalient to multiplying by a decaying
+        exponential in Laplace space). 
+
+        The Stehfest algorithm only uses abcissa along the real axis of the
+        imaginary plane to estimate the time-domain function. Oscillatory 
+        time-domain functions have poles away from the real axis, so this 
+        method does not work well with oscillatory functions. This method also 
+        depends on summation of terms in a series that grow very large, and will
+        have catastrophic cancellation during summation if the  working precision 
+        is too low.
+
+        The de Hoog, Knight and Stokes method is essentially a Fourier-series
+        quadratyre type approximation to the Bromwich contour integral, with 
+        non-linear series acceleration and an analytical expression for the 
+        remainder term. This method is typically the most robust and is therefore
+        the default method. 
+
+        **Singularities**
+
+        All numerical inverse Laplace transform methods have problems at large
+        time when the Laplace-space function has poles, singularities, or branch
+        cuts to the right of the origin in the complex plane. For simple poles
+        in `\bar{f}(p)`, at the `p`-plane origin is a constant in time. A pole 
+        to the left of the origin is a decreasing function of time, and a pole 
+        to the right of the origin leads to an increasing function in time 
+        (see Duffy [3] Figure 4.10.4, p. 228). 
+
+        For example:
+
+        `\bar{f}(p)=\frac{1}{p^2-9}`
+        `f(t)=\frac{1}{3}\sinh 3t`
+
+        In general as `p \rightarrow \infty` `t \rightarrow 0` and vice-versa. All
+        numerical inverse Laplace transform methods require their abcissa to shift 
+        closer to the origin for larger times. If the abcissa shift left of the 
+        rightmost singularity in the Laplace domain, the answer will be completely 
+        wrong.
+
+        **Lower-level Use**
+
+        The algorithms are designed to also be used with numerical methods, rather 
+        that just with simple analytical functions. The
+
+        **References**
+
+        1. NIST Digital Library of Mathematical Functions. Table 1.14.4 
+             (http://dlmf.nist.gov/1.14T4)
+        2. Cohen, A.M. (2007). Numerical Methods for Laplace Transform 
+             Inversion, Springer.
+        3. Duffy, D.G. (1998). Advanced Engineering Mathematics, CRC Press.
+
         """
         
         rule = kwargs.get('method','dehoog')
@@ -294,18 +454,28 @@ class LaplaceTransformInversionMethods:
             elif lrule == 'dehoog':
                 rule = ctx._de_hoog
             else:
-                raise ValueError("unknown inversion method: %s" % rule)
+                raise ValueError("unknown numerical Laplace transform inversion method: %s" % rule)
         else:
             rule = rule(ctx)
-    
+
+        # determine the vector of Laplace-space parameter
+        # needed for the requested method and desired time
         rule.calc_laplace_parameter(t,**kwargs)
-        np = rule.p.rows # p is a column vector
+
+        # compute the Laplace-space function evalutations
+        # at the required abcissa.
+        
+        np = rule.p.rows # p as column vector
         fp = ctx.matrix(np,1)
         for i in range(np):
             fp[i] = f(rule.p[i])
+
+        # compute the time-domain solution from the
+        # Laplace-space function evaluations
         v = rule.calc_time_domain_solution(fp)
         return v
 
+    # shortcuts for the above function for specific methods 
     def invlaptalbot(ctx, *args, **kwargs):
         kwargs['method'] = 'talbot'
         return ctx.invertlaplace(*args, **kwargs)
@@ -320,6 +490,6 @@ class LaplaceTransformInversionMethods:
 
 # ****************************************
 
-#if __name__ == '__main__':
-    #import doctest
-    #doctest.testmod()
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
