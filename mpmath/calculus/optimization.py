@@ -970,7 +970,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
             xl = x
         if verify and norm(f(*xl))**2 > tol: # TODO: better condition?
             raise ValueError('Could not find root within given tolerance. '
-                             '(%g > %g)\n'
+                             '(%s > %s)\n'
                              'Try another starting point or tweak arguments.'
                              % (norm(f(*xl))**2, tol))
         return x
