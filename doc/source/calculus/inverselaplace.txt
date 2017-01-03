@@ -1,0 +1,28 @@
+Numerical inverse Laplace transform
+-----------------------------------
+
+One-step algorithm (``invertlaplace``)
+.....................................
+
+.. autofunction:: mpmath.invertlaplace
+
+Specific algorithms
+...................
+
+Fixed Talbot algorithm
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.calculus.inverselaplace.FixedTalbot
+   :members:
+
+Gaver-Stehfest algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.calculus.inverselaplace.Stehfest
+   :members:
+
+de Hoog, Knight & Stokes algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.calculus.inverselaplace.deHoog
+   :members:
