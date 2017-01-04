@@ -13,18 +13,18 @@ class InverseLaplaceTransform(object):
     def __init__(self, ctx):
         self.ctx = ctx
 
-        # a default level of approximation appropriate  
-        # for the given precision goal
-        self.degree = 18
-
-        # decimal digits of precision for computing p vectors, 
+        # decimal precision for computing p vectors, 
         # and f(t) solutions.  (Talbot and Stehfest have 
         # their own expressions that override this minimum)
-        self.dps_goal = 30
+        self.dps_goal = self.ctx.dps
 
+        # a default level of approximation appropriate  
+        # for the given precision goal
+        self.degree = None
+        
         # number of digits to add to working precision
         # inside "with" statements
-        self.step = 10
+        self.step = max(10,int(0.1*self.dps_goal))
 
         # cache some coefficients for talbot and stehfest methods
         self.talbot_cache = {}
@@ -70,10 +70,23 @@ class FixedTalbot(InverseLaplaceTransform):
         opening along the negative imaginary axis, with the 
         bottom of the parabola at `p=\frac{r}{t_\mathrm{max}}+0j`
 
-        **Options**
-
+        **Optional arguments**
         
+        :class:`~mpmath.calculus.inverselaplace.FixedTalbot.calc_laplace_parameter`
+        recognizes the following keywords
 
+        *tmax*
+            maximum time associated with vector of times 
+            (typically just the time requested)
+        *degree*
+            integer order of approximation (M = number of terms)
+        *dps*
+            desired decimal precision (otherwise computed from
+            requested degree via heuristic). 
+        *r*
+            abcissa for `p_0` (otherwise computed using rule
+            of thumb `2M/5`)
+        
         The working precision will be increased according to a
         rule of thumb, in relation to the degree; dps_goal`=1.7M`. 
         dps_goal can be overridden with a user-specified value.
@@ -98,39 +111,45 @@ class FixedTalbot(InverseLaplaceTransform):
         # default is requested time. 
         self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
 
-        # integer order of approximation
-        self.degree = kwargs.get('degree',self.degree)
-        M = self.degree
-
+        # order of approximation
         # rule for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,int(1.7*M)))
-        dps = self.dps_goal
+        
+        if 'degree' in kwargs:
+            self.degree = kwargs['degree']
+            self.dps_goal = max(self.ctx.dps, int(1.7*self.degree))
+        else:
+            self.degree = int(self.ctx.dps/1.7)
+            self.dps_goal = self.ctx.dps
+            
+        M = self.degree
+        dps_inner = self.dps_goal + self.step
         
         # Abate & Valko rule of thumb for r parameter
         self.r = kwargs.get('r',self.ctx.fraction(2,5)*M)
         
-        if (dps,M) in self.talbot_cache:
-            (self.theta, self.cot_theta, self.delta) = self.talbot_cache[dps,M]
+        if (dps_inner,M) in self.talbot_cache:
+            (self.theta, self.cot_theta, self.delta) = self.talbot_cache[dps_inner,M]
 
         else:
-            with self.ctx.workdps(dps+self.step):
+            with self.ctx.workdps(dps_inner):
                 self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
                                 
-                self.cot_theta = self.ctx.matrix(M,1) # needed several times
-                self.cot_theta[0] = 0.0 # not used
+                self.cot_theta = self.ctx.matrix(M,1) 
+                self.cot_theta[0] = 0 # not used
 
-                self.delta = self.ctx.matrix(M,1) # all but time-dependent part of p
+                # all but time-dependent part of p
+                self.delta = self.ctx.matrix(M,1) 
                 self.delta[0] = self.r
                 
                 for i in range(1,M):
                     self.cot_theta[i] = self.ctx.cot(self.theta[i])
                     self.delta[i] = self.r*self.theta[i]*(self.cot_theta[i] + 1j)
                     
-                self.talbot_cache[dps,M] = (self.theta, self.cot_theta, self.delta)
+                self.talbot_cache[dps_inner,M] = (self.theta, self.cot_theta, self.delta)
 
-        with self.ctx.workdps(self.dps_goal+self.step):
-            # don't cache p, since it depends on t_max
+        with self.ctx.workdps(dps_inner):
+            # don't cache p; it depends on t_max
             self.p = self.ctx.matrix(M,1)
 
             for i in range(M):
@@ -154,6 +173,10 @@ class FixedTalbot(InverseLaplaceTransform):
         j\cot\left( \frac{k \pi}{M}\right)\right \rbrace \qquad 1\le k<M`.
 
         Again, `j=\sqrt{-1}`.
+
+        Before calling this function, call 
+        :class:`~mpmath.calculus.inverselaplace.FixedTalbot.calc_laplace_parameter`
+        to set the parameters and compute the required coefficients.
         """
 
         theta = self.theta
@@ -184,45 +207,49 @@ class Stehfest(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self, t, **kwargs):
         r"""
-        The Gaver-Stehfest method is a discrete approximation of the Widder-Post
-        inversion algorithm, rather than a direct approximation of the Bromwich 
-        contour integral. 
+        The Gaver-Stehfest method is a discrete approximation of the
+        Widder-Post inversion algorithm, rather than a direct
+        approximation of the Bromwich contour integral.
 
         The method only uses values of `p` along the real axis, and
-        therefore has issues inverting oscillatory functions (which have poles
-        in pairs away from the real axis).
+        therefore has issues inverting oscillatory functions (which
+        have poles in pairs away from the real axis).
 
-        The Stehfest coefficients only depend on the order of approximation
-        and not the desired time, so they could be computed once and re-used
-        for a given degree and working precision.
+        The Stehfest coefficients only depend on the order of
+        approximation and not the desired time, so they could be
+        computed once and re-used for a given degree and working
+        precision.
         """
 
         # time of desired approximation
         self.t = self.ctx.convert(t)
 
-        self.degree = kwargs.get('degree',self.degree)
-        
-        M = self.degree
-        # _coeff routine requires degree must be even
-        if M%2 > 0:
-            print 'odd order, incrementing:',M
-            self.degree += 1
-            M = self.degree
-
-        # 2.1 from rule for extended precision from Abate & Valko (2004)
+        # rule-of-thumb for extended precision from Abate & Valko (2004)
         # "Multi-precision Laplace Transform Inversion"
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,int(2.1*M)))
-        dps = self.dps_goal
 
-        if (dps,M) in self.stehfest_cache:
-            self.V = self.stehfest_cache[dps,M]
+        if 'degree' in kwargs:
+            self.degree = kwargs['degree']
+            self.dps_goal = max(self.ctx.dps,int(2.1*self.degree))
+        else:
+            self.degree = int(self.ctx.dps/2.1)
+            self.dps_goal = self.ctx.dps
+                    
+        # _coeff routine requires degree must be even
+        if self.degree%2 > 0:
+            self.degree += 1
+            
+        M = self.degree
+        dps_inner = self.dps_goal + self.step
+
+        if (dps_inner,M) in self.stehfest_cache:
+            self.V = self.stehfest_cache[dps_inner,M]
             
         else:
-            with self.ctx.workdps(dps+self.step):
+            with self.ctx.workdps(dps_inner):
                 self.V = self._coeff()
-                self.stehfest_cache[dps,M] = self.V
+                self.stehfest_cache[dps_inner,M] = self.V
                 
-        with self.ctx.workdps(dps+self.step):
+        with self.ctx.workdps(dps_inner):
             # p not cached since it depends on t, and is trivial to compute
             self.p = self.ctx.matrix(self.ctx.arange(1,M+1))*self.ctx.ln2/self.t
     
@@ -271,8 +298,19 @@ class deHoog(InverseLaplaceTransform):
         self.t = self.ctx.convert(t)
 
         # 2*M+1 terms used below
-        self.degree = kwargs.get('degree',self.degree)
 
+        # no widely-used rule of thumb for increasing precsion as 
+        # degree of approximation increases (based on experimentation)
+        if 'degree' in kwargs:
+            self.degree = kwargs['degree']
+            self.dps_goal = max(self.ctx.dps,int(1.8*self.degree))
+        else:
+            self.degree = int(self.ctx.dps/1.8)
+            self.dps_goal = self.ctx.dps
+
+        M = self.degree
+        dps_inner = self.dps_goal + self.step
+            
         # heuristic based on desired precision
         tmp = self.ctx.power(10.0,-self.dps_goal)
         self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
@@ -281,27 +319,19 @@ class deHoog(InverseLaplaceTransform):
         self.tol = self.ctx.convert(kwargs.get('tol',self.alpha*10.0))
         self.np = 2*self.degree+1
 
-        # scaling factor (this is likely tunable)
+        # scaling factor (likely tunable, but 2 is typical)
         self.scale = kwargs.get('scale',2)
         self.T = self.ctx.convert(kwargs.get('T',self.scale*self.t))        
 
-        # no widely-used rule of thumb for increasing precsion as 
-        # degree of approximation increases, this based on limited experience
-        self.dps_goal = kwargs.get('dps',max(self.dps_goal,int(1.8*self.degree)))
+        with self.ctx.workdps(dps_inner):
 
-        M = self.degree
-        T = self.T
-
-        with self.ctx.workdps(self.dps_goal+self.step):
-
-            # do not chache since p depends on, alpha, tol, T, and scale,
+            # not chached since p depends on, alpha, tol, T, and scale,
             # and is not difficult to compute.
             
             self.p = self.ctx.matrix(2*M+1,1)
+            self.gamma = self.alpha - self.ctx.log(self.tol)/(self.scale*self.T)
             for i in range(2*M+1):
-                self.p[i] = (self.alpha - 
-                             self.ctx.log(self.tol)/(self.scale*T) + 
-                             self.ctx.pi*i/T*1j)
+                self.p[i] = self.gamma + self.ctx.pi*i/self.T*1j
                 
 
     def calc_time_domain_solution(self,fp,t):
@@ -309,14 +339,10 @@ class deHoog(InverseLaplaceTransform):
         M = self.degree
         np = self.np
         T = self.T
-        alpha = self.alpha
-        tol = self.tol
 
         with self.ctx.workdps(self.dps_goal+self.step):
             
             self.t = self.ctx.convert(t)
-            
-            gamma = alpha - self.ctx.log(tol)/(self.scale*T)
 
             e = self.ctx.matrix(np,M+1)
             q = self.ctx.matrix(np,M)
@@ -373,7 +399,7 @@ class deHoog(InverseLaplaceTransform):
 
             # diagonal Pade approximation
             # F=A/B represents accelerated trapezoid rule
-            result = self.ctx.exp(gamma*t)/T*(A[np]/B[np]).real
+            result = self.ctx.exp(self.gamma*t)/T*(A[np]/B[np]).real
 
         return result
 
