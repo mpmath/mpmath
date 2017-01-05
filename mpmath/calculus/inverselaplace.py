@@ -20,18 +20,6 @@ class InverseLaplaceTransform(object):
         # number of digits to add to working precision
         # really just a guess (could be tuned for each method)
         self.step = max(20,int(0.2*self.ctx.dps))
-
-        # cache some coefficients for talbot and stehfest methods
-        self.talbot_cache = {}
-        self.stehfest_cache = {}
-        # no caching for deHoog et al. method
-        
-    def clear(self):
-        """
-        Delete cached coefficient data.
-        """
-        self.talbot_cache = {}
-        self.stehfest_cache = {}
         
     def calc_laplace_parameter(self,t,**kwargs):
         """
@@ -132,26 +120,19 @@ class FixedTalbot(InverseLaplaceTransform):
         # Abate & Valko rule of thumb for r parameter
         self.r = kwargs.get('r',self.ctx.fraction(2,5)*M)
         
-        if (dps_inner,M) in self.talbot_cache:
-            (self.theta, self.cot_theta, self.delta) = self.talbot_cache[dps_inner,M]
-
-        else:
-            self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
+        self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
                             
-            self.cot_theta = self.ctx.matrix(M,1) 
-            self.cot_theta[0] = 0 # not used
+        self.cot_theta = self.ctx.matrix(M,1) 
+        self.cot_theta[0] = 0 # not used
 
-            # all but time-dependent part of p
-            self.delta = self.ctx.matrix(M,1) 
-            self.delta[0] = self.r
+        # all but time-dependent part of p
+        self.delta = self.ctx.matrix(M,1) 
+        self.delta[0] = self.r
             
-            for i in range(1,M):
-                self.cot_theta[i] = self.ctx.cot(self.theta[i])
-                self.delta[i] = self.r*self.theta[i]*(self.cot_theta[i] + 1j)
+        for i in range(1,M):
+            self.cot_theta[i] = self.ctx.cot(self.theta[i])
+            self.delta[i] = self.r*self.theta[i]*(self.cot_theta[i] + 1j)
                 
-            self.talbot_cache[dps_inner,M] = (self.theta, self.cot_theta, self.delta)
-
-        # don't cache p; it depends on t_max
         self.p = self.ctx.matrix(M,1)
 
         for i in range(M):
@@ -265,14 +246,7 @@ class Stehfest(InverseLaplaceTransform):
         self.dps_orig = self.ctx.dps
         self.ctx.dps = dps_inner
         
-        if (dps_inner,M) in self.stehfest_cache:
-            self.V = self.stehfest_cache[dps_inner,M]
-            
-        else:
-            self.V = self._coeff()
-            self.stehfest_cache[dps_inner,M] = self.V
-                
-        # p not cached since it depends on t, and is trivial to compute
+        self.V = self._coeff()
         self.p = self.ctx.matrix(self.ctx.arange(1,M+1))*self.ctx.ln2/self.t
 
         # NB: p is real (mpf)
