@@ -19,7 +19,7 @@ class InverseLaplaceTransform(object):
         
         # number of digits to add to working precision
         # really just a guess (could be tuned for each method)
-        self.step = max(20,int(0.2*self.ctx.dps))
+        self.step = max(15,int(0.2*self.ctx.dps))
         
     def calc_laplace_parameter(self,t,**kwargs):
         """
@@ -101,9 +101,9 @@ class FixedTalbot(InverseLaplaceTransform):
         
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps, int(1.7*self.degree))
+            self.dps_goal = max(self.ctx.dps, int(self.degree*0.75))
         else:
-            self.degree = int(self.ctx.dps/1.7)
+            self.degree = max(16,int(self.ctx.dps*2.0))
             self.dps_goal = self.ctx.dps
 
         self.step = kwargs.get('step',self.step)
@@ -226,9 +226,9 @@ class Stehfest(InverseLaplaceTransform):
 
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps,int(2.1*self.degree))
+            self.dps_goal = max(self.ctx.dps,int(0.5*self.degree))
         else:
-            self.degree = int(self.ctx.dps/2.1)
+            self.degree = max(16,int(3*self.ctx.dps))
             self.dps_goal = self.ctx.dps
                     
         # _coeff routine requires degree must be even
@@ -308,9 +308,9 @@ class deHoog(InverseLaplaceTransform):
         # degree of approximation increases (based on experimentation)
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps,int(1.8*self.degree))
+            self.dps_goal = max(self.ctx.dps,int(1.1*self.degree))
         else:
-            self.degree = int(self.ctx.dps/1.8)
+            self.degree = max(16,self.ctx.dps)
             self.dps_goal = self.ctx.dps
             
         self.step = kwargs.get('step',self.step)
@@ -336,9 +336,6 @@ class deHoog(InverseLaplaceTransform):
         self.scale = kwargs.get('scale',2)
         self.T = self.ctx.convert(kwargs.get('T',self.scale*self.t))        
 
-        # not chached since p depends on, alpha, tol, T, and scale,
-        # and is not difficult to compute.
-            
         self.p = self.ctx.matrix(2*M+1,1)
         self.gamma = self.alpha - self.ctx.log(self.tol)/(self.scale*self.T)
         for i in range(2*M+1):
@@ -354,14 +351,14 @@ class deHoog(InverseLaplaceTransform):
 
         self.t = self.ctx.convert(t)
 
-        e = self.ctx.matrix(np,M+1)
+        e = self.ctx.zeros(np,M+1)
         q = self.ctx.matrix(np,M)
         d = self.ctx.matrix(np,1)
-        A = self.ctx.matrix(np+2,1)
-        B = self.ctx.matrix(np+2,1)
+        A = self.ctx.zeros(np+2,1)
+        B = self.ctx.ones(np+2,1)
     
         # initialize Q-D table
-        e[0:2*M,0] = 0.0
+        # e[0:2*M,0] = 0.0 + 0.0j
         q[0,0] = fp[1]/(fp[0]/2)
         for i in range(1,2*M):
             q[i,0] = fp[i+1]/fp[i]
@@ -384,9 +381,9 @@ class deHoog(InverseLaplaceTransform):
             d[2*r]   = -e[0,r]   # odd terms
 
         # seed A and B for recurrence
-        A[0] = 0.0
+        #A[0] = 0.0 + 0.0j
         A[1] = d[0]
-        B[0:2] = 1.0
+        #B[0:2] = 1.0 + 0.0j
 
         # base of the power series
         z = self.ctx.expjpi(t/T) # i*pi is already in fcn
