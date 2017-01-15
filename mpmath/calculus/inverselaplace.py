@@ -19,6 +19,7 @@ class InverseLaplaceTransform(object):
         
         # number of digits to add to working precision
         # really just a guess (could be tuned for each method)
+        # [intercept in the dps_in -> dps_out relationship]
         self.step = max(15,int(0.2*self.ctx.dps))
         
     def calc_laplace_parameter(self,t,**kwargs):
@@ -101,10 +102,11 @@ class FixedTalbot(InverseLaplaceTransform):
         
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps, int(self.degree*0.75))
+            self.dps_goal = int(max(1.3*self.ctx.dps, self.degree*0.75))
         else:
             self.degree = max(16,int(self.ctx.dps*2.0))
-            self.dps_goal = self.ctx.dps
+            # [slope in the dps_in -> dps_out relationship]
+            self.dps_goal = int(1.3*self.ctx.dps)
 
         self.step = kwargs.get('step',self.step)
             
@@ -226,12 +228,10 @@ class Stehfest(InverseLaplaceTransform):
 
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps,int(2*self.degree))
-            #self.dps_goal = max(self.ctx.dps,int(0.5*self.degree))
+            self.dps_goal = max(int(2.4*self.ctx.dps),2*self.degree)
         else:
-            self.degree = max(16,int(1.1*self.ctx.dps))            
-            #self.degree = max(16,int(3*self.ctx.dps))
-            self.dps_goal = self.ctx.dps
+            self.degree = max(32,int(2.15*self.ctx.dps))
+            self.dps_goal = int(2.4*self.ctx.dps)
                     
         # _coeff routine requires degree must be even
         if self.degree%2 > 0:
@@ -288,7 +288,7 @@ class Stehfest(InverseLaplaceTransform):
         # calc_laplace_parameter(), so is already
         # a list or matrix of mpmath 'mpf' types
 
-        result = self.ctx.fdot(self.V,fp)*self.ctx.ln2/t
+        result = self.ctx.fdot(self.V,fp)*self.ctx.ln2/self.t
 
         # setting dps back to value when calc_laplace_parameter was called
         self.ctx.dps = self.dps_orig
@@ -315,10 +315,10 @@ class deHoog(InverseLaplaceTransform):
         # degree of approximation increases (based on experimentation)
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps,int(1.1*self.degree))
+            self.dps_goal = int(max(1.2*self.ctx.dps,1.1*self.degree))
         else:
             self.degree = max(16,self.ctx.dps)
-            self.dps_goal = self.ctx.dps
+            self.dps_goal = int(1.2*self.ctx.dps)
             
         self.step = kwargs.get('step',self.step)
             
@@ -591,7 +591,7 @@ class LaplaceTransformInversionMethods:
 
         """
         
-        rule = kwargs.get('method','dehoog')
+        rule = kwargs.get('method','talbot')
         if type(rule) is str:
             lrule = rule.lower()
             if lrule == 'talbot':
