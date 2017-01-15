@@ -142,7 +142,7 @@ class FixedTalbot(InverseLaplaceTransform):
     
     def calc_time_domain_solution(self,fp,t):
         r"""
-        The time-domain solution is computed from the Laplace-space
+        The fixed Talbot time-domain solution is computed from the Laplace-space
         function evaluations using
 
         `f(t,M)=\frac{2}{5t}\sum_{k=0}^{M-1}\mathrm{Re} 
@@ -226,9 +226,11 @@ class Stehfest(InverseLaplaceTransform):
 
         if 'degree' in kwargs:
             self.degree = kwargs['degree']
-            self.dps_goal = max(self.ctx.dps,int(0.5*self.degree))
+            self.dps_goal = max(self.ctx.dps,int(2*self.degree))
+            #self.dps_goal = max(self.ctx.dps,int(0.5*self.degree))
         else:
-            self.degree = max(16,int(3*self.ctx.dps))
+            self.degree = max(16,int(1.1*self.ctx.dps))            
+            #self.degree = max(16,int(3*self.ctx.dps))
             self.dps_goal = self.ctx.dps
                     
         # _coeff routine requires degree must be even
@@ -276,7 +278,7 @@ class Stehfest(InverseLaplaceTransform):
         return V
 
     def calc_time_domain_solution(self,fp,t):
-        """Compute time-domain solution using f(p)
+        """Compute time-domain Stehfest algorithm solution using f(p)
         and coefficients"""
 
         # required
@@ -299,7 +301,12 @@ class Stehfest(InverseLaplaceTransform):
 class deHoog(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self, t, **kwargs):
-
+        r"""the de Hoog, Knight & Stokes algorithm is an
+        accelerated form of the Fourier serires numerical
+        inverse Laplace transform algorithms, like Crump (YEAR) 
+        or Dubner & Abate (YEAR).
+        """
+        
         self.t = self.ctx.convert(t)
 
         # 2*M+1 terms used below
@@ -344,7 +351,10 @@ class deHoog(InverseLaplaceTransform):
         # NB: p is complex (mpc)
 
     def calc_time_domain_solution(self,fp,t):
-
+        r"""Calculate time-domain solution for
+        de Hoog, Knight & Stokes algorithm.
+        """
+        
         M = self.degree
         np = self.np
         T = self.T
