@@ -9,7 +9,7 @@ class InverseLaplaceTransform(object):
     passing it as the *method* argument.
     """
 
-    def __init__(self, ctx):
+    def __init__(self,ctx):
         self.ctx = ctx
 
         # a default level of approximation appropriate
@@ -36,7 +36,7 @@ class InverseLaplaceTransform(object):
 
 class FixedTalbot(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self,t,**kwargs):
         r"""
         The "fixed" Talbot method deforms the Bromwich contour
         towards `-\infty` in the shape of a parabola. Traditionally
@@ -127,7 +127,7 @@ class FixedTalbot(InverseLaplaceTransform):
 
         # NB: p is complex (mpc)
 
-    def calc_time_domain_solution(self,fp,t):
+    def calc_time_domain_solution(self,fp,t,manual_prec=False):
         r"""
         The fixed Talbot time-domain solution is computed from the Laplace-space
         function evaluations using
@@ -164,7 +164,7 @@ class FixedTalbot(InverseLaplaceTransform):
         M = self.degree
         p = self.p
         r = self.r
-
+            
         ans = self.ctx.matrix(M,1)
         ans[0] = self.ctx.exp(delta[0])*fp[0]/2
 
@@ -176,7 +176,8 @@ class FixedTalbot(InverseLaplaceTransform):
         result = self.ctx.fraction(2,5)*self.ctx.fsum(ans)/self.t
 
         # setting dps back to value when calc_laplace_parameter was called
-        self.ctx.dps = self.dps_orig
+        if not manual_prec:
+            self.ctx.dps = self.dps_orig
 
         return result.real
 
@@ -184,7 +185,7 @@ class FixedTalbot(InverseLaplaceTransform):
 
 class Stehfest(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self,t,**kwargs):
         r"""
         The Gaver-Stehfest method is a discrete approximation of the
         Widder-Post inversion algorithm, rather than a direct
@@ -260,7 +261,7 @@ class Stehfest(InverseLaplaceTransform):
 
         return V
 
-    def calc_time_domain_solution(self,fp,t):
+    def calc_time_domain_solution(self,fp,t,manual_prec=False):
         """Compute time-domain Stehfest algorithm solution using f(p)
         and coefficients"""
 
@@ -274,7 +275,8 @@ class Stehfest(InverseLaplaceTransform):
         result = self.ctx.fdot(self.V,fp)*self.ctx.ln2/self.t
 
         # setting dps back to value when calc_laplace_parameter was called
-        self.ctx.dps = self.dps_orig
+        if not manual_prec:
+            self.ctx.dps = self.dps_orig
 
         # ignore any small imaginary part
         return result.real
@@ -283,7 +285,7 @@ class Stehfest(InverseLaplaceTransform):
 
 class deHoog(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self,t,**kwargs):
         r"""the de Hoog, Knight & Stokes algorithm is an
         accelerated form of the Fourier serires numerical
         inverse Laplace transform algorithms, like Crump (YEAR)
@@ -332,11 +334,11 @@ class deHoog(InverseLaplaceTransform):
 
         # NB: p is complex (mpc)
 
-    def calc_time_domain_solution(self,fp,t):
+    def calc_time_domain_solution(self,fp,t,manual_prec=False):
         r"""Calculate time-domain solution for
         de Hoog, Knight & Stokes algorithm.
         """
-
+        
         M = self.degree
         np = self.np
         T = self.T
@@ -403,7 +405,8 @@ class deHoog(InverseLaplaceTransform):
         result = self.ctx.exp(self.gamma*self.t)/T*(A[np]/B[np]).real
 
         # setting dps back to value when calc_laplace_parameter was called
-        self.ctx.dps = self.dps_orig
+        if not manual_prec:
+            self.ctx.dps = self.dps_orig
 
         return result
 
