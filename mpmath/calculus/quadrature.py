@@ -420,7 +420,7 @@ class GaussLegendre(QuadratureRule):
         orig = ctx.prec
         ctx.prec = int(prec*1.5)
         if degree == 1:
-            x = ctx.mpf(3)/5
+            x = ctx.sqrt(ctx.mpf(3)/5)
             w = ctx.mpf(5)/9
             nodes = [(-x,w),(ctx.zero,ctx.mpf(8)/9),(x,w)]
             ctx.prec = orig
