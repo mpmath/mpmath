@@ -41,17 +41,17 @@ or function call.
 A trivial example showing the process (which could be implemented
 using the existing interface):
 
->>> from mpmath import *
->>> mp.dps = 20
 >>> myTalbot = calculus.inverselaplace.FixedTalbot(mp)
->>> myTalbot.dps_orig,myTalbot.dps_goal
-
 >>> t = 0.25
 >>> myTalbot.calc_laplace_parameter(t)
 >>> fp = lambda p: 1/(p + 1) - 1/(p + 1000)
 >>> ft = lambda t: exp(-t) - exp(-1000*t)
 >>> fpvec = map(fp,myTalbot.p)
 >>> ft(t)-myTalbot.calc_time_domain_solution(fpvec,t,manual_prec=True)
- mpf('-6.1906035853098729e-12')
->>>  
+mpf('1.928300179528890061756872185e-21')
 
+This manual approach is also useful to look at the Laplace parameter,
+order, or working precision which were computed.
+
+>>> myTalbot.degree
+34
