@@ -44,8 +44,12 @@ class FixedTalbot(InverseLaplaceTransform):
         2004).
 
         The Laplace parameter is sampled along a parabola opening
-        along the negative imaginary axis, with the bottom of the
-        parabola at `p=\frac{r}{t_\mathrm{max}}+0j`
+        along the negative imaginary axis, with the base of the
+        parabola along the real axis at
+        `p=\frac{r}{t_\mathrm{max}}`. As the number of terms used in
+        the approximation (degree) grows, the abscissa required for
+        function evaluation tend towards `-\infty`, requiring high
+        precision to prevent overflow.
 
         **Optional arguments**
 
@@ -62,8 +66,11 @@ class FixedTalbot(InverseLaplaceTransform):
             of thumb `2M/5`)
 
         The working precision will be increased according to a rule of
-        thumb, in relation to the degree; dps_goal`=1.7M`.  dps_goal
-        can be overridden with a user-specified value.
+        thumb. If 'degree' is not specified, the working precision and
+        degree are chosen to hopefully achieve the dps of the calling
+        context. If 'degree' is specified, the working precision is
+        chosen to achieve maximum resulting precision for the
+        specified degree.
 
         `p_0=\frac{r}{t}`
 
@@ -81,8 +88,8 @@ class FixedTalbot(InverseLaplaceTransform):
 
         # optional
         # ------------------------------
-        # maximum time desired (used for scaling)
-        # default is requested time.
+        # maximum time desired (used for scaling) default is requested
+        # time.
         self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
 
         # empirical relationships used here based on a linear fit of
@@ -127,19 +134,19 @@ class FixedTalbot(InverseLaplaceTransform):
 
     def calc_time_domain_solution(self,fp,t,manual_prec=False):
         r"""
-        The fixed Talbot time-domain solution is computed from the Laplace-space
-        function evaluations using
+        The fixed Talbot time-domain solution is computed from the
+        Laplace-space function evaluations using
 
-        `f(t,M)=\frac{2}{5t}\sum_{k=0}^{M-1}\mathrm{Re}
-        \left[ \gamma_k \bar{f}(p_k)\right]`
+        `f(t,M)=\frac{2}{5t}\sum_{k=0}^{M-1}\mathrm{Re} \left[
+        \gamma_k \bar{f}(p_k)\right]`
 
         where
 
         `\gamma_0 = \frac{1}{2}e^{r}\bar{f}(p_0)`
 
         `\gamma_k = e^{tp_k}\left\lbrace 1 + \frac{jk\pi}{M}\left[1 +
-        \cot \left( \frac{k \pi}{M} \right)^2 \right] -
-        j\cot\left( \frac{k \pi}{M}\right)\right \rbrace \qquad 1\le k<M`.
+        \cot \left( \frac{k \pi}{M} \right)^2 \right] - j\cot\left(
+        \frac{k \pi}{M}\right)\right \rbrace \qquad 1\le k<M`.
 
         Again, `j=\sqrt{-1}`.
 
@@ -153,10 +160,11 @@ class FixedTalbot(InverseLaplaceTransform):
         self.t = self.ctx.convert(t)
 
         # assume fp was computed from p matrix returned from
-        # calc_laplace_parameter(), so is already
-        # a list or matrix of mpmath 'mpc' types
+        # calc_laplace_parameter(), so is already a list or matrix of
+        # mpmath 'mpc' types
 
-        # these were computed in previous call to calc_laplace_parameter()
+        # these were computed in previous call to
+        # calc_laplace_parameter()
         theta = self.theta
         delta = self.delta
         M = self.degree
@@ -173,7 +181,8 @@ class FixedTalbot(InverseLaplaceTransform):
 
         result = self.ctx.fraction(2,5)*self.ctx.fsum(ans)/self.t
 
-        # setting dps back to value when calc_laplace_parameter was called
+        # setting dps back to value when calc_laplace_parameter was
+        # called, unless flag is set.
         if not manual_prec:
             self.ctx.dps = self.dps_orig
 
@@ -189,14 +198,18 @@ class Stehfest(InverseLaplaceTransform):
         Widder-Post inversion algorithm, rather than a direct
         approximation of the Bromwich contour integral.
 
-        The method only uses values of `p` along the real axis, and
-        therefore has issues inverting oscillatory functions (which
-        have poles in pairs away from the real axis).
+        The method abscissa along the real axis, and therefore has
+        issues inverting oscillatory functions (which have poles in
+        pairs away from the real axis).
 
-        The Stehfest coefficients only depend on the order of
-        approximation and not the desired time, so they could be
-        computed once and re-used for a given degree and working
-        precision.
+        The working precision will be increased according to a rule of
+        thumb. If 'degree' is not specified, the working precision and
+        degree are chosen to hopefully achieve the dps of the calling
+        context. If 'degree' is specified, the working precision is
+        chosen to achieve maximum resulting precision for the
+        specified degree.
+
+        `p_j = \frac{j \log 2}{t} \qquad 1 \le j \le M`
         """
 
         # required
@@ -236,7 +249,7 @@ class Stehfest(InverseLaplaceTransform):
         # NB: p is real (mpf)
 
     def _coeff(self):
-        """These Salzer summation weights (aka, "Stehfest coefficients")
+        r"""Salzer summation weights (aka, "Stehfest coefficients")
         only depend on the approximation order (M) and the precision"""
 
         M = self.degree
@@ -260,8 +273,18 @@ class Stehfest(InverseLaplaceTransform):
         return V
 
     def calc_time_domain_solution(self,fp,t,manual_prec=False):
-        """Compute time-domain Stehfest algorithm solution using f(p)
-        and coefficients"""
+        r"""
+        Compute time-domain Stehfest algorithm solution.
+
+        `f(t,M) = \frac{\log 2}{t} \sum_{k=1}^{M} V_k \bar{f}\left(
+        p_k \right)`
+
+        where
+
+        `V_k=(-1)^{k + N/2}\sum^{\min(k,N/2)}_{j=\lfloor(k+1)/2
+        \rfloor}\frac{j^{\frac{N}{2}}(2j)!}{(\frac{N}{2}-j)!\,j!\,
+        (j-1)!\,(k-j)!\,(2j-k)!}.
+        """
 
         # required
         self.t = self.ctx.convert(t)
@@ -288,6 +311,8 @@ class deHoog(InverseLaplaceTransform):
         accelerated form of the Fourier series numerical
         inverse Laplace transform algorithms, like Crump (YEAR)
         or Dubner & Abate (YEAR).
+
+        `p = `
         """
 
         self.t = self.ctx.convert(t)
@@ -307,7 +332,8 @@ class deHoog(InverseLaplaceTransform):
         # 2*M+1 terms in approximation
         M = self.degree
 
-        # adjust alpha component of abscissa of convergence for higher precision
+        # adjust alpha component of abscissa of convergence for higher
+        # precision
         tmp = self.ctx.power(10.0,-self.dps_goal)
         self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
 
@@ -335,6 +361,12 @@ class deHoog(InverseLaplaceTransform):
     def calc_time_domain_solution(self,fp,t,manual_prec=False):
         r"""Calculate time-domain solution for
         de Hoog, Knight & Stokes algorithm.
+
+        The un-accelerated Fourier series approach:
+
+        `f(t,2M+1) = \frac{e^{\gamma t}}{T} \sum_{k=0}^{2M}{}^{'}
+        \Re\left[\bar{f}\left(\gamma_0 +\frac{i\pi k}{T}\right)
+        \exp\left(\frac{i\pi t}{T}\right)\right],` 
         """
         
         M = self.degree
