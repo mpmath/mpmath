@@ -1,36 +1,34 @@
 class InverseLaplaceTransform(object):
     r"""
-    Inverse Lapalce Transform method are implemented using this class,
-    in order to simplify the code and provide a common infrastructure.
+    Inverse Laplace transform methods are implemented using this
+    class, in order to simplify the code and provide a common
+    infrastructure.
 
-    Implement a custom inverse Laplace transform algorithm by subclassing
-    :class:`InverseLaplaceTransform` and implementing the appropriate
-    methods. The subclass can then be used by :func:`~mpmath.invertlaplace` by
-    passing it as the *method* argument.
+    Implement a custom inverse Laplace transform algorithm by
+    subclassing :class:`InverseLaplaceTransform` and implementing the
+    appropriate methods. The subclass can then be used by
+    :func:`~mpmath.invertlaplace` by passing it as the *method*
+    argument.
     """
 
     def __init__(self,ctx):
         self.ctx = ctx
 
-        # a default level of approximation appropriate
-        # for the given precision goal
-        self.degree = None
-
     def calc_laplace_parameter(self,t,**kwargs):
         """
-        Determine the vector of Laplace parameter values
-        needed for an algorithm, this will depend on the choice
-        of algorithm (de Hoog is default), the algorithm-specific
-        parameters passed (or default ones), and desired time.
+        Determine the vector of Laplace parameter values needed for an
+        algorithm, this will depend on the choice of algorithm (de
+        Hoog is default), the algorithm-specific parameters passed (or
+        default ones), and desired time.
         """
         raise NotImplementedError
 
     def calc_time_domain_solution(self,fp):
         """
         Compute the time domain solution, after computing the
-        Laplace-space function evalutations at the abcissa
-        required for the algorithm. Abcissa computed for one
-        algorithm are typically not useful for another algorithm.
+        Laplace-space function evaluations at the abscissa required
+        for the algorithm. Abscissa computed for one algorithm are
+        typically not useful for another algorithm.
         """
         raise NotImplementedError
 
@@ -38,16 +36,16 @@ class FixedTalbot(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self,t,**kwargs):
         r"""
-        The "fixed" Talbot method deforms the Bromwich contour
-        towards `-\infty` in the shape of a parabola. Traditionally
-        the Talbot algorithm has adjustable parameters, but the
-        "fixed" version does not. The `r` parameter could be
-        passed in as a parameter, if you want to override
-        the default given by (Abate & Valko, 2004).
+        The "fixed" Talbot method deforms the Bromwich contour towards
+        `-\infty` in the shape of a parabola. Traditionally the Talbot
+        algorithm has adjustable parameters, but the "fixed" version
+        does not. The `r` parameter could be passed in as a parameter,
+        if you want to override the default given by (Abate & Valko,
+        2004).
 
-        The laplace parameter is sampled along a parabola
-        opening along the negative imaginary axis, with the
-        bottom of the parabola at `p=\frac{r}{t_\mathrm{max}}+0j`
+        The Laplace parameter is sampled along a parabola opening
+        along the negative imaginary axis, with the bottom of the
+        parabola at `p=\frac{r}{t_\mathrm{max}}+0j`
 
         **Optional arguments**
 
@@ -60,12 +58,12 @@ class FixedTalbot(InverseLaplaceTransform):
         *degree*
             integer order of approximation (M = number of terms)
         *r*
-            abcissa for `p_0` (otherwise computed using rule
+            abscissa for `p_0` (otherwise computed using rule
             of thumb `2M/5`)
 
-        The working precision will be increased according to a
-        rule of thumb, in relation to the degree; dps_goal`=1.7M`.
-        dps_goal can be overridden with a user-specified value.
+        The working precision will be increased according to a rule of
+        thumb, in relation to the degree; dps_goal`=1.7M`.  dps_goal
+        can be overridden with a user-specified value.
 
         `p_0=\frac{r}{t}`
 
@@ -87,7 +85,7 @@ class FixedTalbot(InverseLaplaceTransform):
         # default is requested time.
         self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
 
-        # emperical relationships used here based on a linear fit of
+        # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
@@ -100,9 +98,9 @@ class FixedTalbot(InverseLaplaceTransform):
 
         M = self.degree
 
-        # this is adjusting the dps of the calling context
-        # hopefully the caller doesn't monkey around with it
-        # between calling this routine and calc_time_domain_solution()
+        # this is adjusting the dps of the calling context hopefully
+        # the caller doesn't monkey around with it between calling
+        # this routine and calc_time_domain_solution()
         self.dps_orig = self.ctx.dps
         self.ctx.dps = self.dps_goal
 
@@ -209,7 +207,7 @@ class Stehfest(InverseLaplaceTransform):
         # optional
         # ------------------------------
 
-        # emperical relationships used here based on a linear fit of
+        # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
@@ -239,7 +237,7 @@ class Stehfest(InverseLaplaceTransform):
 
     def _coeff(self):
         """These Salzer summation weights (aka, "Stehfest coefficients")
-        only depend on the approximation order (M) and the precsion"""
+        only depend on the approximation order (M) and the precision"""
 
         M = self.degree
         M2 = M/2
@@ -287,7 +285,7 @@ class deHoog(InverseLaplaceTransform):
 
     def calc_laplace_parameter(self,t,**kwargs):
         r"""the de Hoog, Knight & Stokes algorithm is an
-        accelerated form of the Fourier serires numerical
+        accelerated form of the Fourier series numerical
         inverse Laplace transform algorithms, like Crump (YEAR)
         or Dubner & Abate (YEAR).
         """
@@ -295,7 +293,7 @@ class deHoog(InverseLaplaceTransform):
         self.t = self.ctx.convert(t)
         self.tmax = self.t
 
-        # emperical relationships used here based on a linear fit of
+        # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
@@ -309,7 +307,7 @@ class deHoog(InverseLaplaceTransform):
         # 2*M+1 terms in approximation
         M = self.degree
 
-        # adjust alpha component of abcissa of convergence for higher precision
+        # adjust alpha component of abscissa of convergence for higher precision
         tmp = self.ctx.power(10.0,-self.dps_goal)
         self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
 
@@ -323,7 +321,7 @@ class deHoog(InverseLaplaceTransform):
         self.dps_orig = self.ctx.dps
         self.ctx.dps = self.dps_goal
 
-        # scaling factor (likely tunable, but 2 is typical)
+        # scaling factor (likely tun-able, but 2 is typical)
         self.scale = kwargs.get('scale',2)
         self.T = self.ctx.convert(kwargs.get('T',self.scale*self.tmax))
 
@@ -422,7 +420,7 @@ class LaplaceTransformInversionMethods:
         r"""
         Computes the numerical inverse Laplace transform for a
         Laplace-space function at a given time.  The function being
-        evalutated is assumed to be a real-valued function of time.
+        evaluated is assumed to be a real-valued function of time.
 
         The user must supply a Laplace-space function (`\bar{f}(p)`),
         and a desired time to estimate the time-domain solution (`f(t)`)
@@ -445,7 +443,7 @@ class LaplaceTransformInversionMethods:
 
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
-        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t)) for t in tvec]
+        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t,method='talbot')) for t in tvec]
         [(0.001, mpf('0.0009990004998333751'), mpf('8.5792304356121216e-20')),
         (0.01, mpf('0.0099004983374916811'), mpf('3.2700764669804695e-19')),
         (0.1, mpf('0.09048374180359596'), mpf('-1.7521580005216785e-18')),
@@ -455,7 +453,7 @@ class LaplaceTransformInversionMethods:
         The methods also work for higher precision:
 
         >>> mp.dps = 100
-        >>> [(t,nstr(ft(t),15),nstr(ft(t)-invertlaplace(fp,t),15)) for t in tvec]
+        >>> [(t,nstr(ft(t),15),nstr(ft(t)-invertlaplace(fp,t,method='talbot'),15)) for t in tvec]
         [(0.001, '0.000999000499833375', '-4.96868310693356e-105'),
         (0.01, '0.00990049833749168', '1.23032291513122e-104'),
         (0.1, '0.090483741803596', '7.25752777054208e-103'),
@@ -469,7 +467,7 @@ class LaplaceTransformInversionMethods:
         >>> mp.dps = 15
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
-        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t,method='dehoog')) for t in tvec]
+        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t)) for t in tvec]
         [(0.001, mpf('0.99999975000001562'), mpf('-8.2477943034013953e-18')),
         (0.01, mpf('0.99997500015624957'), mpf('-3.6981014489887214e-17')),
         (0.1, mpf('0.99750156206604003'), mpf('1.7277947790359516e-18')),
@@ -495,7 +493,7 @@ class LaplaceTransformInversionMethods:
         valid for all methods:
 
         *method*
-            Choses numerical inverse Laplace transform algorithm
+            Chooses numerical inverse Laplace transform algorithm
             (described below).
         *degree*
             Number of terms used in the approximation
@@ -503,64 +501,69 @@ class LaplaceTransformInversionMethods:
         **Algorithms**
 
         Mpmath implements three numerical inverse Laplace transform
-        algorithms, attributed to: Talbot, Stehfest, and de Hoog, Knight
-        and Stokes. These can be selected by using *method='talbot'*,
-        *method='stehfest'*, or *method='dehoog'* or by passing the
-        classes *method=FixedTalbot*, *method=Stehfest*, or
-        *method=deHoog*. The functions :func:`~mpmath.invlaptalbot`,
-        :func:`~mpmath.invlapstehfest`, and :func:`~mpmath.invlapdehoog`
-        are also available as shortcuts.
+        algorithms, attributed to: Talbot, Stehfest, and de Hoog,
+        Knight and Stokes. These can be selected by using
+        *method='talbot'*, *method='stehfest'*, or *method='dehoog'*
+        or by passing the classes *method=FixedTalbot*,
+        *method=Stehfest*, or *method=deHoog*. The functions
+        :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`,
+        and :func:`~mpmath.invlapdehoog` are also available as
+        shortcuts.
 
-        All three algorithms have the property that doubling the number of
-        evaluation points roughly doubles the accuracy (with some
-        additional limitations outlined below), so the methods work for
-        high precision. The Laplace transform converts behavior for time
-        (i.e., along a line) into the entire complex `p`-plane.
-        Singularities, poles, and branch cuts in the complex `p`-plane
-        contain all the information regarding the time behavior of the
-        function of interest. Any numerical method must therefore
-        sample `p`-plane "close enough" to the singularities to accurately
-        characterize them, while not getting too close to have catastrophic
-        cancellation issues. If one or more of the singularities in the
-        `p`-plane is not on the left side of the Bromwich contour, its
-        effects will be left out of the computed solution, and the answer
-        will be wrong.
+        All three algorithms implement a heuristic balance between the
+        requested precision, and the precision used internally for the
+        calculations. This has been tuned for precision up to few
+        hundred decimal digits. The Laplace transform converts
+        behavior for time (i.e., along a line) into the entire complex
+        `p`-plane.  Singularities, poles, and branch cuts in the
+        complex `p`-plane contain all the information regarding the
+        time behavior of the function of interest. Any numerical
+        method must therefore sample `p`-plane "close enough" to the
+        singularities to accurately characterize them, while not
+        getting too close to have catastrophic cancellation issues. If
+        one or more of the singularities in the `p`-plane is not on
+        the left side of the Bromwich contour, its effects will be
+        left out of the computed solution, and the answer will be
+        wrong.
 
-        The fixed Talbot method is high accuracy, except when the time-
-        domain function has a Heaviside step function for positive time
-        (e.g., `H(t-2)`). The Talbot method usually has adjustable
-        parameters, but the "fixed" variety implemented here does not.
-        This function is not defined for small time (in this case `t<2`).
-        This method deforms the Bromwich integral contour in the shape of
-        a parabola headed towards `-\infty`, which leads to problems when
-        the solution has a decaying exponential in it (e.g., a Heaviside
-        step function is equivalient to multiplying by a decaying
-        exponential in Laplace space).
+        The fixed Talbot method is high accuracy and fast, but the
+        method can catastrophically fail for certain time-domain
+        behaviors, including a Heaviside step function for positive
+        time (e.g., `H(t-2)`), or some oscillatory behaviors. The
+        Talbot method usually has adjustable parameters, but the
+        "fixed" variety implemented here does not.  This function is
+        not defined for small time (in this case `t<2`).  This method
+        deforms the Bromwich integral contour in the shape of a
+        parabola headed towards `-\infty`, which leads to problems
+        when the solution has a decaying exponential in it (e.g., a
+        Heaviside step function is equivalent to multiplying by a
+        decaying exponential in Laplace space).
 
-        The Stehfest algorithm only uses abcissa along the real axis of the
-        imaginary plane to estimate the time-domain function. Oscillatory
-        time-domain functions have poles away from the real axis, so this
-        method does not work well with oscillatory functions. This method
-        also depends on summation of terms in a series that grow very
-        large, and will have catastrophic cancellation during summation
-        if the  working precision is too low.
+        The Stehfest algorithm only uses abscissa along the real axis
+        of the imaginary plane to estimate the time-domain
+        function. Oscillatory time-domain functions have poles away
+        from the real axis, so this method does not work well with
+        oscillatory functions. This method also depends on summation
+        of terms in a series that grow very large, and will have
+        catastrophic cancellation during summation if the working
+        precision is too low.
 
         The de Hoog, Knight and Stokes method is essentially a
-        Fourier-series quadratyre type approximation to the Bromwich
+        Fourier-series quadrature type approximation to the Bromwich
         contour integral, with non-linear series acceleration and an
         analytical expression for the remainder term. This method is
         typically the most robust and is therefore the default method.
 
         **Singularities**
 
-        All numerical inverse Laplace transform methods have problems at
-        large time when the Laplace-space function has poles,
-        singularities, or branch cuts to the right of the origin in the
-        complex plane. For simple poles in `\bar{f}(p)`, at the `p`-plane
-        origin is a constant in time. A pole to the left of the origin is
-        a decreasing function of time, and a pole to the right of the
-        origin leads to an increasing function in time (see Duffy [3]
-        Figure 4.10.4, p. 228).
+        All numerical inverse Laplace transform methods have problems
+        at large time when the Laplace-space function has poles,
+        singularities, or branch cuts to the right of the origin in
+        the complex plane. For simple poles in `\bar{f}(p)`, at the
+        `p`-plane origin is a constant in time. A pole to the left of
+        the origin is a decreasing function of time, and a pole to the
+        right of the origin leads to an increasing function in time
+        (see Duffy [3] Figure 4.10.4, p. 228).
 
         For example:
 
@@ -570,9 +573,9 @@ class LaplaceTransformInversionMethods:
 
         In general as `p \rightarrow \infty` `t \rightarrow 0` and
         vice-versa. All numerical inverse Laplace transform methods
-        require their abcissa to shift closer to the origin for larger
-        times. If the abcissa shift left of the rightmost singularity in
-        the Laplace domain, the answer will be completely wrong.
+        require their abscissa to shift closer to the origin for larger
+        times. If the abscissa shift left of the rightmost singularity
+        in the Laplace domain, the answer will be completely wrong.
 
         **References**
 
@@ -582,7 +585,7 @@ class LaplaceTransformInversionMethods:
 
         """
 
-        rule = kwargs.get('method','talbot')
+        rule = kwargs.get('method','dehoog')
         if type(rule) is str:
             lrule = rule.lower()
             if lrule == 'talbot':
@@ -601,7 +604,7 @@ class LaplaceTransformInversionMethods:
         rule.calc_laplace_parameter(t,**kwargs)
 
         # compute the Laplace-space function evalutations
-        # at the required abcissa.
+        # at the required abscissa.
         fp = map(f,rule.p)
 
         # compute the time-domain solution from the
