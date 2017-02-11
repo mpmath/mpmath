@@ -896,13 +896,20 @@ def elliprg(ctx, x, y, z):
     x = ctx.convert(x)
     y = ctx.convert(y)
     z = ctx.convert(z)
-    if not z: x, z = z, x
-    if not z: y, z = x, y
-    if not z: return ctx.inf
+    zeros = (not x) + (not y) + (not z)
+    if zeros == 3:
+        return (x+y+z)*0
+    if zeros == 2:
+        if x: return 0.5*ctx.sqrt(x)
+        if y: return 0.5*ctx.sqrt(y)
+        return 0.5*ctx.sqrt(z)
+    if zeros == 1:
+        if not z:
+            x, z = z, x
     def terms():
         T1 = 0.5*z*ctx.elliprf(x,y,z)
         T2 = -0.5*(x-z)*(y-z)*ctx.elliprd(x,y,z)/3
-        T3 = 0.5*ctx.sqrt(x*y/z)
+        T3 = 0.5*ctx.sqrt(x)*ctx.sqrt(y)/ctx.sqrt(z)
         return T1,T2,T3
     return ctx.sum_accurately(terms)
 

@@ -597,6 +597,23 @@ def test_elliptic_integrals():
     assert elliprd(0,j,-j).ae(1.2708196271909686299 + 2.7811120159520578777j)
     assert elliprd(0,j-1,j).ae(-1.8577235439239060056 - 0.96193450888838559989j)
     assert elliprd(-2-j,-j,-1+j).ae(1.8249027393703805305 - 1.2218475784827035855j)
+    # extra test cases
+    assert elliprg(0,0,0) == 0
+    assert elliprg(0,0,16).ae(2)
+    assert elliprg(0,16,0).ae(2)
+    assert elliprg(16,0,0).ae(2)
+    assert elliprg(1,4,0).ae(1.2110560275684595248036)
+    assert elliprg(1,0,4).ae(1.2110560275684595248036)
+    assert elliprg(0,4,1).ae(1.2110560275684595248036)
+    # should be symmetric -- fixes a bug present in the paper
+    x,y,z = 1,1j,-1+1j
+    assert elliprg(x,y,z).ae(0.64139146875812627545 + 0.58085463774808290907j)
+    assert elliprg(x,z,y).ae(0.64139146875812627545 + 0.58085463774808290907j)
+    assert elliprg(y,x,z).ae(0.64139146875812627545 + 0.58085463774808290907j)
+    assert elliprg(y,z,x).ae(0.64139146875812627545 + 0.58085463774808290907j)
+    assert elliprg(z,x,y).ae(0.64139146875812627545 + 0.58085463774808290907j)
+    assert elliprg(z,y,x).ae(0.64139146875812627545 + 0.58085463774808290907j)
+
     for n in [5, 15, 30, 60, 100]:
         mp.dps = n
         assert elliprf(1,2,0).ae('1.3110287771460599052324197949455597068413774757158115814084108519003952935352071251151477664807145467230678763')
