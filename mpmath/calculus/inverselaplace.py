@@ -527,7 +527,7 @@ class deHoog(InverseLaplaceTransform):
 
 # ****************************************
 
-class LaplaceTransformInversionMethods:
+class LaplaceTransformInversionMethods(object):
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
         ctx._stehfest = Stehfest(ctx)
