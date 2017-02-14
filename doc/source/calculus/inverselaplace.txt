@@ -43,7 +43,7 @@ using the existing interface):
 
 >>> from mpmath import *
 >>> myTalbot = calculus.inverselaplace.FixedTalbot(mp)
->>> t = 0.25
+>>> t = convert(0.25)
 >>> myTalbot.calc_laplace_parameter(t)
 >>> fp = lambda p: 1/(p + 1) - 1/(p + 1000)
 >>> ft = lambda t: exp(-t) - exp(-1000*t)

@@ -286,8 +286,8 @@ class Stehfest(InverseLaplaceTransform):
         # if the precision is not high enough, there will be
         # catastrophic cancellation
         for k in range(1,M+1):
-            z = self.ctx.matrix(int(min(k,M2)+1),1)
-            for j in range(int(self.ctx.floor((k+1)/2.0)),min(k,M2)+1):
+            z = self.ctx.matrix(min(k,M2)+1,1)
+            for j in range(int((k+1)/2),min(k,M2)+1):
                 z[j] = (self.ctx.power(j,M2)*self.ctx.fac(2*j)/
                         (self.ctx.fac(M2-j)*self.ctx.fac(j)*
                          self.ctx.fac(j-1)*self.ctx.fac(k-j)*
@@ -566,24 +566,24 @@ class LaplaceTransformInversionMethods(object):
         >>> tt = [0.001, 0.01, 0.1, 1, 10]
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
-        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='talbot')
-        (0.001, 0.000999000499833375, 8.57923043561212e-20)
-        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='talbot')
-        (0.01, 0.00990049833749168, 3.27007646698047e-19)
-        >>> tt[2],ft(tt[2]),ft(tt[2])-invertlaplace(fp,tt[2],method='talbot')
-        (0.1, 0.090483741803596, -1.75215800052168e-18)
-        >>> tt[3],ft(tt[3]),ft(tt[3])-invertlaplace(fp,tt[3],method='talbot')
-        (1, 0.367879441171442, 1.2428864009344e-17)
-        >>> tt[4],ft(tt[4]),ft(tt[4])-invertlaplace(fp,tt[4],method='talbot')
-        (10, 0.000453999297624849, 4.04513489306658e-20)
+        >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='talbot')
+        (0.000999000499833375, 8.57923043561212e-20)
+        >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='talbot')
+        (0.00990049833749168, 3.27007646698047e-19)
+        >>> ft(tt[2]),ft(tt[2])-invertlaplace(fp,tt[2],method='talbot')
+        (0.090483741803596, -1.75215800052168e-18)
+        >>> ft(tt[3]),ft(tt[3])-invertlaplace(fp,tt[3],method='talbot')
+        (0.367879441171442, 1.2428864009344e-17)
+        >>> ft(tt[4]),ft(tt[4])-invertlaplace(fp,tt[4],method='talbot')
+        (0.000453999297624849, 4.04513489306658e-20)
 
         The methods also work for higher precision:
 
         >>> mp.dps = 100; mp.pretty = True
-        >>> tt[0],nstr(ft(tt[0]),15),nstr(ft(tt[0])-invertlaplace(fp,tt[0],method='talbot'),15)
-        (0.001, '0.000999000499833375', '-4.96868310693356e-105')
-        >>> tt[1],nstr(ft(tt[1]),15),nstr(ft(tt[1])-invertlaplace(fp,tt[1],method='talbot'),15)
-        (0.01, '0.00990049833749168', '1.23032291513122e-104')
+        >>> nstr(ft(tt[0]),15),nstr(ft(tt[0])-invertlaplace(fp,tt[0],method='talbot'),15)
+        ('0.000999000499833375', '-4.96868310693356e-105')
+        >>> nstr(ft(tt[1]),15),nstr(ft(tt[1])-invertlaplace(fp,tt[1],method='talbot'),15)
+        ('0.00990049833749168', '1.23032291513122e-104')
 
         .. math ::
 
@@ -596,10 +596,10 @@ class LaplaceTransformInversionMethods(object):
         >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
-        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
-        (0.001, 0.999999750000016, -8.2477943034014e-18)
-        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1])
-        (0.01, 0.99997500015625, -3.69810144898872e-17)
+        >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
+        (0.999999750000016, -8.2477943034014e-18)
+        >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1])
+        (0.99997500015625, -3.69810144898872e-17)
 
         .. math ::
 
@@ -612,10 +612,10 @@ class LaplaceTransformInversionMethods(object):
         >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: log(p)/p
         >>> ft = lambda t: -euler-log(t)
-        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
-        (0.001, 6.3305396140806, -1.92126634837863e-16)
-        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='stehfest')
-        (0.01, 4.02795452108656, -4.81486093200704e-16)
+        >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
+        (6.3305396140806, -1.92126634837863e-16)
+        >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='stehfest')
+        (4.02795452108656, -4.81486093200704e-16)
 
         **Options**
 
@@ -739,14 +739,14 @@ class LaplaceTransformInversionMethods(object):
         >>> fp = lambda p: 1/(p*p-9)
         >>> ft = lambda t: sinh(3*t)/3
         >>> tt = [0.01,0.1,1.0,10.0]
-        >>> tt[0],ft(tt[0]),invertlaplace(fp,tt[0],method='talbot')
-        (0.01, 0.0100015000675014, 0.0100015000675014)
-        >>> tt[1],ft(tt[1]),invertlaplace(fp,tt[1],method='talbot')
-        (0.1, 0.101506764482381, 0.101506764482381)
-        >>> tt[2],ft(tt[2]),invertlaplace(fp,tt[2],method='talbot')
-        (1.0, 3.33929164246997, 3.33929164246997)
-        >>> tt[3],ft(tt[3]),invertlaplace(fp,tt[3],method='talbot')
-        (10.0, 1781079096920.74, -1.61331069624091e-14)
+        >>> ft(tt[0]),invertlaplace(fp,tt[0],method='talbot')
+        (0.0100015000675014, 0.0100015000675014)
+        >>> ft(tt[1]),invertlaplace(fp,tt[1],method='talbot')
+        (0.101506764482381, 0.101506764482381)
+        >>> ft(tt[2]),invertlaplace(fp,tt[2],method='talbot')
+        (3.33929164246997, 3.33929164246997)
+        >>> ft(tt[3]),invertlaplace(fp,tt[3],method='talbot')
+        (1781079096920.74, -1.61331069624091e-14)
 
         **References**
 
