@@ -277,7 +277,7 @@ class Stehfest(InverseLaplaceTransform):
         only depend on the approximation order (M) and the precision"""
 
         M = self.degree
-        M2 = M/2
+        M2 = int(M/2) # checked earlier that M is even
 
         V = self.ctx.matrix(M,1)
 
@@ -286,7 +286,7 @@ class Stehfest(InverseLaplaceTransform):
         # if the precision is not high enough, there will be
         # catastrophic cancellation
         for k in range(1,M+1):
-            z = self.ctx.matrix(int(min(k,M2)+1),1)
+            z = self.ctx.matrix(min(k,M2)+1,1)
             for j in range(int((k+1)/2),min(k,M2)+1):
                 z[j] = (self.ctx.power(j,M2)*self.ctx.fac(2*j)/
                         (self.ctx.fac(M2-j)*self.ctx.fac(j)*
