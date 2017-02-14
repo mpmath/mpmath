@@ -41,6 +41,7 @@ or function call.
 A trivial example showing the process (which could be implemented
 using the existing interface):
 
+>>> from mpmath import *
 >>> myTalbot = calculus.inverselaplace.FixedTalbot(mp)
 >>> t = 0.25
 >>> myTalbot.calc_laplace_parameter(t)
