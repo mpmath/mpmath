@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='mpmath-invlap',
+setup(name='mpmath',
       description = 'Python library for arbitrary-precision floating-point arithmetic',
       version='0.20-git',
       url='http://mpmath.org',
