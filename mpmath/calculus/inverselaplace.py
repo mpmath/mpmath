@@ -795,7 +795,7 @@ class LaplaceTransformInversionMethods:
 
         # compute the Laplace-space function evalutations
         # at the required abscissa.
-        fp = map(f,rule.p)
+        fp = [f(p) for p in rule.p]
 
         # compute the time-domain solution from the
         # Laplace-space function evaluations
