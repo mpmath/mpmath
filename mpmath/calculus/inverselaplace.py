@@ -192,7 +192,7 @@ class FixedTalbot(InverseLaplaceTransform):
         M = self.degree
         p = self.p
         r = self.r
-            
+
         ans = self.ctx.matrix(M,1)
         ans[0] = self.ctx.exp(delta[0])*fp[0]/2
 
@@ -309,8 +309,8 @@ class Stehfest(InverseLaplaceTransform):
         .. math ::
 
             V_k = (-1)^{k + N/2} \sum^{\min(k,N/2)}_{i=\lfloor(k+1)/2 \rfloor}
-            \frac{i^{\frac{N}{2}}(2i)!}{\left(\frac{N}{2}-i \right)! \, i! \, \left(i-1 
-            \right)! \, \left(k-i\right)! \, \left(2i-k \right)!}
+            \frac{i^{\frac{N}{2}}(2i)!}{\left(\frac{N}{2}-i \right)! \, i! \,
+            \left(i-1 \right)! \, \left(k-i\right)! \, \left(2i-k \right)!}
 
         As the degree increases, the abscissa (`p_k`) only increase
         linearly towards `\infty`, but the Stehfest coefficients
@@ -319,10 +319,10 @@ class Stehfest(InverseLaplaceTransform):
         significance when evaluating the sum.
 
         **References**
-        
+
         1. Widder, D. (1941). *The Laplace Transform*. Princeton.
         2. Stehfest, H. (1970). Algorithm 368: numerical inversion of
-           Laplace transforms. *Communications of the ACM* 13(1):47-49, 
+           Laplace transforms. *Communications of the ACM* 13(1):47-49,
            http://dx.doi.org/10.1145/361953.361969
 
         """
@@ -356,7 +356,7 @@ class deHoog(InverseLaplaceTransform):
 
             p_k = \gamma + \frac{jk}{T} \qquad 0 \le k < 2M+1
 
-        where 
+        where
 
         .. math ::
 
@@ -432,7 +432,7 @@ class deHoog(InverseLaplaceTransform):
 
             f(t,2M+1) = \frac{e^{\gamma t}}{T} \sum_{k=0}^{2M}{}^{'}
             \Re\left[\bar{f}\left( p_k \right)
-            e^{i\pi t/T} \right], 
+            e^{i\pi t/T} \right],
 
         where the prime on the summation indicates the first term is halved.
 
@@ -444,16 +444,16 @@ class deHoog(InverseLaplaceTransform):
         numerical approach.
 
         **References**
-        
+
         1. Davies, B. (2005). *Integral Transforms and their
-           Applications*, Third Edition. Springer.  
+           Applications*, Third Edition. Springer.
         2. de Hoog, F., J. Knight, A. Stokes (1982). An improved
            method for numerical inversion of Laplace transforms. *SIAM
            Journal of Scientific and Statistical Computing* 3:357-366,
            http://dx.doi.org/10.1137/0903022
 
         """
-        
+
         M = self.degree
         np = self.np
         T = self.T
@@ -762,7 +762,7 @@ class LaplaceTransformInversionMethods(object):
            Economics, Engineering, and Physics*. Elsevier.
         2. Davies, B., B. Martin (1979). Numerical inversion of the
            Laplace transform: a survey and comparison of methods. *Journal
-           of Computational Physics* 33:1-32, 
+           of Computational Physics* 33:1-32,
            http://dx.doi.org/10.1016/0021-9991(79)90025-1
         3. Duffy, D.G. (1993). On the numerical inversion of Laplace
            transforms: Comparison of three new methods on characteristic
@@ -770,7 +770,7 @@ class LaplaceTransformInversionMethods(object):
            Software* 19(3):333-359, http://dx.doi.org/10.1145/155743.155788
         4. Kuhlman, K.L., (2013). Review of Inverse Laplace Transform
            Algorithms for Laplace-Space Numerical Approaches, *Numerical
-           Algorithms*, 63(2):339-355. 
+           Algorithms*, 63(2):339-355.
            http://dx.doi.org/10.1007/s11075-012-9625-3
 
         """
