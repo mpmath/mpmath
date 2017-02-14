@@ -49,9 +49,9 @@ class FixedTalbot(InverseLaplaceTransform):
         the approximation (degree) grows, the abscissa required for
         function evaluation tend towards `-\infty`, requiring high
         precision to prevent overflow.  If any poles, branch cuts or
-        other singularities exist such that the Bromwich contour
-        crosses over the singularity during deformation, the method
-        will fail.
+        other singularities exist such that the deformed Bromwich
+        contour lies to the left of the singularity, the method will
+        fail.
 
         **Optional arguments**
 
@@ -74,10 +74,14 @@ class FixedTalbot(InverseLaplaceTransform):
         chosen to achieve maximum resulting precision for the
         specified degree.
 
-        `p_0=\frac{r}{t}`
+        .. math ::
 
-        `p_i=\frac{i r \pi}{Mt_\mathrm{max}}\left[\cot\left(
-        \frac{i\pi}{M}\right) + j \right] \qquad 1\le i <M`
+            p_0=\frac{r}{t}
+
+        .. math ::
+
+            p_i=\frac{i r \pi}{Mt_\mathrm{max}}\left[\cot\left(
+            \frac{i\pi}{M}\right) + j \right] \qquad 1\le i <M
 
         where `j=\sqrt{-1}`, `r=2M/5`, and `t_\mathrm{max}` is the
         maximum specified time.
@@ -139,16 +143,22 @@ class FixedTalbot(InverseLaplaceTransform):
         r"""The fixed Talbot time-domain solution is computed from the
         Laplace-space function evaluations using
 
-        `f(t,M)=\frac{2}{5t}\sum_{k=0}^{M-1}\Re \left[
-        \gamma_k \bar{f}(p_k)\right]`
+        .. math ::
+
+            f(t,M)=\frac{2}{5t}\sum_{k=0}^{M-1}\Re \left[
+            \gamma_k \bar{f}(p_k)\right]
 
         where
 
-        `\gamma_0 = \frac{1}{2}e^{r}\bar{f}(p_0)`
+        .. math ::
 
-        `\gamma_k = e^{tp_k}\left\lbrace 1 + \frac{jk\pi}{M}\left[1 +
-        \cot \left( \frac{k \pi}{M} \right)^2 \right] - j\cot\left(
-        \frac{k \pi}{M}\right)\right \rbrace \qquad 1\le k<M`.
+            \gamma_0 = \frac{1}{2}e^{r}\bar{f}(p_0)
+
+        .. math ::
+
+            \gamma_k = e^{tp_k}\left\lbrace 1 + \frac{jk\pi}{M}\left[1 +
+            \cot \left( \frac{k \pi}{M} \right)^2 \right] - j\cot\left(
+            \frac{k \pi}{M}\right)\right \rbrace \qquad 1\le k<M.
 
         Again, `j=\sqrt{-1}`.
 
@@ -159,11 +169,11 @@ class FixedTalbot(InverseLaplaceTransform):
         **References**
 
         1. Abate, J., P. Valko (2004). Multi-precision Laplace
-           transform inversion. International Journal for Numerical
-           Methods in Engineering 60:979-993,
+           transform inversion. *International Journal for Numerical
+           Methods in Engineering* 60:979-993,
            http://dx.doi.org/10.1002/nme.995
         2. Talbot, A. (1979). The accurate numerical inversion of
-           Laplace transforms. IMA Journal of Applied Mathematics
+           Laplace transforms. *IMA Journal of Applied Mathematics*
            23(1):97, http://dx.doi.org/10.1093/imamat/23.1.97
         """
 
@@ -221,7 +231,9 @@ class Stehfest(InverseLaplaceTransform):
         chosen to achieve maximum resulting precision for the
         specified degree.
 
-        `p_k = \frac{k \log 2}{t} \qquad 1 \le k \le M`
+        .. math ::
+
+            p_k = \frac{k \log 2}{t} \qquad 1 \le k \le M
         """
 
         # required
@@ -287,27 +299,32 @@ class Stehfest(InverseLaplaceTransform):
     def calc_time_domain_solution(self,fp,t,manual_prec=False):
         r"""Compute time-domain Stehfest algorithm solution.
 
-        `f(t,M) = \frac{\log 2}{t} \sum_{k=1}^{M} V_k \bar{f}\left(
-        p_k \right)`
+        .. math ::
+
+            f(t,M) = \frac{\log 2}{t} \sum_{k=1}^{M} V_k \bar{f}\left(
+            p_k \right)
 
         where
 
-        `V_k = (-1)^{k + N/2} \sum^{\min(k,N/2)}_{j=\lfloor(k+1)/2 \rfloor}
-        \frac{j^{\frac{N}{2}}(2j)!}{\left(\frac{N}{2}-j \right)! \, j! \, \left(j-1 
-        \right)! \, \left(k-j\right)! \, \left(2j-k \right)!}`
+        .. math ::
 
-        As the degree is made larger, the abscissa (`p_k`) only
-        increase linearly towards `\infty`, but the Stehfest
-        coefficients (`V_k`) alternate in sign and increase rapidly in
-        sign, requiring high precision to prevent overflow or loss of
+            V_k = (-1)^{k + N/2} \sum^{\min(k,N/2)}_{i=\lfloor(k+1)/2 \rfloor}
+            \frac{i^{\frac{N}{2}}(2i)!}{\left(\frac{N}{2}-i \right)! \, i! \, \left(i-1 
+            \right)! \, \left(k-i\right)! \, \left(2i-k \right)!}
+
+        As the degree increases, the abscissa (`p_k`) only increase
+        linearly towards `\infty`, but the Stehfest coefficients
+        (`V_k`) alternate in sign and increase rapidly in sign,
+        requiring high precision to prevent overflow or loss of
         significance when evaluating the sum.
 
         **References**
         
-        1. Widder, D. (1941). The Laplace Transform. Princeton.
+        1. Widder, D. (1941). *The Laplace Transform*. Princeton.
         2. Stehfest, H. (1970). Algorithm 368: numerical inversion of
-           Laplace transforms. Communications of the ACM 13(1):47-49, 
+           Laplace transforms. *Communications of the ACM* 13(1):47-49, 
            http://dx.doi.org/10.1145/361953.361969
+
         """
 
         # required
@@ -335,11 +352,15 @@ class deHoog(InverseLaplaceTransform):
         accelerated form of the Fourier series numerical
         inverse Laplace transform algorithms.
 
-        `p_k = \gamma + jk/T \qquad 0 \le k < 2M+1`
+        .. math ::
+
+            p_k = \gamma + \frac{jk}{T} \qquad 0 \le k < 2M+1
 
         where 
 
-        `\gamma = \alpha - \log(\mathrm{tol})/(2T)`,
+        .. math ::
+
+            \gamma = \alpha - \frac{\log \mathrm{tol}}{2T},
 
         `j=\sqrt{-1}`, `T = 2t_\mathrm{max}` is a scaled time,
         `\alpha=10^{-\mathrm{dps\_goal}}` is the real part of the
@@ -407,25 +428,30 @@ class deHoog(InverseLaplaceTransform):
 
         The un-accelerated Fourier series approach is:
 
-        `f(t,2M+1) = \frac{e^{\gamma t}}{T} \sum_{k=0}^{2M}{}^{'}
-        \Re\left[\bar{f}\left( p_k \right)
-        e^{i\pi t/T} \right]`, 
+        .. math ::
+
+            f(t,2M+1) = \frac{e^{\gamma t}}{T} \sum_{k=0}^{2M}{}^{'}
+            \Re\left[\bar{f}\left( p_k \right)
+            e^{i\pi t/T} \right], 
 
         where the prime on the summation indicates the first term is halved.
 
         This simplistic approach requires so many function evaluations
         that it is not practical. Non-linear acceleration is
         accomplished via Pade-approximation and an analytic expression
-        for the remainder of the continued fraction.
+        for the remainder of the continued fraction. See the original
+        paper (reference 2 below) a detailed description of the
+        numerical approach.
 
         **References**
         
-        1. Davies, B. (2005). Integral Transforms and their
-           Applications, Third Edition. Springer.  
+        1. Davies, B. (2005). *Integral Transforms and their
+           Applications*, Third Edition. Springer.  
         2. de Hoog, F., J. Knight, A. Stokes (1982). An improved
-           method for numerical inversion of Laplace transforms. SIAM
-           Journal of Scientific and Statistical Computing 3:357-366,
+           method for numerical inversion of Laplace transforms. *SIAM
+           Journal of Scientific and Statistical Computing* 3:357-366,
            http://dx.doi.org/10.1137/0903022
+
         """
         
         M = self.degree
@@ -512,70 +538,84 @@ class LaplaceTransformInversionMethods:
         Laplace-space function at a given time.  The function being
         evaluated is assumed to be a real-valued function of time.
 
-        The user must supply a Laplace-space function (`\bar{f}(p)`),
-        and a desired time to estimate the time-domain solution (`f(t)`)
-        at.
+        The user must supply a Laplace-space function `\bar{f}(p)`,
+        and a desired time at which to estimate the time-domain
+        solution `f(t)`.
 
         A few basic examples of Laplace-space functions with known
         inverses (see references [1,2]) ::
 
         >>> from mpmath import *
         >>> mp.dps = 15
-        >>> tvec = [0.001, 0.01, 0.1, 1, 10]
+        >>> tt = [0.001, 0.01, 0.1, 1, 10]
 
-        `\mathcal{L}\left\lbrace f(t) \right\rbrace=\bar{f}(p)`
+        .. math ::
 
-        `\mathcal{L}^{-1}\left\lbrace \bar{f}(p) \right\rbrace = f(t)`
+            \mathcal{L}\left\lbrace f(t) \right\rbrace=\bar{f}(p)
 
-        `\bar{f}(p) = \frac{1}{(p+1)^2}`
+        .. math ::
 
-        `f(t) = t e^{-t}`
+            \mathcal{L}^{-1}\left\lbrace \bar{f}(p) \right\rbrace = f(t)
+
+        .. math ::
+
+            \bar{f}(p) = \frac{1}{(p+1)^2}
+
+        .. math ::
+
+            f(t) = t e^{-t}
 
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
-        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t,method='talbot')) for t in tvec]
-        [(0.001, mpf('0.0009990004998333751'), mpf('8.5792304356121216e-20')),
-        (0.01, mpf('0.0099004983374916811'), mpf('3.2700764669804695e-19')),
-        (0.1, mpf('0.09048374180359596'), mpf('-1.7521580005216785e-18')),
-        (1.0, mpf('0.36787944117144233'), mpf('1.2428864009344032e-17')),
-        (10.0, mpf('0.00045399929762484856'), mpf('4.0451348930665763e-20'))]
+        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='talbot')
+        (0.001, 0.000999000499833375, 8.57923043561212e-20)
+        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='talbot')
+        (0.01, 0.00990049833749168, 3.27007646698047e-19)
+        >>> tt[2],ft(tt[2]),ft(tt[2])-invertlaplace(fp,tt[2],method='talbot')
+        (0.1, 0.090483741803596, -1.75215800052168e-18)
+        >>> tt[3],ft(tt[3]),ft(tt[3])-invertlaplace(fp,tt[3],method='talbot')
+        (1, 0.367879441171442, 1.2428864009344e-17)
+        >>> tt[4],ft(tt[4]),ft(tt[4])-invertlaplace(fp,tt[4],method='talbot')
+        (10, 0.000453999297624849, 4.04513489306658e-20)
 
         The methods also work for higher precision:
 
         >>> mp.dps = 100
-        >>> [(t,nstr(ft(t),15),nstr(ft(t)-invertlaplace(fp,t,method='talbot'),15)) for t in tvec]
-        [(0.001, '0.000999000499833375', '-4.96868310693356e-105'),
-        (0.01, '0.00990049833749168', '1.23032291513122e-104'),
-        (0.1, '0.090483741803596', '7.25752777054208e-103'),
-        (1.0, '0.367879441171442', '1.0212982518952e-102'),
-        (10.0, '0.000453999297624849', '1.43644942538356e-105')]
+        >>> tt[0],nstr(ft(tt[0]),15),nstr(ft(tt[0])-invertlaplace(fp,tt[0],method='talbot'),15)
+        (0.001, '0.000999000499833375', '-4.96868310693356e-105')
+        >>> tt[1],nstr(ft(tt[1]),15),nstr(ft(tt[1])-invertlaplace(fp,tt[1],method='talbot'),15)
+        (0.01, '0.00990049833749168', '1.23032291513122e-104')
 
-        `\bar{f}(p) = \frac{1}{p^2+1}`
+        .. math ::
 
-        `f(t) = \mathrm{J}_0(t)`
+            \bar{f}(p) = \frac{1}{p^2+1}
+
+        .. math ::
+
+            f(t) = \mathrm{J}_0(t)
 
         >>> mp.dps = 15
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
-        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t)) for t in tvec]
-        [(0.001, mpf('0.99999975000001562'), mpf('-8.2477943034013953e-18')),
-        (0.01, mpf('0.99997500015624957'), mpf('-3.6981014489887214e-17')),
-        (0.1, mpf('0.99750156206604003'), mpf('1.7277947790359516e-18')),
-        (1.0, mpf('0.76519768655796655'), mpf('1.0619604044683858e-17')),
-        (10.0, mpf('-0.24593576445134834'), mpf('-3.2166963159814471e-17'))]
+        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
+        (0.001, 0.999999750000016, -8.2477943034014e-18)
+        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1])
+        (0.01, 0.99997500015625, -3.69810144898872e-17)
 
-        `\bar{f}(p) = \frac{\log p}{p}`
+        .. math ::
 
-        `f(t) = -\gamma -\log t`
+            \bar{f}(p) = \frac{\log p}{p}
+
+        .. math ::
+
+            f(t) = -\gamma -\log t
 
         >>> fp = lambda p: log(p)/p
         >>> ft = lambda t: -euler-log(t)
-        >>> [(t,ft(t),ft(t)-invertlaplace(fp,t,method='stehfest')) for t in tvec]
-        [(0.001, mpf('6.3305396140806041'), mpf('-1.9212663483786344e-16')),
-        (0.01, mpf('4.0279545210865582'), mpf('-4.814860932007035e-16')),
-        (0.1, mpf('1.7253694280925127'), mpf('-7.2309776669517614e-18')),
-        (1.0, mpf('-0.57721566490153287'), mpf('2.4823521988792137e-17')),
-        (10.0, mpf('-2.8798007578955787'), mpf('-1.1353030106517025e-16'))]
+        >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
+        (0.001, 6.3305396140806, -1.92126634837863e-16)
+        >>> tt[1],ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='stehfest')
+        (0.01, 4.02795452108656, -4.81486093200704e-16)
 
         **Options**
 
@@ -602,31 +642,33 @@ class LaplaceTransformInversionMethods:
 
         All three algorithms implement a heuristic balance between the
         requested precision and the precision used internally for the
-        calculations. This has been tuned for precision up to few
-        hundred decimal digits. 
+        calculations. This has been tuned for a typical exponentially
+        decaying function and precision up to few hundred decimal
+        digits.
 
-        The Laplace transform converts behavior for time (i.e., along
-        a line) into the entire complex `p`-plane.  Singularities,
-        poles, and branch cuts in the complex `p`-plane contain all
-        the information regarding the time behavior of the function of
-        interest. Any numerical method must therefore sample `p`-plane
-        "close enough" to the singularities to accurately characterize
-        them, while not getting too close to have catastrophic
-        cancellation issues. Most significantly, if one or more of the
+        The Laplace transform converts the variable time (i.e., along
+        a line) into a parameter given by the right half of the
+        complex `p`-plane.  Singularities, poles, and branch cuts in
+        the complex `p`-plane contain all the information regarding
+        the time behavior of the corresponding function. Any numerical
+        method must therefore sample `p`-plane "close enough" to the
+        singularities to accurately characterize them, while not
+        getting too close to have catastrophic cancellation, overflow,
+        or underflow issues. Most significantly, if one or more of the
         singularities in the `p`-plane is not on the left side of the
         Bromwich contour, its effects will be left out of the computed
-        solution, and the answer will be wrong.
+        solution, and the answer will be completely wrong.
 
         *Talbot*
 
         The fixed Talbot method is high accuracy and fast, but the
-        method can catastrophically fail for certain time-domain
-        behaviors, including a Heaviside step function for positive
+        method can catastrophically fail for certain classes of time-domain
+        behavior, including a Heaviside step function for positive
         time (e.g., `H(t-2)`), or some oscillatory behaviors. The
         Talbot method usually has adjustable parameters, but the
         "fixed" variety implemented here does not. This method
         deforms the Bromwich integral contour in the shape of a
-        parabola headed towards `-\infty`, which leads to problems
+        parabola towards `-\infty`, which leads to problems
         when the solution has a decaying exponential in it (e.g., a
         Heaviside step function is equivalent to multiplying by a
         decaying exponential in Laplace space).
@@ -634,21 +676,24 @@ class LaplaceTransformInversionMethods:
         *Stehfest*
 
         The Stehfest algorithm only uses abscissa along the real axis
-        of the complex plane to estimate the time-domain
+        of the complex `p`-plane to estimate the time-domain
         function. Oscillatory time-domain functions have poles away
         from the real axis, so this method does not work well with
-        oscillatory functions. This method also depends on summation
-        of terms in a series that grows very large, and will have
-        catastrophic cancellation during summation if the working
-        precision is too low.
+        oscillatory functions, especially high-frequency ones. This
+        method also depends on summation of terms in a series that
+        grows very large, and will have catastrophic cancellation
+        during summation if the working precision is too low.
 
         *de Hoog et al.*
 
         The de Hoog, Knight, and Stokes method is essentially a
-        Fourier-series quadrature type approximation to the Bromwich
+        Fourier-series quadrature-type approximation to the Bromwich
         contour integral, with non-linear series acceleration and an
         analytical expression for the remainder term. This method is
-        typically the most robust and is therefore the default method.
+        typically the most robust and is therefore the default
+        method. This method also involves the greatest amount of
+        overhead, so it is typically the slowest of the three methods
+        at high precision.
 
         **Singularities**
 
@@ -679,21 +724,28 @@ class LaplaceTransformInversionMethods:
         completely wrong (the effect of singularities to the right of
         the Bromwich contour are not included in the results).
 
-        For example:
+        For example, the following exponentially growing function has
+        a pole at `p=3`:
 
-        `\bar{f}(p)=\frac{1}{p^2-9}`
+        .. math ::
 
-        `f(t)=\frac{1}{3}\sinh 3t`
+            \bar{f}(p)=\frac{1}{p^2-9}
 
-        >>> from mpmath import *
+        .. math ::
+
+            f(t)=\frac{1}{3}\sinh 3t
+
         >>> fp = lambda p: 1/(p*p-9)
         >>> ft = lambda t: sinh(3*t)/3
-        >>> tvec = [0.01,0.1,1.0,10.0]
-        >>> [(t,ft(t),invertlaplace(fp,t,method='talbot')) for t in tvec]
-        [(0.01, mpf('0.010001500067501447'), mpf('0.010001500067501447')),
-        (0.1, mpf('0.10150676448238088'), mpf('0.10150676448238088')),
-        (1.0, mpf('3.3392916424699677'), mpf('3.3392916424699673')),
-        (10.0, mpf('1781079096920.7439'), mpf('-1.6133106962409078e-14'))]
+        >>> tt = [0.01,0.1,1.0,10.0]
+        >>> tt[0],ft(tt[0]),invertlaplace(fp,tt[0],method='talbot')
+        (0.01, 0.0100015000675014, 0.0100015000675014)
+        >>> tt[1],ft(tt[1]),invertlaplace(fp,tt[1],method='talbot')
+        (0.1, 0.101506764482381, 0.101506764482381)
+        >>> tt[2],ft(tt[2]),invertlaplace(fp,tt[2],method='talbot')
+        (1.0, 3.33929164246997, 3.33929164246997)
+        >>> tt[3],ft(tt[3]),invertlaplace(fp,tt[3],method='talbot')
+        (10.0, 1781079096920.74, -1.61331069624091e-14)
 
         **References**
 
@@ -702,22 +754,22 @@ class LaplaceTransformInversionMethods:
            Inversion, Springer.
         3. Duffy, D.G. (1998). Advanced Engineering Mathematics, CRC Press.
 
-        **Reviews**
+        **Numerical Inverse Laplace Transform Reviews**
 
-        1. Bellman, R., R.E. Kalaba, J.A. Lockett (1966). Numerical
+        1. Bellman, R., R.E. Kalaba, J.A. Lockett (1966). *Numerical
            inversion of the Laplace transform: Applications to Biology,
-           Economics, Engineering, and Physics. Elsevier.
+           Economics, Engineering, and Physics*. Elsevier.
         2. Davies, B., B. Martin (1979). Numerical inversion of the
-           Laplace transform: a survey and comparison of methods. Journal
-           of Computational Physics 33:1-32, 
+           Laplace transform: a survey and comparison of methods. *Journal
+           of Computational Physics* 33:1-32, 
            http://dx.doi.org/10.1016/0021-9991(79)90025-1
         3. Duffy, D.G. (1993). On the numerical inversion of Laplace
            transforms: Comparison of three new methods on characteristic
-           problems from applications. ACM Transactions on Mathematical
-           Software 19(3):333-359, http://dx.doi.org/10.1145/155743.155788
+           problems from applications. *ACM Transactions on Mathematical
+           Software* 19(3):333-359, http://dx.doi.org/10.1145/155743.155788
         4. Kuhlman, K.L., (2013). Review of Inverse Laplace Transform
-           Algorithms for Laplace-Space Numerical Approaches, Numerical
-           Algorithms, 63(2):339-355. 
+           Algorithms for Laplace-Space Numerical Approaches, *Numerical
+           Algorithms*, 63(2):339-355. 
            http://dx.doi.org/10.1007/s11075-012-9625-3
 
         """
