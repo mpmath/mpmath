@@ -545,10 +545,6 @@ class LaplaceTransformInversionMethods:
         A few basic examples of Laplace-space functions with known
         inverses (see references [1,2]) ::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15
-        >>> tt = [0.001, 0.01, 0.1, 1, 10]
-
         .. math ::
 
             \mathcal{L}\left\lbrace f(t) \right\rbrace=\bar{f}(p)
@@ -565,6 +561,9 @@ class LaplaceTransformInversionMethods:
 
             f(t) = t e^{-t}
 
+        >>> from mpmath import *
+        >>> mp.dps = 15; mp.pretty = True
+        >>> tt = [0.001, 0.01, 0.1, 1, 10]
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
         >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='talbot')
@@ -580,7 +579,7 @@ class LaplaceTransformInversionMethods:
 
         The methods also work for higher precision:
 
-        >>> mp.dps = 100
+        >>> mp.dps = 100; mp.pretty = True
         >>> tt[0],nstr(ft(tt[0]),15),nstr(ft(tt[0])-invertlaplace(fp,tt[0],method='talbot'),15)
         (0.001, '0.000999000499833375', '-4.96868310693356e-105')
         >>> tt[1],nstr(ft(tt[1]),15),nstr(ft(tt[1])-invertlaplace(fp,tt[1],method='talbot'),15)
@@ -594,7 +593,7 @@ class LaplaceTransformInversionMethods:
 
             f(t) = \mathrm{J}_0(t)
 
-        >>> mp.dps = 15
+        >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
         >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
@@ -610,6 +609,7 @@ class LaplaceTransformInversionMethods:
 
             f(t) = -\gamma -\log t
 
+        >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: log(p)/p
         >>> ft = lambda t: -euler-log(t)
         >>> tt[0],ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
@@ -735,6 +735,7 @@ class LaplaceTransformInversionMethods:
 
             f(t)=\frac{1}{3}\sinh 3t
 
+        >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: 1/(p*p-9)
         >>> ft = lambda t: sinh(3*t)/3
         >>> tt = [0.01,0.1,1.0,10.0]
