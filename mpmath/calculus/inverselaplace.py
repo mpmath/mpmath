@@ -1,3 +1,5 @@
+# contributed to mpmath by Kristopher L. Kuhlman, February 2017
+
 class InverseLaplaceTransform(object):
     r"""
     Inverse Laplace transform methods are implemented using this
@@ -543,7 +545,7 @@ class LaplaceTransformInversionMethods(object):
         solution `f(t)`.
 
         A few basic examples of Laplace-space functions with known
-        inverses (see references [1,2]) ::
+        inverses (see references [1,2]) :
 
         .. math ::
 

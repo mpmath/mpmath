@@ -56,3 +56,9 @@ order, or working precision which were computed.
 
 >>> myTalbot.degree
 34
+
+Credit
+......
+
+The numerical inverse Laplace transform functionality was contributed
+to mpmath by Kristopher L. Kuhlman in 2017.
