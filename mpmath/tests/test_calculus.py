@@ -126,3 +126,31 @@ def test_fourier():
 def test_differint():
     mp.dps = 15
     assert differint(lambda t: t, 2, -0.5).ae(8*sqrt(2/pi)/3)
+
+def test_invlap():
+    mp.dps = 15
+    t = 0.01
+    fp = lambda p: 1/(p+1)**2
+    ft = lambda t: t*exp(-t)
+    ftt = ft(t)
+    assert invertlaplace(fp,t,method='talbot').ae(ftt)
+    assert invertlaplace(fp,t,method='stehfest').ae(ftt)
+    assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    t = 1.0
+    ftt = ft(t)
+    assert invertlaplace(fp,t,method='talbot').ae(ftt)
+    assert invertlaplace(fp,t,method='stehfest').ae(ftt)
+    assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+
+    t = 0.01
+    fp = lambda p: log(p)/p
+    ft = lambda t: -euler-log(t)
+    ftt = ft(t)
+    assert invertlaplace(fp,t,method='talbot').ae(ftt)
+    assert invertlaplace(fp,t,method='stehfest').ae(ftt)
+    assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    t = 1.0
+    ftt = ft(t)
+    assert invertlaplace(fp,t,method='talbot').ae(ftt)
+    assert invertlaplace(fp,t,method='stehfest').ae(ftt)
+    assert invertlaplace(fp,t,method='dehoog').ae(ftt)

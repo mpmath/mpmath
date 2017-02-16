@@ -11,3 +11,4 @@ Numerical calculus
    integration.txt
    odes.txt
    approximation.txt
+   inverselaplace.txt
