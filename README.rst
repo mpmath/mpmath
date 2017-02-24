@@ -176,3 +176,8 @@ mpmath@googlegroups.com
 
 You can also report bugs and send patches to the mpmath issue tracker,
 https://github.com/fredrik-johansson/mpmath/issues
+
+This project adheres to
+[No Code of Conduct]((https://github.com/domgetter/NCoC).
+Contributions will be judged by their technical merit.
+Nothing else matters.
