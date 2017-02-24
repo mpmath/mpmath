@@ -2816,9 +2816,9 @@ series terminates before the division by zero occurs)::
     >>> hyper([1,1,1,-1],[-2,5],1)
     1.1
 
-With the keyword argument ``eliminate=True``, function degree reduced
+With the keyword argument ``eliminate=True``, the function degree is reduced
 first by cancellation of common parameters.  For nonpositive parameters
-that may lead to the different function definition::
+that may lead to a different function definition::
 
     >>> hyper([-1, 1],[-1],2)
     3.0
