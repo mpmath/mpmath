@@ -2816,6 +2816,15 @@ series terminates before the division by zero occurs)::
     >>> hyper([1,1,1,-1],[-2,5],1)
     1.1
 
+With the keyword argument ``eliminate=True``, function degree reduced
+first by cancellation of common parameters.  For nonpositive parameters
+that may lead to the different function definition::
+
+    >>> hyper([-1, 1],[-1],2)
+    3.0
+    >>> hyper([-1, 1],[-1],2,eliminate=True)
+    -1.0
+
 Except for polynomial cases, the radius of convergence `R` of the hypergeometric
 series is either `R = \infty` (if `p \le q`), `R = 1` (if `p = q+1`), or
 `R = 0` (if `p > q+1`).

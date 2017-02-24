@@ -202,7 +202,7 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     a_s = [ctx._convert_param(a) for a in a_s]
     b_s = [ctx._convert_param(b) for b in b_s]
     # Reduce degree by eliminating common parameters
-    if kwargs.get('eliminate', True):
+    if kwargs.get('eliminate', False):
         i = 0
         while i < q and a_s:
             b = b_s[i]
