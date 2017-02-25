@@ -381,8 +381,13 @@ class deHoog(InverseLaplaceTransform):
 
         """
 
+        # required
+        # ------------------------------
         self.t = self.ctx.convert(t)
-        self.tmax = self.t
+
+        # optional
+        # ------------------------------
+        self.tmax = kwargs.get('tmax',self.t)
 
         # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
