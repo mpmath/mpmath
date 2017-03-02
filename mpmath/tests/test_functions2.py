@@ -152,6 +152,10 @@ def test_hyper_misc():
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
     mp.dps = 15
 
+    # defaults for eliminate
+    assert hyper([-1,1],[-1],2) == 3
+    assert hyper([-1,1],[-1],2,eliminate=True) == -1
+
 def test_elliptic_integrals():
     mp.dps = 15
     assert ellipk(0).ae(pi/2)
@@ -519,8 +523,8 @@ def test_hyper_2f1():
 def test_hyper_2f1_hard():
     mp.dps = 15
     # Singular cases
-    assert hyp2f1(2,-1,-1,3).ae(0.25)
-    assert hyp2f1(2,-2,-2,3).ae(0.25)
+    assert hyp2f1(2,-1,-1,3,eliminate=True).ae(0.25)
+    assert hyp2f1(2,-2,-2,3,eliminate=True).ae(0.25)
     assert hyp2f1(2,-1,-1,3,eliminate=False) == 7
     assert hyp2f1(2,-2,-2,3,eliminate=False) == 34
     assert hyp2f1(2,-2,-3,3) == 14
