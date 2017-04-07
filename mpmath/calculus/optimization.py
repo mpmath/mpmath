@@ -887,7 +887,7 @@ def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **
         >>> findroot(lambda x: x**2, (-1, .5), solver='anderson')
         Traceback (most recent call last):
           ...
-        ValueError: Could not find root within given tolerance. (1 > 2.1684e-19)
+        ValueError: Could not find root within given tolerance. (1.0 > 2.16840434497100886801e-19)
         Try another starting point or tweak arguments.
 
     """
