@@ -684,12 +684,12 @@ class MDNewton:
 # UTILITIES #
 #############
 
-str2solver = {'newton':Newton, 'secant':Secant,'mnewton':MNewton,
+str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
               'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
 
-def findroot(ctx, f, x0, solver=Secant, tol=None, verbose=False, verify=True, **kwargs):
+def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
     Find a solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
