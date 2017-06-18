@@ -398,7 +398,6 @@ kei = mp.kei
 coulombc = mp.coulombc
 coulombf = mp.coulombf
 coulombg = mp.coulombg
-lambertw = mp.lambertw
 barnesg = mp.barnesg
 superfac = mp.superfac
 hyperfac = mp.hyperfac
