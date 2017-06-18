@@ -82,11 +82,11 @@ class QuadratureRule(object):
 
         .. math ::
 
-            [a, \infty] : t = \frac{1}{x} + (a-1)
+            \lbrack a, \infty \rbrack : t = \frac{1}{x} + (a-1)
 
-            [-\infty, b] : t = (b+1) - \frac{1}{x}
+            \lbrack -\infty, b \rbrack : t = (b+1) - \frac{1}{x}
 
-            [-\infty, \infty] : t = \frac{x}{\sqrt{1-x^2}}
+            \lbrack -\infty, \infty \rbrack : t = \frac{x}{\sqrt{1-x^2}}
 
         """
         ctx = self.ctx
