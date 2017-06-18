@@ -9648,7 +9648,7 @@ are permitted to be complex numbers.
 
 .. note ::
 
-    :func:`~mpmath.spherharm` returns a complex number, even the value is
+    :func:`~mpmath.spherharm` returns a complex number, even if the value is
     purely real.
 
 **Plots**
