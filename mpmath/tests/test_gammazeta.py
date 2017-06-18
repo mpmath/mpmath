@@ -276,6 +276,10 @@ def test_zeta():
     mp.dps = 15
     # Complex reflection formula
     assert (zeta(-60+3j) / 10**34).ae(8.6270183987866146+15.337398548226238j)
+    # issue #358
+    assert zeta(0,0.5) == 0
+    assert zeta(0,0) == 0.5
+    assert zeta(0,0.5,1).ae(-0.34657359027997265)
 
 def test_altzeta():
     mp.dps = 15

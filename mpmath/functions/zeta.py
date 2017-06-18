@@ -537,6 +537,8 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
     prec = ctx.prec
     method = kwargs.get('method')
     verbose = kwargs.get('verbose')
+    if (not s) and (not derivative):
+        return ctx.mpf(0.5) - a
     if a == 1 and method != 'euler-maclaurin':
         im = abs(ctx._im(s))
         re = abs(ctx._re(s))
