@@ -506,6 +506,26 @@ Examples::
     [0.0]
 
 
+Stochastic matrices
+...................
+
+The routine ``stoch_eig`` returns the stochastic eigenvector of an
+irreducible stochastic matrix *P*, i.e., the stochastic vector `x` with
+`x P = x` (a stochastic matrix, or Markov transition matrix, is a real
+square matrix whose entries are nonnegative and rows sum to one).
+Internally, the routine passes the input to the ``gth_solve`` routine.
+
+The routine ``gth_solve`` solves for a (normalized) nontrivial solution
+to `x A = 0` for an irreducible transition rate matrix *A* (a transition
+rate matrix is a real square matrix whose off-diagonal entries are
+nonnegative and rows sum to zero), by using the Grassmann-Taksar-Heyman
+(GTH) algorithm, a numerically stable variant of Gaussian
+elimination.
+
+.. autofunction :: mpmath.stoch_eig
+.. autofunction :: mpmath.gth_solve
+
+
 Interval and double-precision matrices
 --------------------------------------
 
