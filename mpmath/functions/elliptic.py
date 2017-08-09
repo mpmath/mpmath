@@ -33,7 +33,7 @@ using the following relations:
 
 .. math ::
 
-    \tau = -i \frac{K(1-m)}{K(m)}
+    \tau = i \frac{K(1-m)}{K(m)}
 
 .. math ::
 
