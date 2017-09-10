@@ -2849,6 +2849,23 @@ Please note that, as currently implemented, evaluation of `\,_pF_{p-1}`
 with `p \ge 3` may be slow or inaccurate when `|z-1|` is small,
 for some parameter values.
 
+Evaluation may be aborted if convergence appears to be too slow.
+The optional ``maxterms`` (limiting the number of series terms) and ``maxprec``
+(limiting the internal precision) keyword arguments can be used
+to control evaluation::
+
+    >>> hyper([1,2,3], [4,5,6], 10000)
+    Traceback (most recent call last):
+      ...
+    NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
+    >>> hyper([1,2,3], [4,5,6], 10000, maxterms=10**6)
+    7.622806053177969474396918e+4310
+
+Additional options include ``force_series`` (which forces direct use of
+a hypergeometric series even if another evaluation method might work better)
+and ``asymp_tol`` which controls the target tolerance for using
+asymptotic series.
+
 When `p > q+1`, ``hyper`` computes the (iterated) Borel sum of the divergent
 series. For `\,_2F_0` the Borel sum has an analytic solution and can be
 computed efficiently (see :func:`~mpmath.hyp2f0`). For higher degrees, the functions
@@ -2885,6 +2902,34 @@ a value with full accuracy::
 
 Note that with the positive `z` value, there is a complex part in the
 correct result, which falls below the tolerance of the asymptotic series.
+
+By default, a parameter that appears in both ``a_s`` and ``b_s`` will be removed
+unless it is a nonpositive integer. This generally speeds up evaluation
+by producing a hypergeometric function of lower order.
+This optimization can be disabled by passing ``eliminate=False``.
+
+    >>> hyper([1,2,3], [4,5,3], 10000)
+    1.268943190440206905892212e+4321
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)
+    Traceback (most recent call last):
+      ...
+    NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False, maxterms=10**6)
+    1.268943190440206905892212e+4321
+
+If a nonpositive integer `-n` appears in both ``a_s`` and ``b_s``, this parameter
+cannot be unambiguously removed since it creates a term 0 / 0.
+In this case the hypergeometric series is understood to terminate before
+the division by zero occurs. This convention is consistent with Mathematica.
+An alternative convention of eliminating the parameters can be toggled
+with ``eliminate_all=True``:
+
+    >>> hyper([2,-1], [-1], 3)
+    7.0
+    >>> hyper([2,-1], [-1], 3, eliminate_all=True)
+    0.25
+    >>> hyper([2], [], 3)
+    0.25
 
 """
 
