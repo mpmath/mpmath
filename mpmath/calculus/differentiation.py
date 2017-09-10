@@ -453,7 +453,7 @@ def differint(ctx, f, x, n=1, x0=0):
 
     .. math ::
 
-        \,_{x_0}{\mathbb{D}}^n_xf(x) \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m}
+        \,_{x_0}{\mathbb{D}}^n_xf(x) = \frac{1}{\Gamma(m-n)} \frac{d^m}{dx^m}
         \int_{x_0}^{x}(x-t)^{m-n-1}f(t)dt
 
     where `f` is a given (presumably well-behaved) function,
