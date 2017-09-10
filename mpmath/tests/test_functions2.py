@@ -520,9 +520,9 @@ def test_hyper_2f1_hard():
     mp.dps = 15
     # Singular cases
     assert hyp2f1(2,-1,-1,3).ae(7)
-    assert hyp2f1(2,-1,-1,3,eliminate_poles=True).ae(0.25)
+    assert hyp2f1(2,-1,-1,3,eliminate_all=True).ae(0.25)
     assert hyp2f1(2,-2,-2,3).ae(34)
-    assert hyp2f1(2,-2,-2,3,eliminate_poles=True).ae(0.25)
+    assert hyp2f1(2,-2,-2,3,eliminate_all=True).ae(0.25)
     assert hyp2f1(2,-2,-3,3) == 14
     assert hyp2f1(2,-3,-2,3) == inf
     assert hyp2f1(2,-1.5,-1.5,3) == 0.25
