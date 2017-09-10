@@ -22,10 +22,9 @@ gmpy = None
 sage = None
 sage_utils = None
 
-try:
-    xrange
+if sys.version_info[0] < 3:
     python3 = False
-except NameError:
+else:
     python3 = True
 
 BACKEND = 'python'

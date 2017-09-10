@@ -1267,8 +1267,8 @@ into mpmath numbers::
 """
 
 re = r"""
-Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
-:func:`~mpmath.re` converts `x` to a mpmath number::
+Returns the real part of `x`, `\Re(x)`. :func:`~mpmath.re`
+converts a non-mpmath number to an mpmath number::
 
     >>> from mpmath import *
     >>> mp.dps = 15; mp.pretty = False
@@ -1279,8 +1279,8 @@ Returns the real part of `x`, `\Re(x)`. Unlike ``x.real``,
 """
 
 im = r"""
-Returns the imaginary part of `x`, `\Im(x)`. Unlike ``x.imag``,
-:func:`~mpmath.im` converts `x` to a mpmath number::
+Returns the imaginary part of `x`, `\Im(x)`. :func:`~mpmath.im`
+converts a non-mpmath number to an mpmath number::
 
     >>> from mpmath import *
     >>> mp.dps = 15; mp.pretty = False
