@@ -167,11 +167,14 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
         else:
             coeffs = [c/lead for c in coeffs]
         f = lambda x: ctx.polyval(coeffs, x)
-        if roots_init is None or len(roots_init) <= deg:
+        if roots_init is None:
             roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
-            roots[:len(roots_init)] = list(roots_init)
         else:
-            roots = list(roots_init[:deg+1])
+            roots = [None]*deg;
+            deg_init = min(deg, len(roots_init))
+            roots[:deg_init] = list(roots_init[:deg_init])
+            roots[deg_init:] = [ctx.mpc((0.4+0.9j)**n) for n
+                                in xrange(deg_init,deg)]
         err = [ctx.one for n in xrange(deg)]
         # Durand-Kerner iteration until convergence
         for step in xrange(maxsteps):
