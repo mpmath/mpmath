@@ -155,10 +155,10 @@ def test_polyroots_legendre_init():
     except (mp.NoConvergence):
         pass
     roots,err = polyroots(coeffs, maxsteps=5, cleanup=True, error=True,
-                          extraprec=100,roots_init=roots_init)
+                          extraprec=extra_prec,roots_init=roots_init)
     assert max(matrix(roots_exact)-matrix(roots).apply(abs)) < err
     roots1,err1 = polyroots(coeffs, maxsteps=25, cleanup=True, error=True,
-                            extraprec=100,roots_init=roots_init[:60])
+                            extraprec=extra_prec,roots_init=roots_init[:60])
     assert max(matrix(roots_exact)-matrix(roots1).apply(abs)) < err1
 
 def test_pade():
