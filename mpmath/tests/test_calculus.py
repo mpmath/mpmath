@@ -131,7 +131,7 @@ def test_polyroots_legendre_init():
         659769125727878493447120, 0,
         -1905929106580294155360, 0,
         916312070471295267]
-    
+
     roots_init =  matrix(['-0.999', '-0.996',  '-0.991', '-0.983', '-0.973',
                           '-0.961', '-0.946',  '-0.93',  '-0.911', '-0.889',
                           '-0.866', '-0.841',  '-0.813', '-0.784', '-0.753',
@@ -145,7 +145,6 @@ def test_polyroots_legendre_init():
                           '0.784',   '0.813',   '0.841',  '0.866',  '0.889',
                           '0.911',   '0.93',    '0.946',  '0.961',  '0.973',
                           '0.983',   '0.991',   '0.996',  '0.999',  '1.0'])
-                         
     with mp.workdps(2*mp.dps):
         roots_exact = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
                                 extraprec=2*extra_prec)
@@ -161,7 +160,7 @@ def test_polyroots_legendre_init():
     roots1,err1 = polyroots(coeffs, maxsteps=25, cleanup=True, error=True,
                             extraprec=100,roots_init=roots_init[:60])
     assert max(matrix(roots_exact)-matrix(roots1).apply(abs)) < err1
-        
+
 def test_pade():
     one = mpf(1)
     mp.dps = 20
