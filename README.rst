@@ -12,7 +12,7 @@ LICENSE file for details)
 0. History and credits
 ----------------------
 
-The following people have contributed patches and new features
+The following people (among others) have contributed patches and new features
 to mpmath:
 
 * Pearu Peterson <pearu.peterson@gmail.com>
@@ -31,6 +31,8 @@ to mpmath:
 * Ken Allen <ken.allen@sbcglobal.net>
 * Timo Hartmann <thartmann15@gmail.com>
 * Sergey B Kirpichev <skirpichev@gmail.com>
+* Kris Kuhlman <kristopher.kuhlman@gmail.com>
+* Paul Masson <paulmasson@analyticphysics.com>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
@@ -71,6 +73,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.0.0 released on September 27, 2017
 * Version 0.19 released on June 10, 2014
 * Version 0.18 released on December 31, 2013
 * Version 0.17 released on February 1, 2011
@@ -95,10 +98,13 @@ Release history:
 --------------------------
 
 Mpmath requires Python 2.5 or later. It has been tested
-with Python 2.5, 2.6, 2.7, 3.1 and 3.2.
+with Python 2.6, 2.7, and 3.2 through 3.5. It should also
+run under other Python implementations such as PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
-website. It should also be available in the Python Package Index at
+website and from https://github.com/fredrik-johansson/mpmath/releases
+
+It should also be available in the Python Package Index at
 https://pypi.python.org/pypi/mpmath
 
 To install latest release of Mpmath with pip, simply run

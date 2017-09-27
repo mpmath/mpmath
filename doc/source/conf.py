@@ -24,7 +24,7 @@ sys.path.insert(0, '../..')
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
 
 # MathJax file, which is free to use.  See http://www.mathjax.org/docs/2.0/start.html
-mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full'
+# mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
@@ -37,7 +37,7 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'mpmath'
-copyright = '2007-2014, Fredrik Johansson'
+copyright = '2007-2017, Fredrik Johansson and mpmath developers'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.

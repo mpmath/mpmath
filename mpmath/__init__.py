@@ -1,4 +1,4 @@
-__version__ = '0.20-git'
+__version__ = '1.0.0'
 
 from .usertools import monitor, timing
 

@@ -1,3 +1,42 @@
+--1.0.0--
+Released September 27, 2017
+
+* Bumped to major version number for 10 year anniversary
+* Added module for inverse Laplace transforms, including the top level
+  function invertlaplace() as well as several different algorithms
+  (Talbot, Gaver-Stehfest and de Hoog) implemented in
+  mpmath.calculus.inverselaplace (Kris Kuhlman)
+* Fixed bugs in elliprg() giving incorrect values for certain input
+* Fixed wrong degree 1 nodes for Gaussian quadrature
+* Made make acot(0) and acoth(0) return a finite result
+* Fixed sieved zeta sum not being used in Python 3, and added cutoff
+  for sieved zeta sum on 32-bit systems when too much memory would be used
+* Fixed zeta(0,0.5) to return correct value instead of raising
+  NoConvergence exception
+* Added detection of exact zeros in gammainc(), in particular fixing
+  NoConvergence error for gammainc(3,-1+1j)
+* Fixed wrong values from besseli() due to improper internal precision
+* Fixed bessely(0,1j) to return complex nan instead of raising NameError
+  (Paul Masson)
+* Changed float() and complex() applied to an mpf or mpc to use rounding
+  to nearest (or the context rounding mode) instead truncating
+* Fix imaginary part of gammainc(n,x), n negative odd int, x < 0
+* Added alternative "phase" color scheme to cplot()
+* Better error message for int(inf) or int(nan) (Aaron Meurer)
+* Fixed polyroots() with error=True
+* Added support to pass optional initial values to polyroots()
+  (Michael Kagalenko)
+* Rewrote the Python major version selection to make it work if something
+  else has redefined xrange (Arne Brys)
+* Switched documentation formula rendering to MathJax (Sergey B Kirpichev)
+* Fixed documentation TeX build (Sergey B Kirpichev)
+* Added PEP8 conformity testing (Sergey B Kirpichev)
+* Various fixes for the test code and test infrastructure on different
+  platforms and Python versions (Sergey B Kirpichev)
+* Fixed module paths in setup.py (Aaron Meurer)
+* Documented more options for methods such as nstr() and hyper()
+* Miscellaneous corrections to the documentation (various)
+
 --0.19--
 Released June 10, 2014
 
