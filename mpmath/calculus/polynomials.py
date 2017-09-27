@@ -45,7 +45,7 @@ def polyval(ctx, coeffs, x, derivative=False):
 
 @defun
 def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
-        error=False):
+        error=False, roots_init=None):
     """
     Computes all roots (real or complex) of a given polynomial.
 
@@ -167,7 +167,14 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
         else:
             coeffs = [c/lead for c in coeffs]
         f = lambda x: ctx.polyval(coeffs, x)
-        roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
+        if roots_init is None:
+            roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
+        else:
+            roots = [None]*deg;
+            deg_init = min(deg, len(roots_init))
+            roots[:deg_init] = list(roots_init[:deg_init])
+            roots[deg_init:] = [ctx.mpc((0.4+0.9j)**n) for n
+                                in xrange(deg_init,deg)]
         err = [ctx.one for n in xrange(deg)]
         # Durand-Kerner iteration until convergence
         for step in xrange(maxsteps):
