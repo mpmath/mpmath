@@ -1261,10 +1261,10 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
+    x = x.lower().rstrip('l')
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
-    x = x.lower()
     parts = x.split('e')
     if len(parts) == 1:
         exp = 0
@@ -1291,12 +1291,13 @@ def from_str(x, prec, rnd=round_fast):
 
     TODO: the rounding does not work properly for large exponents.
     """
-    x = x.strip()
+    x = x.lower().strip()
     if x in special_str:
         return special_str[x]
 
     if '/' in x:
         p, q = x.split('/')
+        p, q = p.rstrip('l'), q.rstrip('l')
         return from_rational(int(p), int(q), prec, rnd)
 
     man, exp = str_to_man_exp(x, base=10)
