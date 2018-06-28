@@ -438,8 +438,7 @@ class GaussLegendre(QuadratureRule):
                 # recurrence relation
                 for j1 in xrange(1,n+1):
                     t3, t2, t1 = t2, t1, ((2*j1-1)*r*t1 - (j1-1)*t2)/j1
-                t4 = n*(r*t1- t2)/(r**2-1)
-                t5 = r
+                t4 = n*(r*t1-t2)/(r**2-1)
                 a = t1/t4
                 r = r - a
                 if abs(a) < epsilon:
