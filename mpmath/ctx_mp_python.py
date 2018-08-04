@@ -914,7 +914,7 @@ class PythonMPContext(object):
             mpc(real='3.5', imag='-5.0')
 
         """
-        if B:
+        if B is not None:
             A = zip(A, B)
         prec, rnd = ctx._prec_rounding
         real = []
