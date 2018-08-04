@@ -888,6 +888,10 @@ def mpf_psi0(x, prec, rnd=round_fast):
         if x == fninf or x == fnan: return fnan
     if x == fzero or (exp >= 0 and sign):
         raise ValueError("polygamma pole")
+    # Near 0 -- fixed-point arithmetic becomes bad
+    if exp+bc < -5:
+        v = mpf_psi0(mpf_add(x, fone, prec, rnd), prec, rnd)
+        return mpf_sub(v, mpf_div(fone, x, wp, rnd), prec, rnd)
     # Reflection formula
     if sign and exp+bc > 3:
         c, s = mpf_cos_sin_pi(x, wp)

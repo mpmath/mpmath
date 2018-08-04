@@ -348,6 +348,10 @@ def test_polygamma():
     assert psi0(pi+j).ae(1.04224048313859376 + 0.35853686544063749j)
     assert psi0(-pi-j).ae(1.3404026194821986 - 2.8824392476809402j)
     assert findroot(psi0, 1).ae(1.4616321449683622)
+    assert psi0(1e-10).ae(-10000000000.57722)
+    assert psi0(1e-40).ae(-1.000000000000000e+40)
+    assert psi0(1e-10+1e-10j).ae(-5000000000.577215 + 5000000000.000000j)
+    assert psi0(1e-40+1e-40j).ae(-5.000000000000000e+39 + 5.000000000000000e+39j)
     assert psi0(inf) == inf
     assert psi1(inf) == 0
     assert psi(2,inf) == 0
