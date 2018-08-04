@@ -123,7 +123,7 @@ def qp(ctx, a, q=None, n=None, **kwargs):
             r *= q
             k += 1
             if k >= n:
-                raise StopIteration
+                return
             if k > maxterms:
                 raise ctx.NoConvergence
     return ctx.mul_accurately(factors)
