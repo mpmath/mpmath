@@ -41,7 +41,7 @@ using the following relations:
 
 .. math ::
 
-    k = \frac{\vartheta_2^4(q)}{\vartheta_3^4(q)}
+    k = \frac{\vartheta_2^2(q)}{\vartheta_3^2(q)}
 
 In addition, an alternative definition is used for the nome in
 number theory, which we here denote by q-bar:
