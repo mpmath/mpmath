@@ -659,7 +659,7 @@ class _matrix(object):
     def __sub__(self, other):
         if isinstance(other, self.ctx.matrix) and not (self.__rows == other.__rows
                                               and self.__cols == other.__cols):
-            raise ValueError('incompatible dimensions for substraction')
+            raise ValueError('incompatible dimensions for subtraction')
         return self.__add__(other * (-1))
 
     def __neg__(self):
