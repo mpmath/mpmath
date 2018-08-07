@@ -167,7 +167,7 @@ support this format::
 Matrix operations
 -----------------
 
-You can add and substract matrices of compatible dimensions::
+You can add and subtract matrices of compatible dimensions::
 
     >>> A = matrix([[1, 2], [3, 4]])
     >>> B = matrix([[-2, 4], [5, 9]])
