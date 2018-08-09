@@ -1064,7 +1064,7 @@ def ellipe(ctx, *args):
 
     .. math ::
 
-        E(\phi + n \pi, m) = 2 n E(m) + F(\phi,m), n \in \mathbb{Z}.
+        E(\phi + n \pi, m) = 2 n E(m) + E(\phi,m), n \in \mathbb{Z}.
 
     **Plots**
 
