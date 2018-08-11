@@ -280,6 +280,8 @@ def test_zeta():
     assert zeta(0,0.5) == 0
     assert zeta(0,0) == 0.5
     assert zeta(0,0.5,1).ae(-0.34657359027997265)
+    # see issue #390
+    assert zeta(-1.5,0.5j).ae(-0.13671400162512768475 + 0.11411333638426559139j)
 
 def test_altzeta():
     mp.dps = 15

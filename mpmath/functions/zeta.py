@@ -627,6 +627,8 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
         n = int(res)
         if n <= 0:
             return ctx.bernpoly(1-n, a) / (n-1)
+    if not (atype == 'Q' or atype == 'Z'):
+        raise NotImplementedError
     t = 1-s
     # We now require a to be standardized
     v = 0
@@ -641,29 +643,19 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
         b += 1
         shift += 1
     # Rational reflection formula
-    if atype == 'Q' or atype == 'Z':
-        try:
-            p, q = a._mpq_
-        except:
-            assert a == int(a)
-            p = int(a)
-            q = 1
-        p += shift*q
-        assert 1 <= p <= q
-        g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
-            for k in range(1,q+1))
-        g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
-        v += g
-        return v
-    # General reflection formula
-    # Note: clcos/clsin can raise NotImplementedError
-    else:
-        C1, C2 = ctx.cospi_sinpi(0.5*t)
-        # Clausen functions; could maybe use polylog directly
-        if C1: C1 *= ctx.clcos(t, 2*a, pi=True)
-        if C2: C2 *= ctx.clsin(t, 2*a, pi=True)
-        v += 2*ctx.gamma(t)/(2*ctx.pi)**t*(C1+C2)
-        return v
+    try:
+        p, q = a._mpq_
+    except:
+        assert a == int(a)
+        p = int(a)
+        q = 1
+    p += shift*q
+    assert 1 <= p <= q
+    g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
+        for k in range(1,q+1))
+    g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
+    v += g
+    return v
 
 def _hurwitz_em(ctx, s, a, d, prec, verbose):
     # May not be converted at this point
@@ -692,7 +684,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
         logs = [logM2ad]
         logr = 1/logM2a
         rM2a = 1/M2a
-        M2as = rM2a**s
+        M2as = M2a**(-s)
         if d:
             tailsum = ctx.gammainc(d+1, s1*logM2a) / s1**(d+1)
         else:
