@@ -15,7 +15,7 @@ install:
 script:
   # Guard against invalid escapes in strings, like '\s'. If this fails, a
   # string or docstring somewhere needs to be a raw string.
-  - if [ "$TRAVIS_PYTHON_VERSION" == "3.6" ];
+  - if [ "$TRAVIS_PYTHON_VERSION" == "3.6" ]; then
         python -We:invalid -m compileall -f mpmath;
     fi
   - pep8
