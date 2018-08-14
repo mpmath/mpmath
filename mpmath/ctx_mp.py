@@ -455,7 +455,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         return PrecisionManager(ctx, None, lambda d: n, normalize_output)
 
     def autoprec(ctx, f, maxprec=None, catch=(), verbose=False):
-        """
+        r"""
         Return a wrapped copy of *f* that repeatedly evaluates *f*
         with increasing precision until the result converges to the
         full precision used at the point of the call.
