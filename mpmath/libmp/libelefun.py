@@ -175,7 +175,7 @@ def ln10_fixed(prec):
     return machin([(46, 31), (34, 49), (20, 161)], prec, True)
 
 
-"""
+r"""
 For computation of pi, we use the Chudnovsky series:
 
              oo

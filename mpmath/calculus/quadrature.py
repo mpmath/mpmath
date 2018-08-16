@@ -383,7 +383,7 @@ class TanhSinh(QuadratureRule):
 
 
 class GaussLegendre(QuadratureRule):
-    """
+    r"""
     This class implements Gauss-Legendre quadrature, which is
     exceptionally efficient for polynomials and polynomial-like (i.e.
     very smooth) integrands.
@@ -407,7 +407,7 @@ class GaussLegendre(QuadratureRule):
     """
 
     def calc_nodes(self, degree, prec, verbose=False):
-        """
+        r"""
         Calculates the abscissas and weights for Gauss-Legendre
         quadrature of degree of given degree (actually `3 \cdot 2^m`).
         """

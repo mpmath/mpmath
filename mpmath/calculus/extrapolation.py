@@ -727,7 +727,7 @@ defun(levin)
 
 class cohen_alt_class:
     # cohen_alt: Copyright 2013 Timo Hartmann (thartmann15 at gmail.com)
-    """
+    r"""
     This interface implements the convergence acceleration of alternating series
     as described in H. Cohen, F.R. Villegas, D. Zagier - "Convergence Acceleration
     of Alternating Series". This series transformation works only well if the
