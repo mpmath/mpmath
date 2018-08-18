@@ -13,6 +13,7 @@ python:
   - pypy3.5
 install:
   - pip install pep8
+  - pip install -e .
 script:
   # Guard against invalid escapes in strings, like '\s'. If this fails, a
   # string or docstring somewhere needs to be a raw string.
