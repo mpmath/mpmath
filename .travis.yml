@@ -8,7 +8,9 @@ python:
   - 3.4
   - 3.5
   - 3.6
-  - "pypy"
+  - 3.7-dev
+  - pypy
+  - pypy3.5
 install:
   - pip install pep8
 script:
