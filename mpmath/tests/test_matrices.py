@@ -196,5 +196,5 @@ def test_matrix_numpy():
     except ImportError:
         return
     l = [[1, 2], [3, 4], [5, 6]]
-    a = numpy.matrix(l)
+    a = numpy.array(l)
     assert matrix(l) == matrix(a)
