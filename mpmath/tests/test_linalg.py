@@ -2,6 +2,7 @@
 
 from __future__ import division
 
+import pytest
 from mpmath import *
 xrange = libmp.backend.xrange
 
@@ -158,15 +159,9 @@ def test_singular():
     A = [[5.6, 1.2], [7./15, .1]]
     B = repr(zeros(2))
     b = [1, 2]
-    def _assert_ZeroDivisionError(statement):
-        try:
-            eval(statement)
-            assert False
-        except (ZeroDivisionError, ValueError):
-            pass
     for i in ['lu_solve(%s, %s)' % (A, b), 'lu_solve(%s, %s)' % (B, b),
               'qr_solve(%s, %s)' % (A, b), 'qr_solve(%s, %s)' % (B, b)]:
-        _assert_ZeroDivisionError(i)
+        pytest.raises((ZeroDivisionError, ValueError), lambda: eval(i))
 
 def test_cholesky():
     assert fp.cholesky(fp.matrix(A9)) == fp.matrix([[2, 0, 0], [1, 2, 0], [-1, -3/2, 3/2]])

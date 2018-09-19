@@ -15,6 +15,7 @@ References:
 
 import mpmath
 import random
+import pytest
 
 from mpmath import *
 
@@ -115,14 +116,7 @@ def test_jtheta():
 
     for q in [one, mpf(2)]:
         for n in range(1,5):
-            raised = True
-            try:
-                r = jtheta(n, z, q)
-            except:
-                pass
-            else:
-                raised = False
-            assert(raised)
+            pytest.raises(ValueError, lambda: jtheta(n, z, q))
 
     z = one/10
     q = one/11
@@ -179,12 +173,7 @@ def test_jtheta_issue_79():
     mp.dps += 30
     q = mpf(6)/10 - one/10**7 - mpf(8)/10 * j
     mp.dps -= 30
-    try:
-        result = jtheta(3, 1, q)
-    except ValueError:
-        pass
-    else:
-        assert(False)
+    pytest.raises(ValueError, lambda: jtheta(3, 1, q))
 
     # bug reported in issue 79
     mp.dps = 100

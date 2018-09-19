@@ -1381,11 +1381,7 @@ def test_hyper_param_accuracy():
     assert (hyp1f1(-10000, 1000, 100)*10**424).ae(-3.1046080515824859974)
     assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=100000)*10**231).ae(-4.0534790813913998643)
     assert legenp(2, 3, 0.25) == 0
-    try:
-        hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3])
-        assert 0
-    except ValueError:
-        pass
+    pytest.raises(ValueError, lambda: hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3]))
     assert hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3], infprec=200) == inf
     assert meijerg([[],[]],[[0,0,0,0],[]],0.1).ae(1.5680822343832351418)
     assert (besselk(400,400)*10**94).ae(1.4387057277018550583)
@@ -1454,11 +1450,7 @@ def test_issue_239():
     x = ldexp(2476979795053773,-52)
     assert betainc(206, 385, 0, 0.55, 1).ae('0.99999999999999999999996570910644857895771110649954')
     mp.dps = 15
-    try:
-        u = hyp2f1(-5,5,0.5,0.5)
-        raise AssertionError("hyp2f1(-5,5,0.5,0.5) (failed zero detection)")
-    except (mp.NoConvergence, ValueError):
-        pass
+    pytest.raises(ValueError, lambda: hyp2f1(-5,5,0.5,0.5))
 
 # Extra stress testing for Bessel functions
 # Reference zeros generated with the aid of scipy.special

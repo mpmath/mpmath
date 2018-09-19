@@ -1,3 +1,4 @@
+import pytest
 from mpmath import *
 
 def test_approximation():
@@ -31,11 +32,7 @@ def test_polyroots():
     assert q.ae(-1 + sqrt(2)*j)
     #this is not a real test, it only tests a specific case
     assert polyroots([1]) == []
-    try:
-        polyroots([0])
-        assert False
-    except ValueError:
-        pass
+    pytest.raises(ValueError, lambda: polyroots([0]))
 
 def test_polyroots_legendre():
     n = 64
@@ -74,12 +71,9 @@ def test_polyroots_legendre():
         916312070471295267]
 
     with mp.workdps(3):
-        try:
-            roots = polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
-                        extraprec=n*10)
-            raise AssertionError("polyroots() didn't raise NoConvergence")
-        except (mp.NoConvergence):
-            pass
+        with pytest.raises(mp.NoConvergence):
+            polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
+                      extraprec=n*10)
 
         roots = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
                     extraprec=n*10)
@@ -148,12 +142,9 @@ def test_polyroots_legendre_init():
     with mp.workdps(2*mp.dps):
         roots_exact = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
                                 extraprec=2*extra_prec)
-    try:
-        roots = polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
-                          extraprec=extra_prec)
-        raise AssertionError("polyroots() didn't raise NoConvergence")
-    except (mp.NoConvergence):
-        pass
+    with pytest.raises(mp.NoConvergence):
+        polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
+                  extraprec=extra_prec)
     roots,err = polyroots(coeffs, maxsteps=5, cleanup=True, error=True,
                           extraprec=extra_prec,roots_init=roots_init)
     assert max(matrix(roots_exact)-matrix(roots).apply(abs)) < err
