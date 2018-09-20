@@ -294,27 +294,22 @@ def test_qr():
         maxnorm = mpf('1.0E-11')
         n1 = norm(A - Q * R)
         #print '\n Norm of A - Q * R = ', n1
-        if n1 > maxnorm:
-            raise ValueError('Excessive norm value')
+        assert n1 <= maxnorm
 
         if dtype == 'real':
             n1 = norm(eye(m) - Q.T * Q)
             #print ' Norm of I - Q.T * Q = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q * Q.T)
             #print ' Norm of I - Q * Q.T = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
         if dtype == 'complex':
             n1 = norm(eye(m) - Q.T * Q.conjugate())
             #print ' Norm of I - Q.T * Q.conjugate() = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q.conjugate() * Q.T)
             #print ' Norm of I - Q.conjugate() * Q.T = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
