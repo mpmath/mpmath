@@ -1,3 +1,4 @@
+import pytest
 from mpmath import *
 
 def ae(a, b):
@@ -60,8 +61,7 @@ def test_double_5():
 def test_double_6():
     assert ae(quadts(lambda x, y: exp(-(x+y)), [0, inf], [0, inf]), 1)
 
-# fails
-def xtest_double_7():
+def test_double_7():
     assert ae(quadts(lambda x, y: exp(-x*x-y*y), [-inf, inf], [-inf, inf]), pi)
 
 
@@ -83,7 +83,8 @@ def test_expmath_integrals():
     mp.dps = 15
 
 # Do not reach full accuracy
-def xtest_expmath_fail():
+@pytest.mark.xfail
+def test_expmath_fail():
     assert ae(quadts(lambda x: sqrt(tan(x)), [0, pi/2]),          pi*sqrt(2)/2)
     assert ae(quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), [0, 1]), pi*log(1+sqrt(2))/2)
     assert ae(quadts(lambda x: log(1+x**2)/x**2, [0, 1]),         pi/2-log(2))
