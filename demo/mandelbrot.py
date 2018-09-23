@@ -31,10 +31,4 @@ def mandelbrot(z):
             return ctx.exp(1j*(i + 1 - ctx.log(ctx.log(abs(z)))/ctx.log(2)))
     return 0
 
-try:
-    import psyco
-    psyco.full()
-except ImportError:
-    pass
-
 ctx.cplot(mandelbrot, RE, IM, points=POINTS, verbose=1)
