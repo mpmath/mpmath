@@ -99,7 +99,7 @@ Alternatively, they can be run from the ``tests`` directory via
 
     ``python runtests.py``
 
-If any test fails, please send a detailed bug report to the `mpmath issue tracker <https://github.com/fredrik-johansson/mpmath/issues>`_. The tests can also be run with `py.test <http://pylib.org/>`_. This will sometimes generate more useful information in case of a failure.
+If any test fails, please send a detailed bug report to the `mpmath issue tracker <https://github.com/fredrik-johansson/mpmath/issues>`_. The tests can also be run with `py.test <https://pytest.org/>`_. This will sometimes generate more useful information in case of a failure.
 
 To run the tests with support for gmpy disabled, use
 
