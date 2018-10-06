@@ -443,6 +443,20 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     if x == -math_float_inf: return fninf
     return from_man_exp(int(numpy.ldexp(m, 113)), int(e-113), prec, rnd)
 
+def from_Decimal(x, prec=None, rnd=round_fast):
+    """Create a raw mpf from a Decimal, rounding if necessary.
+    If prec is not specified, use the equivalent bit precision
+    of the number of significant digits in x."""
+    if x.is_nan(): return fnan
+    if x.is_infinite(): return fninf if x.is_signed() else finf
+    sgn, digs, e = x.as_tuple()
+    if prec is None:
+        prec = int(len(digs)*math.log(10, 2))
+    n = int(('-' if sgn > 0 else '').join(list(map(str, digs))))
+    if e < 0: d = 10**-e
+    else: n *= 10**e; d = 1
+    return from_rational(n, d, prec, rnd)
+
 def to_float(s, strict=False, rnd=round_fast):
     """
     Convert a raw mpf to a Python float. The result is exact if the
