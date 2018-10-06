@@ -140,7 +140,7 @@ def test_householder():
         v = v.apply(lambda x: exp(1J*pi()*x))
         A = diag(v[:,0])*A*diag(v[:n,1])
         return A
-    
+
     residuals_cmplx = []
     refres_cmplx = []
     for n in range(2, 10):
