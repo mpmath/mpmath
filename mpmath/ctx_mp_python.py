@@ -5,7 +5,7 @@ from .libmp.backend import basestring, exec_
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_str, to_int, to_float, to_str,
+    from_int, from_float, from_npfloat, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
     fone, fzero, finf, fninf, fnan,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
@@ -641,10 +641,17 @@ class PythonMPContext(object):
 
         """
         if type(x) in ctx.types: return x
+        import numpy
+        if isinstance(x, numpy.generic):
+            try: x = numpy.asscalar(x)
+            except: pass
         if isinstance(x, int_types): return ctx.make_mpf(from_int(x))
         if isinstance(x, float): return ctx.make_mpf(from_float(x))
+        if isinstance(x, numpy.floating): return ctx.make_mpf(from_npfloat(x))
         if isinstance(x, complex):
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
+        if isinstance(x, numpy.complexfloating):
+            return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         prec, rounding = ctx._prec_rounding
         if isinstance(x, rational.mpq):
             p, q = x._mpq_

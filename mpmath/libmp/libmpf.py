@@ -426,6 +426,23 @@ def from_float(x, prec=53, rnd=round_fast):
     if x == -math_float_inf: return fninf
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
+def from_npfloat(x, prec=113, rnd=round_fast):
+    """Create a raw mpf from a numpy float, rounding if necessary.
+    If prec >= 113, the result is guaranteed to represent exactly the
+    same number as the input. If prec is not specified, use prec=113."""
+    if x != x:
+        return fnan
+    import numpy
+    try:
+        m, e = numpy.frexp(x)
+    except:
+        if x == math_float_inf: return finf
+        if x == -math_float_inf: return fninf
+        return fnan
+    if x == math_float_inf: return finf
+    if x == -math_float_inf: return fninf
+    return from_man_exp(int(numpy.ldexp(m, 113)), int(e-113), prec, rnd)
+
 def to_float(s, strict=False, rnd=round_fast):
     """
     Convert a raw mpf to a Python float. The result is exact if the
