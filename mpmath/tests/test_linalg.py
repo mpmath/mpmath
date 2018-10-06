@@ -132,7 +132,25 @@ def test_householder():
            0.82378073210000002, 0.302645887, 0.0260109244,
            0.00058653999999999998]
     assert norm(matrix(residuals) - matrix(refres), inf) < 1.e-13
-
+    
+    def hilbert_cmplx(n):
+        # Complexified  Hilbert matrix
+        A = ctx.hilbert(n)
+        v = ctx.randmatrix(n, 1, min=-1, max=1)
+        v = v.apply(lambda x: ctx.exp(1J*ctx.pi()*x))
+        A = diag(v)*A*diag(v.conjugate())
+        return A
+    
+    residuals_cmplx = []
+    refres_cmplx = []
+    for n in range(2, 7):
+        A = hilbert_cmplx(n)
+        y = ctx.randmatrix(n,1)
+        H, p, x, r = householder(extend(A, y))
+        residuals_cmplx.append(norm(r, 2))
+        refres_cmplx.append(norm(residual(A, x, y), 2))
+    assert norm(matrix(residuals_cmplx) - matrix(refres_cmplx), inf) < 1.e-13
+    
 def test_factorization():
     A = randmatrix(5)
     P, L, U = lu(A)
