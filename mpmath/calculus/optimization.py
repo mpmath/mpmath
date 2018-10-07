@@ -956,6 +956,10 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
             maxsteps = kwargs['maxsteps']
         else:
             maxsteps = iterations.maxsteps
+
+        if not any(True for _ in iterations): # empty iterable
+            raise ValueError('Could not find root using the given solver.\n'
+                             'Try another starting point or tweak arguments.')
         i = 0
         for x, error in iterations:
             if verbose:

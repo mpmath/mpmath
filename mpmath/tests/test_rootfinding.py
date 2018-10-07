@@ -75,3 +75,11 @@ def test_trivial():
     assert findroot(lambda x: 0, 1) == 1
     assert findroot(lambda x: x, 0) == 0
     #assert findroot(lambda x, y: x + y, (1, -1)) == (1, -1)
+
+def test_noiters():
+    try:
+        with workprec(2):
+            findroot(lambda x: x**2 - 4456178*x + 60372201703370, \
+                     mpc(real='5.278e+13', imag='-5.278e+13'))
+    except ValueError:
+        pass
