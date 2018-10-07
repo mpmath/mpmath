@@ -532,7 +532,7 @@ transforms = [
 
 def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     verbose=False):
-    """
+    r"""
     Given a real number `x`, ``identify(x)`` attempts to find an exact
     formula for `x`. This formula is returned as a string. If no match
     is found, ``None`` is returned. With ``full=True``, a list of

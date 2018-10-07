@@ -356,7 +356,7 @@ mpf_twinprime = def_mpf_constant(twinprime_fixed)
 MAX_BERNOULLI_CACHE = 3000
 
 
-"""
+r"""
 Small Bernoulli numbers and factorials are used in numerous summations,
 so it is critical for speed that sequential computation is fast and that
 values are cached up to a fairly high threshold.
@@ -800,7 +800,7 @@ def mpc_gamma_old(x, prec, rounding=round_fast, p1=1):
 #                                                                       #
 #-----------------------------------------------------------------------#
 
-"""
+r"""
 For all polygamma (psi) functions, we use the Euler-Maclaurin summation
 formula. It looks slightly different in the m = 0 and m > 0 cases.
 
@@ -1065,7 +1065,7 @@ def mpc_psi(m, z, prec, rnd=round_fast):
 #                                                                       #
 #-----------------------------------------------------------------------#
 
-"""
+r"""
 We use zeta(s) = eta(s) / (1 - 2**(1-s)) and Borwein's approximation
 
                   n-1
