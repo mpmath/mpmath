@@ -596,6 +596,9 @@ def test_polylog():
     assert polylog(0.5+j/3, 0.5+j/2).ae(0.31739144796565650535 + 0.99255390416556261437j)
     assert polylog(3+4j,1).ae(zeta(3+4j))
     assert polylog(3+4j,-1).ae(-altzeta(3+4j))
+    # issue 390
+    assert polylog(1.5, -48.910886523731889).ae(-6.272992229311817)
+    assert polylog(1.5, 200).ae(-8.349608319033686529 - 8.159694826434266042j)
 
 def test_bell_polyexp():
     mp.dps = 15
