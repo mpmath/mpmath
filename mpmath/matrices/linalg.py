@@ -339,14 +339,14 @@ class LinearAlgebraMethods(object):
         # calculate Householder matrix
         p = []
         for j in xrange(0, n - 1):
-            s = ctx.fsum((A[i,j])**2 for i in xrange(j, m))
+            s = ctx.fsum(abs(A[i,j])**2 for i in xrange(j, m))
             if not abs(s) > ctx.eps:
                 raise ValueError('matrix is numerically singular')
-            p.append(-ctx.sign(A[j,j]) * ctx.sqrt(s))
+            p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
             kappa = ctx.one / (s - p[j] * A[j,j])
             A[j,j] -= p[j]
             for k in xrange(j+1, n):
-                y = ctx.fsum(A[i,j] * A[i,k] for i in xrange(j, m)) * kappa
+                y = ctx.fsum(ctx.conj(A[i,j]) * A[i,k] for i in xrange(j, m)) * kappa
                 for i in xrange(j, m):
                     A[i,k] -= A[i,j] * y
         # solve Rx = c1
