@@ -964,6 +964,10 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
             i += 1
             if error < tol * max(1, norm(x)) or i >= maxsteps:
                 break
+        else:
+            if not i:
+                raise ValueError('Could not find root using the given solver.\n'
+                                 'Try another starting point or tweak arguments.')
         if not isinstance(x, (list, tuple, ctx.matrix)):
             xl = [x]
         else:
