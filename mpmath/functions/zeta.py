@@ -446,7 +446,10 @@ def polylog_general(ctx, s, z):
     v = ctx.zero
     u = ctx.ln(z)
     if not abs(u) < 5: # theoretically |u| < 2*pi
-        raise NotImplementedError("polylog for arbitrary s and z")
+        j = ctx.j
+        v = 1-s
+        y = ctx.ln(-z)/(2*ctx.pi*j)
+        return ctx.gamma(v)*(j**v*ctx.zeta(v,0.5+y) + j**-v*ctx.zeta(v,0.5-y))/(2*ctx.pi)**v
     t = 1
     k = 0
     while 1:
@@ -480,11 +483,6 @@ def polylog(ctx, s, z):
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(s), z)
     return polylog_general(ctx, s, z)
-
-    #raise NotImplementedError("polylog for arbitrary s and z")
-    # This could perhaps be used in some cases
-    #from quadrature import quad
-    #return quad(lambda t: t**(s-1)/(exp(t)/z-1),[0,inf])/gamma(s)
 
 @defun_wrapped
 def clsin(ctx, s, z, pi=False):

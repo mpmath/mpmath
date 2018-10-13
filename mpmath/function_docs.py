@@ -7263,15 +7263,12 @@ for `z` within the unit circle:
     >>> nsum(lambda k: 0.25**k / k**(3+4j), [1,inf])
     (0.24258605789446 - 0.00222938275488344j)
 
-It is also currently supported outside of the unit circle for `z`
-not too large in magnitude::
+It is also supported outside of the unit circle::
 
     >>> polylog(1+j, 20+40j)
     (-7.1421172179728 - 3.92726697721369j)
     >>> polylog(1+j, 200+400j)
-    Traceback (most recent call last):
-      ...
-    NotImplementedError: polylog for arbitrary s and z
+    (-5.41934747194626 - 9.94037752563927j)
 
 **References**
 
