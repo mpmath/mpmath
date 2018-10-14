@@ -1232,7 +1232,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if i >= 0:
                 digits = digits[:i] + str(int(digits[i]) + 1) + '0' * (dps - i - 1)
             else:
-                digits = '1' + '0' * dps
+                digits = '1' + '0' * (dps - 1)
                 exponent += 1
         else:
             digits = digits[:dps]

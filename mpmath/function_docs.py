@@ -15,11 +15,13 @@ Mpmath can evaluate `\pi` to arbitrary precision::
     >>> +pi
     3.1415926535897932384626433832795028841971693993751
 
-This shows digits 99991-100000 of `\pi`::
+This shows digits 99991-100000 of `\pi` (the last digit is actually
+a 4 when the decimal expansion is truncated, but here the nearest
+rounding is used)::
 
     >>> mp.dps = 100000
     >>> str(pi)[-10:]
-    '5549362464'
+    '5549362465'
 
 **Possible issues**
 
@@ -74,11 +76,13 @@ Mpmath can be evaluate `e` to arbitrary precision::
     >>> +e
     2.7182818284590452353602874713526624977572470937
 
-This shows digits 99991-100000 of `e`::
+This shows digits 99991-100000 of `e` (the last digit is actually
+a 5 when the decimal expansion is truncated, but here the nearest
+rounding is used)::
 
     >>> mp.dps = 100000
     >>> str(e)[-10:]
-    '2100427165'
+    '2100427166'
 
 **Possible issues**
 
@@ -137,11 +141,13 @@ although this is less efficient::
     >>> limit(lambda n: harmonic(n)-log(n), inf)
     0.57721566490153286060651209008240243104215933593992
 
-This shows digits 9991-10000 of `\gamma`::
+This shows digits 9991-10000 of `\gamma` (the last digit is actually
+a 5 when the decimal expansion is truncated, but here the nearest
+rounding is used)::
 
     >>> mp.dps = 10000
     >>> str(euler)[-10:]
-    '4679858165'
+    '4679858166'
 
 Integrals, series, and representations for `\gamma` in terms of
 special functions include the following (there are many others)::
@@ -191,11 +197,13 @@ this is significantly less efficient::
     >>> nsum(lambda k: (-1)**k/(2*k+1)**2, [0, inf])
     0.91596559417721901505460351493238411077414937428167
 
-This shows digits 9991-10000 of `K`::
+This shows digits 9991-10000 of `K` (the last digit is actually
+a 3 when the decimal expansion is truncated, but here the nearest
+rounding is used)::
 
     >>> mp.dps = 10000
     >>> str(catalan)[-10:]
-    '9537871503'
+    '9537871504'
 
 Catalan's constant has numerous integral representations::
 
@@ -407,7 +415,7 @@ Square root evaluation is fast at huge precision::
     >>> mp.dps = 50000
     >>> a = sqrt(3)
     >>> str(a)[-10:]
-    '9329332814'
+    '9329332815'
 
 :func:`mpmath.iv.sqrt` supports interval arguments::
 

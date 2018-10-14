@@ -571,7 +571,7 @@ class QuadratureMethods(object):
 
             >>> mp.dps = 1000
             >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])  #doctest:+ELLIPSIS
-            3.141592653589793238462643383279502884...216420198
+            3.141592653589793238462643383279502884...216420199
 
         Complex integrals are supported. The following computes
         a residue at `z = 0` by integrating counterclockwise along the
