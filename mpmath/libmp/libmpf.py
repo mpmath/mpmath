@@ -90,13 +90,13 @@ ften = (0, MPZ_FIVE, 1, 3)
 fhalf = (0, MPZ_ONE, -1, 1)
 
 # Arbitrary encoding for special numbers: zero mantissa, nonzero exponent
-fnan = (0, MPZ_ZERO, -123, -1)
-finf = (0, MPZ_ZERO, -456, -2)
-fninf = (1, MPZ_ZERO, -789, -3)
+fnan = (0, MPZ_ZERO, 1, -1)
+finf = (0, MPZ_ZERO, -1, -2)
+fninf = (1, MPZ_ZERO, -1, -2)
 
-# Was 1e1000; this is broken in Python 2.4
-math_float_inf = 1e300 * 1e300
-
+math_fnan = float('nan')
+math_finf = float('inf')
+math_fninf = float('-inf')
 
 #----------------------------------------------------------------------------#
 #                                  Rounding                                  #
@@ -150,7 +150,8 @@ shifts_down = {round_floor:(1,0), round_ceiling:(0,1),
 # This function is called almost every time an mpf is created.
 # It has been optimized accordingly.
 
-def _normalize(sign, man, exp, bc, prec, rnd):
+
+def _normalize(sign, man, exp, bc, prec, rnd, strip_trailing=True):
     """
     Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
     normalized mantissa. The mantissa is rounded in the specified
@@ -168,8 +169,9 @@ def _normalize(sign, man, exp, bc, prec, rnd):
     If these conditions are not met, use from_man_exp, mpf_pos, or any
     of the conversion functions to create normalized raw mpf tuples.
     """
-    if not man:
-        return fzero
+    # Covers zero, special numbers, and small enough numbers
+    if bc <= 0 or (bc <= prec and not strip_trailing):
+        return sign, man, exp, bc
     # Cut mantissa down to size if larger than target precision
     n = bc - prec
     if n > 0:
@@ -186,7 +188,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
         exp += n
         bc = prec
     # Strip trailing bits
-    if not man & 1:
+    if strip_trailing and not man & 1:
         t = trailtable[int(man & 255)]
         if not t:
             while not man & 255:
@@ -205,46 +207,9 @@ def _normalize(sign, man, exp, bc, prec, rnd):
         bc = 1
     return sign, man, exp, bc
 
-def _normalize1(sign, man, exp, bc, prec, rnd):
-    """same as normalize, but with the added condition that
-       man is odd or zero
-    """
-    if not man:
-        return fzero
-    if bc <= prec:
-        return sign, man, exp, bc
-    n = bc - prec
-    if rnd == round_nearest:
-        t = man >> (n-1)
-        if t & 1 and ((t & 2) or (man & h_mask[n<300][n])):
-            man = (t>>1)+1
-        else:
-            man = t>>1
-    elif shifts_down[rnd][sign]:
-        man >>= n
-    else:
-        man = -((-man)>>n)
-    exp += n
-    bc = prec
-    # Strip trailing bits
-    if not man & 1:
-        t = trailtable[int(man & 255)]
-        if not t:
-            while not man & 255:
-                man >>= 8
-                exp += 8
-                bc -= 8
-            t = trailtable[int(man & 255)]
-        man >>= t
-        exp += t
-        bc -= t
-    # Bit count can be wrong if the input mantissa was 1 less than
-    # a power of 2 and got rounded up, thereby adding an extra bit.
-    # With trailing bits removed, all powers of two have mantissa 1,
-    # so this is easy to check for.
-    if man == 1:
-        bc = 1
-    return sign, man, exp, bc
+
+# kept for compatibility
+_normalize1 = _normalize
 
 try:
     _exp_types = (int, long)
@@ -263,16 +228,12 @@ def strict_normalize(sign, man, exp, bc, prec, rnd):
 def strict_normalize1(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
-    assert type(man) == MPZ_TYPE
-    assert type(bc) in _exp_types
-    assert type(exp) in _exp_types
-    assert bc == bitcount(man)
     assert (not man) or (man & 1)
-    return _normalize1(sign, man, exp, bc, prec, rnd)
+    return strict_normalize(sign, man, exp, bc, prec, rnd)
+
 
 if BACKEND == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
-    _normalize = gmpy._mpmath_normalize
-    _normalize1 = gmpy._mpmath_normalize
+    _normalize = _normalize1 = gmpy._mpmath_normalize
 
 if BACKEND == 'sage':
     _normalize = _normalize1 = sage_utils.normalize
@@ -338,7 +299,7 @@ def from_int(n, prec=0, rnd=round_fast):
 def to_man_exp(s):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
     sign, man, exp, bc = s
-    if (not man) and exp:
+    if bc < 0:
         raise ValueError("mantissa and exponent are undefined for %s" % man)
     return man, exp
 
@@ -347,7 +308,7 @@ def to_int(s, rnd=None):
     default (same as int(float) in Python), but can be changed. If the
     input is inf/nan, an exception is raised."""
     sign, man, exp, bc = s
-    if (not man) and exp:
+    if bc < 0:
         raise ValueError("cannot convert inf or nan to int")
     if exp >= 0:
         if sign:
@@ -366,9 +327,7 @@ def to_int(s, rnd=None):
 
 def mpf_round_int(s, rnd):
     sign, man, exp, bc = s
-    if (not man) and exp:
-        return s
-    if exp >= 0:
+    if bc <= 0 or exp >= 0:
         return s
     mag = exp+bc
     if mag < 1:
@@ -386,23 +345,22 @@ def mpf_round_int(s, rnd):
             raise NotImplementedError
     return mpf_pos(s, min(bc, mag), rnd)
 
-def mpf_floor(s, prec=0, rnd=round_fast):
-    v = mpf_round_int(s, round_floor)
+# TODO: add documentation
+def mpf_rint(s, prec=0, rnd=round_fast, rndint=round_nearest):
+    v = mpf_round_int(s, rndint)
     if prec:
-        v = mpf_pos(v, prec, rnd)
+        return mpf_pos(v, prec, rnd)
     return v
 
-def mpf_ceil(s, prec=0, rnd=round_fast):
-    v = mpf_round_int(s, round_ceiling)
-    if prec:
-        v = mpf_pos(v, prec, rnd)
-    return v
+def mpf_floor(s, prec = 0, rnd = round_fast):
+    mpf_rint(s, prec, rnd, round_floor)
 
-def mpf_nint(s, prec=0, rnd=round_fast):
-    v = mpf_round_int(s, round_nearest)
-    if prec:
-        v = mpf_pos(v, prec, rnd)
-    return v
+def mpf_ceil(s, prec = 0, rnd = round_fast):
+    mpf_rint(s, prec, rnd, round_ceiling)
+
+def mpf_nint(s, prec = 0, rnd = round_fast):
+    mpf_rint(s, prec, rnd, round_nearest)
+
 
 def mpf_frac(s, prec=0, rnd=round_fast):
     return mpf_sub(s, mpf_floor(s), prec, rnd)
@@ -411,20 +369,36 @@ def from_float(x, prec=53, rnd=round_fast):
     """Create a raw mpf from a Python float, rounding if necessary.
     If prec >= 53, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=53."""
-    # frexp only raises an exception for nan on some platforms
-    if x != x:
-        return fnan
-    # in Python2.5 math.frexp gives an exception for float infinity
-    # in Python2.6 it returns (float infinity, 0)
-    try:
+    if math.isfinite(x):
         m, e = math.frexp(x)
-    except:
-        if x == math_float_inf: return finf
-        if x == -math_float_inf: return fninf
-        return fnan
-    if x == math_float_inf: return finf
-    if x == -math_float_inf: return fninf
-    return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
+        return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
+    if math.isinf(x):
+        return finf if x > 0.0 else fninf
+    return fnan
+
+def from_npfloat(x, prec=113, rnd=round_fast):
+    """Create a raw mpf from a numpy float, rounding if necessary.
+    If prec >= 113, the result is guaranteed to represent exactly the
+    same number as the input. If prec is not specified, use prec=113."""
+    import numpy as np
+    if np.isfinite(x):
+        m, e = np.frexp(x)
+        return from_man_exp(int(np.ldexp(m, 113)), int(e-113), prec, rnd)
+    if np.isposinf(x): return finf
+    if np.isneginf(x): return fninf
+    return fnan
+
+
+def from_Decimal(x, prec=None, rnd=round_fast):
+    """Create a raw mpf from a Decimal, rounding if necessary.
+    If prec is not specified, use the equivalent bit precision
+    of the number of significant digits in x."""
+    if x.is_nan(): return fnan
+    if x.is_infinite(): return fninf if x.is_signed() else finf
+    if prec is None:
+        prec = int(len(x.as_tuple()[1])*3.3219280948873626)
+    return from_str(str(x), prec, rnd)
+
 
 def to_float(s, strict=False, rnd=round_fast):
     """
@@ -440,11 +414,10 @@ def to_float(s, strict=False, rnd=round_fast):
     in case of overflow or (gradual) underflow.
     """
     sign, man, exp, bc = s
-    if not man:
-        if s == fzero: return 0.0
-        if s == finf: return math_float_inf
-        if s == fninf: return -math_float_inf
-        return math_float_inf/math_float_inf
+    if bc <= 0:
+        if not bc: return 0.0
+        if bc == -1: return math_fnan
+        return math_fninf if sign else math_finf
     if bc > 53:
         sign, man, exp, bc = normalize1(sign, man, exp, bc, 53, rnd)
     if sign:
@@ -456,10 +429,7 @@ def to_float(s, strict=False, rnd=round_fast):
             raise
         # Overflow to infinity
         if exp + bc > 0:
-            if sign:
-                return -math_float_inf
-            else:
-                return math_float_inf
+            return math_fninf if sign else math_finf
         # Underflow to zero
         return 0.0
 
@@ -474,24 +444,20 @@ def to_rational(s):
     sign, man, exp, bc = s
     if sign:
         man = -man
-    if bc == -1:
+    if bc < 0:
         raise ValueError("cannot convert %s to a rational number" % man)
-    if exp >= 0:
-        return man * (1<<exp), 1
-    else:
-        return man, 1<<(-exp)
+    if exp >= 0: return man * (1<<exp), 1
+    else:        return man, 1<<(-exp)
+
 
 def to_fixed(s, prec):
     """Convert a raw mpf to a fixed-point big integer"""
     sign, man, exp, bc = s
     offset = exp + prec
     if sign:
-        if offset >= 0: return (-man) << offset
-        else:           return (-man) >> (-offset)
-    else:
-        if offset >= 0: return man << offset
-        else:           return man >> (-offset)
-
+        man = -man
+    if offset >= 0: return man << offset
+    else:           return man >> (-offset)
 
 ##############################################################################
 ##############################################################################
@@ -512,30 +478,25 @@ def mpf_rand(prec):
 def mpf_eq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparison
     unless either number is nan, in which case the result is False."""
-    if not s[1] or not t[1]:
-        if s == fnan or t == fnan:
-            return False
-    return s == t
+    return s == t and s[3] != -1 and t[3] != -1
 
 def mpf_hash(s):
-    # Duplicate the new hash algorithm introduces in Python 3.2.
+    # Duplicate the new hash algorithm introduced in Python 3.2.
     if sys.version >= "3.2":
-        ssign, sman, sexp, sbc = s
+        sign, man, exp, bc = s
 
         # Handle special numbers
-        if not sman:
-            if s == fnan: return sys.hash_info.nan
-            if s == finf: return sys.hash_info.inf
-            if s == fninf: return -sys.hash_info.inf
-        h = sman % HASH_MODULUS
-        if sexp >= 0:
-            sexp = sexp % HASH_BITS
+        if bc < 0:
+            if bc == -1: return sys.hash_info.nan
+            return -sys.hash_info.inf if sign else sys.hash_info.inf
+        h = man % HASH_MODULUS
+        if exp >= 0:
+            exp = exp % HASH_BITS
         else:
-            sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
-        h = (h << sexp) % HASH_MODULUS
-        if ssign: h = -h
-        if h == -1: h == -2
-        return int(h)
+            exp = HASH_BITS - 1 - ((-1 - exp) % HASH_BITS)
+        h = (h << exp) % HASH_MODULUS
+        if sign: h = -h
+        return -2 if h == -1 else int(h)
     else:
         try:
             # Try to be compatible with hash values for floats and ints
@@ -557,29 +518,19 @@ def mpf_cmp(s, t):
     tsign, tman, texp, tbc = t
 
     # Handle zeros and special numbers
-    if not sman or not tman:
-        if s == fzero: return -mpf_sign(t)
-        if t == fzero: return mpf_sign(s)
-        if s == t: return 0
-        # Follow same convention as Python's cmp for float nan
-        if t == fnan: return 1
-        if s == finf: return 1
-        if t == fninf: return 1
-        return -1
+    if sbc <= 0 or tbc <= 0:
+        # Follow same convention as Python's cmp for float nan.
+        # Since NaN doesn't equal anything else,
+        # NaN<x, x<NaN, x==NaN, and NaN==x should all be False.
+        if sbc == -1 or tbc == -1: return 1
+        if ssign == tsign and sbc == tbc: return 0
+        # zeros and infs
+        if not tbc or sbc == -2: return (-1) ** ssign
+        return -(-1) ** tsign
+
     # Different sides of zero
-    if ssign != tsign:
-        if not ssign: return 1
-        return -1
-    # This reduces to direct integer comparison
-    if sexp == texp:
-        if sman == tman:
-            return 0
-        if sman > tman:
-            if ssign: return -1
-            else:     return 1
-        else:
-            if ssign: return 1
-            else:     return -1
+    if ssign != tsign: return tsign - ssign
+
     # Check position of the highest set bit in each number. If
     # different, there is certainly an inequality.
     a = sbc + sexp
@@ -591,32 +542,44 @@ def mpf_cmp(s, t):
         if a < b: return -1
         if a > b: return 1
 
-    # Both numbers have the same highest bit. Subtract to find
-    # how the lower bits compare.
-    delta = mpf_sub(s, t, 5, round_floor)
-    if delta[0]:
-        return -1
-    return 1
+    # Both numbers have the same highest bit.
+    # Equate exponents and do full comparison
+    if sexp < texp:
+        tman <<= texp - sexp
+    elif sexp > texp:
+        sman <<= sexp - texp
+
+    # This reduces to direct integer comparison
+    if sman == tman:
+        return 0
+    if sman > tman:
+        return (-1) ** ssign
+    return -(-1) ** ssign
+
 
 def mpf_lt(s, t):
-    if s == fnan or t == fnan:
-        return False
-    return mpf_cmp(s, t) < 0
+    if s[3] != -1 and t[3] != -1:
+        return mpf_cmp(s, t) < 0
+    return False
+
 
 def mpf_le(s, t):
-    if s == fnan or t == fnan:
-        return False
-    return mpf_cmp(s, t) <= 0
+    if s[3] != -1 and t[3] != -1:
+        return mpf_cmp(s, t) <= 0
+    return False
+
 
 def mpf_gt(s, t):
-    if s == fnan or t == fnan:
-        return False
-    return mpf_cmp(s, t) > 0
+    if s[3] != -1 and t[3] != -1:
+        return mpf_cmp(s, t) > 0
+    return False
+
 
 def mpf_ge(s, t):
-    if s == fnan or t == fnan:
-        return False
-    return mpf_cmp(s, t) >= 0
+    if s[3] != -1 and t[3] != -1:
+        return mpf_cmp(s, t) >= 0
+    return False
+
 
 def mpf_min_max(seq):
     min = max = seq[0]
@@ -625,13 +588,32 @@ def mpf_min_max(seq):
         if mpf_gt(x, max): max = x
     return min, max
 
+
+def mpf_isnan(s):
+    return s[3] == -1
+
+
+def mpf_isinf(s):
+    return s[3] == -2
+
+
+def mpf_isposinf(s):
+    return not s[0] and s[3] == -2
+
+
+def mpf_isneginf(s):
+    return s[0] and s[3] == -2
+
+
+def mpf_isfinite(s):
+    return s[3] >= 0
+
+
 def mpf_pos(s, prec=0, rnd=round_fast):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision)."""
-    if prec:
-        sign, man, exp, bc = s
-        if (not man) and exp:
-            return s
+    sign, man, exp, bc = s
+    if prec and bc >= 0:
         return normalize1(sign, man, exp, bc, prec, rnd)
     return s
 
@@ -640,38 +622,27 @@ def mpf_neg(s, prec=None, rnd=round_fast):
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
     sign, man, exp, bc = s
-    if not man:
-        if exp:
-            if s == finf: return fninf
-            if s == fninf: return finf
-        return s
-    if not prec:
-        return (1-sign, man, exp, bc)
-    return normalize1(1-sign, man, exp, bc, prec, rnd)
+    if prec and bc > 0:
+        return normalize1(1-sign, man, exp, bc, prec, rnd)
+    return (1-sign, man, exp, bc) if bc != -1 else s
+
 
 def mpf_abs(s, prec=None, rnd=round_fast):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision. The prec argument can be omitted to generate an
     exact result."""
     sign, man, exp, bc = s
-    if (not man) and exp:
-        if s == fninf:
-            return finf
-        return s
-    if not prec:
-        if sign:
-            return (0, man, exp, bc)
-        return s
-    return normalize1(0, man, exp, bc, prec, rnd)
+    if prec and bc > 0:
+        return normalize1(0, man, exp, bc, prec, rnd)
+    return (0, man, exp, bc)
+
 
 def mpf_sign(s):
     """Return -1, 0, or 1 (as a Python int, not a raw mpf) depending on
     whether s is negative, zero, or positive. (Nan is taken to give 0.)"""
     sign, man, exp, bc = s
-    if not man:
-        if s == finf: return 1
-        if s == fninf: return -1
-        return 0
+    # NaN and zero
+    if bc == -1 or bc == 0: return 0
     return (-1) ** sign
 
 def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
@@ -686,62 +657,32 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
     tsign, tman, texp, tbc = t
     tsign ^= _sub
     # Standard case: two nonzero, regular numbers
-    if sman and tman:
+    if sbc > 0 and tbc > 0:
         offset = sexp - texp
         if offset:
-            if offset > 0:
-                # Outside precision range; only need to perturb
-                if offset > 100 and prec:
-                    delta = sbc + sexp - tbc - texp
-                    if delta > prec + 4:
-                        offset = prec + 4
-                        sman <<= offset
-                        if tsign == ssign: sman += 1
-                        else:              sman -= 1
-                        return normalize1(ssign, sman, sexp-offset,
-                            bitcount(sman), prec, rnd)
-                # Add
-                if ssign == tsign:
-                    man = tman + (sman << offset)
-                # Subtract
-                else:
-                    if ssign: man = tman - (sman << offset)
-                    else:     man = (sman << offset) - tman
-                    if man >= 0:
-                        ssign = 0
-                    else:
-                        man = -man
-                        ssign = 1
-                bc = bitcount(man)
-                return normalize1(ssign, man, texp, bc, prec or bc, rnd)
-            elif offset < 0:
-                # Outside precision range; only need to perturb
-                if offset < -100 and prec:
-                    delta = tbc + texp - sbc - sexp
-                    if delta > prec + 4:
-                        offset = prec + 4
-                        tman <<= offset
-                        if ssign == tsign: tman += 1
-                        else:              tman -= 1
-                        return normalize1(tsign, tman, texp-offset,
-                            bitcount(tman), prec, rnd)
-                # Add
-                if ssign == tsign:
-                    man = sman + (tman << -offset)
-                # Subtract
-                else:
-                    if tsign: man = sman - (tman << -offset)
-                    else:     man = (tman << -offset) - sman
-                    if man >= 0:
-                        ssign = 0
-                    else:
-                        man = -man
-                        ssign = 1
-                bc = bitcount(man)
-                return normalize1(ssign, man, sexp, bc, prec or bc, rnd)
-        # Equal exponents; no shifting necessary
+            if offset < 0:
+                # Switch roles of s and t
+                offset = -offset
+                ssign, sman, sexp, sbc, tsign, tman, texp, tbc \
+ = tsign, tman, texp, tbc, ssign, sman, sexp, sbc
+
+            # Outside precision range; only need to perturb
+            if offset > 100 and prec:
+                delta = sbc + sexp - tbc - texp
+                if delta > prec + 4:
+                    offset = prec + 4
+                    sman <<= offset
+                    if tsign == ssign: sman += 1
+                    else:              sman -= 1
+                    return normalize1(ssign, sman, sexp - offset,
+                        bitcount(sman), prec, rnd)
+
+            sman <<= offset
+
+        # Add
         if ssign == tsign:
             man = tman + sman
+        # Subtract
         else:
             if ssign: man = tman - sman
             else:     man = sman - tman
@@ -753,27 +694,24 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
         bc = bitcount(man)
         return normalize(ssign, man, texp, bc, prec or bc, rnd)
     # Handle zeros and special numbers
-    if _sub:
-        t = mpf_neg(t)
-    if not sman:
-        if sexp:
-            if s == t or tman or not texp:
-                return s
-            return fnan
-        if tman:
-            return normalize1(tsign, tman, texp, tbc, prec or tbc, rnd)
-        return t
-    if texp:
-        return t
-    if sman:
-        return normalize1(ssign, sman, sexp, sbc, prec or sbc, rnd)
-    return s
+    # NaNs, inf-inf, and -inf+inf
+    if sbc == -1 or tbc == -1 \
+        or (sbc == -2 and tbc == -2 and ssign != tsign): return fnan
+    # infs
+    if sbc == -2: return s
+    if tbc == -2: return tsign, tman, texp, tbc
+    # zeros
+    if not sbc:
+        return normalize1(tsign, tman, texp, tbc, prec or tbc, rnd)
+    return normalize1(ssign, sman, sexp, sbc, prec or sbc, rnd)
 
 def mpf_sub(s, t, prec=0, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of mpf_add that changes the sign of t."""
     return mpf_add(s, t, prec, rnd, 1)
 
+
+# TODO: update this
 def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
     """
     Sum a list of mpf values efficiently and accurately
@@ -822,80 +760,72 @@ def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
         return special
     return from_man_exp(man, exp, prec, rnd)
 
-def gmpy_mpf_mul(s, t, prec=0, rnd=round_fast):
+
+def mpf_mul_base(s, t, prec=0, rnd=round_fast, which='gmpy'):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     sign = ssign ^ tsign
-    man = sman*tman
-    if man:
-        bc = bitcount(man)
+    if sbc > 0 and tbc > 0:
+        man = sman*tman
+        if which == 'gmpy': bc = bitcount(man)
+        else:
+            bc = sbc + tbc - 1
+            bc += int(man>>bc)
         if prec:
             return normalize1(sign, man, sexp+texp, bc, prec, rnd)
         else:
             return (sign, man, sexp+texp, bc)
-    s_special = (not sman) and sexp
-    t_special = (not tman) and texp
-    if not s_special and not t_special:
+    # NaNs, 0*inf, and inf*0
+    if sbc == -1 or tbc == -1 \
+        or (sbc == -2 and tbc == 0) \
+        or (sbc == 0 and tbc == -2): return fnan
+    if not sbc or not tbc:
         return fzero
-    if fnan in (s, t): return fnan
-    if (not tman) and texp: s, t = t, s
-    if t == fzero: return fnan
-    return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
+    # infs
+    return sign, finf[1:3]
+
+
+def mpf_mul_int_base(s, n, prec, rnd=round_fast, which='gmpy'):
+    """Multiply by a Python integer."""
+    sign, man, exp, bc = s
+    if not man:
+        return mpf_mul(s, from_int(n), prec, rnd)
+    if not n:
+        return fzero
+    if n < 0:
+        sign ^= 1
+        n = -n
+    man *= n
+    if which == 'gmpy': bc = bitcount(man)
+    else:
+        # Generally n will be small
+        if n < 1024:
+            bc += bctable[int(n)] - 1
+        else:
+            bc += bitcount(n) - 1
+        bc += int(man>>bc)
+    return normalize(sign, man, exp, bc, prec, rnd)
+
+
+def gmpy_mpf_mul(s, t, prec=0, rnd=round_fast):
+    """Multiply two raw mpfs"""
+    return mpf_mul_base(s, t, prec, rnd, 'gmpy')
+
 
 def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
-    sign, man, exp, bc = s
-    if not man:
-        return mpf_mul(s, from_int(n), prec, rnd)
-    if not n:
-        return fzero
-    if n < 0:
-        sign ^= 1
-        n = -n
-    man *= n
-    return normalize(sign, man, exp, bitcount(man), prec, rnd)
+    return mpf_mul_int_base(s, n, prec, rnd, 'gmpy')
+
 
 def python_mpf_mul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
-    ssign, sman, sexp, sbc = s
-    tsign, tman, texp, tbc = t
-    sign = ssign ^ tsign
-    man = sman*tman
-    if man:
-        bc = sbc + tbc - 1
-        bc += int(man>>bc)
-        if prec:
-            return normalize1(sign, man, sexp+texp, bc, prec, rnd)
-        else:
-            return (sign, man, sexp+texp, bc)
-    s_special = (not sman) and sexp
-    t_special = (not tman) and texp
-    if not s_special and not t_special:
-        return fzero
-    if fnan in (s, t): return fnan
-    if (not tman) and texp: s, t = t, s
-    if t == fzero: return fnan
-    return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
+    return mpf_mul_base(s, t, prec, rnd, 'python')
+
 
 def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
-    sign, man, exp, bc = s
-    if not man:
-        return mpf_mul(s, from_int(n), prec, rnd)
-    if not n:
-        return fzero
-    if n < 0:
-        sign ^= 1
-        n = -n
-    man *= n
-    # Generally n will be small
-    if n < 1024:
-        bc += bctable[int(n)] - 1
-    else:
-        bc += bitcount(n) - 1
-    bc += int(man>>bc)
-    return normalize(sign, man, exp, bc, prec, rnd)
+    return mpf_mul_int_base(s, n, prec, rnd, 'python')
 
 
 if BACKEND == 'gmpy':
@@ -908,43 +838,34 @@ else:
 def mpf_shift(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""
     sign, man, exp, bc = s
-    if not man:
+    if bc <= 0:
         return s
     return sign, man, exp+n, bc
 
 def mpf_frexp(x):
     """Convert x = y*2**n to (y, n) with abs(y) in [0.5, 1) if nonzero"""
     sign, man, exp, bc = x
-    if not man:
-        if x == fzero:
-            return (fzero, 0)
-        else:
-            raise ValueError
+    if not bc:
+        return (fzero, 0)
+    if bc < 0:
+        raise ValueError
     return mpf_shift(x, -bc-exp), bc+exp
 
-def mpf_div(s, t, prec, rnd=round_fast):
+
+def mpf_div(s, t, prec, rnd=round_fast, strict=False):
     """Floating-point division"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
-    if not sman or not tman:
-        if s == fzero:
-            if t == fzero: raise ZeroDivisionError
-            if t == fnan: return fnan
-            return fzero
-        if t == fzero:
-            raise ZeroDivisionError
-        s_special = (not sman) and sexp
-        t_special = (not tman) and texp
-        if s_special and t_special:
-            return fnan
-        if s == fnan or t == fnan:
-            return fnan
-        if not t_special:
-            if t == fzero:
-                return fnan
-            return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
-        return fzero
     sign = ssign ^ tsign
+    if sbc <= 0 or tbc <= 0:
+        # NaNs, inf/inf, and 0/0
+        if sbc == tbc or sbc == -1 or tbc == -1: return fnan
+        if not tbc:
+            if strict: raise ZeroDivisionError
+            return sign, finf[1:3]
+        if tbc == -2 or not sbc:
+            return fzero
+        return sign, finf[1:3]
     if tman == 1:
         return normalize1(sign, sman, sexp-texp, sbc, prec, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
@@ -962,7 +883,7 @@ def mpf_div(s, t, prec, rnd=round_fast):
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     """Floating-point division n/t with a Python integer as numerator"""
     sign, man, exp, bc = t
-    if not n or not man:
+    if not n or bc <= 0:
         return mpf_div(from_int(n), t, prec, rnd)
     if n < 0:
         sign ^= 1
@@ -978,7 +899,7 @@ def mpf_rdiv_int(n, t, prec, rnd=round_fast):
 def mpf_mod(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
-    if ((not sman) and sexp) or ((not tman) and texp):
+    if sbc < 0 or tbc < 0:
         return fnan
     # Important special case: do nothing if t is larger
     if ssign == tsign and texp > sexp+sbc:
@@ -1014,28 +935,24 @@ negative_rnd = {
   round_nearest : round_nearest
 }
 
-def mpf_pow_int(s, n, prec, rnd=round_fast):
+
+def mpf_pow_int(s, n, prec, rnd=round_fast, strict=False):
     """Compute s**n, where s is a raw mpf and n is a Python integer."""
     sign, man, exp, bc = s
 
-    if (not man) and exp:
-        if s == finf:
-            if n > 0: return s
-            if n == 0: return fnan
-            return fzero
-        if s == fninf:
-            if n > 0: return [finf, fninf][n & 1]
-            if n == 0: return fnan
-            return fzero
+    if bc <= 0:
+        if bc != -1:
+            if n < 0:
+                if strict and not bc: raise ZeroDivisionError
+                return finf if not bc else fzero
+            if n > 0: return sign & n, man, exp, bc
+        # NaN, inf**0, and 0**0
         return fnan
 
     n = int(n)
     if n == 0: return fone
     if n == 1: return mpf_pos(s, prec, rnd)
     if n == 2:
-        _, man, exp, bc = s
-        if not man:
-            return fzero
         man = man*man
         if man == 1:
             return (0, MPZ_ONE, exp+exp, 1)
@@ -1072,12 +989,13 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
             pe = pe+exp
             pbc += bc - 2
             pbc = pbc + bctable[int(pm >> pbc)]
-            if pbc > workprec:
+            tmp = pbc - workprec
+            if tmp > 0:
                 if rounds_down:
-                    pm = pm >> (pbc-workprec)
+                    pm = pm >> tmp
                 else:
-                    pm = -((-pm) >> (pbc-workprec))
-                pe += pbc - workprec
+                    pm = -((-pm) >> tmp)
+                pe += tmp
                 pbc = workprec
             n -= 1
             if not n:
@@ -1086,12 +1004,13 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
         exp = exp+exp
         bc = bc + bc - 2
         bc = bc + bctable[int(man >> bc)]
+        tmp = bc - workprec
         if bc > workprec:
             if rounds_down:
-                man = man >> (bc-workprec)
+                man = man >> tmp
             else:
-                man = -((-man) >> (bc-workprec))
-            exp += bc - workprec
+                man = -((-man) >> tmp)
+            exp += tmp
             bc = workprec
         n = n // 2
 
@@ -1141,17 +1060,17 @@ def to_digits_exp(s, dps):
         sign = ''
     _sign, man, exp, bc = s
 
-    if not man:
+    if bc <= 0:
         return '', '0', 0
 
-    bitprec = int(dps * math.log(10,2)) + 10
+    bitprec = int(dps * 3.3219280948873626) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
     if abs(exp_from_1) > 3500:
         from .libelefun import mpf_ln2, mpf_ln10
-        # Set b = int(exp * log(2)/log(10))
+        # Set b = int(exp * 0.3010299956639812)
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = bitcount(abs(exp)) + 5
@@ -1169,7 +1088,7 @@ def to_digits_exp(s, dps):
     # fixed-point number and then converting that number to
     # a decimal fixed-point number.
     fixprec = max(bitprec - exp - bc, 0)
-    fixdps = int(fixprec / math.log(10,2) + 0.5)
+    fixdps = int(fixprec * 0.3010299956639812 + 0.5)
     sf = to_fixed(s, fixprec)
     sd = bin_to_radix(sf, fixprec, 10, fixdps)
     digits = numeral(sd, base=10, size=dps)
@@ -1197,17 +1116,16 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     """
 
     # Special numbers
-    if not s[1]:
-        if s == fzero:
+    if s[3] <= 0:
+        if not s[3]:
             if dps: t = '0.0'
             else:   t = '.0'
             if show_zero_exponent:
                 t += 'e+0'
             return t
-        if s == finf: return '+inf'
-        if s == fninf: return '-inf'
-        if s == fnan: return 'nan'
-        raise ValueError
+        if s[3] == -2:
+            return '-inf' if s[0] else '+inf'
+        return 'nan'
 
     if min_fixed is None: min_fixed = min(-(dps//3), -5)
     if max_fixed is None: max_fixed = dps
@@ -1345,7 +1263,7 @@ def mpf_sqrt(s, prec, rnd=round_fast):
     sign, man, exp, bc = s
     if sign:
         raise ComplexResult("square root of a negative number")
-    if not man:
+    if bc <= 0:
         return s
     if exp & 1:
         exp -= 1
@@ -1368,8 +1286,8 @@ def mpf_sqrt(s, prec, rnd=round_fast):
 def mpf_hypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
     x and y."""
-    if y == fzero: return mpf_abs(x, prec, rnd)
-    if x == fzero: return mpf_abs(y, prec, rnd)
+    if not y[3]: return mpf_abs(x, prec, rnd)
+    if not x[3]: return mpf_abs(y, prec, rnd)
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
     return mpf_sqrt(hypot2, prec, rnd)
 

@@ -116,6 +116,8 @@ def testit(importdir='', testdir=''):
         tstart = clock()
         for priority, name, module in modules:
             print(name)
+            if os.fstat(1) == os.fstat(2):
+                print(name, file=sys.stderr)
             for f in sorted(module.__dict__.keys()):
                 if f.startswith('test_'):
                     if coverage and ('numpy' in f):
@@ -128,10 +130,10 @@ def testit(importdir='', testdir=''):
                         etype, evalue, trb = sys.exc_info()
                         if etype in (KeyboardInterrupt, SystemExit):
                             raise
-                        print("")
-                        print("TEST FAILED!")
-                        print("")
-                        traceback.print_exc()
+                        print("", file=sys.stderr)
+                        print("TEST FAILED!", file=sys.stderr)
+                        print("", file=sys.stderr)
+                        traceback.print_exc(file=sys.stderr)
                     t2 = clock()
                     print("ok " + "       " + ("%.7f" % (t2-t1)) + " s")
         tend = clock()

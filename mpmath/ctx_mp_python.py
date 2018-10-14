@@ -5,7 +5,7 @@ from .libmp.backend import basestring, exec_
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_str, to_int, to_float, to_str,
+    from_int, from_float, from_npfloat, from_Decimal, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
     fone, fzero, finf, fninf, fnan,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
@@ -365,8 +365,8 @@ class _mpc(mpnumeric):
 
     def __new__(cls, real=0, imag=0):
         s = object.__new__(cls)
-        if isinstance(real, complex_types):
-            real, imag = real.real, real.imag
+        if isinstance(real, complex_types) or isinstance(real, numbers.Complex):
+            real, imag = real.real, (real.imag if imag == 0 else imag)
         elif hasattr(real, '_mpc_'):
             s._mpc_ = real._mpc_
             return s
@@ -641,10 +641,24 @@ class PythonMPContext(object):
 
         """
         if type(x) in ctx.types: return x
-        if isinstance(x, int_types): return ctx.make_mpf(from_int(x))
+        import numpy as np
+        if isinstance(x, np.generic):
+            try: x = np.asscalar(x)
+            except: pass
+        if isinstance(x, int_types) or isinstance(x, numbers.Integral):
+            try: return ctx.make_mpf(from_int(int(x)))
+            except: pass
         if isinstance(x, float): return ctx.make_mpf(from_float(x))
+        if isinstance(x, np.floating): return ctx.make_mpf(from_npfloat(x))
+        import decimal as dec
+        if isinstance(x, dec.Decimal): return ctx.make_mpf(from_Decimal(x))
         if isinstance(x, complex):
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
+        if isinstance(x, np.complexfloating):
+            return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
+        if isinstance(x, numbers.Rational): # e.g. Fraction
+            try: x = rational.mpq(int(x.numerator), int(x.denominator))
+            except: pass
         prec, rounding = ctx._prec_rounding
         if isinstance(x, rational.mpq):
             p, q = x._mpq_

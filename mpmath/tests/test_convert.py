@@ -193,3 +193,22 @@ def test_mpmathify():
     assert mpmathify('(1.0+1.0j)') == mpc(1, 1)
     assert mpmathify('(1.2e-10 - 3.4e5j)') == mpc('1.2e-10', '-3.4e5')
     assert mpmathify('1j') == mpc(1j)
+
+def test_compatibility():
+    import numpy as np
+    import math, cmath
+    from fractions import Fraction
+    from decimal import Decimal
+    # numpy types
+    for nptype in np.core.numerictypes.typeDict.values():
+        if issubclass(nptype, np.complexfloating):
+            assert complex(sqrt(nptype(complex(0.5, -0.5)))) \
+                == cmath.sqrt(complex(0.5, -0.5))
+        elif issubclass(nptype, np.floating):
+            assert float(sqrt(nptype(0.5))) == math.sqrt(0.5)
+        elif issubclass(nptype, np.integer):
+            assert float(sqrt(nptype(2))) == math.sqrt(2)
+    #Fraction and Decimal
+    assert float(sqrt(Fraction(1, 2))) == math.sqrt(0.5)
+    assert float(sqrt(Decimal('0.5'))) == math.sqrt(0.5)
+
