@@ -5,7 +5,7 @@ from .libmp.backend import basestring, exec_
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_str, to_int, to_float, to_str,
+    from_int, from_float, from_npfloat, from_Decimal, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
     fone, fzero, finf, fninf, fnan,
     mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
@@ -645,6 +645,10 @@ class PythonMPContext(object):
         if isinstance(x, float): return ctx.make_mpf(from_float(x))
         if isinstance(x, complex):
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
+        if type(x).__module__ == 'numpy': return ctx.npconvert(x)
+        if isinstance(x, numbers.Rational): # e.g. Fraction
+            try: x = rational.mpq(int(x.numerator), int(x.denominator))
+            except: pass
         prec, rounding = ctx._prec_rounding
         if isinstance(x, rational.mpq):
             p, q = x._mpq_
@@ -659,7 +663,22 @@ class PythonMPContext(object):
         if hasattr(x, '_mpc_'): return ctx.make_mpc(x._mpc_)
         if hasattr(x, '_mpmath_'):
             return ctx.convert(x._mpmath_(prec, rounding))
+        if type(x).__module__ == 'decimal':
+            try: return ctx.make_mpf(from_Decimal(x, prec, rounding))
+            except: pass
         return ctx._convert_fallback(x, strings)
+
+    def npconvert(ctx, x):
+        """
+        Converts *x* to an ``mpf`` or ``mpc``. *x* should be a numpy
+        scalar.
+        """
+        import numpy as np
+        if isinstance(x, np.integer): return ctx.make_mpf(from_int(int(x)))
+        if isinstance(x, np.floating): return ctx.make_mpf(from_npfloat(x))
+        if isinstance(x, np.complexfloating):
+            return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
+        raise TypeError("cannot create mpf from " + repr(x))
 
     def isnan(ctx, x):
         """
