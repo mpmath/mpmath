@@ -1224,13 +1224,16 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
     else:
         # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in '56789' and \
-            (dps < 500 or digits[dps-4:dps] == '9999'):
-            digits2 = str(int(digits[:dps]) + 1)
-            if len(digits2) > dps:
-                digits2 = digits2[:dps]
+        if len(digits) > dps and digits[dps] in '56789':
+            digits = digits[:dps]
+            i = dps - 1
+            while i >= 0 and digits[i] == '9':
+                i -= 1
+            if i >= 0:
+                digits = digits[:i] + str(int(digits[i]) + 1) + '0' * (dps - i - 1)
+            else:
+                digits = '1' + '0' * dps
                 exponent += 1
-            digits = digits2
         else:
             digits = digits[:dps]
 

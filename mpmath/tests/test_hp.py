@@ -235,7 +235,7 @@ def test_log_hp():
     res = last_digits(r)
     # Mathematica N[Log[10^15000/3], 2000]
     # ...7443804441768333470331
-    assert res == '44380444176833347033'
+    assert res == '43804441768333470331'
 
     # see issue 145
     r = log(mpf(3)/2)
@@ -249,7 +249,7 @@ def test_log_hp():
     res = last_digits(r)
     # Mathematica  N[Log[2], 10000]
     # ...695615913401856601359655561
-    assert res == '91340185660135965556'
+    assert res == '13401856601359655561'
     r = log(mpf(10)**10/3)
     res = last_digits(r)
     # Mathematica N[Log[10^10/3], 10000]
