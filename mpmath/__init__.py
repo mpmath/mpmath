@@ -437,10 +437,6 @@ def runtests():
     tests.testit(importdir, testdir)
 
 def doctests(filter=[]):
-    try:
-        import psyco; psyco.full()
-    except ImportError:
-        pass
     import sys
     from timeit import default_timer as clock
     for i, arg in enumerate(sys.argv):

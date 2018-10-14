@@ -2,6 +2,7 @@
 
 from __future__ import division
 
+import pytest
 from mpmath import *
 xrange = libmp.backend.xrange
 
@@ -175,15 +176,9 @@ def test_singular():
     A = [[5.6, 1.2], [7./15, .1]]
     B = repr(zeros(2))
     b = [1, 2]
-    def _assert_ZeroDivisionError(statement):
-        try:
-            eval(statement)
-            assert False
-        except (ZeroDivisionError, ValueError):
-            pass
     for i in ['lu_solve(%s, %s)' % (A, b), 'lu_solve(%s, %s)' % (B, b),
               'qr_solve(%s, %s)' % (A, b), 'qr_solve(%s, %s)' % (B, b)]:
-        _assert_ZeroDivisionError(i)
+        pytest.raises((ZeroDivisionError, ValueError), lambda: eval(i))
 
 def test_cholesky():
     assert fp.cholesky(fp.matrix(A9)) == fp.matrix([[2, 0, 0], [1, 2, 0], [-1, -3/2, 3/2]])
@@ -316,27 +311,22 @@ def test_qr():
         maxnorm = mpf('1.0E-11')
         n1 = norm(A - Q * R)
         #print '\n Norm of A - Q * R = ', n1
-        if n1 > maxnorm:
-            raise ValueError('Excessive norm value')
+        assert n1 <= maxnorm
 
         if dtype == 'real':
             n1 = norm(eye(m) - Q.T * Q)
             #print ' Norm of I - Q.T * Q = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q * Q.T)
             #print ' Norm of I - Q * Q.T = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
         if dtype == 'complex':
             n1 = norm(eye(m) - Q.T * Q.conjugate())
             #print ' Norm of I - Q.T * Q.conjugate() = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q.conjugate() * Q.T)
             #print ' Norm of I - Q.conjugate() * Q.T = ', n1
-            if n1 > maxnorm:
-                raise ValueError('Excessive norm value')
+            assert n1 <= maxnorm

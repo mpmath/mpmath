@@ -4,7 +4,7 @@ special functions.
 
 (Other torture tests may also be placed here.)
 
-Running this file (gmpy and psyco recommended!) takes several CPU minutes.
+Running this file (gmpy recommended!) takes several CPU minutes.
 With Python 2.6+, multiprocessing is used automatically to run tests
 in parallel if many cores are available. (A single test may take between
 a second and several minutes; possibly more.)
@@ -40,11 +40,6 @@ TODO:
 
 import sys, os
 from timeit import default_timer as clock
-
-if "-psyco" in sys.argv:
-    sys.argv.remove('-psyco')
-    import psyco
-    psyco.full()
 
 if "-nogmpy" in sys.argv:
     sys.argv.remove('-nogmpy')

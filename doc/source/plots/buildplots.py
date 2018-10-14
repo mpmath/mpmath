@@ -1,12 +1,6 @@
 import os.path
 import glob
 
-try:
-    import psyco
-    psyco.full()
-except ImportError:
-    pass
-
 for f in glob.glob("*.py"):
     if "buildplots" in f or os.path.exists(f[:-3]+".png"):
         continue

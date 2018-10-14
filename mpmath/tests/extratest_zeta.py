@@ -27,9 +27,4 @@ def test_zetazero():
     print("ok =", ok)
 
 if __name__ == "__main__":
-    try:
-        import psyco
-        psyco.full()
-    except ImportError:
-        pass
     test_zetazero()

@@ -1,3 +1,4 @@
+import pytest
 from mpmath import *
 from mpmath.calculus.optimization import Secant, Muller, Bisection, Illinois, \
     Pegasus, Anderson, Ridder, ANewton, Newton, MNewton, MDNewton
@@ -27,6 +28,20 @@ def test_findroot():
     #assert isinstance(findroot(f, 1, force_type=complex, tol=1e-10), complex)
     assert isinstance(fp.findroot(f, 1, tol=1e-10), float)
     assert isinstance(fp.findroot(f, 1+0j, tol=1e-10), complex)
+
+    # issue 401
+    with pytest.raises(ValueError):
+        with workprec(2):
+            findroot(lambda x: x**2 - 4456178*x + 60372201703370,
+                     mpc(real='5.278e+13', imag='-5.278e+13'))
+
+    # issue 192
+    with pytest.raises(ValueError):
+        findroot(lambda x: -1, 0)
+
+    # issue 387
+    with pytest.raises(ValueError):
+        findroot(lambda p: (1 - p)**30 - 1, 0.9)
 
 def test_bisection():
     # issue 273

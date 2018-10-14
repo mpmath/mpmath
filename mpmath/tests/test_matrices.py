@@ -1,3 +1,4 @@
+import pytest
 from mpmath import *
 
 def test_matrix_basic():
@@ -16,11 +17,7 @@ def test_matrix_basic():
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
     assert A4 * A5 == matrix([[12, -6], [39, -12]])
     assert A1 * A3 == A3 * A1 == A3
-    try:
-        A2 * A2
-        assert False
-    except ValueError:
-        pass
+    pytest.raises(ValueError, lambda: A2*A2)
     l = [[10, 20, 30], [40, 0, 60], [70, 80, 90]]
     A6 = matrix(l)
     assert A6.tolist() == l
@@ -35,10 +32,7 @@ def test_matrix_basic():
     A3.cols = 2
     assert len(A3._matrix__data) == 3
     assert A4 + A4 == 2*A4
-    try:
-        A4 + A2
-    except ValueError:
-        pass
+    pytest.raises(ValueError, lambda: A4 + A2)
     assert sum(A1 - A1) == 0
     A7 = matrix([[1, 2], [3, 4], [5, 6], [7, 8]])
     x = matrix([10, -10])
@@ -47,11 +41,7 @@ def test_matrix_basic():
     assert sum((A8 + 1) - (2 - zeros(5))) == 0
     assert (1 + ones(4)) / 2 - 1 == zeros(4)
     assert eye(3)**10 == eye(3)
-    try:
-        A7**2
-        assert False
-    except ValueError:
-        pass
+    pytest.raises(ValueError, lambda: A7**2)
     A9 = randmatrix(3)
     A10 = matrix(A9)
     A9[0,0] = -100
@@ -70,11 +60,7 @@ def test_matrix_slices():
     assert A[2,:] == matrix([[7, 8 ,9]])
     assert A[1:3,1:3] == matrix([[5,6],[8,9]])
     assert V[2:4] == matrix([3,4])
-    try:
-        A6 = A[:,1:6]
-        assert False
-    except IndexError:
-        pass
+    pytest.raises(IndexError, lambda: A[:,1:6])
 
     # Assign slice with matrix
     A1 = matrix(3)
@@ -96,17 +82,11 @@ def test_matrix_slices():
                                     [7, 8 ,15]])
     V[1:3] = 10
     assert V == matrix([1,10,10,4,5])
-    try:
+    with pytest.raises(ValueError):
         A1[2,:] = A[:,1]
-        assert False
-    except ValueError:
-        pass
 
-    try:
+    with pytest.raises(IndexError):
         A1[2,1:20] = A[:,:]
-        assert False
-    except IndexError:
-        pass
 
     # Assign slice with scalar
     A1[:,2] = 10
@@ -196,5 +176,5 @@ def test_matrix_numpy():
     except ImportError:
         return
     l = [[1, 2], [3, 4], [5, 6]]
-    a = numpy.matrix(l)
+    a = numpy.array(l)
     assert matrix(l) == matrix(a)
