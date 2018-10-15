@@ -195,19 +195,27 @@ def test_mpmathify():
     assert mpmathify('1j') == mpc(1j)
 
 def test_compatibility():
-    import numpy as np
-    import math, cmath
-    from fractions import Fraction
-    from decimal import Decimal
+    try:
+        import numpy as np
+        from fractions import Fraction
+        from decimal import Decimal
+    except ImportError:
+        return
     # numpy types
     for nptype in np.core.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
-            assert complex(sqrt(nptype(complex(0.5, -0.5)))) \
-                == cmath.sqrt(complex(0.5, -0.5))
+            x = nptype(complex(0.5, -0.5))
         elif issubclass(nptype, np.floating):
-            assert float(sqrt(nptype(0.5))) == math.sqrt(0.5)
+            x = nptype(0.5)
         elif issubclass(nptype, np.integer):
-            assert float(sqrt(nptype(2))) == math.sqrt(2)
+            x = nptype(2)
+        # Handle the weird types
+        try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
+        except: continue
+        assert diff < 2.0**-53
     #Fraction and Decimal
-    assert float(sqrt(Fraction(1, 2))) == math.sqrt(0.5)
-    assert float(sqrt(Decimal('0.5'))) == math.sqrt(0.5)
+    oldprec = mp.prec
+    mp.prec = 1000
+    assert sqrt(Fraction(2, 3)) == sqrt(mpf('2/3'))
+    assert sqrt(Decimal(2)/Decimal(3)) == sqrt(mpf('2/3'))
+    mp.prec = oldprec
