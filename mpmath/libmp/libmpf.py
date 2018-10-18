@@ -20,7 +20,7 @@ from .backend import (MPZ, MPZ_TYPE, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
 from .libintmath import (giant_steps,
     trailtable, bctable, lshift, rshift, bitcount, trailing,
     sqrt_fixed, numeral, isqrt, isqrt_fast, sqrtrem,
-    bin_to_radix)
+    bin_to_radix, stddigits)
 
 # We don't pickle tuples directly for the following reasons:
 #   1: pickle uses str() for ints, which is inefficient when they are large
@@ -327,7 +327,7 @@ if BACKEND == 'gmpy' and '_mpmath_create' in dir(gmpy):
 if BACKEND == 'sage':
     from_man_exp = sage_utils.from_man_exp
 
-def from_int(n, prec=0, rnd=round_fast):
+def from_int(n, prec=None, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
     the mantissa is stored exactly."""
     if not prec:
@@ -1125,13 +1125,15 @@ def mpf_perturb(x, eps_sign, prec, rnd):
 #                              Radix conversion                              #
 #----------------------------------------------------------------------------#
 
-def to_digits_exp(s, dps):
-    """Helper function for representing the floating-point number s as
-    a decimal with dps digits. Returns (sign, string, exponent) where
-    sign is '' or '-', string is the digit string, and exponent is
-    the decimal exponent as an int.
+base_exp = {2:1, 4:2, 8:3, 16:4, 32:5}
 
-    If inexact, the decimal representation is rounded toward zero."""
+def to_digits_exp(s, ps, base=10):
+    """Helper function for representing the floating-point number s as
+    a string with ps digits. Returns (sign, string, exponent) where
+    sign is '' or '-', string is the digit string in the given base,
+    and exponent is the exponent as an int.
+
+    If inexact, the string representation is rounded toward zero."""
 
     # Extract sign first so it doesn't mess up the string digit count
     if s[0]:
@@ -1144,12 +1146,19 @@ def to_digits_exp(s, dps):
     if not man:
         return '', '0', 0
 
-    bitprec = int(dps * math.log(10,2)) + 10
+    if base == 10:
+        blog2 = 3.3219280948873626
+    elif base in base_exp:
+        blog2 = base_exp[base]
+    else:
+        raise NotImplementedError
+
+    bitprec = int(ps * blog2) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if abs(exp_from_1) > 3500:
+    if base == 10 and abs(exp_from_1) > 3500:
         from .libelefun import mpf_ln2, mpf_ln10
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
@@ -1169,73 +1178,82 @@ def to_digits_exp(s, dps):
     # fixed-point number and then converting that number to
     # a decimal fixed-point number.
     fixprec = max(bitprec - exp - bc, 0)
-    fixdps = int(fixprec / math.log(10,2) + 0.5)
+    fixps = int(fixprec / blog2 + 0.5)
     sf = to_fixed(s, fixprec)
-    sd = bin_to_radix(sf, fixprec, 10, fixdps)
-    digits = numeral(sd, base=10, size=dps)
+    sb = bin_to_radix(sf, fixprec, base, fixps)
+    digits = numeral(sb, base=base, size=ps)
 
-    exponent += len(digits) - fixdps - 1
+    exponent += len(digits) - fixps - 1
     return sign, digits, exponent
 
-def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
-    show_zero_exponent=False):
+def to_str(s, ps, strip_zeros=True, min_fixed=None, max_fixed=None,
+    show_zero_exponent=False, base=10):
     """
-    Convert a raw mpf to a decimal floating-point literal with at
-    most `dps` decimal digits in the mantissa (not counting extra zeros
+    Convert a raw mpf to a floating-point literal in the given base
+    with at most `ps` digits in the mantissa (not counting extra zeros
     that may be inserted for visual purposes).
 
     The number will be printed in fixed-point format if the position
     of the leading digit is strictly between min_fixed
-    (default = min(-dps/3,-5)) and max_fixed (default = dps).
+    (default = min(-ps/3,-5)) and max_fixed (default = ps).
 
     To force fixed-point format always, set min_fixed = -inf,
     max_fixed = +inf. To force floating-point format, set
     min_fixed >= max_fixed.
 
     The literal is formatted so that it can be parsed back to a number
-    by to_str, float() or Decimal().
+    by from_str.
     """
+
+    if base in base_exp:
+        sep = 'p'
+    else:
+        sep = 'e'
 
     # Special numbers
     if not s[1]:
         if s == fzero:
-            if dps: t = '0.0'
+            if ps: t = '0.0'
             else:   t = '.0'
             if show_zero_exponent:
-                t += 'e+0'
+                t += sep + '+0'
             return t
         if s == finf: return '+inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
         raise ValueError
 
-    if min_fixed is None: min_fixed = min(-(dps//3), -5)
-    if max_fixed is None: max_fixed = dps
+    if min_fixed is None: min_fixed = min(-(ps//3), -5)
+    if max_fixed is None: max_fixed = ps
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
-    sign, digits, exponent = to_digits_exp(s, dps+3)
+    sign, digits, exponent = to_digits_exp(s, ps+3)
+
+    rnd_digs = stddigits[(base//2 + base%2):base]
 
     # No digits: show only .0; round exponent to nearest
-    if not dps:
-        if digits[0] in '56789':
+    if not ps:
+        if digits[0] in rnd_digs:
             exponent += 1
         digits = ".0"
 
     else:
         # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in '56789':
-            digits = digits[:dps]
-            i = dps - 1
-            while i >= 0 and digits[i] == '9':
+        if len(digits) > ps and digits[ps] in rnd_digs:
+            digits = digits[:ps]
+            i = ps - 1
+            dig = stddigits[base-1]
+            while i >= 0 and digits[i] == dig:
                 i -= 1
             if i >= 0:
-                digits = digits[:i] + str(int(digits[i]) + 1) + '0' * (dps - i - 1)
+                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
+                    '0' * (ps - i - 1)
             else:
-                digits = '1' + '0' * (dps - 1)
+                digits = '1' + '0' * (ps - 1)
                 exponent += 1
         else:
-            digits = digits[:dps]
+            digits = digits[:ps]
 
         # Prettify numbers close to unit magnitude
         if min_fixed < exponent < max_fixed:
@@ -1244,8 +1262,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 split = 1
             else:
                 split = exponent + 1
-                if split > dps:
-                    digits += "0"*(split-dps)
+                if split > ps:
+                    digits += "0"*(split-ps)
             exponent = 0
         else:
             split = 1
@@ -1258,9 +1276,39 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if digits[-1] == ".":
                 digits += "0"
 
-    if exponent == 0 and dps and not show_zero_exponent: return sign + digits
-    if exponent >= 0: return sign + digits + "e+" + str(exponent)
-    if exponent < 0: return sign + digits + "e" + str(exponent)
+    if base in [2, 8, 16]:
+        if base == 2: prefix = "0b"
+        elif base == 8: prefix = "0"
+        else: prefix = "0x"
+    else:
+        prefix = ""
+
+    if exponent == 0 and ps and not show_zero_exponent:
+        return sign + prefix + digits
+    if exponent >= 0: return sign + prefix + digits + sep + "+" + str(exponent)
+    return sign + prefix + digits + sep + str(exponent)
+
+def to_hex(s, hps, strip_zeros=True, min_fixed=None, max_fixed=None,
+    show_zero_exponent=False):
+    return to_str(s, hps, strip_zeros, min_fixed, max_fixed,
+                       show_zero_exponent, base=16)
+
+def to_oct(s, ops, strip_zeros=True, min_fixed=None, max_fixed=None,
+    show_zero_exponent=False):
+    return to_str(s, ops, strip_zeros, min_fixed, max_fixed,
+                       show_zero_exponent, base=8)
+
+def to_bin(s, bps, strip_zeros=True, min_fixed=None, max_fixed=None,
+    show_zero_exponent=False):
+    return to_str(s, bps, strip_zeros, min_fixed, max_fixed,
+                       show_zero_exponent, base=2)
+
+# TODO: optimize size estimate
+
+def to_str_p2(x, base=2):
+    sign, man, exp, bc = x
+    return ['','-'][sign] + numeral(man, size=bitcount(man)//base_exp[base], \
+                                    base=base) + ("p%i" % exp)
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
@@ -1268,7 +1316,11 @@ def str_to_man_exp(x, base=10):
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
-    parts = x.split('e')
+    if base in base_exp:
+        sep = 'p'
+    else:
+        sep = 'e'
+    parts = x.split(sep)
     if len(parts) == 1:
         exp = 0
     else: # == 2
@@ -1285,7 +1337,7 @@ def str_to_man_exp(x, base=10):
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
 
-def from_str(x, prec, rnd=round_fast):
+def from_str(x, prec, rnd=round_fast, base=None):
     """Create a raw mpf from a decimal literal, rounding in the
     specified direction if the input number cannot be represented
     exactly as a binary floating-point number with the given number of
@@ -1298,41 +1350,63 @@ def from_str(x, prec, rnd=round_fast):
     if x in special_str:
         return special_str[x]
 
+    if base is None:
+        if x.startswith('0b') or x.startswith('-0b'):
+            base = 2
+        elif x.startswith('0x') or x.startswith('-0x'):
+            base = 16
+        elif x.startswith('0o') or x.startswith('-0o'):
+            base = 8
+        else:
+            base = 10
+
     if '/' in x:
         p, q = x.split('/')
         p, q = p.rstrip('l'), q.rstrip('l')
-        return from_rational(int(p), int(q), prec, rnd)
+        return from_rational(int(p, base), int(q, base), prec, rnd)
 
-    man, exp = str_to_man_exp(x, base=10)
+    man, exp = str_to_man_exp(x, base)
 
-    # XXX: appropriate cutoffs & track direction
-    # note no factors of 5
-    if abs(exp) > 400:
-        s = from_int(man, prec+10)
-        s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
-    else:
-        if exp >= 0:
-            s = from_int(man * 10**exp, prec, rnd)
+    if base == 10:
+        # XXX: appropriate cutoffs & track direction
+        # note no factors of 5
+        if abs(exp) > 400:
+            s = from_int(man, prec+10)
+            s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
         else:
-            s = from_rational(man, 10**-exp, prec, rnd)
+            if exp >= 0:
+                s = from_int(man * 10**exp, prec, rnd)
+            else:
+                s = from_rational(man, 10**-exp, prec, rnd)
+    elif base in base_exp:
+        s = from_man_exp(man, exp * base_exp[base], prec, rnd)
+    else:
+        raise NotImplementedError
     return s
 
-# Binary string conversion. These are currently mainly used for debugging
-# and could use some improvement in the future
+def from_hex(x, prec=None, rnd=round_fast):
+    """Create a raw mpf from a hexadecimal literal, rounding in the
+    specified direction if *prec* is not *None*. The literal syntax is
+    the same as for Python floats.
+    """
+    man, exp = str_to_man_exp(x, base=16)
+    return from_man_exp(man, exp<<2, prec, rnd)
 
-def from_bstr(x):
+def from_oct(x, prec=None, rnd=round_fast):
+    """Create a raw mpf from an octal literal, rounding in the
+    specified direction if *prec* is not *None*. The literal syntax is
+    the same as for Python floats.
+    """
+    man, exp = str_to_man_exp(x, base=8)
+    return from_man_exp(man, (exp<<1)+exp, prec, rnd)
+
+def from_bin(x, prec=None, rnd=round_fast):
+    """Create a raw mpf from a binary literal, rounding in the
+    specified direction if *prec* is not *None*. The literal syntax is
+    the same as for Python floats.
+    """
     man, exp = str_to_man_exp(x, base=2)
-    man = MPZ(man)
-    sign = 0
-    if man < 0:
-        man = -man
-        sign = 1
-    bc = bitcount(man)
-    return normalize(sign, man, exp, bc, bc, round_floor)
-
-def to_bstr(x):
-    sign, man, exp, bc = x
-    return ['','-'][sign] + numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
+    return from_man_exp(man, exp, prec, rnd)
 
 
 #----------------------------------------------------------------------------#

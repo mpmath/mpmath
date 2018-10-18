@@ -11,8 +11,8 @@ from .libmpf import (prec_to_dps, dps_to_prec, repr_dps,
   mpf_mul, mpf_mul_int, mpf_shift, mpf_frexp,
   mpf_div, mpf_rdiv_int, mpf_mod, mpf_pow_int,
   mpf_perturb,
-  to_digits_exp, to_str, str_to_man_exp, from_str, from_bstr, to_bstr,
-  mpf_sqrt, mpf_hypot)
+  to_digits_exp, to_str, to_bin, to_oct, to_hex, str_to_man_exp,
+  from_str, from_bin, from_oct, from_hex, mpf_sqrt, mpf_hypot)
 
 from .libmpc import (mpc_one, mpc_zero, mpc_two, mpc_half,
   mpc_is_inf, mpc_is_infnan, mpc_to_str, mpc_to_complex, mpc_hash,
