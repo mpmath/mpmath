@@ -199,6 +199,7 @@ def test_compatibility():
         import numpy as np
         from fractions import Fraction
         from decimal import Decimal
+        import decimal
     except ImportError:
         return
     # numpy types
@@ -216,6 +217,7 @@ def test_compatibility():
     #Fraction and Decimal
     oldprec = mp.prec
     mp.prec = 1000
-    assert sqrt(Fraction(2, 3)) == sqrt(mpf('2/3'))
-    assert sqrt(Decimal(2)/Decimal(3)) == sqrt(mpf('2/3'))
+    decimal.getcontext().prec = mp.dps
+    assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
+    assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
