@@ -1,6 +1,15 @@
 mpmath
 ======
 
+|pypi version| |Build status| |Zenodo Badge|
+
+.. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
+   :target: https://pypi.python.org/pypi/mpmath
+.. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
+   :target: https://travis-ci.org/fredrik-johansson/mpmath
+.. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
+   :target: https://zenodo.org/badge/latestdoi/2934512
+
 A Python library for arbitrary-precision floating-point arithmetic.
 
 Website: http://mpmath.org/
@@ -134,11 +143,7 @@ to generate more useful reports in case there are failures.
 You may also want to check out the demo scripts in the demo
 directory.
 
-The master branch is automatically tested by Travis CI, the
-results can be seen here:
-
-.. image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.png?branch=master
-    :target: http://travis-ci.org/fredrik-johansson/mpmath
+The master branch is automatically tested by Travis CI.
 
 3. Documentation
 ----------------
