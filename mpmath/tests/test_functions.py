@@ -857,9 +857,16 @@ def test_expm1():
     assert expm1(0) == 0
     assert expm1(3).ae(exp(3)-1)
     assert expm1(inf) == inf
-    assert expm1(1e-10)*1e10
     assert expm1(1e-50).ae(1e-50)
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
+
+def test_log1p():
+    mp.dps = 15
+    assert log1p(0) == 0
+    assert log1p(3).ae(log(1+3))
+    assert log1p(inf) == inf
+    assert log1p(1e-50).ae(1e-50)
+    assert (log1p(1e-10)*1e10).ae(0.99999999995)
 
 def test_powm1():
     mp.dps = 15

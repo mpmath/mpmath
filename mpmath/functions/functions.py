@@ -180,6 +180,14 @@ def expm1(ctx, x):
     return ctx.sum_accurately(lambda: iter([ctx.exp(x),-1]),1)
 
 @defun_wrapped
+def log1p(ctx, x):
+    if not x:
+        return ctx.zero
+    if ctx.mag(x) < -ctx.prec:
+        return x - 0.5*x**2
+    return ctx.log(ctx.fadd(1, x, prec=2*ctx.prec))
+
+@defun_wrapped
 def powm1(ctx, x, y):
     mag = ctx.mag
     one = ctx.one

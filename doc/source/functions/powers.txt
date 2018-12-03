@@ -68,6 +68,10 @@ Logarithms
 ^^^^^^^^^^^^^^
 .. autofunction:: mpmath.log10(x)
 
+:func:`log1p`
+^^^^^^^^^^^^^^
+.. autofunction:: mpmath.log1p(x)
+
 
 Lambert W function
 ...................................................

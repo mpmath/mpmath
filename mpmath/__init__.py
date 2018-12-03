@@ -413,6 +413,7 @@ primezeta = mp.primezeta
 bell = mp.bell
 polyexp = mp.polyexp
 expm1 = mp.expm1
+log1p = mp.log1p
 powm1 = mp.powm1
 unitroots = mp.unitroots
 cyclotomic = mp.cyclotomic

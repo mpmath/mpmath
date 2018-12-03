@@ -1364,6 +1364,22 @@ Evaluation works for extremely tiny values::
 
 """
 
+log1p = r"""
+Computes `\log(1+x)`, accurately for small `x`.
+
+    >>> from mpmath import *
+    >>> mp.dps = 15; mp.pretty = True
+    >>> log(1+1e-10); print(mp.log1p(1e-10))
+    1.00000008269037e-10
+    9.9999999995e-11
+    >>> mp.log1p(1e-100j)
+    (5.0e-201 + 1.0e-100j)
+    >>> mp.log1p(0)
+    0.0
+
+"""
+
+
 powm1 = r"""
 Computes `x^y - 1`, accurately when `x^y` is very close to 1.
 
