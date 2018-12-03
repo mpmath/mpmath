@@ -305,27 +305,30 @@ def qr_step(ctx, n0, n1, A, Q, shift):
         c /= v
         s /= v
 
+    cc = ctx.conj(c)
+    cs = ctx.conj(s)
+
     for k in xrange(n0, n):
         # apply givens rotation from the left
         x = A[n0  ,k]
         y = A[n0+1,k]
-        A[n0  ,k] = ctx.conj(c) * x + ctx.conj(s) * y
-        A[n0+1,k] =         -s  * x +          c  * y
+        A[n0  ,k] = cc * x + cs * y
+        A[n0+1,k] = c * y - s * x
 
     for k in xrange(min(n1, n0+3)):
         # apply givens rotation from the right
         x = A[k,n0  ]
         y = A[k,n0+1]
-        A[k,n0  ] =           c  * x +          s  * y
-        A[k,n0+1] = -ctx.conj(s) * x + ctx.conj(c) * y
+        A[k,n0  ] = c * x + s * y
+        A[k,n0+1] = cc * y - cs * x
 
     if not isinstance(Q, bool):
         for k in xrange(n):
             # eigenvectors
             x = Q[k,n0  ]
             y = Q[k,n0+1]
-            Q[k,n0  ] =           c  * x +          s  * y
-            Q[k,n0+1] = -ctx.conj(s) * x + ctx.conj(c) * y
+            Q[k,n0  ] = c * x + s * y
+            Q[k,n0+1] = cc * y - cs * x
 
     # chase the bulge
 
@@ -349,27 +352,30 @@ def qr_step(ctx, n0, n1, A, Q, shift):
 
         A[j+2,j] = 0
 
+        cc = ctx.conj(c)
+        cs = ctx.conj(s)
+
         for k in xrange(j+1, n):
             # apply givens rotation from the left
             x = A[j+1,k]
             y = A[j+2,k]
-            A[j+1,k] = ctx.conj(c) * x + ctx.conj(s) * y
-            A[j+2,k] =         -s  * x +          c  * y
+            A[j+1,k] = cc * x + cs * y
+            A[j+2,k] = c * y - s * x
 
         for k in xrange(0, min(n1, j+4)):
             # apply givens rotation from the right
             x = A[k,j+1]
             y = A[k,j+2]
-            A[k,j+1] =           c  * x +          s  * y
-            A[k,j+2] = -ctx.conj(s) * x + ctx.conj(c) * y
+            A[k,j+1] = c * x + s * y
+            A[k,j+2] = cc * y - cs * x
 
         if not isinstance(Q, bool):
             for k in xrange(0, n):
                 # eigenvectors
                 x = Q[k,j+1]
                 y = Q[k,j+2]
-                Q[k,j+1] =           c  * x +          s  * y
-                Q[k,j+2] = -ctx.conj(s) * x + ctx.conj(c) * y
+                Q[k,j+1] = c * x + s * y
+                Q[k,j+2] = cc * y - cs * x
 
 
 
