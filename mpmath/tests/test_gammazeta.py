@@ -214,6 +214,7 @@ def test_gamma_quotients():
     assert rf(2.5,1) == 2.5
     assert rf(-5,2) == 20
     assert rf(j,j).ae(gamma(2*j)/gamma(j))
+    assert rf('-255.5815971722918','-0.5119253100282322').ae('-0.1952720278805729485')  # issue 421
     assert ff(-2,0) == 1
     assert ff(-2,1) == -2
     assert ff(4,3) == 24
@@ -247,6 +248,7 @@ def test_gamma_quotients():
     assert beta(1+2j,-1-j/2).ae(1.16396542451069943086+0.08511695947832914640j)
     assert beta(-0.5,0.5) == 0
     assert beta(-3,3).ae(-1/3.)
+    assert beta('-255.5815971722918','-0.5119253100282322').ae('18.157330562703710339')  # issue 421
 
 def test_zeta():
     mp.dps = 15

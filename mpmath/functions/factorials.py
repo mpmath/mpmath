@@ -55,19 +55,26 @@ def beta(ctx, x, y):
             if y < 0:
                 return ctx.sign(ctx.gamma(y)) * ctx.inf
         return ctx.nan
-    return ctx.gammaprod([x, y], [x+y])
+    xy = ctx.fadd(x, y, prec=2*ctx.prec)
+    return ctx.gammaprod([x, y], [xy])
 
 @defun
 def binomial(ctx, n, k):
-    return ctx.gammaprod([n+1], [k+1, n-k+1])
+    n1 = ctx.fadd(n, 1, prec=2*ctx.prec)
+    k1 = ctx.fadd(k, 1, prec=2*ctx.prec)
+    nk1 = ctx.fsub(n1, k, prec=2*ctx.prec)
+    return ctx.gammaprod([n1], [k1, nk1])
 
 @defun
 def rf(ctx, x, n):
-    return ctx.gammaprod([x+n], [x])
+    xn = ctx.fadd(x, n, prec=2*ctx.prec)
+    return ctx.gammaprod([xn], [x])
 
 @defun
 def ff(ctx, x, n):
-    return ctx.gammaprod([x+1], [x-n+1])
+    x1 = ctx.fadd(x, 1, prec=2*ctx.prec)
+    xn1 = ctx.fadd(ctx.fsub(x, n, prec=2*ctx.prec), 1, prec=2*ctx.prec)
+    return ctx.gammaprod([x1], [xn1])
 
 @defun_wrapped
 def fac2(ctx, x):
