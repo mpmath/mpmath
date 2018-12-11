@@ -1,3 +1,35 @@
+--1.1.0--
+Released December 11, 2018
+
+Bugs:
+* Fixed severe bug in householder() for complex matrices
+  (Michael Kagalenko)
+* Fixed frequently-reported bug where findroot() mysteriously raised
+  UnboundLocalError (Sergey B Kirpichev)
+* Corrected rounding in binary-to-decimal conversion above 500 digits
+* Fixed minor loss of accuracy affecting rf(), ff(), binomial(), beta()
+* Fixed incorrect computation of the Hurwitz zeta function in some cases
+* Fixed accuracy of digamma function near 0
+* Fixed RuntimeError in qfac() in Python 3.7 caused by raising
+  StopIteration (Zbigniew Jędrzejewski-Szmek)
+* Fix to allow NumPy arrays in fdot() (Nico Schlömer)
+
+Features and improvements:
+* Added more automatic conversions from Fraction, Decimal, NumPy types
+  (Jonathan Warner)
+* Support creating mpf from a long literal (ylemkimon)
+* Implemented log1p()
+* Slight speedup of eig()
+* Implement polylog() for general complex s and z by using Hurwitz zeta
+  algorithm as a fallback
+
+Library:
+* Test more CPython and PyPy versions (Sergey B Kirpichev, Aaron Meurer)
+* Drop support for Python 2.6 and 3.2 (Sergey B Kirpichev)
+* Use py.test for test code; lots of code cleanup (Sergey B Kirpichev)
+* Corrections to the documentation (Paul Masson, Connor Behan,
+  Warren Weckesser, Aaron Meurer)
+
 --1.0.0--
 Released September 27, 2017
 

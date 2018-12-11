@@ -21,8 +21,8 @@ LICENSE file for details)
 0. History and credits
 ----------------------
 
-The following people (among others) have contributed patches and new features
-to mpmath:
+The following people (among others) have contributed major patches
+or new features to mpmath:
 
 * Pearu Peterson <pearu.peterson@gmail.com>
 * Mario Pernici <mario.pernici@mi.infn.it>
@@ -42,6 +42,8 @@ to mpmath:
 * Sergey B Kirpichev <skirpichev@gmail.com>
 * Kris Kuhlman <kristopher.kuhlman@gmail.com>
 * Paul Masson <paulmasson@analyticphysics.com>
+* Michael Kagalenko <michael.kagalenko@gmail.com>
+* Jonathan Warner <warnerjon12@gmail.com>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
@@ -82,6 +84,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.1.0 released on December 11, 2018
 * Version 1.0.0 released on September 27, 2017
 * Version 0.19 released on June 10, 2014
 * Version 0.18 released on December 31, 2013
