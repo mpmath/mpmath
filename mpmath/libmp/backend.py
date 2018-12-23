@@ -29,7 +29,7 @@ else:
 
 BACKEND = 'python'
 
-from .six import exec_, print_
+from six import exec_, print_
 
 if not python3:
     MPZ = long
