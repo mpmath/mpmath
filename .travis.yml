@@ -5,16 +5,25 @@ python:
   - 3.3
   - 3.4
   - 3.5
-  - 3.6
   - 3.7-dev
   - pypy
   - pypy3.5
+matrix:
+  include:
+    - python: 3.6
+      env: COVERAGE='on'
 install:
   - pip install -e .[develop]
 script:
   # Guard against invalid escapes in strings, like '\s'.
   - python -We:invalid -m compileall -f mpmath -q
   - pycodestyle
-  - py.test
+  - |
+    if [ -n "${COVERAGE}" ]; then
+      py.test --cov mpmath
+    else
+      py.test
+    fi
+after_success: test -n "${COVERAGE}" && codecov
 notifications:
   email: false
