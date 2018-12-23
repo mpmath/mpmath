@@ -1,12 +1,14 @@
 mpmath
 ======
 
-|pypi version| |Build status| |Zenodo Badge|
+|pypi version| |Build status| |Code coverage status| |Zenodo Badge|
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
 .. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
    :target: https://travis-ci.org/fredrik-johansson/mpmath
+.. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/fredrik-johansson/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
 
