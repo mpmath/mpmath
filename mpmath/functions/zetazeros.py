@@ -437,9 +437,7 @@ def gram_index(ctx, t):
     prec = ctx.prec
     try:
         ctx.prec += wp
-        x0 = (t/(2*ctx.pi))*ctx.log(t/(2*ctx.pi))
-        h = ctx.findroot(lambda x:ctx.siegeltheta(t)-ctx.pi*x, x0)
-        h = int(h)
+        h = int(ctx.siegeltheta(t)/ctx.pi)
     finally:
         ctx.prec = prec
     return(h)
