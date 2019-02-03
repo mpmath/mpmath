@@ -155,8 +155,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.rgamma = ctx._wrap_libmp_function(libmp.mpf_rgamma, libmp.mpc_rgamma)
         ctx.loggamma = ctx._wrap_libmp_function(libmp.mpf_loggamma, libmp.mpc_loggamma)
         ctx.fac = ctx.factorial = ctx._wrap_libmp_function(libmp.mpf_factorial, libmp.mpc_factorial)
-        ctx.gamma_old = ctx._wrap_libmp_function(libmp.mpf_gamma_old, libmp.mpc_gamma_old)
-        ctx.fac_old = ctx.factorial_old = ctx._wrap_libmp_function(libmp.mpf_factorial_old, libmp.mpc_factorial_old)
 
         ctx.digamma = ctx._wrap_libmp_function(libmp.mpf_psi0, libmp.mpc_psi0)
         ctx.harmonic = ctx._wrap_libmp_function(libmp.mpf_harmonic, libmp.mpc_harmonic)
