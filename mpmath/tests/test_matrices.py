@@ -178,9 +178,3 @@ def test_matrix_numpy():
     l = [[1, 2], [3, 4], [5, 6]]
     a = numpy.array(l)
     assert matrix(l) == matrix(a)
-
-def test_matrix_iv():
-    A = iv.matrix([[1, 2], [3, 4]])
-    two = iv.mpf(2)
-    assert A*two == two*A
-    assert two*A == iv.matrix([[iv.mpf(2), iv.mpf(4)], [iv.mpf(6), iv.mpf(8)]])
