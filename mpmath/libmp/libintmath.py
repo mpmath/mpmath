@@ -66,11 +66,11 @@ def python_trailing(n):
     low_byte = n & 0xff
     if low_byte:
         return small_trailing[low_byte]
-    n >>= 8
     t = 8
+    n >>= 8
     while not n & 0xff:
-    	n >>= 8
-    	t += 8
+        n >>= 8
+        t += 8
     return t + small_trailing[n & 0xff]
 
 if BACKEND == 'gmpy':
