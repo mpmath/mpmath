@@ -12,6 +12,10 @@ from bisect import bisect
 from .backend import xrange
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
+small_trailing = [0] * 256
+for j in range(1,8):
+    small_trailing[1<<j::1<<(j+1)] = [j] * (1<<(7-j))
+
 def giant_steps(start, target, n=2):
     """
     Return a list of integers ~=
@@ -59,11 +63,15 @@ def python_trailing(n):
     """Count the number of trailing zero bits in abs(n)."""
     if not n:
         return 0
-    t = 0
-    while not n & 1:
-        n >>= 1
-        t += 1
-    return t
+    low_byte = n & 0xff
+    if low_byte:
+        return small_trailing[low_byte]
+    t = 8
+    n >>= 8
+    while not n & 0xff:
+        n >>= 8
+        t += 8
+    return t + small_trailing[n & 0xff]
 
 if BACKEND == 'gmpy':
     if gmpy.version() >= '2':
