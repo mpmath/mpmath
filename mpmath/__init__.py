@@ -1,4 +1,6 @@
-__version__ = '1.1.0'
+import pkg_resources
+__version__ = pkg_resources.get_distribution(__name__).version
+del pkg_resources
 
 from .usertools import monitor, timing
 

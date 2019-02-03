@@ -2,20 +2,29 @@ language: python
 sudo: false
 python:
   - 2.7
-  - 3.3
   - 3.4
   - 3.5
-  - 3.6
   - 3.7-dev
   - pypy
   - pypy3.5
+matrix:
+  include:
+    - python: 2.7
+      env: COVERAGE='on'
+    - python: 3.6
+      env: COVERAGE='on'
 install:
-  - pip install pep8
-  - pip install -e .
+  - pip install -U -e .[develop]
 script:
   # Guard against invalid escapes in strings, like '\s'.
   - python -We:invalid -m compileall -f mpmath -q
-  - pep8
-  - py.test
+  - pycodestyle
+  - |
+    if [ -n "${COVERAGE}" ]; then
+      py.test --cov mpmath
+    else
+      py.test
+    fi
+after_success: test -n "${COVERAGE}" && codecov
 notifications:
   email: false

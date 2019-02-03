@@ -1,12 +1,14 @@
 mpmath
 ======
 
-|pypi version| |Build status| |Zenodo Badge|
+|pypi version| |Build status| |Code coverage status| |Zenodo Badge|
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
 .. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
    :target: https://travis-ci.org/fredrik-johansson/mpmath
+.. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/fredrik-johansson/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
 
@@ -48,10 +50,6 @@ or new features to mpmath:
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
 documentation.
-
-Mpmath includes a copy of Benjamin Peterson's six.py for
-Python 2/3 compatibility. six.py is provided under the MIT license
-(see the source file for details).
 
 For a detailed changelog, including individual contributions,
 see the CHANGES file.
@@ -109,8 +107,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires Python 2.7 or later. It has been tested
-with CPython 2.7, 3.3 through 3.7 and for PyPy.
+Mpmath requires Python 2.7 or 3.4 (or later versions). It has been tested
+with CPython 2.7, 3.4 through 3.7 and for PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
 website and from https://github.com/fredrik-johansson/mpmath/releases
