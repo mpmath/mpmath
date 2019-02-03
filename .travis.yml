@@ -12,7 +12,7 @@ matrix:
     - python: 3.6
       env: COVERAGE='on'
 install:
-  - pip install -e .[develop]
+  - pip install -U -e .[develop]
 script:
   # Guard against invalid escapes in strings, like '\s'.
   - python -We:invalid -m compileall -f mpmath -q
