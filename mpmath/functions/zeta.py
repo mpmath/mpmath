@@ -1029,12 +1029,12 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         err = r1+r2+r4
         t = t1-t2+t3-t4
         if kwargs.get("verbose"):
-            print_('main term =', t1)
-            print_('    computed using', gt, 'zeros of zeta')
-            print_('prime term =', t2)
-            print_('    computed using', pt, 'values of the von Mangoldt function')
-            print_('exponential term =', t3)
-            print_('singular term =', t4)
+            print('main term =', t1)
+            print('    computed using', gt, 'zeros of zeta')
+            print('prime term =', t2)
+            print('    computed using', pt, 'values of the von Mangoldt function')
+            print('exponential term =', t3)
+            print('singular term =', t4)
     finally:
         ctx.prec = prec
     if kwargs.get("error"):
