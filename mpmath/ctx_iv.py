@@ -31,6 +31,7 @@ def convert_mpf_(x, prec, rounding):
     if isinstance(x, int_types): return from_int(x, prec, rounding)
     if isinstance(x, float): return from_float(x, prec, rounding)
     if isinstance(x, basestring): return from_str(x, prec, rounding)
+    raise NotImplementedError
 
 
 class ivmpf(object):
@@ -41,11 +42,20 @@ class ivmpf(object):
     def __new__(cls, x=0):
         return cls.ctx.convert(x)
 
-    def __int__(self):
+    def cast(self, cls, f_convert):
         a, b = self._mpi_
         if a == b:
-            return int(libmp.to_int(a))
+            return cls(f_convert(a))
         raise ValueError
+
+    def __int__(self):
+        return self.cast(int, libmp.to_int)
+
+    def __float__(self):
+        return self.cast(float, libmp.to_float)
+
+    def __complex__(self):
+        return self.cast(complex, libmp.to_float)
 
     def __hash__(self):
         a, b = self._mpi_
