@@ -51,10 +51,6 @@ Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
 documentation.
 
-Mpmath includes a copy of Benjamin Peterson's six.py for
-Python 2/3 compatibility. six.py is provided under the MIT license
-(see the source file for details).
-
 For a detailed changelog, including individual contributions,
 see the CHANGES file.
 

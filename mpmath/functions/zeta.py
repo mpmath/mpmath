@@ -1,4 +1,6 @@
-from ..libmp.backend import xrange, print_
+from __future__ import print_function
+
+from ..libmp.backend import xrange
 from .functions import defun, defun_wrapped, defun_static
 
 @defun
@@ -602,9 +604,9 @@ def _hurwitz(ctx, s, a=1, d=0, **kwargs):
             T1, T2 = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
             cancellation = ctx.mag(T1) - ctx.mag(T1+T2)
             if verbose:
-                print_("Term 1:", T1)
-                print_("Term 2:", T2)
-                print_("Cancellation:", cancellation, "bits")
+                print("Term 1:", T1)
+                print("Term 2:", T2)
+                print("Cancellation:", cancellation, "bits")
             if cancellation < extraprec:
                 return T1 + T2
             else:
@@ -713,7 +715,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 return lsum, (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
         if verbose:
-            print_("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
+            print("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
         M1, M2 = M2, M2*2
         if ctx.re(s) < 0:
             N += N//2
