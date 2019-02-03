@@ -938,8 +938,8 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         0.023104993115419
         >>> xi = lambda s: 0.5*s*(s-1)*pi**(-0.5*s)*gamma(0.5*s)*zeta(s)
         >>> Xi = lambda t: xi(0.5+t*j)
-        >>> -0.5*diff(Xi,0,n=2)/Xi(0)
-        (0.023104993115419 + 0.0j)
+        >>> chop(-0.5*diff(Xi,0,n=2)/Xi(0))
+        0.023104993115419
 
     We may ask for an approximate error value::
 

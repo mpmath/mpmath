@@ -80,12 +80,15 @@ class SpecialFunctions(object):
 
 def defun_wrapped(f):
     SpecialFunctions.defined_functions[f.__name__] = f, True
+    return f
 
 def defun(f):
     SpecialFunctions.defined_functions[f.__name__] = f, False
+    return f
 
 def defun_static(f):
     setattr(SpecialFunctions, f.__name__, f)
+    return f
 
 @defun_wrapped
 def cot(ctx, z): return ctx.one / ctx.tan(z)

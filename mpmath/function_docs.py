@@ -9770,8 +9770,8 @@ on the unit sphere::
     >>> Y1 = lambda t,p: fp.spherharm(l1,m1,t,p)
     >>> Y2 = lambda t,p: fp.conj(fp.spherharm(l2,m2,t,p))
     >>> l1 = l2 = 3; m1 = m2 = 2
-    >>> print(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere))
-    (1+0j)
+    >>> fp.chop(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere))
+    1.0000000000000007
     >>> m2 = 1    # m1 != m2
     >>> print(fp.chop(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere)))
     0.0
@@ -10011,7 +10011,7 @@ Pass ``exact=True`` to obtain exact values of Stirling numbers as integers::
 
     >>> stirling1(42, 5)
     -2.864498971768501633736628e+50
-    >>> print stirling1(42, 5, exact=True)
+    >>> print(stirling1(42, 5, exact=True))
     -286449897176850163373662803014001546235808317440000
 
 """
@@ -10045,7 +10045,7 @@ Pass ``exact=True`` to obtain exact values of Stirling numbers as integers::
 
     >>> stirling2(52, 10)
     2.641822121003543906807485e+45
-    >>> print stirling2(52, 10, exact=True)
+    >>> print(stirling2(52, 10, exact=True))
     2641822121003543906807485307053638921722527655
 
 
