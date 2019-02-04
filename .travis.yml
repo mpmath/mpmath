@@ -2,7 +2,6 @@ language: python
 sudo: false
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.7-dev
   - pypy
@@ -13,6 +12,9 @@ matrix:
       env: COVERAGE='on'
     - python: 3.6
       env: COVERAGE='on'
+    - python: 3.4
+      before_install:
+        - pip install --upgrade --force-reinstall setuptools
 install:
   - pip install -U -e .[develop]
 script:
