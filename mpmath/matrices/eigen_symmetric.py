@@ -783,16 +783,16 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
       >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
       >>> B = mp.sqrt(mp.pi) * 57 / 16
       >>> C = mp.quad(lambda x: mp.exp(- x * x) * f(x), [-mp.inf, +mp.inf])
-      >>> print mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10)
-      0.0 0.0
+      >>> mp.nprint((mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10)))
+      (0.0, 0.0)
 
       >>> f = lambda x: x**5 - 2 * x**4 + 3 * x**3 - 5 * x**2 + 7 * x - 11
       >>> X, W = mp.gauss_quadrature(3, "laguerre")
       >>> A = mp.fdot([(f(x), w) for x, w in zip(X, W)])
       >>> B = 76
       >>> C = mp.quad(lambda x: mp.exp(-x) * f(x), [0, +mp.inf])
-      >>> print mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10)
-      0.0 0.0
+      >>> mp.nprint(mp.chop(A-B, tol = 1e-10), mp.chop(A-C, tol = 1e-10))
+      .0
 
       # orthogonality of the chebyshev polynomials:
       >>> f = lambda x: mp.chebyt(3, x) * mp.chebyt(2, x)
