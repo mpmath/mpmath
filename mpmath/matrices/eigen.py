@@ -40,6 +40,7 @@ class Eigen(object):
 
 def defun(f):
     setattr(Eigen, f.__name__, f)
+    return f
 
 def hessenberg_reduce_0(ctx, A, T):
     """
