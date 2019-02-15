@@ -443,3 +443,9 @@ def test_isnan_etc():
     assert mp.isnpint(-1.1+0j) == False
     assert mp.isnpint(-1+0.1j) == False
     assert mp.isnpint(0+0.1j) == False
+
+
+def test_issue_438():
+    assert mpf(finf) == mpf('inf')
+    assert mpf(fninf) == mpf('-inf')
+    assert mpf(fnan)._mpf_ == mpf('nan')._mpf_
