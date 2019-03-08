@@ -98,14 +98,6 @@ class ivmpf(object):
     def _mpci_(self):
         return self._mpi_, mpi_zero
 
-    def _compare(*args):
-        raise TypeError("no ordering relation is defined for intervals")
-
-    __gt__ = _compare
-    __le__ = _compare
-    __gt__ = _compare
-    __ge__ = _compare
-
     def __contains__(self, t):
         t = self.ctx.mpf(t)
         return (self.a <= t.a) and (t.b <= self.b)
