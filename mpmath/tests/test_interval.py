@@ -1,4 +1,86 @@
+import pytest
+
 from mpmath import *
+
+from hypothesis import given, settings, Verbosity
+from hypothesis.strategies import composite, floats, one_of
+
+
+@composite
+def bounds_strat(draw):
+    low = draw(floats(allow_nan=False, allow_infinity=True))
+    high = draw(floats(min_value=low, allow_nan=False, allow_infinity=True))
+
+    return low, high
+
+
+@composite
+def bounds_invalue_strat(draw):
+    low = draw(floats(allow_nan=False, allow_infinity=True))
+    high = draw(floats(min_value=low, allow_nan=False, allow_infinity=True))
+    value = draw(floats(min_value=low, max_value=high, allow_nan=False))
+    return low, high, value
+
+
+@composite
+def bounds_outvalue_strat(draw):
+    low = draw(floats(allow_nan=False, allow_infinity=True))
+    high = draw(floats(min_value=low, allow_nan=False, allow_infinity=True))
+    value = draw(one_of(floats(min_value=high, allow_nan=False, allow_infinity=True, exclude_min=True)),
+                 one_of(floats(max_value=low, allow_nan=False, allow_infinity=True, exclude_max=True)))
+    return low, high, value
+
+
+@given(bounds_strat())
+@settings(verbosity=Verbosity.verbose)
+def test_interval_identity_properties(bounds):
+    iv.dps = 15
+    assert mpi(bounds[0]) == mpi(bounds[0], bounds[0])
+    assert mpi(bounds[0]) != mpi(-bounds[0], bounds[0])
+    assert not mpi(bounds[0]) != mpi(bounds[0], bounds[0])
+
+    assert mpi(bounds[0], bounds[1]) == mpi(bounds[0], bounds[1]) == mpi(bounds)
+
+
+@given(bounds_n_val=bounds_invalue_strat())
+@settings(verbosity=Verbosity.verbose)
+def test_float_in(bounds_n_val):
+
+    low, high, value = bounds_n_val
+
+    i = mpi(low, high)
+    assert value in i
+
+
+@given(bounds_n_val=bounds_outvalue_strat())
+@settings(verbosity=Verbosity.verbose)
+def test_not_float_in(bounds_n_val):
+
+    low, high, value = bounds_n_val
+
+    i = mpi(low, high)
+    with pytest.raises(AssertionError):
+        assert value in i
+
+
+@given(bounds_n_val=bounds_outvalue_strat())
+@settings(verbosity=Verbosity.verbose)
+def test_float_not_in(bounds_n_val):
+    low, high, value = bounds_n_val
+
+    i = mpi(low, high)
+    assert value not in i
+
+
+@given(bounds_n_val=bounds_invalue_strat())
+@settings(verbosity=Verbosity.verbose)
+def test_not_float_not_in(bounds_n_val):
+    low, high, value = bounds_n_val
+
+    i = mpi(low, high)
+    with pytest.raises(AssertionError):
+        assert value not in i
+
 
 def test_interval_identity():
     iv.dps = 15
