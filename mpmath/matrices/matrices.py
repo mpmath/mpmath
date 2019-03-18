@@ -437,18 +437,18 @@ class _matrix(object):
         
         '''
         if isinstance(key_1d,int):
-            return xrange(key_1d,key_1d+1)
+            return xrange(key_1d%depth,key_1d%depth+1)
         elif isinstance(key_1d,slice):
             return xrange(*key_1d.indices(depth))
         elif isinstance(key_1d,list):
             if isinstance(key_1d[0],bool):
                 if len(key_1d) != depth:
                     raise IndexError('boolean mask does not match dimension size')
-                return [i for i,x in enumerate(key_1d) if x] # return list so that we can take length late
+                return [k for k,x in enumerate(key_1d) if x] # return list so that we can take length late
             elif isinstance(key_1d[0],int):
                 if min(key_1d)<0 or max(key_1d) >= depth:
                     raise IndexError('index is out of bounds')
-                return key_1d
+                return [k%depth for k in key_1d]
             else:
                 raise IndexError('index array must be int or bool')
         else:
