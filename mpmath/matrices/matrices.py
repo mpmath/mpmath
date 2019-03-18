@@ -468,32 +468,25 @@ class _matrix(object):
         '''
         
         # parse key
-        if isinstance(key,int):
-            # if the matrix is a vector pull element
+        if isinstance(key,(int,slice,list)):
+            # if the matrix is a row vector take only 0th row
             if self.rows == 1:
-                j = key
                 i = 0
-            elif self.cols == 1:
+                j = key
+            # if the matrix is a column vector take only 0th column
+            if self.cols == 1:
                 i = key
                 j = 0
-            # otherwise assume index is for row
+            # otherwise assume we take all columns
             else:
                 i = key
                 j = slice(None,None,None)
-        elif isinstance(key,slice):
-            i = key
-            j = slice(None,None,None)
-        elif len(key) == 2:
+        elif isinstance(key,tuple):
+            assert len(key) == 2, 'mpmath matrix class only allows two dimensional matrices'
             i,j = key
-        else:
-            raise IndexError('mpmatrix class only allows two dimensional matrices')
 
-        i_intlike = isinstance(i,int)
-        j_intlike = isinstance(j,int)
-    
         # return scalar if both dimensions are integers
-        if i_intlike and j_intlike:
-                
+        if isinstance(i,int) and isinstance(j,int):
             if i < 0:
                 i += self.__rows
             if i < 0 or i >= self.__rows:
@@ -527,63 +520,46 @@ class _matrix(object):
         '''
         
         # parse key
-        if isinstance(key,int):
-            # if the matrix is a vector pull element
+        if isinstance(key,(int,slice,list)):
+            # if the matrix is a row vector pull element
             if self.rows == 1:
-                j = key
                 i = 0
-            elif self.cols == 1:
-                i = key
-                j = 0
-            # otherwise assume index is for row
+                j = key
             else:
                 i = key
                 j = slice(None,None,None)
-        elif isinstance(key,slice):
-            i = key
-            j = slice(None,None,None)
-        elif len(key) == 2:
+        elif isinstance(key,tuple):
+            assert len(key) == 2, 'mpmath matrix class only allows two dimensional matrices'
             i,j = key
-        else:
-            raise IndexError('mpmatrix class only allows two dimensional matrices')
-
-        i_intlike = isinstance(i,int)
-        j_intlike = isinstance(j,int)
     
-        # return scalar if both dimensions are integers
-        if i_intlike and j_intlike:
-                
-            if i < 0:
-                i += self.__rows
-            if i < 0 or i >= self.__rows:
-                raise IndexError('index out of bounds')
-            if j < 0:
-                j += self.__cols
-            if j < 0 or j >= self.__cols:
-                raise IndexError('index out of bounds')
+        i_indices = self.__get_indices(i,self.__rows)
+        j_indices = self.__get_indices(j,self.__cols)
 
-            self.__set_element((i,j), value)
-        
-        # otherwise return submatrix of original matrix as mpmatrix class
-        else:
-            i_indices = self.__get_indices(i,self.__rows)
-            j_indices = self.__get_indices(j,self.__cols)
-            
-            if isinstance(value,self.ctx.matrix):
+        if isinstance(value,self.ctx.matrix):
+            # if setting to a 1x1 mpmath matrix
+            if value.__rows==1 and value.__cols==1:
+                value = value.__get_element((0,0))
+                for x,i in enumerate(i_indices):
+                    for y,j in enumerate(j_indices):
+                        self.__set_element((i,j),value)
+            # if setting from submatrix
+            else:
                 if len(i_indices)!=value.rows or len(j_indices)!= value.cols:
                     raise IndexError('indexed submatrix size does not match assingment matrix size')
-
+                    
                 for x,i in enumerate(i_indices):
                     for y,j in enumerate(j_indices):
                         self.__set_element((i,j),value.__get_element((x,y)))
-            else:
-                for x,i in enumerate(i_indices):
-                    for y,j in enumerate(j_indices):
-                        value = self.ctx.convert(value)
-                        self.__set_element((i,j),value)
-            
+        # if setting from scalar which can be cast to mpf or mpc
+        else:
+            value = self.ctx.convert(value)
+            for x,i in enumerate(i_indices):
+                for y,j in enumerate(j_indices):
+                    self.__set_element((i,j),value)
+
         if self._LU:
             self._LU = None
+
         return
 
     def __matmul__(self,other):
