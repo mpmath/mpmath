@@ -437,7 +437,7 @@ class _matrix(object):
         
         '''
         if isinstance(key_1d,int):
-            return xrange(key_1d%depth,key_1d%depth+1)
+            return xrange(key_1d%depth,key_1d%depth00+1)
         elif isinstance(key_1d,slice):
             return xrange(*key_1d.indices(depth))
         elif isinstance(key_1d,list):
@@ -448,7 +448,7 @@ class _matrix(object):
             elif isinstance(key_1d[0],int):
                 if min(key_1d)<0 or max(key_1d) >= depth:
                     raise IndexError('index is out of bounds')
-                return [k%depth for k in key_1d]
+                return key_1d
             else:
                 raise IndexError('index array must be int or bool')
         else:
@@ -461,7 +461,6 @@ class _matrix(object):
         - slices
         - integer array
         - boolean mask
-        
            
         Notes
         -----
