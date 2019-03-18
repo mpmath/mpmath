@@ -470,11 +470,11 @@ class _matrix(object):
         # parse key
         if isinstance(key,(int,slice,list)):
             # if the matrix is a row vector take only 0th row
-            if self.rows == 1:
+            if self.__rows == 1:
                 i = 0
                 j = key
             # if the matrix is a column vector take only 0th column
-            if self.cols == 1:
+            elif self.__cols == 1:
                 i = key
                 j = 0
             # otherwise assume we take all columns
@@ -482,8 +482,11 @@ class _matrix(object):
                 i = key
                 j = slice(None,None,None)
         elif isinstance(key,tuple):
-            assert len(key) == 2, 'mpmath matrix class only allows two dimensional matrices'
+            if len(key) != 2:
+                raise IndexError('mpmath matrix class only allows two dimensional matrices')
             i,j = key
+        else:
+            raise IndexError('could not understand given key')
 
         # return scalar if both dimensions are integers
         if isinstance(i,int) and isinstance(j,int):
@@ -522,16 +525,24 @@ class _matrix(object):
         # parse key
         if isinstance(key,(int,slice,list)):
             # if the matrix is a row vector pull element
-            if self.rows == 1:
+            if self.__rows == 1:
                 i = 0
                 j = key
+            # if the matrix is a column vector take only 0th column
+            elif self.__cols == 1:
+                i = key
+                j = 0
+            # otherwise assume we take all columns
             else:
                 i = key
                 j = slice(None,None,None)
         elif isinstance(key,tuple):
-            assert len(key) == 2, 'mpmath matrix class only allows two dimensional matrices'
+            if len(key) != 2:
+                raise IndexError('mpmath matrix class only allows two dimensional matrices')
             i,j = key
-    
+        else:
+            raise IndexError('could not understand given key')
+        
         i_indices = self.__get_indices(i,self.__rows)
         j_indices = self.__get_indices(j,self.__cols)
 
@@ -591,6 +602,7 @@ class _matrix(object):
         if isinstance(other, self.ctx.matrix):
             # dot multiplication  TODO: use Strassen's method?
             if self.__cols != other.__rows:
+                print(self.__rows,self.__cols,other.__rows,other.__cols)
                 raise ValueError('dimensions not compatible for multiplication')
             new = self.ctx.matrix(self.__rows, other.__cols)
             # loop over nonzero entries of self
