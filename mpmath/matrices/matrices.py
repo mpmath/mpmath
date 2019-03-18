@@ -437,7 +437,7 @@ class _matrix(object):
         
         '''
         if isinstance(key_1d,int):
-            return xrange(key_1d%depth,key_1d%depth00+1)
+            return xrange(key_1d%depth,key_1d%depth+1)
         elif isinstance(key_1d,slice):
             return xrange(*key_1d.indices(depth))
         elif isinstance(key_1d,list):
