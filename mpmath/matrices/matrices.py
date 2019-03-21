@@ -582,7 +582,7 @@ class _matrix(object):
             for i in xrange(self.__rows):
                 for j in xrange(other.__cols):
                     # make sure that self[i,k] and other[i,k] are nonzero
-                    new[i, j] = self.ctx.fdot((self[i,k], other[k,j]) for k in xrange(other.__rows) if ((i,k) in self.__data and (k,j) in other.__data))
+                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[k,j]) for k in xrange(other.__rows) if ((i,k) in self.__data and (k,j) in other.__data))
             return new
         else:
             # try scalar multiplication
