@@ -237,7 +237,6 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 szmax = sz
         # Step 2
         y[m], y[m+1] = y[m+1], y[m]
-        tmp = {}
         for i in xrange(1,n+1): H[m,i], H[m+1,i] = H[m+1,i], H[m,i]
         for i in xrange(1,n+1): A[m,i], A[m+1,i] = A[m+1,i], A[m,i]
         for i in xrange(1,n+1): B[i,m], B[i,m+1] = B[i,m+1], B[i,m]
