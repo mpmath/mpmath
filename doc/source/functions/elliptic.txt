@@ -91,6 +91,11 @@ Jacobi elliptic functions
 Modular functions
 ......................
 
+:func:`eta`
+^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.eta(tau)
+
 :func:`kleinj`
 ^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.kleinj(tau=None, **kwargs)
+

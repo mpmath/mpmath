@@ -47,6 +47,7 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+eta = mp.eta
 
 qp = mp.qp
 qhyper = mp.qhyper
