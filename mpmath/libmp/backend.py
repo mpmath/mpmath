@@ -79,7 +79,8 @@ if 'MPMATH_NOGMPY' not in os.environ:
     except:
         pass
 
-if 'MPMATH_NOSAGE' not in os.environ:
+if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
+        'MPMATH_SAGE' in os.environ):
     try:
         import sage.all
         import sage.libs.mpmath.utils as _sage_utils
