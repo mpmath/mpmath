@@ -827,7 +827,7 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
             f = ctx.re
         elif f == "imag":
             f = ctx.im
-        elif cmp == "abs":
+        elif f == "abs":
             f = abs
         else:
             raise RuntimeError("unknown function %s" % f)
