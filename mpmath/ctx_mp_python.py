@@ -228,8 +228,50 @@ class _mpf(mpnumeric):
     def to_fixed(self, prec):
         return to_fixed(self._mpf_, prec)
 
-    def __round__(self, *args):
-        return round(float(self), *args)
+    def __round__(self, n=0):
+        """
+        Round to `n` digits, respecting current rounding flags and precision.
+
+        The Python docs [1] say:
+        > For the built-in types ... toward the even choice
+
+        Thus, as we are not a built-in type, we can round using the current
+        rounding flag.
+
+        This implementation always returns an `mpf` object.
+        TODO: would we like `round(foo, 0)` to return `int`?
+
+        [1] https://docs.python.org/3/library/functions.html#round
+        """
+        if False:
+            from .libmp.libmpf import mpf_round_int
+            cls, new, (prec, rounding) = self._ctxdata
+            v = new(cls)
+            # TODO: these decimal-digit-shifts are neither lossless nor cheap :(
+            v._mpf_ = mpf_round_int((10**n*self)._mpf_, rounding)
+            shift = mpf('1e' + str(-n))
+            v = v*shift
+            return v
+
+        if True:
+            # estimate of digits left of decimal place
+            # TODO: this is +/- 1; in general I don't think its possible
+            # to decouple this counting from the rounding itself.
+            s = to_str(abs(self)._mpf_, 1, min_fixed=-float('inf'), max_fixed=float('inf'))
+            s = s[:-2] if s.endswith('.0') else s
+            intdigits = len(s)
+
+            # TODO: does not control rounding
+            s = to_str(self._mpf_, intdigits+n)
+
+            #cls, new, (prec, rounding) = self._ctxdata
+            #v = new(cls)
+            #v._mpf_ = mpf(s)._mpf_
+
+            return mpf(s)
+
+        #with workdps(n):
+        #    return fmul(self, 1)
 
 mpf_binary_op = """
 def %NAME%(self, other):
