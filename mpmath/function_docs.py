@@ -7297,7 +7297,7 @@ It is also supported outside of the unit circle::
 **References**
 
 1. Richard Crandall, "Note on fast polylogarithm computation"
-   http://people.reed.edu/~crandall/papers/Polylog.pdf
+   http://www.reed.edu/physics/faculty/crandall/papers/Polylog.pdf
 2. http://en.wikipedia.org/wiki/Polylogarithm
 3. http://mathworld.wolfram.com/Polylogarithm.html
 
