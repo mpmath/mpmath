@@ -1,17 +1,18 @@
 """
 Function plotting demo.
 """
+from __future__ import print_function
 
 from mpmath import *
 
 def main():
-    print """
+    print("""
     Simple function plotting. You can enter one or several
     formulas, in ordinary Python syntax and using the mpmath
     function library. The variable is 'x'. So for example
     the input "sin(x/2)" (without quotation marks) defines
     a valid function.
-    """
+    """)
     functions = []
     for i in xrange(10):
         if i == 0:
@@ -19,18 +20,18 @@ def main():
         else:
             s = raw_input('Enter another function (optional): ')
         if not s:
-            print
+            print()
             break
         f = eval("lambda x: " + s)
         functions.append(f)
-        print "Added f(x) = " + s
-        print
+        print("Added f(x) = " + s)
+        print()
     xlim = raw_input('Enter xmin, xmax (optional): ')
     if xlim:
         xlim = eval(xlim)
     else:
         xlim = [-5, 5]
-    print "Plotting..."
+    print("Plotting...")
     plot(functions, xlim=xlim)
 
 main()
