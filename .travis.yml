@@ -1,18 +1,44 @@
 language: python
-python:
-  - 2.7
-  - 3.5
-  - 3.7
-  - 3.8
-  - pypy
-  - pypy3
 matrix:
   include:
-    - python: 2.7
+    - arch: arm64
+      python: 2.7
+    - arch: amd64
+      python: 2.7
+    - arch: arm64
+      python: 3.5
+    - arch: amd64
+      python: 3.5
+    - arch: arm64
+      python: 3.7
+    - arch: amd64
+      python: 3.7
+    - arch: arm64
+      python: 3.8
+    - arch: amd64
+      python: 3.8
+    - arch: amd64
+      python: pypy
+    - arch: amd64
+      python: pypy3
+    - arch: arm64
+      python: 2.7
       env: COVERAGE='on'
-    - python: 3.6
+    - arch: amd64
+      python: 2.7
       env: COVERAGE='on'
-    - python: 3.4
+    - arch: arm64
+      python: 3.6
+      env: COVERAGE='on'
+    - arch: amd64
+      python: 3.6
+      env: COVERAGE='on'
+    - arch: arm64
+      python: 3.4
+      before_install:
+        - pip install --upgrade --force-reinstall setuptools
+    - arch: amd64
+      python: 3.4
       before_install:
         - pip install --upgrade --force-reinstall setuptools
 install:
