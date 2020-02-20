@@ -9398,14 +9398,14 @@ The sn-function is doubly periodic in the complex plane with periods
     >>> chop(sn(2+2*j*ellipk(1-0.25), 0.25))
     0.9628981775982774425751399
 
-The cn-function is doubly periodic with periods `4 K(m)` and `4 i K(1-m)`::
+The cn-function is doubly periodic with periods `4 K(m)` and `2 K(m) + 2 i K(1-m)`::
 
     >>> cn = ellipfun('cn')
     >>> cn(2, 0.25)
     -0.2698649654510865792581416
     >>> cn(2+4*ellipk(0.25), 0.25)
     -0.2698649654510865792581416
-    >>> chop(cn(2+4*j*ellipk(1-0.25), 0.25))
+    >>> chop(cn(2+2*ellipk(0.25)+2*j*ellipk(1-0.25), 0.25))
     -0.2698649654510865792581416
 
 The dn-function is doubly periodic with periods `2 K(m)` and `4 i K(1-m)`::
