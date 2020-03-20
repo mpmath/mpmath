@@ -13,7 +13,7 @@ class _matrix(object):
     Elements default to zero.
     Use a flat list to create a column vector easily.
 
-    By default, only mpf is used to store the data. You can specify another type
+    By default, the datatype of the context (mpf for mp, mpi for iv, and float for fp)  is used to store the data. You can specify another type
     using force_type=type. It's possible to specify None.
     Make sure force_type(force_type()) is fast.
 
@@ -330,13 +330,12 @@ class _matrix(object):
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], _matrix):
-            A = args[0].copy()
-            self.__data = A._matrix__data
+            A = args[0]
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
             for i in xrange(A.__rows):
                 for j in xrange(A.__cols):
-                    A[i,j] = convert(A[i,j])
+                    self[i, j] = convert(A[i, j])
         elif hasattr(args[0], 'tolist'):
             A = self.ctx.matrix(args[0].tolist())
             self.__data = A._matrix__data
@@ -435,6 +434,7 @@ class _matrix(object):
                 1. Does not check on the value of key it expects key to be a integer tuple (i,j)
                 2. Does not check bounds
                 3. Does not check the value type
+                4. Does not reset the LU cache
         '''
         if value: # only store non-zeros
             self.__data[key] = value
