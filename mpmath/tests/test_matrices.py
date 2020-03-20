@@ -7,7 +7,13 @@ def test_matrix_basic():
     for i in range(3):
         A1[i,i] = 1
     assert A1 == eye(3)
+    assert not A1 != eye(3)
     assert A1 == matrix(A1)
+    assert A1 != 'hello'
+    assert not A1 == 'hello'
+    assert not A1 == 42
+    assert not A1 == None
+    assert A1 != None
     A2 = matrix(3, 2)
     assert not A2._matrix__data
     A3 = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -16,6 +22,8 @@ def test_matrix_basic():
     assert (1, 1) not in A3._matrix__data
     A4 = matrix([[1, 2, 3], [4, 5, 6]])
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
+    assert not A4 == A5
+    assert A4 != A5
     assert A4 * A5 == matrix([[12, -6], [39, -12]])
     assert A1 * A3 == A3 * A1 == A3
     pytest.raises(ValueError, lambda: A2*A2)
@@ -190,7 +198,10 @@ def test_matrix_numpy():
     numpy = pytest.importorskip("numpy")
     l = [[1, 2], [3, 4], [5, 6]]
     a = numpy.array(l)
+    m = matrix(l)
     assert matrix(l) == matrix(a)
+    assert m.__eq__(a) == NotImplemented
+    assert m.__ne__(a) == NotImplemented
 
 def test_interval_matrix_scalar_mult():
     """Multiplication of iv.matrix and any scalar type"""
