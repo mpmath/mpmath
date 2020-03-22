@@ -514,7 +514,7 @@ def RC_calc(ctx, x, y, r, pv=True):
         return 1/ctx.sqrt(x)
     extraprec = 2*max(0,-ctx.mag(x-y)+ctx.mag(x))
     ctx.prec += extraprec
-    if ctx._is_real_type(x) and ctx._is_real_type(y) and ctx._re(y) < 0:
+    if ctx._is_real_type(x) and ctx._is_real_type(y) and ctx._re(y) > 0:
         x = ctx._re(x)
         y = ctx._re(y)
         a = ctx.sqrt(x/y)
