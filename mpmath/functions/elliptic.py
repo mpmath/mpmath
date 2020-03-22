@@ -531,7 +531,14 @@ def RC_calc(ctx, x, y, r, pv=True):
     ctx.prec -= extraprec
     return v
 
-def RJ_calc(ctx, x, y, z, p, r):
+def RJ_calc(ctx, x, y, z, p, r, integration):
+    """
+    With integration == 0, computes RJ only using Carlson's algorithm
+    (may be wrong for some values).
+    With integration == 1, uses an initial integration to make sure
+    Carlson's algorithm is correct.
+    With integration == 2, uses only integration.
+    """
     if not (ctx.isnormal(x) and ctx.isnormal(y) and \
         ctx.isnormal(z) and ctx.isnormal(p)):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z) or ctx.isnan(p):
@@ -540,6 +547,40 @@ def RJ_calc(ctx, x, y, z, p, r):
             return ctx.zero
     if not p:
         return ctx.inf
+    if (not x) + (not y) + (not z) > 1:
+        return ctx.inf
+    # Check conditions and fall back on integration for argument
+    # reduction if needed. The following conditions might be needlessly
+    # restrictive.
+    initial_integral = ctx.zero
+    if integration >= 1:
+        ok = (x.real >= 0 and y.real >= 0 and z.real >= 0 and p.real > 0)
+        if not ok:
+            if x == p or y == p or z == p:
+                ok = True
+        if not ok:
+            if p.imag != 0 or p.real >= 0:
+                if (x.imag == 0 and x.real >= 0 and ctx.conj(y) == z):
+                    ok = True
+                if (y.imag == 0 and y.real >= 0 and ctx.conj(x) == z):
+                    ok = True
+                if (z.imag == 0 and z.real >= 0 and ctx.conj(x) == y):
+                    ok = True
+        if not ok or (integration == 2):
+            N = ctx.ceil(-min(x.real, y.real, z.real, p.real)) + 1
+            # integrate around the singularity
+            if any((t.real <= 0 and t.imag == 0) for t in [x, y, z, p]):
+                margin = 1
+                for t in [x, y, z, p]:
+                    if not t.real > 0:
+                        if not t.imag == 0:
+                            margin = min(margin, abs(t.imag) * 0.5)
+                N += margin * ctx.j
+            F = lambda t: 1/(ctx.sqrt(t+x)*ctx.sqrt(t+y)*ctx.sqrt(t+z)*(t+p))
+            if integration == 2:
+                return 1.5 * ctx.quad(F, [0, N, ctx.inf])
+            initial_integral = 1.5 * ctx.quad(F, [0, N])
+            x += N; y += N; z += N; p += N
     xm,ym,zm,pm = x,y,z,p
     A0 = Am = (x + y + z + 2*p)/5
     delta = (p-x)*(p-y)*(p-z)
@@ -578,7 +619,7 @@ def RJ_calc(ctx, x, y, z, p, r):
     Q = 24024
     v1 = g**m * ctx.power(Am, -1.5) * P/Q
     v2 = 6*S
-    return v1 + v2
+    return initial_integral + v1 + v2
 
 @defun
 def elliprf(ctx, x, y, z):
@@ -774,7 +815,7 @@ def elliprc(ctx, x, y, pv=True):
     return +v
 
 @defun
-def elliprj(ctx, x, y, z, p):
+def elliprj(ctx, x, y, z, p, integration=1):
     r"""
     Evaluates the Carlson symmetric elliptic integral of the third kind
 
@@ -845,7 +886,7 @@ def elliprj(ctx, x, y, z, p):
     try:
         ctx.prec += 20
         tol = ctx.eps * 2**10
-        v = RJ_calc(ctx, x, y, z, p, tol)
+        v = RJ_calc(ctx, x, y, z, p, tol, integration)
     finally:
         ctx.prec = prec
     return +v
