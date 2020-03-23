@@ -568,14 +568,22 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
                     ok = True
         if not ok or (integration == 2):
             N = ctx.ceil(-min(x.real, y.real, z.real, p.real)) + 1
-            # integrate around the singularity
-            if any((t.real <= 0 and t.imag == 0) for t in [x, y, z, p]):
+            # Integrate around any singularities
+            if all((t.imag >= 0 or t.real > 0) for t in [x, y, z, p]):
+                margin = ctx.j
+            elif all((t.imag < 0 or t.real > 0) for t in [x, y, z, p]):
+                margin = -ctx.j
+            else:
                 margin = 1
+                # Go through the upper half-plane, but low enough that any
+                # parameter starting in the lower plane doesn't cross the
+                # branch cut
                 for t in [x, y, z, p]:
-                    if not t.real > 0:
-                        if not t.imag == 0:
-                            margin = min(margin, abs(t.imag) * 0.5)
-                N += margin * ctx.j
+                    if t.imag >= 0 or t.real > 0:
+                        continue
+                    margin = min(margin, abs(t.imag) * 0.5)
+                margin *= ctx.j
+            N += margin
             F = lambda t: 1/(ctx.sqrt(t+x)*ctx.sqrt(t+y)*ctx.sqrt(t+z)*(t+p))
             if integration == 2:
                 return 1.5 * ctx.quad(F, [0, N, ctx.inf])
