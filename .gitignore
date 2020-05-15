@@ -55,3 +55,6 @@ mpmath.egg-info/
 # Coverage-related files
 .coverage
 htmlcov/
+
+# Visual Studio files
+.vs/
