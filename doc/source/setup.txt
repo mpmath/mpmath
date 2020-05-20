@@ -36,6 +36,7 @@ or
 
 If you have an old version of mpmath installed already, you may have to pass ``easy_install`` the ``-U`` flag to force an upgrade.
 
+If installation fails, try deleting the following folders: .eggs, mpmath.egg-info, dist, build
 
 Debian/Ubuntu
 .............

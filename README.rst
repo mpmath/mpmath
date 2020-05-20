@@ -138,7 +138,7 @@ See the main documentation for more detailed instructions.
 
 The unit tests in mpmath/tests/ can be run via the script
 runtests.py, but it is recommended to run them with py.test
-(http://codespeak.net/py/dist/index.html), especially
+(https://pytest.org/), especially
 to generate more useful reports in case there are failures.
 
 You may also want to check out the demo scripts in the demo
