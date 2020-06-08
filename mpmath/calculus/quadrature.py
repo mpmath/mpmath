@@ -211,7 +211,7 @@ class QuadratureRule(object):
         the standard interval and then calls :func:`~mpmath.sum_next`.
         """
         ctx = self.ctx
-        I = err = ctx.zero
+        I = total_err = ctx.zero
         for i in xrange(len(points)-1):
             a, b = points[i], points[i+1]
             if a == b:
@@ -224,23 +224,26 @@ class QuadratureRule(object):
                 f = lambda x: _f(-x) + _f(x)
                 a, b = (ctx.zero, ctx.inf)
             results = []
+            err = ctx.zero
             for degree in xrange(1, max_degree+1):
                 nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
                     print("Integrating from %s to %s (degree %s of %s)" % \
                         (ctx.nstr(a), ctx.nstr(b), degree, max_degree))
-                results.append(self.sum_next(f, nodes, degree, prec, results, verbose))
+                result = self.sum_next(f, nodes, degree, prec, results, verbose)
+                results.append(result)
                 if degree > 1:
                     err = self.estimate_error(results, prec, epsilon)
+                    if verbose:
+                        print("Estimated error:", ctx.nstr(err), " epsilon:", ctx.nstr(epsilon), " result: ", ctx.nstr(result))
                     if err <= epsilon:
                         break
-                    if verbose:
-                        print("Estimated error:", ctx.nstr(err))
             I += results[-1]
-        if err > epsilon:
+            total_err += err
+        if total_err > epsilon:
             if verbose:
-                print("Failed to reach full accuracy. Estimated error:", ctx.nstr(err))
-        return I, err
+                print("Failed to reach full accuracy. Estimated error:", ctx.nstr(total_err))
+        return I, total_err
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
         r"""
