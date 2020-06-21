@@ -543,6 +543,8 @@ class LinearAlgebraMethods(object):
         try:
             # do not overwrite A
             A = ctx.matrix(A).copy()
+            if any(all(ctx.almosteq(0, x) for x in A[:, c]) for c in range(A.cols)):
+                return 0 * A[0, 0]
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
