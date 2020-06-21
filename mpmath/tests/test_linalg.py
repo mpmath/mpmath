@@ -69,6 +69,9 @@ A10 = matrix([[1.0 + 1.0j, 2.0, 2.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]])
 b10 = [1.0, 1.0 + 1.0j, 1.0]
+A11 = matrix([[4, 0, -2],
+             [2, 0, -4],
+             [2, 0, 5.5]])
 
 
 def test_LU_decomp():
@@ -193,6 +196,8 @@ def test_det():
     assert det(A5) == 1
     assert round(det(A6)) == 78356463
     assert det(zeros(3)) == 0
+    assert det(A11) == 0
+
 
 def test_cond():
     A = matrix([[1.2969, 0.8648], [0.2161, 0.1441]])
