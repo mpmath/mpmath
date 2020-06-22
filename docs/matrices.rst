@@ -260,10 +260,12 @@ so called norms.
 Linear algebra
 --------------
 
-Determinant
-...........
+Determinant and Rank
+....................
 
 .. autofunction :: mpmath.det
+
+.. autofunction :: mpmath.rank
 
 
 Decompositions

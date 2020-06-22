@@ -537,6 +537,7 @@ class LinearAlgebraMethods:
     def det(ctx, A):
         """
         Calculate the determinant of a square matrix.
+
         The determinant is the normed, alternating n-linear from,
         i.e. a multiplicative map for each matrix into the
         field of numbers of its entries.
@@ -545,10 +546,10 @@ class LinearAlgebraMethods:
 
         Determinant of identity is 1.
 
-        >>> from mpmath import *
+        >>> from mpmath import eye, matrix, det
         >>> A = eye(3)
         >>> print(det(A))
-        1
+        1.0
 
         But in general a matrix can have any number as its determinant.
 
@@ -566,22 +567,15 @@ class LinearAlgebraMethods:
 
         >>> A = matrix([[1, 3, -2], [1, 9, -6], [1, 4, -3]])
         >>> print(det(A))
-        -2
+        -2.0
 
         i.e. has an inverse matrix.
 
-        >>> B = 0.5 * matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]])
+        >>> B = matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]]) / 2
         >>> A*B == eye(3)
         True
-        >>> print(det(A))
+        >>> print(det(B))
         -0.5
-
-        As mentioned, the determinant is multiplicative, i.e.
-
-        >>> det(A*B) == det(A) * det(b)
-        True
-        >>> 2*det(B) == det(2*B)
-        True
 
         Moreover, a matrix of integers has an inverse matrix of integers
         if and only if the determinat is equal to either 1 or -1.
@@ -591,7 +585,7 @@ class LinearAlgebraMethods:
         >>> A*B == eye(3)
         True
         >>> print(det(A), det(B))
-        -2.0 -0.5
+        -1.0 -1.0
 
         """
         prec = ctx.prec
@@ -846,3 +840,82 @@ class LinearAlgebraMethods:
         # ------------------
         # END OF FUNCTION QR
         # ------------------
+
+    def rank(ctx, A, iszerofunc=None):
+        """
+        Calculate the rank of a matrix.
+
+        This corresponds to the maximal
+        number of linear independent
+        columns (or rows equivalently).
+
+        Rank is computed via singular value decomposition
+        by counting the number of non-zero singular values.
+
+        The argument 'iszerofunc' allows for the provision
+        of a custom function to enable zero detection customization.
+
+        **Examples**
+
+        Rank of identity is same as its dimension.
+
+        >>> from mpmath import eye, matrix, rank, zeros, qr
+        >>> A = eye(3)
+        >>> rank(A)
+        3
+
+        But in general a matrix has rank less or equal of its dimension.
+
+        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
+        >>> rank(A)
+        2
+
+        The rank is given by the number of non zero lines in an
+        equivalent triangular matrix.
+
+        >>> R = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
+        >>> rank(A)
+        2
+
+        The rank is zero if and only if the matrix is zero.
+
+        >>> A = zeros(3)
+        >>> rank(A)
+        0
+
+        The matrix has full rank if and only ist is equivalent to identity,
+
+        >>> A = matrix([[1, 0, 1],[-2, 1, -2],[-4, 1, -5]])
+        >>> rank(A)
+        3
+
+        i.e. has an inverse matrix.
+
+        >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
+        >>> A*B == eye(3)
+        True
+        >>> rank(B)
+        3
+
+        to handle numerical precision zero evaluation can be customized
+        by providing an `iszerofunc`
+
+        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
+        >>> _, R = qr(A)
+        >>> R
+        matrix(
+        [['-3.74165738677394', '-9.8886659507597', '-7.48331477354788'],
+         ['0.0', '1.79284291400159', '-2.548055495426e-26'],
+         ['0.0', '0.0', '4.35114889954169e-27']])
+
+        to take advantage of full precision provide a custom `iszerofunc`
+
+        >>> iszerofunc = lambda x: not bool(x)
+        >>> rank(R, iszerofunc)
+        3
+
+        """
+        if iszerofunc is None:
+            iszerofunc = lambda v: ctx.absmin(v) < ctx.eps
+
+        return sum(1 for v in ctx.svd_r(A, compute_uv=False) if not iszerofunc(v))
