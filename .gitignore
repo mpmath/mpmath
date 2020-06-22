@@ -58,3 +58,6 @@ htmlcov/
 
 # Visual Studio files
 .vs/
+
+# PyCharm files
+.idea/
