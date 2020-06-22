@@ -69,9 +69,14 @@ A10 = matrix([[1.0 + 1.0j, 2.0, 2.0],
             [4.0, 5.0, 6.0],
             [7.0, 8.0, 9.0]])
 b10 = [1.0, 1.0 + 1.0j, 1.0]
+
 A11 = matrix([[4, 0, -2],
              [2, 0, -4],
              [2, 0, 5.5]])
+
+A12 = matrix([[1,0,0],
+              [0,1,0],
+              [0,0,1.0j]])
 
 
 def test_LU_decomp():
@@ -95,6 +100,12 @@ def test_LU_decomp():
     bak = A.copy()
     LU_decomp(A, overwrite=1)
     assert A != bak
+
+    try:
+        LU_decomp(A11)
+        assert False
+    except ZeroDivisionError:
+        assert True
 
 def test_inverse():
     for A in [A1, A2, A5]:
@@ -197,7 +208,7 @@ def test_det():
     assert round(det(A6)) == 78356463
     assert det(zeros(3)) == 0
     assert det(A11) == 0
-
+    assert absmin(det(A12*1e-30) - 1e-30) < eps
 
 def test_cond():
     A = matrix([[1.2969, 0.8648], [0.2161, 0.1441]])

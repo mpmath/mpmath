@@ -134,6 +134,9 @@ class LinearAlgebraMethods:
                 if current > biggest: # TODO: what if equal?
                     biggest = current
                     p[j] = k
+            # without pivot LU fails
+            if p[j] is None:
+                raise ZeroDivisionError('matrix is numerically singular')
             # swap rows according to p
             ctx.swap_row(A, j, p[j])
             if ctx.absmin(A[j,j]) <= tol:
@@ -539,8 +542,6 @@ class LinearAlgebraMethods:
         try:
             # do not overwrite A
             A = ctx.matrix(A).copy()
-            if any(all(ctx.almosteq(0, x) for x in A[:, c]) for c in range(A.cols)):
-                return 0 * A[0, 0]
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
