@@ -536,7 +536,63 @@ class LinearAlgebraMethods:
 
     def det(ctx, A):
         """
-        Calculate the determinant of a matrix.
+        Calculate the determinant of a square matrix.
+        The determinant is the normed, alternating n-linear from,
+        i.e. a multiplicative map for each matrix into the
+        field of numbers of its entries.
+
+        **Examples**
+
+        Determinant of identity is 1.
+
+        >>> from mpmath import *
+        >>> A = eye(3)
+        >>> print(det(A))
+        1
+
+        But in general a matrix can have any number as its determinant.
+
+        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
+        >>> print(det(A))
+        0
+
+        The determinant is vanishing if a matrix has no inverse.
+
+        >>> A = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
+        >>> print(det(A))
+        0
+
+        But, matrix has determinate different from zero full rank if and only is is equivalent to identity,
+
+        >>> A = matrix([[1, 3, -2], [1, 9, -6], [1, 4, -3]])
+        >>> print(det(A))
+        -2
+
+        i.e. has an inverse matrix.
+
+        >>> B = 0.5 * matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]])
+        >>> A*B == eye(3)
+        True
+        >>> print(det(A))
+        -0.5
+
+        As mentioned, the determinant is multiplicative, i.e.
+
+        >>> det(A*B) == det(A) * det(b)
+        True
+        >>> 2*det(B) == det(2*B)
+        True
+
+        Moreover, a matrix of integers has an inverse matrix of integers
+        if and only if the determinat is equal to either 1 or -1.
+
+        >>> A = matrix([[1, 0, 1],[-2, 1, -2],[-4, 1, -5]])
+        >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
+        >>> A*B == eye(3)
+        True
+        >>> print(det(A), det(B))
+        -2.0 -0.5
+
         """
         prec = ctx.prec
         try:
