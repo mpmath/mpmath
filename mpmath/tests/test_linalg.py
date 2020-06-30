@@ -99,11 +99,7 @@ def test_LU_decomp():
     LU_decomp(A, overwrite=1)
     assert A != bak
 
-    try:
-        LU_decomp(A11)
-        assert False
-    except ZeroDivisionError:
-        assert True
+    pytest.raises(ZeroDivisionError, LU_decomp, A11)
 
 def test_inverse():
     for A in [A1, A2, A5]:
