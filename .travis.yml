@@ -1,5 +1,6 @@
 language: python
 matrix:
+# When changing the supported python versions, please keep the README, .travis-ci.yml and setup.cfg in sync!
   include:
     - arch: arm64
       python: 2.7
