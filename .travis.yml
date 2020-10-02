@@ -10,9 +10,9 @@ python:
 matrix:
   include:
     - python: 2.7
-      env: COVERAGE='on'
+      env: PYTEST_ADDOPTS='--cov mpmath'
     - python: 3.6
-      env: COVERAGE='on'
+      env: PYTEST_ADDOPTS='--cov mpmath'
 before_install:
   - pip install -U --force-reinstall setuptools
 install:
@@ -21,12 +21,7 @@ script:
   # Guard against invalid escapes in strings, like '\s'.
   - python -We:invalid -m compileall -f mpmath -q
   - pycodestyle
-  - |
-    if [ -n "${COVERAGE}" ]; then
-      py.test --cov mpmath
-    else
-      py.test
-    fi
-after_success: test -n "${COVERAGE}" && codecov
+  - py.test
+after_success: test -n "${PYTEST_ADDOPTS}" && codecov
 notifications:
   email: false
