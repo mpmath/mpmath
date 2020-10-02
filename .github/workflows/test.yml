@@ -1,0 +1,32 @@
+name: test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9-dev, pypy2, pypy3]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install -U --force-reinstall setuptools pip
+        pip install -U .[develop]
+    - name: Linting with pycodestyle, etc
+      run: |
+        python -We:invalid -m compileall -f mpmath -q
+        pycodestyle
+    - name: Tests
+      run: py.test
+    - name: Coverage tests
+      env:
+        PYTEST_ADDOPTS: --cov mpmath
+      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      run: py.test
+    - name: Upload coverage data
+      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      run: codecov --required
