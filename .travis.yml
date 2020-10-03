@@ -1,3 +1,5 @@
+os: linux
+dist: xenial
 language: python
 python:
   - 2.7
@@ -8,7 +10,7 @@ python:
   - 3.9-dev
   - pypy
   - pypy3
-matrix:
+jobs:
   include:
     - python: 2.7
       env: PYTEST_ADDOPTS='--cov mpmath'
