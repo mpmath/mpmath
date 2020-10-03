@@ -14,19 +14,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        pip install -U --force-reinstall setuptools pip
-        pip install -U .[develop]
+        pip install --upgrade --force-reinstall setuptools pip
+        pip install --upgrade .[develop]
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: py.test
+      run: pytest
     - name: Coverage tests
       env:
         PYTEST_ADDOPTS: --cov mpmath
       if: matrix.python-version == 2.7 || matrix.python-version == 3.6
-      run: py.test
+      run: pytest
     - name: Upload coverage data
       if: matrix.python-version == 2.7 || matrix.python-version == 3.6
       run: codecov --required
