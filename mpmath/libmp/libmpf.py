@@ -544,7 +544,7 @@ def mpf_eq(s, t):
 
 def mpf_hash(s):
     # Duplicate the new hash algorithm introduces in Python 3.2.
-    if sys.version >= "3.2":
+    if sys.version_info >= (3, 2):
         ssign, sman, sexp, sbc = s
 
         # Handle special numbers
