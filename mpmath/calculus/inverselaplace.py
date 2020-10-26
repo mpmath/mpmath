@@ -802,7 +802,7 @@ class LaplaceTransformInversionMethods(object):
 
         # compute the Laplace-space function evalutations
         # at the required abscissa.
-        fp = [f(p) for p in rule.p]
+        fp = [f(p, **kwargs) for p in rule.p]
 
         # compute the time-domain solution from the
         # Laplace-space function evaluations
