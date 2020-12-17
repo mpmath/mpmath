@@ -1322,8 +1322,6 @@ class PrecisionManager:
                     return f(*args, **kwargs)
             finally:
                 self.ctx.prec = orig
-        g.__name__ = f.__name__
-        g.__doc__ = f.__doc__
         return g
     def __enter__(self):
         self.origp = self.ctx.prec
