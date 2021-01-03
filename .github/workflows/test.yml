@@ -22,11 +22,10 @@ jobs:
         pycodestyle
     - name: Tests
       run: pytest
-    - name: Coverage tests
+    - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
       if: matrix.python-version == 2.7 || matrix.python-version == 3.6
-      run: pytest
-    - name: Upload coverage data
-      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
-      run: codecov --required
+      run: |
+        pytest
+        codecov --required
