@@ -52,7 +52,7 @@ class mpq(object):
 
     def __hash__(s):
         a, b = s._mpq_
-        if sys.version >= "3.2":
+        if sys.version_info >= (3, 2):
             inverse = pow(b, HASH_MODULUS-2, HASH_MODULUS)
             if not inverse:
                 h = sys.hash_info.inf
