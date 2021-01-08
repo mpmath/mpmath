@@ -426,6 +426,11 @@ backlunds = mp.backlunds
 lerchphi = mp.lerchphi
 stirling1 = mp.stirling1
 stirling2 = mp.stirling2
+squarew = mp.squarew
+trianglew = mp.trianglew
+sawtoothw = mp.sawtoothw
+unit_triangle = mp.unit_triangle
+sigmoidw = mp.sigmoidw
 
 # be careful when changing this name, don't use test*!
 def runtests():
