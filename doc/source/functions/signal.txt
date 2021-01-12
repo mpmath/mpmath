@@ -1,7 +1,7 @@
 Signal functions
 ----------------
 
-The functions in this section ...
+The functions in this section describe non-sinusoidal waveforms, which are often used in signal processing and electronics.
 
 
 Square wave signal
@@ -10,18 +10,25 @@ Square wave signal
 :func:`squarew`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: mpmath.squarew(A,T)
+.. autofunction:: mpmath.squarew(t,A,T)
+.. autofunction:: mpmath.squarew_floor(t,A,T)
+.. autofunction:: mpmath.squarew_floorex(t,A,T)
 
 Triangle wave signal
 ...............................
 
 :func:`trianglew`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.trianglew(A,T)
+
+.. autofunction:: mpmath.trianglew(t,A,T)
+.. autofunction:: mpmath.trianglew_saw(t,A,T)
 
 Sawtooth wave signal
-................
+......................
 
 :func:`sawtoothw`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.sawtoothw(A,T)
+
+.. autofunction:: mpmath.sawtoothw(t,A,T)
+.. autofunction:: mpmath.sawtoothw_mod(t,A,T)
+.. autofunction:: mpmath.sawtoothw_floor(t,A,T)
