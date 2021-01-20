@@ -5,8 +5,8 @@ mpmath
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
-.. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
-   :target: https://travis-ci.org/fredrik-johansson/mpmath
+.. |Build status| image:: https://github.com/fredrik-johansson/mpmath/workflows/test/badge.svg
+   :target: https://github.com/fredrik-johansson/mpmath/actions?workflow=test
 .. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/fredrik-johansson/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
