@@ -1,58 +1,31 @@
+os: linux
+dist: xenial
 language: python
-matrix:
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.7
+  - 3.8
+  - 3.9
+  - 3.10-dev
+  - pypy
+  - pypy3
+jobs:
   include:
-    - arch: arm64
-      python: 2.7
-    - arch: amd64
-      python: 2.7
-    - arch: arm64
-      python: 3.5
-    - arch: amd64
-      python: 3.5
-    - arch: arm64
-      python: 3.7
-    - arch: amd64
-      python: 3.7
-    - arch: arm64
-      python: 3.8
-    - arch: amd64
-      python: 3.8
-    - arch: amd64
-      python: pypy
-    - arch: amd64
-      python: pypy3
-    - arch: arm64
-      python: 2.7
-      env: COVERAGE='on'
-    - arch: amd64
-      python: 2.7
-      env: COVERAGE='on'
-    - arch: arm64
-      python: 3.6
-      env: COVERAGE='on'
-    - arch: amd64
-      python: 3.6
-      env: COVERAGE='on'
-    - arch: arm64
-      python: 3.4
-      before_install:
-        - pip install --upgrade --force-reinstall setuptools
-    - arch: amd64
-      python: 3.4
-      before_install:
-        - pip install --upgrade --force-reinstall setuptools
+    - python: 2.7
+      env: PYTEST_ADDOPTS='--cov mpmath'
+    - python: 3.6
+      env: PYTEST_ADDOPTS='--cov mpmath'
+before_install:
+  - pip install -U --force-reinstall setuptools
 install:
   - pip install -U -e .[develop]
 script:
   # Guard against invalid escapes in strings, like '\s'.
   - python -We:invalid -m compileall -f mpmath -q
   - pycodestyle
-  - |
-    if [ -n "${COVERAGE}" ]; then
-      py.test --cov mpmath
-    else
-      py.test
-    fi
-after_success: test -n "${COVERAGE}" && codecov
+  - py.test
+after_success: test -n "${PYTEST_ADDOPTS}" && codecov
 notifications:
   email: false
