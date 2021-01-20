@@ -32,3 +32,12 @@ Sawtooth wave signal
 .. autofunction:: mpmath.sawtoothw(t,A,T)
 .. autofunction:: mpmath.sawtoothw_mod(t,A,T)
 .. autofunction:: mpmath.sawtoothw_floor(t,A,T)
+
+Sigmoid wave signal
+.....................
+
+:func:`sigmoidw`
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autofunction:: mpmath.sigmoidw(t,A)
+

@@ -13,7 +13,7 @@ def squarew(ctx,t, A, T):
 
     **Examples**
 
-    Square wave with period = 1, amplitude = 1 ::
+    Square wave with period = 2, amplitude = 1 ::
 
         >>> squarew(0,1,2)
         0.0
@@ -23,7 +23,7 @@ def squarew(ctx,t, A, T):
         0.0
         >>> squarew(1.5,1,2)
         -1
-        >>> squarew(1,1,2)
+        >>> squarew(2,1,2)
         0.0
 
     """
@@ -48,7 +48,7 @@ def squarew_floor(ctx,t, A, T):
 
     **Examples**
 
-    Square wave with period = 1, amplitude = 1 ::
+    Square wave with period = 2, amplitude = 1 ::
 
         >>> squarew_floor(0,1,2)
         1.0
@@ -58,7 +58,7 @@ def squarew_floor(ctx,t, A, T):
         -1.0
         >>> squarew_floor(1.5,1,2)
         -1.0
-        >>> squarew_floor(1,1,2)
+        >>> squarew_floor(2,1,2)
         1.0
     """
     return A*(4*ctx.floor(t/T) - 2*ctx.floor(2*t/T) + 1)
@@ -75,7 +75,7 @@ def squarew_floorex(ctx,t, A, T):
 
     **Examples**
 
-    Square wave with period = 1, amplitude = 1 ::
+    Square wave with period = 2, amplitude = 1 ::
 
         >>> squarew_floor_ex(0,1,2)
         1.0
@@ -85,7 +85,7 @@ def squarew_floorex(ctx,t, A, T):
         -1.0
         >>> squarew_floor_ex(1.5,1,2)
         -1.0
-        >>> squarew_floor_ex(1,1,2)
+        >>> squarew_floor_ex(2,1,2)
         1.0
 
     """
@@ -105,7 +105,7 @@ def trianglew(ctx,t, A, T):
 
     **Examples**
 
-    Triangle wave with period = 1, amplitude = 1 ::
+    Triangle wave with period = 2, amplitude = 1 ::
 
         >>> trianglew(0,1,2)
         0.0
@@ -117,7 +117,7 @@ def trianglew(ctx,t, A, T):
         0.0
         >>> trianglew(1.5,1,2)
         -1.0
-        >>> trianglew(1,1,2)
+        >>> trianglew(2,1,2)
         0.0
     """
     return (2*A/ctx.pi)*ctx.asin(ctx.sinpi(2*t/T))
@@ -134,7 +134,7 @@ def trianglew_saw(ctx,t, A, T):
 
     **Examples**
 
-    Triangle wave with period = 1, amplitude = 1 ::
+    Triangle wave with period = 2, amplitude = 1 ::
 
         >>> trianglew_saw(0,1,2)
         1.0
@@ -146,7 +146,7 @@ def trianglew_saw(ctx,t, A, T):
         0.0
         >>> trianglew_saw(1.5,1,2)
         -1.0
-        >>> trianglew_saw(1,1,2)
+        >>> trianglew_saw(2,1,2)
         1.0
     """
     n = t*ctx.pi/T
@@ -167,7 +167,7 @@ def sawtoothw(t, A, T):
 
     **Examples**
 
-    Sawtooth wave with period = 1, amplitude = 1 ::
+    Sawtooth wave with period = 2, amplitude = 1 ::
 
         >>> sawtoothw(0,1,2)
         -1.0
@@ -179,7 +179,7 @@ def sawtoothw(t, A, T):
         0.0
         >>> sawtoothw(1.5,1,2)
         0.5
-        >>> sawtoothw(1,1,2)
+        >>> sawtoothw(2,1,2)
         -1.0
 
     """
@@ -205,7 +205,7 @@ def sawtoothw_mod(t, A, T):
 
     **Examples**
 
-    Sawtooth wave with period = 1, amplitude = 1 ::
+    Sawtooth wave with period = 2, amplitude = 1 ::
 
         >>> sawtoothw_mod(0,1,2)
         -1.0
@@ -217,7 +217,7 @@ def sawtoothw_mod(t, A, T):
         0.0
         >>> sawtoothw_mod(1.5,1,2)
         0.5
-        >>> sawtoothw_mod(1,1,2)
+        >>> sawtoothw_mod(2,1,2)
         -1.0
 
     """
@@ -235,7 +235,7 @@ def sawtoothw_floor(t, A, T):
 
     **Examples**
 
-    Sawtooth wave with period = 1, amplitude = 1 ::
+    Sawtooth wave with period = 2, amplitude = 1 ::
 
         >>> sawtoothw_floor(0,1,2)
         -1.0
@@ -247,8 +247,20 @@ def sawtoothw_floor(t, A, T):
         0.0
         >>> sawtoothw_floor(1.5,1,2)
         0.5
-        >>> sawtoothw_floor(1,1,2)
+        >>> sawtoothw_floor(2,1,2)
         -1.0
 
     """
     return A*(2*((t/T) - ctx.floor(t/T)) - 1)
+
+def sigmoidw(t, A):
+    """
+    Computes the sigmoid wave function using the definition:
+
+    .. math::
+        x(t) = \frac{A}{1 + e^{-x}} - A
+
+    where A is the amplitude.
+    """
+    return 2A/(1 + exp(-t)) - A
+
