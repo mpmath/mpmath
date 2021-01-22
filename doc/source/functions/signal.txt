@@ -12,7 +12,7 @@ Square wave signal
 
 .. autofunction:: mpmath.squarew(t,A,T)
 .. autofunction:: mpmath.squarew_floor(t,A,T)
-.. autofunction:: mpmath.squarew_floorex(t,A,T)
+.. autofunction:: mpmath.squarew_floor_ex(t,A,T)
 
 Triangle wave signal
 ...............................
