@@ -1,8 +1,4 @@
-# order of square wave function in terms of increasing run time:
-# square_wave_floor_ex, square_wave, square_wave_floor
-
-
-def squarew(ctx,t, A, T):
+def squarew(ctx, t, A, T):
     """
     Computes the square wave function using the definition:
 
@@ -26,6 +22,13 @@ def squarew(ctx,t, A, T):
         >>> squarew(2,1,2)
         0.0
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> squarew(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        -1
+    The average run time of the function using 200 dps (from 50 test runs) is 5.806399999999823e-05 seconds.
+
     """
     n = ctx.sinpi(2*t/T)
     if n == 0:
@@ -37,7 +40,7 @@ def squarew(ctx,t, A, T):
         return -A
 
 
-def squarew_floor(ctx,t, A, T):
+def squarew_floor(ctx, t, A, T):
     """
     Computes the square wave function using the definition:
 
@@ -60,11 +63,18 @@ def squarew_floor(ctx,t, A, T):
         -1.0
         >>> squarew_floor(2,1,2)
         1.0
+
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> squarew_floor(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        -1.0
+    The average run time of the function using 200 dps (from 50 test runs) is 2.081799999999967e-05 seconds.
     """
     return A*(4*ctx.floor(t/T) - 2*ctx.floor(2*t/T) + 1)
 
 
-def squarew_floorex(ctx,t, A, T):
+def squarew_floor_ex(ctx, t, A, T):
     """
     Computes the square wave function using the definition:
 
@@ -88,13 +98,18 @@ def squarew_floorex(ctx,t, A, T):
         >>> squarew_floor_ex(2,1,2)
         1.0
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> squarew_floor_ex(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        -1.0
+    The average run time of the function using 200 dps (from 50 test runs) is 1.2968000000001533e-05 seconds.
+
     """
     return A*((-1)**ctx.floor(2*t/T))
 
-# order of triangle wave function in terms of increasing run time:
-# triangle_wave, triangle_wave_saw
 
-def trianglew(ctx,t, A, T):
+def trianglew(ctx, t, A, T):
     """
     Computes the triangle wave function using the definition:
 
@@ -119,11 +134,19 @@ def trianglew(ctx,t, A, T):
         -1.0
         >>> trianglew(2,1,2)
         0.0
+
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> trianglew(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        -0.22222222222222232090871330001391470432281494140625
+    The average run time of the function (from 50 test runs) using 200 dps is 0.00014768000000000281 seconds.
+
     """
     return (2*A/ctx.pi)*ctx.asin(ctx.sinpi(2*t/T))
 
 
-def trianglew_saw(ctx,t, A, T):
+def trianglew_saw(ctx, t, A, T):
     """
     Computes the triangle wave function as the absolute function of a sawtooth wave:
 
@@ -148,6 +171,14 @@ def trianglew_saw(ctx,t, A, T):
         -1.0
         >>> trianglew_saw(2,1,2)
         1.0
+
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> trianglew_saw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        -0.22222222222222232090871330001391470432281494140625
+    The average run time of the function (from 50 test runs) using 200 dps is 0.0001810279999999992 seconds.
+
     """
     n = t*ctx.pi/T
     if n == ctx.pi/4 or (n - ctx.pi/4) % ctx.pi == 0:
@@ -156,7 +187,7 @@ def trianglew_saw(ctx,t, A, T):
         return A*(abs((4/ctx.pi)*ctx.atan(ctx.cot((t*ctx.pi/T) - ctx.pi/4))) - 1)
 
 
-def sawtoothw(t, A, T):
+def sawtoothw(ctx, t, A, T):
     """
     Computes the sawtooth wave function using the definition:
 
@@ -182,6 +213,13 @@ def sawtoothw(t, A, T):
         >>> sawtoothw(2,1,2)
         -1.0
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> sawtoothw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        0.111111111111111160454356650006957352161407470703125
+    The average run time of the function (from 50 test runs) using 200 dps is 0.0001736160000000009 seconds.
+
     """
     n = t*ctx.pi/T
     if n % ctx.pi == 0:
@@ -191,10 +229,8 @@ def sawtoothw(t, A, T):
     else:
         return -(2*A/ctx.pi)*ctx.atan(ctx.cot(t*ctx.pi/T))
 
-# order of sawtooth wave functions in increasing run time:
-# sawtooth_wave_mod, sawtooth_wave_floor, sawtooth_wave
 
-def sawtoothw_mod(t, A, T):
+def sawtoothw_mod(ctx, t, A, T):
     """
     Computes the sawtooth wave function using the definition:
 
@@ -220,11 +256,18 @@ def sawtoothw_mod(t, A, T):
         >>> sawtoothw_mod(2,1,2)
         -1.0
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> sawtoothw_mod(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        0.111111111111111160454356650006957352161407470703125
+    The average run time of the function (from 50 test runs) using 200 dps is 1.6823999999998896e-05 seconds.
+
     """
     return A*((2/T)*ctx.fmod(t, T) - 1)
 
 
-def sawtoothw_floor(t, A, T):
+def sawtoothw_floor(ctx, t, A, T):
     """
     Computes the sawtooth wave function using the definition:
 
@@ -250,10 +293,18 @@ def sawtoothw_floor(t, A, T):
         >>> sawtoothw_floor(2,1,2)
         -1.0
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> sawtoothw_floor(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
+        0.111111111111111160454356650006957352161407470703125
+    The average run time of the function (from 50 test runs) using 200 dps is 1.763999999999988e-05 seconds.
+
     """
     return A*(2*((t/T) - ctx.floor(t/T)) - 1)
 
-def sigmoidw(t, A):
+
+def sigmoidw(ctx, t, A):
     """
     Computes the sigmoid wave function using the definition:
 
@@ -261,6 +312,13 @@ def sigmoidw(t, A):
         x(t) = \frac{A}{1 + e^{-x}} - A
 
     where A is the amplitude.
-    """
-    return 2A/(1 + exp(-t)) - A
 
+    Testing run time with 200 dps ::
+        >>> from mpmath import *
+        >>> mp.dps = 200; mp.pretty = True
+        >>> sigmoidw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1)
+        0.50467239772185676840241452244896871205195656825700120504353593216961978482423997202634746804585666419751329795595729358385128816779304161122766839674446523241806725207242033774310388431511520878680774
+    The average run time of the function (from 50 test runs) using 200 dps is 0.00019384400000000023 seconds.
+
+    """
+    return 2*A/(1 + ctx.exp(-t)) - A
