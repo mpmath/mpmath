@@ -1,4 +1,4 @@
-def squarew(ctx, t, A, T):
+def squarew(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the square wave function using the definition:
 
@@ -40,7 +40,7 @@ def squarew(ctx, t, A, T):
         return -A
 
 
-def squarew_floor(ctx, t, A, T):
+def squarew_floor(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the square wave function using the definition:
 
@@ -74,7 +74,7 @@ def squarew_floor(ctx, t, A, T):
     return A*(4*ctx.floor(t/T) - 2*ctx.floor(2*t/T) + 1)
 
 
-def squarew_floor_ex(ctx, t, A, T):
+def squarew_floor_ex(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the square wave function using the definition:
 
@@ -109,7 +109,7 @@ def squarew_floor_ex(ctx, t, A, T):
     return A*((-1)**ctx.floor(2*t/T))
 
 
-def trianglew(ctx, t, A, T):
+def trianglew(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the triangle wave function using the definition:
 
@@ -146,7 +146,7 @@ def trianglew(ctx, t, A, T):
     return (2*A/ctx.pi)*ctx.asin(ctx.sinpi(2*t/T))
 
 
-def trianglew_saw(ctx, t, A, T):
+def trianglew_saw(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the triangle wave function as the absolute function of a sawtooth wave:
 
@@ -187,7 +187,7 @@ def trianglew_saw(ctx, t, A, T):
         return A*(abs((4/ctx.pi)*ctx.atan(ctx.cot((t*ctx.pi/T) - ctx.pi/4))) - 1)
 
 
-def sawtoothw(ctx, t, A, T):
+def sawtoothw(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the sawtooth wave function using the definition:
 
@@ -230,7 +230,7 @@ def sawtoothw(ctx, t, A, T):
         return -(2*A/ctx.pi)*ctx.atan(ctx.cot(t*ctx.pi/T))
 
 
-def sawtoothw_mod(ctx, t, A, T):
+def sawtoothw_mod(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the sawtooth wave function using the definition:
 
@@ -267,7 +267,7 @@ def sawtoothw_mod(ctx, t, A, T):
     return A*((2/T)*ctx.fmod(t, T) - 1)
 
 
-def sawtoothw_floor(ctx, t, A, T):
+def sawtoothw_floor(ctx, t: float, A: float, T: float) -> float:
     """
     Computes the sawtooth wave function using the definition:
 
@@ -304,7 +304,7 @@ def sawtoothw_floor(ctx, t, A, T):
     return A*(2*((t/T) - ctx.floor(t/T)) - 1)
 
 
-def sigmoidw(ctx, t, A):
+def sigmoidw(ctx, t: float, A: float) -> float:
     """
     Computes the sigmoid wave function using the definition:
 
