@@ -598,7 +598,7 @@ def jacobian(ctx, f, x):
             J[i,j] = Jj[i]
     return J
 
-# TODO: test with user-specified jacobian matrix, support force_type
+# TODO: test with user-specified jacobian matrix
 class MDNewton:
     """
     Find the root of a vector function numerically using Newton's method.
@@ -693,14 +693,21 @@ str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
-    Find a solution to `f(x) = 0`, using *x0* as starting point or
+    Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
 
     Multidimensional overdetermined systems are supported.
     You can specify them using a function or a list of functions.
 
-    If the found root does not satisfy `|f(x)|^2 \leq \mathrm{tol}`,
-    an exception is raised (this can be disabled with *verify=False*).
+    Mathematically speaking, this function returns `x` such that
+    `|f(x)|^2 \leq \mathrm{tol}` is true within the current working precision.
+    If the computed value does not meet this criterion, an exception is raised.
+    This exception can be disabled with *verify=False*.
+
+    For interval arithmetic (``iv.findroot()``), please note that
+    the returned interval ``x`` is not guaranteed to contain `f(x)=0`!
+    It is only some `x` for which `|f(x)|^2 \leq \mathrm{tol}` certainly holds
+    regardless of numerical error. This may be improved in the future.
 
     **Arguments**
 

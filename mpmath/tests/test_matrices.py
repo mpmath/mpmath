@@ -23,7 +23,7 @@ def test_matrix_basic():
     A6 = matrix(l)
     assert A6.tolist() == l
     assert A6 == eval(repr(A6))
-    A6 = matrix(A6, force_type=float)
+    A6 = fp.matrix(A6)
     assert A6 == eval(repr(A6))
     assert A6*1j == eval(repr(A6*1j))
     assert A3 * 10 == 10 * A3 == A6
