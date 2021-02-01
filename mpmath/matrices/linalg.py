@@ -37,10 +37,9 @@ inaccuracy of the internal floating point arithmetic. Though, it's even smaller
 than the current machine epsilon, which basically means you can trust the
 result.
 
-If you need more speed, use NumPy. Or choose a faster data type using the
-keyword ``force_type``::
+If you need more speed, use NumPy, or ``fp.lu_solve`` for a floating-point computation.
 
-    >>> lu_solve(A, b, force_type=float)
+    >>> fp.lu_solve(A, b)
     matrix(
     [['30.0'],
      ['-20.0']])
@@ -85,9 +84,9 @@ and equation solving with rigorous error bounds::
 
     >>> a = iv.matrix([['0.1','0.3','1.0'],
     ...             ['7.1','5.5','4.8'],
-    ...             ['3.2','4.4','5.6']], force_type=mpi)
+    ...             ['3.2','4.4','5.6']])
     >>>
-    >>> b = iv.matrix(['4','0.6','0.5'], force_type=mpi)
+    >>> b = iv.matrix(['4','0.6','0.5'])
     >>> c = iv.lu_solve(a, b)
     >>> print(c)
     [   [5.2582327113062568605927528666, 5.25823271130625686059275702219]]

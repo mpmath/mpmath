@@ -1,4 +1,5 @@
 from ..libmp.backend import xrange
+import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
@@ -13,9 +14,7 @@ class _matrix(object):
     Elements default to zero.
     Use a flat list to create a column vector easily.
 
-    By default, only mpf is used to store the data. You can specify another type
-    using force_type=type. It's possible to specify None.
-    Make sure force_type(force_type()) is fast.
+    The datatype of the context (mpf for mp, mpi for iv, and float for fp) is used to store the data.
 
     Creating matrices
     -----------------
@@ -72,28 +71,12 @@ class _matrix(object):
         [['0.0', '0.0'],
          ['0.0', mpc(real='1.0', imag='1.0')]])
 
-    You can use the keyword ``force_type`` to change the function which is
-    called on every new element:
-
-        >>> matrix(2, 5, force_type=int) # doctest: +SKIP
-        matrix(
-        [[0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0]])
-
     A more comfortable way to create a matrix lets you use nested lists:
 
         >>> matrix([[1, 2], [3, 4]])
         matrix(
         [['1.0', '2.0'],
          ['3.0', '4.0']])
-
-    If you want to preserve the type of the elements you can use
-    ``force_type=None``:
-
-        >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
-        matrix(
-        [['1.0', '2.5'],
-         [mpc(real='0.0', imag='1.0'), '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -301,9 +284,12 @@ class _matrix(object):
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
-        convert = kwargs.get('force_type', self.ctx.convert)
-        if not convert:
-            convert = lambda x: x
+        if "force_type" in kwargs:
+            warnings.warn("The force_type argument was removed, it did not work"
+                " properly anyway. If you want to force floating-point or"
+                " interval computations, use the respective methods from `fp`"
+                " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
+                " If you want to truncate values to integer, use .apply(int) instead.")
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
@@ -312,7 +298,8 @@ class _matrix(object):
                 self.__cols = len(A[0])
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
-                        self[i, j] = convert(a)
+                        # note: this will call __setitem__ which will call self.ctx.convert() to convert the datatype.
+                        self[i, j] = a
             else:
                 # interpret list as row vector
                 v = args[0]
@@ -330,13 +317,12 @@ class _matrix(object):
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], _matrix):
-            A = args[0].copy()
-            self.__data = A._matrix__data
+            A = args[0]
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
             for i in xrange(A.__rows):
                 for j in xrange(A.__cols):
-                    A[i,j] = convert(A[i,j])
+                    self[i, j] = A[i, j]
         elif hasattr(args[0], 'tolist'):
             A = self.ctx.matrix(args[0].tolist())
             self.__data = A._matrix__data
@@ -435,6 +421,7 @@ class _matrix(object):
                 1. Does not check on the value of key it expects key to be a integer tuple (i,j)
                 2. Does not check bounds
                 3. Does not check the value type
+                4. Does not reset the LU cache
         '''
         if value: # only store non-zeros
             self.__data[key] = value
