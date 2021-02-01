@@ -37,7 +37,7 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'mpmath'
-copyright = '2007-2018, Fredrik Johansson and mpmath developers'
+copyright = '2007-2021, Fredrik Johansson and mpmath developers'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.

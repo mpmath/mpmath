@@ -46,6 +46,7 @@ or new features to mpmath:
 * Paul Masson <paulmasson@analyticphysics.com>
 * Michael Kagalenko <michael.kagalenko@gmail.com>
 * Jonathan Warner <warnerjon12@gmail.com>
+* Max Gaukler <max.gaukler@fau.de>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
