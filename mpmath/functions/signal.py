@@ -22,13 +22,6 @@ def squarew(ctx, t: float, A: float, T: float) -> float:
         >>> squarew(2,1,2)
         0.0
 
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> squarew(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        -1
-    The average run time of the function using 200 dps (from 50 test runs) is 5.806399999999823e-05 seconds.
-
     """
     n = ctx.sinpi(2*t/T)
     if n == 0:
@@ -63,13 +56,6 @@ def squarew_floor(ctx, t: float, A: float, T: float) -> float:
         -1.0
         >>> squarew_floor(2,1,2)
         1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> squarew_floor(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        -1.0
-    The average run time of the function using 200 dps (from 50 test runs) is 2.081799999999967e-05 seconds.
     """
     return A*(4*ctx.floor(t/T) - 2*ctx.floor(2*t/T) + 1)
 
@@ -97,14 +83,6 @@ def squarew_floor_ex(ctx, t: float, A: float, T: float) -> float:
         -1.0
         >>> squarew_floor_ex(2,1,2)
         1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> squarew_floor_ex(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        -1.0
-    The average run time of the function using 200 dps (from 50 test runs) is 1.2968000000001533e-05 seconds.
-
     """
     return A*((-1)**ctx.floor(2*t/T))
 
@@ -134,14 +112,6 @@ def trianglew(ctx, t: float, A: float, T: float) -> float:
         -1.0
         >>> trianglew(2,1,2)
         0.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> trianglew(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        -0.22222222222222232090871330001391470432281494140625
-    The average run time of the function (from 50 test runs) using 200 dps is 0.00014768000000000281 seconds.
-
     """
     return (2*A/ctx.pi)*ctx.asin(ctx.sinpi(2*t/T))
 
@@ -171,14 +141,6 @@ def trianglew_saw(ctx, t: float, A: float, T: float) -> float:
         -1.0
         >>> trianglew_saw(2,1,2)
         1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> trianglew_saw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        -0.22222222222222232090871330001391470432281494140625
-    The average run time of the function (from 50 test runs) using 200 dps is 0.0001810279999999992 seconds.
-
     """
     n = t*ctx.pi/T
     if n == ctx.pi/4 or (n - ctx.pi/4) % ctx.pi == 0:
@@ -212,14 +174,6 @@ def sawtoothw(ctx, t: float, A: float, T: float) -> float:
         0.5
         >>> sawtoothw(2,1,2)
         -1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> sawtoothw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        0.111111111111111160454356650006957352161407470703125
-    The average run time of the function (from 50 test runs) using 200 dps is 0.0001736160000000009 seconds.
-
     """
     n = t*ctx.pi/T
     if n % ctx.pi == 0:
@@ -255,14 +209,6 @@ def sawtoothw_mod(ctx, t: float, A: float, T: float) -> float:
         0.5
         >>> sawtoothw_mod(2,1,2)
         -1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> sawtoothw_mod(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        0.111111111111111160454356650006957352161407470703125
-    The average run time of the function (from 50 test runs) using 200 dps is 1.6823999999998896e-05 seconds.
-
     """
     return A*((2/T)*ctx.fmod(t, T) - 1)
 
@@ -292,16 +238,37 @@ def sawtoothw_floor(ctx, t: float, A: float, T: float) -> float:
         0.5
         >>> sawtoothw_floor(2,1,2)
         -1.0
-
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> sawtoothw_floor(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1,2)
-        0.111111111111111160454356650006957352161407470703125
-    The average run time of the function (from 50 test runs) using 200 dps is 1.763999999999988e-05 seconds.
-
     """
     return A*(2*((t/T) - ctx.floor(t/T)) - 1)
+
+def unit_triangle(t: float, A: float) -> float:
+    """
+    Computes the unit triangle using the definition:
+
+    .. math::
+        x(t) = \left| t \right| + 1
+
+    where A is the amplitude.
+
+    **Examples**
+
+    Unit triangle with amplitude = 1 ::
+
+        >>> unit_triangle(-1,1)
+        0
+        >>> unit_triangle(-0.5,1)
+        0.5
+        >>> unit_triangle(-0,1)
+        1
+        >>> unit_triangle(0.5,1)
+        0.5
+        >>> unit_triangle(1,1)
+        0
+    """
+    if t <= -1 or t >= 1:
+        return 0
+    else:
+        return A*(-abs(t) + 1)
 
 
 def sigmoidw(ctx, t: float, A: float) -> float:
@@ -309,16 +276,24 @@ def sigmoidw(ctx, t: float, A: float) -> float:
     Computes the sigmoid wave function using the definition:
 
     .. math::
-        x(t) = \frac{A}{1 + e^{-x}} - A
+        x(t) = \frac{A}{1 + e^{-t}}
 
     where A is the amplitude.
 
-    Testing run time with 200 dps ::
-        >>> from mpmath import *
-        >>> mp.dps = 200; mp.pretty = True
-        >>> sigmoidw(1.1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111,1)
-        0.50467239772185676840241452244896871205195656825700120504353593216961978482423997202634746804585666419751329795595729358385128816779304161122766839674446523241806725207242033774310388431511520878680774
-    The average run time of the function (from 50 test runs) using 200 dps is 0.00019384400000000023 seconds.
+    **Examples**
+
+    Sigmoid wave with amplitude = 1 ::
+
+        >>> sigmoidw(-1,1)
+        0.268941421369995
+        >>> sigmoidw(-0.5,1)
+        0.377540668798145
+        >>> sigmoidw(0,1)
+        0.5
+        >>> sigmoidw(0.5,1)
+        0.622459331201855
+        >>> sigmoidw(1,1)
+        0.731058578630005
 
     """
-    return 2*A/(1 + ctx.exp(-t)) - A
+    return A / (1 + ctx.exp(-t))
