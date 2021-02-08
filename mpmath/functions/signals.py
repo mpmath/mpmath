@@ -1,8 +1,8 @@
 def squarew(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the square wave function using the definition:
 
-    ..math::
+    .. math::
         x(t) = Asgn(\sin(\frac{2 \pi t}{T}))
 
     where sgn is the sign function and x is 0 at the discontinuities.
@@ -34,7 +34,7 @@ def squarew(ctx, t: float, A: float, T: float) -> float:
 
 
 def squarew_floor(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the square wave function using the definition:
 
     .. math::
@@ -61,7 +61,7 @@ def squarew_floor(ctx, t: float, A: float, T: float) -> float:
 
 
 def squarew_floor_ex(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the square wave function using the definition:
 
     .. math::
@@ -88,7 +88,7 @@ def squarew_floor_ex(ctx, t: float, A: float, T: float) -> float:
 
 
 def trianglew(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the triangle wave function using the definition:
 
     .. math::
@@ -117,7 +117,7 @@ def trianglew(ctx, t: float, A: float, T: float) -> float:
 
 
 def trianglew_saw(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the triangle wave function as the absolute function of a sawtooth wave:
 
     .. math::
@@ -150,7 +150,7 @@ def trianglew_saw(ctx, t: float, A: float, T: float) -> float:
 
 
 def sawtoothw(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the sawtooth wave function using the definition:
 
     .. math::
@@ -185,7 +185,7 @@ def sawtoothw(ctx, t: float, A: float, T: float) -> float:
 
 
 def sawtoothw_mod(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the sawtooth wave function using the definition:
 
     .. math::
@@ -214,7 +214,7 @@ def sawtoothw_mod(ctx, t: float, A: float, T: float) -> float:
 
 
 def sawtoothw_floor(ctx, t: float, A: float, T: float) -> float:
-    """
+    r"""
     Computes the sawtooth wave function using the definition:
 
     .. math::
@@ -241,12 +241,13 @@ def sawtoothw_floor(ctx, t: float, A: float, T: float) -> float:
     """
     return A*(2*((t/T) - ctx.floor(t/T)) - 1)
 
+
 def unit_triangle(t: float, A: float) -> float:
-    """
+    r"""
     Computes the unit triangle using the definition:
 
     .. math::
-        x(t) = \left| t \right| + 1
+        x(t) = A(-\left| t \right| + 1)
 
     where A is the amplitude.
 
@@ -272,7 +273,7 @@ def unit_triangle(t: float, A: float) -> float:
 
 
 def sigmoidw(ctx, t: float, A: float) -> float:
-    """
+    r"""
     Computes the sigmoid wave function using the definition:
 
     .. math::

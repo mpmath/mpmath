@@ -49,8 +49,15 @@ def sawtoothw_floor(t: float, A: float, T: float) -> float:
     return A*(2*((t/T) - mpmath.floor(t/T)) - 1)
 
 
+def unit_triangle(t: float, A: float) -> float:
+    if t <= -1 or t >= 1:
+        return 0
+    else:
+        return A*(-abs(t) + 1)
+
+
 def sigmoidw(t: float, A: float) -> float:
-    return 2*A/(1 + mpmath.exp(-t)) - A
+    return A/(1 + mpmath.exp(-t))
 
 mpmath.mp.dps = 200; mpmath.mp.pretty = True
 
