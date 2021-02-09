@@ -29,3 +29,11 @@ jobs:
       run: |
         pytest
         codecov --required
+    - name: Make packages
+      run: python setup.py sdist bdist_wheel
+    - name: Publish package on PyPI
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@f91f98d65eb3eb032447201d64f2c25d67c28efe
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
