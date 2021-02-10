@@ -197,7 +197,7 @@ def test_mpmathify():
 def test_issue548():
     try:
         # This expression is invalid, but may trigger the ReDOS vulnerability
-        # in the regular expression.
+        # in the regular expression for parsing complex numbers.
         mpmathify('(' + '1' * 5000 + '!j')
     except:
         return
