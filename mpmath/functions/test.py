@@ -1,4 +1,8 @@
+from mpmath import mp
 import mpmath
+import numpy as np
+
+mpmath.mp.dps = 200
 
 def squarew(t: float, A: float, T: float) -> float:
     n = mpmath.sinpi(2*t/T)
@@ -19,9 +23,12 @@ def squarew_floor_ex(t: float, A: float, T: float) -> float:
     return A*((-1)**mpmath.floor(2*t/T))
 
 
-def trianglew(t: float, A: float, T: float) -> float:
+def trianglew(
+    t: float,
+    A: float = 1,
+    T: float = 1,
+) -> float:
     return (2*A/mpmath.pi)*mpmath.asin(mpmath.sinpi(2*t/T))
-
 
 def trianglew_saw(t: float, A: float, T: float) -> float:
     n = t*mpmath.pi/T
@@ -59,14 +66,25 @@ def unit_triangle(t: float, A: float) -> float:
 def sigmoidw(t: float, A: float) -> float:
     return A/(1 + mpmath.exp(-t))
 
-mpmath.mp.dps = 200; mpmath.mp.pretty = True
+def triangle_wave(x, frange=(-1, 1), period=1):
+    A = frange[1] - frange[0]
+    bottom = frange[0]
+    P = period
 
-for i in range(-1000,-995):
+    return A*(1-2*mp.fabs(0.5-mp.frac(x/P+0.25))) + bottom
 
-    temp = mpmath.fdiv(i,100)
-    print(temp)
-    answer = trianglew(temp,1,1)
-    print(answer)
-    answer = trianglew_saw(temp, 1, 1)
-    print(answer)
-    print(" ")
+N = -10
+step = mp.fdiv(1, 100)
+
+while N <= -9.9:
+    x = N
+    print(float(x))
+    answer = sigmoidw(x, 1)
+    
+    calib_row = calibration_data[calibration_data[:, 0].astype(np.float) == float(x)].copy()
+    calib_value = mp.mpf(calib_row[0,5])
+    
+    print(mp.fsub(answer, calib_value))
+    print("")
+    
+    N += step
