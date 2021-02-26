@@ -718,8 +718,6 @@ class QuadratureMethods(object):
             >>> quad(f, [-100, 0, 100])   # Also good
             3.12159332021646
 
-        For such integr
-
         **References**
 
         1. http://mathworld.wolfram.com/DoubleIntegral.html
@@ -1112,4 +1110,3 @@ class QuadratureMethods(object):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
