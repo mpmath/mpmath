@@ -586,8 +586,8 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
             N += margin
             F = lambda t: 1/(ctx.sqrt(t+x)*ctx.sqrt(t+y)*ctx.sqrt(t+z)*(t+p))
             if integration == 2:
-                return 1.5 * ctx.quad(F, [0, N, ctx.inf])
-            initial_integral = 1.5 * ctx.quad(F, [0, N])
+                return 1.5 * ctx.quadsubdiv(F, [0, N, ctx.inf])
+            initial_integral = 1.5 * ctx.quadsubdiv(F, [0, N])
             x += N; y += N; z += N; p += N
     xm,ym,zm,pm = x,y,z,p
     A0 = Am = (x + y + z + 2*p)/5

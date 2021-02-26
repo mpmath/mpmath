@@ -103,6 +103,7 @@ quad = mp.quad
 quadgl = mp.quadgl
 quadts = mp.quadts
 quadosc = mp.quadosc
+quadsubdiv = mp.quadsubdiv
 
 invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot
