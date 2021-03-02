@@ -100,17 +100,18 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
     **Precision and conditioning**
 
     The roots are computed to the current working precision accuracy. If this
-    accuracy cannot be achieved in `maxsteps` steps, then a `NoConvergence`
-    exception is raised. The algorithm internally is using the current working
-    precision extended by `extraprec`. If `NoConvergence` was raised, that is
-    caused either by not having enough extra precision to achieve convergence
-    (in which case increasing `extraprec` should fix the problem) or too low
-    `maxsteps` (in which case increasing `maxsteps` should fix the problem), or
-    a combination of both.
+    accuracy cannot be achieved in ``maxsteps`` steps, then a
+    ``NoConvergence`` exception is raised. The algorithm internally is using
+    the current working precision extended by ``extraprec``. If
+    ``NoConvergence`` was raised, that is caused either by not having enough
+    extra precision to achieve convergence (in which case increasing
+    ``extraprec`` should fix the problem) or too low ``maxsteps`` (in which
+    case increasing ``maxsteps`` should fix the problem), or a combination of
+    both.
 
-    The user should always do a convergence study with regards to `extraprec`
-    to ensure accurate results. It is possible to get convergence to a wrong
-    answer with too low `extraprec`.
+    The user should always do a convergence study with regards to
+    ``extraprec`` to ensure accurate results. It is possible to get
+    convergence to a wrong answer with too low ``extraprec``.
 
     Provided there are no repeated roots, :func:`~mpmath.polyroots` can
     typically compute all roots of an arbitrary polynomial to high precision::

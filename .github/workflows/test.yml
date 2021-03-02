@@ -1,0 +1,39 @@
+name: test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10-dev, pypy2, pypy3]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install --upgrade --force-reinstall setuptools pip
+        pip install --upgrade .[develop]
+    - name: Linting with pycodestyle, etc
+      run: |
+        python -We:invalid -m compileall -f mpmath -q
+        pycodestyle
+    - name: Tests
+      run: pytest
+    - name: Run coverage tests & upload results
+      env:
+        PYTEST_ADDOPTS: --cov mpmath
+      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      run: |
+        pytest
+        codecov --required
+    - name: Make packages
+      run: python setup.py sdist bdist_wheel
+    - name: Publish package on PyPI
+      if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@v1.4.2
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}

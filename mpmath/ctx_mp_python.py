@@ -848,7 +848,6 @@ class PythonMPContext(object):
         prec, rnd = ctx._prec_rounding
         real = []
         imag = []
-        other = 0
         for term in terms:
             reval = imval = 0
             if hasattr(term, "_mpf_"):
@@ -862,10 +861,7 @@ class PythonMPContext(object):
                 elif hasattr(term, "_mpc_"):
                     reval, imval = term._mpc_
                 else:
-                    if absolute: term = ctx.absmax(term)
-                    if squared: term = term**2
-                    other += term
-                    continue
+                    raise NotImplementedError
             if imval:
                 if squared:
                     if absolute:
@@ -891,10 +887,7 @@ class PythonMPContext(object):
             s = ctx.make_mpc((s, mpf_sum(imag, prec, rnd)))
         else:
             s = ctx.make_mpf(s)
-        if other is 0:
-            return s
-        else:
-            return s + other
+        return s
 
     def fdot(ctx, A, B=None, conjugate=False):
         r"""
@@ -940,7 +933,6 @@ class PythonMPContext(object):
         prec, rnd = ctx._prec_rounding
         real = []
         imag = []
-        other = 0
         hasattr_ = hasattr
         types = (ctx.mpf, ctx.mpc)
         for a, b in A:
@@ -976,19 +968,13 @@ class PythonMPContext(object):
                 imag.append(mpf_mul(are, bim))
                 imag.append(mpf_mul(aim, bre))
             else:
-                if conjugate:
-                    other += a*ctx.conj(b)
-                else:
-                    other += a*b
+                raise NotImplementedError
         s = mpf_sum(real, prec, rnd)
         if imag:
             s = ctx.make_mpc((s, mpf_sum(imag, prec, rnd)))
         else:
             s = ctx.make_mpf(s)
-        if other is 0:
-            return s
-        else:
-            return s + other
+        return s
 
     def _wrap_libmp_function(ctx, mpf_f, mpc_f=None, mpi_f=None, doc="<no doc>"):
         """

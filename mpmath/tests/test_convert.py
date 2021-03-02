@@ -194,6 +194,16 @@ def test_mpmathify():
     assert mpmathify('(1.2e-10 - 3.4e5j)') == mpc('1.2e-10', '-3.4e5')
     assert mpmathify('1j') == mpc(1j)
 
+def test_issue548():
+    try:
+        # This expression is invalid, but may trigger the ReDOS vulnerability
+        # in the regular expression for parsing complex numbers.
+        mpmathify('(' + '1' * 5000 + '!j')
+    except:
+        return
+    # The expression is invalid and should raise an exception.
+    assert False
+
 def test_compatibility():
     try:
         import numpy as np

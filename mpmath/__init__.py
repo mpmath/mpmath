@@ -1,6 +1,4 @@
-import pkg_resources
-__version__ = pkg_resources.get_distribution(__name__).version
-del pkg_resources
+__version__ = '1.2.1'
 
 from .usertools import monitor, timing
 
@@ -49,6 +47,7 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+eta = mp.eta
 
 qp = mp.qp
 qhyper = mp.qhyper
@@ -104,6 +103,7 @@ quad = mp.quad
 quadgl = mp.quadgl
 quadts = mp.quadts
 quadosc = mp.quadosc
+quadsubdiv = mp.quadsubdiv
 
 invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot

@@ -683,7 +683,7 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
 
     input:
       A           : a real or complex square matrix of shape (n, n)
-      left        : if true, the left eigenvectors are calulated.
+      left        : if true, the left eigenvectors are calculated.
       right       : if true, the right eigenvectors are calculated.
       overwrite_a : if true, allows modification of A which may improve
                     performance. if false, A is not modified.
@@ -827,7 +827,7 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
             f = ctx.re
         elif f == "imag":
             f = ctx.im
-        elif cmp == "abs":
+        elif f == "abs":
             f = abs
         else:
             raise RuntimeError("unknown function %s" % f)

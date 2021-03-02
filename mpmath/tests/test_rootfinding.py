@@ -23,9 +23,8 @@ def test_findroot():
     # test types
     f = lambda x: (x - 2)**2
 
-    #assert isinstance(findroot(f, 1, force_type=mpf, tol=1e-10), mpf)
-    #assert isinstance(findroot(f, 1., force_type=None, tol=1e-10), float)
-    #assert isinstance(findroot(f, 1, force_type=complex, tol=1e-10), complex)
+    assert isinstance(findroot(f, 1, tol=1e-10), mpf)
+    assert isinstance(iv.findroot(f, 1., tol=1e-10), iv.mpf)
     assert isinstance(fp.findroot(f, 1, tol=1e-10), float)
     assert isinstance(fp.findroot(f, 1+0j, tol=1e-10), complex)
 

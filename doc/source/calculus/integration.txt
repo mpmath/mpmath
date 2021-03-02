@@ -6,6 +6,11 @@ Standard quadrature (``quad``)
 
 .. autofunction:: mpmath.quad
 
+Quadrature with subdivision (``quadsubdiv``)
+............................................
+
+.. autofunction:: mpmath.quadsubdiv
+
 Oscillatory quadrature (``quadosc``)
 ....................................
 

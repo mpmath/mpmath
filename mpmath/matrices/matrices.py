@@ -1,4 +1,5 @@
 from ..libmp.backend import xrange
+import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
@@ -13,9 +14,7 @@ class _matrix(object):
     Elements default to zero.
     Use a flat list to create a column vector easily.
 
-    By default, only mpf is used to store the data. You can specify another type
-    using force_type=type. It's possible to specify None.
-    Make sure force_type(force_type()) is fast.
+    The datatype of the context (mpf for mp, mpi for iv, and float for fp) is used to store the data.
 
     Creating matrices
     -----------------
@@ -72,28 +71,12 @@ class _matrix(object):
         [['0.0', '0.0'],
          ['0.0', mpc(real='1.0', imag='1.0')]])
 
-    You can use the keyword ``force_type`` to change the function which is
-    called on every new element:
-
-        >>> matrix(2, 5, force_type=int) # doctest: +SKIP
-        matrix(
-        [[0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0]])
-
     A more comfortable way to create a matrix lets you use nested lists:
 
         >>> matrix([[1, 2], [3, 4]])
         matrix(
         [['1.0', '2.0'],
          ['3.0', '4.0']])
-
-    If you want to preserve the type of the elements you can use
-    ``force_type=None``:
-
-        >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
-        matrix(
-        [['1.0', '2.5'],
-         [mpc(real='0.0', imag='1.0'), '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -205,15 +188,25 @@ class _matrix(object):
          ['2.0', '3.0']])
 
     Of course you can perform matrix multiplication, if the dimensions are
-    compatible::
+    compatible, using ``@`` (for Python >= 3.5) or ``*``. For clarity, ``@`` is
+    recommended (`PEP 465 <https://www.python.org/dev/peps/pep-0465/>`), because
+    the meaning of ``*`` is different in many other Python libraries such as NumPy.
 
-        >>> A * B
+        >>> A @ B # doctest:+SKIP
+        matrix(
+        [['8.0', '22.0'],
+         ['14.0', '48.0']])
+        >>> A * B # same as A @ B
         matrix(
         [['8.0', '22.0'],
          ['14.0', '48.0']])
         >>> matrix([[1, 2, 3]]) * matrix([[-6], [7], [-2]])
         matrix(
         [['2.0']])
+
+    ..
+        COMMENT: TODO: the above "doctest:+SKIP" may be removed as soon as we
+        have dropped support for Python 3.4 and below.
 
     You can raise powers of square matrices::
 
@@ -232,6 +225,8 @@ class _matrix(object):
         matrix(
         [['1.0', '1.0842021724855e-19'],
          ['-2.16840434497101e-19', '1.0']])
+
+
 
     Matrix transposition is straightforward::
 
@@ -289,9 +284,12 @@ class _matrix(object):
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
-        convert = kwargs.get('force_type', self.ctx.convert)
-        if not convert:
-            convert = lambda x: x
+        if "force_type" in kwargs:
+            warnings.warn("The force_type argument was removed, it did not work"
+                " properly anyway. If you want to force floating-point or"
+                " interval computations, use the respective methods from `fp`"
+                " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
+                " If you want to truncate values to integer, use .apply(int) instead.")
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
@@ -300,7 +298,8 @@ class _matrix(object):
                 self.__cols = len(A[0])
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
-                        self[i, j] = convert(a)
+                        # note: this will call __setitem__ which will call self.ctx.convert() to convert the datatype.
+                        self[i, j] = a
             else:
                 # interpret list as row vector
                 v = args[0]
@@ -318,13 +317,12 @@ class _matrix(object):
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], _matrix):
-            A = args[0].copy()
-            self.__data = A._matrix__data
+            A = args[0]
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
             for i in xrange(A.__rows):
                 for j in xrange(A.__cols):
-                    A[i,j] = convert(A[i,j])
+                    self[i, j] = A[i, j]
         elif hasattr(args[0], 'tolist'):
             A = self.ctx.matrix(args[0].tolist())
             self.__data = A._matrix__data
@@ -423,6 +421,7 @@ class _matrix(object):
                 1. Does not check on the value of key it expects key to be a integer tuple (i,j)
                 2. Does not check bounds
                 3. Does not check the value type
+                4. Does not reset the LU cache
         '''
         if value: # only store non-zeros
             self.__data[key] = value
@@ -575,13 +574,17 @@ class _matrix(object):
 
     def __mul__(self, other):
         if isinstance(other, self.ctx.matrix):
-            # dot multiplication  TODO: use Strassen's method?
+            # dot multiplication
             if self.__cols != other.__rows:
                 raise ValueError('dimensions not compatible for multiplication')
             new = self.ctx.matrix(self.__rows, other.__cols)
+            self_zero = self.ctx.zero
+            self_get = self.__data.get
+            other_zero = other.ctx.zero
+            other_get = other.__data.get
             for i in xrange(self.__rows):
                 for j in xrange(other.__cols):
-                    new[i, j] = self.ctx.fdot((self[i,k], other[k,j])
+                    new[i, j] = self.ctx.fdot((self_get((i,k), self_zero), other_get((k,j), other_zero))
                                      for k in xrange(other.__rows))
             return new
         else:
@@ -591,6 +594,9 @@ class _matrix(object):
                 for j in xrange(self.__cols):
                     new[i, j] = other * self[i, j]
             return new
+
+    def __matmul__(self, other):
+        return self.__mul__(other)
 
     def __rmul__(self, other):
         # assume other is scalar and thus commutative
@@ -661,6 +667,12 @@ class _matrix(object):
                                               and self.__cols == other.__cols):
             raise ValueError('incompatible dimensions for subtraction')
         return self.__add__(other * (-1))
+
+    def __pos__(self):
+        """
+        +M returns a copy of M, rounded to current working precision.
+        """
+        return (+1) * self
 
     def __neg__(self):
         return (-1) * self

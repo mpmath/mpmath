@@ -253,7 +253,7 @@ def shanks(ctx, seq, table=None, randomized=False):
                 b = row[j-1] - table[i-1][j-1]
             if not b:
                 if randomized:
-                    b = rnd.getrandbits(10)*eps
+                    b = (1 + rnd.getrandbits(10))*eps
                 elif i & 1:
                     return table[:-1]
                 else:

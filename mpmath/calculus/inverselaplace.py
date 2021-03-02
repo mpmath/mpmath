@@ -470,13 +470,13 @@ class deHoog(InverseLaplaceTransform):
         # would it be useful to try re-using
         # space between e&q and A&B?
         e = self.ctx.zeros(np,M+1)
-        q = self.ctx.matrix(np,M)
+        q = self.ctx.matrix(2*M,M)
         d = self.ctx.matrix(np,1)
-        A = self.ctx.zeros(np+2,1)
-        B = self.ctx.ones(np+2,1)
+        A = self.ctx.zeros(np+1,1)
+        B = self.ctx.ones(np+1,1)
 
         # initialize Q-D table
-        # e[0:2*M,0] = 0.0 + 0.0j
+        e[:,0] = 0.0 + 0j
         q[0,0] = fp[1]/(fp[0]/2)
         for i in range(1,2*M):
             q[i,0] = fp[i+1]/fp[i]
@@ -484,11 +484,11 @@ class deHoog(InverseLaplaceTransform):
         # rhombus rule for filling triangular Q-D table (e & q)
         for r in range(1,M+1):
             # start with e, column 1, 0:2*M-2
-            mr = 2*(M-r)
+            mr = 2*(M-r) + 1
             e[0:mr,r] = q[1:mr+1,r-1] - q[0:mr,r-1] + e[1:mr+1,r-1]
             if not r == M:
                 rq = r+1
-                mr = 2*(M-rq)+1
+                mr = 2*(M-rq)+1 + 2
                 for i in range(mr):
                     q[i,rq-1] = q[i+1,rq-2]*e[i+1,rq-1]/e[i,rq-1]
 
@@ -499,9 +499,9 @@ class deHoog(InverseLaplaceTransform):
             d[2*r]   = -e[0,r]   # odd terms
 
         # seed A and B for recurrence
-        #A[0] = 0.0 + 0.0j
+        A[0] = 0.0 + 0.0j
         A[1] = d[0]
-        #B[0:2] = 1.0 + 0.0j
+        B[0:2] = 1.0 + 0.0j
 
         # base of the power series
         z = self.ctx.expjpi(self.t/T) # i*pi is already in fcn
@@ -604,9 +604,9 @@ class LaplaceTransformInversionMethods(object):
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
-        (0.999999750000016, -8.2477943034014e-18)
+        (0.999999750000016, -6.09717765032273e-18)
         >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1])
-        (0.99997500015625, -3.69810144898872e-17)
+        (0.99997500015625, -5.61756281076169e-17)
 
         .. math ::
 

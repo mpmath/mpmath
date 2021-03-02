@@ -4,6 +4,8 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
+import functools
+
 import re
 
 from .ctx_base import StandardBaseContext
@@ -40,8 +42,8 @@ from . import rational
 
 new = object.__new__
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
+                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
 
 if BACKEND == 'sage':
     from sage.libs.mpmath.ext_main import Context as BaseMPContext
@@ -1303,6 +1305,7 @@ class PrecisionManager:
         self.dpsfun = dpsfun
         self.normalize_output = normalize_output
     def __call__(self, f):
+        @functools.wraps(f)
         def g(*args, **kwargs):
             orig = self.ctx.prec
             try:
@@ -1319,8 +1322,6 @@ class PrecisionManager:
                     return f(*args, **kwargs)
             finally:
                 self.ctx.prec = orig
-        g.__name__ = f.__name__
-        g.__doc__ = f.__doc__
         return g
     def __enter__(self):
         self.origp = self.ctx.prec

@@ -54,7 +54,7 @@ else:
     exec_ = getattr(builtins, "exec")
 
 # Define constants for calculating hash on Python 3.2.
-if sys.version >= "3.2":
+if sys.version_info >= (3, 2):
     HASH_MODULUS = sys.hash_info.modulus
     if sys.hash_info.width == 32:
         HASH_BITS = 31
@@ -79,7 +79,8 @@ if 'MPMATH_NOGMPY' not in os.environ:
     except:
         pass
 
-if 'MPMATH_NOSAGE' not in os.environ:
+if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
+        'MPMATH_SAGE' in os.environ):
     try:
         import sage.all
         import sage.libs.mpmath.utils as _sage_utils

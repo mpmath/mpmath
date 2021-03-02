@@ -19,6 +19,7 @@ from .libmp import (
     mpci_abs, mpci_pow, mpci_exp, mpci_log,
     ComplexResult,
     mpf_hash, mpc_hash)
+from .matrices.matrices import _matrix
 
 mpi_zero = (fzero, fzero)
 
@@ -251,6 +252,7 @@ def _binary_op(f_real, f_complex):
             tval = (tval, mpi_zero)
             return g_complex(ctx, sval, tval)
     def lop_real(s, t):
+        if isinstance(t, _matrix): return NotImplemented
         ctx = s.ctx
         if not isinstance(t, ctx._types): t = ctx.convert(t)
         if hasattr(t, "_mpi_"): return g_real(ctx, s._mpi_, t._mpi_)
@@ -263,6 +265,7 @@ def _binary_op(f_real, f_complex):
         if hasattr(t, "_mpci_"): return g_complex(ctx, t._mpci_, (s._mpi_, mpi_zero))
         return NotImplemented
     def lop_complex(s, t):
+        if isinstance(t, _matrix): return NotImplemented
         ctx = s.ctx
         if not isinstance(t, s.ctx._types):
             try:

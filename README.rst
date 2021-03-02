@@ -5,8 +5,8 @@ mpmath
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
-.. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
-   :target: https://travis-ci.org/fredrik-johansson/mpmath
+.. |Build status| image:: https://github.com/fredrik-johansson/mpmath/workflows/test/badge.svg
+   :target: https://github.com/fredrik-johansson/mpmath/actions?workflow=test
 .. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/fredrik-johansson/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
@@ -46,6 +46,7 @@ or new features to mpmath:
 * Paul Masson <paulmasson@analyticphysics.com>
 * Michael Kagalenko <michael.kagalenko@gmail.com>
 * Jonathan Warner <warnerjon12@gmail.com>
+* Max Gaukler <max.gaukler@fau.de>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
@@ -138,7 +139,7 @@ See the main documentation for more detailed instructions.
 
 The unit tests in mpmath/tests/ can be run via the script
 runtests.py, but it is recommended to run them with py.test
-(http://codespeak.net/py/dist/index.html), especially
+(https://pytest.org/), especially
 to generate more useful reports in case there are failures.
 
 You may also want to check out the demo scripts in the demo
