@@ -52,9 +52,9 @@ def test_matrix_basic():
 def test_matmul():
     """
     Test the PEP465 "@" matrix multiplication syntax.
-    To avoid syntax errors when importing this file in Python 3.4 and below, we have to use exec() - sorry for that.
+    To avoid syntax errors when importing this file in Python 3.5 and below, we have to use exec() - sorry for that.
     """
-    # TODO remove exec() wrapper as soon as we drop support for Python <= 3.4
+    # TODO remove exec() wrapper as soon as we drop support for Python <= 3.5
     if sys.hexversion < 0x30500f0:
         # we are on Python < 3.5
         pytest.skip("'@' (__matmul__) is only supported in Python 3.5 or newer")
