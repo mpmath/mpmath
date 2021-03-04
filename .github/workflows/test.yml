@@ -12,16 +12,23 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install libs
+      run: |
+        sudo apt update
+        sudo apt install libmpc-dev
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade .[develop]
+        pip install --upgrade .[develop,gmpy]
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
       run: pytest
+    - name: Remove gmpy on 2.7
+      if: matrix.python-version == 2.7
+      run: pip uninstall -y gmpy2
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
