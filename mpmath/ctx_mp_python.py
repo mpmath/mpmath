@@ -1,4 +1,5 @@
 #from ctx_base import StandardBaseContext
+import numbers
 
 from .libmp.backend import basestring, exec_
 
@@ -85,6 +86,9 @@ class _mpf(mpnumeric):
         if isinstance(x, float): return from_float(x)
         if isinstance(x, basestring): return from_str(x, prec, rounding)
         if isinstance(x, cls.context.constant): return x.func(prec, rounding)
+        if isinstance(x, numbers.Rational): return from_rational(x.numerator,
+                                                                 x.denominator,
+                                                                 prec, rounding)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
             t = cls.context.convert(x._mpmath_(prec, rounding))
