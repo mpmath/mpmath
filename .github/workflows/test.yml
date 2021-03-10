@@ -15,11 +15,11 @@ jobs:
     - name: Install libs
       run: |
         sudo apt update
-        sudo apt install libmpc-dev
+        sudo apt install libmpc-dev latexmk texlive-xetex
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade .[develop,gmpy]
+        pip install --upgrade .[develop,gmpy,docs]
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
@@ -36,8 +36,22 @@ jobs:
       run: |
         pytest
         codecov --required
+    - name: Building docs
+      run: |
+        python setup.py build_sphinx -c doc/source -b html,latex
+        make -C build/sphinx/latex all-pdf
     - name: Make packages
       run: python setup.py sdist bdist_wheel
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      if: matrix.python-version == 3.6
+      with:
+        path: |
+          dist/
+          build/sphinx/html/
+          build/sphinx/latex/mpmath.pdf
+          coverage.xml
+          build/coverage/html/
     - name: Publish package on PyPI
       if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@v1.4.2
