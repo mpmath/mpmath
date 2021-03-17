@@ -38,7 +38,7 @@ jobs:
         codecov --required
     - name: Building docs
       run: |
-        python setup.py build_sphinx -c doc/source -b html,latex
+        python setup.py build_sphinx -c docs -b html,latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
       run: python setup.py sdist bdist_wheel
