@@ -4,86 +4,86 @@ Powers and logarithms
 Nth roots
 .........
 
-:func:`sqrt`
-^^^^^^^^^^^^^^
+:func:`~mpmath.sqrt`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.sqrt(x, **kwargs)
 
-:func:`hypot`
-^^^^^^^^^^^^^
+:func:`~mpmath.hypot`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hypot(x, y)
 
-:func:`cbrt`
-^^^^^^^^^^^^^^
+:func:`~mpmath.cbrt`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.cbrt(x, **kwargs)
 
-:func:`root`
-^^^^^^^^^^^^^^
+:func:`~mpmath.root`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.root(z, n, k=0)
 
-:func:`unitroots`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.unitroots`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.unitroots(n, primitive=False)
 
 
 Exponentiation
 ..............
 
-:func:`exp`
-^^^^^^^^^^^^^^
+:func:`~mpmath.exp`
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.exp(x, **kwargs)
 
-:func:`power`
-^^^^^^^^^^^^^^
+:func:`~mpmath.power`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.power(x, y)
 
-:func:`expj`
-^^^^^^^^^^^^^^
+:func:`~mpmath.expj`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.expj(x, **kwargs)
 
-:func:`expjpi`
-^^^^^^^^^^^^^^
+:func:`~mpmath.expjpi`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.expjpi(x, **kwargs)
 
-:func:`expm1`
-^^^^^^^^^^^^^^
+:func:`~mpmath.expm1`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.expm1(x)
 
-:func:`powm1`
-^^^^^^^^^^^^^^
+:func:`~mpmath.powm1`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.powm1(x, y)
 
 
 Logarithms
 ..........
 
-:func:`log`
-^^^^^^^^^^^^^^
+:func:`~mpmath.log`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.log(x, b=None)
 
-:func:`ln`
-^^^^^^^^^^^^^^
+:func:`~mpmath.ln`
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ln(x, **kwargs)
 
-:func:`log10`
-^^^^^^^^^^^^^^
+:func:`~mpmath.log10`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.log10(x)
 
-:func:`log1p`
-^^^^^^^^^^^^^^
+:func:`~mpmath.log1p`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.log1p(x)
 
 
 Lambert W function
 ...................................................
 
-:func:`lambertw`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.lambertw`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.lambertw(z, k=0)
 
 
 Arithmetic-geometric mean
 .......................................
 
-:func:`agm`
-^^^^^^^^^^^^^^
+:func:`~mpmath.agm`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.agm(a, b=1)

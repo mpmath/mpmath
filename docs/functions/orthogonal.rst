@@ -20,60 +20,60 @@ For more information, see the `Wikipedia article on orthogonal polynomials <http
 Legendre functions
 .......................................
 
-:func:`legendre`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.legendre`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.legendre(n, x)
 
-:func:`legenp`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.legenp`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.legenp(n, m, z, type=2)
 
-:func:`legenq`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.legenq`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.legenq(n, m, z, type=2)
 
 Chebyshev polynomials
 .....................
 
-:func:`chebyt`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.chebyt`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.chebyt(n, x)
 
-:func:`chebyu`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.chebyu`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.chebyu(n, x)
 
 Jacobi polynomials
 ..................
 
-:func:`jacobi`
-^^^^^^^^^^^^^^
+:func:`~mpmath.jacobi`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.jacobi(n, a, b, z)
 
 Gegenbauer polynomials
 .....................................
 
-:func:`gegenbauer`
-^^^^^^^^^^^^^^^^^^
+:func:`~mpmath.gegenbauer`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.gegenbauer(n, a, z)
 
 Hermite polynomials
 .....................................
 
-:func:`hermite`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.hermite`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hermite(n, z)
 
 Laguerre polynomials
 .......................................
 
-:func:`laguerre`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.laguerre`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.laguerre(n, a, z)
 
 Spherical harmonics
 .....................................
 
-:func:`spherharm`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.spherharm`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.spherharm(l, m, theta, phi)

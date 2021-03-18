@@ -33,36 +33,36 @@ and singular parameter combinations.
 Common hypergeometric series
 ............................
 
-:func:`hyp0f1`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp0f1`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp0f1(a, z)
 
-:func:`hyp1f1`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp1f1`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp1f1(a, b, z)
 
-:func:`hyp1f2`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp1f2`
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp1f2(a1, b1, b2, z)
 
-:func:`hyp2f0`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp2f0`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp2f0(a, b, z)
 
-:func:`hyp2f1`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp2f1`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp2f1(a, b, c, z)
 
-:func:`hyp2f2`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp2f2`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp2f2(a1, a2, b1, b2, z)
 
-:func:`hyp2f3`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp2f3`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp2f3(a1, a2, b1, b2, b3, z)
 
-:func:`hyp3f2`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyp3f2`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyp3f2(a1, a2, a3, b1, b2, z)
 
 Generalized hypergeometric functions
@@ -79,37 +79,36 @@ Generalized hypergeometric functions
 Meijer G-function
 ...................................
 
-:func:`meijerg`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.meijerg`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.meijerg(a_s,b_s,z,r=1,**kwargs)
 
 Bilateral hypergeometric series
 ...............................
 
-:func:`bihyper`
-^^^^^^^^^^^^^^^
+:func:`~mpmath.bihyper`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.bihyper(a_s,b_s,z,**kwargs)
 
 Hypergeometric functions of two variables
 ...............................................
 
-:func:`hyper2d`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.hyper2d`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyper2d(a,b,x,y,**kwargs)
 
-:func:`appellf1`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.appellf1`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.appellf1(a,b1,b2,c,x,y,**kwargs)
 
-:func:`appellf2`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.appellf2`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.appellf2(a,b1,b2,c1,c2,x,y,**kwargs)
 
-:func:`appellf3`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.appellf3`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.appellf3(a1,a2,b1,b2,c,x,y,**kwargs)
 
-:func:`appellf4`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.appellf4`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.appellf4(a,b,c1,c2,x,y,**kwargs)
-

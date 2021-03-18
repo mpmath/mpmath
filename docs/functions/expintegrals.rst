@@ -8,23 +8,23 @@ The most general function in this section is the incomplete gamma function, to w
 Incomplete gamma functions
 ..........................
 
-:func:`gammainc`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.gammainc`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.gammainc(z, a=0, b=inf, regularized=False)
 
 
 Exponential integrals
 .....................
 
-:func:`ei`
-^^^^^^^^^^
+:func:`~mpmath.ei`
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ei(x, **kwargs)
 
-:func:`e1`
+:func:`~mpmath.e1`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.e1(x, **kwargs)
 
-:func:`expint`
+:func:`~mpmath.expint`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.expint(*args)
 
@@ -32,7 +32,7 @@ Exponential integrals
 Logarithmic integral
 ....................
 
-:func:`li`
+:func:`~mpmath.li`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.li(x, **kwargs)
 
@@ -40,65 +40,65 @@ Logarithmic integral
 Trigonometric integrals
 .......................
 
-:func:`ci`
-^^^^^^^^^^
+:func:`~mpmath.ci`
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ci(x, **kwargs)
 
-:func:`si`
-^^^^^^^^^^
+:func:`~mpmath.si`
+^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.si(x, **kwargs)
 
 
 Hyperbolic integrals
 ....................
 
-:func:`chi`
-^^^^^^^^^^^
+:func:`~mpmath.chi`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.chi(x, **kwargs)
 
-:func:`shi`
-^^^^^^^^^^^
+:func:`~mpmath.shi`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.shi(x, **kwargs)
 
 
 Error functions
 ...............
 
-:func:`erf`
-^^^^^^^^^^^
+:func:`~mpmath.erf`
+^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.erf(x, **kwargs)
 
-:func:`erfc`
-^^^^^^^^^^^^
+:func:`~mpmath.erfc`
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.erfc(x, **kwargs)
 
-:func:`erfi`
-^^^^^^^^^^^^
+:func:`~mpmath.erfi`
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.erfi(x)
 
-:func:`erfinv`
-^^^^^^^^^^^^^^
+:func:`~mpmath.erfinv`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.erfinv(x)
 
 The normal distribution
 ....................................................
 
-:func:`npdf`
-^^^^^^^^^^^^
+:func:`~mpmath.npdf`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.npdf(x, mu=0, sigma=1)
 
-:func:`ncdf`
-^^^^^^^^^^^^
+:func:`~mpmath.ncdf`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ncdf(x, mu=0, sigma=1)
 
 
 Fresnel integrals
 ......................................................
 
-:func:`fresnels`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.fresnels`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.fresnels(x)
 
-:func:`fresnelc`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.fresnelc`
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.fresnelc(x)

@@ -12,20 +12,20 @@ The number identification facilities in mpmath are inspired by the `Inverse Symb
 Constant recognition
 -----------------------------------
 
-:func:`identify`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.identify`
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.identify
 
 Algebraic identification
 ---------------------------------------
 
-:func:`findpoly`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.findpoly`
+^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.findpoly
 
 Integer relations (PSLQ)
 ----------------------------
 
-:func:`pslq`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.pslq`
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pslq
