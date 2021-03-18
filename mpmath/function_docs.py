@@ -43,6 +43,11 @@ One solution is to use the :func:`~mpmath.sinpi` function instead::
 
 See the documentation of trigonometric functions for additional
 details.
+
+**References**
+
+* [BorweinBorwein]_
+
 """
 
 degree = r"""
@@ -174,6 +179,11 @@ special functions include the following (there are many others)::
 For generalizations of the identities `\gamma = -\Gamma'(1)`
 and `\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)`, see
 :func:`~mpmath.psi` and :func:`~mpmath.stieltjes` respectively.
+
+**References**
+
+* [BorweinBailey]_
+
 """
 
 catalan = r"""
@@ -2050,6 +2060,10 @@ very quickly::
     >>> mp.dps = 15
     >>> gamma(10**20)
     1.9328495143101e+1956570551809674817225
+
+**References**
+
+* [Spouge]_
 
 """
 
@@ -9044,7 +9058,7 @@ Evaluation at zero and for negative integer `s`::
 
 2. http://mathworld.wolfram.com/HurwitzZetaFunction.html
 
-3. http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
+3. [BorweinZeta]_
 
 """
 
