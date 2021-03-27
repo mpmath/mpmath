@@ -285,10 +285,11 @@ class TanhSinh(QuadratureRule):
         recurrence for the exponential function)
       * The nodes are computed successively instead of all at once
 
-    Various documents describing the algorithm are available online, e.g.:
+    **References**
 
-      * http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
-      * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+    * [Bailey]_
+    * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+
     """
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):

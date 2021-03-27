@@ -15,9 +15,6 @@ import mpmath
 # Add any Sphinx extension module names here, as strings.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
 
-# The suffix of source filenames.
-source_suffix = '.txt'
-
 # The master toctree document.
 master_doc = 'index'
 

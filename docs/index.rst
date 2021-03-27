@@ -16,8 +16,8 @@ Introduction
 .. toctree ::
    :maxdepth: 2
 
-   setup.txt
-   basics.txt
+   setup
+   basics
 
 Basic features
 ----------------
@@ -25,9 +25,9 @@ Basic features
 .. toctree ::
    :maxdepth: 2
 
-   contexts.txt
-   general.txt
-   plotting.txt
+   contexts
+   general
+   plotting
 
 Advanced mathematics
 --------------------
@@ -38,10 +38,10 @@ provides extensive support for transcendental functions, evaluation of sums, int
 .. toctree ::
    :maxdepth: 2
 
-   functions/index.txt
-   calculus/index.txt
-   matrices.txt
-   identification.txt
+   functions/index
+   calculus/index
+   matrices
+   identification
 
 End matter
 ----------
@@ -49,5 +49,5 @@ End matter
 .. toctree ::
    :maxdepth: 2
 
-   technical.txt
-   references.txt
+   technical
+   references

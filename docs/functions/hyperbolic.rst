@@ -4,53 +4,53 @@ Hyperbolic functions
 Hyperbolic functions
 ....................
 
-:func:`cosh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.cosh`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.cosh(x, **kwargs)
 
-:func:`sinh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.sinh`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.sinh(x, **kwargs)
 
-:func:`tanh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.tanh`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.tanh(x, **kwargs)
 
-:func:`sech`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.sech`
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.sech(x)
 
-:func:`csch`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.csch`
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.csch(x)
 
-:func:`coth`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.coth`
+^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.coth(x)
 
 Inverse hyperbolic functions
 ............................
 
-:func:`acosh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.acosh`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.acosh(x, **kwargs)
 
-:func:`asinh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.asinh`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.asinh(x, **kwargs)
 
-:func:`atanh`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.atanh`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.atanh(x, **kwargs)
 
-:func:`asech`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.asech`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.asech(x)
 
-:func:`acsch`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.acsch`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.acsch(x)
 
-:func:`acoth`
-^^^^^^^^^^^^^^^^
+:func:`~mpmath.acoth`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.acoth(x)
