@@ -52,6 +52,23 @@ jobs:
           build/sphinx/latex/mpmath.pdf
           coverage.xml
           build/coverage/html/
+    - name: Get version
+      id: release
+      run: |
+        export VERSION=$(python -c 'import mpmath;print(mpmath.__version__)')
+        echo ::set-output name=version::${VERSION}
+    - name: Publish on Github Releases
+      uses: softprops/action-gh-release@v1
+      if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES_DEPLOY_KEY }}
+      with:
+        files: |
+          dist/*
+          build/sphinx/latex/mpmath*.pdf
+        draft: true
+        prerelease: true
+        name: "Mpmath v${{ steps.release.outputs.version }}"
     - name: Publish package on PyPI
       if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@v1.4.2
