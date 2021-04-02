@@ -412,7 +412,7 @@ class StandardBaseContext(Context,
 
     def power(ctx, x, y):
         r"""Converts `x` and `y` to mpmath numbers and evaluates
-        `x^y = \exp(y \log(x))`::
+        the principal value of `\exp(y \log(x))`::
 
             >>> from mpmath import *
             >>> mp.dps = 30; mp.pretty = True
@@ -425,6 +425,10 @@ class StandardBaseContext(Context,
 
             >>> power(2, 43112609)-1
             3.16470269330255923143453723949e+12978188
+
+        **See Also**
+
+        :func:`~mpmath.root`
         """
         return ctx.convert(x) ** ctx.convert(y)
 
