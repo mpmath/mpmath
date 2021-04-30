@@ -4,7 +4,7 @@ from .libmp.backend import basestring, exec_
 
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
-    ComplexResult, to_pickable, from_pickable, normalize,
+    ComplexResult, normalize,
     from_int, from_float, from_npfloat, from_Decimal, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
     fone, fzero, finf, fninf, fnan,
@@ -130,8 +130,7 @@ class _mpf(mpnumeric):
 
     conjugate = lambda self: self
 
-    def __getstate__(self): return to_pickable(self._mpf_)
-    def __setstate__(self, val): self._mpf_ = from_pickable(val)
+    def __reduce__(self): return self.__class__, (self._mpf_,)
 
     def __repr__(s):
         if s.context.pretty:
@@ -380,11 +379,7 @@ class _mpc(mpnumeric):
     real = property(lambda self: self.context.make_mpf(self._mpc_[0]))
     imag = property(lambda self: self.context.make_mpf(self._mpc_[1]))
 
-    def __getstate__(self):
-        return to_pickable(self._mpc_[0]), to_pickable(self._mpc_[1])
-
-    def __setstate__(self, val):
-        self._mpc_ = from_pickable(val[0]), from_pickable(val[1])
+    def __reduce__(self): return self.__class__, self._mpc_
 
     def __repr__(s):
         if s.context.pretty:

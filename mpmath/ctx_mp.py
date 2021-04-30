@@ -16,7 +16,7 @@ from . import libmp
 
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
-    ComplexResult, to_pickable, from_pickable, normalize,
+    ComplexResult, normalize,
     from_int, from_float, from_str, to_int, to_float, to_str,
     from_rational, from_man_exp,
     fone, fzero, finf, fninf, fnan,

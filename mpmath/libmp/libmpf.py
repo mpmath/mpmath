@@ -22,23 +22,6 @@ from .libintmath import (giant_steps,
     sqrt_fixed, numeral, isqrt, isqrt_fast, sqrtrem,
     bin_to_radix)
 
-# We don't pickle tuples directly for the following reasons:
-#   1: pickle uses str() for ints, which is inefficient when they are large
-#   2: pickle doesn't work for gmpy mpzs
-# Both problems are solved by using hex()
-
-if BACKEND == 'sage':
-    def to_pickable(x):
-        sign, man, exp, bc = x
-        return sign, hex(man), exp, bc
-else:
-    def to_pickable(x):
-        sign, man, exp, bc = x
-        return sign, hex(man)[2:], exp, bc
-
-def from_pickable(x):
-    sign, man, exp, bc = x
-    return (sign, MPZ(man, 16), exp, bc)
 
 class ComplexResult(ValueError):
     pass

@@ -4,16 +4,15 @@ import pickle
 
 from mpmath import *
 
-def pickler(obj):
+def pickler(obj, protocol=0):
     fn = tempfile.mktemp()
 
-    f = open(fn, 'wb')
-    pickle.dump(obj, f)
-    f.close()
+    with open(fn, 'wb') as f:
+        pickle.dump(obj, f, protocol=protocol)
 
-    f = open(fn, 'rb')
-    obj2 = pickle.load(f)
-    f.close()
+    with open(fn, 'rb') as f:
+        obj2 = pickle.load(f)
+
     os.remove(fn)
 
     return obj2
@@ -21,7 +20,10 @@ def pickler(obj):
 def test_pickle():
 
     obj = mpf('0.5')
-    assert obj == pickler(obj)
+
+    for protocol in range(pickle.HIGHEST_PROTOCOL + 1):
+        assert obj == pickler(obj, protocol)
 
     obj = mpc('0.5','0.2')
-    assert obj == pickler(obj)
+    for protocol in range(pickle.HIGHEST_PROTOCOL + 1):
+        assert obj == pickler(obj, protocol)

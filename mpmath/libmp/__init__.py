@@ -1,6 +1,6 @@
 from .libmpf import (prec_to_dps, dps_to_prec, repr_dps,
   round_down, round_up, round_floor, round_ceiling, round_nearest,
-  to_pickable, from_pickable, ComplexResult,
+  ComplexResult,
   fzero, fnzero, fone, fnone, ftwo, ften, fhalf, fnan, finf, fninf,
   math_float_inf, round_int, normalize, normalize1,
   from_man_exp, from_int, to_man_exp, to_int, mpf_ceil, mpf_floor,
