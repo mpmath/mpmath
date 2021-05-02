@@ -4,7 +4,7 @@ Plotting (requires matplotlib)
 
 from colorsys import hsv_to_rgb, hls_to_rgb
 from .libmp import NoConvergence
-from .libmp.backend import xrange
+
 
 class VisualizationMethods(object):
     plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError, NoConvergence)
@@ -53,7 +53,7 @@ def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
         segments = []
         segment = []
         in_complex = False
-        for i in xrange(len(x)):
+        for i in range(len(x)):
             try:
                 if i != 0:
                     for sing in singularities:
@@ -203,8 +203,8 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     #   cplot(lambda z: z if z.real < 0 else 0)
     #   cplot(lambda z: z if z.imag < 0 else 0)
     w = pylab.zeros((N, M, 3))
-    for n in xrange(N):
-        for m in xrange(M):
+    for n in range(N):
+        for m in range(M):
             z = ctx.mpc(x[m], y[n])
             try:
                 v = color(f(z))
@@ -266,10 +266,10 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
     M, N = points
     u = pylab.linspace(ua, ub, M)
     v = pylab.linspace(va, vb, N)
-    x, y, z = [pylab.zeros((M, N)) for i in xrange(3)]
-    xab, yab, zab = [[0, 0] for i in xrange(3)]
-    for n in xrange(N):
-        for m in xrange(M):
+    x, y, z = [pylab.zeros((M, N)) for i in range(3)]
+    xab, yab, zab = [[0, 0] for i in range(3)]
+    for n in range(N):
+        for m in range(M):
             fdata = f(ctx.convert(u[m]), ctx.convert(v[n]))
             try:
                 x[m,n], y[m,n], z[m,n] = fdata

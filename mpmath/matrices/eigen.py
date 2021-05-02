@@ -33,8 +33,6 @@ low level routines:
   eig_tr_l : left  eigenvectors of an upper triangular matrix
 """
 
-from ..libmp.backend import xrange
-
 class Eigen(object):
     pass
 
@@ -77,12 +75,12 @@ def hessenberg_reduce_0(ctx, A, T):
     n = A.rows
     if n <= 2: return
 
-    for i in xrange(n-1, 1, -1):
+    for i in range(n-1, 1, -1):
 
         # scale the vector
 
         scale = 0
-        for k in xrange(0, i):
+        for k in range(0, i):
             scale += abs(ctx.re(A[i,k])) + abs(ctx.im(A[i,k]))
 
         scale_inv = 0
@@ -98,7 +96,7 @@ def hessenberg_reduce_0(ctx, A, T):
         # calculate parameters for housholder transformation
 
         H = 0
-        for k in xrange(0, i):
+        for k in range(0, i):
             A[i,k] *= scale_inv
             rr = ctx.re(A[i,k])
             ii = ctx.im(A[i,k])
@@ -120,29 +118,29 @@ def hessenberg_reduce_0(ctx, A, T):
         H = 1 / ctx.sqrt(H)
 
         T[i] *= H
-        for k in xrange(0, i - 1):
+        for k in range(0, i - 1):
             A[i,k] *= H
 
-        for j in xrange(0, i):
+        for j in range(0, i):
             # apply housholder transformation (from right)
 
             G = ctx.conj(T[i]) * A[j,i-1]
-            for k in xrange(0, i-1):
+            for k in range(0, i-1):
                 G += ctx.conj(A[i,k]) * A[j,k]
 
             A[j,i-1] -= G * T[i]
-            for k in xrange(0, i-1):
+            for k in range(0, i-1):
                 A[j,k] -= G * A[i,k]
 
-        for j in xrange(0, n):
+        for j in range(0, n):
             # apply housholder transformation (from left)
 
             G = T[i] * A[i-1,j]
-            for k in xrange(0, i-1):
+            for k in range(0, i-1):
                 G += A[i,k] * A[k,j]
 
             A[i-1,j] -= G * ctx.conj(T[i])
-            for k in xrange(0, i-1):
+            for k in range(0, i-1):
                 A[k,j] -= G * ctx.conj(A[i,k])
 
 
@@ -167,20 +165,20 @@ def hessenberg_reduce_1(ctx, A, T):
     A[0,0] = A[1,1] = 1
     A[0,1] = A[1,0] = 0
 
-    for i in xrange(2, n):
+    for i in range(2, n):
         if T[i] != 0:
 
-            for j in xrange(0, i):
+            for j in range(0, i):
                 G = T[i] * A[i-1,j]
-                for k in xrange(0, i-1):
+                for k in range(0, i-1):
                     G += A[i,k] * A[k,j]
 
                 A[i-1,j] -= G * ctx.conj(T[i])
-                for k in xrange(0, i-1):
+                for k in range(0, i-1):
                     A[k,j] -= G * ctx.conj(A[i,k])
 
         A[i,i] = 1
-        for j in xrange(0, i):
+        for j in range(0, i):
             A[j,i] = A[i,j] = 0
 
 
@@ -235,8 +233,8 @@ def hessenberg(ctx, A, overwrite_a = False):
     Q = A.copy()
     hessenberg_reduce_1(ctx, Q, T)
 
-    for x in xrange(n):
-        for y in xrange(x+2, n):
+    for x in range(n):
+        for y in range(x+2, n):
             A[y,x] = 0
 
     return Q, A
@@ -309,14 +307,14 @@ def qr_step(ctx, n0, n1, A, Q, shift):
     cc = ctx.conj(c)
     cs = ctx.conj(s)
 
-    for k in xrange(n0, n):
+    for k in range(n0, n):
         # apply givens rotation from the left
         x = A[n0  ,k]
         y = A[n0+1,k]
         A[n0  ,k] = cc * x + cs * y
         A[n0+1,k] = c * y - s * x
 
-    for k in xrange(min(n1, n0+3)):
+    for k in range(min(n1, n0+3)):
         # apply givens rotation from the right
         x = A[k,n0  ]
         y = A[k,n0+1]
@@ -324,7 +322,7 @@ def qr_step(ctx, n0, n1, A, Q, shift):
         A[k,n0+1] = cc * y - cs * x
 
     if not isinstance(Q, bool):
-        for k in xrange(n):
+        for k in range(n):
             # eigenvectors
             x = Q[k,n0  ]
             y = Q[k,n0+1]
@@ -333,7 +331,7 @@ def qr_step(ctx, n0, n1, A, Q, shift):
 
     # chase the bulge
 
-    for j in xrange(n0, n1 - 2):
+    for j in range(n0, n1 - 2):
         # calculate givens rotation
 
         c = A[j+1,j]
@@ -356,14 +354,14 @@ def qr_step(ctx, n0, n1, A, Q, shift):
         cc = ctx.conj(c)
         cs = ctx.conj(s)
 
-        for k in xrange(j+1, n):
+        for k in range(j+1, n):
             # apply givens rotation from the left
             x = A[j+1,k]
             y = A[j+2,k]
             A[j+1,k] = cc * x + cs * y
             A[j+2,k] = c * y - s * x
 
-        for k in xrange(0, min(n1, j+4)):
+        for k in range(0, min(n1, j+4)):
             # apply givens rotation from the right
             x = A[k,j+1]
             y = A[k,j+2]
@@ -371,7 +369,7 @@ def qr_step(ctx, n0, n1, A, Q, shift):
             A[k,j+2] = cc * y - cs * x
 
         if not isinstance(Q, bool):
-            for k in xrange(0, n):
+            for k in range(0, n):
                 # eigenvectors
                 x = Q[k,j+1]
                 y = Q[k,j+2]
@@ -402,8 +400,8 @@ def hessenberg_qr(ctx, A, Q):
     n = A.rows
 
     norm = 0
-    for x in xrange(n):
-        for y in xrange(min(x+2, n)):
+    for x in range(n):
+        for y in range(min(x+2, n)):
             norm += ctx.re(A[y,x]) ** 2 + ctx.im(A[y,x]) ** 2
     norm = ctx.sqrt(norm) / n
 
@@ -540,8 +538,8 @@ def schur(ctx, A, overwrite_a = False):
     Q = A.copy()
     hessenberg_reduce_1(ctx, Q, T)
 
-    for x in xrange(n):
-        for y in xrange(x + 2, n):
+    for x in range(n):
+        for y in range(x + 2, n):
             A[y,x] = 0
 
     hessenberg_qr(ctx, A, Q)
@@ -579,15 +577,15 @@ def eig_tr_r(ctx, A):
 
     rmax = 1
 
-    for i in xrange(1, n):
+    for i in range(1, n):
         s = A[i,i]
 
         smin = max(eps * abs(s), smlnum)
 
-        for j in xrange(i - 1, -1, -1):
+        for j in range(i - 1, -1, -1):
 
             r = 0
-            for k in xrange(j + 1, i + 1):
+            for k in range(j + 1, i + 1):
                 r += A[j,k] * ER[k,i]
 
             t = A[j,j] - s
@@ -599,12 +597,12 @@ def eig_tr_r(ctx, A):
 
             rmax = max(rmax, abs(r))
             if rmax > simin:
-                for k in xrange(j, i+1):
+                for k in range(j, i+1):
                     ER[k,i] /= rmax
                 rmax = 1
 
         if rmax != 1:
-            for k in xrange(0, i + 1):
+            for k in range(0, i + 1):
                 ER[k,i] /= rmax
 
     return ER
@@ -637,15 +635,15 @@ def eig_tr_l(ctx, A):
 
     rmax = 1
 
-    for i in xrange(0, n - 1):
+    for i in range(0, n - 1):
         s = A[i,i]
 
         smin = max(eps * abs(s), smlnum)
 
-        for j in xrange(i + 1, n):
+        for j in range(i + 1, n):
 
             r = 0
-            for k in xrange(i, j):
+            for k in range(i, j):
                 r += EL[i,k] * A[k,j]
 
             t = A[j,j] - s
@@ -657,12 +655,12 @@ def eig_tr_l(ctx, A):
 
             rmax = max(rmax, abs(r))
             if rmax > simin:
-                for k in xrange(i, j + 1):
+                for k in range(i, j + 1):
                     EL[i,k] /= rmax
                 rmax = 1
 
         if rmax != 1:
-            for k in xrange(i, n):
+            for k in range(i, n):
                 EL[i,k] /= rmax
 
     return EL
@@ -755,14 +753,14 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
     else:
         Q = False
 
-    for x in xrange(n):
-        for y in xrange(x + 2, n):
+    for x in range(n):
+        for y in range(x + 2, n):
             A[y,x] = 0
 
     hessenberg_qr(ctx, A, Q)
 
-    E = [0 for i in xrange(n)]
-    for i in xrange(n):
+    E = [0 for i in range(n)]
+    for i in range(n):
         E[i] = A[i,i]
 
     if not (left or right):
@@ -836,11 +834,11 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
 
     # Sort eigenvalues (bubble-sort)
 
-    for i in xrange(n):
+    for i in range(n):
         imax = i
         s = f(E[i])         # s is the current maximal element
 
-        for j in xrange(i + 1, n):
+        for j in range(i + 1, n):
             c = f(E[j])
             if c < s:
                 s = c
@@ -854,13 +852,13 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
             E[imax] = z
 
             if not isinstance(EL, bool):
-                for j in xrange(n):
+                for j in range(n):
                     z = EL[i,j]
                     EL[i,j] = EL[imax,j]
                     EL[imax,j] = z
 
             if not isinstance(ER, bool):
-                for j in xrange(n):
+                for j in range(n):
                     z = ER[j,i]
                     ER[j,i] = ER[j,imax]
                     ER[j,imax] = z

@@ -10,7 +10,7 @@ import re
 
 from .ctx_base import StandardBaseContext
 
-from .libmp.backend import basestring, BACKEND
+from .libmp.backend import BACKEND
 
 from . import libmp
 
@@ -609,14 +609,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return to_str(x._mpf_, n, **kwargs)
         if hasattr(x, '_mpc_'):
             return "(" + mpc_to_str(x._mpc_, n, **kwargs)  + ")"
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             return repr(x)
         if isinstance(x, ctx.matrix):
             return x.__nstr__(n, **kwargs)
         return str(x)
 
     def _convert_fallback(ctx, x, strings):
-        if strings and isinstance(x, basestring):
+        if strings and isinstance(x, str):
             if 'j' in x.lower():
                 x = x.lower().replace(' ', '')
                 match = get_complex.match(x)

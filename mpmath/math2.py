@@ -59,21 +59,8 @@ def _mathfun_n(f_real, f_complex):
     f.__name__ = f_real.__name__
     return f
 
-# Workaround for non-raising log and sqrt in Python 2.5 and 2.4
-# on Unix system
-try:
-    math.log(-2.0)
-    def math_log(x):
-        if x <= 0.0:
-            raise ValueError("math domain error")
-        return math.log(x)
-    def math_sqrt(x):
-        if x < 0.0:
-            raise ValueError("math domain error")
-        return math.sqrt(x)
-except (ValueError, TypeError):
-    math_log = math.log
-    math_sqrt = math.sqrt
+math_log = math.log
+math_sqrt = math.sqrt
 
 pow = _mathfun_n(operator.pow, lambda x, y: complex(x)**y)
 log = _mathfun_n(math_log, cmath.log)
@@ -251,12 +238,8 @@ def loggamma(x):
             x = float(x)
         except (ValueError, TypeError):
             x = complex(x)
-    try:
-        xreal = x.real
-        ximag = x.imag
-    except AttributeError:   # py2.5
-        xreal = x
-        ximag = 0.0
+    xreal = x.real
+    ximag = x.imag
     # Reflection formula
     # http://functions.wolfram.com/GammaBetaErf/LogGamma/16/01/01/0003/
     if xreal < 0.0:
@@ -266,12 +249,8 @@ def loggamma(x):
                 v = v.conjugate()
             return v
         z = 1-x
-        try:
-            re = z.real
-            im = z.imag
-        except AttributeError:   # py2.5
-            re = z
-            im = 0.0
+        re = z.real
+        im = z.imag
         refloor = floor(re)
         if im == 0.0:
             imsign = 0

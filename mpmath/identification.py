@@ -3,7 +3,6 @@ Implements the PSLQ algorithm for integer relation detection,
 and derivative algorithms for constant recognition.
 """
 
-from .libmp.backend import xrange
 from .libmp import int_types, sqrt_fixed
 
 # round to nearest integer (can be done more elegantly...)
@@ -178,25 +177,25 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     H = {}
     # Initialization
     # step 1
-    for i in xrange(1, n+1):
-        for j in xrange(1, n+1):
+    for i in range(1, n+1):
+        for j in range(1, n+1):
             A[i,j] = B[i,j] = (i==j) << prec
             H[i,j] = 0
     # step 2
     s = [None] + [0] * n
-    for k in xrange(1, n+1):
+    for k in range(1, n+1):
         t = 0
-        for j in xrange(k, n+1):
+        for j in range(k, n+1):
             t += (x[j]**2 >> prec)
         s[k] = sqrt_fixed(t, prec)
     t = s[1]
     y = x[:]
-    for k in xrange(1, n+1):
+    for k in range(1, n+1):
         y[k] = (x[k] << prec) // t
         s[k] = (s[k] << prec) // t
     # step 3
-    for i in xrange(1, n+1):
-        for j in xrange(i+1, n):
+    for i in range(1, n+1):
+        for j in range(i+1, n):
             H[i,j] = 0
         if i <= n-1:
             if s[i]:
@@ -210,8 +209,8 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
             else:
                 H[i,j] = 0
     # step 4
-    for i in xrange(2, n+1):
-        for j in xrange(i-1, 0, -1):
+    for i in range(2, n+1):
+        for j in range(i-1, 0, -1):
             #t = floor(H[i,j]/H[j,j] + 0.5)
             if H[j,j]:
                 t = round_fixed((H[i,j] << prec)//H[j,j], prec)
@@ -219,9 +218,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 #t = 0
                 continue
             y[j] = y[j] + (t*y[i] >> prec)
-            for k in xrange(1, j+1):
+            for k in range(1, j+1):
                 H[i,k] = H[i,k] - (t*H[j,k] >> prec)
-            for k in xrange(1, n+1):
+            for k in range(1, n+1):
                 A[i,k] = A[i,k] - (t*A[j,k] >> prec)
                 B[k,j] = B[k,j] + (t*B[k,i] >> prec)
     # Main algorithm
@@ -237,9 +236,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 szmax = sz
         # Step 2
         y[m], y[m+1] = y[m+1], y[m]
-        for i in xrange(1,n+1): H[m,i], H[m+1,i] = H[m+1,i], H[m,i]
-        for i in xrange(1,n+1): A[m,i], A[m+1,i] = A[m+1,i], A[m,i]
-        for i in xrange(1,n+1): B[i,m], B[i,m+1] = B[i,m+1], B[i,m]
+        for i in range(1,n+1): H[m,i], H[m+1,i] = H[m+1,i], H[m,i]
+        for i in range(1,n+1): A[m,i], A[m+1,i] = A[m+1,i], A[m,i]
+        for i in range(1,n+1): B[i,m], B[i,m+1] = B[i,m+1], B[i,m]
         # Step 3
         if m <= n - 2:
             t0 = sqrt_fixed((H[m,m]**2 + H[m,m+1]**2)>>prec, prec)
@@ -250,23 +249,23 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 break
             t1 = (H[m,m] << prec) // t0
             t2 = (H[m,m+1] << prec) // t0
-            for i in xrange(m, n+1):
+            for i in range(m, n+1):
                 t3 = H[i,m]
                 t4 = H[i,m+1]
                 H[i,m] = (t1*t3+t2*t4) >> prec
                 H[i,m+1] = (-t2*t3+t1*t4) >> prec
         # Step 4
-        for i in xrange(m+1, n+1):
-            for j in xrange(min(i-1, m+1), 0, -1):
+        for i in range(m+1, n+1):
+            for j in range(min(i-1, m+1), 0, -1):
                 try:
                     t = round_fixed((H[i,j] << prec)//H[j,j], prec)
                 # Precision probably exhausted
                 except ZeroDivisionError:
                     break
                 y[j] = y[j] + ((t*y[i]) >> prec)
-                for k in xrange(1, j+1):
+                for k in range(1, j+1):
                     H[i,k] = H[i,k] - (t*H[j,k] >> prec)
-                for k in xrange(1, n+1):
+                for k in range(1, n+1):
                     A[i,k] = A[i,k] - (t*A[j,k] >> prec)
                     B[k,j] = B[k,j] + (t*B[k,i] >> prec)
         # Until a relation is found, the error typically decreases
@@ -276,7 +275,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         # "high quality" relation was detected. Reporting this to
         # the user somehow might be useful.
         best_err = maxcoeff<<prec
-        for i in xrange(1, n+1):
+        for i in range(1, n+1):
             err = abs(y[i])
             # Maybe we are done?
             if err < tol:

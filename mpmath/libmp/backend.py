@@ -22,47 +22,14 @@ gmpy = None
 sage = None
 sage_utils = None
 
-if sys.version_info[0] < 3:
-    python3 = False
-else:
-    python3 = True
-
 BACKEND = 'python'
+MPZ = int
 
-if not python3:
-    MPZ = long
-    xrange = xrange
-    basestring = basestring
-
-    def exec_(_code_, _globs_=None, _locs_=None):
-        """Execute code in a namespace."""
-        if _globs_ is None:
-            frame = sys._getframe(1)
-            _globs_ = frame.f_globals
-            if _locs_ is None:
-                _locs_ = frame.f_locals
-            del frame
-        elif _locs_ is None:
-            _locs_ = _globs_
-        exec("""exec _code_ in _globs_, _locs_""")
+HASH_MODULUS = sys.hash_info.modulus
+if sys.hash_info.width == 32:
+    HASH_BITS = 31
 else:
-    MPZ = int
-    xrange = range
-    basestring = str
-
-    import builtins
-    exec_ = getattr(builtins, "exec")
-
-# Define constants for calculating hash on Python 3.2.
-if sys.version_info >= (3, 2):
-    HASH_MODULUS = sys.hash_info.modulus
-    if sys.hash_info.width == 32:
-        HASH_BITS = 31
-    else:
-        HASH_BITS = 61
-else:
-    HASH_MODULUS = None
-    HASH_BITS = None
+    HASH_BITS = 61
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
@@ -103,13 +70,7 @@ MPZ_TWO = MPZ(2)
 MPZ_THREE = MPZ(3)
 MPZ_FIVE = MPZ(5)
 
-try:
-    if BACKEND == 'python':
-        int_types = (int, long)
-    else:
-        int_types = (int, long, MPZ_TYPE)
-except NameError:
-    if BACKEND == 'python':
-        int_types = (int,)
-    else:
-        int_types = (int, MPZ_TYPE)
+if BACKEND == 'python':
+    int_types = int,
+else:
+    int_types = (int, MPZ_TYPE)

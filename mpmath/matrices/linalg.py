@@ -105,7 +105,6 @@ and equation solving with rigorous error bounds::
 
 from copy import copy
 
-from ..libmp.backend import xrange
 
 class LinearAlgebraMethods(object):
 
@@ -127,11 +126,11 @@ class LinearAlgebraMethods(object):
         tol = ctx.absmin(ctx.mnorm(A,1) * ctx.eps) # each pivot element has to be bigger
         n = A.rows
         p = [None]*(n - 1)
-        for j in xrange(n - 1):
+        for j in range(n - 1):
             # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
             biggest = 0
-            for k in xrange(j, n):
-                s = ctx.fsum([ctx.absmin(A[k,l]) for l in xrange(j, n)])
+            for k in range(j, n):
+                s = ctx.fsum([ctx.absmin(A[k,l]) for l in range(j, n)])
                 if ctx.absmin(s) <= tol:
                     raise ZeroDivisionError('matrix is numerically singular')
                 current = 1/s * ctx.absmin(A[k,j])
@@ -143,9 +142,9 @@ class LinearAlgebraMethods(object):
             if ctx.absmin(A[j,j]) <= tol:
                 raise ZeroDivisionError('matrix is numerically singular')
             # calculate elimination factors and add rows
-            for i in xrange(j + 1, n):
+            for i in range(j + 1, n):
                 A[i,j] /= A[j,j]
-                for k in xrange(j + 1, n):
+                for k in range(j + 1, n):
                     A[i,k] -= A[i,j]*A[j,k]
         if ctx.absmin(A[n - 1,n - 1]) <= tol:
             raise ZeroDivisionError('matrix is numerically singular')
@@ -165,11 +164,11 @@ class LinearAlgebraMethods(object):
             raise ValueError("Value should be equal to n")
         b = copy(b)
         if p: # swap b according to p
-            for k in xrange(0, len(p)):
+            for k in range(0, len(p)):
                 ctx.swap_row(b, k, p[k])
         # solve
-        for i in xrange(1, n):
-            for j in xrange(i):
+        for i in range(1, n):
+            for j in range(i):
                 b[i] -= L[i,j] * b[j]
         return b
 
@@ -183,8 +182,8 @@ class LinearAlgebraMethods(object):
         if len(y) != n:
             raise ValueError("Value should be equal to n")
         x = copy(y)
-        for i in xrange(n - 1, -1, -1):
-            for j in xrange(i + 1, n):
+        for i in range(n - 1, -1, -1):
+            for j in range(i + 1, n):
                 x[i] -= U[i,j] * x[j]
             x[i] /= U[i,i]
         return x
@@ -239,7 +238,7 @@ class LinearAlgebraMethods(object):
         """
         if A.rows != A.cols:
             raise RuntimeError("need n*n matrix") # TODO: really?
-        for _ in xrange(maxsteps):
+        for _ in range(maxsteps):
             r = ctx.residual(A, x, b)
             if ctx.norm(r, 2) < 10*ctx.eps:
                 break
@@ -265,8 +264,8 @@ class LinearAlgebraMethods(object):
         n = A.rows
         L = ctx.matrix(n)
         U = ctx.matrix(n)
-        for i in xrange(n):
-            for j in xrange(n):
+        for i in range(n):
+            for j in range(n):
                 if i > j:
                     L[i,j] = A[i,j]
                 elif i == j:
@@ -276,7 +275,7 @@ class LinearAlgebraMethods(object):
                     U[i,j] = A[i,j]
         # calculate permutation matrix
         P = ctx.eye(n)
-        for k in xrange(len(p)):
+        for k in range(len(p)):
             ctx.swap_row(P, k, p[k])
         return P, L, U
 
@@ -304,15 +303,15 @@ class LinearAlgebraMethods(object):
             A, p = ctx.LU_decomp(A)
             cols = []
             # calculate unit vectors and solve corresponding system to get columns
-            for i in xrange(1, n + 1):
+            for i in range(1, n + 1):
                 e = ctx.unitvector(n, i)
                 y = ctx.L_solve(A, e, p)
                 cols.append(ctx.U_solve(A, y))
             # convert columns to matrix
             inv = []
-            for i in xrange(n):
+            for i in range(n):
                 row = []
-                for j in xrange(n):
+                for j in range(n):
                     row.append(cols[j][i])
                 inv.append(row)
             result = ctx.matrix(inv, **kwargs)
@@ -337,25 +336,25 @@ class LinearAlgebraMethods(object):
             raise RuntimeError("Columns should not be less than rows")
         # calculate Householder matrix
         p = []
-        for j in xrange(0, n - 1):
-            s = ctx.fsum(abs(A[i,j])**2 for i in xrange(j, m))
+        for j in range(0, n - 1):
+            s = ctx.fsum(abs(A[i,j])**2 for i in range(j, m))
             if not abs(s) > ctx.eps:
                 raise ValueError('matrix is numerically singular')
             p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
             kappa = ctx.one / (s - p[j] * A[j,j])
             A[j,j] -= p[j]
-            for k in xrange(j+1, n):
-                y = ctx.fsum(ctx.conj(A[i,j]) * A[i,k] for i in xrange(j, m)) * kappa
-                for i in xrange(j, m):
+            for k in range(j+1, n):
+                y = ctx.fsum(ctx.conj(A[i,j]) * A[i,k] for i in range(j, m)) * kappa
+                for i in range(j, m):
                     A[i,k] -= A[i,j] * y
         # solve Rx = c1
-        x = [A[i,n - 1] for i in xrange(n - 1)]
-        for i in xrange(n - 2, -1, -1):
-            x[i] -= ctx.fsum(A[i,j] * x[j] for j in xrange(i + 1, n - 1))
+        x = [A[i,n - 1] for i in range(n - 1)]
+        for i in range(n - 2, -1, -1):
+            x[i] -= ctx.fsum(A[i,j] * x[j] for j in range(i + 1, n - 1))
             x[i] /= p[i]
         # calculate residual
         if not m == n - 1:
-            r = [A[m-1-i, n-1] for i in xrange(m - n + 1)]
+            r = [A[m-1-i, n-1] for i in range(m - n + 1)]
         else:
             # determined system, residual should be 0
             r = [0]*m # maybe a bad idea, changing r[i] will change all elements
@@ -485,18 +484,18 @@ class LinearAlgebraMethods(object):
             tol = +ctx.eps
         n = A.rows
         L = ctx.matrix(n)
-        for j in xrange(n):
+        for j in range(n):
             c = ctx.re(A[j,j])
             if abs(c-A[j,j]) > tol:
                 raise ValueError('matrix is not Hermitian')
-            s = c - ctx.fsum((L[j,k] for k in xrange(j)),
+            s = c - ctx.fsum((L[j,k] for k in range(j)),
                 absolute=True, squared=True)
             if s < tol:
                 raise ValueError('matrix is not positive-definite')
             L[j,j] = ctx.sqrt(s)
-            for i in xrange(j, n):
-                it1 = (L[i,k] for k in xrange(j))
-                it2 = (L[j,k] for k in xrange(j))
+            for i in range(j, n):
+                it1 = (L[i,k] for k in range(j))
+                it2 = (L[j,k] for k in range(j))
                 t = ctx.fdot(it1, it2, conjugate=True)
                 L[i,j] = (A[i,j] - t) / L[j,j]
         return L
@@ -526,8 +525,8 @@ class LinearAlgebraMethods(object):
             n = L.rows
             if len(b) != n:
                 raise ValueError("Value should be equal to n")
-            for i in xrange(n):
-                b[i] -= ctx.fsum(L[i,j] * b[j] for j in xrange(i))
+            for i in range(n):
+                b[i] -= ctx.fsum(L[i,j] * b[j] for j in range(i))
                 b[i] /= L[i,i]
             x = ctx.U_solve(L.T, b)
             return x
@@ -551,7 +550,7 @@ class LinearAlgebraMethods(object):
             for i, e in enumerate(p):
                 if i != e:
                     z *= -1
-            for i in xrange(A.rows):
+            for i in range(A.rows):
                 z *= R[i,i]
             return z
         finally:
@@ -664,13 +663,13 @@ class LinearAlgebraMethods(object):
                 rzero = ctx.mpf('0.0')
 
                 # main loop to factor A (complex)
-                for j in xrange(0, n):
+                for j in range(0, n):
                     alpha = A[j,j]
                     alphr = ctx.re(alpha)
                     alphi = ctx.im(alpha)
 
                     if (m-j) >= 2:
-                        xnorm = ctx.fsum( A[i,j]*ctx.conj(A[i,j]) for i in xrange(j+1, m) )
+                        xnorm = ctx.fsum( A[i,j]*ctx.conj(A[i,j]) for i in range(j+1, m) )
                         xnorm = ctx.re( ctx.sqrt(xnorm) )
                     else:
                         xnorm = rzero
@@ -688,14 +687,14 @@ class LinearAlgebraMethods(object):
                     t = -ctx.conj(tau[j])
                     za = one / (alpha - beta)
 
-                    for i in xrange(j+1, m):
+                    for i in range(j+1, m):
                         A[i,j] *= za
 
                     A[j,j] = one
-                    for k in xrange(j+1, n):
-                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in xrange(j, m))
+                    for k in range(j+1, n):
+                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in range(j, m))
                         temp = t * ctx.conj(y)
-                        for i in xrange(j, m):
+                        for i in range(j, m):
                             A[i,k] += A[i,j] * temp
 
                     A[j,j] = ctx.mpc(beta, '0.0')
@@ -704,11 +703,11 @@ class LinearAlgebraMethods(object):
                 zero = ctx.mpf('0.0')
 
                 # main loop to factor A (real)
-                for j in xrange(0, n):
+                for j in range(0, n):
                     alpha = A[j,j]
 
                     if (m-j) > 2:
-                        xnorm = ctx.fsum( (A[i,j])**2 for i in xrange(j+1, m) )
+                        xnorm = ctx.fsum( (A[i,j])**2 for i in range(j+1, m) )
                         xnorm = ctx.sqrt(xnorm)
                     elif (m-j) == 2:
                         xnorm = abs( A[m-1,j] )
@@ -728,14 +727,14 @@ class LinearAlgebraMethods(object):
                     t = -tau[j]
                     da = one / (alpha - beta)
 
-                    for i in xrange(j+1, m):
+                    for i in range(j+1, m):
                         A[i,j] *= da
 
                     A[j,j] = one
-                    for k in xrange(j+1, n):
-                        y = ctx.fsum( A[i,j] * A[i,k] for i in xrange(j, m) )
+                    for k in range(j+1, n):
+                        y = ctx.fsum( A[i,j] * A[i,k] for i in range(j, m) )
                         temp = t * y
-                        for i in xrange(j,m):
+                        for i in range(j,m):
                             A[i,k] += A[i,j] * temp
 
                     A[j,j] = beta
@@ -750,8 +749,8 @@ class LinearAlgebraMethods(object):
 
             # form R before the values are overwritten
             R = A.copy()
-            for j in xrange(0, n):
-                for i in xrange(j+1, m):
+            for j in range(0, n):
+                for i in range(j+1, m):
                     R[i,j] = zero
 
             # set the value of p (number of columns of Q to return)
@@ -761,28 +760,28 @@ class LinearAlgebraMethods(object):
 
             # add columns to A if needed and initialize
             A.cols += (p-n)
-            for j in xrange(0, p):
+            for j in range(0, p):
                 A[j,j] = one
-                for i in xrange(0, j):
+                for i in range(0, j):
                     A[i,j] = zero
 
             # main loop to form Q
-            for j in xrange(n-1, -1, -1):
+            for j in range(n-1, -1, -1):
                 t = -tau[j]
                 A[j,j] += t
 
-                for k in xrange(j+1, p):
+                for k in range(j+1, p):
                     if cmplx:
-                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in xrange(j+1, m))
+                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in range(j+1, m))
                         temp = t * ctx.conj(y)
                     else:
-                        y = ctx.fsum(A[i,j] * A[i,k] for i in xrange(j+1, m))
+                        y = ctx.fsum(A[i,j] * A[i,k] for i in range(j+1, m))
                         temp = t * y
                     A[j,k] = temp
-                    for i in xrange(j+1, m):
+                    for i in range(j+1, m):
                         A[i,k] += A[i,j] * temp
 
-                for i in xrange(j+1, m):
+                for i in range(j+1, m):
                     A[i, j] *= t
 
             return A, R[0:p,0:n]

@@ -94,8 +94,7 @@ fnan = (0, MPZ_ZERO, -123, -1)
 finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
-# Was 1e1000; this is broken in Python 2.4
-math_float_inf = 1e300 * 1e300
+math_float_inf = 1e1000
 
 
 #----------------------------------------------------------------------------#
@@ -414,14 +413,7 @@ def from_float(x, prec=53, rnd=round_fast):
     # frexp only raises an exception for nan on some platforms
     if x != x:
         return fnan
-    # in Python2.5 math.frexp gives an exception for float infinity
-    # in Python2.6 it returns (float infinity, 0)
-    try:
-        m, e = math.frexp(x)
-    except:
-        if x == math_float_inf: return finf
-        if x == -math_float_inf: return fninf
-        return fnan
+    m, e = math.frexp(x)
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
@@ -544,32 +536,22 @@ def mpf_eq(s, t):
 
 def mpf_hash(s):
     # Duplicate the new hash algorithm introduces in Python 3.2.
-    if sys.version_info >= (3, 2):
-        ssign, sman, sexp, sbc = s
+    ssign, sman, sexp, sbc = s
 
-        # Handle special numbers
-        if not sman:
-            if s == fnan: return sys.hash_info.nan
-            if s == finf: return sys.hash_info.inf
-            if s == fninf: return -sys.hash_info.inf
-        h = sman % HASH_MODULUS
-        if sexp >= 0:
-            sexp = sexp % HASH_BITS
-        else:
-            sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
-        h = (h << sexp) % HASH_MODULUS
-        if ssign: h = -h
-        if h == -1: h == -2
-        return int(h)
+    # Handle special numbers
+    if not sman:
+        if s == fnan: return sys.hash_info.nan
+        if s == finf: return sys.hash_info.inf
+        if s == fninf: return -sys.hash_info.inf
+    h = sman % HASH_MODULUS
+    if sexp >= 0:
+        sexp = sexp % HASH_BITS
     else:
-        try:
-            # Try to be compatible with hash values for floats and ints
-            return hash(to_float(s, strict=1))
-        except OverflowError:
-            # We must unfortunately sacrifice compatibility with ints here.
-            # We could do hash(man << exp) when the exponent is positive, but
-            # this would cause unreasonable inefficiency for large numbers.
-            return hash(s)
+        sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
+    h = (h << sexp) % HASH_MODULUS
+    if ssign: h = -h
+    if h == -1: h == -2
+    return int(h)
 
 def mpf_cmp(s, t):
     """Compare the raw mpfs s and t. Return -1 if s < t, 0 if s == t,

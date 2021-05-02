@@ -3,8 +3,6 @@ Computational functions for interval arithmetic.
 
 """
 
-from .backend import xrange
-
 from .libmpf import (
     ComplexResult,
     round_down, round_up, round_floor, round_ceiling, round_nearest,
@@ -596,7 +594,7 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
             b.append('')
         if a[1] == b[1]:
             if a[0] != b[0]:
-                for i in xrange(len(a[0]) + 1):
+                for i in range(len(a[0]) + 1):
                     if a[0][i] != b[0][i]:
                         break
                 s = (a[0][:i] + br1 + a[0][i:] + ',' + sp + b[0][i:] + br2

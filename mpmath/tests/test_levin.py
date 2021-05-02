@@ -4,8 +4,6 @@
 from mpmath import mp
 from mpmath import libmp
 
-xrange = libmp.backend.xrange
-
 # Attention:
 #   These tests run with 15-20 decimal digits precision. For higher precision the
 #   working precision must be raised.
@@ -96,7 +94,7 @@ def test_levin_3():
     #   exact = mp.exp(mp.one / (32 * z)) * mp.besselk(mp.one / 4, mp.one / (32 * z)) / (4 * mp.sqrt(z * mp.pi))
     err = abs(v - exact)
     assert err < eps
-    w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)), [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in xrange(1000)])
+    w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)), [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in range(1000)])
     err = abs(v - w)
     assert err < eps
 
@@ -115,7 +113,7 @@ def test_levin_nsum():
 
     z = 2 + 1j
     f = lambda n: mp.rf(2 / mp.mpf(3), n) * mp.rf(4 / mp.mpf(3), n) * z**n / (mp.rf(1 / mp.mpf(3), n) * mp.fac(n))
-    v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in xrange(1000)])
+    v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in range(1000)])
     exact = mp.hyp2f1(2 / mp.mpf(3), 4 / mp.mpf(3), 1 / mp.mpf(3), z)
     assert abs(exact - v) < eps
 

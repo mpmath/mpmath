@@ -1,3 +1,4 @@
+import numbers
 import operator
 import sys
 from .libmp import int_types, mpf_hash, bitcount, from_man_exp, HASH_MODULUS
@@ -52,22 +53,14 @@ class mpq(object):
 
     def __hash__(s):
         a, b = s._mpq_
-        if sys.version_info >= (3, 2):
-            inverse = pow(b, HASH_MODULUS-2, HASH_MODULUS)
-            if not inverse:
-                h = sys.hash_info.inf
-            else:
-                h = (abs(a) * inverse) % HASH_MODULUS
-            if a < 0: h = -h
-            if h == -1: h = -2
-            return h
+        inverse = pow(b, HASH_MODULUS-2, HASH_MODULUS)
+        if not inverse:
+            h = sys.hash_info.inf
         else:
-            if b == 1:
-                return hash(a)
-            # Power of two: mpf compatible hash
-            if not (b & (b-1)):
-                return mpf_hash(from_man_exp(a, 1-bitcount(b)))
-            return hash((a,b))
+            h = (abs(a) * inverse) % HASH_MODULUS
+        if a < 0: h = -h
+        if h == -1: h = -2
+        return h
 
     def __eq__(s, t):
         ttype = type(t)
@@ -231,10 +224,6 @@ mpq_5_4 = mpq((5,4))
 #     We do not subclass, hence we do not use the @abstractmethod checks. While
 #     this is less invasive it may turn out that we do not actually support
 #     parts of the expected interfaces.  See
-#     http://docs.python.org/2/library/numbers.html for list of abstract
+#     https://docs.python.org/3/library/numbers.html for list of abstract
 #     methods.
-try:
-    import numbers
-    numbers.Rational.register(mpq)
-except ImportError:
-    pass
+numbers.Rational.register(mpq)

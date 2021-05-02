@@ -1,6 +1,5 @@
 import math
 
-from ..libmp.backend import xrange
 
 class QuadratureRule(object):
     """
@@ -212,7 +211,7 @@ class QuadratureRule(object):
         """
         ctx = self.ctx
         I = total_err = ctx.zero
-        for i in xrange(len(points)-1):
+        for i in range(len(points)-1):
             a, b = points[i], points[i+1]
             if a == b:
                 continue
@@ -225,7 +224,7 @@ class QuadratureRule(object):
                 a, b = (ctx.zero, ctx.inf)
             results = []
             err = ctx.zero
-            for degree in xrange(1, max_degree+1):
+            for degree in range(1, max_degree+1):
                 nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
                     print("Integrating from %s to %s (degree %s of %s)" % \
@@ -353,7 +352,7 @@ class TanhSinh(QuadratureRule):
         udelta = ctx.exp(h)
         urdelta = 1/udelta
 
-        for k in xrange(0, 20*2**degree+1):
+        for k in range(0, 20*2**degree+1):
             # Reference implementation:
             # t = t0 + k*h
             # x = tanh(pi/2 * sinh(t))
@@ -432,7 +431,7 @@ class GaussLegendre(QuadratureRule):
         nodes = []
         n = 3*2**(degree-1)
         upto = n//2 + 1
-        for j in xrange(1, upto):
+        for j in range(1, upto):
             # Asymptotic formula for the roots
             r = ctx.mpf(math.cos(math.pi*(j-0.25)/(n+0.5)))
             # Newton iteration
@@ -440,7 +439,7 @@ class GaussLegendre(QuadratureRule):
                 t1, t2 = 1, 0
                 # Evaluates the Legendre polynomial using its defining
                 # recurrence relation
-                for j1 in xrange(1,n+1):
+                for j1 in range(1,n+1):
                     t3, t2, t1 = t2, t1, ((2*j1-1)*r*t1 - (j1-1)*t2)/j1
                 t4 = n*(r*t1-t2)/(r**2-1)
                 a = t1/t4

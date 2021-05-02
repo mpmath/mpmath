@@ -1,5 +1,3 @@
-from ..libmp.backend import xrange
-
 class SpecialFunctions(object):
     """
     This class implements special functions using high-level code.
@@ -274,16 +272,12 @@ def fabs(ctx, x):
 @defun
 def re(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "real"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.real
-    return x
+    return x.real
 
 @defun
 def im(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "imag"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.imag
-    return ctx.zero
+    return x.imag
 
 @defun
 def conj(ctx, x):
@@ -432,9 +426,9 @@ def _lambertw_series(ctx, z, k, tol):
                 # The series converges, so we could use it directly, but unless
                 # *extremely* close, it is better to just use the first few
                 # terms to get a good approximation for the iteration
-                for l in xrange(max(2,cancellation)):
+                for l in range(max(2,cancellation)):
                     if l not in u:
-                        a[l] = ctx.fsum(u[j]*u[l+1-j] for j in xrange(2,l))
+                        a[l] = ctx.fsum(u[j]*u[l+1-j] for j in range(2,l))
                         u[l] = (l-1)*(u[l-2]/2+a[l-2]/4)/(l+1)-a[l]/2-u[l-1]/(l+1)
                     term = u[l] * p**l
                     s += term
@@ -474,7 +468,7 @@ def lambertw(ctx, z, k=0):
     if not done:
         # Use Halley iteration to solve w*exp(w) = z
         two = ctx.mpf(2)
-        for i in xrange(100):
+        for i in range(100):
             ew = ctx.exp(w)
             wew = w*ew
             wewz = wew-z

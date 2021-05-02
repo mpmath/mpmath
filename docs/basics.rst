@@ -125,9 +125,8 @@ It is often useful to change the precision during only part of a calculation. A 
     >>> # do_something()
     >>> mp.prec -= 2
 
-Since Python 2.5, the ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner:
+The ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner:
 
-    >>> from __future__ import with_statement  # only need this in Python 2.5
     >>> with workdps(20):  # doctest: +SKIP
     ...     print(mpf(1)/7)
     ...     with extradps(10):
@@ -138,7 +137,7 @@ Since Python 2.5, the ``with`` statement along with the mpmath functions ``workp
     >>> mp.dps
     15
 
-The ``with`` statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised. (The effect of the ``with`` statement can be emulated in Python 2.4 by using a ``try/finally`` block.)
+The ``with`` statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised.
 
 The ``workprec`` family of functions can also be used as function decorators:
 

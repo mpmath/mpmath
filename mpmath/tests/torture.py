@@ -5,7 +5,7 @@ special functions.
 (Other torture tests may also be placed here.)
 
 Running this file (gmpy recommended!) takes several CPU minutes.
-With Python 2.6+, multiprocessing is used automatically to run tests
+The multiprocessing module is used automatically to run tests
 in parallel if many cores are available. (A single test may take between
 a second and several minutes; possibly more.)
 
@@ -50,7 +50,6 @@ if not sys.argv[-1].endswith(".py"):
     filt = sys.argv[-1]
 
 from mpmath import *
-from mpmath.libmp.backend import exec_
 
 def test_asymp(f, maxdps=150, verbose=False, huge_range=False):
     dps = [5,15,25,50,90,150,500,1500,5000,10000]
@@ -67,7 +66,7 @@ def test_asymp(f, maxdps=150, verbose=False, huge_range=False):
         print("Absolute error:", abs(x-y))
         print("Relative error:", abs(x-y)/abs(y))
         raise AssertionError
-    exponents = range(-20,20)
+    exponents = list(range(-20,20))
     if huge_range:
         exponents += [-1000, -100, -50, 50, 100, 1000]
     for n in exponents:
@@ -204,19 +203,15 @@ def testit(line):
     if filt in line:
         print(line)
         t1 = clock()
-        exec_(line, globals(), locals())
+        exec(line, globals(), locals())
         t2 = clock()
         elapsed = t2-t1
         print("Time:", elapsed, "for", line, "(OK)")
 
 if __name__ == '__main__':
-    try:
-        from multiprocessing import Pool
-        mapf = Pool(None).map
-        print("Running tests with multiprocessing")
-    except ImportError:
-        print("Not using multiprocessing")
-        mapf = map
+    from multiprocessing import Pool
+    mapf = Pool(None).map
+    print("Running tests with multiprocessing")
     t1 = clock()
     tasks = cases.splitlines()
     mapf(testit, tasks)

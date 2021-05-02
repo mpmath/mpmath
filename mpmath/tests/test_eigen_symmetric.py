@@ -4,7 +4,6 @@
 from mpmath import mp
 from mpmath import libmp
 
-xrange = libmp.backend.xrange
 
 def run_eigsy(A, verbose = False):
     if verbose:
@@ -73,7 +72,7 @@ def run_svd_r(A, full_matrices = False, verbose = True):
     U, S0, V = mp.svd_r(A, full_matrices = full_matrices)
 
     S = mp.zeros(U.cols, V.rows)
-    for j in xrange(min(m, n)):
+    for j in range(min(m, n)):
         S[j,j] = S0[j]
 
     if verbose:
@@ -112,7 +111,7 @@ def run_svd_c(A, full_matrices = False, verbose = True):
     U, S0, V = mp.svd_c(A, full_matrices = full_matrices)
 
     S = mp.zeros(U.cols, V.rows)
-    for j in xrange(min(m, n)):
+    for j in range(min(m, n)):
         S[j,j] = S0[j]
 
     if verbose:
@@ -148,14 +147,14 @@ def run_gauss(qtype, a, b):
     assert mp.mnorm(d) < eps
     assert mp.mnorm(e) < eps
 
-def irandmatrix(n, range = 10):
+def irandmatrix(n, r=10):
     """
     random matrix with integer entries
     """
     A = mp.matrix(n, n)
-    for i in xrange(n):
-        for j in xrange(n):
-            A[i,j]=int( (2 * mp.rand() - 1) * range)
+    for i in range(n):
+        for j in range(n):
+            A[i,j]=int( (2 * mp.rand() - 1) * r)
     return A
 
 #######################
@@ -191,11 +190,11 @@ def test_eighe_fixed_matrix():
 def test_eigsy_randmatrix():
     N = 5
 
-    for a in xrange(10):
+    for a in range(10):
         A = 2 * mp.randmatrix(N, N) - 1
 
-        for i in xrange(0, N):
-            for j in xrange(i + 1, N):
+        for i in range(0, N):
+            for j in range(i + 1, N):
                 A[j,i] = A[i,j]
 
         run_eigsy(A)
@@ -203,12 +202,12 @@ def test_eigsy_randmatrix():
 def test_eighe_randmatrix():
     N = 5
 
-    for a in xrange(10):
+    for a in range(10):
         A = (2 * mp.randmatrix(N, N) - 1) + 1j * (2 * mp.randmatrix(N, N) - 1)
 
-        for i in xrange(0, N):
+        for i in range(0, N):
             A[i,i] = mp.re(A[i,i])
-            for j in xrange(i + 1, N):
+            for j in range(i + 1, N):
                 A[j,i] = mp.conj(A[i,j])
 
         run_eighe(A)
@@ -217,11 +216,11 @@ def test_eigsy_irandmatrix():
     N = 4
     R = 4
 
-    for a in xrange(10):
+    for a in range(10):
         A=irandmatrix(N, R)
 
-        for i in xrange(0, N):
-            for j in xrange(i + 1, N):
+        for i in range(0, N):
+            for j in range(i + 1, N):
                 A[j,i] = A[i,j]
 
         run_eigsy(A)
@@ -230,40 +229,40 @@ def test_eighe_irandmatrix():
     N = 4
     R = 4
 
-    for a in xrange(10):
+    for a in range(10):
         A=irandmatrix(N, R) + 1j * irandmatrix(N, R)
 
-        for i in xrange(0, N):
+        for i in range(0, N):
             A[i,i] = mp.re(A[i,i])
-            for j in xrange(i + 1, N):
+            for j in range(i + 1, N):
                 A[j,i] = mp.conj(A[i,j])
 
         run_eighe(A)
 
 def test_svd_r_rand():
-    for i in xrange(5):
+    for i in range(5):
         full = mp.rand() > 0.5
         m = 1 + int(mp.rand() * 10)
         n = 1 + int(mp.rand() * 10)
         A = 2 * mp.randmatrix(m, n) - 1
         if mp.rand() > 0.5:
             A *= 10
-            for x in xrange(m):
-                for y in xrange(n):
+            for x in range(m):
+                for y in range(n):
                     A[x,y]=int(A[x,y])
 
         run_svd_r(A, full_matrices = full, verbose = False)
 
 def test_svd_c_rand():
-    for i in xrange(5):
+    for i in range(5):
         full = mp.rand() > 0.5
         m = 1 + int(mp.rand() * 10)
         n = 1 + int(mp.rand() * 10)
         A = (2 * mp.randmatrix(m, n) - 1) + 1j * (2 * mp.randmatrix(m, n) - 1)
         if mp.rand() > 0.5:
             A *= 10
-            for x in xrange(m):
-                for y in xrange(n):
+            for x in range(m):
+                for y in range(n):
                     A[x,y]=int(mp.re(A[x,y])) + 1j * int(mp.im(A[x,y]))
 
         run_svd_c(A, full_matrices=full, verbose=False)
@@ -327,7 +326,7 @@ def test_gauss_quadrature_dynamic(verbose = False):
 
     def F(x):
         r = 0
-        for i in xrange(len(A) - 1, -1, -1):
+        for i in range(len(A) - 1, -1, -1):
             r = r * x + A[i]
         return r
 
@@ -335,7 +334,7 @@ def test_gauss_quadrature_dynamic(verbose = False):
         X, W = mp.gauss_quadrature(n, qtype, alpha = alpha, beta = beta)
 
         a = 0
-        for i in xrange(len(X)):
+        for i in range(len(X)):
             a += W[i] * F(X[i])
 
         b = mp.quad(lambda x: FW(x) * F(x), R)

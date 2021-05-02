@@ -21,9 +21,7 @@ only on a part of the real line. Definitions and branch cuts
 are given in the documentation of each function.
 The branch cut conventions used by mpmath are essentially
 the same as those found in most standard mathematical software,
-such as Mathematica and Python's own ``cmath`` libary (as of Python 2.6;
-earlier Python versions implement some functions
-erroneously).
+such as Mathematica and Python's own ``cmath`` libary.
 
 Degree-radian conversion
 ...........................................................

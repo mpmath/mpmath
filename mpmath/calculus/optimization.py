@@ -1,8 +1,4 @@
-from __future__ import print_function
-
 from copy import copy
-
-from ..libmp.backend import xrange
 
 class OptimizationMethods(object):
     def __init__(ctx):
@@ -590,11 +586,11 @@ def jacobian(ctx, f, x):
     m = len(fx)
     n = len(x)
     J = ctx.matrix(m, n)
-    for j in xrange(n):
+    for j in range(n):
         xj = x.copy()
         xj[j] += h
         Jj = (ctx.matrix(f(*xj)) - fx) / h
-        for i in xrange(m):
+        for i in range(m):
             J[i,j] = Jj[i]
     return J
 
@@ -1008,7 +1004,7 @@ def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
     if tol is None:
         tol = ctx.eps ** 0.8
     kwargs['d0f'] = f
-    for i in xrange(maxsteps):
+    for i in range(maxsteps):
         dfstr = 'd' + str(i) + 'f'
         if dfstr in kwargs:
             df = kwargs[dfstr]
@@ -1046,7 +1042,7 @@ def steffensen(f):
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
-    ...     for i in xrange(9):
+    ...     for i in range(9):
     ...         try:
     ...             fx = f(fx)
     ...         except OverflowError:

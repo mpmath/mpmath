@@ -1,10 +1,7 @@
 # TODO: don't use round
 
-from __future__ import division
-
 import pytest
 from mpmath import *
-xrange = libmp.backend.xrange
 
 # XXX: these shouldn't be visible(?)
 LU_decomp = mp.LU_decomp
@@ -269,7 +266,7 @@ def test_qr():
     flg = False                     # toggle to create real vs complex matrix
     zero = mpf('0.0')
 
-    for k in xrange(0,10):
+    for k in range(0,10):
         exdps = 0
         mode = 'full'
         flg = bool(k % 2)
@@ -287,16 +284,16 @@ def test_qr():
         if flg:
             flg = False
             dtype = 'complex'
-            for j in xrange(0,n):
-                for i in xrange(0,m):
+            for j in range(0,n):
+                for i in range(0,m):
                     val = nint(lowlimit + (uplimit-lowlimit)*rand())
                     val2 = nint(lowlimit + (uplimit-lowlimit)*rand())
                     A[i,j] = mpc(val, val2)
         else:
             flg = True
             dtype = 'real'
-            for j in xrange(0,n):
-                for i in xrange(0,m):
+            for j in range(0,n):
+                for i in range(0,m):
                     val = nint(lowlimit + (uplimit-lowlimit)*rand())
                     A[i,j] = mpf(val)
 

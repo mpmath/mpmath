@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10-dev, pypy2, pypy3]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, 3.10-dev, pypy3]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -26,13 +26,13 @@ jobs:
         pycodestyle
     - name: Tests
       run: pytest
-    - name: Remove gmpy on 2.7
-      if: matrix.python-version == 2.7
+    - name: Remove gmpy on 3.8
+      if: matrix.python-version == 3.8
       run: pip uninstall -y gmpy2
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
-      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      if: matrix.python-version == 3.8 || matrix.python-version == 3.9
       run: |
         pytest
         codecov --required
@@ -44,7 +44,7 @@ jobs:
       run: python setup.py sdist bdist_wheel
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
-      if: matrix.python-version == 3.6
+      if: matrix.python-version == 3.9
       with:
         path: |
           dist/

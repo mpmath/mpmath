@@ -1,6 +1,4 @@
-#from ctx_base import StandardBaseContext
-
-from .libmp.backend import basestring, exec_
+import numbers
 
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
@@ -83,7 +81,7 @@ class _mpf(mpnumeric):
     def mpf_convert_arg(cls, x, prec, rounding):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
-        if isinstance(x, basestring): return from_str(x, prec, rounding)
+        if isinstance(x, str): return from_str(x, prec, rounding)
         if isinstance(x, cls.context.constant): return x.func(prec, rounding)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
@@ -283,7 +281,7 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     code = code.replace("%WITH_MPF%", with_mpf)
     code = code.replace("%NAME%", name)
     np = {}
-    exec_(code, globals(), np)
+    exec(code, globals(), np)
     return np[name]
 
 _mpf.__eq__ = binary_op('__eq__',
@@ -655,7 +653,7 @@ class PythonMPContext(object):
         if isinstance(x, rational.mpq):
             p, q = x._mpq_
             return ctx.make_mpf(from_rational(p, q, prec))
-        if strings and isinstance(x, basestring):
+        if strings and isinstance(x, str):
             try:
                 _mpf_ = from_str(x, prec, rounding)
                 return ctx.make_mpf(_mpf_)
@@ -1044,7 +1042,7 @@ class PythonMPContext(object):
                 p, q = x
             elif hasattr(x, '_mpq_'):
                 p, q = x._mpq_
-            elif isinstance(x, basestring) and '/' in x:
+            elif isinstance(x, str) and '/' in x:
                 p, q = x.split('/')
                 p = int(p)
                 q = int(q)
@@ -1139,11 +1137,7 @@ class PythonMPContext(object):
 #     We do not subclass, hence we do not use the @abstractmethod checks. While
 #     this is less invasive it may turn out that we do not actually support
 #     parts of the expected interfaces.  See
-#     http://docs.python.org/2/library/numbers.html for list of abstract
+#     https://docs.python.org/3/library/numbers.html for list of abstract
 #     methods.
-try:
-    import numbers
-    numbers.Complex.register(_mpc)
-    numbers.Real.register(_mpf)
-except ImportError:
-    pass
+numbers.Complex.register(_mpc)
+numbers.Real.register(_mpf)
