@@ -93,3 +93,12 @@ def test_expmath_fail():
     assert ae(quadts(lambda x: atan(x)/(x*sqrt(1-x**2)), [0, 1]), pi*log(1+sqrt(2))/2)
     assert ae(quadts(lambda x: log(1+x**2)/x**2, [0, 1]),         pi/2-log(2))
     assert ae(quadts(lambda x: x**2/((1+x**4)*sqrt(1-x**4)), [0, 1]),     pi/8)
+
+def test_quadsing():
+    assert quadsing(lambda s: s**(-9/mpf(10)), [0, 1], where="left").ae(10)
+    assert quadsing(lambda s: s**(-11/mpf(10)), [1, inf], where="right").ae(10)
+    a, b = mpf(1)/7, mpf(1)/9
+    x, y = mpf(11), mpf(3)
+    assert quadsing(lambda t: (x-t)**(a-1)*(t-y)**(b-1), [y, x], where="both").ae(beta(a,b)*(x-y)**(a+b-1))
+    assert quadsing(lambda t: t**(a-1)/(1+t)**(a+b), [0, inf], where="both").ae(beta(a,b))
+    assert quadsing(lambda t: exp(t)*(-t)**(a-1), [-inf, 0], where="right").ae(gamma(a))

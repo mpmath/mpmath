@@ -679,6 +679,11 @@ class QuadratureMethods(object):
             >>> +a
             2.0
 
+        A better way is to use :func:`~mpmath.quadsing` for such integrals:
+
+            >>> quadsing(lambda x: 1/sqrt(x), [0, 1])
+            2.0
+
         **Highly variable functions**
 
         For functions that are smooth (in the sense of being infinitely
@@ -1107,6 +1112,143 @@ class QuadratureMethods(object):
             return +total, +total_error
         else:
             return +total
+
+    def quadsing(ctx, f, interval, where="both", verbose=False):
+        r"""
+        Calculates
+
+        .. math ::
+
+            I = \int_a^b f(x) dx
+
+        where `f(x)` has a singularity at `a`, `b` or both ends. This function works well
+        for singularites which behave like powers `x^{\alpha},\,\alpha\in\mathbb{C}`, and
+        can give accurate answer for some integrals where :func:`~mpmath.quad` fails.
+        There must not be any singularity inside the integration interval.
+
+        Logarithmic singularities cannot be integrated: "quadsing(lambda x: log(x), [0, 1])"
+        and "quadsing(lambda t: mp.log(t)/(t*t), [1, inf])" fail badly.
+        Use :func:`~mpmath.quad` or :func:`~mpmath.quadsubdiv` instead.
+
+        **Options**
+
+        *which*
+            specifies the position of the singularity: "left", "right" or "both".
+            The default is "both" which uses extrapolation at both ends of the interval.
+            If one knows that only the left or right side has a singularity, it is
+            faster to set *which* to "left" or "right".
+
+        *verbose*
+            Print details about progress.
+
+        **Examples**
+
+        Powers:
+
+            >>> from mpmath import *
+            >>> mp.dps = 15; mp.pretty = True
+            >>> quadsing(lambda s: (s**(-9999/mpf(10000))), [0, 1], where="left")
+            10000.0
+            >>> quadsing(lambda s: (s**(-10001/mpf(10000))), [1, inf], where="right")
+            10000.0
+
+        Integral for the beta function:
+
+            >>> a, b = mpf(1)/7, mpf(1)/9
+            >>> chop(quadsing(lambda t: t**(a-1)*(1-t)**(b-1), [0, 1]) - beta(a, b))
+            0.0
+
+        **Algorithm**
+
+        As an example, take `I = \int_0^1 f(x) dx` with a singularity at 0.
+        For positve integers `n`, define `I_n = \int_{1/(n+1)}^{1/n} f(x) dx`.
+        Then `I = I_1 + I_2 + \ldots`.
+
+        Now use standart numerical integration :func:`~mpmath.quad` for the integrals
+        `I_n` and use non-linear extrapolation (the Levin transformation) for the sum.
+        This scheme is described in [1] and often works surprisingly well.
+        For a successful integration, the function must be sufficiently regular.
+        Be aware that this scheme can fail unexpectedly because the non-linear extrapolation
+        process is not well controlled.
+
+        Similarly, to evaluate the integral `I = \int_0^{\infty} f(x) dx` with a singularity
+        at `\infty`, we define `I_n = \int_{n}^{n+1} f(x) dx`. Then `I = I_0 + I_1 + \ldots`.
+        The sum is again evaluated using non-linear series acceleation.
+
+        In the general case, the integration interval is split appropriately.
+
+        **References**
+
+        1. J. Stoer and R. Bulirsch, Introduction to Numerical Analysis, 2nd edition, p.161
+
+        """
+        a, b = ctx._as_points(interval)
+        a = ctx.convert(a)
+        b = ctx.convert(b)
+
+        if b < a:
+            if where == "left":
+                return - ctx.quadsing(f, [b, a], where="right", verbose=verbose)
+            elif where == "right":
+                return - ctx.quadsing(f, [b, a], where="left", verbose=verbose)
+            else:
+                return - ctx.quadsing(f, [b, a], where=where, verbose=verbose)
+
+        if where == "left":
+            if a == ctx.ninf and b == ctx.inf:
+                L = ctx.quadsing(f, [ctx.ninf, 0], where="left", verbose=verbose)
+                R = ctx.quad(f, [0, ctx.inf])
+                return L + R
+            elif a == ctx.ninf:
+                U = lambda n: ctx.quad(f, [b-(n+1), b-n])
+                L = ctx.nsum(U, [0, ctx.inf], method="l", verbose=verbose)
+                return L
+            elif b == ctx.inf:
+                L = ctx.quadsing(f, [a, a+1], where="left", verbose=verbose)
+                R = ctx.quad(f, [a+1, ctx.inf])
+                return L + R
+            else:
+                ba = b-a
+                U = lambda n: ctx.quad(f, [a+ba/(n+1), a+ba/n])
+                L = ctx.nsum(U, [1, ctx.inf], method="l", verbose=verbose)
+                return L
+        elif where == "right":
+            if a == ctx.ninf and b == ctx.inf:
+                L = ctx.quad(f, [ctx.ninf, 0])
+                R = ctx.quadsing(f, [0, ctx.inf], where="right", verbose=verbose)
+                return L + R
+            elif a == ctx.ninf:
+                L = ctx.quad(f, [ctx.ninf, b-1])
+                R = ctx.quadsing(f, [b-1, b], where="right", verbose=verbose)
+                return L+R
+            elif b == ctx.inf:
+                U = lambda n: ctx.quad(f, [a+n, a+(n+1)])
+                R = ctx.nsum(U, [0, ctx.inf], method="l", verbose=verbose)
+                return R
+            else:
+                ba = b-a
+                U = lambda n: ctx.quad(f, [b-ba/n, b-ba/(n+1)])
+                R = ctx.nsum(U, [1, ctx.inf], method="l", verbose=verbose)
+                return R
+        else:
+            # both
+            if a == ctx.ninf and b == ctx.inf:
+                L = ctx.quadsing(f, [ctx.ninf, 0], where="left", verbose=verbose)
+                R = ctx.quadsing(f, [0, ctx.inf], where="right", verbose=verbose)
+                return L + R
+            elif a == ctx.ninf:
+                L = ctx.quadsing(f, [ctx.ninf, b-1], where="left", verbose=verbose)
+                R = ctx.quadsing(f, [b-1, b], where="right", verbose=verbose)
+                return L + R
+            elif b == ctx.inf:
+                L = ctx.quadsing(f, [a, a+1], where="left", verbose=verbose)
+                R = ctx.quadsing(f, [a+1, ctx.inf], where="right", verbose=verbose)
+                return L + R
+            else:
+                mid = (a + b) / 2
+                L = ctx.quadsing(f, [a, mid], where="left", verbose=verbose)
+                R = ctx.quadsing(f, [mid, b], where="right", verbose=verbose)
+                return L + R
 
 if __name__ == '__main__':
     import doctest

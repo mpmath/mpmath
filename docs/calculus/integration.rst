@@ -16,6 +16,11 @@ Oscillatory quadrature (``quadosc``)
 
 .. autofunction:: mpmath.quadosc
 
+Quadrature for singular integrals (``quadsing``)
+............................................
+
+.. autofunction:: mpmath.quadsing
+
 Quadrature rules
 ................
 
