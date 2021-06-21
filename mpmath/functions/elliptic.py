@@ -477,7 +477,6 @@ def RF_calc(ctx, x, y, z, r):
     Q = ctx.root(3*r, -6) * max(abs(A0-x),abs(A0-y),abs(A0-z))
     g = ctx.mpf(0.25)
     pow4 = ctx.one
-    m = 0
     while 1:
         xs = ctx.sqrt(xm)
         ys = ctx.sqrt(ym)
@@ -488,7 +487,6 @@ def RF_calc(ctx, x, y, z, r):
         if pow4 * Q < abs(Am):
             break
         Am = Am1
-        m += 1
         pow4 *= g
     t = pow4/Am
     X = (A0-x)*t
@@ -593,7 +591,6 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     A0 = Am = (x + y + z + 2*p)/5
     delta = (p-x)*(p-y)*(p-z)
     Q = ctx.root(0.25*r, -6) * max(abs(A0-x),abs(A0-y),abs(A0-z),abs(A0-p))
-    m = 0
     g = ctx.mpf(0.25)
     pow4 = ctx.one
     S = 0
@@ -606,15 +603,14 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
         Am1 = (Am+lm)*g
         xm = (xm+lm)*g; ym = (ym+lm)*g; zm = (zm+lm)*g; pm = (pm+lm)*g
         dm = (sp+sx) * (sp+sy) * (sp+sz)
-        em = delta * ctx.power(4, -3*m) / dm**2
+        em = delta * pow4**3 / dm**2
         if pow4 * Q < abs(Am):
             break
         T = RC_calc(ctx, ctx.one, ctx.one+em, r) * pow4 / dm
         S += T
         pow4 *= g
-        m += 1
         Am = Am1
-    t = ctx.ldexp(1,-2*m) / Am
+    t = pow4 / Am
     X = (A0-x)*t
     Y = (A0-y)*t
     Z = (A0-z)*t
@@ -625,7 +621,7 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     E5 = X*Y*Z*P**2
     P = 24024 - 5148*E2 + 2457*E2**2 + 4004*E3 - 4158*E2*E3 - 3276*E4 + 2772*E5
     Q = 24024
-    v1 = g**m * ctx.power(Am, -1.5) * P/Q
+    v1 = pow4 * ctx.power(Am, -1.5) * P/Q
     v2 = 6*S
     return initial_integral + v1 + v2
 
