@@ -15,7 +15,7 @@ jobs:
     - name: Install libs
       run: |
         sudo apt update
-        sudo apt install libmpc-dev latexmk texlive-xetex
+        sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
@@ -26,9 +26,6 @@ jobs:
         pycodestyle
     - name: Tests
       run: pytest
-    - name: Remove gmpy on 2.7
-      if: matrix.python-version == 2.7
-      run: pip uninstall -y gmpy2
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
