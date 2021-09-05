@@ -53,8 +53,8 @@ else:
     import builtins
     exec_ = getattr(builtins, "exec")
 
-# Define constants for calculating hash on Python 3.2.
-if sys.version_info >= (3, 2):
+# Define constants for calculating hash on Python 3.
+if python3:
     HASH_MODULUS = sys.hash_info.modulus
     if sys.hash_info.width == 32:
         HASH_BITS = 31

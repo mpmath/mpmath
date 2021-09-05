@@ -274,16 +274,12 @@ def fabs(ctx, x):
 @defun
 def re(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "real"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.real
-    return x
+    return x.real
 
 @defun
 def im(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "imag"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.imag
-    return ctx.zero
+    return x.imag
 
 @defun
 def conj(ctx, x):
