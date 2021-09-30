@@ -643,7 +643,7 @@ class LinearAlgebraMethods(object):
         assert isinstance(A, ctx.matrix)
         m = A.rows
         n = A.cols
-        assert n > 1
+        assert n >= 0
         assert m >= n
         assert edps >= 0
 
