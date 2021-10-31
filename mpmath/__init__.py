@@ -429,7 +429,7 @@ squarew = mp.squarew
 trianglew = mp.trianglew
 sawtoothw = mp.sawtoothw
 unit_triangle = mp.unit_triangle
-sigmoidw = mp.sigmoidw
+sigmoid = mp.sigmoid
 
 # be careful when changing this name, don't use test*!
 def runtests():
