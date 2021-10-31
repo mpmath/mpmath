@@ -1,3 +1,6 @@
+from .functions import defun, defun_wrapped, defun_static
+
+@defun
 def squarew(ctx, t: float, A: float, T: float) -> float:
     r"""
     Computes the square wave function using the definition:
@@ -86,7 +89,7 @@ def squarew_floor_ex(ctx, t: float, A: float, T: float) -> float:
     """
     return A*((-1)**ctx.floor(2*t/T))
 
-
+@defun
 def trianglew(ctx, t: float, A: float, T: float) -> float:
     r"""
     Computes the triangle wave function using the definition:
