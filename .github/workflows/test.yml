@@ -37,6 +37,7 @@ jobs:
         pytest
         codecov --required
     - name: Building docs
+      if: matrix.python-version > 3
       run: |
         python setup.py build_sphinx -c docs -b html,latex
         make -C build/sphinx/latex all-pdf
