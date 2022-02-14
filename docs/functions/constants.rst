@@ -31,7 +31,7 @@ The predefined objects :data:`j` (imaginary unit), :data:`inf` (positive infinit
 Pi (``pi``)
 ....................................
 
-.. autoattribute:: mpmath.mp.pi
+.. autofunction:: mpmath.mp.pi
 
 Degree (``degree``)
 ....................................
@@ -52,7 +52,7 @@ Golden ratio (``phi``)
 Euler's constant (``euler``)
 ............................
 
-.. autoattribute:: mpmath.mp.euler
+.. autofunction:: mpmath.mp.euler
 
 Catalan's constant (``catalan``)
 ................................

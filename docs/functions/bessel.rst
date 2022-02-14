@@ -7,22 +7,22 @@ The functions in this section arise as solutions to various differential equatio
 Bessel functions
 ...................................................
 
-:func:`besselj`
+:func:`~mpmath.besselj`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.besselj(n,x,derivative=0)
 .. autofunction:: mpmath.j0(x)
 .. autofunction:: mpmath.j1(x)
 
-:func:`bessely`
+:func:`~mpmath.bessely`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.bessely(n,x,derivative=0)
 
-:func:`besseli`
+:func:`~mpmath.besseli`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.besseli(n,x,derivative=0)
 
-:func:`besselk`
+:func:`~mpmath.besselk`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.besselk(n,x)
 
@@ -30,23 +30,23 @@ Bessel functions
 Bessel function zeros
 ...............................
 
-:func:`besseljzero`
-^^^^^^^^^^^^^^^^^^^^
+:func:`~mpmath.besseljzero`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.besseljzero(v,m,derivative=0)
 
-:func:`besselyzero`
-^^^^^^^^^^^^^^^^^^^^
+:func:`~mpmath.besselyzero`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.besselyzero(v,m,derivative=0)
 
 
 Hankel functions
 ................
 
-:func:`hankel1`
+:func:`~mpmath.hankel1`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hankel1(n,x)
 
-:func:`hankel2`
+:func:`~mpmath.hankel2`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hankel2(n,x)
 
@@ -54,20 +54,20 @@ Hankel functions
 Kelvin functions
 ................
 
-:func:`ber`
+:func:`~mpmath.ber`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ber
 
-:func:`bei`
+:func:`~mpmath.bei`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.bei
 
-:func:`ker`
+:func:`~mpmath.ker`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.ker
 
-:func:`kei`
+:func:`~mpmath.kei`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.kei
 
@@ -75,11 +75,11 @@ Kelvin functions
 Struve functions
 ...................................................
 
-:func:`struveh`
+:func:`~mpmath.struveh`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.struveh
 
-:func:`struvel`
+:func:`~mpmath.struvel`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.struvel
 
@@ -87,11 +87,11 @@ Struve functions
 Anger-Weber functions
 ...................................................
 
-:func:`angerj`
+:func:`~mpmath.angerj`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.angerj
 
-:func:`webere`
+:func:`~mpmath.webere`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.webere
 
@@ -99,38 +99,38 @@ Anger-Weber functions
 Lommel functions
 ...................................................
 
-:func:`lommels1`
+:func:`~mpmath.lommels1`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.lommels1
 
-:func:`lommels2`
+:func:`~mpmath.lommels2`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.lommels2
 
 Airy and Scorer functions
 ...............................................
 
-:func:`airyai`
+:func:`~mpmath.airyai`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.airyai(z, derivative=0, **kwargs)
 
-:func:`airybi`
+:func:`~mpmath.airybi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.airybi(z, derivative=0, **kwargs)
 
-:func:`airyaizero`
+:func:`~mpmath.airyaizero`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.airyaizero(k, derivative=0)
 
-:func:`airybizero`
+:func:`~mpmath.airybizero`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.airybizero(k, derivative=0, complex=0)
 
-:func:`scorergi`
+:func:`~mpmath.scorergi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.scorergi(z, **kwargs)
 
-:func:`scorerhi`
+:func:`~mpmath.scorerhi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.scorerhi(z, **kwargs)
 
@@ -138,48 +138,48 @@ Airy and Scorer functions
 Coulomb wave functions
 ...............................................
 
-:func:`coulombf`
+:func:`~mpmath.coulombf`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.coulombf(l,eta,z)
 
-:func:`coulombg`
+:func:`~mpmath.coulombg`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.coulombg(l,eta,z)
 
-:func:`coulombc`
+:func:`~mpmath.coulombc`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.coulombc(l,eta)
 
 Confluent U and Whittaker functions
 ...................................
 
-:func:`hyperu`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyperu`
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyperu(a, b, z)
 
-:func:`whitm`
-^^^^^^^^^^^^^^
+:func:`~mpmath.whitm`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.whitm(k,m,z)
 
-:func:`whitw`
-^^^^^^^^^^^^^^
+:func:`~mpmath.whitw`
+^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.whitw(k,m,z)
 
 Parabolic cylinder functions
 .................................
 
-:func:`pcfd`
-^^^^^^^^^^^^^^
+:func:`~mpmath.pcfd`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pcfd(n,z,**kwargs)
 
-:func:`pcfu`
-^^^^^^^^^^^^^^
+:func:`~mpmath.pcfu`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pcfu(a,z,**kwargs)
 
-:func:`pcfv`
-^^^^^^^^^^^^^^
+:func:`~mpmath.pcfv`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pcfv(a,z,**kwargs)
 
-:func:`pcfw`
-^^^^^^^^^^^^^^
+:func:`~mpmath.pcfw`
+^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pcfw(a,z,**kwargs)

@@ -157,3 +157,4 @@ There are many excellent textbooks on numerical analysis and floating-point arit
 
 * `David Goldberg, What Every Computer Scientist Should Know About Floating-Point Arithmetic <http://www.cl.cam.ac.uk/teaching/1011/FPComp/floatingmath.pdf>`_
 * `The Wikipedia article about numerical analysis  <http://en.wikipedia.org/wiki/Numerical_analysis>`_
+* [MPFR]_

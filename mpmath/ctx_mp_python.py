@@ -67,9 +67,11 @@ class _mpf(mpnumeric):
                 v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
             if len(val) == 4:
-                sign, man, exp, bc = val
+                if val not in (finf, fninf, fnan):
+                    sign, man, exp, bc = val
+                    val = normalize(sign, MPZ(man), exp, bc, prec, rounding)
                 v = new(cls)
-                v._mpf_ = normalize(sign, MPZ(man), exp, bc, prec, rounding)
+                v._mpf_ = val
                 return v
             raise ValueError
         else:

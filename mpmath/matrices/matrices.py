@@ -206,7 +206,7 @@ class _matrix(object):
 
     ..
         COMMENT: TODO: the above "doctest:+SKIP" may be removed as soon as we
-        have dropped support for Python 3.4 and below.
+        have dropped support for Python 3.5 and below.
 
     You can raise powers of square matrices::
 

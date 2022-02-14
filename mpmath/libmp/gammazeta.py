@@ -267,8 +267,7 @@ Reference:
 [1] Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
 http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
 
-[2] Jonathan Borwein & David Bailey, Mathematics by Experiment,
-A K Peters, 2003
+[2] [BorweinBailey]_
 """
 
 @constant_memo
