@@ -379,6 +379,10 @@ def test_polygamma():
     assert isnan(psi(2,mpc(inf,inf)))
     assert isnan(psi(2,mpc(nan,nan)))
     assert isnan(psi(2,mpc(-inf,-inf)))
+    mp.dps = 30
+    # issue #534
+    assert digamma(-0.75+1j).ae(mpc('0.46317279488182026118963809283042317', '2.4821070143037957102007677817351115'))
+    mp.dps = 15
 
 def test_polygamma_high_prec():
     mp.dps = 100

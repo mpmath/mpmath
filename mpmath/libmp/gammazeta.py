@@ -750,6 +750,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     z2 = mpc_square(z, wp)
     t = mpc_one
     prev = mpc_zero
+    szprev = fzero
     k = 1
     eps = mpf_shift(fone, -wp+2)
     while 1:
@@ -758,9 +759,10 @@ def mpc_psi0(z, prec, rnd=round_fast):
         term = mpc_mpf_div(bern, mpc_mul_int(t, 2*k, wp), wp)
         s = mpc_sub(s, term, wp)
         szterm = mpc_abs(term, 10)
-        if k > 2 and mpf_le(szterm, eps):
+        if k > 2 and (mpf_le(szterm, eps) or mpf_le(szprev, szterm)):
             break
         prev = term
+        szprev = szterm
         k += 1
     return s
 
