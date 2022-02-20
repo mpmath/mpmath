@@ -1,4 +1,5 @@
 # contributed to mpmath by Kristopher L. Kuhlman, February 2017
+# contributed to mpmath by Guillermo Navas-Palencia, February 2022
 
 class InverseLaplaceTransform(object):
     r"""
@@ -534,11 +535,136 @@ class deHoog(InverseLaplaceTransform):
 
 # ****************************************
 
+class Cohen(InverseLaplaceTransform):
+
+    def calc_laplace_parameter(self, t, **kwargs):
+        r"""The Cohen algorithm accelerates the convergence of the nearly
+        alternating series resulting from the application of the trapezoidal
+        rule to the Bromwich contour inversion integral.
+
+        .. math ::
+
+            p_k = \frac{\gamma}{2 t} + \frac{\pi i k}{t} \qquad 0 \le k < M
+
+        where 
+
+        .. math ::
+
+            \gamma = \frac{2}{3} (d + \log(10) + \log(2 t)),
+
+        `d = \mathrm{dps\_goal}`, which is chosen based on the desired
+        accuracy using the method developed in [1] to improve numerical
+        stability. The Cohen algorithm shows robustness similar to the de Hoog
+        et al. algorithm, but it is faster than the fixed Talbot algorithm.
+
+        **Optional arguments**
+
+        *degree*
+            integer order of the approximation (M = number of terms)
+        *alpha*
+            abscissa for `p_0` (controls the discretization error)
+
+        The working precision will be increased according to a rule of
+        thumb. If 'degree' is not specified, the working precision and
+        degree are chosen to hopefully achieve the dps of the calling
+        context. If 'degree' is specified, the working precision is
+        chosen to achieve maximum resulting precision for the
+        specified degree.
+
+        **References**
+
+        1. P. Glasserman, J. Ruiz-Mata (2006). Computing the credit loss
+        distribution in the Gaussian copula model: a comparison of methods.
+        *Journal of Credit Risk* 2(4):33-66, 10.21314/JCR.2006.057
+
+        """
+        self.t = self.ctx.convert(t)
+
+        if 'degree' in kwargs:
+            self.degree = kwargs['degree']
+            self.dps_goal = int(1.5 * self.degree)
+        else:
+            self.dps_goal = int(self.ctx.dps * 1.74)
+            self.degree = max(22, int(1.31 * self.dps_goal))
+
+        M = self.degree + 1
+
+        # this is adjusting the dps of the calling context hopefully
+        # the caller doesn't monkey around with it between calling
+        # this routine and calc_time_domain_solution()
+        self.dps_orig = self.ctx.dps
+        self.ctx.dps = self.dps_goal
+
+        ttwo = 2 * self.t
+        tmp = self.ctx.dps * self.ctx.log(10) + self.ctx.log(ttwo)
+        tmp = self.ctx.fraction(2, 3) * tmp
+        self.alpha = self.ctx.convert(kwargs.get('alpha', tmp))
+
+        # all but time-dependent part of p       
+        a_t = self.alpha / ttwo
+        p_t = self.ctx.pi * 1j / self.t
+
+        self.p = self.ctx.matrix(M, 1)
+        self.p[0] = a_t
+
+        for i in range(1, M):
+            self.p[i] = a_t + i * p_t
+
+    def calc_time_domain_solution(self, fp, t, manual_prec=False):
+        r"""Calculate time-domain solution for Cohen algorithm.
+
+        The accelerated nearly alternating series is:
+
+        .. math ::
+
+            f(t, M) = \frac{e^{\gamma / 2}}{t} \left[\frac{1}{2}
+            \Re\left(\bar{f}\left(\frac{\gamma}{2t}\right) \right) -
+            \sum_{k=0}^{M-1}\frac{c_{M,k}}{d_M}\Re\left(\bar{f}
+            \left(\frac{\gamma + 2(k+1) \pi i}{2t}\right)\right)\right],
+
+        where coefficients `\frac{c_{M, k}}{d_M}` are described in [1].
+
+        1. H. Cohen, F. Rodriguez Villegas, D. Zagier (2000). Convergence
+        acceleration of alternating series. *Experiment. Math* 9(1):3-12
+
+        """
+        self.t = self.ctx.convert(t)
+
+        n = self.degree
+        M = n + 1
+
+        A = self.ctx.matrix(M, 1)
+        for i in range(M):
+            A[i] = fp[i].real
+
+        d = (3 + self.ctx.sqrt(8)) ** n
+        d = (d + 1 / d) / 2
+        b = -self.ctx.one
+        c = -d
+        s = 0
+
+        for k in range(n):
+            c = b - c
+            s = s + c * A[k + 1]
+            b = 2 * (k + n) * (k - n) * b / ((2 * k + 1) * (k + self.ctx.one))
+
+        result = self.ctx.exp(self.alpha / 2) / self.t * (A[0] / 2 - s / d)
+
+        # setting dps back to value when calc_laplace_parameter was
+        # called, unless flag is set.
+        if not manual_prec:
+            self.ctx.dps = self.dps_orig
+
+        return result
+
+# ****************************************
+
 class LaplaceTransformInversionMethods(object):
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
         ctx._stehfest = Stehfest(ctx)
         ctx._de_hoog = deHoog(ctx)
+        ctx._cohen = Cohen(ctx)
 
     def invertlaplace(ctx, f, t, **kwargs):
         r"""Computes the numerical inverse Laplace transform for a
@@ -603,9 +729,9 @@ class LaplaceTransformInversionMethods(object):
         >>> mp.dps = 15; mp.pretty = True
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
-        >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0])
+        >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='dehoog')
         (0.999999750000016, -6.09717765032273e-18)
-        >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1])
+        >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='dehoog')
         (0.99997500015625, -5.61756281076169e-17)
 
         .. math ::
@@ -637,17 +763,17 @@ class LaplaceTransformInversionMethods(object):
 
         **Algorithms**
 
-        Mpmath implements three numerical inverse Laplace transform
+        Mpmath implements four numerical inverse Laplace transform
         algorithms, attributed to: Talbot, Stehfest, and de Hoog,
         Knight and Stokes. These can be selected by using
-        *method='talbot'*, *method='stehfest'*, or *method='dehoog'*
-        or by passing the classes *method=FixedTalbot*,
-        *method=Stehfest*, or *method=deHoog*. The functions
+        *method='talbot'*, *method='stehfest'*, *method='dehoog'* or 
+        *method='cohen'* or by passing the classes *method=FixedTalbot*,
+        *method=Stehfest*, *method=deHoog*, or *method=Cohen*. The functions
         :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`,
-        and :func:`~mpmath.invlapdehoog` are also available as
-        shortcuts.
+        :func:`~mpmath.invlapdehoog`, and :func:`~mpmath.invlapcohen`
+        are also available as shortcuts.
 
-        All three algorithms implement a heuristic balance between the
+        All four algorithms implement a heuristic balance between the
         requested precision and the precision used internally for the
         calculations. This has been tuned for a typical exponentially
         decaying function and precision up to few hundred decimal
@@ -697,10 +823,17 @@ class LaplaceTransformInversionMethods(object):
         Fourier-series quadrature-type approximation to the Bromwich
         contour integral, with non-linear series acceleration and an
         analytical expression for the remainder term. This method is
-        typically the most robust and is therefore the default
-        method. This method also involves the greatest amount of
-        overhead, so it is typically the slowest of the three methods
-        at high precision.
+        typically one of the most robust. This method also involves the
+        greatest amount of overhead, so it is typically the slowest of the
+        four methods at high precision.
+
+        *Cohen*
+
+        The Cohen method is a trapezoidal rule approximation to the Bromwich
+        contour integral, with linear acceleration for alternating
+        series. This method is as robust as the de Hoog et al method and the
+        fastest of the four methods at high precision, and is therefore the
+        default method.
 
         **Singularities**
 
@@ -782,7 +915,7 @@ class LaplaceTransformInversionMethods(object):
 
         """
 
-        rule = kwargs.get('method','dehoog')
+        rule = kwargs.get('method','cohen')
         if type(rule) is str:
             lrule = rule.lower()
             if lrule == 'talbot':
@@ -791,6 +924,8 @@ class LaplaceTransformInversionMethods(object):
                 rule = ctx._stehfest
             elif lrule == 'dehoog':
                 rule = ctx._de_hoog
+            elif rule == 'cohen':
+                rule = ctx._cohen
             else:
                 raise ValueError("unknown invlap algorithm: %s" % rule)
         else:
@@ -820,6 +955,10 @@ class LaplaceTransformInversionMethods(object):
     def invlapdehoog(ctx, *args, **kwargs):
         kwargs['method'] = 'dehoog'
         return ctx.invertlaplace(*args, **kwargs)
+
+    def invlapcohen(ctx, *args, **kwargs):
+        kwargs['method'] = 'cohen'
+        return ctx.invertlaplace(*args, **kwargs)        
 
 # ****************************************
 
