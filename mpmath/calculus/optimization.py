@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from copy import copy
+from types import SimpleNamespace
 
 from ..libmp.backend import xrange
 
@@ -652,11 +653,13 @@ class MDNewton:
         J = self.J
         fx = self.ctx.matrix(f(*x0))
         fxnorm = norm(fx)
+        details = Details(fev=1, jev=0)
         cancel = False
         while not cancel:
             # get direction of descent
             fxn = -fx
             Jx = J(*x0)
+            details.jev += 1
             s = self.ctx.lu_solve(Jx, fxn)
             if self.verbose:
                 print('Jx:')
@@ -672,6 +675,7 @@ class MDNewton:
                     cancel = True
                     break
                 fx = self.ctx.matrix(f(*x1))
+                details.fev += 1
                 newnorm = norm(fx)
                 if newnorm < fxnorm:
                     # new x accepted
@@ -680,18 +684,21 @@ class MDNewton:
                     break
                 l /= 2
                 x1 = x0 + l*s
-            yield (x0, fxnorm)
+            yield (x0, fxnorm, details)
 
 #############
 # UTILITIES #
 #############
+
+class Details(SimpleNamespace):
+    pass
 
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
               'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
 
-def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
+def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, details=False, **kwargs):
     r"""
     Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
@@ -966,7 +973,9 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         else:
             maxsteps = iterations.maxsteps
         i = 0
-        for x, error in iterations:
+        for result in iterations:
+            x, error = result[:2]
+            d = result[2] if len(result) > 2 else None
             if verbose:
                 print('x:    ', x)
                 print('error:', error)
@@ -986,6 +995,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
                              '(%s > %s)\n'
                              'Try another starting point or tweak arguments.'
                              % (norm(f(*xl))**2, tol))
+        if details:
+            return x, d
         return x
     finally:
         ctx.prec = prec

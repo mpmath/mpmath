@@ -70,7 +70,7 @@ def test_multidimensional():
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
     assert mnorm(jacobian(f, (1,-2)) - matrix([[6,8],[0,-2]]),1) < 1.e-7
-    for x, error in MDNewton(mp, f, (1,-2), verbose=0,
+    for x, error, details in MDNewton(mp, f, (1,-2), verbose=0,
                              norm=lambda x: norm(x, inf)):
         pass
     assert norm(f(*x), 2) < 1e-14
