@@ -1,6 +1,6 @@
-from .functions import defun, defun_wrapped
+from .functions import defun_wrapped
 
-@defun
+@defun_wrapped
 def squarew(ctx, t, amplitude=1, period=1):
     r"""
     Computes the square wave function using the definition:
@@ -31,7 +31,7 @@ def squarew(ctx, t, amplitude=1, period=1):
     A = amplitude
     return A*((-1)**ctx.floor(2*t/P))
 
-@defun
+@defun_wrapped
 def trianglew(ctx, t, amplitude=1, period=1):
     r"""
     Computes the triangle wave function using the definition:
@@ -66,7 +66,7 @@ def trianglew(ctx, t, amplitude=1, period=1):
 
     return 2*A*(0.5 - ctx.fabs(1 - 2*ctx.frac(t/P + 0.25)))
 
-@defun
+@defun_wrapped
 def sawtoothw(ctx, t, amplitude=1, period=1):
     r"""
     Computes the sawtooth wave function using the definition:
@@ -98,7 +98,7 @@ def sawtoothw(ctx, t, amplitude=1, period=1):
     P = period
     return A*ctx.frac(t/P)
 
-@defun
+@defun_wrapped
 def unit_triangle(t, amplitude=1):
     r"""
     Computes the unit triangle using the definition:
@@ -130,7 +130,7 @@ def unit_triangle(t, amplitude=1):
         return ctx.zero
     return A*(-abs(t) + 1)
 
-@defun
+@defun_wrapped
 def sigmoid(ctx, t, amplitude=1):
     r"""
     Computes the sigmoid function using the definition:
