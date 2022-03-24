@@ -721,7 +721,8 @@ def levin(ctx, method = "levin", variant = "u"):
     L.ctx = ctx
     return L
 
-levin.__doc__ = levin_class.__doc__
+if hasattr(levin_class, '__doc__'):
+    levin.__doc__ = levin_class.__doc__
 defun(levin)
 
 
@@ -890,7 +891,8 @@ def cohen_alt(ctx):
     L.ctx = ctx
     return L
 
-cohen_alt.__doc__ = cohen_alt_class.__doc__
+if hasattr(cohen_alt_class, '__doc__'):
+    cohen_alt.__doc__ = cohen_alt_class.__doc__
 defun(cohen_alt)
 
 

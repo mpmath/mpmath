@@ -9,6 +9,7 @@ see libmpc and libmpi.
 
 """
 
+import functools
 import math
 from bisect import bisect
 
@@ -89,18 +90,26 @@ def constant_memo(f):
     function taking a single argument prec as input and
     returning a fixed-point value with the given precision.
     """
-    f.memo_prec = -1
-    f.memo_val = None
+    try:
+        f.memo_prec = -1
+        f.memo_val = None
+        _f = f
+    except AttributeError:
+        _f = functools.partial(f)
+
+        _f.memo_prec = -1
+        _f.memo_val = None
+
+    @functools.wraps(f, updated={})
     def g(prec, **kwargs):
-        memo_prec = f.memo_prec
+        memo_prec = _f.memo_prec
         if prec <= memo_prec:
-            return f.memo_val >> (memo_prec-prec)
+            return _f.memo_val >> (memo_prec-prec)
         newprec = int(prec*1.05+10)
-        f.memo_val = f(newprec, **kwargs)
-        f.memo_prec = newprec
-        return f.memo_val >> (newprec-prec)
-    g.__name__ = f.__name__
-    g.__doc__ = f.__doc__
+        _f.memo_val = f(newprec, **kwargs)
+        _f.memo_prec = newprec
+        return _f.memo_val >> (newprec-prec)
+
     return g
 
 def def_mpf_constant(fixed):
@@ -111,13 +120,13 @@ def def_mpf_constant(fixed):
     Assumptions: the constant is positive and has magnitude ~= 1;
     the fixed-point function rounds to floor.
     """
+    @functools.wraps(fixed)
     def f(prec, rnd=round_fast):
         wp = prec + 20
         v = fixed(wp)
         if rnd in (round_up, round_ceiling):
             v += 1
         return normalize(0, v, -wp, bitcount(v), prec, rnd)
-    f.__doc__ = fixed.__doc__
     return f
 
 def bsp_acot(q, a, b, hyperbolic):

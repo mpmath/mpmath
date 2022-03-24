@@ -42,8 +42,8 @@ from . import rational
 
 new = object.__new__
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r'^\(?([\+\-]?\d*(?:\.\d*)?(?:e[\+\-]?\d+)?)??'
+                         r'([\+\-]?\d*(?:\.\d*)?(?:e[\+\-]?\d+)?j)?\)?$')
 
 if BACKEND == 'sage':
     from sage.libs.mpmath.ext_main import Context as BaseMPContext
@@ -76,22 +76,27 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         ctx._init_aliases()
 
-        # XXX: automate
         try:
-            ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
-            ctx.primepi.im_func.func_doc = function_docs.primepi
-            ctx.psi.im_func.func_doc = function_docs.psi
-            ctx.atan2.im_func.func_doc = function_docs.atan2
-        except AttributeError:
-            # python 3
-            ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
-            ctx.primepi.__func__.func_doc = function_docs.primepi
-            ctx.psi.__func__.func_doc = function_docs.psi
-            ctx.atan2.__func__.func_doc = function_docs.atan2
 
-        ctx.digamma.func_doc = function_docs.digamma
-        ctx.cospi.func_doc = function_docs.cospi
-        ctx.sinpi.func_doc = function_docs.sinpi
+            # XXX: automate
+            try:
+                ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
+                ctx.primepi.im_func.func_doc = function_docs.primepi
+                ctx.psi.im_func.func_doc = function_docs.psi
+                ctx.atan2.im_func.func_doc = function_docs.atan2
+            except AttributeError:
+                # python 3
+                ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
+                ctx.primepi.__func__.func_doc = function_docs.primepi
+                ctx.psi.__func__.func_doc = function_docs.psi
+                ctx.atan2.__func__.func_doc = function_docs.atan2
+
+            ctx.digamma.func_doc = function_docs.digamma
+            ctx.cospi.func_doc = function_docs.cospi
+            ctx.sinpi.func_doc = function_docs.sinpi
+
+        except AttributeError:
+            pass
 
     def init_builtins(ctx):
 
@@ -620,10 +625,10 @@ class MPContext(BaseMPContext, StandardBaseContext):
             if 'j' in x.lower():
                 x = x.lower().replace(' ', '')
                 match = get_complex.match(x)
-                re = match.group('re')
+                re = match.group(1)
                 if not re:
                     re = 0
-                im = match.group('im').rstrip('j')
+                im = match.group(2).rstrip('j')
                 return ctx.mpc(ctx.convert(re), ctx.convert(im))
         if hasattr(x, "_mpi_"):
             a, b = x._mpi_

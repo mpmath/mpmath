@@ -54,7 +54,8 @@ else:
     exec_ = getattr(builtins, "exec")
 
 # Define constants for calculating hash on Python 3.2.
-if sys.version_info >= (3, 2):
+# if sys.version_info >= (3, 2):
+if hasattr(sys, 'hash_info'):
     HASH_MODULUS = sys.hash_info.modulus
     if sys.hash_info.width == 32:
         HASH_BITS = 31

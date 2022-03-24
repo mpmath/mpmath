@@ -1,3 +1,5 @@
+import functools
+
 from operator import gt, lt
 
 from .libmp.backend import xrange
@@ -476,6 +478,7 @@ class StandardBaseContext(Context,
 
         """
         f_cache = {}
+        @functools.wraps(f)
         def f_cached(*args, **kwargs):
             if kwargs:
                 key = args, tuple(kwargs.items())
@@ -489,6 +492,4 @@ class StandardBaseContext(Context,
             value = f(*args, **kwargs)
             f_cache[key] = (prec, value)
             return value
-        f_cached.__name__ = f.__name__
-        f_cached.__doc__ = f.__doc__
         return f_cached

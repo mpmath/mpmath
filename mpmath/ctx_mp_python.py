@@ -1007,7 +1007,10 @@ class PythonMPContext(object):
                 return ctx.make_mpc(mpc_f(x._mpc_, prec, rounding))
             raise NotImplementedError("%s of a %s" % (name, type(x)))
         name = mpf_f.__name__[4:]
-        f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
+        try:
+            f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
+        except AttributeError:
+            pass
         return f
 
     # Called by SpecialFunctions.__init__()
@@ -1026,7 +1029,10 @@ class PythonMPContext(object):
                 return +retval
         else:
             f_wrapped = f
-        f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        try:
+            f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        except AttributeError:
+            pass
         setattr(cls, name, f_wrapped)
 
     def _convert_param(ctx, x):

@@ -36,7 +36,11 @@ def _mathfun_real(f_real, f_complex):
         except (TypeError, ValueError):
             x = complex(x)
             return f_complex(x)
-    f.__name__ = f_real.__name__
+
+    try:
+        f.__name__ = f_real.__name__
+    except AttributeError:
+        pass
     return f
 
 def _mathfun(f_real, f_complex):
@@ -47,7 +51,10 @@ def _mathfun(f_real, f_complex):
             return f_real(float(x))
         except (TypeError, ValueError):
             return f_complex(complex(x))
-    f.__name__ = f_real.__name__
+    try:
+        f.__name__ = f_real.__name__
+    except AttributeError:
+        pass
     return f
 
 def _mathfun_n(f_real, f_complex):
@@ -56,7 +63,10 @@ def _mathfun_n(f_real, f_complex):
             return f_real(*(float(x) for x in args))
         except (TypeError, ValueError):
             return f_complex(*(complex(x) for x in args))
-    f.__name__ = f_real.__name__
+    try:
+        f.__name__ = f_real.__name__
+    except AttributeError:
+        pass
     return f
 
 # Workaround for non-raising log and sqrt in Python 2.5 and 2.4
