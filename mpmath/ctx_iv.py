@@ -513,7 +513,7 @@ class MPIntervalContext(StandardBaseContext):
         raise ValueError
 
     def _is_real_type(ctx, z):
-        return isinstance(z, ctx.mpf) or isinstance(z, int_types)
+        return isinstance(z, (ctx.mpf, int_types))
 
     def _is_complex_type(ctx, z):
         return isinstance(z, ctx.mpc)
