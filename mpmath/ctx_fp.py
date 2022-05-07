@@ -191,7 +191,7 @@ class FPContext(StandardBaseContext):
         return z, 'R'
 
     def _is_real_type(ctx, z):
-        return isinstance(z, float) or isinstance(z, int_types)
+        return isinstance(z, (float, int_types))
 
     def _is_complex_type(ctx, z):
         return isinstance(z, complex)
