@@ -336,7 +336,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return x._mpf_ == fnan
         if hasattr(x, "_mpc_"):
             return fnan in x._mpc_
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, (int_types, rational.mpq)):
             return False
         x = ctx.convert(x)
         if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
