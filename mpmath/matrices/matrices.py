@@ -437,7 +437,7 @@ class _matrix(object):
          B = A[:,2:6]
         '''
         # Convert vector to matrix indexing
-        if isinstance(key, int) or isinstance(key,slice):
+        if isinstance(key, (int, slice)):
             # only sufficent for vectors
             if self.__rows == 1:
                 key = (0, key)
@@ -502,7 +502,7 @@ class _matrix(object):
         #  submatrix to matrix (the value matrix should be the same size as the slice size)
         # A[3,:] = B   where A is n x m  and B is n x 1
         # Convert vector to matrix indexing
-        if isinstance(key, int) or isinstance(key,slice):
+        if isinstance(key, (int, slice)):
             # only sufficent for vectors
             if self.__rows == 1:
                 key = (0, key)
