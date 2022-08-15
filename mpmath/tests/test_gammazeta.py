@@ -6,7 +6,7 @@ def test_zeta_int_bug():
 
 def test_bernoulli():
     assert bernfrac(0) == (1,1)
-    assert bernfrac(1) == (-1,2)
+    assert bernfrac(1) == (1,2)
     assert bernfrac(2) == (1,6)
     assert bernfrac(3) == (0,1)
     assert bernfrac(4) == (-1,30)
@@ -24,7 +24,7 @@ def test_bernoulli():
     assert q == 342999030
     mp.dps = 15
     assert bernoulli(0) == 1
-    assert bernoulli(1) == -0.5
+    assert bernoulli(1) == 0.5
     assert bernoulli(2).ae(1./6)
     assert bernoulli(3) == 0
     assert bernoulli(4).ae(-1./30)

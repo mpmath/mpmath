@@ -406,7 +406,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n == 0:
             return fone
         if n == 1:
-            return mpf_neg(fhalf)
+            return fhalf
     # For odd n > 1, the Bernoulli numbers are zero
     if n & 1:
         return fzero
@@ -501,7 +501,7 @@ def bernfrac(n):
         ...     print("%s %s/%s" % (n, p, q))
         ...
         0 1/1
-        1 -1/2
+        1 1/2
         2 1/6
         3 0/1
         4 -1/30
@@ -557,7 +557,7 @@ def bernfrac(n):
     """
     n = int(n)
     if n < 3:
-        return [(1, 1), (-1, 2), (1, 6)][n]
+        return [(1, 1), (1, 2), (1, 6)][n]
     if n & 1:
         return (0, 1)
     q = 1

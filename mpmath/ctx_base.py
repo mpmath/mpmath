@@ -357,6 +357,7 @@ class StandardBaseContext(Context,
             while 1:
                 ctx.prec = prec + extraprec + 5
                 max_mag = ctx.ninf
+                sum_mag = ctx.zero
                 s = ctx.zero
                 k = 0
                 for term in terms():
