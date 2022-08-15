@@ -388,7 +388,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n == 0:
             return fone
         if n == 1:
-            return mpf_neg(fhalf)
+            return fhalf
     # For odd n > 1, the Bernoulli numbers are zero
     if n & 1:
         return fzero
@@ -473,6 +473,10 @@ def bernfrac(n):
     always reduced to lowest terms. Note that for `n > 1` and `n` odd,
     `B_n = 0`, and `(0, 1)` is returned.
 
+    Note that `B_1=+\frac{1}{2}`; this choice of value confers several
+    theoretical advantages [3]. The previous behavior can be obtained by
+    multiplying ``p`` by ``(-1)**n``.
+
     **Examples**
 
     The first few Bernoulli numbers are exactly::
@@ -483,7 +487,7 @@ def bernfrac(n):
         ...     print("%s %s/%s" % (n, p, q))
         ...
         0 1/1
-        1 -1/2
+        1 1/2
         2 1/6
         3 0/1
         4 -1/30
@@ -540,10 +544,13 @@ def bernfrac(n):
     2. The Bernoulli Number Page:
        http://www.bernoulli.org/
 
+    3. P. Luschny, "The Bernoulli Manifesto",
+       https://luschny.de/math/zeta/The-Bernoulli-Manifesto.html
+
     """
     n = int(n)
     if n < 3:
-        return [(1, 1), (-1, 2), (1, 6)][n]
+        return [(1, 1), (1, 2), (1, 6)][n]
     if n & 1:
         return (0, 1)
     q = 1
