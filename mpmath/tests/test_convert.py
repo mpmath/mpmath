@@ -35,6 +35,12 @@ def test_basic_string():
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
 
+
+def test_eps_repr():
+    mp.dps = 24
+    assert repr(mp.eps) == '<epsilon of working precision: 2.06795e-25~>'
+
+
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'
@@ -45,6 +51,7 @@ def test_pretty():
     iv.pretty = False
 
 def test_str_whitespace():
+    mp.dps = 15
     assert mpf('1.26 ') == 1.26
 
 def test_unicode():
