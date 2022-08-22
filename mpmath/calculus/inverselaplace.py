@@ -14,10 +14,10 @@ class InverseLaplaceTransform(object):
     argument.
     """
 
-    def __init__(self,ctx):
+    def __init__(self, ctx):
         self.ctx = ctx
 
-    def calc_laplace_parameter(self,t,**kwargs):
+    def calc_laplace_parameter(self, t, **kwargs):
         r"""
         Determine the vector of Laplace parameter values needed for an
         algorithm, this will depend on the choice of algorithm (de
@@ -26,7 +26,7 @@ class InverseLaplaceTransform(object):
         """
         raise NotImplementedError
 
-    def calc_time_domain_solution(self,fp):
+    def calc_time_domain_solution(self, fp):
         r"""
         Compute the time domain solution, after computing the
         Laplace-space function evaluations at the abscissa required
@@ -35,9 +35,10 @@ class InverseLaplaceTransform(object):
         """
         raise NotImplementedError
 
+
 class FixedTalbot(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self,t,**kwargs):
+    def calc_laplace_parameter(self, t, **kwargs):
         r"""The "fixed" Talbot method deforms the Bromwich contour towards
         `-\infty` in the shape of a parabola. Traditionally the Talbot
         algorithm has adjustable parameters, but the "fixed" version
@@ -100,7 +101,7 @@ class FixedTalbot(InverseLaplaceTransform):
         # ------------------------------
         # maximum time desired (used for scaling) default is requested
         # time.
-        self.tmax = self.ctx.convert(kwargs.get('tmax',self.t))
+        self.tmax = self.ctx.convert(kwargs.get('tmax', self.t))
 
         # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
@@ -111,7 +112,7 @@ class FixedTalbot(InverseLaplaceTransform):
             self.dps_goal = self.degree
         else:
             self.dps_goal = int(1.72*self.ctx.dps)
-            self.degree = max(12,int(1.38*self.dps_goal))
+            self.degree = max(12, int(1.38*self.dps_goal))
 
         M = self.degree
 
@@ -122,27 +123,27 @@ class FixedTalbot(InverseLaplaceTransform):
         self.ctx.dps = self.dps_goal
 
         # Abate & Valko rule of thumb for r parameter
-        self.r = kwargs.get('r',self.ctx.fraction(2,5)*M)
+        self.r = kwargs.get('r', self.ctx.fraction(2, 5)*M)
 
         self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
 
-        self.cot_theta = self.ctx.matrix(M,1)
-        self.cot_theta[0] = 0 # not used
+        self.cot_theta = self.ctx.matrix(M, 1)
+        self.cot_theta[0] = 0  # not used
 
         # all but time-dependent part of p
-        self.delta = self.ctx.matrix(M,1)
+        self.delta = self.ctx.matrix(M, 1)
         self.delta[0] = self.r
 
-        for i in range(1,M):
+        for i in range(1, M):
             self.cot_theta[i] = self.ctx.cot(self.theta[i])
             self.delta[i] = self.r*self.theta[i]*(self.cot_theta[i] + 1j)
 
-        self.p = self.ctx.matrix(M,1)
+        self.p = self.ctx.matrix(M, 1)
         self.p = self.delta/self.tmax
 
         # NB: p is complex (mpc)
 
-    def calc_time_domain_solution(self,fp,t,manual_prec=False):
+    def calc_time_domain_solution(self, fp, t, manual_prec=False):
         r"""The fixed Talbot time-domain solution is computed from the
         Laplace-space function evaluations using
 
@@ -196,15 +197,15 @@ class FixedTalbot(InverseLaplaceTransform):
         p = self.p
         r = self.r
 
-        ans = self.ctx.matrix(M,1)
+        ans = self.ctx.matrix(M, 1)
         ans[0] = self.ctx.exp(delta[0])*fp[0]/2
 
-        for i in range(1,M):
+        for i in range(1, M):
             ans[i] = self.ctx.exp(delta[i])*fp[i]*(
                 1 + 1j*theta[i]*(1 + self.cot_theta[i]**2) -
                 1j*self.cot_theta[i])
 
-        result = self.ctx.fraction(2,5)*self.ctx.fsum(ans)/self.t
+        result = self.ctx.fraction(2, 5)*self.ctx.fsum(ans)/self.t
 
         # setting dps back to value when calc_laplace_parameter was
         # called, unless flag is set.
@@ -213,11 +214,12 @@ class FixedTalbot(InverseLaplaceTransform):
 
         return result.real
 
+
 # ****************************************
 
 class Stehfest(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self,t,**kwargs):
+    def calc_laplace_parameter(self, t, **kwargs):
         r"""
         The Gaver-Stehfest method is a discrete approximation of the
         Widder-Post inversion algorithm, rather than a direct
@@ -256,10 +258,10 @@ class Stehfest(InverseLaplaceTransform):
             self.dps_goal = int(1.38*self.degree)
         else:
             self.dps_goal = int(2.93*self.ctx.dps)
-            self.degree = max(16,self.dps_goal)
+            self.degree = max(16, self.dps_goal)
 
         # _coeff routine requires even degree
-        if self.degree%2 > 0:
+        if self.degree % 2 > 0:
             self.degree += 1
 
         M = self.degree
@@ -271,7 +273,7 @@ class Stehfest(InverseLaplaceTransform):
         self.ctx.dps = self.dps_goal
 
         self.V = self._coeff()
-        self.p = self.ctx.matrix(self.ctx.arange(1,M+1))*self.ctx.ln2/self.t
+        self.p = self.ctx.matrix(self.ctx.arange(1, M+1))*self.ctx.ln2/self.t
 
         # NB: p is real (mpf)
 
@@ -280,26 +282,26 @@ class Stehfest(InverseLaplaceTransform):
         only depend on the approximation order (M) and the precision"""
 
         M = self.degree
-        M2 = int(M/2) # checked earlier that M is even
+        M2 = int(M/2)  # checked earlier that M is even
 
-        V = self.ctx.matrix(M,1)
+        V = self.ctx.matrix(M, 1)
 
         # Salzer summation weights
         # get very large in magnitude and oscillate in sign,
         # if the precision is not high enough, there will be
         # catastrophic cancellation
-        for k in range(1,M+1):
-            z = self.ctx.matrix(min(k,M2)+1,1)
-            for j in range(int((k+1)/2),min(k,M2)+1):
-                z[j] = (self.ctx.power(j,M2)*self.ctx.fac(2*j)/
+        for k in range(1, M+1):
+            z = self.ctx.matrix(min(k, M2)+1, 1)
+            for j in range(int((k+1)/2), min(k, M2)+1):
+                z[j] = (self.ctx.power(j, M2)*self.ctx.fac(2*j)/
                         (self.ctx.fac(M2-j)*self.ctx.fac(j)*
                          self.ctx.fac(j-1)*self.ctx.fac(k-j)*
                          self.ctx.fac(2*j-k)))
-            V[k-1] = self.ctx.power(-1,k+M2)*self.ctx.fsum(z)
+            V[k-1] = self.ctx.power(-1, k+M2)*self.ctx.fsum(z)
 
         return V
 
-    def calc_time_domain_solution(self,fp,t,manual_prec=False):
+    def calc_time_domain_solution(self, fp, t, manual_prec=False):
         r"""Compute time-domain Stehfest algorithm solution.
 
         .. math ::
@@ -337,7 +339,7 @@ class Stehfest(InverseLaplaceTransform):
         # calc_laplace_parameter(), so is already
         # a list or matrix of mpmath 'mpf' types
 
-        result = self.ctx.fdot(self.V,fp)*self.ctx.ln2/self.t
+        result = self.ctx.fdot(self.V, fp)*self.ctx.ln2/self.t
 
         # setting dps back to value when calc_laplace_parameter was called
         if not manual_prec:
@@ -346,11 +348,12 @@ class Stehfest(InverseLaplaceTransform):
         # ignore any small imaginary part
         return result.real
 
+
 # ****************************************
 
 class deHoog(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self,t,**kwargs):
+    def calc_laplace_parameter(self, t, **kwargs):
         r"""the de Hoog, Knight & Stokes algorithm is an
         accelerated form of the Fourier series numerical
         inverse Laplace transform algorithms.
@@ -388,7 +391,7 @@ class deHoog(InverseLaplaceTransform):
 
         # optional
         # ------------------------------
-        self.tmax = kwargs.get('tmax',self.t)
+        self.tmax = kwargs.get('tmax', self.t)
 
         # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
@@ -399,19 +402,19 @@ class deHoog(InverseLaplaceTransform):
             self.dps_goal = int(1.38*self.degree)
         else:
             self.dps_goal = int(self.ctx.dps*1.36)
-            self.degree = max(10,self.dps_goal)
+            self.degree = max(10, self.dps_goal)
 
         # 2*M+1 terms in approximation
         M = self.degree
 
         # adjust alpha component of abscissa of convergence for higher
         # precision
-        tmp = self.ctx.power(10.0,-self.dps_goal)
-        self.alpha = self.ctx.convert(kwargs.get('alpha',tmp))
+        tmp = self.ctx.power(10.0, -self.dps_goal)
+        self.alpha = self.ctx.convert(kwargs.get('alpha', tmp))
 
         # desired tolerance (here simply related to alpha)
-        self.tol = self.ctx.convert(kwargs.get('tol',self.alpha*10.0))
-        self.np = 2*self.degree+1 # number of terms in approximation
+        self.tol = self.ctx.convert(kwargs.get('tol', self.alpha*10.0))
+        self.np = 2*self.degree+1  # number of terms in approximation
 
         # this is adjusting the dps of the calling context
         # hopefully the caller doesn't monkey around with it
@@ -420,17 +423,17 @@ class deHoog(InverseLaplaceTransform):
         self.ctx.dps = self.dps_goal
 
         # scaling factor (likely tun-able, but 2 is typical)
-        self.scale = kwargs.get('scale',2)
-        self.T = self.ctx.convert(kwargs.get('T',self.scale*self.tmax))
+        self.scale = kwargs.get('scale', 2)
+        self.T = self.ctx.convert(kwargs.get('T', self.scale*self.tmax))
 
-        self.p = self.ctx.matrix(2*M+1,1)
+        self.p = self.ctx.matrix(2*M+1, 1)
         self.gamma = self.alpha - self.ctx.log(self.tol)/(self.scale*self.T)
         self.p = (self.gamma + self.ctx.pi*
                   self.ctx.matrix(self.ctx.arange(self.np))/self.T*1j)
 
         # NB: p is complex (mpc)
 
-    def calc_time_domain_solution(self,fp,t,manual_prec=False):
+    def calc_time_domain_solution(self, fp, t, manual_prec=False):
         r"""Calculate time-domain solution for
         de Hoog, Knight & Stokes algorithm.
 
@@ -470,34 +473,34 @@ class deHoog(InverseLaplaceTransform):
 
         # would it be useful to try re-using
         # space between e&q and A&B?
-        e = self.ctx.zeros(np,M+1)
-        q = self.ctx.matrix(2*M,M)
-        d = self.ctx.matrix(np,1)
-        A = self.ctx.zeros(np+1,1)
-        B = self.ctx.ones(np+1,1)
+        e = self.ctx.zeros(np, M+1)
+        q = self.ctx.matrix(2*M, M)
+        d = self.ctx.matrix(np, 1)
+        A = self.ctx.zeros(np+1, 1)
+        B = self.ctx.ones(np+1, 1)
 
         # initialize Q-D table
-        e[:,0] = 0.0 + 0j
-        q[0,0] = fp[1]/(fp[0]/2)
-        for i in range(1,2*M):
-            q[i,0] = fp[i+1]/fp[i]
+        e[:, 0] = 0.0 + 0j
+        q[0, 0] = fp[1]/(fp[0]/2)
+        for i in range(1, 2*M):
+            q[i, 0] = fp[i+1]/fp[i]
 
         # rhombus rule for filling triangular Q-D table (e & q)
-        for r in range(1,M+1):
+        for r in range(1, M+1):
             # start with e, column 1, 0:2*M-2
             mr = 2*(M-r) + 1
-            e[0:mr,r] = q[1:mr+1,r-1] - q[0:mr,r-1] + e[1:mr+1,r-1]
+            e[0:mr, r] = q[1:mr+1, r-1] - q[0:mr, r-1] + e[1:mr+1, r-1]
             if not r == M:
                 rq = r+1
                 mr = 2*(M-rq)+1 + 2
                 for i in range(mr):
-                    q[i,rq-1] = q[i+1,rq-2]*e[i+1,rq-1]/e[i,rq-1]
+                    q[i, rq-1] = q[i+1, rq-2]*e[i+1, rq-1]/e[i, rq-1]
 
         # build up continued fraction coefficients (d)
         d[0] = fp[0]/2
-        for r in range(1,M+1):
-            d[2*r-1] = -q[0,r-1] # even terms
-            d[2*r]   = -e[0,r]   # odd terms
+        for r in range(1, M+1):
+            d[2*r-1] = -q[0, r-1]  # even terms
+            d[2*r]   = -e[0, r]    # odd terms
 
         # seed A and B for recurrence
         A[0] = 0.0 + 0.0j
@@ -505,19 +508,19 @@ class deHoog(InverseLaplaceTransform):
         B[0:2] = 1.0 + 0.0j
 
         # base of the power series
-        z = self.ctx.expjpi(self.t/T) # i*pi is already in fcn
+        z = self.ctx.expjpi(self.t/T)  # i*pi is already in fcn
 
         # coefficients of Pade approximation (A & B)
         # using recurrence for all but last term
-        for i in range(1,2*M):
+        for i in range(1, 2*M):
             A[i+1] = A[i] + d[i]*A[i-1]*z
             B[i+1] = B[i] + d[i]*B[i-1]*z
 
         # "improved remainder" to continued fraction
-        brem  = (1 + (d[2*M-1] - d[2*M])*z)/2
+        brem = (1 + (d[2*M-1] - d[2*M])*z)/2
         # powm1(x,y) computes x^y - 1 more accurately near zero
         rem = brem*self.ctx.powm1(1 + d[2*M]*z/brem,
-                                  self.ctx.fraction(1,2))
+                                  self.ctx.fraction(1, 2))
 
         # last term of recurrence using new remainder
         A[np] = A[2*M] + rem*A[2*M-1]
@@ -533,6 +536,7 @@ class deHoog(InverseLaplaceTransform):
 
         return result
 
+
 # ****************************************
 
 class Cohen(InverseLaplaceTransform):
@@ -546,7 +550,7 @@ class Cohen(InverseLaplaceTransform):
 
             p_k = \frac{\gamma}{2 t} + \frac{\pi i k}{t} \qquad 0 \le k < M
 
-        where 
+        where
 
         .. math ::
 
@@ -600,7 +604,7 @@ class Cohen(InverseLaplaceTransform):
         tmp = self.ctx.fraction(2, 3) * tmp
         self.alpha = self.ctx.convert(kwargs.get('alpha', tmp))
 
-        # all but time-dependent part of p       
+        # all but time-dependent part of p
         a_t = self.alpha / ttwo
         p_t = self.ctx.pi * 1j / self.t
 
@@ -656,6 +660,7 @@ class Cohen(InverseLaplaceTransform):
             self.ctx.dps = self.dps_orig
 
         return result
+
 
 # ****************************************
 
@@ -752,8 +757,8 @@ class LaplaceTransformInversionMethods(object):
 
         **Options**
 
-        :func:`~mpmath.invertlaplace` recognizes the following optional keywords
-        valid for all methods:
+        :func:`~mpmath.invertlaplace` recognizes the following optional
+        keywords valid for all methods:
 
         *method*
             Chooses numerical inverse Laplace transform algorithm
@@ -766,7 +771,7 @@ class LaplaceTransformInversionMethods(object):
         Mpmath implements four numerical inverse Laplace transform
         algorithms, attributed to: Talbot, Stehfest, and de Hoog,
         Knight and Stokes. These can be selected by using
-        *method='talbot'*, *method='stehfest'*, *method='dehoog'* or 
+        *method='talbot'*, *method='stehfest'*, *method='dehoog'* or
         *method='cohen'* or by passing the classes *method=FixedTalbot*,
         *method=Stehfest*, *method=deHoog*, or *method=Cohen*. The functions
         :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`,
@@ -915,7 +920,7 @@ class LaplaceTransformInversionMethods(object):
 
         """
 
-        rule = kwargs.get('method','cohen')
+        rule = kwargs.get('method', 'cohen')
         if type(rule) is str:
             lrule = rule.lower()
             if lrule == 'talbot':
@@ -933,7 +938,7 @@ class LaplaceTransformInversionMethods(object):
 
         # determine the vector of Laplace-space parameter
         # needed for the requested method and desired time
-        rule.calc_laplace_parameter(t,**kwargs)
+        rule.calc_laplace_parameter(t, **kwargs)
 
         # compute the Laplace-space function evalutations
         # at the required abscissa.
@@ -941,7 +946,7 @@ class LaplaceTransformInversionMethods(object):
 
         # compute the time-domain solution from the
         # Laplace-space function evaluations
-        return rule.calc_time_domain_solution(fp,t)
+        return rule.calc_time_domain_solution(fp, t)
 
     # shortcuts for the above function for specific methods
     def invlaptalbot(ctx, *args, **kwargs):
@@ -958,7 +963,8 @@ class LaplaceTransformInversionMethods(object):
 
     def invlapcohen(ctx, *args, **kwargs):
         kwargs['method'] = 'cohen'
-        return ctx.invertlaplace(*args, **kwargs)        
+        return ctx.invertlaplace(*args, **kwargs)
+
 
 # ****************************************
 
