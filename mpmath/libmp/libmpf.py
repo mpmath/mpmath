@@ -559,7 +559,7 @@ def mpf_hash(s):
             sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
         h = (h << sexp) % HASH_MODULUS
         if ssign: h = -h
-        if h == -1: h == -2
+        if h == -1: h = -2
         return int(h)
     else:
         try:
