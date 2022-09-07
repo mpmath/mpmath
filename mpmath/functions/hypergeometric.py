@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .functions import defun, defun_wrapped
 
 def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
@@ -559,8 +558,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
                 return _cache[k]
             t = term(k-1)
             m = k-1
-            for j in xrange(p): t *= (a_s[j]+m)
-            for j in xrange(q): t /= (b_s[j]+m)
+            for j in range(p): t *= (a_s[j]+m)
+            for j in range(q): t /= (b_s[j]+m)
             t *= z
             t /= k
             _cache[k] = t
@@ -636,8 +635,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
         try:
             trunc = 50 * ctx.dps
             ctx.prec += 20
-            for i in xrange(5):
-                head = ctx.fsum(term(k) for k in xrange(trunc))
+            for i in range(5):
+                head = ctx.fsum(term(k) for k in range(trunc))
                 tail, err = ctx.sumem(term, [trunc, ctx.inf], tol=tol,
                     adiffs=hyper_diffs(trunc),
                     verbose=kwargs.get('verbose'),
@@ -711,7 +710,7 @@ def _hyp_borel(ctx, p, q, a_s, b_s, z, **kwargs):
             cache[k] = t
             return t
         s = ctx.one
-        for k in xrange(1, ctx.prec):
+        for k in range(1, ctx.prec):
             t = term(k)
             s += t
             if abs(t) <= tol:

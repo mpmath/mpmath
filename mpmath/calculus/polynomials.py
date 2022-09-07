@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .calculus import defun
 
 #----------------------------------------------------------------------------#
@@ -169,19 +168,19 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
             coeffs = [c/lead for c in coeffs]
         f = lambda x: ctx.polyval(coeffs, x)
         if roots_init is None:
-            roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
+            roots = [ctx.mpc((0.4+0.9j)**n) for n in range(deg)]
         else:
             roots = [None]*deg;
             deg_init = min(deg, len(roots_init))
             roots[:deg_init] = list(roots_init[:deg_init])
             roots[deg_init:] = [ctx.mpc((0.4+0.9j)**n) for n
-                                in xrange(deg_init,deg)]
-        err = [ctx.one for n in xrange(deg)]
+                                in range(deg_init,deg)]
+        err = [ctx.one for n in range(deg)]
         # Durand-Kerner iteration until convergence
-        for step in xrange(maxsteps):
+        for step in range(maxsteps):
             if abs(max(err)) < tol:
                 break
-            for i in xrange(deg):
+            for i in range(deg):
                 p = roots[i]
                 x = f(p)
                 for j in range(deg):
@@ -197,7 +196,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                     % maxsteps)
         # Remove small real or imaginary parts
         if cleanup:
-            for i in xrange(deg):
+            for i in range(deg):
                 if abs(roots[i]) < tol:
                     roots[i] = ctx.zero
                 elif abs(ctx._im(roots[i])) < tol:

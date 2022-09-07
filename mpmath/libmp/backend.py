@@ -31,7 +31,6 @@ BACKEND = 'python'
 
 if not python3:
     MPZ = long
-    xrange = xrange
     basestring = basestring
 
     def exec_(_code_, _globs_=None, _locs_=None):
@@ -47,7 +46,6 @@ if not python3:
         exec("""exec _code_ in _globs_, _locs_""")
 else:
     MPZ = int
-    xrange = range
     basestring = str
 
     import builtins

@@ -1,5 +1,4 @@
 from bisect import bisect
-from ..libmp.backend import xrange
 
 class ODEMethods(object):
     pass
@@ -18,7 +17,7 @@ def ode_taylor(ctx, derivs, x0, y0, tol_prec, n):
         # evaluation points for derivatives
         for i in range(n):
             fxy = derivs(x, y)
-            y = [y[i]+h*fxy[i] for i in xrange(len(y))]
+            y = [y[i]+h*fxy[i] for i in range(len(y))]
             x += h
             xs.append(x)
             ys.append(y)

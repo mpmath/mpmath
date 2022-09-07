@@ -1,5 +1,3 @@
-from ..libmp.backend import xrange
-
 # TODO: should use diagonalization-based algorithms
 
 class MatrixCalculusMethods(object):
@@ -137,7 +135,7 @@ class MatrixCalculusMethods(object):
                     break
                 Y += T
                 k += 1
-            for k in xrange(j):
+            for k in range(j):
                 Y = Y*Y
         finally:
             ctx.prec = prec

@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-from ..libmp.backend import xrange
 from .functions import defun, defun_wrapped, defun_static
 
 @defun
@@ -289,7 +288,7 @@ def primezeta(ctx, s):
 @defun_wrapped
 def bernpoly(ctx, n, z):
     # Slow implementation:
-    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
+    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in range(0,n+1))
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
@@ -652,7 +651,7 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
     p += shift*q
     assert 1 <= p <= q
     g = ctx.fsum(ctx.cospi(t/2-2*k*b)*ctx._hurwitz(t,(k,q)) \
-        for k in range(1,q+1))
+        for k in range(1, q+1))
     g *= 2*ctx.gamma(t)/(2*ctx.pi*q)**t
     v += g
     return v
@@ -705,8 +704,8 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 if m <= d:
                     logs.append(logs[-1] * logr)
                 Un = [0]*(D+1)
-                for i in xrange(D): Un[i] = (1-m-s)*U[i]
-                for i in xrange(1,D+1): Un[i] += (d-(i-1))*U[i-1]
+                for i in range(D): Un[i] = (1-m-s)*U[i]
+                for i in range(1, D+1): Un[i] += (d-(i-1))*U[i-1]
                 U = Un
                 r *= rM2a
             t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
@@ -746,10 +745,10 @@ def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
     have_one_derivative = len(derivatives) == 1
     if not reflect:
         if not have_derivatives:
-            return [ctx.fsum((a+k)**negs for k in xrange(n+1))], []
+            return [ctx.fsum((a+k)**negs for k in range(n+1))], []
         if have_one_derivative:
             d = derivatives[0]
-            x = ctx.fsum(ctx.ln(a+k)**d * (a+k)**negs for k in xrange(n+1))
+            x = ctx.fsum(ctx.ln(a+k)**d * (a+k)**negs for k in range(n+1))
             return [(-1)**d * x], []
     maxd = max(derivatives)
     if not have_one_derivative:
@@ -759,7 +758,7 @@ def _zetasum(ctx, s, a, n, derivatives=[0], reflect=False):
         ys = [ctx.zero for d in derivatives]
     else:
         ys = []
-    for k in xrange(n+1):
+    for k in range(n+1):
         w = a + k
         xterm = w ** negs
         if reflect:
@@ -805,7 +804,7 @@ def dirichlet(ctx, s, chi=[1], derivative=0):
             if have_pole:
                 return +ctx.inf
         z = ctx.zero
-        for p in range(1,q+1):
+        for p in range(1, q+1):
             if chi[p%q]:
                 if d == 1:
                     z += chi[p%q] * (ctx.zeta(s, (p,q), 1) - \
@@ -1138,7 +1137,7 @@ def lerchphi(ctx, z, s, a):
         m = int(ctx.ceil(1-ctx.re(a)))
         v = ctx.zero
         zpow = ctx.one
-        for n in xrange(m):
+        for n in range(m):
             v += zpow / (a+n)**s
             zpow *= z
         return zpow * ctx.lerchphi(z,s, a+m) + v

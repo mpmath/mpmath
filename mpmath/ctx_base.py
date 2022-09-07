@@ -1,7 +1,5 @@
 from operator import gt, lt
 
-from .libmp.backend import xrange
-
 from .functions.functions import SpecialFunctions
 from .functions.rszeta import RSCache
 from .calculus.quadrature import QuadratureMethods
@@ -324,11 +322,11 @@ class StandardBaseContext(Context,
             if n == 1:
                 return [ctx.mpf(a)]
             step = (b - a) / ctx.mpf(n - 1)
-            y = [i*step + a for i in xrange(n)]
+            y = [i*step + a for i in range(n)]
             y[-1] = b
         else:
             step = (b - a) / ctx.mpf(n)
-            y = [i*step + a for i in xrange(n)]
+            y = [i*step + a for i in range(n)]
         return y
 
     def cos_sin(ctx, z, **kwargs):
