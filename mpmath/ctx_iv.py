@@ -2,8 +2,6 @@ import operator
 
 from . import libmp
 
-from .libmp.backend import basestring
-
 from .libmp import (
     int_types, MPZ_ONE,
     prec_to_dps, dps_to_prec, repr_dps,
@@ -31,7 +29,7 @@ def convert_mpf_(x, prec, rounding):
     if hasattr(x, "_mpf_"): return x._mpf_
     if isinstance(x, int_types): return from_int(x, prec, rounding)
     if isinstance(x, float): return from_float(x, prec, rounding)
-    if isinstance(x, basestring): return from_str(x, prec, rounding)
+    if isinstance(x, str): return from_str(x, prec, rounding)
     raise NotImplementedError
 
 
@@ -419,7 +417,7 @@ class MPIntervalContext(StandardBaseContext):
             re = ctx.convert(x.real)
             im = ctx.convert(x.imag)
             return ctx.mpc(re,im)
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             v = mpi_from_str(x, ctx.prec)
             return ctx.make_mpf(v)
         if hasattr(x, "_mpi_"):

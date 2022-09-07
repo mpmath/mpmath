@@ -31,7 +31,6 @@ BACKEND = 'python'
 
 if not python3:
     MPZ = long
-    basestring = basestring
 
     def exec_(_code_, _globs_=None, _locs_=None):
         """Execute code in a namespace."""
@@ -46,7 +45,6 @@ if not python3:
         exec("""exec _code_ in _globs_, _locs_""")
 else:
     MPZ = int
-    basestring = str
 
     import builtins
     exec_ = getattr(builtins, "exec")
