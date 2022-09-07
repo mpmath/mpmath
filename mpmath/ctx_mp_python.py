@@ -1,7 +1,5 @@
 #from ctx_base import StandardBaseContext
 
-from .libmp.backend import exec_
-
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
     ComplexResult, to_pickable, from_pickable, normalize,
@@ -283,7 +281,7 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     code = code.replace("%WITH_MPF%", with_mpf)
     code = code.replace("%NAME%", name)
     np = {}
-    exec_(code, globals(), np)
+    exec(code, globals(), np)
     return np[name]
 
 _mpf.__eq__ = binary_op('__eq__',
