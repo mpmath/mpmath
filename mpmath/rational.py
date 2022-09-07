@@ -21,7 +21,7 @@ def create_reduced(p, q, _cache={}):
         _cache[key] = v
     return v
 
-class mpq(object):
+class mpq:
     """
     Exact rational type, currently only intended for internal use.
     """

@@ -1,6 +1,6 @@
 from bisect import bisect
 
-class ODEMethods(object):
+class ODEMethods:
     pass
 
 def ode_taylor(ctx, derivs, x0, y0, tol_prec, n):

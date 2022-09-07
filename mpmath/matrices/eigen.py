@@ -34,7 +34,7 @@ low level routines:
 """
 
 
-class Eigen(object):
+class Eigen:
     pass
 
 def defun(f):

@@ -28,7 +28,7 @@ from . import function_docs
 
 new = object.__new__
 
-class mpnumeric(object):
+class mpnumeric:
     """Base class for mpf and mpc."""
     __slots__ = []
     def __new__(cls, val):
@@ -578,7 +578,7 @@ class _mpc(mpnumeric):
 complex_types = (complex, _mpc)
 
 
-class PythonMPContext(object):
+class PythonMPContext:
 
     def __init__(ctx):
         ctx._prec_rounding = [53, round_nearest]

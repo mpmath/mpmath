@@ -33,7 +33,7 @@ def convert_mpf_(x, prec, rounding):
     raise NotImplementedError
 
 
-class ivmpf(object):
+class ivmpf:
     """
     Interval arithmetic class. Precision is controlled by iv.prec.
     """
@@ -146,7 +146,7 @@ class ivmpf(object):
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.ctx.almosteq(s, t, rel_eps, abs_eps)
 
-class ivmpc(object):
+class ivmpc:
 
     def __new__(cls, re=0, im=0):
         re = cls.ctx.convert(re)

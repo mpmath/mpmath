@@ -16,7 +16,7 @@ from .visualization import VisualizationMethods
 
 from . import libmp
 
-class Context(object):
+class Context:
     pass
 
 class StandardBaseContext(Context,

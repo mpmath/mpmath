@@ -5,7 +5,7 @@ import warnings
 rowsep = '\n'
 colsep = '  '
 
-class _matrix(object):
+class _matrix:
     """
     Numerical matrix.
 
@@ -743,7 +743,7 @@ class _matrix(object):
             m[i] = self[i,n]
         return m
 
-class MatrixMethods(object):
+class MatrixMethods:
 
     def __init__(ctx):
         # XXX: subclass

@@ -1,4 +1,4 @@
-class SpecialFunctions(object):
+class SpecialFunctions:
     """
     This class implements special functions using high-level code.
 

@@ -1,6 +1,6 @@
 # TODO: should use diagonalization-based algorithms
 
-class MatrixCalculusMethods(object):
+class MatrixCalculusMethods:
 
     def _exp_pade(ctx, a):
         """

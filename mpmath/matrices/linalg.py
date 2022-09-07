@@ -106,7 +106,7 @@ and equation solving with rigorous error bounds::
 from copy import copy
 
 
-class LinearAlgebraMethods(object):
+class LinearAlgebraMethods:
 
     def LU_decomp(ctx, A, overwrite=False, use_cache=True):
         """

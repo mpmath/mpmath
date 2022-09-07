@@ -1,7 +1,7 @@
 import math
 
 
-class QuadratureRule(object):
+class QuadratureRule:
     """
     Quadrature rules are implemented using this class, in order to
     simplify the code and provide a common infrastructure
@@ -455,7 +455,7 @@ class GaussLegendre(QuadratureRule):
         ctx.prec = orig
         return nodes
 
-class QuadratureMethods(object):
+class QuadratureMethods:
 
     def __init__(ctx, *args, **kwargs):
         ctx._gauss_legendre = GaussLegendre(ctx)

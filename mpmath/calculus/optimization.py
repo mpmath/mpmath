@@ -1,7 +1,7 @@
 from copy import copy
 
 
-class OptimizationMethods(object):
+class OptimizationMethods:
     def __init__(ctx):
         pass
 
