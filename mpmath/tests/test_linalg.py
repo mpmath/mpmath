@@ -1,7 +1,5 @@
 # TODO: don't use round
 
-from __future__ import division
-
 import pytest
 from mpmath import *
 

@@ -8,8 +8,6 @@ Run with:
     python manydigits.py
 
 """
-from __future__ import print_function
-
 from mpmath import *
 from mpmath.libmp import to_fixed, bin_to_radix
 

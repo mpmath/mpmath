@@ -1,8 +1,6 @@
 """
 Function plotting demo.
 """
-from __future__ import print_function
-
 from mpmath import *
 
 def main():
@@ -14,11 +12,11 @@ def main():
     a valid function.
     """)
     functions = []
-    for i in xrange(10):
+    for i in range(10):
         if i == 0:
-            s = raw_input('Enter a function: ')
+            s = input('Enter a function: ')
         else:
-            s = raw_input('Enter another function (optional): ')
+            s = input('Enter another function (optional): ')
         if not s:
             print()
             break
@@ -26,7 +24,7 @@ def main():
         functions.append(f)
         print("Added f(x) = " + s)
         print()
-    xlim = raw_input('Enter xmin, xmax (optional): ')
+    xlim = input('Enter xmin, xmax (optional): ')
     if xlim:
         xlim = eval(xlim)
     else:

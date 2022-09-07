@@ -4,7 +4,6 @@ Calculate digits of pi. This module can be run interactively with
     python pidigits.py
 
 """
-from __future__ import print_function
 __docformat__ = 'plaintext'
 
 import sys
@@ -70,13 +69,13 @@ def interactive():
     print("Compute digits of pi with mpmath\n")
     base = input("Which base? (2-36, 10 for decimal) \n> ")
     digits = input("How many digits? (enter a big number, say, 10000)\n> ")
-    tofile = raw_input("Output to file? (enter a filename, or just press " \
+    tofile = input("Output to file? (enter a filename, or just press " \
         "enter\nto print directly to the screen) \n> ")
     if tofile:
         tofile = open(tofile, "w")
 
     calculateit(base, digits, tofile)
-    raw_input("\nPress enter to close this script.")
+    input("\nPress enter to close this script.")
 
 if __name__ == "__main__":
     interactive()
