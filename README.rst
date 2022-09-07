@@ -83,6 +83,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.2.0 released on February 1, 2021
 * Version 1.1.0 released on December 11, 2018
 * Version 1.0.0 released on September 27, 2017
 * Version 0.19 released on June 10, 2014

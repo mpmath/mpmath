@@ -506,6 +506,18 @@ Examples::
     [0.0]
 
 
+Determinant
+...........
+
+The determinant of a square matrix is computed by the
+function ``det``::
+
+    >>> from mpmath import mp
+    >>> A = mp.matrix([[7, 2], [1.5, 3]])
+    >>> print(mp.det(A))
+    18.0
+
+
 Interval and double-precision matrices
 --------------------------------------
 

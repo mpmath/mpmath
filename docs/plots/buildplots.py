@@ -20,4 +20,4 @@ for f in glob.glob("*.py"):
             l = l[:-1] + (", dpi=45, file='%s.png')" % f[:-3])
             code[i] = l
     code = "\n".join(code)
-    exec code
+    exec(code)

@@ -19,6 +19,9 @@ python runtests.py -strict
 python runtests.py -local
   Insert '../..' at the beginning of sys.path to use local mpmath
 
+python runtests.py -skip ...
+  Skip tests from the listed modules
+
 Additional arguments are used to filter the tests to run. Only files that have
 one of the arguments in their name are executed.
 
@@ -54,7 +57,7 @@ else:
 # TODO: add a flag for this
 testdir = ''
 
-def testit(importdir='', testdir=''):
+def testit(importdir='', testdir='', exit_on_fail=False):
     """Run all tests in testdir while importing from importdir."""
     if importdir:
         sys.path.insert(1, importdir)
@@ -77,6 +80,10 @@ def testit(importdir='', testdir=''):
         from timeit import default_timer as clock
         modules = []
         args = sys.argv[1:]
+        excluded = []
+        if '-skip' in args:
+            excluded = args[args.index('-skip')+1:]
+            args = args[:args.index('-skip')]
         # search for tests in directory of this file if not otherwise specified
         if not testdir:
             pattern = os.path.dirname(sys.argv[0])
@@ -97,6 +104,8 @@ def testit(importdir='', testdir=''):
                         break
                 if not ok:
                     continue
+            elif name in excluded:
+                continue
             module = __import__(name)
             priority = module.__dict__.get('priority', 100)
             if priority == 666:
@@ -124,6 +133,8 @@ def testit(importdir='', testdir=''):
                         print("TEST FAILED!")
                         print("")
                         traceback.print_exc()
+                        if exit_on_fail:
+                            return
                     t2 = clock()
                     print("ok " + "       " + ("%.7f" % (t2-t1)) + " s")
         tend = clock()

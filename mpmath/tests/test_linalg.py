@@ -275,8 +275,8 @@ def test_qr():
         flg = bool(k % 2)
 
         # generate arbitrary matrix size (2 to maxm)
-        num1 = nint(2 + (maxm-2)*rand())
-        num2 = nint(2 + (maxm-2)*rand())
+        num1 = nint(maxm*rand())
+        num2 = nint(maxm*rand())
         m = int(max(num1, num2))
         n = int(min(num1, num2))
 

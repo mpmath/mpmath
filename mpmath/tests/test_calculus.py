@@ -192,11 +192,13 @@ def test_invlap():
     assert invertlaplace(fp,t,method='talbot').ae(ftt)
     assert invertlaplace(fp,t,method='stehfest').ae(ftt)
     assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    assert invertlaplace(fp,t,method='cohen').ae(ftt)
     t = 1.0
     ftt = ft(t)
     assert invertlaplace(fp,t,method='talbot').ae(ftt)
     assert invertlaplace(fp,t,method='stehfest').ae(ftt)
     assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    assert invertlaplace(fp,t,method='cohen').ae(ftt)
 
     t = 0.01
     fp = lambda p: log(p)/p
@@ -205,8 +207,10 @@ def test_invlap():
     assert invertlaplace(fp,t,method='talbot').ae(ftt)
     assert invertlaplace(fp,t,method='stehfest').ae(ftt)
     assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    assert invertlaplace(fp,t,method='cohen').ae(ftt)
     t = 1.0
     ftt = ft(t)
     assert invertlaplace(fp,t,method='talbot').ae(ftt)
     assert invertlaplace(fp,t,method='stehfest').ae(ftt)
     assert invertlaplace(fp,t,method='dehoog').ae(ftt)
+    assert invertlaplace(fp,t,method='cohen').ae(ftt)
