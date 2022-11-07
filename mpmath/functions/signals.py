@@ -20,11 +20,11 @@ def sawtoothw(ctx, t, amplitude=1, period=1):
     return A*ctx.frac(t/P)
 
 @defun_wrapped
-def unit_triangle(t, amplitude=1):
+def unit_triangle(ctx, t, amplitude=1):
     A = amplitude
     if t <= -1 or t >= 1:
         return ctx.zero
-    return A*(-abs(t) + 1)
+    return A*(-ctx.fabs(t) + 1)
 
 @defun_wrapped
 def sigmoid(ctx, t, amplitude=1):
