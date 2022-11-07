@@ -93,7 +93,11 @@ Running tests
 
 It is recommended that you run mpmath's full set of unit tests to make sure everything works. The `py.test <https://pytest.org/>`_ is a required dependence for testing.  The tests are located in the ``tests`` subdirectory of the main mpmath directory. They can be run using::
 
-    ``py.test --pyargs mpmath``
+    py.test --pyargs mpmath
+
+Doctests can be run with::
+
+    py.test --doctest-modules mpmath
 
 If any test fails, please send a detailed bug report to the `mpmath issue tracker <https://github.com/fredrik-johansson/mpmath/issues>`_.
 
@@ -104,19 +108,17 @@ To enable extra diagnostics, use, set ``MPMATH_STRICT`` environment variable.
 Compiling the documentation
 ---------------------------
 
-If you downloaded the source package, the text source for these documentation pages is included in the ``doc`` directory. The documentation can be compiled to pretty HTML using `Sphinx <http://sphinx.pocoo.org/>`_. Go to the ``doc`` directory and run
+Building the documentation requires `Sphinx <http://sphinx.pocoo.org/>`_. 
 
-    ``python build.py``
+Use::
 
-You can also test that all the interactive examples in the documentation work by running
+    python setup.py build_sphinx -c docs -b html,latex
 
-    ``python run_doctest.py``
+The create a PDF::
 
-and by running the individual ``.py`` files in the mpmath source.
+    make -C build/sphinx/latex all-pdf
 
-(The doctests may take several minutes.)
-
-Finally, some additional demo scripts are available in the ``demo`` directory included in the source package.
+Some additional demo scripts are available in the ``demo`` directory included in the source package.
 
 Mpmath under Sage
 -------------------
