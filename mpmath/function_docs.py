@@ -10069,7 +10069,7 @@ squarew = r"""
 Computes the square wave function using the definition:
 
 .. math::
-    x(t) = A(-1)^{\left\lfloor{\frac{2t}{P}}\right\rfloor}
+    x(t) = A(-1)^{\left\lfloor{2t / P}\right\rfloor}
 
 where `P` is the period of the wave and `A` is the amplitude.
 
@@ -10095,9 +10095,9 @@ trianglew = r"""
 Computes the triangle wave function using the definition:
 
 .. math::
-    x(t) = 2A\left(\frac{1}{2}-\left|1-2frac\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
+    x(t) = 2A\left(\frac{1}{2}-\left|1-2 \operatorname{frac}\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
 
-where :math:`frac\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
 , `P` is the period of the wave, and `A` is the amplitude.
 
 **Examples**
@@ -10124,10 +10124,10 @@ sawtoothw = r"""
 Computes the sawtooth wave function using the definition:
 
 .. math::
-    x(t) = Afrac\left(\frac{t}{T}\right)
+    x(t) = A\operatorname{frac}\left(\frac{t}{T}\right)
 
-where :math:`frac\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
-, `P` is the period of the wave, and `A` is the amplitude.
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`,
+`P` is the period of the wave, and `A` is the amplitude.
 
 **Examples**
 

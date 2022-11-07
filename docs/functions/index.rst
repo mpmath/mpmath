@@ -10,6 +10,7 @@ Mpmath implements the standard functions from Python's ``math`` and ``cmath`` mo
    powers
    trigonometric
    hyperbolic
+   signals
    gamma
    expintegrals
    bessel
