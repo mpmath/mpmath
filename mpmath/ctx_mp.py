@@ -705,7 +705,7 @@ maxterms, or set zeroprec."""
             max_total_jump += abs(d)
         while 1:
             if extraprec > maxprec:
-                raise ValueError(ctx._hypsum_msg % (prec, prec+extraprec))
+                raise ctx.NoConvergence(ctx._hypsum_msg % (prec, prec+extraprec))
             wp = prec + extraprec
             if magnitude_check:
                 mag_dict = dict((n,None) for n in magnitude_check)
