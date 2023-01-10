@@ -1222,7 +1222,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                     error = lerror
                     best = est
             if TRY_EULER_MACLAURIN:
-                if ctx.mpc(ctx.sign(partial[-1]) / ctx.sign(partial[-2])).ae(-1):
+                if ctx.almosteq(ctx.mpc(ctx.sign(partial[-1]) / ctx.sign(partial[-2])), -1):
                     if verbose:
                         print ("NOT using Euler-Maclaurin: the series appears"
                             " to be alternating, so numerical\n quadrature"
