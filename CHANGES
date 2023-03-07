@@ -1,3 +1,40 @@
+--1.3.0--
+Released March 7, 2023
+
+Security issues:
+
+* Fixed ReDOS vulnerability in mpmathify() (CVE-2021-29063) (Vinzent Steinberg)
+
+Features:
+
+* Added quadsubdiv() for numerical integration with adaptive path splitting
+  (Fredrik Johansson)
+* Added the Cohen algorithm for inverse Laplace transforms
+  (Guillermo Navas-Palencia)
+* Some speedup of matrix multiplication (Fredrik Johansson)
+* Optimizations to Carlson elliptic integrals (Paul Masson)
+* Added signal functions (squarew(), trianglew(), sawtoothw(), unit_triangle()
+  sigmoidw()) (Nike Dattani, Deyan Mihaylov, Tina Yu)
+
+Bug fixes:
+
+* Correct mpf initialization from tuple for finf and fninf (Sergey B Kirpichev)
+* Support QR decomposition for matrices of width 0 and 1 (Clemens Hofreither)
+* Fixed some cases where elliprj() gave inaccurate results (Fredrik Johansson)
+* Fixed cases where digamma() hangs for complex input (Fredrik Johansson)
+* Fixed cases of polylog() with integer-valued parameter with complex type
+  (Fredrik Johansson)
+* Fixed fp.nsum() with Euler-Maclaurin algorithm (Fredrik Johansson)
+
+Maintenance:
+
+* Dropped support for Python 3.4 (Sergey B Kirpichev)
+* Documentation cleanup (Sergey B Kirpichev)
+* Removed obsolete files (Sergey B Kirpichev)
+* Added options to runtests.py to skip tests and exit on failure
+  (Jonathan Warner)
+
+
 --1.2.0--
 Released February 1, 2021
 

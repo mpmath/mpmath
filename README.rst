@@ -29,7 +29,7 @@ or new features to mpmath:
 * Pearu Peterson <pearu.peterson@gmail.com>
 * Mario Pernici <mario.pernici@mi.infn.it>
 * Ondrej Certik <ondrej@certik.cz>
-* Vinzent Steinberg <vinzent.steinberg@gmail.com>
+* Vinzent Steinberg <vinzent.steinberg@gmail.cm>
 * Nimish Telang <ntelang@gmail.com>
 * Mike Taschuk <mtaschuk@ece.ualberta.ca>
 * Case Van Horsen <casevh@gmail.com>
@@ -47,6 +47,8 @@ or new features to mpmath:
 * Michael Kagalenko <michael.kagalenko@gmail.com>
 * Jonathan Warner <warnerjon12@gmail.com>
 * Max Gaukler <max.gaukler@fau.de>
+* Guillermo Navas-Palencia <g.navas.palencia@gmail.com>
+* Nike Dattani <nike@hpqc.org>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
@@ -83,6 +85,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.3.0 released on March 7, 2023
 * Version 1.2.0 released on February 1, 2021
 * Version 1.1.0 released on December 11, 2018
 * Version 1.0.0 released on September 27, 2017
