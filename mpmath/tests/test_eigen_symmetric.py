@@ -147,14 +147,14 @@ def run_gauss(qtype, a, b):
     assert mp.mnorm(d) < eps
     assert mp.mnorm(e) < eps
 
-def irandmatrix(n, range = 10):
+def irandmatrix(n, r=10):
     """
     random matrix with integer entries
     """
     A = mp.matrix(n, n)
     for i in range(n):
         for j in range(n):
-            A[i,j]=int( (2 * mp.rand() - 1) * range)
+            A[i,j] = int((2 * mp.rand() - 1) * r)
     return A
 
 #######################

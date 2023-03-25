@@ -4,10 +4,6 @@ from mpmath.libmp import *
 import random
 import sys
 
-try:
-    long = long
-except NameError:
-    long = int
 
 def test_type_compare():
     assert mpf(2) == mpc(2,0)
@@ -147,9 +143,8 @@ def test_hash():
     assert hash(mp.mpq(1,1)) == hash(1)
     assert hash(mp.mpq(5,1)) == hash(5)
     assert hash(mp.mpq(1,2)) == hash(0.5)
-    if sys.version_info >= (3, 2):
-        assert hash(mpf(1)*2**2000) == hash(2**2000)
-        assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
+    assert hash(mpf(1)*2**2000) == hash(2**2000)
+    assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
 
 # Advanced rounding test
 def test_add_rounding():
@@ -399,8 +394,8 @@ def test_isnan_etc():
     assert isnormal(mpq((0,1))) == False
     assert isint(3) == True
     assert isint(0) == True
-    assert isint(long(3)) == True
-    assert isint(long(0)) == True
+    assert isint(int(3)) == True
+    assert isint(int(0)) == True
     assert isint(mpf(3)) == True
     assert isint(mpf(0)) == True
     assert isint(mpf(-3)) == True

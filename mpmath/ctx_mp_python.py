@@ -1,4 +1,4 @@
-#from ctx_base import StandardBaseContext
+import numbers
 
 from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
     round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
@@ -187,7 +187,7 @@ class _mpf(mpnumeric):
 
     def __rsub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if type(t) in int_types:
+        if isinstance(t, int_types):
             v = new(cls)
             v._mpf_ = mpf_sub(from_int(t), s._mpf_, prec, rounding)
             return v
@@ -238,17 +238,16 @@ def %NAME%(self, other):
     if hasattr(other, '_mpf_'):
         tval = other._mpf_
         %WITH_MPF%
-    ttype = type(other)
-    if ttype in int_types:
+    if isinstance(other, int_types):
         %WITH_INT%
-    elif ttype is float:
+    elif isinstance(other, float):
         tval = from_float(other)
         %WITH_MPF%
     elif hasattr(other, '_mpc_'):
         tval = other._mpc_
         mpc = type(other)
         %WITH_MPC%
-    elif ttype is complex:
+    elif isinstance(other, complex):
         tval = from_float(other.real), from_float(other.imag)
         mpc = self.context.mpc
         %WITH_MPC%
@@ -1035,7 +1034,7 @@ class PythonMPContext:
         elif hasattr(x, "_mpf_"):
             v = x._mpf_
         else:
-            if type(x) in int_types:
+            if isinstance(x, int_types):
                 return int(x), 'Z'
             p = None
             if isinstance(x, tuple):
@@ -1134,14 +1133,9 @@ class PythonMPContext:
 
 
 # Register with "numbers" ABC
-#     We do not subclass, hence we do not use the @abstractmethod checks. While
-#     this is less invasive it may turn out that we do not actually support
-#     parts of the expected interfaces.  See
-#     http://docs.python.org/2/library/numbers.html for list of abstract
-#     methods.
-try:
-    import numbers
-    numbers.Complex.register(_mpc)
-    numbers.Real.register(_mpf)
-except ImportError:
-    pass
+#   We do not subclass, hence we do not use the @abstractmethod checks. While
+#   this is less invasive it may turn out that we do not actually support
+#   parts of the expected interfaces.  See
+#   https://docs.python.org/3/library/numbers.html for list of abstract methods.
+numbers.Complex.register(_mpc)
+numbers.Real.register(_mpf)
