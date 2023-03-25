@@ -6,7 +6,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "pypy-3.7", "pypy-3.8", "pypy3.9"]
+        python-version:
+          - 3.5
+          - 3.6
+          - 3.7
+          - 3.8
+          - 3.9
+          - 3.10
+          - 3.11
+          - pypy3.7
+          - pypy3.8
+          - pypy3.9
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -30,7 +40,7 @@ jobs:
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
-      if: matrix.python-version == 3.5 || matrix.python-version == 3.10
+      if: matrix.python-version == 3.10
       run: |
         pytest docs mpmath
         codecov --required
@@ -42,7 +52,7 @@ jobs:
       run: python setup.py sdist bdist_wheel
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.6
+      if: matrix.python-version == 3.10
       with:
         path: |
           dist/
@@ -51,7 +61,7 @@ jobs:
           coverage.xml
           build/coverage/html/
     - name: Publish package on PyPI
-      if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      if: matrix.python-version == 3.10 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         user: __token__
