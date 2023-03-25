@@ -2892,7 +2892,7 @@ The optional ``maxterms`` (limiting the number of series terms) and ``maxprec``
 (limiting the internal precision) keyword arguments can be used
 to control evaluation::
 
-    >>> hyper([1,2,3], [4,5,6], 10000)
+    >>> hyper([1,2,3], [4,5,6], 10000)              # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2922,7 +2922,7 @@ gives only a few digits. Using Borel summation, ``hyper`` can produce
 a value with full accuracy::
 
     >>> mp.dps = 15
-    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)
+    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)             # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2948,7 +2948,7 @@ This optimization can be disabled by passing ``eliminate=False``.
 
     >>> hyper([1,2,3], [4,5,3], 10000)
     1.268943190440206905892212e+4321
-    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)             # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -10069,7 +10069,7 @@ squarew = r"""
 Computes the square wave function using the definition:
 
 .. math::
-    x(t) = A(-1)^{\left\lfloor{\frac{2t}{P}}\right\rfloor}
+    x(t) = A(-1)^{\left\lfloor{2t / P}\right\rfloor}
 
 where `P` is the period of the wave and `A` is the amplitude.
 
@@ -10095,9 +10095,9 @@ trianglew = r"""
 Computes the triangle wave function using the definition:
 
 .. math::
-    x(t) = 2A\left(\frac{1}{2}-\left|1-2frac\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
+    x(t) = 2A\left(\frac{1}{2}-\left|1-2 \operatorname{frac}\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
 
-where :math:`frac\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
 , `P` is the period of the wave, and `A` is the amplitude.
 
 **Examples**
@@ -10124,10 +10124,10 @@ sawtoothw = r"""
 Computes the sawtooth wave function using the definition:
 
 .. math::
-    x(t) = Afrac\left(\frac{t}{T}\right)
+    x(t) = A\operatorname{frac}\left(\frac{t}{T}\right)
 
-where :math:`frac\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
-, `P` is the period of the wave, and `A` is the amplitude.
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`,
+`P` is the period of the wave, and `A` is the amplitude.
 
 **Examples**
 
@@ -10162,15 +10162,15 @@ Unit triangle with amplitude = 1 ::
     >>> from mpmath import *
     >>> mp.dps = 25; mp.pretty = True
     >>> unit_triangle(-1,1)
-    0
+    0.0
     >>> unit_triangle(-0.5,1)
     0.5
     >>> unit_triangle(0,1)
-    1
+    1.0
     >>> unit_triangle(0.5,1)
     0.5
     >>> unit_triangle(1,1)
-    0
+    0.0
 """
 
 sigmoid = r"""

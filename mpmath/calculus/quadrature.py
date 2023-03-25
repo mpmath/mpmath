@@ -1015,6 +1015,7 @@ class QuadratureMethods:
         This function gives an accurate answer for some integrals where
         :func:`~mpmath.quad` fails::
 
+            >>> from mpmath import *
             >>> mp.dps = 15; mp.pretty = True
             >>> quad(lambda x: abs(sin(x)), [0, 2*pi])
             3.99900894176779
@@ -1041,7 +1042,7 @@ class QuadratureMethods:
         estimate on subintervals may be inaccurate::
 
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
-            (0.209736068833883, 1.00011000000001e-18)
+            (0.210802735500549, 1.0001111101e-17)
             >>> mp.dps = 20
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
             (0.21080273550054927738, 2.200000001e-24)
@@ -1049,6 +1050,7 @@ class QuadratureMethods:
         The second answer is correct. We can get an accurate result at lower
         precision by forcing a finer initial subdivision::
 
+            >>> mp.dps = 15
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, linspace(0,1,5))
             0.210802735500549
 

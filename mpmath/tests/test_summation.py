@@ -15,6 +15,8 @@ def test_nsum():
     assert nsum(lambda k: 1/k**2, [1, inf]).ae(pi**2 / 6)
     assert nsum(lambda k: 2**k/fac(k), [0, inf]).ae(exp(2))
     assert nsum(lambda k: 1/k**2, [4, inf], method='e').ae(0.2838229557371153)
+    assert abs(fp.nsum(lambda k: 1/k**4, [1, fp.inf]) - 1.082323233711138) < 1e-5
+    assert abs(fp.nsum(lambda k: 1/k**4, [1, fp.inf], method='e') - 1.082323233711138) < 1e-4
 
 def test_nprod():
     mp.dps = 15
