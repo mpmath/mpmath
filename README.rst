@@ -5,10 +5,10 @@ mpmath
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
-.. |Build status| image:: https://github.com/fredrik-johansson/mpmath/workflows/test/badge.svg
-   :target: https://github.com/fredrik-johansson/mpmath/actions?workflow=test
-.. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/fredrik-johansson/mpmath
+.. |Build status| image:: https://github.com/mpmath/mpmath/workflows/test/badge.svg
+   :target: https://github.com/mpmath/mpmath/actions?workflow=test
+.. |Code coverage status| image:: https://codecov.io/gh/mpmath/mpmath/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/mpmath/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
 
