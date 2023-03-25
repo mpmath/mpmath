@@ -26,7 +26,7 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: pytest
+      run: python -m pytest
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
