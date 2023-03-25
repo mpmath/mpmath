@@ -32,7 +32,7 @@ jobs:
         PYTEST_ADDOPTS: --cov mpmath
       if: matrix.python-version == 3.5 || matrix.python-version == 3.10
       run: |
-        pytest
+        pytest docs mpmath
         codecov --required
     - name: Building docs
       run: |
