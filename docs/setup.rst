@@ -59,7 +59,7 @@ of supported OpenSUSE versions and use http://download.opensuse.org/repositories
 Current development version
 ...........................
 
-The git repository is https://github.com/fredrik-johansson/mpmath
+The git repository is https://github.com/mpmath/mpmath
 
 Checking that it works
 ......................
@@ -99,7 +99,7 @@ Doctests can be run with::
 
     py.test --doctest-modules mpmath
 
-If any test fails, please send a detailed bug report to the `mpmath issue tracker <https://github.com/fredrik-johansson/mpmath/issues>`_.
+If any test fails, please send a detailed bug report to the `mpmath issue tracker <https://github.com/mpmath/mpmath/issues>`_.
 
 To run the tests with support for gmpy disabled, set ``MPMATH_NOGMPY`` environment variable.
 
