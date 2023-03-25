@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "mpmath",
+    "docs",
+]
+addopts = [
+    "--import-mode=importlib",
+]

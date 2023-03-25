@@ -8,7 +8,7 @@ __docformat__ = 'plaintext'
 
 import sys
 import math
-from time import clock
+from time import perf_counter
 
 from mpmath.libmp import bin_to_radix, numeral, pi_fixed
 
@@ -41,15 +41,15 @@ def calculateit(base, n, tofile):
     prec = int(n*math.log(base,2))+10
 
     print("Step 1 of 2: calculating binary value...")
-    t = clock()
+    t = perf_counter()
     a = pi_fixed(prec, verbose=True, verbose_base=base)
-    step1_time = clock() - t
+    step1_time = perf_counter() - t
 
     print("Step 2 of 2: converting to specified base...")
-    t = clock()
+    t = perf_counter()
     d = bin_to_radix(a, prec, base, n)
     d = numeral(d, base, n)
-    step2_time = clock() - t
+    step2_time = perf_counter() - t
 
     print("\nWriting output...\n")
 
