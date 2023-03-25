@@ -20,7 +20,7 @@ master_doc = 'index'
 
 # Project information.
 project = 'mpmath'
-copyright = '2007-2021, Fredrik Johansson and mpmath developers'
+copyright = '2007-2023, Fredrik Johansson and mpmath developers'
 version = mpmath.__version__
 release = version
 
