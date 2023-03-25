@@ -24,10 +24,11 @@ jobs:
         pip install --upgrade --force-reinstall setuptools pip
         pip install --upgrade .[develop,gmpy,docs]
         pip install --upgrade pytest-xdist
-    - name: Linting with pycodestyle, etc
+    - name: Linting with flake8, etc
+      if: matrix.python-version >= 3.9
       run: |
         python -We:invalid -m compileall -f mpmath -q
-        pycodestyle
+        flake518
     - name: Tests
       if: matrix.python-version != 3.10 && matrix.python-version != 3.11
       run: pytest
@@ -56,7 +57,7 @@ jobs:
         make -C build/sphinx/latex all-pdf
     - name: Make packages
       if: matrix.python-version == 3.11
-      run: python setup.py sdist bdist_wheel
+      run: python -m build
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       if: matrix.python-version == 3.11
