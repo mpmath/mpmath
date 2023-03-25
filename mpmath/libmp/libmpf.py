@@ -1289,7 +1289,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
-    x = x.lower().rstrip('l')
+    x = x.lower().rstrip('l').replace('_', '')
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
