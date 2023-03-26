@@ -78,20 +78,20 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         # XXX: automate
         try:
-            ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
-            ctx.primepi.im_func.func_doc = function_docs.primepi
-            ctx.psi.im_func.func_doc = function_docs.psi
-            ctx.atan2.im_func.func_doc = function_docs.atan2
+            ctx.bernoulli.im_func.__doc__ = function_docs.bernoulli
+            ctx.primepi.im_func.__doc__ = function_docs.primepi
+            ctx.psi.im_func.__doc__ = function_docs.psi
+            ctx.atan2.im_func.__doc__ = function_docs.atan2
         except AttributeError:
             # python 3
-            ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
-            ctx.primepi.__func__.func_doc = function_docs.primepi
-            ctx.psi.__func__.func_doc = function_docs.psi
-            ctx.atan2.__func__.func_doc = function_docs.atan2
+            ctx.bernoulli.__func__.__doc__ = function_docs.bernoulli
+            ctx.primepi.__func__.__doc__ = function_docs.primepi
+            ctx.psi.__func__.__doc__ = function_docs.psi
+            ctx.atan2.__func__.__doc__ = function_docs.atan2
 
-        ctx.digamma.func_doc = function_docs.digamma
-        ctx.cospi.func_doc = function_docs.cospi
-        ctx.sinpi.func_doc = function_docs.sinpi
+        ctx.digamma.__doc__ = function_docs.digamma
+        ctx.cospi.__doc_ = function_docs.cospi
+        ctx.sinpi.__doc_ = function_docs.sinpi
 
     def init_builtins(ctx):
 
