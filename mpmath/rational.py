@@ -62,9 +62,11 @@ class mpq:
         return h
 
     def __eq__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        print(ttype, int_types)
+        if ttype is mpq:
             return s._mpq_ == t._mpq_
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             if b != 1:
                 return False

@@ -187,7 +187,7 @@ class _mpf(mpnumeric):
 
     def __rsub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if isinstance(t, int_types):
+        if type(t) in int_types:
             v = new(cls)
             v._mpf_ = mpf_sub(from_int(t), s._mpf_, prec, rounding)
             return v
@@ -238,16 +238,17 @@ def %NAME%(self, other):
     if hasattr(other, '_mpf_'):
         tval = other._mpf_
         %WITH_MPF%
-    if isinstance(other, int_types):
+    ttype = type(other)
+    if ttype in int_types:
         %WITH_INT%
-    elif isinstance(other, float):
+    elif ttype is float:
         tval = from_float(other)
         %WITH_MPF%
     elif hasattr(other, '_mpc_'):
         tval = other._mpc_
         mpc = type(other)
         %WITH_MPC%
-    elif isinstance(other, complex):
+    elif ttype is complex:
         tval = from_float(other.real), from_float(other.imag)
         mpc = self.context.mpc
         %WITH_MPC%
@@ -1034,7 +1035,7 @@ class PythonMPContext:
         elif hasattr(x, "_mpf_"):
             v = x._mpf_
         else:
-            if isinstance(x, int_types):
+            if type(x) in int_types:
                 return int(x), 'Z'
             p = None
             if isinstance(x, tuple):

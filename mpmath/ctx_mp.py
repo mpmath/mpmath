@@ -380,7 +380,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return sign and exp >= 0
         if hasattr(x, '_mpc_'):
             return not x.imag and ctx.isnpint(x.real)
-        if isinstance(x, int_types):
+        if type(x) in int_types:
             return x <= 0
         if isinstance(x, ctx.mpq):
             p, q = x._mpq_
@@ -1143,9 +1143,10 @@ maxterms, or set zeroprec."""
             -19
 
         """
-        if isinstance(x, int_types):
+        typx = type(x)
+        if typx in int_types:
             return int(x), ctx.ninf
-        elif isinstance(x, rational.mpq):
+        elif typx is rational.mpq:
             p, q = x._mpq_
             n, r = divmod(p, q)
             if 2*r >= q:

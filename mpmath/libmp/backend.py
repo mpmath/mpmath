@@ -66,4 +66,4 @@ MPZ_TWO = MPZ(2)
 MPZ_THREE = MPZ(3)
 MPZ_FIVE = MPZ(5)
 
-int_types = (int) if BACKEND == 'python' else (int, MPZ_TYPE)
+int_types = (int,) if BACKEND == 'python' else (int, MPZ_TYPE)
