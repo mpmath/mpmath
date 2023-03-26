@@ -272,16 +272,12 @@ def fabs(ctx, x):
 @defun
 def re(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "real"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.real
-    return x
+    return x.real
 
 @defun
 def im(ctx, x):
     x = ctx.convert(x)
-    if hasattr(x, "imag"):    # py2.5 doesn't have .real/.imag for all numbers
-        return x.imag
-    return ctx.zero
+    return x.imag
 
 @defun
 def conj(ctx, x):
@@ -343,16 +339,11 @@ import cmath
 
 def _lambertw_approx_hybrid(z, k):
     imag_sign = 0
-    if hasattr(z, "imag"):
-        x = float(z.real)
-        y = z.imag
-        if y:
-            imag_sign = (-1) ** (y < 0)
-        y = float(y)
-    else:
-        x = float(z)
-        y = 0.0
-        imag_sign = 0
+    x = float(z.real)
+    y = z.imag
+    if y:
+        imag_sign = (-1) ** (y < 0)
+    y = float(y)
     # hack to work regardless of whether Python supports -0.0
     if not y:
         y = 0.0

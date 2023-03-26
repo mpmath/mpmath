@@ -1,5 +1,7 @@
+import numbers
 import operator
 import sys
+
 from .libmp import int_types, mpf_hash, bitcount, from_man_exp, HASH_MODULUS
 
 new = object.__new__
@@ -211,13 +213,8 @@ mpq_5_4 = mpq((5,4))
 
 
 # Register with "numbers" ABC
-#     We do not subclass, hence we do not use the @abstractmethod checks. While
-#     this is less invasive it may turn out that we do not actually support
-#     parts of the expected interfaces.  See
-#     http://docs.python.org/2/library/numbers.html for list of abstract
-#     methods.
-try:
-    import numbers
-    numbers.Rational.register(mpq)
-except ImportError:
-    pass
+#   We do not subclass, hence we do not use the @abstractmethod checks. While
+#   this is less invasive it may turn out that we do not actually support
+#   parts of the expected interfaces.  See
+#   https://docs.python.org/3/library/numbers.html for list of abstract methods.
+numbers.Rational.register(mpq)

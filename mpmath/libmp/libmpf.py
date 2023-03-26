@@ -412,18 +412,10 @@ def from_float(x, prec=53, rnd=round_fast):
     If prec >= 53, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=53."""
     # frexp only raises an exception for nan on some platforms
-    if x != x:
-        return fnan
-    # in Python2.5 math.frexp gives an exception for float infinity
-    # in Python2.6 it returns (float infinity, 0)
-    try:
-        m, e = math.frexp(x)
-    except:
-        if x == math_float_inf: return finf
-        if x == -math_float_inf: return fninf
-        return fnan
+    if x != x: return fnan
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
+    m, e = math.frexp(x)
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
 def from_npfloat(x, prec=113, rnd=round_fast):
