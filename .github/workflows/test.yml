@@ -26,7 +26,7 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: pytest docs mpmath
+      run: pytest
     - name: Remove gmpy on 2.7
       if: matrix.python-version == 2.7
       run: pip uninstall -y gmpy2
@@ -35,7 +35,7 @@ jobs:
         PYTEST_ADDOPTS: --cov mpmath
       if: matrix.python-version == 2.7 || matrix.python-version == 3.6
       run: |
-        pytest docs mpmath
+        pytest
         codecov --required
     - name: Building docs
       run: |
