@@ -127,7 +127,7 @@ It is often useful to change the precision during only part of a calculation. A 
 
 The ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner:
 
-    >>> with workdps(20):  # doctest: +SKIP
+    >>> with workdps(20):
     ...     print(mpf(1)/7)
     ...     with extradps(10):
     ...         print(mpf(1)/7)
