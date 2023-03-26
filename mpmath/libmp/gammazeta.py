@@ -491,6 +491,12 @@ def bernfrac(n):
     always reduced to lowest terms. Note that for `n > 1` and `n` odd,
     `B_n = 0`, and `(0, 1)` is returned.
 
+    .. versionchanged :: 1.4
+    ``bernfrac(1)`` gives ``(1, 2)`` instead of ``(-1, 2)``.
+    This choice of value confers several theoretical advantages [3],
+    including an extension to complex parameters. The previous
+    behavior can be obtained by multiplying ``p`` by ``(-1)**n``.
+
     **Examples**
 
     The first few Bernoulli numbers are exactly::
@@ -553,6 +559,9 @@ def bernfrac(n):
 
     2. The Bernoulli Number Page:
        http://www.bernoulli.org/
+
+    3. P. Luschny, "The Bernoulli Manifesto",
+       https://luschny.de/math/zeta/The-Bernoulli-Manifesto.html
 
     """
     n = int(n)
