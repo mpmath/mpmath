@@ -288,6 +288,8 @@ def primezeta(ctx, s):
 
 @defun_wrapped
 def bernpoly(ctx, n, z):
+    # Slow implementation:
+    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in xrange(0,n+1))
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
