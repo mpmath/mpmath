@@ -137,7 +137,7 @@ The ``with`` statement along with the mpmath functions ``workprec``, ``workdps``
     >>> mp.dps
     15
 
-The ``with`` statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised. (The effect of the ``with`` statement can be emulated in Python 2.4 by using a ``try/finally`` block.)
+The ``with`` statement ensures that the precision gets reset when exiting the block, even in the case that an exception is raised.
 
 The ``workprec`` family of functions can also be used as function decorators:
 
