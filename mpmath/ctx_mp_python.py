@@ -3,17 +3,16 @@ import numbers
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
                     fninf, from_Decimal, from_float, from_int, from_man_exp,
-                    from_npfloat, from_pickable, from_rational, from_str,
-                    fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
-                    mpc_conjugate, mpc_div, mpc_div_mpf, mpc_hash,
-                    mpc_is_nonzero, mpc_mpf_div, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
-                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
-                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_pickable,
+                    from_npfloat, from_rational, from_str, fzero, int_types,
+                    mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
+                    mpc_div_mpf, mpc_hash, mpc_is_nonzero, mpc_mpf_div,
+                    mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_pos,
+                    mpc_pow, mpc_pow_int, mpc_pow_mpf, mpc_sub, mpc_sub_mpf,
+                    mpc_to_complex, mpc_to_str, mpf_abs, mpf_add, mpf_cmp,
+                    mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt,
+                    mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
+                    mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
+                    prec_to_dps, round_nearest, to_fixed, to_float, to_int,
                     to_str)
 
 
@@ -122,8 +121,7 @@ class _mpf(mpnumeric):
 
     conjugate = lambda self: self
 
-    def __getstate__(self): return to_pickable(self._mpf_)
-    def __setstate__(self, val): self._mpf_ = from_pickable(val)
+    def __reduce__(self): return self.__class__, (self._mpf_,)
 
     def __repr__(s):
         if s.context.pretty:
@@ -553,11 +551,7 @@ class _mpc(mpnumeric):
     real = property(lambda self: self.context.make_mpf(self._mpc_[0]))
     imag = property(lambda self: self.context.make_mpf(self._mpc_[1]))
 
-    def __getstate__(self):
-        return to_pickable(self._mpc_[0]), to_pickable(self._mpc_[1])
-
-    def __setstate__(self, val):
-        self._mpc_ = from_pickable(val[0]), from_pickable(val[1])
+    def __reduce__(self): return self.__class__, self._mpc_
 
     def __repr__(s):
         if s.context.pretty:
