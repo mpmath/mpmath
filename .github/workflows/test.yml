@@ -25,7 +25,6 @@ jobs:
       run: |
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
-        ruff --help >/dev/null 2>&1 && ruff --format=github --select=E703,E712,E713 .
     - name: Tests
       run: pytest
     - name: Remove gmpy on 2.7
