@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade .[develop,gmpy,docs]
+        pip install --upgrade -e .[develop,gmpy,docs]
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
