@@ -1,4 +1,4 @@
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 
 from .usertools import monitor, timing
 
@@ -426,6 +426,11 @@ backlunds = mp.backlunds
 lerchphi = mp.lerchphi
 stirling1 = mp.stirling1
 stirling2 = mp.stirling2
+squarew = mp.squarew
+trianglew = mp.trianglew
+sawtoothw = mp.sawtoothw
+unit_triangle = mp.unit_triangle
+sigmoid = mp.sigmoid
 
 # be careful when changing this name, don't use test*!
 def runtests():

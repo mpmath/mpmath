@@ -27,6 +27,12 @@ de Hoog, Knight & Stokes algorithm
 .. autoclass:: mpmath.calculus.inverselaplace.deHoog
    :members:
 
+Cohen acceleration algorithm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: mpmath.calculus.inverselaplace.Cohen
+   :members:   
+
 Manual approach 
 ...............
 
@@ -61,4 +67,5 @@ Credit
 ......
 
 The numerical inverse Laplace transform functionality was contributed
-to mpmath by Kristopher L. Kuhlman in 2017.
+to mpmath by Kristopher L. Kuhlman in 2017. The Cohen method was contributed
+to mpmath by Guillermo Navas-Palencia in 2022.

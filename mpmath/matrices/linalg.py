@@ -39,10 +39,8 @@ result.
 
 If you need more speed, use NumPy, or ``fp.lu_solve`` for a floating-point computation.
 
-    >>> fp.lu_solve(A, b)
-    matrix(
-    [['30.0'],
-     ['-20.0']])
+    >>> fp.lu_solve(A, b)   # doctest: +ELLIPSIS
+    matrix(...)
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
 such systems, so the residual is minimized instead. Internally this is done
@@ -643,7 +641,7 @@ class LinearAlgebraMethods(object):
         assert isinstance(A, ctx.matrix)
         m = A.rows
         n = A.cols
-        assert n > 1
+        assert n >= 0
         assert m >= n
         assert edps >= 0
 

@@ -2,14 +2,15 @@ name: test
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10-dev, pypy2, pypy3]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, '3.10', '3.11', pypy2.7, pypy3.7, pypy3.8, pypy3.9]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install libs
@@ -25,7 +26,7 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: pytest
+      run: pytest docs mpmath
     - name: Remove gmpy on 2.7
       if: matrix.python-version == 2.7
       run: pip uninstall -y gmpy2
@@ -34,7 +35,7 @@ jobs:
         PYTEST_ADDOPTS: --cov mpmath
       if: matrix.python-version == 2.7 || matrix.python-version == 3.6
       run: |
-        pytest
+        pytest docs mpmath
         codecov --required
     - name: Building docs
       run: |
@@ -43,7 +44,7 @@ jobs:
     - name: Make packages
       run: python setup.py sdist bdist_wheel
     - name: Archive production artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: matrix.python-version == 3.6
       with:
         path: |

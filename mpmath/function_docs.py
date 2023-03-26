@@ -2892,7 +2892,7 @@ The optional ``maxterms`` (limiting the number of series terms) and ``maxprec``
 (limiting the internal precision) keyword arguments can be used
 to control evaluation::
 
-    >>> hyper([1,2,3], [4,5,6], 10000)
+    >>> hyper([1,2,3], [4,5,6], 10000)              # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2922,7 +2922,7 @@ gives only a few digits. Using Borel summation, ``hyper`` can produce
 a value with full accuracy::
 
     >>> mp.dps = 15
-    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)
+    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)             # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2948,7 +2948,7 @@ This optimization can be disabled by passing ``eliminate=False``.
 
     >>> hyper([1,2,3], [4,5,3], 10000)
     1.268943190440206905892212e+4321
-    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)             # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -10062,5 +10062,140 @@ Pass ``exact=True`` to obtain exact values of Stirling numbers as integers::
     >>> print(stirling2(52, 10, exact=True))
     2641822121003543906807485307053638921722527655
 
+
+"""
+
+squarew = r"""
+Computes the square wave function using the definition:
+
+.. math::
+    x(t) = A(-1)^{\left\lfloor{2t / P}\right\rfloor}
+
+where `P` is the period of the wave and `A` is the amplitude.
+
+**Examples**
+
+Square wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> squarew(0,1,2)
+    1.0
+    >>> squarew(0.5,1,2)
+    1.0
+    >>> squarew(1,1,2)
+    -1.0
+    >>> squarew(1.5,1,2)
+    -1.0
+    >>> squarew(2,1,2)
+    1.0
+"""
+
+trianglew = r"""
+Computes the triangle wave function using the definition:
+
+.. math::
+    x(t) = 2A\left(\frac{1}{2}-\left|1-2 \operatorname{frac}\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
+
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
+, `P` is the period of the wave, and `A` is the amplitude.
+
+**Examples**
+
+Triangle wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> trianglew(0,1,2)
+    0.0
+    >>> trianglew(0.25,1,2)
+    0.5
+    >>> trianglew(0.5,1,2)
+    1.0
+    >>> trianglew(1,1,2)
+    0.0
+    >>> trianglew(1.5,1,2)
+    -1.0
+    >>> trianglew(2,1,2)
+    0.0
+"""
+
+sawtoothw = r"""
+Computes the sawtooth wave function using the definition:
+
+.. math::
+    x(t) = A\operatorname{frac}\left(\frac{t}{T}\right)
+
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`,
+`P` is the period of the wave, and `A` is the amplitude.
+
+**Examples**
+
+Sawtooth wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> sawtoothw(0,1,2)
+    0.0
+    >>> sawtoothw(0.5,1,2)
+    0.25
+    >>> sawtoothw(1,1,2)
+    0.5
+    >>> sawtoothw(1.5,1,2)
+    0.75
+    >>> sawtoothw(2,1,2)
+    0.0
+"""
+
+unit_triangle = r"""
+Computes the unit triangle using the definition:
+
+.. math::
+    x(t) = A(-\left| t \right| + 1)
+
+where `A` is the amplitude.
+
+**Examples**
+
+Unit triangle with amplitude = 1 ::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> unit_triangle(-1,1)
+    0.0
+    >>> unit_triangle(-0.5,1)
+    0.5
+    >>> unit_triangle(0,1)
+    1.0
+    >>> unit_triangle(0.5,1)
+    0.5
+    >>> unit_triangle(1,1)
+    0.0
+"""
+
+sigmoid = r"""
+Computes the sigmoid function using the definition:
+
+.. math::
+    x(t) = \frac{A}{1 + e^{-t}}
+
+where `A` is the amplitude.
+
+**Examples**
+
+Sigmoid function with amplitude = 1 ::
+
+    >>> from mpmath import *
+    >>> mp.dps = 25; mp.pretty = True
+    >>> sigmoid(-1,1)
+    0.2689414213699951207488408
+    >>> sigmoid(-0.5,1)
+    0.3775406687981454353610994
+    >>> sigmoid(0,1)
+    0.5
+    >>> sigmoid(0.5,1)
+    0.6224593312018545646389006
+    >>> sigmoid(1,1)
+    0.7310585786300048792511592
 
 """
