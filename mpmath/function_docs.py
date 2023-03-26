@@ -2247,7 +2247,7 @@ Numerical values of the first few Bernoulli numbers::
     ...     print("%s %s" % (n, bernoulli(n)))
     ...
     0 1.0
-    1 -0.5
+    1 0.5
     2 0.166666666666667
     3 0.0
     4 -0.0333333333333333
@@ -2291,6 +2291,10 @@ guaranteed to be fast.
 
 For larger `n`, `B_n` is evaluated in terms of the Riemann zeta
 function.
+
+.. versionchanged :: 1.4
+    `bernoulli(1)` gives `+0.5` instead of `-0.5`. The previous
+    behavior can be obtained with `(-1)**n*bernoulli(n)`.
 """
 
 stieltjes = r"""
