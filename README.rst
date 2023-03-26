@@ -113,7 +113,7 @@ Release history:
 --------------------------
 
 Mpmath requires Python 3.5 or later versions. It has been tested
-with CPython 3.5 through 3.10 and for PyPy.
+with CPython 3.5 through 3.11 and for PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
 website and from https://github.com/fredrik-johansson/mpmath/releases
