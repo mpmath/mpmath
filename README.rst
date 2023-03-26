@@ -116,7 +116,7 @@ Mpmath requires Python 3.5 or later versions. It has been tested
 with CPython 3.5 through 3.11 and for PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
-website and from https://github.com/fredrik-johansson/mpmath/releases
+website and from https://github.com/mpmath/mpmath/releases
 
 It should also be available in the Python Package Index at
 https://pypi.python.org/pypi/mpmath
@@ -134,7 +134,7 @@ Mpmath can also be installed using
 ``python -m easy_install mpmath``
 
 The latest development code is available from
-https://github.com/fredrik-johansson/mpmath
+https://github.com/mpmath/mpmath
 
 See the main documentation for more detailed instructions.
 
@@ -191,4 +191,4 @@ General questions and comments can be sent to the mpmath mailinglist,
 mpmath@googlegroups.com
 
 You can also report bugs and send patches to the mpmath issue tracker,
-https://github.com/fredrik-johansson/mpmath/issues
+https://github.com/mpmath/mpmath/issues

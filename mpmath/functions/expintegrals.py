@@ -108,7 +108,7 @@ def ncdf(ctx, x, mu=0, sigma=1):
 @defun_wrapped
 def betainc(ctx, a, b, x1=0, x2=1, regularized=False):
     if x1 == x2:
-        v = 0
+        v = ctx.zero
     elif not x1:
         if x1 == 0 and x2 == 1:
             v = ctx.beta(a, b)

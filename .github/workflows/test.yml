@@ -20,19 +20,22 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade -e .[develop,gmpy,docs]
+        pip install --upgrade .[develop,gmpy,docs]
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: python -m pytest
+      run: pytest
+    - name: Remove gmpy on 3.10
+      if: matrix.python-version == 3.10
+      run: pip uninstall -y gmpy2
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
-      if: matrix.python-version == 3.10
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
       run: |
-        pytest docs mpmath
+        pytest
         codecov --required
     - name: Building docs
       run: |
