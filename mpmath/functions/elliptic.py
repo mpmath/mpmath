@@ -512,7 +512,7 @@ def RC_calc(ctx, x, y, r, pv=True):
         return 1/ctx.sqrt(x)
     extraprec = 2*max(0,-ctx.mag(x-y)+ctx.mag(x))
     ctx.prec += extraprec
-    if ctx._is_real_type(x) and ctx._is_real_type(y):
+    if ctx._is_real_type(x) and ctx._is_real_type(y) and ctx._re(y) > 0:
         x = ctx._re(x)
         y = ctx._re(y)
         a = ctx.sqrt(x/y)
@@ -525,7 +525,7 @@ def RC_calc(ctx, x, y, r, pv=True):
     else:
         sx = ctx.sqrt(x)
         sy = ctx.sqrt(y)
-        v = ctx.acos(sx/sy)/(ctx.sqrt((1-x/y))*sy)
+        v = ctx.acos(sx/sy)/(ctx.sqrt(1-x/y)*sy)
     ctx.prec -= extraprec
     return v
 
@@ -802,9 +802,9 @@ def elliprc(ctx, x, y, pv=True):
         >>> elliprc(2, -3, pv=True)
         0.3333969101113672670749334
         >>> elliprc(2, -3, pv=False)
-        (0.3333969101113672670749334 + 0.7024814731040726393156375j)
-        >>> 0.5*q(lambda t: 1/(sqrt(t+2)*(t-3)), [0,3-j,6,inf])
-        (0.3333969101113672670749334 + 0.7024814731040726393156375j)
+        (0.3333969101113672670749334 - 0.7024814731040726393156375j)
+        >>> 0.5*q(lambda t: 1/(sqrt(t+2)*(t-3)), [0,3+j,6,inf])
+        (0.3333969101113672670749334 - 0.7024814731040726393156375j)
 
     """
     x = ctx.convert(x)
