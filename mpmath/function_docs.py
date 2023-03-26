@@ -2237,11 +2237,9 @@ The Bernoulli numbers are rational numbers, but this function
 returns a floating-point approximation. To obtain an exact
 fraction, use :func:`~mpmath.bernfrac` instead.
 
-.. versionchanged :: 1.4
-    ``bernoulli(1)`` gives ``+0.5`` instead of ``-0.5``.
-    This choice of value confers several theoretical advantages [1],
-    including an extension to complex parameters. The previous
-    behavior can be obtained with ``(-1)**n*bernoulli(n)``.
+Note that `B_1=+0.5`; this choice of value confers several theoretical
+advantages [1]. The previous behavior can be obtained with
+``(-1)**n*bernoulli(n)``.
 
 **Examples**
 
