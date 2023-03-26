@@ -187,11 +187,11 @@ class _matrix:
          ['2.0', '3.0']])
 
     Of course you can perform matrix multiplication, if the dimensions are
-    compatible, using ``@`` (for Python >= 3.5) or ``*``. For clarity, ``@`` is
+    compatible, using ``@`` or ``*``. For clarity, ``@`` is
     recommended (`PEP 465 <https://www.python.org/dev/peps/pep-0465/>`), because
     the meaning of ``*`` is different in many other Python libraries such as NumPy.
 
-        >>> A @ B # doctest:+SKIP
+        >>> A @ B
         matrix(
         [['8.0', '22.0'],
          ['14.0', '48.0']])
@@ -202,10 +202,6 @@ class _matrix:
         >>> matrix([[1, 2, 3]]) * matrix([[-6], [7], [-2]])
         matrix(
         [['2.0']])
-
-    ..
-        COMMENT: TODO: the above "doctest:+SKIP" may be removed as soon as we
-        have dropped support for Python 3.5 and below.
 
     You can raise powers of square matrices::
 

@@ -75,9 +75,10 @@ class mpq:
         return NotImplemented
 
     def __ne__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             return s._mpq_ != t._mpq_
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             if b != 1:
                 return True
@@ -85,10 +86,11 @@ class mpq:
         return NotImplemented
 
     def _cmp(s, t, op):
-        if isinstance(t, int_types):
+        ttype = type(t)
+        if ttype in int_types:
             a, b = s._mpq_
             return op(a, t*b)
-        if isinstance(t, mpq):
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return op(a*d, b*c)
@@ -117,11 +119,12 @@ class mpq:
         return s
 
     def __add__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(a*d+b*c, b*d)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             v = new(mpq)
             v._mpq_ = a+b*t, b
@@ -131,11 +134,12 @@ class mpq:
     __radd__ = __add__
 
     def __sub__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(a*d-b*c, b*d)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             v = new(mpq)
             v._mpq_ = a-b*t, b
@@ -143,11 +147,12 @@ class mpq:
         return NotImplemented
 
     def __rsub__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(b*c-a*d, b*d)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             v = new(mpq)
             v._mpq_ = b*t-a, b
@@ -155,11 +160,12 @@ class mpq:
         return NotImplemented
 
     def __mul__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(a*c, b*d)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             return create_reduced(a*t, b)
         return NotImplemented
@@ -167,27 +173,30 @@ class mpq:
     __rmul__ = __mul__
 
     def __div__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(a*d, b*c)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             return create_reduced(a, b*t)
         return NotImplemented
 
     def __rdiv__(s, t):
-        if isinstance(t, mpq):
+        ttype = type(t)
+        if ttype is mpq:
             a, b = s._mpq_
             c, d = t._mpq_
             return create_reduced(b*c, a*d)
-        if isinstance(t, int_types):
+        if ttype in int_types:
             a, b = s._mpq_
             return create_reduced(b*t, a)
         return NotImplemented
 
     def __pow__(s, t):
-        if isinstance(t, int_types):
+        ttype = type(t)
+        if ttype in int_types:
             a, b = s._mpq_
             if t:
                 if t < 0:

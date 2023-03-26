@@ -94,8 +94,7 @@ fnan = (0, MPZ_ZERO, -123, -1)
 finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
-# Was 1e1000; this is broken in Python 2.4
-math_float_inf = 1e300 * 1e300
+math_float_inf = 1e1000
 
 
 #----------------------------------------------------------------------------#

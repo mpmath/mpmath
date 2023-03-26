@@ -52,15 +52,10 @@ def test_matrix_basic():
 def test_matmul():
     """
     Test the PEP465 "@" matrix multiplication syntax.
-    To avoid syntax errors when importing this file in Python 3.5 and below, we have to use exec() - sorry for that.
     """
-    # TODO remove exec() wrapper as soon as we drop support for Python <= 3.5
-    if sys.hexversion < 0x30500f0:
-        # we are on Python < 3.5
-        pytest.skip("'@' (__matmul__) is only supported in Python 3.5 or newer")
     A4 = matrix([[1, 2, 3], [4, 5, 6]])
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
-    exec("assert A4 @ A5 == A4 * A5")
+    assert A4 @ A5 == A4 * A5
 
 def test_matrix_slices():
     A = matrix([    [1, 2, 3],

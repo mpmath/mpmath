@@ -76,18 +76,10 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         ctx._init_aliases()
 
-        # XXX: automate
-        try:
-            ctx.bernoulli.im_func.__doc__ = function_docs.bernoulli
-            ctx.primepi.im_func.__doc__ = function_docs.primepi
-            ctx.psi.im_func.__doc__ = function_docs.psi
-            ctx.atan2.im_func.__doc__ = function_docs.atan2
-        except AttributeError:
-            # python 3
-            ctx.bernoulli.__func__.__doc__ = function_docs.bernoulli
-            ctx.primepi.__func__.__doc__ = function_docs.primepi
-            ctx.psi.__func__.__doc__ = function_docs.psi
-            ctx.atan2.__func__.__doc__ = function_docs.atan2
+        ctx.bernoulli.__func__.__doc__ = function_docs.bernoulli
+        ctx.primepi.__func__.__doc__ = function_docs.primepi
+        ctx.psi.__func__.__doc__ = function_docs.psi
+        ctx.atan2.__func__.__doc__ = function_docs.atan2
 
         ctx.digamma.__doc__ = function_docs.digamma
         ctx.cospi.__doc_ = function_docs.cospi
