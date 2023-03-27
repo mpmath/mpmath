@@ -16,7 +16,7 @@ jobs:
     - name: Install libs
       run: |
         sudo apt update
-        sudo apt install libmpc-dev latexmk texlive-xetex
+        sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
