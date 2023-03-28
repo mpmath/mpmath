@@ -180,6 +180,8 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
     >>> mp.dps = 30
     >>> mpf(10.9)   # bad
     mpf('10.9000000000000003552713678800501')
+    >>> mpf(1090/100)  # bad, beware Python's true division produces floats
+    mpf('10.9000000000000003552713678800501')
     >>> mpf('10.9')  # good
     mpf('10.8999999999999999999999999999997')
     >>> mpf(109) / mpf(10)   # also good
