@@ -38,7 +38,7 @@ class Newton:
         else:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -126,13 +126,13 @@ class MNewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -183,13 +183,13 @@ class Halley:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -529,7 +529,7 @@ class ANewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -944,7 +944,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         if multidimensional:
             # only one multidimensional solver available at the moment
             solver = MDNewton
-            if not 'norm' in kwargs:
+            if 'norm' not in kwargs:
                 norm = lambda x: ctx.norm(x, 'inf')
                 kwargs['norm'] = norm
             else:

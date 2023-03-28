@@ -84,7 +84,7 @@ def timing(f, *args, **kwargs):
     if t > 0.05 or once:
         return t
     for i in range(3):
-        t1=clock();
+        t1=clock()
         # Evaluate multiple times because the timer function
         # has a significant overhead
         g();g();g();g();g();g();g();g();g();g()
