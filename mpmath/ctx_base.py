@@ -318,7 +318,7 @@ class StandardBaseContext(Context,
                             % len(args))
         if n < 1:
             raise ValueError('n must be greater than 0')
-        if not 'endpoint' in kwargs or kwargs['endpoint']:
+        if 'endpoint' not in kwargs or kwargs['endpoint']:
             if n == 1:
                 return [ctx.mpf(a)]
             step = (b - a) / ctx.mpf(n - 1)

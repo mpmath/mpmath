@@ -13,7 +13,7 @@ def test_matrix_basic():
     A3 = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     assert list(A3) == list(range(1, 10))
     A3[1,1] = 0
-    assert not (1, 1) in A3._matrix__data
+    assert (1, 1) not in A3._matrix__data
     A4 = matrix([[1, 2, 3], [4, 5, 6]])
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
     assert A4 * A5 == matrix([[12, -6], [39, -12]])

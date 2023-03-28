@@ -38,7 +38,8 @@ TODO:
 """
 
 
-import sys, os
+import os
+import sys
 from timeit import default_timer as clock
 
 if "-nogmpy" in sys.argv:

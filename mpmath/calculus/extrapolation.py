@@ -2108,7 +2108,7 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
             values.append(g(k+1))
 
     # XXX: steps used by nsum don't work well
-    if not 'steps' in kwargs:
+    if 'steps' not in kwargs:
         kwargs['steps'] = [10]
 
     return +ctx.adaptive_extrapolation(update, None, kwargs)

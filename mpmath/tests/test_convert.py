@@ -1,3 +1,4 @@
+import fractions
 import random
 from mpmath import *
 from mpmath.libmp import *
@@ -234,3 +235,6 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
+
+def test_issue465():
+    assert mpf(fractions.Fraction(1, 3)) == mpf('0.33333333333333331')

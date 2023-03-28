@@ -22,7 +22,7 @@ def test_interval_identity():
     assert mpi(-5, 5) in w
     assert mpi(2, inf) in w
     assert mpi(0, 2) in mpi(0, 10)
-    assert not (3 in mpi(-inf, 0))
+    assert 3 not in mpi(-inf, 0)
 
 def test_interval_hash():
     assert hash(mpi(3)) == hash(3)

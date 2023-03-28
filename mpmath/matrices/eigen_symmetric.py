@@ -1613,7 +1613,7 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
         S = svd_r_raw(ctx, A, V, calc_u = True)
 
         if n > m:
-            if full_matrices == False:
+            if full_matrices is False:
                 V = V[:m,:]
 
             S = S[:m]
@@ -1717,7 +1717,7 @@ def svd_c(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
         S = svd_c_raw(ctx, A, V, calc_u = True)
 
         if n > m:
-            if full_matrices == False:
+            if full_matrices is False:
                 V = V[:m,:]
 
             S = S[:m]
