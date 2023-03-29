@@ -59,12 +59,10 @@ def _mathfun_n(f_real, f_complex):
     f.__name__ = f_real.__name__
     return f
 
-math_log = math.log
-math_sqrt = math.sqrt
 
 pow = _mathfun_n(operator.pow, lambda x, y: complex(x)**y)
-log = _mathfun_n(math_log, cmath.log)
-sqrt = _mathfun(math_sqrt, cmath.sqrt)
+log = _mathfun_n(math.log, cmath.log)
+sqrt = _mathfun(math.sqrt, cmath.sqrt)
 exp = _mathfun_real(math.exp, cmath.exp)
 
 cos = _mathfun_real(math.cos, cmath.cos)
@@ -238,14 +236,12 @@ def loggamma(x):
             x = float(x)
         except (ValueError, TypeError):
             x = complex(x)
-    xreal = x.real
-    ximag = x.imag
     # Reflection formula
     # http://functions.wolfram.com/GammaBetaErf/LogGamma/16/01/01/0003/
-    if xreal < 0.0:
+    if x.real < 0.0:
         if abs(x) < 0.5:
             v = log(gamma(x))
-            if ximag == 0:
+            if x.imag == 0:
                 v = v.conjugate()
             return v
         z = 1-x
@@ -311,7 +307,7 @@ def _digamma_real(x):
         if t < 1e-20:
             break
         t *= x2
-    return s + math_log(x) - 0.5/x
+    return s + math.log(x) - 0.5/x
 
 def _digamma_complex(x):
     if not x.imag:
@@ -522,7 +518,7 @@ def ei_taylor(z, _e1=False):
         s += log(-z)
     else:
         if type(z) is float or z.imag == 0.0:
-            s += math_log(abs(z))
+            s += math.log(abs(z))
         else:
             s += cmath.log(z)
     return s
