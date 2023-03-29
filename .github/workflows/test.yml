@@ -26,6 +26,7 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
+      if: matrix.python-version != 3.10 && matrix.python-version != 3.11
       run: pytest
     - name: Remove gmpy on 3.10
       if: matrix.python-version == 3.10
@@ -39,21 +40,23 @@ jobs:
         coverage html
         coverage xml
     - name: Upload coverage data
-      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
         fail_ci_if_error: true
     - name: Building docs
+      if: matrix.python-version == 3.11
       run: |
         sphinx-build --color -W --keep-going -b html docs build/sphinx/html
         sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
+      if: matrix.python-version == 3.11
       run: python setup.py sdist bdist_wheel
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.10
+      if: matrix.python-version == 3.11
       with:
         path: |
           dist/
