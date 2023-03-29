@@ -537,7 +537,7 @@ class MPIntervalContext(StandardBaseContext):
 
 # Register with "numbers" ABC
 #   We do not subclass, hence we do not use the @abstractmethod checks. While
-#   his is less invasive it may turn out that we do not actually support
+#   this is less invasive it may turn out that we do not actually support
 #   parts of the expected interfaces.  See
 #   https://docs.python.org/3/library/numbers.html for list of abstract methods.
 numbers.Complex.register(ivmpc)
