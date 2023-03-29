@@ -557,6 +557,8 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
             except NotImplementedError:
                 if verbose:
                     print("zeta: Could not use the Riemann-Siegel algorithm")
+            finally:
+                ctx.prec = prec
     if s == 1:
         return ctx.inf
     abss = abs(s)
