@@ -4,7 +4,6 @@
 from mpmath import mp
 from mpmath import libmp
 
-xrange = libmp.backend.xrange
 
 def run_hessenberg(A, verbose = 0):
     if verbose > 1:
@@ -23,14 +22,14 @@ def run_hessenberg(A, verbose = 0):
     eps = mp.exp(0.8 * mp.log(mp.eps))
 
     err0 = 0
-    for x in xrange(n):
-        for y in xrange(n):
+    for x in range(n):
+        for y in range(n):
             err0 += abs(A[y,x] - B[y,x])
     err0 /= n * n
 
     err1 = 0
-    for x in xrange(n):
-        for y in xrange(x + 2, n):
+    for x in range(n):
+        for y in range(x + 2, n):
             err1 += abs(H[y,x])
 
     if verbose > 0:
@@ -61,22 +60,22 @@ def run_schur(A, verbose = 0):
     eps = mp.exp(0.8 * mp.log(mp.eps))
 
     err0 = 0
-    for x in xrange(n):
-        for y in xrange(n):
+    for x in range(n):
+        for y in range(n):
             err0 += abs(A[y,x] - B[y,x])
     err0 /= n * n
 
     err1 = 0
-    for x in xrange(n):
-        for y in xrange(n):
+    for x in range(n):
+        for y in range(n):
             if x == y:
                 C[y,x] -= 1
             err1 += abs(C[y,x])
     err1 /= n * n
 
     err2 = 0
-    for x in xrange(n):
-        for y in xrange(x + 1, n):
+    for x in range(n):
+        for y in range(x + 1, n):
             err2 += abs(R[y,x])
 
     if verbose > 0:
@@ -105,7 +104,7 @@ def run_eig(A, verbose = 0):
     eps = mp.exp(0.8 * mp.log(mp.eps))
 
     err0 = 0
-    for i in xrange(n):
+    for i in range(n):
         B = A * ER[:,i] - E[i] * ER[:,i]
         err0 = max(err0, mp.mnorm(B))
 
@@ -123,22 +122,22 @@ def run_eig(A, verbose = 0):
 
 def test_eig_dyn():
     v = 0
-    for i in xrange(5):
+    for i in range(5):
         n = 1 + int(mp.rand() * 5)
         if mp.rand() > 0.5:
             # real
             A = 2 * mp.randmatrix(n, n) - 1
             if mp.rand() > 0.5:
                 A *= 10
-                for x in xrange(n):
-                    for y in xrange(n):
+                for x in range(n):
+                    for y in range(n):
                         A[x,y] = int(A[x,y])
         else:
             A = (2 * mp.randmatrix(n, n) - 1) + 1j * (2 * mp.randmatrix(n, n) - 1)
             if mp.rand() > 0.5:
                 A *= 10
-                for x in xrange(n):
-                    for y in xrange(n):
+                for x in range(n):
+                    for y in range(n):
                         A[x,y] = int(mp.re(A[x,y])) + 1j * int(mp.im(A[x,y]))
 
         run_hessenberg(A, verbose = v)

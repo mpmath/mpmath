@@ -1,8 +1,6 @@
-import operator
+import numbers
 
 from . import libmp
-
-from .libmp.backend import basestring
 
 from .libmp import (
     int_types, MPZ_ONE,
@@ -31,11 +29,11 @@ def convert_mpf_(x, prec, rounding):
     if hasattr(x, "_mpf_"): return x._mpf_
     if isinstance(x, int_types): return from_int(x, prec, rounding)
     if isinstance(x, float): return from_float(x, prec, rounding)
-    if isinstance(x, basestring): return from_str(x, prec, rounding)
+    if isinstance(x, str): return from_str(x, prec, rounding)
     raise NotImplementedError
 
 
-class ivmpf(object):
+class ivmpf:
     """
     Interval arithmetic class. Precision is controlled by iv.prec.
     """
@@ -148,7 +146,7 @@ class ivmpf(object):
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.ctx.almosteq(s, t, rel_eps, abs_eps)
 
-class ivmpc(object):
+class ivmpc:
 
     def __new__(cls, re=0, im=0):
         re = cls.ctx.convert(re)
@@ -419,7 +417,7 @@ class MPIntervalContext(StandardBaseContext):
             re = ctx.convert(x.real)
             im = ctx.convert(x.imag)
             return ctx.mpc(re,im)
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             v = mpi_from_str(x, ctx.prec)
             return ctx.make_mpf(v)
         if hasattr(x, "_mpi_"):
@@ -538,14 +536,9 @@ class MPIntervalContext(StandardBaseContext):
 
 
 # Register with "numbers" ABC
-#     We do not subclass, hence we do not use the @abstractmethod checks. While
-#     this is less invasive it may turn out that we do not actually support
-#     parts of the expected interfaces.  See
-#     http://docs.python.org/2/library/numbers.html for list of abstract
-#     methods.
-try:
-    import numbers
-    numbers.Complex.register(ivmpc)
-    numbers.Real.register(ivmpf)
-except ImportError:
-    pass
+#   We do not subclass, hence we do not use the @abstractmethod checks. While
+#   this is less invasive it may turn out that we do not actually support
+#   parts of the expected interfaces.  See
+#   https://docs.python.org/3/library/numbers.html for list of abstract methods.
+numbers.Complex.register(ivmpc)
+numbers.Real.register(ivmpf)

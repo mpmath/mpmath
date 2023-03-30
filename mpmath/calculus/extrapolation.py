@@ -3,7 +3,6 @@ try:
 except ImportError:
     izip = zip
 
-from ..libmp.backend import xrange
 from .calculus import defun
 
 try:
@@ -88,7 +87,7 @@ def richardson(ctx, seq):
     # of successive weights to obtain a recurrence relation
     c = (-1)**N * N**N / ctx.mpf(ctx._ifac(N))
     maxc = 1
-    for k in xrange(N+1):
+    for k in range(N+1):
         s += c * seq[N+k]
         maxc = max(abs(c), maxc)
         c *= (k-N)*ctx.mpf(k+N+1)**N
@@ -240,9 +239,9 @@ def shanks(ctx, seq, table=None, randomized=False):
         from random import Random
         rnd = Random()
         rnd.seed(START)
-    for i in xrange(START, STOP):
+    for i in range(START, STOP):
         row = []
-        for j in xrange(i+1):
+        for j in range(i+1):
             if j == 0:
                 a, b = 0, seq[i+1]-seq[i]
             else:
@@ -450,7 +449,7 @@ class levin_class:
         >>> print(mp.chop(v - exact))
         0.0
         >>> w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)),
-        ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in xrange(1000)])
+        ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in range(1000)])
         >>> print(mp.chop(v - w))
         0.0
 
@@ -482,7 +481,7 @@ class levin_class:
         >>> z = 2 + 1j
         >>> exact = mp.hyp2f1(2 / mp.mpf(3), 4 / mp.mpf(3), 1 / mp.mpf(3), z)
         >>> f = lambda n: mp.rf(2 / mp.mpf(3), n) * mp.rf(4 / mp.mpf(3), n) * z**n / (mp.rf(1 / mp.mpf(3), n) * mp.fac(n))
-        >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in xrange(1000)])
+        >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in range(1000)])
         >>> print(mp.chop(exact-v))
         0.0
 
@@ -838,7 +837,7 @@ class cohen_alt_class:
         c = -d
         s = 0
 
-        for k in xrange(n):
+        for k in range(n):
             c = b - c
             if k % 2 == 0:
                 s = s + c * A[k]
@@ -874,7 +873,7 @@ class cohen_alt_class:
         b = self.ctx.one
         s = 0
 
-        for k in xrange(n):
+        for k in range(n):
             b = 2 * (n + k) * (n - k) * b / ((2 * k + 1) * (k + self.ctx.one))
             s += b * S[k]
 
@@ -1039,9 +1038,9 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
     err = ctx.zero
     prev = 0
     M = 10000
-    if a == ctx.ninf: adiffs = (0 for n in xrange(M))
+    if a == ctx.ninf: adiffs = (0 for n in range(M))
     else:             adiffs = adiffs or ctx.diffs(f, a)
-    if b == ctx.inf:  bdiffs = (0 for n in xrange(M))
+    if b == ctx.inf:  bdiffs = (0 for n in range(M))
     else:             bdiffs = bdiffs or ctx.diffs(f, b)
     orig = ctx.prec
     #verbose = 1
@@ -1099,9 +1098,9 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     maxterms = option('maxterms', ctx.dps*10)
     method = set(option('method', 'r+s').split('+'))
     skip = option('skip', 0)
-    steps = iter(option('steps', xrange(10, 10**9, 10)))
+    steps = iter(option('steps', range(10, 10**9, 10)))
     strict = option('strict')
-    #steps = (10 for i in xrange(1000))
+    #steps = (10 for i in range(1000))
     summer=[]
     if 'd' in method or 'direct' in method:
         TRY_RICHARDSON = TRY_SHANKS = TRY_EULER_MACLAURIN = False
@@ -1162,7 +1161,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             if verbose:
                 print("-"*70)
                 print("Adding terms #%i-#%i" % (index, index+step))
-            update(partial, xrange(index, index+step))
+            update(partial, range(index, index+step))
             index += step
 
             # Check direct error
@@ -1508,7 +1507,7 @@ def nsum(ctx, f, *intervals, **options):
       >>> # exact = mp.quad(lambda x: mp.exp( -x * x / 2 - z * x ** 4), [0,mp.inf]) * 2 / mp.sqrt(2 * mp.pi)
       >>> exact = mp.exp(mp.one / (32 * z)) * mp.besselk(mp.one / 4, mp.one / (32 * z)) / (4 * mp.sqrt(z * mp.pi)) # this is the symbolic expression for the integral
       >>> w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)),
-      ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in xrange(1000)])
+      ...   [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in range(1000)])
       >>> print(mp.chop(w - exact))
       0.0
 
@@ -1518,7 +1517,7 @@ def nsum(ctx, f, *intervals, **options):
       >>> z = 2 + 1j
       >>> exact = mp.hyp2f1(2 / mp.mpf(3), 4 / mp.mpf(3), 1 / mp.mpf(3), z)
       >>> f = lambda n: mp.rf(2 / mp.mpf(3), n) * mp.rf(4 / mp.mpf(3), n) * z**n / (mp.rf(1 / mp.mpf(3), n) * mp.fac(n))
-      >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in xrange(1000)])
+      >>> v = mp.nsum(f, [0, mp.inf], method = "levin", steps = [10 for x in range(1000)])
       >>> print(mp.chop(exact-v))
       0.0
 
@@ -1767,7 +1766,7 @@ def fold_finite(ctx, f, intervals):
         return f
     indices = [v[0] for v in intervals]
     points = [v[1] for v in intervals]
-    ranges = [xrange(a, b+1) for (a,b) in points]
+    ranges = [range(a, b+1) for (a,b) in points]
     def g(*args):
         args = list(args)
         s = ctx.zero
@@ -1822,11 +1821,11 @@ def fold_infinite(ctx, f, intervals):
         s = ctx.zero
         #y = ctx.mpf(n)
         args[dim2] = ctx.mpf(n) #y
-        for x in xrange(n+1):
+        for x in range(n+1):
             args[dim1] = ctx.mpf(x)
             s += f(*args)
         args[dim1] = ctx.mpf(n) #ctx.mpf(n)
-        for y in xrange(n):
+        for y in range(n):
             args[dim2] = ctx.mpf(y)
             s += f(*args)
         return s
@@ -1982,7 +1981,7 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
             return f(0) * ctx.nprod(lambda k: f(-k) * f(k), [1, ctx.inf], **kwargs)
         return ctx.nprod(f, [-b, ctx.inf], **kwargs)
     elif b != ctx.inf:
-        return ctx.fprod(f(ctx.mpf(k)) for k in xrange(int(a), int(b)+1))
+        return ctx.fprod(f(ctx.mpf(k)) for k in range(int(a), int(b)+1))
 
     a = int(a)
 
