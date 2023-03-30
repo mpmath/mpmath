@@ -16,7 +16,7 @@ jobs:
     - name: Install libs
       run: |
         sudo apt update
-        sudo apt install libmpc-dev latexmk texlive-xetex
+        sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
@@ -39,7 +39,8 @@ jobs:
         codecov --required
     - name: Building docs
       run: |
-        python setup.py build_sphinx -c docs -b html,latex
+        sphinx-build --color -W --keep-going -b html docs build/sphinx/html
+        sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
       run: python setup.py sdist bdist_wheel
