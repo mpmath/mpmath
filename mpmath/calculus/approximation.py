@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .calculus import defun
 
 #----------------------------------------------------------------------------#
@@ -213,7 +212,7 @@ def fourier(ctx, f, interval, N):
     cos_series = []
     sin_series = []
     cutoff = ctx.eps*10
-    for n in xrange(N+1):
+    for n in range(N+1):
         m = 2*n*ctx.pi/L
         an = 2*ctx.quadgl(lambda t: f(t)*ctx.cos(m*t), interval)/L
         bn = 2*ctx.quadgl(lambda t: f(t)*ctx.sin(m*t), interval)/L
@@ -241,6 +240,6 @@ def fourierval(ctx, series, interval, x):
     b = interval[-1]
     m = 2*ctx.pi/(ab[-1]-ab[0])
     s = ctx.zero
-    s += ctx.fsum(cs[n]*ctx.cos(m*n*x) for n in xrange(len(cs)) if cs[n])
-    s += ctx.fsum(ss[n]*ctx.sin(m*n*x) for n in xrange(len(ss)) if ss[n])
+    s += ctx.fsum(cs[n]*ctx.cos(m*n*x) for n in range(len(cs)) if cs[n])
+    s += ctx.fsum(ss[n]*ctx.sin(m*n*x) for n in range(len(ss)) if ss[n])
     return s
