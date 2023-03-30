@@ -12,7 +12,6 @@ see libmpc and libmpi.
 import math
 from bisect import bisect
 
-from .backend import xrange
 from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE, BACKEND
 
 from .libmpf import (
@@ -72,7 +71,7 @@ atan_taylor_cache = {}
 
 # ~= next power of two + 20
 cache_prec_steps = [22,22]
-for k in xrange(1, bitcount(LOG_TAYLOR_PREC)+1):
+for k in range(1, bitcount(LOG_TAYLOR_PREC)+1):
     cache_prec_steps += [min(2**k,LOG_TAYLOR_PREC)+20] * 2**(k-1)
 
 
@@ -606,7 +605,7 @@ def log_taylor(x, prec, r=0):
 
     The caller must provide sufficient guard bits.
     """
-    for i in xrange(r):
+    for i in range(r):
         x = isqrt_fast(x<<prec)
     one = MPZ_ONE << prec
     v = ((x-one)<<prec)//(x+one)
@@ -1047,18 +1046,18 @@ def exponential_series(x, prec, type=0):
         u = int(0.3*prec**0.35)
         x2 = a = (x*x) >> wp
         xpowers = [one, x2]
-        for i in xrange(1, u):
+        for i in range(1, u):
             xpowers.append((xpowers[-1]*x2)>>wp)
         sums = [MPZ_ZERO] * u
         k = 2
         while a:
-            for i in xrange(u):
+            for i in range(u):
                 a //= (k-1)*k
                 if alt and k & 2: sums[i] -= a
                 else:             sums[i] += a
                 k += 2
             a = (a*xpowers[-1]) >> wp
-        for i in xrange(1, u):
+        for i in range(1, u):
             sums[i] = (sums[i]*xpowers[i]) >> wp
         c = sum(sums) + one
     if type == 0:
@@ -1067,7 +1066,7 @@ def exponential_series(x, prec, type=0):
             v = c - s
         else:
             v = c + s
-        for i in xrange(r):
+        for i in range(r):
             v = (v*v) >> wp
         return v >> extra
     else:
@@ -1075,7 +1074,7 @@ def exponential_series(x, prec, type=0):
         # cosh(2*x) = 2*cosh(x)^2 - 1
         # cos(2*x) = 2*cos(x)^2 - 1
         pshift = wp-1
-        for i in xrange(r):
+        for i in range(r):
             c = ((c*c) >> pshift) - one
         # With the abs, this is the same for sinh and sin
         s = isqrt_fast(abs((one<<wp) - c*c))

@@ -668,3 +668,6 @@ def test_elliptic_integrals():
 
 def test_issue_238():
     assert isnan(qfrom(m=nan))
+
+def test_issue_604():
+    assert ellipe(pi, 1).ae('2.0')

@@ -8,8 +8,6 @@ Run with:
     python manydigits.py
 
 """
-from __future__ import print_function
-
 from mpmath import *
 from mpmath.libmp import to_fixed, bin_to_radix
 
@@ -92,7 +90,7 @@ print("C17: S= -4*Zeta(2) - 2*Zeta(3) + 4*Zeta(2)*Zeta(3) + 2*Zeta(5)")
 print(pr(-4*zeta(2) - 2*zeta(3) + 4*zeta(2)*zeta(3) + 2*zeta(5)))
 print()
 
-print("C18: Catalan G = Sum{i=0}{\infty}(-1)^i/(2i+1)^2")
+print(r"C18: Catalan G = Sum{i=0}{\infty}(-1)^i/(2i+1)^2")
 print(pr(catalan))
 print()
 

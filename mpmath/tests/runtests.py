@@ -27,7 +27,9 @@ one of the arguments in their name are executed.
 
 """
 
-import sys, os, traceback
+import os
+import sys
+import traceback
 
 profile = False
 if "-profile" in sys.argv:

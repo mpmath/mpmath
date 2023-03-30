@@ -1,10 +1,7 @@
-from __future__ import print_function
-
 from copy import copy
 
-from ..libmp.backend import xrange
 
-class OptimizationMethods(object):
+class OptimizationMethods:
     def __init__(ctx):
         pass
 
@@ -38,7 +35,7 @@ class Newton:
         else:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -126,13 +123,13 @@ class MNewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -183,13 +180,13 @@ class Halley:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -529,7 +526,7 @@ class ANewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -590,11 +587,11 @@ def jacobian(ctx, f, x):
     m = len(fx)
     n = len(x)
     J = ctx.matrix(m, n)
-    for j in xrange(n):
+    for j in range(n):
         xj = x.copy()
         xj[j] += h
         Jj = (ctx.matrix(f(*xj)) - fx) / h
-        for i in xrange(m):
+        for i in range(m):
             J[i,j] = Jj[i]
     return J
 
@@ -944,7 +941,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         if multidimensional:
             # only one multidimensional solver available at the moment
             solver = MDNewton
-            if not 'norm' in kwargs:
+            if 'norm' not in kwargs:
                 norm = lambda x: ctx.norm(x, 'inf')
                 kwargs['norm'] = norm
             else:
@@ -1008,7 +1005,7 @@ def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
     if tol is None:
         tol = ctx.eps ** 0.8
     kwargs['d0f'] = f
-    for i in xrange(maxsteps):
+    for i in range(maxsteps):
         dfstr = 'd' + str(i) + 'f'
         if dfstr in kwargs:
             df = kwargs[dfstr]
@@ -1046,7 +1043,7 @@ def steffensen(f):
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
-    ...     for i in xrange(9):
+    ...     for i in range(9):
     ...         try:
     ...             fx = f(fx)
     ...         except OverflowError:

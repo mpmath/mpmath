@@ -1,7 +1,7 @@
 # contributed to mpmath by Kristopher L. Kuhlman, February 2017
 # contributed to mpmath by Guillermo Navas-Palencia, February 2022
 
-class InverseLaplaceTransform(object):
+class InverseLaplaceTransform:
     r"""
     Inverse Laplace transform methods are implemented using this
     class, in order to simplify the code and provide a common
@@ -664,7 +664,7 @@ class Cohen(InverseLaplaceTransform):
 
 # ****************************************
 
-class LaplaceTransformInversionMethods(object):
+class LaplaceTransformInversionMethods:
     def __init__(ctx, *args, **kwargs):
         ctx._fixed_talbot = FixedTalbot(ctx)
         ctx._stehfest = Stehfest(ctx)

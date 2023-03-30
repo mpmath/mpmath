@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .calculus import defun
 
 try:
@@ -23,7 +22,7 @@ def difference(ctx, s, n):
     n = int(n)
     d = ctx.zero
     b = (-1) ** (n & 1)
-    for k in xrange(n+1):
+    for k in range(n+1):
         d += b * s[k]
         b = (b * (k-n)) // (k+1)
     return d
@@ -49,11 +48,11 @@ def hsteps(ctx, f, x, n, prec, **options):
         direction = options.get('direction', 0)
         if direction:
             h *= ctx.sign(direction)
-            steps = xrange(n+1)
+            steps = range(n+1)
             norm = h
         # Central: steps x-n*h, x-(n-2)*h ..., x, ..., x+(n-2)*h, x+n*h
         else:
-            steps = xrange(-n, n+1, 2)
+            steps = range(-n, n+1, 2)
             norm = (2*h)
         # Perturb
         if singular:
@@ -282,7 +281,7 @@ def diffs(ctx, f, x, n=None, **options):
     while 1:
         callprec = ctx.prec
         y, norm, workprec = hsteps(ctx, f, x, B, callprec, **options)
-        for k in xrange(A, B):
+        for k in range(A, B):
             try:
                 ctx.prec = workprec
                 d = ctx.difference(y, k) / norm**k
@@ -298,7 +297,7 @@ def iterable_to_function(gen):
     gen = iter(gen)
     data = []
     def f(k):
-        for i in xrange(len(data), k+1):
+        for i in range(len(data), k+1):
             data.append(next(gen))
         return data[k]
     return f
@@ -348,10 +347,10 @@ def diffs_prod(ctx, factors):
         v = iterable_to_function(ctx.diffs_prod(factors[N//2:]))
         n = 0
         while 1:
-            #yield sum(binomial(n,k)*u(n-k)*v(k) for k in xrange(n+1))
+            #yield sum(binomial(n,k)*u(n-k)*v(k) for k in range(n+1))
             s = u(n) * v(0)
             a = 1
-            for k in xrange(1,n+1):
+            for k in range(1,n+1):
                 a = a * (n-k+1) // k
                 s += a * u(n-k) * v(k)
             yield s

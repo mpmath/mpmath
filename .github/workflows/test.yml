@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, '3.10', '3.11', pypy2.7, pypy3.7, pypy3.8, pypy3.9]
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, '3.10', 3.11, pypy3.7, pypy3.8, pypy3.9]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -16,7 +16,7 @@ jobs:
     - name: Install libs
       run: |
         sudo apt update
-        sudo apt install libmpc-dev latexmk texlive-xetex
+        sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
@@ -26,26 +26,27 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         pycodestyle
     - name: Tests
-      run: pytest docs mpmath
-    - name: Remove gmpy on 2.7
-      if: matrix.python-version == 2.7
+      run: pytest
+    - name: Remove gmpy on 3.10
+      if: matrix.python-version == 3.10
       run: pip uninstall -y gmpy2
     - name: Run coverage tests & upload results
       env:
         PYTEST_ADDOPTS: --cov mpmath
-      if: matrix.python-version == 2.7 || matrix.python-version == 3.6
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
       run: |
-        pytest docs mpmath
+        pytest
         codecov --required
     - name: Building docs
       run: |
-        python setup.py build_sphinx -c docs -b html,latex
+        sphinx-build --color -W --keep-going -b html docs build/sphinx/html
+        sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
       run: python setup.py sdist bdist_wheel
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.6
+      if: matrix.python-version == 3.10
       with:
         path: |
           dist/
@@ -54,7 +55,7 @@ jobs:
           coverage.xml
           build/coverage/html/
     - name: Publish package on PyPI
-      if: matrix.python-version == 3.9 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      if: matrix.python-version == 3.10 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
         user: __token__

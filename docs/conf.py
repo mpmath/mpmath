@@ -13,14 +13,15 @@ import mpmath
 
 
 # Add any Sphinx extension module names here, as strings.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
+              'sphinx.ext.intersphinx']
 
 # The master toctree document.
 master_doc = 'index'
 
 # Project information.
 project = 'mpmath'
-copyright = '2007-2021, Fredrik Johansson and mpmath developers'
+copyright = '2007-2023, Fredrik Johansson and mpmath developers'
 version = mpmath.__version__
 release = version
 
@@ -43,3 +44,9 @@ latex_preamble = r'\usepackage{amsfonts}'
 
 # The name of default reST role, that is, for text marked up `like this`.
 default_role = 'math'
+
+# Contains mapping the locations and names of other projects that
+# should be linked to in this documentation.
+intersphinx_mapping = {
+    'python3': ('https://docs.python.org/3/', None),
+}

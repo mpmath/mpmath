@@ -1,7 +1,5 @@
 from operator import gt, lt
 
-from .libmp.backend import xrange
-
 from .functions.functions import SpecialFunctions
 from .functions.rszeta import RSCache
 from .calculus.quadrature import QuadratureMethods
@@ -18,7 +16,7 @@ from .visualization import VisualizationMethods
 
 from . import libmp
 
-class Context(object):
+class Context:
     pass
 
 class StandardBaseContext(Context,
@@ -320,15 +318,15 @@ class StandardBaseContext(Context,
                             % len(args))
         if n < 1:
             raise ValueError('n must be greater than 0')
-        if not 'endpoint' in kwargs or kwargs['endpoint']:
+        if 'endpoint' not in kwargs or kwargs['endpoint']:
             if n == 1:
                 return [ctx.mpf(a)]
             step = (b - a) / ctx.mpf(n - 1)
-            y = [i*step + a for i in xrange(n)]
+            y = [i*step + a for i in range(n)]
             y[-1] = b
         else:
             step = (b - a) / ctx.mpf(n)
-            y = [i*step + a for i in xrange(n)]
+            y = [i*step + a for i in range(n)]
         return y
 
     def cos_sin(ctx, z, **kwargs):
@@ -357,6 +355,7 @@ class StandardBaseContext(Context,
             while 1:
                 ctx.prec = prec + extraprec + 5
                 max_mag = ctx.ninf
+                sum_mag = ctx.zero
                 s = ctx.zero
                 k = 0
                 for term in terms():
@@ -412,7 +411,7 @@ class StandardBaseContext(Context,
 
     def power(ctx, x, y):
         r"""Converts `x` and `y` to mpmath numbers and evaluates
-        `x^y = \exp(y \log(x))`::
+        the principal value of `\exp(y \log(x))`::
 
             >>> from mpmath import *
             >>> mp.dps = 30; mp.pretty = True
@@ -425,6 +424,10 @@ class StandardBaseContext(Context,
 
             >>> power(2, 43112609)-1
             3.16470269330255923143453723949e+12978188
+
+        **See Also**
+
+        :func:`~mpmath.root`
         """
         return ctx.convert(x) ** ctx.convert(y)
 

@@ -24,7 +24,7 @@ IM = [-1.5, 1.5]
 
 def mandelbrot(z):
     c = z
-    for i in xrange(ITERATIONS):
+    for i in range(ITERATIONS):
         zprev = z
         z = z*z + c
         if abs(z) > ESCAPE_RADIUS:
