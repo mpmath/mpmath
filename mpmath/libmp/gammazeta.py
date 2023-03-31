@@ -517,6 +517,10 @@ def bernfrac(n):
 
     This function works for arbitrarily large `n`::
 
+        >>> import sys
+        >>> if hasattr(sys, 'set_int_max_str_digits'):
+        ...     sys.set_int_max_str_digits(30000)
+        >>> del sys
         >>> p, q = bernfrac(10**4)
         >>> print(q)
         2338224387510
