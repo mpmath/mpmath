@@ -19,6 +19,17 @@ mp._iv = iv
 fp._iv = iv
 iv._iv = iv
 
+
+def __getattr__(name):
+    if name == "dps":
+        raise AttributeError(
+            f"Module {__name__!r} does not have attribute {name!r}; "
+            "you may want 'from mpmath import mp', see Issue #657"
+        )
+    # TODO: how to pass through to access any of the stuff in here?
+    # Maintaining `__all__` would be a pain...
+
+
 # XXX: extremely bad pickle hack
 from . import ctx_mp as _ctx_mp
 _ctx_mp._mpf_module.mpf = mp.mpf
