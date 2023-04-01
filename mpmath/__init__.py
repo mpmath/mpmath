@@ -21,7 +21,7 @@ iv._iv = iv
 
 
 def __getattr__(name):
-    if name == "dps":
+    if name in ("dps", "prec"):
         raise AttributeError(
             f"Module {__name__!r} does not have attribute {name!r}; "
             "you may want 'from mpmath import mp', see Issue #657"
