@@ -26,7 +26,7 @@ def __getattr__(name):
             f"Module {__name__!r} does not have attribute {name!r}; "
             "you may want 'from mpmath import mp', see Issue #657"
         )
-    raise AttributeError(f"Module {__name__!r} has no attribute {name!r})
+    raise AttributeError(f"Module {__name__!r} has no attribute {name!r}")
 
 
 # XXX: extremely bad pickle hack
