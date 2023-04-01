@@ -1,5 +1,8 @@
 __version__ = '1.3.0'
 
+import sys
+import types
+
 from .usertools import monitor, timing
 
 from .ctx_fp import FPContext
@@ -432,6 +435,34 @@ trianglew = mp.trianglew
 sawtoothw = mp.sawtoothw
 unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
+
+
+class SetMPMathPrecisionError(RuntimeError):
+
+    def __init__(self, attribute):
+        self._attribute = attribute
+
+    def __str__(self):
+        name = self._attribute
+        return (f"cannot set '{name}' on 'mpmath'. Did you mean to "
+                f"set '{name}' on 'mpmath.mp'?")
+
+
+class _MPMathModuleType(types.ModuleType):
+
+    def _set_dps(self, value):
+        raise SetMPMathPrecisionError('dps')
+
+    dps = property(fset=_set_dps)
+
+    def _set_prec(self, value):
+        raise SetMPMathPrecisionError('prec')
+
+    prec = property(fset=_set_prec)
+
+
+sys.modules[__name__].__class__ = _MPMathModuleType
+
 
 # be careful when changing this name, don't use test*!
 def runtests():
