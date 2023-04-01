@@ -444,8 +444,8 @@ class SetMPMathPrecisionError(RuntimeError):
 
     def __str__(self):
         name = self._attribute
-        return (f"cannot set '{name}' on 'mpmath'. Did you mean to "
-                f"set '{name}' on 'mpmath.mp'?")
+        return ("cannot set '%s' on 'mpmath'. Did you mean to "
+                "set '%s' on 'mpmath.mp'?" % (name, name))
 
 
 class _MPMathModuleType(types.ModuleType):
