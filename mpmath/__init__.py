@@ -1,5 +1,6 @@
 __version__ = '1.3.0'
 
+import functools
 import sys
 import types
 
@@ -437,31 +438,18 @@ unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
 
 
-class SetMPMathPrecisionError(RuntimeError):
-
-    def __init__(self, attribute):
-        self._attribute = attribute
-
-    def __str__(self):
-        name = self._attribute
-        return ("cannot set '%s' on 'mpmath'. Did you mean to "
-                "set '%s' on 'mpmath.mp'?" % (name, name))
-
-
 class _MPMathModuleType(types.ModuleType):
 
-    def _set_dps(self, value):
-        raise SetMPMathPrecisionError('dps')
+    def _helper(self, *args, prop=''):
+        raise AttributeError("cannot set '{name}' on 'mpmath'. Did you mean to "
+                             "set '{name}' on 'mpmath.mp'?".format(name=prop))
 
-    dps = property(fset=_set_dps)
-
-    def _set_prec(self, value):
-        raise SetMPMathPrecisionError('prec')
-
-    prec = property(fset=_set_prec)
+    dps = property(fset=functools.partial(_helper, prop='dps'))
+    prec = property(fset=functools.partial(_helper, prop='prec'))
 
 
 sys.modules[__name__].__class__ = _MPMathModuleType
+del functools, sys, types
 
 
 # be careful when changing this name, don't use test*!
