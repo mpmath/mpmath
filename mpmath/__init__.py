@@ -438,6 +438,7 @@ unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
 
 
+# Hack to guard against setting module properties instead of 'mp', Issue #657
 class _MPMathModule(types.ModuleType):
 
     def _helper(self, *args, prop=''):
@@ -446,6 +447,8 @@ class _MPMathModule(types.ModuleType):
 
     dps = property(fset=functools.partial(_helper, prop='dps'))
     prec = property(fset=functools.partial(_helper, prop='prec'))
+    pretty = property(fset=functools.partial(_helper, prop='pretty'))
+    trap_complex = property(fset=functools.partial(_helper, prop='trap_complex'))
 
 
 sys.modules[__name__].__class__ = _MPMathModule
