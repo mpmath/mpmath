@@ -438,7 +438,7 @@ unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
 
 
-class _MPMathModuleType(types.ModuleType):
+class _MPMathModule(types.ModuleType):
 
     def _helper(self, *args, prop=''):
         raise AttributeError("cannot set '{name}' on 'mpmath'. Did you mean to "
@@ -448,7 +448,7 @@ class _MPMathModuleType(types.ModuleType):
     prec = property(fset=functools.partial(_helper, prop='prec'))
 
 
-sys.modules[__name__].__class__ = _MPMathModuleType
+sys.modules[__name__].__class__ = _MPMathModule
 del functools, sys, types
 
 
