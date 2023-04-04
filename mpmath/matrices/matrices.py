@@ -676,8 +676,11 @@ class _matrix:
         return -self + other
 
     def __eq__(self, other):
-        return self.__rows == other.__rows and self.__cols == other.__cols \
-               and self.__data == other.__data
+        try:
+            return (self.__rows == other.__rows and self.__cols == other.__cols
+                    and self.__data == other.__data)
+        except AttributeError:
+            return NotImplemented
 
     def __len__(self):
         if self.rows == 1:

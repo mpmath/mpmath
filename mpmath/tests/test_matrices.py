@@ -48,6 +48,7 @@ def test_matrix_basic():
     A9[0,0] = -100
     assert A9 != A10
     assert nstr(A9)
+    assert A9 != None  # issue 283
 
 def test_matmul():
     """
