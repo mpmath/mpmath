@@ -68,6 +68,8 @@ def test_matrix_slices():
     assert A[:,1] == matrix([[2],[5],[8]])
     assert A[2,:] == matrix([[7, 8 ,9]])
     assert A[1:3,1:3] == matrix([[5,6],[8,9]])
+    assert A[0:2,0:2] == matrix([[1,2],[4,5]])  # issue 267
+    assert A[:2,:2] == matrix([[1,2],[4,5]])
     assert V[2:4] == matrix([3,4])
     pytest.raises(IndexError, lambda: A[:,1:6])
 
