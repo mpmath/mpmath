@@ -1,5 +1,8 @@
-import fractions
+from fractions import Fraction
+from decimal import Decimal
+import decimal
 import random
+import pytest
 from mpmath import *
 from mpmath.libmp import *
 
@@ -209,13 +212,7 @@ def test_issue548():
     assert False
 
 def test_compatibility():
-    try:
-        import numpy as np
-        from fractions import Fraction
-        from decimal import Decimal
-        import decimal
-    except ImportError:
-        return
+    np = pytest.importorskip("numpy")
     # numpy types
     for nptype in np.core.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
@@ -237,4 +234,4 @@ def test_compatibility():
     mp.prec = oldprec
 
 def test_issue465():
-    assert mpf(fractions.Fraction(1, 3)) == mpf('0.33333333333333331')
+    assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
