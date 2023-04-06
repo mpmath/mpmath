@@ -1,8 +1,8 @@
 Setting up mpmath
 =================
 
-Mpmath requires at least Python 3.5.  It has been tested
-with CPython 3.5 through 3.11 and for PyPy.
+Mpmath requires at least Python 3.8.  It has been tested
+with CPython 3.8 through 3.11 and for PyPy.
 
 Download and installation
 -------------------------
