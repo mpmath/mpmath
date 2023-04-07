@@ -225,6 +225,9 @@ def test_compatibility():
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
         assert diff < 2.0**-53
+    # issues 382 and 539
+    assert mp.sqrt(np.int64(1)) == mpf('1.0')
+    assert mpf(np.int64(1)) == mpf('1.0')
     #Fraction and Decimal
     oldprec = mp.prec
     mp.prec = 1000
