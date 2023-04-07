@@ -41,6 +41,12 @@ def test_basic_string():
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
+    # issue 377
+    assert to_str(from_str('1_234.567891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
+    assert to_str(from_str('1.0_0', 80), 24) == '1.0'
+    assert to_str(from_str('.000', 80), 24) == '0.0'
 
 def test_pretty():
     mp.pretty = True
