@@ -2386,3 +2386,9 @@ def test_bessel_zeros_extra():
 def test_issue_569():
     r = betainc(1, 2, 1, 1)
     assert isinstance(r, mp.mpf) and r == 0
+
+def test_issue_274():
+    pytest.importorskip("gmpy2")
+
+    with pytest.raises(ValueError):
+        mp.fraction(1, 100).func(1000, 0xdead)
