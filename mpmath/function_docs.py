@@ -2416,6 +2416,7 @@ The reciprocal gamma function `1/\Gamma(x)` evaluated at `x = 0`::
 
     >>> from mpmath import *
     >>> mp.dps = 15
+    >>> mp.pretty = True
     >>> gammaprod([], [0])
     0.0
 

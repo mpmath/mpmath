@@ -7,6 +7,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.8, 3.9, '3.10', 3.11, pypy3.8, pypy3.9]
+    env:
+      PYTEST_ADDOPTS: -n auto
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -21,6 +23,7 @@ jobs:
       run: |
         pip install --upgrade --force-reinstall setuptools pip
         pip install --upgrade .[develop,gmpy,docs]
+        pip install --upgrade pytest-xdist
     - name: Linting with pycodestyle, etc
       run: |
         python -We:invalid -m compileall -f mpmath -q
@@ -33,7 +36,7 @@ jobs:
       run: pip uninstall -y gmpy2
     - name: Run coverage tests
       env:
-        PYTEST_ADDOPTS: --cov mpmath
+        PYTEST_ADDOPTS: --cov mpmath -n auto
       if: matrix.python-version == 3.10 || matrix.python-version == 3.11
       run: |
         pytest
