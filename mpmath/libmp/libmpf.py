@@ -1285,6 +1285,8 @@ def str_to_man_exp(x, base=10):
     if len(parts) == 2:
         a, b = parts[0], parts[1].rstrip('0')
         exp -= len(b)
+        if a == '':
+            a = '0'
         x = a + b
     x = MPZ(int(x, base))
     return x, exp

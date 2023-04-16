@@ -1,5 +1,8 @@
-import fractions
+from fractions import Fraction
+from decimal import Decimal
+import decimal
 import random
+import pytest
 from mpmath import *
 from mpmath.libmp import *
 
@@ -38,6 +41,12 @@ def test_basic_string():
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
+    # issue 377
+    assert to_str(from_str('1_234.567891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
+    assert to_str(from_str('1.0_0', 80), 24) == '1.0'
+    assert to_str(from_str('.000', 80), 24) == '0.0'
 
 def test_pretty():
     mp.pretty = True
@@ -209,13 +218,7 @@ def test_issue548():
     assert False
 
 def test_compatibility():
-    try:
-        import numpy as np
-        from fractions import Fraction
-        from decimal import Decimal
-        import decimal
-    except ImportError:
-        return
+    np = pytest.importorskip("numpy")
     # numpy types
     for nptype in np.core.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
@@ -228,6 +231,9 @@ def test_compatibility():
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
         assert diff < 2.0**-53
+    # issues 382 and 539
+    assert mp.sqrt(np.int64(1)) == mpf('1.0')
+    assert mpf(np.int64(1)) == mpf('1.0')
     #Fraction and Decimal
     oldprec = mp.prec
     mp.prec = 1000
@@ -237,4 +243,4 @@ def test_compatibility():
     mp.prec = oldprec
 
 def test_issue465():
-    assert mpf(fractions.Fraction(1, 3)) == mpf('0.33333333333333331')
+    assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
