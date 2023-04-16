@@ -59,25 +59,10 @@ def _mathfun_n(f_real, f_complex):
     f.__name__ = f_real.__name__
     return f
 
-# Workaround for non-raising log and sqrt in Python 2.5 and 2.4
-# on Unix system
-try:
-    math.log(-2.0)
-    def math_log(x):
-        if x <= 0.0:
-            raise ValueError("math domain error")
-        return math.log(x)
-    def math_sqrt(x):
-        if x < 0.0:
-            raise ValueError("math domain error")
-        return math.sqrt(x)
-except (ValueError, TypeError):
-    math_log = math.log
-    math_sqrt = math.sqrt
 
 pow = _mathfun_n(operator.pow, lambda x, y: complex(x)**y)
-log = _mathfun_n(math_log, cmath.log)
-sqrt = _mathfun(math_sqrt, cmath.sqrt)
+log = _mathfun_n(math.log, cmath.log)
+sqrt = _mathfun(math.sqrt, cmath.sqrt)
 exp = _mathfun_real(math.exp, cmath.exp)
 
 cos = _mathfun_real(math.cos, cmath.cos)
@@ -251,27 +236,17 @@ def loggamma(x):
             x = float(x)
         except (ValueError, TypeError):
             x = complex(x)
-    try:
-        xreal = x.real
-        ximag = x.imag
-    except AttributeError:   # py2.5
-        xreal = x
-        ximag = 0.0
     # Reflection formula
     # http://functions.wolfram.com/GammaBetaErf/LogGamma/16/01/01/0003/
-    if xreal < 0.0:
+    if x.real < 0.0:
         if abs(x) < 0.5:
             v = log(gamma(x))
-            if ximag == 0:
+            if x.imag == 0:
                 v = v.conjugate()
             return v
         z = 1-x
-        try:
-            re = z.real
-            im = z.imag
-        except AttributeError:   # py2.5
-            re = z
-            im = 0.0
+        re = z.real
+        im = z.imag
         refloor = floor(re)
         if im == 0.0:
             imsign = 0
@@ -332,7 +307,7 @@ def _digamma_real(x):
         if t < 1e-20:
             break
         t *= x2
-    return s + math_log(x) - 0.5/x
+    return s + math.log(x) - 0.5/x
 
 def _digamma_complex(x):
     if not x.imag:
@@ -502,14 +477,13 @@ EI_ASYMP_CONVERGENCE_RADIUS = 40.0
 
 def ei_asymp(z, _e1=False):
     r = 1./z
-    s = t = 1.0
     k = 1
-    while 1:
+    t = 1.0*k*r
+    s = 1.0 + t
+    while abs(t) >= 1e-16:
+        k += 1
         t *= k*r
         s += t
-        if abs(t) < 1e-16:
-            break
-        k += 1
     v = s*exp(z)/z
     if _e1:
         if type(z) is complex:
@@ -543,7 +517,7 @@ def ei_taylor(z, _e1=False):
         s += log(-z)
     else:
         if type(z) is float or z.imag == 0.0:
-            s += math_log(abs(z))
+            s += math.log(abs(z))
         else:
             s += cmath.log(z)
     return s

@@ -379,6 +379,13 @@ def test_polygamma():
     assert isnan(psi(2,mpc(inf,inf)))
     assert isnan(psi(2,mpc(nan,nan)))
     assert isnan(psi(2,mpc(-inf,-inf)))
+    mp.dps = 30
+    # issue #534
+    assert digamma(-0.75+1j).ae(mpc('0.46317279488182026118963809283042317', '2.4821070143037957102007677817351115'))
+    # issue #647
+    mp.prec = 42
+    assert digamma(-0.5+0.5j).ae(mpc('0.131892637354523', '2.44065951997751'))
+    mp.dps = 15
 
 def test_polygamma_high_prec():
     mp.dps = 100
@@ -587,6 +594,8 @@ def test_polylog():
     # issue 390
     assert polylog(1.5, -48.910886523731889).ae(-6.272992229311817)
     assert polylog(1.5, 200).ae(-8.349608319033686529 - 8.159694826434266042j)
+    assert polylog(-2+0j, -2).ae(mpf(1)/13.5)
+    assert polylog(-2+0j, 1.25).ae(-180)
 
 def test_bell_polyexp():
     mp.dps = 15

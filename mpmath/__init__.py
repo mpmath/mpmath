@@ -1,4 +1,4 @@
-__version__ = '1.1.0'
+__version__ = '1.3.0'
 
 from .usertools import monitor, timing
 
@@ -47,6 +47,7 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+eta = mp.eta
 
 qp = mp.qp
 qhyper = mp.qhyper
@@ -102,6 +103,7 @@ quad = mp.quad
 quadgl = mp.quadgl
 quadts = mp.quadts
 quadosc = mp.quadosc
+quadsubdiv = mp.quadsubdiv
 
 invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot
@@ -424,6 +426,11 @@ backlunds = mp.backlunds
 lerchphi = mp.lerchphi
 stirling1 = mp.stirling1
 stirling2 = mp.stirling2
+squarew = mp.squarew
+trianglew = mp.trianglew
+sawtoothw = mp.sawtoothw
+unit_triangle = mp.unit_triangle
+sigmoid = mp.sigmoid
 
 # be careful when changing this name, don't use test*!
 def runtests():

@@ -4,11 +4,13 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
+import functools
+
 import re
 
 from .ctx_base import StandardBaseContext
 
-from .libmp.backend import basestring, BACKEND
+from .libmp.backend import BACKEND
 
 from . import libmp
 
@@ -40,8 +42,8 @@ from . import rational
 
 new = object.__new__
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
+                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
 
 if BACKEND == 'sage':
     from sage.libs.mpmath.ext_main import Context as BaseMPContext
@@ -74,22 +76,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         ctx._init_aliases()
 
-        # XXX: automate
-        try:
-            ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
-            ctx.primepi.im_func.func_doc = function_docs.primepi
-            ctx.psi.im_func.func_doc = function_docs.psi
-            ctx.atan2.im_func.func_doc = function_docs.atan2
-        except AttributeError:
-            # python 3
-            ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
-            ctx.primepi.__func__.func_doc = function_docs.primepi
-            ctx.psi.__func__.func_doc = function_docs.psi
-            ctx.atan2.__func__.func_doc = function_docs.atan2
+        ctx.bernoulli.__func__.__doc__ = function_docs.bernoulli
+        ctx.primepi.__func__.__doc__ = function_docs.primepi
+        ctx.psi.__func__.__doc__ = function_docs.psi
+        ctx.atan2.__func__.__doc__ = function_docs.atan2
 
-        ctx.digamma.func_doc = function_docs.digamma
-        ctx.cospi.func_doc = function_docs.cospi
-        ctx.sinpi.func_doc = function_docs.sinpi
+        ctx.digamma.__doc__ = function_docs.digamma
+        ctx.cospi.__doc_ = function_docs.cospi
+        ctx.sinpi.__doc_ = function_docs.sinpi
 
     def init_builtins(ctx):
 
@@ -607,14 +601,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return to_str(x._mpf_, n, **kwargs)
         if hasattr(x, '_mpc_'):
             return "(" + mpc_to_str(x._mpc_, n, **kwargs)  + ")"
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             return repr(x)
         if isinstance(x, ctx.matrix):
             return x.__nstr__(n, **kwargs)
         return str(x)
 
     def _convert_fallback(ctx, x, strings):
-        if strings and isinstance(x, basestring):
+        if strings and isinstance(x, str):
             if 'j' in x.lower():
                 x = x.lower().replace(' ', '')
                 match = get_complex.match(x)
@@ -1303,6 +1297,7 @@ class PrecisionManager:
         self.dpsfun = dpsfun
         self.normalize_output = normalize_output
     def __call__(self, f):
+        @functools.wraps(f)
         def g(*args, **kwargs):
             orig = self.ctx.prec
             try:
@@ -1319,8 +1314,6 @@ class PrecisionManager:
                     return f(*args, **kwargs)
             finally:
                 self.ctx.prec = orig
-        g.__name__ = f.__name__
-        g.__doc__ = f.__doc__
         return g
     def __enter__(self):
         self.origp = self.ctx.prec

@@ -1,11 +1,11 @@
-from ..libmp.backend import xrange
+import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
 rowsep = '\n'
 colsep = '  '
 
-class _matrix(object):
+class _matrix:
     """
     Numerical matrix.
 
@@ -13,9 +13,7 @@ class _matrix(object):
     Elements default to zero.
     Use a flat list to create a column vector easily.
 
-    By default, only mpf is used to store the data. You can specify another type
-    using force_type=type. It's possible to specify None.
-    Make sure force_type(force_type()) is fast.
+    The datatype of the context (mpf for mp, mpi for iv, and float for fp) is used to store the data.
 
     Creating matrices
     -----------------
@@ -72,28 +70,12 @@ class _matrix(object):
         [['0.0', '0.0'],
          ['0.0', mpc(real='1.0', imag='1.0')]])
 
-    You can use the keyword ``force_type`` to change the function which is
-    called on every new element:
-
-        >>> matrix(2, 5, force_type=int) # doctest: +SKIP
-        matrix(
-        [[0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0]])
-
     A more comfortable way to create a matrix lets you use nested lists:
 
         >>> matrix([[1, 2], [3, 4]])
         matrix(
         [['1.0', '2.0'],
          ['3.0', '4.0']])
-
-    If you want to preserve the type of the elements you can use
-    ``force_type=None``:
-
-        >>> matrix([[1, 2.5], [1j, mpf(2)]], force_type=None)
-        matrix(
-        [['1.0', '2.5'],
-         [mpc(real='0.0', imag='1.0'), '2.0']])
 
     Convenient advanced functions are available for creating various standard
     matrices, see ``zeros``, ``ones``, ``diag``, ``eye``, ``randmatrix`` and
@@ -205,9 +187,15 @@ class _matrix(object):
          ['2.0', '3.0']])
 
     Of course you can perform matrix multiplication, if the dimensions are
-    compatible::
+    compatible, using ``@`` or ``*``. For clarity, ``@`` is
+    recommended (`PEP 465 <https://www.python.org/dev/peps/pep-0465/>`), because
+    the meaning of ``*`` is different in many other Python libraries such as NumPy.
 
-        >>> A * B
+        >>> A @ B
+        matrix(
+        [['8.0', '22.0'],
+         ['14.0', '48.0']])
+        >>> A * B # same as A @ B
         matrix(
         [['8.0', '22.0'],
          ['14.0', '48.0']])
@@ -232,6 +220,8 @@ class _matrix(object):
         matrix(
         [['1.0', '1.0842021724855e-19'],
          ['-2.16840434497101e-19', '1.0']])
+
+
 
     Matrix transposition is straightforward::
 
@@ -289,9 +279,12 @@ class _matrix(object):
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
-        convert = kwargs.get('force_type', self.ctx.convert)
-        if not convert:
-            convert = lambda x: x
+        if "force_type" in kwargs:
+            warnings.warn("The force_type argument was removed, it did not work"
+                " properly anyway. If you want to force floating-point or"
+                " interval computations, use the respective methods from `fp`"
+                " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
+                " If you want to truncate values to integer, use .apply(int) instead.")
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
@@ -300,7 +293,8 @@ class _matrix(object):
                 self.__cols = len(A[0])
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
-                        self[i, j] = convert(a)
+                        # note: this will call __setitem__ which will call self.ctx.convert() to convert the datatype.
+                        self[i, j] = a
             else:
                 # interpret list as row vector
                 v = args[0]
@@ -318,13 +312,12 @@ class _matrix(object):
                 self.__rows = args[0]
                 self.__cols = args[1]
         elif isinstance(args[0], _matrix):
-            A = args[0].copy()
-            self.__data = A._matrix__data
+            A = args[0]
             self.__rows = A._matrix__rows
             self.__cols = A._matrix__cols
-            for i in xrange(A.__rows):
-                for j in xrange(A.__cols):
-                    A[i,j] = convert(A[i,j])
+            for i in range(A.__rows):
+                for j in range(A.__cols):
+                    self[i, j] = A[i, j]
         elif hasattr(args[0], 'tolist'):
             A = self.ctx.matrix(args[0].tolist())
             self.__data = A._matrix__data
@@ -338,8 +331,8 @@ class _matrix(object):
         Return a copy of self with the function `f` applied elementwise.
         """
         new = self.ctx.matrix(self.__rows, self.__cols)
-        for i in xrange(self.__rows):
-            for j in xrange(self.__cols):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
                 new[i,j] = f(self[i,j])
         return new
 
@@ -377,9 +370,9 @@ class _matrix(object):
         # XXX: should be something like self.ctx._types
         typ = self.ctx.mpf
         s = '['
-        for i in xrange(self.__rows):
+        for i in range(self.__rows):
             s += '['
-            for j in xrange(self.__cols):
+            for j in range(self.__cols):
                 if not avoid_type or not isinstance(self[i,j], typ):
                     a = repr(self[i,j])
                 else:
@@ -423,6 +416,7 @@ class _matrix(object):
                 1. Does not check on the value of key it expects key to be a integer tuple (i,j)
                 2. Does not check bounds
                 3. Does not check the value type
+                4. Does not reset the LU cache
         '''
         if value: # only store non-zeros
             self.__data[key] = value
@@ -455,7 +449,7 @@ class _matrix(object):
                 if (key[0].start is None or key[0].start >= 0) and \
                     (key[0].stop is None or key[0].stop <= self.__rows+1):
                     # Generate indices
-                    rows = xrange(*key[0].indices(self.__rows))
+                    rows = range(*key[0].indices(self.__rows))
                 else:
                     raise IndexError('Row index out of bounds')
             else:
@@ -468,7 +462,7 @@ class _matrix(object):
                 if (key[1].start is None or key[1].start >= 0) and \
                     (key[1].stop is None or key[1].stop <= self.__cols+1):
                     # Generate indices
-                    columns = xrange(*key[1].indices(self.__cols))
+                    columns = range(*key[1].indices(self.__cols))
                 else:
                     raise IndexError('Column index out of bounds')
 
@@ -519,7 +513,7 @@ class _matrix(object):
                 if (key[0].start is None or key[0].start >= 0) and \
                     (key[0].stop is None or key[0].stop <= self.__rows+1):
                     # generate row indices
-                    rows = xrange(*key[0].indices(self.__rows))
+                    rows = range(*key[0].indices(self.__rows))
                 else:
                     raise IndexError('Row index out of bounds')
             else:
@@ -531,7 +525,7 @@ class _matrix(object):
                 if (key[1].start is None or key[1].start >= 0) and \
                     (key[1].stop is None or key[1].stop <= self.__cols+1):
                     # Generate column indices
-                    columns = xrange(*key[1].indices(self.__cols))
+                    columns = range(*key[1].indices(self.__cols))
                 else:
                     raise IndexError('Column index out of bounds')
             else:
@@ -569,28 +563,35 @@ class _matrix(object):
         return
 
     def __iter__(self):
-        for i in xrange(self.__rows):
-            for j in xrange(self.__cols):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
                 yield self[i,j]
 
     def __mul__(self, other):
         if isinstance(other, self.ctx.matrix):
-            # dot multiplication  TODO: use Strassen's method?
+            # dot multiplication
             if self.__cols != other.__rows:
                 raise ValueError('dimensions not compatible for multiplication')
             new = self.ctx.matrix(self.__rows, other.__cols)
-            for i in xrange(self.__rows):
-                for j in xrange(other.__cols):
-                    # make sure that self[i,k] and other[i,k] are nonzero
-                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[k,j]) for k in xrange(other.__rows) if ((i,k) in self.__data and (k,j) in other.__data))
+            self_zero = self.ctx.zero
+            self_get = self.__data.get
+            other_zero = other.ctx.zero
+            other_get = other.__data.get
+            for i in range(self.__rows):
+                for j in range(other.__cols):
+                    new[i, j] = self.ctx.fdot((self_get((i,k), self_zero), other_get((k,j), other_zero))
+                                              for k in range(other.__rows) if ((i,k) in self.__data and (k,j) in other.__data)
             return new
         else:
             # try scalar multiplication
             new = self.ctx.matrix(self.__rows, self.__cols)
-            for i in xrange(self.__rows):
-                for j in xrange(self.__cols):
+            for i in range(self.__rows):
+                for j in range(self.__cols):
                     new[i, j] = other * self[i, j]
             return new
+
+    def __matmul__(self, other):
+        return self.__mul__(other)
 
     def __rmul__(self, other):
         # assume other is scalar and thus commutative
@@ -629,8 +630,8 @@ class _matrix(object):
         # assume other is scalar and do element-wise divison
         assert not isinstance(other, self.ctx.matrix)
         new = self.ctx.matrix(self.__rows, self.__cols)
-        for i in xrange(self.__rows):
-            for j in xrange(self.__cols):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
                 new[i,j] = self[i,j] / other
         return new
 
@@ -641,15 +642,15 @@ class _matrix(object):
             if not (self.__rows == other.__rows and self.__cols == other.__cols):
                 raise ValueError('incompatible dimensions for addition')
             new = self.ctx.matrix(self.__rows, self.__cols)
-            for i in xrange(self.__rows):
-                for j in xrange(self.__cols):
+            for i in range(self.__rows):
+                for j in range(self.__cols):
                     new[i,j] = self[i,j] + other[i,j]
             return new
         else:
             # assume other is scalar and add element-wise
             new = self.ctx.matrix(self.__rows, self.__cols)
-            for i in xrange(self.__rows):
-                for j in xrange(self.__cols):
+            for i in range(self.__rows):
+                for j in range(self.__cols):
                     new[i,j] += self[i,j] + other
             return new
 
@@ -662,6 +663,12 @@ class _matrix(object):
             raise ValueError('incompatible dimensions for subtraction')
         return self.__add__(other * (-1))
 
+    def __pos__(self):
+        """
+        +M returns a copy of M, rounded to current working precision.
+        """
+        return (+1) * self
+
     def __neg__(self):
         return (-1) * self
 
@@ -669,8 +676,11 @@ class _matrix(object):
         return -self + other
 
     def __eq__(self, other):
-        return self.__rows == other.__rows and self.__cols == other.__cols \
-               and self.__data == other.__data
+        try:
+            return (self.__rows == other.__rows and self.__cols == other.__cols
+                    and self.__data == other.__data)
+        except AttributeError:
+            return NotImplemented
 
     def __len__(self):
         if self.rows == 1:
@@ -704,8 +714,8 @@ class _matrix(object):
 
     def transpose(self):
         new = self.ctx.matrix(self.__cols, self.__rows)
-        for i in xrange(self.__rows):
-            for j in xrange(self.__cols):
+        for i in range(self.__rows):
+            for j in range(self.__cols):
                 new[j,i] = self[i,j]
         return new
 
@@ -732,7 +742,7 @@ class _matrix(object):
             m[i] = self[i,n]
         return m
 
-class MatrixMethods(object):
+class MatrixMethods:
 
     def __init__(ctx):
         # XXX: subclass
@@ -745,7 +755,7 @@ class MatrixMethods(object):
         Create square identity matrix n x n.
         """
         A = ctx.matrix(n, **kwargs)
-        for i in xrange(n):
+        for i in range(n):
             A[i,i] = 1
         return A
 
@@ -763,7 +773,7 @@ class MatrixMethods(object):
          ['0.0', '0.0', '3.0']])
         """
         A = ctx.matrix(len(diagonal), **kwargs)
-        for i in xrange(len(diagonal)):
+        for i in range(len(diagonal)):
             A[i,i] = diagonal[i]
         return A
 
@@ -788,8 +798,8 @@ class MatrixMethods(object):
         else:
             raise TypeError('zeros expected at most 2 arguments, got %i' % len(args))
         A = ctx.matrix(m, n, **kwargs)
-        for i in xrange(m):
-            for j in xrange(n):
+        for i in range(m):
+            for j in range(n):
                 A[i,j] = 0
         return A
 
@@ -814,8 +824,8 @@ class MatrixMethods(object):
         else:
             raise TypeError('ones expected at most 2 arguments, got %i' % len(args))
         A = ctx.matrix(m, n, **kwargs)
-        for i in xrange(m):
-            for j in xrange(n):
+        for i in range(m):
+            for j in range(n):
                 A[i,j] = 1
         return A
 
@@ -830,8 +840,8 @@ class MatrixMethods(object):
         if n is None:
             n = m
         A = ctx.matrix(m, n)
-        for i in xrange(m):
-            for j in xrange(n):
+        for i in range(m):
+            for j in range(n):
                 A[i,j] = ctx.one / (i + j + 1)
         return A
 
@@ -852,8 +862,8 @@ class MatrixMethods(object):
         if not n:
             n = m
         A = ctx.matrix(m, n, **kwargs)
-        for i in xrange(m):
-            for j in xrange(n):
+        for i in range(m):
+            for j in range(n):
                 A[i,j] = ctx.rand() * (max - min) + min
         return A
 
@@ -864,7 +874,7 @@ class MatrixMethods(object):
         if i == j:
             return
         if isinstance(A, ctx.matrix):
-            for k in xrange(A.cols):
+            for k in range(A.cols):
                 A[i,k], A[j,k] = A[j,k], A[i,k]
         elif isinstance(A, list):
             A[i], A[j] = A[j], A[i]
@@ -881,7 +891,7 @@ class MatrixMethods(object):
             raise ValueError("Value should be equal to len(b)")
         A = A.copy()
         A.cols += 1
-        for i in xrange(A.rows):
+        for i in range(A.rows):
             A[i, A.cols-1] = b[i]
         return A
 
@@ -982,9 +992,9 @@ class MatrixMethods(object):
             p = ctx.convert(p)
         m, n = A.rows, A.cols
         if p == 1:
-            return max(ctx.fsum((A[i,j] for i in xrange(m)), absolute=1) for j in xrange(n))
+            return max(ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n))
         elif p == ctx.inf:
-            return max(ctx.fsum((A[i,j] for j in xrange(n)), absolute=1) for i in xrange(m))
+            return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
 

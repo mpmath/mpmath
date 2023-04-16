@@ -1,0 +1,72 @@
+name: test
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11, pypy3.8, pypy3.9]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install libs
+      run: |
+        sudo apt update
+        sudo apt install latexmk texlive-xetex
+    - name: Install dependencies
+      run: |
+        pip install --upgrade --force-reinstall setuptools pip
+        pip install --upgrade .[develop,gmpy,docs]
+    - name: Linting with pycodestyle, etc
+      run: |
+        python -We:invalid -m compileall -f mpmath -q
+        pycodestyle
+    - name: Tests
+      if: matrix.python-version != 3.10 && matrix.python-version != 3.11
+      run: pytest
+    - name: Remove gmpy on 3.10
+      if: matrix.python-version == 3.10
+      run: pip uninstall -y gmpy2
+    - name: Run coverage tests
+      env:
+        PYTEST_ADDOPTS: --cov mpmath
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      run: |
+        pytest
+        coverage html
+        coverage xml
+    - name: Upload coverage data
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: true
+    - name: Building docs
+      if: matrix.python-version == 3.11
+      run: |
+        sphinx-build --color -W --keep-going -b html docs build/sphinx/html
+        sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
+        make -C build/sphinx/latex all-pdf
+    - name: Make packages
+      if: matrix.python-version == 3.11
+      run: python setup.py sdist bdist_wheel
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      if: matrix.python-version == 3.11
+      with:
+        path: |
+          dist/
+          build/sphinx/html/
+          build/sphinx/latex/mpmath.pdf
+          coverage.xml
+          build/coverage/html/
+    - name: Publish package on PyPI
+      if: matrix.python-version == 3.11 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}

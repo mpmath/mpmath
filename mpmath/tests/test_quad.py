@@ -19,6 +19,10 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 2*sqrt(1-x*x), [-1, 1]), pi)
     mp.dps = 15
 
+def test_multiple_intervals():
+    y,err = quad(lambda x: sign(x), [-0.5, 0.9, 1], maxdegree=2, error=True)
+    assert abs(y-0.5) < 2*err
+
 def test_quad_symmetry():
     assert quadts(sin, [-1, 1]) == 0
     assert quadgl(sin, [-1, 1]) == 0

@@ -6,24 +6,23 @@ This module can be run interactively with
     python taylor.py
 
 """
-
 from mpmath import *
 
 def taylor(x, n):
-    print "-"*75
+    print("-"*75)
     t = x = mpi(x)
     s = 1
-    print "adding 1"
-    print s, "\n"
+    print("adding 1")
+    print(s, "\n")
     s += t
-    print "adding x"
-    print s, "\n"
+    print("adding x")
+    print(s, "\n")
     for k in range(2, n+1):
         t = (t * x) / k
         s += t
-        print "adding x^%i / %i! ~= %s" % (k, k, t.mid)
-        print s, "\n"
-    print "-"*75
+        print("adding x^%i / %i! ~= %s" % (k, k, t.mid))
+        print(s, "\n")
+    print("-"*75)
     return s
 
 # Note: this should really be computed using interval arithmetic too!
@@ -41,32 +40,32 @@ def exponential(x, n):
     t = taylor(x, n)
     r = remainder(x, n)
     expx = exp(x)
-    print "Correct value of exp(x):    ", expx
-    print
-    print "Computed interval:          "
-    print t
-    print
-    print "Computed value (midpoint):  ", t.mid
-    print
-    print "Estimated rounding error:   ", t.delta
-    print "Estimated truncation error: ", r
-    print "Estimated total error:      ", t.delta + r
-    print "Actual error                ", abs(expx - t.mid)
-    print
+    print("Correct value of exp(x):    ", expx)
+    print()
+    print("Computed interval:          ")
+    print(t)
+    print()
+    print("Computed value (midpoint):  ", t.mid)
+    print()
+    print("Estimated rounding error:   ", t.delta)
+    print("Estimated truncation error: ", r)
+    print("Estimated total error:      ", t.delta + r)
+    print("Actual error                ", abs(expx - t.mid))
+    print()
     u = t + mpi(-r, r)
-    print "Interval with est. truncation error added:"
-    print u
-    print
-    print "Correct value contained in computed interval:", t.a <= expx <= t.b
-    print "When accounting for truncation error:", u.a <= expx <= u.b
+    print("Interval with est. truncation error added:")
+    print(u)
+    print()
+    print("Correct value contained in computed interval:", t.a <= expx <= t.b)
+    print("When accounting for truncation error:", u.a <= expx <= u.b)
 
 if __name__ == "__main__":
-    print "Interval arithmetic demo"
-    print
-    print "This script sums the Taylor series for exp(x) using interval arithmetic,"
-    print "and then compares the numerical errors due to rounding and truncation."
-    print
-    x = mpf(raw_input("Enter the value of x (e.g. 3.5): "))
-    n = int(raw_input("Enter the number of terms n (e.g. 10): "))
-    print
+    print("Interval arithmetic demo")
+    print()
+    print("This script sums the Taylor series for exp(x) using interval arithmetic,")
+    print("and then compares the numerical errors due to rounding and truncation.")
+    print()
+    x = mpf(input("Enter the value of x (e.g. 3.5): "))
+    n = int(input("Enter the number of terms n (e.g. 10): "))
+    print()
     exponential(x, n)

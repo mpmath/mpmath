@@ -2382,3 +2382,13 @@ def test_bessel_zeros_extra():
             assert besselyzero(v,m).ae(yn_small_zeros[v][m-1])
             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
+
+def test_issue_569():
+    r = betainc(1, 2, 1, 1)
+    assert isinstance(r, mp.mpf) and r == 0
+
+def test_issue_274():
+    pytest.importorskip("gmpy2")
+
+    with pytest.raises(ValueError):
+        mp.fraction(1, 100).func(1000, 0xdead)

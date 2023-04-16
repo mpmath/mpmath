@@ -1,4 +1,8 @@
+from fractions import Fraction
+from decimal import Decimal
+import decimal
 import random
+import pytest
 from mpmath import *
 from mpmath.libmp import *
 
@@ -34,6 +38,15 @@ def test_basic_string():
     assert str(mpf("-2163048125l")) == '-2163048125.0'
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
+
+    # issue 613
+    assert str(mpf('2_5_0_0.0')) == '2500.0'
+    # issue 377
+    assert to_str(from_str('1_234.567891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
+    assert to_str(from_str('1.0_0', 80), 24) == '1.0'
+    assert to_str(from_str('.000', 80), 24) == '0.0'
 
 def test_pretty():
     mp.pretty = True
@@ -194,14 +207,18 @@ def test_mpmathify():
     assert mpmathify('(1.2e-10 - 3.4e5j)') == mpc('1.2e-10', '-3.4e5')
     assert mpmathify('1j') == mpc(1j)
 
-def test_compatibility():
+def test_issue548():
     try:
-        import numpy as np
-        from fractions import Fraction
-        from decimal import Decimal
-        import decimal
-    except ImportError:
+        # This expression is invalid, but may trigger the ReDOS vulnerability
+        # in the regular expression for parsing complex numbers.
+        mpmathify('(' + '1' * 5000 + '!j')
+    except:
         return
+    # The expression is invalid and should raise an exception.
+    assert False
+
+def test_compatibility():
+    np = pytest.importorskip("numpy")
     # numpy types
     for nptype in np.core.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
@@ -214,6 +231,9 @@ def test_compatibility():
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
         assert diff < 2.0**-53
+    # issues 382 and 539
+    assert mp.sqrt(np.int64(1)) == mpf('1.0')
+    assert mpf(np.int64(1)) == mpf('1.0')
     #Fraction and Decimal
     oldprec = mp.prec
     mp.prec = 1000
@@ -221,3 +241,6 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
+
+def test_issue465():
+    assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')

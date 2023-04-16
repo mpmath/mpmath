@@ -1,4 +1,2 @@
-include mpmath/*.py
-include mpmath/tests/*.py
-include LICENSE
+recursive-include docs *
 include CHANGES
