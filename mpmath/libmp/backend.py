@@ -29,17 +29,10 @@ HASH_BITS = 31 if sys.hash_info.width == 32 else 61
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
-        try:
-            import gmpy2 as gmpy
-        except ImportError:
-            try:
-                import gmpy
-            except ImportError:
-                raise ImportError
-        if gmpy.version() >= '1.03':
-            BACKEND = 'gmpy'
-            MPZ = gmpy.mpz
-    except:
+        import gmpy2 as gmpy
+        BACKEND = 'gmpy'
+        MPZ = gmpy.mpz
+    except ImportError:
         pass
 
 if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
