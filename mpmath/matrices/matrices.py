@@ -575,7 +575,7 @@ class _matrix:
             new = self.ctx.matrix(self.__rows, other.__cols)
             for i in range(self.__rows):
                 for j in range(other.__cols):
-                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[i,k])
+                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[k,j])
                                               for k in range(other.__rows) if (i,k) in self.__data and (k,j) in other.__data)
             return new
         else:
