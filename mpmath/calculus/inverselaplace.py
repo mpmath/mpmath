@@ -964,10 +964,3 @@ class LaplaceTransformInversionMethods:
     def invlapcohen(ctx, *args, **kwargs):
         kwargs['method'] = 'cohen'
         return ctx.invertlaplace(*args, **kwargs)
-
-
-# ****************************************
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

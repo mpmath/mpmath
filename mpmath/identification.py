@@ -833,8 +833,3 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 IdentificationMethods.pslq = pslq
 IdentificationMethods.findpoly = findpoly
 IdentificationMethods.identify = identify
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

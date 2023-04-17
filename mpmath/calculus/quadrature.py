@@ -1107,7 +1107,3 @@ class QuadratureMethods:
             return +total, +total_error
         else:
             return +total
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -992,7 +992,3 @@ class MatrixMethods:
             return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -1093,7 +1093,3 @@ def steffensen(f):
 OptimizationMethods.jacobian = jacobian
 OptimizationMethods.findroot = findroot
 OptimizationMethods.multiplicity = multiplicity
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

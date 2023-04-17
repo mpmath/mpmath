@@ -1313,8 +1313,3 @@ class PrecisionManager:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.ctx.prec = self.origp
         return False
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
