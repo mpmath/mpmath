@@ -52,11 +52,10 @@ if 'MPMATH_STRICT' in os.environ:
 else:
     STRICT = False
 
-MPZ_TYPE = type(MPZ(0))
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)
 MPZ_TWO = MPZ(2)
 MPZ_THREE = MPZ(3)
 MPZ_FIVE = MPZ(5)
 
-int_types = (int,) if BACKEND == 'python' else (int, MPZ_TYPE)
+int_types = (int,) if BACKEND == 'python' else (int, MPZ)
