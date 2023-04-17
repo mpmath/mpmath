@@ -156,7 +156,7 @@ The unit tests in mpmath/tests/ can be run with `pytest
 You may also want to check out the demo scripts in the demo
 directory.
 
-The master branch is automatically tested by Travis CI.
+The master branch is automatically tested on the Github Actions.
 
 4. Known problems
 -----------------
