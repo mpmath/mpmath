@@ -1,4 +1,7 @@
-__version__ = '1.4.0a0'
+from importlib.metadata import version
+
+__version__ = version(__name__)
+del version
 
 import functools
 import sys
