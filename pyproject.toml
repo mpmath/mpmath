@@ -47,7 +47,7 @@ exclude = ['.eggs', '.git']
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL']
-addopts = "--doctest-modules --doctest-glob='*.rst'"
+addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
 [tool.coverage.run]
 branch = true
