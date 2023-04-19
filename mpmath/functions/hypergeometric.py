@@ -196,6 +196,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     Hypergeometric function, general case.
     """
     z = ctx.convert(z)
+    if ctx.isnan(z):
+        return ctx.nan
     p = len(a_s)
     q = len(b_s)
     a_s = [ctx._convert_param(a) for a in a_s]
