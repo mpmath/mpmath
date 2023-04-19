@@ -774,8 +774,8 @@ class LaplaceTransformInversionMethods:
         *method='talbot'*, *method='stehfest'*, *method='dehoog'* or
         *method='cohen'* or by passing the classes *method=FixedTalbot*,
         *method=Stehfest*, *method=deHoog*, or *method=Cohen*. The functions
-        :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`,
-        :func:`~mpmath.invlapdehoog`, and :func:`~mpmath.invlapcohen`
+        ``invlaptalbot()``, ``invlapstehfest()``,
+        ``invlapdehoog()``, and ``invlapcohen()``
         are also available as shortcuts.
 
         All four algorithms implement a heuristic balance between the

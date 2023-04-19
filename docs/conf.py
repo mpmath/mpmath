@@ -16,6 +16,9 @@ import mpmath
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
               'sphinx.ext.intersphinx']
 
+# Sphinx will warn about all references where the target cannot be found.
+nitpicky = True
+
 # The master toctree document.
 master_doc = 'index'
 
@@ -48,5 +51,6 @@ default_role = 'math'
 # Contains mapping the locations and names of other projects that
 # should be linked to in this documentation.
 intersphinx_mapping = {
-    'python3': ('https://docs.python.org/3/', None),
+    'python': ('https://docs.python.org/3/', None),
+    'sympy': ('https://docs.sympy.org/latest/', None),
 }

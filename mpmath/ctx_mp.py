@@ -567,7 +567,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         instead of returning it.
 
         The keyword arguments *strip_zeros*, *min_fixed*, *max_fixed*
-        and *show_zero_exponent* are forwarded to :func:`~mpmath.libmp.to_str`.
+        and *show_zero_exponent* are forwarded to ``mpmath.libmp.to_str()``.
 
         The number will be printed in fixed-point format if the position
         of the leading digit is strictly between min_fixed

@@ -210,9 +210,9 @@ class StandardBaseContext(Context,
 
     def arange(ctx, *args):
         r"""
-        This is a generalized version of Python's :func:`~mpmath.range` function
+        This is a generalized version of Python's :class:`range` function
         that accepts fractional endpoints and step sizes and
-        returns a list of ``mpf`` instances. Like :func:`~mpmath.range`,
+        returns a list of ``mpf`` instances. Like :class:`range`,
         :func:`~mpmath.arange` can be called with 1, 2 or 3 arguments:
 
         ``arange(b)``
@@ -224,7 +224,7 @@ class StandardBaseContext(Context,
 
         where `b-1 \le x < b` (in the third case, `b-h \le x < b`).
 
-        Like Python's :func:`~mpmath.range`, the endpoint is not included. To
+        Like Python's :class:`range`, the endpoint is not included. To
         produce ranges where the endpoint is included, :func:`~mpmath.linspace`
         is more convenient.
 

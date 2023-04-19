@@ -21,8 +21,8 @@ computed via :func:`~mpmath.hyper`, but generally only in rapidly convergent
 instances.
 
 Most hypergeometric and hypergeometric-derived functions accept optional
-keyword arguments to specify options for :func:`hypercomb` or
-:func:`hyper`. Some useful options are *maxprec*, *maxterms*,
+keyword arguments to specify options for :func:`~mpmath.hypercomb` or
+:func:`~mpmath.hyper`. Some useful options are *maxprec*, *maxterms*,
 *zeroprec*, *accurate_small*, *hmag*, *force_series*,
 *asymp_tol* and *eliminate*. These options give control over what to
 do in case of slow convergence, extreme loss of accuracy or
@@ -68,12 +68,12 @@ Common hypergeometric series
 Generalized hypergeometric functions
 ....................................
 
-:func:`hyper`
-^^^^^^^^^^^^^^
+:func:`~mpmath.hyper`
+^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hyper(a_s, b_s, z)
 
-:func:`hypercomb`
-^^^^^^^^^^^^^^^^^
+:func:`~mpmath.hypercomb`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.hypercomb
 
 Meijer G-function

@@ -157,7 +157,7 @@ In Sage, mpmath can alternatively be imported via the interface library
 
     sage: import sage.libs.mpmath.all as mpmath
 
-This module provides a few extra conversion functions, including :func:`call`
+This module provides a few extra conversion functions, including ``mpmath.call()``
 which permits calling any mpmath function with Sage numbers as input, and getting 
 Sage ``RealNumber`` or ``ComplexNumber`` instances
 with the appropriate precision back::

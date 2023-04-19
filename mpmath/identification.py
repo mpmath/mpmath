@@ -683,7 +683,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
     The output formula can be evaluated as a Python expression.
     Note however that if fractions (like '2/3') are present in
-    the formula, Python's :func:`~mpmath.eval()` may erroneously perform
+    the formula, Python's :func:`eval` may erroneously perform
     integer division. Note also that the output is not necessarily
     in the algebraically simplest form::
 
@@ -691,7 +691,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         '(sqrt(8)/2)'
 
     As a solution to both problems, consider using SymPy's
-    :func:`~mpmath.sympify` to convert the formula into a symbolic expression.
+    :func:`~sympy.core.sympify.sympify` to convert the formula into a symbolic expression.
     SymPy can be used to pretty-print or further simplify the formula
     symbolically::
 
@@ -715,7 +715,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         1/2 + 5**(1/2)/2
 
     (In fact, this functionality is available directly in SymPy as the
-    function :func:`~mpmath.nsimplify`, which is essentially a wrapper for
+    function :func:`~sympy.simplify.simplify.nsimplify`, which is essentially a wrapper for
     :func:`~mpmath.identify`.)
 
     **Miscellaneous issues and limitations**
