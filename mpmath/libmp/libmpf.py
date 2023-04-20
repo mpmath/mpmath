@@ -1033,6 +1033,8 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
             if n > 0: return [finf, fninf][n & 1]
             if n == 0: return fnan
             return fzero
+        if n == 0:
+            return fone
         return fnan
 
     n = int(n)

@@ -337,6 +337,8 @@ def mpf_pow(s, t, prec, rnd=round_fast):
                 return mpf_pow_int(mpf_sqrt(s, prec+10,
                     reciprocal_rnd[rnd]), -tman, prec, rnd)
             return mpf_pow_int(mpf_sqrt(s, prec+10, rnd), tman, prec, rnd)
+    if s == fone:
+        return fone
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
     c = mpf_log(s, prec+10, rnd)
