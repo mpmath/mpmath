@@ -467,7 +467,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         extra precision is unknown, :func:`~mpmath.autoprec` is convenient::
 
             >>> from mpmath import *
-            >>> mp.dps = 15
             >>> mp.pretty = True
             >>> besselj(5, 125 * 10**28)    # Exact input
             -8.03284785591801e-17
@@ -747,7 +746,6 @@ maxterms, or set zeroprec."""
         possible to convert into one) and `n` must be a Python ``int``.
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> ldexp(1, 10)
             mpf('1024.0')
             >>> ldexp(1, -3)
@@ -764,7 +762,6 @@ maxterms, or set zeroprec."""
         performed.
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> frexp(7.5)
             (mpf('0.9375'), 3)
 
@@ -786,7 +783,6 @@ maxterms, or set zeroprec."""
         An mpmath number is returned::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fneg(2.5)
             mpf('-2.5')
             >>> fneg(-5+2j)
@@ -848,7 +844,6 @@ maxterms, or set zeroprec."""
         Using :func:`~mpmath.fadd` with precision and rounding control::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fadd(2, 1e-20)
             mpf('2.0')
             >>> fadd(2, 1e-20, rounding='u')
@@ -914,7 +909,6 @@ maxterms, or set zeroprec."""
         Using :func:`~mpmath.fsub` with precision and rounding control::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fsub(2, 1e-20)
             mpf('2.0')
             >>> fsub(2, 1e-20, rounding='d')
@@ -980,7 +974,6 @@ maxterms, or set zeroprec."""
         The result is an mpmath number::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fmul(2, 5.0)
             mpf('10.0')
             >>> fmul(0.5j, 0.5)
@@ -1049,7 +1042,6 @@ maxterms, or set zeroprec."""
         The result is an mpmath number::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fdiv(3, 2)
             mpf('1.5')
             >>> fdiv(2, 3)
@@ -1207,7 +1199,6 @@ maxterms, or set zeroprec."""
         converted to mpmath numbers.
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fprod([1, 2, 0.5, 7])
             mpf('7.0')
 
@@ -1235,7 +1226,6 @@ maxterms, or set zeroprec."""
         the fraction `p/q`. The value is updated with the precision.
 
             >>> from mpmath import *
-            >>> mp.dps = 15
             >>> a = fraction(1,100)
             >>> b = mpf(1)/100
             >>> print(a); print(b)
@@ -1245,7 +1235,6 @@ maxterms, or set zeroprec."""
             >>> print(a); print(b)      # a will be accurate
             0.01
             0.0100000000000000002081668171172
-            >>> mp.dps = 15
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
             '%s/%s' % (p, q))

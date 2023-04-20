@@ -4,7 +4,6 @@ Mathematical constants
 Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants. These constants are implemented as lazy objects that can evaluate to any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular ``mpf`` using the unary ``+`` operator, or by calling it as a function::
 
     >>> from mpmath import *
-    >>> mp.dps = 15
     >>> pi
     <pi: 3.14159~>
     >>> 2*pi

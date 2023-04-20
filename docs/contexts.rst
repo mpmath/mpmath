@@ -15,7 +15,7 @@ form of an initial parameter called "ctx" visible in the help for the function::
     >>> import mpmath
     >>> help(mpmath.fsum)   # doctest:+SKIP
     Help on method fsum in module mpmath.ctx_mp_python:
-    
+
     fsum(ctx, terms, absolute=False, squared=False) method of mpmath.ctx_mp.MPContext instance
         Calculates a sum containing a finite number of terms (for infinite
         series, see :func:`~mpmath.nsum`). The terms will be converted to
@@ -23,7 +23,6 @@ form of an initial parameter called "ctx" visible in the help for the function::
 
 The following operations are equivalent::
 
-    >>> mpmath.mp.dps = 15; mpmath.mp.pretty = False
     >>> mpmath.fsum([1,2,3])
     mpf('6.0')
     >>> mpmath.mp.fsum([1,2,3])
@@ -100,7 +99,6 @@ Common interface
     [1.0  0.0]
     [0.0  1.0]
     >>> fp.pretty = False
-    >>> mp.pretty = False
 
 
 Arbitrary-precision floating-point (``mp``)
@@ -125,7 +123,6 @@ Interval arithmetic provides rigorous error tracking. If `f` is a mathematical f
 Intervals can be created from single numbers (treated as zero-width intervals) or pairs of endpoint numbers. Strings are treated as exact decimal numbers. Note that a Python float like ``0.1`` generally does not represent the same number as its literal; use ``'0.1'`` instead::
 
     >>> from mpmath import iv
-    >>> iv.dps = 15; iv.pretty = False
     >>> iv.mpf(3)
     mpi('3.0', '3.0')
     >>> print(iv.mpf(3))

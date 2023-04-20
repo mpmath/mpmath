@@ -928,7 +928,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
     **Examples**
 
         >>> from mpmath import *
-        >>> mp.pretty = True; mp.dps = 15
+        >>> mp.pretty = True
         >>> secondzeta(2)
         0.023104993115419
         >>> xi = lambda s: 0.5*s*(s-1)*pi**(-0.5*s)*gamma(0.5*s)*zeta(s)

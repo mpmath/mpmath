@@ -467,7 +467,7 @@ class QuadratureMethods:
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> mp.pretty = True
             >>> quad(sin, [0, pi])
             2.0
 
@@ -555,7 +555,6 @@ class QuadratureMethods:
         (`\int 1/(1+x^2) = \tan^{-1} x`), and the Gaussian integral
         `\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}`::
 
-            >>> mp.dps = 15
             >>> quad(lambda x: 2/(x**2+1), [0, inf])
             3.14159265358979
             >>> quad(lambda x: exp(-x**2), [-inf, inf])**2
@@ -843,7 +842,7 @@ class QuadratureMethods:
         Below is an example of each::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
             >>> quadosc(f, [0,inf], omega=3)
             0.37833007080198
@@ -1016,7 +1015,7 @@ class QuadratureMethods:
         :func:`~mpmath.quad` fails::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> mp.pretty = True
             >>> quad(lambda x: abs(sin(x)), [0, 2*pi])
             3.99900894176779
             >>> quadsubdiv(lambda x: abs(sin(x)), [0, 2*pi])

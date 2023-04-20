@@ -14,7 +14,6 @@ The most basic way to create one is to use the ``matrix`` class directly. You
 can create an empty matrix specifying the dimensions::
 
     >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
     >>> matrix(2)
     matrix(
     [['0.0', '0.0'],

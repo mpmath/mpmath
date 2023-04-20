@@ -367,7 +367,6 @@ class levin_class:
     First we sum the zeta function::
 
         >>> from mpmath import mp
-        >>> mp.prec = 53
         >>> eps = mp.mpf(mp.eps)
         >>> with mp.extraprec(2 * mp.prec): # levin needs a high working precision
         ...     L = mp.levin(method = "levin", variant = "u")
@@ -1264,7 +1263,7 @@ def nsum(ctx, f, *intervals, **options):
     are::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> nsum(lambda n: 1/fac(n), [0, inf])
         2.71828182845905
         >>> nsum(lambda n: 1/n**2, [1, inf])

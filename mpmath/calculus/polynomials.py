@@ -61,7 +61,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
     Finding the three real roots of `x^3 - x^2 - 14x + 24`::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]
 

@@ -481,7 +481,7 @@ def nzeros(ctx, t):
     The first zero has imaginary part between 14 and 15::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> nzeros(14)
         0
         >>> nzeros(15)
@@ -553,7 +553,7 @@ def backlunds(ctx, t):
     **Examples**
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> backlunds(217.3)
         0.16302205431184
 
