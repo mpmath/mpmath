@@ -454,6 +454,8 @@ class _matrix:
                     raise IndexError('Row index out of bounds')
             else:
                 # Single row
+                if key[0] >= self.__rows:
+                    raise IndexError('Row index out of bounds')
                 rows = [key[0]]
 
             # Columns
@@ -468,6 +470,8 @@ class _matrix:
 
             else:
                 # Single column
+                if key[1] >= self.__cols:
+                    raise IndexError('Column index out of bounds')
                 columns = [key[1]]
 
             # Create matrix slice
