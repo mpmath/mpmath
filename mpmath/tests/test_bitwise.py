@@ -135,7 +135,6 @@ def test_add_exact():
     assert mpf_add(fzero, fzero) == fzero
 
 def test_long_exponent_shifts():
-    mp.dps = 15
     # Check for possible bugs due to exponent arithmetic overflow
     # in a C implementation
     x = mpf(1)
@@ -185,4 +184,3 @@ def test_float_rounding():
             fa = to_float(x._mpf_, rnd=rnd)
             fb = to_float(fadd(x,0,prec=53,rounding=rnd)._mpf_, rnd=rnd)
             assert fa == fb
-    mp.prec = 53

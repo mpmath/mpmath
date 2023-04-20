@@ -2,7 +2,6 @@ from mpmath import *
 from mpmath.libmp import *
 
 def test_trig_misc_hard():
-    mp.prec = 53
     # Worst-case input for an IEEE double, from a paper by Kahan
     x = ldexp(6381956970095103,797)
     assert cos(x) == mpf('-4.6871659242546277e-19')
@@ -28,8 +27,6 @@ def test_trig_misc_hard():
     assert tan(-1e-6j).ae(-9.9999999999966644e-007j, rel_eps=2e-15, abs_eps=0)
 
 def test_trig_near_zero():
-    mp.dps = 15
-
     for r in [round_nearest, round_down, round_up, round_floor, round_ceiling]:
         assert sin(0, rounding=r) == 0
         assert cos(0, rounding=r) == 1
@@ -61,8 +58,6 @@ def test_trig_near_zero():
 
 
 def test_trig_near_n_pi():
-
-    mp.dps = 15
     a = [n*pi for n in [1, 2, 6, 11, 100, 1001, 10000, 100001]]
     mp.dps = 135
     a.append(10**100 * pi)
@@ -132,5 +127,3 @@ def test_trig_near_n_pi():
     assert cos(a[6], rounding=r) == 1
     assert cos(a[7], rounding=r) > -1
     assert cos(a[8], rounding=r) == 1
-
-    mp.dps = 15
