@@ -156,7 +156,10 @@ class FPContext(StandardBaseContext):
 
     def mag(ctx, z):
         if z:
-            return ctx.frexp(abs(z))[1]
+            n, e = ctx.frexp(abs(z))
+            if e:
+                return e
+            return ctx.convert(n)
         return ctx.ninf
 
     def isint(ctx, z):
