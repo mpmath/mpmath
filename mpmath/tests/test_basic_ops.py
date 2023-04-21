@@ -101,7 +101,6 @@ def test_mixed_misc():
     assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
 
 def test_add_misc():
-    mp.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
@@ -148,7 +147,6 @@ def test_hash():
 
 # Advanced rounding test
 def test_add_rounding():
-    mp.dps = 15
     a = from_float(1e-50)
     assert mpf_sub(mpf_add(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
     assert mpf_sub(fone, a, 53, round_up) == fone
@@ -186,7 +184,6 @@ def test_arithmetic_functions():
                     assert fop(x, y, exact=True) == z0
                 assert fneg(fneg(z1, exact=True), prec=inf) == z1
                 assert fneg(z1) == -(+z1)
-    mp.dps = 15
 
 def test_exact_integer_arithmetic():
     # XXX: re-fix this so that all operations are tested with all rounding modes
@@ -209,7 +206,6 @@ def test_exact_integer_arithmetic():
                 b = random.randint(-M2, M2)
                 assert mpf(a) * mpf(b) == a*b
                 assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
-    mp.dps = 15
 
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
@@ -219,14 +215,12 @@ def test_str_1000_digits():
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
     assert str(pi)[-10:-1] == '2164201989'[:9]
-    mp.dps = 15
 
 def test_str_10000_digits():
     mp.dps = 10001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
-    mp.dps = 15
 
 def test_monitor():
     f = lambda x: x**2
@@ -259,7 +253,6 @@ def test_nint_distance():
     assert nint_distance(mpf('1e-100')) == (0, -332)
 
 def test_floor_ceil_nint_frac():
-    mp.dps = 15
     for n in range(-10,10):
         assert floor(n) == n
         assert floor(n+0.5) == n

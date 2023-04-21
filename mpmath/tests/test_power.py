@@ -4,7 +4,6 @@ from mpmath.libmp import *
 import random
 
 def test_fractional_pow():
-    mp.dps = 15
     assert mpf(16) ** 2.5 == 1024
     assert mpf(64) ** 0.5 == 8
     assert mpf(64) ** -0.5 == 0.125
@@ -152,5 +151,3 @@ def test_pow_epsilon_rounding():
         assert powr(pos09999, -6, r) == 1
         assert powr(neg10001, -6, r) < 1
         assert powr(neg09999, -6, r) == 1
-
-    mp.dps = 15

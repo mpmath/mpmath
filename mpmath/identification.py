@@ -32,7 +32,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     Find rational approximations for `\pi`::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> pslq([-1, pi], tol=0.01)
         [22, 7]
         >>> pslq([-1, pi], tol=0.001)
@@ -330,7 +330,7 @@ def findpoly(ctx, x, n=1, **kwargs):
     polynomial with a rational root::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> findpoly(0.7)
         [-10, 7]
 
@@ -375,7 +375,6 @@ def findpoly(ctx, x, n=1, **kwargs):
     We can verify that `\pi` is not an algebraic number of degree 3 with
     coefficients less than 1000::
 
-        >>> mp.dps = 15
         >>> findpoly(pi, 3)
         >>>
 
@@ -388,7 +387,6 @@ def findpoly(ctx, x, n=1, **kwargs):
 
     One example of each method is shown below::
 
-        >>> mp.dps = 15
         >>> findpoly(pi, 4)
         [95, -545, 863, -183, -298]
         >>> findpoly(pi, 3, maxcoeff=10000)
@@ -540,7 +538,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     formula for the golden ratio::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> identify(phi)
         '((1+sqrt(5))/2)'
 
@@ -573,7 +571,6 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     precision. Here the default recognition of rational, algebraic,
     and exp/log of algebraic numbers is demonstrated::
 
-        >>> mp.dps = 15
         >>> identify(0.22222222222222222)
         '(2/9)'
         >>> identify(1.9662210973805663)

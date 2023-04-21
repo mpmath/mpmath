@@ -60,7 +60,7 @@ def chebyfit(ctx, f, interval, N, error=False):
     of `f(x) = \cos(x)`, valid on the interval `[1, 2]`::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> poly, err = chebyfit(cos, [1, 2], 5, error=True)
         >>> nprint(poly)
         [0.00291682, 0.146166, -0.732491, 0.174141, 0.949553]
@@ -162,7 +162,7 @@ def fourier(ctx, f, interval, N):
     rational numbers::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> c, s = fourier(lambda x: x, [-pi, pi], 5)
         >>> nprint(c)
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

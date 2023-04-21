@@ -765,7 +765,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import diag, mp
-        >>> mp.pretty = False
         >>> diag([1, 2, 3])
         matrix(
         [['1.0', '0.0', '0.0'],
@@ -784,7 +783,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import zeros, mp
-        >>> mp.pretty = False
         >>> zeros(2)
         matrix(
         [['0.0', '0.0'],
@@ -810,7 +808,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import ones, mp
-        >>> mp.pretty = False
         >>> ones(2)
         matrix(
         [['1.0', '1.0'],
@@ -919,7 +916,6 @@ class MatrixMethods:
         **Examples**
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> x = matrix([-10, 2, 100])
             >>> norm(x, 1)
             mpf('112.0')
@@ -975,7 +971,6 @@ class MatrixMethods:
         **Examples**
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> A = matrix([[1, -1000], [100, 50]])
             >>> mnorm(A, 1)
             mpf('1050.0')

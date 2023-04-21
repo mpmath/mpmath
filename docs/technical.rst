@@ -95,10 +95,9 @@ More precisely, mpmath uses the following formulas to translate between *prec* a
 
 Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This is done to hide minor rounding errors and artifacts resulting from binary-decimal conversion. As a result, mpmath interprets 53 bits as giving 15 digits of decimal precision, not 16.
 
-The *dps* value controls the number of digits to display when printing numbers with :func:`str`, while the decimal precision used by :func:`repr` is set two or three digits higher. For example, with 15 dps we have::
+The *dps* value controls the number of digits to display when printing numbers with :func:`str`, while the decimal precision used by :func:`repr` is set two or three digits higher. For example, with (default) 15 dps we have::
 
     >>> from mpmath import *
-    >>> mp.dps = 15
     >>> str(pi)
     '3.14159265358979'
     >>> repr(+pi)

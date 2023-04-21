@@ -130,7 +130,6 @@ class StandardBaseContext(Context,
         single number or an iterable::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> chop(5+1e-10j, tol=1e-9)
             mpf('5.0')
             >>> nprint(chop([1.0, 1e-20, 3+1e-18j, -4, 2]))
@@ -179,7 +178,6 @@ class StandardBaseContext(Context,
         **Examples**
 
             >>> from mpmath import *
-            >>> mp.dps = 15
             >>> almosteq(3.141592653589793, 3.141592653589790)
             True
             >>> almosteq(3.141592653589793, 3.141592653589700)
@@ -233,7 +231,6 @@ class StandardBaseContext(Context,
         **Examples**
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> arange(4)
             [mpf('0.0'), mpf('1.0'), mpf('2.0'), mpf('3.0')]
             >>> arange(1, 2, 0.25)
@@ -294,7 +291,6 @@ class StandardBaseContext(Context,
         the endpoint is included::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> linspace(1, 4, 4)
             [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
 
@@ -440,7 +436,6 @@ class StandardBaseContext(Context,
         has been called more than *N* times::
 
             >>> from mpmath import *
-            >>> mp.dps = 15
             >>> f = maxcalls(sin, 10)
             >>> print(sum(f(n) for n in range(10)))
             1.95520948210738
@@ -465,7 +460,7 @@ class StandardBaseContext(Context,
         is equal to or higher than the working precision::
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> mp.pretty = True
             >>> f = memoize(maxcalls(sin, 1))
             >>> f(2)
             0.909297426825682

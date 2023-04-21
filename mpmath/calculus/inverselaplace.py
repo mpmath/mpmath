@@ -700,7 +700,7 @@ class LaplaceTransformInversionMethods:
             f(t) = t e^{-t}
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> tt = [0.001, 0.01, 0.1, 1, 10]
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)

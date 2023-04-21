@@ -5,7 +5,6 @@ from mpmath.calculus.optimization import Secant, Muller, Bisection, Illinois, \
 
 def test_findroot():
     # old tests, assuming secant
-    mp.dps = 15
     assert findroot(lambda x: 4*x-3, mpf(5)).ae(0.75)
     assert findroot(sin, mpf(3)).ae(pi)
     assert findroot(sin, (mpf(3), mpf(3.14))).ae(pi)

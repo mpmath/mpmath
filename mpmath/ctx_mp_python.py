@@ -632,7 +632,6 @@ class PythonMPContext:
         numbers are permitted.
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> mpmathify(3.5)
             mpf('3.5')
             >>> mpmathify('2.1')
@@ -839,7 +838,6 @@ class PythonMPContext:
         Python function :func:`sum`.
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> fsum([1, 2, 0.5, 7])
             mpf('10.5')
 
@@ -912,7 +910,6 @@ class PythonMPContext:
         **Examples**
 
             >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
             >>> A = [2, 1.5, 3]
             >>> B = [1, -1, 2]
             >>> fdot(A, B)

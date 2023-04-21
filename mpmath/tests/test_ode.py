@@ -50,21 +50,18 @@ def test_ode2():
 '''
 
 def test_odefun_rational():
-    mp.dps = 15
     # A rational function
     f = lambda t: 1/(1+mpf(t)**2)
     g = odefun(lambda x, y: [-2*x*y[0]**2], 0, [f(0)])
     assert f(2).ae(g(2)[0])
 
 def test_odefun_sinc_large():
-    mp.dps = 15
     # Sinc function; test for large x
     f = sinc
     g = odefun(lambda x, y: [(cos(x)-y[0])/x], 1, [f(1)], tol=0.01, degree=5)
     assert abs(f(100) - g(100)[0])/f(100) < 0.01
 
 def test_odefun_harmonic():
-    mp.dps = 15
     # Harmonic oscillator
     f = odefun(lambda x, y: [-y[1], y[0]], 0, [1, 0])
     for x in [0, 1, 2.5, 8, 3.7]:    #  we go back to 3.7 to check caching

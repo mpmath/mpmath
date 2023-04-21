@@ -14,7 +14,6 @@ equation system::
 using ``lu_solve``::
 
     >>> from mpmath import *
-    >>> mp.pretty = False
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
     >>> x = lu_solve(A, b)
@@ -80,7 +79,6 @@ Matrices may contain interval elements. This allows one to perform
 basic linear algebra operations such as matrix multiplication
 and equation solving with rigorous error bounds::
 
-    >>> iv.prec = 53
     >>> a = iv.matrix([['0.1','0.3','1.0'],
     ...             ['7.1','5.5','4.8'],
     ...             ['3.2','4.4','5.6']])

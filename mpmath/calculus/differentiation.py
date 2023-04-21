@@ -71,7 +71,7 @@ def diff(ctx, f, x, n=1, **options):
     A few basic examples are::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> diff(lambda x: x**2 + x, 1.0)
         3.0
         >>> diff(lambda x: x**2 + x, 1.0, 2)
@@ -243,7 +243,6 @@ def diffs(ctx, f, x, n=None, **options):
     **Examples**
 
         >>> from mpmath import *
-        >>> mp.dps = 15
         >>> nprint(list(diffs(cos, 1, 5)))
         [0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]
         >>> for i, d in zip(range(6), diffs(cos, 1)):
@@ -320,7 +319,7 @@ def diffs_prod(ctx, factors):
     **Examples**
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> f = lambda x: exp(x)*cos(x)*sin(x)
         >>> u = diffs(f, 1)
         >>> v = mp.diffs_prod([diffs(exp,1), diffs(cos,1), diffs(sin,1)])
@@ -408,7 +407,7 @@ def diffs_exp(ctx, fdiffs):
     logarithmic differentiation::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>>
         >>> def diffs_loggamma(x):
         ...     yield loggamma(x)
@@ -476,7 +475,7 @@ def differint(ctx, f, x, n=1, x0=0):
     the following gives a half-derivative (order 0.5)::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> x = mpf(3); p = 2; n = 0.5
         >>> differint(lambda t: t**p, x, n)
         7.81764019044672
@@ -524,7 +523,7 @@ def diffun(ctx, f, n=1, **options):
     derivative `f^{(n)}(x)`::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> cos2 = diffun(sin)
         >>> sin2 = diffun(sin, 4)
         >>> cos(1.3), cos2(1.3)
@@ -549,7 +548,7 @@ def taylor(ctx, f, x, n, **options):
     given function `f`. The coefficients are returned as a list.
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> nprint(chop(taylor(sin, 0, 5)))
         [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333]
 
@@ -600,7 +599,7 @@ def pade(ctx, a, L, M):
     Ch.1A)::
 
         >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.pretty = True
         >>> one = mpf(1)
         >>> def f(x):
         ...     return sqrt((one + 2*x)/(one + x))
