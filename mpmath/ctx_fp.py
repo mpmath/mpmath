@@ -1,4 +1,6 @@
+import cmath
 import math
+import sys
 
 from . import function_docs, libmp, math2
 from .ctx_base import StandardBaseContext
@@ -35,10 +37,10 @@ class FPContext(StandardBaseContext):
 
     zero = 0.0
     one = 1.0
-    eps = math2.EPS
+    eps = sys.float_info.epsilon
     inf = math2.INF
-    ninf = math2.NINF
-    nan = math2.NAN
+    ninf = -math.inf
+    nan = math.nan
     j = 1j
 
     # Called by SpecialFunctions.__init__()
@@ -62,14 +64,14 @@ class FPContext(StandardBaseContext):
         return cache[n]
 
     pi = math2.pi
-    e = math2.e
+    e = math.e
     euler = math2.euler
     sqrt2 = 1.4142135623730950488
     sqrt5 = 2.2360679774997896964
     phi = 1.6180339887498948482
     ln2 = 0.69314718055994530942
     ln10 = 2.302585092994045684
-    euler = 0.57721566490153286061
+    euler = math2.euler
     catalan = 0.91596559417721901505
     khinchin = 2.6854520010653064453
     apery = 1.2020569031595942854
@@ -133,11 +135,7 @@ class FPContext(StandardBaseContext):
     _ei = staticmethod(math2.ei)
     _e1 = staticmethod(math2.e1)
     _zeta = _zeta_int = staticmethod(math2.zeta)
-
-    # XXX: math2
-    def arg(ctx, z):
-        z = complex(z)
-        return math.atan2(z.imag, z.real)
+    arg = staticmethod(cmath.phase)
 
     def expj(ctx, x):
         return ctx.exp(ctx.j*x)
@@ -202,8 +200,7 @@ class FPContext(StandardBaseContext):
             if k > maxterms:
                 raise ctx.NoConvergence
 
-    def atan2(ctx, x, y):
-        return math.atan2(x, y)
+    atan2 = staticmethod(math.atan2)
 
     def psi(ctx, m, z):
         m = int(m)
@@ -228,8 +225,8 @@ class FPContext(StandardBaseContext):
         import random
         return random.random()
 
-    _erf = staticmethod(math2.erf)
-    _erfc = staticmethod(math2.erfc)
+    _erf = staticmethod(math.erf)
+    _erfc = staticmethod(math.erfc)
 
     def sum_accurately(ctx, terms, check_step=1):
         s = ctx.zero

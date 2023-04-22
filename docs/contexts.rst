@@ -257,7 +257,7 @@ To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp
 
     >>> u = fp.erfc(2.5)
     >>> print(u)
-    0.000406952017444959
+    0.00040695201744495...
     >>> type(u)
     <class 'float'>
     >>> mp.dps = 15
