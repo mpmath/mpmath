@@ -510,7 +510,7 @@ The exponential function can be evaluated efficiently to arbitrary
 precision::
 
     >>> mp.dps = 10000
-    >>> exp(pi)  #doctest: +ELLIPSIS
+    >>> exp(pi)
     23.140692632779269005729...8984304016040616
 
 **Functional properties**

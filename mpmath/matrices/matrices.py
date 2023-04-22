@@ -165,7 +165,7 @@ class _matrix:
         matrix(
         [['3.0', '-2.0'],
          ['-2.0', '-5.0']])
-        >>> A + ones(3) # doctest:+ELLIPSIS
+        >>> A + ones(3)
         Traceback (most recent call last):
           ...
         ValueError: incompatible dimensions for addition

@@ -153,7 +153,7 @@ def diff(ctx, f, x, n=1, **options):
     With integration, the result may have a small imaginary part
     even even if the result is purely real::
 
-        >>> diff(sqrt, 1, method='quad')    # doctest:+ELLIPSIS
+        >>> diff(sqrt, 1, method='quad')
         (0.5 - 4.59...e-26j)
         >>> chop(_)
         0.5

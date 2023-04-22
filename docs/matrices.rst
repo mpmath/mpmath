@@ -178,7 +178,7 @@ You can add and subtract matrices of compatible dimensions::
     matrix(
     [['3.0', '-2.0'],
      ['-2.0', '-5.0']])
-    >>> A + ones(3) # doctest:+ELLIPSIS
+    >>> A + ones(3)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "...", line 238, in __add__

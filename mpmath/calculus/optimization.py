@@ -883,7 +883,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
     Be careful with symmetric functions::
 
-        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
+        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson')
         Traceback (most recent call last):
           ...
         ZeroDivisionError

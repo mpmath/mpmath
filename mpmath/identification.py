@@ -654,7 +654,6 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
         >>> for p in identify(pi, ['e', 'catalan'], tol=1e-5, full=True):
         ...     print(p)
-        ...  # doctest: +ELLIPSIS
         e/log((6 + (-4/3)*e))
         (3**3*5*e*catalan**2)/(2*7**2)
         sqrt(((-13) + 1*e + 22*catalan))

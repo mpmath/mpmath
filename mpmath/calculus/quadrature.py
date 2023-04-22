@@ -572,7 +572,7 @@ class QuadratureMethods:
         One can just as well compute 1000 digits (output truncated)::
 
             >>> mp.dps = 1000
-            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])  #doctest:+ELLIPSIS
+            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
             3.141592653589793238462643383279502884...216420199
 
         Complex integrals are supported. The following computes
