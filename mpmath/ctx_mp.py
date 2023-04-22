@@ -6,16 +6,16 @@ operating with them.
 import functools
 import re
 
-from . import function_docs, libmp, rational
+from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
-from .libmp import (MPZ_ONE, ComplexResult, bitcount, dps_to_prec, finf, fnan,
-                    fninf, fone, from_rational, fzero, int_types, mpc_add,
-                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul, mpc_mul_mpf,
-                    mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str, mpf_add,
-                    mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
-                    mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
-                    mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
-                    mpf_sub, mpf_twinprime, repr_dps, to_str)
+from .libmp import (MPQ, MPZ_ONE, ComplexResult, bitcount, dps_to_prec, finf,
+                    fnan, fninf, fone, from_rational, fzero, int_types,
+                    mpc_add, mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul,
+                    mpc_mul_mpf, mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str,
+                    mpf_add, mpf_apery, mpf_catalan, mpf_degree, mpf_div,
+                    mpf_e, mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2,
+                    mpf_ln10, mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi,
+                    mpf_rand, mpf_sub, mpf_twinprime, repr_dps, to_str)
 from .libmp.backend import BACKEND
 
 
@@ -41,11 +41,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.trap_complex = False
         ctx.pretty = False
         ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
-        ctx._mpq = rational.mpq
+        ctx._mpq = MPQ
         ctx.default()
         StandardBaseContext.__init__(ctx)
 
-        ctx.mpq = rational.mpq
+        ctx.mpq = MPQ
         ctx.init_builtins()
 
         ctx.hyp_summators = {}
@@ -300,7 +300,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return x._mpf_ == fnan
         if hasattr(x, "_mpc_"):
             return fnan in x._mpc_
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, int_types) or isinstance(x, MPQ):
             return False
         x = ctx.convert(x)
         if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
@@ -346,8 +346,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return not x.imag and ctx.isnpint(x.real)
         if type(x) in int_types:
             return x <= 0
-        if isinstance(x, ctx.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             if not p:
                 return True
             return q == 1 and p <= 0
@@ -1102,8 +1102,8 @@ maxterms, or set zeroprec."""
         typx = type(x)
         if typx in int_types:
             return int(x), ctx.ninf
-        elif typx is rational.mpq:
-            p, q = x._mpq_
+        elif typx is MPQ:
+            p, q = x.numerator, x.denominator
             n, r = divmod(p, q)
             if 2*r >= q:
                 n += 1

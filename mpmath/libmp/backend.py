@@ -1,3 +1,4 @@
+from fractions import Fraction
 import os
 import sys
 
@@ -23,6 +24,7 @@ sage = None
 sage_utils = None
 BACKEND = 'python'
 MPZ = int
+MPQ = Fraction
 HASH_MODULUS = sys.hash_info.modulus
 HASH_BITS = 31 if sys.hash_info.width == 32 else 61
 
@@ -32,6 +34,7 @@ if 'MPMATH_NOGMPY' not in os.environ:
         import gmpy2 as gmpy
         BACKEND = 'gmpy'
         MPZ = gmpy.mpz
+        MPQ = gmpy.mpq
     except ImportError:
         pass
 
@@ -44,6 +47,7 @@ if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
         sage_utils = _sage_utils
         BACKEND = 'sage'
         MPZ = sage.Integer
+        MPQ = lambda x, y=1: sage.Rational((x, y))
     except:
         pass
 

@@ -6,10 +6,9 @@ import pytest
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
                     nan, ninf, nint, nint_distance, pi)
-from mpmath.libmp import (finf, fnan, fninf, fone, from_float, from_int,
+from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
                           from_str, mpf_add, mpf_mul, mpf_sub, round_down,
                           round_nearest, round_up, to_int)
-from mpmath.rational import mpq
 
 
 def test_type_compare():
@@ -187,7 +186,7 @@ def test_hash():
     assert hash(mp.mpq(5,1)) == hash(5)
     assert hash(mp.mpq(1,2)) == hash(0.5)
     assert hash(mpf(1)*2**2000) == hash(2**2000)
-    assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
+    assert hash(mpf(1)/2**2000) == hash(MPQ(1,2**2000))
 
 # Advanced rounding test
 def test_add_rounding():
@@ -382,8 +381,8 @@ def test_isnan_etc():
     assert isnan(mpc(2, 2)) is False
     assert isnan(mpc(nan, inf)) is True
     assert isnan(mpc(inf, inf)) is False
-    assert isnan(mpq((3, 2))) is False
-    assert isnan(mpq((0, 1))) is False
+    assert isnan(MPQ(3, 2)) is False
+    assert isnan(MPQ(0, 1)) is False
     assert isinf(inf) is True
     assert isinf(-inf) is True
     assert isinf(3) is False
@@ -396,8 +395,8 @@ def test_isnan_etc():
     assert isinf(mpc(nan, inf)) is True
     assert isinf(mpc(inf, nan)) is True
     assert isinf(mpc(nan, nan)) is False
-    assert isinf(mpq((3, 2))) is False
-    assert isinf(mpq((0, 1))) is False
+    assert isinf(MPQ(3, 2)) is False
+    assert isinf(MPQ(0, 1)) is False
     pytest.raises(TypeError, lambda: isinf(object()))
     assert isnormal(3) is True
     assert isnormal(3.5) is True
@@ -426,8 +425,8 @@ def test_isnan_etc():
     assert isnormal(mpc(nan, inf)) is False
     assert isnormal(mpc(nan, nan)) is False
     assert isnormal(mpc(inf, inf)) is False
-    assert isnormal(mpq((3, 2))) is True
-    assert isnormal(mpq((0, 1))) is False
+    assert isnormal(MPQ(3, 2)) is True
+    assert isnormal(MPQ(0, 1)) is False
     pytest.raises(TypeError, lambda: isnormal(object()))
     assert isint(3) is True
     assert isint(0) is True
@@ -454,12 +453,12 @@ def test_isnan_etc():
     assert isint(3 + 4j) is False
     assert isint(3 + 4j, gaussian=True) is True
     assert isint(3 + 0j) is True
-    assert isint(mpq((3, 2))) is False
-    assert isint(mpq((3, 9))) is False
-    assert isint(mpq((9, 3))) is True
-    assert isint(mpq((0, 4))) is True
-    assert isint(mpq((1, 1))) is True
-    assert isint(mpq((-1, 1))) is True
+    assert isint(MPQ(3, 2)) is False
+    assert isint(MPQ(3, 9)) is False
+    assert isint(MPQ(9, 3)) is True
+    assert isint(MPQ(0, 4)) is True
+    assert isint(MPQ(1, 1)) is True
+    assert isint(MPQ(-1, 1)) is True
     pytest.raises(TypeError, lambda: isint(object()))
     assert mp.isnpint(0) is True
     assert mp.isnpint(1) is False
@@ -485,6 +484,6 @@ def test_issue_438():
 
 
 def test_ctx_mag():
-    assert mp.mag(mpq(1, 2)) == 0
-    assert mp.mag(mpq(2)) == 2
-    assert mp.mag(mpq(0)) == mpf('-inf')
+    assert mp.mag(MPQ(1, 2)) == 0
+    assert mp.mag(MPQ(2)) == 2
+    assert mp.mag(MPQ(0)) == mpf('-inf')

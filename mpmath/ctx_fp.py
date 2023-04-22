@@ -21,7 +21,7 @@ class FPContext(StandardBaseContext):
 
         ctx._init_aliases()
 
-    _mpq = lambda cls, x: float(x[0])/x[1]
+    _mpq = lambda cls, x, y: float(x)/y
 
     NoConvergence = libmp.NoConvergence
 
