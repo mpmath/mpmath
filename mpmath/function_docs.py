@@ -2879,7 +2879,7 @@ The optional ``maxterms`` (limiting the number of series terms) and ``maxprec``
 (limiting the internal precision) keyword arguments can be used
 to control evaluation::
 
-    >>> hyper([1,2,3], [4,5,6], 10000)              # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([1,2,3], [4,5,6], 10000)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2909,7 +2909,7 @@ gives only a few digits. Using Borel summation, ``hyper`` can produce
 a value with full accuracy::
 
     >>> mp.dps = 15
-    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)             # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2935,7 +2935,7 @@ This optimization can be disabled by passing ``eliminate=False``.
 
     >>> hyper([1,2,3], [4,5,3], 10000)
     1.268943190440206905892212e+4321
-    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)             # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.

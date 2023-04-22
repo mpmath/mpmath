@@ -478,7 +478,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         The following fails to converge because `\sin(\pi) = 0` whereas all
         finite-precision approximations of `\pi` give nonzero values::
 
-            >>> autoprec(sin)(pi) # doctest: +IGNORE_EXCEPTION_DETAIL
+            >>> autoprec(sin)(pi)
             Traceback (most recent call last):
               ...
             NoConvergence: autoprec: prec increased to 2910 without convergence
