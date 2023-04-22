@@ -303,10 +303,10 @@ and methods::
 
     >>> A = fp.matrix([[1, 2], [3, 4]])
     >>> b = fp.matrix([-10, 10])
-    >>> fp.lu_solve(A, b)  # doctest:+SKIP
+    >>> fp.lu_solve(A, b)
     matrix(
-    [['30.0'],
-     ['-20.0']])
+    [['29.999999999999996'],
+     ['-19.999999999999996']])
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
 such systems, so the residual is minimized instead. Internally this is done
@@ -414,7 +414,7 @@ Examples::
     >>> from mpmath import mp
     >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
     >>> Q, R = mp.schur(A)
-    >>> mp.nprint(R, 3) # doctest:+SKIP
+    >>> mp.nprint(R, 3)
     [2.0  0.417  -2.53]
     [0.0    4.0  -4.74]
     [0.0    0.0    9.0]

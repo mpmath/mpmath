@@ -208,7 +208,7 @@ def hessenberg(ctx, A, overwrite_a = False):
       >>> from mpmath import mp
       >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
       >>> Q, H = mp.hessenberg(A)
-      >>> mp.nprint(H, 3) # doctest:+SKIP
+      >>> mp.nprint(H, 3)
       [  3.15  2.23  4.44]
       [-0.769  4.85  3.05]
       [   0.0  3.61   7.0]
@@ -513,7 +513,7 @@ def schur(ctx, A, overwrite_a = False):
       >>> from mpmath import mp
       >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
       >>> Q, R = mp.schur(A)
-      >>> mp.nprint(R, 3) # doctest:+SKIP
+      >>> mp.nprint(R, 3)
       [2.0  0.417  -2.53]
       [0.0    4.0  -4.74]
       [0.0    0.0    9.0]
