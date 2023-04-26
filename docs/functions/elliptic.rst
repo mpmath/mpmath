@@ -1,7 +1,8 @@
 Elliptic functions
 ------------------
 
-.. automodule :: mpmath.functions.elliptic
+.. automodule:: mpmath.functions.elliptic
+   :no-index:
 
 
 Elliptic arguments
