@@ -893,3 +893,29 @@ def test_cyclotomic():
     assert cyclotomic(2,2.5) == 2.5+1
     assert cyclotomic(3,2.5) == 2.5**2 + 2.5 + 1
     assert cyclotomic(7,2.5) == 406.234375
+
+def test_mp_nan_in_args():
+    assert mp.isnan(mp.legendre(1.2, mp.nan))  # issue 485
+    assert mp.isnan(mp.hyp2f1(0.5, 0.5, 0.5, mp.nan))
+    assert mp.isnan(mp.hyp2f1(0.5, 2.2, 0.5, mp.nan))
+    assert mp.isnan(mp.hyp2f1(0.4, 2.2, 0.5, mp.nan))  # issue 479
+    assert mp.isnan(mp.chebyt(2.3, mp.nan))  # issue 478
+    assert mp.isnan(mp.chebyt(13, mp.nan))
+    assert mp.isnan(mp.chebyt(17, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 1, mp.nan))  # issue 507
+    assert mp.isnan(mp.hyp1f1(1, 1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 1.1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 3, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 4, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2, 1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 4, mp.nan))
+    assert mp.isnan(mp.hyp0f1(2.5, mp.nan))  # issue 489
+    assert mp.isnan(mp.hyp0f1(25, mp.nan))
+    assert mp.isnan(mp.hyp0f1(2513, mp.nan))
+    assert mp.isnan(mp.hyp0f1(.25, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2.5,2.2, mp.nan))  # issue 488
+    assert mp.isnan(mp.hyp1f1(1,2.2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1,2002.2, mp.nan))
