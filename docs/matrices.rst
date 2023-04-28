@@ -315,6 +315,7 @@ that that ``lu_solve`` will square the errors. If you can't afford this, use
 ``qr_solve`` instead. It is twice as slow but more accurate, and it calculates
 the residual automatically.
 
+.. autofunction:: mpmath.lu_solve
 
 Matrix factorization
 ....................
