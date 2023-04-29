@@ -920,3 +920,7 @@ def test_mp_nan_in_args():
     assert mp.isnan(mp.hyp1f1(1,2.2, mp.nan))
     assert mp.isnan(mp.hyp1f1(1,2002.2, mp.nan))
     assert mp.isnan(mp.hyp2f2(0.4, 2.5, 2.2, 0.7, mp.nan))  # issue 509
+    assert mp.isnan(mp.gegenbauer(0, 2.5, mp.nan))  # issue 508
+    assert mp.isnan(mp.gegenbauer(1, 2.5, mp.nan))
+    assert mp.isnan(mp.gegenbauer(2, 2.5, mp.nan))
+    assert mp.isnan(mp.gegenbauer(2, 5, mp.nan))
