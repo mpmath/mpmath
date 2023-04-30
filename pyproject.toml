@@ -1,0 +1,58 @@
+[build-system]
+requires = ['pip>=20.3', 'setuptools>=61,<67.3', 'wheel']
+build-backend = 'setuptools.build_meta'
+[project]
+name = 'mpmath'
+description = 'Python library for arbitrary-precision floating-point arithmetic'
+authors = [{name = 'Fredrik Johansson', email = 'fredrik.johansson@gmail.com'}]
+license = {text = 'BSD'}
+classifiers = ['License :: OSI Approved :: BSD License',
+               'Topic :: Scientific/Engineering :: Mathematics',
+               'Topic :: Software Development :: Libraries :: Python Modules',
+               'Programming Language :: Python',
+               'Programming Language :: Python :: 3',
+               'Programming Language :: Python :: 3 :: Only',
+               'Programming Language :: Python :: 3.8',
+               'Programming Language :: Python :: 3.9',
+               'Programming Language :: Python :: 3.10',
+               'Programming Language :: Python :: 3.11',
+               'Programming Language :: Python :: Implementation :: CPython',
+               'Programming Language :: Python :: Implementation :: PyPy']
+dynamic = ['version']
+requires-python = '>=3.8'
+[project.readme]
+file = 'README.rst'
+content-type = 'text/x-rst'
+[project.urls]
+Homepage = 'https://mpmath.org/'
+'Source Code' = 'https://github.com/mpmath/mpmath'
+'Bug Tracker' = 'https://github.com/mpmath/mpmath/issues'
+Documentation = 'http://mpmath.org/doc/current/'
+[project.optional-dependencies]
+tests = ['pytest>=6', 'numpy']
+develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
+           'pytest-cov', 'wheel', 'build']
+gmpy = ['gmpy2>=2.1.0a4; platform_python_implementation!="PyPy"']
+docs = ['sphinx']
+[tool.setuptools]
+zip-safe = true
+[tool.setuptools.dynamic]
+version = {attr = 'mpmath.__version__'}
+[tool.setuptools.packages]
+find = {namespaces = false}
+[tool.flake8]
+select = ['E101', 'E111', 'E112', 'E113', 'E703', 'E712', 'E713',
+          'W191', 'W291', 'W292', 'W293', 'W391']
+exclude = ['.eggs', '.git']
+[tool.pytest.ini_options]
+testpaths = ['mpmath', 'docs']
+doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL']
+addopts = "--doctest-modules --doctest-glob='*.rst'"
+norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
+[tool.coverage.run]
+branch = true
+omit = ['mpmath/tests/*']
+[tool.coverage.report]
+exclude_lines = ['pragma: no cover',
+                 'raise NotImplementedError',
+                 'return NotImplemented']
