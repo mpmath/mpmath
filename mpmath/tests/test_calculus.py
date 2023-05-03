@@ -1,5 +1,9 @@
 import pytest
-from mpmath import *
+
+from mpmath import (arange, chebyfit, cos, differint, e, euler, exp, fourier,
+                    fourierval, inf, invertlaplace, j, limit, log, matrix, mp,
+                    mpf, pade, pi, polyroots, polyval, sin, sqrt)
+
 
 def test_approximation():
     f = lambda x: cos(2-2*x)/x
