@@ -1,6 +1,8 @@
-from mpmath import *
-from random import seed, randint, random
 import math
+from random import randint, random, seed
+
+from mpmath import ceil, floor, mp, mpf
+
 
 # Test compatibility with Python floats, which are
 # IEEE doubles (53-bit)
