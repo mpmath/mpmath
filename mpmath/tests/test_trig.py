@@ -1,5 +1,7 @@
-from mpmath import *
-from mpmath.libmp import *
+from mpmath import cos, ldexp, mp, mpf, pi, sin, tan
+from mpmath.libmp import (round_ceiling, round_down, round_floor,
+                          round_nearest, round_up)
+
 
 def test_trig_misc_hard():
     # Worst-case input for an IEEE double, from a paper by Kahan
