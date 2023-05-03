@@ -1,4 +1,5 @@
-from mpmath import *
+from mpmath import inf, iv, mp, mpf, mpi, pi, sqrt
+
 
 def test_interval_identity():
     assert mpi(2) == mpi(2, 2)
