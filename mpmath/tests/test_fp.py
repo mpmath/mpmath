@@ -6,7 +6,7 @@ exp 2.25
 log 2.25
 '''
 
-from mpmath import *
+from mpmath import ae, fp, mp
 mp.dps = 20
 for test in cases.splitlines():
     if not test:
