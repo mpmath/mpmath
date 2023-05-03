@@ -4,8 +4,8 @@ high-precision input, from 5 to 200 digits. The reference values were
 verified with Mathematica.
 """
 
-import time
-from mpmath import *
+from mpmath import cos, e, euler, exp, log, mp, mpc, mpf, pi, sin, sqrt, tan
+
 
 precs = [5, 15, 28, 35, 57, 80, 100, 150, 200]
 
