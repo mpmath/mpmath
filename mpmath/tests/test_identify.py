@@ -1,4 +1,5 @@
-from mpmath import *
+from mpmath import e, exp, identify, log, mp, pi, pslq, zeta
+
 
 def test_pslq():
     assert pslq([3*pi+4*e/7, pi, e, log(2)]) == [7, -21, -4, 0]
