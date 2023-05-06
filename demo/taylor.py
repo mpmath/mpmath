@@ -6,7 +6,7 @@ This module can be run interactively with
     python taylor.py
 
 """
-from mpmath import *
+from mpmath import mpi, exp, factorial, mpf
 
 def taylor(x, n):
     print("-"*75)
