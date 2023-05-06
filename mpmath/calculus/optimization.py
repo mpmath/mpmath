@@ -748,7 +748,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     secant method by default. A simple example use of the secant method is to
     compute `\pi` as the root of `\sin x` closest to `x_0 = 3`::
 
-        >>> from mpmath import *
+        >>> from mpmath import (diff, gamma, findroot, sin, zeta, exp, log,
+        ...                     lambertw, mp, j)
         >>> mp.dps = 30; mp.pretty = True
         >>> findroot(sin, 3)
         3.14159265358979323846264338328
@@ -997,7 +998,7 @@ def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
     evaluating 10 derivatives by default. You can be specify the n-th derivative
     using the dnf keyword.
 
-    >>> from mpmath import *
+    >>> from mpmath import multiplicity, pi, sin
     >>> multiplicity(lambda x: sin(x) - 1, pi/2)
     2
 

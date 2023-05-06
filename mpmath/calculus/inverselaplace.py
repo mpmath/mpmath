@@ -699,7 +699,8 @@ class LaplaceTransformInversionMethods:
 
             f(t) = t e^{-t}
 
-        >>> from mpmath import *
+        >>> from mpmath import (besselj, euler, exp, invertlaplace, log,
+        ...                     mp, nstr, sinh, sqrt)
         >>> mp.pretty = True
         >>> tt = [0.001, 0.01, 0.1, 1, 10]
         >>> fp = lambda p: 1/(p+1)**2
