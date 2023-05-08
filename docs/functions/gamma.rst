@@ -21,7 +21,7 @@ The gamma and polygamma functions are closely related to :doc:`zeta`. See also :
 Factorials
 ..........
 
-:func:`~mpmath.factorial`/:func:`fac`
+:func:`~mpmath.factorial`/``fac()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.factorial(x, **kwargs)

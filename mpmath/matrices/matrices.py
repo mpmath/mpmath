@@ -165,7 +165,7 @@ class _matrix:
         matrix(
         [['3.0', '-2.0'],
          ['-2.0', '-5.0']])
-        >>> A + ones(3) # doctest:+ELLIPSIS
+        >>> A + ones(3)
         Traceback (most recent call last):
           ...
         ValueError: incompatible dimensions for addition
@@ -992,7 +992,3 @@ class MatrixMethods:
             return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

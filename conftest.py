@@ -1,4 +1,16 @@
+import os
+import sys
+
 import pytest
+
+import mpmath
+
+
+def pytest_report_header(config):
+    print("mpmath backend: %s" % mpmath.libmp.backend.BACKEND)
+    print("mpmath mp class: %s" % repr(mpmath.mp))
+    print("mpmath version: %s" % mpmath.__version__)
+    print("Python version: %s" % sys.version)
 
 
 def pytest_configure(config):

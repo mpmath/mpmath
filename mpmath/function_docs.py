@@ -427,7 +427,7 @@ Square root evaluation is fast at huge precision::
     >>> str(a)[-10:]
     '9329332815'
 
-:func:`mpmath.iv.sqrt` supports interval arguments::
+``mpmath.iv.sqrt()`` supports interval arguments::
 
     >>> iv.pretty = True
     >>> iv.sqrt([16,100])
@@ -498,7 +498,7 @@ Arguments can be arbitrarily large::
     1.135483865314736098540939e-4343
 
 Evaluation is supported for interval arguments via
-:func:`mpmath.iv.exp`::
+``mpmath.iv.exp()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.exp([-inf,0])
@@ -510,7 +510,7 @@ The exponential function can be evaluated efficiently to arbitrary
 precision::
 
     >>> mp.dps = 10000
-    >>> exp(pi)  #doctest: +ELLIPSIS
+    >>> exp(pi)
     23.140692632779269005729...8984304016040616
 
 **Functional properties**
@@ -656,7 +656,7 @@ Computes the cosine of `x`, `\cos(x)`.
     >>> nprint(chop(taylor(cos, 0, 6)))
     [1.0, 0.0, -0.5, 0.0, 0.0416667, 0.0, -0.00138889]
 
-Intervals are supported via :func:`mpmath.iv.cos`::
+Intervals are supported via ``mpmath.iv.cos()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.cos([0,1])
@@ -681,7 +681,7 @@ Computes the sine of `x`, `\sin(x)`.
     >>> nprint(chop(taylor(sin, 0, 6)))
     [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333, 0.0]
 
-Intervals are supported via :func:`mpmath.iv.sin`::
+Intervals are supported via ``mpmath.iv.sin()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.sin([0,1])
@@ -709,7 +709,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> nprint(chop(taylor(tan, 0, 6)))
     [0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]
 
-Intervals are supported via :func:`mpmath.iv.tan`::
+Intervals are supported via ``mpmath.iv.tan()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.tan([0,1])
@@ -737,7 +737,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> nprint(chop(taylor(sec, 0, 6)))
     [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]
 
-Intervals are supported via :func:`mpmath.iv.sec`::
+Intervals are supported via ``mpmath.iv.sec()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.sec([0,1])
@@ -764,7 +764,7 @@ arithmetic.
     >>> csc(inf)
     nan
 
-Intervals are supported via :func:`mpmath.iv.csc`::
+Intervals are supported via ``mpmath.iv.csc()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.csc([0,1])  # Interval includes a singularity
@@ -792,7 +792,7 @@ arithmetic.
     >>> cot(inf)
     nan
 
-Intervals are supported via :func:`mpmath.iv.cot`::
+Intervals are supported via ``mpmath.iv.cot()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.cot([0,1])  # Interval includes a singularity
@@ -1411,7 +1411,7 @@ Evaluation works for extremely tiny `y`::
 root = r"""
 ``root(z, n, k=0)`` computes an `n`-th root of `z`, i.e. returns a number
 `r` that (up to possible approximation error) satisfies `r^n = z`.
-(``nthroot`` is available as an alias for ``root``.)
+(``nthroot()`` is available as an alias for :func:`~mpmath.root`.)
 
 Every complex number `z \ne 0` has `n` distinct `n`-th roots, which are
 equidistant points on a circle with radius `|z|^{1/n}`, centered around the
@@ -1441,11 +1441,11 @@ the equivalent reciprocal for a non-principal root with `k \ne 0`) is computed.
 :func:`~mpmath.root` is implemented to use Newton's method for small
 `n`. At high precision, this makes `x^{1/n}` not much more
 expensive than the regular exponentiation, `x^n`. For very large
-`n`, :func:`~mpmath.nthroot` falls back to use the exponential function.
+`n`, :func:`~mpmath.root` falls back to use the exponential function.
 
 **Examples**
 
-:func:`~mpmath.nthroot`/:func:`~mpmath.root` is faster and more accurate than raising to a
+``nthroot()``/:func:`~mpmath.root` is faster and more accurate than raising to a
 floating-point fraction::
 
     >>> from mpmath import *
@@ -1733,7 +1733,7 @@ where `\phi` is the golden ratio. :func:`~mpmath.fibonacci` also uses this
 continuous formula to compute `F(n)` for extremely large `n`, where
 calculating the exact integer would be wasteful.
 
-For convenience, :func:`~mpmath.fib` is available as an alias for
+For convenience, ``fib()`` is available as an alias for
 :func:`~mpmath.fibonacci`.
 
 **Basic examples**
@@ -1967,7 +1967,7 @@ Stirling's formula::
     >>> sqrt(2*pi*x)*(x/e)**x
     2.32579597597705e+95657055186
 
-:func:`~mpmath.fac` supports evaluation for astronomically large values::
+:func:`~mpmath.factorial` supports evaluation for astronomically large values::
 
     >>> fac(10**30)
     6.22311232304258e+29565705518096748172348871081098
@@ -2879,7 +2879,7 @@ The optional ``maxterms`` (limiting the number of series terms) and ``maxprec``
 (limiting the internal precision) keyword arguments can be used
 to control evaluation::
 
-    >>> hyper([1,2,3], [4,5,6], 10000)              # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([1,2,3], [4,5,6], 10000)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2909,7 +2909,7 @@ gives only a few digits. Using Borel summation, ``hyper`` can produce
 a value with full accuracy::
 
     >>> mp.dps = 15
-    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)             # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([2,0.5,4], [5.25], '0.08', force_series=True)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -2935,7 +2935,7 @@ This optimization can be disabled by passing ``eliminate=False``.
 
     >>> hyper([1,2,3], [4,5,3], 10000)
     1.268943190440206905892212e+4321
-    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)             # doctest: +IGNORE_EXCEPTION_DETAIL
+    >>> hyper([1,2,3], [4,5,3], 10000, eliminate=False)
     Traceback (most recent call last):
       ...
     NoConvergence: Hypergeometric series converges too slowly. Try increasing maxterms.
@@ -3879,7 +3879,7 @@ function having identical mu and sigma::
 """
 
 expint = r"""
-:func:`~mpmath.expint(n,z)` gives the generalized exponential integral
+:func:`~mpmath.expint` gives the generalized exponential integral
 or En-function,
 
 .. math ::
@@ -9353,7 +9353,7 @@ in terms of Jacobi theta functions as
 
 or more generally computes a ratio of two such functions. Here
 `t = u/\vartheta_3(0,q)^2`, and `q = q(m)` denotes the nome (see
-:func:`~mpmath.nome`). Optionally, you can specify the nome directly
+``mpmath.functions.elliptic.nome()``). Optionally, you can specify the nome directly
 instead of `m` by passing ``q=<value>``, or you can directly
 specify the elliptic parameter `k` with ``k=<value>``.
 

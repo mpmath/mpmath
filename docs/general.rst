@@ -7,7 +7,7 @@ on numbers or aid general programming.
 Conversion and printing
 -----------------------
 
-:func:`~mpmath.mpmathify` / :func:`convert`
+:func:`~mpmath.mpmathify` / ``convert()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.mpmathify(x, strings=True)
 

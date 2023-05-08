@@ -111,7 +111,7 @@ There is no restriction on the magnitude of numbers. An ``mpf`` can for example 
 
 Or why not 1 googolplex:
 
-    >>> print(mpf(10) ** (10**100))  # doctest:+ELLIPSIS
+    >>> print(mpf(10) ** (10**100))
     1.0e+100000000000000000000000000000000000000000000000000...
 
 The (binary) exponent is stored exactly and is independent of the precision.

@@ -883,7 +883,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
     Be careful with symmetric functions::
 
-        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
+        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson')
         Traceback (most recent call last):
           ...
         ZeroDivisionError
@@ -1093,7 +1093,3 @@ def steffensen(f):
 OptimizationMethods.jacobian = jacobian
 OptimizationMethods.findroot = findroot
 OptimizationMethods.multiplicity = multiplicity
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -38,7 +38,7 @@ result.
 
 If you need more speed, use NumPy, or ``fp.lu_solve`` for a floating-point computation.
 
-    >>> fp.lu_solve(A, b)   # doctest: +ELLIPSIS
+    >>> fp.lu_solve(A, b)
     matrix(...)
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve

@@ -25,7 +25,7 @@ Mpmath supports arbitrary-precision computation of various common (and less comm
 Exact constants
 ...............
 
-The predefined objects :data:`j` (imaginary unit), :data:`inf` (positive infinity) and :data:`nan` (not-a-number) are shortcuts to :class:`mpc` and :class:`mpf` instances with these fixed values.
+The predefined objects ``j`` (imaginary unit), ``inf`` (positive infinity) and ``nan`` (not-a-number) are shortcuts to ``mpc`` and ``mpf`` instances with these fixed values.
 
 Pi (``pi``)
 ....................................

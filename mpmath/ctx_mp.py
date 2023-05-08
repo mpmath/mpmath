@@ -478,7 +478,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         The following fails to converge because `\sin(\pi) = 0` whereas all
         finite-precision approximations of `\pi` give nonzero values::
 
-            >>> autoprec(sin)(pi) # doctest: +IGNORE_EXCEPTION_DETAIL
+            >>> autoprec(sin)(pi)
             Traceback (most recent call last):
               ...
             NoConvergence: autoprec: prec increased to 2910 without convergence
@@ -567,7 +567,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         instead of returning it.
 
         The keyword arguments *strip_zeros*, *min_fixed*, *max_fixed*
-        and *show_zero_exponent* are forwarded to :func:`~mpmath.libmp.to_str`.
+        and *show_zero_exponent* are forwarded to ``mpmath.libmp.to_str()``.
 
         The number will be printed in fixed-point format if the position
         of the leading digit is strictly between min_fixed
@@ -1313,8 +1313,3 @@ class PrecisionManager:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.ctx.prec = self.origp
         return False
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

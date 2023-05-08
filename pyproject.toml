@@ -46,8 +46,8 @@ select = ['E101', 'E111', 'E112', 'E113', 'E703', 'E712', 'E713',
 exclude = ['.eggs', '.git']
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
-doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL']
-addopts = "--doctest-modules --doctest-glob='*.rst'"
+doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
+addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
 [tool.coverage.run]
 branch = true

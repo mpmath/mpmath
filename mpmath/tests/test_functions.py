@@ -924,3 +924,8 @@ def test_mp_nan_in_args():
     assert mp.isnan(mp.gegenbauer(1, 2.5, mp.nan))
     assert mp.isnan(mp.gegenbauer(2, 2.5, mp.nan))
     assert mp.isnan(mp.gegenbauer(2, 5, mp.nan))
+    assert mp.isnan(mp.laguerre(0, 2.5, mp.nan))  # issue 506
+    assert mp.isnan(mp.laguerre(1, 2.5, mp.nan))
+    assert mp.isnan(mp.laguerre(1, 2.5345, mp.nan))
+    assert mp.isnan(mp.laguerre(2, 2, mp.nan))
+    assert mp.isnan(mp.laguerre(2, 5, mp.nan))

@@ -281,7 +281,3 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     return interpolant
 
 ODEMethods.odefun = odefun
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
