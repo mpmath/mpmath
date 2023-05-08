@@ -2,7 +2,7 @@ import cmath
 import math
 import sys
 
-from . import function_docs, libmp, math2
+from . import function_docs, libfp, libmp
 from .ctx_base import StandardBaseContext
 from .libmp import int_types, mpf_bernoulli, to_float
 
@@ -17,7 +17,7 @@ class FPContext(StandardBaseContext):
         StandardBaseContext.__init__(ctx)
 
         # Override SpecialFunctions implementation
-        ctx.loggamma = math2.loggamma
+        ctx.loggamma = libfp.loggamma
         ctx._bernoulli_cache = {}
         ctx.pretty = False
 
@@ -38,7 +38,7 @@ class FPContext(StandardBaseContext):
     zero = 0.0
     one = 1.0
     eps = sys.float_info.epsilon
-    inf = math2.INF
+    inf = libfp.INF
     ninf = -math.inf
     nan = math.nan
     j = 1j
@@ -63,15 +63,15 @@ class FPContext(StandardBaseContext):
         cache[n] = to_float(mpf_bernoulli(n, 53, 'n'), strict=True)
         return cache[n]
 
-    pi = math2.pi
+    pi = libfp.pi
     e = math.e
-    euler = math2.euler
+    euler = libfp.euler
     sqrt2 = 1.4142135623730950488
     sqrt5 = 2.2360679774997896964
     phi = 1.6180339887498948482
     ln2 = 0.69314718055994530942
     ln10 = 2.302585092994045684
-    euler = math2.euler
+    euler = libfp.euler
     catalan = 0.91596559417721901505
     khinchin = 2.6854520010653064453
     apery = 1.2020569031595942854
@@ -86,7 +86,7 @@ class FPContext(StandardBaseContext):
         return x != x
 
     def isinf(ctx, x):
-        return abs(x) == math2.INF
+        return abs(x) == libfp.INF
 
     def isnormal(ctx, x):
         if x:
@@ -109,32 +109,32 @@ class FPContext(StandardBaseContext):
         except:
             return complex(x)
 
-    power = staticmethod(math2.pow)
-    sqrt = staticmethod(math2.sqrt)
-    exp = staticmethod(math2.exp)
-    ln = log = staticmethod(math2.log)
-    cos = staticmethod(math2.cos)
-    sin = staticmethod(math2.sin)
-    tan = staticmethod(math2.tan)
-    cos_sin = staticmethod(math2.cos_sin)
-    acos = staticmethod(math2.acos)
-    asin = staticmethod(math2.asin)
-    atan = staticmethod(math2.atan)
-    cosh = staticmethod(math2.cosh)
-    sinh = staticmethod(math2.sinh)
-    tanh = staticmethod(math2.tanh)
-    gamma = staticmethod(math2.gamma)
-    rgamma = staticmethod(math2.rgamma)
-    fac = factorial = staticmethod(math2.factorial)
-    floor = staticmethod(math2.floor)
-    ceil = staticmethod(math2.ceil)
-    cospi = staticmethod(math2.cospi)
-    sinpi = staticmethod(math2.sinpi)
-    cbrt = staticmethod(math2.cbrt)
-    _nthroot = staticmethod(math2.nthroot)
-    _ei = staticmethod(math2.ei)
-    _e1 = staticmethod(math2.e1)
-    _zeta = _zeta_int = staticmethod(math2.zeta)
+    power = staticmethod(libfp.pow)
+    sqrt = staticmethod(libfp.sqrt)
+    exp = staticmethod(libfp.exp)
+    ln = log = staticmethod(libfp.log)
+    cos = staticmethod(libfp.cos)
+    sin = staticmethod(libfp.sin)
+    tan = staticmethod(libfp.tan)
+    cos_sin = staticmethod(libfp.cos_sin)
+    acos = staticmethod(libfp.acos)
+    asin = staticmethod(libfp.asin)
+    atan = staticmethod(libfp.atan)
+    cosh = staticmethod(libfp.cosh)
+    sinh = staticmethod(libfp.sinh)
+    tanh = staticmethod(libfp.tanh)
+    gamma = staticmethod(libfp.gamma)
+    rgamma = staticmethod(libfp.rgamma)
+    fac = factorial = staticmethod(libfp.factorial)
+    floor = staticmethod(libfp.floor)
+    ceil = staticmethod(libfp.ceil)
+    cospi = staticmethod(libfp.cospi)
+    sinpi = staticmethod(libfp.sinpi)
+    cbrt = staticmethod(libfp.cbrt)
+    _nthroot = staticmethod(libfp.nthroot)
+    _ei = staticmethod(libfp.ei)
+    _e1 = staticmethod(libfp.e1)
+    _zeta = _zeta_int = staticmethod(libfp.zeta)
     arg = staticmethod(cmath.phase)
 
     def expj(ctx, x):
@@ -208,7 +208,7 @@ class FPContext(StandardBaseContext):
             return ctx.digamma(z)
         return (-1)**(m+1) * ctx.fac(m) * ctx.zeta(m+1, z)
 
-    digamma = staticmethod(math2.digamma)
+    digamma = staticmethod(libfp.digamma)
 
     def harmonic(ctx, x):
         x = ctx.convert(x)
