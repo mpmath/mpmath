@@ -13,7 +13,8 @@ stored, so it is cheap to represent sparse matrices.
 The most basic way to create one is to use the ``matrix`` class directly. You
 can create an empty matrix specifying the dimensions::
 
-    >>> from mpmath import *
+    >>> from mpmath import (matrix, ones, zeros, randmatrix, nprint, chop, iv,
+    ...                     lu_solve, residual, fp, lu, diag, eye, eps, qr)
     >>> matrix(2)
     matrix(
     [['0.0', '0.0'],
