@@ -297,6 +297,12 @@ def sqrtrem_python(x):
 
 def isqrt_python(x):
     """Integer square root with correct (floor) rounding."""
+    # Due to an implementation problem with `math.isqrt`,
+    # the speed is reversed around about 2**55000.
+    # Python 3.12 will resolve this, so we assume that in
+    # the future we will just call `math.isqrt`.
+    if x.bit_length() < 55000:
+        return math.isqrt(x)
     return sqrtrem_python(x)[0]
 
 def sqrt_fixed(x, prec):
