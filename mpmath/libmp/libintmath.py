@@ -306,6 +306,7 @@ elif BACKEND == 'sage':
     isqrt_small = isqrt_fast = isqrt = \
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
+    _gcd2 = sage.gcd
 else:
     if sys.version_info >= (3, 12):
         isqrt_small = isqrt_fast = isqrt = math.isqrt
@@ -314,6 +315,21 @@ else:
         isqrt_fast = isqrt_fast_python
         isqrt = isqrt_python
     sqrtrem = sqrtrem_python
+    _gcd2 = math.gcd
+
+
+if sys.version_info >= (3, 9) and BACKEND == 'python':
+    gcd = math.gcd
+elif BACKEND == 'gmpy':
+    gcd = gmpy.gcd
+else:
+    def gcd(*args):
+        res = MPZ_ZERO
+        for a in args:
+            a = MPZ(a)
+            if res != MPZ_ONE:
+                res = _gcd2(res, a)
+        return res
 
 
 def ifib(n, _cache={}):
@@ -461,16 +477,6 @@ def moebius(n):
             if not sum(p % f for f in factors):
                 factors.append(p)
     return (-1)**len(factors)
-
-def gcd(*args):
-    a = 0
-    for b in args:
-        if a:
-            while b:
-                a, b = b, a % b
-        else:
-            a = b
-    return a
 
 
 #  Comment by Juan Arias de Reyna:
