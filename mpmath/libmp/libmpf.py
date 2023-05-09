@@ -43,17 +43,12 @@ def from_pickable(x):
 class ComplexResult(ValueError):
     pass
 
-try:
-    intern
-except NameError:
-    intern = lambda x: x
-
 # All supported rounding modes
-round_nearest = intern('n')
-round_floor = intern('f')
-round_ceiling = intern('c')
-round_up = intern('u')
-round_down = intern('d')
+round_nearest = sys.intern('n')
+round_floor = sys.intern('f')
+round_ceiling = sys.intern('c')
+round_up = sys.intern('u')
+round_down = sys.intern('d')
 round_fast = round_down
 
 def prec_to_dps(n):
