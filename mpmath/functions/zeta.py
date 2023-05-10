@@ -285,20 +285,18 @@ def primezeta(ctx, s):
 
 @defun_wrapped
 def bernpoly(ctx, n, z):
-    # Slow implementation:
-    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*z**(n-k) for k in range(0,n+1))
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
-    if z == 0 or (z == 1 and n > 1):
-        return ctx.bernoulli(n)
-    if z == 0.5:
-        return (ctx.ldexp(1,1-n)-1)*ctx.bernoulli(n)
     if n <= 3:
         if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return (6*z*(z-1)+1)/6
         if n == 3: return z*(z*(z-1.5)+0.5)
+    if z == 0 or z == 1:
+        return ctx.bernoulli(n)
+    if z == 0.5:
+        return (ctx.ldexp(1,1-n)-1)*ctx.bernoulli(n)
     if ctx.isinf(z):
         return z ** n
     if ctx.isnan(z):
@@ -308,10 +306,12 @@ def bernpoly(ctx, n, z):
             t = ctx.one
             yield t
             r = ctx.one/z
-            k = 1
+            t = t*n*r
+            yield -t/2
+            k = 2
             while k <= n:
                 t = t*(n+1-k)/k*r
-                if not (k > 2 and k & 1):
+                if not k & 1:
                     yield t*ctx.bernoulli(k)
                 k += 1
         return ctx.sum_accurately(terms) * z**n
@@ -320,12 +320,16 @@ def bernpoly(ctx, n, z):
             yield ctx.bernoulli(n)
             t = ctx.one
             k = 1
-            while k <= n:
+            while k < n - 1:
                 t = t*(n+1-k)/k * z
                 m = n-k
-                if not (m > 2 and m & 1):
+                if not m & 1:
                     yield t*ctx.bernoulli(m)
                 k += 1
+            t = t*2/(n-1)*z
+            yield -t/2
+            t = t/n*z
+            yield t
         return ctx.sum_accurately(terms)
 
 @defun_wrapped
@@ -359,13 +363,14 @@ def eulerpoly(ctx, n, z):
         w = ctx.ldexp(1,n+2)
         while 1:
             v = n-k+1
-            if not (v > 2 and v & 1):
+            if not v & 1:
                 yield (2-w)*ctx.bernoulli(v)*t
             k += 1
-            if k > n:
-                break
             t = t*z*(n-k+2)/k
             w *= 0.5
+            if k >= n:
+                break
+        yield -(2-w)*t/2
     return ctx.sum_accurately(terms) / m
 
 @defun
