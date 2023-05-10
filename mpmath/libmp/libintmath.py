@@ -7,6 +7,7 @@ here from settings.py
 """
 
 import math
+import sys
 from bisect import bisect
 
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
@@ -306,9 +307,12 @@ elif BACKEND == 'sage':
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
 else:
-    isqrt_small = isqrt_small_python
-    isqrt_fast = isqrt_fast_python
-    isqrt = isqrt_python
+    if sys.version_info >= (3, 12):
+        isqrt_small = isqrt_fast = isqrt = math.isqrt
+    else:
+        isqrt_small = isqrt_small_python
+        isqrt_fast = isqrt_fast_python
+        isqrt = isqrt_python
     sqrtrem = sqrtrem_python
 
 
