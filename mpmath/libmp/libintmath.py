@@ -7,6 +7,7 @@ here from settings.py
 """
 
 import math
+import sys
 from bisect import bisect
 
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
@@ -297,12 +298,6 @@ def sqrtrem_python(x):
 
 def isqrt_python(x):
     """Integer square root with correct (floor) rounding."""
-    # Due to an implementation problem with `math.isqrt`,
-    # the speed is reversed around about 2**55000.
-    # Python 3.12 will resolve this, so we assume that in
-    # the future we will just call `math.isqrt`.
-    if x.bit_length() < 55000:
-        return math.isqrt(x)
     return sqrtrem_python(x)[0]
 
 def sqrt_fixed(x, prec):
@@ -322,9 +317,12 @@ elif BACKEND == 'sage':
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
 else:
-    isqrt_small = isqrt_small_python
-    isqrt_fast = isqrt_fast_python
-    isqrt = isqrt_python
+    if sys.version_info >= (3, 12):
+        isqrt_small = isqrt_fast = isqrt = math.isqrt
+    else:
+        isqrt_small = isqrt_small_python
+        isqrt_fast = isqrt_fast_python
+        isqrt = isqrt_python
     sqrtrem = sqrtrem_python
 
 
