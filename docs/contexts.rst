@@ -255,14 +255,14 @@ Although mpmath is generally designed for arbitrary-precision arithmetic, many o
 
 To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp.func`` instead of ``func`` or ``mp.func``::
 
-    >>> u = fp.erfc(2.5)
+    >>> u = fp.erfc(0.5)
     >>> print(u)
-    0.00040695201744495...
+    0.4795001221869535
     >>> type(u)
     <class 'float'>
-    >>> mp.dps = 15
-    >>> print(mp.erfc(2.5))
-    0.000406952017444959
+    >>> mp.dps = 16
+    >>> print(mp.erfc(0.5))
+    0.4795001221869535
     >>> fp.matrix([[1,2],[3,4]]) ** 2
     matrix(
     [['7.0', '10.0'],
