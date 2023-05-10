@@ -73,16 +73,10 @@ def python_trailing(n):
     return t + small_trailing[n & 0xff]
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).bit_scan1()
-            else: return 0
-    else:
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).scan1()
-            else: return 0
+    def gmpy_trailing(n):
+        """Count the number of trailing zero bits in abs(n) using gmpy."""
+        if n: return MPZ(n).bit_scan1()
+        else: return 0
 
 # Small powers of 2
 powers = [1<<_ for _ in range(300)]
@@ -305,12 +299,8 @@ def sqrt_fixed(x, prec):
 sqrt_fixed2 = sqrt_fixed
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
-        sqrtrem = gmpy.isqrt_rem
-    else:
-        isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
-        sqrtrem = gmpy.sqrtrem
+    isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
+    sqrtrem = gmpy.isqrt_rem
 elif BACKEND == 'sage':
     isqrt_small = isqrt_fast = isqrt = \
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
