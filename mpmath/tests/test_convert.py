@@ -41,6 +41,7 @@ def test_basic_string():
     assert str(mpf("-2163048125l")) == '-2163048125.0'
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
+    assert str(mpf('inf')) == '+inf'
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
@@ -60,14 +61,6 @@ def test_pretty():
 
 def test_str_whitespace():
     assert mpf('1.26 ') == 1.26
-
-def test_unicode():
-    try:
-        unicode = unicode
-    except NameError:
-        unicode = str
-    assert mpf(unicode('2.76')) == 2.76
-    assert mpf(unicode('inf')) == inf
 
 def test_str_format():
     assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'

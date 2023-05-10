@@ -1,14 +1,5 @@
-try:
-    from itertools import izip
-except ImportError:
-    izip = zip
-
 from .calculus import defun
 
-try:
-    next = next
-except NameError:
-    next = lambda _: _.next()
 
 @defun
 def richardson(ctx, seq):
@@ -1047,7 +1038,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
     try:
         ctx.prec += 10
         s = ctx.zero
-        for k, (da, db) in enumerate(izip(adiffs, bdiffs)):
+        for k, (da, db) in enumerate(zip(adiffs, bdiffs)):
             if k & 1:
                 term = (db-da) * ctx.bernoulli(k+1) / ctx.factorial(k+1)
                 mag = abs(term)
