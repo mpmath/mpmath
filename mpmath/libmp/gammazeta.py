@@ -494,7 +494,7 @@ def bernfrac(n):
 
     The first few Bernoulli numbers are exactly::
 
-        >>> from mpmath import *
+        >>> from mpmath import bernfrac, mp, mpf, bernoulli
         >>> for n in range(15):
         ...     p, q = bernfrac(n)
         ...     print("%s %s/%s" % (n, p, q))
@@ -517,6 +517,10 @@ def bernfrac(n):
 
     This function works for arbitrarily large `n`::
 
+        >>> import sys
+        >>> if hasattr(sys, 'set_int_max_str_digits'):
+        ...     sys.set_int_max_str_digits(30000)
+        >>> del sys
         >>> p, q = bernfrac(10**4)
         >>> print(q)
         2338224387510

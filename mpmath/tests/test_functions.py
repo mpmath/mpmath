@@ -1,9 +1,22 @@
-from mpmath.libmp import *
-from mpmath import *
-import random
-import time
-import math
 import cmath
+import math
+import random
+
+from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
+                    asech, asin, asinh, atan, atan2, atanh, catalan, cbrt,
+                    ceil, conj, cos, cos_sin, cosh, cospi, cospi_sinpi, cot,
+                    coth, csc, csch, cyclotomic, degree, degrees, e, eps,
+                    euler, exp, expj, expjpi, expm1, fabs, fadd, fib,
+                    fibonacci, floor, fmod, frexp, glaisher, hypot, im, inf,
+                    isnan, j, khinchin, ldexp, linspace, ln, ln2, ln10, log,
+                    log1p, log10, mertens, mp, mpc, mpf, nan, nthroot, phi, pi,
+                    power, powm1, radians, rand, re, root, sec, sech, sign,
+                    sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh, twinprime,
+                    unitroots)
+from mpmath.libmp import (bitcount, from_int, mpf_gt, mpf_lt, mpf_mul,
+                          mpf_pow_int, mpf_rand, mpf_sqrt, round_ceiling,
+                          round_down, round_nearest, round_up)
+
 
 def mpc_ae(a, b, eps=eps):
     res = True
@@ -110,7 +123,6 @@ def test_sqrt_rounding():
     assert sqrt(mpf('7.0503726185518891')) == mpf('2.655253776675949')
 
 def test_float_sqrt():
-    mp.dps = 15
     # These should round identically
     for x in [0, 1e-7, 0.1, 0.5, 1, 2, 3, 4, 5, 0.333, 76.19]:
         assert sqrt(mpf(x)) == float(x)**0.5
@@ -138,7 +150,6 @@ def test_exact_cbrt():
         mp.dps = prec
         A = random.randint(10**(prec//2-2), 10**(prec//2-1))
         assert cbrt(mpf(A*A*A)) == A
-    mp.dps = 15
 
 def test_exp():
     assert exp(0) == 1
@@ -162,7 +173,6 @@ def test_issue_73():
     assert (+b).ae(2.7182818284590451)
 
 def test_log():
-    mp.dps = 15
     assert log(1) == 0
     for x in [0.5, 1.5, 2.0, 3.0, 100, 10**50, 1e-50]:
         assert log(x).ae(math.log(x))
@@ -250,7 +260,6 @@ def test_complex_powers():
     assert (e**(-pi*1j)).ae(-1)
     mp.dps = 50
     assert (e**(-pi*1j)).ae(-1)
-    mp.dps = 15
 
 def test_complex_sqrt_accuracy():
     def test_mpc_sqrt(lst):
@@ -269,10 +278,8 @@ def test_complex_sqrt_accuracy():
     dps = mp.dps
     test_mpc_sqrt([(random.uniform(0, 10),random.uniform(0, 10)) for i in range(N)])
     test_mpc_sqrt([(i + 0.1, (i + 0.2)*10**i) for i in range(N)])
-    mp.dps = 15
 
 def test_atan():
-    mp.dps = 15
     assert atan(-2.3).ae(math.atan(-2.3))
     assert atan(1e-50) == 1e-50
     assert atan(1e50).ae(pi/2)
@@ -298,7 +305,6 @@ def test_atan():
     assert atan(mpc(1,-inf)).ae(pi2)
 
 def test_atan2():
-    mp.dps = 15
     assert atan2(1,1).ae(pi/4)
     assert atan2(1,-1).ae(3*pi/4)
     assert atan2(-1,-1).ae(-3*pi/4)
@@ -362,10 +368,8 @@ def test_areal_inverses():
     mp.dps = 1000
     assert asin(1).ae(pi/2)
     assert asin(-1).ae(-pi/2)
-    mp.dps = dps
 
 def test_invhyperb_inaccuracy():
-    mp.dps = 15
     assert (asinh(1e-5)*10**5).ae(0.99999999998333333)
     assert (asinh(1e-10)*10**10).ae(1)
     assert (asinh(1e-50)*10**50).ae(1)
@@ -393,8 +397,6 @@ def test_complex_functions():
             assert tanh(mpc(z)).ae(cmath.tanh(z))
 
 def test_complex_inverse_functions():
-    mp.dps = 15
-    iv.dps = 15
     for (z1, z2) in random_complexes(30):
         # apparently cmath uses a different branch, so we
         # can't use it for comparison
@@ -442,14 +444,12 @@ def test_reciprocal_functions():
     assert acoth(0).ae(1.5707963267948966192j)
 
 def test_ldexp():
-    mp.dps = 15
     assert ldexp(mpf(2.5), 0) == 2.5
     assert ldexp(mpf(2.5), -1) == 1.25
     assert ldexp(mpf(2.5), 2) == 10
     assert ldexp(mpf('inf'), 3) == mpf('inf')
 
 def test_frexp():
-    mp.dps = 15
     assert frexp(0) == (0.0, 0)
     assert frexp(9) == (0.5625, 4)
     assert frexp(1) == (0.5, 1)
@@ -493,7 +493,6 @@ def test_misc_bugs():
     # test that this doesn't raise an exception
     mp.dps = 1000
     log(1302)
-    mp.dps = 15
 
 def test_arange():
     assert arange(10) == [mpf('0.0'), mpf('1.0'), mpf('2.0'), mpf('3.0'),
@@ -545,7 +544,6 @@ def test_float_cbrt():
         z = w*w*w
         r = cbrt(z)
         assert mpc_ae(r, w, eps)
-    mp.dps = 15
 
 def test_root():
     mp.dps = 30
@@ -634,10 +632,8 @@ def test_issue_136():
     # Check that this doesn't take eternity to compute
     mp.dps = 20
     assert nthroot('-1e100000000', 4).ae((1+j)*mpf('1e25000000')/sqrt(2))
-    mp.dps = 15
 
 def test_mpcfun_real_imag():
-    mp.dps = 15
     x = mpf(0.3)
     y = mpf(0.4)
     assert exp(mpc(x,0)) == exp(x)
@@ -799,7 +795,6 @@ def test_sinc():
     assert sincpi(1.5).ae(-0.212206590789193781)
 
 def test_fibonacci():
-    mp.dps = 15
     assert [fibonacci(n) for n in range(-5, 10)] == \
         [5, -3, 2, -1, 1, 0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
     assert fib(2.5).ae(1.4893065462657091)
@@ -814,11 +809,9 @@ def test_fibonacci():
     assert fib(3+0j) == 2
 
 def test_call_with_dps():
-    mp.dps = 15
     assert abs(exp(1, dps=30)-e(dps=35)) < 1e-29
 
 def test_tanh():
-    mp.dps = 15
     assert tanh(0) == 0
     assert tanh(inf) == 1
     assert tanh(-inf) == -1
@@ -826,7 +819,6 @@ def test_tanh():
     assert tanh(mpc('inf', '0')) == 1
 
 def test_atanh():
-    mp.dps = 15
     assert atanh(0) == 0
     assert atanh(0.5).ae(0.54930614433405484570)
     assert atanh(-0.5).ae(-0.54930614433405484570)
@@ -853,7 +845,6 @@ def test_atanh():
     assert atanh(mpc(1,-inf)).ae(-jpi2)
 
 def test_expm1():
-    mp.dps = 15
     assert expm1(0) == 0
     assert expm1(3).ae(exp(3)-1)
     assert expm1(inf) == inf
@@ -861,7 +852,6 @@ def test_expm1():
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
 
 def test_log1p():
-    mp.dps = 15
     assert log1p(0) == 0
     assert log1p(3).ae(log(1+3))
     assert log1p(inf) == inf
@@ -869,7 +859,6 @@ def test_log1p():
     assert (log1p(1e-10)*1e10).ae(0.99999999995)
 
 def test_powm1():
-    mp.dps = 15
     assert powm1(2,3) == 7
     assert powm1(-1,2) == 0
     assert powm1(-1,0) == 0
@@ -902,7 +891,6 @@ def test_unitroots():
     assert len(unitroots(16, primitive=True)) == 8
 
 def test_cyclotomic():
-    mp.dps = 15
     assert [cyclotomic(n,1) for n in range(31)] == [1,0,2,3,2,5,1,7,2,3,1,11,1,13,1,1,2,17,1,19,1,1,1,23,1,5,1,3,1,29,1]
     assert [cyclotomic(n,-1) for n in range(31)] == [1,-2,0,1,2,1,3,1,2,1,5,1,1,1,7,1,2,1,3,1,1,1,11,1,1,1,13,1,1,1,1]
     assert [cyclotomic(n,j) for n in range(21)] == [1,-1+j,1+j,j,0,1,-j,j,2,-j,1,j,3,1,-j,1,2,1,j,j,5]
@@ -918,3 +906,39 @@ def test_cyclotomic():
     assert cyclotomic(2,2.5) == 2.5+1
     assert cyclotomic(3,2.5) == 2.5**2 + 2.5 + 1
     assert cyclotomic(7,2.5) == 406.234375
+
+def test_mp_nan_in_args():
+    assert mp.isnan(mp.legendre(1.2, mp.nan))  # issue 485
+    assert mp.isnan(mp.hyp2f1(0.5, 0.5, 0.5, mp.nan))
+    assert mp.isnan(mp.hyp2f1(0.5, 2.2, 0.5, mp.nan))
+    assert mp.isnan(mp.hyp2f1(0.4, 2.2, 0.5, mp.nan))  # issue 479
+    assert mp.isnan(mp.chebyt(2.3, mp.nan))  # issue 478
+    assert mp.isnan(mp.chebyt(13, mp.nan))
+    assert mp.isnan(mp.chebyt(17, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 1, mp.nan))  # issue 507
+    assert mp.isnan(mp.hyp1f1(1, 1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 1.1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 3, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1, 4, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2, 1, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(0, 4, mp.nan))
+    assert mp.isnan(mp.hyp0f1(2.5, mp.nan))  # issue 489
+    assert mp.isnan(mp.hyp0f1(25, mp.nan))
+    assert mp.isnan(mp.hyp0f1(2513, mp.nan))
+    assert mp.isnan(mp.hyp0f1(.25, mp.nan))
+    assert mp.isnan(mp.hyp1f1(2.5,2.2, mp.nan))  # issue 488
+    assert mp.isnan(mp.hyp1f1(1,2.2, mp.nan))
+    assert mp.isnan(mp.hyp1f1(1,2002.2, mp.nan))
+    assert mp.isnan(mp.hyp2f2(0.4, 2.5, 2.2, 0.7, mp.nan))  # issue 509
+    assert mp.isnan(mp.gegenbauer(0, 2.5, mp.nan))  # issue 508
+    assert mp.isnan(mp.gegenbauer(1, 2.5, mp.nan))
+    assert mp.isnan(mp.gegenbauer(2, 2.5, mp.nan))
+    assert mp.isnan(mp.gegenbauer(2, 5, mp.nan))
+    assert mp.isnan(mp.laguerre(0, 2.5, mp.nan))  # issue 506
+    assert mp.isnan(mp.laguerre(1, 2.5, mp.nan))
+    assert mp.isnan(mp.laguerre(1, 2.5345, mp.nan))
+    assert mp.isnan(mp.laguerre(2, 2, mp.nan))
+    assert mp.isnan(mp.laguerre(2, 5, mp.nan))

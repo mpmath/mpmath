@@ -1,8 +1,11 @@
 import pytest
-from mpmath import *
+
+from mpmath import (arange, chebyfit, cos, differint, e, euler, exp, fourier,
+                    fourierval, inf, invertlaplace, j, limit, log, matrix, mp,
+                    mpf, pade, pi, polyroots, polyval, sin, sqrt)
+
 
 def test_approximation():
-    mp.dps = 15
     f = lambda x: cos(2-2*x)/x
     p, err = chebyfit(f, [2, 4], 8, error=True)
     assert err < 1e-5
@@ -11,7 +14,6 @@ def test_approximation():
         assert abs(polyval(p, x) - f(x)) < err
 
 def test_limits():
-    mp.dps = 15
     assert limit(lambda x: (x-sin(x))/x**3, 0).ae(mpf(1)/6)
     assert limit(lambda n: (1+1/n)**n, inf).ae(e)
 
@@ -165,10 +167,8 @@ def test_pade():
     for x in arange(0, 1, 0.1):
         r = polyval(p[::-1], x)/polyval(q[::-1], x)
         assert(r.ae(exp(x), 1.0e-10))
-    mp.dps = 15
 
 def test_fourier():
-    mp.dps = 15
     c, s = fourier(lambda x: x+1, [-1, 2], 2)
     #plot([lambda x: x+1, lambda x: fourierval((c, s), [-1, 2], x)], [-1, 2])
     assert c[0].ae(1.5)
@@ -180,11 +180,9 @@ def test_fourier():
     assert fourierval((c, s), [-1, 2], 1).ae(1.9134966715663442)
 
 def test_differint():
-    mp.dps = 15
     assert differint(lambda t: t, 2, -0.5).ae(8*sqrt(2/pi)/3)
 
 def test_invlap():
-    mp.dps = 15
     t = 0.01
     fp = lambda p: 1/(p+1)**2
     ft = lambda t: t*exp(-t)

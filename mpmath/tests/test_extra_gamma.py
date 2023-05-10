@@ -1,81 +1,18 @@
-from mpmath import *
+import pytest
+
+from mpmath import (nstr, gamma, loggamma, rgamma, factorial, exp, log,
+                    sqrt, pi, j, fadd, fsub, mpf, agm, mp, eps, mpc)
 from mpmath.libmp import ifac
 
-import sys
-if "-dps" in sys.argv:
-    maxdps = int(sys.argv[sys.argv.index("-dps")+1])
-else:
-    maxdps = 1000
-
-raise_ = "-raise" in sys.argv
-
-errcount = 0
-
 def check(name, func, z, y):
-    global errcount
-    try:
-        x = func(z)
-    except:
-        errcount += 1
-        if raise_:
-            raise
-        print()
-        print(name)
-        print("EXCEPTION")
-        import traceback
-        traceback.print_tb(sys.exc_info()[2])
-        print()
-        return
+    x = func(z)
     xre = x.real
     xim = x.imag
     yre = y.real
     yim = y.imag
     tol = eps*8
     err = 0
-    if abs(xre-yre) > abs(yre)*tol:
-        err = 1
-        print()
-        print("Error! %s (re = %s, wanted %s, err=%s)" % (name, nstr(xre,10), nstr(yre,10), nstr(abs(xre-yre))))
-        errcount += 1
-        if raise_:
-            raise SystemExit
-    if abs(xim-yim) > abs(yim)*tol:
-        err = 1
-        print()
-        print("Error! %s (im = %s, wanted %s, err=%s)" % (name, nstr(xim,10), nstr(yim,10), nstr(abs(xim-yim))))
-        errcount += 1
-        if raise_:
-            raise SystemExit
-    if not err:
-        sys.stdout.write("%s ok; " % name)
-
-def testcase(case):
-    z, result = case
-    print("Testing z =", z)
-    mp.dps = 1010
-    z = eval(z)
-    mp.dps = maxdps + 50
-    if result is None:
-        gamma_val = gamma(z)
-        loggamma_val = loggamma(z)
-        factorial_val = factorial(z)
-        rgamma_val = rgamma(z)
-    else:
-        loggamma_val = eval(result)
-        gamma_val = exp(loggamma_val)
-        factorial_val = z * gamma_val
-        rgamma_val = 1/gamma_val
-    for dps in [5, 10, 15, 25, 40, 60, 90, 120, 250, 600, 1000, 1800, 3600]:
-        if dps > maxdps:
-            break
-        mp.dps = dps
-        print("dps = %s" % dps)
-        check("gamma", gamma, z, gamma_val)
-        check("rgamma", rgamma, z, rgamma_val)
-        check("loggamma", loggamma, z, loggamma_val)
-        check("factorial", factorial, z, factorial_val)
-        print()
-        mp.dps = 15
+    return abs(xre-yre) <= abs(yre)*tol and abs(xim-yim) <= abs(yim)*tol
 
 testcases = []
 
@@ -86,7 +23,7 @@ for n in range(-200,200):
     testcases.append(["%s+0.5" % n, None])
     testcases.append(["%s+0.37" % n, None])
 
-testcases += [\
+testcases += [
 ["(0.1+1j)", None],
 ["(-0.1+1j)", None],
 ["(0.1-1j)", None],
@@ -201,15 +138,25 @@ for n in [0,1,2,3,4,25,-1,-2,-3,-4,-20,-21,-50,-51,-200,-201,-20000,-20001]:
         testcases.append(["fadd(%s,'%sj',exact=True)" % (n, t), None])
         testcases.append(["fsub(%s,'%sj',exact=True)" % (n, t), None])
 
-if __name__ == "__main__":
-    from timeit import default_timer as clock
-    tot_time = 0.0
-    for case in testcases:
-        t1 = clock()
-        testcase(case)
-        t2 = clock()
-        print("Test time:", t2-t1)
-        print()
-        tot_time += (t2-t1)
-    print("Total time:", tot_time)
-    print("Errors:", errcount)
+
+@pytest.mark.parametrize("z,result", testcases)
+def test_extra_gamma(z, result):
+    mp.dps = 1010
+    z = eval(z)
+    mp.dps = 1050
+    if result is None:
+        gamma_val = gamma(z)
+        loggamma_val = loggamma(z)
+        factorial_val = factorial(z)
+        rgamma_val = rgamma(z)
+    else:
+        loggamma_val = eval(result)
+        gamma_val = exp(loggamma_val)
+        factorial_val = z * gamma_val
+        rgamma_val = 1/gamma_val
+    for dps in [5, 10, 15, 25, 40, 60, 90, 120, 250, 600, 1000]:
+        mp.dps = dps
+        assert check("gamma", gamma, z, gamma_val)
+        assert check("rgamma", rgamma, z, rgamma_val)
+        assert check("loggamma", loggamma, z, loggamma_val)
+        assert check("factorial", factorial, z, factorial_val)

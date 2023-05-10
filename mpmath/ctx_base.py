@@ -129,8 +129,7 @@ class StandardBaseContext(Context,
         numbers close to zero to exact zeros. The input can be a
         single number or an iterable::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import chop, nprint
             >>> chop(5+1e-10j, tol=1e-9)
             mpf('5.0')
             >>> nprint(chop([1.0, 1e-20, 3+1e-18j, -4, 2]))
@@ -178,8 +177,7 @@ class StandardBaseContext(Context,
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15
+            >>> from mpmath import almosteq
             >>> almosteq(3.141592653589793, 3.141592653589790)
             True
             >>> almosteq(3.141592653589793, 3.141592653589700)
@@ -212,9 +210,9 @@ class StandardBaseContext(Context,
 
     def arange(ctx, *args):
         r"""
-        This is a generalized version of Python's :func:`~mpmath.range` function
+        This is a generalized version of Python's :class:`range` function
         that accepts fractional endpoints and step sizes and
-        returns a list of ``mpf`` instances. Like :func:`~mpmath.range`,
+        returns a list of ``mpf`` instances. Like :class:`range`,
         :func:`~mpmath.arange` can be called with 1, 2 or 3 arguments:
 
         ``arange(b)``
@@ -226,14 +224,13 @@ class StandardBaseContext(Context,
 
         where `b-1 \le x < b` (in the third case, `b-h \le x < b`).
 
-        Like Python's :func:`~mpmath.range`, the endpoint is not included. To
+        Like Python's :class:`range`, the endpoint is not included. To
         produce ranges where the endpoint is included, :func:`~mpmath.linspace`
         is more convenient.
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import arange
             >>> arange(4)
             [mpf('0.0'), mpf('1.0'), mpf('2.0'), mpf('3.0')]
             >>> arange(1, 2, 0.25)
@@ -293,8 +290,7 @@ class StandardBaseContext(Context,
         for partitioning an interval into subintervals, since
         the endpoint is included::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import linspace
             >>> linspace(1, 4, 4)
             [mpf('1.0'), mpf('2.0'), mpf('3.0'), mpf('4.0')]
 
@@ -413,7 +409,7 @@ class StandardBaseContext(Context,
         r"""Converts `x` and `y` to mpmath numbers and evaluates
         the principal value of `\exp(y \log(x))`::
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, power
             >>> mp.dps = 30; mp.pretty = True
             >>> power(2, 0.5)
             1.41421356237309504880168872421
@@ -439,12 +435,11 @@ class StandardBaseContext(Context,
         Return a wrapped copy of *f* that raises ``NoConvergence`` when *f*
         has been called more than *N* times::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15
+            >>> from mpmath import maxcalls, sin
             >>> f = maxcalls(sin, 10)
             >>> print(sum(f(n) for n in range(10)))
             1.95520948210738
-            >>> f(10) # doctest: +IGNORE_EXCEPTION_DETAIL
+            >>> f(10)
             Traceback (most recent call last):
               ...
             NoConvergence: maxcalls: function evaluated 10 times
@@ -464,15 +459,15 @@ class StandardBaseContext(Context,
         a memoized copy of *f*. Values are only reused if the cached precision
         is equal to or higher than the working precision::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import memoize, maxcalls, mp, sin
+            >>> mp.pretty = True
             >>> f = memoize(maxcalls(sin, 1))
             >>> f(2)
             0.909297426825682
             >>> f(2)
             0.909297426825682
             >>> mp.dps = 25
-            >>> f(2) # doctest: +IGNORE_EXCEPTION_DETAIL
+            >>> f(2)
             Traceback (most recent call last):
               ...
             NoConvergence: maxcalls: function evaluated 1 times

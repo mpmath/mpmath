@@ -236,7 +236,7 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
 
     For example, to plot a simple function::
 
-        >>> from mpmath import *
+        >>> from mpmath import sin, cos, pi, splot
         >>> f = lambda x, y: sin(x+y)*cos(y)
         >>> splot(f, [-pi,pi], [-pi,pi])    # doctest: +SKIP
 

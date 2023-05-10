@@ -1,10 +1,11 @@
-from mpmath import *
-from mpmath.libmp import *
-
 import random
 
+from mpmath import make_mpf, mp, mpf
+from mpmath.libmp import (from_int, mpf_pow, mpf_pow_int, round_ceiling,
+                          round_down, round_floor, round_up, to_int)
+
+
 def test_fractional_pow():
-    mp.dps = 15
     assert mpf(16) ** 2.5 == 1024
     assert mpf(64) ** 0.5 == 8
     assert mpf(64) ** -0.5 == 0.125
@@ -37,22 +38,22 @@ def test_pow_epsilon_rounding():
     Stress test directed rounding for powers with integer exponents.
     Basically, we look at the following cases:
 
-    >>> 1.0001 ** -5 # doctest: +SKIP
-    0.99950014996500702
-    >>> 0.9999 ** -5 # doctest: +SKIP
+    >>> 1.0001 ** -5
+    0.999500149965007
+    >>> 0.9999 ** -5
     1.000500150035007
-    >>> (-1.0001) ** -5 # doctest: +SKIP
-    -0.99950014996500702
-    >>> (-0.9999) ** -5 # doctest: +SKIP
+    >>> (-1.0001) ** -5
+    -0.999500149965007
+    >>> (-0.9999) ** -5
     -1.000500150035007
 
-    >>> 1.0001 ** -6 # doctest: +SKIP
-    0.99940020994401269
-    >>> 0.9999 ** -6 # doctest: +SKIP
+    >>> 1.0001 ** -6
+    0.9994002099440127
+    >>> 0.9999 ** -6
     1.0006002100560125
-    >>> (-1.0001) ** -6 # doctest: +SKIP
-    0.99940020994401269
-    >>> (-0.9999) ** -6 # doctest: +SKIP
+    >>> (-1.0001) ** -6
+    0.9994002099440127
+    >>> (-0.9999) ** -6
     1.0006002100560125
 
     etc.
@@ -152,5 +153,3 @@ def test_pow_epsilon_rounding():
         assert powr(pos09999, -6, r) == 1
         assert powr(neg10001, -6, r) < 1
         assert powr(neg09999, -6, r) == 1
-
-    mp.dps = 15

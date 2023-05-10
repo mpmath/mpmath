@@ -631,8 +631,7 @@ class PythonMPContext:
         working precision. Strings representing fractions or complex
         numbers are permitted.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import mpmathify
             >>> mpmathify(3.5)
             mpf('3.5')
             >>> mpmathify('2.1')
@@ -689,7 +688,7 @@ class PythonMPContext:
         number, whether either the real or complex part is NaN;
         otherwise return *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isnan, nan, mpc
             >>> isnan(3.14)
             False
             >>> isnan(nan)
@@ -716,7 +715,7 @@ class PythonMPContext:
         Return *True* if the absolute value of *x* is infinite;
         otherwise return *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isinf, inf, mpc
             >>> isinf(inf)
             True
             >>> isinf(-inf)
@@ -751,7 +750,7 @@ class PythonMPContext:
         complex number *x* is considered "normal" if its magnitude is
         normal::
 
-            >>> from mpmath import *
+            >>> from mpmath import isnormal, inf, nan, mpc
             >>> isnormal(3)
             True
             >>> isnormal(0)
@@ -788,7 +787,7 @@ class PythonMPContext:
         Return *True* if *x* is integer-valued; otherwise return
         *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isint, mpf, inf
             >>> isint(3)
             True
             >>> isint(mpf(3))
@@ -838,8 +837,7 @@ class PythonMPContext:
         faster and produces more accurate results than the builtin
         Python function :func:`sum`.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fsum
             >>> fsum([1, 2, 0.5, 7])
             mpf('10.5')
 
@@ -911,8 +909,7 @@ class PythonMPContext:
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fdot, j
             >>> A = [2, 1.5, 3]
             >>> B = [1, -1, 2]
             >>> fdot(A, B)
@@ -1098,7 +1095,7 @@ class PythonMPContext:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, mag, ceil, mpf, log, inf, nan
             >>> mp.pretty = True
             >>> mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
             (4, 4, 4, 4)

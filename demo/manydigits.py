@@ -8,7 +8,8 @@ Run with:
     python manydigits.py
 
 """
-from mpmath import *
+from mpmath import (mp, sin, tan, cos, sqrt, e, pi, exp, atanh, mpf, tanh,
+                    zeta, catalan, findroot, quadts, atan, asin, asinh)
 from mpmath.libmp import to_fixed, bin_to_radix
 
 dps = 100

@@ -6,7 +6,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8, 3.9, '3.10', 3.11, pypy3.7, pypy3.8, pypy3.9]
+        python-version: [3.8, 3.9, '3.10', 3.11, pypy3.8, pypy3.9]
+    env:
+      PYTEST_ADDOPTS: -n auto
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -21,32 +23,47 @@ jobs:
       run: |
         pip install --upgrade --force-reinstall setuptools pip
         pip install --upgrade .[develop,gmpy,docs]
-    - name: Linting with pycodestyle, etc
+        pip install --upgrade pytest-xdist
+    - name: Linting with flake8, etc
+      if: matrix.python-version >= 3.9
       run: |
         python -We:invalid -m compileall -f mpmath -q
-        pycodestyle
+        flake518
     - name: Tests
-      run: pytest
+      if: matrix.python-version != 3.10 && matrix.python-version != 3.11
+      run: |
+        pytest
+        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
     - name: Remove gmpy on 3.10
       if: matrix.python-version == 3.10
       run: pip uninstall -y gmpy2
-    - name: Run coverage tests & upload results
+    - name: Run coverage tests
       env:
-        PYTEST_ADDOPTS: --cov mpmath
+        PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
       if: matrix.python-version == 3.10 || matrix.python-version == 3.11
       run: |
         pytest
-        codecov --required
+        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
+        coverage html
+        coverage xml
+    - name: Upload coverage data
+      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: true
     - name: Building docs
+      if: matrix.python-version == 3.11
       run: |
         sphinx-build --color -W --keep-going -b html docs build/sphinx/html
         sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
-      run: python setup.py sdist bdist_wheel
+      if: matrix.python-version == 3.11
+      run: python -m build
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.10
+      if: matrix.python-version == 3.11
       with:
         path: |
           dist/
@@ -55,8 +72,8 @@ jobs:
           coverage.xml
           build/coverage/html/
     - name: Publish package on PyPI
-      if: matrix.python-version == 3.10 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@v1.4.2
+      if: matrix.python-version == 3.11 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}

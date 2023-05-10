@@ -1,7 +1,7 @@
-from mpmath import *
+from mpmath import inf, iv, mp, mpf, mpi, pi, sqrt
+
 
 def test_interval_identity():
-    iv.dps = 15
     assert mpi(2) == mpi(2, 2)
     assert mpi(2) != mpi(-2, 2)
     assert not (mpi(2) != mpi(2, 2))
@@ -33,7 +33,6 @@ def test_interval_hash():
     assert hash(iv.mpc((1,3),(2,4))) == hash(iv.mpc((1,3),(2,4)))
 
 def test_interval_arithmetic():
-    iv.dps = 15
     assert mpi(2) + mpi(3,4) == mpi(5,6)
     assert mpi(1, 2)**2 == mpi(1, 4)
     assert mpi(1) + mpi(0, 1e-50) == mpi(1, mpf('1.0000000000000002'))
@@ -193,7 +192,6 @@ def test_interval_div():
     assert mpi(0, 0) / mpi(0, 1) == mpi(-inf, inf)
 
 def test_interval_cos_sin():
-    iv.dps = 15
     cos = iv.cos
     sin = iv.sin
     tan = iv.tan
@@ -271,8 +269,6 @@ def test_interval_cos_sin():
 
 def test_interval_complex():
     # TODO: many more tests
-    iv.dps = 15
-    mp.dps = 15
     assert iv.mpc(2,3) == 2+3j
     assert iv.mpc(2,3) != 2+4j
     assert iv.mpc(2,3) != 1+3j
@@ -311,8 +307,6 @@ def test_interval_complex():
     assert iv.sin(2+3j).ae(mp.sin(2+3j))
 
 def test_interval_complex_arg():
-    mp.dps = 15
-    iv.dps = 15
     assert iv.arg(3) == 0
     assert iv.arg(0) == 0
     assert iv.arg([0,3]) == 0
@@ -356,7 +350,6 @@ def test_interval_complex_arg():
     assert t.b.ae(mp.pi)
 
 def test_interval_ae():
-    iv.dps = 15
     x = iv.mpf([1,2])
     assert x.ae(1) is None
     assert x.ae(1.5) is None
@@ -387,10 +380,8 @@ def test_interval_nstr():
     assert iv.nstr(mpi('1e123', '1e129'), n, mode='diff') == '[1.0e+123, 1.0e+129]'
     exp = iv.exp
     assert iv.nstr(iv.exp(mpi('5000.1')), n, mode='diff') == '3.2797365856787867069110487[0926, 1191]e+2171'
-    iv.dps = 15
 
 def test_mpi_from_str():
-    iv.dps = 15
     assert iv.convert('1.5 +- 0.5') == mpi(mpf('1.0'), mpf('2.0'))
     assert mpi(1, 2) in iv.convert('1.5 (33.33333333333333333333333333333%)')
     assert iv.convert('[1, 2]') == mpi(1, 2)
@@ -399,8 +390,6 @@ def test_mpi_from_str():
     assert iv.convert('12[3.4,5.9]e4') == mpi('123.4e+4', '125.9e4')
 
 def test_interval_gamma():
-    mp.dps = 15
-    iv.dps = 15
     # TODO: need many more tests
     assert iv.rgamma(0) == 0
     assert iv.fac(0) == 1
@@ -441,8 +430,6 @@ def test_interval_gamma():
         assert z.d.ae(max_imag)
 
 def test_interval_conversions():
-    mp.dps = 15
-    iv.dps = 15
     for a, b in ((-0.0, 0), (0.0, 0.5), (1.0, 1), \
                  ('-inf', 20.5), ('-inf', float(sqrt(2)))):
         r = mpi(a, b)

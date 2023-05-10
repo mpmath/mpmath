@@ -24,7 +24,8 @@ class _matrix:
     The most basic way to create one is to use the ``matrix`` class directly.
     You can create an empty matrix specifying the dimensions:
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, matrix, randmatrix, nprint, ones, norm,
+        ...                     mnorm, inf)
         >>> mp.dps = 15
         >>> matrix(2)
         matrix(
@@ -165,7 +166,7 @@ class _matrix:
         matrix(
         [['3.0', '-2.0'],
          ['-2.0', '-5.0']])
-        >>> A + ones(3) # doctest:+ELLIPSIS
+        >>> A + ones(3)
         Traceback (most recent call last):
           ...
         ValueError: incompatible dimensions for addition
@@ -454,6 +455,8 @@ class _matrix:
                     raise IndexError('Row index out of bounds')
             else:
                 # Single row
+                if key[0] >= self.__rows:
+                    raise IndexError('Row index out of bounds')
                 rows = [key[0]]
 
             # Columns
@@ -468,6 +471,8 @@ class _matrix:
 
             else:
                 # Single column
+                if key[1] >= self.__cols:
+                    raise IndexError('Column index out of bounds')
                 columns = [key[1]]
 
             # Create matrix slice
@@ -573,14 +578,10 @@ class _matrix:
             if self.__cols != other.__rows:
                 raise ValueError('dimensions not compatible for multiplication')
             new = self.ctx.matrix(self.__rows, other.__cols)
-            self_zero = self.ctx.zero
-            self_get = self.__data.get
-            other_zero = other.ctx.zero
-            other_get = other.__data.get
             for i in range(self.__rows):
                 for j in range(other.__cols):
-                    new[i, j] = self.ctx.fdot((self_get((i,k), self_zero), other_get((k,j), other_zero))
-                                     for k in range(other.__rows))
+                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[k,j])
+                                              for k in range(other.__rows) if (i,k) in self.__data and (k,j) in other.__data)
             return new
         else:
             # try scalar multiplication
@@ -676,8 +677,11 @@ class _matrix:
         return -self + other
 
     def __eq__(self, other):
-        return self.__rows == other.__rows and self.__cols == other.__cols \
-               and self.__data == other.__data
+        try:
+            return (self.__rows == other.__rows and self.__cols == other.__cols
+                    and self.__data == other.__data)
+        except AttributeError:
+            return NotImplemented
 
     def __len__(self):
         if self.rows == 1:
@@ -762,7 +766,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import diag, mp
-        >>> mp.pretty = False
         >>> diag([1, 2, 3])
         matrix(
         [['1.0', '0.0', '0.0'],
@@ -781,7 +784,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import zeros, mp
-        >>> mp.pretty = False
         >>> zeros(2)
         matrix(
         [['0.0', '0.0'],
@@ -807,7 +809,6 @@ class MatrixMethods:
 
         Example:
         >>> from mpmath import ones, mp
-        >>> mp.pretty = False
         >>> ones(2)
         matrix(
         [['1.0', '1.0'],
@@ -915,8 +916,7 @@ class MatrixMethods:
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import matrix, norm, inf
             >>> x = matrix([-10, 2, 100])
             >>> norm(x, 1)
             mpf('112.0')
@@ -971,8 +971,7 @@ class MatrixMethods:
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import matrix, mnorm, inf
             >>> A = matrix([[1, -1000], [100, 50]])
             >>> mnorm(A, 1)
             mpf('1050.0')
@@ -994,7 +993,3 @@ class MatrixMethods:
             return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

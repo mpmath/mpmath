@@ -6,7 +6,7 @@ The functions in this section describe non-sinusoidal waveforms, which are often
 Square wave signal
 ...................................................
 
-:func:`squarew`
+:func:`~mpmath.squarew`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.squarew(t, amplitude=1, period=1)
@@ -14,15 +14,15 @@ Square wave signal
 Triangle wave signal
 ...............................
 
-:func:`trianglew`
-^^^^^^^^^^^^^^^^^^^^
+:func:`~mpmath.trianglew`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.trianglew(t, amplitude=1, period=1)
 
 Sawtooth wave signal
 ......................
 
-:func:`sawtoothw`
+:func:`~mpmath.sawtoothw`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.sawtoothw(t, amplitude=1, period=1)
@@ -30,16 +30,15 @@ Sawtooth wave signal
 Unit triangle signal
 .....................
 
-:func:`unit_triangle`
-^^^^^^^^^^^^^^^^^^^^^^^
+:func:`~mpmath.unit_triangle`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.unit_triangle(t, amplitude=1)
 
 Sigmoid wave signal
 .....................
 
-:func:`sigmoid`
+:func:`~mpmath.sigmoid`
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autofunction:: mpmath.sigmoid(t, amplitude=1)
-    

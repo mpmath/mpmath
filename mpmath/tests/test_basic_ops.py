@@ -1,8 +1,14 @@
-import mpmath
-from mpmath import *
-from mpmath.libmp import *
+import operator
 import random
 import sys
+
+from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
+                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, nan,
+                    ninf, nint, nint_distance, pi)
+from mpmath.libmp import (finf, fnan, fninf, fone, from_float, from_int,
+                          mpf_add, mpf_mul, mpf_sub, round_down, round_nearest,
+                          round_up, to_int)
+from mpmath.rational import mpq
 
 
 def test_type_compare():
@@ -101,7 +107,6 @@ def test_mixed_misc():
     assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
 
 def test_add_misc():
-    mp.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
@@ -136,7 +141,6 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
-    from mpmath.rational import mpq
     assert hash(mp.mpq(1,3))
     assert hash(mp.mpq(0,1)) == 0
     assert hash(mp.mpq(-1,1)) == hash(-1)
@@ -148,7 +152,6 @@ def test_hash():
 
 # Advanced rounding test
 def test_add_rounding():
-    mp.dps = 15
     a = from_float(1e-50)
     assert mpf_sub(mpf_add(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
     assert mpf_sub(fone, a, 53, round_up) == fone
@@ -161,7 +164,6 @@ def test_almost_equal():
     assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
 
 def test_arithmetic_functions():
-    import operator
     ops = [(operator.add, fadd), (operator.sub, fsub), (operator.mul, fmul),
         (operator.truediv, fdiv)]
     a = mpf(0.27)
@@ -186,7 +188,6 @@ def test_arithmetic_functions():
                     assert fop(x, y, exact=True) == z0
                 assert fneg(fneg(z1, exact=True), prec=inf) == z1
                 assert fneg(z1) == -(+z1)
-    mp.dps = 15
 
 def test_exact_integer_arithmetic():
     # XXX: re-fix this so that all operations are tested with all rounding modes
@@ -209,7 +210,6 @@ def test_exact_integer_arithmetic():
                 b = random.randint(-M2, M2)
                 assert mpf(a) * mpf(b) == a*b
                 assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
-    mp.dps = 15
 
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
@@ -219,14 +219,12 @@ def test_str_1000_digits():
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
     assert str(pi)[-10:-1] == '2164201989'[:9]
-    mp.dps = 15
 
 def test_str_10000_digits():
     mp.dps = 10001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
-    mp.dps = 15
 
 def test_monitor():
     f = lambda x: x**2
@@ -259,7 +257,6 @@ def test_nint_distance():
     assert nint_distance(mpf('1e-100')) == (0, -332)
 
 def test_floor_ceil_nint_frac():
-    mp.dps = 15
     for n in range(-10,10):
         assert floor(n) == n
         assert floor(n+0.5) == n
@@ -336,7 +333,6 @@ def test_floor_ceil_nint_frac():
     assert frac(3.25+4.75j) == 0.25+0.75j
 
 def test_isnan_etc():
-    from mpmath.rational import mpq
     assert isnan(nan) is True
     assert isnan(3) is False
     assert isnan(mpf(3)) is False
