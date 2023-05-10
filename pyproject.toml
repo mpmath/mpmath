@@ -56,3 +56,6 @@ omit = ['mpmath/tests/*']
 exclude_lines = ['pragma: no cover',
                  'raise NotImplementedError',
                  'return NotImplemented']
+[tool.isort]
+lines_after_imports = 2
+atomic = true

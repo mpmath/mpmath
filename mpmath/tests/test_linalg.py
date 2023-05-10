@@ -1,7 +1,11 @@
 # TODO: don't use round
 
 import pytest
-from mpmath import *
+
+from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
+                    hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
+                    mp, mpc, mpf, nint, norm, pi, qr, qr_solve, rand,
+                    randmatrix, residual, zeros)
 
 
 # XXX: these shouldn't be visible(?)

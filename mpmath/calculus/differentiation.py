@@ -70,7 +70,7 @@ def diff(ctx, f, x, n=1, **options):
     an integer `n \ge 0`, the `n`-th derivative `f^{(n)}(x)`.
     A few basic examples are::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, diff, nprint, sqrt, cos, exp, j, chop
         >>> mp.pretty = True
         >>> diff(lambda x: x**2 + x, 1.0)
         3.0
@@ -242,7 +242,7 @@ def diffs(ctx, f, x, n=None, **options):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mpmath import nprint, diffs, cos
         >>> nprint(list(diffs(cos, 1, 5)))
         [0.540302, -0.841471, -0.540302, 0.841471, 0.540302, -0.841471]
         >>> for i, d in zip(range(6), diffs(cos, 1)):
@@ -318,7 +318,7 @@ def diffs_prod(ctx, factors):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, exp, sin, cos, diffs
         >>> mp.pretty = True
         >>> f = lambda x: exp(x)*cos(x)*sin(x)
         >>> u = diffs(f, 1)
@@ -406,7 +406,7 @@ def diffs_exp(ctx, fdiffs):
     The derivatives of the gamma function can be computed using
     logarithmic differentiation::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, loggamma, diffs_exp, diffs, gamma, psi
         >>> mp.pretty = True
         >>>
         >>> def diffs_loggamma(x):
@@ -474,7 +474,8 @@ def differint(ctx, f, x, n=1, x0=0):
     monomial `x^p`, which may be used as a reference. For example,
     the following gives a half-derivative (order 0.5)::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, mpf, differint, gamma, inf, exp, pi,
+        ...                     j, gammainc)
         >>> mp.pretty = True
         >>> x = mpf(3); p = 2; n = 0.5
         >>> differint(lambda t: t**p, x, n)
@@ -522,7 +523,7 @@ def diffun(ctx, f, n=1, **options):
     Given a function `f`, returns a function `g(x)` that evaluates the nth
     derivative `f^{(n)}(x)`::
 
-        >>> from mpmath import *
+        >>> from mpmath import diffun, sin, cos, mp
         >>> mp.pretty = True
         >>> cos2 = diffun(sin)
         >>> sin2 = diffun(sin, 4)
@@ -547,7 +548,7 @@ def taylor(ctx, f, x, n, **options):
     Produces a degree-`n` Taylor polynomial around the point `x` of the
     given function `f`. The coefficients are returned as a list.
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, sin, nprint, chop, exp, polyval, taylor
         >>> mp.pretty = True
         >>> nprint(chop(taylor(sin, 0, 5)))
         [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333]
@@ -598,7 +599,7 @@ def pade(ctx, a, L, M):
     from G.A. Baker 'Essentials of Pade Approximants' Academic Press,
     Ch.1A)::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mpf, sqrt, taylor, pade, polyval
         >>> mp.pretty = True
         >>> one = mpf(1)
         >>> def f(x):

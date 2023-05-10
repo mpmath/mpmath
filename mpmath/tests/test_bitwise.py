@@ -2,8 +2,12 @@
 Test bit-level integer and mpf operations
 """
 
-from mpmath import *
-from mpmath.libmp import *
+from mpmath import eps, fadd, ldexp, mp, mpc, mpf
+from mpmath.libmp import (bitcount, fone, from_float, from_man_exp, fzero,
+                          mpf_add, mpf_neg, mpf_perturb, mpf_sub,
+                          round_ceiling, round_down, round_floor,
+                          round_nearest, round_up, to_float, trailing)
+
 
 def test_bitcount():
     assert bitcount(0) == 0

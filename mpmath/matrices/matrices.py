@@ -24,7 +24,8 @@ class _matrix:
     The most basic way to create one is to use the ``matrix`` class directly.
     You can create an empty matrix specifying the dimensions:
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, matrix, randmatrix, nprint, ones, norm,
+        ...                     mnorm, inf)
         >>> mp.dps = 15
         >>> matrix(2)
         matrix(
@@ -915,7 +916,7 @@ class MatrixMethods:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import matrix, norm, inf
             >>> x = matrix([-10, 2, 100])
             >>> norm(x, 1)
             mpf('112.0')
@@ -970,7 +971,7 @@ class MatrixMethods:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import matrix, mnorm, inf
             >>> A = matrix([[1, -1000], [100, 50]])
             >>> mnorm(A, 1)
             mpf('1050.0')

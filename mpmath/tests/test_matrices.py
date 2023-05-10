@@ -1,6 +1,9 @@
 import pytest
-import sys
-from mpmath import *
+
+from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
+                    j, matrix, mnorm, mp, mpc, mpf, mpi, norm, nstr, ones,
+                    randmatrix, sqrt, swap_row, zeros)
+
 
 def test_matrix_basic():
     A1 = matrix(3)

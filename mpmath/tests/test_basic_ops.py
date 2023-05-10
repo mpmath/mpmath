@@ -1,8 +1,14 @@
-import mpmath
-from mpmath import *
-from mpmath.libmp import *
+import operator
 import random
 import sys
+
+from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
+                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, nan,
+                    ninf, nint, nint_distance, pi)
+from mpmath.libmp import (finf, fnan, fninf, fone, from_float, from_int,
+                          mpf_add, mpf_mul, mpf_sub, round_down, round_nearest,
+                          round_up, to_int)
+from mpmath.rational import mpq
 
 
 def test_type_compare():
@@ -135,7 +141,6 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
-    from mpmath.rational import mpq
     assert hash(mp.mpq(1,3))
     assert hash(mp.mpq(0,1)) == 0
     assert hash(mp.mpq(-1,1)) == hash(-1)
@@ -159,7 +164,6 @@ def test_almost_equal():
     assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
 
 def test_arithmetic_functions():
-    import operator
     ops = [(operator.add, fadd), (operator.sub, fsub), (operator.mul, fmul),
         (operator.truediv, fdiv)]
     a = mpf(0.27)
@@ -329,7 +333,6 @@ def test_floor_ceil_nint_frac():
     assert frac(3.25+4.75j) == 0.25+0.75j
 
 def test_isnan_etc():
-    from mpmath.rational import mpq
     assert isnan(nan) is True
     assert isnan(3) is False
     assert isnan(mpf(3)) is False

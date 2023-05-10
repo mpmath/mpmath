@@ -97,7 +97,7 @@ Note that the dps is set 1 decimal digit lower than the corresponding binary pre
 
 The *dps* value controls the number of digits to display when printing numbers with :class:`str`, while the decimal precision used by :func:`repr` is set two or three digits higher. For example, with (default) 15 dps we have::
 
-    >>> from mpmath import *
+    >>> from mpmath import pi
     >>> str(pi)
     '3.14159265358979'
     >>> repr(+pi)

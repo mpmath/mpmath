@@ -466,7 +466,8 @@ class QuadratureMethods:
         Computes a single, double or triple integral over a given
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, quad, cos, pi, exp, inf, sqrt,
+            ...                     chop, sin, j, log, euler, e, linspace)
             >>> mp.pretty = True
             >>> quad(sin, [0, pi])
             2.0
@@ -841,7 +842,9 @@ class QuadratureMethods:
         specify the `n`-th zero by providing the *zeros* arguments.
         Below is an example of each::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, sin, quadosc, pi, ei, cos, inf, j0,
+            ...                     j1, sqrt, findroot, exp, e, si, ci, j,
+            ...                     quad, log)
             >>> mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
             >>> quadosc(f, [0,inf], omega=3)
@@ -1014,7 +1017,8 @@ class QuadratureMethods:
         This function gives an accurate answer for some integrals where
         :func:`~mpmath.quad` fails::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, sin, pi, quad, quadsubdiv, ceil, exp,
+            ...                     sech, linspace, fp, ci)
             >>> mp.pretty = True
             >>> quad(lambda x: abs(sin(x)), [0, 2*pi])
             3.99900894176779

@@ -44,7 +44,16 @@ from timeit import default_timer as clock
 
 import pytest
 
-from mpmath import *
+from mpmath import (workprec, power, mp, mpf, bernoulli, agm, airyai,
+                    airybi, apery, barnesg, besseli, besselj, besselk,
+                    bessely, catalan, cbrt, chi, ci, cos, cosh, coulombf,
+                    coulombg, e, e1, ei, ellipe, ellipk, erf, erfc, erfi,
+                    euler, exp, expint, expm1, gamma, gammainc, glaisher,
+                    hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2,
+                    hyp2f3, hyperu, jtheta, khinchin, lambertw, legendre,
+                    legenp, legenq, li, ln, ln10, ln2, loggamma, mertens,
+                    phi, pi, polylog, root, shi, si, sin, sinh, sqrt,
+                    stieltjes, tan, tanh, twinprime, j, bernfrac)
 
 a1, a2, a3, a4, a5 = 1.5, -2.25, 3.125, 4, 2
 

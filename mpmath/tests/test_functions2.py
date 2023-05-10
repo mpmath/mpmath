@@ -1,6 +1,18 @@
-import math
 import pytest
-from mpmath import *
+
+from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
+                    besseljzero, besselk, bessely, besselyzero, betainc,
+                    chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
+                    ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
+                    fadd, fmul, fp, fraction, fresnelc, fresnels, fsub, fsum,
+                    gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
+                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
+                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
+                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
+                    legenq, li, log, meijerg, mp, mpc, mpf, nan, ncdf, npdf,
+                    nthroot, pi, qp, quadts, shi, si, spherharm, sqrt, struveh,
+                    struvel, whitm, whitw)
+
 
 def test_bessel():
     assert j0(1).ae(0.765197686557966551)

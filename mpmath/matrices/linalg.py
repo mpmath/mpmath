@@ -13,7 +13,7 @@ equation system::
 
 using ``lu_solve``::
 
-    >>> from mpmath import *
+    >>> from mpmath import matrix, lu_solve, residual, eps, fp, lu, iv
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
     >>> x = lu_solve(A, b)
@@ -429,7 +429,8 @@ class LinearAlgebraMethods:
 
         Cholesky decomposition of a positive-definite symmetric matrix::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, eye, hilbert, nprint, cholesky,
+            ...                     chop, matrix)
             >>> mp.dps = 25; mp.pretty = True
             >>> A = eye(3) + hilbert(3)
             >>> nprint(A)
@@ -597,7 +598,7 @@ class LinearAlgebraMethods:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, qr, matrix, chop, nprint, j
             >>> mp.dps = 15
             >>> mp.pretty = True
             >>> A = matrix([[1, 2], [3, 4], [1, 1]])

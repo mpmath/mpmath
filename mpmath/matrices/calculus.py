@@ -65,7 +65,8 @@ class MatrixCalculusMethods:
 
         Basic examples::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, expm, zeros, eye, j, hilbert, chop,
+            ...                     mnorm, ones, matrix)
             >>> mp.pretty = True
             >>> expm(zeros(3))
             [1.0  0.0  0.0]
@@ -149,7 +150,7 @@ class MatrixCalculusMethods:
 
         Examples::
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, eye, cosm, hilbert, j, matrix
             >>> mp.pretty = True
             >>> X = eye(3)
             >>> cosm(X)
@@ -178,7 +179,7 @@ class MatrixCalculusMethods:
 
         Examples::
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, eye, sinm, hilbert, matrix, j
             >>> mp.pretty = True
             >>> X = eye(3)
             >>> sinm(X)
@@ -216,7 +217,7 @@ class MatrixCalculusMethods:
 
         Square roots of some simple matrices::
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, sqrtm, j, matrix, cos, sin, chop, mnorm
             >>> mp.pretty = True
             >>> sqrtm([[1,0], [0,1]])
             [1.0  0.0]
@@ -355,7 +356,8 @@ class MatrixCalculusMethods:
 
         Logarithms of some simple matrices::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, eye, logm, expm, matrix, j, nprint,
+            ...                     chop, hilbert, cos, sin, pi, re)
             >>> mp.pretty = True
             >>> X = eye(3)
             >>> logm(X)
@@ -468,7 +470,8 @@ class MatrixCalculusMethods:
 
         Powers and inverse powers of a matrix::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, matrix, powm, chop, extraprec, fib,
+            ...                     phi, sqrt)
             >>> mp.pretty = True
             >>> A = matrix([[4,1,4],[7,8,9],[10,2,11]])
             >>> powm(A, 2)

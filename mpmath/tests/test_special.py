@@ -1,4 +1,5 @@
-from mpmath import *
+from mpmath import atan, exp, inf, isinf, isnan, log, mpf, nan, pi, sin, sqrt
+
 
 def test_special():
     assert inf == inf

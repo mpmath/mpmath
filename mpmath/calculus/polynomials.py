@@ -19,7 +19,7 @@ def polyval(ctx, coeffs, x, derivative=False):
     evaluates `P(x)` with the derivative, `P'(x)`, and returns the
     tuple `(P(x), P'(x))`.
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, polyval
         >>> mp.pretty = True
         >>> polyval([3, 0, 2], 0.5)
         2.75
@@ -60,7 +60,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
 
     Finding the three real roots of `x^3 - x^2 - 14x + 24`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, polyroots, nprint, sqrt, polyval
         >>> mp.pretty = True
         >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]

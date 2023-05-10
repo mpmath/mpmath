@@ -1,4 +1,6 @@
-from mpmath import *
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, sin, sqrt,
+                    taylor)
+
 
 def test_diff():
     assert diff(log, 2.0, n=0).ae(log(2))

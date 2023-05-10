@@ -1,6 +1,7 @@
 import pytest
 
-from mpmath import *
+from mpmath import (nstr, gamma, loggamma, rgamma, factorial, exp, log,
+                    sqrt, pi, j, fadd, fsub, mpf, agm, mp, eps, mpc)
 from mpmath.libmp import ifac
 
 def check(name, func, z, y):

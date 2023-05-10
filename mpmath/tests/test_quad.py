@@ -1,5 +1,8 @@
 import pytest
-from mpmath import *
+
+from mpmath import (atan, cos, cosh, e, euler, exp, inf, j, log, mp, pi, quad,
+                    quadgl, quadosc, quadts, sign, sin, sinh, sqrt, tan)
+
 
 def ae(a, b):
     return abs(a-b) < 10**(-mp.dps+5)

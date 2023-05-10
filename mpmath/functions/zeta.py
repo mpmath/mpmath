@@ -927,7 +927,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, secondzeta, pi, gamma, zeta, diff, chop, j
         >>> mp.pretty = True
         >>> secondzeta(2)
         0.023104993115419
@@ -1067,7 +1067,8 @@ def lerchphi(ctx, z, s, a):
 
     Several evaluations in terms of simpler functions::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, lerchphi, catalan, diff, zeta, pi, log,
+        ...                     atanh, sqrt, j, polylog)
         >>> mp.dps = 25; mp.pretty = True
         >>> lerchphi(-1,2,0.5); 4*catalan
         3.663862376708876060218414

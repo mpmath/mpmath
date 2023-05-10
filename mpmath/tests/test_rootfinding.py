@@ -1,7 +1,12 @@
 import pytest
-from mpmath import *
-from mpmath.calculus.optimization import Secant, Muller, Bisection, Illinois, \
-    Pegasus, Anderson, Ridder, ANewton, Newton, MNewton, MDNewton
+
+from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
+                    mp, mpc, mpf, multiplicity, norm, pi, polyval, sin, sqrt,
+                    workprec)
+from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
+                                          Illinois, MDNewton, MNewton, Muller,
+                                          Newton, Pegasus, Ridder, Secant)
+
 
 def test_findroot():
     # old tests, assuming secant

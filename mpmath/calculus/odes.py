@@ -121,7 +121,8 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     We will solve the standard test problem `y'(x) = y(x), y(0) = 1`
     which has explicit solution `y(x) = \exp(x)`::
 
-        >>> from mpmath import *
+        >>> from mpmath import (atan, cos, exp, mp, mpf, nprint, odefun,
+        ...                     pi, sin, quad)
         >>> mp.pretty = True
         >>> f = odefun(lambda x, y: y, 0, 1)
         >>> for x in [0, 1, 2.5]:

@@ -31,7 +31,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
 
     Find rational approximations for `\pi`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, pslq, pi, mpf, sqrt, acot
         >>> mp.pretty = True
         >>> pslq([-1, pi], tol=0.01)
         [22, 7]
@@ -329,7 +329,8 @@ def findpoly(ctx, x, n=1, **kwargs):
     By default (degree `n = 1`), :func:`~mpmath.findpoly` simply finds a linear
     polynomial with a rational root::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, findpoly, nprint, polyval, polyroots,
+        ...                     sqrt, pi, phi, euler, findroot)
         >>> mp.pretty = True
         >>> findpoly(0.7)
         [-10, 7]
@@ -537,7 +538,8 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     As a simple example, :func:`~mpmath.identify` will find an algebraic
     formula for the golden ratio::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, identify, phi, pi, e, sqrt, log, mpf,
+        ...                     exp, catalan)
         >>> mp.pretty = True
         >>> identify(phi)
         '((1+sqrt(5))/2)'
