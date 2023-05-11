@@ -291,10 +291,10 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
                     w = ctx.sqrt(-z)
                     jw = ctx.j*w
                     u = 1/(4*jw)
-                    c = ctx.mpq_1_2 - b
+                    c = ctx._mpq_1_2 - b
                     E = ctx.exp(2*jw)
-                    T1 = ([-jw,E], [c,-1], [], [], [b-ctx.mpq_1_2, ctx.mpq_3_2-b], [], -u)
-                    T2 = ([jw,E], [c,1], [], [], [b-ctx.mpq_1_2, ctx.mpq_3_2-b], [], u)
+                    T1 = ([-jw,E], [c,-1], [], [], [b-ctx._mpq_1_2, ctx._mpq_3_2-b], [], -u)
+                    T2 = ([jw,E], [c,1], [], [], [b-ctx._mpq_1_2, ctx._mpq_3_2-b], [], u)
                     return T1, T2
                 v = ctx.hypercomb(h, [], force_series=True)
                 v = ctx.gamma(b)/(2*ctx.sqrt(ctx.pi))*v
@@ -364,8 +364,8 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
         # things a bit unreadable. The formula is quite messy to begin
         # with, though...
         abz = a*b*z
-        ch = c * ctx.mpq_1_2
-        c1h = (c+1) * ctx.mpq_1_2
+        ch = c * ctx._mpq_1_2
+        c1h = (c+1) * ctx._mpq_1_2
         nz = 1-z
         g = z/nz
         abg = a*b*g
@@ -450,9 +450,9 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
         # Use 1/z transformation
         if absz >= 1.3:
             def h(a,b):
-                t = ctx.mpq_1-c; ab = a-b; rz = 1/z
-                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[ctx.mpq_1+ab],  rz)
-                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[ctx.mpq_1-ab],  rz)
+                t = ctx._mpq_1-c; ab = a-b; rz = 1/z
+                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[ctx._mpq_1+ab],  rz)
+                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[ctx._mpq_1-ab],  rz)
                 return T1, T2
             v = ctx.hypercomb(h, [a,b], **kwargs)
 
@@ -840,12 +840,12 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric1F2/06/02/03/
                 def h(a1,b1,b2):
-                    X = ctx.mpq_1_2*(a1-b1-b2+ctx.mpq_1_2)
+                    X = ctx._mpq_1_2*(a1-b1-b2+ctx._mpq_1_2)
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(ctx.mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-ctx.mpq_3_16)
-                    c[2] = 2*(b1*b2+ctx.mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-ctx.mpq_3_16)**2+\
-                        ctx.mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
+                    c[1] = 2*(ctx._mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-ctx._mpq_3_16)
+                    c[2] = 2*(b1*b2+ctx._mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-ctx._mpq_3_16)**2+\
+                        ctx._mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
                         4*(a1-b1-b2)*(-8*a1**2+11*a1+b1+b2-2)-3)
                     s1 = 0
                     s2 = 0
@@ -854,9 +854,9 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                     while 1:
                         if k not in c:
                             uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
-                                (b1-b2)**2 - 2*a1*(b1+b2-2) + ctx.mpq_1_4)
-                            uu2 = (k-a1+b1-b2-ctx.mpq_1_2)*(k-a1-b1+b2-ctx.mpq_1_2)*\
-                                (k-a1+b1+b2-ctx.mpq_5_2)
+                                (b1-b2)**2 - 2*a1*(b1+b2-2) + ctx._mpq_1_4)
+                            uu2 = (k-a1+b1-b2-ctx._mpq_1_2)*(k-a1-b1+b2-ctx._mpq_1_2)*\
+                                (k-a1+b1+b2-ctx._mpq_5_2)
                             c[k] = ctx.one/(2*k)*(uu1*c[k-1]-uu2*c[k-2])
                         w = c[k] * (-z)**(-0.5*k)
                         t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
@@ -919,7 +919,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric2F3/06/02/03/01/0002/
                 def h(a1,a2,b1,b2,b3):
-                    X = ctx.mpq_1_2*(a1+a2-b1-b2-b3+ctx.mpq_1_2)
+                    X = ctx._mpq_1_2*(a1+a2-b1-b2-b3+ctx._mpq_1_2)
                     A2 = a1+a2
                     B3 = b1+b2+b3
                     A = a1*a2
@@ -927,8 +927,8 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                     R = b1*b2*b3
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(B - A + ctx.mpq_1_4*(3*A2+B3-2)*(A2-B3) - ctx.mpq_3_16)
-                    c[2] = ctx.mpq_1_2*c[1]**2 + ctx.mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
+                    c[1] = 2*(B - A + ctx._mpq_1_4*(3*A2+B3-2)*(A2-B3) - ctx._mpq_3_16)
+                    c[2] = ctx._mpq_1_2*c[1]**2 + ctx._mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
                         4*(-8*A2**2 + 11*A2 + 8*A + B3 - 2)*(A2-B3)-3)
                     s1 = 0
                     s2 = 0
