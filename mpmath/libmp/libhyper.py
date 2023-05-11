@@ -10,8 +10,6 @@ import math
 
 from .backend import MPZ_ZERO, MPZ_ONE, BACKEND
 
-from .libintmath import gcd
-
 from .libmpf import (\
     ComplexResult, round_fast, round_nearest,
     negative_rnd, bitcount, to_fixed, from_man_exp, from_int, to_int,

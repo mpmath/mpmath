@@ -9,6 +9,7 @@ here from settings.py
 import math
 import sys
 from bisect import bisect
+from functools import lru_cache
 
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
@@ -306,6 +307,7 @@ elif BACKEND == 'sage':
     isqrt_small = isqrt_fast = isqrt = \
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
+    _gcd2 = sage.gcd
 else:
     if sys.version_info >= (3, 12):
         isqrt_small = isqrt_fast = isqrt = math.isqrt
@@ -314,6 +316,21 @@ else:
         isqrt_fast = isqrt_fast_python
         isqrt = isqrt_python
     sqrtrem = sqrtrem_python
+    _gcd2 = math.gcd
+
+
+if sys.version_info >= (3, 9) and BACKEND == 'python':
+    gcd = math.gcd
+elif BACKEND == 'gmpy':
+    gcd = gmpy.gcd
+else:
+    def gcd(*args):
+        res = MPZ_ZERO
+        for a in args:
+            a = MPZ(a)
+            if res != MPZ_ONE:
+                res = _gcd2(res, a)
+        return res
 
 
 def ifib(n, _cache={}):
@@ -343,21 +360,6 @@ def ifib(n, _cache={}):
 
 MAX_FACTORIAL_CACHE = 1000
 
-def ifac(n, memo={0:1, 1:1}):
-    """Return n factorial (for integers n >= 0 only)."""
-    f = memo.get(n)
-    if f:
-        return f
-    k = len(memo)
-    p = memo[k-1]
-    MAX = MAX_FACTORIAL_CACHE
-    while k <= n:
-        p *= k
-        if k <= MAX:
-            memo[k] = p
-        k += 1
-    return p
-
 def ifac2(n, memo_pair=[{0:1}, {1:1}]):
     """Return n!! (double factorial), integers n >= 0 only."""
     memo = memo_pair[n&1]
@@ -376,9 +378,16 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
 
 if BACKEND == 'gmpy':
     ifac = gmpy.fac
+    ifac2 = gmpy.double_fac
+    ifib = gmpy.fib
 elif BACKEND == 'sage':
-    ifac = lambda n: int(sage.factorial(n))
+    ifac = sage.factorial
+    ifac2 = lambda n: MPZ(n).multifactorial(2)
     ifib = sage.fibonacci
+else:
+    ifac = math.factorial
+
+ifac = lru_cache(maxsize=1024)(ifac)
 
 def list_primes(n):
     n = n + 1
@@ -461,16 +470,6 @@ def moebius(n):
             if not sum(p % f for f in factors):
                 factors.append(p)
     return (-1)**len(factors)
-
-def gcd(*args):
-    a = 0
-    for b in args:
-        if a:
-            while b:
-                a, b = b, a % b
-        else:
-            a = b
-    return a
 
 
 #  Comment by Juan Arias de Reyna:
