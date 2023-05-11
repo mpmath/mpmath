@@ -989,7 +989,7 @@ def mpf_fibonacci(x, prec, rnd=round_fast):
         return x
     # F(2^n) ~= 2^(2^n)
     size = abs(exp+bc)
-    if exp >= 0:
+    if exp >= 0 and not sign:
         # Exact
         if size < 10 or size <= bitcount(prec):
             return from_int(ifib(to_int(x)), prec, rnd)

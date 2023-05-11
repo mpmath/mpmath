@@ -9,6 +9,7 @@ here from settings.py
 import math
 import sys
 from bisect import bisect
+from functools import lru_cache
 
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
@@ -359,21 +360,6 @@ def ifib(n, _cache={}):
 
 MAX_FACTORIAL_CACHE = 1000
 
-def ifac(n, memo={0:1, 1:1}):
-    """Return n factorial (for integers n >= 0 only)."""
-    f = memo.get(n)
-    if f:
-        return f
-    k = len(memo)
-    p = memo[k-1]
-    MAX = MAX_FACTORIAL_CACHE
-    while k <= n:
-        p *= k
-        if k <= MAX:
-            memo[k] = p
-        k += 1
-    return p
-
 def ifac2(n, memo_pair=[{0:1}, {1:1}]):
     """Return n!! (double factorial), integers n >= 0 only."""
     memo = memo_pair[n&1]
@@ -392,9 +378,16 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
 
 if BACKEND == 'gmpy':
     ifac = gmpy.fac
+    ifac2 = gmpy.double_fac
+    ifib = gmpy.fib
 elif BACKEND == 'sage':
-    ifac = lambda n: int(sage.factorial(n))
+    ifac = sage.factorial
+    ifac2 = lambda n: MPZ(n).multifactorial(2)
     ifib = sage.fibonacci
+else:
+    ifac = math.factorial
+
+ifac = lru_cache(maxsize=1024)(ifac)
 
 def list_primes(n):
     n = n + 1
