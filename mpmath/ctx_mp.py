@@ -45,7 +45,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.default()
         StandardBaseContext.__init__(ctx)
 
-        ctx.mpq = MPQ
         ctx.init_builtins()
 
         ctx.hyp_summators = {}

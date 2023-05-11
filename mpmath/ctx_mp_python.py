@@ -986,7 +986,7 @@ class PythonMPContext:
             if p is not None:
                 if not p % q:
                     return p // q, 'Z'
-                return ctx.mpq(p,q), 'Q'
+                return ctx._mpq(p,q), 'Q'
             x = ctx.convert(x)
             if hasattr(x, "_mpc_"):
                 v, im = x._mpc_
@@ -1004,7 +1004,7 @@ class PythonMPContext:
                 if exp >= 0:
                     return int(man) << exp, 'Z'
                 p, q = int(man), (1<<(-exp))
-                return ctx.mpq(p,q), 'Q'
+                return ctx._mpq(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
         if not exp:
