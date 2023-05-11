@@ -1,4 +1,5 @@
-from mpmath import *
+from mpmath import atan, exp, inf, isinf, isnan, log, mpf, nan, pi, sin, sqrt
+
 
 def test_special():
     assert inf == inf
@@ -74,7 +75,8 @@ def test_special_powers():
     assert (-inf)**-2 == 0
     assert (-inf)**-3 == 0
     assert isnan(nan**5)
-    assert isnan(nan**0)
+    assert nan**0 == 1
+    assert 1**inf == 1
 
 def test_functions_special():
     assert exp(inf) == inf

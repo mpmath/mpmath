@@ -16,7 +16,6 @@ This module implements gamma- and zeta-related functions:
 import math
 import sys
 
-from .backend import xrange
 from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
 
 from .libintmath import list_primes, ifac, ifac2, moebius
@@ -267,8 +266,7 @@ Reference:
 [1] Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
 http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
 
-[2] Jonathan Borwein & David Bailey, Mathematics by Experiment,
-A K Peters, 2003
+[2] [BorweinBailey]_
 """
 
 @constant_memo
@@ -315,7 +313,7 @@ def mertens_fixed(prec):
 @constant_memo
 def twinprime_fixed(prec):
     def I(n):
-        return sum(moebius(d)<<(n//d) for d in xrange(1,n+1) if not n%d)//n
+        return sum(moebius(d)<<(n//d) for d in range(1,n+1) if not n%d)//n
     wp = 2*prec + 30
     res = fone
     primes = [from_rational(1,p,wp) for p in [2,3,5,7]]
@@ -451,7 +449,7 @@ def mpf_bernoulli(n, prec, rnd=None):
             a = MPZ_ZERO
         else:
             a = bin1
-        for j in xrange(1, m//6+1):
+        for j in range(1, m//6+1):
             usign, uman, uexp, ubc = u = numbers[m-6*j]
             if usign:
                 uman = -uman
@@ -496,7 +494,7 @@ def bernfrac(n):
 
     The first few Bernoulli numbers are exactly::
 
-        >>> from mpmath import *
+        >>> from mpmath import bernfrac, mp, mpf, bernoulli
         >>> for n in range(15):
         ...     p, q = bernfrac(n)
         ...     print("%s %s/%s" % (n, p, q))
@@ -519,6 +517,10 @@ def bernfrac(n):
 
     This function works for arbitrarily large `n`::
 
+        >>> import sys
+        >>> if hasattr(sys, 'set_int_max_str_digits'):
+        ...     sys.set_int_max_str_digits(30000)
+        >>> del sys
         >>> p, q = bernfrac(10**4)
         >>> print(q)
         2338224387510
@@ -686,7 +688,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
     x = to_fixed(x, wp)
     one = MPZ_ONE << wp
     if m < n:
-        for k in xrange(m, n):
+        for k in range(m, n):
             s -= (one << wp) // x
             x += one
     x -= one
@@ -739,7 +741,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     n = int(0.11*wp) + 2
     s = mpc_zero
     if w < n:
-        for k in xrange(w, n):
+        for k in range(w, n):
             s = mpc_sub(s, mpc_reciprocal(z, wp), wp)
             z = mpc_add_mpf(z, fone, wp)
     z = mpc_sub(z, mpc_one, wp)
@@ -750,6 +752,7 @@ def mpc_psi0(z, prec, rnd=round_fast):
     z2 = mpc_square(z, wp)
     t = mpc_one
     prev = mpc_zero
+    szprev = fzero
     k = 1
     eps = mpf_shift(fone, -wp+2)
     while 1:
@@ -758,9 +761,10 @@ def mpc_psi0(z, prec, rnd=round_fast):
         term = mpc_mpf_div(bern, mpc_mul_int(t, 2*k, wp), wp)
         s = mpc_sub(s, term, wp)
         szterm = mpc_abs(term, 10)
-        if k > 2 and mpf_le(szterm, eps):
+        if k > 2 and (mpf_le(szterm, eps) or mpf_le(szprev, szterm)):
             break
         prev = term
+        szprev = szterm
         k += 1
     return s
 
@@ -797,7 +801,7 @@ def mpc_psi(m, z, prec, rnd=round_fast):
     n = int(0.4*wp + 4*m)
     s = mpc_zero
     if w < n:
-        for k in xrange(w, n):
+        for k in range(w, n):
             t = mpc_pow_int(z, -m-1, wp)
             s = mpc_add(s, t, wp)
             z = mpc_add_mpf(z, fone, wp)
@@ -949,7 +953,7 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     d = borwein_coefficients(n)
     t = MPZ_ZERO
     s = MPZ(s)
-    for k in xrange(n):
+    for k in range(n):
         t += (((-1)**k * (d[k] - d[n])) << wp) // (k+1)**s
     t = (t << wp) // (-d[n])
     t = (t << wp) // ((1 << wp) - (1 << (wp+1-s)))
@@ -1022,7 +1026,7 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
     t = MPZ_ZERO
     sf = to_fixed(s, wp)
     ln2 = ln2_fixed(wp)
-    for k in xrange(n):
+    for k in range(n):
         u = (-sf*log_int_fixed(k+1, wp, ln2)) >> wp
         #esign, eman, eexp, ebc = mpf_exp(u, wp)
         #offset = eexp + wp
@@ -1110,7 +1114,7 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
     ln2 = ln2_fixed(wp)
     pi2 = pi_fixed(wp-1)
     wp2 = wp+wp
-    for k in xrange(n):
+    for k in range(n):
         log = log_int_fixed(k+1, wp, ln2)
         # A square root is much cheaper than an exp
         if critical_line:
@@ -1173,7 +1177,7 @@ def primesieve(n):
     primes = list_primes(n)
     for p in primes:
         #sieve[p::p] = p
-        for k in xrange(p,n+1,p):
+        for k in range(p,n+1,p):
             sieve[k] = p
     for i, p in enumerate(sieve):
         if i >= 2:
@@ -1219,7 +1223,7 @@ def zetasum_sieved(critical_line, sre, sim, a, n, wp):
     if a == 1:
         xre += one
     aa = max(a,2)
-    for k in xrange(aa, a+n+1):
+    for k in range(aa, a+n+1):
         p = sieve[k]
         if p in basic_powers:
             m = mult[k]
@@ -1290,7 +1294,7 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
     pi2 = pi_fixed(wp-1)
     wp2 = wp+wp
 
-    for w in xrange(a, a+n+1):
+    for w in range(a, a+n+1):
         log = log_int_fixed(w, wp, ln2)
         cos, sin = cos_sin_fixed((-sim*log)>>wp, wp, pi2)
         if critical_line:
@@ -1413,7 +1417,7 @@ def zeta_array(N, prec):
         exp_2pi_k = mpf_mul(exp_2pi_k, exp_2pi, wp)
         k += 1
     # Exponential sum
-    for n in xrange(3, N+1, 2):
+    for n in range(3, N+1, 2):
         s = MPZ_ZERO
         k = 1
         for e1, e2 in exps3:
@@ -1428,26 +1432,26 @@ def zeta_array(N, prec):
             k += 1
         zeta_values[n] = -2*s
     # Even zeta values
-    B = [mpf_abs(mpf_bernoulli(k,wp)) for k in xrange(N+2)]
+    B = [mpf_abs(mpf_bernoulli(k,wp)) for k in range(N+2)]
     pi_pow = fpi = mpf_pow_int(mpf_shift(mpf_pi(wp), 1), 2, wp)
     pi_pow = mpf_div(pi_pow, from_int(4), wp)
-    for n in xrange(2,N+2,2):
+    for n in range(2,N+2,2):
         z = mpf_mul(B[n], pi_pow, wp)
         zeta_values[n] = to_fixed(z, wp)
         pi_pow = mpf_mul(pi_pow, fpi, wp)
         pi_pow = mpf_div(pi_pow, from_int((n+1)*(n+2)), wp)
     # Zeta sum
     reciprocal_pi = (one << wp) // pi
-    for n in xrange(3, N+1, 4):
+    for n in range(3, N+1, 4):
         U = (n-3)//4
         s = zeta_values[4*U+4]*(4*U+7)//4
-        for k in xrange(1, U+1):
+        for k in range(1, U+1):
             s -= (zeta_values[4*k] * zeta_values[4*U+4-4*k]) >> wp
         zeta_values[n] += (2*s*reciprocal_pi) >> wp
-    for n in xrange(5, N+1, 4):
+    for n in range(5, N+1, 4):
         U = (n-1)//4
         s = zeta_values[4*U+2]*(2*U+1)
-        for k in xrange(1, 2*U+1):
+        for k in range(1, 2*U+1):
             s += ((-1)**k*2*k* zeta_values[2*k] * zeta_values[4*U+2-2*k])>>wp
         zeta_values[n] += ((s*reciprocal_pi)>>wp)//(2*U)
     return [x>>extra for x in zeta_values]
@@ -1494,11 +1498,11 @@ def gamma_taylor_coefficients(inprec):
     A[1] = MPZ_ONE << wp
     A[2] = euler_fixed(wp)
     # SLOW, reference implementation
-    #zeta_values = [0,0]+[to_fixed(mpf_zeta_int(k,wp),wp) for k in xrange(2,N)]
+    #zeta_values = [0,0]+[to_fixed(mpf_zeta_int(k,wp),wp) for k in range(2,N)]
     zeta_values = zeta_array(N, wp)
-    for k in xrange(3, N):
+    for k in range(3, N):
         a = (-A[2]*A[k-1])>>wp
-        for j in xrange(2,k):
+        for j in range(2,k):
             a += ((-1)**j * zeta_values[j] * A[k-j]) >> wp
         a //= (1-k)
         A[k] = a
@@ -1518,7 +1522,7 @@ def gamma_fixed_taylor(xmpf, x, wp, prec, rnd, type):
     coeffs, cwp = gamma_taylor_coefficients(wp)
     if nearest_int > 0:
         r = one
-        for i in xrange(nearest_int-1):
+        for i in range(nearest_int-1):
             x -= one
             r = (r*x) >> wp
         x -= one
@@ -1534,7 +1538,7 @@ def gamma_fixed_taylor(xmpf, x, wp, prec, rnd, type):
             return mpf_log(mpf_abs(from_man_exp((r<<wp)//p, -wp)), prec, rnd)
     else:
         r = one
-        for i in xrange(-nearest_int):
+        for i in range(-nearest_int):
             r = (r*x) >> wp
             x += one
         p = MPZ_ZERO
@@ -1632,27 +1636,27 @@ def complex_stirling_series(x, y, prec):
     sim = -y
 
     # Add initial terms of Stirling's series
-    sre += tre//12; sim += tim//12;
+    sre += tre//12; sim += tim//12
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre -= tre//360; sim -= tim//360;
+    sre -= tre//360; sim -= tim//360
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre += tre//1260; sim += tim//1260;
+    sre += tre//1260; sim += tim//1260
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre -= tre//1680; sim -= tim//1680;
-    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    if abs(tre) + abs(tim) < 5: return sre, sim
-    sre += tre//1188; sim += tim//1188;
-    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre -= 691*tre//360360; sim -= 691*tim//360360;
-    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre += tre//156; sim += tim//156;
+    sre -= tre//1680; sim -= tim//1680
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
     if abs(tre) + abs(tim) < 5: return sre, sim
-    sre -= 3617*tre//122400; sim -= 3617*tim//122400;
+    sre += tre//1188; sim += tim//1188
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre += 43867*tre//244188; sim += 43867*tim//244188;
+    sre -= 691*tre//360360; sim -= 691*tim//360360
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
-    sre -= 174611*tre//125400; sim -= 174611*tim//125400;
+    sre += tre//156; sim += tim//156
+    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
+    if abs(tre) + abs(tim) < 5: return sre, sim
+    sre -= 3617*tre//122400; sim -= 3617*tim//122400
+    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
+    sre += 43867*tre//244188; sim += 43867*tim//244188
+    tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
+    sre -= 174611*tre//125400; sim -= 174611*tim//125400
     tre, tim = ((tre*ure-tim*uim)>>prec), ((tre*uim+tim*ure)>>prec)
     if abs(tre) + abs(tim) < 5: return sre, sim
 
@@ -1846,7 +1850,7 @@ def mpf_gamma(x, prec, rnd='d', type=0):
     if n < n_for_stirling:
         r = one = MPZ_ONE << wp
         d = n_for_stirling - n
-        for k in xrange(d):
+        for k in range(d):
             r = (r * absxman) >> wp
             absxman += one
         x = xabs = from_man_exp(absxman, -wp)
@@ -2039,7 +2043,7 @@ def mpc_gamma(z, prec, rnd='d', type=0):
             d = int((1 + n_for_stirling**2 - bn**2)**0.5 - an)
             rre = one = MPZ_ONE << wp
             rim = MPZ_ZERO
-            for k in xrange(d):
+            for k in range(d):
                 rre, rim = ((afix*rre-bfix*rim)>>wp), ((afix*rim + bfix*rre)>>wp)
                 afix += one
             r = from_man_exp(rre, -wp), from_man_exp(rim, -wp)

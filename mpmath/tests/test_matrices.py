@@ -1,5 +1,9 @@
 import pytest
-from mpmath import *
+
+from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
+                    j, matrix, mnorm, mp, mpc, mpf, mpi, norm, nstr, ones,
+                    randmatrix, sqrt, swap_row, zeros)
+
 
 def test_matrix_basic():
     A1 = matrix(3)
@@ -12,7 +16,7 @@ def test_matrix_basic():
     A3 = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     assert list(A3) == list(range(1, 10))
     A3[1,1] = 0
-    assert not (1, 1) in A3._matrix__data
+    assert (1, 1) not in A3._matrix__data
     A4 = matrix([[1, 2, 3], [4, 5, 6]])
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
     assert A4 * A5 == matrix([[12, -6], [39, -12]])
@@ -22,7 +26,7 @@ def test_matrix_basic():
     A6 = matrix(l)
     assert A6.tolist() == l
     assert A6 == eval(repr(A6))
-    A6 = matrix(A6, force_type=float)
+    A6 = fp.matrix(A6)
     assert A6 == eval(repr(A6))
     assert A6*1j == eval(repr(A6*1j))
     assert A3 * 10 == 10 * A3 == A6
@@ -47,6 +51,17 @@ def test_matrix_basic():
     A9[0,0] = -100
     assert A9 != A10
     assert nstr(A9)
+    assert A9 != None  # issue 283
+    pytest.raises(IndexError, lambda: zeros(1,1)[:, 1])  # issue 318
+    pytest.raises(IndexError, lambda: zeros(1,1)[1, :])
+
+def test_matmul():
+    """
+    Test the PEP465 "@" matrix multiplication syntax.
+    """
+    A4 = matrix([[1, 2, 3], [4, 5, 6]])
+    A5 = matrix([[6, -1], [3, 2], [0, -3]])
+    assert A4 @ A5 == A4 * A5
 
 def test_matrix_slices():
     A = matrix([    [1, 2, 3],
@@ -59,6 +74,8 @@ def test_matrix_slices():
     assert A[:,1] == matrix([[2],[5],[8]])
     assert A[2,:] == matrix([[7, 8 ,9]])
     assert A[1:3,1:3] == matrix([[5,6],[8,9]])
+    assert A[0:2,0:2] == matrix([[1,2],[4,5]])  # issue 267
+    assert A[:2,:2] == matrix([[1,2],[4,5]])
     assert V[2:4] == matrix([3,4])
     pytest.raises(IndexError, lambda: A[:,1:6])
 
@@ -166,15 +183,71 @@ def test_vector():
 def test_matrix_copy():
     A = ones(6)
     B = A.copy()
+    C = +A
     assert A == B
+    assert A == C
     B[0,0] = 0
     assert A != B
+    C[0,0] = 42
+    assert A != C
 
 def test_matrix_numpy():
-    try:
-        import numpy
-    except ImportError:
-        return
+    numpy = pytest.importorskip("numpy")
     l = [[1, 2], [3, 4], [5, 6]]
     a = numpy.array(l)
     assert matrix(l) == matrix(a)
+
+def test_interval_matrix_scalar_mult():
+    """Multiplication of iv.matrix and any scalar type"""
+    a = mpi(-1, 1)
+    b = a + a * 2j
+    c = mpf(42)
+    d = c + c * 2j
+    e = 1.234
+    f = fp.convert(e)
+    g = e + e * 3j
+    h = fp.convert(g)
+    M = iv.ones(1)
+    for x in [a, b, c, d, e, f, g, h]:
+        assert x * M == iv.matrix([x])
+        assert M * x == iv.matrix([x])
+
+@pytest.mark.xfail()
+def test_interval_matrix_matrix_mult():
+    """Multiplication of iv.matrix and other matrix types"""
+    A = ones(1)
+    B = fp.ones(1)
+    M = iv.ones(1)
+    for X in [A, B, M]:
+        assert X * M == iv.matrix(X)
+        assert X * M == X
+        assert M * X == iv.matrix(X)
+        assert M * X == X
+
+def test_matrix_conversion_to_iv():
+    # Test that matrices with foreign datatypes are properly converted
+    for other_type_eye in [eye(3), fp.eye(3), iv.eye(3)]:
+        A = iv.matrix(other_type_eye)
+        B = iv.eye(3)
+        assert type(A[0,0]) == type(B[0,0])
+        assert A.tolist() == B.tolist()
+
+def test_interval_matrix_mult_bug():
+    # regression test for interval matrix multiplication:
+    # result must be nonzero-width and contain the exact result
+    x = convert('1.00000000000001') # note: this is implicitly rounded to some near mpf float value
+    A = matrix([[x]])
+    B = iv.matrix(A)
+    C = iv.matrix([[x]])
+    assert B == C
+    B = B * B
+    C = C * C
+    assert B == C
+    assert B[0, 0].delta > 1e-16
+    assert B[0, 0].delta < 3e-16
+    assert C[0, 0].delta > 1e-16
+    assert C[0, 0].delta < 3e-16
+    assert mp.mpf('1.00000000000001998401444325291756783368705994138804689654') in B[0, 0]
+    assert mp.mpf('1.00000000000001998401444325291756783368705994138804689654') in C[0, 0]
+    # the following caused an error before the bug was fixed
+    assert iv.matrix(mp.eye(2)) * (iv.ones(2) + mpi(1, 2)) == iv.matrix([[mpi(2, 3), mpi(2, 3)], [mpi(2, 3), mpi(2, 3)]])

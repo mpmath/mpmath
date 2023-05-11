@@ -1,10 +1,7 @@
-from __future__ import print_function
-
 from copy import copy
 
-from ..libmp.backend import xrange
 
-class OptimizationMethods(object):
+class OptimizationMethods:
     def __init__(ctx):
         pass
 
@@ -38,7 +35,7 @@ class Newton:
         else:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -126,13 +123,13 @@ class MNewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -183,13 +180,13 @@ class Halley:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
             df = kwargs['df']
         self.df = df
-        if not 'd2f' in kwargs:
+        if 'd2f' not in kwargs:
             def d2f(x):
                 return self.ctx.diff(df, x)
         else:
@@ -529,7 +526,7 @@ class ANewton:
             raise ValueError('expected 1 starting point, got %i' % len(x0))
         self.x0 = x0[0]
         self.f = f
-        if not 'df' in kwargs:
+        if 'df' not in kwargs:
             def df(x):
                 return self.ctx.diff(f, x)
         else:
@@ -590,15 +587,15 @@ def jacobian(ctx, f, x):
     m = len(fx)
     n = len(x)
     J = ctx.matrix(m, n)
-    for j in xrange(n):
+    for j in range(n):
         xj = x.copy()
         xj[j] += h
         Jj = (ctx.matrix(f(*xj)) - fx) / h
-        for i in xrange(m):
+        for i in range(m):
             J[i,j] = Jj[i]
     return J
 
-# TODO: test with user-specified jacobian matrix, support force_type
+# TODO: test with user-specified jacobian matrix
 class MDNewton:
     """
     Find the root of a vector function numerically using Newton's method.
@@ -693,14 +690,21 @@ str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
-    Find a solution to `f(x) = 0`, using *x0* as starting point or
+    Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
 
     Multidimensional overdetermined systems are supported.
     You can specify them using a function or a list of functions.
 
-    If the found root does not satisfy `|f(x)|^2 \leq \mathrm{tol}`,
-    an exception is raised (this can be disabled with *verify=False*).
+    Mathematically speaking, this function returns `x` such that
+    `|f(x)|^2 \leq \mathrm{tol}` is true within the current working precision.
+    If the computed value does not meet this criterion, an exception is raised.
+    This exception can be disabled with *verify=False*.
+
+    For interval arithmetic (``iv.findroot()``), please note that
+    the returned interval ``x`` is not guaranteed to contain `f(x)=0`!
+    It is only some `x` for which `|f(x)|^2 \leq \mathrm{tol}` certainly holds
+    regardless of numerical error. This may be improved in the future.
 
     **Arguments**
 
@@ -744,7 +748,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     secant method by default. A simple example use of the secant method is to
     compute `\pi` as the root of `\sin x` closest to `x_0 = 3`::
 
-        >>> from mpmath import *
+        >>> from mpmath import (diff, gamma, findroot, sin, zeta, exp, log,
+        ...                     lambertw, mp, j)
         >>> mp.dps = 30; mp.pretty = True
         >>> findroot(sin, 3)
         3.14159265358979323846264338328
@@ -879,7 +884,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
     Be careful with symmetric functions::
 
-        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson') #doctest:+ELLIPSIS
+        >>> findroot(lambda x: x**2, (-1, 1), solver='anderson')
         Traceback (most recent call last):
           ...
         ZeroDivisionError
@@ -937,7 +942,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         if multidimensional:
             # only one multidimensional solver available at the moment
             solver = MDNewton
-            if not 'norm' in kwargs:
+            if 'norm' not in kwargs:
                 norm = lambda x: ctx.norm(x, 'inf')
                 kwargs['norm'] = norm
             else:
@@ -993,7 +998,7 @@ def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
     evaluating 10 derivatives by default. You can be specify the n-th derivative
     using the dnf keyword.
 
-    >>> from mpmath import *
+    >>> from mpmath import multiplicity, pi, sin
     >>> multiplicity(lambda x: sin(x) - 1, pi/2)
     2
 
@@ -1001,7 +1006,7 @@ def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
     if tol is None:
         tol = ctx.eps ** 0.8
     kwargs['d0f'] = f
-    for i in xrange(maxsteps):
+    for i in range(maxsteps):
         dfstr = 'd' + str(i) + 'f'
         if dfstr in kwargs:
             df = kwargs[dfstr]
@@ -1039,7 +1044,7 @@ def steffensen(f):
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
     ...     fx = Fx = x
-    ...     for i in xrange(9):
+    ...     for i in range(9):
     ...         try:
     ...             fx = f(fx)
     ...         except OverflowError:
@@ -1089,7 +1094,3 @@ def steffensen(f):
 OptimizationMethods.jacobian = jacobian
 OptimizationMethods.findroot = findroot
 OptimizationMethods.multiplicity = multiplicity
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

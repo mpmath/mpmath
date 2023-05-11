@@ -4,8 +4,8 @@ high-precision input, from 5 to 200 digits. The reference values were
 verified with Mathematica.
 """
 
-import time
-from mpmath import *
+from mpmath import cos, e, euler, exp, log, mp, mpc, mpf, pi, sin, sqrt, tan
+
 
 precs = [5, 15, 28, 35, 57, 80, 100, 150, 200]
 
@@ -199,7 +199,6 @@ def test_hp():
         assert (tan(abi).imag).ae(mpf(tan_abi_imag), abs_eps=1e-205)
     mp.dps = 460
     assert str(log(3))[-20:] == '02166121184001409826'
-    mp.dps = 15
 
 # Since str(a) can differ in the last digit from rounded a, and I want
 # to compare the last digits of big numbers with the results in Mathematica,
@@ -280,8 +279,6 @@ def test_log_hp():
     # Mathematica N[Log[1 + 10^-100]*10^10, 10030]
     # ...3994733877377412241546890854692521568292338268273 10^-91
     assert res == '39947338773774122415', res
-
-    mp.dps = 15
 
 def test_exp_hp():
     mp.dps = 4000

@@ -6,7 +6,7 @@ exp 2.25
 log 2.25
 '''
 
-from mpmath import *
+from mpmath import ae, fp, mp
 mp.dps = 20
 for test in cases.splitlines():
     if not test:
@@ -1669,3 +1669,15 @@ def test_fp_stress_ei_e1():
     assert ae(v, (-9.9960598637998647276e+135 + 2.6855081527595608863e+136j), tol=ATOL)
     assert ae(v.real, -9.9960598637998647276e+135, tol=PTOL)
     assert ae(v.imag, 2.6855081527595608863e+136, tol=PTOL)
+
+def test_fp_nan_in_args():
+    assert fp.isnan(fp.ei(fp.nan))  # issue 483
+    assert fp.isnan(fp.li(fp.nan))  # issue 484
+    assert fp.isnan(fp.ci(fp.nan))  # issue 480
+    assert fp.isnan(fp.si(fp.nan))  # issue 481
+    assert fp.isnan(fp.chi(fp.nan))  # issue 482
+    assert fp.isnan(fp.shi(fp.nan))
+    assert fp.isnan(fp.e1(fp.nan))  # issue 487
+    assert fp.isnan(fp.chebyt(1.3, fp.nan))  # issue 478
+    assert fp.isnan(fp.chebyt(13, fp.nan))
+    assert fp.isnan(fp.hyp2f2(0.4, 2.5, 2.2, 0.7, fp.nan))  # issue 509

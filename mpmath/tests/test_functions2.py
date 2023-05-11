@@ -1,9 +1,20 @@
-import math
 import pytest
-from mpmath import *
+
+from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
+                    besseljzero, besselk, bessely, besselyzero, betainc,
+                    chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
+                    ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
+                    fadd, fmul, fp, fraction, fresnelc, fresnels, fsub, fsum,
+                    gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
+                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
+                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
+                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
+                    legenq, li, log, meijerg, mp, mpc, mpf, nan, ncdf, npdf,
+                    nthroot, pi, qp, quadts, shi, si, spherharm, sqrt, struveh,
+                    struvel, whitm, whitw)
+
 
 def test_bessel():
-    mp.dps = 15
     assert j0(1).ae(0.765197686557966551)
     assert j0(pi).ae(-0.304242177644093864)
     assert j0(1000).ae(0.0247866861524201746)
@@ -78,7 +89,6 @@ def test_bessel():
         assert besseli(91.5,24.7708).ae("4.00830632138673963619656140653537080438462342928377020695738635559218797348548092636896796324190271316137982810144874264e-41")
 
 def test_bessel_zeros():
-    mp.dps = 15
     assert besseljzero(0,1).ae(2.40482555769577276869)
     assert besseljzero(2,1).ae(5.1356223018406825563)
     assert besseljzero(1,50).ae(157.86265540193029781)
@@ -93,7 +103,6 @@ def test_bessel_zeros():
     assert besselyzero(2,1,1).ae(5.0025829314460639452)
 
 def test_hankel():
-    mp.dps = 15
     assert hankel1(0,0.5).ae(0.93846980724081290423-0.44451873350670655715j)
     assert hankel1(1,0.5).ae(0.2422684576748738864-1.4714723926702430692j)
     assert hankel1(-1,0.5).ae(-0.2422684576748738864+1.4714723926702430692j)
@@ -106,19 +115,16 @@ def test_hankel():
     assert hankel2(1.5,3+4j).ae(14.783528526098567526-7.397390270853446512j)
 
 def test_struve():
-    mp.dps = 15
     assert struveh(2,3).ae(0.74238666967748318564)
     assert struveh(-2.5,3).ae(0.41271003220971599344)
     assert struvel(2,3).ae(1.7476573277362782744)
     assert struvel(-2.5,3).ae(1.5153394466819651377)
 
 def test_whittaker():
-    mp.dps = 15
     assert whitm(2,3,4).ae(49.753745589025246591)
     assert whitw(2,3,4).ae(14.111656223052932215)
 
 def test_kelvin():
-    mp.dps = 15
     assert ber(2,3).ae(0.80836846563726819091)
     assert ber(3,4).ae(-0.28262680167242600233)
     assert ber(-3,2).ae(-0.085611448496796363669)
@@ -132,7 +138,6 @@ def test_kelvin():
     assert kei(0.5,3).ae(0.013633041571314302948)
 
 def test_hyper_misc():
-    mp.dps = 15
     assert hyp0f1(1,0) == 1
     assert hyp1f1(1,2,0) == 1
     assert hyp1f2(1,2,3,0) == 1
@@ -151,10 +156,8 @@ def test_hyper_misc():
     mp.dps = 25
     v = mpc('1.2282306665029814734863026', '-0.1225033830118305184672133')
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
-    mp.dps = 15
 
 def test_elliptic_integrals():
-    mp.dps = 15
     assert ellipk(0).ae(pi/2)
     assert ellipk(0.5).ae(gamma(0.25)**2/(4*sqrt(pi)))
     assert ellipk(1) == inf
@@ -211,10 +214,8 @@ def test_elliptic_integrals():
     v = ellipe(pi)
     assert v.real.ae('0.4632848917264710404078033487934663562998345622611263332')
     assert v.imag.ae('1.0637961621753130852473300451583414489944099504180510966')
-    mp.dps = 15
 
 def test_exp_integrals():
-    mp.dps = 15
     x = +e
     z = e + sqrt(3)*j
     assert ei(x).ae(8.21168165538361560)
@@ -261,7 +262,6 @@ def test_exp_integrals():
     assert chi(inf) == inf
 
 def test_ei():
-    mp.dps = 15
     assert ei(0) == -inf
     assert ei(inf) == inf
     assert ei(-inf) == -0.0
@@ -283,7 +283,6 @@ def test_ei():
     # More asymptotic expansions
     assert chi(-10**6+100j).ae('1.3077239389562548386e+434288 + 7.6808956999707408158e+434287j')
     assert shi(-10**6+100j).ae('-1.3077239389562548386e+434288 - 7.6808956999707408158e+434287j')
-    mp.dps = 15
     assert ei(10j).ae(-0.0454564330044553726+3.2291439210137706686j)
     assert ei(100j).ae(-0.0051488251426104921+3.1330217936839529126j)
     u = ei(fmul(10**20, j, exact=True))
@@ -300,7 +299,6 @@ def test_ei():
     assert u.imag.ae(3.141595611735621062025)
 
 def test_e1():
-    mp.dps = 15
     assert e1(0) == inf
     assert e1(inf) == 0
     assert e1(-inf) == mpc(-inf, -pi)
@@ -312,7 +310,6 @@ def test_e1():
     assert e1(fmul(-10**20, j, exact=True)).ae(6.4525128526578084421e-21 + 7.6397040444172830039e-21j, abs_eps=0, rel_eps=8*eps)
 
 def test_expint():
-    mp.dps = 15
     assert expint(0,0) == inf
     assert expint(0,1).ae(1/e)
     assert expint(0,1.5).ae(2/exp(1.5)/3)
@@ -444,7 +441,6 @@ def test_trig_integrals():
     assert ae(fp.shi(2+50j), -0.017515007378437448+1.497884414277228461j)
 
 def test_airy():
-    mp.dps = 15
     assert (airyai(10)*10**10).ae(1.1047532552898687)
     assert (airybi(10)/10**9).ae(0.45564115354822515)
     assert (airyai(1000)*10**9158).ae(9.306933063179556004)
@@ -455,7 +451,6 @@ def test_airy():
     assert (airybi(100+100j)/10**185).ae(1.7086751714463652039 - 3.1416590020830804578j)
 
 def test_hyper_0f1():
-    mp.dps = 15
     v = 8.63911136507950465
     assert hyper([],[(1,3)],1.5).ae(v)
     assert hyper([],[1/3.],1.5).ae(v)
@@ -466,7 +461,6 @@ def test_hyper_0f1():
     assert hyp0f1(3,1e9j).ae('-2.1222788784457702157e+19410 + 5.0840597555401854116e+19410j')
 
 def test_hyper_1f1():
-    mp.dps = 15
     v = 1.2917526488617656673
     assert hyper([(1,2)],[(3,2)],0.7).ae(v)
     assert hyper([(1,2)],[(3,2)],0.7+0j).ae(v)
@@ -488,7 +482,6 @@ def test_hyper_1f1():
     assert hyp1f1(1j,fraction(1,3),0.415-69.739j).ae(25.857588206024346592 + 15.738060264515292063j)
 
 def test_hyper_2f1():
-    mp.dps = 15
     v = 1.0652207633823291032
     assert hyper([(1,2), (3,4)], [2], 0.3).ae(v)
     assert hyper([(1,2), 0.75], [2], 0.3).ae(v)
@@ -518,7 +511,6 @@ def test_hyper_2f1():
     assert hyper([0.2,(3,10)],[(4,10)],4+2j).ae(v)
 
 def test_hyper_2f1_hard():
-    mp.dps = 15
     # Singular cases
     assert hyp2f1(2,-1,-1,3).ae(7)
     assert hyp2f1(2,-1,-1,3,eliminate_all=True).ae(0.25)
@@ -590,7 +582,6 @@ def test_hyper_3f2_etc():
     #assert hyper([1,1,1],[2,3],0.9999).ae(1.2897972005319693905)
 
 def test_hyper_u():
-    mp.dps = 15
     assert hyperu(2,-3,0).ae(0.05)
     assert hyperu(2,-3.5,0).ae(4./99)
     assert hyperu(2,0,0) == 0.5
@@ -612,7 +603,6 @@ def test_hyper_u():
     #assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
 
 def test_hyper_2f0():
-    mp.dps = 15
     assert hyper([1,2],[],3) == hyp2f0(1,2,3)
     assert hyp2f0(2,3,7).ae(0.0116108068639728714668 - 0.0073727413865865802130j)
     assert hyp2f0(2,3,0) == 1
@@ -634,7 +624,6 @@ def test_hyper_2f0():
         assert hyp2f0(1.5, 0.5, 0.009).ae('1.006867007239309717945323585695344927904000945829843527398772456281301440034218290443367270629519483 + 1.238277162240704919639384945859073461954721356062919829456053965502443570466701567100438048602352623e-46j')
 
 def test_hyper_1f2():
-    mp.dps = 15
     assert hyper([1],[2,3],4) == hyp1f2(1,2,3,4)
     a1,b1,b2 = (1,10),(2,3),1./16
     assert hyp1f2(a1,b1,b2,10).ae(298.7482725554557568)
@@ -657,7 +646,6 @@ def test_hyper_1f2():
     assert hyp1f2(a1,b1,b2,10**20*j).ae('-1.1734497974795488504e+6141851462 + 1.1498106965385471542e+6141851462j')
 
 def test_hyper_2f3():
-    mp.dps = 15
     assert hyper([1,2],[3,4,5],6) == hyp2f3(1,2,3,4,5,6)
     a1,a2,b1,b2,b3 = (1,10),(2,3),(3,10), 2, 1./16
     # Check asymptotic expansion
@@ -680,7 +668,6 @@ def test_hyper_2f3():
     assert hyp2f3(a1,a2,b1,b2,b3,10**20*j).ae('-2.0988815677627225449e+6141851451 + 5.7708223542739208681e+6141851452j')
 
 def test_hyper_2f2():
-    mp.dps = 15
     assert hyper([1,2],[3,4],5) == hyp2f2(1,2,3,4,5)
     a1,a2,b1,b2 = (3,10),4,(1,2),1./16
     assert hyp2f2(a1,a2,b1,b2,10).ae(448225936.3377556696)
@@ -689,7 +676,6 @@ def test_hyper_2f2():
     assert hyp2f2(a1,a2,b1,b2,10**20).ae('1.1148680024303263661e+43429448190325182840')
 
 def test_orthpoly():
-    mp.dps = 15
     assert jacobi(-4,2,3,0.7).ae(22800./4913)
     assert jacobi(3,2,4,5.5) == 4133.125
     assert jacobi(1.5,5/6.,4,0).ae(-1.0851951434075508417)
@@ -716,7 +702,6 @@ def test_orthpoly():
     assert laguerre(3, 1+j, 0.5).ae(0.2291666666666666667 + 2.5416666666666666667j)
 
 def test_hermite():
-    mp.dps = 15
     assert hermite(-2, 0).ae(0.5)
     assert hermite(-1, 0).ae(0.88622692545275801365)
     assert hermite(0, 0).ae(1)
@@ -747,7 +732,6 @@ def test_hermite():
     assert hermite(2+3j, -1-j).ae(851.3677063883687676 - 1496.4373467871007997j)
 
 def test_gegenbauer():
-    mp.dps = 15
     assert gegenbauer(1,2,3).ae(12)
     assert gegenbauer(2,3,4).ae(381)
     assert gegenbauer(0,0,0) == 0
@@ -761,7 +745,6 @@ def test_gegenbauer():
     #assert gegenbauer(-2, -0.5, 3).ae(-12)
 
 def test_legenp():
-    mp.dps = 15
     assert legenp(2,0,4) == legendre(2,4)
     assert legenp(-2, -1, 0.5).ae(0.43301270189221932338)
     assert legenp(-2, -1, 0.5, type=3).ae(0.43301270189221932338j)
@@ -781,7 +764,6 @@ def test_legenp():
     assert legenp(-2,0.5,-0.5).ae(-0.85738275810499171286)
 
 def test_legenq():
-    mp.dps = 15
     f = legenq
     # Evaluation at poles
     assert isnan(f(3,2,1))
@@ -841,7 +823,6 @@ def test_legenq():
     assert f(-2.5,1,1.5,type=3).ae(-0.29932356550447017254)
 
 def test_agm():
-    mp.dps = 15
     assert agm(0,0) == 0
     assert agm(0,1) == 0
     assert agm(1,1) == 1
@@ -855,7 +836,6 @@ def test_agm():
     assert agm(-3,4).ae(0.63468509766550907+1.3443087080896272j)
 
 def test_gammainc():
-    mp.dps = 15
     assert gammainc(2,5).ae(6*exp(-5))
     assert gammainc(2,0,5).ae(1-6*exp(-5))
     assert gammainc(2,3,5).ae(-6*exp(-5)+4*exp(-3))
@@ -932,7 +912,6 @@ def test_gammainc_expint_n():
     # Need to cover positive/negative arguments; small/large/huge arguments
     # for both positive and negative indices, as well as indices 0 and 1
     # which may be special-cased
-    mp.dps = 15
     assert expint(-3,3.5).ae(0.021456366563296693987)
     assert expint(-2,3.5).ae(0.014966633183073309405)
     assert expint(-1,3.5).ae(0.011092916359219041088)
@@ -1058,13 +1037,11 @@ def test_gammainc_expint_n():
     assert gammainc(3,-350000000000000000000000).ae('1.6209025312973255256e+152003068666138139677942')
 
 def test_incomplete_beta():
-    mp.dps = 15
     assert betainc(-2,-3,0.5,0.75).ae(63.4305673311255413583969)
     assert betainc(4.5,0.5+2j,2.5,6).ae(0.2628801146130621387903065 + 0.5162565234467020592855378j)
     assert betainc(4,5,0,6).ae(90747.77142857142857142857)
 
 def test_erf():
-    mp.dps = 15
     assert erf(0) == 0
     assert erf(1).ae(0.84270079294971486934)
     assert erf(3+4j).ae(-120.186991395079444098 - 27.750337293623902498j)
@@ -1127,7 +1104,6 @@ def test_erf():
     assert erfc(100+100j).ae(0.00065234366376857698698 - 0.0039357263629214118437j)
 
 def test_pdf():
-    mp.dps = 15
     assert npdf(-inf) == 0
     assert npdf(inf) == 0
     assert npdf(5,0,2).ae(npdf(5+4,4,2))
@@ -1141,7 +1117,6 @@ def test_pdf():
     assert (ncdf(-10)*10**24).ae(7.619853024160526)
 
 def test_lambertw():
-    mp.dps = 15
     assert lambertw(0) == 0
     assert lambertw(0+0j) == 0
     assert lambertw(inf) == inf
@@ -1336,7 +1311,6 @@ def test_lambertw_hard():
     assert lambertw(x).ae(ans)
 
 def test_meijerg():
-    mp.dps = 15
     assert meijerg([[2,3],[1]],[[0.5,2],[3,4]], 2.5).ae(4.2181028074787439386)
     assert meijerg([[],[1+j]],[[1],[1]], 3+4j).ae(271.46290321152464592 - 703.03330399954820169j)
     assert meijerg([[0.25],[1]],[[0.5],[2]],0) == 0
@@ -1355,7 +1329,6 @@ def test_meijerg():
         assert x1.ae(x3)
 
 def test_appellf1():
-    mp.dps = 15
     assert appellf1(2,-2,1,1,2,3).ae(-1.75)
     assert appellf1(2,1,-2,1,2,3).ae(-8)
     assert appellf1(2,1,-2,1,0.5,0.25).ae(1.5)
@@ -1365,11 +1338,9 @@ def test_appellf1():
 def test_coulomb():
     # Note: most tests are doctests
     # Test for a bug:
-    mp.dps = 15
     assert coulombg(mpc(-5,0),2,3).ae(20.087729487721430394)
 
 def test_hyper_param_accuracy():
-    mp.dps = 15
     As = [n+1e-10 for n in range(-5,-1)]
     Bs = [n+1e-10 for n in range(-12,-5)]
     assert hyper(As,Bs,10).ae(-381757055858.652671927)
@@ -1400,7 +1371,6 @@ def test_hypercomb_zero_pow():
     assert meijerg([[-1.5],[]],[[0],[-0.75]],0).ae(1.4464090846320771425)
 
 def test_spherharm():
-    mp.dps = 15
     t = 0.5; r = 0.25
     assert spherharm(0,0,t,r).ae(0.28209479177387814347)
     assert spherharm(1,-1,t,r).ae(0.16048941205971996369 - 0.04097967481096344271j)
@@ -1442,7 +1412,6 @@ def test_spherharm():
     assert spherharm(3,-2,1,1).ae(-0.16270707338254028971 - 0.35552144137546777097j)
 
 def test_qfunctions():
-    mp.dps = 15
     assert qp(2,3,100).ae('2.7291482267247332183e2391')
 
 def test_issue_239():
@@ -2369,7 +2338,6 @@ ynp_small_zeros = \
 
 @pytest.mark.slow
 def test_bessel_zeros_extra():
-    mp.dps = 15
     for v in range(V):
         for m in range(1,M+1):
             print(v, m, "of", V, M)
@@ -2382,3 +2350,13 @@ def test_bessel_zeros_extra():
             assert besselyzero(v,m).ae(yn_small_zeros[v][m-1])
             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
+
+def test_issue_569():
+    r = betainc(1, 2, 1, 1)
+    assert isinstance(r, mp.mpf) and r == 0
+
+def test_issue_274():
+    pytest.importorskip("gmpy2")
+
+    with pytest.raises(ValueError):
+        mp.fraction(1, 100).func(1000, 0xdead)

@@ -1,8 +1,6 @@
-from ..libmp.backend import xrange
-
 # TODO: should use diagonalization-based algorithms
 
-class MatrixCalculusMethods(object):
+class MatrixCalculusMethods:
 
     def _exp_pade(ctx, a):
         """
@@ -67,8 +65,9 @@ class MatrixCalculusMethods(object):
 
         Basic examples::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import (mp, expm, zeros, eye, j, hilbert, chop,
+            ...                     mnorm, ones, matrix)
+            >>> mp.pretty = True
             >>> expm(zeros(3))
             [1.0  0.0  0.0]
             [0.0  1.0  0.0]
@@ -86,8 +85,8 @@ class MatrixCalculusMethods(object):
             [ 2.26812870852145  2.44114713886289   1.42699786729125]
             [0.841130841230196  1.42699786729125    1.6000162976327]
             >>> expm([[1+j, 0], [1+j,1]])
-            [(1.46869393991589 + 2.28735528717884j)                        0.0]
-            [  (1.03776739863568 + 3.536943175722j)  (2.71828182845905 + 0.0j)]
+            [(1.46869393991589 + 2.28735528717884j)               0.0]
+            [  (1.03776739863568 + 3.536943175722j)  2.71828182845905]
 
         Matrices with large entries are allowed::
 
@@ -137,7 +136,7 @@ class MatrixCalculusMethods(object):
                     break
                 Y += T
                 k += 1
-            for k in xrange(j):
+            for k in range(j):
                 Y = Y*Y
         finally:
             ctx.prec = prec
@@ -151,8 +150,8 @@ class MatrixCalculusMethods(object):
 
         Examples::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import mp, eye, cosm, hilbert, j, matrix
+            >>> mp.pretty = True
             >>> X = eye(3)
             >>> cosm(X)
             [0.54030230586814               0.0               0.0]
@@ -180,8 +179,8 @@ class MatrixCalculusMethods(object):
 
         Examples::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import mp, eye, sinm, hilbert, matrix, j
+            >>> mp.pretty = True
             >>> X = eye(3)
             >>> sinm(X)
             [0.841470984807897                0.0                0.0]
@@ -218,8 +217,8 @@ class MatrixCalculusMethods(object):
 
         Square roots of some simple matrices::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import mp, sqrtm, j, matrix, cos, sin, chop, mnorm
+            >>> mp.pretty = True
             >>> sqrtm([[1,0], [0,1]])
             [1.0  0.0]
             [0.0  1.0]
@@ -286,7 +285,7 @@ class MatrixCalculusMethods(object):
 
         Two examples from the documentation for Matlab's ``sqrtm``::
 
-            >>> mp.dps = 15; mp.pretty = True
+            >>> mp.pretty = True
             >>> sqrtm([[7,10],[15,22]])
             [1.56669890360128  1.74077655955698]
             [2.61116483933547  4.17786374293675]
@@ -357,8 +356,9 @@ class MatrixCalculusMethods(object):
 
         Logarithms of some simple matrices::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import (mp, eye, logm, expm, matrix, j, nprint,
+            ...                     chop, hilbert, cos, sin, pi, re)
+            >>> mp.pretty = True
             >>> X = eye(3)
             >>> logm(X)
             [0.0  0.0  0.0]
@@ -470,8 +470,9 @@ class MatrixCalculusMethods(object):
 
         Powers and inverse powers of a matrix::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import (mp, matrix, powm, chop, extraprec, fib,
+            ...                     phi, sqrt)
+            >>> mp.pretty = True
             >>> A = matrix([[4,1,4],[7,8,9],[10,2,11]])
             >>> powm(A, 2)
             [ 63.0  20.0   69.0]

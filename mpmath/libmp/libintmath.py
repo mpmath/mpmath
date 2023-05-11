@@ -7,9 +7,9 @@ here from settings.py
 """
 
 import math
+import sys
 from bisect import bisect
 
-from .backend import xrange
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
 small_trailing = [0] * 256
@@ -74,16 +74,10 @@ def python_trailing(n):
     return t + small_trailing[n & 0xff]
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).bit_scan1()
-            else: return 0
-    else:
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).scan1()
-            else: return 0
+    def gmpy_trailing(n):
+        """Count the number of trailing zero bits in abs(n) using gmpy."""
+        if n: return MPZ(n).bit_scan1()
+        else: return 0
 
 # Small powers of 2
 powers = [1<<_ for _ in range(300)]
@@ -306,20 +300,19 @@ def sqrt_fixed(x, prec):
 sqrt_fixed2 = sqrt_fixed
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
-        sqrtrem = gmpy.isqrt_rem
-    else:
-        isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
-        sqrtrem = gmpy.sqrtrem
+    isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
+    sqrtrem = gmpy.isqrt_rem
 elif BACKEND == 'sage':
     isqrt_small = isqrt_fast = isqrt = \
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
 else:
-    isqrt_small = isqrt_small_python
-    isqrt_fast = isqrt_fast_python
-    isqrt = isqrt_python
+    if sys.version_info >= (3, 12):
+        isqrt_small = isqrt_fast = isqrt = math.isqrt
+    else:
+        isqrt_small = isqrt_small_python
+        isqrt_fast = isqrt_fast_python
+        isqrt = isqrt_python
     sqrtrem = sqrtrem_python
 
 
@@ -389,11 +382,11 @@ elif BACKEND == 'sage':
 
 def list_primes(n):
     n = n + 1
-    sieve = list(xrange(n))
+    sieve = list(range(n))
     sieve[:2] = [0, 0]
-    for i in xrange(2, int(n**0.5)+1):
+    for i in range(2, int(n**0.5)+1):
         if sieve[i]:
-            for j in xrange(i**2, n, i):
+            for j in range(i**2, n, i):
                 sieve[j] = 0
     return [p for p in sieve if p]
 
@@ -433,7 +426,7 @@ def isprime(n):
         x = pow(a,d,n)
         if x == 1 or x == m:
             return True
-        for r in xrange(1,s):
+        for r in range(1,s):
             x = x**2 % n
             if x == m:
                 return True
@@ -461,7 +454,7 @@ def moebius(n):
     if n < 2:
         return n
     factors = []
-    for p in xrange(2, n+1):
+    for p in range(2, n+1):
         if not (n % p):
             if not (n % p**2):
                 return 0
@@ -558,8 +551,8 @@ def stirling1(n, k):
         return MPZ_ZERO
     L = [MPZ_ZERO] * (k+1)
     L[1] = MPZ_ONE
-    for m in xrange(2, n+1):
-        for j in xrange(min(k, m), 0, -1):
+    for m in range(2, n+1):
+        for j in range(min(k, m), 0, -1):
             L[j] = (m-1) * L[j] + L[j-1]
     return (-1)**(n+k) * L[k]
 
@@ -575,7 +568,7 @@ def stirling2(n, k):
         return MPZ(k == 1)
     s = MPZ_ZERO
     t = MPZ_ONE
-    for j in xrange(k+1):
+    for j in range(k+1):
         if (k + j) & 1:
             s -= t * MPZ(j)**n
         else:

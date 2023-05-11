@@ -2,9 +2,6 @@
 Computational functions for interval arithmetic.
 
 """
-
-from .backend import xrange
-
 from .libmpf import (
     ComplexResult,
     round_down, round_up, round_floor, round_ceiling, round_nearest,
@@ -539,7 +536,7 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
 
     **Examples**
 
-        >>> from mpmath import mpi, mp
+        >>> from mpmath import mpi, mp, iv
         >>> mp.dps = 30
         >>> x = mpi(1, 2)._mpi_
         >>> mpi_to_str(x, 2, mode='plusminus')
@@ -550,6 +547,7 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
         '[1.0, 2.0]'
         >>> mpi_to_str(x, 2, mode='brackets' , brackets=('<', '>'))
         '<1.0, 2.0>'
+        >>> iv.dps = 30
         >>> x = mpi('5.2582327113062393041', '5.2582327113062749951')._mpi_
         >>> mpi_to_str(x, 15, mode='diff')
         '5.2582327113062[4, 7]'
@@ -596,7 +594,7 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
             b.append('')
         if a[1] == b[1]:
             if a[0] != b[0]:
-                for i in xrange(len(a[0]) + 1):
+                for i in range(len(a[0]) + 1):
                     if a[0][i] != b[0][i]:
                         break
                 s = (a[0][:i] + br1 + a[0][i:] + ',' + sp + b[0][i:] + br2

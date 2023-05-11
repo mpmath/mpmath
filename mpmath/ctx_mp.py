@@ -4,11 +4,13 @@ operating with them.
 """
 __docformat__ = 'plaintext'
 
+import functools
+
 import re
 
 from .ctx_base import StandardBaseContext
 
-from .libmp.backend import basestring, BACKEND
+from .libmp.backend import BACKEND
 
 from . import libmp
 
@@ -40,8 +42,8 @@ from . import rational
 
 new = object.__new__
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*\.?\d*(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
+                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
 
 if BACKEND == 'sage':
     from sage.libs.mpmath.ext_main import Context as BaseMPContext
@@ -74,22 +76,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         ctx._init_aliases()
 
-        # XXX: automate
-        try:
-            ctx.bernoulli.im_func.func_doc = function_docs.bernoulli
-            ctx.primepi.im_func.func_doc = function_docs.primepi
-            ctx.psi.im_func.func_doc = function_docs.psi
-            ctx.atan2.im_func.func_doc = function_docs.atan2
-        except AttributeError:
-            # python 3
-            ctx.bernoulli.__func__.func_doc = function_docs.bernoulli
-            ctx.primepi.__func__.func_doc = function_docs.primepi
-            ctx.psi.__func__.func_doc = function_docs.psi
-            ctx.atan2.__func__.func_doc = function_docs.atan2
+        ctx.bernoulli.__func__.__doc__ = function_docs.bernoulli
+        ctx.primepi.__func__.__doc__ = function_docs.primepi
+        ctx.psi.__func__.__doc__ = function_docs.psi
+        ctx.atan2.__func__.__doc__ = function_docs.atan2
 
-        ctx.digamma.func_doc = function_docs.digamma
-        ctx.cospi.func_doc = function_docs.cospi
-        ctx.sinpi.func_doc = function_docs.sinpi
+        ctx.digamma.__doc__ = function_docs.digamma
+        ctx.cospi.__doc_ = function_docs.cospi
+        ctx.sinpi.__doc_ = function_docs.sinpi
 
     def init_builtins(ctx):
 
@@ -319,7 +313,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         number, whether either the real or complex part is NaN;
         otherwise return *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isnan, nan, mpc
             >>> isnan(3.14)
             False
             >>> isnan(nan)
@@ -346,7 +340,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         Return *True* if *x* is a finite number, i.e. neither
         an infinity or a NaN.
 
-            >>> from mpmath import *
+            >>> from mpmath import isfinite, inf, nan, mpc
             >>> isfinite(inf)
             False
             >>> isfinite(-inf)
@@ -472,8 +466,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         to binary at a much higher precision. If the amount of required
         extra precision is unknown, :func:`~mpmath.autoprec` is convenient::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15
+            >>> from mpmath import mp, besselj, autoprec, sin, pi, exp, expm1
             >>> mp.pretty = True
             >>> besselj(5, 125 * 10**28)    # Exact input
             -8.03284785591801e-17
@@ -485,7 +478,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         The following fails to converge because `\sin(\pi) = 0` whereas all
         finite-precision approximations of `\pi` give nonzero values::
 
-            >>> autoprec(sin)(pi) # doctest: +IGNORE_EXCEPTION_DETAIL
+            >>> autoprec(sin)(pi)
             Traceback (most recent call last):
               ...
             NoConvergence: autoprec: prec increased to 2910 without convergence
@@ -574,7 +567,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         instead of returning it.
 
         The keyword arguments *strip_zeros*, *min_fixed*, *max_fixed*
-        and *show_zero_exponent* are forwarded to :func:`~mpmath.libmp.to_str`.
+        and *show_zero_exponent* are forwarded to ``mpmath.libmp.to_str()``.
 
         The number will be printed in fixed-point format if the position
         of the leading digit is strictly between min_fixed
@@ -584,7 +577,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         max_fixed = +inf. To force floating-point format, set
         min_fixed >= max_fixed.
 
-            >>> from mpmath import *
+            >>> from mpmath import nstr, ldexp, mpf, pi, nprint
             >>> nstr([+pi, ldexp(1,-500)])
             '[3.14159, 3.05494e-151]'
             >>> nprint([+pi, ldexp(1,-500)])
@@ -607,14 +600,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return to_str(x._mpf_, n, **kwargs)
         if hasattr(x, '_mpc_'):
             return "(" + mpc_to_str(x._mpc_, n, **kwargs)  + ")"
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             return repr(x)
         if isinstance(x, ctx.matrix):
             return x.__nstr__(n, **kwargs)
         return str(x)
 
     def _convert_fallback(ctx, x, strings):
-        if strings and isinstance(x, basestring):
+        if strings and isinstance(x, str):
             if 'j' in x.lower():
                 x = x.lower().replace(' ', '')
                 match = get_complex.match(x)
@@ -752,8 +745,7 @@ maxterms, or set zeroprec."""
         The argument `x` must be a real floating-point number (or
         possible to convert into one) and `n` must be a Python ``int``.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import ldexp
             >>> ldexp(1, 10)
             mpf('1024.0')
             >>> ldexp(1, -3)
@@ -769,8 +761,7 @@ maxterms, or set zeroprec."""
         `n` a Python integer, and such that `x = y 2^n`. No rounding is
         performed.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import frexp
             >>> frexp(7.5)
             (mpf('0.9375'), 3)
 
@@ -791,8 +782,7 @@ maxterms, or set zeroprec."""
 
         An mpmath number is returned::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fneg, fadd, mpf, log, inf
             >>> fneg(2.5)
             mpf('-2.5')
             >>> fneg(-5+2j)
@@ -853,8 +843,7 @@ maxterms, or set zeroprec."""
 
         Using :func:`~mpmath.fadd` with precision and rounding control::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fadd, nprint, mpf, inf
             >>> fadd(2, 1e-20)
             mpf('2.0')
             >>> fadd(2, 1e-20, rounding='u')
@@ -919,8 +908,7 @@ maxterms, or set zeroprec."""
 
         Using :func:`~mpmath.fsub` with precision and rounding control::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fsub, nprint, mpf, inf
             >>> fsub(2, 1e-20)
             mpf('2.0')
             >>> fsub(2, 1e-20, rounding='d')
@@ -985,8 +973,7 @@ maxterms, or set zeroprec."""
 
         The result is an mpmath number::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fmul, mpf, mpc
             >>> fmul(2, 5.0)
             mpf('10.0')
             >>> fmul(0.5j, 0.5)
@@ -1054,8 +1041,7 @@ maxterms, or set zeroprec."""
 
         The result is an mpmath number::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fdiv
             >>> fdiv(3, 2)
             mpf('1.5')
             >>> fdiv(2, 3)
@@ -1114,7 +1100,7 @@ maxterms, or set zeroprec."""
         an estimate of `\log_2(|x-n|)`. If `d < 0`, `-d` gives the precision
         (measured in bits) lost to cancellation when computing `x-n`.
 
-            >>> from mpmath import *
+            >>> from mpmath import nint_distance, mpf, mpc
             >>> n, d = nint_distance(5)
             >>> print(n); print(d)
             5
@@ -1212,8 +1198,7 @@ maxterms, or set zeroprec."""
         infinite products, see :func:`~mpmath.nprod`). The factors will be
         converted to mpmath numbers.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fprod
             >>> fprod([1, 2, 0.5, 7])
             mpf('7.0')
 
@@ -1240,8 +1225,7 @@ maxterms, or set zeroprec."""
         Given Python integers `(p, q)`, returns a lazy ``mpf`` representing
         the fraction `p/q`. The value is updated with the precision.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15
+            >>> from mpmath import fraction, mpf, mp
             >>> a = fraction(1,100)
             >>> b = mpf(1)/100
             >>> print(a); print(b)
@@ -1251,7 +1235,6 @@ maxterms, or set zeroprec."""
             >>> print(a); print(b)      # a will be accurate
             0.01
             0.0100000000000000002081668171172
-            >>> mp.dps = 15
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
             '%s/%s' % (p, q))
@@ -1303,6 +1286,7 @@ class PrecisionManager:
         self.dpsfun = dpsfun
         self.normalize_output = normalize_output
     def __call__(self, f):
+        @functools.wraps(f)
         def g(*args, **kwargs):
             orig = self.ctx.prec
             try:
@@ -1319,8 +1303,6 @@ class PrecisionManager:
                     return f(*args, **kwargs)
             finally:
                 self.ctx.prec = orig
-        g.__name__ = f.__name__
-        g.__doc__ = f.__doc__
         return g
     def __enter__(self):
         self.origp = self.ctx.prec
@@ -1331,8 +1313,3 @@ class PrecisionManager:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.ctx.prec = self.origp
         return False
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

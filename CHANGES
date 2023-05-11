@@ -1,3 +1,87 @@
+--1.3.0--
+Released March 7, 2023
+
+Security issues:
+
+* Fixed ReDOS vulnerability in mpmathify() (CVE-2021-29063) (Vinzent Steinberg)
+
+Features:
+
+* Added quadsubdiv() for numerical integration with adaptive path splitting
+  (Fredrik Johansson)
+* Added the Cohen algorithm for inverse Laplace transforms
+  (Guillermo Navas-Palencia)
+* Some speedup of matrix multiplication (Fredrik Johansson)
+* Optimizations to Carlson elliptic integrals (Paul Masson)
+* Added signal functions (squarew(), trianglew(), sawtoothw(), unit_triangle()
+  sigmoidw()) (Nike Dattani, Deyan Mihaylov, Tina Yu)
+
+Bug fixes:
+
+* Correct mpf initialization from tuple for finf and fninf (Sergey B Kirpichev)
+* Support QR decomposition for matrices of width 0 and 1 (Clemens Hofreither)
+* Fixed some cases where elliprj() gave inaccurate results (Fredrik Johansson)
+* Fixed cases where digamma() hangs for complex input (Fredrik Johansson)
+* Fixed cases of polylog() with integer-valued parameter with complex type
+  (Fredrik Johansson)
+* Fixed fp.nsum() with Euler-Maclaurin algorithm (Fredrik Johansson)
+
+Maintenance:
+
+* Dropped support for Python 3.4 (Sergey B Kirpichev)
+* Documentation cleanup (Sergey B Kirpichev)
+* Removed obsolete files (Sergey B Kirpichev)
+* Added options to runtests.py to skip tests and exit on failure
+  (Jonathan Warner)
+
+
+--1.2.0--
+Released February 1, 2021
+
+Features and optimizations:
+
+* Support @ operator for matrix multiplication (Max Gaukler)
+* Add eta() implementing the Dedekind eta function
+* Optimized the python_trailing function (adhoc-king)
+* Implement unary plus for matrices (Max Gaukler)
+* Improved calculation of gram_index (p15-git-acc)
+
+Compatibility:
+
+* Enable sage backend by default only if SAGE_ROOT is set (Pauli Virtanen)
+* Fix syntax warnings on CPython 3.8 (Sergey B Kirpichev)
+* Changed version requirements to Python 2.7 and 3.4 or later
+  (Sergey B Kirpichev)
+* Improvements to the setup and test code (Sergey B Kirpichev)
+* Fix sys.version comparisons for compatibility with Python 3.10 (Jakub Wilk)
+* Fixes to Python2/3 compatibility for printing (Christian Clauss)
+
+Bug fixes:
+
+* Fix a possible division by zero in shanks() (Pascal Hebbeker)
+* Fixed indexing errors in deHoog, Knight & Stokes inverse laplace
+  transform algorithm (Kris Kuhlman)
+* Corrected branch cuts of the elliprj() function in some cases
+* Fix initialization of iv.matrix from non-interval matrix (Max Gaukler)
+* Preserve function signatures in PrecisionManager (Viet Tran)
+* Implemented float and complex conversions for ivmpf
+  (Jonathan Warner)
+* Fixed issue with scalar-matrix multiplication for interval matrices
+  (Jonathan Warner)
+* Fix estimation of quadrature error with multiple subintervals (Tom Minka)
+* Fixed a problem with the defun decorators (Sergey B Kirpichev)
+* Fix eigenvalue sorting by absolute value (Georg Ostrovski)
+
+Cleanup:
+
+* Documentation corrections (Paul Masson, S.Y. Lee)
+* Remove inaccessible logic in fsum/fdot (Sergey B Kirpichev)
+* Remove broken force_type option for matrix constructor (Max Gaukler)
+* Fix text of the BSD license in LICENSE (Sergey B Kirpichev)
+* Minor code cleanup (Frédéric Chapoton)
+* Removed old, unused code
+
+
 --1.1.0--
 Released December 11, 2018
 

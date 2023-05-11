@@ -64,6 +64,33 @@ between the various parameters (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 from .functions import defun, defun_wrapped
 
+@defun_wrapped
+def eta(ctx, tau):
+    r"""
+    Returns the Dedekind eta function of tau in the upper half-plane.
+
+        >>> from mpmath import mp, eta, gamma, pi, sqrt, diff, chop, exp
+        >>> mp.dps = 25; mp.pretty = True
+        >>> eta(1j); gamma(0.25) / (2*pi**0.75)
+        (0.7682254223260566590025942 + 0.0j)
+        0.7682254223260566590025942
+        >>> tau = sqrt(2) + sqrt(5)*1j
+        >>> eta(-1/tau); sqrt(-1j*tau) * eta(tau)
+        (0.9022859908439376463573294 + 0.07985093673948098408048575j)
+        (0.9022859908439376463573295 + 0.07985093673948098408048575j)
+        >>> eta(tau+1); exp(pi*1j/12) * eta(tau)
+        (0.4493066139717553786223114 + 0.3290014793877986663915939j)
+        (0.4493066139717553786223114 + 0.3290014793877986663915939j)
+        >>> f = lambda z: diff(eta, z) / eta(z)
+        >>> chop(36*diff(f,tau)**2 - 24*diff(f,tau,2)*f(tau) + diff(f,tau,3))
+        0.0
+
+    """
+    if ctx.im(tau) <= 0.0:
+        raise ValueError("eta is only defined in the upper half-plane")
+    q = ctx.expjpi(tau/12)
+    return q * ctx.qp(q**24)
+
 def nome(ctx, m):
     m = ctx.convert(m)
     if not m:
@@ -94,7 +121,7 @@ def qfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     r"""
     Returns the elliptic nome `q`, given any of `q, m, k, \tau, \bar{q}`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, qfrom, mfrom, kfrom, taufrom, qbarfrom
         >>> mp.dps = 25; mp.pretty = True
         >>> qfrom(q=0.25)
         0.25
@@ -125,7 +152,8 @@ def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     Returns the number-theoretic nome `\bar q`, given any of
     `q, m, k, \tau, \bar{q}`::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, qbarfrom, qfrom, extraprec, mfrom,
+        ...                     kfrom, taufrom)
         >>> mp.dps = 25; mp.pretty = True
         >>> qbarfrom(qbar=0.25)
         0.25
@@ -156,7 +184,7 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     Returns the elliptic half-period ratio `\tau`, given any of
     `q, m, k, \tau, \bar{q}`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, taufrom, qfrom, mfrom, kfrom, qbarfrom
         >>> mp.dps = 25; mp.pretty = True
         >>> taufrom(tau=0.5j)
         (0.0 + 0.5j)
@@ -190,7 +218,7 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     Returns the elliptic modulus `k`, given any of
     `q, m, k, \tau, \bar{q}`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, kfrom, mfrom, qfrom, taufrom, qbarfrom
         >>> mp.dps = 25; mp.pretty = True
         >>> kfrom(k=0.25)
         0.25
@@ -235,7 +263,7 @@ def mfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     Returns the elliptic parameter `m`, given any of
     `q, m, k, \tau, \bar{q}`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mfrom, qfrom, kfrom, taufrom, qbarfrom, taylor
         >>> mp.dps = 25; mp.pretty = True
         >>> mfrom(m=0.25)
         0.25
@@ -374,7 +402,8 @@ def kleinj(ctx, tau=None, **kwargs):
 
     Verifying the functional equation `J(\tau) = J(\tau+1) = J(-\tau^{-1})`::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, j, kleinj, taylor, sqrt, extraprec,
+        ...                     chop, identify, cbrt)
         >>> mp.dps = 25; mp.pretty = True
         >>> tau = 0.625+0.75*j
         >>> tau = 0.625+0.75*j
@@ -450,7 +479,6 @@ def RF_calc(ctx, x, y, z, r):
     Q = ctx.root(3*r, -6) * max(abs(A0-x),abs(A0-y),abs(A0-z))
     g = ctx.mpf(0.25)
     pow4 = ctx.one
-    m = 0
     while 1:
         xs = ctx.sqrt(xm)
         ys = ctx.sqrt(ym)
@@ -461,7 +489,6 @@ def RF_calc(ctx, x, y, z, r):
         if pow4 * Q < abs(Am):
             break
         Am = Am1
-        m += 1
         pow4 *= g
     t = pow4/Am
     X = (A0-x)*t
@@ -504,7 +531,14 @@ def RC_calc(ctx, x, y, r, pv=True):
     ctx.prec -= extraprec
     return v
 
-def RJ_calc(ctx, x, y, z, p, r):
+def RJ_calc(ctx, x, y, z, p, r, integration):
+    """
+    With integration == 0, computes RJ only using Carlson's algorithm
+    (may be wrong for some values).
+    With integration == 1, uses an initial integration to make sure
+    Carlson's algorithm is correct.
+    With integration == 2, uses only integration.
+    """
     if not (ctx.isnormal(x) and ctx.isnormal(y) and \
         ctx.isnormal(z) and ctx.isnormal(p)):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z) or ctx.isnan(p):
@@ -513,11 +547,52 @@ def RJ_calc(ctx, x, y, z, p, r):
             return ctx.zero
     if not p:
         return ctx.inf
+    if (not x) + (not y) + (not z) > 1:
+        return ctx.inf
+    # Check conditions and fall back on integration for argument
+    # reduction if needed. The following conditions might be needlessly
+    # restrictive.
+    initial_integral = ctx.zero
+    if integration >= 1:
+        ok = (x.real >= 0 and y.real >= 0 and z.real >= 0 and p.real > 0)
+        if not ok:
+            if x == p or y == p or z == p:
+                ok = True
+        if not ok:
+            if p.imag != 0 or p.real >= 0:
+                if (x.imag == 0 and x.real >= 0 and ctx.conj(y) == z):
+                    ok = True
+                if (y.imag == 0 and y.real >= 0 and ctx.conj(x) == z):
+                    ok = True
+                if (z.imag == 0 and z.real >= 0 and ctx.conj(x) == y):
+                    ok = True
+        if not ok or (integration == 2):
+            N = ctx.ceil(-min(x.real, y.real, z.real, p.real)) + 1
+            # Integrate around any singularities
+            if all((t.imag >= 0 or t.real > 0) for t in [x, y, z, p]):
+                margin = ctx.j
+            elif all((t.imag < 0 or t.real > 0) for t in [x, y, z, p]):
+                margin = -ctx.j
+            else:
+                margin = 1
+                # Go through the upper half-plane, but low enough that any
+                # parameter starting in the lower plane doesn't cross the
+                # branch cut
+                for t in [x, y, z, p]:
+                    if t.imag >= 0 or t.real > 0:
+                        continue
+                    margin = min(margin, abs(t.imag) * 0.5)
+                margin *= ctx.j
+            N += margin
+            F = lambda t: 1/(ctx.sqrt(t+x)*ctx.sqrt(t+y)*ctx.sqrt(t+z)*(t+p))
+            if integration == 2:
+                return 1.5 * ctx.quadsubdiv(F, [0, N, ctx.inf])
+            initial_integral = 1.5 * ctx.quadsubdiv(F, [0, N])
+            x += N; y += N; z += N; p += N
     xm,ym,zm,pm = x,y,z,p
     A0 = Am = (x + y + z + 2*p)/5
     delta = (p-x)*(p-y)*(p-z)
     Q = ctx.root(0.25*r, -6) * max(abs(A0-x),abs(A0-y),abs(A0-z),abs(A0-p))
-    m = 0
     g = ctx.mpf(0.25)
     pow4 = ctx.one
     S = 0
@@ -530,15 +605,14 @@ def RJ_calc(ctx, x, y, z, p, r):
         Am1 = (Am+lm)*g
         xm = (xm+lm)*g; ym = (ym+lm)*g; zm = (zm+lm)*g; pm = (pm+lm)*g
         dm = (sp+sx) * (sp+sy) * (sp+sz)
-        em = delta * ctx.power(4, -3*m) / dm**2
+        em = delta * pow4**3 / dm**2
         if pow4 * Q < abs(Am):
             break
         T = RC_calc(ctx, ctx.one, ctx.one+em, r) * pow4 / dm
         S += T
         pow4 *= g
-        m += 1
         Am = Am1
-    t = ctx.ldexp(1,-2*m) / Am
+    t = pow4 / Am
     X = (A0-x)*t
     Y = (A0-y)*t
     Z = (A0-z)*t
@@ -549,9 +623,9 @@ def RJ_calc(ctx, x, y, z, p, r):
     E5 = X*Y*Z*P**2
     P = 24024 - 5148*E2 + 2457*E2**2 + 4004*E3 - 4158*E2*E3 - 3276*E4 + 2772*E5
     Q = 24024
-    v1 = g**m * ctx.power(Am, -1.5) * P/Q
+    v1 = pow4 * ctx.power(Am, -1.5) * P/Q
     v2 = 6*S
-    return v1 + v2
+    return initial_integral + v1 + v2
 
 @defun
 def elliprf(ctx, x, y, z):
@@ -575,7 +649,8 @@ def elliprf(ctx, x, y, z):
 
     Some basic values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, elliprf, pi, inf, ellipk, ellipe,
+        ...                     elliprd, mpf, quad, extradps, sqrt, j, gamma)
         >>> mp.dps = 25; mp.pretty = True
         >>> elliprf(0,1,1); pi/2
         1.570796326794896619231322
@@ -700,7 +775,8 @@ def elliprc(ctx, x, y, pv=True):
 
     Some special values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, elliprc, pi, acosh, sqrt, acos,
+        ...                     extradps, quad, inf, j)
         >>> mp.dps = 25; mp.pretty = True
         >>> elliprc(1,2)*4; elliprc(0,1)*2; +pi
         3.141592653589793238462643
@@ -747,7 +823,7 @@ def elliprc(ctx, x, y, pv=True):
     return +v
 
 @defun
-def elliprj(ctx, x, y, z, p):
+def elliprj(ctx, x, y, z, p, integration=1):
     r"""
     Evaluates the Carlson symmetric elliptic integral of the third kind
 
@@ -764,7 +840,8 @@ def elliprj(ctx, x, y, z, p):
 
     Some values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, elliprj, sqrt, gamma, pi, chop, mpf,
+        ...                     quad, inf, j)
         >>> mp.dps = 25; mp.pretty = True
         >>> elliprj(1,1,1,1)
         1.0
@@ -818,7 +895,7 @@ def elliprj(ctx, x, y, z, p):
     try:
         ctx.prec += 20
         tol = ctx.eps * 2**10
-        v = RJ_calc(ctx, x, y, z, p, tol)
+        v = RJ_calc(ctx, x, y, z, p, tol, integration)
     finally:
         ctx.prec = prec
     return +v
@@ -834,7 +911,8 @@ def elliprd(ctx, x, y, z):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, elliprd, elliprj, extradps, quad, sqrt,
+        ...                     gamma, pi)
         >>> mp.dps = 25; mp.pretty = True
         >>> elliprd(1,2,3)
         0.2904602810289906442326534
@@ -869,7 +947,7 @@ def elliprg(ctx, x, y, z):
 
     Evaluation for real and complex arguments::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, pi, elliprg, chop, fp, nprint, mpf, j
         >>> mp.dps = 25; mp.pretty = True
         >>> elliprg(0,1,1)*4; +pi
         3.141592653589793238462643
@@ -955,7 +1033,8 @@ def ellipf(ctx, phi, m):
 
     Basic values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, ellipf, log, sec, tan, pi, eps, ellipk,
+        ...                     sin, appellf1, quad)
         >>> mp.dps = 25; mp.pretty = True
         >>> ellipf(0,1)
         0.0
@@ -1075,7 +1154,8 @@ def ellipe(ctx, *args):
 
     Basic values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, ellipe, inf, quad, sqrt, sin, pi,
+        ...                     hyp2f1, appellf1)
         >>> mp.dps = 25; mp.pretty = True
         >>> ellipe(0)
         1.570796326794896619231322
@@ -1234,7 +1314,8 @@ def ellippi(ctx, *args):
 
     Some basic values and limits::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, ellippi, ellipk, inf, pi, sqrt, ellipe,
+        ...                     log, sec, tan, ellipf)
         >>> mp.dps = 25; mp.pretty = True
         >>> ellippi(0,-5); ellipk(-5)
         0.9555039270640439337379334

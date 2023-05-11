@@ -1,11 +1,15 @@
 import pytest
-from mpmath import *
-from mpmath.calculus.optimization import Secant, Muller, Bisection, Illinois, \
-    Pegasus, Anderson, Ridder, ANewton, Newton, MNewton, MDNewton
+
+from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
+                    mp, mpc, mpf, multiplicity, norm, pi, polyval, sin, sqrt,
+                    workprec)
+from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
+                                          Illinois, MDNewton, MNewton, Muller,
+                                          Newton, Pegasus, Ridder, Secant)
+
 
 def test_findroot():
     # old tests, assuming secant
-    mp.dps = 15
     assert findroot(lambda x: 4*x-3, mpf(5)).ae(0.75)
     assert findroot(sin, mpf(3)).ae(pi)
     assert findroot(sin, (mpf(3), mpf(3.14))).ae(pi)
@@ -23,9 +27,8 @@ def test_findroot():
     # test types
     f = lambda x: (x - 2)**2
 
-    #assert isinstance(findroot(f, 1, force_type=mpf, tol=1e-10), mpf)
-    #assert isinstance(findroot(f, 1., force_type=None, tol=1e-10), float)
-    #assert isinstance(findroot(f, 1, force_type=complex, tol=1e-10), complex)
+    assert isinstance(findroot(f, 1, tol=1e-10), mpf)
+    assert isinstance(iv.findroot(f, 1., tol=1e-10), iv.mpf)
     assert isinstance(fp.findroot(f, 1, tol=1e-10), float)
     assert isinstance(fp.findroot(f, 1+0j, tol=1e-10), complex)
 

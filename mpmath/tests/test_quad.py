@@ -1,5 +1,8 @@
 import pytest
-from mpmath import *
+
+from mpmath import (atan, cos, cosh, e, euler, exp, inf, j, log, mp, pi, quad,
+                    quadgl, quadosc, quadts, sign, sin, sinh, sqrt, tan)
+
 
 def ae(a, b):
     return abs(a-b) < 10**(-mp.dps+5)
@@ -17,7 +20,10 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 1/(1+x*x), [-1, 1]), pi/2)
         assert ae(quadts(lambda x: 1/(1+x*x), [-inf, inf]), pi)
         assert ae(quadts(lambda x: 2*sqrt(1-x*x), [-1, 1]), pi)
-    mp.dps = 15
+
+def test_multiple_intervals():
+    y,err = quad(lambda x: sign(x), [-0.5, 0.9, 1], maxdegree=2, error=True)
+    assert abs(y-0.5) < 2*err
 
 def test_quad_symmetry():
     assert quadts(sin, [-1, 1]) == 0
@@ -35,7 +41,6 @@ def test_complex_integration():
     assert quadts(lambda x: x, [0, 1+j]).ae(j)
 
 def test_quadosc():
-    mp.dps = 15
     assert quadosc(lambda x: sin(x)/x, [0, inf], period=2*pi).ae(pi/2)
 
 # Double integrals
@@ -80,7 +85,6 @@ def test_expmath_integrals():
         assert ae(quadts(lambda x: x**2 / sin(x)**2, [0, pi/2]),            pi*log(2))
         assert ae(quadts(lambda x: x**2/sqrt(exp(x)-1), [0, inf]),          4*pi*(log(2)**2 + pi**2/12))
         assert ae(quadts(lambda x: x*exp(-x)*sqrt(1-exp(-2*x)), [0, inf]),  pi*(1+2*log(2))/8)
-    mp.dps = 15
 
 # Do not reach full accuracy
 @pytest.mark.xfail

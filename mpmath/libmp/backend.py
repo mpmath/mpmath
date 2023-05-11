@@ -21,65 +21,22 @@ import sys
 gmpy = None
 sage = None
 sage_utils = None
-
-if sys.version_info[0] < 3:
-    python3 = False
-else:
-    python3 = True
-
 BACKEND = 'python'
+MPZ = int
+HASH_MODULUS = sys.hash_info.modulus
+HASH_BITS = 31 if sys.hash_info.width == 32 else 61
 
-if not python3:
-    MPZ = long
-    xrange = xrange
-    basestring = basestring
-
-    def exec_(_code_, _globs_=None, _locs_=None):
-        """Execute code in a namespace."""
-        if _globs_ is None:
-            frame = sys._getframe(1)
-            _globs_ = frame.f_globals
-            if _locs_ is None:
-                _locs_ = frame.f_locals
-            del frame
-        elif _locs_ is None:
-            _locs_ = _globs_
-        exec("""exec _code_ in _globs_, _locs_""")
-else:
-    MPZ = int
-    xrange = range
-    basestring = str
-
-    import builtins
-    exec_ = getattr(builtins, "exec")
-
-# Define constants for calculating hash on Python 3.2.
-if sys.version >= "3.2":
-    HASH_MODULUS = sys.hash_info.modulus
-    if sys.hash_info.width == 32:
-        HASH_BITS = 31
-    else:
-        HASH_BITS = 61
-else:
-    HASH_MODULUS = None
-    HASH_BITS = None
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
-        try:
-            import gmpy2 as gmpy
-        except ImportError:
-            try:
-                import gmpy
-            except ImportError:
-                raise ImportError
-        if gmpy.version() >= '1.03':
-            BACKEND = 'gmpy'
-            MPZ = gmpy.mpz
-    except:
+        import gmpy2 as gmpy
+        BACKEND = 'gmpy'
+        MPZ = gmpy.mpz
+    except ImportError:
         pass
 
-if 'MPMATH_NOSAGE' not in os.environ:
+if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
+        'MPMATH_SAGE' in os.environ):
     try:
         import sage.all
         import sage.libs.mpmath.utils as _sage_utils
@@ -95,20 +52,10 @@ if 'MPMATH_STRICT' in os.environ:
 else:
     STRICT = False
 
-MPZ_TYPE = type(MPZ(0))
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)
 MPZ_TWO = MPZ(2)
 MPZ_THREE = MPZ(3)
 MPZ_FIVE = MPZ(5)
 
-try:
-    if BACKEND == 'python':
-        int_types = (int, long)
-    else:
-        int_types = (int, long, MPZ_TYPE)
-except NameError:
-    if BACKEND == 'python':
-        int_types = (int,)
-    else:
-        int_types = (int, MPZ_TYPE)
+int_types = (int,) if BACKEND == 'python' else (int, MPZ)

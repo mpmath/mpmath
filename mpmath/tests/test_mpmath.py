@@ -1,5 +1,5 @@
-from mpmath.libmp import *
-from mpmath import *
+from mpmath import fp, iv, mp, mpc, mpf
+
 
 def test_newstyle_classes():
     for cls in [mp, fp, iv, mpf, mpc]:

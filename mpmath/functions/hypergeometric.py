@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .functions import defun, defun_wrapped
 
 def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
@@ -197,6 +196,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     Hypergeometric function, general case.
     """
     z = ctx.convert(z)
+    if ctx.isnan(z):
+        return ctx.nan
     p = len(a_s)
     q = len(b_s)
     a_s = [ctx._convert_param(a) for a in a_s]
@@ -559,8 +560,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
                 return _cache[k]
             t = term(k-1)
             m = k-1
-            for j in xrange(p): t *= (a_s[j]+m)
-            for j in xrange(q): t /= (b_s[j]+m)
+            for j in range(p): t *= (a_s[j]+m)
+            for j in range(q): t /= (b_s[j]+m)
             t *= z
             t /= k
             _cache[k] = t
@@ -636,8 +637,8 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
         try:
             trunc = 50 * ctx.dps
             ctx.prec += 20
-            for i in xrange(5):
-                head = ctx.fsum(term(k) for k in xrange(trunc))
+            for i in range(5):
+                head = ctx.fsum(term(k) for k in range(trunc))
                 tail, err = ctx.sumem(term, [trunc, ctx.inf], tol=tol,
                     adiffs=hyper_diffs(trunc),
                     verbose=kwargs.get('verbose'),
@@ -711,7 +712,7 @@ def _hyp_borel(ctx, p, q, a_s, b_s, z, **kwargs):
             cache[k] = t
             return t
         s = ctx.one
-        for k in xrange(1, ctx.prec):
+        for k in range(1, ctx.prec):
             t = term(k)
             s += t
             if abs(t) <= tol:
@@ -1180,7 +1181,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
     Two separable cases: a product of two geometric series, and a
     product of two Gaussian hypergeometric functions::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mpf, hyper2d, hyp2f1, exp
         >>> mp.dps = 25; mp.pretty = True
         >>> x, y = mpf(0.25), mpf(0.5)
         >>> hyper2d({'m':1,'n':1}, {}, x,y)
@@ -1201,7 +1202,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
 
     Six of the 34 Horn functions, G1-G3 and H1-H3::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, hyper2d, nsum, fac, inf, rf
         >>> mp.dps = 10; mp.pretty = True
         >>> x, y = 0.0625, 0.125
         >>> a1,a2,b1,b2,c1,c2,d = 1.1,-1.2,-1.3,-1.4,1.5,-1.6,1.7
@@ -1367,7 +1368,7 @@ def bihyper(ctx, a_s, b_s, z, **kwargs):
 
     The value of `\,_2H_2` at `z = 1` is given by Dougall's formula::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, bihyper, mpf, hyper, gammaprod
         >>> mp.dps = 25; mp.pretty = True
         >>> a,b,c,d = 0.5, 1.5, 2.25, 3.25
         >>> bihyper([a,b],[c,d],1)

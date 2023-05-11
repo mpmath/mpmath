@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .calculus import defun
 
 #----------------------------------------------------------------------------#
@@ -20,7 +19,7 @@ def polyval(ctx, coeffs, x, derivative=False):
     evaluates `P(x)` with the derivative, `P'(x)`, and returns the
     tuple `(P(x), P'(x))`.
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, polyval
         >>> mp.pretty = True
         >>> polyval([3, 0, 2], 0.5)
         2.75
@@ -61,8 +60,8 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
 
     Finding the three real roots of `x^3 - x^2 - 14x + 24`::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import mp, polyroots, nprint, sqrt, polyval
+        >>> mp.pretty = True
         >>> nprint(polyroots([1,-1,-14,24]), 4)
         [-4.0, 2.0, 3.0]
 
@@ -100,17 +99,18 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
     **Precision and conditioning**
 
     The roots are computed to the current working precision accuracy. If this
-    accuracy cannot be achieved in `maxsteps` steps, then a `NoConvergence`
-    exception is raised. The algorithm internally is using the current working
-    precision extended by `extraprec`. If `NoConvergence` was raised, that is
-    caused either by not having enough extra precision to achieve convergence
-    (in which case increasing `extraprec` should fix the problem) or too low
-    `maxsteps` (in which case increasing `maxsteps` should fix the problem), or
-    a combination of both.
+    accuracy cannot be achieved in ``maxsteps`` steps, then a
+    ``NoConvergence`` exception is raised. The algorithm internally is using
+    the current working precision extended by ``extraprec``. If
+    ``NoConvergence`` was raised, that is caused either by not having enough
+    extra precision to achieve convergence (in which case increasing
+    ``extraprec`` should fix the problem) or too low ``maxsteps`` (in which
+    case increasing ``maxsteps`` should fix the problem), or a combination of
+    both.
 
-    The user should always do a convergence study with regards to `extraprec`
-    to ensure accurate results. It is possible to get convergence to a wrong
-    answer with too low `extraprec`.
+    The user should always do a convergence study with regards to
+    ``extraprec`` to ensure accurate results. It is possible to get
+    convergence to a wrong answer with too low ``extraprec``.
 
     Provided there are no repeated roots, :func:`~mpmath.polyroots` can
     typically compute all roots of an arbitrary polynomial to high precision::
@@ -168,19 +168,19 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
             coeffs = [c/lead for c in coeffs]
         f = lambda x: ctx.polyval(coeffs, x)
         if roots_init is None:
-            roots = [ctx.mpc((0.4+0.9j)**n) for n in xrange(deg)]
+            roots = [ctx.mpc((0.4+0.9j)**n) for n in range(deg)]
         else:
-            roots = [None]*deg;
+            roots = [None]*deg
             deg_init = min(deg, len(roots_init))
             roots[:deg_init] = list(roots_init[:deg_init])
             roots[deg_init:] = [ctx.mpc((0.4+0.9j)**n) for n
-                                in xrange(deg_init,deg)]
-        err = [ctx.one for n in xrange(deg)]
+                                in range(deg_init,deg)]
+        err = [ctx.one for n in range(deg)]
         # Durand-Kerner iteration until convergence
-        for step in xrange(maxsteps):
+        for step in range(maxsteps):
             if abs(max(err)) < tol:
                 break
-            for i in xrange(deg):
+            for i in range(deg):
                 p = roots[i]
                 x = f(p)
                 for j in range(deg):
@@ -196,7 +196,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                     % maxsteps)
         # Remove small real or imaginary parts
         if cleanup:
-            for i in xrange(deg):
+            for i in range(deg):
                 if abs(roots[i]) < tol:
                     roots[i] = ctx.zero
                 elif abs(ctx._im(roots[i])) < tol:

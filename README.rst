@@ -5,20 +5,20 @@ mpmath
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
-.. |Build status| image:: https://secure.travis-ci.org/fredrik-johansson/mpmath.svg?branch=master
-   :target: https://travis-ci.org/fredrik-johansson/mpmath
-.. |Code coverage status| image:: https://codecov.io/gh/fredrik-johansson/mpmath/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/fredrik-johansson/mpmath
+.. |Build status| image:: https://github.com/mpmath/mpmath/workflows/test/badge.svg
+   :target: https://github.com/mpmath/mpmath/actions?workflow=test
+.. |Code coverage status| image:: https://codecov.io/gh/mpmath/mpmath/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/mpmath/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
 
 A Python library for arbitrary-precision floating-point arithmetic.
 
-Website: http://mpmath.org/
+Website: https://mpmath.org/
 Main author: Fredrik Johansson <fredrik.johansson@gmail.com>
 
 Mpmath is free software released under the New BSD License (see the
-LICENSE file for details)
+LICENSE file for details).
 
 0. History and credits
 ----------------------
@@ -29,7 +29,7 @@ or new features to mpmath:
 * Pearu Peterson <pearu.peterson@gmail.com>
 * Mario Pernici <mario.pernici@mi.infn.it>
 * Ondrej Certik <ondrej@certik.cz>
-* Vinzent Steinberg <vinzent.steinberg@gmail.com>
+* Vinzent Steinberg <vinzent.steinberg@gmail.cm>
 * Nimish Telang <ntelang@gmail.com>
 * Mike Taschuk <mtaschuk@ece.ualberta.ca>
 * Case Van Horsen <casevh@gmail.com>
@@ -46,6 +46,9 @@ or new features to mpmath:
 * Paul Masson <paulmasson@analyticphysics.com>
 * Michael Kagalenko <michael.kagalenko@gmail.com>
 * Jonathan Warner <warnerjon12@gmail.com>
+* Max Gaukler <max.gaukler@fau.de>
+* Guillermo Navas-Palencia <g.navas.palencia@gmail.com>
+* Nike Dattani <nike@hpqc.org>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
@@ -82,6 +85,9 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.3.0 released on March 7, 2023
+* Version 1.2.1 released on February 9, 2021
+* Version 1.2.0 released on February 1, 2021
 * Version 1.1.0 released on December 11, 2018
 * Version 1.0.0 released on September 27, 2017
 * Version 0.19 released on June 10, 2014
@@ -107,11 +113,11 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires Python 2.7 or 3.4 (or later versions). It has been tested
-with CPython 2.7, 3.4 through 3.7 and for PyPy.
+Mpmath requires Python 3.8 or later versions. It has been tested
+with CPython 3.8 through 3.11 and for PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
-website and from https://github.com/fredrik-johansson/mpmath/releases
+website and from https://github.com/mpmath/mpmath/releases
 
 It should also be available in the Python Package Index at
 https://pypi.python.org/pypi/mpmath
@@ -120,45 +126,37 @@ To install latest release of Mpmath with pip, simply run
 
 ``pip install mpmath``
 
-Or unpack the mpmath archive and run
+or from the source tree
 
-``python setup.py install``
-
-Mpmath can also be installed using
-
-``python -m easy_install mpmath``
+``pip install .``
 
 The latest development code is available from
-https://github.com/fredrik-johansson/mpmath
+https://github.com/mpmath/mpmath
 
 See the main documentation for more detailed instructions.
 
-2. Running tests
+2. Documentation
 ----------------
 
-The unit tests in mpmath/tests/ can be run via the script
-runtests.py, but it is recommended to run them with py.test
-(http://codespeak.net/py/dist/index.html), especially
-to generate more useful reports in case there are failures.
+Documentation in reStructuredText format is available in the
+docs directory included with the source package. These files
+are human-readable, but can be compiled to prettier HTML using
+`Sphinx <https://www.sphinx-doc.org/>`_.
+
+The most recent documentation is also available in HTML format:
+
+https://mpmath.org/doc/current/
+
+3. Running tests
+----------------
+
+The unit tests in mpmath/tests/ can be run with `pytest
+<https://pytest.org/>`_, see the main documentation.
 
 You may also want to check out the demo scripts in the demo
 directory.
 
-The master branch is automatically tested by Travis CI.
-
-3. Documentation
-----------------
-
-Documentation in reStructuredText format is available in the
-doc directory included with the source package. These files
-are human-readable, but can be compiled to prettier HTML using
-the build.py script (requires Sphinx, http://sphinx.pocoo.org/).
-
-See setup.txt in the documentation for more information.
-
-The most recent documentation is also available in HTML format:
-
-http://mpmath.org/doc/current/
+The master branch is automatically tested on the Github Actions.
 
 4. Known problems
 -----------------
@@ -183,7 +181,7 @@ Mpmath is a work in progress. Major issues include:
 -----------------------
 
 General questions and comments can be sent to the mpmath mailinglist,
-mpmath@googlegroups.com
+mailto:mpmath@googlegroups.com
 
 You can also report bugs and send patches to the mpmath issue tracker,
-https://github.com/fredrik-johansson/mpmath/issues
+https://github.com/mpmath/mpmath/issues

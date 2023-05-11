@@ -1,13 +1,15 @@
-import mpmath
-from mpmath import *
-from mpmath.libmp import *
+import operator
 import random
 import sys
 
-try:
-    long = long
-except NameError:
-    long = int
+from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
+                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, nan,
+                    ninf, nint, nint_distance, pi)
+from mpmath.libmp import (finf, fnan, fninf, fone, from_float, from_int,
+                          mpf_add, mpf_mul, mpf_sub, round_down, round_nearest,
+                          round_up, to_int)
+from mpmath.rational import mpq
+
 
 def test_type_compare():
     assert mpf(2) == mpc(2,0)
@@ -105,7 +107,6 @@ def test_mixed_misc():
     assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
 
 def test_add_misc():
-    mp.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
@@ -140,20 +141,17 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
-    from mpmath.rational import mpq
     assert hash(mp.mpq(1,3))
     assert hash(mp.mpq(0,1)) == 0
     assert hash(mp.mpq(-1,1)) == hash(-1)
     assert hash(mp.mpq(1,1)) == hash(1)
     assert hash(mp.mpq(5,1)) == hash(5)
     assert hash(mp.mpq(1,2)) == hash(0.5)
-    if sys.version >= "3.2":
-        assert hash(mpf(1)*2**2000) == hash(2**2000)
-        assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
+    assert hash(mpf(1)*2**2000) == hash(2**2000)
+    assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
 
 # Advanced rounding test
 def test_add_rounding():
-    mp.dps = 15
     a = from_float(1e-50)
     assert mpf_sub(mpf_add(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
     assert mpf_sub(fone, a, 53, round_up) == fone
@@ -166,7 +164,6 @@ def test_almost_equal():
     assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
 
 def test_arithmetic_functions():
-    import operator
     ops = [(operator.add, fadd), (operator.sub, fsub), (operator.mul, fmul),
         (operator.truediv, fdiv)]
     a = mpf(0.27)
@@ -191,7 +188,6 @@ def test_arithmetic_functions():
                     assert fop(x, y, exact=True) == z0
                 assert fneg(fneg(z1, exact=True), prec=inf) == z1
                 assert fneg(z1) == -(+z1)
-    mp.dps = 15
 
 def test_exact_integer_arithmetic():
     # XXX: re-fix this so that all operations are tested with all rounding modes
@@ -214,7 +210,6 @@ def test_exact_integer_arithmetic():
                 b = random.randint(-M2, M2)
                 assert mpf(a) * mpf(b) == a*b
                 assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
-    mp.dps = 15
 
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
@@ -224,14 +219,12 @@ def test_str_1000_digits():
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
     assert str(pi)[-10:-1] == '2164201989'[:9]
-    mp.dps = 15
 
 def test_str_10000_digits():
     mp.dps = 10001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
-    mp.dps = 15
 
 def test_monitor():
     f = lambda x: x**2
@@ -264,7 +257,6 @@ def test_nint_distance():
     assert nint_distance(mpf('1e-100')) == (0, -332)
 
 def test_floor_ceil_nint_frac():
-    mp.dps = 15
     for n in range(-10,10):
         assert floor(n) == n
         assert floor(n+0.5) == n
@@ -341,105 +333,110 @@ def test_floor_ceil_nint_frac():
     assert frac(3.25+4.75j) == 0.25+0.75j
 
 def test_isnan_etc():
-    from mpmath.rational import mpq
-    assert isnan(nan) == True
-    assert isnan(3) == False
-    assert isnan(mpf(3)) == False
-    assert isnan(inf) == False
-    assert isnan(mpc(2,nan)) == True
-    assert isnan(mpc(2,nan)) == True
-    assert isnan(mpc(nan,nan)) == True
-    assert isnan(mpc(2,2)) == False
-    assert isnan(mpc(nan,inf)) == True
-    assert isnan(mpc(inf,inf)) == False
-    assert isnan(mpq((3,2))) == False
-    assert isnan(mpq((0,1))) == False
-    assert isinf(inf) == True
-    assert isinf(-inf) == True
-    assert isinf(3) == False
-    assert isinf(nan) == False
-    assert isinf(3+4j) == False
-    assert isinf(mpc(inf)) == True
-    assert isinf(mpc(3,inf)) == True
-    assert isinf(mpc(inf,3)) == True
-    assert isinf(mpc(inf,inf)) == True
-    assert isinf(mpc(nan,inf)) == True
-    assert isinf(mpc(inf,nan)) == True
-    assert isinf(mpc(nan,nan)) == False
-    assert isinf(mpq((3,2))) == False
-    assert isinf(mpq((0,1))) == False
-    assert isnormal(3) == True
-    assert isnormal(3.5) == True
-    assert isnormal(mpf(3.5)) == True
-    assert isnormal(0) == False
-    assert isnormal(mpf(0)) == False
-    assert isnormal(0.0) == False
-    assert isnormal(inf) == False
-    assert isnormal(-inf) == False
-    assert isnormal(nan) == False
-    assert isnormal(float(inf)) == False
-    assert isnormal(mpc(0,0)) == False
-    assert isnormal(mpc(3,0)) == True
-    assert isnormal(mpc(0,3)) == True
-    assert isnormal(mpc(3,3)) == True
-    assert isnormal(mpc(0,nan)) == False
-    assert isnormal(mpc(0,inf)) == False
-    assert isnormal(mpc(3,nan)) == False
-    assert isnormal(mpc(3,inf)) == False
-    assert isnormal(mpc(3,-inf)) == False
-    assert isnormal(mpc(nan,0)) == False
-    assert isnormal(mpc(inf,0)) == False
-    assert isnormal(mpc(nan,3)) == False
-    assert isnormal(mpc(inf,3)) == False
-    assert isnormal(mpc(inf,nan)) == False
-    assert isnormal(mpc(nan,inf)) == False
-    assert isnormal(mpc(nan,nan)) == False
-    assert isnormal(mpc(inf,inf)) == False
-    assert isnormal(mpq((3,2))) == True
-    assert isnormal(mpq((0,1))) == False
-    assert isint(3) == True
-    assert isint(0) == True
-    assert isint(long(3)) == True
-    assert isint(long(0)) == True
-    assert isint(mpf(3)) == True
-    assert isint(mpf(0)) == True
-    assert isint(mpf(-3)) == True
-    assert isint(mpf(3.2)) == False
-    assert isint(3.2) == False
-    assert isint(nan) == False
-    assert isint(inf) == False
-    assert isint(-inf) == False
-    assert isint(mpc(0)) == True
-    assert isint(mpc(3)) == True
-    assert isint(mpc(3.2)) == False
-    assert isint(mpc(3,inf)) == False
-    assert isint(mpc(inf)) == False
-    assert isint(mpc(3,2)) == False
-    assert isint(mpc(0,2)) == False
-    assert isint(mpc(3,2),gaussian=True) == True
-    assert isint(mpc(3,0),gaussian=True) == True
-    assert isint(mpc(0,3),gaussian=True) == True
-    assert isint(3+4j) == False
-    assert isint(3+4j, gaussian=True) == True
-    assert isint(3+0j) == True
-    assert isint(mpq((3,2))) == False
-    assert isint(mpq((3,9))) == False
-    assert isint(mpq((9,3))) == True
-    assert isint(mpq((0,4))) == True
-    assert isint(mpq((1,1))) == True
-    assert isint(mpq((-1,1))) == True
-    assert mp.isnpint(0) == True
-    assert mp.isnpint(1) == False
-    assert mp.isnpint(-1) == True
-    assert mp.isnpint(-1.1) == False
-    assert mp.isnpint(-1.0) == True
-    assert mp.isnpint(mp.mpq(1,2)) == False
-    assert mp.isnpint(mp.mpq(-1,2)) == False
-    assert mp.isnpint(mp.mpq(-3,1)) == True
-    assert mp.isnpint(mp.mpq(0,1)) == True
-    assert mp.isnpint(mp.mpq(1,1)) == False
-    assert mp.isnpint(0+0j) == True
-    assert mp.isnpint(-1+0j) == True
-    assert mp.isnpint(-1.1+0j) == False
-    assert mp.isnpint(-1+0.1j) == False
-    assert mp.isnpint(0+0.1j) == False
+    assert isnan(nan) is True
+    assert isnan(3) is False
+    assert isnan(mpf(3)) is False
+    assert isnan(inf) is False
+    assert isnan(mpc(2, nan)) is True
+    assert isnan(mpc(2, nan)) is True
+    assert isnan(mpc(nan, nan)) is True
+    assert isnan(mpc(2, 2)) is False
+    assert isnan(mpc(nan, inf)) is True
+    assert isnan(mpc(inf, inf)) is False
+    assert isnan(mpq((3, 2))) is False
+    assert isnan(mpq((0, 1))) is False
+    assert isinf(inf) is True
+    assert isinf(-inf) is True
+    assert isinf(3) is False
+    assert isinf(nan) is False
+    assert isinf(3 + 4j) is False
+    assert isinf(mpc(inf)) is True
+    assert isinf(mpc(3, inf)) is True
+    assert isinf(mpc(inf, 3)) is True
+    assert isinf(mpc(inf, inf)) is True
+    assert isinf(mpc(nan, inf)) is True
+    assert isinf(mpc(inf, nan)) is True
+    assert isinf(mpc(nan, nan)) is False
+    assert isinf(mpq((3, 2))) is False
+    assert isinf(mpq((0, 1))) is False
+    assert isnormal(3) is True
+    assert isnormal(3.5) is True
+    assert isnormal(mpf(3.5)) is True
+    assert isnormal(0) is False
+    assert isnormal(mpf(0)) is False
+    assert isnormal(0.0) is False
+    assert isnormal(inf) is False
+    assert isnormal(-inf) is False
+    assert isnormal(nan) is False
+    assert isnormal(float(inf)) is False
+    assert isnormal(mpc(0, 0)) is False
+    assert isnormal(mpc(3, 0)) is True
+    assert isnormal(mpc(0, 3)) is True
+    assert isnormal(mpc(3, 3)) is True
+    assert isnormal(mpc(0, nan)) is False
+    assert isnormal(mpc(0, inf)) is False
+    assert isnormal(mpc(3, nan)) is False
+    assert isnormal(mpc(3, inf)) is False
+    assert isnormal(mpc(3, -inf)) is False
+    assert isnormal(mpc(nan, 0)) is False
+    assert isnormal(mpc(inf, 0)) is False
+    assert isnormal(mpc(nan, 3)) is False
+    assert isnormal(mpc(inf, 3)) is False
+    assert isnormal(mpc(inf, nan)) is False
+    assert isnormal(mpc(nan, inf)) is False
+    assert isnormal(mpc(nan, nan)) is False
+    assert isnormal(mpc(inf, inf)) is False
+    assert isnormal(mpq((3, 2))) is True
+    assert isnormal(mpq((0, 1))) is False
+    assert isint(3) is True
+    assert isint(0) is True
+    assert isint(int(3)) is True
+    assert isint(int(0)) is True
+    assert isint(mpf(3)) is True
+    assert isint(mpf(0)) is True
+    assert isint(mpf(-3)) is True
+    assert isint(mpf(3.2)) is False
+    assert isint(3.2) is False
+    assert isint(nan) is False
+    assert isint(inf) is False
+    assert isint(-inf) is False
+    assert isint(mpc(0)) is True
+    assert isint(mpc(3)) is True
+    assert isint(mpc(3.2)) is False
+    assert isint(mpc(3, inf)) is False
+    assert isint(mpc(inf)) is False
+    assert isint(mpc(3, 2)) is False
+    assert isint(mpc(0, 2)) is False
+    assert isint(mpc(3, 2), gaussian=True) is True
+    assert isint(mpc(3, 0), gaussian=True) is True
+    assert isint(mpc(0, 3), gaussian=True) is True
+    assert isint(3 + 4j) is False
+    assert isint(3 + 4j, gaussian=True) is True
+    assert isint(3 + 0j) is True
+    assert isint(mpq((3, 2))) is False
+    assert isint(mpq((3, 9))) is False
+    assert isint(mpq((9, 3))) is True
+    assert isint(mpq((0, 4))) is True
+    assert isint(mpq((1, 1))) is True
+    assert isint(mpq((-1, 1))) is True
+    assert mp.isnpint(0) is True
+    assert mp.isnpint(1) is False
+    assert mp.isnpint(-1) is True
+    assert mp.isnpint(-1.1) is False
+    assert mp.isnpint(-1.0) is True
+    assert mp.isnpint(mp.mpq(1, 2)) is False
+    assert mp.isnpint(mp.mpq(-1, 2)) is False
+    assert mp.isnpint(mp.mpq(-3, 1)) is True
+    assert mp.isnpint(mp.mpq(0, 1)) is True
+    assert mp.isnpint(mp.mpq(1, 1)) is False
+    assert mp.isnpint(0 + 0j) is True
+    assert mp.isnpint(-1 + 0j) is True
+    assert mp.isnpint(-1.1 + 0j) is False
+    assert mp.isnpint(-1 + 0.1j) is False
+    assert mp.isnpint(0 + 0.1j) is False
+
+
+def test_issue_438():
+    assert mpf(finf) == mpf('inf')
+    assert mpf(fninf) == mpf('-inf')
+    assert mpf(fnan)._mpf_ == mpf('nan')._mpf_

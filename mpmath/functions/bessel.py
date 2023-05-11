@@ -618,19 +618,19 @@ def _airy_zero(ctx, which, k, derivative, complex=False):
     k = int(k)
     if k < 1:
         raise ValueError("k cannot be less than 1")
-    if not derivative in (0,1):
+    if derivative not in (0, 1):
         raise ValueError("Derivative should lie between 0 and 1")
     if which == 0:
         if derivative:
             return ctx.findroot(lambda z: ctx.airyai(z,1),
                 -U(3*ctx.pi*(4*k-3)/8))
         return ctx.findroot(ctx.airyai, -T(3*ctx.pi*(4*k-1)/8))
-    if which == 1 and complex == False:
+    if which == 1 and complex is False:
         if derivative:
             return ctx.findroot(lambda z: ctx.airybi(z,1),
                 -U(3*ctx.pi*(4*k-1)/8))
         return ctx.findroot(ctx.airybi, -T(3*ctx.pi*(4*k-3)/8))
-    if which == 1 and complex == True:
+    if which == 1 and complex is True:
         if derivative:
             t = 3*ctx.pi*(4*k-3)/8 + 0.75j*ctx.ln2
             s = ctx.expjpi(ctx.mpf(1)/3) * T(t)
@@ -861,7 +861,7 @@ def bessel_zero(ctx, kind, prime, v, m, isoltol=0.01, _interval_cache={}):
             raise ValueError("v cannot be negative")
         if m < 1:
             raise ValueError("m cannot be less than 1")
-        if not prime in (0,1):
+        if prime not in (0, 1):
             raise ValueError("prime should lie between 0 and 1")
         if kind == 1:
             if prime: f = lambda x: ctx.besselj(v,x,derivative=1)
@@ -930,7 +930,7 @@ def besseljzero(ctx, v, m, derivative=0):
 
     Initial zeros of the Bessel functions `J_0(z), J_1(z), J_2(z)`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, besseljzero, mpf, gamma, nprod, inf, besselj
         >>> mp.dps = 25; mp.pretty = True
         >>> besseljzero(0,1); besseljzero(0,2); besseljzero(0,3)
         2.404825557695772768621632
@@ -1037,7 +1037,7 @@ def besselyzero(ctx, v, m, derivative=0):
 
     Initial zeros of the Bessel functions `Y_0(z), Y_1(z), Y_2(z)`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, besselyzero
         >>> mp.dps = 25; mp.pretty = True
         >>> besselyzero(0,1); besselyzero(0,2); besselyzero(0,3)
         0.8935769662791675215848871

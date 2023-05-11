@@ -1,8 +1,7 @@
 import math
 
-from ..libmp.backend import xrange
 
-class QuadratureRule(object):
+class QuadratureRule:
     """
     Quadrature rules are implemented using this class, in order to
     simplify the code and provide a common infrastructure
@@ -14,8 +13,6 @@ class QuadratureRule(object):
     passing it as the *method* argument.
 
     :class:`QuadratureRule` instances are supposed to be singletons.
-    :class:`QuadratureRule` therefore implements instance caching
-    in :func:`~mpmath.__new__`.
     """
 
     def __init__(self, ctx):
@@ -36,7 +33,8 @@ class QuadratureRule(object):
         r"""
         Compute nodes for the standard interval `[-1, 1]`. Subclasses
         should probably implement only this method, and use
-        :func:`~mpmath.get_nodes` method to retrieve the nodes.
+        :func:`~mpmath.calculus.quadrature.QuadratureRule.get_nodes`
+        method to retrieve the nodes.
         """
         raise NotImplementedError
 
@@ -44,12 +42,13 @@ class QuadratureRule(object):
         """
         Return nodes for given interval, degree and precision. The
         nodes are retrieved from a cache if already computed;
-        otherwise they are computed by calling :func:`~mpmath.calc_nodes`
+        otherwise they are computed by calling
+        :func:`~mpmath.calculus.quadrature.QuadratureRule.calc_nodes`
         and are then cached.
 
-        Subclasses should probably not implement this method,
-        but just implement :func:`~mpmath.calc_nodes` for the actual
-        node computation.
+        Subclasses should probably not implement this method, but just
+        implement :func:`~mpmath.calculus.quadrature.QuadratureRule.calc_nodes`
+        for the actual node computation.
         """
         key = (a, b, degree, prec)
         if key in self.transformed_cache:
@@ -145,7 +144,7 @@ class QuadratureRule(object):
         quit within a reasonable amount of time when it is given
         an "unsolvable" integral.
 
-        The default formula used by :func:`~mpmath.guess_degree` is tuned
+        The default formula used by :func:`~mpmath.calculus.quadrature.QuadratureRule.guess_degree` is tuned
         for both :class:`TanhSinh` and :class:`GaussLegendre`.
         The output is roughly as follows:
 
@@ -205,14 +204,14 @@ class QuadratureRule(object):
         Main integration function. Computes the 1D integral over
         the interval specified by *points*. For each subinterval,
         performs quadrature of degree from 1 up to *max_degree*
-        until :func:`~mpmath.estimate_error` signals convergence.
+        until :func:`~mpmath.calculus.quadrature.QuadratureRule.estimate_error` signals convergence.
 
-        :func:`~mpmath.summation` transforms each subintegration to
-        the standard interval and then calls :func:`~mpmath.sum_next`.
+        :func:`~mpmath.calculus.quadrature.QuadratureRule.summation` transforms each subintegration to
+        the standard interval and then calls :func:`~mpmath.calculus.quadrature.QuadratureRule.sum_next`.
         """
         ctx = self.ctx
-        I = err = ctx.zero
-        for i in xrange(len(points)-1):
+        I = total_err = ctx.zero
+        for i in range(len(points)-1):
             a, b = points[i], points[i+1]
             if a == b:
                 continue
@@ -224,31 +223,34 @@ class QuadratureRule(object):
                 f = lambda x: _f(-x) + _f(x)
                 a, b = (ctx.zero, ctx.inf)
             results = []
-            for degree in xrange(1, max_degree+1):
+            err = ctx.zero
+            for degree in range(1, max_degree+1):
                 nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
                     print("Integrating from %s to %s (degree %s of %s)" % \
                         (ctx.nstr(a), ctx.nstr(b), degree, max_degree))
-                results.append(self.sum_next(f, nodes, degree, prec, results, verbose))
+                result = self.sum_next(f, nodes, degree, prec, results, verbose)
+                results.append(result)
                 if degree > 1:
                     err = self.estimate_error(results, prec, epsilon)
+                    if verbose:
+                        print("Estimated error:", ctx.nstr(err), " epsilon:", ctx.nstr(epsilon), " result: ", ctx.nstr(result))
                     if err <= epsilon:
                         break
-                    if verbose:
-                        print("Estimated error:", ctx.nstr(err))
             I += results[-1]
-        if err > epsilon:
+            total_err += err
+        if total_err > epsilon:
             if verbose:
-                print("Failed to reach full accuracy. Estimated error:", ctx.nstr(err))
-        return I, err
+                print("Failed to reach full accuracy. Estimated error:", ctx.nstr(total_err))
+        return I, total_err
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
         r"""
         Evaluates the step sum `\sum w_k f(x_k)` where the *nodes* list
         contains the `(w_k, x_k)` pairs.
 
-        :func:`~mpmath.summation` will supply the list *results* of
-        values computed by :func:`~mpmath.sum_next` at previous degrees, in
+        :func:`~mpmath.calculus.quadrature.QuadratureRule.summation` will supply the list *results* of
+        values computed by :func:`~mpmath.calculus.quadrature.QuadratureRule.sum_next` at previous degrees, in
         case the quadrature rule is able to reuse them.
         """
         return self.ctx.fdot((w, f(x)) for (x,w) in nodes)
@@ -282,10 +284,11 @@ class TanhSinh(QuadratureRule):
         recurrence for the exponential function)
       * The nodes are computed successively instead of all at once
 
-    Various documents describing the algorithm are available online, e.g.:
+    **References**
 
-      * http://crd.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
-      * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+    * [Bailey]_
+    * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+
     """
 
     def sum_next(self, f, nodes, degree, prec, previous, verbose=False):
@@ -349,7 +352,7 @@ class TanhSinh(QuadratureRule):
         udelta = ctx.exp(h)
         urdelta = 1/udelta
 
-        for k in xrange(0, 20*2**degree+1):
+        for k in range(0, 20*2**degree+1):
             # Reference implementation:
             # t = t0 + k*h
             # x = tanh(pi/2 * sinh(t))
@@ -428,7 +431,7 @@ class GaussLegendre(QuadratureRule):
         nodes = []
         n = 3*2**(degree-1)
         upto = n//2 + 1
-        for j in xrange(1, upto):
+        for j in range(1, upto):
             # Asymptotic formula for the roots
             r = ctx.mpf(math.cos(math.pi*(j-0.25)/(n+0.5)))
             # Newton iteration
@@ -436,7 +439,7 @@ class GaussLegendre(QuadratureRule):
                 t1, t2 = 1, 0
                 # Evaluates the Legendre polynomial using its defining
                 # recurrence relation
-                for j1 in xrange(1,n+1):
+                for j1 in range(1,n+1):
                     t3, t2, t1 = t2, t1, ((2*j1-1)*r*t1 - (j1-1)*t2)/j1
                 t4 = n*(r*t1-t2)/(r**2-1)
                 a = t1/t4
@@ -452,7 +455,7 @@ class GaussLegendre(QuadratureRule):
         ctx.prec = orig
         return nodes
 
-class QuadratureMethods(object):
+class QuadratureMethods:
 
     def __init__(ctx, *args, **kwargs):
         ctx._gauss_legendre = GaussLegendre(ctx)
@@ -463,8 +466,9 @@ class QuadratureMethods(object):
         Computes a single, double or triple integral over a given
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import (mp, quad, cos, pi, exp, inf, sqrt,
+            ...                     chop, sin, j, log, euler, e, linspace)
+            >>> mp.pretty = True
             >>> quad(sin, [0, pi])
             2.0
 
@@ -518,7 +522,7 @@ class QuadratureMethods(object):
         quadrature and Gauss-Legendre quadrature. These can be selected
         using *method='tanh-sinh'* or *method='gauss-legendre'* or by
         passing the classes *method=TanhSinh*, *method=GaussLegendre*.
-        The functions :func:`~mpmath.quadts` and :func:`~mpmath.quadgl` are also available
+        The functions ``quadts()`` and ``quadgl()`` are also available
         as shortcuts.
 
         Both algorithms have the property that doubling the number of
@@ -542,8 +546,8 @@ class QuadratureMethods(object):
         can be a better choice if the integrand is smooth and repeated
         integrations are required (e.g. for multiple integrals).
 
-        See the documentation for :class:`TanhSinh` and
-        :class:`GaussLegendre` for additional details.
+        See the documentation for :class:`~mpmath.calculus.quadrature.TanhSinh` and
+        :class:`~mpmath.calculus.quadrature.GaussLegendre` for additional details.
 
         **Examples of 1D integrals**
 
@@ -552,7 +556,6 @@ class QuadratureMethods(object):
         (`\int 1/(1+x^2) = \tan^{-1} x`), and the Gaussian integral
         `\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}`::
 
-            >>> mp.dps = 15
             >>> quad(lambda x: 2/(x**2+1), [0, inf])
             3.14159265358979
             >>> quad(lambda x: exp(-x**2), [-inf, inf])**2
@@ -570,7 +573,7 @@ class QuadratureMethods(object):
         One can just as well compute 1000 digits (output truncated)::
 
             >>> mp.dps = 1000
-            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])  #doctest:+ELLIPSIS
+            >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
             3.141592653589793238462643383279502884...216420199
 
         Complex integrals are supported. The following computes
@@ -839,8 +842,10 @@ class QuadratureMethods(object):
         specify the `n`-th zero by providing the *zeros* arguments.
         Below is an example of each::
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = True
+            >>> from mpmath import (mp, sin, quadosc, pi, ei, cos, inf, j0,
+            ...                     j1, sqrt, findroot, exp, e, si, ci, j,
+            ...                     quad, log)
+            >>> mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
             >>> quadosc(f, [0,inf], omega=3)
             0.37833007080198
@@ -1003,6 +1008,106 @@ class QuadratureMethods(object):
         s += ctx.nsum(term, [n, ctx.inf])
         return s
 
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+    def quadsubdiv(ctx, f, interval, tol=None, maxintervals=None, **kwargs):
+        """
+        Computes the integral of *f* over the interval or path specified
+        by *interval*, using :func:`~mpmath.quad` together with adaptive
+        subdivision of the interval.
+
+        This function gives an accurate answer for some integrals where
+        :func:`~mpmath.quad` fails::
+
+            >>> from mpmath import (mp, sin, pi, quad, quadsubdiv, ceil, exp,
+            ...                     sech, linspace, fp, ci)
+            >>> mp.pretty = True
+            >>> quad(lambda x: abs(sin(x)), [0, 2*pi])
+            3.99900894176779
+            >>> quadsubdiv(lambda x: abs(sin(x)), [0, 2*pi])
+            4.0
+            >>> quadsubdiv(sin, [0, 1000])
+            0.437620923709297
+            >>> quadsubdiv(lambda x: 1/(1+x**2), [-100, 100])
+            3.12159332021646
+            >>> quadsubdiv(lambda x: ceil(x), [0, 100])
+            5050.0
+            >>> quadsubdiv(lambda x: sin(x+exp(x)), [0,8])
+            0.347400172657248
+
+        The argument *maxintervals* can be set to limit the permissible
+        subdivision::
+
+            >>> quadsubdiv(lambda x: sin(x**2), [0,100], maxintervals=5, error=True)
+            (-5.40487904307774, 5.011)
+            >>> quadsubdiv(lambda x: sin(x**2), [0,100], maxintervals=100, error=True)
+            (0.631417921866934, 1.10101120134116e-17)
+
+        Subdivision does not guarantee a correct answer since, the error
+        estimate on subintervals may be inaccurate::
+
+            >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
+            (0.210802735500549, 1.0001111101e-17)
+            >>> mp.dps = 20
+            >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
+            (0.21080273550054927738, 2.200000001e-24)
+
+        The second answer is correct. We can get an accurate result at lower
+        precision by forcing a finer initial subdivision::
+
+            >>> mp.dps = 15
+            >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, linspace(0,1,5))
+            0.210802735500549
+
+        The following integral is too oscillatory for convergence, but we can get a
+        reasonable estimate::
+
+            >>> v, err = fp.quadsubdiv(lambda x: fp.sin(1/x), [0,1], error=True)
+            >>> round(v, 6), round(err, 6)
+            (0.504067, 1e-06)
+            >>> sin(1) - ci(1)
+            0.504067061906928
+
+        """
+        queue = []
+        for i in range(len(interval)-1):
+            queue.append((interval[i], interval[i+1]))
+        total = ctx.zero
+        total_error = ctx.zero
+        if maxintervals is None:
+            maxintervals = 10 * ctx.prec
+        count = 0
+        quad_args = kwargs.copy()
+        quad_args["verbose"] = False
+        quad_args["error"] = True
+        if tol is None:
+            tol = +ctx.eps
+        orig = ctx.prec
+        try:
+            ctx.prec += 5
+            while queue:
+                a, b = queue.pop()
+                s, err = ctx.quad(f, [a, b], **quad_args)
+                if kwargs.get("verbose"):
+                    print("subinterval", count, a, b, err)
+                if err < tol or count > maxintervals:
+                    total += s
+                    total_error += err
+                else:
+                    count += 1
+                    if count == maxintervals and kwargs.get("verbose"):
+                        print("warning: number of intervals exceeded maxintervals")
+                    if a == -ctx.inf and b == ctx.inf:
+                        m = 0
+                    elif a == -ctx.inf:
+                        m = min(b-1, 2*b)
+                    elif b == ctx.inf:
+                        m = max(a+1, 2*a)
+                    else:
+                        m = a + (b - a) / 2
+                    queue.append((a, m))
+                    queue.append((m, b))
+        finally:
+            ctx.prec = orig
+        if kwargs.get("error"):
+            return +total, +total_error
+        else:
+            return +total

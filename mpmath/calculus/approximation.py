@@ -1,4 +1,3 @@
-from ..libmp.backend import xrange
 from .calculus import defun
 
 #----------------------------------------------------------------------------#
@@ -60,8 +59,8 @@ def chebyfit(ctx, f, interval, N, error=False):
     Here we use :func:`~mpmath.chebyfit` to generate a low-degree approximation
     of `f(x) = \cos(x)`, valid on the interval `[1, 2]`::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import mp, chebyfit, cos, nprint, polyval
+        >>> mp.pretty = True
         >>> poly, err = chebyfit(cos, [1, 2], 5, error=True)
         >>> nprint(poly)
         [0.00291682, 0.146166, -0.732491, 0.174141, 0.949553]
@@ -162,8 +161,9 @@ def fourier(ctx, f, interval, N):
     the function has odd symmetry), and the sine coefficients are
     rational numbers::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (mp, fourier, pi, nprint, plot, cosh, quad,
+        ...                     sqrt, fourierval)
+        >>> mp.pretty = True
         >>> c, s = fourier(lambda x: x, [-pi, pi], 5)
         >>> nprint(c)
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -213,7 +213,7 @@ def fourier(ctx, f, interval, N):
     cos_series = []
     sin_series = []
     cutoff = ctx.eps*10
-    for n in xrange(N+1):
+    for n in range(N+1):
         m = 2*n*ctx.pi/L
         an = 2*ctx.quadgl(lambda t: f(t)*ctx.cos(m*t), interval)/L
         bn = 2*ctx.quadgl(lambda t: f(t)*ctx.sin(m*t), interval)/L
@@ -241,6 +241,6 @@ def fourierval(ctx, series, interval, x):
     b = interval[-1]
     m = 2*ctx.pi/(ab[-1]-ab[0])
     s = ctx.zero
-    s += ctx.fsum(cs[n]*ctx.cos(m*n*x) for n in xrange(len(cs)) if cs[n])
-    s += ctx.fsum(ss[n]*ctx.sin(m*n*x) for n in xrange(len(ss)) if ss[n])
+    s += ctx.fsum(cs[n]*ctx.cos(m*n*x) for n in range(len(cs)) if cs[n])
+    s += ctx.fsum(ss[n]*ctx.sin(m*n*x) for n in range(len(ss)) if ss[n])
     return s

@@ -8,7 +8,7 @@ cases are also provided.
 import operator
 import math
 
-from .backend import MPZ_ZERO, MPZ_ONE, BACKEND, xrange, exec_
+from .backend import MPZ_ZERO, MPZ_ONE, BACKEND
 
 from .libintmath import gcd
 
@@ -165,7 +165,7 @@ def make_hyp_summator(key):
     noncancellable_real_den = breal[cancellable_real:]
 
     # LOOP
-    add("for n in xrange(1,10**8):")
+    add("for n in range(1,10**8):")
 
     add("    if n in magnitude_check:")
     add("        p_mag = bitcount(abs(PRE))")
@@ -301,7 +301,7 @@ def make_hyp_summator(key):
 
     namespace = {}
 
-    exec_(source, globals(), namespace)
+    exec(source, globals(), namespace)
 
     #print source
     return source, namespace[fname]

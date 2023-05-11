@@ -1,6 +1,8 @@
-from mpmath import *
-from random import seed, randint, random
 import math
+from random import randint, random, seed
+
+from mpmath import ceil, floor, mp, mpf
+
 
 # Test compatibility with Python floats, which are
 # IEEE doubles (53-bit)
@@ -22,7 +24,6 @@ uses_x87 = -4.1974624032366689e+117 / -8.4657370748010221e-47 \
     == 4.9581771393902231e+163
 
 def test_double_compatibility():
-    mp.prec = 53
     for x, y in zip(xs, ys):
         mpx = mpf(x)
         mpy = mpf(y)
@@ -59,7 +60,6 @@ def test_sqrt():
     # this fails quite often. it appers to be float
     # that rounds the wrong way, not mpf
     fail = 0
-    mp.prec = 53
     for x in xs:
         x = abs(x)
         mp.prec = 100

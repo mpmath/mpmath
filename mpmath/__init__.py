@@ -1,6 +1,4 @@
-import pkg_resources
-__version__ = pkg_resources.get_distribution(__name__).version
-del pkg_resources
+__version__ = '1.4.0a0'
 
 from .usertools import monitor, timing
 
@@ -49,6 +47,7 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+eta = mp.eta
 
 qp = mp.qp
 qhyper = mp.qhyper
@@ -104,6 +103,7 @@ quad = mp.quad
 quadgl = mp.quadgl
 quadts = mp.quadts
 quadosc = mp.quadosc
+quadsubdiv = mp.quadsubdiv
 
 invertlaplace = mp.invertlaplace
 invlaptalbot = mp.invlaptalbot
@@ -426,38 +426,8 @@ backlunds = mp.backlunds
 lerchphi = mp.lerchphi
 stirling1 = mp.stirling1
 stirling2 = mp.stirling2
-
-# be careful when changing this name, don't use test*!
-def runtests():
-    """
-    Run all mpmath tests and print output.
-    """
-    import os.path
-    from inspect import getsourcefile
-    from .tests import runtests as tests
-    testdir = os.path.dirname(os.path.abspath(getsourcefile(tests)))
-    importdir = os.path.abspath(testdir + '/../..')
-    tests.testit(importdir, testdir)
-
-def doctests(filter=[]):
-    import sys
-    from timeit import default_timer as clock
-    for i, arg in enumerate(sys.argv):
-        if '__init__.py' in arg:
-            filter = [sn for sn in sys.argv[i+1:] if not sn.startswith("-")]
-            break
-    import doctest
-    globs = globals().copy()
-    for obj in globs: #sorted(globs.keys()):
-        if filter:
-            if not sum([pat in obj for pat in filter]):
-                continue
-        sys.stdout.write(str(obj) + " ")
-        sys.stdout.flush()
-        t1 = clock()
-        doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
-        t2 = clock()
-        print(round(t2-t1, 3))
-
-if __name__ == '__main__':
-    doctests()
+squarew = mp.squarew
+trianglew = mp.trianglew
+sawtoothw = mp.sawtoothw
+unit_triangle = mp.unit_triangle
+sigmoid = mp.sigmoid

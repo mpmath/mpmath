@@ -10,7 +10,7 @@ things in mathematics.
 
 Mpmath can evaluate `\pi` to arbitrary precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, pi, sin, sinpi
     >>> mp.dps = 50; mp.pretty = True
     >>> +pi
     3.1415926535897932384626433832795028841971693993751
@@ -43,6 +43,11 @@ One solution is to use the :func:`~mpmath.sinpi` function instead::
 
 See the documentation of trigonometric functions for additional
 details.
+
+**References**
+
+* [BorweinBorwein]_
+
 """
 
 degree = r"""
@@ -50,7 +55,7 @@ Represents one degree of angle, `1^{\circ} = \pi/180`, or
 about 0.01745329. This constant may be evaluated to arbitrary
 precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, degree, sin
     >>> mp.dps = 50; mp.pretty = True
     >>> +degree
     0.017453292519943295769236907684886127134428718885417
@@ -71,7 +76,7 @@ natural logarithm (:func:`~mpmath.ln`) and of the exponential function
 
 Mpmath can be evaluate `e` to arbitrary precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, e
     >>> mp.dps = 50; mp.pretty = True
     >>> +e
     2.7182818284590452353602874713526624977572470937
@@ -101,7 +106,7 @@ Represents the golden ratio `\phi = (1+\sqrt 5)/2`,
 approximately equal to 1.6180339887. To high precision,
 its value is::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, phi, sqrt, findroot, fib, inf, limit
     >>> mp.dps = 50; mp.pretty = True
     >>> +phi
     1.6180339887498948482045868343656381177203091798058
@@ -130,7 +135,8 @@ number (see :func:`~mpmath.harmonic`).
 
 Evaluation of `\gamma` is supported at arbitrary precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, euler, harmonic, limit, log, inf, exp,
+    ...                     zeta, gamma, nsum, diff, nprod)
     >>> mp.dps = 50; mp.pretty = True
     >>> +euler
     0.57721566490153286060651209008240243104215933593992
@@ -174,6 +180,11 @@ special functions include the following (there are many others)::
 For generalizations of the identities `\gamma = -\Gamma'(1)`
 and `\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)`, see
 :func:`~mpmath.psi` and :func:`~mpmath.stieltjes` respectively.
+
+**References**
+
+* [BorweinBailey]_
+
 """
 
 catalan = r"""
@@ -186,7 +197,8 @@ series
 
 Mpmath can evaluate it to arbitrary precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, catalan, nsum, inf, quad, log, atan,
+    ...                     ellipk, pi, zeta)
     >>> mp.dps = 50; mp.pretty = True
     >>> +catalan
     0.91596559417721901505460351493238411077414937428167
@@ -231,7 +243,7 @@ Khinchin's constant `K` = 2.68542... is a number that
 appears in the theory of continued fractions. Mpmath can evaluate
 it to arbitrary precision::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, khinchin, log, quad, sincpi, exp, nsum, mpf
     >>> mp.dps = 50; mp.pretty = True
     >>> +khinchin
     2.6854520010653064453097148354817956938203822939945
@@ -263,7 +275,7 @@ The constant is defined  as `A = \exp(1/12-\zeta'(-1))` where
 
 Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, glaisher, quad, log, gamma, pi, mpf, zeta
     >>> mp.dps = 50; mp.pretty = True
     >>> +glaisher
     1.282427129100622636875342568869791727767688927325
@@ -304,7 +316,7 @@ approximately equal to 1.2020569 given by
 The calculation is based on an efficient hypergeometric
 series. To 50 decimal places, the value is given by::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, apery, zeta, psi, nsum, inf, exp, pi
     >>> mp.dps = 50; mp.pretty = True
     >>> +apery
     1.2020569031595942853997381615114499907649862923405
@@ -344,7 +356,7 @@ the prime reciprocal constant.
 
 The following gives the Mertens constant to 50 digits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, mertens
     >>> mp.dps = 50; mp.pretty = True
     >>> +mertens
     0.2614972128476427837554268386086958590515666482612
@@ -370,7 +382,7 @@ It is given by the product over primes
 
 Computing `C_2` to 50 digits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, twinprime
     >>> mp.dps = 50; mp.pretty = True
     >>> +twinprime
     0.66016181584686957392781211001455577843262336028473
@@ -397,8 +409,8 @@ performing ``x**0.5``.
 
 Basic examples and limits::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, sqrt, inf, iv
+    >>> mp.pretty = True
     >>> sqrt(10)
     3.16227766016838
     >>> sqrt(100)
@@ -417,9 +429,9 @@ Square root evaluation is fast at huge precision::
     >>> str(a)[-10:]
     '9329332815'
 
-:func:`mpmath.iv.sqrt` supports interval arguments::
+``mpmath.iv.sqrt()`` supports interval arguments::
 
-    >>> iv.dps = 15; iv.pretty = True
+    >>> iv.pretty = True
     >>> iv.sqrt([16,100])
     [4.0, 10.0]
     >>> iv.sqrt(2)
@@ -434,8 +446,7 @@ cbrt = r"""
 function is faster and more accurate than raising to a floating-point
 fraction::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import mpf, cbrt, mp
     >>> 125**(mpf(1)/3)
     mpf('4.9999999999999991')
     >>> cbrt(125)
@@ -468,7 +479,8 @@ For complex numbers, the exponential function also satisfies
 
 Some values of the exponential function::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, exp, inf, iv, pi, j, chop, nprint, taylor,
+    ...                     diff, quad, limit, odefun, fac, nsum, cosh, sinh)
     >>> mp.dps = 25; mp.pretty = True
     >>> exp(0)
     1.0
@@ -489,7 +501,7 @@ Arguments can be arbitrarily large::
     1.135483865314736098540939e-4343
 
 Evaluation is supported for interval arguments via
-:func:`mpmath.iv.exp`::
+``mpmath.iv.exp()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.exp([-inf,0])
@@ -501,7 +513,7 @@ The exponential function can be evaluated efficiently to arbitrary
 precision::
 
     >>> mp.dps = 10000
-    >>> exp(pi)  #doctest: +ELLIPSIS
+    >>> exp(pi)
     23.140692632779269005729...8984304016040616
 
 **Functional properties**
@@ -546,7 +558,7 @@ cosh = r"""
 Computes the hyperbolic cosine of `x`,
 `\cosh(x) = (e^x + e^{-x})/2`. Values and limits include::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, cosh, inf, chop, taylor, nprint, cos
     >>> mp.dps = 25; mp.pretty = True
     >>> cosh(0)
     1.0
@@ -576,7 +588,7 @@ sinh = r"""
 Computes the hyperbolic sine of `x`,
 `\sinh(x) = (e^x - e^{-x})/2`. Values and limits include::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, sinh, inf, chop, taylor, nprint, j
     >>> mp.dps = 25; mp.pretty = True
     >>> sinh(0)
     0.0
@@ -605,7 +617,7 @@ tanh = r"""
 Computes the hyperbolic tangent of `x`,
 `\tanh(x) = \sinh(x)/\cosh(x)`. Values and limits include::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, tanh, inf, nprint, chop, taylor, j
     >>> mp.dps = 25; mp.pretty = True
     >>> tanh(0)
     0.0
@@ -634,7 +646,7 @@ the argument; more precisely, `\tanh x = -i \tan ix`::
 cos = r"""
 Computes the cosine of `x`, `\cos(x)`.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, cos, pi, inf, nprint, chop, taylor, iv
     >>> mp.dps = 25; mp.pretty = True
     >>> cos(pi/3)
     0.5
@@ -647,7 +659,7 @@ Computes the cosine of `x`, `\cos(x)`.
     >>> nprint(chop(taylor(cos, 0, 6)))
     [1.0, 0.0, -0.5, 0.0, 0.0416667, 0.0, -0.00138889]
 
-Intervals are supported via :func:`mpmath.iv.cos`::
+Intervals are supported via ``mpmath.iv.cos()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.cos([0,1])
@@ -659,7 +671,7 @@ Intervals are supported via :func:`mpmath.iv.cos`::
 sin = r"""
 Computes the sine of `x`, `\sin(x)`.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, sin, inf, nprint, chop, taylor, iv
     >>> mp.dps = 25; mp.pretty = True
     >>> sin(pi/3)
     0.8660254037844386467637232
@@ -672,7 +684,7 @@ Computes the sine of `x`, `\sin(x)`.
     >>> nprint(chop(taylor(sin, 0, 6)))
     [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333, 0.0]
 
-Intervals are supported via :func:`mpmath.iv.sin`::
+Intervals are supported via ``mpmath.iv.sin()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.sin([0,1])
@@ -687,7 +699,7 @@ The tangent function is singular at `x = (n+1/2)\pi`, but
 ``tan(x)`` always returns a finite result since `(n+1/2)\pi`
 cannot be represented exactly using floating-point arithmetic.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, iv, tan, pi, inf, nprint, chop, taylor
     >>> mp.dps = 25; mp.pretty = True
     >>> tan(pi/3)
     1.732050807568877293527446
@@ -700,7 +712,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> nprint(chop(taylor(tan, 0, 6)))
     [0.0, 1.0, 0.0, 0.333333, 0.0, 0.133333, 0.0]
 
-Intervals are supported via :func:`mpmath.iv.tan`::
+Intervals are supported via ``mpmath.iv.tan()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.tan([0,1])
@@ -715,7 +727,7 @@ The secant function is singular at `x = (n+1/2)\pi`, but
 ``sec(x)`` always returns a finite result since `(n+1/2)\pi`
 cannot be represented exactly using floating-point arithmetic.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, pi, sec, inf, nprint, chop, taylor, iv
     >>> mp.dps = 25; mp.pretty = True
     >>> sec(pi/3)
     2.0
@@ -728,7 +740,7 @@ cannot be represented exactly using floating-point arithmetic.
     >>> nprint(chop(taylor(sec, 0, 6)))
     [1.0, 0.0, 0.5, 0.0, 0.208333, 0.0, 0.0847222]
 
-Intervals are supported via :func:`mpmath.iv.sec`::
+Intervals are supported via ``mpmath.iv.sec()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.sec([0,1])
@@ -744,7 +756,7 @@ exception of the point `x = 0`, ``csc(x)`` returns a finite result
 since `n \pi` cannot be represented exactly using floating-point
 arithmetic.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, csc, inf, iv, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> csc(pi/3)
     1.154700538379251529018298
@@ -755,7 +767,7 @@ arithmetic.
     >>> csc(inf)
     nan
 
-Intervals are supported via :func:`mpmath.iv.csc`::
+Intervals are supported via ``mpmath.iv.csc()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.csc([0,1])  # Interval includes a singularity
@@ -772,7 +784,7 @@ exception of the point `x = 0`, ``cot(x)`` returns a finite result
 since `n \pi` cannot be represented exactly using floating-point
 arithmetic.
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, cot, pi, inf, iv
     >>> mp.dps = 25; mp.pretty = True
     >>> cot(pi/3)
     0.5773502691896257645091488
@@ -783,7 +795,7 @@ arithmetic.
     >>> cot(inf)
     nan
 
-Intervals are supported via :func:`mpmath.iv.cot`::
+Intervals are supported via ``mpmath.iv.cot()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.cot([0,1])  # Interval includes a singularity
@@ -801,7 +813,7 @@ function assuming values between `+\pi` and `0`.
 
 Basic values are::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, acos, nprint, chop, taylort, cos
     >>> mp.dps = 25; mp.pretty = True
     >>> acos(-1)
     3.141592653589793238462643
@@ -846,7 +858,7 @@ function assuming values between `-\pi/2` and `\pi/2`.
 
 Basic values are::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, asin, nprint, chop, taylor, sin
     >>> mp.dps = 25; mp.pretty = True
     >>> asin(-1)
     -1.570796326794896619231322
@@ -889,7 +901,7 @@ This is a real-valued function for all real `x`, with range
 
 Basic values are::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, inf, atan, nprint, chop
     >>> mp.dps = 25; mp.pretty = True
     >>> atan(-inf)
     -1.570796326794896619231322
@@ -982,8 +994,8 @@ sinpi = r"""
 Computes `\sin(\pi x)`, more accurately than the expression
 ``sin(pi*x)``::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, sinpi, pi, sin
+    >>> mp.pretty = True
     >>> sinpi(10**10), sin(pi*(10**10))
     (0.0, -2.23936276195592e-6)
     >>> sinpi(10**10+0.5), sin(pi*(10**10+0.5))
@@ -994,8 +1006,8 @@ cospi = r"""
 Computes `\cos(\pi x)`, more accurately than the expression
 ``cos(pi*x)``::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, cospi, cos, pi
+    >>> mp.pretty = True
     >>> cospi(10**10), cos(pi*(10**10))
     (1.0, 0.999999999997493)
     >>> cospi(10**10+0.5), cos(pi*(10**10+0.5))
@@ -1016,8 +1028,8 @@ See :func:`~mpmath.sincpi` for the normalized sinc function.
 
 Simple values and limits include::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, sinc, inf, quad, si
+    >>> mp.pretty = True
     >>> sinc(0)
     1.0
     >>> sinc(1)
@@ -1049,8 +1061,8 @@ Equivalently, we have
 The normalization entails that the function integrates
 to unity over the entire real line::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, inf, quadosc, sincpi
+    >>> mp.pretty = True
     >>> quadosc(sincpi, [-inf, inf], period=2.0)
     1.0
 
@@ -1064,7 +1076,7 @@ at its roots::
 expj = r"""
 Convenience function for computing `e^{ix}`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, expj, j
     >>> mp.dps = 25; mp.pretty = True
     >>> expj(0)
     (1.0 + 0.0j)
@@ -1081,7 +1093,7 @@ Convenience function for computing `e^{i \pi x}`.
 Evaluation is accurate near zeros (see also :func:`~mpmath.cospi`,
 :func:`~mpmath.sinpi`)::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, expjpi, j
     >>> mp.dps = 25; mp.pretty = True
     >>> expjpi(0)
     (1.0 + 0.0j)
@@ -1101,8 +1113,7 @@ floor = r"""
 Computes the floor of `x`, `\lfloor x \rfloor`, defined as
 the largest integer less than or equal to `x`::
 
-    >>> from mpmath import *
-    >>> mp.pretty = False
+    >>> from mpmath import floor
     >>> floor(3.5)
     mpf('3.0')
 
@@ -1116,7 +1127,6 @@ the largest integer less than or equal to `x`::
 
 To avoid rounding, use *prec=0*::
 
-    >>> mp.dps = 15
     >>> print(int(floor(10**30+1)))
     1000000000000000019884624838656
     >>> print(int(floor(10**30+1, prec=0)))
@@ -1133,8 +1143,7 @@ ceil = r"""
 Computes the ceiling of `x`, `\lceil x \rceil`, defined as
 the smallest integer greater than or equal to `x`::
 
-    >>> from mpmath import *
-    >>> mp.pretty = False
+    >>> from mpmath import ceil
     >>> ceil(3.5)
     mpf('4.0')
 
@@ -1152,8 +1161,7 @@ Evaluates the nearest integer function, `\mathrm{nint}(x)`.
 This gives the nearest integer to `x`; on a tie, it
 gives the nearest even integer::
 
-    >>> from mpmath import *
-    >>> mp.pretty = False
+    >>> from mpmath import nint
     >>> nint(3.2)
     mpf('3.0')
     >>> nint(3.8)
@@ -1178,8 +1186,7 @@ Gives the fractional part of `x`, defined as
 In effect, this computes `x` modulo 1, or `x+n` where
 `n \in \mathbb{Z}` is such that `x+n \in [0,1)`::
 
-    >>> from mpmath import *
-    >>> mp.pretty = False
+    >>> from mpmath import frac, nprint, fourier, pi
     >>> frac(1.25)
     mpf('0.25')
     >>> frac(3)
@@ -1197,7 +1204,6 @@ Plotted, the fractional part function gives a sawtooth
 wave. The Fourier series coefficients have a simple
 form::
 
-    >>> mp.dps = 15
     >>> nprint(fourier(lambda x: frac(x)-0.5, [0,1], 4))
     ([0.0, 0.0, 0.0, 0.0, 0.0], [0.0, -0.31831, -0.159155, -0.106103, -0.0795775])
     >>> nprint([-1/(pi*k) for k in range(1,5)])
@@ -1216,8 +1222,7 @@ sign = r"""
 Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
 (with the special case `\mathrm{sign}(0) = 0`)::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import sign, mp, j
     >>> sign(10)
     mpf('1.0')
     >>> sign(-10)
@@ -1228,7 +1233,7 @@ Returns the sign of `x`, defined as `\mathrm{sign}(x) = x / |x|`
 Note that the sign function is also defined for complex numbers,
 for which it gives the projection onto the unit circle::
 
-    >>> mp.dps = 15; mp.pretty = True
+    >>> mp.pretty = True
     >>> sign(1+j)
     (0.707106781186547 + 0.707106781186547j)
 
@@ -1239,8 +1244,8 @@ Computes the complex argument (phase) of `x`, defined as the
 signed angle between the positive real axis and `x` in the
 complex plane::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import arg, mp
+    >>> mp.pretty = True
     >>> arg(3)
     0.0
     >>> arg(3+3j)
@@ -1264,8 +1269,7 @@ Returns the absolute value of `x`, `|x|`. Unlike :func:`abs`,
 :func:`~mpmath.fabs` converts non-mpmath numbers (such as ``int``)
 into mpmath numbers::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import fabs
     >>> fabs(3)
     mpf('3.0')
     >>> fabs(-3)
@@ -1278,8 +1282,7 @@ re = r"""
 Returns the real part of `x`, `\Re(x)`. :func:`~mpmath.re`
 converts a non-mpmath number to an mpmath number::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import re
     >>> re(3)
     mpf('3.0')
     >>> re(-1+4j)
@@ -1290,8 +1293,7 @@ im = r"""
 Returns the imaginary part of `x`, `\Im(x)`. :func:`~mpmath.im`
 converts a non-mpmath number to an mpmath number::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import im
     >>> im(3)
     mpf('0.0')
     >>> im(-1+4j)
@@ -1302,8 +1304,7 @@ conj = r"""
 Returns the complex conjugate of `x`, `\overline{x}`. Unlike
 ``x.conjugate()``, :func:`~mpmath.im` converts `x` to a mpmath number::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import conj
     >>> conj(3)
     mpf('3.0')
     >>> conj(-1+4j)
@@ -1314,8 +1315,8 @@ polar = r"""
 Returns the polar representation of the complex number `z`
 as a pair `(r, \phi)` such that `z = r e^{i \phi}`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import polar, mp
+    >>> mp.pretty = True
     >>> polar(-2)
     (2.0, 3.14159265358979)
     >>> polar(3-4j)
@@ -1326,8 +1327,8 @@ rect = r"""
 Returns the complex number represented by polar
 coordinates `(r, \phi)`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import rect, mp, pi, chop, sqrt
+    >>> mp.pretty = True
     >>> chop(rect(2, pi))
     -2.0
     >>> rect(sqrt(2), -pi/4)
@@ -1340,8 +1341,8 @@ Computes `e^x - 1`, accurately for small `x`.
 Unlike the expression ``exp(x) - 1``, ``expm1(x)`` does not suffer from
 potentially catastrophic cancellation::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, exp, expm1
+    >>> mp.pretty = True
     >>> exp(1e-10)-1; print(expm1(1e-10))
     1.00000008274037e-10
     1.00000000005e-10
@@ -1367,8 +1368,8 @@ Evaluation works for extremely tiny values::
 log1p = r"""
 Computes `\log(1+x)`, accurately for small `x`.
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, log, log1p
+    >>> mp.pretty = True
     >>> log(1+1e-10); print(mp.log1p(1e-10))
     1.00000008269037e-10
     9.9999999995e-11
@@ -1385,8 +1386,8 @@ Computes `x^y - 1`, accurately when `x^y` is very close to 1.
 
 This avoids potentially catastrophic cancellation::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, power, powm1, j, fadd
+    >>> mp.pretty = True
     >>> power(0.99999995, 1e-10) - 1
     0.0
     >>> powm1(0.99999995, 1e-10)
@@ -1413,7 +1414,7 @@ Evaluation works for extremely tiny `y`::
 root = r"""
 ``root(z, n, k=0)`` computes an `n`-th root of `z`, i.e. returns a number
 `r` that (up to possible approximation error) satisfies `r^n = z`.
-(``nthroot`` is available as an alias for ``root``.)
+(``nthroot()`` is available as an alias for :func:`~mpmath.root`.)
 
 Every complex number `z \ne 0` has `n` distinct `n`-th roots, which are
 equidistant points on a circle with radius `|z|^{1/n}`, centered around the
@@ -1443,15 +1444,14 @@ the equivalent reciprocal for a non-principal root with `k \ne 0`) is computed.
 :func:`~mpmath.root` is implemented to use Newton's method for small
 `n`. At high precision, this makes `x^{1/n}` not much more
 expensive than the regular exponentiation, `x^n`. For very large
-`n`, :func:`~mpmath.nthroot` falls back to use the exponential function.
+`n`, :func:`~mpmath.root` falls back to use the exponential function.
 
 **Examples**
 
-:func:`~mpmath.nthroot`/:func:`~mpmath.root` is faster and more accurate than raising to a
+``nthroot()``/:func:`~mpmath.root` is faster and more accurate than raising to a
 floating-point fraction::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import root, mpf, nthroot, mp
     >>> 16807 ** (mpf(1)/5)
     mpf('7.0000000000000009')
     >>> root(16807, 5)
@@ -1528,8 +1528,8 @@ with `\zeta_0 = 1`.
 
 The roots of unity up to `n = 4`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, nprint, unitroots, chop, fsum, nprint
+    >>> mp.pretty = True
     >>> nprint(unitroots(1))
     [1.0]
     >>> nprint(unitroots(2))
@@ -1610,8 +1610,8 @@ used, meaning that `\Im(\ln(x)) = -\pi < \arg(x) \le \pi`.
 
 Some basic values and limits::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, log, inf, quad, diff, nprint, taylor, j, pi
+    >>> mp.pretty = True
     >>> log(1)
     0.0
     >>> log(2)
@@ -1665,8 +1665,8 @@ fmod = r"""
 Converts `x` and `y` to mpmath numbers and returns `x \mod y`.
 For mpmath numbers, this is equivalent to ``x % y``.
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, pi, fmod
+    >>> mp.pretty = True
     >>> fmod(100, pi)
     2.61062773871641
 
@@ -1680,8 +1680,8 @@ You can use :func:`~mpmath.fmod` to compute fractional parts of numbers::
 radians = r"""
 Converts the degree angle `x` to radians::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, radians
+    >>> mp.pretty = True
     >>> radians(60)
     1.0471975511966
 """
@@ -1689,8 +1689,8 @@ Converts the degree angle `x` to radians::
 degrees = r"""
 Converts the radian angle `x` to a degree angle::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, degrees, pi
+    >>> mp.pretty = True
     >>> degrees(pi/3)
     60.0
 """
@@ -1706,8 +1706,8 @@ The two-argument arctangent essentially computes
 `x` and `y` to give the angle for the correct quadrant. The
 following examples illustrate the difference::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, atan2, atan
+    >>> mp.pretty = True
     >>> atan2(1,1), atan(1/1.)
     (0.785398163397448, 0.785398163397448)
     >>> atan2(1,-1), atan(1/-1.)
@@ -1736,15 +1736,15 @@ where `\phi` is the golden ratio. :func:`~mpmath.fibonacci` also uses this
 continuous formula to compute `F(n)` for extremely large `n`, where
 calculating the exact integer would be wasteful.
 
-For convenience, :func:`~mpmath.fib` is available as an alias for
+For convenience, ``fib()`` is available as an alias for
 :func:`~mpmath.fibonacci`.
 
 **Basic examples**
 
 Some small Fibonacci numbers are::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, fibonacci, fib, pi, findroot, nsum, sqrt, inf
+    >>> mp.pretty = True
     >>> for i in range(10):
     ...     print(fibonacci(i))
     ...
@@ -1888,8 +1888,8 @@ in terms of the Hurwitz zeta function, for example using
 
 Some special values are::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, altzeta, mpf, pi, inf
+    >>> mp.pretty = True
     >>> altzeta(1)
     0.693147180559945
     >>> altzeta(0)
@@ -1945,8 +1945,8 @@ is defined for real or complex `x` by `x! = \Gamma(x+1)`.
 
 Basic values and limits::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, fac, sqrt, inf, pi, exp, nsum
+    >>> mp.pretty = True
     >>> for k in range(6):
     ...     print("%s %s" % (k, fac(k)))
     ...
@@ -1970,7 +1970,7 @@ Stirling's formula::
     >>> sqrt(2*pi*x)*(x/e)**x
     2.32579597597705e+95657055186
 
-:func:`~mpmath.fac` supports evaluation for astronomically large values::
+:func:`~mpmath.factorial` supports evaluation for astronomically large values::
 
     >>> fac(10**30)
     6.22311232304258e+29565705518096748172348871081098
@@ -2002,8 +2002,8 @@ by analytic continuation.
 
 Basic values and limits::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, gamma, inf, sqrt, pi, exp, quad
+    >>> mp.pretty = True
     >>> for k in range(1, 6):
     ...     print("%s %s" % (k, gamma(k)))
     ...
@@ -2051,6 +2051,10 @@ very quickly::
     >>> gamma(10**20)
     1.9328495143101e+1956570551809674817225
 
+**References**
+
+* [Spouge]_
+
 """
 
 psi = r"""
@@ -2075,7 +2079,8 @@ at `z = 0, -1, -2, \ldots`).
 For various rational arguments, the polygamma function reduces to
 a combination of standard mathematical constants::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, psi, euler, catalan, pi, apery, quad, diff,
+    ...                     sqrt, nsum, inf, j, nprint, polyroots)
     >>> mp.dps = 25; mp.pretty = True
     >>> psi(0, 1), -euler
     (-0.5772156649015328606065121, -0.5772156649015328606065121)
@@ -2159,8 +2164,8 @@ approximation of the `n`-th harmonic number `H(n)`, defined as
 
 The first few harmonic numbers are::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, harmonic, inf, pi, findroot, ceil
+    >>> mp.pretty = True
     >>> for n in range(8):
     ...     print("%s %s" % (n, harmonic(n)))
     ...
@@ -2227,8 +2232,8 @@ fraction, use :func:`~mpmath.bernfrac` instead.
 
 Numerical values of the first few Bernoulli numbers::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, bernoulli, pi, fac, zeta
+    >>> mp.pretty = True
     >>> for n in range(15):
     ...     print("%s %s" % (n, bernoulli(n)))
     ...
@@ -2299,8 +2304,8 @@ coefficient `\gamma_n(a)` for the Hurwitz zeta function
 
 The zeroth Stieltjes constant is just Euler's constant `\gamma`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, stieltjes, extradps, zeta, diff
+    >>> mp.pretty = True
     >>> stieltjes(0)
     0.577215664901533
 
@@ -2400,8 +2405,8 @@ In particular:
 
 The reciprocal gamma function `1/\Gamma(x)` evaluated at `x = 0`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15
+    >>> from mpmath import mp, gammaprod, limit, gamma
+    >>> mp.pretty = True
     >>> gammaprod([], [0])
     0.0
 
@@ -2432,8 +2437,8 @@ For integer and half-integer arguments where all three gamma
 functions are finite, the beta function becomes either rational
 number or a rational multiple of `\pi`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, beta, inf, j, pi, e, quad, sqrt, sin, cos
+    >>> mp.pretty = True
     >>> beta(5, 2)
     0.0333333333333333
     >>> beta(1.5, 2)
@@ -2511,7 +2516,7 @@ beta distribution with parameters `a`, `b`.
 Verifying that :func:`~mpmath.betainc` computes the integral in the
 definition::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, betainc, quad, identify, chop, pi, e
     >>> mp.dps = 25; mp.pretty = True
     >>> x,y,a,b = 3, 4, 0, 6
     >>> betainc(x, y, a, b)
@@ -2568,8 +2573,8 @@ complex `n` and `k`, via the gamma function.
 
 Generate Pascal's triangle::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, binomial, nprint, exp, taylor, j, chop, quad, pi
+    >>> mp.pretty = True
     >>> for n in range(5):
     ...     nprint([binomial(n,k) for k in range(n+1)])
     ...
@@ -2626,8 +2631,8 @@ where the rightmost expression is valid for nonintegral `n`.
 
 For integral `n`, the rising factorial is a polynomial::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import rf, mp, nprint, taylor
+    >>> mp.pretty = True
     >>> for n in range(5):
     ...     nprint(taylor(lambda x: rf(x,n), 0, n))
     ...
@@ -2656,8 +2661,8 @@ where the rightmost expression is valid for nonintegral `n`.
 
 For integral `n`, the falling factorial is a polynomial::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, ff, nprint, taylor
+    >>> mp.pretty = True
     >>> for n in range(5):
     ...     nprint(taylor(lambda x: ff(x,n), 0, n))
     ...
@@ -2695,8 +2700,9 @@ and more generally by [1]
 
 The integer sequence of double factorials begins::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, fac2, nprint, mpf, exp, pi, nsum, sqrt, e,
+    ...                     gamma, inf, erf, fac)
+    >>> mp.pretty = True
     >>> nprint([fac2(n) for n in range(10)])
     [1.0, 1.0, 2.0, 3.0, 8.0, 15.0, 48.0, 105.0, 384.0, 945.0]
 
@@ -2788,7 +2794,8 @@ far the most common).
 Verifying that :func:`~mpmath.hyper` gives the sum in the definition, by
 comparison with :func:`~mpmath.nsum`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, hyper, rf, fac, nsum, inf, mpf, sqrt, pi,
+    ...                     exp, identify, extradps)
     >>> mp.dps = 25; mp.pretty = True
     >>> a,b,c,d = 2,3,4,5
     >>> x = 0.25
@@ -2995,8 +3002,8 @@ with `a=1, z=3`. There is a zero factor, two gamma function poles, and
 the 1F1 function is singular; all singularities cancel out to give a finite
 value::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, hypercomb, exp
+    >>> mp.pretty = True
     >>> hypercomb(lambda a: [([a-1],[1],[a-3],[a-4],[a],[a-1],3)], [1])
     -180.769832308689
     >>> -9*exp(3)
@@ -3022,7 +3029,7 @@ and is related to the Bessel function of the first kind (see :func:`~mpmath.bess
 
 Evaluation for arbitrary arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp0f1, chop, diff
     >>> mp.dps = 25; mp.pretty = True
     >>> hyp0f1(2, 0.25)
     1.130318207984970054415392
@@ -3079,7 +3086,7 @@ information.
 Evaluation for real and complex values of the argument `z`, with
 fixed parameters `a = 2, b = -1/3`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp1f1, j, chop, diff, exp, quad, gammaprod
     >>> mp.dps = 25; mp.pretty = True
     >>> hyp1f1(2, (-1,3), 3.25)
     -2815.956856924817275640248
@@ -3138,7 +3145,7 @@ The call ``hyp1f2(a1,b1,b2,z)`` is equivalent to
 
 Evaluation works for complex and arbitrarily large arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp1f2, j
     >>> mp.dps = 25; mp.pretty = True
     >>> a, b, c = 1.5, (-1,3), 2.25
     >>> hyp1f2(a, b, c, 10**20)
@@ -3159,7 +3166,7 @@ The call ``hyp2f2(a1,a2,b1,b2,z)`` is equivalent to
 
 Evaluation works for complex and arbitrarily large arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp2f2, j
     >>> mp.dps = 25; mp.pretty = True
     >>> a, b, c, d = 1.5, (-1,3), 2.25, 4
     >>> hyp2f2(a, b, c, d, 10**20)
@@ -3180,7 +3187,7 @@ The call ``hyp2f3(a1,a2,b1,b2,b3,z)`` is equivalent to
 
 Evaluation works for arbitrarily large arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp2f3, j
     >>> mp.dps = 25; mp.pretty = True
     >>> a1,a2,b1,b2,b3 = 1.5, (-1,3), 2.25, 4, (1,5)
     >>> hyp2f3(a1,a2,b1,b2,b3,10**20)
@@ -3222,7 +3229,7 @@ is equivalent to ``hyper([a,b],[c],z)``.
 Evaluation with `z` inside, outside and on the unit circle, for
 fixed parameters::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp2f1, j, gammaprod, quad, diff, chop
     >>> mp.dps = 25; mp.pretty = True
     >>> hyp2f1(2, (1,2), 4, 0.75)
     1.303703703703703703703704
@@ -3297,7 +3304,7 @@ function is similar to that of `\,_2F_1`, generally with a singularity at
 Evaluation is supported inside, on, and outside
 the circle of convergence `|z| = 1`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp3f2, sqrt, j, pi, ln2, ellipe, hyp2f1
     >>> mp.dps = 25; mp.pretty = True
     >>> hyp3f2(1,2,3,4,5,0.25)
     1.083533123380934241548707
@@ -3368,7 +3375,7 @@ see :func:`~mpmath.hyp1f1`).
 
 Evaluation for arbitrary complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyperu, chop, diff, quad, gamma, exp, inf
     >>> mp.dps = 25; mp.pretty = True
     >>> hyperu(2,3,4)
     0.0625
@@ -3427,7 +3434,7 @@ after `-a` or `-b` terms.
 
 Evaluation is supported for arbitrary complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hyp2f0, j, nprint, identify, taylor
     >>> mp.dps = 25; mp.pretty = True
     >>> hyp2f0((2,3), 1.25, -100)
     0.07095851870980052763312791
@@ -3516,7 +3523,8 @@ function
 We can compare with numerical quadrature to verify that
 :func:`~mpmath.gammainc` computes the integral in the definition::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, gammainc, quad, exp, findroot, mpf, sqrt,
+    ...                     erf, pi, identify, ei)
     >>> mp.dps = 25; mp.pretty = True
     >>> gammainc(2+3j, 4, 10)
     (0.00977212668627705160602312 - 0.0770637306312989892451977j)
@@ -3612,8 +3620,8 @@ function is the normalized antiderivative of the Gaussian function
 
 Simple values and limits include::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, erf, inf, nprint, chop, taylor, j
+    >>> mp.pretty = True
     >>> erf(0)
     0.0
     >>> erf(1)
@@ -3678,8 +3686,8 @@ Computes the complementary error function,
 This function avoids cancellation that occurs when naively
 computing the complementary error function as ``1-erf(x)``::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, erf, erfc
+    >>> mp.pretty = True
     >>> 1 - erf(10)
     0.0
     >>> erfc(10)
@@ -3718,8 +3726,8 @@ numbers `x`.
 
 Basic values and limits::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, erfi, inf, erf
+    >>> mp.pretty = True
     >>> erfi(0)
     0.0
     >>> erfi(1)
@@ -3774,8 +3782,8 @@ This function is defined only for `-1 \le x \le 1`.
 
 Special values include::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, erfinv, erf, quad, sqrt, pi
+    >>> mp.pretty = True
     >>> erfinv(0)
     0.0
     >>> erfinv(1)
@@ -3832,8 +3840,8 @@ and variance `\sigma^2`.
 Elementary properties of the probability distribution can
 be verified using numerical integration::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, quad, inf, npdf
+    >>> mp.pretty = True
     >>> quad(npdf, [-inf, inf])
     1.0
     >>> quad(lambda x: npdf(x, 3), [3, inf])
@@ -3854,8 +3862,8 @@ See also :func:`~mpmath.npdf`, which gives the probability density.
 
 Elementary properties include::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, ncdf, pi, inf, diff, npdf
+    >>> mp.pretty = True
     >>> ncdf(pi, mu=pi)
     0.5
     >>> ncdf(-inf)
@@ -3878,7 +3886,7 @@ function having identical mu and sigma::
 """
 
 expint = r"""
-:func:`~mpmath.expint(n,z)` gives the generalized exponential integral
+:func:`~mpmath.expint` gives the generalized exponential integral
 or En-function,
 
 .. math ::
@@ -3892,7 +3900,7 @@ also given by :func:`~mpmath.e1`.
 
 Evaluation at real and complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, expint, fac, exp, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> expint(1, 6.25)
     0.0002704758872637179088496194
@@ -3932,7 +3940,7 @@ This is equivalent to :func:`~mpmath.expint` with `n = 1`.
 
 Two ways to evaluate this function::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, e1, expint, ei
     >>> mp.dps = 25; mp.pretty = True
     >>> e1(6.25)
     0.0002704758872637179088496194
@@ -3974,8 +3982,9 @@ integral functions denoted by `E_n`, which are available as :func:`~mpmath.expin
 
 Some basic values and limits are::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, ei, inf, quad, exp, chop, si, pi, j, chi,
+    ...                     shi, hyper, euler, ln, ci)
+    >>> mp.pretty = True
     >>> ei(0)
     -inf
     >>> ei(1)
@@ -4075,7 +4084,7 @@ as :func:`~mpmath.polylog`.
 
 Some basic values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, li, findroot, ei, log, quad, inf, ln
     >>> mp.dps = 30; mp.pretty = True
     >>> li(0)
     0.0
@@ -4158,7 +4167,8 @@ Computes the cosine integral,
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, ci, pi, inf, chop, sinc, limit, findroot,
+    ...                     cos, quadosc, fac, nsum, euler, j)
     >>> mp.dps = 25; mp.pretty = True
     >>> ci(0)
     -inf
@@ -4227,7 +4237,7 @@ function (see :func:`~mpmath.sinc`).
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import si, mp, pi, inf, j, quad, sinc, nsum, fac
     >>> mp.dps = 25; mp.pretty = True
     >>> si(0)
     0.0
@@ -4285,7 +4295,7 @@ in analogy with the cosine integral (see :func:`~mpmath.ci`) as
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, chi, inf, findroot, j
     >>> mp.dps = 25; mp.pretty = True
     >>> chi(0)
     -inf
@@ -4315,7 +4325,7 @@ in analogy with the sine integral (see :func:`~mpmath.si`) as
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, shi, inf, j
     >>> mp.dps = 25; mp.pretty = True
     >>> shi(0)
     0.0
@@ -4349,7 +4359,7 @@ without the normalization factor `\pi/2`.
 
 Some basic values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, fresnels, inf, quad, sin, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> fresnels(0)
     0.0
@@ -4384,7 +4394,7 @@ without the normalization factor `\pi/2`.
 
 Some basic values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, fresnelc, inf, quad, cos, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> fresnelc(0)
     0.0
@@ -4464,7 +4474,9 @@ negative half of the real axis. They can be computed with
 
 Limits and values include::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, airyai, power, gamma, inf, j, findroot,
+    ...                     airyaizero, chop, airybi, besselj, nprint,
+    ...                     taylor, sqrt, diff, quad, pi, differint)
     >>> mp.dps = 25; mp.pretty = True
     >>> airyai(0); 1/(power(3,'2/3')*gamma('2/3'))
     0.3550280538878172392600632
@@ -4657,7 +4669,9 @@ with :func:`~mpmath.airybizero`.
 
 Limits and values include::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, airybi, power, gamma, inf, airybizero, findroot,
+    ...                     quad, nprint, taylor, mpf, sqrt, besselj, chop, diff,
+    ...                     differint, pi, j)
     >>> mp.dps = 25; mp.pretty = True
     >>> airybi(0); 1/(power(3,'1/6')*gamma('2/3'))
     0.6149266274460007351509224
@@ -4816,7 +4830,7 @@ zero `a'_k` of the derivative function, i.e.
 
 Some values of `a_k`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, airyaizero, airyai, chop
     >>> mp.dps = 25; mp.pretty = True
     >>> airyaizero(1)
     -2.338107410459767038489197
@@ -4865,7 +4879,7 @@ is computed.
 
 Some values of `b_k`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, airybizero, airybi, chop, conj, pi, arg
     >>> mp.dps = 25; mp.pretty = True
     >>> airybizero(1)
     -1.17371322270912792491998
@@ -4957,7 +4971,7 @@ not the modulus `k` which is sometimes used.
 
 Values and limits include::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, ellipk, inf, sin, quad, pi, hyp2f1, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> ellipk(0)
     1.570796326794896619231322
@@ -5017,8 +5031,9 @@ two distinct positive numbers is less than the arithmetic
 mean. It follows that the arithmetic-geometric mean lies
 between the two means::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, mpf, agm, pi, log, j, quad, cos, sin,
+    ...                     gamma, sqrt, e, inf)
+    >>> mp.pretty = True
     >>> a = mpf(3)
     >>> b = mpf(4)
     >>> sqrt(a*b)
@@ -5123,7 +5138,7 @@ reduces to a Legendre polynomial.
 
 Evaluation for arbitrary arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, gegenbauer, chop, diff, taylor, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> gegenbauer(3, 0.5, -10)
     -2485.0
@@ -5197,7 +5212,7 @@ The Laguerre polynomials are orthogonal with respect to the weight
 
 Evaluation for arbitrary arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, laguerre, j, chop, fac, taylor, quad, exp, inf
     >>> mp.dps = 25; mp.pretty = True
     >>> laguerre(5, 0, 0.25)
     0.03726399739583333333333333
@@ -5274,7 +5289,7 @@ for `\Re{z} > 0`, or generally
 
 Evaluation for arbitrary arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, hermite, chop, taylor, chop, diff, exp, inf, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> hermite(0, 10)
     1.0
@@ -5357,8 +5372,9 @@ a polynomial in `x`.
 
 A special evaluation is `P_n^{(a,b)}(1) = {n+a \choose n}`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, jacobi, binomial, nprint, taylor, chop,
+    ...                     quad, diff, pi)
+    >>> mp.pretty = True
     >>> jacobi(4, 0.5, 0.25, 1)
     2.4609375
     >>> binomial(4+0.5, 4)
@@ -5418,7 +5434,7 @@ equation
 We can verify that :func:`~mpmath.jacobi` approximately satisfies
 this equation::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, jacobi, diff, nprint, pi
     >>> mp.dps = 15
     >>> a = 2.5
     >>> b = 4
@@ -5475,8 +5491,9 @@ A third definition is in terms of the hypergeometric function
 The Legendre polynomials assume fixed values at the points
 `x = -1` and `x = 1`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, legendre, nprint, chop, taylor, polyroots,
+    ...                     quad, diff)
+    >>> mp.pretty = True
     >>> nprint([legendre(n, 1) for n in range(6)])
     [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
     >>> nprint([legendre(n, -1) for n in range(6)])
@@ -5584,7 +5601,8 @@ second kind as implemented by :func:`~mpmath.legenq`.
 
 Evaluation for arbitrary parameters and arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, legenp, legendre, chop, legenq, diff,
+    ...                     mpmathify, j)
     >>> mp.dps = 25; mp.pretty = True
     >>> legenp(2, 0, 10); legendre(2, 10)
     149.5
@@ -5656,7 +5674,7 @@ of `(z^2-1)^{m/2}`, giving slightly different branches.
 
 Evaluation for arbitrary parameters and arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, legenq, j, chop
     >>> mp.dps = 25; mp.pretty = True
     >>> legenq(2, 0, 0.5)
     -0.8186632680417568557122028
@@ -5701,8 +5719,8 @@ evaluated for nonintegral `n`.
 The coefficients of the `n`-th polynomial can be recovered
 using using degree-`n` Taylor expansion::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, nprint, chop, taylor, chebyt, quad, sqrt
+    >>> mp.pretty = True
     >>> for n in range(5):
     ...     nprint(chop(taylor(lambda x: chebyt(n, x), 0, n)))
     ...
@@ -5751,8 +5769,8 @@ evaluated for nonintegral `n`.
 The coefficients of the `n`-th polynomial can be recovered
 using using degree-`n` Taylor expansion::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, nprint, taylor, chop, chebyu, sqrt, quad
+    >>> mp.pretty = True
     >>> for n in range(5):
     ...     nprint(chop(taylor(lambda x: chebyu(n, x), 0, n)))
     ...
@@ -5822,8 +5840,9 @@ is computed.
 Evaluation is supported for arbitrary arguments, and at
 arbitrary precision::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, besselj, pi, nprint, findroot, quadosc, sqrt,
+    ...                     pi, sin, cos, diff, j0, j1, quad, differint, j, inf)
+    >>> mp.pretty = True
     >>> besselj(2, 1000)
     -0.024777229528606
     >>> besselj(4, 0.75)
@@ -5941,7 +5960,7 @@ is computed.
 
 Some values of `I_n(x)`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, besseli, exp, cos, pi, diff, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> besseli(0,0)
     1.0
@@ -6016,7 +6035,7 @@ is computed.
 
 Some values of `Y_n(x)`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, bessely, pi, diff, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> bessely(0,0), bessely(1,0), bessely(2,0)
     (-inf, -inf, -inf)
@@ -6079,7 +6098,7 @@ limit.
 
 Evaluation is supported for arbitrary complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, besselk, j, fmul
     >>> mp.dps = 25; mp.pretty = True
     >>> besselk(0,1)
     0.4210244382407083333356274
@@ -6141,7 +6160,7 @@ which is the complex combination of Bessel functions given by
 
 The Hankel function is generally complex-valued::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, pi, hankel1
     >>> mp.dps = 25; mp.pretty = True
     >>> hankel1(2, pi)
     (0.4854339326315091097054957 - 0.0999007139290278787734903j)
@@ -6168,7 +6187,7 @@ which is the complex combination of Bessel functions given by
 
 The Hankel function is generally complex-valued::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, pi, hankel2
     >>> mp.dps = 25; mp.pretty = True
     >>> hankel2(2, pi)
     (0.4854339326315091097054957 + 0.0999007139290278787734903j)
@@ -6209,7 +6228,8 @@ is based on [Corless]_.
 
 The Lambert W function is the inverse of `w \exp(w)`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, lambertw, exp, chop, mpf, log, nprint,
+    ...                     taylor, inf, e, eps)
     >>> mp.dps = 25; mp.pretty = True
     >>> w = lambertw(1)
     >>> w
@@ -6330,8 +6350,9 @@ For positive integers `n`, we have have relation to superfactorials
 
 Some elementary values and limits of the Barnes G-function::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, barnesg, sqrt, exp, log, glaisher, inf,
+    ...                     catalan, pi, nthroot, gamma, limit, mpf, psi, diff)
+    >>> mp.pretty = True
     >>> barnesg(1), barnesg(2), barnesg(3)
     (1.0, 1.0, 1.0)
     >>> barnesg(4)
@@ -6443,8 +6464,8 @@ in terms of the Barnes G-function (see :func:`~mpmath.barnesg`).
 
 The first few superfactorials are (OEIS A000178)::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, superfac, pi, diff
+    >>> mp.pretty = True
     >>> for n in range(10):
     ...     print("%s %s" % (n, superfac(n)))
     ...
@@ -6513,8 +6534,9 @@ the integral representation
 The rapidly-growing sequence of hyperfactorials begins
 (OEIS A002109)::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, hyperfac, diff, pi, mpf, chop, exp, quad,
+    ...                     binomial, loggamma, sqrt, j)
+    >>> mp.pretty = True
     >>> for n in range(10):
     ...     print("%s %s" % (n, hyperfac(n)))
     ...
@@ -6595,7 +6617,7 @@ of the gamma function, `z = 0, -1, -2, \ldots`.
 
 Basic examples::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, rgamma, inf, pi, log, exp, quad, e
     >>> mp.dps = 25; mp.pretty = True
     >>> rgamma(1)
     1.0
@@ -6641,7 +6663,8 @@ instead of :func:`~mpmath.gamma` for extremely large arguments.
 
 Comparing with `\ln(\Gamma(z))`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, log, loggamma, pi, j, ln2, sqrt, inf, quad,
+    ...                     diff, psi)
     >>> mp.dps = 25; mp.pretty = True
     >>> loggamma('13.2'); log(gamma('13.2'))
     20.49400419456603678498394
@@ -6738,7 +6761,8 @@ providing the phase factor for the Z-function
 (see :func:`~mpmath.siegelz`). Evaluation is supported for real and
 complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, siegeltheta, inf, diff, nprint, chop, taylor,
+    ...                     findroot, diffun, log, pi, mpf)
     >>> mp.dps = 25; mp.pretty = True
     >>> siegeltheta(0)
     0.0
@@ -6787,7 +6811,7 @@ is the Riemann-Siegel theta function (:func:`~mpmath.siegeltheta`).
 
 The first few Gram points are::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, grampoint, siegeltheta, pi, findroot
     >>> mp.dps = 25; mp.pretty = True
     >>> grampoint(0)
     17.84559954041086081682634
@@ -6839,7 +6863,8 @@ and where `\theta(t)` denotes the Riemann-Siegel theta function
 
 Evaluation is supported for real and complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, siegelz, diff, nprint, chop, taylor,
+    ...                     findroot, zeta, grampoint)
     >>> mp.dps = 25; mp.pretty = True
     >>> siegelz(1)
     -0.7363054628673177346778998
@@ -6935,8 +6960,8 @@ For small arguments, the Riemann R function almost exactly
 gives the prime counting function if rounded to the nearest
 integer::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, primepi, riemannr, nstr, li, diff, mpf
+    >>> mp.pretty = True
     >>> primepi(50), riemannr(50)
     (15, 14.9757023241462)
     >>> max(abs(primepi(n)-int(round(riemannr(n)))) for n in range(100))
@@ -7008,7 +7033,7 @@ or :func:`~mpmath.riemannr`.
 
 Some values of the prime counting function::
 
-    >>> from mpmath import *
+    >>> from mpmath import primepi
     >>> [primepi(k) for k in range(20)]
     [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8]
     >>> primepi(3.5)
@@ -7036,9 +7061,9 @@ the Riemann hypothesis, and can be computed very quickly.
 
 Exact values of the prime counting function for small `x`::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
-    >>> iv.dps = 15; iv.pretty = True
+    >>> from mpmath import mp, iv, primepi2, primepi, mpf, riemannr
+    >>> mp.pretty = True
+    >>> iv.pretty = True
     >>> primepi2(10)
     [4.0, 4.0]
     >>> primepi2(100)
@@ -7095,7 +7120,8 @@ half-plane `\mathrm{Re}(s) > 0`.
 Arbitrary-precision evaluation for real and complex arguments is
 supported::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, primezeta, extradps, log, eps, mertens,
+    ...                     euler, inf, mpf, pi)
     >>> mp.dps = 30; mp.pretty = True
     >>> primezeta(2)
     0.452247420041065498506543364832
@@ -7158,8 +7184,8 @@ Evaluates the Bernoulli polynomial `B_n(z)`.
 
 The first few Bernoulli polynomials are::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import mp, nprint, chop, taylor, bernpoly, bernoulli
+    >>> mp.pretty = True
     >>> for n in range(6):
     ...     nprint(chop(taylor(lambda x: bernpoly(n,x), 0, n)))
     ...
@@ -7207,8 +7233,9 @@ as :func:`~mpmath.li`.
 The polylogarithm satisfies a huge number of functional identities.
 A sample of polylogarithm evaluations is shown below::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, polylog, log, pi, phi, zeta, j, catalan, exp,
+    ...                     zeta, quad, diff, taylor, altzeta, nsum, inf, nprint)
+    >>> mp.pretty = True
     >>> polylog(1,0.5), log(2)
     (0.693147180559945, 0.693147180559945)
     >>> polylog(2,0.5), (pi**2-6*log(2)**2)/12
@@ -7297,7 +7324,7 @@ It is also supported outside of the unit circle::
 **References**
 
 1. Richard Crandall, "Note on fast polylogarithm computation"
-   http://people.reed.edu/~crandall/papers/Polylog.pdf
+   http://www.reed.edu/physics/faculty/crandall/papers/Polylog.pdf
 2. http://en.wikipedia.org/wiki/Polylogarithm
 3. http://mathworld.wolfram.com/Polylogarithm.html
 
@@ -7339,7 +7366,7 @@ differentiated, etc for arbitrary complex arguments.
 
 Simple evaluations::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, bell, nprint, taylor, det, superfac
     >>> mp.dps = 25; mp.pretty = True
     >>> bell(0, 2.5)
     1.0
@@ -7437,7 +7464,7 @@ at `n = 0`.
 
 Evaluating a series::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, nsum, sqrt, fac, inf, polyexp, pi, hyper
     >>> mp.dps = 25; mp.pretty = True
     >>> nsum(lambda k: sqrt(k)/fac(k), [1,inf])
     2.101755547733791780315904
@@ -7506,8 +7533,9 @@ written explicitly as
 The coefficients of low-order cyclotomic polynomials can be recovered
 using Taylor expansion::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = True
+    >>> from mpmath import (mp, chop, taylor, cyclotomic, nstr, fprod,
+    ...                     unitroots, polyroots)
+    >>> mp.pretty = True
     >>> for n in range(9):
     ...     p = chop(taylor(lambda x: cyclotomic(n,x), 0, 10))
     ...     print("%s %s" % (n, nstr(p[:10+1-p[::-1].index(1)])))
@@ -7612,7 +7640,9 @@ Many standard functions are special cases of the Meijer G-function
 (possibly rescaled and/or with branch cut corrections). We define
 some test parameters::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, mpf, meijerg, exp, log, sin, cos, sqrt, pi,
+    ...                     besselj, bessely, chop, gamma, expint, besseli,
+    ...                     besselk, erfc)
     >>> mp.dps = 25; mp.pretty = True
     >>> a = mpf(0.75)
     >>> b = mpf(1.5)
@@ -7775,7 +7805,9 @@ cosine sum.
 
 Evaluation for arbitrarily chosen `s` and `z`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, clsin, nsum, sin, inf, chop, log, exp, j,
+    ...                     ln, quad, pi, chop, cot, csc, extraprec, sqrt,
+    ...                     catalan)
     >>> mp.dps = 25; mp.pretty = True
     >>> s, z = 3, 4
     >>> clsin(s, z); nsum(lambda k: sin(z*k)/k**s, [1,inf])
@@ -7895,7 +7927,8 @@ This function is complementary to the Clausen sine function
 
 Evaluation for arbitrarily chosen `s` and `z`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, clcos, cos, inf, nsum, pi, sqrt, exp, log, j,
+    ...                     sin, chop, nsum, csc, zeta, altzeta, extraprec)
     >>> mp.dps = 25; mp.pretty = True
     >>> s, z = 3, 4
     >>> clcos(s, z); nsum(lambda k: cos(z*k)/k**s, [1,inf])
@@ -8021,7 +8054,8 @@ They are alternate forms of the confluent hypergeometric functions
 
 Evaluation for arbitrary real and complex arguments is supported::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, whitm, j, mpf, chop, diff, inf, sqrt, pi,
+    ...                     quad, exp, whitw)
     >>> mp.dps = 25; mp.pretty = True
     >>> whitm(1, 1, 1)
     0.7302596799460411820509668
@@ -8071,7 +8105,7 @@ solution to the Whittaker differential equation. (See :func:`~mpmath.whitm`.)
 
 Evaluation for arbitrary real and complex arguments is supported::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, whitw, j, mpf, chop, diff
     >>> mp.dps = 25; mp.pretty = True
     >>> whitw(1, 1, 1)
     1.19532063107581155661012
@@ -8130,7 +8164,7 @@ The imaginary part is given by :func:`~mpmath.bei`.
 
 Verifying the defining relation::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, ber, besselj, root, j, bei
     >>> mp.dps = 25; mp.pretty = True
     >>> n, x = 2, 3.5
     >>> ber(n,x)
@@ -8175,7 +8209,7 @@ The imaginary part is given by :func:`~mpmath.kei`.
 
 Verifying the defining relation::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, ker, exp, kei, pi, j, besselk, root
     >>> mp.dps = 25; mp.pretty = True
     >>> n, x = 2, 4.5
     >>> ker(n,x)
@@ -8220,7 +8254,7 @@ which is a solution to the Struve differential equation
 
 Evaluation for arbitrary real and complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, struveh, j, sqrt, cos, pi, mpf, diff, fac2, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> struveh(0, 3.5)
     0.3608207733778295024977797
@@ -8274,7 +8308,7 @@ which solves to the modified Struve differential equation
 
 Evaluation for arbitrary real and complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, struvel, j, mpf, diff, fac2, pi
     >>> mp.dps = 25; mp.pretty = True
     >>> struvel(0, 3.5)
     7.180846515103737996249972
@@ -8321,7 +8355,8 @@ with respecto to either variable, and sometimes both.
 
 Evaluation is supported for real and complex parameters::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, appellf1, hyp2f1, chop, diff, mpmathify,
+    ...                     quad, ellipe, re, pi, mpf, sin, sqrt, j)
     >>> mp.dps = 25; mp.pretty = True
     >>> appellf1(1,0,0.5,1,0.5,0.25)
     1.154700538379251529018298
@@ -8448,7 +8483,8 @@ equation
 
 Evaluation for real and complex parameter and argument::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, angerj, besselj, mpf, diff, sinpi, quad,
+    ...                     sin, cos, pi)
     >>> mp.dps = 25; mp.pretty = True
     >>> angerj(2,3)
     0.4860912605858910769078311
@@ -8511,7 +8547,7 @@ equation
 
 Evaluation for real and complex parameter and argument::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, webere, struveh, pi, diff, cospi, mpf, sin, quad
     >>> mp.dps = 25; mp.pretty = True
     >>> webere(2,3)
     -0.1057668973099018425662646
@@ -8579,7 +8615,8 @@ A second solution is given by :func:`~mpmath.lommels2`.
 
 An integral representation::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, mpf, lommels1, quad, bessely, besselj, pi,
+    ...                     gamma, sqrt, power, struveh, diff)
     >>> mp.dps = 25; mp.pretty = True
     >>> u,v,z = 0.25, 0.125, mpf(0.75)
     >>> lommels1(u,v,z)
@@ -8634,7 +8671,8 @@ which solves the same differential equation as
 
 For large `|z|`, `S_{\mu,\nu} \sim z^{\mu-1}`::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, lommels2, power, struveh, bessely, power,
+    ...                     sqrt, pi, gamma, diff, mpf)
     >>> mp.dps = 25; mp.pretty = True
     >>> lommels2(10,2,30000)
     1.968299831601008419949804e+40
@@ -8678,7 +8716,7 @@ The series is generally absolutely convergent for `|x| + |y| < 1`.
 
 Evaluation for real and complex arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, appellf2, chop, mpf, j, diff
     >>> mp.dps = 25; mp.pretty = True
     >>> appellf2(1,2,3,4,5,0.25,0.125)
     1.257417193533135344785602
@@ -8736,7 +8774,8 @@ The series is generally absolutely convergent for `|x| < 1, |y| < 1`.
 
 Evaluation for various parameters and variables::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, appellf3, hyp2f1, j, mpf, polylog, gammaprod,
+    ...                     hyp3f2, chop, diff)
     >>> mp.dps = 25; mp.pretty = True
     >>> appellf3(1,2,3,4,5,0.5,0.25)
     2.221557778107438938158705
@@ -8807,7 +8846,7 @@ The series is generally absolutely convergent for
 
 Evaluation for various parameters and arguments::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, appellf4, hyp2f1, diff, chop, mpf
     >>> mp.dps = 25; mp.pretty = True
     >>> appellf4(1,1,2,2,0.25,0.125)
     1.286182069079718313546608
@@ -8889,7 +8928,9 @@ nonrational `a` or when computing derivatives.
 
 Some values of the Riemann zeta function::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, zeta, pi, inf, euler, j, zetazero, findroot,
+    ...                     chop, catalan, psi, ln, loggamma, fac, mpf, diff,
+    ...                     nsum)
     >>> mp.dps = 25; mp.pretty = True
     >>> zeta(2); pi**2 / 6
     1.644934066848226436472415
@@ -9044,7 +9085,7 @@ Evaluation at zero and for negative integer `s`::
 
 2. http://mathworld.wolfram.com/HurwitzZetaFunction.html
 
-3. http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P155.pdf
+3. [BorweinZeta]_
 
 """
 
@@ -9071,7 +9112,8 @@ derivative) can be evaluated.
 
 The ordinary Riemann zeta function::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, zeta, dirichlet, ln, pi, catalan, diff, log,
+    ...                     gamma, log, sqrt, euler, nsum, inf, ln2)
     >>> mp.dps = 25; mp.pretty = True
     >>> dirichlet(3, [1]); zeta(3)
     1.202056903159594285399738
@@ -9160,7 +9202,8 @@ to be complex in this implementation (see references).
 
 Evaluation is supported for arbitrary magnitudes of `z`::
 
-    >>> from mpmath import *
+    >>> from mpmath import  (mp, coulombf, mpf, chop, diff, coulombg, sqrt,
+    ...                      exp, j, quad, coulombc, fac, inf)
     >>> mp.dps = 25; mp.pretty = True
     >>> coulombf(2, 1.5, 3.5)
     0.4080998961088761187426445
@@ -9275,7 +9318,7 @@ See :func:`~mpmath.coulombf` for additional information.
 
 Evaluation is supported for arbitrary magnitudes of `z`::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, coulombg, diff
     >>> mp.dps = 25; mp.pretty = True
     >>> coulombg(-2, 1.5, 3.5)
     1.380011900612186346255524
@@ -9352,7 +9395,7 @@ in terms of Jacobi theta functions as
 
 or more generally computes a ratio of two such functions. Here
 `t = u/\vartheta_3(0,q)^2`, and `q = q(m)` denotes the nome (see
-:func:`~mpmath.nome`). Optionally, you can specify the nome directly
+``mpmath.functions.elliptic.nome()``). Optionally, you can specify the nome directly
 instead of `m` by passing ``q=<value>``, or you can directly
 specify the elliptic parameter `k` with ``k=<value>``.
 
@@ -9380,7 +9423,7 @@ evaluating the chosen function for given arguments is returned.
 
 Basic evaluation::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, ellipfun, ellipk, chop, j
     >>> mp.dps = 25; mp.pretty = True
     >>> ellipfun('cd', 3.5, 0.5)
     -0.9891101840595543931308394
@@ -9398,14 +9441,14 @@ The sn-function is doubly periodic in the complex plane with periods
     >>> chop(sn(2+2*j*ellipk(1-0.25), 0.25))
     0.9628981775982774425751399
 
-The cn-function is doubly periodic with periods `4 K(m)` and `4 i K(1-m)`::
+The cn-function is doubly periodic with periods `4 K(m)` and `2 K(m) + 2 i K(1-m)`::
 
     >>> cn = ellipfun('cn')
     >>> cn(2, 0.25)
     -0.2698649654510865792581416
     >>> cn(2+4*ellipk(0.25), 0.25)
     -0.2698649654510865792581416
-    >>> chop(cn(2+4*j*ellipk(1-0.25), 0.25))
+    >>> chop(cn(2+2*ellipk(0.25)+2*j*ellipk(1-0.25), 0.25))
     -0.2698649654510865792581416
 
 The dn-function is doubly periodic with periods `2 K(m)` and `4 i K(1-m)`::
@@ -9463,7 +9506,8 @@ Considered as functions of `z`, the Jacobi theta functions may be
 viewed as generalizations of the ordinary trigonometric functions
 cos and sin. They are periodic functions::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, jtheta, pi, nprint, fourier, exp, j, mpf,
+    ...                     gamma, diff, sqrt)
     >>> mp.dps = 25; mp.pretty = True
     >>> jtheta(1, 0.25, '0.2')
     0.2945120798627300045053104
@@ -9583,7 +9627,7 @@ Euler polynomials (see :func:`~mpmath.eulerpoly`) as `E_n = 2^n E_n(1/2)`.
 Computing the first few Euler numbers and verifying that they
 agree with the Taylor series::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, eulernum, chop, diffs, sech, sqrt, pi, e
     >>> mp.dps = 25; mp.pretty = True
     >>> [eulernum(n) for n in range(11)]
     [1.0, 0.0, -1.0, 0.0, 5.0, 0.0, -61.0, 0.0, 1385.0, 0.0, -50521.0]
@@ -9643,7 +9687,7 @@ Special values include the Euler numbers `E_n = 2^n E_n(1/2)` (see
 
 Computing the coefficients of the first few Euler polynomials::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, chop, taylor, eulerpoly, inf, eulernum
     >>> mp.dps = 25; mp.pretty = True
     >>> for n in range(6):
     ...     chop(taylor(lambda z: eulerpoly(n,z), 0, n))
@@ -9745,7 +9789,7 @@ are permitted to be complex numbers.
 
 Some low-order spherical harmonics with reference values::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, spherharm, pi, sqrt, expj, sin, fp, j, cos
     >>> mp.dps = 25; mp.pretty = True
     >>> theta = pi/4
     >>> phi = pi/3
@@ -9813,7 +9857,8 @@ particular solution is given by the Scorer Hi-function
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, scorergi, power, gamma, diff, inf, airybi,
+    ...                     scorerhi, chop, airyai, pi)
     >>> mp.dps = 25; mp.pretty = True
     >>> scorergi(0); 1/(power(3,'7/6')*gamma('2/3'))
     0.2049755424820002450503075
@@ -9907,7 +9952,8 @@ differential equation `f''(z) - z f(z) = 1/\pi`. See also
 
 Some values and limits::
 
-    >>> from mpmath import *
+    >>> from mpmath import (mp, scorerhi, power, gamma, diff, inf, airyai,
+    ...                     airybi, chop)
     >>> mp.dps = 25; mp.pretty = True
     >>> scorerhi(0); 2/(power(3,'7/6')*gamma('2/3'))
     0.4099510849640004901006149
@@ -9978,7 +10024,7 @@ is not optimized for approximating large values quickly.
 
 Comparing with the generating function::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, taylor, ff, stirling1, matrix, stirling2
     >>> mp.dps = 25; mp.pretty = True
     >>> taylor(lambda x: ff(x, 5), 0, 5)
     [0.0, 24.0, -50.0, 35.0, -10.0, 1.0]
@@ -10030,7 +10076,7 @@ The implementation is not optimized for approximating large values quickly.
 
 Comparing with the generating function::
 
-    >>> from mpmath import *
+    >>> from mpmath import mp, stirling2, taylor, ff
     >>> mp.dps = 25; mp.pretty = True
     >>> taylor(lambda x: sum(stirling2(5,k) * ff(x,k) for k in range(6)), 0, 5)
     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
@@ -10048,5 +10094,140 @@ Pass ``exact=True`` to obtain exact values of Stirling numbers as integers::
     >>> print(stirling2(52, 10, exact=True))
     2641822121003543906807485307053638921722527655
 
+
+"""
+
+squarew = r"""
+Computes the square wave function using the definition:
+
+.. math::
+    x(t) = A(-1)^{\left\lfloor{2t / P}\right\rfloor}
+
+where `P` is the period of the wave and `A` is the amplitude.
+
+**Examples**
+
+Square wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import mp, squarew
+    >>> mp.dps = 25; mp.pretty = True
+    >>> squarew(0,1,2)
+    1.0
+    >>> squarew(0.5,1,2)
+    1.0
+    >>> squarew(1,1,2)
+    -1.0
+    >>> squarew(1.5,1,2)
+    -1.0
+    >>> squarew(2,1,2)
+    1.0
+"""
+
+trianglew = r"""
+Computes the triangle wave function using the definition:
+
+.. math::
+    x(t) = 2A\left(\frac{1}{2}-\left|1-2 \operatorname{frac}\left(\frac{x}{P}+\frac{1}{4}\right)\right|\right)
+
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`
+, `P` is the period of the wave, and `A` is the amplitude.
+
+**Examples**
+
+Triangle wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import mp, trianglew
+    >>> mp.dps = 25; mp.pretty = True
+    >>> trianglew(0,1,2)
+    0.0
+    >>> trianglew(0.25,1,2)
+    0.5
+    >>> trianglew(0.5,1,2)
+    1.0
+    >>> trianglew(1,1,2)
+    0.0
+    >>> trianglew(1.5,1,2)
+    -1.0
+    >>> trianglew(2,1,2)
+    0.0
+"""
+
+sawtoothw = r"""
+Computes the sawtooth wave function using the definition:
+
+.. math::
+    x(t) = A\operatorname{frac}\left(\frac{t}{T}\right)
+
+where :math:`\operatorname{frac}\left(\frac{t}{T}\right) = \frac{t}{T}-\left\lfloor{\frac{t}{T}}\right\rfloor`,
+`P` is the period of the wave, and `A` is the amplitude.
+
+**Examples**
+
+Sawtooth wave with period = 2, amplitude = 1 ::
+
+    >>> from mpmath import mp, sawtoothw
+    >>> mp.dps = 25; mp.pretty = True
+    >>> sawtoothw(0,1,2)
+    0.0
+    >>> sawtoothw(0.5,1,2)
+    0.25
+    >>> sawtoothw(1,1,2)
+    0.5
+    >>> sawtoothw(1.5,1,2)
+    0.75
+    >>> sawtoothw(2,1,2)
+    0.0
+"""
+
+unit_triangle = r"""
+Computes the unit triangle using the definition:
+
+.. math::
+    x(t) = A(-\left| t \right| + 1)
+
+where `A` is the amplitude.
+
+**Examples**
+
+Unit triangle with amplitude = 1 ::
+
+    >>> from mpmath import mp, unit_triangle
+    >>> mp.dps = 25; mp.pretty = True
+    >>> unit_triangle(-1,1)
+    0.0
+    >>> unit_triangle(-0.5,1)
+    0.5
+    >>> unit_triangle(0,1)
+    1.0
+    >>> unit_triangle(0.5,1)
+    0.5
+    >>> unit_triangle(1,1)
+    0.0
+"""
+
+sigmoid = r"""
+Computes the sigmoid function using the definition:
+
+.. math::
+    x(t) = \frac{A}{1 + e^{-t}}
+
+where `A` is the amplitude.
+
+**Examples**
+
+Sigmoid function with amplitude = 1 ::
+
+    >>> from mpmath import mp, sigmoid
+    >>> mp.dps = 25; mp.pretty = True
+    >>> sigmoid(-1,1)
+    0.2689414213699951207488408
+    >>> sigmoid(-0.5,1)
+    0.3775406687981454353610994
+    >>> sigmoid(0,1)
+    0.5
+    >>> sigmoid(0.5,1)
+    0.6224593312018545646389006
+    >>> sigmoid(1,1)
+    0.7310585786300048792511592
 
 """

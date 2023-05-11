@@ -1,7 +1,6 @@
 from bisect import bisect
-from ..libmp.backend import xrange
 
-class ODEMethods(object):
+class ODEMethods:
     pass
 
 def ode_taylor(ctx, derivs, x0, y0, tol_prec, n):
@@ -18,7 +17,7 @@ def ode_taylor(ctx, derivs, x0, y0, tol_prec, n):
         # evaluation points for derivatives
         for i in range(n):
             fxy = derivs(x, y)
-            y = [y[i]+h*fxy[i] for i in xrange(len(y))]
+            y = [y[i]+h*fxy[i] for i in range(len(y))]
             x += h
             xs.append(x)
             ys.append(y)
@@ -122,8 +121,9 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     We will solve the standard test problem `y'(x) = y(x), y(0) = 1`
     which has explicit solution `y(x) = \exp(x)`::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (atan, cos, exp, mp, mpf, nprint, odefun,
+        ...                     pi, sin, quad)
+        >>> mp.pretty = True
         >>> f = odefun(lambda x, y: y, 0, 1)
         >>> for x in [0, 1, 2.5]:
         ...     print((f(x), exp(x)))
@@ -192,25 +192,25 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     To get a well-defined IVP, we need two initial values. With
     `y(0) = y_0(0) = 1` and `-y'(0) = y_1(0) = 0`, the problem will of
     course be solved by `y(x) = y_0(x) = \cos(x)` and
-    `-y'(x) = y_1(x) = \sin(x)`. We check this::
+    `y'(x) = y_1(x) = -y_0(x) = -\sin(x)`. We check this::
 
-        >>> f = odefun(lambda x, y: [-y[1], y[0]], 0, [1, 0])
+        >>> f = odefun(lambda x, y: [y[1], -y[0]], 0, [1, 0])
         >>> for x in [0, 1, 2.5, 10]:
         ...     nprint(f(x), 15)
-        ...     nprint([cos(x), sin(x)], 15)
+        ...     nprint([cos(x), -sin(x)], 15)
         ...     print("---")
         ...
         [1.0, 0.0]
         [1.0, 0.0]
         ---
-        [0.54030230586814, 0.841470984807897]
-        [0.54030230586814, 0.841470984807897]
+        [0.54030230586814, -0.841470984807897]
+        [0.54030230586814, -0.841470984807897]
         ---
-        [-0.801143615546934, 0.598472144103957]
-        [-0.801143615546934, 0.598472144103957]
+        [-0.801143615546934, -0.598472144103957]
+        [-0.801143615546934, -0.598472144103957]
         ---
-        [-0.839071529076452, -0.54402111088937]
-        [-0.839071529076452, -0.54402111088937]
+        [-0.839071529076452, 0.54402111088937]
+        [-0.839071529076452, 0.54402111088937]
         ---
 
     Note that we get both the sine and the cosine solutions
@@ -282,7 +282,3 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     return interpolant
 
 ODEMethods.odefun = odefun
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

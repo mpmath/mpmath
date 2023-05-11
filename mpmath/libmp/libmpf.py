@@ -14,7 +14,7 @@ import sys
 #from random import getrandbits
 getrandbits = None
 
-from .backend import (MPZ, MPZ_TYPE, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
+from .backend import (MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
     BACKEND, STRICT, HASH_MODULUS, HASH_BITS, gmpy, sage, sage_utils)
 
 from .libintmath import (giant_steps,
@@ -43,17 +43,12 @@ def from_pickable(x):
 class ComplexResult(ValueError):
     pass
 
-try:
-    intern
-except NameError:
-    intern = lambda x: x
-
 # All supported rounding modes
-round_nearest = intern('n')
-round_floor = intern('f')
-round_ceiling = intern('c')
-round_up = intern('u')
-round_down = intern('d')
+round_nearest = sys.intern('n')
+round_floor = sys.intern('f')
+round_ceiling = sys.intern('c')
+round_up = sys.intern('u')
+round_down = sys.intern('d')
 round_fast = round_down
 
 def prec_to_dps(n):
@@ -94,8 +89,7 @@ fnan = (0, MPZ_ZERO, -123, -1)
 finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
-# Was 1e1000; this is broken in Python 2.4
-math_float_inf = 1e300 * 1e300
+math_float_inf = 1e1000
 
 
 #----------------------------------------------------------------------------#
@@ -246,15 +240,12 @@ def _normalize1(sign, man, exp, bc, prec, rnd):
         bc = 1
     return sign, man, exp, bc
 
-try:
-    _exp_types = (int, long)
-except NameError:
-    _exp_types = (int,)
+_exp_types = (int,)
 
 def strict_normalize(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
-    assert type(man) == MPZ_TYPE
+    assert type(man) == MPZ
     assert type(bc) in _exp_types
     assert type(exp) in _exp_types
     assert bc == bitcount(man)
@@ -263,7 +254,7 @@ def strict_normalize(sign, man, exp, bc, prec, rnd):
 def strict_normalize1(sign, man, exp, bc, prec, rnd):
     """Additional checks on the components of an mpf. Enable tests by setting
        the environment variable MPMATH_STRICT to Y."""
-    assert type(man) == MPZ_TYPE
+    assert type(man) == MPZ
     assert type(bc) in _exp_types
     assert type(exp) in _exp_types
     assert bc == bitcount(man)
@@ -412,18 +403,10 @@ def from_float(x, prec=53, rnd=round_fast):
     If prec >= 53, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=53."""
     # frexp only raises an exception for nan on some platforms
-    if x != x:
-        return fnan
-    # in Python2.5 math.frexp gives an exception for float infinity
-    # in Python2.6 it returns (float infinity, 0)
-    try:
-        m, e = math.frexp(x)
-    except:
-        if x == math_float_inf: return finf
-        if x == -math_float_inf: return fninf
-        return fnan
+    if x != x: return fnan
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
+    m, e = math.frexp(x)
     return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
 
 def from_npfloat(x, prec=113, rnd=round_fast):
@@ -544,32 +527,22 @@ def mpf_eq(s, t):
 
 def mpf_hash(s):
     # Duplicate the new hash algorithm introduces in Python 3.2.
-    if sys.version >= "3.2":
-        ssign, sman, sexp, sbc = s
+    ssign, sman, sexp, sbc = s
 
-        # Handle special numbers
-        if not sman:
-            if s == fnan: return sys.hash_info.nan
-            if s == finf: return sys.hash_info.inf
-            if s == fninf: return -sys.hash_info.inf
-        h = sman % HASH_MODULUS
-        if sexp >= 0:
-            sexp = sexp % HASH_BITS
-        else:
-            sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
-        h = (h << sexp) % HASH_MODULUS
-        if ssign: h = -h
-        if h == -1: h == -2
-        return int(h)
+    # Handle special numbers
+    if not sman:
+        if s == fnan: return sys.hash_info.nan
+        if s == finf: return sys.hash_info.inf
+        if s == fninf: return -sys.hash_info.inf
+    h = sman % HASH_MODULUS
+    if sexp >= 0:
+        sexp = sexp % HASH_BITS
     else:
-        try:
-            # Try to be compatible with hash values for floats and ints
-            return hash(to_float(s, strict=1))
-        except OverflowError:
-            # We must unfortunately sacrifice compatibility with ints here.
-            # We could do hash(man << exp) when the exponent is positive, but
-            # this would cause unreasonable inefficiency for large numbers.
-            return hash(s)
+        sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
+    h = (h << sexp) % HASH_MODULUS
+    if ssign: h = -h
+    if h == -1: h = -2
+    return int(h)
 
 def mpf_cmp(s, t):
     """Compare the raw mpfs s and t. Return -1 if s < t, 0 if s == t,
@@ -1052,6 +1025,8 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
             if n > 0: return [finf, fninf][n & 1]
             if n == 0: return fnan
             return fzero
+        if n == 0:
+            return fone
         return fnan
 
     n = int(n)
@@ -1289,7 +1264,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
-    x = x.lower().rstrip('l')
+    x = x.lower().rstrip('l').replace('_', '')
     # Verify that the input is a valid float literal
     float(x)
     # Split into mantissa, exponent
@@ -1304,6 +1279,8 @@ def str_to_man_exp(x, base=10):
     if len(parts) == 2:
         a, b = parts[0], parts[1].rstrip('0')
         exp -= len(b)
+        if a == '':
+            a = '0'
         x = a + b
     x = MPZ(int(x, base))
     return x, exp

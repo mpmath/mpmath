@@ -8,8 +8,8 @@ def monitor(f, input='print', output='print'):
     inputs and outputs to stdout, along with the total evaluation
     count::
 
-        >>> from mpmath import *
-        >>> mp.dps = 5; mp.pretty = False
+        >>> from mpmath import mp, diff, monitor, exp, findroot, sin
+        >>> mp.dps = 5
         >>> diff(monitor(exp), 1)   # diff will eval f(x-h) and f(x+h)
         in  0 (mpf('0.99999999906867742538452148'),) {}
         out 0 mpf('2.7182818259274480055282064')
@@ -84,7 +84,7 @@ def timing(f, *args, **kwargs):
     if t > 0.05 or once:
         return t
     for i in range(3):
-        t1=clock();
+        t1=clock()
         # Evaluate multiple times because the timer function
         # has a significant overhead
         g();g();g();g();g();g();g();g();g();g()

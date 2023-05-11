@@ -156,24 +156,23 @@ class FPContext(StandardBaseContext):
 
     def mag(ctx, z):
         if z:
-            return ctx.frexp(abs(z))[1]
+            n, e = ctx.frexp(abs(z))
+            if e:
+                return e
+            return ctx.convert(n)
         return ctx.ninf
 
     def isint(ctx, z):
-        if hasattr(z, "imag"):   # float/int don't have .real/.imag in py2.5
-            if z.imag:
-                return False
-            z = z.real
+        if z.imag:
+            return False
+        z = z.real
         try:
             return z == int(z)
         except:
             return False
 
     def nint_distance(ctx, z):
-        if hasattr(z, "imag"):   # float/int don't have .real/.imag in py2.5
-            n = round(z.real)
-        else:
-            n = round(z)
+        n = round(z.real)
         if n == z:
             return n, ctx.ninf
         return n, ctx.mag(abs(z-n))
@@ -182,10 +181,7 @@ class FPContext(StandardBaseContext):
         if type(z) is tuple:
             p, q = z
             return ctx.mpf(p) / q, 'R'
-        if hasattr(z, "imag"):    # float/int don't have .real/.imag in py2.5
-            intz = int(z.real)
-        else:
-            intz = int(z)
+        intz = int(z.real)
         if z == intz:
             return intz, 'Z'
         return z, 'R'
