@@ -19,23 +19,6 @@ class SpecialFunctions:
             f, wrap = cls.defined_functions[name]
             cls._wrap_specfun(name, f, wrap)
 
-        from ..libmp.backend import MPQ
-
-        self._mpq_1 = MPQ(1,1)
-        self._mpq_1_2 = MPQ(1,2)
-        self._mpq_3_2 = MPQ(3,2)
-        self._mpq_1_4 = MPQ(1,4)
-        self._mpq_1_16 = MPQ(1,16)
-        self._mpq_3_16 = MPQ(3,16)
-        self._mpq_5_2 = MPQ(5,2)
-        self._mpq_3_4 = MPQ(3,4)
-        self._mpq_1_3 = MPQ(1,3)
-        self._mpq_2_3 = MPQ(2,3)
-        self._mpq_4_3 = MPQ(4,3)
-        self._mpq_1_6 = MPQ(1,6)
-        self._mpq_5_6 = MPQ(5,6)
-        self._mpq_5_3 = MPQ(5,3)
-
         self._misc_const_cache = {}
 
         self._aliases.update({
