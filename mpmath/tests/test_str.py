@@ -1,4 +1,5 @@
-from mpmath import nstr, matrix, inf
+from mpmath import inf, matrix, nstr
+
 
 def test_nstr():
     m = matrix([[0.75, 0.190940654, -0.0299195971],

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from mpmath import mp
-from mpmath import libmp
 
 
 # Attention:

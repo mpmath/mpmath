@@ -5,7 +5,7 @@ from fractions import Fraction
 
 import pytest
 
-from mpmath import inf, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
+from mpmath import iv, mp, mpc, mpf, mpi, mpmathify, sqrt
 from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
                           to_rational, to_str)

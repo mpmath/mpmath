@@ -1,6 +1,5 @@
 import operator
 import random
-import sys
 
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, nan,

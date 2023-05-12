@@ -17,11 +17,10 @@ import random
 
 import pytest
 
-from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipf,
-                    ellipfun, ellipk, ellippi, elliprc, elliprd, elliprf,
-                    elliprg, elliprj, eps, exp, isnan, j, jtheta, ldexp, ln2,
-                    mp, mpc, mpf, nan, pi, qfrom, sec, sech, sin, sinh, sqrt,
-                    tan, tanh)
+from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
+                    ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
+                    elliprj, eps, exp, isnan, j, jtheta, ldexp, ln2, mp, mpc,
+                    mpf, nan, pi, qfrom, sec, sech, sin, sinh, sqrt, tan, tanh)
 
 
 def mpc_ae(a, b, eps=eps):
