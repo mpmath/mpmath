@@ -179,12 +179,12 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
-    assert hash(mp._mpq(1,3))
-    assert hash(mp._mpq(0,1)) == 0
-    assert hash(mp._mpq(-1,1)) == hash(-1)
-    assert hash(mp._mpq(1,1)) == hash(1)
-    assert hash(mp._mpq(5,1)) == hash(5)
-    assert hash(mp._mpq(1,2)) == hash(0.5)
+    assert hash(MPQ(1,3))
+    assert hash(MPQ(0,1)) == 0
+    assert hash(MPQ(-1,1)) == hash(-1)
+    assert hash(MPQ(1,1)) == hash(1)
+    assert hash(MPQ(5,1)) == hash(5)
+    assert hash(MPQ(1,2)) == hash(0.5)
     assert hash(mpf(1)*2**2000) == hash(2**2000)
     assert hash(mpf(1)/2**2000) == hash(MPQ(1,2**2000))
 
@@ -465,11 +465,11 @@ def test_isnan_etc():
     assert mp.isnpint(-1) is True
     assert mp.isnpint(-1.1) is False
     assert mp.isnpint(-1.0) is True
-    assert mp.isnpint(mp._mpq(1, 2)) is False
-    assert mp.isnpint(mp._mpq(-1, 2)) is False
-    assert mp.isnpint(mp._mpq(-3, 1)) is True
-    assert mp.isnpint(mp._mpq(0, 1)) is True
-    assert mp.isnpint(mp._mpq(1, 1)) is False
+    assert mp.isnpint(MPQ(1, 2)) is False
+    assert mp.isnpint(MPQ(-1, 2)) is False
+    assert mp.isnpint(MPQ(-3, 1)) is True
+    assert mp.isnpint(MPQ(0, 1)) is True
+    assert mp.isnpint(MPQ(1, 1)) is False
     assert mp.isnpint(0 + 0j) is True
     assert mp.isnpint(-1 + 0j) is True
     assert mp.isnpint(-1.1 + 0j) is False

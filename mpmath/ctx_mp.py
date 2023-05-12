@@ -41,7 +41,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.trap_complex = False
         ctx.pretty = False
         ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
-        ctx._mpq = MPQ
         ctx.default()
         StandardBaseContext.__init__(ctx)
 

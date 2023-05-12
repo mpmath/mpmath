@@ -21,8 +21,6 @@ class FPContext(StandardBaseContext):
 
         ctx._init_aliases()
 
-    _mpq = lambda cls, x, y: float(x)/y
-
     NoConvergence = libmp.NoConvergence
 
     def _get_prec(ctx): return 53

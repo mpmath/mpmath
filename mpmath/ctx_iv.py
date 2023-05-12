@@ -395,11 +395,6 @@ class MPIntervalContext(StandardBaseContext):
         a._mpci_ = v
         return a
 
-    def _mpq(ctx, p, q):
-        a = libmp.from_rational(p, q, ctx.prec, round_floor)
-        b = libmp.from_rational(p, q, ctx.prec, round_ceiling)
-        return ctx.make_mpf((a, b))
-
     def convert(ctx, x):
         if isinstance(x, (ctx.mpf, ctx.mpc)):
             return x
