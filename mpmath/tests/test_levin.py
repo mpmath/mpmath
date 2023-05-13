@@ -94,7 +94,8 @@ def test_levin_3():
     #   exact = mp.exp(mp.one / (32 * z)) * mp.besselk(mp.one / 4, mp.one / (32 * z)) / (4 * mp.sqrt(z * mp.pi))
     err = abs(v - exact)
     assert err < eps
-    w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)), [0, mp.inf], method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in range(1000)])
+    w = mp.nsum(lambda n: (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n)), [0, mp.inf],
+                method = "levin", levin_variant = "t", workprec = 8*mp.prec, steps = [2] + [1 for x in range(1000)])
     err = abs(v - w)
     assert err < eps
 
