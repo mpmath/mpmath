@@ -5,55 +5,32 @@ operating with them.
 __docformat__ = 'plaintext'
 
 import functools
-
 import re
 
+from . import function_docs, libmp, rational
 from .ctx_base import StandardBaseContext
-
+from .libmp import (MPZ_ONE, ComplexResult, bitcount, dps_to_prec, finf, fnan,
+                    fninf, fone, from_rational, fzero, int_types, mpc_add,
+                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul, mpc_mul_mpf,
+                    mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str, mpf_add,
+                    mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
+                    mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
+                    mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
+                    mpf_sub, mpf_twinprime, repr_dps, to_str)
 from .libmp.backend import BACKEND
 
-from . import libmp
-
-from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
-    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
-    ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_str, to_int, to_float, to_str,
-    from_rational, from_man_exp,
-    fone, fzero, finf, fninf, fnan,
-    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
-    mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
-    mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
-    mpf_hash, mpf_rand,
-    mpf_sum,
-    bitcount, to_fixed,
-    mpc_to_str,
-    mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
-    mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
-    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
-    mpc_mpf_div,
-    mpf_pow,
-    mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10,
-    mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin,
-    mpf_glaisher, mpf_twinprime, mpf_mertens,
-    int_types)
-
-from . import function_docs
-from . import rational
-
-new = object.__new__
 
 get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
                          r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
 
 if BACKEND == 'sage':
-    from sage.libs.mpmath.ext_main import Context as BaseMPContext
     # pickle hack
     import sage.libs.mpmath.ext_main as _mpf_module
+    from sage.libs.mpmath.ext_main import Context as BaseMPContext
 else:
-    from .ctx_mp_python import PythonMPContext as BaseMPContext
     from . import ctx_mp_python as _mpf_module
+    from .ctx_mp_python import PythonMPContext as BaseMPContext
 
-from .ctx_mp_python import _mpf, _mpc, mpnumeric
 
 class MPContext(BaseMPContext, StandardBaseContext):
     """
@@ -86,10 +63,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.sinpi.__doc_ = function_docs.sinpi
 
     def init_builtins(ctx):
-
-        mpf = ctx.mpf
-        mpc = ctx.mpc
-
         # Exact constants
         ctx.one = ctx.make_mpf(fone)
         ctx.zero = ctx.make_mpf(fzero)

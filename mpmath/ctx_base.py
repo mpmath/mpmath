@@ -1,20 +1,20 @@
 from operator import gt, lt
 
+from . import libmp
+from .calculus.calculus import CalculusMethods
+from .calculus.inverselaplace import LaplaceTransformInversionMethods
+from .calculus.odes import ODEMethods
+from .calculus.optimization import OptimizationMethods
+from .calculus.quadrature import QuadratureMethods
 from .functions.functions import SpecialFunctions
 from .functions.rszeta import RSCache
-from .calculus.quadrature import QuadratureMethods
-from .calculus.inverselaplace import LaplaceTransformInversionMethods
-from .calculus.calculus import CalculusMethods
-from .calculus.optimization import OptimizationMethods
-from .calculus.odes import ODEMethods
-from .matrices.matrices import MatrixMethods
-from .matrices.calculus import MatrixCalculusMethods
-from .matrices.linalg import LinearAlgebraMethods
-from .matrices.eigen import Eigen
 from .identification import IdentificationMethods
+from .matrices.calculus import MatrixCalculusMethods
+from .matrices.eigen import Eigen
+from .matrices.linalg import LinearAlgebraMethods
+from .matrices.matrices import MatrixMethods
 from .visualization import VisualizationMethods
 
-from . import libmp
 
 class Context:
     pass
