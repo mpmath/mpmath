@@ -170,8 +170,8 @@ def test_conversion_methods():
     assert x.__rsub__(a) is NotImplemented
     assert x.__mul__(a) is NotImplemented
     assert x.__rmul__(a) is NotImplemented
-    assert x.__div__(a) is NotImplemented
-    assert x.__rdiv__(a) is NotImplemented
+    assert x.__truediv__(a) is NotImplemented
+    assert x.__rtruediv__(a) is NotImplemented
     assert x.__mod__(a) is NotImplemented
     assert x.__rmod__(a) is NotImplemented
     assert x.__pow__(a) is NotImplemented

@@ -333,7 +333,48 @@ class _mpf(mpnumeric):
         return self.__mul__(other)
     __rmul__ = __mul__
 
-    def __rdiv__(s, t):
+    def __truediv__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_div(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_mpf_div(sval, tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_div(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_div(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_mpf_div(sval, tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__truediv__(other)
+
+    def __rtruediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if isinstance(t, int_types):
             v = new(cls)
@@ -421,11 +462,6 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     exec(code, globals(), np)
     return np[name]
 
-_mpf.__div__ = binary_op('__div__',
-    'val = mpf_div(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_div(sval, from_int(other), prec, rounding)' + return_mpf,
-    'val = mpc_mpf_div(sval, tval, prec, rounding)' + return_mpc)
-
 _mpf.__mod__ = binary_op('__mod__',
     'val = mpf_mod(sval, tval, prec, rounding)' + return_mpf,
     'val = mpf_mod(sval, from_int(other), prec, rounding)' + return_mpf,
@@ -435,9 +471,6 @@ _mpf.__pow__ = binary_op('__pow__',
     mpf_pow_same,
     'val = mpf_pow_int(sval, other, prec, rounding)' + return_mpf,
     'val = mpc_pow((sval, fzero), tval, prec, rounding)' + return_mpc)
-
-_mpf.__truediv__ = _mpf.__div__
-_mpf.__rtruediv__ = _mpf.__rdiv__
 
 
 class _constant(_mpf):
