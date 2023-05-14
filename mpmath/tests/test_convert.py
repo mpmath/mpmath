@@ -184,8 +184,8 @@ def test_conversion_methods():
     assert z.__rsub__(a) is NotImplemented
     assert z.__mul__(a) is NotImplemented
     assert z.__rmul__(a) is NotImplemented
-    assert z.__div__(a) is NotImplemented
-    assert z.__rdiv__(a) is NotImplemented
+    assert z.__truediv__(a) is NotImplemented
+    assert z.__rtruediv__(a) is NotImplemented
     assert z.__pow__(a) is NotImplemented
     assert z.__rpow__(a) is NotImplemented
 

@@ -668,7 +668,7 @@ class _mpc(mpnumeric):
         v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
 
-    def __div__(s, t):
+    def __truediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
             t = s.mpc_convert_lhs(t)
@@ -717,7 +717,7 @@ class _mpc(mpnumeric):
             return t
         return t * s
 
-    def __rdiv__(s, t):
+    def __rtruediv__(s, t):
         t = s.mpc_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -728,9 +728,6 @@ class _mpc(mpnumeric):
         if t is NotImplemented:
             return t
         return t ** s
-
-    __truediv__ = __div__
-    __rtruediv__ = __rdiv__
 
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.context.almosteq(s, t, rel_eps, abs_eps)
