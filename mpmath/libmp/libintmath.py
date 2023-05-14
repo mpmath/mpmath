@@ -91,20 +91,11 @@ def python_bitcount(n):
     bc = int(math.log(n, 2)) - 4
     return bc + bctable[n>>bc]
 
-def gmpy_bitcount(n):
-    """Calculate bit size of the nonnegative integer n."""
-    if n: return MPZ(n).numdigits(2)
-    else: return 0
-
-#def sage_bitcount(n):
-#    if n: return MPZ(n).nbits()
-#    else: return 0
-
 def sage_trailing(n):
     return MPZ(n).trailing_zero_bits()
 
 if BACKEND == 'gmpy':
-    bitcount = gmpy_bitcount
+    bitcount = gmpy.bit_length
     trailing = gmpy_trailing
 elif BACKEND == 'sage':
     sage_bitcount = sage_utils.bitcount
@@ -113,9 +104,6 @@ elif BACKEND == 'sage':
 else:
     bitcount = python_bitcount
     trailing = python_trailing
-
-if BACKEND == 'gmpy' and 'bit_length' in dir(gmpy):
-    bitcount = gmpy.bit_length
 
 # Used to avoid slow function calls as far as possible
 trailtable = [trailing(n) for n in range(256)]

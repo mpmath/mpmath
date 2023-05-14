@@ -820,7 +820,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
         return special
     return from_man_exp(man, exp, prec, rnd)
 
-def gmpy_mpf_mul(s, t, prec=0, rnd=round_fast):
+def mpf_mul(s, t, prec=0, rnd=round_fast):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -854,28 +854,6 @@ def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
     man *= n
     return normalize(sign, man, exp, bitcount(man), prec, rnd)
 
-def python_mpf_mul(s, t, prec=0, rnd=round_fast):
-    """Multiply two raw mpfs"""
-    ssign, sman, sexp, sbc = s
-    tsign, tman, texp, tbc = t
-    sign = ssign ^ tsign
-    man = sman*tman
-    if man:
-        bc = sbc + tbc - 1
-        bc += int(man>>bc)
-        if prec:
-            return normalize1(sign, man, sexp+texp, bc, prec, rnd)
-        else:
-            return (sign, man, sexp+texp, bc)
-    s_special = (not sman) and sexp
-    t_special = (not tman) and texp
-    if not s_special and not t_special:
-        return fzero
-    if fnan in (s, t): return fnan
-    if (not tman) and texp: s, t = t, s
-    if t == fzero: return fnan
-    return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
-
 def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
     sign, man, exp, bc = s
@@ -897,10 +875,8 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
 
 
 if BACKEND == 'gmpy':
-    mpf_mul = gmpy_mpf_mul
     mpf_mul_int = gmpy_mpf_mul_int
 else:
-    mpf_mul = python_mpf_mul
     mpf_mul_int = python_mpf_mul_int
 
 def mpf_shift(s, n):
