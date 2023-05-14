@@ -2,8 +2,6 @@
 Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
-__docformat__ = 'plaintext'
-
 import math
 
 from bisect import bisect
