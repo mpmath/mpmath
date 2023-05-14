@@ -261,7 +261,7 @@ def strict_normalize1(sign, man, exp, bc, prec, rnd):
     assert (not man) or (man & 1)
     return _normalize1(sign, man, exp, bc, prec, rnd)
 
-if BACKEND == 'gmpy' and '_mpmath_normalize' in dir(gmpy):
+if BACKEND == 'gmpy':
     _normalize = gmpy._mpmath_normalize
     _normalize1 = gmpy._mpmath_normalize
 
@@ -312,7 +312,7 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
-if BACKEND == 'gmpy' and '_mpmath_create' in dir(gmpy):
+if BACKEND == 'gmpy':
     from_man_exp = gmpy._mpmath_create
 
 if BACKEND == 'sage':
