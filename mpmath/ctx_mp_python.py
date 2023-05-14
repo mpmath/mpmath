@@ -385,17 +385,48 @@ class _mpf(mpnumeric):
             return t
         return t / s
 
-    def __rpow__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
-        return t ** s
+    def __mod__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_mod(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            raise NotImplementedError("complex modulo")
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_mod(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_mod(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            raise NotImplementedError("complex modulo")
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__mod__(other)
 
     def __rmod__(s, t):
         t = s.mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
         return t % s
+
+    def __rpow__(s, t):
+        t = s.mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t ** s
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -461,11 +492,6 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     np = {}
     exec(code, globals(), np)
     return np[name]
-
-_mpf.__mod__ = binary_op('__mod__',
-    'val = mpf_mod(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_mod(sval, from_int(other), prec, rounding)' + return_mpf,
-    'raise NotImplementedError("complex modulo")')
 
 _mpf.__pow__ = binary_op('__pow__',
     mpf_pow_same,
