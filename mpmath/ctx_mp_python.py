@@ -422,6 +422,65 @@ class _mpf(mpnumeric):
             return t
         return t % s
 
+    def __pow__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            try:
+                val = mpf_pow(sval, tval, prec, rounding)
+                obj = new(mpf)
+                obj._mpf_ = val
+                return obj
+            except ComplexResult:
+                if mpf.context.trap_complex:
+                    raise
+                mpc = mpf.context.mpc
+                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                obj = new(mpc)
+                obj._mpc_ = val
+                return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_pow((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_pow_int(sval, other, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            try:
+                val = mpf_pow(sval, tval, prec, rounding)
+                obj = new(mpf)
+                obj._mpf_ = val
+                return obj
+            except ComplexResult:
+                if mpf.context.trap_complex:
+                    raise
+                mpc = mpf.context.mpc
+                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                obj = new(mpc)
+                obj._mpc_ = val
+                return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_pow((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__pow__(other)
+
     def __rpow__(s, t):
         t = s.mpf_convert_lhs(t)
         if t is NotImplemented:
@@ -439,64 +498,6 @@ class _mpf(mpnumeric):
 
     def __round__(self, *args):
         return round(float(self), *args)
-
-mpf_binary_op = """
-def %NAME%(self, other):
-    mpf, new, (prec, rounding) = self._ctxdata
-    sval = self._mpf_
-    if hasattr(other, '_mpf_'):
-        tval = other._mpf_
-        %WITH_MPF%
-    ttype = type(other)
-    if ttype in int_types:
-        %WITH_INT%
-    elif ttype is float:
-        tval = from_float(other)
-        %WITH_MPF%
-    elif hasattr(other, '_mpc_'):
-        tval = other._mpc_
-        mpc = type(other)
-        %WITH_MPC%
-    elif ttype is complex:
-        tval = from_float(other.real), from_float(other.imag)
-        mpc = self.context.mpc
-        %WITH_MPC%
-    if isinstance(other, mpnumeric):
-        return NotImplemented
-    try:
-        other = mpf.context.convert(other, strings=False)
-    except TypeError:
-        return NotImplemented
-    return self.%NAME%(other)
-"""
-
-return_mpf = "; obj = new(mpf); obj._mpf_ = val; return obj"
-return_mpc = "; obj = new(mpc); obj._mpc_ = val; return obj"
-
-mpf_pow_same = """
-        try:
-            val = mpf_pow(sval, tval, prec, rounding) %s
-        except ComplexResult:
-            if mpf.context.trap_complex:
-                raise
-            mpc = mpf.context.mpc
-            val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding) %s
-""" % (return_mpf, return_mpc)
-
-def binary_op(name, with_mpf='', with_int='', with_mpc=''):
-    code = mpf_binary_op
-    code = code.replace("%WITH_INT%", with_int)
-    code = code.replace("%WITH_MPC%", with_mpc)
-    code = code.replace("%WITH_MPF%", with_mpf)
-    code = code.replace("%NAME%", name)
-    np = {}
-    exec(code, globals(), np)
-    return np[name]
-
-_mpf.__pow__ = binary_op('__pow__',
-    mpf_pow_same,
-    'val = mpf_pow_int(sval, other, prec, rounding)' + return_mpf,
-    'val = mpc_pow((sval, fzero), tval, prec, rounding)' + return_mpc)
 
 
 class _constant(_mpf):
