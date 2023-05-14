@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 ##################################################################################################
 #     module for the symmetric eigenvalue problem
 #       Copyright 2013 Timo Hartmann (thartmann15 at gmail.com)
