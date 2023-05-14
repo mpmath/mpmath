@@ -171,11 +171,31 @@ class _mpf(mpnumeric):
     def __le__(s, t): return s._cmp(t, mpf_le)
     def __ge__(s, t): return s._cmp(t, mpf_ge)
 
-    def __ne__(s, t):
-        v = s.__eq__(t)
-        if v is NotImplemented:
-            return v
-        return not v
+    def __eq__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            return mpf_eq(sval, tval)
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
+        ttype = type(other)
+        if ttype in int_types:
+            return mpf_eq(sval, from_int(other))
+        if ttype is float:
+            tval = from_float(other)
+            return mpf_eq(sval, tval)
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__eq__(other)
 
     def __rsub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
@@ -275,11 +295,6 @@ def binary_op(name, with_mpf='', with_int='', with_mpc=''):
     np = {}
     exec(code, globals(), np)
     return np[name]
-
-_mpf.__eq__ = binary_op('__eq__',
-    'return mpf_eq(sval, tval)',
-    'return mpf_eq(sval, from_int(other))',
-    'return (tval[1] == fzero) and mpf_eq(tval[0], sval)')
 
 _mpf.__add__ = binary_op('__add__',
     'val = mpf_add(sval, tval, prec, rounding)' + return_mpf,
