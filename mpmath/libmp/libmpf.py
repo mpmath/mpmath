@@ -233,7 +233,7 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
         sign = 1
         man = -man
     if man < 1024:
-        bc = bctable[int(man)]
+        bc = bctable[man]
     else:
         bc = bitcount(man)
     if not prec:
@@ -242,13 +242,13 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
         if not man & 1:
             if man & 2:
                 return (sign, man >> 1, exp + 1, bc - 1)
-            t = trailtable[int(man & 255)]
+            t = trailtable[man & 255]
             if not t:
                 while not man & 255:
                     man >>= 8
                     exp += 8
                     bc -= 8
-                t = trailtable[int(man & 255)]
+                t = trailtable[man & 255]
             man >>= t
             exp += t
             bc -= t
@@ -352,7 +352,7 @@ def from_float(x, prec=53, rnd=round_fast):
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
     m, e = math.frexp(x)
-    return from_man_exp(int(m*(1<<53)), e-53, prec, rnd)
+    return from_man_exp(MPZ(m*(1<<53)), e-53, prec, rnd)
 
 def from_npfloat(x, prec=113, rnd=round_fast):
     """Create a raw mpf from a numpy float, rounding if necessary.
@@ -364,7 +364,7 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     import numpy as np
     if np.isfinite(x):
         m, e = np.frexp(x)
-        return from_man_exp(int(np.ldexp(m, 113)), int(e-113), prec, rnd)
+        return from_man_exp(int(np.ldexp(m, 113)), e-113, prec, rnd)
     if np.isposinf(x): return finf
     if np.isneginf(x): return fninf
     return fnan
@@ -812,10 +812,10 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     man *= n
     # Generally n will be small
     if n < 1024:
-        bc += bctable[int(n)] - 1
+        bc += bctable[n] - 1
     else:
         bc += bitcount(n) - 1
-    bc += int(man>>bc)
+    bc += man>>bc
     return normalize(sign, man, exp, bc, prec, rnd)
 
 
@@ -961,7 +961,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
         if man == 1:
             return (0, MPZ_ONE, exp+exp, 1)
         bc = bc + bc - 2
-        bc += bctable[int(man>>bc)]
+        bc += bctable[man>>bc]
         return normalize(0, man, exp+exp, bc, prec, rnd)
     if n == -1: return mpf_div(fone, s, prec, rnd)
     if n < 0:
@@ -992,7 +992,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
             pm = pm*man
             pe = pe+exp
             pbc += bc - 2
-            pbc = pbc + bctable[int(pm >> pbc)]
+            pbc = pbc + bctable[pm >> pbc]
             if pbc > workprec:
                 if rounds_down:
                     pm = pm >> (pbc-workprec)
@@ -1006,7 +1006,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
         man = man*man
         exp = exp+exp
         bc = bc + bc - 2
-        bc = bc + bctable[int(man >> bc)]
+        bc = bc + bctable[man >> bc]
         if bc > workprec:
             if rounds_down:
                 man = man >> (bc-workprec)
@@ -1161,7 +1161,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         # Prettify numbers close to unit magnitude
         if min_fixed < exponent < max_fixed:
             if exponent < 0:
-                digits = ("0"*int(-exponent)) + digits
+                digits = ("0"*(-exponent)) + digits
                 split = 1
             else:
                 split = exponent + 1
