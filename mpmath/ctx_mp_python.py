@@ -557,7 +557,6 @@ complex_types = (complex, _mpc)
 
 
 class PythonMPContext:
-
     def __init__(ctx):
         ctx._prec_rounding = [53, round_nearest]
         ctx.mpf = type('mpf', (_mpf,), {})
@@ -656,34 +655,6 @@ class PythonMPContext:
         if isinstance(x, np.complexfloating):
             return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         raise TypeError("cannot create mpf from " + repr(x))
-
-    def isnan(ctx, x):
-        """
-        Return *True* if *x* is a NaN (not-a-number), or for a complex
-        number, whether either the real or complex part is NaN;
-        otherwise return *False*::
-
-            >>> from mpmath import isnan, nan, mpc
-            >>> isnan(3.14)
-            False
-            >>> isnan(nan)
-            True
-            >>> isnan(mpc(3.14,2.72))
-            False
-            >>> isnan(mpc(3.14,nan))
-            True
-
-        """
-        if hasattr(x, "_mpf_"):
-            return x._mpf_ == fnan
-        if hasattr(x, "_mpc_"):
-            return fnan in x._mpc_
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
-            return False
-        x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnan(x)
-        raise TypeError("isnan() needs a number as input")
 
     def isinf(ctx, x):
         """
