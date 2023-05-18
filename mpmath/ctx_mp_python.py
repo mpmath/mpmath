@@ -438,14 +438,6 @@ class _mpc(mpnumeric):
                 return t
         return s.real == t.real and s.imag == t.imag
 
-    def _compare(*args):
-        raise TypeError("no ordering relation is defined for complex numbers")
-
-    __gt__ = _compare
-    __le__ = _compare
-    __gt__ = _compare
-    __ge__ = _compare
-
     def __add__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
