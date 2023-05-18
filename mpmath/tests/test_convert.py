@@ -124,6 +124,8 @@ def test_custom_class():
     assert mympc() + mpc(2) == mpc(5.5, 2.5)
     assert mpc(2) + mympc() == mpc(5.5, 2.5)
     assert mpc(mympc()) == (3.5+2.5j)
+    assert mpmathify(mympf()) == mpf(3.5)
+    assert mpmathify(mympc()) == mpc(3.5, 2.5)
 
 def test_conversion_methods():
     class SomethingRandom:
@@ -227,6 +229,7 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
+    pytest.raises(TypeError, lambda: mpmathify(np.array(1)))
 
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')

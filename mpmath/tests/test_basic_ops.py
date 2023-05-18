@@ -1,12 +1,14 @@
 import operator
 import random
 
+import pytest
+
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, nan,
-                    ninf, nint, nint_distance, pi)
+                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
+                    nan, ninf, nint, nint_distance, pi)
 from mpmath.libmp import (finf, fnan, fninf, fone, from_float, from_int,
-                          mpf_add, mpf_mul, mpf_sub, round_down, round_nearest,
-                          round_up, to_int)
+                          from_str, mpf_add, mpf_mul, mpf_sub, round_down,
+                          round_nearest, round_up, to_int)
 from mpmath.rational import mpq
 
 
@@ -116,6 +118,44 @@ def test_add_misc():
     assert mpf(1) + 1e-20 == 1
     assert mpf(1.07e-22) + 0 == mpf(1.07e-22)
     assert mpf(0) + mpf(1.07e-22) == mpf(1.07e-22)
+
+def test_mpf_init():
+    a1 = mpf(0.3, prec=20)
+    a2 = mpf(0.3, dps=5)
+    a3 = mpf(0.3)
+    assert a1 == a2
+    assert a1 != a3
+    assert str(a1) == '0.300000190734863'
+    assert str(a3) == '0.3'
+    pytest.raises(ValueError, lambda: mpf((1, 2, 3)))
+    pytest.raises(ValueError, lambda: mpf(mpi(1, 2)))
+    pytest.raises(TypeError, lambda: mpf(object()))
+    pytest.raises(TypeError, lambda: mpf(1 + 1j))
+    class SomethingReal:
+        def _mpmath_(self, prec, rounding):
+            return mp.make_mpf(from_str('1.3', prec, rounding))
+    class SomethingComplex:
+        def _mpmath_(self, prec, rounding):
+            return mp.make_mpc((from_str('1.3', prec, rounding), \
+                from_str('1.7', prec, rounding)))
+    class mympf:
+        @property
+        def _mpf_(self):
+            return mpf(3.5)._mpf_
+    assert mpf(SomethingReal(), prec=20) == mpf('1.3', prec=20)
+    pytest.raises(TypeError, lambda: mpf(SomethingComplex()))
+    assert mpf(mympf()) == mpf(3.5)
+    assert mympf() - mpf(0.5) == mpf(3.0)
+
+def test_mpf_props():
+    a = mpf(0.5)
+    assert a.man_exp == (1, -1)
+    assert a.man == 1
+    assert a.exp == -1
+    assert a.bc == 1
+
+def test_mpf_magic():
+    assert complex(mpf(0.5)) == complex(0.5)
 
 def test_complex_misc():
     # many more tests needed
@@ -358,6 +398,7 @@ def test_isnan_etc():
     assert isinf(mpc(nan, nan)) is False
     assert isinf(mpq((3, 2))) is False
     assert isinf(mpq((0, 1))) is False
+    pytest.raises(TypeError, lambda: isinf(object()))
     assert isnormal(3) is True
     assert isnormal(3.5) is True
     assert isnormal(mpf(3.5)) is True
@@ -387,6 +428,7 @@ def test_isnan_etc():
     assert isnormal(mpc(inf, inf)) is False
     assert isnormal(mpq((3, 2))) is True
     assert isnormal(mpq((0, 1))) is False
+    pytest.raises(TypeError, lambda: isnormal(object()))
     assert isint(3) is True
     assert isint(0) is True
     assert isint(int(3)) is True
@@ -418,6 +460,7 @@ def test_isnan_etc():
     assert isint(mpq((0, 4))) is True
     assert isint(mpq((1, 1))) is True
     assert isint(mpq((-1, 1))) is True
+    pytest.raises(TypeError, lambda: isint(object()))
     assert mp.isnpint(0) is True
     assert mp.isnpint(1) is False
     assert mp.isnpint(-1) is True
@@ -439,3 +482,9 @@ def test_issue_438():
     assert mpf(finf) == mpf('inf')
     assert mpf(fninf) == mpf('-inf')
     assert mpf(fnan)._mpf_ == mpf('nan')._mpf_
+
+
+def test_ctx_mag():
+    assert mp.mag(mpq(1, 2)) == 0
+    assert mp.mag(mpq(2)) == 2
+    assert mp.mag(mpq(0)) == mpf('-inf')

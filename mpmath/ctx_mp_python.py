@@ -640,8 +640,7 @@ class PythonMPContext:
         if hasattr(x, '_mpmath_'):
             return ctx.convert(x._mpmath_(prec, rounding))
         if type(x).__module__ == 'decimal':
-            try: return ctx.make_mpf(from_Decimal(x, prec, rounding))
-            except: pass
+            return ctx.make_mpf(from_Decimal(x, prec, rounding))
         return ctx._convert_fallback(x, strings)
 
     def npconvert(ctx, x):
@@ -684,9 +683,7 @@ class PythonMPContext:
         if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return False
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isinf(x)
-        raise TypeError("isinf() needs a number as input")
+        return ctx.isinf(x)
 
     def isnormal(ctx, x):
         """
@@ -724,9 +721,7 @@ class PythonMPContext:
         if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return bool(x)
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnormal(x)
-        raise TypeError("isnormal() needs a number as input")
+        return ctx.isnormal(x)
 
     def isint(ctx, x, gaussian=False):
         """
@@ -771,9 +766,7 @@ class PythonMPContext:
             p, q = x._mpq_
             return p % q == 0
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isint(x, gaussian)
-        raise TypeError("isint() needs a number as input")
+        return ctx.isint(x, gaussian)
 
     def fsum(ctx, terms, absolute=False, squared=False):
         """
@@ -1004,7 +997,7 @@ class PythonMPContext:
             elif hasattr(x, "_mpf_"):
                 v = x._mpf_
             else:
-                return x, 'U'
+                raise NotImplementedError
         sign, man, exp, bc = v
         if man:
             if exp >= -4:
@@ -1012,15 +1005,13 @@ class PythonMPContext:
                     man = -man
                 if exp >= 0:
                     return int(man) << exp, 'Z'
-                if exp >= -4:
-                    p, q = int(man), (1<<(-exp))
-                    return ctx.mpq(p,q), 'Q'
+                p, q = int(man), (1<<(-exp))
+                return ctx.mpq(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
-        elif not exp:
+        if not exp:
             return 0, 'Z'
-        else:
-            return x, 'U'
+        raise NotImplementedError
 
     def _mpf_mag(ctx, x):
         sign, man, exp, bc = x
@@ -1055,28 +1046,24 @@ class PythonMPContext:
         """
         if hasattr(x, "_mpf_"):
             return ctx._mpf_mag(x._mpf_)
-        elif hasattr(x, "_mpc_"):
+        if hasattr(x, "_mpc_"):
             r, i = x._mpc_
             if r == fzero:
                 return ctx._mpf_mag(i)
             if i == fzero:
                 return ctx._mpf_mag(r)
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
-        elif isinstance(x, int_types):
+        if isinstance(x, int_types):
             if x:
                 return bitcount(abs(x))
             return ctx.ninf
-        elif isinstance(x, rational.mpq):
+        if isinstance(x, rational.mpq):
             p, q = x._mpq_
             if p:
                 return 1 + bitcount(abs(p)) - bitcount(q)
             return ctx.ninf
-        else:
-            x = ctx.convert(x)
-            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
-                return ctx.mag(x)
-            else:
-                raise TypeError("requires an mpf/mpc")
+        x = ctx.convert(x)
+        return ctx.mag(x)
 
 
 # Register with "numbers" ABC
