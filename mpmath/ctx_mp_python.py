@@ -439,12 +439,6 @@ class _mpc(mpnumeric):
                 return t
         return s.real == t.real and s.imag == t.imag
 
-    def __ne__(s, t):
-        b = s.__eq__(t)
-        if b is NotImplemented:
-            return b
-        return not b
-
     def _compare(*args):
         raise TypeError("no ordering relation is defined for complex numbers")
 
