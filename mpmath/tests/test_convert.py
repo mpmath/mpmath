@@ -164,9 +164,6 @@ def test_conversion_methods():
     assert x.__ge__(a) is NotImplemented
     assert x.__eq__(a) is NotImplemented
     assert x.__ne__(a) is NotImplemented
-    # implementation detail
-    if hasattr(x, "__cmp__"):
-        assert x.__cmp__(a) is NotImplemented
     assert x.__sub__(a) is NotImplemented
     assert x.__rsub__(a) is NotImplemented
     assert x.__mul__(a) is NotImplemented

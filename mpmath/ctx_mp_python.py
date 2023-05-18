@@ -166,7 +166,6 @@ class _mpf(mpnumeric):
                 return t
         return func(s._mpf_, t)
 
-    def __cmp__(s, t): return s._cmp(t, mpf_cmp)
     def __lt__(s, t): return s._cmp(t, mpf_lt)
     def __gt__(s, t): return s._cmp(t, mpf_gt)
     def __le__(s, t): return s._cmp(t, mpf_le)
