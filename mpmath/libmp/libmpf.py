@@ -327,7 +327,7 @@ if BACKEND == 'gmpy' and '_mpmath_create' in dir(gmpy):
 if BACKEND == 'sage':
     from_man_exp = sage_utils.from_man_exp
 
-def from_int(n, prec=None, rnd=round_fast):
+def from_int(n, prec=0, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
     the mantissa is stored exactly."""
     if not prec:
@@ -1425,7 +1425,7 @@ def from_oct(x, prec=None, rnd=round_fast):
     man, exp = str_to_man_exp(x, base=8)
     return from_man_exp(man, (exp<<1)+exp, prec, rnd)
 
-def from_bin(x, prec=None, rnd=round_fast):
+def from_bin(x, prec=0, rnd=round_fast):
     """Create a raw mpf from a binary literal, rounding in the
     specified direction if *prec* is not *None*. The literal syntax is
     the same as for Python floats.
