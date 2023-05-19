@@ -1,3 +1,4 @@
+from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 
 @defun
@@ -259,7 +260,7 @@ def _anger(ctx,which,v,z,**kwargs):
     v = ctx._convert_param(v)[0]
     z = ctx.convert(z)
     def h(v):
-        b = ctx.mpq_1_2
+        b = MPQ(1,2)
         u = v*b
         m = b*3
         a1,a2,b1,b2 = m-u, m+u, 1-u, 1+u
@@ -288,7 +289,7 @@ def lommels1(ctx, u, v, z, **kwargs):
     v = ctx._convert_param(v)[0]
     z = ctx.convert(z)
     def h(u,v):
-        b = ctx.mpq_1_2
+        b = MPQ(1,2)
         w = ctx.square_exp_arg(z, mult=-0.25)
         return ([u-v+1, u+v+1, z], [-1, -1, u+1], [], [], [1], \
             [b*(u-v+3),b*(u+v+3)], w),
@@ -302,11 +303,11 @@ def lommels2(ctx, u, v, z, **kwargs):
     # Asymptotic expansion (GR p. 947) -- need to be careful
     # not to use for small arguments
     # def h(u,v):
-    #    b = ctx.mpq_1_2
+    #    b = MPQ(1,2)
     #    w = -(z/2)**(-2)
     #    return ([z], [u-1], [], [], [b*(1-u+v)], [b*(1-u-v)], w),
     def h(u,v):
-        b = ctx.mpq_1_2
+        b = MPQ(1,2)
         w = ctx.square_exp_arg(z, mult=-0.25)
         T1 = [u-v+1, u+v+1, z], [-1, -1, u+1], [], [], [1], [b*(u-v+3),b*(u+v+3)], w
         T2 = [2, z], [u+v-1, -v], [v, b*(u+v+1)], [b*(v-u+1)], [], [1-v], w
@@ -425,7 +426,7 @@ def _airyderiv_0(ctx, z, n, ntype, which):
     if ntype == 'Z':
         if n < 0:
             return z
-        r = ctx.mpq_1_3
+        r = MPQ(1,3)
         prec = ctx.prec
         try:
             ctx.prec += 10
@@ -489,8 +490,8 @@ def airyai(ctx, z, derivative=0, **kwargs):
                     ctx.prec -= extraprec
                     C1 = _airyai_C1(ctx) * 0.5
                     C2 = _airyai_C2(ctx)
-                    T1 = [C1,z],[1,2],[],[],[],[ctx.mpq_5_3],w
-                    T2 = [C2],[1],[],[],[],[ctx.mpq_1_3],w
+                    T1 = [C1,z],[1,2],[],[],[],[MPQ(5,3)],w
+                    T2 = [C2],[1],[],[],[],[MPQ(1,3)],w
                     return T1, T2
             return ctx.hypercomb(h, [], **kwargs)
         else:
@@ -501,7 +502,7 @@ def airyai(ctx, z, derivative=0, **kwargs):
                 ctx.prec += extraprec
                 w = z**3/9
                 ctx.prec -= extraprec
-                q13,q23,q43 = ctx.mpq_1_3, ctx.mpq_2_3, ctx.mpq_4_3
+                q13,q23,q43 = MPQ(1,3), MPQ(2,3), MPQ(4,3)
                 a1=q13; a2=1; b1=(1-n)*q13; b2=(2-n)*q13; b3=1-n*q13
                 T1 = [3, z], [n-q23, -n], [a1], [b1,b2,b3], \
                     [a1,a2], [b1,b2,b3], w
@@ -530,8 +531,8 @@ def airyai(ctx, z, derivative=0, **kwargs):
                 ctx.prec -= extraprec
                 C1 = _airyai_C1(ctx)
                 C2 = _airyai_C2(ctx)
-                T1 = [C1],[1],[],[],[],[ctx.mpq_2_3],w
-                T2 = [z*C2],[1],[],[],[],[ctx.mpq_4_3],w
+                T1 = [C1],[1],[],[],[],[MPQ(2,3)],w
+                T2 = [z*C2],[1],[],[],[],[MPQ(4,3)],w
                 return T1, T2
         return ctx.hypercomb(h, [], **kwargs)
 
@@ -574,8 +575,8 @@ def airybi(ctx, z, derivative=0, **kwargs):
                 ctx.prec -= extraprec
                 C1 = _airybi_C1(ctx)*0.5
                 C2 = _airybi_C2(ctx)
-                T1 = [C1,z],[1,2],[],[],[],[ctx.mpq_5_3],w
-                T2 = [C2],[1],[],[],[],[ctx.mpq_1_3],w
+                T1 = [C1,z],[1,2],[],[],[],[MPQ(5,3)],w
+                T2 = [C2],[1],[],[],[],[MPQ(1,3)],w
                 return T1, T2
             return ctx.hypercomb(h, [], **kwargs)
         else:
@@ -585,9 +586,9 @@ def airybi(ctx, z, derivative=0, **kwargs):
                 ctx.prec += extraprec
                 w = z**3/9
                 ctx.prec -= extraprec
-                q13,q23,q43 = ctx.mpq_1_3, ctx.mpq_2_3, ctx.mpq_4_3
-                q16 = ctx.mpq_1_6
-                q56 = ctx.mpq_5_6
+                q13,q23,q43 = MPQ(1,3), MPQ(2,3), MPQ(4,3)
+                q16 = MPQ(1,6)
+                q56 = MPQ(5,6)
                 a1=q13; a2=1; b1=(1-n)*q13; b2=(2-n)*q13; b3=1-n*q13
                 T1 = [3, z], [n-q16, -n], [a1], [b1,b2,b3], \
                     [a1,a2], [b1,b2,b3], w
@@ -606,8 +607,8 @@ def airybi(ctx, z, derivative=0, **kwargs):
             ctx.prec -= extraprec
             C1 = _airybi_C1(ctx)
             C2 = _airybi_C2(ctx)
-            T1 = [C1],[1],[],[],[],[ctx.mpq_2_3],w
-            T2 = [z*C2],[1],[],[],[],[ctx.mpq_4_3],w
+            T1 = [C1],[1],[],[],[],[MPQ(2,3)],w
+            T2 = [z*C2],[1],[],[],[],[MPQ(4,3)],w
             return T1, T2
         return ctx.hypercomb(h, [], **kwargs)
 
@@ -686,7 +687,7 @@ def _scorer(ctx, z, which, kwargs):
         w = z**3/9
         ctx.prec -= extraprec
         T1 = [A], [1], [], [], [], [], 0
-        T2 = [B,z], [-1,2], [], [], [1], [ctx.mpq_4_3,ctx.mpq_5_3], w
+        T2 = [B,z], [-1,2], [], [], [1], [MPQ(4,3),MPQ(5,3)], w
         return T1, T2
     return ctx.hypercomb(h, [], **kwargs)
 

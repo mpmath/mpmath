@@ -633,7 +633,7 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
     # We now require a to be standardized
     v = 0
     shift = 0
-    b = a
+    b = ctx.mpf(a)
     while ctx.re(b) > 1:
         b -= 1
         v -= b**negs
@@ -644,7 +644,7 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
         shift += 1
     # Rational reflection formula
     try:
-        p, q = a._mpq_
+        p, q = a.numerator, a.denominator
     except:
         assert a == int(a)
         p = int(a)
