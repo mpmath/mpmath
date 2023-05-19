@@ -2,6 +2,8 @@ import cmath
 import math
 import random
 
+import pytest
+
 from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     asech, asin, asinh, atan, atan2, atanh, catalan, cbrt,
                     ceil, conj, cos, cos_sin, cosh, cospi, cospi_sinpi, cot,
@@ -13,9 +15,9 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     power, powm1, radians, rand, re, root, sec, sech, sign,
                     sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh, twinprime,
                     unitroots)
-from mpmath.libmp import (bitcount, from_int, mpf_gt, mpf_lt, mpf_mul,
-                          mpf_pow_int, mpf_rand, mpf_sqrt, round_ceiling,
-                          round_down, round_nearest, round_up)
+from mpmath.libmp import (ComplexResult, bitcount, from_int, mpf_gt, mpf_lt,
+                          mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
+                          round_ceiling, round_down, round_nearest, round_up)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -134,6 +136,9 @@ def test_float_sqrt():
     assert sqrt(-1j).ae(cmath.sqrt(-1j))
     assert sqrt(math.pi + math.e*1j).ae(cmath.sqrt(math.pi + math.e*1j))
     assert sqrt(math.pi - math.e*1j).ae(cmath.sqrt(math.pi - math.e*1j))
+    mp2 = mp.clone()
+    mp2.trap_complex = True
+    pytest.raises(ComplexResult, lambda: mp2.sqrt(-1))
 
 def test_hypot():
     assert hypot(0, 0) == 0

@@ -4,7 +4,8 @@ sure that passing custom Axes works.
 
 """
 
-from mpmath import mp, fp
+from mpmath import fp, mp
+
 
 def test_axes():
     try:

@@ -1,30 +1,21 @@
 import numbers
 
-from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
-    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
-    ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_npfloat, from_Decimal, from_str, to_int, to_float, to_str,
-    from_rational, from_man_exp,
-    fone, fzero, finf, fninf, fnan,
-    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
-    mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
-    mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
-    mpf_hash, mpf_rand,
-    mpf_sum,
-    bitcount, to_fixed,
-    mpc_to_str,
-    mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
-    mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
-    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
-    mpc_mpf_div,
-    mpf_pow,
-    mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10,
-    mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin,
-    mpf_glaisher, mpf_twinprime, mpf_mertens,
-    int_types)
+from . import function_docs, rational
+from .libmp import (MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
+                    fninf, from_Decimal, from_float, from_int, from_man_exp,
+                    from_npfloat, from_pickable, from_rational, from_str,
+                    fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
+                    mpc_conjugate, mpc_div, mpc_div_mpf, mpc_hash,
+                    mpc_is_nonzero, mpc_mpf_div, mpc_mul, mpc_mul_int,
+                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
+                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
+                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
+                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
+                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
+                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
+                    round_nearest, to_fixed, to_float, to_int, to_pickable,
+                    to_str)
 
-from . import rational
-from . import function_docs
 
 new = object.__new__
 
@@ -175,7 +166,6 @@ class _mpf(mpnumeric):
                 return t
         return func(s._mpf_, t)
 
-    def __cmp__(s, t): return s._cmp(t, mpf_cmp)
     def __lt__(s, t): return s._cmp(t, mpf_lt)
     def __gt__(s, t): return s._cmp(t, mpf_gt)
     def __le__(s, t): return s._cmp(t, mpf_le)
@@ -448,20 +438,6 @@ class _mpc(mpnumeric):
                 return t
         return s.real == t.real and s.imag == t.imag
 
-    def __ne__(s, t):
-        b = s.__eq__(t)
-        if b is NotImplemented:
-            return b
-        return not b
-
-    def _compare(*args):
-        raise TypeError("no ordering relation is defined for complex numbers")
-
-    __gt__ = _compare
-    __le__ = _compare
-    __gt__ = _compare
-    __ge__ = _compare
-
     def __add__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
@@ -581,7 +557,6 @@ complex_types = (complex, _mpc)
 
 
 class PythonMPContext:
-
     def __init__(ctx):
         ctx._prec_rounding = [53, round_nearest]
         ctx.mpf = type('mpf', (_mpf,), {})
@@ -665,8 +640,7 @@ class PythonMPContext:
         if hasattr(x, '_mpmath_'):
             return ctx.convert(x._mpmath_(prec, rounding))
         if type(x).__module__ == 'decimal':
-            try: return ctx.make_mpf(from_Decimal(x, prec, rounding))
-            except: pass
+            return ctx.make_mpf(from_Decimal(x, prec, rounding))
         return ctx._convert_fallback(x, strings)
 
     def npconvert(ctx, x):
@@ -680,34 +654,6 @@ class PythonMPContext:
         if isinstance(x, np.complexfloating):
             return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         raise TypeError("cannot create mpf from " + repr(x))
-
-    def isnan(ctx, x):
-        """
-        Return *True* if *x* is a NaN (not-a-number), or for a complex
-        number, whether either the real or complex part is NaN;
-        otherwise return *False*::
-
-            >>> from mpmath import isnan, nan, mpc
-            >>> isnan(3.14)
-            False
-            >>> isnan(nan)
-            True
-            >>> isnan(mpc(3.14,2.72))
-            False
-            >>> isnan(mpc(3.14,nan))
-            True
-
-        """
-        if hasattr(x, "_mpf_"):
-            return x._mpf_ == fnan
-        if hasattr(x, "_mpc_"):
-            return fnan in x._mpc_
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
-            return False
-        x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnan(x)
-        raise TypeError("isnan() needs a number as input")
 
     def isinf(ctx, x):
         """
@@ -737,9 +683,7 @@ class PythonMPContext:
         if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return False
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isinf(x)
-        raise TypeError("isinf() needs a number as input")
+        return ctx.isinf(x)
 
     def isnormal(ctx, x):
         """
@@ -777,9 +721,7 @@ class PythonMPContext:
         if isinstance(x, int_types) or isinstance(x, rational.mpq):
             return bool(x)
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnormal(x)
-        raise TypeError("isnormal() needs a number as input")
+        return ctx.isnormal(x)
 
     def isint(ctx, x, gaussian=False):
         """
@@ -824,9 +766,7 @@ class PythonMPContext:
             p, q = x._mpq_
             return p % q == 0
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isint(x, gaussian)
-        raise TypeError("isint() needs a number as input")
+        return ctx.isint(x, gaussian)
 
     def fsum(ctx, terms, absolute=False, squared=False):
         """
@@ -1057,7 +997,7 @@ class PythonMPContext:
             elif hasattr(x, "_mpf_"):
                 v = x._mpf_
             else:
-                return x, 'U'
+                raise NotImplementedError
         sign, man, exp, bc = v
         if man:
             if exp >= -4:
@@ -1065,15 +1005,13 @@ class PythonMPContext:
                     man = -man
                 if exp >= 0:
                     return int(man) << exp, 'Z'
-                if exp >= -4:
-                    p, q = int(man), (1<<(-exp))
-                    return ctx.mpq(p,q), 'Q'
+                p, q = int(man), (1<<(-exp))
+                return ctx.mpq(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
-        elif not exp:
+        if not exp:
             return 0, 'Z'
-        else:
-            return x, 'U'
+        raise NotImplementedError
 
     def _mpf_mag(ctx, x):
         sign, man, exp, bc = x
@@ -1108,28 +1046,24 @@ class PythonMPContext:
         """
         if hasattr(x, "_mpf_"):
             return ctx._mpf_mag(x._mpf_)
-        elif hasattr(x, "_mpc_"):
+        if hasattr(x, "_mpc_"):
             r, i = x._mpc_
             if r == fzero:
                 return ctx._mpf_mag(i)
             if i == fzero:
                 return ctx._mpf_mag(r)
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
-        elif isinstance(x, int_types):
+        if isinstance(x, int_types):
             if x:
                 return bitcount(abs(x))
             return ctx.ninf
-        elif isinstance(x, rational.mpq):
+        if isinstance(x, rational.mpq):
             p, q = x._mpq_
             if p:
                 return 1 + bitcount(abs(p)) - bitcount(q)
             return ctx.ninf
-        else:
-            x = ctx.convert(x)
-            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
-                return ctx.mag(x)
-            else:
-                raise TypeError("requires an mpf/mpc")
+        x = ctx.convert(x)
+        return ctx.mag(x)
 
 
 # Register with "numbers" ABC

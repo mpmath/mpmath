@@ -4,7 +4,6 @@ Calculate digits of pi. This module can be run interactively with
     python pidigits.py
 
 """
-__docformat__ = 'plaintext'
 
 import sys
 import math

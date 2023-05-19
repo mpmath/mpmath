@@ -1,13 +1,9 @@
-from .ctx_base import StandardBaseContext
-
 import math
-import cmath
-from . import math2
 
-from . import function_docs
+from . import function_docs, libmp, math2
+from .ctx_base import StandardBaseContext
+from .libmp import int_types, mpf_bernoulli, to_float
 
-from .libmp import mpf_bernoulli, to_float, int_types
-from . import libmp
 
 class FPContext(StandardBaseContext):
     """

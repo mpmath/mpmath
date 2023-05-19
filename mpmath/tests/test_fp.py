@@ -23,6 +23,7 @@ for test in cases.splitlines():
 
 from mpmath import fp
 
+
 def ae(x, y, tol=1e-12):
     if x == y:
         return True

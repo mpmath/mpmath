@@ -1,5 +1,5 @@
 [build-system]
-requires = ['pip>=20.3', 'setuptools>=61,<67.3', 'wheel']
+requires = ['pip>=20.3', 'setuptools>=61', 'wheel']
 build-backend = 'setuptools.build_meta'
 [project]
 name = 'mpmath'
@@ -41,9 +41,10 @@ version = {attr = 'mpmath.__version__'}
 [tool.setuptools.packages]
 find = {namespaces = false}
 [tool.flake8]
-select = ['E101', 'E111', 'E112', 'E113', 'E703', 'E712', 'E713',
+select = ['E101', 'E111', 'E112', 'E113', 'E501', 'E703', 'E712', 'E713',
           'W191', 'W291', 'W292', 'W293', 'W391']
 exclude = ['.eggs', '.git']
+max_line_length = 200
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']

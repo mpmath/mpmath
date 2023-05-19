@@ -1,7 +1,8 @@
-from mpmath.libmp import *
-from mpmath import mpf, mp
+from random import choice, randint, seed
 
-from random import randint, choice, seed
+from mpmath import mpf
+from mpmath.libmp import *
+
 
 all_modes = [round_floor, round_ceiling, round_down, round_up, round_nearest]
 

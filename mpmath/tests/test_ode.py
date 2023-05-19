@@ -1,5 +1,6 @@
 #from mpmath.calculus import ODE_step_euler, ODE_step_rk4, odeint, arange
-from mpmath import odefun, cos, sin, mpf, sinc, mp
+from mpmath import cos, mpf, odefun, sin, sinc
+
 
 '''
 solvers = [ODE_step_euler, ODE_step_rk4]
