@@ -113,7 +113,7 @@ bctable = [bitcount(n) for n in range(1024)]
 
 def bin_to_radix(x, xbits, base, bdigits):
     """Changes radix of a fixed-point number; i.e., converts
-    x * 2**xbits to floor(x * 10**bdigits)."""
+    x * 2**xbits to floor(x * base**bdigits)."""
     return x * (MPZ(base)**bdigits) >> xbits
 
 stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'
