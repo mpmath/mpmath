@@ -1,3 +1,4 @@
+from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 
 def _hermite_param(ctx, n, z, parabolic_cylinder):
@@ -8,7 +9,7 @@ def _hermite_param(ctx, n, z, parabolic_cylinder):
     """
     n, ntyp = ctx._convert_param(n)
     z = ctx.convert(z)
-    q = -ctx.mpq_1_2
+    q = -MPQ(1,2)
     # For re(z) > 0, 2F0 -- http://functions.wolfram.com/
     #     HypergeometricFunctions/HermiteHGeneral/06/02/0009/
     # Otherwise, there is a reflection formula
@@ -162,7 +163,7 @@ def pcfu(ctx, a, z, **kwargs):
 
     """
     n, _ = ctx._convert_param(a)
-    return ctx.pcfd(-n-ctx.mpq_1_2, z)
+    return ctx.pcfd(-n-MPQ(1,2), z)
 
 @defun
 def pcfv(ctx, a, z, **kwargs):
@@ -198,8 +199,8 @@ def pcfv(ctx, a, z, **kwargs):
     """
     n, ntype = ctx._convert_param(a)
     z = ctx.convert(z)
-    q = ctx.mpq_1_2
-    r = ctx.mpq_1_4
+    q = MPQ(1,2)
+    r = MPQ(1,4)
     if ntype == 'Q' and ctx.isint(n*2):
         # Faster for half-integers
         def h():
@@ -287,7 +288,7 @@ def pcfy1(ctx, a, z, **kwargs):
         w1 = ctx.fmul(w, -0.25, exact=True)
         w2 = ctx.fmul(w, 0.5, exact=True)
         e = ctx.exp(w1)
-        return [e], [1], [], [], [ctx.mpq_1_2*a+ctx.mpq_1_4], [ctx.mpq_1_2], w2
+        return [e], [1], [], [], [MPQ(1,2)*a+MPQ(1,4)], [MPQ(1,2)], w2
     return ctx.hypercomb(h, [], **kwargs)
 
 @defun
@@ -299,8 +300,8 @@ def pcfy2(ctx, a, z, **kwargs):
         w1 = ctx.fmul(w, -0.25, exact=True)
         w2 = ctx.fmul(w, 0.5, exact=True)
         e = ctx.exp(w1)
-        return [e, z], [1, 1], [], [], [ctx.mpq_1_2*a+ctx.mpq_3_4], \
-            [ctx.mpq_3_2], w2
+        return [e, z], [1, 1], [], [], [MPQ(1,2)*a+MPQ(3,4)], \
+            [MPQ(3,2)], w2
     return ctx.hypercomb(h, [], **kwargs)
 """
 

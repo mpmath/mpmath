@@ -1,7 +1,7 @@
 import numbers
 
-from . import function_docs, rational
-from .libmp import (MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
+from . import function_docs
+from .libmp import (MPQ, MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
                     fninf, from_Decimal, from_float, from_int, from_man_exp,
                     from_npfloat, from_pickable, from_rational, from_str,
                     fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
@@ -94,8 +94,8 @@ class _mpf(mpnumeric):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
         if isinstance(x, complex_types): return cls.context.mpc(x)
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             return from_rational(p, q, cls.context.prec)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
@@ -803,11 +803,11 @@ class PythonMPContext:
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
         if type(x).__module__ == 'numpy': return ctx.npconvert(x)
         if isinstance(x, numbers.Rational): # e.g. Fraction
-            try: x = rational.mpq(int(x.numerator), int(x.denominator))
+            try: x = MPQ(int(x.numerator), int(x.denominator))
             except: pass
         prec, rounding = ctx._prec_rounding
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             return ctx.make_mpf(from_rational(p, q, prec))
         if strings and isinstance(x, str):
             try:
@@ -860,7 +860,7 @@ class PythonMPContext:
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             return re in (finf, fninf) or im in (finf, fninf)
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, int_types) or isinstance(x, MPQ):
             return False
         x = ctx.convert(x)
         return ctx.isinf(x)
@@ -898,7 +898,7 @@ class PythonMPContext:
             if re == fzero: return im_normal
             if im == fzero: return re_normal
             return re_normal and im_normal
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, int_types) or isinstance(x, MPQ):
             return bool(x)
         x = ctx.convert(x)
         return ctx.isnormal(x)
@@ -942,8 +942,8 @@ class PythonMPContext:
                 im_isint = (iman and iexp >= 0) or im == fzero
                 return re_isint and im_isint
             return re_isint and im == fzero
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             return p % q == 0
         x = ctx.convert(x)
         return ctx.isint(x, gaussian)
@@ -1159,8 +1159,6 @@ class PythonMPContext:
             p = None
             if isinstance(x, tuple):
                 p, q = x
-            elif hasattr(x, '_mpq_'):
-                p, q = x._mpq_
             elif isinstance(x, str) and '/' in x:
                 p, q = x.split('/')
                 p = int(p)
@@ -1168,7 +1166,7 @@ class PythonMPContext:
             if p is not None:
                 if not p % q:
                     return p // q, 'Z'
-                return ctx.mpq(p,q), 'Q'
+                return MPQ(p,q), 'Q'
             x = ctx.convert(x)
             if hasattr(x, "_mpc_"):
                 v, im = x._mpc_
@@ -1186,7 +1184,7 @@ class PythonMPContext:
                 if exp >= 0:
                     return int(man) << exp, 'Z'
                 p, q = int(man), (1<<(-exp))
-                return ctx.mpq(p,q), 'Q'
+                return MPQ(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
         if not exp:
@@ -1237,8 +1235,8 @@ class PythonMPContext:
             if x:
                 return bitcount(abs(x))
             return ctx.ninf
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             if p:
                 return 1 + bitcount(abs(p)) - bitcount(q)
             return ctx.ninf
