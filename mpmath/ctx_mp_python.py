@@ -802,11 +802,8 @@ class PythonMPContext:
         if isinstance(x, complex):
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
         if type(x).__module__ == 'numpy': return ctx.npconvert(x)
-        if isinstance(x, numbers.Rational): # e.g. Fraction
-            try: x = MPQ(int(x.numerator), int(x.denominator))
-            except: pass
         prec, rounding = ctx._prec_rounding
-        if isinstance(x, MPQ):
+        if isinstance(x, numbers.Rational):
             p, q = x.numerator, x.denominator
             return ctx.make_mpf(from_rational(p, q, prec))
         if strings and isinstance(x, str):
