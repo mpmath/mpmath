@@ -1,3 +1,4 @@
+import decimal
 import operator
 import random
 
@@ -80,6 +81,9 @@ def test_div():
     assert 6 / mpc(3) == 2.0
     assert 6.0 / mpc(3) == 2.0
     assert (6+0j) / mpc(3) == 2.0
+
+def test_mod():
+    assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
 
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0
