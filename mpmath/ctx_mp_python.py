@@ -395,7 +395,7 @@ class _mpf(mpnumeric):
             obj._mpf_ = val
             return obj
         if hasattr(other, '_mpc_'):
-            raise NotImplementedError("complex modulo")
+            return NotImplemented
         ttype = type(other)
         if ttype in int_types:
             val = mpf_mod(sval, from_int(other), prec, rounding)
@@ -409,7 +409,7 @@ class _mpf(mpnumeric):
             obj._mpf_ = val
             return obj
         if ttype is complex:
-            raise NotImplementedError("complex modulo")
+            return NotImplemented
         try:
             other = mpf.context.convert(other, strings=False)
         except TypeError:

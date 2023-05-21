@@ -139,6 +139,8 @@ def test_float_sqrt():
     mp2 = mp.clone()
     mp2.trap_complex = True
     pytest.raises(ComplexResult, lambda: mp2.sqrt(-1))
+    pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**0.5)
+    pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
 def test_hypot():
     assert hypot(0, 0) == 0
