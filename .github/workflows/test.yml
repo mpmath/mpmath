@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, pypy3.8, pypy3.9]
+        python-version: [3.8, 3.9, '3.10', 3.11, '3.12-dev', pypy3.8, pypy3.9]
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
@@ -22,10 +22,17 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade .[develop,gmpy,docs]
+        if [[ ${{matrix.python-version}} != "3.12-dev" ]]
+        then
+          pip install --upgrade .[develop,gmpy,docs]
+        else
+          pip install --upgrade pytest
+          pip install --upgrade .[docs]
+        fi
         pip install --upgrade pytest-xdist
     - name: Linting with flake8, etc
-      if: matrix.python-version >= 3.9
+      # workaround PyCQA/pycodestyle#1142
+      if: matrix.python-version >= 3.9 && matrix.python-version != '3.12-dev'
       run: |
         python -We:invalid -m compileall -f mpmath -q
         flake518
