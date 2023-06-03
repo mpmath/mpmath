@@ -347,9 +347,9 @@ def eulerpoly(ctx, n, z):
         return z
     m = n+1
     if z == 0:
-        return -2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m
+        return -2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m * z**0
     if z == 1:
-        return 2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m
+        return 2*(ctx.ldexp(1,m)-1)*ctx.bernoulli(m)/m * z**0
     if z == 0.5:
         if n % 2:
             return ctx.zero
