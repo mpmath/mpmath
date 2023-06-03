@@ -1,30 +1,21 @@
 import numbers
 
-from .libmp import (MPZ, MPZ_ZERO, MPZ_ONE, int_types, repr_dps,
-    round_floor, round_ceiling, dps_to_prec, round_nearest, prec_to_dps,
-    ComplexResult, to_pickable, from_pickable, normalize,
-    from_int, from_float, from_npfloat, from_Decimal, from_str, to_int, to_float, to_str,
-    from_rational, from_man_exp,
-    fone, fzero, finf, fninf, fnan,
-    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
-    mpf_div, mpf_rdiv_int, mpf_pow_int, mpf_mod,
-    mpf_eq, mpf_cmp, mpf_lt, mpf_gt, mpf_le, mpf_ge,
-    mpf_hash, mpf_rand,
-    mpf_sum,
-    bitcount, to_fixed,
-    mpc_to_str,
-    mpc_to_complex, mpc_hash, mpc_pos, mpc_is_nonzero, mpc_neg, mpc_conjugate,
-    mpc_abs, mpc_add, mpc_add_mpf, mpc_sub, mpc_sub_mpf, mpc_mul, mpc_mul_mpf,
-    mpc_mul_int, mpc_div, mpc_div_mpf, mpc_pow, mpc_pow_mpf, mpc_pow_int,
-    mpc_mpf_div,
-    mpf_pow,
-    mpf_pi, mpf_degree, mpf_e, mpf_phi, mpf_ln2, mpf_ln10,
-    mpf_euler, mpf_catalan, mpf_apery, mpf_khinchin,
-    mpf_glaisher, mpf_twinprime, mpf_mertens,
-    int_types)
-
-from . import rational
 from . import function_docs
+from .libmp import (MPQ, MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
+                    fninf, from_Decimal, from_float, from_int, from_man_exp,
+                    from_npfloat, from_pickable, from_rational, from_str,
+                    fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
+                    mpc_conjugate, mpc_div, mpc_div_mpf, mpc_hash,
+                    mpc_is_nonzero, mpc_mpf_div, mpc_mul, mpc_mul_int,
+                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
+                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
+                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
+                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
+                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
+                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
+                    round_nearest, to_fixed, to_float, to_int, to_pickable,
+                    to_str)
+
 
 new = object.__new__
 
@@ -103,8 +94,8 @@ class _mpf(mpnumeric):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
         if isinstance(x, complex_types): return cls.context.mpc(x)
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             return from_rational(p, q, cls.context.prec)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
@@ -142,7 +133,6 @@ class _mpf(mpnumeric):
     def __str__(s): return to_str(s._mpf_, s.context._str_digits)
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
-    def __long__(s): return long(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
     def __complex__(s): return complex(float(s))
     def __nonzero__(s): return s._mpf_ != fzero
@@ -176,17 +166,119 @@ class _mpf(mpnumeric):
                 return t
         return func(s._mpf_, t)
 
-    def __cmp__(s, t): return s._cmp(t, mpf_cmp)
     def __lt__(s, t): return s._cmp(t, mpf_lt)
     def __gt__(s, t): return s._cmp(t, mpf_gt)
     def __le__(s, t): return s._cmp(t, mpf_le)
     def __ge__(s, t): return s._cmp(t, mpf_ge)
 
-    def __ne__(s, t):
-        v = s.__eq__(t)
-        if v is NotImplemented:
-            return v
-        return not v
+    def __eq__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            return mpf_eq(sval, tval)
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
+        ttype = type(other)
+        if ttype in int_types:
+            return mpf_eq(sval, from_int(other))
+        if ttype is float:
+            tval = from_float(other)
+            return mpf_eq(sval, tval)
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__eq__(other)
+
+    def __add__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_add(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_add_mpf(tval, sval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_add(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_add(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            val = mpc_add_mpf(tval, sval, prec, rounding)
+            mpc = self.context.mpc
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__add__(other)
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_sub(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_sub((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_sub(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_sub(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_sub((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__sub__(other)
 
     def __rsub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
@@ -199,7 +291,90 @@ class _mpf(mpnumeric):
             return t
         return t - s
 
-    def __rdiv__(s, t):
+    def __mul__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_mul(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_mul_mpf(tval, sval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_mul_int(sval, other, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_mul(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_mul_mpf(tval, sval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__mul__(other)
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_div(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_mpf_div(sval, tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_div(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_div(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_mpf_div(sval, tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__truediv__(other)
+
+    def __rtruediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if isinstance(t, int_types):
             v = new(cls)
@@ -210,17 +385,107 @@ class _mpf(mpnumeric):
             return t
         return t / s
 
-    def __rpow__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
-        return t ** s
+    def __mod__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            val = mpf_mod(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if hasattr(other, '_mpc_'):
+            return NotImplemented
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_mod(sval, from_int(other), prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            val = mpf_mod(sval, tval, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is complex:
+            return NotImplemented
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__mod__(other)
 
     def __rmod__(s, t):
         t = s.mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
         return t % s
+
+    def __pow__(self, other):
+        mpf, new, (prec, rounding) = self._ctxdata
+        sval = self._mpf_
+        if hasattr(other, '_mpf_'):
+            tval = other._mpf_
+            try:
+                val = mpf_pow(sval, tval, prec, rounding)
+                obj = new(mpf)
+                obj._mpf_ = val
+                return obj
+            except ComplexResult:
+                if mpf.context.trap_complex:
+                    raise
+                mpc = mpf.context.mpc
+                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                obj = new(mpc)
+                obj._mpc_ = val
+                return obj
+        if hasattr(other, '_mpc_'):
+            tval = other._mpc_
+            mpc = type(other)
+            val = mpc_pow((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        ttype = type(other)
+        if ttype in int_types:
+            val = mpf_pow_int(sval, other, prec, rounding)
+            obj = new(mpf)
+            obj._mpf_ = val
+            return obj
+        if ttype is float:
+            tval = from_float(other)
+            try:
+                val = mpf_pow(sval, tval, prec, rounding)
+                obj = new(mpf)
+                obj._mpf_ = val
+                return obj
+            except ComplexResult:
+                if mpf.context.trap_complex:
+                    raise
+                mpc = mpf.context.mpc
+                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                obj = new(mpc)
+                obj._mpc_ = val
+                return obj
+        if ttype is complex:
+            tval = from_float(other.real), from_float(other.imag)
+            mpc = self.context.mpc
+            val = mpc_pow((sval, fzero), tval, prec, rounding)
+            obj = new(mpc)
+            obj._mpc_ = val
+            return obj
+        try:
+            other = mpf.context.convert(other, strings=False)
+        except TypeError:
+            return NotImplemented
+        return self.__pow__(other)
+
+    def __rpow__(s, t):
+        t = s.mpf_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t ** s
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -233,99 +498,6 @@ class _mpf(mpnumeric):
 
     def __round__(self, *args):
         return round(float(self), *args)
-
-mpf_binary_op = """
-def %NAME%(self, other):
-    mpf, new, (prec, rounding) = self._ctxdata
-    sval = self._mpf_
-    if hasattr(other, '_mpf_'):
-        tval = other._mpf_
-        %WITH_MPF%
-    ttype = type(other)
-    if ttype in int_types:
-        %WITH_INT%
-    elif ttype is float:
-        tval = from_float(other)
-        %WITH_MPF%
-    elif hasattr(other, '_mpc_'):
-        tval = other._mpc_
-        mpc = type(other)
-        %WITH_MPC%
-    elif ttype is complex:
-        tval = from_float(other.real), from_float(other.imag)
-        mpc = self.context.mpc
-        %WITH_MPC%
-    if isinstance(other, mpnumeric):
-        return NotImplemented
-    try:
-        other = mpf.context.convert(other, strings=False)
-    except TypeError:
-        return NotImplemented
-    return self.%NAME%(other)
-"""
-
-return_mpf = "; obj = new(mpf); obj._mpf_ = val; return obj"
-return_mpc = "; obj = new(mpc); obj._mpc_ = val; return obj"
-
-mpf_pow_same = """
-        try:
-            val = mpf_pow(sval, tval, prec, rounding) %s
-        except ComplexResult:
-            if mpf.context.trap_complex:
-                raise
-            mpc = mpf.context.mpc
-            val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding) %s
-""" % (return_mpf, return_mpc)
-
-def binary_op(name, with_mpf='', with_int='', with_mpc=''):
-    code = mpf_binary_op
-    code = code.replace("%WITH_INT%", with_int)
-    code = code.replace("%WITH_MPC%", with_mpc)
-    code = code.replace("%WITH_MPF%", with_mpf)
-    code = code.replace("%NAME%", name)
-    np = {}
-    exec(code, globals(), np)
-    return np[name]
-
-_mpf.__eq__ = binary_op('__eq__',
-    'return mpf_eq(sval, tval)',
-    'return mpf_eq(sval, from_int(other))',
-    'return (tval[1] == fzero) and mpf_eq(tval[0], sval)')
-
-_mpf.__add__ = binary_op('__add__',
-    'val = mpf_add(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_add(sval, from_int(other), prec, rounding)' + return_mpf,
-    'val = mpc_add_mpf(tval, sval, prec, rounding)' + return_mpc)
-
-_mpf.__sub__ = binary_op('__sub__',
-    'val = mpf_sub(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_sub(sval, from_int(other), prec, rounding)' + return_mpf,
-    'val = mpc_sub((sval, fzero), tval, prec, rounding)' + return_mpc)
-
-_mpf.__mul__ = binary_op('__mul__',
-    'val = mpf_mul(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_mul_int(sval, other, prec, rounding)' + return_mpf,
-    'val = mpc_mul_mpf(tval, sval, prec, rounding)' + return_mpc)
-
-_mpf.__div__ = binary_op('__div__',
-    'val = mpf_div(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_div(sval, from_int(other), prec, rounding)' + return_mpf,
-    'val = mpc_mpf_div(sval, tval, prec, rounding)' + return_mpc)
-
-_mpf.__mod__ = binary_op('__mod__',
-    'val = mpf_mod(sval, tval, prec, rounding)' + return_mpf,
-    'val = mpf_mod(sval, from_int(other), prec, rounding)' + return_mpf,
-    'raise NotImplementedError("complex modulo")')
-
-_mpf.__pow__ = binary_op('__pow__',
-    mpf_pow_same,
-    'val = mpf_pow_int(sval, other, prec, rounding)' + return_mpf,
-    'val = mpc_pow((sval, fzero), tval, prec, rounding)' + return_mpc)
-
-_mpf.__radd__ = _mpf.__add__
-_mpf.__rmul__ = _mpf.__mul__
-_mpf.__truediv__ = _mpf.__div__
-_mpf.__rtruediv__ = _mpf.__rdiv__
 
 
 class _constant(_mpf):
@@ -449,20 +621,6 @@ class _mpc(mpnumeric):
                 return t
         return s.real == t.real and s.imag == t.imag
 
-    def __ne__(s, t):
-        b = s.__eq__(t)
-        if b is NotImplemented:
-            return b
-        return not b
-
-    def _compare(*args):
-        raise TypeError("no ordering relation is defined for complex numbers")
-
-    __gt__ = _compare
-    __le__ = _compare
-    __gt__ = _compare
-    __ge__ = _compare
-
     def __add__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
@@ -510,7 +668,7 @@ class _mpc(mpnumeric):
         v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
 
-    def __div__(s, t):
+    def __truediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
             t = s.mpc_convert_lhs(t)
@@ -559,7 +717,7 @@ class _mpc(mpnumeric):
             return t
         return t * s
 
-    def __rdiv__(s, t):
+    def __rtruediv__(s, t):
         t = s.mpc_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -571,9 +729,6 @@ class _mpc(mpnumeric):
             return t
         return t ** s
 
-    __truediv__ = __div__
-    __rtruediv__ = __rdiv__
-
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.context.almosteq(s, t, rel_eps, abs_eps)
 
@@ -582,7 +737,6 @@ complex_types = (complex, _mpc)
 
 
 class PythonMPContext:
-
     def __init__(ctx):
         ctx._prec_rounding = [53, round_nearest]
         ctx.mpf = type('mpf', (_mpf,), {})
@@ -631,8 +785,7 @@ class PythonMPContext:
         working precision. Strings representing fractions or complex
         numbers are permitted.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import mpmathify
             >>> mpmathify(3.5)
             mpf('3.5')
             >>> mpmathify('2.1')
@@ -649,12 +802,9 @@ class PythonMPContext:
         if isinstance(x, complex):
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
         if type(x).__module__ == 'numpy': return ctx.npconvert(x)
-        if isinstance(x, numbers.Rational): # e.g. Fraction
-            try: x = rational.mpq(int(x.numerator), int(x.denominator))
-            except: pass
         prec, rounding = ctx._prec_rounding
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, numbers.Rational):
+            p, q = x.numerator, x.denominator
             return ctx.make_mpf(from_rational(p, q, prec))
         if strings and isinstance(x, str):
             try:
@@ -667,8 +817,7 @@ class PythonMPContext:
         if hasattr(x, '_mpmath_'):
             return ctx.convert(x._mpmath_(prec, rounding))
         if type(x).__module__ == 'decimal':
-            try: return ctx.make_mpf(from_Decimal(x, prec, rounding))
-            except: pass
+            return ctx.make_mpf(from_Decimal(x, prec, rounding))
         return ctx._convert_fallback(x, strings)
 
     def npconvert(ctx, x):
@@ -683,40 +832,12 @@ class PythonMPContext:
             return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         raise TypeError("cannot create mpf from " + repr(x))
 
-    def isnan(ctx, x):
-        """
-        Return *True* if *x* is a NaN (not-a-number), or for a complex
-        number, whether either the real or complex part is NaN;
-        otherwise return *False*::
-
-            >>> from mpmath import *
-            >>> isnan(3.14)
-            False
-            >>> isnan(nan)
-            True
-            >>> isnan(mpc(3.14,2.72))
-            False
-            >>> isnan(mpc(3.14,nan))
-            True
-
-        """
-        if hasattr(x, "_mpf_"):
-            return x._mpf_ == fnan
-        if hasattr(x, "_mpc_"):
-            return fnan in x._mpc_
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
-            return False
-        x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnan(x)
-        raise TypeError("isnan() needs a number as input")
-
     def isinf(ctx, x):
         """
         Return *True* if the absolute value of *x* is infinite;
         otherwise return *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isinf, inf, mpc
             >>> isinf(inf)
             True
             >>> isinf(-inf)
@@ -736,12 +857,10 @@ class PythonMPContext:
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             return re in (finf, fninf) or im in (finf, fninf)
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, int_types) or isinstance(x, MPQ):
             return False
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isinf(x)
-        raise TypeError("isinf() needs a number as input")
+        return ctx.isinf(x)
 
     def isnormal(ctx, x):
         """
@@ -751,7 +870,7 @@ class PythonMPContext:
         complex number *x* is considered "normal" if its magnitude is
         normal::
 
-            >>> from mpmath import *
+            >>> from mpmath import isnormal, inf, nan, mpc
             >>> isnormal(3)
             True
             >>> isnormal(0)
@@ -776,19 +895,17 @@ class PythonMPContext:
             if re == fzero: return im_normal
             if im == fzero: return re_normal
             return re_normal and im_normal
-        if isinstance(x, int_types) or isinstance(x, rational.mpq):
+        if isinstance(x, int_types) or isinstance(x, MPQ):
             return bool(x)
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isnormal(x)
-        raise TypeError("isnormal() needs a number as input")
+        return ctx.isnormal(x)
 
     def isint(ctx, x, gaussian=False):
         """
         Return *True* if *x* is integer-valued; otherwise return
         *False*::
 
-            >>> from mpmath import *
+            >>> from mpmath import isint, mpf, inf
             >>> isint(3)
             True
             >>> isint(mpf(3))
@@ -822,13 +939,11 @@ class PythonMPContext:
                 im_isint = (iman and iexp >= 0) or im == fzero
                 return re_isint and im_isint
             return re_isint and im == fzero
-        if isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             return p % q == 0
         x = ctx.convert(x)
-        if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
-            return ctx.isint(x, gaussian)
-        raise TypeError("isint() needs a number as input")
+        return ctx.isint(x, gaussian)
 
     def fsum(ctx, terms, absolute=False, squared=False):
         """
@@ -838,8 +953,7 @@ class PythonMPContext:
         faster and produces more accurate results than the builtin
         Python function :func:`sum`.
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fsum
             >>> fsum([1, 2, 0.5, 7])
             mpf('10.5')
 
@@ -911,8 +1025,7 @@ class PythonMPContext:
 
         **Examples**
 
-            >>> from mpmath import *
-            >>> mp.dps = 15; mp.pretty = False
+            >>> from mpmath import fdot, j
             >>> A = [2, 1.5, 3]
             >>> B = [1, -1, 2]
             >>> fdot(A, B)
@@ -1043,8 +1156,6 @@ class PythonMPContext:
             p = None
             if isinstance(x, tuple):
                 p, q = x
-            elif hasattr(x, '_mpq_'):
-                p, q = x._mpq_
             elif isinstance(x, str) and '/' in x:
                 p, q = x.split('/')
                 p = int(p)
@@ -1052,7 +1163,7 @@ class PythonMPContext:
             if p is not None:
                 if not p % q:
                     return p // q, 'Z'
-                return ctx.mpq(p,q), 'Q'
+                return MPQ(p,q), 'Q'
             x = ctx.convert(x)
             if hasattr(x, "_mpc_"):
                 v, im = x._mpc_
@@ -1061,7 +1172,7 @@ class PythonMPContext:
             elif hasattr(x, "_mpf_"):
                 v = x._mpf_
             else:
-                return x, 'U'
+                raise NotImplementedError
         sign, man, exp, bc = v
         if man:
             if exp >= -4:
@@ -1069,15 +1180,13 @@ class PythonMPContext:
                     man = -man
                 if exp >= 0:
                     return int(man) << exp, 'Z'
-                if exp >= -4:
-                    p, q = int(man), (1<<(-exp))
-                    return ctx.mpq(p,q), 'Q'
+                p, q = int(man), (1<<(-exp))
+                return MPQ(p,q), 'Q'
             x = ctx.make_mpf(v)
             return x, 'R'
-        elif not exp:
+        if not exp:
             return 0, 'Z'
-        else:
-            return x, 'U'
+        raise NotImplementedError
 
     def _mpf_mag(ctx, x):
         sign, man, exp, bc = x
@@ -1098,7 +1207,7 @@ class PythonMPContext:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, mag, ceil, mpf, log, inf, nan
             >>> mp.pretty = True
             >>> mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
             (4, 4, 4, 4)
@@ -1112,28 +1221,24 @@ class PythonMPContext:
         """
         if hasattr(x, "_mpf_"):
             return ctx._mpf_mag(x._mpf_)
-        elif hasattr(x, "_mpc_"):
+        if hasattr(x, "_mpc_"):
             r, i = x._mpc_
             if r == fzero:
                 return ctx._mpf_mag(i)
             if i == fzero:
                 return ctx._mpf_mag(r)
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
-        elif isinstance(x, int_types):
+        if isinstance(x, int_types):
             if x:
                 return bitcount(abs(x))
             return ctx.ninf
-        elif isinstance(x, rational.mpq):
-            p, q = x._mpq_
+        if isinstance(x, MPQ):
+            p, q = x.numerator, x.denominator
             if p:
                 return 1 + bitcount(abs(p)) - bitcount(q)
             return ctx.ninf
-        else:
-            x = ctx.convert(x)
-            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
-                return ctx.mag(x)
-            else:
-                raise TypeError("requires an mpf/mpc")
+        x = ctx.convert(x)
+        return ctx.mag(x)
 
 
 # Register with "numbers" ABC

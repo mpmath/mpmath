@@ -13,8 +13,7 @@ equation system::
 
 using ``lu_solve``::
 
-    >>> from mpmath import *
-    >>> mp.pretty = False
+    >>> from mpmath import matrix, lu_solve, residual, eps, fp, lu, iv
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
     >>> x = lu_solve(A, b)
@@ -39,7 +38,7 @@ result.
 
 If you need more speed, use NumPy, or ``fp.lu_solve`` for a floating-point computation.
 
-    >>> fp.lu_solve(A, b)   # doctest: +ELLIPSIS
+    >>> fp.lu_solve(A, b)
     matrix(...)
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
@@ -87,13 +86,13 @@ and equation solving with rigorous error bounds::
     >>> b = iv.matrix(['4','0.6','0.5'])
     >>> c = iv.lu_solve(a, b)
     >>> print(c)
-    [   [5.2582327113062568605927528666, 5.25823271130625686059275702219]]
-    [[-13.1550493962678375411635581388, -13.1550493962678375411635540152]]
-    [  [7.42069154774972557628979076189, 7.42069154774972557628979190734]]
+    [  [5.2582327113062393041, 5.2582327113062749951]]
+    [[-13.155049396267856583, -13.155049396267821167]]
+    [  [7.4206915477497212555, 7.4206915477497310922]]
     >>> print(a*c)
-    [  [3.99999999999999999999999844904, 4.00000000000000000000000155096]]
-    [[0.599999999999999999999968898009, 0.600000000000000000000031763736]]
-    [[0.499999999999999999999979320485, 0.500000000000000000000020679515]]
+    [  [3.9999999999999866773, 4.0000000000000133227]]
+    [[0.59999999999972430942, 0.60000000000027142733]]
+    [[0.49999999999982236432, 0.50000000000018474111]]
 """
 
 # TODO:
@@ -430,7 +429,8 @@ class LinearAlgebraMethods:
 
         Cholesky decomposition of a positive-definite symmetric matrix::
 
-            >>> from mpmath import *
+            >>> from mpmath import (mp, eye, hilbert, nprint, cholesky,
+            ...                     chop, matrix)
             >>> mp.dps = 25; mp.pretty = True
             >>> A = eye(3) + hilbert(3)
             >>> nprint(A)
@@ -598,7 +598,7 @@ class LinearAlgebraMethods:
 
         **Examples**
 
-            >>> from mpmath import *
+            >>> from mpmath import mp, qr, matrix, chop, nprint, j
             >>> mp.dps = 15
             >>> mp.pretty = True
             >>> A = matrix([[1, 2], [3, 4], [1, 1]])

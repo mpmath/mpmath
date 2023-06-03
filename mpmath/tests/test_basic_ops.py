@@ -1,8 +1,15 @@
-import mpmath
-from mpmath import *
-from mpmath.libmp import *
+import decimal
+import operator
 import random
-import sys
+
+import pytest
+
+from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
+                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
+                    nan, ninf, nint, nint_distance, pi)
+from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
+                          from_str, mpf_add, mpf_mul, mpf_sub, round_down,
+                          round_nearest, round_up, to_int)
 
 
 def test_type_compare():
@@ -75,6 +82,9 @@ def test_div():
     assert 6.0 / mpc(3) == 2.0
     assert (6+0j) / mpc(3) == 2.0
 
+def test_mod():
+    assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
+
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0
     assert mpf(6) ** 3 == 216.0
@@ -101,7 +111,6 @@ def test_mixed_misc():
     assert 6.0 / mpf(2) == mpf(6) / 2.0 == 3
 
 def test_add_misc():
-    mp.dps = 15
     assert mpf(4) + mpf(-70) == -66
     assert mpf(1) + mpf(1.1)/80 == 1 + 1.1/80
     assert mpf((1, 10000000000)) + mpf(3) == mpf((1, 10000000000))
@@ -112,6 +121,44 @@ def test_add_misc():
     assert mpf(1) + 1e-20 == 1
     assert mpf(1.07e-22) + 0 == mpf(1.07e-22)
     assert mpf(0) + mpf(1.07e-22) == mpf(1.07e-22)
+
+def test_mpf_init():
+    a1 = mpf(0.3, prec=20)
+    a2 = mpf(0.3, dps=5)
+    a3 = mpf(0.3)
+    assert a1 == a2
+    assert a1 != a3
+    assert str(a1) == '0.300000190734863'
+    assert str(a3) == '0.3'
+    pytest.raises(ValueError, lambda: mpf((1, 2, 3)))
+    pytest.raises(ValueError, lambda: mpf(mpi(1, 2)))
+    pytest.raises(TypeError, lambda: mpf(object()))
+    pytest.raises(TypeError, lambda: mpf(1 + 1j))
+    class SomethingReal:
+        def _mpmath_(self, prec, rounding):
+            return mp.make_mpf(from_str('1.3', prec, rounding))
+    class SomethingComplex:
+        def _mpmath_(self, prec, rounding):
+            return mp.make_mpc((from_str('1.3', prec, rounding), \
+                from_str('1.7', prec, rounding)))
+    class mympf:
+        @property
+        def _mpf_(self):
+            return mpf(3.5)._mpf_
+    assert mpf(SomethingReal(), prec=20) == mpf('1.3', prec=20)
+    pytest.raises(TypeError, lambda: mpf(SomethingComplex()))
+    assert mpf(mympf()) == mpf(3.5)
+    assert mympf() - mpf(0.5) == mpf(3.0)
+
+def test_mpf_props():
+    a = mpf(0.5)
+    assert a.man_exp == (1, -1)
+    assert a.man == 1
+    assert a.exp == -1
+    assert a.bc == 1
+
+def test_mpf_magic():
+    assert complex(mpf(0.5)) == complex(0.5)
 
 def test_complex_misc():
     # many more tests needed
@@ -136,19 +183,17 @@ def test_hash():
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
-    from mpmath.rational import mpq
-    assert hash(mp.mpq(1,3))
-    assert hash(mp.mpq(0,1)) == 0
-    assert hash(mp.mpq(-1,1)) == hash(-1)
-    assert hash(mp.mpq(1,1)) == hash(1)
-    assert hash(mp.mpq(5,1)) == hash(5)
-    assert hash(mp.mpq(1,2)) == hash(0.5)
+    assert hash(MPQ(1,3))
+    assert hash(MPQ(0,1)) == 0
+    assert hash(MPQ(-1,1)) == hash(-1)
+    assert hash(MPQ(1,1)) == hash(1)
+    assert hash(MPQ(5,1)) == hash(5)
+    assert hash(MPQ(1,2)) == hash(0.5)
     assert hash(mpf(1)*2**2000) == hash(2**2000)
-    assert hash(mpf(1)/2**2000) == hash(mpq(1,2**2000))
+    assert hash(mpf(1)/2**2000) == hash(MPQ(1,2**2000))
 
 # Advanced rounding test
 def test_add_rounding():
-    mp.dps = 15
     a = from_float(1e-50)
     assert mpf_sub(mpf_add(fone, a, 53, round_up), fone, 53, round_up) == from_float(2.2204460492503131e-16)
     assert mpf_sub(fone, a, 53, round_up) == fone
@@ -161,7 +206,6 @@ def test_almost_equal():
     assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
 
 def test_arithmetic_functions():
-    import operator
     ops = [(operator.add, fadd), (operator.sub, fsub), (operator.mul, fmul),
         (operator.truediv, fdiv)]
     a = mpf(0.27)
@@ -186,7 +230,6 @@ def test_arithmetic_functions():
                     assert fop(x, y, exact=True) == z0
                 assert fneg(fneg(z1, exact=True), prec=inf) == z1
                 assert fneg(z1) == -(+z1)
-    mp.dps = 15
 
 def test_exact_integer_arithmetic():
     # XXX: re-fix this so that all operations are tested with all rounding modes
@@ -209,7 +252,6 @@ def test_exact_integer_arithmetic():
                 b = random.randint(-M2, M2)
                 assert mpf(a) * mpf(b) == a*b
                 assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
-    mp.dps = 15
 
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
@@ -219,14 +261,12 @@ def test_str_1000_digits():
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
     assert str(pi)[-10:-1] == '2164201989'[:9]
-    mp.dps = 15
 
 def test_str_10000_digits():
     mp.dps = 10001
     # last digit may be wrong
     assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
     assert str(pi)[-10:-1] == '5256375678'[:9]
-    mp.dps = 15
 
 def test_monitor():
     f = lambda x: x**2
@@ -259,7 +299,6 @@ def test_nint_distance():
     assert nint_distance(mpf('1e-100')) == (0, -332)
 
 def test_floor_ceil_nint_frac():
-    mp.dps = 15
     for n in range(-10,10):
         assert floor(n) == n
         assert floor(n+0.5) == n
@@ -336,7 +375,6 @@ def test_floor_ceil_nint_frac():
     assert frac(3.25+4.75j) == 0.25+0.75j
 
 def test_isnan_etc():
-    from mpmath.rational import mpq
     assert isnan(nan) is True
     assert isnan(3) is False
     assert isnan(mpf(3)) is False
@@ -347,8 +385,8 @@ def test_isnan_etc():
     assert isnan(mpc(2, 2)) is False
     assert isnan(mpc(nan, inf)) is True
     assert isnan(mpc(inf, inf)) is False
-    assert isnan(mpq((3, 2))) is False
-    assert isnan(mpq((0, 1))) is False
+    assert isnan(MPQ(3, 2)) is False
+    assert isnan(MPQ(0, 1)) is False
     assert isinf(inf) is True
     assert isinf(-inf) is True
     assert isinf(3) is False
@@ -361,8 +399,9 @@ def test_isnan_etc():
     assert isinf(mpc(nan, inf)) is True
     assert isinf(mpc(inf, nan)) is True
     assert isinf(mpc(nan, nan)) is False
-    assert isinf(mpq((3, 2))) is False
-    assert isinf(mpq((0, 1))) is False
+    assert isinf(MPQ(3, 2)) is False
+    assert isinf(MPQ(0, 1)) is False
+    pytest.raises(TypeError, lambda: isinf(object()))
     assert isnormal(3) is True
     assert isnormal(3.5) is True
     assert isnormal(mpf(3.5)) is True
@@ -390,8 +429,9 @@ def test_isnan_etc():
     assert isnormal(mpc(nan, inf)) is False
     assert isnormal(mpc(nan, nan)) is False
     assert isnormal(mpc(inf, inf)) is False
-    assert isnormal(mpq((3, 2))) is True
-    assert isnormal(mpq((0, 1))) is False
+    assert isnormal(MPQ(3, 2)) is True
+    assert isnormal(MPQ(0, 1)) is False
+    pytest.raises(TypeError, lambda: isnormal(object()))
     assert isint(3) is True
     assert isint(0) is True
     assert isint(int(3)) is True
@@ -417,22 +457,23 @@ def test_isnan_etc():
     assert isint(3 + 4j) is False
     assert isint(3 + 4j, gaussian=True) is True
     assert isint(3 + 0j) is True
-    assert isint(mpq((3, 2))) is False
-    assert isint(mpq((3, 9))) is False
-    assert isint(mpq((9, 3))) is True
-    assert isint(mpq((0, 4))) is True
-    assert isint(mpq((1, 1))) is True
-    assert isint(mpq((-1, 1))) is True
+    assert isint(MPQ(3, 2)) is False
+    assert isint(MPQ(3, 9)) is False
+    assert isint(MPQ(9, 3)) is True
+    assert isint(MPQ(0, 4)) is True
+    assert isint(MPQ(1, 1)) is True
+    assert isint(MPQ(-1, 1)) is True
+    pytest.raises(TypeError, lambda: isint(object()))
     assert mp.isnpint(0) is True
     assert mp.isnpint(1) is False
     assert mp.isnpint(-1) is True
     assert mp.isnpint(-1.1) is False
     assert mp.isnpint(-1.0) is True
-    assert mp.isnpint(mp.mpq(1, 2)) is False
-    assert mp.isnpint(mp.mpq(-1, 2)) is False
-    assert mp.isnpint(mp.mpq(-3, 1)) is True
-    assert mp.isnpint(mp.mpq(0, 1)) is True
-    assert mp.isnpint(mp.mpq(1, 1)) is False
+    assert mp.isnpint(MPQ(1, 2)) is False
+    assert mp.isnpint(MPQ(-1, 2)) is False
+    assert mp.isnpint(MPQ(-3, 1)) is True
+    assert mp.isnpint(MPQ(0, 1)) is True
+    assert mp.isnpint(MPQ(1, 1)) is False
     assert mp.isnpint(0 + 0j) is True
     assert mp.isnpint(-1 + 0j) is True
     assert mp.isnpint(-1.1 + 0j) is False
@@ -444,3 +485,9 @@ def test_issue_438():
     assert mpf(finf) == mpf('inf')
     assert mpf(fninf) == mpf('-inf')
     assert mpf(fnan)._mpf_ == mpf('nan')._mpf_
+
+
+def test_ctx_mag():
+    assert mp.mag(MPQ(1, 2)) == 0
+    assert mp.mag(MPQ(2)) == 2
+    assert mp.mag(MPQ(0)) == mpf('-inf')

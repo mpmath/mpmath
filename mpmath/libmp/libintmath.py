@@ -7,7 +7,9 @@ here from settings.py
 """
 
 import math
+import sys
 from bisect import bisect
+from functools import lru_cache
 
 from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
 
@@ -73,16 +75,10 @@ def python_trailing(n):
     return t + small_trailing[n & 0xff]
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).bit_scan1()
-            else: return 0
-    else:
-        def gmpy_trailing(n):
-            """Count the number of trailing zero bits in abs(n) using gmpy."""
-            if n: return MPZ(n).scan1()
-            else: return 0
+    def gmpy_trailing(n):
+        """Count the number of trailing zero bits in abs(n) using gmpy."""
+        if n: return MPZ(n).bit_scan1()
+        else: return 0
 
 # Small powers of 2
 powers = [1<<_ for _ in range(300)]
@@ -95,20 +91,11 @@ def python_bitcount(n):
     bc = int(math.log(n, 2)) - 4
     return bc + bctable[n>>bc]
 
-def gmpy_bitcount(n):
-    """Calculate bit size of the nonnegative integer n."""
-    if n: return MPZ(n).numdigits(2)
-    else: return 0
-
-#def sage_bitcount(n):
-#    if n: return MPZ(n).nbits()
-#    else: return 0
-
 def sage_trailing(n):
     return MPZ(n).trailing_zero_bits()
 
 if BACKEND == 'gmpy':
-    bitcount = gmpy_bitcount
+    bitcount = gmpy.bit_length
     trailing = gmpy_trailing
 elif BACKEND == 'sage':
     sage_bitcount = sage_utils.bitcount
@@ -117,9 +104,6 @@ elif BACKEND == 'sage':
 else:
     bitcount = python_bitcount
     trailing = python_trailing
-
-if BACKEND == 'gmpy' and 'bit_length' in dir(gmpy):
-    bitcount = gmpy.bit_length
 
 # Used to avoid slow function calls as far as possible
 trailtable = [trailing(n) for n in range(256)]
@@ -305,21 +289,36 @@ def sqrt_fixed(x, prec):
 sqrt_fixed2 = sqrt_fixed
 
 if BACKEND == 'gmpy':
-    if gmpy.version() >= '2':
-        isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
-        sqrtrem = gmpy.isqrt_rem
-    else:
-        isqrt_small = isqrt_fast = isqrt = gmpy.sqrt
-        sqrtrem = gmpy.sqrtrem
+    isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
+    sqrtrem = gmpy.isqrt_rem
 elif BACKEND == 'sage':
     isqrt_small = isqrt_fast = isqrt = \
         getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
     sqrtrem = lambda n: MPZ(n).sqrtrem()
+    _gcd2 = sage.gcd
 else:
-    isqrt_small = isqrt_small_python
-    isqrt_fast = isqrt_fast_python
-    isqrt = isqrt_python
+    if sys.version_info >= (3, 12):
+        isqrt_small = isqrt_fast = isqrt = math.isqrt
+    else:
+        isqrt_small = isqrt_small_python
+        isqrt_fast = isqrt_fast_python
+        isqrt = isqrt_python
     sqrtrem = sqrtrem_python
+    _gcd2 = math.gcd
+
+
+if sys.version_info >= (3, 9) and BACKEND == 'python':
+    gcd = math.gcd
+elif BACKEND == 'gmpy':
+    gcd = gmpy.gcd
+else:
+    def gcd(*args):
+        res = MPZ_ZERO
+        for a in args:
+            a = MPZ(a)
+            if res != MPZ_ONE:
+                res = _gcd2(res, a)
+        return res
 
 
 def ifib(n, _cache={}):
@@ -349,21 +348,6 @@ def ifib(n, _cache={}):
 
 MAX_FACTORIAL_CACHE = 1000
 
-def ifac(n, memo={0:1, 1:1}):
-    """Return n factorial (for integers n >= 0 only)."""
-    f = memo.get(n)
-    if f:
-        return f
-    k = len(memo)
-    p = memo[k-1]
-    MAX = MAX_FACTORIAL_CACHE
-    while k <= n:
-        p *= k
-        if k <= MAX:
-            memo[k] = p
-        k += 1
-    return p
-
 def ifac2(n, memo_pair=[{0:1}, {1:1}]):
     """Return n!! (double factorial), integers n >= 0 only."""
     memo = memo_pair[n&1]
@@ -382,9 +366,16 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
 
 if BACKEND == 'gmpy':
     ifac = gmpy.fac
+    ifac2 = gmpy.double_fac
+    ifib = gmpy.fib
 elif BACKEND == 'sage':
-    ifac = lambda n: int(sage.factorial(n))
+    ifac = sage.factorial
+    ifac2 = lambda n: MPZ(n).multifactorial(2)
     ifib = sage.fibonacci
+else:
+    ifac = math.factorial
+
+ifac = lru_cache(maxsize=1024)(ifac)
 
 def list_primes(n):
     n = n + 1
@@ -467,16 +458,6 @@ def moebius(n):
             if not sum(p % f for f in factors):
                 factors.append(p)
     return (-1)**len(factors)
-
-def gcd(*args):
-    a = 0
-    for b in args:
-        if a:
-            while b:
-                a, b = b, a % b
-        else:
-            a = b
-    return a
 
 
 #  Comment by Juan Arias de Reyna:

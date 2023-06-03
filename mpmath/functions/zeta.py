@@ -285,17 +285,15 @@ def primezeta(ctx, s):
 
 @defun_wrapped
 def bernpoly(ctx, n, z):
-    # Slow implementation:
-    #return sum(ctx.binomial(n,k)*ctx.bernoulli(k)*(-1)**k*z**(n-k) for k in range(0,n+1))
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
     if n <= 3:
-        if n == 0: return ctx.one
+        if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return (6*z*(z-1)+1)/6
         if n == 3: return z*(z*(z-1.5)+0.5)
-    if z == 1 or z == 0:
+    if z == 0 or z == 1:
         return ctx.bernoulli(n)
     if z == 0.5:
         return (ctx.ldexp(1,1-n)-1)*ctx.bernoulli(n)
@@ -308,10 +306,12 @@ def bernpoly(ctx, n, z):
             t = ctx.one
             yield t
             r = ctx.one/z
-            k = 1
+            t = t*n*r
+            yield -t/2
+            k = 2
             while k <= n:
-                t = t*(k-1-n)/k*r
-                if not (k > 2 and k & 1):
+                t = t*(n+1-k)/k*r
+                if not k & 1:
                     yield t*ctx.bernoulli(k)
                 k += 1
         return ctx.sum_accurately(terms) * z**n
@@ -320,13 +320,17 @@ def bernpoly(ctx, n, z):
             yield ctx.bernoulli(n)
             t = ctx.one
             k = 1
-            while k <= n:
-                t = t*(k-1-n)/k*z
+            while k < n - 1:
+                t = t*(n+1-k)/k * z
                 m = n-k
-                if not (m > 2 and m & 1):
+                if not m & 1:
                     yield t*ctx.bernoulli(m)
                 k += 1
-        return ctx.sum_accurately(terms) * (-1)**n
+            t = t*2/(n-1)*z
+            yield -t/2
+            t = t/n*z
+            yield t
+        return ctx.sum_accurately(terms)
 
 @defun_wrapped
 def eulerpoly(ctx, n, z):
@@ -334,7 +338,7 @@ def eulerpoly(ctx, n, z):
     if n < 0:
         raise ValueError("Euler polynomials only defined for n >= 0")
     if n <= 2:
-        if n == 0: return ctx.one
+        if n == 0: return z ** 0
         if n == 1: return z - 0.5
         if n == 2: return z*(z-1)
     if ctx.isinf(z):
@@ -354,19 +358,20 @@ def eulerpoly(ctx, n, z):
             return ctx.ldexp(ctx._eulernum(n), -n)
     # http://functions.wolfram.com/Polynomials/EulerE2/06/01/02/01/0002/
     def terms():
-        t = -ctx.one
+        t = ctx.one
         k = 0
         w = ctx.ldexp(1,n+2)
         while 1:
             v = n-k+1
-            if not (v > 2 and v & 1):
+            if not v & 1:
                 yield (2-w)*ctx.bernoulli(v)*t
             k += 1
-            if k > n:
-                break
-            t = t*z*(k-2-n)/k
+            t = t*z*(n-k+2)/k
             w *= 0.5
-    return ctx.sum_accurately(terms) / m * (-1)**n
+            if k >= n:
+                break
+        yield -(2-w)*t/2
+    return ctx.sum_accurately(terms) / m
 
 @defun
 def eulernum(ctx, n, exact=False):
@@ -628,7 +633,7 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
     # We now require a to be standardized
     v = 0
     shift = 0
-    b = a
+    b = ctx.mpf(a)
     while ctx.re(b) > 1:
         b -= 1
         v -= b**negs
@@ -639,7 +644,7 @@ def _hurwitz_reflection(ctx, s, a, d, atype):
         shift += 1
     # Rational reflection formula
     try:
-        p, q = a._mpq_
+        p, q = a.numerator, a.denominator
     except:
         assert a == int(a)
         p = int(a)
@@ -927,8 +932,8 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
 
     **Examples**
 
-        >>> from mpmath import *
-        >>> mp.pretty = True; mp.dps = 15
+        >>> from mpmath import mp, secondzeta, pi, gamma, zeta, diff, chop, j
+        >>> mp.pretty = True
         >>> secondzeta(2)
         0.023104993115419
         >>> xi = lambda s: 0.5*s*(s-1)*pi**(-0.5*s)*gamma(0.5*s)*zeta(s)
@@ -1067,7 +1072,8 @@ def lerchphi(ctx, z, s, a):
 
     Several evaluations in terms of simpler functions::
 
-        >>> from mpmath import *
+        >>> from mpmath import (mp, lerchphi, catalan, diff, zeta, pi, log,
+        ...                     atanh, sqrt, j, polylog)
         >>> mp.dps = 25; mp.pretty = True
         >>> lerchphi(-1,2,0.5); 4*catalan
         3.663862376708876060218414

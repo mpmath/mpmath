@@ -1,25 +1,28 @@
 Basic usage
 ===========================
 
-In interactive code examples that follow, it will be assumed that
-all items in the ``mpmath`` namespace have been imported::
+To avoid inadvertently overriding other functions or objects, explicitly import
+only the needed objects, or use the ``mpmath.`` or ``mp.`` namespaces::
 
-    >>> from mpmath import *
+    >>> from mpmath import sin
+    >>> sin(1)
+    mpf('0.8414709848078965')
 
-Importing everything can be convenient, especially when using mpmath interactively, but be
-careful when mixing mpmath with other libraries! To avoid inadvertently overriding
-other functions or objects, explicitly import only the needed objects, or use
-the ``mpmath.`` or ``mp.`` namespaces::
+    >>> import mpmath
+    >>> mpmath.sin(1)
+    mpf('0.8414709848078965')
 
-    from mpmath import sin, cos
-    sin(1), cos(1)
+    >>> from mpmath import mp  # mp context object -- to be explained
+    >>> mp.sin(1)
+    mpf('0.8414709848078965')
 
-    import mpmath
-    mpmath.sin(1), mpmath.cos(1)
+.. note::
 
-    from mpmath import mp    # mp context object -- to be explained
-    mp.sin(1), mp.cos(1)
-
+   Importing everything with ``from mpmath import *`` can be convenient,
+   especially when using mpmath interactively, but is best to avoid such
+   import statements in production code, as they make it unclear which
+   names are present in the namespace and wildcard-imported names may
+   conflict with other modules or variable names.
 
 Number types
 ------------
@@ -40,6 +43,7 @@ The following section will provide a very short introduction to the types ``mpf`
 
 The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real number or one of the special values ``inf`` (positive infinity), ``-inf`` (negative infinity) and ``nan`` (not-a-number, indicating an indeterminate result). You can create ``mpf`` instances from strings, integers, floats, and other ``mpf`` instances:
 
+    >>> from mpmath import mpf, mpc, mp
     >>> mpf(4)
     mpf('4.0')
     >>> mpf(2.5)
@@ -111,7 +115,7 @@ There is no restriction on the magnitude of numbers. An ``mpf`` can for example 
 
 Or why not 1 googolplex:
 
-    >>> print(mpf(10) ** (10**100))  # doctest:+ELLIPSIS
+    >>> print(mpf(10) ** (10**100))
     1.0e+100000000000000000000000000000000000000000000000000...
 
 The (binary) exponent is stored exactly and is independent of the precision.
@@ -127,6 +131,7 @@ It is often useful to change the precision during only part of a calculation. A 
 
 The ``with`` statement along with the mpmath functions ``workprec``, ``workdps``, ``extraprec`` and ``extradps`` can be used to temporarily change precision in a more safe manner:
 
+    >>> from mpmath import extradps, workdps
     >>> with workdps(20):
     ...     print(mpf(1)/7)
     ...     with extradps(10):
@@ -151,6 +156,7 @@ The ``workprec`` family of functions can also be used as function decorators:
 
 Some functions accept the ``prec`` and ``dps`` keyword arguments and this will override the global working precision. Note that this will not affect the precision at which the result is printed, so to get all digits, you must either use increase precision afterward when printing or use ``nstr``/``nprint``:
 
+    >>> from mpmath import exp, nprint
     >>> mp.dps = 15
     >>> print(exp(1))
     2.71828182845905
@@ -217,6 +223,7 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
 
 The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use :func:`mpmath.nstr` and :func:`mpmath.nprint`:
 
+    >>> from mpmath import nstr
     >>> a = mpf(1) / 6
     >>> a
     mpf('0.16666666666666666')

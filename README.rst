@@ -113,8 +113,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires Python 3.5 or later versions. It has been tested
-with CPython 3.5 through 3.11 and for PyPy.
+Mpmath requires Python 3.8 or later versions. It has been tested
+with CPython 3.8 through 3.12 and for PyPy.
 
 The latest release of mpmath can be downloaded from the mpmath
 website and from https://github.com/mpmath/mpmath/releases
@@ -156,7 +156,7 @@ The unit tests in mpmath/tests/ can be run with `pytest
 You may also want to check out the demo scripts in the demo
 directory.
 
-The master branch is automatically tested by Travis CI.
+The master branch is automatically tested on the Github Actions.
 
 4. Known problems
 -----------------

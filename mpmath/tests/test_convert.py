@@ -1,14 +1,20 @@
-import fractions
+import decimal
 import random
-from mpmath import *
-from mpmath.libmp import *
+from decimal import Decimal
+from fractions import Fraction
+
+import pytest
+
+from mpmath import iv, mp, mpc, mpf, mpi, mpmathify, sqrt
+from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
+                          round_ceiling, round_floor, round_nearest,
+                          to_rational, to_str)
 
 
 def test_basic_string():
     """
     Test basic string conversion
     """
-    mp.dps = 15
     assert mpf('3') == mpf('3.0') == mpf('0003.') == mpf('0.03e2') == mpf(3.0)
     assert mpf('30') == mpf('30.0') == mpf('00030.') == mpf(30.0)
     for i in range(10):
@@ -35,30 +41,26 @@ def test_basic_string():
     assert str(mpf("-2163048125l")) == '-2163048125.0'
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
+    assert str(mpf('inf')) == '+inf'
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
+    # issue 377
+    assert to_str(from_str('1_234.567891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_891', 80), 24) == '1234.567891'
+    assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
+    assert to_str(from_str('1.0_0', 80), 24) == '1.0'
+    assert to_str(from_str('.000', 80), 24) == '0.0'
 
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'
     assert repr(mpc(2.5,3.5)) == '(2.5 + 3.5j)'
-    mp.pretty = False
     iv.pretty = True
     assert repr(mpi(2.5,3.5)) == '[2.5, 3.5]'
-    iv.pretty = False
 
 def test_str_whitespace():
     assert mpf('1.26 ') == 1.26
-
-def test_unicode():
-    mp.dps = 15
-    try:
-        unicode = unicode
-    except NameError:
-        unicode = str
-    assert mpf(unicode('2.76')) == 2.76
-    assert mpf(unicode('inf')) == inf
 
 def test_str_format():
     assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'
@@ -76,7 +78,6 @@ def test_str_format():
     assert to_str(from_float(2.1287e30), 15, max_fixed=1000) == '2128700000000000000000000000000.0'
 
 def test_tight_string_conversion():
-    mp.dps = 15
     # In an old version, '0.5' wasn't recognized as representing
     # an exact binary number and was erroneously rounded up or down
     assert from_str('0.5', 10, round_floor) == fhalf
@@ -90,10 +91,8 @@ def test_eval_repr_invariant():
         for i in range(1000):
             a = mpf(random.random())**0.5 * 10**random.randint(-100, 100)
             assert eval(repr(a)) == a
-    mp.dps = 15
 
 def test_str_bugs():
-    mp.dps = 15
     # Decimal rounding used to give the wrong exponent in some cases
     assert str(mpf('1e600')) == '1.0e+600'
     assert str(mpf('1e10000')) == '1.0e+10000'
@@ -106,7 +105,6 @@ def test_str_prec0():
     assert to_str(from_float(-1e+15), 0) == '-.0e+15'
 
 def test_convert_rational():
-    mp.dps = 15
     assert from_rational(30, 5, 53, round_nearest) == (0, 3, 1, 2)
     assert from_rational(-7, 4, 53, round_nearest) == (1, 7, -2, 3)
     assert to_rational((0, 1, -1, 1)) == (1, 2)
@@ -126,6 +124,8 @@ def test_custom_class():
     assert mympc() + mpc(2) == mpc(5.5, 2.5)
     assert mpc(2) + mympc() == mpc(5.5, 2.5)
     assert mpc(mympc()) == (3.5+2.5j)
+    assert mpmathify(mympf()) == mpf(3.5)
+    assert mpmathify(mympc()) == mpc(3.5, 2.5)
 
 def test_conversion_methods():
     class SomethingRandom:
@@ -166,15 +166,12 @@ def test_conversion_methods():
     assert x.__ge__(a) is NotImplemented
     assert x.__eq__(a) is NotImplemented
     assert x.__ne__(a) is NotImplemented
-    # implementation detail
-    if hasattr(x, "__cmp__"):
-        assert x.__cmp__(a) is NotImplemented
     assert x.__sub__(a) is NotImplemented
     assert x.__rsub__(a) is NotImplemented
     assert x.__mul__(a) is NotImplemented
     assert x.__rmul__(a) is NotImplemented
-    assert x.__div__(a) is NotImplemented
-    assert x.__rdiv__(a) is NotImplemented
+    assert x.__truediv__(a) is NotImplemented
+    assert x.__rtruediv__(a) is NotImplemented
     assert x.__mod__(a) is NotImplemented
     assert x.__rmod__(a) is NotImplemented
     assert x.__pow__(a) is NotImplemented
@@ -187,8 +184,8 @@ def test_conversion_methods():
     assert z.__rsub__(a) is NotImplemented
     assert z.__mul__(a) is NotImplemented
     assert z.__rmul__(a) is NotImplemented
-    assert z.__div__(a) is NotImplemented
-    assert z.__rdiv__(a) is NotImplemented
+    assert z.__truediv__(a) is NotImplemented
+    assert z.__rtruediv__(a) is NotImplemented
     assert z.__pow__(a) is NotImplemented
     assert z.__rpow__(a) is NotImplemented
 
@@ -209,13 +206,7 @@ def test_issue548():
     assert False
 
 def test_compatibility():
-    try:
-        import numpy as np
-        from fractions import Fraction
-        from decimal import Decimal
-        import decimal
-    except ImportError:
-        return
+    np = pytest.importorskip("numpy")
     # numpy types
     for nptype in np.core.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
@@ -228,6 +219,9 @@ def test_compatibility():
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
         assert diff < 2.0**-53
+    # issues 382 and 539
+    assert mp.sqrt(np.int64(1)) == mpf('1.0')
+    assert mpf(np.int64(1)) == mpf('1.0')
     #Fraction and Decimal
     oldprec = mp.prec
     mp.prec = 1000
@@ -235,6 +229,7 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
+    pytest.raises(TypeError, lambda: mpmathify(np.array(1)))
 
 def test_issue465():
-    assert mpf(fractions.Fraction(1, 3)) == mpf('0.33333333333333331')
+    assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')

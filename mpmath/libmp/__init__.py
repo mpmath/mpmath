@@ -2,7 +2,7 @@ from .libmpf import (prec_to_dps, dps_to_prec, repr_dps,
   round_down, round_up, round_floor, round_ceiling, round_nearest,
   to_pickable, from_pickable, ComplexResult,
   fzero, fnzero, fone, fnone, ftwo, ften, fhalf, fnan, finf, fninf,
-  math_float_inf, round_int, normalize, normalize1,
+  math_float_inf, round_int, normalize,
   from_man_exp, from_int, to_man_exp, to_int, mpf_ceil, mpf_floor,
   mpf_nint, mpf_frac,
   from_float, from_npfloat, from_Decimal, to_float, from_rational, to_rational, to_fixed,
@@ -72,6 +72,6 @@ from .libintmath import (trailing, bitcount, numeral, bin_to_radix,
   isqrt, isqrt_small, isqrt_fast, sqrt_fixed, sqrtrem, ifib, ifac,
   list_primes, isprime, moebius, gcd, eulernum, stirling1, stirling2)
 
-from .backend import (gmpy, sage, BACKEND, STRICT, MPZ, MPZ_TYPE,
+from .backend import (gmpy, sage, BACKEND, STRICT, MPZ, MPQ,
   MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_THREE, MPZ_FIVE, int_types,
   HASH_MODULUS, HASH_BITS)

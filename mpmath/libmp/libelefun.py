@@ -337,6 +337,8 @@ def mpf_pow(s, t, prec, rnd=round_fast):
                 return mpf_pow_int(mpf_sqrt(s, prec+10,
                     reciprocal_rnd[rnd]), -tman, prec, rnd)
             return mpf_pow_int(mpf_sqrt(s, prec+10, rnd), tman, prec, rnd)
+    if s == fone:
+        return fone
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
     c = mpf_log(s, prec+10, rnd)
@@ -987,7 +989,7 @@ def mpf_fibonacci(x, prec, rnd=round_fast):
         return x
     # F(2^n) ~= 2^(2^n)
     size = abs(exp+bc)
-    if exp >= 0:
+    if exp >= 0 and not sign:
         # Exact
         if size < 10 or size <= bitcount(prec):
             return from_int(ifib(to_int(x)), prec, rnd)

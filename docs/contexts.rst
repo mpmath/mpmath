@@ -13,17 +13,16 @@ context. This fact is usually transparent to the user, but sometimes shows up in
 form of an initial parameter called "ctx" visible in the help for the function::
 
     >>> import mpmath
-    >>> help(mpmath.fsum)   # doctest:+SKIP
+    >>> help(mpmath.fsum)
     Help on method fsum in module mpmath.ctx_mp_python:
-    
-    fsum(ctx, terms, absolute=False, squared=False) method of mpmath.ctx_mp.MPContext instance
+    <BLANKLINE>
+    fsum(terms, absolute=False, squared=False) method of mpmath.ctx_mp.MPContext instance
         Calculates a sum containing a finite number of terms (for infinite
         series, see :func:`~mpmath.nsum`). The terms will be converted to
     ...
 
 The following operations are equivalent::
 
-    >>> mpmath.mp.dps = 15; mpmath.mp.pretty = False
     >>> mpmath.fsum([1,2,3])
     mpf('6.0')
     >>> mpmath.mp.fsum([1,2,3])
@@ -100,7 +99,6 @@ Common interface
     [1.0  0.0]
     [0.0  1.0]
     >>> fp.pretty = False
-    >>> mp.pretty = False
 
 
 Arbitrary-precision floating-point (``mp``)
@@ -125,7 +123,6 @@ Interval arithmetic provides rigorous error tracking. If `f` is a mathematical f
 Intervals can be created from single numbers (treated as zero-width intervals) or pairs of endpoint numbers. Strings are treated as exact decimal numbers. Note that a Python float like ``0.1`` generally does not represent the same number as its literal; use ``'0.1'`` instead::
 
     >>> from mpmath import iv
-    >>> iv.dps = 15; iv.pretty = False
     >>> iv.mpf(3)
     mpi('3.0', '3.0')
     >>> print(iv.mpf(3))
@@ -258,38 +255,36 @@ Although mpmath is generally designed for arbitrary-precision arithmetic, many o
 
 To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp.func`` instead of ``func`` or ``mp.func``::
 
-    >>> u = fp.erfc(2.5)
-    >>> print(u)  # doctest:+SKIP
-    0.000406952017445
-    >>> type(u)  # doctest:+SKIP
-    <type 'float'>
-    >>> mp.dps = 15
-    >>> print(mp.erfc(2.5))
-    0.000406952017444959
+    >>> u = fp.erfc(0.5)
+    >>> print(u)
+    0.4795001221869535
+    >>> type(u)
+    <class 'float'>
+    >>> mp.dps = 16
+    >>> print(mp.erfc(0.5))
+    0.4795001221869535
     >>> fp.matrix([[1,2],[3,4]]) ** 2
     matrix(
     [['7.0', '10.0'],
      ['15.0', '22.0']])
-    >>> 
-    >>> type(_[0,0])  # doctest:+SKIP
-    <type 'float'>
+    >>>
+    >>> type(_[0,0])
+    <class 'float'>
     >>> print(fp.quad(fp.sin, [0, fp.pi]))    # numerical integration
     2.0
 
 The ``fp`` context wraps Python's ``math`` and ``cmath`` modules for elementary functions. It supports both real and complex numbers and automatically generates complex results for real inputs (``math`` raises an exception)::
 
-    >>> fp.sqrt(5)  # doctest:+SKIP
+    >>> fp.sqrt(5)
     2.23606797749979
-    >>> fp.sqrt(-5)  # doctest:+SKIP
+    >>> fp.sqrt(-5)
     2.23606797749979j
-    >>> fp.sin(10)  # doctest:+SKIP
+    >>> fp.sin(10)
     -0.5440211108893698
-    >>> fp.power(-1, 0.25)  # doctest:+SKIP
+    >>> fp.power(-1, 0.25)
     (0.7071067811865476+0.7071067811865475j)
-    >>> (-1) ** 0.25  # doctest:+SKIP
-    Traceback (most recent call last):
-      ...
-    ValueError: negative number cannot be raised to a fractional power
+    >>> (-1) ** 0.25
+    (0.7071067811865476+0.7071067811865475j)
 
 The ``prec`` and ``dps`` attributes can be changed (for interface compatibility with the ``mp`` context) but this has no effect::
 

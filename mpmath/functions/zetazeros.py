@@ -349,7 +349,7 @@ def zetazero(ctx, n, info=False, round=True):
 
     The first few zeros::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, zetazero, chop, zeta, siegelz
         >>> mp.dps = 25; mp.pretty = True
         >>> zetazero(1)
         (0.5 + 14.13472514173469379045725j)
@@ -480,8 +480,8 @@ def nzeros(ctx, t):
 
     The first zero has imaginary part between 14 and 15::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import mp, nzeros, zetazero
+        >>> mp.pretty = True
         >>> nzeros(14)
         0
         >>> nzeros(15)
@@ -552,8 +552,9 @@ def backlunds(ctx, t):
 
     **Examples**
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (mp, backlunds, chop, grampoint, extraprec,
+        ...                     nzeros, siegeltheta, pi)
+        >>> mp.pretty = True
         >>> backlunds(217.3)
         0.16302205431184
 

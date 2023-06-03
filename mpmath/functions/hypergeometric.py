@@ -1,3 +1,4 @@
+from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 
 def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
@@ -196,6 +197,8 @@ def hyper(ctx, a_s, b_s, z, **kwargs):
     Hypergeometric function, general case.
     """
     z = ctx.convert(z)
+    if ctx.isnan(z):
+        return ctx.nan
     p = len(a_s)
     q = len(b_s)
     a_s = [ctx._convert_param(a) for a in a_s]
@@ -289,10 +292,10 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
                     w = ctx.sqrt(-z)
                     jw = ctx.j*w
                     u = 1/(4*jw)
-                    c = ctx.mpq_1_2 - b
+                    c = MPQ(1,2) - b
                     E = ctx.exp(2*jw)
-                    T1 = ([-jw,E], [c,-1], [], [], [b-ctx.mpq_1_2, ctx.mpq_3_2-b], [], -u)
-                    T2 = ([jw,E], [c,1], [], [], [b-ctx.mpq_1_2, ctx.mpq_3_2-b], [], u)
+                    T1 = ([-jw,E], [c,-1], [], [], [b-MPQ(1,2), MPQ(3,2)-b], [], -u)
+                    T2 = ([jw,E], [c,1], [], [], [b-MPQ(1,2), MPQ(3,2)-b], [], u)
                     return T1, T2
                 v = ctx.hypercomb(h, [], force_series=True)
                 v = ctx.gamma(b)/(2*ctx.sqrt(ctx.pi))*v
@@ -362,8 +365,8 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
         # things a bit unreadable. The formula is quite messy to begin
         # with, though...
         abz = a*b*z
-        ch = c * ctx.mpq_1_2
-        c1h = (c+1) * ctx.mpq_1_2
+        ch = c * MPQ(1,2)
+        c1h = (c+1) * MPQ(1,2)
         nz = 1-z
         g = z/nz
         abg = a*b*g
@@ -448,9 +451,9 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
         # Use 1/z transformation
         if absz >= 1.3:
             def h(a,b):
-                t = ctx.mpq_1-c; ab = a-b; rz = 1/z
-                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[ctx.mpq_1+ab],  rz)
-                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[ctx.mpq_1-ab],  rz)
+                t = MPQ(1)-c; ab = a-b; rz = 1/z
+                T1 = ([-z],[-a], [c,-ab],[b,c-a], [a,t+a],[MPQ(1)+ab],  rz)
+                T2 = ([-z],[-b], [c,ab],[a,c-b], [b,t+b],[MPQ(1)-ab],  rz)
                 return T1, T2
             v = ctx.hypercomb(h, [a,b], **kwargs)
 
@@ -838,12 +841,12 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric1F2/06/02/03/
                 def h(a1,b1,b2):
-                    X = ctx.mpq_1_2*(a1-b1-b2+ctx.mpq_1_2)
+                    X = MPQ(1,2)*(a1-b1-b2+MPQ(1,2))
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(ctx.mpq_1_4*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-ctx.mpq_3_16)
-                    c[2] = 2*(b1*b2+ctx.mpq_1_4*(a1-b1-b2)*(3*a1+b1+b2-2)-ctx.mpq_3_16)**2+\
-                        ctx.mpq_1_16*(-16*(2*a1-3)*b1*b2 + \
+                    c[1] = 2*(MPQ(1,4)*(3*a1+b1+b2-2)*(a1-b1-b2)+b1*b2-MPQ(3,16))
+                    c[2] = 2*(b1*b2+MPQ(1,4)*(a1-b1-b2)*(3*a1+b1+b2-2)-MPQ(3,16))**2+\
+                        MPQ(1,16)*(-16*(2*a1-3)*b1*b2 + \
                         4*(a1-b1-b2)*(-8*a1**2+11*a1+b1+b2-2)-3)
                     s1 = 0
                     s2 = 0
@@ -852,9 +855,9 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                     while 1:
                         if k not in c:
                             uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
-                                (b1-b2)**2 - 2*a1*(b1+b2-2) + ctx.mpq_1_4)
-                            uu2 = (k-a1+b1-b2-ctx.mpq_1_2)*(k-a1-b1+b2-ctx.mpq_1_2)*\
-                                (k-a1+b1+b2-ctx.mpq_5_2)
+                                (b1-b2)**2 - 2*a1*(b1+b2-2) + MPQ(1,4))
+                            uu2 = (k-a1+b1-b2-MPQ(1,2))*(k-a1-b1+b2-MPQ(1,2))*\
+                                (k-a1+b1+b2-MPQ(5,2))
                             c[k] = ctx.one/(2*k)*(uu1*c[k-1]-uu2*c[k-2])
                         w = c[k] * (-z)**(-0.5*k)
                         t1 = (-ctx.j)**k * ctx.mpf(2)**(-k) * w
@@ -917,7 +920,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                 # http://functions.wolfram.com/HypergeometricFunctions/
                 # Hypergeometric2F3/06/02/03/01/0002/
                 def h(a1,a2,b1,b2,b3):
-                    X = ctx.mpq_1_2*(a1+a2-b1-b2-b3+ctx.mpq_1_2)
+                    X = MPQ(1,2)*(a1+a2-b1-b2-b3+MPQ(1,2))
                     A2 = a1+a2
                     B3 = b1+b2+b3
                     A = a1*a2
@@ -925,8 +928,8 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                     R = b1*b2*b3
                     c = {}
                     c[0] = ctx.one
-                    c[1] = 2*(B - A + ctx.mpq_1_4*(3*A2+B3-2)*(A2-B3) - ctx.mpq_3_16)
-                    c[2] = ctx.mpq_1_2*c[1]**2 + ctx.mpq_1_16*(-16*(2*A2-3)*(B-A) + 32*R +\
+                    c[1] = 2*(B - A + MPQ(1,4)*(3*A2+B3-2)*(A2-B3) - MPQ(3,16))
+                    c[2] = MPQ(1,2)*c[1]**2 + MPQ(1,16)*(-16*(2*A2-3)*(B-A) + 32*R +\
                         4*(-8*A2**2 + 11*A2 + 8*A + B3 - 2)*(A2-B3)-3)
                     s1 = 0
                     s2 = 0
@@ -1179,7 +1182,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
     Two separable cases: a product of two geometric series, and a
     product of two Gaussian hypergeometric functions::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mpf, hyper2d, hyp2f1, exp
         >>> mp.dps = 25; mp.pretty = True
         >>> x, y = mpf(0.25), mpf(0.5)
         >>> hyper2d({'m':1,'n':1}, {}, x,y)
@@ -1200,7 +1203,7 @@ def hyper2d(ctx, a, b, x, y, **kwargs):
 
     Six of the 34 Horn functions, G1-G3 and H1-H3::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, hyper2d, nsum, fac, inf, rf
         >>> mp.dps = 10; mp.pretty = True
         >>> x, y = 0.0625, 0.125
         >>> a1,a2,b1,b2,c1,c2,d = 1.1,-1.2,-1.3,-1.4,1.5,-1.6,1.7
@@ -1366,7 +1369,7 @@ def bihyper(ctx, a_s, b_s, z, **kwargs):
 
     The value of `\,_2H_2` at `z = 1` is given by Dougall's formula::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, bihyper, mpf, hyper, gammaprod
         >>> mp.dps = 25; mp.pretty = True
         >>> a,b,c,d = 0.5, 1.5, 2.25, 3.25
         >>> bihyper([a,b],[c,d],1)

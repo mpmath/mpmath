@@ -1,3 +1,4 @@
+from fractions import Fraction
 import os
 import sys
 
@@ -23,23 +24,18 @@ sage = None
 sage_utils = None
 BACKEND = 'python'
 MPZ = int
+MPQ = Fraction
 HASH_MODULUS = sys.hash_info.modulus
 HASH_BITS = 31 if sys.hash_info.width == 32 else 61
 
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
-        try:
-            import gmpy2 as gmpy
-        except ImportError:
-            try:
-                import gmpy
-            except ImportError:
-                raise ImportError
-        if gmpy.version() >= '1.03':
-            BACKEND = 'gmpy'
-            MPZ = gmpy.mpz
-    except:
+        import gmpy2 as gmpy
+        BACKEND = 'gmpy'
+        MPZ = gmpy.mpz
+        MPQ = gmpy.mpq
+    except ImportError:
         pass
 
 if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
@@ -51,6 +47,7 @@ if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
         sage_utils = _sage_utils
         BACKEND = 'sage'
         MPZ = sage.Integer
+        MPQ = lambda x, y=1: sage.Rational((x, y))
     except:
         pass
 
@@ -59,11 +56,10 @@ if 'MPMATH_STRICT' in os.environ:
 else:
     STRICT = False
 
-MPZ_TYPE = type(MPZ(0))
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)
 MPZ_TWO = MPZ(2)
 MPZ_THREE = MPZ(3)
 MPZ_FIVE = MPZ(5)
 
-int_types = (int,) if BACKEND == 'python' else (int, MPZ_TYPE)
+int_types = (int,) if BACKEND == 'python' else (int, MPZ)

@@ -1,8 +1,8 @@
 Setting up mpmath
 =================
 
-Mpmath requires at least Python 2.7 or 3.5.  It has been tested
-with CPython 2.7, 3.5 through 3.11 and for PyPy.
+Mpmath requires at least Python 3.8.  It has been tested
+with CPython 3.8 through 3.11 and for PyPy.
 
 Download and installation
 -------------------------
@@ -157,7 +157,7 @@ In Sage, mpmath can alternatively be imported via the interface library
 
     sage: import sage.libs.mpmath.all as mpmath
 
-This module provides a few extra conversion functions, including :func:`call`
+This module provides a few extra conversion functions, including ``mpmath.call()``
 which permits calling any mpmath function with Sage numbers as input, and getting 
 Sage ``RealNumber`` or ``ComplexNumber`` instances
 with the appropriate precision back::

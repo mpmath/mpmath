@@ -1,4 +1,4 @@
-__version__ = '1.3.0'
+__version__ = '1.4.0a0'
 
 from .usertools import monitor, timing
 
@@ -431,38 +431,3 @@ trianglew = mp.trianglew
 sawtoothw = mp.sawtoothw
 unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
-
-# be careful when changing this name, don't use test*!
-def runtests():
-    """
-    Run all mpmath tests and print output.
-    """
-    import os.path
-    from inspect import getsourcefile
-    from .tests import runtests as tests
-    testdir = os.path.dirname(os.path.abspath(getsourcefile(tests)))
-    importdir = os.path.abspath(testdir + '/../..')
-    tests.testit(importdir, testdir)
-
-def doctests(filter=[]):
-    import sys
-    from timeit import default_timer as clock
-    for i, arg in enumerate(sys.argv):
-        if '__init__.py' in arg:
-            filter = [sn for sn in sys.argv[i+1:] if not sn.startswith("-")]
-            break
-    import doctest
-    globs = globals().copy()
-    for obj in globs: #sorted(globs.keys()):
-        if filter:
-            if not sum([pat in obj for pat in filter]):
-                continue
-        sys.stdout.write(str(obj) + " ")
-        sys.stdout.flush()
-        t1 = clock()
-        doctest.run_docstring_examples(globs[obj], {}, verbose=("-v" in sys.argv))
-        t2 = clock()
-        print(round(t2-t1, 3))
-
-if __name__ == '__main__':
-    doctests()

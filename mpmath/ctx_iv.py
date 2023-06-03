@@ -1,27 +1,20 @@
 import numbers
 
 from . import libmp
-
-from .libmp import (
-    int_types, MPZ_ONE,
-    prec_to_dps, dps_to_prec, repr_dps,
-    round_floor, round_ceiling,
-    fzero, finf, fninf, fnan,
-    mpf_le, mpf_neg,
-    from_int, from_float, from_str, from_rational,
-    mpi_mid, mpi_delta, mpi_str,
-    mpi_abs, mpi_pos, mpi_neg, mpi_add, mpi_sub,
-    mpi_mul, mpi_div, mpi_pow_int, mpi_pow,
-    mpi_from_str,
-    mpci_pos, mpci_neg, mpci_add, mpci_sub, mpci_mul, mpci_div, mpci_pow,
-    mpci_abs, mpci_pow, mpci_exp, mpci_log,
-    ComplexResult,
-    mpf_hash, mpc_hash)
+from .libmp import (MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan, fninf,
+                    from_float, from_int, from_str, fzero, int_types, mpc_hash,
+                    mpci_abs, mpci_add, mpci_div, mpci_mul, mpci_neg, mpci_pos,
+                    mpci_pow, mpci_sub, mpf_hash, mpf_le, mpf_neg, mpi_abs,
+                    mpi_add, mpi_delta, mpi_div, mpi_from_str, mpi_mid,
+                    mpi_mul, mpi_neg, mpi_pos, mpi_pow, mpi_str, mpi_sub,
+                    prec_to_dps, repr_dps, round_ceiling, round_floor)
 from .matrices.matrices import _matrix
+
 
 mpi_zero = (fzero, fzero)
 
 from .ctx_base import StandardBaseContext
+
 
 new = object.__new__
 
@@ -401,12 +394,6 @@ class MPIntervalContext(StandardBaseContext):
         a = new(ctx.mpc)
         a._mpci_ = v
         return a
-
-    def _mpq(ctx, pq):
-        p, q = pq
-        a = libmp.from_rational(p, q, ctx.prec, round_floor)
-        b = libmp.from_rational(p, q, ctx.prec, round_ceiling)
-        return ctx.make_mpf((a, b))
 
     def convert(ctx, x):
         if isinstance(x, (ctx.mpf, ctx.mpc)):

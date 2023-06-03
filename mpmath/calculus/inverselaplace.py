@@ -699,8 +699,9 @@ class LaplaceTransformInversionMethods:
 
             f(t) = t e^{-t}
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (besselj, euler, exp, invertlaplace, log,
+        ...                     mp, nstr, sinh, sqrt)
+        >>> mp.pretty = True
         >>> tt = [0.001, 0.01, 0.1, 1, 10]
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
@@ -774,8 +775,8 @@ class LaplaceTransformInversionMethods:
         *method='talbot'*, *method='stehfest'*, *method='dehoog'* or
         *method='cohen'* or by passing the classes *method=FixedTalbot*,
         *method=Stehfest*, *method=deHoog*, or *method=Cohen*. The functions
-        :func:`~mpmath.invlaptalbot`, :func:`~mpmath.invlapstehfest`,
-        :func:`~mpmath.invlapdehoog`, and :func:`~mpmath.invlapcohen`
+        ``invlaptalbot()``, ``invlapstehfest()``,
+        ``invlapdehoog()``, and ``invlapcohen()``
         are also available as shortcuts.
 
         All four algorithms implement a heuristic balance between the
@@ -964,10 +965,3 @@ class LaplaceTransformInversionMethods:
     def invlapcohen(ctx, *args, **kwargs):
         kwargs['method'] = 'cohen'
         return ctx.invertlaplace(*args, **kwargs)
-
-
-# ****************************************
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

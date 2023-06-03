@@ -31,8 +31,8 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
 
     Find rational approximations for `\pi`::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import mp, pslq, pi, mpf, sqrt, acot
+        >>> mp.pretty = True
         >>> pslq([-1, pi], tol=0.01)
         [22, 7]
         >>> pslq([-1, pi], tol=0.001)
@@ -329,8 +329,9 @@ def findpoly(ctx, x, n=1, **kwargs):
     By default (degree `n = 1`), :func:`~mpmath.findpoly` simply finds a linear
     polynomial with a rational root::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (mp, findpoly, nprint, polyval, polyroots,
+        ...                     sqrt, pi, phi, euler, findroot)
+        >>> mp.pretty = True
         >>> findpoly(0.7)
         [-10, 7]
 
@@ -375,7 +376,6 @@ def findpoly(ctx, x, n=1, **kwargs):
     We can verify that `\pi` is not an algebraic number of degree 3 with
     coefficients less than 1000::
 
-        >>> mp.dps = 15
         >>> findpoly(pi, 3)
         >>>
 
@@ -388,7 +388,6 @@ def findpoly(ctx, x, n=1, **kwargs):
 
     One example of each method is shown below::
 
-        >>> mp.dps = 15
         >>> findpoly(pi, 4)
         [95, -545, 863, -183, -298]
         >>> findpoly(pi, 3, maxcoeff=10000)
@@ -539,8 +538,9 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     As a simple example, :func:`~mpmath.identify` will find an algebraic
     formula for the golden ratio::
 
-        >>> from mpmath import *
-        >>> mp.dps = 15; mp.pretty = True
+        >>> from mpmath import (mp, identify, phi, pi, e, sqrt, log, mpf,
+        ...                     exp, catalan)
+        >>> mp.pretty = True
         >>> identify(phi)
         '((1+sqrt(5))/2)'
 
@@ -573,7 +573,6 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     precision. Here the default recognition of rational, algebraic,
     and exp/log of algebraic numbers is demonstrated::
 
-        >>> mp.dps = 15
         >>> identify(0.22222222222222222)
         '(2/9)'
         >>> identify(1.9662210973805663)
@@ -657,7 +656,6 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
         >>> for p in identify(pi, ['e', 'catalan'], tol=1e-5, full=True):
         ...     print(p)
-        ...  # doctest: +ELLIPSIS
         e/log((6 + (-4/3)*e))
         (3**3*5*e*catalan**2)/(2*7**2)
         sqrt(((-13) + 1*e + 22*catalan))
@@ -686,7 +684,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 
     The output formula can be evaluated as a Python expression.
     Note however that if fractions (like '2/3') are present in
-    the formula, Python's :func:`~mpmath.eval()` may erroneously perform
+    the formula, Python's :func:`eval` may erroneously perform
     integer division. Note also that the output is not necessarily
     in the algebraically simplest form::
 
@@ -694,7 +692,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         '(sqrt(8)/2)'
 
     As a solution to both problems, consider using SymPy's
-    :func:`~mpmath.sympify` to convert the formula into a symbolic expression.
+    :func:`~sympy.core.sympify.sympify` to convert the formula into a symbolic expression.
     SymPy can be used to pretty-print or further simplify the formula
     symbolically::
 
@@ -718,7 +716,7 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         1/2 + 5**(1/2)/2
 
     (In fact, this functionality is available directly in SymPy as the
-    function :func:`~mpmath.nsimplify`, which is essentially a wrapper for
+    function :func:`~sympy.simplify.simplify.nsimplify`, which is essentially a wrapper for
     :func:`~mpmath.identify`.)
 
     **Miscellaneous issues and limitations**
@@ -836,8 +834,3 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
 IdentificationMethods.pslq = pslq
 IdentificationMethods.findpoly = findpoly
 IdentificationMethods.identify = identify
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

@@ -1,8 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from mpmath import mp
-from mpmath import libmp
 
 
 def run_hessenberg(A, verbose = 0):

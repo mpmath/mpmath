@@ -13,8 +13,8 @@ stored, so it is cheap to represent sparse matrices.
 The most basic way to create one is to use the ``matrix`` class directly. You
 can create an empty matrix specifying the dimensions::
 
-    >>> from mpmath import *
-    >>> mp.dps = 15; mp.pretty = False
+    >>> from mpmath import (matrix, ones, zeros, randmatrix, nprint, chop, iv,
+    ...                     lu_solve, residual, fp, lu, diag, eye, eps, qr)
     >>> matrix(2)
     matrix(
     [['0.0', '0.0'],
@@ -179,7 +179,7 @@ You can add and subtract matrices of compatible dimensions::
     matrix(
     [['3.0', '-2.0'],
      ['-2.0', '-5.0']])
-    >>> A + ones(3) # doctest:+ELLIPSIS
+    >>> A + ones(3)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
       File "...", line 238, in __add__
@@ -304,10 +304,10 @@ and methods::
 
     >>> A = fp.matrix([[1, 2], [3, 4]])
     >>> b = fp.matrix([-10, 10])
-    >>> fp.lu_solve(A, b)  # doctest:+SKIP
+    >>> fp.lu_solve(A, b)
     matrix(
-    [['30.0'],
-     ['-20.0']])
+    [['29.999999999999996'],
+     ['-19.999999999999996']])
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
 such systems, so the residual is minimized instead. Internally this is done
@@ -316,6 +316,7 @@ that that ``lu_solve`` will square the errors. If you can't afford this, use
 ``qr_solve`` instead. It is twice as slow but more accurate, and it calculates
 the residual automatically.
 
+.. autofunction:: mpmath.lu_solve
 
 Matrix factorization
 ....................
@@ -415,7 +416,7 @@ Examples::
     >>> from mpmath import mp
     >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
     >>> Q, R = mp.schur(A)
-    >>> mp.nprint(R, 3) # doctest:+SKIP
+    >>> mp.nprint(R, 3)
     [2.0  0.417  -2.53]
     [0.0    4.0  -4.74]
     [0.0    0.0    9.0]

@@ -1,3 +1,4 @@
+from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 
 def _hermite_param(ctx, n, z, parabolic_cylinder):
@@ -8,7 +9,7 @@ def _hermite_param(ctx, n, z, parabolic_cylinder):
     """
     n, ntyp = ctx._convert_param(n)
     z = ctx.convert(z)
-    q = -ctx.mpq_1_2
+    q = -MPQ(1,2)
     # For re(z) > 0, 2F0 -- http://functions.wolfram.com/
     #     HypergeometricFunctions/HermiteHGeneral/06/02/0009/
     # Otherwise, there is a reflection formula
@@ -86,7 +87,7 @@ def pcfd(ctx, n, z, **kwargs):
 
     **Examples**
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, pcfd, mpf, chop, diff, taylor
         >>> mp.dps = 25; mp.pretty = True
         >>> pcfd(0,0); pcfd(1,0); pcfd(2,0); pcfd(3,0)
         1.0
@@ -144,7 +145,7 @@ def pcfu(ctx, a, z, **kwargs):
 
     Connection to other functions::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mpf, pcfu, sqrt, pi, exp, erfc
         >>> mp.dps = 25; mp.pretty = True
         >>> z = mpf(3)
         >>> pcfu(0.5,z)
@@ -162,7 +163,7 @@ def pcfu(ctx, a, z, **kwargs):
 
     """
     n, _ = ctx._convert_param(a)
-    return ctx.pcfd(-n-ctx.mpq_1_2, z)
+    return ctx.pcfd(-n-MPQ(1,2), z)
 
 @defun
 def pcfv(ctx, a, z, **kwargs):
@@ -178,7 +179,7 @@ def pcfv(ctx, a, z, **kwargs):
 
     Wronskian relation between `U` and `V`::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, pcfu, diff, pcfv, sqrt, pi, chop
         >>> mp.dps = 25; mp.pretty = True
         >>> a, z = 2, 3
         >>> pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z)
@@ -198,8 +199,8 @@ def pcfv(ctx, a, z, **kwargs):
     """
     n, ntype = ctx._convert_param(a)
     z = ctx.convert(z)
-    q = ctx.mpq_1_2
-    r = ctx.mpq_1_4
+    q = MPQ(1,2)
+    r = MPQ(1,4)
     if ntype == 'Q' and ctx.isint(n*2):
         # Faster for half-integers
         def h():
@@ -246,7 +247,7 @@ def pcfw(ctx, a, z, **kwargs):
 
     Value at the origin::
 
-        >>> from mpmath import *
+        >>> from mpmath import mp, mpf, pcfw, power, gamma, sqrt, diff
         >>> mp.dps = 25; mp.pretty = True
         >>> a = mpf(0.25)
         >>> pcfw(a,0)
@@ -287,7 +288,7 @@ def pcfy1(ctx, a, z, **kwargs):
         w1 = ctx.fmul(w, -0.25, exact=True)
         w2 = ctx.fmul(w, 0.5, exact=True)
         e = ctx.exp(w1)
-        return [e], [1], [], [], [ctx.mpq_1_2*a+ctx.mpq_1_4], [ctx.mpq_1_2], w2
+        return [e], [1], [], [], [MPQ(1,2)*a+MPQ(1,4)], [MPQ(1,2)], w2
     return ctx.hypercomb(h, [], **kwargs)
 
 @defun
@@ -299,8 +300,8 @@ def pcfy2(ctx, a, z, **kwargs):
         w1 = ctx.fmul(w, -0.25, exact=True)
         w2 = ctx.fmul(w, 0.5, exact=True)
         e = ctx.exp(w1)
-        return [e, z], [1, 1], [], [], [ctx.mpq_1_2*a+ctx.mpq_3_4], \
-            [ctx.mpq_3_2], w2
+        return [e, z], [1, 1], [], [], [MPQ(1,2)*a+MPQ(3,4)], \
+            [MPQ(3,2)], w2
     return ctx.hypercomb(h, [], **kwargs)
 """
 

@@ -8,7 +8,7 @@ section :doc:`gamma`.
 Fibonacci numbers
 .................
 
-:func:`~mpmath.fibonacci`/:func:`fib`
+:func:`~mpmath.fibonacci`/``fib()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.fibonacci(n, **kwargs)
 

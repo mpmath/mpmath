@@ -10,8 +10,6 @@ import math
 
 from .backend import MPZ_ZERO, MPZ_ONE, BACKEND
 
-from .libintmath import gcd
-
 from .libmpf import (\
     ComplexResult, round_fast, round_nearest,
     negative_rnd, bitcount, to_fixed, from_man_exp, from_int, to_int,
@@ -127,7 +125,7 @@ def make_hyp_summator(key):
             add("%sINT_%i = coeffs[%i]" % (W, i, i))
         elif flag == 'Q':
             ([arat,brat][i >= p]).append(i)
-            add("%sP_%i, %sQ_%i = coeffs[%i]._mpq_" % (W, i, W, i, i))
+            add("%sP_%i, %sQ_%i = coeffs[%i].numerator, coeffs[%i].denominator" % (W, i, W, i, i, i))
         elif flag == 'R':
             ([areal,breal][i >= p]).append(i)
             add("xsign, xm, xe, xbc = coeffs[%i]._mpf_" % i)

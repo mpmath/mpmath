@@ -1,7 +1,8 @@
-from mpmath.libmp import *
-from mpmath import mpf, mp
+from random import choice, randint, seed
 
-from random import randint, choice, seed
+from mpmath import mpf
+from mpmath.libmp import *
+
 
 all_modes = [round_floor, round_ceiling, round_down, round_up, round_nearest]
 
@@ -124,7 +125,6 @@ def test_epsilon_rounding():
 
 
 def test_mod():
-    mp.dps = 15
     assert mpf(234) % 1 == 0
     assert mpf(-3) % 256 == 253
     assert mpf(0.25) % 23490.5 == 0.25
@@ -138,6 +138,5 @@ def test_mod():
     assert 3 % mpf('1.75') == 1.25
 
 def test_div_negative_rnd_bug():
-    mp.dps = 15
     assert (-3) / mpf('0.1531879017645047') == mpf('-19.583791966887116')
     assert mpf('-2.6342475750861301') / mpf('0.35126216427941814') == mpf('-7.4993775104985909')

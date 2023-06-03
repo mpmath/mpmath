@@ -1,7 +1,8 @@
-from mpmath import *
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, sin, sqrt,
+                    taylor)
+
 
 def test_diff():
-    mp.dps = 15
     assert diff(log, 2.0, n=0).ae(log(2))
     assert diff(cos, 1.0).ae(-sin(1))
     assert diff(abs, 0.0) == 0
@@ -17,19 +18,16 @@ def test_diff():
     assert diffun(sin, n=2)(2).ae(-sin(2))
 
 def test_diffs():
-    mp.dps = 15
     assert [chop(d) for d in diffs(sin, 0, 1)] == [0, 1]
     assert [chop(d) for d in diffs(sin, 0, 1, method='quad')] == [0, 1]
     assert [chop(d) for d in diffs(sin, 0, 2)] == [0, 1, 0]
     assert [chop(d) for d in diffs(sin, 0, 2, method='quad')] == [0, 1, 0]
 
 def test_taylor():
-    mp.dps = 15
     # Easy to test since the coefficients are exact in floating-point
     assert taylor(sqrt, 1, 4) == [1, 0.5, -0.125, 0.0625, -0.0390625]
 
 def test_diff_partial():
-    mp.dps = 15
     x,y,z = xyz = 2,3,7
     f = lambda x,y,z: 3*x**2 * (y+2)**3 * z**5
     assert diff(f, xyz, (0,0,0)).ae(25210500)

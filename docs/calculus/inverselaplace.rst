@@ -31,9 +31,9 @@ Cohen acceleration algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: mpmath.calculus.inverselaplace.Cohen
-   :members:   
+   :members:
 
-Manual approach 
+Manual approach
 ...............
 
 It is possible and sometimes beneficial to re-create some of the
@@ -47,7 +47,7 @@ or function call.
 A trivial example showing the process (which could be implemented
 using the existing interface):
 
->>> from mpmath import *
+>>> from mpmath import calculus, convert, exp, mp
 >>> myTalbot = calculus.inverselaplace.FixedTalbot(mp)
 >>> t = convert(0.25)
 >>> myTalbot.calc_laplace_parameter(t)
