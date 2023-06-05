@@ -3,22 +3,20 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
 import math
-
+import sys
 from bisect import bisect
 
-import sys
 
 # Importing random is slow
 #from random import getrandbits
 getrandbits = None
 
-from .backend import (MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE,
-    BACKEND, STRICT, HASH_MODULUS, HASH_BITS, gmpy, sage, sage_utils)
+from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
+                      MPZ_TWO, MPZ_ZERO, STRICT, gmpy, sage, sage_utils)
+from .libintmath import (bctable, bin_to_radix, bitcount, giant_steps, isqrt,
+                         isqrt_fast, lshift, numeral, rshift, sqrt_fixed,
+                         sqrtrem, trailing, trailtable)
 
-from .libintmath import (giant_steps,
-    trailtable, bctable, lshift, rshift, bitcount, trailing,
-    sqrt_fixed, numeral, isqrt, isqrt_fast, sqrtrem,
-    bin_to_radix)
 
 # We don't pickle tuples directly for the following reasons:
 #   1: pickle uses str() for ints, which is inefficient when they are large
@@ -1072,6 +1070,7 @@ def to_digits_exp(s, dps):
     exp_from_1 = exp + bc
     if abs(exp_from_1) > 3500:
         from .libelefun import mpf_ln2, mpf_ln10
+
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
@@ -1186,10 +1185,14 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
     x = x.lower().rstrip('l').replace('_', '')
-    # Verify that the input is a valid float literal
-    float(x)
     # Split into mantissa, exponent
-    parts = x.split('e')
+    if base <= 10:
+        sep = 'e'
+    else:
+        sep = '@'
+    if pow(2, e2 := int(math.log2(base))) == base and e2 in [1, 4] and x.find('p') >= 0:
+        sep = 'p'
+    parts = x.split(sep)
     if len(parts) == 1:
         exp = 0
     else: # == 2
@@ -1199,7 +1202,10 @@ def str_to_man_exp(x, base=10):
     parts = x.split('.')
     if len(parts) == 2:
         a, b = parts[0], parts[1].rstrip('0')
-        exp -= len(b)
+        if sep != 'p':
+            exp -= len(b)
+        else:
+            exp -= len(b)*e2
         if a == '':
             a = '0'
         x = a + b
@@ -1208,12 +1214,12 @@ def str_to_man_exp(x, base=10):
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
 
-def from_str(x, prec, rnd=round_fast):
-    """Create a raw mpf from a decimal literal, rounding in the
+def from_str(x, prec=0, rnd=round_fast, base=0):
+    """Create a raw mpf from a string x in a given base, rounding in the
     specified direction if the input number cannot be represented
     exactly as a binary floating-point number with the given number of
-    bits. The literal syntax accepted is the same as for Python
-    floats.
+    bits.  The string syntax accepted for float() or float.fromhex()
+    is accepted too.
 
     TODO: the rounding does not work properly for large exponents.
     """
@@ -1221,41 +1227,42 @@ def from_str(x, prec, rnd=round_fast):
     if x in special_str:
         return special_str[x]
 
+    if not base:
+        if x.startswith(('0b', '-0b', '0B', '-0B')):
+            base = 2
+        elif x.startswith(('0x', '-0x', '0X', '-0X')):
+            base = 16
+        elif x.startswith(('0o', '-0o')):
+            base = 8
+        else:
+            base = 10
+
     if '/' in x:
         p, q = x.split('/')
         p, q = p.rstrip('l'), q.rstrip('l')
-        return from_rational(int(p), int(q), prec, rnd)
+        return from_rational(int(p, base), int(q, base), prec, rnd)
 
-    man, exp = str_to_man_exp(x, base=10)
+    man, exp = str_to_man_exp(x, base)
 
-    # XXX: appropriate cutoffs & track direction
-    # note no factors of 5
-    if abs(exp) > 400:
-        s = from_int(man, prec+10)
-        s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
-    else:
-        if exp >= 0:
-            s = from_int(man * 10**exp, prec, rnd)
+    if base == 10:
+        # XXX: appropriate cutoffs & track direction
+        # note no factors of 5
+        if abs(exp) > 400:
+            s = from_int(man, prec+10)
+            s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
         else:
-            s = from_rational(man, 10**-exp, prec, rnd)
+            if exp >= 0:
+                s = from_int(man * 10**exp, prec, rnd)
+            else:
+                s = from_rational(man, 10**-exp, prec, rnd)
+    elif pow(2, e2 := int(math.log2(base))) == base:
+        if x.find('p') < 0:
+            s = from_man_exp(man, exp*e2, prec, rnd)
+        else:
+            s = from_man_exp(man, exp, prec, rnd)
+    else:
+        raise NotImplementedError
     return s
-
-# Binary string conversion. These are currently mainly used for debugging
-# and could use some improvement in the future
-
-def from_bstr(x):
-    man, exp = str_to_man_exp(x, base=2)
-    man = MPZ(man)
-    sign = 0
-    if man < 0:
-        man = -man
-        sign = 1
-    bc = bitcount(man)
-    return normalize(sign, man, exp, bc, bc, round_floor)
-
-def to_bstr(x):
-    sign, man, exp, bc = x
-    return ['','-'][sign] + numeral(man, size=bitcount(man), base=2) + ("e%i" % exp)
 
 
 #----------------------------------------------------------------------------#

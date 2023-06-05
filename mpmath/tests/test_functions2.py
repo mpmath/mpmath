@@ -1352,8 +1352,10 @@ def test_hyper_param_accuracy():
     assert hyp2f1(-5, 10, 3, 0.5, zeroprec=500) == 0
     assert (hyp1f1(-10000, 1000, 100)*10**424).ae(-3.1046080515824859974)
     assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=100000)*10**231).ae(-4.0534790813913998643)
+    assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000)*10**231).ae(-4.0534790813913998643)
+    pytest.raises(mp.NoConvergence, lambda: hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000,force_series=True))
     assert legenp(2, 3, 0.25) == 0
-    pytest.raises(ValueError, lambda: hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3]))
+    pytest.raises(mp.NoConvergence, lambda: hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3]))
     assert hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3], infprec=200) == inf
     assert meijerg([[],[]],[[0,0,0,0],[]],0.1).ae(1.5680822343832351418)
     assert (besselk(400,400)*10**94).ae(1.4387057277018550583)

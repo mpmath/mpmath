@@ -52,6 +52,15 @@ def test_basic_string():
     assert to_str(from_str('1.0_0', 80), 24) == '1.0'
     assert to_str(from_str('.000', 80), 24) == '0.0'
 
+def test_from_str():
+    assert mpf(from_str('ABC.ABC', base=16)) == mpf(float.fromhex('ABC.ABC'))
+    assert mpf(from_str('0xABC.ABC')) == mpf(float.fromhex('ABC.ABC'))
+    assert mpf(from_str('0x3.a7p10')) == mpf(float.fromhex('0x3.a7p10'))
+    assert mpf(from_str('0x1.4ace478p+33')) == mpf(float.fromhex('0x1.4ace478p+33'))
+    assert mpf(from_str('0x1.4ace478@+33')) == mpf('7.0354608312666732e+39')
+    assert mpf(from_str('0b1101.100101')) == mpf('13.578125')
+    assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
+
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'

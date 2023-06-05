@@ -5,6 +5,7 @@ operating with them.
 
 import functools
 import re
+import warnings
 
 from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
@@ -21,6 +22,13 @@ from .libmp.backend import BACKEND
 
 get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
                          r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
+
+def __getattr__(name):
+    if name == 'mpnumeric':
+        from .ctx_mp_python import mpnumeric
+        warnings.warn(f"{name} is deprecated", DeprecationWarning)
+        return mpnumeric
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 if BACKEND == 'sage':
     # pickle hack
@@ -666,7 +674,7 @@ maxterms, or set zeroprec."""
             max_total_jump += abs(d)
         while 1:
             if extraprec > maxprec:
-                raise ValueError(ctx._hypsum_msg % (prec, prec+extraprec))
+                raise ctx.NoConvergence(ctx._hypsum_msg % (prec, prec+extraprec))
             wp = prec + extraprec
             if magnitude_check:
                 mag_dict = dict((n,None) for n in magnitude_check)
