@@ -22,13 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade --force-reinstall setuptools pip
-        if [[ ${{matrix.python-version}} != "3.12-dev" ]]
-        then
-          pip install --upgrade .[develop,gmpy,docs]
-        else
-          pip install --upgrade pytest 'flake518>=1.5'
-          pip install --upgrade .[docs]
-        fi
+        pip install --upgrade .[develop,gmpy,docs]
         pip install --upgrade pytest-xdist
     - name: Linting with flake8, etc
       if: matrix.python-version >= 3.9
