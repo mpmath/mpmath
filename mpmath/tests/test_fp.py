@@ -1682,3 +1682,6 @@ def test_fp_nan_in_args():
     assert fp.isnan(fp.chebyt(1.3, fp.nan))  # issue 478
     assert fp.isnan(fp.chebyt(13, fp.nan))
     assert fp.isnan(fp.hyp2f2(0.4, 2.5, 2.2, 0.7, fp.nan))  # issue 509
+
+def test_issue_510():
+    assert fp.rgamma(fp.inf) == fp.zero
