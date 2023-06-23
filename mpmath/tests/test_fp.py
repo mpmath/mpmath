@@ -1685,3 +1685,6 @@ def test_fp_nan_in_args():
 
 def test_issue_510():
     assert fp.rgamma(fp.inf) == fp.zero
+
+def test_issue_491():
+    assert fp.appellf1(0, 0.4, 2.5, 2.2, fp.inf, 1.4) == fp.one
