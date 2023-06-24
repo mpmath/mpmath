@@ -84,6 +84,8 @@ def test_div():
 
 def test_mod():
     assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
+    assert mpf(2.53) % inf == mpf(2.53)
+    assert mpf(2.53) % ninf == mpf(2.53)
 
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0

@@ -896,6 +896,8 @@ def mpf_mod(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ((not sman) and sexp) or ((not tman) and texp):
+        if t == finf or t == fninf:
+            return s
         return fnan
     # Important special case: do nothing if t is larger
     if ssign == tsign and texp > sexp+sbc:
