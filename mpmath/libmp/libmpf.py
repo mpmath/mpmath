@@ -1115,7 +1115,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     min_fixed >= max_fixed.
 
     The literal is formatted so that it can be parsed back to a number
-    by to_str, float() or Decimal().
+    by from_str, float() or Decimal().
     """
 
     # Special numbers
