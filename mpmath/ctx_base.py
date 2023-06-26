@@ -1,4 +1,5 @@
 from operator import gt, lt
+import random
 
 from . import libmp
 from .calculus.calculus import CalculusMethods
@@ -452,6 +453,26 @@ class StandardBaseContext(Context,
                 raise ctx.NoConvergence("maxcalls: function evaluated %i times" % N)
             return f(*args, **kwargs)
         return f_maxcalls_wrapped
+
+    def rand(ctx):
+        """
+        Get a random number in the range ``[0.0, 1.0)`` with (almost) uniform distribution.
+
+        This method is a replacement for ``random.random()``. It is roughly equal
+        to ``random.randint(0, 2 ** prec - 1) / (2 ** prec)``, where ``prec``
+        is the current resolution in bits.
+
+        Just like ``random.random()`` and most other floating-point random number
+        generators, the distribution is not perfect:
+
+        Some float values within ``[0,1)`` will never be returned, for example,
+        ``2 ** -(prec + 1)`` is impossible. See
+        http://mumble.net/~campbell/2014/04/28/uniform-random-float
+        for a lengthy discussion.
+        """
+        # slow default implementation of rand() that works for arbitrary precision.
+        return ctx.convert(random.getrandbits(ctx.prec)) * (ctx.convert(2) ** (-ctx.prec))
+
 
     def memoize(ctx, f):
         """

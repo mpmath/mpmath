@@ -4,9 +4,9 @@ import random
 
 import pytest
 
-from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, frac, fsub, inf,
+from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
-                    nan, ninf, nint, nint_distance, pi)
+                    nan, ninf, nint, nint_distance, pi, iv, workprec)
 from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
                           from_str, mpf_add, mpf_mul, mpf_sub, round_down,
                           round_nearest, round_up, to_int)
@@ -496,3 +496,41 @@ def test_ctx_mag():
 def test_ctx_mp_mpnumeric():
     with pytest.deprecated_call():
         from mpmath.ctx_mp import mpnumeric
+
+def test_rand_precision():
+    """
+    Test precision of rand()
+    """
+    def get_remainder(x, bits):
+        """
+        Return ``(x % 2**-bits) * (2**bits)``.
+        If this is nonzero, we know for sure that x was generated with a resolution greater than ``bits``.
+        """
+        x = x * 2 ** bits
+        return x - int(x)
+    # Python float (to test the tests)
+    random.seed(42)
+    x = random.random()
+    assert x == 0.6394267984578837, "failed to initialize random() reproducibly"
+    assert get_remainder(x, 53) == 0
+    assert get_remainder(x, 52) != 0 # Note: this is only true for specific random seeds!
+    # fp:
+    random.seed(42)
+    x = fp.rand()
+    assert get_remainder(x, 53) == 0
+    assert get_remainder(x, 52) != 0 # Note: this is only true for specific random seeds!
+    # mp:
+    with workprec(123):
+        random.seed(43)
+        x = mp.rand()
+        assert get_remainder(x, 123) == 0
+        assert get_remainder(x, 122) != 0  # Note: this is only true for specific random seeds!
+    # iv:
+    oldprec = iv.prec # REMOVE ME LATER - workaround for the bug that workprec doesn't work for iv
+    iv.prec=123 # REMOVE ME LATER - workaround for the bug that workprec doesn't work for iv
+    with workprec(123):
+        random.seed(43)
+        x = iv.rand()
+        assert get_remainder(x, 123) == 0
+        assert get_remainder(x, 122) != 0  # Note: this is only true for specific random seeds!
+    iv.prec = oldprec # REMOVE ME LATER - workaround for the bug that workprec  doesn't work for iv
