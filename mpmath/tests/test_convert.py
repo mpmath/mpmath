@@ -65,6 +65,13 @@ def test_eps_repr():
     mp.dps = 24
     assert repr(mp.eps) == '<epsilon of working precision: 2.06795e-25~>'
 
+def test_to_str():
+    assert to_str(from_str('ABC.ABC', base=16), 6, base=16) == '0xabc.abc'
+    assert to_str(from_str('0x3.a7p10', base=16), 3, base=16) == '0xe9c.0'
+    assert to_str(from_str('0x1.4ace478p+33'), 7, base=16) == '0x2.959c8f@+8'
+    assert to_str(from_str('0o1101.100101'), 8, base=8) == '0o1101.1001'
+    assert to_str(from_str('0b1101.100101'), 10, base=2) == '0b1101.100101'
+
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'
