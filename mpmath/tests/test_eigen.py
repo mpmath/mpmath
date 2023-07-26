@@ -172,3 +172,6 @@ def test_eig():
         run_hessenberg(A, verbose = v)
         run_schur(A, verbose = v)
         run_eig(A, verbose = v)
+
+    A = mp.matrix(1)
+    assert mp.eig(A, left=False, right=False) == [0]

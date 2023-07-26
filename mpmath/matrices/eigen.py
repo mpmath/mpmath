@@ -730,6 +730,9 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
     n = A.rows
 
     if n == 1:
+        if not (left or right):
+            return [A[0]]
+
         if left and (not right):
             return ([A[0]], ctx.matrix([[1]]))
 
