@@ -172,6 +172,7 @@ svd_r = mp.svd_r
 svd_c = mp.svd_c
 svd = mp.svd
 gauss_quadrature = mp.gauss_quadrature
+rank = mp.rank
 
 expm = mp.expm
 sqrtm = mp.sqrtm

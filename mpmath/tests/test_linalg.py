@@ -4,8 +4,8 @@ import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
                     hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
-                    mp, mpc, mpf, nint, norm, pi, qr, qr_solve, rand,
-                    randmatrix, residual, zeros)
+                    mp, mpc, mpf, nint, norm, pi, qr, qr_solve, rand, rank,
+                    randmatrix, residual, zeros, absmin, eps)
 
 
 # XXX: these shouldn't be visible(?)
@@ -70,6 +70,17 @@ A10 = matrix([[1.0 + 1.0j, 2.0, 2.0],
             [7.0, 8.0, 9.0]])
 b10 = [1.0, 1.0 + 1.0j, 1.0]
 
+A11 = matrix([[4, 0, -2],
+             [2, 0, -4],
+             [2, 0, 5.5]])
+
+A12 = matrix([[1,0,0],
+              [0,1,0],
+              [0,0,1.0j]])
+
+A13 = matrix([[2, 6, 4],
+              [3, 8, 6],
+              [1, 1, 2]])
 
 def test_LU_decomp():
     A = A3.copy()
@@ -92,6 +103,8 @@ def test_LU_decomp():
     bak = A.copy()
     LU_decomp(A, overwrite=1)
     assert A != bak
+
+    pytest.raises(ZeroDivisionError, LU_decomp, A11)
 
 def test_inverse():
     for A in [A1, A2, A5]:
@@ -193,6 +206,8 @@ def test_det():
     assert det(A5) == 1
     assert round(det(A6)) == 78356463
     assert det(zeros(3)) == 0
+    assert det(A11) == 0
+    assert absmin(det(A12*1e-30) - 1e-30) < eps
 
 def test_cond():
     A = matrix([[1.2969, 0.8648], [0.2161, 0.1441]])
@@ -325,3 +340,18 @@ def test_qr():
             n1 = norm(eye(m) - Q.conjugate() * Q.T)
             #print ' Norm of I - Q.conjugate() * Q.T = ', n1
             assert n1 <= maxnorm
+
+def test_rank():
+    assert rank(A1) == 3
+    assert rank(A2) == 4
+    assert rank(A3) == 5
+    assert rank(A4) == 5
+    assert rank(A5) == 3
+    assert rank(A6) == 3
+    assert rank(zeros(3)) == 0
+    assert rank(A11) == 2
+    assert rank(A1*A11) == 2
+    assert rank(A11*A11) == 2
+    iszerofunc = lambda x: not bool(x)
+    assert rank(A13) == 2
+    assert rank(A13, iszerofunc) == 3
