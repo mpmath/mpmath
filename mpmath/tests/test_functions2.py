@@ -13,6 +13,8 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
                     spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
                     whitw, zeta)
+from mpmath.ctx_mp_python import _mpf as mpf_type
+from mpmath.ctx_mp_python import mpc as mpc_type
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -167,8 +169,8 @@ def test_elliptic_integrals():
     assert ellipk(1+0j) == inf
     assert ellipk(-1).ae('1.3110287771460599052')
     assert ellipk(-2).ae('1.1714200841467698589')
-    assert isinstance(ellipk(-2), mpf)
-    assert isinstance(ellipe(-2), mpf)
+    assert isinstance(ellipk(-2), mpf_type)
+    assert isinstance(ellipe(-2), mpf_type)
     assert ellipk(-50).ae('0.47103424540873331679')
     mp.dps = 30
     n1 = +fraction(99999,100000)
@@ -189,7 +191,7 @@ def test_elliptic_integrals():
     assert isnan(ellipk(nan))
     assert isnan(ellipe(nan))
     assert ellipk(inf) == 0
-    assert isinstance(ellipk(inf), mpc)
+    assert isinstance(ellipk(inf), mpc_type)
     assert ellipk(-inf) == 0
     assert ellipk(1+0j) == inf
     assert ellipe(0).ae(pi/2)
@@ -244,12 +246,12 @@ def test_exp_integrals():
     assert li(0) == 0.0
     assert li(1) == -inf
     assert li(inf) == inf
-    assert isinstance(li(0.7), mpf)
+    assert isinstance(li(0.7), mpf_type)
     assert si(inf).ae(pi/2)
     assert si(-inf).ae(-pi/2)
     assert ci(inf) == 0
     assert ci(0) == -inf
-    assert isinstance(ei(-0.7), mpf)
+    assert isinstance(ei(-0.7), mpf_type)
     assert airyai(inf) == 0
     assert airybi(inf) == inf
     assert airyai(-inf) == 0
@@ -1071,10 +1073,10 @@ def test_erf():
     assert erf(pi).ae(0.99999112385363235839)
     assert erf(1j).ae(1.6504257587975428760j)
     assert erf(-1j).ae(-1.6504257587975428760j)
-    assert isinstance(erf(1), mpf)
-    assert isinstance(erf(-1), mpf)
-    assert isinstance(erf(0), mpf)
-    assert isinstance(erf(0j), mpc)
+    assert isinstance(erf(1), mpf_type)
+    assert isinstance(erf(-1), mpf_type)
+    assert isinstance(erf(0), mpf_type)
+    assert isinstance(erf(0j), mpc_type)
     assert erf(inf) == 1
     assert erf(-inf) == -1
     assert erfi(0) == 0
@@ -1205,8 +1207,8 @@ def test_lambertw_hard():
     def check(x,y):
         y = convert(y)
         type_ok = True
-        if isinstance(y, mpf):
-            type_ok = isinstance(x, mpf)
+        if isinstance(y, mpf_type):
+            type_ok = isinstance(x, mpf_type)
         real_ok = abs(x.real-y.real) <= abs(y.real)*8*eps
         imag_ok = abs(x.imag-y.imag) <= abs(y.imag)*8*eps
         #print x, y, abs(x.real-y.real), abs(x.imag-y.imag)
@@ -2378,7 +2380,7 @@ def test_bessel_zeros_extra():
 
 def test_issue_569():
     r = betainc(1, 2, 1, 1)
-    assert isinstance(r, mp.mpf) and r == 0
+    assert isinstance(r, mpf_type) and r == 0
 
 @pytest.mark.skipif(BACKEND != 'gmpy', reason="gmpy isn't used")
 def test_issue_274():

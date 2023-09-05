@@ -1,5 +1,6 @@
 import warnings
 
+
 # TODO: interpret list as vectors (for multiplication)
 
 # pickling helper
@@ -377,7 +378,7 @@ class _matrix:
         If avoid_type: avoid multiple 'mpf's.
         """
         # XXX: should be something like self.ctx._types
-        typ = self.ctx.mpf
+        typ = type(self.ctx.mpf(0))
         s = '['
         for i in range(self._rows):
             s += '['

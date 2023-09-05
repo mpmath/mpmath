@@ -15,6 +15,8 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     phi, pi, power, powm1, radians, rand, re, root, sec, sech,
                     sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh,
                     twinprime, unitroots)
+from mpmath.ctx_mp_python import _mpf as mpf_type
+from mpmath.ctx_mp_python import mpc as mpc_type
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
                           round_ceiling, round_down, round_nearest, round_up)
@@ -415,12 +417,12 @@ def test_areal_inverses():
     assert asin(mpf(0)) == 0
     assert asinh(mpf(0)) == 0
     assert acosh(mpf(1)) == 0
-    assert isinstance(asin(mpf(0.5)), mpf)
-    assert isinstance(asin(mpf(2.0)), mpc)
-    assert isinstance(acos(mpf(0.5)), mpf)
-    assert isinstance(acos(mpf(2.0)), mpc)
-    assert isinstance(atanh(mpf(0.1)), mpf)
-    assert isinstance(atanh(mpf(1.1)), mpc)
+    assert isinstance(asin(mpf(0.5)), mpf_type)
+    assert isinstance(asin(mpf(2.0)), mpc_type)
+    assert isinstance(acos(mpf(0.5)), mpf_type)
+    assert isinstance(acos(mpf(2.0)), mpc_type)
+    assert isinstance(atanh(mpf(0.1)), mpf_type)
+    assert isinstance(atanh(mpf(1.1)), mpc_type)
 
     random.seed(1)
     for i in range(50):
@@ -430,20 +432,20 @@ def test_areal_inverses():
 
         x = random.uniform(-10, 10)
         assert asinh(mpf(x)).ae(cmath.asinh(x).real)
-        assert isinstance(asinh(mpf(x)), mpf)
+        assert isinstance(asinh(mpf(x)), mpf_type)
         x = random.uniform(1, 10)
         assert acosh(mpf(x)).ae(cmath.acosh(x).real)
-        assert isinstance(acosh(mpf(x)), mpf)
+        assert isinstance(acosh(mpf(x)), mpf_type)
         x = random.uniform(-10, 0.999)
-        assert isinstance(acosh(mpf(x)), mpc)
+        assert isinstance(acosh(mpf(x)), mpc_type)
 
         x = random.uniform(-1, 1)
         assert atanh(mpf(x)).ae(cmath.atanh(x).real)
-        assert isinstance(atanh(mpf(x)), mpf)
+        assert isinstance(atanh(mpf(x)), mpf_type)
 
     dps = mp.dps
     mp.dps = 300
-    assert isinstance(asin(0.5), mpf)
+    assert isinstance(asin(0.5), mpf_type)
     mp.dps = 1000
     assert asin(1).ae(pi/2)
     assert asin(-1).ae(-pi/2)
@@ -543,7 +545,7 @@ def test_aliases():
     assert degrees(5.6) == 5.6 / degree
     assert radians(5.6) == 5.6 * degree
     assert power(-1,0.5) == j
-    assert fmod(25,7) == 4.0 and isinstance(fmod(25,7), mpf)
+    assert fmod(25,7) == 4.0 and isinstance(fmod(25,7), mpf_type)
 
 def test_arg_sign():
     assert arg(3) == 0
@@ -935,8 +937,8 @@ def test_atanh():
     assert atanh(1) == inf
     assert atanh(-1) == -inf
     assert isnan(atanh(nan))
-    assert isinstance(atanh(1), mpf)
-    assert isinstance(atanh(-1), mpf)
+    assert isinstance(atanh(1), mpf_type)
+    assert isinstance(atanh(-1), mpf_type)
     # Limits at infinity
     jpi2 = j*pi/2
     assert atanh(inf).ae(-jpi2)
