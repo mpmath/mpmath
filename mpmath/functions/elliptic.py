@@ -101,7 +101,7 @@ def nome(ctx, m):
         return m
     if ctx.isinf(m):
         if m == ctx.ninf:
-            return type(m)(-1)
+            return -ctx.one
         else:
             return ctx.mpc(-1)
     a = ctx.ellipk(ctx.one-m)

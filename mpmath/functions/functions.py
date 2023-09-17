@@ -466,7 +466,7 @@ def bell(ctx, n, x=1):
     if not n:
         if ctx.isnan(x):
             return x
-        return type(x)(1)
+        return ctx.one
     if ctx.isinf(x) or ctx.isinf(n) or ctx.isnan(x) or ctx.isnan(n):
         return x**n
     if n == 1: return x

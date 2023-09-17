@@ -31,7 +31,7 @@ def erf(ctx, z):
             pass
     if ctx._is_complex_type(z) and not z.imag:
         try:
-            return type(z)(ctx._erf(z.real))
+            return ctx.mpc(ctx._erf(z.real))
         except NotImplementedError:
             pass
     return ctx._erf_complex(z)
@@ -46,7 +46,7 @@ def erfc(ctx, z):
             pass
     if ctx._is_complex_type(z) and not z.imag:
         try:
-            return type(z)(ctx._erfc(z.real))
+            return ctx.mpc(ctx._erfc(z.real))
         except NotImplementedError:
             pass
     return ctx._erfc_complex(z)
@@ -175,7 +175,7 @@ def gammainc(ctx, z, a=0, b=None, regularized=False):
 def _lower_gamma(ctx, z, b, regularized=False):
     # Pole
     if ctx.isnpint(z):
-        return type(z)(ctx.inf)
+        return ctx.inf
     G = [z] * regularized
     negb = ctx.fneg(b, exact=True)
     def h(z):
@@ -191,7 +191,7 @@ def _upper_gamma(ctx, z, a, regularized=False):
             if regularized:
                 # Gamma pole
                 if ctx.isnpint(z):
-                    return type(z)(ctx.zero)
+                    return ctx.zero
                 orig = ctx.prec
                 try:
                     ctx.prec += 10
@@ -263,7 +263,7 @@ def expint(ctx, n, z):
         # integral from 1 to infinity of t^n
         if ctx.re(n) <= 1:
             # TODO: reasonable sign of infinity
-            return type(z)(ctx.inf)
+            return ctx.inf
         else:
             return ctx.one/(n-1)
     if n == 0:
