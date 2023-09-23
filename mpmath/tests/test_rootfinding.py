@@ -70,7 +70,7 @@ def test_multiplicity():
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
     assert multiplicity(lambda x: x**2, 1) == 0
 
-def test_multidimensional():
+def test_multidimensional(capsys):
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
     assert mnorm(jacobian(f, (1,-2)) - matrix([[6,8],[0,-2]]),1) < 1.e-7
@@ -78,6 +78,12 @@ def test_multidimensional():
                              norm=lambda x: norm(x, inf)):
         pass
     assert norm(f(*x), 2) < 1e-14
+    for x, error in MDNewton(mp, f, (1,-2), verbose=1,
+                             norm=lambda x: norm(x, inf)):
+        pass
+    assert norm(f(*x), 2) < 1e-14
+    captured = capsys.readouterr()
+    assert captured.out.find("canceled, won't get more exact") >= 0
     # The Chinese mathematician Zhu Shijie was the very first to solve this
     # nonlinear system 700 years ago
     f1 = lambda x, y: -x + 2*y
