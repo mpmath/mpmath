@@ -12,6 +12,7 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     legenq, li, log, meijerg, mp, mpc, mpf, nan, ncdf, npdf,
                     nthroot, pi, qp, quadts, shi, si, spherharm, sqrt, struveh,
                     struvel, whitm, whitw)
+from mpmath.libmp import BACKEND
 
 
 def test_bessel():
@@ -2358,8 +2359,7 @@ def test_issue_569():
     r = betainc(1, 2, 1, 1)
     assert isinstance(r, mp.mpf) and r == 0
 
+@pytest.mark.skipif(BACKEND != 'gmpy', reason="gmpy isn't used")
 def test_issue_274():
-    pytest.importorskip("gmpy2")
-
     with pytest.raises(ValueError):
         mp.fraction(1, 100).func(1000, 0xdead)
