@@ -1,8 +1,8 @@
 import numbers
 
 from . import function_docs
-from .libmp import (MPQ, MPZ, ComplexResult, bitcount, dps_to_prec, finf, fnan,
-                    fninf, from_Decimal, from_float, from_int, from_man_exp,
+from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
+                    from_Decimal, from_float, from_int, from_man_exp,
                     from_npfloat, from_rational, from_str, fzero, int_types,
                     mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
                     mpc_div_mpf, mpc_hash, mpc_is_nonzero, mpc_mpf_div,
@@ -1224,12 +1224,12 @@ class PythonMPContext:
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
         if isinstance(x, int_types):
             if x:
-                return bitcount(abs(x))
+                return x.bit_length()
             return ctx.ninf
         if isinstance(x, MPQ):
             p, q = x.numerator, x.denominator
             if p:
-                return 1 + bitcount(abs(p)) - bitcount(q)
+                return 1 + p.bit_length() - q.bit_length()
             return ctx.ninf
         x = ctx.convert(x)
         return ctx.mag(x)

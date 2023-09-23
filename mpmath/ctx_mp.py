@@ -9,14 +9,14 @@ import warnings
 
 from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
-from .libmp import (MPQ, MPZ_ONE, ComplexResult, bitcount, dps_to_prec, finf,
-                    fnan, fninf, fone, from_rational, fzero, int_types,
-                    mpc_add, mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul,
-                    mpc_mul_mpf, mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str,
-                    mpf_add, mpf_apery, mpf_catalan, mpf_degree, mpf_div,
-                    mpf_e, mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2,
-                    mpf_ln10, mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi,
-                    mpf_rand, mpf_sub, mpf_twinprime, repr_dps, to_str)
+from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
+                    fninf, fone, from_rational, fzero, int_types, mpc_add,
+                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul, mpc_mul_mpf,
+                    mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str, mpf_add,
+                    mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
+                    mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
+                    mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
+                    mpf_sub, mpf_twinprime, repr_dps, to_str)
 from .libmp.backend import BACKEND
 
 
@@ -1116,7 +1116,7 @@ maxterms, or set zeroprec."""
             elif not r:
                 return n, ctx.ninf
             # log(p/q-n) = log((p-nq)/q) = log(p-nq) - log(q)
-            d = bitcount(abs(p-n*q)) - bitcount(q)
+            d = (p-n*q).bit_length() - q.bit_length()
             return n, d
         if hasattr(x, "_mpf_"):
             re = x._mpf_
@@ -1160,7 +1160,7 @@ maxterms, or set zeroprec."""
                 else:
                     man -= (t<<d)
                 n = t>>1   # int(t)>>1
-                re_dist = exp+bitcount(man)
+                re_dist = exp+man.bit_length()
             if sign:
                 n = -n
         elif re == fzero:

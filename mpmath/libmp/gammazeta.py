@@ -16,46 +16,29 @@ This module implements gamma- and zeta-related functions:
 import math
 import sys
 
-from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_THREE, gmpy
-
-from .libintmath import list_primes, ifac, ifac2, moebius
-
-from .libmpf import (\
-    round_floor, round_ceiling, round_down, round_up,
-    round_nearest, round_fast,
-    lshift, sqrt_fixed, isqrt_fast,
-    fzero, fone, fnone, fhalf, ftwo, finf, fninf, fnan,
-    from_int, to_int, to_fixed, from_man_exp, from_rational,
-    mpf_pos, mpf_neg, mpf_abs, mpf_add, mpf_sub,
-    mpf_mul, mpf_mul_int, mpf_div, mpf_sqrt, mpf_pow_int,
-    mpf_rdiv_int,
-    mpf_perturb, mpf_le, mpf_lt, mpf_gt, mpf_shift,
-    negative_rnd, reciprocal_rnd,
-    bitcount, to_float, mpf_floor, mpf_sign, ComplexResult
-)
-
-from .libelefun import (\
-    constant_memo,
-    def_mpf_constant,
-    mpf_pi, pi_fixed, ln2_fixed, log_int_fixed, mpf_ln2,
-    mpf_exp, mpf_log, mpf_pow, mpf_cosh,
-    mpf_cos_sin, mpf_cosh_sinh, mpf_cos_sin_pi, mpf_cos_pi, mpf_sin_pi,
-    ln_sqrt2pi_fixed, mpf_ln_sqrt2pi, sqrtpi_fixed, mpf_sqrtpi,
-    cos_sin_fixed, exp_fixed
-)
-
-from .libmpc import (\
-    mpc_zero, mpc_one, mpc_half, mpc_two,
-    mpc_abs, mpc_shift, mpc_pos, mpc_neg,
-    mpc_add, mpc_sub, mpc_mul, mpc_div,
-    mpc_add_mpf, mpc_mul_mpf, mpc_div_mpf, mpc_mpf_div,
-    mpc_mul_int, mpc_pow_int,
-    mpc_log, mpc_exp, mpc_pow,
-    mpc_cos_pi, mpc_sin_pi,
-    mpc_reciprocal, mpc_square,
-    mpc_sub_mpf
-)
-
+from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO, gmpy
+from .libelefun import (constant_memo, cos_sin_fixed, def_mpf_constant,
+                        exp_fixed, ln2_fixed, ln_sqrt2pi_fixed, log_int_fixed,
+                        mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi, mpf_cosh,
+                        mpf_cosh_sinh, mpf_exp, mpf_ln2, mpf_ln_sqrt2pi,
+                        mpf_log, mpf_pi, mpf_pow, mpf_sin_pi, mpf_sqrtpi,
+                        pi_fixed, sqrtpi_fixed)
+from .libintmath import ifac, ifac2, list_primes, moebius
+from .libmpc import (mpc_abs, mpc_add, mpc_add_mpf, mpc_cos_pi, mpc_div,
+                     mpc_div_mpf, mpc_exp, mpc_half, mpc_log, mpc_mpf_div,
+                     mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_one,
+                     mpc_pos, mpc_pow, mpc_pow_int, mpc_reciprocal, mpc_shift,
+                     mpc_sin_pi, mpc_square, mpc_sub, mpc_sub_mpf, mpc_two,
+                     mpc_zero)
+from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
+                     from_int, from_man_exp, from_rational, ftwo, fzero,
+                     isqrt_fast, lshift, mpf_abs, mpf_add, mpf_div, mpf_floor,
+                     mpf_gt, mpf_le, mpf_lt, mpf_mul, mpf_mul_int, mpf_neg,
+                     mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
+                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
+                     reciprocal_rnd, round_ceiling, round_down, round_fast,
+                     round_floor, round_nearest, round_up, sqrt_fixed,
+                     to_fixed, to_float, to_int)
 
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
@@ -1545,7 +1528,7 @@ def gamma_fixed_taylor(xmpf, x, wp, prec, rnd, type):
         for c in coeffs:
             p = c + ((x*p)>>wp)
         p >>= (cwp-wp)
-        if wp - bitcount(abs(x)) > 10:
+        if wp - x.bit_length() > 10:
             # pass very close to 0, so do floating-point multiply
             g = mpf_add(xmpf, from_int(-nearest_int))  # exact
             r = from_man_exp(p*r,-wp-wp)
@@ -1567,7 +1550,7 @@ def stirling_coefficient(n):
         return gamma_stirling_cache[n]
     p, q = bernfrac(n)
     q *= MPZ(n*(n-1))
-    gamma_stirling_cache[n] = p, q, bitcount(abs(p)), bitcount(q)
+    gamma_stirling_cache[n] = p, q, p.bit_length(), q.bit_length()
     return gamma_stirling_cache[n]
 
 def real_stirling_series(x, prec):
@@ -1597,8 +1580,8 @@ def real_stirling_series(x, prec):
     k = 22
     # From here on, the coefficients are growing, so we
     # have to keep t at a roughly constant size
-    usize = bitcount(abs(u))
-    tsize = bitcount(abs(t))
+    usize = u.bit_length()
+    tsize = t.bit_length()
     texp = 0
     while 1:
         p, q, pb, qb = stirling_coefficient(k)
@@ -1663,8 +1646,8 @@ def complex_stirling_series(x, y, prec):
     k = 22
     # From here on, the coefficients are growing, so we
     # have to keep t at a roughly constant size
-    usize = bitcount(max(abs(ure), abs(uim)))
-    tsize = bitcount(max(abs(tre), abs(tim)))
+    usize = (max(abs(ure), abs(uim))).bit_length()
+    tsize = (max(abs(tre), abs(tim))).bit_length()
     texp = 0
     while 1:
         p, q, pb, qb = stirling_coefficient(k)
@@ -1757,7 +1740,7 @@ def mpf_gamma(x, prec, rnd='d', type=0):
     if type == 3:
         wp = prec + 20
     else:
-        wp = prec + bitcount(gamma_size) + 20
+        wp = prec + gamma_size.bit_length() + 20
 
     # Very close to 0, pole
     if mag < -wp:
@@ -1817,7 +1800,7 @@ def mpf_gamma(x, prec, rnd='d', type=0):
         one = MPZ_ONE << wp
         one_dist = abs(absxman-one)
         two_dist = abs(absxman-2*one)
-        cancellation = (wp - bitcount(min(one_dist, two_dist)))
+        cancellation = (wp - min(one_dist, two_dist).bit_length())
         if cancellation > 10:
             xsub1 = mpf_sub(fone, x)
             xsub2 = mpf_sub(ftwo, x)
@@ -1958,7 +1941,7 @@ def mpc_gamma(z, prec, rnd='d', type=0):
     if type == 3:
         pass
     else:
-        wp += bitcount(gamma_size)
+        wp += gamma_size.bit_length()
 
     # Reflect to the right half-plane. Note that Stirling's expansion
     # is valid in the left half-plane too, as long as we're not too close

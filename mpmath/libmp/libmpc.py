@@ -4,30 +4,23 @@ Low-level functions for complex arithmetic.
 
 import sys
 
-from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, BACKEND
+from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_TWO, MPZ_ZERO
+from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
+                        mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
+                        mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
+                        mpf_log, mpf_log_hypot, mpf_nthroot, mpf_phi, mpf_pi,
+                        mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh, mpf_tan,
+                        mpf_tanh)
+from .libmpf import (ComplexResult, bctable, fhalf, finf, fnan, fninf, fnone,
+                     fone, from_float, from_int, from_man_exp, ftwo, fzero,
+                     giant_steps, lshift, mpf_abs, mpf_add, mpf_ceil, mpf_div,
+                     mpf_floor, mpf_frac, mpf_hash, mpf_hypot, mpf_mul,
+                     mpf_mul_int, mpf_neg, mpf_nint, mpf_pos, mpf_rdiv_int,
+                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
+                     normalize, reciprocal_rnd, round_ceiling, round_down,
+                     round_fast, round_floor, round_nearest, round_up, rshift,
+                     to_fixed, to_float, to_int, to_str)
 
-from .libmpf import (\
-    round_floor, round_ceiling, round_down, round_up,
-    round_nearest, round_fast, bitcount,
-    bctable, normalize, reciprocal_rnd, rshift, lshift, giant_steps,
-    negative_rnd,
-    to_str, to_fixed, from_man_exp, from_float, to_float, from_int, to_int,
-    fzero, fone, ftwo, fhalf, finf, fninf, fnan, fnone,
-    mpf_abs, mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul,
-    mpf_div, mpf_mul_int, mpf_shift, mpf_sqrt, mpf_hypot,
-    mpf_rdiv_int, mpf_floor, mpf_ceil, mpf_nint, mpf_frac,
-    mpf_sign, mpf_hash,
-    ComplexResult
-)
-
-from .libelefun import (\
-    mpf_pi, mpf_exp, mpf_log, mpf_cos_sin, mpf_cosh_sinh, mpf_tan, mpf_pow_int,
-    mpf_log_hypot,
-    mpf_cos_sin_pi, mpf_phi,
-    mpf_cos, mpf_sin, mpf_cos_pi, mpf_sin_pi,
-    mpf_atan, mpf_atan2, mpf_cosh, mpf_sinh, mpf_tanh,
-    mpf_asin, mpf_acos, mpf_acosh, mpf_nthroot, mpf_fibonacci
-)
 
 # An mpc value is a (real, imag) tuple
 mpc_one = fone, fzero

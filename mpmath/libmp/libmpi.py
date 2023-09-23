@@ -2,26 +2,18 @@
 Computational functions for interval arithmetic.
 
 """
-from .libmpf import (
-    ComplexResult,
-    round_down, round_up, round_floor, round_ceiling, round_nearest,
-    prec_to_dps, repr_dps, dps_to_prec,
-    bitcount,
-    from_float,
-    fnan, finf, fninf, fzero, fhalf, fone, fnone,
-    mpf_sign, mpf_lt, mpf_le, mpf_gt, mpf_ge, mpf_eq, mpf_cmp,
-    mpf_min_max,
-    mpf_floor, from_int, to_int, to_str, from_str,
-    mpf_abs, mpf_neg, mpf_pos, mpf_add, mpf_sub, mpf_mul, mpf_mul_int,
-    mpf_div, mpf_shift, mpf_pow_int,
-    from_man_exp, MPZ_ONE)
+from .gammazeta import mpc_loggamma, mpf_gamma, mpf_loggamma, mpf_rgamma
+from .libelefun import (mod_pi2, mpf_atan, mpf_atan2, mpf_cos_sin, mpf_exp,
+                        mpf_log, mpf_pi, mpf_sqrt)
+from .libmpf import (MPZ_ONE, ComplexResult, dps_to_prec, fhalf, finf, fnan,
+                     fninf, fnone, fone, from_float, from_int, from_man_exp,
+                     from_str, fzero, mpf_abs, mpf_add, mpf_cmp, mpf_div,
+                     mpf_eq, mpf_floor, mpf_ge, mpf_gt, mpf_le, mpf_lt,
+                     mpf_min_max, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos,
+                     mpf_pow_int, mpf_shift, mpf_sign, mpf_sub, prec_to_dps,
+                     repr_dps, round_ceiling, round_down, round_floor,
+                     round_nearest, round_up, to_int, to_str)
 
-from .libelefun import (
-    mpf_log, mpf_exp, mpf_sqrt, mpf_atan, mpf_atan2,
-    mpf_pi, mod_pi2, mpf_cos_sin
-)
-
-from .gammazeta import mpf_gamma, mpf_rgamma, mpf_loggamma, mpc_loggamma
 
 def mpi_str(s, prec):
     sa, sb = s
@@ -870,7 +862,7 @@ def mpci_gamma(z, prec, type=0):
         bn = abs(to_int(b2))
         absn = max(an, bn)
         gamma_size = max(0,absn*mag)
-        wp += bitcount(gamma_size)
+        wp += gamma_size.bit_length()
 
     # Assume type != 1
     if type == 1:

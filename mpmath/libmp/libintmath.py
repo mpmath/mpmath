@@ -11,7 +11,8 @@ import sys
 from bisect import bisect
 from functools import lru_cache
 
-from .backend import BACKEND, gmpy, sage, sage_utils, MPZ, MPZ_ONE, MPZ_ZERO
+from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy, sage, sage_utils
+
 
 small_trailing = [0] * 256
 for j in range(1,8):
@@ -180,7 +181,7 @@ def isqrt_small_python(x):
         # Initial estimate can be any integer >= the true root; round up
         r = int(x**0.5 * 1.00000000000001) + 1
     else:
-        bc = bitcount(x)
+        bc = x.bit_length()
         n = bc//2
         r = int((x>>(2*n-100))**0.5+2)<<(n-50)  # +2 is to round up
     # The following iteration now precisely computes floor(sqrt(x))
@@ -219,7 +220,7 @@ def isqrt_fast_python(x):
                 if x >= _1_400:
                     y = (y + x//y) >> 1
         return y
-    bc = bitcount(x)
+    bc = x.bit_length()
     guard_bits = 10
     x <<= 2*guard_bits
     bc += 2*guard_bits
