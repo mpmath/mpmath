@@ -60,7 +60,7 @@ if BACKEND == 'sage':
     rshift = operator.rshift
     lshift = operator.lshift
 
-def python_trailing(n):
+def trailing(n):
     """Count the number of trailing zero bits in abs(n)."""
     if not n:
         return 0
@@ -74,40 +74,21 @@ def python_trailing(n):
         t += 8
     return t + small_trailing[n & 0xff]
 
-if BACKEND == 'gmpy':
-    def gmpy_trailing(n):
-        """Count the number of trailing zero bits in abs(n) using gmpy."""
-        if n: return MPZ(n).bit_scan1()
-        else: return 0
-
-# Small powers of 2
-powers = [1<<_ for _ in range(300)]
-
-def python_bitcount(n):
-    """Calculate bit size of the nonnegative integer n."""
-    bc = bisect(powers, n)
-    if bc != 300:
-        return bc
-    bc = int(math.log(n, 2)) - 4
-    return bc + bctable[n>>bc]
-
-def sage_trailing(n):
-    return MPZ(n).trailing_zero_bits()
+def bitcount(n):
+    """Calculate bit size of abs(n)."""
+    return MPZ(n).bit_length()
 
 if BACKEND == 'gmpy':
     bitcount = gmpy.bit_length
-    trailing = gmpy_trailing
+    def trailing(n):
+        return MPZ(n).bit_scan1() if n else MPZ(0)
 elif BACKEND == 'sage':
-    sage_bitcount = sage_utils.bitcount
-    bitcount = sage_bitcount
-    trailing = sage_trailing
-else:
-    bitcount = python_bitcount
-    trailing = python_trailing
+    def trailing(n):
+        return MPZ(n).trailing_zero_bits()
 
 # Used to avoid slow function calls as far as possible
 trailtable = [trailing(n) for n in range(256)]
-bctable = [bitcount(n) for n in range(1024)]
+bctable = [n.bit_length() for n in range(1024)]
 
 # TODO: speed up for bases 2, 4, 8, 16, ...
 
