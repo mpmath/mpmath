@@ -107,6 +107,8 @@ def test_calculate_nome():
         q = calculate_nome(sqrt(m))
         assert q.ae(i[1])
 
+    assert qfrom(m=mp.ninf).ae(mpf('-1.0'))
+
 def test_jtheta():
     mp.dps = 25
 

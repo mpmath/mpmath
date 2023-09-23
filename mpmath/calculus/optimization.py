@@ -665,7 +665,7 @@ class MDNewton:
             while True:
                 if x1 == x0:
                     if self.verbose:
-                        print("canceled, won't get more excact")
+                        print("canceled, won't get more exact")
                     cancel = True
                     break
                 fx = self.ctx.matrix(f(*x1))
