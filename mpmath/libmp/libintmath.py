@@ -415,6 +415,12 @@ def isprime(n):
             return False
     return True
 
+if BACKEND == 'gmpy':
+    isprime = gmpy.is_prime
+elif BACKEND == 'sage':
+    def isprime(n):
+        return MPZ(n).is_prime(False)
+
 def moebius(n):
     """
     Evaluates the Moebius function which is `mu(n) = (-1)^k` if `n`
