@@ -299,13 +299,12 @@ else:
         return res
 
 
-def ifib(n, _cache={}):
+@lru_cache(maxsize=250)
+def ifib(n):
     """Computes the nth Fibonacci number as an integer, for
     integer n."""
     if n < 0:
         return (-1)**(-n+1) * ifib(-n)
-    if n in _cache:
-        return _cache[n]
     m = n
     # Use Dijkstra's logarithmic algorithm
     # The following implementation is basically equivalent to
@@ -320,8 +319,6 @@ def ifib(n, _cache={}):
             qq = q*q
             p, q = p*p+qq, qq+2*p*q
             n >>= 1
-    if m < 250:
-        _cache[m] = b
     return b
 
 MAX_FACTORIAL_CACHE = 1000
@@ -464,9 +461,8 @@ def moebius(n):
 #     computes first all
 #     the previous ones, and keeps them in the CACHE
 
-MAX_EULER_CACHE = 500
-
-def eulernum(m, _cache={0:MPZ_ONE}):
+@lru_cache(maxsize=500)
+def eulernum(m):
     r"""
     Computes the Euler numbers `E(n)`, which can be defined as
     coefficients of the Taylor expansion of `1/cosh x`:
@@ -486,12 +482,9 @@ def eulernum(m, _cache={0:MPZ_ONE}):
     # for odd m > 1, the Euler numbers are zero
     if m & 1:
         return MPZ_ZERO
-    f = _cache.get(m)
-    if f:
-        return f
-    MAX = MAX_EULER_CACHE
     n = m
     a = [MPZ(_) for _ in [0,0,1,0,0,0]]
+    suma = MPZ(1)
     for  n in range(1, m+1):
         for j in range(n+1, -1, -2):
             a[j+1] = (j-1)*a[j] + (j+1)*a[j+2]
@@ -499,10 +492,7 @@ def eulernum(m, _cache={0:MPZ_ONE}):
         suma = 0
         for k in range(n+1, -1, -2):
             suma += a[k+1]
-            if n <= MAX:
-                _cache[n] = ((-1)**(n//2))*(suma // 2**n)
-        if n == m:
-            return ((-1)**(n//2))*suma // 2**n
+    return ((-1)**(n//2))*suma // 2**n
 
 def stirling1(n, k):
     """
