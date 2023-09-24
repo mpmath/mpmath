@@ -517,14 +517,8 @@ def log_int_fixed(n, prec, ln2=None):
         if vprec >= prec:
             return value >> (vprec - prec)
     wp = prec + 10
-    if wp <= LOG_TAYLOR_SHIFT:
-        if ln2 is None:
-            ln2 = ln2_fixed(wp)
-        r = n.bit_length()
-        x = n << (wp-r)
-        v = log_taylor_cached(x, wp) + r*ln2
-    else:
-        v = to_fixed(mpf_log(from_int(n), wp+5), wp)
+    assert wp > LOG_TAYLOR_SHIFT
+    v = to_fixed(mpf_log(from_int(n), wp+5), wp)
     if n < MAX_LOG_INT_CACHE:
         log_int_cache[n] = (v, wp)
     return v >> (wp-prec)
