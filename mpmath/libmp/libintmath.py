@@ -174,16 +174,12 @@ def isqrt_small_python(x):
     """
     if not x:
         return x
-    if x < _1_800:
-        # Exact with IEEE double precision arithmetic
-        if x < _1_50:
-            return int(x**0.5)
-        # Initial estimate can be any integer >= the true root; round up
-        r = int(x**0.5 * 1.00000000000001) + 1
-    else:
-        bc = x.bit_length()
-        n = bc//2
-        r = int((x>>(2*n-100))**0.5+2)<<(n-50)  # +2 is to round up
+    assert x < _1_800
+    # Exact with IEEE double precision arithmetic
+    if x < _1_50:
+        return int(x**0.5)
+    # Initial estimate can be any integer >= the true root; round up
+    r = int(x**0.5 * 1.00000000000001) + 1
     # The following iteration now precisely computes floor(sqrt(x))
     # See e.g. Crandall & Pomerance, "Prime Numbers: A Computational
     # Perspective"
