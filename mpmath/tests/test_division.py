@@ -1,8 +1,8 @@
 from random import choice, randint, seed
 
 from mpmath import mpf
-from mpmath.libmp import (bitcount, from_int, from_str, mpf_div, mpf_mul,
-                          mpf_rdiv_int, round_ceiling, round_down, round_floor,
+from mpmath.libmp import (from_int, from_str, mpf_div, mpf_mul, mpf_rdiv_int,
+                          round_ceiling, round_down, round_floor,
                           round_nearest, round_up, trailing)
 
 
@@ -79,7 +79,7 @@ def test_tight_integer_division():
         a = choice([1, -1]) * randint(1, 1<<randint(10, 100))
         b = choice([1, -1]) * randint(1, 1<<randint(10, 100))
         p = a * b
-        width = bitcount(abs(b)) - trailing(b)
+        width = b.bit_length() - trailing(b)
         a = from_int(a); b = from_int(b); p = from_int(p)
         for mode in [round_floor, round_ceiling, round_down,
                      round_up, round_nearest]:
@@ -93,7 +93,7 @@ def test_epsilon_rounding():
     a = from_str('0.101' + ('0'*200) + '1', base=2)
     b = from_str('1.10101', base=2)
     c = mpf_mul(a, b, 250, round_floor) # exact
-    assert mpf_div(c, b, bitcount(a[1]), round_floor) == a # exact
+    assert mpf_div(c, b, a[1].bit_length(), round_floor) == a # exact
 
     assert mpf_div(c, b, 2, round_down) == from_str('0.10', base=2)
     assert mpf_div(c, b, 3, round_down) == from_str('0.101', base=2)
@@ -108,7 +108,7 @@ def test_epsilon_rounding():
     a = from_str('-0.101' + ('0'*200) + '1', base=2)
     b = from_str('1.10101', base=2)
     c = mpf_mul(a, b, 250, round_floor)
-    assert mpf_div(c, b, bitcount(a[1]), round_floor) == a
+    assert mpf_div(c, b, a[1].bit_length(), round_floor) == a
 
     assert mpf_div(c, b, 2, round_down) == from_str('-0.10', base=2)
     assert mpf_div(c, b, 3, round_up) == from_str('-0.110', base=2)

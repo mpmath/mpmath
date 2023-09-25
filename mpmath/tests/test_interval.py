@@ -401,6 +401,7 @@ def test_interval_gamma():
     assert iv.gamma(2) == 1
     assert iv.gamma(3) == 2
     assert -3.5449077018110320546 in iv.gamma(-0.5)
+    assert 0.49801566811835601-0.1549498283018107j in iv.gamma(1+1j)
     assert iv.loggamma(1) == 0
     assert iv.loggamma(2) == 0
     assert 0.69314718055994530942 in iv.loggamma(3)

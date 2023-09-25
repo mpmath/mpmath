@@ -5,38 +5,26 @@ of hypergeometric series. Optimized versions for various special
 cases are also provided.
 """
 
-import operator
 import math
+import operator
 
-from .backend import MPZ_ZERO, MPZ_ONE, BACKEND
-
-from .libmpf import (\
-    ComplexResult, round_fast, round_nearest,
-    negative_rnd, bitcount, to_fixed, from_man_exp, from_int, to_int,
-    from_rational,
-    fzero, fone, fnone, ftwo, finf, fninf, fnan,
-    mpf_sign, mpf_add, mpf_abs, mpf_pos,
-    mpf_cmp, mpf_lt, mpf_le, mpf_gt, mpf_min_max,
-    mpf_perturb, mpf_neg, mpf_shift, mpf_sub, mpf_mul, mpf_div,
-    sqrt_fixed, mpf_sqrt, mpf_rdiv_int, mpf_pow_int,
-    to_rational,
-)
-
-from .libelefun import (\
-    mpf_pi, mpf_exp, mpf_log, pi_fixed, mpf_cos_sin, mpf_cos, mpf_sin,
-    mpf_sqrt, agm_fixed,
-)
-
-from .libmpc import (\
-    mpc_one, mpc_sub, mpc_mul_mpf, mpc_mul, mpc_neg, complex_int_pow,
-    mpc_div, mpc_add_mpf, mpc_sub_mpf,
-    mpc_log, mpc_add, mpc_pos, mpc_shift,
-    mpc_is_infnan, mpc_zero, mpc_sqrt, mpc_abs,
-    mpc_mpf_div, mpc_square, mpc_exp
-)
-
+from .backend import BACKEND, MPZ_ONE, MPZ_ZERO
+from .gammazeta import euler_fixed, mpf_euler, mpf_gamma_int
+from .libelefun import (agm_fixed, mpf_cos, mpf_cos_sin, mpf_exp, mpf_log,
+                        mpf_pi, mpf_sin, mpf_sqrt, pi_fixed)
 from .libintmath import ifac
-from .gammazeta import mpf_gamma_int, mpf_euler, euler_fixed
+from .libmpc import (complex_int_pow, mpc_abs, mpc_add, mpc_add_mpf, mpc_div,
+                     mpc_exp, mpc_is_infnan, mpc_log, mpc_mpf_div, mpc_mul,
+                     mpc_mul_mpf, mpc_neg, mpc_one, mpc_pos, mpc_shift,
+                     mpc_sqrt, mpc_square, mpc_sub, mpc_sub_mpf, mpc_zero)
+from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fone, from_int,
+                     from_man_exp, from_rational, ftwo, fzero, mpf_abs,
+                     mpf_add, mpf_cmp, mpf_div, mpf_gt, mpf_le, mpf_lt,
+                     mpf_min_max, mpf_mul, mpf_neg, mpf_perturb, mpf_pos,
+                     mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sqrt,
+                     mpf_sub, negative_rnd, round_fast, round_nearest,
+                     sqrt_fixed, to_fixed, to_int, to_rational)
+
 
 class NoConvergence(Exception):
     pass
@@ -166,9 +154,9 @@ def make_hyp_summator(key):
     add("for n in range(1,10**8):")
 
     add("    if n in magnitude_check:")
-    add("        p_mag = bitcount(abs(PRE))")
+    add("        p_mag = PRE.bit_length()")
     if have_complex:
-        add("        p_mag = max(p_mag, bitcount(abs(PIM)))")
+        add("        p_mag = max(p_mag, PIM.bit_length())")
     add("        magnitude_check[n] = wp-p_mag")
 
     # Real factors
@@ -631,7 +619,7 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
     # Beware of near-poles
     if xmag < -10:
         raise NotImplementedError
-    nmag = bitcount(abs(n))
+    nmag = n.bit_length()
     have_imag = n > 0 and sign
     negx = mpf_neg(x)
     # Skip series if direct convergence
@@ -649,7 +637,7 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
         if not can_use_asymptotic_series:
             xi = abs(to_int(x))
             m = min(max(1, xi-n), 2*wp)
-            siz = -n*nmag + (m+n)*bitcount(abs(m+n)) - m*xmag - (144*m//100)
+            siz = -n*nmag + (m+n)*(m+n).bit_length() - m*xmag - (144*m//100)
             tol = -wp-10
             can_use_asymptotic_series = siz < tol
         if can_use_asymptotic_series:
@@ -917,7 +905,7 @@ def mpf_besseljn(n, x, prec, rounding=round_fast):
     negate = n < 0 and n & 1
     mag = x[2]+x[3]
     n = abs(n)
-    wp = prec + 20 + n*bitcount(n)
+    wp = prec + 20 + n*n.bit_length()
     if mag < 0:
         wp -= n * mag
     x = to_fixed(x, wp)
@@ -941,7 +929,7 @@ def mpc_besseljn(n, z, prec, rounding=round_fast):
     origprec = prec
     zre, zim = z
     mag = max(zre[2]+zre[3], zim[2]+zim[3])
-    prec += 20 + n*bitcount(n) + abs(mag)
+    prec += 20 + n*n.bit_length() + abs(mag)
     if mag < 0:
         prec -= n * mag
     zre = to_fixed(zre, prec)

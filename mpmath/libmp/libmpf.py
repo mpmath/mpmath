@@ -13,10 +13,9 @@ getrandbits = None
 
 from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
                       MPZ_TWO, MPZ_ZERO, STRICT, gmpy, sage, sage_utils)
-from .libintmath import (bctable, bin_to_radix, bitcount, giant_steps, isqrt,
-                         isqrt_fast, lshift, numeral, rshift, sqrt_fixed,
-                         sqrtrem, trailing, trailtable)
-
+from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
+                         lshift, numeral, rshift, sqrt_fixed, sqrtrem,
+                         trailing, trailtable)
 
 
 class ComplexResult(ValueError):
@@ -54,7 +53,7 @@ def repr_dps(n):
 #----------------------------------------------------------------------------#
 
 # Regular number format:
-# (-1)**sign * mantissa * 2**exponent, plus bitcount of mantissa
+# (-1)**sign * mantissa * 2**exponent, plus mantissa.bit_length()
 fzero = (0, MPZ_ZERO, 0, 0)
 fnzero = (1, MPZ_ZERO, 0, 0)
 fone = (0, MPZ_ONE, 0, 1)
@@ -186,7 +185,7 @@ def strict_normalize(sign, man, exp, bc, prec, rnd):
     assert type(man) == MPZ
     assert type(bc) in _exp_types
     assert type(exp) in _exp_types
-    assert bc == bitcount(man)
+    assert bc == man.bit_length()
     assert man >= 0
     return _normalize(sign, man, exp, bc, prec, rnd)
 
@@ -216,7 +215,7 @@ def from_man_exp(man, exp, prec=None, rnd=round_fast):
     if man < 1024:
         bc = bctable[man]
     else:
-        bc = bitcount(man)
+        bc = man.bit_length()
     if not prec:
         if not man:
             return fzero
@@ -362,8 +361,8 @@ def from_Decimal(x, prec=None, rnd=round_fast):
 
 def to_float(s, strict=False, rnd=round_fast):
     """
-    Convert a raw mpf to a Python float. The result is exact if the
-    bitcount of s is <= 53 and no underflow/overflow occurs.
+    Convert a raw mpf to a Python float. The result is exact if
+    s.bit_length() <= 53 and no underflow/overflow occurs.
 
     If the number is too large or too small to represent as a regular
     float, it will be converted to inf or 0.0. Setting strict=True
@@ -623,7 +622,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                         if tsign == ssign: sman += 1
                         else:              sman -= 1
                         return normalize(ssign, sman, sexp-offset,
-                                         bitcount(sman), prec, rnd)
+                                         sman.bit_length(), prec, rnd)
                 # Add
                 if ssign == tsign:
                     man = tman + (sman << offset)
@@ -636,7 +635,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                     else:
                         man = -man
                         ssign = 1
-                bc = bitcount(man)
+                bc = man.bit_length()
                 return normalize(ssign, man, texp, bc, prec or bc, rnd)
             elif offset < 0:
                 # Outside precision range; only need to perturb
@@ -648,7 +647,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                         if ssign == tsign: tman += 1
                         else:              tman -= 1
                         return normalize(tsign, tman, texp-offset,
-                            bitcount(tman), prec, rnd)
+                            tman.bit_length(), prec, rnd)
                 # Add
                 if ssign == tsign:
                     man = sman + (tman << -offset)
@@ -661,7 +660,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
                     else:
                         man = -man
                         ssign = 1
-                bc = bitcount(man)
+                bc = man.bit_length()
                 return normalize(ssign, man, sexp, bc, prec or bc, rnd)
         # Equal exponents; no shifting necessary
         if ssign == tsign:
@@ -674,7 +673,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
             else:
                 man = -man
                 ssign = 1
-        bc = bitcount(man)
+        bc = man.bit_length()
         return normalize(ssign, man, texp, bc, prec or bc, rnd)
     # Handle zeros and special numbers
     if _sub:
@@ -723,7 +722,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
                 # x much larger than existing sum?
                 # first: quick test
                 if (delta > max_extra_prec) and \
-                    ((not man) or delta-bitcount(abs(man)) > max_extra_prec):
+                    ((not man) or delta-man.bit_length() > max_extra_prec):
                     man = xman
                     exp = xexp
                 else:
@@ -753,7 +752,7 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     sign = ssign ^ tsign
     man = sman*tman
     if man:
-        bc = bitcount(man)
+        bc = man.bit_length()
         if prec:
             return normalize(sign, man, sexp+texp, bc, prec, rnd)
         else:
@@ -778,7 +777,7 @@ def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
         sign ^= 1
         n = -n
     man *= n
-    return normalize(sign, man, exp, bitcount(man), prec, rnd)
+    return normalize(sign, man, exp, man.bit_length(), prec, rnd)
 
 def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     """Multiply by a Python integer."""
@@ -795,7 +794,7 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     if n < 1024:
         bc += bctable[n] - 1
     else:
-        bc += bitcount(n) - 1
+        bc += n.bit_length() - 1
     bc += man>>bc
     return normalize(sign, man, exp, bc, prec, rnd)
 
@@ -856,8 +855,8 @@ def mpf_div(s, t, prec, rnd=round_fast):
     if rem:
         quot = (quot<<1) + 1
         extra += 1
-        return normalize(sign, quot, sexp-texp-extra, bitcount(quot), prec, rnd)
-    return normalize(sign, quot, sexp-texp-extra, bitcount(quot), prec, rnd)
+        return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
+    return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
 
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     """Floating-point division n/t with a Python integer as numerator"""
@@ -872,8 +871,8 @@ def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     if rem:
         quot = (quot<<1) + 1
         extra += 1
-        return normalize(sign, quot, -exp-extra, bitcount(quot), prec, rnd)
-    return normalize(sign, quot, -exp-extra, bitcount(quot), prec, rnd)
+        return normalize(sign, quot, -exp-extra, quot.bit_length(), prec, rnd)
+    return normalize(sign, quot, -exp-extra, quot.bit_length(), prec, rnd)
 
 def mpf_mod(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
@@ -898,7 +897,7 @@ def mpf_mod(s, t, prec, rnd=round_fast):
     else:
         man = -man
         sign = 1
-    return normalize(sign, man, base, bitcount(man), prec, rnd)
+    return normalize(sign, man, base, man.bit_length(), prec, rnd)
 
 reciprocal_rnd = {
   round_down : round_up,
@@ -958,7 +957,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
         return (result_sign, MPZ_ONE, exp*n, 1)
     if bc*n < 1000:
         man **= n
-        return normalize(result_sign, man, exp*n, bitcount(man), prec, rnd)
+        return normalize(result_sign, man, exp*n, man.bit_length(), prec, rnd)
 
     # Use directed rounding all the way through to maintain rigorous
     # bounds for interval arithmetic
@@ -968,7 +967,7 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
     # Now we perform binary exponentiation. Need to estimate precision
     # to avoid rounding errors from temporary operations. Roughly log_2(n)
     # operations are performed.
-    workprec = prec + 4*bitcount(n) + 4
+    workprec = prec + 4*n.bit_length() + 4
     _, pm, pe, pbc = fone
     while 1:
         if n & 1:
@@ -1059,7 +1058,7 @@ def to_digits_exp(s, dps):
         # Set b = int(exp * log(2)/log(10))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
-        expprec = bitcount(abs(exp)) + 5
+        expprec = exp.bit_length() + 5
         tmp = from_int(exp)
         tmp = mpf_mul(tmp, mpf_ln2(expprec))
         tmp = mpf_div(tmp, mpf_ln10(expprec), expprec)

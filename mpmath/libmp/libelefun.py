@@ -12,24 +12,17 @@ see libmpc and libmpi.
 import math
 from bisect import bisect
 
-from .backend import MPZ, MPZ_ZERO, MPZ_ONE, MPZ_TWO, MPZ_FIVE, BACKEND
-
-from .libmpf import (
-    round_floor, round_ceiling, round_down, round_up,
-    round_nearest, round_fast,
-    ComplexResult,
-    bitcount, bctable, lshift, rshift, giant_steps, sqrt_fixed,
-    from_int, to_int, from_man_exp, to_fixed, to_float, from_float,
-    from_rational, normalize,
-    fzero, fone, fnone, fhalf, finf, fninf, fnan,
-    mpf_cmp, mpf_sign, mpf_abs,
-    mpf_pos, mpf_neg, mpf_add, mpf_sub, mpf_mul, mpf_div, mpf_shift,
-    mpf_rdiv_int, mpf_pow_int, mpf_sqrt,
-    reciprocal_rnd, negative_rnd, mpf_perturb,
-    isqrt_fast
-)
-
+from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
 from .libintmath import ifib
+from .libmpf import (ComplexResult, bctable, fhalf, finf, fnan, fninf, fnone,
+                     fone, from_float, from_int, from_man_exp, from_rational,
+                     fzero, giant_steps, isqrt_fast, lshift, mpf_abs, mpf_add,
+                     mpf_cmp, mpf_div, mpf_mul, mpf_neg, mpf_perturb, mpf_pos,
+                     mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sqrt,
+                     mpf_sub, negative_rnd, normalize, reciprocal_rnd,
+                     round_ceiling, round_down, round_fast, round_floor,
+                     round_nearest, round_up, rshift, sqrt_fixed, to_fixed,
+                     to_float, to_int)
 
 
 #-------------------------------------------------------------------------------
@@ -71,7 +64,7 @@ atan_taylor_cache = {}
 
 # ~= next power of two + 20
 cache_prec_steps = [22,22]
-for k in range(1, bitcount(LOG_TAYLOR_PREC)+1):
+for k in range(1, LOG_TAYLOR_PREC.bit_length()+1):
     cache_prec_steps += [min(2**k,LOG_TAYLOR_PREC)+20] * 2**(k-1)
 
 
@@ -115,7 +108,7 @@ def def_mpf_constant(fixed):
         v = fixed(wp)
         if rnd in (round_up, round_ceiling):
             v += 1
-        return normalize(0, v, -wp, bitcount(v), prec, rnd)
+        return normalize(0, v, -wp, v.bit_length(), prec, rnd)
     f.__doc__ = fixed.__doc__
     return f
 
@@ -352,9 +345,9 @@ def int_pow_fixed(y, n, prec):
     """
     if n == 2:
         return (y*y), 0
-    bc = bitcount(y)
+    bc = y.bit_length()
     exp = 0
-    workprec = 2 * (prec + 4*bitcount(n) + 4)
+    workprec = 2 * (prec + 4*n.bit_length() + 4)
     _, pm, pe, pbc = fone
     while 1:
         if n & 1:
@@ -524,14 +517,8 @@ def log_int_fixed(n, prec, ln2=None):
         if vprec >= prec:
             return value >> (vprec - prec)
     wp = prec + 10
-    if wp <= LOG_TAYLOR_SHIFT:
-        if ln2 is None:
-            ln2 = ln2_fixed(wp)
-        r = bitcount(n)
-        x = n << (wp-r)
-        v = log_taylor_cached(x, wp) + r*ln2
-    else:
-        v = to_fixed(mpf_log(from_int(n), wp+5), wp)
+    assert wp > LOG_TAYLOR_SHIFT
+    v = to_fixed(mpf_log(from_int(n), wp+5), wp)
     if n < MAX_LOG_INT_CACHE:
         log_int_cache[n] = (v, wp)
     return v >> (wp-prec)
@@ -702,7 +689,7 @@ def mpf_log(x, prec, rnd=round_fast):
             tman = (MPZ_ONE<<bc) - man
         else:
             tman = man - (MPZ_ONE<<(bc-1))
-        tbc = bitcount(tman)
+        tbc = tman.bit_length()
         cancellation = bc - tbc
         if cancellation > wp:
             t = normalize(tsign, tman, abs_mag-bc, tbc, tbc, 'n')
@@ -716,7 +703,7 @@ def mpf_log(x, prec, rnd=round_fast):
     # Another special case:
     # n*log(2) is a good enough approximation
     if abs_mag > 10000:
-        if bitcount(abs_mag) > wp:
+        if abs_mag.bit_length() > wp:
             return from_man_exp(exp*ln2_fixed(wp), -wp, prec, rnd)
     #------------------------------------------------------------------
     # General case.
@@ -805,7 +792,7 @@ def atan_taylor_get_cached(n, prec):
     # To avoid unnecessary precomputation at low precision, we
     # do it in steps
     # Round to next power of 2
-    prec2 = (1<<(bitcount(prec-1))) + 20
+    prec2 = (1<<(prec-1).bit_length()) + 20
     dprec = prec2 - prec
     if (n, prec2) in atan_taylor_cache:
         a, atan_a = atan_taylor_cache[n, prec2]
@@ -991,7 +978,7 @@ def mpf_fibonacci(x, prec, rnd=round_fast):
     size = abs(exp+bc)
     if exp >= 0 and not sign:
         # Exact
-        if size < 10 or size <= bitcount(prec):
+        if size < 10 or size <= prec.bit_length():
             return from_int(ifib(to_int(x)), prec, rnd)
     # Use the modified Binet formula
     wp = prec + size + 20
@@ -1023,7 +1010,7 @@ def exponential_series(x, prec, type=0):
     else:
         sign = 0
     r = int(0.5*prec**0.5)
-    xmag = bitcount(x) - prec
+    xmag = x.bit_length() - prec
     r = max(0, xmag + r)
     extra = 10 + 2*max(r,-xmag)
     wp = prec + extra
@@ -1348,7 +1335,7 @@ def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
         # Subtract nearest half-integer (= mod by pi/2)
         n = ((man >> (-exp-2)) + 1) >> 1
         man = man - (n << (-exp-1))
-        mag2 = bitcount(man) + exp
+        mag2 = man.bit_length() + exp
         wp = prec + 10 - mag2
         offset = exp + wp
         if offset >= 0:
