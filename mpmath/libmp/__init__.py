@@ -25,10 +25,10 @@ from .libhyper import (NoConvergence, make_hyp_summator, mpc_agm, mpc_agm1,
                        mpc_ellipk, mpc_si, mpf_agm, mpf_agm1, mpf_besseljn,
                        mpf_ci, mpf_ci_si, mpf_e1, mpf_ei, mpf_ellipe,
                        mpf_ellipk, mpf_erf, mpf_erfc, mpf_expint, mpf_si)
-from .libintmath import (bin_to_radix, bitcount, eulernum, gcd, ifac, ifib,
-                         isprime, isqrt, isqrt_fast, isqrt_small, list_primes,
-                         moebius, numeral, sqrt_fixed, sqrtrem, stirling1,
-                         stirling2, trailing)
+from .libintmath import (bin_to_radix, bitcount, eulernum, gcd, giant_steps,
+                         ifac, ifib, isprime, isqrt, isqrt_fast, isqrt_small,
+                         list_primes, moebius, numeral, sqrt_fixed, sqrtrem,
+                         stirling1, stirling2, trailing)
 from .libmpc import (complex_int_pow, mpc_abs, mpc_acos, mpc_acosh, mpc_add,
                      mpc_add_mpf, mpc_arg, mpc_asin, mpc_asinh, mpc_atan,
                      mpc_atanh, mpc_cbrt, mpc_ceil, mpc_conjugate, mpc_cos,
