@@ -57,8 +57,8 @@ class FPContext(StandardBaseContext):
         setattr(cls, name, f_wrapped)
 
     @functools.lru_cache
-    def bernoulli(ctx, n):
-        return to_float(mpf_bernoulli(n, 53, 'n'), strict=True)
+    def bernoulli(ctx, n, plus=False):
+        return to_float(mpf_bernoulli(n, 53, 'n', plus=plus), strict=True)
 
     pi = libfp.pi
     e = math.e

@@ -2228,9 +2228,8 @@ The Bernoulli numbers are rational numbers, but this function
 returns a floating-point approximation. To obtain an exact
 fraction, use :func:`~mpmath.bernfrac` instead.
 
-Note that `B_1=+0.5`; this choice of value confers several theoretical
-advantages [1]. The previous behavior can be obtained with
-``(-1)**n*bernoulli(n)``.
+Optional ``plus`` flag (default: False) control the sign choice of
+the `B_1` value (default: `-0.5`).
 
 **Examples**
 
@@ -2242,7 +2241,7 @@ Numerical values of the first few Bernoulli numbers::
     ...     print("%s %s" % (n, bernoulli(n)))
     ...
     0 1.0
-    1 0.5
+    1 -0.5
     2 0.166666666666667
     3 0.0
     4 -0.0333333333333333
@@ -2289,8 +2288,7 @@ function.
 
 **References**
 
-1. P. Luschny, "The Bernoulli Manifesto",
-   https://luschny.de/math/zeta/The-Bernoulli-Manifesto.html
+1. https://en.wikipedia.org/wiki/Bernoulli_number
 
 """
 

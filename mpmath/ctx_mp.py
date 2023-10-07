@@ -219,8 +219,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
         else: b = b._mpc_
         return ctx.make_mpc(libmp.mpc_agm(a, b, prec, rounding))
 
-    def bernoulli(ctx, n):
-        return ctx.make_mpf(libmp.mpf_bernoulli(int(n), *ctx._prec_rounding))
+    def bernoulli(ctx, n, plus=False):
+        return ctx.make_mpf(libmp.mpf_bernoulli(int(n), *ctx._prec_rounding, plus=plus))
 
     def _zeta_int(ctx, n):
         return ctx.make_mpf(libmp.mpf_zeta_int(int(n), *ctx._prec_rounding))
