@@ -36,6 +36,7 @@ develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
 gmpy = ['gmpy2>=2.1.0a4; platform_python_implementation!="PyPy" and python_version<"3.12"',
         'gmpy2>=2.2.0a1; platform_python_implementation!="PyPy" and python_version>="3.12"']
 docs = ['sphinx']
+ci = ['pytest-xdist']
 [tool.setuptools]
 zip-safe = true
 [tool.setuptools.dynamic]

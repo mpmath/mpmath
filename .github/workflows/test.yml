@@ -23,8 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip
-        pip install --upgrade .[develop,gmpy,docs]
-        pip install --upgrade pytest-xdist
+        pip install --upgrade .[develop,gmpy,docs,ci]
     - name: Linting with flake8, etc
       if: matrix.python-version >= 3.9
       run: |
