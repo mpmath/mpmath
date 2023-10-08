@@ -22,7 +22,7 @@ jobs:
         sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
-        pip install --upgrade --force-reinstall setuptools pip
+        pip install --upgrade setuptools pip
         pip install --upgrade .[develop,gmpy,docs]
         pip install --upgrade pytest-xdist
     - name: Linting with flake8, etc
