@@ -1,5 +1,5 @@
 name: test
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         coverage html
         coverage xml
     - name: Upload coverage data
-      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      if: "(matrix.python-version == 3.10 || matrix.python-version == 3.11) && github.repository == 'mpmath/mpmath'"
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
@@ -61,6 +61,10 @@ jobs:
     - name: Make packages
       if: matrix.python-version == 3.11
       run: python -m build
+    - name: Prepare Sage integration
+      if: matrix.python-version == 3.11
+      run: |
+        echo "sage-package create mpmath --version git --tarball dist/$(cd dist && echo *.tar.gz) --type=standard" > update-pkgs.sh
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       if: matrix.python-version == 3.11
@@ -71,9 +75,30 @@ jobs:
           build/sphinx/latex/mpmath.pdf
           coverage.xml
           build/coverage/html/
+          update-pkgs.sh
     - name: Publish package on PyPI
       if: matrix.python-version == 3.11 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+
+  sage:
+    needs: [build]
+    uses: sagemath/sage/.github/workflows/docker.yml@develop
+    with:
+      tox_system_factors: >-
+        ["ubuntu-focal"]
+      tox_packages_factors: >-
+        ["standard"]
+      incremental:              true
+      free_disk_space:          true
+      from_docker_repository:   ghcr.io/sagemath/sage/
+      from_docker_target:       "with-targets"
+      from_docker_tag:          "dev"
+      docker_targets:           "with-targets"
+      targets:                  "mpmath-uninstall build doc-html ptest"
+      sage_repo:                sagemath/sage
+      sage_ref:                 develop
+      upstream_artifact:        artifact
+      docker_push_repository:   ghcr.io/${{ github.repository }}/mpmath-
