@@ -2,7 +2,7 @@ name: test
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -22,9 +22,8 @@ jobs:
         sudo apt install latexmk texlive-xetex
     - name: Install dependencies
       run: |
-        pip install --upgrade --force-reinstall setuptools pip
-        pip install --upgrade .[develop,gmpy,docs]
-        pip install --upgrade pytest-xdist
+        pip install --upgrade setuptools pip
+        pip install --upgrade .[develop,gmpy,docs,ci]
     - name: Linting with flake8, etc
       if: matrix.python-version >= 3.9
       run: |

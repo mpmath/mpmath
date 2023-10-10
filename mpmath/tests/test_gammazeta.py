@@ -681,3 +681,8 @@ def test_zeta_near_1():
     z = zeta(s3)
     assert z.real.ae('0.57721566490153286060651209008240243104215933593992')
     assert z.imag.ae('-1e50')
+
+def test_issue_723():
+    mp.dps = 16
+    assert zeta(-0.01 + 1000j).ae(-8.971459529241107 + 8.732179332810066j)
+    mp.dps = 15
