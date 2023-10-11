@@ -499,6 +499,13 @@ def test_ctx_mp_mpnumeric():
     with pytest.deprecated_call():
         from mpmath.ctx_mp import mpnumeric
 
+def test_rational():
+    with pytest.deprecated_call():
+        from mpmath.rational import mpq
+    with pytest.raises(AttributeError):
+        import mpmath
+        mpmath.rational.xyz
+
 def test_rand_precision():
     """
     Test precision of rand()
