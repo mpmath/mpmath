@@ -2,12 +2,8 @@ import fractions
 import warnings
 
 
-warnings.warn('mpmath.rational module is deprecated', DeprecationWarning)
-
-
 def __getattr__(name):
     if name in ('mpq',):
-        warnings.warn('mpmath.rational.mpq type is deprecated', DeprecationWarning)
         return globals()['_mpq']
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 

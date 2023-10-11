@@ -500,8 +500,7 @@ def test_ctx_mp_mpnumeric():
         from mpmath.ctx_mp import mpnumeric
 
 def test_rational():
-    with pytest.deprecated_call():
-        from mpmath.rational import mpq
+    from mpmath.rational import mpq
     with pytest.raises(AttributeError):
         import mpmath
         mpmath.rational.xyz
