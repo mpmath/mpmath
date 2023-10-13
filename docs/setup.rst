@@ -74,11 +74,6 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
-.. note::
-
-    If you have are upgrading mpmath from an earlier version, you may have to
-    manually uninstall the old version or remove the old files.
-
 Using gmpy (optional)
 ---------------------
 
