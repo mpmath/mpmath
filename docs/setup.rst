@@ -83,8 +83,8 @@ your system, mpmath will automatically detect it and transparently use gmpy
 integers instead. This makes mpmath much faster, especially at high precision
 (approximately above 100 digits).
 
-To verify that mpmath uses gmpy, check the internal variable ``BACKEND`` is not
-equal to 'python'.
+To verify that mpmath uses gmpy, check the internal variable ``BACKEND`` is
+equal to 'gmpy'.
 
 The gmpy mode can be disabled by setting the ``MPMATH_NOGMPY`` environment
 variable. Note that the mode cannot be switched during runtime; mpmath must be
