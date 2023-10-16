@@ -98,7 +98,7 @@ jobs:
       from_docker_tag:          "dev"
       docker_targets:           "with-targets"
       targets:                  "mpmath-uninstall build doc-html ptest"
-      sage_repo:                sagemath/sage
-      sage_ref:                 develop
+      sage_repo:                skirpichev/sage
+      sage_ref:                 mpmath-tests
       upstream_artifact:        artifact
       docker_push_repository:   ghcr.io/${{ github.repository }}/mpmath-
