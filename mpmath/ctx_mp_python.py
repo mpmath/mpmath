@@ -539,12 +539,21 @@ class _mpc(mpnumeric):
     def __new__(cls, real=0, imag=0):
         s = object.__new__(cls)
         if isinstance(real, complex_types):
-            real, imag = real.real, real.imag
+            r_real, r_imag = real.real, real.imag
         elif hasattr(real, '_mpc_'):
-            s._mpc_ = real._mpc_
-            return s
-        real = cls.context.mpf(real)
-        imag = cls.context.mpf(imag)
+            r_real, r_imag = real._mpc_
+        else:
+            r_real, r_imag = real, 0
+        if isinstance(imag, complex_types):
+            i_real, i_imag = imag.real, imag.imag
+        elif hasattr(imag, '_mpc_'):
+            i_real, i_imag = imag._mpc_
+        else:
+            i_real, i_imag = imag, 0
+        r_real, r_imag = map(cls.context.mpf, [r_real, r_imag])
+        i_real, i_imag = map(cls.context.mpf, [i_real, i_imag])
+        real = r_real - i_imag
+        imag = r_imag + i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
         return s
 

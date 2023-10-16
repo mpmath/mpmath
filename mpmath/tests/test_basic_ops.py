@@ -152,6 +152,14 @@ def test_mpf_init():
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
 
+def test_mpc_init():
+    class mympc:
+        @property
+        def _mpc_(self):
+            return (mpf(7)._mpf_, mpf(-1)._mpf_)
+    assert mpc(3+1j, 7-1j) == mpc(real='4.0', imag='8.0')
+    assert mpc(3+1j, mympc()) == mpc(real='4.0', imag='8.0')
+
 def test_mpf_props():
     a = mpf(0.5)
     assert a.man_exp == (1, -1)
