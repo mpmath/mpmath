@@ -74,21 +74,35 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
+.. warning::
+
+   By default, mpmath uses Python integers internally.  Beware that now CPython
+   has a `global limit
+   <https://docs.python.org/3/library/stdtypes.html#integer-string-conversion-length-limitation>`_
+   for converting between :class:`int` and :class:`str`.  This affects
+   conversion to mpmath types from big decimal strings.  For example::
+
+       >>> mpf('1' * 500_000)
+       Traceback (most recent call last):
+       ...
+       ValueError: Exceeds the limit (4300 digits) for integer string conversion...
+
+   You could use ``sys.set_int_max_str_digits(0)`` to disable this limitation.
+
 Using gmpy (optional)
 ---------------------
 
-By default, mpmath uses Python integers internally. If `gmpy
-<https://github.com/aleaxit/gmpy>`_ version 2.1.0a4 or later is installed on
-your system, mpmath will automatically detect it and transparently use gmpy
-integers instead. This makes mpmath much faster, especially at high precision
-(approximately above 100 digits).
+If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.1.0a4 or later is
+installed on your system, mpmath will automatically detect it and transparently
+use gmpy integers instead of Python integers.  This makes mpmath much faster,
+especially at high precision (approximately above 100 digits).
 
 To verify that mpmath uses gmpy, check the internal variable ``BACKEND`` is
 equal to 'gmpy'.
 
-The gmpy mode can be disabled by setting the ``MPMATH_NOGMPY`` environment
-variable. Note that the mode cannot be switched during runtime; mpmath must be
-re-imported for this change to take effect.
+Using the gmpy backend can be disabled by setting the ``MPMATH_NOGMPY``
+environment variable.  Note that the mode cannot be switched during runtime;
+mpmath must be re-imported for this change to take effect.
 
 Running tests
 -------------
