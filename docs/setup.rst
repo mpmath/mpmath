@@ -74,6 +74,12 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
+..
+    >>> import mpmath, pytest
+    >>> if mpmath.libmp.backend.BACKEND != 'python':
+    ...     pytest.skip('skip the rest')
+    >>>
+
 .. warning::
 
    By default, mpmath uses Python integers internally.  Beware that now CPython

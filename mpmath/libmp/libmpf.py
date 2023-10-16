@@ -1193,7 +1193,8 @@ def str_to_man_exp(x, base=10):
         if a == '':
             a = '0'
         x = a + b
-    x = MPZ(int(x, base))
+    x = x.replace(' ', '').replace('+', '')  # workaround aleaxit/gmpy#381
+    x = MPZ(x, base)
     return x, exp
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
