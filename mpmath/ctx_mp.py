@@ -5,7 +5,6 @@ operating with them.
 
 import functools
 import re
-import warnings
 
 from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
@@ -26,7 +25,6 @@ get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
 def __getattr__(name):
     if name == 'mpnumeric':
         from .ctx_mp_python import mpnumeric
-        warnings.warn(f"{name} is deprecated", DeprecationWarning)
         return mpnumeric
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
