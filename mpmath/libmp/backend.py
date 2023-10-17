@@ -47,9 +47,7 @@ if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
         sage_utils = _sage_utils
         BACKEND = 'sage'
         MPZ = sage.Integer
-        class MPQ(sage.Rational):
-            def __init__(self, x, y=1):
-                super().__init__((x, y))
+        MPQ = Fraction
     except:
         pass
 
