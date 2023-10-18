@@ -410,9 +410,9 @@ def to_rational(s):
     if bc == -1:
         raise ValueError("cannot convert %s to a rational number" % man)
     if exp >= 0:
-        return man * (1<<exp), 1
+        return man * (1<<exp), MPZ(1)
     else:
-        return man, 1<<(-exp)
+        return man, MPZ(1)<<(-exp)
 
 def to_fixed(s, prec):
     """Convert a raw mpf to a fixed-point big integer"""

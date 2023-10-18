@@ -13,7 +13,7 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
                     mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
                     prec_to_dps, round_nearest, to_fixed, to_float, to_int,
-                    to_str)
+                    to_rational, to_str)
 
 
 new = object.__new__
@@ -120,6 +120,9 @@ class _mpf(mpnumeric):
     imag = property(lambda self: self.context.zero)
 
     conjugate = lambda self: self
+
+    def as_integer_ratio(self):
+        return to_rational(self._mpf_)
 
     def __reduce__(self): return self.__class__, (self._mpf_,)
 

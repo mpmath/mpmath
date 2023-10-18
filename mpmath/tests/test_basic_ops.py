@@ -5,8 +5,8 @@ import random
 import pytest
 
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
-                    nan, ninf, nint, nint_distance, pi, iv, workprec)
+                    isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
+                    mpi, nan, ninf, nint, nint_distance, pi, workprec)
 from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
                           from_str, mpf_add, mpf_mul, mpf_sub, round_down,
                           round_nearest, round_up, to_int)
@@ -169,6 +169,11 @@ def test_mpf_props():
     assert a.man == 1
     assert a.exp == -1
     assert a.bc == 1
+
+def test_mpf_methods():
+    assert mpf(0.5).as_integer_ratio() == (1, 2)
+    assert mpf('0.3').as_integer_ratio() == (5404319552844595,
+                                             18014398509481984)
 
 def test_mpf_magic():
     assert complex(mpf(0.5)) == complex(0.5)
