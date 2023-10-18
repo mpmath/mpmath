@@ -922,11 +922,11 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
     if (not man) and exp:
         if s == finf:
             if n > 0: return s
-            if n == 0: return fnan
+            if n == 0: return fone
             return fzero
         if s == fninf:
             if n > 0: return [finf, fninf][n & 1]
-            if n == 0: return fnan
+            if n == 0: return fone
             return fzero
         if n == 0:
             return fone

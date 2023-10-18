@@ -2363,3 +2363,10 @@ def test_issue_569():
 def test_issue_274():
     with pytest.raises(ValueError):
         mp.fraction(1, 100).func(1000, 0xdead)
+
+def test_issue_523():
+    assert mp.hermite(0, inf) == 1.0
+
+def test_issue_512():
+    assert mp.hyperu(0, 1, inf) == 1.0
+    assert mp.hyperu(0, 2, inf) == 1.0

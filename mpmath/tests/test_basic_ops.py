@@ -101,6 +101,9 @@ def test_pow():
     assert 6 ** mpc(3) == 216.0
     assert 6.0 ** mpc(3) == 216.0
     assert (6+0j) ** mpc(3) == 216.0
+    assert inf ** mpf(0) == mpf(1)
+    assert ninf ** mpf(0) == mpf(1)
+    assert nan ** mpf(0) == mpf(1)
 
 def test_mixed_misc():
     assert 1 + mpf(3) == mpf(3) + 1 == 4
