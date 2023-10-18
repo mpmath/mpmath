@@ -380,7 +380,7 @@ def bernoulli_size(n):
 
 BERNOULLI_PREC_CUTOFF = bernoulli_size(MAX_BERNOULLI_CACHE)
 
-def mpf_bernoulli(n, prec, rnd=None):
+def mpf_bernoulli(n, prec, rnd=None, plus=False):
     """Computation of Bernoulli numbers (numerically)"""
     if n < 2:
         if n < 0:
@@ -388,7 +388,7 @@ def mpf_bernoulli(n, prec, rnd=None):
         if n == 0:
             return fone
         if n == 1:
-            return mpf_neg(fhalf)
+            return fhalf if plus else mpf_neg(fhalf)
     # For odd n > 1, the Bernoulli numbers are zero
     if n & 1:
         return fzero
@@ -466,12 +466,15 @@ def mpf_bernoulli_huge(n, prec, rnd=None):
         v = mpf_neg(v)
     return mpf_pos(v, prec, rnd or round_fast)
 
-def bernfrac(n):
+def bernfrac(n, plus=False):
     r"""
     Returns a tuple of integers `(p, q)` such that `p/q = B_n` exactly,
     where `B_n` denotes the `n`-th Bernoulli number. The fraction is
     always reduced to lowest terms. Note that for `n > 1` and `n` odd,
     `B_n = 0`, and `(0, 1)` is returned.
+
+    Optional ``plus`` flag (default: False) control the sign choice of
+    the `B_1` value (default: `(-1, 2)`).
 
     **Examples**
 
@@ -540,10 +543,12 @@ def bernfrac(n):
     2. The Bernoulli Number Page:
        http://www.bernoulli.org/
 
+    3. https://en.wikipedia.org/wiki/Bernoulli_number
+
     """
     n = int(n)
     if n < 3:
-        return [(1, 1), (-1, 2), (1, 6)][n]
+        return [(1, 1), (1 if plus else -1, 2), (1, 6)][n]
     if n & 1:
         return (0, 1)
     q = 1

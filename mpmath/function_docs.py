@@ -2228,6 +2228,9 @@ The Bernoulli numbers are rational numbers, but this function
 returns a floating-point approximation. To obtain an exact
 fraction, use :func:`~mpmath.bernfrac` instead.
 
+Optional ``plus`` flag (default: False) control the sign choice of
+the `B_1` value (default: `-0.5`).
+
 **Examples**
 
 Numerical values of the first few Bernoulli numbers::
@@ -2282,6 +2285,11 @@ guaranteed to be fast.
 
 For larger `n`, `B_n` is evaluated in terms of the Riemann zeta
 function.
+
+**References**
+
+1. https://en.wikipedia.org/wiki/Bernoulli_number
+
 """
 
 stieltjes = r"""

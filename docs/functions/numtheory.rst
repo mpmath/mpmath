@@ -18,11 +18,11 @@ Bernoulli numbers and polynomials
 
 :func:`~mpmath.bernoulli`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.bernoulli(n)
+.. autofunction:: mpmath.bernoulli
 
 :func:`~mpmath.bernfrac`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.bernfrac(n)
+.. autofunction:: mpmath.bernfrac
 
 :func:`~mpmath.bernpoly`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

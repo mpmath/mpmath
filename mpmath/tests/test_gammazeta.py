@@ -1,3 +1,5 @@
+import pytest
+
 from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     bernpoly, beta, binomial, catalan, digamma, e, euler,
                     eulerpoly, fac, fac2, factorial, fadd, ff, findroot, fp,
@@ -11,48 +13,49 @@ from mpmath.libmp import from_float, mpf_zeta_int, round_up
 def test_zeta_int_bug():
     assert mpf_zeta_int(0, 10) == from_float(-0.5)
 
-def test_bernoulli():
-    assert bernfrac(0) == (1,1)
-    assert bernfrac(1) == (-1,2)
-    assert bernfrac(2) == (1,6)
-    assert bernfrac(3) == (0,1)
-    assert bernfrac(4) == (-1,30)
-    assert bernfrac(5) == (0,1)
-    assert bernfrac(6) == (1,42)
-    assert bernfrac(8) == (-1,30)
-    assert bernfrac(10) == (5,66)
-    assert bernfrac(12) == (-691,2730)
-    assert bernfrac(18) == (43867,798)
-    p, q = bernfrac(228)
+@pytest.mark.parametrize('plus', [True, False])
+def test_bernoulli(plus):
+    assert bernfrac(0, plus) == (1,1)
+    assert bernfrac(1, plus) == (1,2) if plus else (-1,2)
+    assert bernfrac(2, plus) == (1,6)
+    assert bernfrac(3, plus) == (0,1)
+    assert bernfrac(4, plus) == (-1,30)
+    assert bernfrac(5, plus) == (0,1)
+    assert bernfrac(6, plus) == (1,42)
+    assert bernfrac(8, plus) == (-1,30)
+    assert bernfrac(10, plus) == (5,66)
+    assert bernfrac(12, plus) == (-691,2730)
+    assert bernfrac(18, plus) == (43867,798)
+    p, q = bernfrac(228, plus)
     assert p % 10**10 == 164918161
     assert q == 625170
-    p, q = bernfrac(1000)
+    p, q = bernfrac(1000, plus)
     assert p % 10**10 == 7950421099
     assert q == 342999030
     mp.dps = 15
-    assert bernoulli(0) == 1
-    assert bernoulli(1) == -0.5
-    assert bernoulli(2).ae(1./6)
-    assert bernoulli(3) == 0
-    assert bernoulli(4).ae(-1./30)
-    assert bernoulli(5) == 0
-    assert bernoulli(6).ae(1./42)
-    assert str(bernoulli(10)) == '0.0757575757575758'
-    assert str(bernoulli(234)) == '7.62772793964344e+267'
-    assert str(bernoulli(10**5)) == '-5.82229431461335e+376755'
-    assert str(bernoulli(10**8+2)) == '1.19570355039953e+676752584'
+    assert bernoulli(0, plus) == 1
+    assert bernoulli(1, plus) == 0.5 if plus else -0.5
+    assert bernoulli(2, plus).ae(1./6)
+    assert bernoulli(3, plus) == 0
+    assert bernoulli(4, plus).ae(-1./30)
+    assert bernoulli(5, plus) == 0
+    assert bernoulli(6, plus).ae(1./42)
+    assert str(bernoulli(10, plus)) == '0.0757575757575758'
+    assert str(bernoulli(234, plus)) == '7.62772793964344e+267'
+    assert str(bernoulli(10**5, plus)) == '-5.82229431461335e+376755'
+    assert str(bernoulli(10**8+2, plus)) == '1.19570355039953e+676752584'
 
     mp.dps = 50
-    assert str(bernoulli(10)) == '0.075757575757575757575757575757575757575757575757576'
-    assert str(bernoulli(234)) == '7.6277279396434392486994969020496121553385863373331e+267'
-    assert str(bernoulli(10**5)) == '-5.8222943146133508236497045360612887555320691004308e+376755'
-    assert str(bernoulli(10**8+2)) == '1.1957035503995297272263047884604346914602088317782e+676752584'
+    assert str(bernoulli(10, plus)) == '0.075757575757575757575757575757575757575757575757576'
+    assert str(bernoulli(234, plus)) == '7.6277279396434392486994969020496121553385863373331e+267'
+    assert str(bernoulli(10**5, plus)) == '-5.8222943146133508236497045360612887555320691004308e+376755'
+    assert str(bernoulli(10**8+2, plus)) == '1.1957035503995297272263047884604346914602088317782e+676752584'
 
     mp.dps = 1000
-    assert bernoulli(10).ae(mpf(5)/66)
+    assert bernoulli(10, plus).ae(mpf(5)/66)
 
     mp.dps = 50000
-    assert bernoulli(10).ae(mpf(5)/66)
+    assert bernoulli(10, plus).ae(mpf(5)/66)
 
     mp.dps = 15
 

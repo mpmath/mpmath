@@ -21,6 +21,8 @@ for test in cases.splitlines():
 
 """
 
+import pytest
+
 from mpmath import fp
 
 
@@ -122,12 +124,13 @@ def test_fp_expj():
     assert ae(fp.expjpi(0.75), (-0.7071067811865475244 + 0.7071067811865475244j))
     assert ae(fp.expjpi(2+3j), (0.000080699517570304599239 + 0.0j))
 
-def test_fp_bernoulli():
-    assert ae(fp.bernoulli(0), 1.0)
-    assert ae(fp.bernoulli(1), -0.5)
-    assert ae(fp.bernoulli(2), 0.16666666666666666667)
-    assert ae(fp.bernoulli(10), 0.075757575757575757576)
-    assert ae(fp.bernoulli(11), 0.0)
+@pytest.mark.parametrize('plus', [True, False])
+def test_fp_bernoulli(plus):
+    assert ae(fp.bernoulli(0, plus), 1.0)
+    assert ae(fp.bernoulli(1, plus), 0.5 if plus else -0.5)
+    assert ae(fp.bernoulli(2, plus), 0.16666666666666666667)
+    assert ae(fp.bernoulli(10, plus), 0.075757575757575757576)
+    assert ae(fp.bernoulli(11, plus), 0.0)
 
 def test_fp_gamma():
     assert ae(fp.gamma(1), 1.0)

@@ -1,4 +1,5 @@
 import cmath
+import functools
 import math
 import sys
 
@@ -18,7 +19,6 @@ class FPContext(StandardBaseContext):
 
         # Override SpecialFunctions implementation
         ctx.loggamma = libfp.loggamma
-        ctx._bernoulli_cache = {}
         ctx.pretty = False
 
         ctx._init_aliases()
@@ -56,12 +56,9 @@ class FPContext(StandardBaseContext):
         f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
         setattr(cls, name, f_wrapped)
 
-    def bernoulli(ctx, n):
-        cache = ctx._bernoulli_cache
-        if n in cache:
-            return cache[n]
-        cache[n] = to_float(mpf_bernoulli(n, 53, 'n'), strict=True)
-        return cache[n]
+    @functools.lru_cache
+    def bernoulli(ctx, n, plus=False):
+        return to_float(mpf_bernoulli(n, 53, 'n', plus=plus), strict=True)
 
     pi = libfp.pi
     e = math.e
