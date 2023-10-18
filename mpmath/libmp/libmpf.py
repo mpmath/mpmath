@@ -404,11 +404,13 @@ def from_rational(p, q, prec, rnd=round_fast):
 def to_rational(s):
     """Convert a raw mpf to a rational number. Return integers (p, q)
     such that s = p/q exactly."""
+    if s == fnan:
+        raise ValueError("cannot convert nan to a rational number")
+    if s in (finf, fninf):
+        raise OverflowError("cannot convert infinity to a rational number")
     sign, man, exp, bc = s
     if sign:
         man = -man
-    if bc == -1:
-        raise ValueError("cannot convert %s to a rational number" % man)
     if exp >= 0:
         return man * (1<<exp), MPZ(1)
     else:

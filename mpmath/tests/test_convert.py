@@ -117,6 +117,10 @@ def test_convert_rational():
     assert from_rational(30, 5, 53, round_nearest) == (0, 3, 1, 2)
     assert from_rational(-7, 4, 53, round_nearest) == (1, 7, -2, 3)
     assert to_rational((0, 1, -1, 1)) == (1, 2)
+    assert to_rational((0, 1, 0, 1)) == (1, 1)
+    pytest.raises(ValueError, lambda: to_rational(mpf('nan')._mpf_))
+    pytest.raises(OverflowError, lambda: to_rational(mpf('inf')._mpf_))
+    pytest.raises(OverflowError, lambda: to_rational(mpf('-inf')._mpf_))
 
 def test_custom_class():
     class mympf:
