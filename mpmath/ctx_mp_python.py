@@ -86,6 +86,8 @@ class _mpf(mpnumeric):
             if a == b:
                 return a
             raise ValueError("can only create mpf from zero-width interval")
+        if type(x).__module__ == 'decimal':
+            return from_Decimal(x, prec, rounding)
         raise TypeError("cannot create mpf from " + repr(x))
 
     @classmethod

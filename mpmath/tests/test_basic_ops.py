@@ -154,6 +154,7 @@ def test_mpf_init():
     pytest.raises(TypeError, lambda: mpf(SomethingComplex()))
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
+    assert mpf(decimal.Decimal('1.5')) == mpf('1.5')
 
 def test_mpc_init():
     class mympc:
