@@ -42,30 +42,21 @@ class _mpf(mpnumeric):
             if 'dps' in kwargs:
                 prec = dps_to_prec(kwargs['dps'])
             rounding = kwargs.get('rounding', rounding)
+        v = new(cls)
         if type(val) is cls:
-            sign, man, exp, bc = val._mpf_
-            if (not man) and exp:
-                return val
-            v = new(cls)
-            v._mpf_ = normalize(sign, man, exp, bc, prec, rounding)
-            return v
+            val = val._mpf_
         elif type(val) is tuple:
-            if len(val) == 2:
-                v = new(cls)
+            if len(val) == 4:
+                pass
+            elif len(val) == 2:
                 v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
-            if len(val) == 4:
-                if val not in (finf, fninf, fnan):
-                    sign, man, exp, bc = val
-                    val = normalize(sign, MPZ(man), exp, bc, prec, rounding)
-                v = new(cls)
-                v._mpf_ = val
-                return v
-            raise ValueError
+            else:
+                raise ValueError
         else:
-            v = new(cls)
-            v._mpf_ = mpf_pos(cls.mpf_convert_arg(val, prec, rounding), prec, rounding)
-            return v
+            val = cls.mpf_convert_arg(val, prec, rounding)
+        v._mpf_ = mpf_pos(val, prec, rounding)
+        return v
 
     @classmethod
     def mpf_convert_arg(cls, x, prec, rounding):
