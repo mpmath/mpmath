@@ -143,14 +143,8 @@ Mpmath is preinstalled a regular Python module, and can be imported as usual wit
     ----------------------------------------------------------------------
     sage: import mpmath
     sage: mpmath.mp.dps = 50
-    sage: print mpmath.mpf(2) ** 0.5
+    sage: print(mpmath.mpf(2) ** 0.5)
     1.4142135623730950488016887242096980785696718753769
-
-The mpmath installation under Sage automatically use Sage integers for asymptotically fast arithmetic,
-so there is no need to install GMPY::
-
-    sage: mpmath.libmp.BACKEND
-    'sage'
 
 In Sage, mpmath can alternatively be imported via the interface library
 ``sage.libs.mpmath.all``. For example::

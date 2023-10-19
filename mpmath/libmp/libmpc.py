@@ -4,7 +4,7 @@ Low-level functions for complex arithmetic.
 
 import sys
 
-from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_TWO, MPZ_ZERO
+from .backend import MPZ, MPZ_ONE, MPZ_TWO, MPZ_ZERO
 from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
                         mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
                         mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
@@ -811,12 +811,3 @@ def mpc_expjpi(z, prec, rnd='f'):
     re = mpf_mul(ey, c, prec, rnd)
     im = mpf_mul(ey, s, prec, rnd)
     return re, im
-
-
-if BACKEND == 'sage':
-    try:
-        import sage.libs.mpmath.ext_libmp as _lbmp
-        mpc_exp = _lbmp.mpc_exp
-        mpc_sqrt = _lbmp.mpc_sqrt
-    except (ImportError, AttributeError):
-        print("Warning: Sage imports in libmpc failed")

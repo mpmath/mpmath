@@ -11,7 +11,7 @@ import sys
 from bisect import bisect
 from functools import lru_cache
 
-from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy, sage, sage_utils
+from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy
 
 
 small_trailing = [0] * 256
@@ -56,11 +56,6 @@ def lshift(x, n):
     if n >= 0: return x << n
     else:      return x >> (-n)
 
-if BACKEND == 'sage':
-    import operator
-    rshift = operator.rshift
-    lshift = operator.lshift
-
 def trailing(n):
     """Count the number of trailing zero bits in abs(n)."""
     if not n:
@@ -83,9 +78,6 @@ if BACKEND == 'gmpy':
     bitcount = gmpy.bit_length
     def trailing(n):
         return MPZ(n).bit_scan1() if n else MPZ(0)
-elif BACKEND == 'sage':
-    def trailing(n):
-        return MPZ(n).trailing_zero_bits()
 
 # Used to avoid slow function calls as far as possible
 trailtable = [trailing(n) for n in range(256)]
@@ -269,11 +261,6 @@ sqrt_fixed2 = sqrt_fixed
 if BACKEND == 'gmpy':
     isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
     sqrtrem = gmpy.isqrt_rem
-elif BACKEND == 'sage':
-    isqrt_small = isqrt_fast = isqrt = \
-        getattr(sage_utils, "isqrt", lambda n: MPZ(n).isqrt())
-    sqrtrem = lambda n: MPZ(n).sqrtrem()
-    _gcd2 = sage.gcd
 else:
     if sys.version_info >= (3, 12):
         isqrt_small = isqrt_fast = isqrt = math.isqrt
@@ -343,10 +330,6 @@ if BACKEND == 'gmpy':
     ifac = gmpy.fac
     ifac2 = gmpy.double_fac
     ifib = gmpy.fib
-elif BACKEND == 'sage':
-    ifac = sage.factorial
-    ifac2 = lambda n: MPZ(n).multifactorial(2)
-    ifib = sage.fibonacci
 else:
     ifac = math.factorial
 
@@ -361,12 +344,6 @@ def list_primes(n):
             for j in range(i**2, n, i):
                 sieve[j] = 0
     return [p for p in sieve if p]
-
-if BACKEND == 'sage':
-    # Note: it is *VERY* important for performance that we convert
-    # the list to Python ints.
-    def list_primes(n):
-        return [int(_) for _ in sage.primes(n+1)]
 
 small_odd_primes = (3,5,7,11,13,17,19,23,29,31,37,41,43,47)
 small_odd_primes_set = set(small_odd_primes)
@@ -417,9 +394,6 @@ def isprime(n):
 
 if BACKEND == 'gmpy':
     isprime = gmpy.is_prime
-elif BACKEND == 'sage':
-    def isprime(n):
-        return MPZ(n).is_prime(False)
 
 def moebius(n):
     """

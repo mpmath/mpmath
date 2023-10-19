@@ -17,7 +17,6 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
                     mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
                     mpf_sub, mpf_twinprime, repr_dps, to_str)
-from .libmp.backend import BACKEND
 
 
 get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
@@ -30,13 +29,8 @@ def __getattr__(name):
         return mpnumeric
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-if BACKEND == 'sage':
-    # pickle hack
-    import sage.libs.mpmath.ext_main as _mpf_module
-    from sage.libs.mpmath.ext_main import Context as BaseMPContext
-else:
-    from . import ctx_mp_python as _mpf_module
-    from .ctx_mp_python import PythonMPContext as BaseMPContext
+from . import ctx_mp_python as _mpf_module
+from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 
 class MPContext(BaseMPContext, StandardBaseContext):
@@ -141,13 +135,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx._erfc = ctx._wrap_libmp_function(libmp.mpf_erfc, None)
         ctx._zeta = ctx._wrap_libmp_function(libmp.mpf_zeta, libmp.mpc_zeta)
         ctx._altzeta = ctx._wrap_libmp_function(libmp.mpf_altzeta, libmp.mpc_altzeta)
-
-        # Faster versions
-        ctx.sqrt = getattr(ctx, "_sage_sqrt", ctx.sqrt)
-        ctx.exp = getattr(ctx, "_sage_exp", ctx.exp)
-        ctx.ln = getattr(ctx, "_sage_ln", ctx.ln)
-        ctx.cos = getattr(ctx, "_sage_cos", ctx.cos)
-        ctx.sin = getattr(ctx, "_sage_sin", ctx.sin)
 
     def to_fixed(ctx, x, prec):
         return x.to_fixed(prec)

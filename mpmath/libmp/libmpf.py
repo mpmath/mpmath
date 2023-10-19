@@ -12,7 +12,7 @@ from bisect import bisect
 getrandbits = None
 
 from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_TWO, MPZ_ZERO, STRICT, gmpy, sage, sage_utils)
+                      MPZ_TWO, MPZ_ZERO, STRICT, gmpy)
 from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
                          lshift, numeral, rshift, sqrt_fixed, sqrtrem,
                          trailing, trailtable)
@@ -192,9 +192,6 @@ def strict_normalize(sign, man, exp, bc, prec, rnd):
 if BACKEND == 'gmpy':
     _normalize = gmpy._mpmath_normalize
 
-if BACKEND == 'sage':
-    _normalize = _normalize1 = sage_utils.normalize
-
 if STRICT:
     normalize = strict_normalize
 else:
@@ -239,9 +236,6 @@ int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
 if BACKEND == 'gmpy':
     from_man_exp = gmpy._mpmath_create
-
-if BACKEND == 'sage':
-    from_man_exp = sage_utils.from_man_exp
 
 def from_int(n, prec=0, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
@@ -1289,15 +1283,3 @@ def mpf_hypot(x, y, prec, rnd=round_fast):
     if x == fzero: return mpf_abs(y, prec, rnd)
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
     return mpf_sqrt(hypot2, prec, rnd)
-
-
-if BACKEND == 'sage':
-    try:
-        import sage.libs.mpmath.ext_libmp as ext_lib
-        mpf_add = ext_lib.mpf_add
-        mpf_sub = ext_lib.mpf_sub
-        mpf_mul = ext_lib.mpf_mul
-        mpf_div = ext_lib.mpf_div
-        mpf_sqrt = ext_lib.mpf_sqrt
-    except ImportError:
-        pass
