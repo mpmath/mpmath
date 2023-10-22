@@ -404,15 +404,17 @@ def from_rational(p, q, prec, rnd=round_fast):
 def to_rational(s):
     """Convert a raw mpf to a rational number. Return integers (p, q)
     such that s = p/q exactly."""
+    if s == fnan:
+        raise ValueError("cannot convert nan to a rational number")
+    if s in (finf, fninf):
+        raise OverflowError("cannot convert infinity to a rational number")
     sign, man, exp, bc = s
     if sign:
         man = -man
-    if bc == -1:
-        raise ValueError("cannot convert %s to a rational number" % man)
     if exp >= 0:
-        return man * (1<<exp), 1
+        return man * (1<<exp), MPZ(1)
     else:
-        return man, 1<<(-exp)
+        return man, MPZ(1)<<(-exp)
 
 def to_fixed(s, prec):
     """Convert a raw mpf to a fixed-point big integer"""
@@ -922,11 +924,11 @@ def mpf_pow_int(s, n, prec, rnd=round_fast):
     if (not man) and exp:
         if s == finf:
             if n > 0: return s
-            if n == 0: return fnan
+            if n == 0: return fone
             return fzero
         if s == fninf:
             if n > 0: return [finf, fninf][n & 1]
-            if n == 0: return fnan
+            if n == 0: return fone
             return fzero
         if n == 0:
             return fone
@@ -1193,7 +1195,8 @@ def str_to_man_exp(x, base=10):
         if a == '':
             a = '0'
         x = a + b
-    x = MPZ(int(x, base))
+    x = x.replace(' ', '').replace('+', '')  # workaround aleaxit/gmpy#381
+    x = MPZ(x, base)
     return x, exp
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}

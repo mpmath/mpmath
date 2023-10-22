@@ -13,7 +13,7 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
                     mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
                     prec_to_dps, round_nearest, to_fixed, to_float, to_int,
-                    to_str)
+                    to_rational, to_str)
 
 
 new = object.__new__
@@ -42,30 +42,21 @@ class _mpf(mpnumeric):
             if 'dps' in kwargs:
                 prec = dps_to_prec(kwargs['dps'])
             rounding = kwargs.get('rounding', rounding)
+        v = new(cls)
         if type(val) is cls:
-            sign, man, exp, bc = val._mpf_
-            if (not man) and exp:
-                return val
-            v = new(cls)
-            v._mpf_ = normalize(sign, man, exp, bc, prec, rounding)
-            return v
+            val = val._mpf_
         elif type(val) is tuple:
-            if len(val) == 2:
-                v = new(cls)
+            if len(val) == 4:
+                pass
+            elif len(val) == 2:
                 v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
-            if len(val) == 4:
-                if val not in (finf, fninf, fnan):
-                    sign, man, exp, bc = val
-                    val = normalize(sign, MPZ(man), exp, bc, prec, rounding)
-                v = new(cls)
-                v._mpf_ = val
-                return v
-            raise ValueError
+            else:
+                raise ValueError
         else:
-            v = new(cls)
-            v._mpf_ = mpf_pos(cls.mpf_convert_arg(val, prec, rounding), prec, rounding)
-            return v
+            val = cls.mpf_convert_arg(val, prec, rounding)
+        v._mpf_ = mpf_pos(val, prec, rounding)
+        return v
 
     @classmethod
     def mpf_convert_arg(cls, x, prec, rounding):
@@ -86,6 +77,8 @@ class _mpf(mpnumeric):
             if a == b:
                 return a
             raise ValueError("can only create mpf from zero-width interval")
+        if type(x).__module__ == 'decimal':
+            return from_Decimal(x, prec, rounding)
         raise TypeError("cannot create mpf from " + repr(x))
 
     @classmethod
@@ -120,6 +113,9 @@ class _mpf(mpnumeric):
     imag = property(lambda self: self.context.zero)
 
     conjugate = lambda self: self
+
+    def as_integer_ratio(self):
+        return to_rational(self._mpf_)
 
     def __reduce__(self): return self.__class__, (self._mpf_,)
 
@@ -539,12 +535,21 @@ class _mpc(mpnumeric):
     def __new__(cls, real=0, imag=0):
         s = object.__new__(cls)
         if isinstance(real, complex_types):
-            real, imag = real.real, real.imag
+            r_real, r_imag = real.real, real.imag
         elif hasattr(real, '_mpc_'):
-            s._mpc_ = real._mpc_
-            return s
-        real = cls.context.mpf(real)
-        imag = cls.context.mpf(imag)
+            r_real, r_imag = real._mpc_
+        else:
+            r_real, r_imag = real, 0
+        if isinstance(imag, complex_types):
+            i_real, i_imag = imag.real, imag.imag
+        elif hasattr(imag, '_mpc_'):
+            i_real, i_imag = imag._mpc_
+        else:
+            i_real, i_imag = imag, 0
+        r_real, r_imag = map(cls.context.mpf, [r_real, r_imag])
+        i_real, i_imag = map(cls.context.mpf, [i_real, i_imag])
+        real = r_real - i_imag
+        imag = r_imag + i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
         return s
 

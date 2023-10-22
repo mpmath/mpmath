@@ -5,8 +5,8 @@ import random
 import pytest
 
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, monitor, mp, mpc, mpf, mpi,
-                    nan, ninf, nint, nint_distance, pi, iv, workprec)
+                    isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
+                    mpi, nan, ninf, nint, nint_distance, pi, workprec)
 from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
                           from_str, mpf_add, mpf_mul, mpf_sub, round_down,
                           round_nearest, round_up, to_int)
@@ -101,6 +101,9 @@ def test_pow():
     assert 6 ** mpc(3) == 216.0
     assert 6.0 ** mpc(3) == 216.0
     assert (6+0j) ** mpc(3) == 216.0
+    assert inf ** mpf(0) == mpf(1)
+    assert ninf ** mpf(0) == mpf(1)
+    assert nan ** mpf(0) == mpf(1)
 
 def test_mixed_misc():
     assert 1 + mpf(3) == mpf(3) + 1 == 4
@@ -151,6 +154,15 @@ def test_mpf_init():
     pytest.raises(TypeError, lambda: mpf(SomethingComplex()))
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
+    assert mpf(decimal.Decimal('1.5')) == mpf('1.5')
+
+def test_mpc_init():
+    class mympc:
+        @property
+        def _mpc_(self):
+            return (mpf(7)._mpf_, mpf(-1)._mpf_)
+    assert mpc(3+1j, 7-1j) == mpc(real='4.0', imag='8.0')
+    assert mpc(3+1j, mympc()) == mpc(real='4.0', imag='8.0')
 
 def test_mpf_props():
     a = mpf(0.5)
@@ -158,6 +170,11 @@ def test_mpf_props():
     assert a.man == 1
     assert a.exp == -1
     assert a.bc == 1
+
+def test_mpf_methods():
+    assert mpf(0.5).as_integer_ratio() == (1, 2)
+    assert mpf('0.3').as_integer_ratio() == (5404319552844595,
+                                             18014398509481984)
 
 def test_mpf_magic():
     assert complex(mpf(0.5)) == complex(0.5)
