@@ -9,8 +9,8 @@ Fibonacci numbers
 .................
 
 :func:`~mpmath.fibonacci`/``fib()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fibonacci(n, **kwargs)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.fibonacci
 
 
 Bernoulli numbers and polynomials
@@ -33,7 +33,7 @@ Euler numbers and polynomials
 
 :func:`~mpmath.eulernum`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.eulernum(n)
+.. autofunction:: mpmath.eulernum
 
 :func:`~mpmath.eulerpoly`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -53,12 +53,11 @@ Stirling numbers
 
 :func:`~mpmath.stirling1`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.stirling1(n,k,exact=False)
+.. autofunction:: mpmath.stirling1
 
 :func:`~mpmath.stirling2`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.stirling2(n,k,exact=False)
-
+.. autofunction:: mpmath.stirling2
 
 
 Prime counting functions
@@ -66,7 +65,7 @@ Prime counting functions
 
 :func:`~mpmath.primepi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.primepi(x)
+.. autofunction:: mpmath.primepi
 
 :func:`~mpmath.primepi2`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -90,4 +89,4 @@ Arithmetic functions
 
 :func:`~mpmath.mangoldt`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.mangoldt(n)
+.. autofunction:: mpmath.mangoldt
