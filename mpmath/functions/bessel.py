@@ -151,7 +151,9 @@ def bessely(ctx, n, z, derivative=0, **kwargs):
         ctx.besselj(-n,z,derivative,**kwargs))/sin
 
 @defun_wrapped
-def besselk(ctx, n, z, **kwargs):
+def besselk(ctx, n, z, derivative=0, **kwargs):
+    if derivative:
+        raise NotImplementedError
     if not z:
         return ctx.inf
     M = ctx.mag(z)
