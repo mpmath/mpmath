@@ -6,23 +6,23 @@ Nth roots
 
 :func:`~mpmath.sqrt`
 ^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.sqrt(x, **kwargs)
+.. autofunction:: mpmath.sqrt
 
 :func:`~mpmath.hypot`
 ^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.hypot(x, y)
+.. autofunction:: mpmath.hypot
 
 :func:`~mpmath.cbrt`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.cbrt(x, **kwargs)
+.. autofunction:: mpmath.cbrt
 
 :func:`~mpmath.root`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.root(z, n, k=0)
+.. autofunction:: mpmath.root
 
 :func:`~mpmath.unitroots`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.unitroots(n, primitive=False)
+.. autofunction:: mpmath.unitroots
 
 
 Exponentiation
@@ -30,19 +30,19 @@ Exponentiation
 
 :func:`~mpmath.exp`
 ^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.exp(x, **kwargs)
+.. autofunction:: mpmath.exp
 
 :func:`~mpmath.power`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.power(x, y)
+.. autofunction:: mpmath.power
 
 :func:`~mpmath.expj`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.expj(x, **kwargs)
+.. autofunction:: mpmath.expj
 
 :func:`~mpmath.expjpi`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.expjpi(x, **kwargs)
+.. autofunction:: mpmath.expjpi
 
 :func:`~mpmath.expm1`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -58,15 +58,15 @@ Logarithms
 
 :func:`~mpmath.log`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.log(x, b=None)
+.. autofunction:: mpmath.log
 
 :func:`~mpmath.ln`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.ln(x, **kwargs)
+.. autofunction:: mpmath.ln
 
 :func:`~mpmath.log10`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.log10(x)
+.. autofunction:: mpmath.log10
 
 :func:`~mpmath.log1p`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -78,7 +78,7 @@ Lambert W function
 
 :func:`~mpmath.lambertw`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.lambertw(z, k=0)
+.. autofunction:: mpmath.lambertw
 
 
 Arithmetic-geometric mean
@@ -86,4 +86,4 @@ Arithmetic-geometric mean
 
 :func:`~mpmath.agm`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.agm(a, b=1)
+.. autofunction:: mpmath.agm
