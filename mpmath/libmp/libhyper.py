@@ -8,7 +8,7 @@ cases are also provided.
 import math
 import operator
 
-from .backend import BACKEND, MPZ_ONE, MPZ_ZERO
+from .backend import MPZ_ONE, MPZ_ZERO
 from .gammazeta import euler_fixed, mpf_euler, mpf_gamma_int
 from .libelefun import (agm_fixed, mpf_cos, mpf_cos_sin, mpf_exp, mpf_log,
                         mpf_pi, mpf_sin, mpf_sqrt, pi_fixed)
@@ -291,22 +291,6 @@ def make_hyp_summator(key):
 
     #print source
     return source, namespace[fname]
-
-
-if BACKEND == 'sage':
-
-    def make_hyp_summator(key):
-        """
-        Returns a function that sums a generalized hypergeometric series,
-        for given parameter types (integer, rational, real, complex).
-        """
-        from sage.libs.mpmath.ext_main import hypsum_internal
-        p, q, param_types, ztype = key
-        def _hypsum(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):
-            return hypsum_internal(p, q, param_types, ztype, coeffs, z,
-                prec, wp, epsshift, magnitude_check, kwargs)
-
-        return "(none)", _hypsum
 
 
 #-----------------------------------------------------------------------#

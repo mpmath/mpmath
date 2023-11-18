@@ -1398,19 +1398,3 @@ def exp_fixed(x, prec, ln2=None):
         return v << n
     else:
         return v >> (-n)
-
-
-if BACKEND == 'sage':
-    try:
-        import sage.libs.mpmath.ext_libmp as _lbmp
-        mpf_sqrt = _lbmp.mpf_sqrt
-        mpf_exp = _lbmp.mpf_exp
-        mpf_log = _lbmp.mpf_log
-        mpf_cos = _lbmp.mpf_cos
-        mpf_sin = _lbmp.mpf_sin
-        mpf_pow = _lbmp.mpf_pow
-        exp_fixed = _lbmp.exp_fixed
-        cos_sin_fixed = _lbmp.cos_sin_fixed
-        log_int_fixed = _lbmp.log_int_fixed
-    except (ImportError, AttributeError):
-        print("Warning: Sage imports in libelefun failed")

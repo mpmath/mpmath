@@ -20,8 +20,6 @@ import sys
 
 # So we can import it from this module
 gmpy = None
-sage = None
-sage_utils = None
 BACKEND = 'python'
 MPZ = int
 MPQ = Fraction
@@ -36,19 +34,6 @@ if 'MPMATH_NOGMPY' not in os.environ:
         MPZ = gmpy.mpz
         MPQ = gmpy.mpq
     except ImportError:
-        pass
-
-if ('MPMATH_NOSAGE' not in os.environ and 'SAGE_ROOT' in os.environ or
-        'MPMATH_SAGE' in os.environ):
-    try:
-        import sage.all
-        import sage.libs.mpmath.utils as _sage_utils
-        sage = sage.all
-        sage_utils = _sage_utils
-        BACKEND = 'sage'
-        MPZ = sage.Integer
-        MPQ = lambda x, y=1: sage.Rational((x, y))
-    except:
         pass
 
 if 'MPMATH_STRICT' in os.environ:
