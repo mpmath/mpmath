@@ -713,7 +713,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     *x0*
         starting point, several starting points or interval (depends on solver)
     *tol*
-        the returned solution has an error smaller than this
+        the returned solution has an error smaller than this, with
+        the defailt value ``2**10`` times epsilon of working precision
     *verbose*
         print additional information for each iteration if true
     *verify*
@@ -721,7 +722,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     *solver*
         a generator for *f* and *x0* returning approximative solution and error
     *maxsteps*
-        after how many steps the solver will cancel
+        the solver will cancel at least after that number of iterations
     *df*
         first derivative of *f* (used by some solvers)
     *d2f*
@@ -959,10 +960,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
         # use solver
         iterations = solver(ctx, f, x0, **kwargs)
-        if 'maxsteps' in kwargs:
-            maxsteps = kwargs['maxsteps']
-        else:
-            maxsteps = iterations.maxsteps
+        maxsteps = kwargs.get('maxsteps', iterations.maxsteps)
         i = 0
         for x, error in iterations:
             if verbose:
