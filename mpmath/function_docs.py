@@ -3532,7 +3532,7 @@ We can compare with numerical quadrature to verify that
 :func:`~mpmath.gammainc` computes the integral in the definition::
 
     >>> from mpmath import (mp, gammainc, quad, exp, findroot, mpf, sqrt,
-    ...                     erf, pi, identify, ei)
+    ...                     erf, pi, identify, ei, lower_gamma, upper_gamma)
     >>> mp.dps = 25; mp.pretty = True
     >>> gammainc(2+3j, 4, 10)
     (0.00977212668627705160602312 - 0.0770637306312989892451977j)
@@ -3543,7 +3543,7 @@ Argument symmetries follow directly from the integral definition::
 
     >>> gammainc(3, 4, 5) + gammainc(3, 5, 4)
     0.0
-    >>> gammainc(3,0,2) + gammainc(3,2,4); gammainc(3,0,4)
+    >>> lower_gamma(3,2) + gammainc(3,2,4); lower_gamma(3,4)
     1.523793388892911312363331
     1.523793388892911312363331
     >>> findroot(lambda z: gammainc(2,z,3), 1)
@@ -3551,22 +3551,22 @@ Argument symmetries follow directly from the integral definition::
 
 Evaluation for arbitrarily large arguments::
 
-    >>> gammainc(10, 100)
+    >>> upper_gamma(10, 100)
     4.083660630910611272288592e-26
-    >>> gammainc(10, 10000000000000000)
+    >>> upper_gamma(10, 10000000000000000)
     5.290402449901174752972486e-4342944819032375
-    >>> gammainc(3+4j, 1000000+1000000j)
+    >>> upper_gamma(3+4j, 1000000+1000000j)
     (-1.257913707524362408877881e-434284 + 2.556691003883483531962095e-434284j)
 
 Evaluation of a generalized incomplete gamma function automatically chooses
 the representation that gives a more accurate result, depending on which
 parameter is larger::
 
-    >>> gammainc(10000000, 3) - gammainc(10000000, 2)   # Bad
+    >>> upper_gamma(10000000, 3) - upper_gamma(10000000, 2)   # Bad
     0.0
     >>> gammainc(10000000, 2, 3)   # Good
     1.755146243738946045873491e+4771204
-    >>> gammainc(2, 0, 100000001) - gammainc(2, 0, 100000000)   # Bad
+    >>> lower_gamma(2, 100000001) - lower_gamma(2, 100000000)   # Bad
     0.0
     >>> gammainc(2, 100000000, 100000001)   # Good
     4.078258353474186729184421e-43429441
@@ -3576,10 +3576,10 @@ relations::
 
     >>> mp.dps = 25
     >>> z, a = mpf(3.5), mpf(2)
-    >>> gammainc(z+1, a); z*gammainc(z,a) + a**z*exp(-a)
+    >>> upper_gamma(z+1, a); z*upper_gamma(z,a) + a**z*exp(-a)
     10.60130296933533459267329
     10.60130296933533459267329
-    >>> gammainc(z+1,0,a); z*gammainc(z,0,a) - a**z*exp(-a)
+    >>> lower_gamma(z+1,a); z*lower_gamma(z,a) - a**z*exp(-a)
     1.030425427232114336470932
     1.030425427232114336470932
 
@@ -3587,14 +3587,14 @@ Evaluation at integers and poles::
 
     >>> gammainc(-3, -4, -5)
     (-0.2214577048967798566234192 + 0.0j)
-    >>> gammainc(-3, 0, 5)
+    >>> lower_gamma(-3, 5)
     +inf
 
 If `z` is an integer, the recurrence reduces the incomplete gamma
 function to `P(a) \exp(-a) + Q(b) \exp(-b)` where `P` and
 `Q` are polynomials::
 
-    >>> gammainc(1, 2); exp(-2)
+    >>> upper_gamma(1, 2); exp(-2)
     0.1353352832366126918939995
     0.1353352832366126918939995
     >>> mp.dps = 50
@@ -3606,12 +3606,37 @@ the exponential integral Ei and the error function for special
 arguments::
 
     >>> mp.dps = 25
-    >>> gammainc(0, 4); -ei(-4)
+    >>> upper_gamma(0, 4); -ei(-4)
     0.00377935240984890647887486
     0.00377935240984890647887486
-    >>> gammainc(0.5, 0, 2); sqrt(pi)*erf(sqrt(2))
+    >>> lower_gamma(0.5, 2); sqrt(pi)*erf(sqrt(2))
     1.691806732945198336509541
     1.691806732945198336509541
+
+**Related functions**
+
+See also :func:`~mpmath.lower_gamma` and :func:`~mpmath.upper_gamma`.
+
+"""
+
+lower_gamma = r"""
+``lower_gamma(z, b)`` is the "lower" incomplete gamma function.
+
+.. math ::
+
+  \Gamma(z,0,b) = \int_0^b t^{z-1} e^{-t} \, dt
+
+See also :func:`~mpmath.gammainc`.
+"""
+
+upper_gamma = r"""
+``upper_gamma(z, a)`` is the "upper" incomplete gamma function.
+
+.. math ::
+
+  \Gamma(z,a,\infty) = \int_a^{\infty} t^{z-1} e^{-t} \, dt
+
+See also :func:`~mpmath.gammainc`.
 
 """
 

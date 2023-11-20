@@ -12,6 +12,13 @@ Incomplete gamma functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.gammainc(z, a=0, b=inf, regularized=False)
 
+:func:`~mpmath.lower_gamma`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.lower_gamma
+
+:func:`~mpmath.upper_gamma`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.upper_gamma
 
 Exponential integrals
 .....................

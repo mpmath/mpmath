@@ -475,7 +475,7 @@ def differint(ctx, f, x, n=1, x0=0):
     the following gives a half-derivative (order 0.5)::
 
         >>> from mpmath import (mp, mpf, differint, gamma, inf, exp, pi,
-        ...                     j, gammainc)
+        ...                     j, lower_gamma)
         >>> mp.pretty = True
         >>> x = mpf(3); p = 2; n = 0.5
         >>> differint(lambda t: t**p, x, n)
@@ -507,7 +507,7 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> n = 1+2*j
         >>> differint(lambda x: exp(c*x), x, n)
         (-123295.005390743 + 140955.117867654j)
-        >>> x**(-n) * exp(c)**x * (x*c)**n * gammainc(-n, 0, x*c) / gamma(-n)
+        >>> x**(-n) * exp(c)**x * (x*c)**n * lower_gamma(-n, x*c) / gamma(-n)
         (-123295.005390743 + 140955.117867654j)
 
 
