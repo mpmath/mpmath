@@ -156,6 +156,8 @@ _lanczos_p = (0.99999999999980993, 676.5203681218851, -1259.1392167224028,
 
 def _gamma_complex(x):
     if not x.imag:
+        if x.real == -INF:
+            return math.nan
         return complex(math.gamma(x.real))
     if x.real < 0.5:
         # TODO: sinpi

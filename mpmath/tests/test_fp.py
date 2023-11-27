@@ -140,6 +140,7 @@ def test_fp_gamma():
     assert ae(fp.gamma(-7.1), 0.0016478244570263333622)
     assert ae(fp.gamma(12.3), 83385367.899970000963)
     assert ae(fp.gamma(2+0j), (1.0 + 0.0j))
+    assert fp.isnan(fp.gamma(-fp.inf))
     assert ae(fp.gamma(-2.5+0j), (-0.94530872048294188123 + 0.0j))
     assert ae(fp.gamma(3+4j), (0.0052255384713692141947 - 0.17254707929430018772j))
     assert ae(fp.gamma(-3-4j), (0.00001460997305874775607 - 0.000020760733311509070396j))
@@ -1697,3 +1698,7 @@ def test_issue_510():
 
 def test_issue_491():
     assert fp.appellf1(0, 0.4, 2.5, 2.2, fp.inf, 1.4) == fp.one
+
+def test_issue_521():
+    assert fp.ff(1, -fp.inf) == 0.0
+    assert fp.isnan(fp.ff(1, fp.inf))

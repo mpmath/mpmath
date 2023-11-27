@@ -100,7 +100,7 @@ class FPContext(StandardBaseContext):
             if x.imag:
                 return False
             x = x.real
-        return x <= 0.0 and round(x) == x
+        return math.isfinite(x) and x <= 0.0 and round(x) == x
 
     mpf = float
     mpc = complex
