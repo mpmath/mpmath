@@ -1,7 +1,8 @@
 import pytest
 
-from mpmath import (atan, cos, cosh, e, euler, exp, inf, j, log, mp, pi, quad,
-                    quadgl, quadosc, quadts, sign, sin, sinh, sqrt, tan)
+from mpmath import (airyai, airyaizero, atan, cos, cosh, e, euler, exp, inf, j,
+                    log, mp, pi, quad, quadgl, quadosc, quadts, sign, sin,
+                    sinh, sqrt, tan)
 
 
 def ae(a, b):
@@ -42,6 +43,8 @@ def test_complex_integration():
 
 def test_quadosc():
     assert quadosc(lambda x: sin(x)/x, [0, inf], period=2*pi).ae(pi/2)
+    # issue #652
+    assert ae(quadosc(airyai, [-inf, 0], zeros=lambda n: -airyaizero(-n)), 2/3)
 
 # Double integrals
 def test_double_trivial():
