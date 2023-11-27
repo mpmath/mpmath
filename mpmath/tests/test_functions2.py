@@ -696,6 +696,8 @@ def test_orthpoly():
     assert legendre(j,-j).ae(2.4448182735671431011 + 0.6928881737669934843j)
     assert chebyu(5,1) == 6
     assert chebyt(3,2) == 26
+    assert chebyu(5,inf) == inf  # issue 469
+    assert chebyt(5,inf) == inf
     assert legendre(3.5,-1) == inf
     assert legendre(4.5,-1) == -inf
     assert legendre(3.5+1j,-1) == mpc(inf,inf)
@@ -1354,7 +1356,8 @@ def test_hyper_param_accuracy():
     assert (hyp1f1(-10000, 1000, 100)*10**424).ae(-3.1046080515824859974)
     assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=100000)*10**231).ae(-4.0534790813913998643)
     assert (hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000)*10**231).ae(-4.0534790813913998643)
-    pytest.raises(mp.NoConvergence, lambda: hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000,force_series=True))
+    pytest.raises(mp.NoConvergence, lambda: mp.hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000,force_series=True))
+    pytest.raises(fp.NoConvergence, lambda: fp.hyp2f1(1000,1.5,-3.5,-0.75,maxterms=10000,force_series=True))
     assert legenp(2, 3, 0.25) == 0
     pytest.raises(mp.NoConvergence, lambda: hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3]))
     assert hypercomb(lambda a: [([],[],[],[],[a],[-a],0.5)], [3], infprec=200) == inf

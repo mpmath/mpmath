@@ -85,6 +85,11 @@ class FPContext(StandardBaseContext):
     def isinf(ctx, x):
         return abs(x) == libfp.INF
 
+    def isfinite(ctx, x):
+        if type(x) is complex:
+            return all(map(math.isfinite, [x.real, x.imag]))
+        return math.isfinite(x)
+
     def isnormal(ctx, x):
         if x:
             return x - x == 0.0

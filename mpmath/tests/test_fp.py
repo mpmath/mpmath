@@ -1674,6 +1674,12 @@ def test_fp_stress_ei_e1():
     assert ae(v.real, -9.9960598637998647276e+135, tol=PTOL)
     assert ae(v.imag, 2.6855081527595608863e+136, tol=PTOL)
 
+def test_fp_isfinite():
+    assert fp.isfinite(1.2)
+    assert fp.isfinite(1+2j)
+    assert not fp.isfinite(fp.inf)
+    assert not fp.isfinite(fp.nan)
+
 def test_fp_nan_in_args():
     assert fp.isnan(fp.ei(fp.nan))  # issue 483
     assert fp.isnan(fp.li(fp.nan))  # issue 484

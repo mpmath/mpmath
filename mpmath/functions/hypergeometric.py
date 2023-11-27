@@ -440,8 +440,9 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
 
     # Fast case: standard series converges rapidly,
     # possibly in finitely many terms
-    if absz <= 0.8 or (ctx.isint(a) and a <= 0 and a >= -1000) or \
-                      (ctx.isint(b) and b <= 0 and b >= -1000):
+    if ctx.isfinite(z) and (absz <= 0.8 or
+                            (ctx.isint(a) and -1000 <= a <= 0) or
+                            (ctx.isint(b) and -1000 <= b <= 0)):
         try:
             return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z, **kwargs)
         except ctx.NoConvergence:
