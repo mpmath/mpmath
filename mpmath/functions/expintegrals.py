@@ -166,13 +166,15 @@ def gammainc(ctx, z, a=0, b=None, regularized=False):
         return +ctx._gamma3(z, a, b, regularized)
     # Upper gamma
     elif lower_modified:
-        return ctx._upper_gamma(z, a, regularized)
+        return ctx.upper_gamma(z, a, regularized)
     # Lower gamma
     elif upper_modified:
-        return ctx._lower_gamma(z, b, regularized)
+        return ctx.lower_gamma(z, b, regularized)
 
 @defun
-def _lower_gamma(ctx, z, b, regularized=False):
+def lower_gamma(ctx, z, b, regularized=False):
+    z = ctx.convert(z)
+    b = ctx.convert(b)
     # Pole
     if ctx.isnpint(z):
         return ctx.inf
@@ -184,7 +186,9 @@ def _lower_gamma(ctx, z, b, regularized=False):
     return ctx.hypercomb(h, [z])
 
 @defun
-def _upper_gamma(ctx, z, a, regularized=False):
+def upper_gamma(ctx, z, a, regularized=False):
+    z = ctx.convert(z)
+    a = ctx.convert(a)
     # Fast integer case, when available
     if ctx.isint(z):
         try:
@@ -270,7 +274,7 @@ def expint(ctx, n, z):
         return ctx.exp(-z)/z
     if n == -1:
         return ctx.exp(-z)*(z+1)/z**2
-    return z**(n-1) * ctx.gammainc(1-n, z)
+    return z**(n-1) * ctx.upper_gamma(1-n, z)
 
 @defun_wrapped
 def li(ctx, z, offset=False):

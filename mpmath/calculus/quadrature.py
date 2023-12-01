@@ -986,7 +986,7 @@ class QuadratureMethods:
             return s1 + s2
         if a == ctx.ninf:
             if zeros:
-                return ctx.quadosc(lambda x:f(-x), [-b,-a], lambda n: zeros(-n))
+                return ctx.quadosc(lambda x:f(-x), [-b,-a], zeros=lambda n: zeros(-n))
             else:
                 return ctx.quadosc(lambda x:f(-x), [-b,-a], omega=omega, period=period)
         if b != ctx.inf:

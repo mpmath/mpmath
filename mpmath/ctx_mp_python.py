@@ -129,9 +129,7 @@ class _mpf(mpnumeric):
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
     def __complex__(s): return complex(float(s))
-    def __nonzero__(s): return s._mpf_ != fzero
-
-    __bool__ = __nonzero__
+    def __bool__(s): return s._mpf_ != fzero
 
     def __abs__(s):
         cls, new, (prec, rounding) = s._ctxdata
@@ -595,10 +593,8 @@ class _mpc(mpnumeric):
         v._mpc_ = mpc_conjugate(s._mpc_, prec, rounding)
         return v
 
-    def __nonzero__(s):
+    def __bool__(s):
         return mpc_is_nonzero(s._mpc_)
-
-    __bool__ = __nonzero__
 
     def __hash__(s):
         return mpc_hash(s._mpc_)
