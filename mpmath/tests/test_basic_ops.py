@@ -163,6 +163,7 @@ def test_mpc_init():
             return (mpf(7)._mpf_, mpf(-1)._mpf_)
     assert mpc(3+1j, 7-1j) == mpc(real='4.0', imag='8.0')
     assert mpc(3+1j, mympc()) == mpc(real='4.0', imag='8.0')
+    assert mpc('(1+2j)') == mpc(real='1.0', imag='2.0')
 
 def test_mpf_props():
     a = mpf(0.5)
@@ -553,3 +554,6 @@ def test_rand_precision():
         assert get_remainder(x, 123) == 0
         assert get_remainder(x, 122) != 0  # Note: this is only true for specific random seeds!
     iv.prec = oldprec # REMOVE ME LATER - workaround for the bug that workprec  doesn't work for iv
+
+def test_issue_260():
+    assert mpc(str(mpc(1j))) == mpc(1j)

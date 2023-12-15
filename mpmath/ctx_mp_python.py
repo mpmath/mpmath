@@ -523,7 +523,7 @@ class _constant(_mpf):
 
 class _mpc(mpnumeric):
     """
-    An mpc represents a complex number using a pair of mpf:s (one
+    An mpc represents a complex number using a pair of mpf's (one
     for the real part and another for the imaginary part.) The mpc
     class behaves fairly similarly to Python's complex type.
     """
@@ -532,6 +532,8 @@ class _mpc(mpnumeric):
 
     def __new__(cls, real=0, imag=0):
         s = object.__new__(cls)
+        if isinstance(real, str):
+            real = cls.context.convert(real)
         if isinstance(real, complex_types):
             r_real, r_imag = real.real, real.imag
         elif hasattr(real, '_mpc_'):
