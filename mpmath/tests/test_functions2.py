@@ -9,9 +9,10 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
                     hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
                     kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
-                    legenq, li, log, lower_gamma, meijerg, mp, mpc, mpf, nan,
-                    ncdf, npdf, nthroot, pi, qp, quadts, shi, si, spherharm,
-                    sqrt, struveh, struvel, upper_gamma, whitm, whitw)
+                    legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
+                    mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
+                    spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
+                    whitw, zeta)
 from mpmath.libmp import BACKEND
 
 
@@ -2373,3 +2374,10 @@ def test_issue_523():
 def test_issue_512():
     assert mp.hyperu(0, 1, inf) == 1.0
     assert mp.hyperu(0, 2, inf) == 1.0
+
+def test_issue_251():
+    assert lerchphi(1.0000000, 4.1+1j,
+                    1.0).ae(1.0497861493928464 - 0.053190918836910267j)
+    assert lerchphi(1.00000001, 4.1+1j,
+                    1.0).ae(1.0497861498996701 - 0.053190919646660638j)
+    assert zeta(4.1+1j, 1.0).ae(1.0497861493928464 - 0.053190918836910267j)
