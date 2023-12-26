@@ -248,24 +248,23 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
 
     .. note :: This function requires matplotlib (pylab) 0.98.5.3 or higher.
     """
-    import pylab
-    import mpl_toolkits.mplot3d as mplot3d
+    import matplotlib.pyplot as plt
+    import numpy as np
     if file:
         axes = None
     fig = None
     if not axes:
-        fig = pylab.figure()
-        axes = mplot3d.axes3d.Axes3D(fig)
-    ua, ub = u
-    va, vb = v
+        fig, axes = plt.subplots(subplot_kw={'projection': '3d'})
+    ua, ub = map(float, u)
+    va, vb = map(float, v)
     du = ub - ua
     dv = vb - va
     if not isinstance(points, (list, tuple)):
         points = [points, points]
     M, N = points
-    u = pylab.linspace(ua, ub, M)
-    v = pylab.linspace(va, vb, N)
-    x, y, z = [pylab.zeros((M, N)) for i in range(3)]
+    u = np.linspace(ua, ub, M)
+    v = np.linspace(va, vb, N)
+    x, y, z = [np.zeros((M, N)) for i in range(3)]
     xab, yab, zab = [[0, 0] for i in range(3)]
     for n in range(N):
         for m in range(M):
@@ -300,9 +299,9 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
             axes.set_zlim3d(zab[0] - delta / 2.0, zab[1] + delta / 2.0)
     if fig:
         if file:
-            pylab.savefig(file, dpi=dpi)
+            plt.savefig(file, dpi=dpi)
         else:
-            pylab.show()
+            plt.show()
 
 
 VisualizationMethods.plot = plot
