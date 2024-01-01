@@ -1872,7 +1872,7 @@ alternating series
 
 .. math ::
 
-    \eta(s) = \sum_{k=0}^{\infty} \frac{(-1)^k}{k^s}
+    \eta(s) = \sum_{k=1}^{\infty} \frac{(-1)^{k-1}}{k^s}
         = 1-\frac{1}{2^s}+\frac{1}{3^s}-\frac{1}{4^s}+\ldots
 
 The eta function, unlike the Riemann zeta function, is an entire
