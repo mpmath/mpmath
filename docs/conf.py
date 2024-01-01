@@ -20,10 +20,9 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
 nitpicky = True
 
 # Project information.
-project = 'mpmath'
-copyright = '2007-2023, Fredrik Johansson and mpmath developers'
-version = mpmath.__version__
-release = version
+project = mpmath.__name__
+copyright = '2007-2024, Fredrik Johansson and mpmath developers'
+release = version = mpmath.__version__
 
 # Define how the current time is formatted using time.strftime().
 today_fmt = '%B %d, %Y'
