@@ -1,5 +1,9 @@
 __version__ = '1.4.0a0'
 
+import functools
+import sys
+import types
+
 from .usertools import monitor, timing
 
 from .ctx_fp import FPContext
@@ -434,3 +438,20 @@ trianglew = mp.trianglew
 sawtoothw = mp.sawtoothw
 unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
+
+
+# Hack to guard against setting module properties instead of 'mp', Issue #657
+class _MPMathModule(types.ModuleType):
+
+    def _helper(self, *args, prop=''):
+        raise AttributeError("cannot set '{name}' on 'mpmath'. Did you mean to "
+                             "set '{name}' on 'mpmath.mp'?".format(name=prop))
+
+    dps = property(fset=functools.partial(_helper, prop='dps'))
+    prec = property(fset=functools.partial(_helper, prop='prec'))
+    pretty = property(fset=functools.partial(_helper, prop='pretty'))
+    trap_complex = property(fset=functools.partial(_helper, prop='trap_complex'))
+
+
+sys.modules[__name__].__class__ = _MPMathModule
+del functools, sys, types
