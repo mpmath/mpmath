@@ -32,40 +32,40 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         flake518
     - name: Tests
-      if: matrix.python-version != 3.10 && matrix.python-version != 3.11
+      if: matrix.python-version != 3.11 && matrix.python-version != 3.12
       run: |
         pytest
         MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
-    - name: Remove gmpy on 3.10
-      if: matrix.python-version == 3.10
+    - name: Remove gmpy on 3.11
+      if: matrix.python-version == 3.11
       run: pip uninstall -y gmpy2
     - name: Run coverage tests
       env:
         PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
-      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      if: matrix.python-version == 3.11 || matrix.python-version == 3.12
       run: |
         pytest
         MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
         coverage html
         coverage xml
     - name: Upload coverage data
-      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      if: matrix.python-version == 3.11 || matrix.python-version == 3.12
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
         fail_ci_if_error: true
     - name: Building docs
-      if: matrix.python-version == 3.11
+      if: matrix.python-version == 3.12
       run: |
         sphinx-build --color -W --keep-going -b html docs build/sphinx/html
         sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
-      if: matrix.python-version == 3.11
+      if: matrix.python-version == 3.12
       run: python -m build
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.11
+      if: matrix.python-version == 3.12
       with:
         path: |
           dist/
@@ -74,7 +74,7 @@ jobs:
           coverage.xml
           build/coverage/html/
     - name: Publish package on PyPI
-      if: matrix.python-version == 3.11 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      if: matrix.python-version == 3.12 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
