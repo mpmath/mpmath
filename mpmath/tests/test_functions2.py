@@ -2388,3 +2388,8 @@ def test_issue_251():
     assert lerchphi(1.00000001, 4.1+1j,
                     1.0).ae(1.0497861498996701 - 0.053190919646660638j)
     assert zeta(4.1+1j, 1.0).ae(1.0497861493928464 - 0.053190918836910267j)
+
+def test_issue_505():
+    assert mp.isnan(mp.polylog(mp.inf, 2.2))
+    assert mp.isnan(mp.polylog(mp.ninf, 2.2))
+    assert mp.isnan(mp.polylog(mp.nan, 2.2))
