@@ -51,3 +51,4 @@ End matter
 
    technical
    references
+   genindex

@@ -19,14 +19,10 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
 # Sphinx will warn about all references where the target cannot be found.
 nitpicky = True
 
-# The master toctree document.
-master_doc = 'index'
-
 # Project information.
-project = 'mpmath'
-copyright = '2007-2023, Fredrik Johansson and mpmath developers'
-version = mpmath.__version__
-release = version
+project = mpmath.__name__
+copyright = '2007-2024, Fredrik Johansson and mpmath developers'
+release = version = mpmath.__version__
 
 # Define how the current time is formatted using time.strftime().
 today_fmt = '%B %d, %Y'
@@ -34,16 +30,10 @@ today_fmt = '%B %d, %Y'
 # The "theme" that the HTML output should use.
 html_theme = 'classic'
 
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'mpmathdoc'
-
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
-latex_documents = [(master_doc, 'mpmath.tex', 'mpmath documentation',
+latex_documents = [('index', 'mpmath.tex', 'mpmath documentation',
                     r'Fredrik Johansson \and mpmath contributors', 'manual')]
-
-# Additional stuff for the LaTeX preamble.
-latex_preamble = r'\usepackage{amsfonts}'
 
 # The name of default reST role, that is, for text marked up `like this`.
 default_role = 'math'
