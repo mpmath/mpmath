@@ -5,7 +5,6 @@ to improve accuracy at extremely high zoom levels.
 """
 
 import mpmath
-import cmath
 
 ctx = mpmath.fp
 # ctx = mpmath.mp
