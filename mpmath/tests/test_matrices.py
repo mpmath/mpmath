@@ -251,3 +251,7 @@ def test_interval_matrix_mult_bug():
     assert mp.mpf('1.00000000000001998401444325291756783368705994138804689654') in C[0, 0]
     # the following caused an error before the bug was fixed
     assert iv.matrix(mp.eye(2)) * (iv.ones(2) + mpi(1, 2)) == iv.matrix([[mpi(2, 3), mpi(2, 3)], [mpi(2, 3), mpi(2, 3)]])
+
+def test_issue_156():
+    with pytest.deprecated_call():
+        matrix([[1, 2], [3, 4]], force_type=float)

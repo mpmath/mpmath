@@ -285,7 +285,8 @@ class _matrix:
                 " properly anyway. If you want to force floating-point or"
                 " interval computations, use the respective methods from `fp`"
                 " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
-                " If you want to truncate values to integer, use .apply(int) instead.")
+                " If you want to truncate values to integer, use .apply(int) instead.",
+                DeprecationWarning)
         if isinstance(args[0], (list, tuple)):
             if isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
