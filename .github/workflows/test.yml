@@ -32,24 +32,21 @@ jobs:
         python -We:invalid -m compileall -f mpmath -q
         flake518
     - name: Tests
-      if: matrix.python-version != 3.11 && matrix.python-version != 3.12
+      if: matrix.python-version != 'pypy3.10' && matrix.python-version != 3.12
       run: |
         pytest
         MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
-    - name: Remove gmpy on 3.11
-      if: matrix.python-version == 3.11
-      run: pip uninstall -y gmpy2
     - name: Run coverage tests
       env:
         PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
-      if: matrix.python-version == 3.11 || matrix.python-version == 3.12
+      if: matrix.python-version == 'pypy3.10' || matrix.python-version == 3.12
       run: |
         pytest
         MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
         coverage html
         coverage xml
     - name: Upload coverage data
-      if: matrix.python-version == 3.11 || matrix.python-version == 3.12
+      if: matrix.python-version == 'pypy3.10' || matrix.python-version == 3.12
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
