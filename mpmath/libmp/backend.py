@@ -1,6 +1,7 @@
-from fractions import Fraction
 import os
 import sys
+from fractions import Fraction
+
 
 #----------------------------------------------------------------------------#
 # Support GMPY for high-speed large integer arithmetic.                      #
@@ -35,11 +36,6 @@ if 'MPMATH_NOGMPY' not in os.environ:
         MPQ = gmpy.mpq
     except ImportError:
         pass
-
-if 'MPMATH_STRICT' in os.environ:
-    STRICT = True
-else:
-    STRICT = False
 
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)

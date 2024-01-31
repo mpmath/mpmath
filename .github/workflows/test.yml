@@ -33,16 +33,13 @@ jobs:
         flake518
     - name: Tests
       if: matrix.python-version != 'pypy3.10' && matrix.python-version != 3.12
-      run: |
-        pytest
-        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
+      run: pytest
     - name: Run coverage tests
       env:
         PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
       if: matrix.python-version == 'pypy3.10' || matrix.python-version == 3.12
       run: |
         pytest
-        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
         coverage html
         coverage xml
     - name: Upload coverage data
