@@ -64,6 +64,10 @@ cosh = _mathfun_real(math.cosh, cmath.cosh)
 sinh = _mathfun_real(math.sinh, cmath.sinh)
 tanh = _mathfun_real(math.tanh, cmath.tanh)
 
+acosh = _mathfun(math.acosh, cmath.acosh)
+asinh = _mathfun(math.asinh, cmath.asinh)
+atanh = _mathfun_real(math.atanh, cmath.atanh)
+
 floor = _mathfun_real(math.floor,
     lambda z: complex(math.floor(z.real), math.floor(z.imag)))
 ceil = _mathfun_real(math.ceil,
