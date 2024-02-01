@@ -9,12 +9,12 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     ceil, conj, cos, cos_sin, cosh, cospi, cospi_sinpi, cot,
                     coth, csc, csch, cyclotomic, degree, degrees, e, eps,
                     euler, exp, expj, expjpi, expm1, fabs, fadd, fib,
-                    fibonacci, floor, fmod, frexp, glaisher, hypot, im, inf,
-                    isnan, j, khinchin, ldexp, linspace, ln, ln2, ln10, log,
-                    log1p, log10, mertens, mp, mpc, mpf, nan, nthroot, phi, pi,
-                    power, powm1, radians, rand, re, root, sec, sech, sign,
-                    sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh, twinprime,
-                    unitroots)
+                    fibonacci, floor, fmod, fp, frexp, glaisher, hypot, im,
+                    inf, isnan, j, khinchin, ldexp, linspace, ln, ln2, ln10,
+                    log, log1p, log10, mertens, mp, mpc, mpf, nan, nthroot,
+                    phi, pi, power, powm1, radians, rand, re, root, sec, sech,
+                    sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh,
+                    twinprime, unitroots)
 from mpmath.libmp import (ComplexResult, from_int, mpf_gt, mpf_lt, mpf_mul,
                           mpf_pow_int, mpf_rand, mpf_sqrt, round_ceiling,
                           round_down, round_nearest, round_up)
@@ -949,3 +949,8 @@ def test_mp_nan_in_args():
     assert mp.isnan(mp.laguerre(1, 2.5345, mp.nan))
     assert mp.isnan(mp.laguerre(2, 2, mp.nan))
     assert mp.isnan(mp.laguerre(2, 5, mp.nan))
+
+def test_issue_749():
+    assert mp.asinh(mp.inf) == mp.inf
+    assert mp.asinh(mp.mpc(mp.inf, 0)) == mp.mpc(mp.inf, 0)
+    assert fp.asinh(fp.mpc(fp.inf, 0)) == fp.mpc(fp.inf, 0)
