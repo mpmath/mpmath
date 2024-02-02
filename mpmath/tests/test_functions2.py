@@ -748,6 +748,13 @@ def test_gegenbauer():
     assert gegenbauer(-0.5, -0.5, 3).ae(-2.6383553159023906245)
     assert gegenbauer(2+3j, 1-j, 3+4j).ae(14.880536623203696780 + 20.022029711598032898j)
     #assert gegenbauer(-2, -0.5, 3).ae(-12)
+    assert gegenbauer(0, 0, 2.2) == 0  # issue 494
+    assert gegenbauer(0, 1, 2.2) == 1
+    assert gegenbauer(0, 4, 2.2) == 1
+    assert gegenbauer(0, 0, 1.8) == 0
+    assert gegenbauer(0, 1, 1.8) == 1
+    mp.dps = 200
+    assert gegenbauer(2,-1.0, 27397079.00297188) == 0  # issue 461
 
 def test_legenp():
     assert legenp(2,0,4) == legendre(2,4)

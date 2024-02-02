@@ -5155,12 +5155,14 @@ arbitrary.
 """
 
 gegenbauer = r"""
-Evaluates the Gegenbauer polynomial, or ultraspherical polynomial,
+Evaluates the Gegenbauer function, a generalization of Gegenbauer (or
+ultraspherical) polynomials.
 
 .. math ::
 
-    C_n^{(a)}(z) = {n+2a-1 \choose n} \,_2F_1\left(-n, n+2a;
-        a+\frac{1}{2}; \frac{1}{2}(1-z)\right).
+    C_n^{(a)}(z) = \frac{\Gamma\left(n+2a\right)}
+                    {\Gamma\left(2a\right)\Gamma\left(n+1\right)}
+        \,_2F_1\left(-n, n+2a;a+\frac{1}{2}; \frac{1}{2}(1-z)\right).
 
 When `n` is a nonnegative integer, this formula gives a polynomial
 in `z` of degree `n`, but all parameters are permitted to be
