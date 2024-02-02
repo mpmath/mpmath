@@ -70,9 +70,9 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.ninf = ctx.make_mpf(fninf)
         ctx.nan = ctx.make_mpf(fnan)
 
-        eps = ctx.constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1),
-            "epsilon of working precision", "eps")
-        ctx.eps = eps
+        ctx.eps = ctx.constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1),
+                               "epsilon of working precision", "eps",
+                               lambda: ctx.dps)
 
         # Approximate constants
         ctx.pi = ctx.constant(mpf_pi, "pi", "pi")

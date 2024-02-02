@@ -498,10 +498,11 @@ class _constant(_mpf):
     is converted to a regular mpf at the working precision. A
     regular mpf can also be obtained using the operation +x."""
 
-    def __new__(cls, func, name, docname=''):
+    def __new__(cls, func, name, docname='', _reprdps_getter=lambda: 15):
         a = object.__new__(cls)
         a.name = name
         a.func = func
+        a._reprdps_getter = _reprdps_getter
         a.__doc__ = getattr(function_docs, docname, '')
         return a
 
@@ -518,7 +519,7 @@ class _constant(_mpf):
         return self.func(prec, rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=15)))
+        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=self._reprdps_getter())))
 
 
 class _mpc(mpnumeric):

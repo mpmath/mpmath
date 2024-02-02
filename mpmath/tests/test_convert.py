@@ -61,6 +61,10 @@ def test_from_str():
     assert mpf(from_str('0b1101.100101')) == mpf('13.578125')
     assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
 
+def test_eps_repr():
+    mp.dps = 24
+    assert repr(mp.eps) == '<epsilon of working precision: 2.06795e-25~>'
+
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'
