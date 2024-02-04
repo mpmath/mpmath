@@ -112,6 +112,11 @@ def test_fp_cospi_sinpi():
     assert ae(fp.sinpi(-0.7+2j), (-216.6116802292079471 - 157.37650009392034693j))
     assert ae(fp.cospi(-0.7+2j), (-157.37759774921754565 + 216.61016943630197336j))
 
+def test_fp_asinh_acosh_atanh():
+    assert ae(fp.asinh(0), 0.0)
+    assert ae(fp.acosh(1), 0.0)
+    assert ae(fp.atanh(0), 0.0)
+
 def test_fp_expj():
     assert ae(fp.expj(0), (1.0 + 0.0j))
     assert ae(fp.expj(1), (0.5403023058681397174 + 0.84147098480789650665j))

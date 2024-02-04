@@ -723,8 +723,10 @@ def acos_asin(z, prec, rnd, n):
         im = mpf_neg(im)
     if bsign and n == 1:
         im = mpf_neg(im)
-    re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
-    im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    if re[3] >= 0:
+        re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
+    if im[3] >= 0:
+        im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
     return re, im
 
 def mpc_acos(z, prec, rnd=round_fast):
