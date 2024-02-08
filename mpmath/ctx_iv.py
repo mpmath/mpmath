@@ -4,10 +4,10 @@ from . import libmp
 from .libmp import (MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     from_float, from_int, from_str, fzero, int_types, mpc_hash,
                     mpci_abs, mpci_add, mpci_div, mpci_mul, mpci_neg, mpci_pos,
-                    mpci_pow, mpci_sub, mpf_hash, mpf_le, mpf_neg, mpi_abs,
-                    mpi_add, mpi_delta, mpi_div, mpi_from_str, mpi_mid,
-                    mpi_mul, mpi_neg, mpi_pos, mpi_pow, mpi_str, mpi_sub,
-                    prec_to_dps, repr_dps, round_ceiling, round_floor)
+                    mpci_pow, mpci_sub, mpf_hash, mpf_le, mpf_neg, mpf_pos,
+                    mpi_abs, mpi_add, mpi_delta, mpi_div, mpi_from_str,
+                    mpi_mid, mpi_mul, mpi_neg, mpi_pos, mpi_pow, mpi_str,
+                    mpi_sub, prec_to_dps, repr_dps, round_ceiling, round_floor)
 from .matrices.matrices import _matrix
 
 
@@ -23,7 +23,13 @@ def convert_mpf_(x, prec, rounding):
     if isinstance(x, int_types): return from_int(x, prec, rounding)
     if isinstance(x, float): return from_float(x, prec, rounding)
     if isinstance(x, str): return from_str(x, prec, rounding)
+    if isinstance(x, tuple): return mpf_pos(x, prec, rounding)
     raise NotImplementedError
+
+# pickling support
+def _make_mpf(x):
+    from mpmath import iv
+    return iv.mpf(x)
 
 
 class ivmpf:
@@ -113,6 +119,9 @@ class ivmpf:
         a = libmp.to_str(a, n)
         b = libmp.to_str(b, n)
         return "mpi(%r, %r)" % (a, b)
+
+    def __reduce__(self):
+        return _make_mpf, (self._mpi_,)
 
     def _compare(s, t, cmpfun):
         if not hasattr(t, "_mpi_"):
