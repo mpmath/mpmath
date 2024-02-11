@@ -411,7 +411,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         """
         return PrecisionManager(ctx, None, lambda d: n, normalize_output)
 
-    def autoprec(ctx, f, maxprec=None, catch=(), verbose=False):
+    def autoprec(ctx, f, maxprec=None, catch=(), verbose=False, lr=2, early_termination=False):
         r"""
         Return a wrapped copy of *f* that repeatedly evaluates *f*
         with increasing precision until the result converges to the
@@ -423,6 +423,15 @@ class MPContext(BaseMPContext, StandardBaseContext):
         from *f* depend "discontinuously" on the precision, for instance
         if catastrophic cancellation can occur. Therefore, :func:`~mpmath.autoprec`
         should be used judiciously.
+
+        Use the early_termination parameter when calculating a function with acceptable precision
+        instead of convergent precision. If this parameter is enabled, the first successfully
+        computed value, which is not ctx.nan, will be returned.
+
+        Adjust the lr parameter to regulate the rate of change of the prec2 parameter.
+        In the code implementation, prec2 is updated by scaling it with lr and then
+        ensuring that it does not exceed the maximum allowed precision.
+
 
         **Examples**
 
@@ -476,7 +485,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
             >>> autoprec(f, catch=ZeroDivisionError)(1e-30)
             1.0e+30
 
-
         """
         def f_autoprec_wrapped(*args, **kwargs):
             prec = ctx.prec
@@ -497,6 +505,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
                         v2 = f(*args, **kwargs)
                     except catch:
                         v2 = ctx.nan
+                    if early_termination:
+                        if v1 is not ctx.nan:
+                            return +v1
+                        if v2 is not ctx.nan:
+                            break
                     if v1 == v2:
                         break
                     err = ctx.mag(v2-v1) - ctx.mag(v2)
@@ -510,7 +523,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
                         raise ctx.NoConvergence(\
                         "autoprec: prec increased to %i without convergence"\
                         % prec2)
-                    prec2 += int(prec2*2)
+                    prec2 += int(prec2*lr)
                     prec2 = min(prec2, maxprec2)
             finally:
                 ctx.prec = prec
