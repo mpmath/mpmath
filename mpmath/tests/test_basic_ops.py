@@ -557,3 +557,14 @@ def test_rand_precision():
 
 def test_issue_260():
     assert mpc(str(mpc(1j))) == mpc(1j)
+
+
+def test_issue_751():
+    x = mp.autoprec(mp.matrix, catch=ZeroDivisionError)([[1e210, 300*1e230], [0, 340*1e230]] )
+    assert mp.det(x) == 0
+    with pytest.raises(ZeroDivisionError) as e_info:
+        mp.det(x, handle_exception=False)
+    assert (mp.autoprec(mp.det, catch=ZeroDivisionError)(x, False) ==
+            mp.autoprec(mp.det, catch=ZeroDivisionError, early_termination=True)(x, False))
+    assert (mp.autoprec(mp.det, catch=ZeroDivisionError)(x, False) ==
+            mp.autoprec(mp.det, catch=ZeroDivisionError, lr=0.1, early_termination=True)(x, False))
