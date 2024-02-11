@@ -534,7 +534,7 @@ class LinearAlgebraMethods:
         finally:
             ctx.prec = prec
 
-    def det(ctx, A):
+    def det(ctx, A, handle_exception=True):
         """
         Calculate the determinant of a square matrix.
 
@@ -595,8 +595,11 @@ class LinearAlgebraMethods:
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
-            except ZeroDivisionError:
-                return 0
+            except ZeroDivisionError as e:
+                if handle_exception:
+                    return 0
+                else:
+                    raise e
             z = 1
             for i, e in enumerate(p):
                 if i != e:
