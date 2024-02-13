@@ -43,7 +43,7 @@ jobs:
       if: matrix.default
       run: |
         python -We:invalid -m compileall -f mpmath -q
-        flake518
+        flake518 mpmath
     - name: Tests
       if: ${{ ! matrix.coverage }}
       run: pytest
