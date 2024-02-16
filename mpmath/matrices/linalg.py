@@ -101,6 +101,7 @@ and equation solving with rigorous error bounds::
 # *iterative solving
 
 from copy import copy
+from .matrices import _is_ndarray, _np_conj
 
 
 class LinearAlgebraMethods:
@@ -112,7 +113,8 @@ class LinearAlgebraMethods:
 
         Use overwrite to specify whether A will be overwritten with L and U.
         """
-        if not A.rows == A.cols:
+        rows, cols = A.shape
+        if not rows == cols:
             raise ValueError('need n*n matrix')
         # get from cache if possible
         if use_cache and isinstance(A, ctx.matrix) and A._LU:
@@ -121,7 +123,7 @@ class LinearAlgebraMethods:
             orig = A
             A = A.copy()
         tol = ctx.absmin(ctx.mnorm(A,1) * ctx.eps) # each pivot element has to be bigger
-        n = A.rows
+        n = rows
         p = [None]*(n - 1)
         for j in range(n - 1):
             # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
@@ -157,9 +159,10 @@ class LinearAlgebraMethods:
         """
         Solve the lower part of a LU factorized matrix for y.
         """
-        if L.rows != L.cols:
+        rows, cols = L.shape
+        if rows != cols:
             raise RuntimeError("need n*n matrix")
-        n = L.rows
+        n = rows
         if len(b) != n:
             raise ValueError("Value should be equal to n")
         b = copy(b)
@@ -176,9 +179,10 @@ class LinearAlgebraMethods:
         """
         Solve the upper part of a LU factorized matrix for x.
         """
-        if U.rows != U.cols:
+        rows, cols = U.shape
+        if rows != cols:
             raise RuntimeError("need n*n matrix")
-        n = U.rows
+        n = rows
         if len(y) != n:
             raise ValueError("Value should be equal to n")
         x = copy(y)
@@ -205,15 +209,26 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
-            if A.rows < A.cols:
+            if _is_ndarray(A) and _is_ndarray(b):
+                assert b.size == A.shape[0]
+                b_shape = b.shape
+                A, b = A.copy(), b.ravel().copy()
+            else:
+                A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            rows, cols = A.shape
+            if rows < cols:
                 raise ValueError('cannot solve underdetermined system')
-            if A.rows > A.cols:
+            if rows > cols:
                 # use least-squares method if overdetermined
                 # (this increases errors)
-                AH = A.H
-                A = AH * A
-                b = AH * b
+                if _is_ndarray(A):
+                    AH = _np_conj(ctx, A).T
+                    A = AH.dot(A)
+                    b = AH.dot(b)
+                else:
+                    AH = A.H
+                    A = AH * A
+                    b = AH * b
                 if (kwargs.get('real', False) or
                     not sum(type(i) is ctx.mpc for i in A)):
                     # TODO: necessary to check also b?
@@ -225,6 +240,8 @@ class LinearAlgebraMethods:
                 A, p = ctx.LU_decomp(A)
                 b = ctx.L_solve(A, b, p)
                 x = ctx.U_solve(A, b)
+            if _is_ndarray(x):
+                x = x.reshape(b_shape)
         finally:
             ctx.prec = prec
         return x
@@ -236,7 +253,8 @@ class LinearAlgebraMethods:
         This re-uses the LU decomposition and is thus cheap.
         Usually 3 up to 4 iterations are giving the maximal improvement.
         """
-        if A.rows != A.cols:
+        rows, cols = A.shape
+        if rows != cols:
             raise RuntimeError("need n*n matrix") # TODO: really?
         for _ in range(maxsteps):
             r = ctx.residual(A, x, b)
@@ -259,9 +277,10 @@ class LinearAlgebraMethods:
         If you need efficiency, use the low-level method LU_decomp instead, it's
         much more memory efficient.
         """
+        is_npobj = _is_ndarray(A)
         # get factorization
         A, p = ctx.LU_decomp(A)
-        n = A.rows
+        n = A.shape[0]
         L = ctx.matrix(n)
         U = ctx.matrix(n)
         for i in range(n):
@@ -277,6 +296,10 @@ class LinearAlgebraMethods:
         P = ctx.eye(n)
         for k in range(len(p)):
             ctx.swap_row(P, k, p[k])
+        if is_npobj:
+            P = P.to_numpy()
+            L = L.to_numpy()
+            U = U.to_numpy()
         return P, L, U
 
     def unitvector(ctx, n, i):
@@ -297,8 +320,11 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A
-            A = ctx.matrix(A, **kwargs).copy()
-            n = A.rows
+            if _is_ndarray(A):
+                A = A.copy()
+            else:
+                A = ctx.matrix(A, **kwargs).copy()
+            n = A.shape[0]
             # get LU factorisation
             A, p = ctx.LU_decomp(A)
             cols = []
@@ -315,6 +341,8 @@ class LinearAlgebraMethods:
                     row.append(cols[j][i])
                 inv.append(row)
             result = ctx.matrix(inv, **kwargs)
+            if _is_ndarray(A):
+                result = result.to_numpy()
         finally:
             ctx.prec = prec
         return result
@@ -328,10 +356,9 @@ class LinearAlgebraMethods:
         H and p contain all information about the transformation matrices.
         x is the solution, res the residual.
         """
-        if not isinstance(A, ctx.matrix):
+        if not (isinstance(A, ctx.matrix) or _is_ndarray(A)):
             raise TypeError("A should be a type of ctx.matrix")
-        m = A.rows
-        n = A.cols
+        m, n = A.shape
         if m < n - 1:
             raise RuntimeError("Columns should not be less than rows")
         # calculate Householder matrix
@@ -381,8 +408,11 @@ class LinearAlgebraMethods:
         oldprec = ctx.prec
         try:
             ctx.prec *= 2
-            A, x, b = ctx.matrix(A, **kwargs), ctx.matrix(x, **kwargs), ctx.matrix(b, **kwargs)
-            return A*x - b
+            if _is_ndarray(A) and _is_ndarray(x) and _is_ndarray(b):
+                return A.dot(x) - b
+            else:
+                A, x, b = ctx.matrix(A, **kwargs), ctx.matrix(x, **kwargs), ctx.matrix(b, **kwargs)
+                return A*x - b
         finally:
             ctx.prec = oldprec
 
@@ -402,15 +432,24 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
-            if A.rows < A.cols:
+            if _is_ndarray(A) and _is_ndarray(b):
+                assert b.size == A.shape[0]
+                b_shape = b.shape
+                A, b = A.copy(), b.ravel().copy()
+            else:
+                A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            rows, cols = A.shape
+            if rows < cols:
                 raise ValueError('cannot solve underdetermined system')
             H, p, x, r = ctx.householder(ctx.extend(A, b))
             res = ctx.norm(r)
             # calculate residual "manually" for determined systems
             if res == 0:
                 res = ctx.norm(ctx.residual(A, x, b))
-            return ctx.matrix(x, **kwargs), res
+            x = ctx.matrix(x, **kwargs)
+            if _is_ndarray(A) and _is_ndarray(b):
+                x = x.to_numpy().reshape(b_shape)
+            return x, res
         finally:
             ctx.prec = prec
 
@@ -477,13 +516,14 @@ class LinearAlgebraMethods:
         1. [Wikipedia]_ http://en.wikipedia.org/wiki/Cholesky_decomposition
 
         """
-        if not isinstance(A, ctx.matrix):
+        if not (isinstance(A, ctx.matrix) or _is_ndarray(A)):
             raise RuntimeError("A should be a type of ctx.matrix")
-        if not A.rows == A.cols:
+        rows, cols = A.shape
+        if rows != cols:
             raise ValueError('need n*n matrix')
         if tol is None:
             tol = +ctx.eps
-        n = A.rows
+        n = rows
         L = ctx.matrix(n)
         for j in range(n):
             c = ctx.re(A[j,j])
@@ -499,6 +539,8 @@ class LinearAlgebraMethods:
                 it2 = (L[j,k] for k in range(j))
                 t = ctx.fdot(it1, it2, conjugate=True)
                 L[i,j] = (A[i,j] - t) / L[j,j]
+        if _is_ndarray(A):
+            L = L.to_numpy()
         return L
 
     def cholesky_solve(ctx, A, b, **kwargs):
@@ -517,19 +559,29 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
-            if A.rows !=  A.cols:
+            if _is_ndarray(A) and _is_ndarray(b):
+                assert b.size == A.shape[0]
+                b_shape = b.shape
+                A, b = A.copy(), b.ravel().copy()
+            else:
+                A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            rows, cols = A.shape
+            if rows != cols:
                 raise ValueError('can only solve determined system')
             # Cholesky factorization
             L = ctx.cholesky(A)
             # solve
-            n = L.rows
+            n = rows
             if len(b) != n:
                 raise ValueError("Value should be equal to n")
             for i in range(n):
                 b[i] -= ctx.fsum(L[i,j] * b[j] for j in range(i))
                 b[i] /= L[i,i]
-            x = ctx.U_solve(L.T, b)
+            if _is_ndarray(A) and _is_ndarray(b):
+                x = ctx.U_solve(_np_conj(ctx, L).T, b)
+                x = x.reshape(b_shape)
+            else:
+                x = ctx.U_solve(L.H, b)
             return x
         finally:
             ctx.prec = prec
@@ -591,7 +643,10 @@ class LinearAlgebraMethods:
         prec = ctx.prec
         try:
             # do not overwrite A
-            A = ctx.matrix(A).copy()
+            if _is_ndarray(A):
+                A = A.copy()
+            else:
+                A = ctx.matrix(A).copy()
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
@@ -601,7 +656,7 @@ class LinearAlgebraMethods:
             for i, e in enumerate(p):
                 if i != e:
                     z *= -1
-            for i in range(A.rows):
+            for i in range(A.shape[0]):
                 z *= R[i,i]
             return z
         finally:
@@ -627,11 +682,14 @@ class LinearAlgebraMethods:
 
     def lu_solve_mat(ctx, a, b):
         """Solve a * x = b  where a and b are matrices."""
-        r = ctx.matrix(a.rows, b.cols)
-        for i in range(b.cols):
+        a_rows, b_cols = a.shape[0], b.shape[1]
+        r = ctx.matrix(a_rows, b_cols)
+        for i in range(b_cols):
             c = ctx.lu_solve(a, b.column(i))
             for j in range(len(c)):
                 r[j, i] = c[j]
+        if _is_ndarray(a) and _is_ndarray(b):
+            return r.to_numpy()
         return r
 
     def qr(ctx, A, mode = 'full', edps = 10):
@@ -690,15 +748,17 @@ class LinearAlgebraMethods:
         """
 
         # check values before continuing
-        assert isinstance(A, ctx.matrix)
-        m = A.rows
-        n = A.cols
+        assert isinstance(A, ctx.matrix) or _is_ndarray(A)
+        m, n = A.shape
         assert n >= 0
         assert m >= n
         assert edps >= 0
 
         # check for complex data type
-        cmplx = any(type(x) is ctx.mpc for x in A)
+        if _is_ndarray(A):
+            cmplx = type(A[0,0]) is ctx.mpc
+        else:
+            cmplx = any(type(x) is ctx.mpc for x in A)
 
         # temporarily increase the precision and initialize
         with ctx.extradps(edps):
@@ -810,11 +870,21 @@ class LinearAlgebraMethods:
                 p = n
 
             # add columns to A if needed and initialize
-            A.cols += (p-n)
-            for j in range(p):
-                A[j,j] = one
-                for i in range(j):
-                    A[i,j] = zero
+            if _is_ndarray(A):
+                import numpy as np
+                # Ensure A a square matrix
+                if p < n:
+                    A = A[:,:p]
+                elif p > n:
+                    A = np.pad(A, ((0, 0), (0, p-n)), constant_values=zero)
+                A[np.diag_indices(p)] = one
+                A[np.triu_indices(p, 1)] = zero
+            else:
+                A.cols += (p-n)
+                for j in range(p):
+                    A[j,j] = one
+                    for i in range(j):
+                        A[i,j] = zero
 
             # main loop to form Q
             for j in range(n-1, -1, -1):
