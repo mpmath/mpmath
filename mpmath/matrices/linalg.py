@@ -529,7 +529,7 @@ class LinearAlgebraMethods:
             for i in range(n):
                 b[i] -= ctx.fsum(L[i,j] * b[j] for j in range(i))
                 b[i] /= L[i,i]
-            x = ctx.U_solve(L.T, b)
+            x = ctx.U_solve(L.H, b)
             return x
         finally:
             ctx.prec = prec
