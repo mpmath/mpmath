@@ -313,8 +313,10 @@ class _matrix:
                 self.shape = tuple(args)
         elif isinstance(args[0], _matrix):
             A = args[0]
-            self.shape = A.shape
-            self.__data = A._matrix__data.copy()
+            rows, cols = self.shape = A.shape
+            for i in range(rows):
+                for j in range(cols):
+                    self[i, j] = A[i, j]
         elif hasattr(args[0], 'tolist'): # A is likely a numpy array
             A = args[0]
             if A.ndim == 1: # convert vector to (N, 1) matrix
@@ -726,9 +728,9 @@ class _matrix:
         return self.shape[0]
 
     def __setrows(self, value):
-        for key in self.__data:
-            if key[0] >= value:
-                del self.__data[key]
+        to_del = [key for key in self.__data if key[0] >= value]
+        for key in to_del:
+            del self.__data[key]
         self.shape = (value, self.shape[1])
         self._LU = None
 
@@ -738,9 +740,9 @@ class _matrix:
         return self.shape[1]
 
     def __setcols(self, value):
-        for key in self.__data:
-            if key[1] >= value:
-                del self.__data[key]
+        to_del = [key for key in self.__data if key[1] >= value]
+        for key in to_del:
+            del self.__data[key]
         self.shape = (self.shape[0], value)
         self._LU = None
 
