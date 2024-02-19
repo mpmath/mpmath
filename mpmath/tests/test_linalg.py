@@ -200,6 +200,7 @@ def test_cholesky():
 
     a = fp.matrix([[1, 0.5j], [-0.5j, 0.5]])
     b = fp.ones(2, 1)
+    x = fp.cholesky_solve(a, b)
     assert fp.norm(fp.residual(a, x, b), fp.inf) == 0
 
 def test_det():
