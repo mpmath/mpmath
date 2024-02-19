@@ -551,6 +551,12 @@ class LinearAlgebraMethods:
         >>> print(det(A))
         1.0
 
+        The determinant of a 0 by 0 matrix is 1 as the product of no factors
+        is by convention the multiplicative identity.
+        >>> A = matrix(0, 0)
+        >>> print(det(A))
+        1
+        
         But in general a matrix can have any number as its determinant.
 
         >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
@@ -592,6 +598,10 @@ class LinearAlgebraMethods:
         try:
             # do not overwrite A
             A = ctx.matrix(A).copy()
+
+            if A.rows == 0 or A.cols == 0:
+                return 1
+
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
