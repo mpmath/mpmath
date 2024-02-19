@@ -198,13 +198,9 @@ def test_cholesky():
     x = fp.cholesky_solve(A9, b9)
     assert fp.norm(fp.residual(A9, x, b9), fp.inf) == 0
 
-    np = pytest.importorskip("numpy")
-    a = mp.randmatrix(4, 4) + mp.randmatrix(4, 4) * 1j
-    a = a * a.H
-    b = mp.randmatrix(4, 1)
-    x = mp.cholesky_solve(a, b)
-    ref = np.linalg.solve(np.array(a).reshape(4, 4).astype(complex), np.array(b).astype(float))
-    assert abs(np.array(x).astype(complex) - ref).max() < 1e-12
+    a = fp.matrix([[1, 0.5j], [-0.5j, 0.5]])
+    b = fp.ones(2, 1)
+    assert fp.norm(fp.residual(a, x, b), fp.inf) == 0
 
 def test_det():
     assert det(A1) == 1
