@@ -556,7 +556,7 @@ class LinearAlgebraMethods:
         >>> A = matrix(0, 0)
         >>> print(det(A))
         1
-        
+
         But in general a matrix can have any number as its determinant.
 
         >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
