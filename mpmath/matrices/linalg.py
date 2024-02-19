@@ -146,7 +146,7 @@ class LinearAlgebraMethods:
                 A[i,j] /= A[j,j]
                 for k in range(j + 1, n):
                     A[i,k] -= A[i,j]*A[j,k]
-        if ctx.absmin(A[n - 1,n - 1]) <= tol:
+        if len(p) > 0 and ctx.absmin(A[n - 1,n - 1]) <= tol:
             raise ZeroDivisionError('matrix is numerically singular')
         # cache decomposition
         if not overwrite and isinstance(orig, ctx.matrix):
@@ -598,10 +598,6 @@ class LinearAlgebraMethods:
         try:
             # do not overwrite A
             A = ctx.matrix(A).copy()
-
-            if A.rows == 0 or A.cols == 0:
-                return 1
-
             # use LU factorization to calculate determinant
             try:
                 R, p = ctx.LU_decomp(A)
