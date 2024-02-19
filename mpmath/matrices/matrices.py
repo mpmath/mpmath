@@ -394,9 +394,11 @@ class _matrix:
     def __repr__(self):
         if self.ctx.pretty:
             return self.__str__()
-        s = 'matrix(\n'
-        s += self._toliststr(avoid_type=True) + ')'
-        return s
+
+        if self.__rows == 0 or self.__cols == 0:
+            return f'matrix({self.__rows}, {self.__cols})'
+
+        return f'matrix(\n{self._toliststr(avoid_type=True)})'
 
     def __get_element(self, key):
         '''
