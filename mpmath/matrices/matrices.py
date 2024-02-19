@@ -990,8 +990,8 @@ class MatrixMethods:
             p = ctx.convert(p)
         m, n = A.rows, A.cols
         if p == 1:
-            return max((ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n)), default=1)
+            return max((ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n)), default=0)
         elif p == ctx.inf:
-            return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=1)
+            return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=0)
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
