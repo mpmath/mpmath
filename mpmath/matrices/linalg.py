@@ -146,7 +146,7 @@ class LinearAlgebraMethods:
                 A[i,j] /= A[j,j]
                 for k in range(j + 1, n):
                     A[i,k] -= A[i,j]*A[j,k]
-        if len(p) > 0 and ctx.absmin(A[n - 1,n - 1]) <= tol:
+        if p and ctx.absmin(A[n - 1,n - 1]) <= tol:
             raise ZeroDivisionError('matrix is numerically singular')
         # cache decomposition
         if not overwrite and isinstance(orig, ctx.matrix):

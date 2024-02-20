@@ -280,17 +280,29 @@ class _matrix:
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
+
         if "force_type" in kwargs:
             warnings.warn("The force_type argument was removed, it did not work"
                 " properly anyway. If you want to force floating-point or"
                 " interval computations, use the respective methods from `fp`"
                 " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
                 " If you want to truncate values to integer, use .apply(int) instead.")
-        if isinstance(args[0], (list, tuple)):
-            if isinstance(args[0][0], (list, tuple)):
+
+        if len(args) == 0:
+            # null matrix
+            self.__rows = 0
+            self.__cols = 0
+        elif len(args) in (1, 2) and all(isinstance(arg, int) for arg in args):
+            # empty matrix of given dimensions
+            self.__rows = args[0]
+            self.__cols = args[1] if len(args) == 2 else args[0]
+        elif isinstance(args[0], (list, tuple)):
+            A = args[0]
+            self.__rows = len(A)
+            if len(A) == 0:
+                self.__cols = 0
+            elif isinstance(A[0], (list, tuple)):
                 # interpret nested list as matrix
-                A = args[0]
-                self.__rows = len(A)
                 self.__cols = len(A[0])
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
@@ -298,20 +310,9 @@ class _matrix:
                         self[i, j] = a
             else:
                 # interpret list as row vector
-                v = args[0]
-                self.__rows = len(v)
                 self.__cols = 1
-                for i, e in enumerate(v):
+                for i, e in enumerate(A):
                     self[i, 0] = e
-        elif isinstance(args[0], int):
-            # create empty matrix of given dimensions
-            if len(args) == 1:
-                self.__rows = self.__cols = args[0]
-            else:
-                if not isinstance(args[1], int):
-                    raise TypeError("expected int")
-                self.__rows = args[0]
-                self.__cols = args[1]
         elif isinstance(args[0], _matrix):
             A = args[0]
             self.__rows = A._matrix__rows
@@ -362,28 +363,24 @@ class _matrix:
     def __str__(self):
         return self.__nstr__()
 
-    def _toliststr(self, avoid_type=False):
+    def _tolist_str(self):
         """
         Create a list string from a matrix.
-
-        If avoid_type: avoid multiple 'mpf's.
         """
-        # XXX: should be something like self.ctx._types
         typ = self.ctx.mpf
-        s = '['
+
+        def __elem_str(i, j):
+            e = self[i, j]
+            return str(e) if isinstance(e, typ) else repr(e)
+
+        rows = []
         for i in range(self.__rows):
-            s += '['
-            for j in range(self.__cols):
-                if not avoid_type or not isinstance(self[i,j], typ):
-                    a = repr(self[i,j])
-                else:
-                    a = "'" + str(self[i,j]) + "'"
-                s += a + ', '
-            s = s[:-2]
-            s += '],\n '
-        s = s[:-3]
-        s += ']'
-        return s
+            row_str = ', '.join(__elem_str(i, j) for j in range(self.__cols))
+            rows.append(f'       [{row_str}]')
+
+        rows[0] = 'matrix(' + rows[0][8:]
+        matrix_str = ',\n'.join(rows)
+        return f'[{matrix_str}]'
 
     def tolist(self):
         """
@@ -392,13 +389,7 @@ class _matrix:
         return [[self[i,j] for j in range(self.__cols)] for i in range(self.__rows)]
 
     def __repr__(self):
-        if self.ctx.pretty:
-            return self.__str__()
-
-        if self.__rows == 0 or self.__cols == 0:
-            return f'matrix({self.__rows}, {self.__cols})'
-
-        return f'matrix(\n{self._toliststr(avoid_type=True)})'
+        return str(self) if self.ctx.pretty else self._tolist_str()
 
     def __get_element(self, key):
         '''
