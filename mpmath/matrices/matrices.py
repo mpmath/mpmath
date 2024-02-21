@@ -363,24 +363,21 @@ class _matrix:
     def __str__(self):
         return self.__nstr__()
 
-    def _tolist_str(self):
+    def _toliststr(self):
         """
         Create a list string from a matrix.
         """
         typ = self.ctx.mpf
-
-        def __elem_str(i, j):
-            e = self[i, j]
-            return str(e) if isinstance(e, typ) else repr(e)
-
         rows = []
         for i in range(self.__rows):
-            row_str = ', '.join(__elem_str(i, j) for j in range(self.__cols))
-            rows.append(f'       [{row_str}]')
+            row_str = ', '.join(map(
+                lambda e: str(e) if isinstance(e, typ) else repr(e),
+                (self[i, j] for j in range(self.__cols))
+            ))
+            rows.append('[' + row_str + ']')
 
-        rows[0] = 'matrix(' + rows[0][8:]
-        matrix_str = ',\n'.join(rows)
-        return f'[{matrix_str}]'
+        res = ',\n        '.join(rows)
+        return f'matrix([{res}])'
 
     def tolist(self):
         """
@@ -389,7 +386,7 @@ class _matrix:
         return [[self[i,j] for j in range(self.__cols)] for i in range(self.__rows)]
 
     def __repr__(self):
-        return str(self) if self.ctx.pretty else self._tolist_str()
+        return str(self) if self.ctx.pretty else self._toliststr()
 
     def __get_element(self, key):
         '''
