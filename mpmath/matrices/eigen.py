@@ -206,13 +206,13 @@ def hessenberg(ctx, A, overwrite_a = False):
       >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
       >>> Q, H = mp.hessenberg(A)
       >>> mp.nprint(H, 3)
-      [  3.15  2.23  4.44]
-      [-0.769  4.85  3.05]
-      [   0.0  3.61   7.0]
+      [[  3.15  2.23  4.44]
+       [-0.769  4.85  3.05]
+       [   0.0  3.61   7.0]]
       >>> print(mp.chop(A - Q * H * Q.transpose_conj()))
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
+      [[0.0  0.0  0.0]
+       [0.0  0.0  0.0]
+       [0.0  0.0  0.0]]
 
     return value:   (Q, H)
     """
@@ -511,13 +511,13 @@ def schur(ctx, A, overwrite_a = False):
       >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
       >>> Q, R = mp.schur(A)
       >>> mp.nprint(R, 3)
-      [2.0  0.417  -2.53]
-      [0.0    4.0  -4.74]
-      [0.0    0.0    9.0]
+      [[2.0  0.417  -2.53]
+       [0.0    4.0  -4.74]
+       [0.0    0.0    9.0]]
       >>> print(mp.chop(A - Q * R * Q.transpose_conj()))
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
+      [[0.0  0.0  0.0]
+       [0.0  0.0  0.0]
+       [0.0  0.0  0.0]]
 
     warning: The Schur decomposition is not unique.
     """
@@ -701,20 +701,20 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
       >>> A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
       >>> E, ER = mp.eig(A)
       >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
-      [0.0]
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]
+       [0.0]]
 
       >>> E, EL, ER = mp.eig(A,left = True, right = True)
       >>> E, EL, ER = mp.eig_sort(E, EL, ER)
       >>> mp.nprint(E)
       [2.0, 4.0, 9.0]
       >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
-      [0.0]
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]
+       [0.0]]
       >>> print(mp.chop( EL[0,:] * A - EL[0,:] * E[0]))
-      [0.0  0.0  0.0]
+      [[0.0  0.0  0.0]]
 
     warning:
      - If there are multiple eigenvalues, the eigenvectors do not necessarily
@@ -814,11 +814,11 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
       >>> mp.nprint(E)
       [9.0, 4.0, 2.0]
       >>> print(mp.chop(A * ER[:,0] - E[0] * ER[:,0]))
-      [0.0]
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]
+       [0.0]]
       >>> print(mp.chop( EL[0,:] * A - EL[0,:] * E[0]))
-      [0.0  0.0  0.0]
+      [[0.0  0.0  0.0]]
     """
 
     if isinstance(f, str):

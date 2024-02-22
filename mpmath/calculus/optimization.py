@@ -800,11 +800,11 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         >>> f = [lambda x1, x2: x1**2 + x2,
         ...      lambda x1, x2: 5*x1**2 - 3*x1 + 2*x2 - 3]
         >>> findroot(f, (0, 0))
-        [-0.618033988749895]
-        [-0.381966011250105]
+        [[-0.618033988749895]
+         [-0.381966011250105]]
         >>> findroot(f, (10, 10))
-        [ 1.61803398874989]
-        [-2.61803398874989]
+        [[ 1.61803398874989]
+         [-2.61803398874989]]
 
     You can verify this by solving the system manually.
 
@@ -814,8 +814,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         ...     return x1**2 + x2, 5*x1**2 - 3*x1 + 2*x2 - 3
         ...
         >>> findroot(f, (0, 0))
-        [-0.618033988749895]
-        [-0.381966011250105]
+        [[-0.618033988749895]
+         [-0.381966011250105]]
 
 
     **Multiple roots**

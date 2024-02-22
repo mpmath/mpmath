@@ -542,14 +542,14 @@ def eigsy(ctx, A, eigvals_only = False, overwrite_a = False):
       >>> A = mp.matrix([[3, 2], [2, 0]])
       >>> E = mp.eigsy(A, eigvals_only = True)
       >>> print(E)
-      [-1.0]
-      [ 4.0]
+      [[-1.0]
+       [ 4.0]]
 
       >>> A = mp.matrix([[1, 2], [2, 3]])
       >>> E, Q = mp.eigsy(A)
       >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]]
 
     see also: eighe, eigh, eig
     """
@@ -616,14 +616,14 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
       >>> A = mp.matrix([[1, -3 - 1j], [-3 + 1j, -2]])
       >>> E = mp.eighe(A, eigvals_only = True)
       >>> print(E)
-      [-4.0]
-      [ 3.0]
+      [[-4.0]
+       [ 3.0]]
 
       >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
       >>> E, Q = mp.eighe(A)
       >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]]
 
     see also: eigsy, eigh, eig
     """
@@ -694,20 +694,20 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
       >>> A = mp.matrix([[3, 2], [2, 0]])
       >>> E = mp.eigh(A, eigvals_only = True)
       >>> print(E)
-      [-1.0]
-      [ 4.0]
+      [[-1.0]
+       [ 4.0]]
 
       >>> A = mp.matrix([[1, 2], [2, 3]])
       >>> E, Q = mp.eigh(A)
       >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]]
 
       >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
       >>> E, Q = mp.eigh(A)
       >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]]
 
     see also: eigsy, eighe, eig
     """
@@ -1570,15 +1570,15 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
        >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
        >>> S = mp.svd_r(A, compute_uv = False)
        >>> print(S)
-       [6.0]
-       [3.0]
-       [1.0]
+       [[6.0]
+        [3.0]
+        [1.0]]
 
        >>> U, S, V = mp.svd_r(A)
        >>> print(mp.chop(A - U * mp.diag(S) * V))
-       [0.0  0.0  0.0]
-       [0.0  0.0  0.0]
-       [0.0  0.0  0.0]
+       [[0.0  0.0  0.0]
+        [0.0  0.0  0.0]
+        [0.0  0.0  0.0]]
 
 
     see also: svd, svd_c
@@ -1675,15 +1675,15 @@ def svd_c(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
       >>> A = mp.matrix([[-2j, -1-3j, -2+2j], [2-2j, -1-3j, 1], [-3+1j,-2j,0]])
       >>> S = mp.svd_c(A, compute_uv = False)
       >>> print(mp.chop(S - mp.matrix([mp.sqrt(34), mp.sqrt(15), mp.sqrt(6)])))
-      [0.0]
-      [0.0]
-      [0.0]
+      [[0.0]
+       [0.0]
+       [0.0]]
 
       >>> U, S, V = mp.svd_c(A)
       >>> print(mp.chop(A - U * mp.diag(S) * V))
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
-      [0.0  0.0  0.0]
+      [[0.0  0.0  0.0]
+       [0.0  0.0  0.0]
+       [0.0  0.0  0.0]]
 
     see also: svd, svd_r
     """
@@ -1782,15 +1782,15 @@ def svd(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False):
        >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
        >>> S = mp.svd(A, compute_uv = False)
        >>> print(S)
-       [6.0]
-       [3.0]
-       [1.0]
+       [[6.0]
+        [3.0]
+        [1.0]]
 
        >>> U, S, V = mp.svd(A)
        >>> print(mp.chop(A - U * mp.diag(S) * V))
-       [0.0  0.0  0.0]
-       [0.0  0.0  0.0]
-       [0.0  0.0  0.0]
+       [[0.0  0.0  0.0]
+        [0.0  0.0  0.0]
+        [0.0  0.0  0.0]]
 
     see also: svd_r, svd_c
     """
