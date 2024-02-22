@@ -280,29 +280,20 @@ class _matrix:
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
-
         if "force_type" in kwargs:
             warnings.warn("The force_type argument was removed, it did not work"
                 " properly anyway. If you want to force floating-point or"
                 " interval computations, use the respective methods from `fp`"
                 " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
                 " If you want to truncate values to integer, use .apply(int) instead.")
-
-        if len(args) == 0:
-            # null matrix
-            self.__rows = 0
-            self.__cols = 0
-        elif len(args) in (1, 2) and all(isinstance(arg, int) for arg in args):
-            # empty matrix of given dimensions
-            self.__rows = args[0]
-            self.__cols = args[1] if len(args) == 2 else args[0]
-        elif isinstance(args[0], (list, tuple)):
-            A = args[0]
-            self.__rows = len(A)
-            if len(A) == 0:
+        if isinstance(args[0], (list, tuple)):
+            if not args[0]:
+                self.__rows = 0
                 self.__cols = 0
-            elif isinstance(A[0], (list, tuple)):
+            elif isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
+                A = args[0]
+                self.__rows = len(A)
                 self.__cols = len(A[0])
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
@@ -310,9 +301,20 @@ class _matrix:
                         self[i, j] = a
             else:
                 # interpret list as row vector
+                v = args[0]
+                self.__rows = len(v)
                 self.__cols = 1
-                for i, e in enumerate(A):
+                for i, e in enumerate(v):
                     self[i, 0] = e
+        elif isinstance(args[0], int):
+            # create empty matrix of given dimensions
+            if len(args) == 1:
+                self.__rows = self.__cols = args[0]
+            else:
+                if not isinstance(args[1], int):
+                    raise TypeError("expected int")
+                self.__rows = args[0]
+                self.__cols = args[1]
         elif isinstance(args[0], _matrix):
             A = args[0]
             self.__rows = A._matrix__rows
@@ -351,7 +353,7 @@ class _matrix:
                 else:
                     string = str(self[i,j])
                 res[-1].append(string)
-                maxlen[j] = max(len(string), maxlen[j])
+                maxlen[j] = max(len(string), maxlen[j]) + 1
         # Patch strings together
         for i, row in enumerate(res):
             for j, elem in enumerate(row):
@@ -367,6 +369,7 @@ class _matrix:
         """
         Create a list string from a matrix.
         """
+        # XXX: should be something like self.ctx._types
         typ = self.ctx.mpf
         s = '['
         for i in range(self.__rows):
