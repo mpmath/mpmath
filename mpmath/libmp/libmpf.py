@@ -1085,7 +1085,7 @@ def to_digits_exp(s, dps, base=10):
     return sign, digits, exponent
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
-    show_zero_exponent=False, base=10):
+           show_zero_exponent=False, base=10, binary_exp=False):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1099,11 +1099,21 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     max_fixed = +inf. To force floating-point format, set
     min_fixed >= max_fixed.
 
-    The literal is formatted so that it can be parsed back to a number
-    by from_str, float() or Decimal().
-    """
+    If binary_exp is True and the base is either 2 or 16, the number will
+    be printed in a binary or hexadecimal notation, where the exponent
+    separator is the 'p' and the exponent is written in decimal rather than
+    hexadecimal or binary.  The number is normalized, i.e. the first
+    digit is 1.  This is format of the float.fromhex().
 
+    The literal is formatted so that it can be parsed back to a number
+    by from_str, float(), float.fromhex() or Decimal().
+    """
     sep = '@' if base > 10 else 'e'
+
+    if binary_exp:
+        sep = 'p'
+        if base not in (2, 16):
+            raise ValueError("binary_exp option could be used for base 2 and 16")
 
     if base == 2:
         prefix = "0b"
@@ -1121,7 +1131,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             else:   t = '.0'
             if show_zero_exponent:
                 t += sep + '+0'
-            return t
+            return prefix + t
         if s == finf: return '+inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
@@ -1143,6 +1153,15 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         digits = ".0"
 
     else:
+        if binary_exp and base == 16:
+            exponent *= 4
+            # normalization
+            if int(digits[0], 16) > 1:
+                shift = math.floor(math.log2(int(digits[0], 16)))
+                exponent += shift
+                n = int(digits, 16) >> shift
+                digits = hex(n)[2:]
+
         # Rounding up kills some instances of "...99999"
         if len(digits) > dps and digits[dps] in rnd_digs:
             digits = digits[:dps]
@@ -1160,7 +1179,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             digits = digits[:dps]
 
         # Prettify numbers close to unit magnitude
-        if min_fixed < exponent < max_fixed:
+        if not binary_exp and min_fixed < exponent < max_fixed:
             if exponent < 0:
                 digits = ("0"*(-exponent)) + digits
                 split = 1
@@ -1183,7 +1202,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     sign += prefix
 
     if exponent == 0 and dps and not show_zero_exponent: return sign + digits
-    return sign + digits + sep + "{:+}".format(exponent)
+    return sign + digits + sep + f"{exponent:+}"
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""
