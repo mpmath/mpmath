@@ -2,7 +2,7 @@ import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
-rowsep = '\n'
+rowsep = '\n '
 colsep = '  '
 
 class _matrix:
@@ -353,14 +353,14 @@ class _matrix:
                 else:
                     string = str(self[i,j])
                 res[-1].append(string)
-                maxlen[j] = max(len(string), maxlen[j]) + 1
+                maxlen[j] = max(len(string), maxlen[j])
         # Patch strings together
         for i, row in enumerate(res):
             for j, elem in enumerate(row):
                 # Pad each element up to maxlen so the columns line up
                 row[j] = elem.rjust(maxlen[j])
             res[i] = "[" + colsep.join(row) + "]"
-        return rowsep.join(res)
+        return "[" + rowsep.join(res) + "]"
 
     def __str__(self):
         return self.__nstr__()
