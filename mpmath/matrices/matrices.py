@@ -383,7 +383,7 @@ class _matrix:
         if s[-1] != '[':
             s = s[:-3]
         s += ']'
-        return s    
+        return s
 
     def tolist(self):
         """
