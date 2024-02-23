@@ -1,6 +1,5 @@
 [build-system]
-requires = ['pip>=20.3', 'setuptools>=61', 'wheel',
-            'setuptools_scm[toml]>=6.0']
+requires = ['setuptools>=61', 'setuptools_scm[toml]>=6.0']
 build-backend = 'setuptools.build_meta'
 [project]
 name = 'mpmath'
