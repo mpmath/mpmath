@@ -1,5 +1,6 @@
 [build-system]
-requires = ['pip>=20.3', 'setuptools>=61', 'wheel']
+requires = ['pip>=20.3', 'setuptools>=61', 'wheel',
+            'setuptools_scm[toml]>=6.0']
 build-backend = 'setuptools.build_meta'
 [project]
 name = 'mpmath'
@@ -40,7 +41,7 @@ ci = ['pytest-xdist']
 [tool.setuptools]
 zip-safe = true
 [tool.setuptools.dynamic]
-version = {attr = 'mpmath.__version__'}
+version = {attr = 'setuptools_scm.get_version'}
 [tool.setuptools.packages]
 find = {namespaces = false}
 [tool.flake8]
