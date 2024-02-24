@@ -146,7 +146,7 @@ class LinearAlgebraMethods:
                 A[i,j] /= A[j,j]
                 for k in range(j + 1, n):
                     A[i,k] -= A[i,j]*A[j,k]
-        if ctx.absmin(A[n - 1,n - 1]) <= tol:
+        if p and ctx.absmin(A[n - 1,n - 1]) <= tol:
             raise ZeroDivisionError('matrix is numerically singular')
         # cache decomposition
         if not overwrite and isinstance(orig, ctx.matrix):
@@ -542,6 +542,12 @@ class LinearAlgebraMethods:
         >>> A = eye(3)
         >>> print(det(A))
         1.0
+
+        The determinant of a 0 by 0 matrix is 1 as the product of no factors
+        is by convention the multiplicative identity.
+        >>> A = matrix(0, 0)
+        >>> print(det(A))
+        1
 
         But in general a matrix can have any number as its determinant.
 

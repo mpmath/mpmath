@@ -288,7 +288,10 @@ class _matrix:
                 " If you want to truncate values to integer, use .apply(int) instead.",
                 DeprecationWarning)
         if isinstance(args[0], (list, tuple)):
-            if isinstance(args[0][0], (list, tuple)):
+            if not args[0]:
+                self.__rows = 0
+                self.__cols = 0
+            elif isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
                 A = args[0]
                 self.__rows = len(A)
@@ -358,12 +361,12 @@ class _matrix:
                 # Pad each element up to maxlen so the columns line up
                 row[j] = elem.rjust(maxlen[j])
             res[i] = "[" + colsep.join(row) + "]"
-        return rowsep.join(res)
+        return rowsep.join(res) if self.rows or self.cols else ''
 
     def __str__(self):
         return self.__nstr__()
 
-    def _toliststr(self, avoid_type=False):
+    def _toliststr(self):
         """
         Create a list string from a matrix.
 
@@ -375,14 +378,16 @@ class _matrix:
         for i in range(self.__rows):
             s += '['
             for j in range(self.__cols):
-                if not avoid_type or not isinstance(self[i,j], typ):
+                if not isinstance(self[i,j], typ):
                     a = repr(self[i,j])
                 else:
                     a = "'" + str(self[i,j]) + "'"
                 s += a + ', '
-            s = s[:-2]
+            if s[-1] != '[':
+                s = s[:-2]
             s += '],\n '
-        s = s[:-3]
+        if s[-1] != '[':
+            s = s[:-3]
         s += ']'
         return s
 
@@ -396,7 +401,7 @@ class _matrix:
         if self.ctx.pretty:
             return self.__str__()
         s = 'matrix(\n'
-        s += self._toliststr(avoid_type=True) + ')'
+        s += self._toliststr() + ')'
         return s
 
     def __get_element(self, key):
@@ -989,8 +994,8 @@ class MatrixMethods:
             p = ctx.convert(p)
         m, n = A.rows, A.cols
         if p == 1:
-            return max(ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n))
+            return max((ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n)), default=0)
         elif p == ctx.inf:
-            return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
+            return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=0)
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
