@@ -2,9 +2,6 @@ import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
-rowsep = '\n'
-colsep = '  '
-
 class _matrix:
     """
     Numerical matrix.
@@ -356,6 +353,8 @@ class _matrix:
                 res[-1].append(string)
                 maxlen[j] = max(len(string), maxlen[j])
         # Patch strings together
+        rowsep = '\n'
+        colsep = '  '
         for i, row in enumerate(res):
             for j, elem in enumerate(row):
                 # Pad each element up to maxlen so the columns line up
