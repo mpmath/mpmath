@@ -633,7 +633,7 @@ class _matrix:
             y = self.ctx.inverse(y)
         return y
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         # assume other is scalar and do element-wise divison
         assert not isinstance(other, self.ctx.matrix)
         new = self.ctx.matrix(self.__rows, self.__cols)
@@ -641,8 +641,6 @@ class _matrix:
             for j in range(self.__cols):
                 new[i,j] = self[i,j] / other
         return new
-
-    __truediv__ = __div__
 
     def __add__(self, other):
         if isinstance(other, self.ctx.matrix):
