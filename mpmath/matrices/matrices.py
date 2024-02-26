@@ -694,27 +694,29 @@ class _matrix:
         else:
             return self.rows # do it like numpy
 
-    def __getrows(self):
+    @property
+    def rows(self):
+        """Number of rows."""
         return self._rows
 
-    def __setrows(self, value):
+    @rows.setter
+    def rows(self, value):
         for key in self._data.copy():
             if key[0] >= value:
                 del self._data[key]
         self._rows = value
 
-    rows = property(__getrows, __setrows, doc='number of rows')
-
-    def __getcols(self):
+    @property
+    def cols(self):
+        """Number of columns."""
         return self._cols
 
-    def __setcols(self, value):
+    @cols.setter
+    def cols(self, value):
         for key in self._data.copy():
             if key[1] >= value:
                 del self._data[key]
         self._cols = value
-
-    cols = property(__getcols, __setcols, doc='number of columns')
 
     def transpose(self):
         new = self.ctx.matrix(self._cols, self._rows)
