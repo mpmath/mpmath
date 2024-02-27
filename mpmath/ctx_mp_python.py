@@ -37,11 +37,13 @@ class _mpf(mpnumeric):
         or a decimal string representing a number in floating-point
         format."""
         prec, rounding = cls.context._prec_rounding
+        base = 0
         if kwargs:
             prec = kwargs.get('prec', prec)
             if 'dps' in kwargs:
                 prec = dps_to_prec(kwargs['dps'])
             rounding = kwargs.get('rounding', rounding)
+            base = kwargs.get('base', base)
         v = new(cls)
         if type(val) is cls:
             val = val._mpf_
@@ -54,15 +56,15 @@ class _mpf(mpnumeric):
             else:
                 raise ValueError
         else:
-            val = cls.mpf_convert_arg(val, prec, rounding)
+            val = cls.mpf_convert_arg(val, prec, rounding, base)
         v._mpf_ = mpf_pos(val, prec, rounding)
         return v
 
     @classmethod
-    def mpf_convert_arg(cls, x, prec, rounding):
+    def mpf_convert_arg(cls, x, prec, rounding, base):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
-        if isinstance(x, str): return from_str(x, prec, rounding)
+        if isinstance(x, str): return from_str(x, prec, rounding, base)
         if isinstance(x, cls.context.constant): return x.func(prec, rounding)
         if isinstance(x, numbers.Rational): return from_rational(x.numerator,
                                                                  x.denominator,
