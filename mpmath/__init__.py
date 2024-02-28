@@ -156,6 +156,7 @@ swap_row = mp.swap_row
 extend = mp.extend
 norm = mp.norm
 mnorm = mp.mnorm
+kron = mp.kron
 
 lu_solve = mp.lu_solve
 lu = mp.lu

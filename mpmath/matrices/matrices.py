@@ -993,3 +993,26 @@ class MatrixMethods:
             return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
+        
+    def kron(ctx, *args):
+        """
+        Calculates the tensor products of 2 or more matrices, similar to numpy.kron
+        """
+        new_rows: int = 1
+        new_cols: int = 1
+        for m in args:
+            new_rows *= m.rows
+            new_cols *= m.cols
+        res = ctx.ones(new_rows, new_cols)
+        for i in range(new_rows):
+            for j in range(new_cols):
+                partition_rows: int = 1
+                partition_cols: int = 1
+                for m in args:
+                    partition_rows *= m.rows
+                    partition_cols *= m.cols
+                    res[i, j] *= m[
+                            int(i * partition_rows / new_rows) % m.rows, 
+                            int(j * partition_cols / new_cols) % m.cols
+                        ]
+        return res
