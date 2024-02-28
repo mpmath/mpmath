@@ -155,6 +155,9 @@ def test_mpf_init():
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
     assert mpf(decimal.Decimal('1.5')) == mpf('1.5')
+    assert mpf('0x1.4ace478p+33') == mpf(11100000000.0)
+    assert mpf('0x1.4ace478p+33', base=0) == mpf(11100000000.0)
+    assert mpf('1.4ace478p+33', base=16) == mpf(11100000000.0)
 
 def test_mpc_init():
     class mympc:

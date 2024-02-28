@@ -15,9 +15,9 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     phi, pi, power, powm1, radians, rand, re, root, sec, sech,
                     sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh,
                     twinprime, unitroots)
-from mpmath.libmp import (ComplexResult, from_int, mpf_gt, mpf_lt, mpf_mul,
-                          mpf_pow_int, mpf_rand, mpf_sqrt, round_ceiling,
-                          round_down, round_nearest, round_up)
+from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
+                          mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
+                          round_ceiling, round_down, round_nearest, round_up)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -162,10 +162,10 @@ def test_exp():
     assert exp(0) == 1
     assert exp(10000).ae(mpf('8.8068182256629215873e4342'))
     assert exp(-10000).ae(mpf('1.1354838653147360985e-4343'))
-    a = exp(mpf((1, 8198646019315405, -53, 53)))
+    a = exp(mpf((1, MPZ(8198646019315405), -53, 53)))
     assert a.bc == a.man.bit_length()
     mp.prec = 67
-    a = exp(mpf((1, 1781864658064754565, -60, 61)))
+    a = exp(mpf((1, MPZ(1781864658064754565), -60, 61)))
     assert a.bc == a.man.bit_length()
     mp.prec = 53
     assert exp(ln2 * 10).ae(1024)

@@ -12,10 +12,10 @@ from bisect import bisect
 getrandbits = None
 
 from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_TWO, MPZ_ZERO, STRICT, gmpy)
+                      MPZ_TWO, MPZ_ZERO, gmpy)
 from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
                          lshift, numeral, rshift, sqrt_fixed, sqrtrem,
-                         trailing, trailtable)
+                         stddigits, trailing, trailtable)
 
 
 class ComplexResult(ValueError):
@@ -179,23 +179,16 @@ def _normalize(sign, man, exp, bc, prec, rnd):
 
 _exp_types = (int,)
 
-def strict_normalize(sign, man, exp, bc, prec, rnd):
-    """Additional checks on the components of an mpf. Enable tests by setting
-       the environment variable MPMATH_STRICT to Y."""
+if BACKEND == 'gmpy':
+    _normalize = gmpy._mpmath_normalize
+
+def normalize(sign, man, exp, bc, prec, rnd):
     assert type(man) == MPZ
     assert type(bc) in _exp_types
     assert type(exp) in _exp_types
     assert bc == man.bit_length()
     assert man >= 0
     return _normalize(sign, man, exp, bc, prec, rnd)
-
-if BACKEND == 'gmpy':
-    _normalize = gmpy._mpmath_normalize
-
-if STRICT:
-    normalize = strict_normalize
-else:
-    normalize = _normalize
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #
@@ -1024,13 +1017,13 @@ def mpf_perturb(x, eps_sign, prec, rnd):
 #                              Radix conversion                              #
 #----------------------------------------------------------------------------#
 
-def to_digits_exp(s, dps):
+def to_digits_exp(s, dps, base=10):
     """Helper function for representing the floating-point number s as
-    a decimal with dps digits. Returns (sign, string, exponent) where
-    sign is '' or '-', string is the digit string, and exponent is
-    the decimal exponent as an int.
+    a string with dps digits. Returns (sign, string, exponent) where
+    sign is '' or '-', string is the digit string in the given base,
+    and exponent is the exponent as an int.
 
-    If inexact, the decimal representation is rounded toward zero."""
+    If inexact, the string representation is rounded toward zero."""
 
     # Extract sign first so it doesn't mess up the string digit count
     if s[0]:
@@ -1043,12 +1036,19 @@ def to_digits_exp(s, dps):
     if not man:
         return '', '0', 0
 
-    bitprec = int(dps * math.log(10,2)) + 10
+    if base == 10:
+        blog2 = 3.3219280948873626
+    elif pow(2, blog2 := int(math.log2(base))) == base:
+        pass
+    else:
+        raise NotImplementedError
+
+    bitprec = int(dps * blog2) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if abs(exp_from_1) > 3500:
+    if base == 10 and abs(exp_from_1) > 3500:
         from .libelefun import mpf_ln2, mpf_ln10
 
         # Set b = int(exp * log(2)/log(10))
@@ -1069,19 +1069,19 @@ def to_digits_exp(s, dps):
     # fixed-point number and then converting that number to
     # a decimal fixed-point number.
     fixprec = max(bitprec - exp - bc, 0)
-    fixdps = int(fixprec / math.log(10,2) + 0.5)
+    fixdps = int(fixprec / blog2 + 0.5)
     sf = to_fixed(s, fixprec)
-    sd = bin_to_radix(sf, fixprec, 10, fixdps)
-    digits = numeral(sd, base=10, size=dps)
+    sb = bin_to_radix(sf, fixprec, base, fixdps)
+    digits = numeral(sb, base=base, size=dps)
 
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
-    show_zero_exponent=False):
+           show_zero_exponent=False, base=10, binary_exp=False):
     """
-    Convert a raw mpf to a decimal floating-point literal with at
-    most `dps` decimal digits in the mantissa (not counting extra zeros
+    Convert a raw mpf to a floating-point literal in the given base
+    with at most `dps` digits in the mantissa (not counting extra zeros
     that may be inserted for visual purposes).
 
     The number will be printed in fixed-point format if the position
@@ -1092,9 +1092,30 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     max_fixed = +inf. To force floating-point format, set
     min_fixed >= max_fixed.
 
+    If binary_exp is True and the base is either 2 or 16, the number will
+    be printed in a binary or hexadecimal notation, where the exponent
+    separator is the 'p' and the exponent is written in decimal rather than
+    hexadecimal or binary.  The number is normalized, i.e. the first
+    digit is 1.  This is format of the float.fromhex().
+
     The literal is formatted so that it can be parsed back to a number
-    by from_str, float() or Decimal().
+    by from_str, float(), float.fromhex() or Decimal().
     """
+    sep = '@' if base > 10 else 'e'
+
+    if binary_exp:
+        sep = 'p'
+        if base not in (2, 16):
+            raise ValueError("binary_exp option could be used for base 2 and 16")
+
+    if base == 2:
+        prefix = "0b"
+    elif base == 8:
+        prefix = "0o"
+    elif base == 16:
+        prefix = "0x"
+    else:
+        prefix = ""
 
     # Special numbers
     if not s[1]:
@@ -1102,8 +1123,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if dps: t = '0.0'
             else:   t = '.0'
             if show_zero_exponent:
-                t += 'e+0'
-            return t
+                t += sep + '+0'
+            return prefix + t
         if s == finf: return '+inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
@@ -1114,23 +1135,36 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
-    sign, digits, exponent = to_digits_exp(s, dps+3)
+    sign, digits, exponent = to_digits_exp(s, dps+3, base)
+
+    rnd_digs = stddigits[(base//2 + base%2):base]
 
     # No digits: show only .0; round exponent to nearest
     if not dps:
-        if digits[0] in '56789':
+        if digits[0] in rnd_digs:
             exponent += 1
         digits = ".0"
 
     else:
+        if binary_exp and base == 16:
+            exponent *= 4
+            # normalization
+            if int(digits[0], 16) > 1:
+                shift = math.floor(math.log2(int(digits[0], 16)))
+                exponent += shift
+                n = int(digits, 16) >> shift
+                digits = hex(n)[2:]
+
         # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in '56789':
+        if len(digits) > dps and digits[dps] in rnd_digs:
             digits = digits[:dps]
             i = dps - 1
-            while i >= 0 and digits[i] == '9':
+            dig = stddigits[base-1]
+            while i >= 0 and digits[i] == dig:
                 i -= 1
             if i >= 0:
-                digits = digits[:i] + str(int(digits[i]) + 1) + '0' * (dps - i - 1)
+                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
+                    '0' * (dps - i - 1)
             else:
                 digits = '1' + '0' * (dps - 1)
                 exponent += 1
@@ -1138,7 +1172,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             digits = digits[:dps]
 
         # Prettify numbers close to unit magnitude
-        if min_fixed < exponent < max_fixed:
+        if not binary_exp and min_fixed < exponent < max_fixed:
             if exponent < 0:
                 digits = ("0"*(-exponent)) + digits
                 split = 1
@@ -1158,9 +1192,10 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if digits[-1] == ".":
                 digits += "0"
 
+    sign += prefix
+
     if exponent == 0 and dps and not show_zero_exponent: return sign + digits
-    if exponent >= 0: return sign + digits + "e+" + str(exponent)
-    if exponent < 0: return sign + digits + "e" + str(exponent)
+    return sign + digits + sep + f"{exponent:+}"
 
 def str_to_man_exp(x, base=10):
     """Helper function for from_str."""

@@ -4,9 +4,12 @@ sure that passing custom Axes works.
 
 """
 
+import pytest
+
 from mpmath import fp, mp
 
 
+@pytest.mark.filterwarnings("ignore:datetime.datetime.utc.*:DeprecationWarning")
 def test_axes():
     try:
         import matplotlib

@@ -2,9 +2,6 @@ import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
-rowsep = '\n'
-colsep = '  '
-
 class _matrix:
     """
     Numerical matrix.
@@ -275,7 +272,7 @@ class _matrix:
     """
 
     def __init__(self, *args, **kwargs):
-        self.__data = {}
+        self._data = {}
         # LU decompostion cache, this is useful when solving the same system
         # multiple times, when calculating the inverse and when calculating the
         # determinant
@@ -286,9 +283,12 @@ class _matrix:
                 " properly anyway. If you want to force floating-point or"
                 " interval computations, use the respective methods from `fp`"
                 " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
-                " If you want to truncate values to integer, use .apply(int) instead.")
+                " If you want to truncate values to integer, use .apply(int) instead.",
+                DeprecationWarning)
         if isinstance(args[0], (list, tuple)):
-            if isinstance(args[0][0], (list, tuple)):
+            if not args[0]:
+                self.shape = (0, 0)
+            elif isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
                 A = args[0]
                 self.shape = (len(A), len(A[0]))
@@ -324,7 +324,7 @@ class _matrix:
             else:
                 self.shape = A.shape
             A = self.ctx.matrix(A.tolist())
-            self.__data = A._matrix__data
+            self._data = A._data
         else:
             raise TypeError('could not interpret given arguments')
 
@@ -354,17 +354,19 @@ class _matrix:
                 res[-1].append(string)
                 maxlen[j] = max(len(string), maxlen[j])
         # Patch strings together
+        rowsep = '\n'
+        colsep = '  '
         for i, row in enumerate(res):
             for j, elem in enumerate(row):
                 # Pad each element up to maxlen so the columns line up
                 row[j] = elem.rjust(maxlen[j])
             res[i] = "[" + colsep.join(row) + "]"
-        return rowsep.join(res)
+        return rowsep.join(res) if self.rows or self.cols else ''
 
     def __str__(self):
         return self.__nstr__()
 
-    def _toliststr(self, avoid_type=False):
+    def _toliststr(self):
         """
         Create a list string from a matrix.
 
@@ -382,9 +384,11 @@ class _matrix:
                 else:
                     a = "'" + str(self[i,j]) + "'"
                 s += a + ', '
-            s = s[:-2]
+            if s[-1] != '[':
+                s = s[:-2]
             s += '],\n '
-        s = s[:-3]
+        if s[-1] != '[':
+            s = s[:-3]
         s += ']'
         return s
 
@@ -406,22 +410,22 @@ class _matrix:
         if self.ctx.pretty:
             return self.__str__()
         s = 'matrix(\n'
-        s += self._toliststr(avoid_type=True) + ')'
+        s += self._toliststr() + ')'
         return s
 
-    def __get_element(self, key):
+    def _get_element(self, key):
         '''
         Fast extraction of the i,j element from the matrix
             This function is for private use only because is unsafe:
                 1. Does not check on the value of key it expects key to be a integer tuple (i,j)
                 2. Does not check bounds
         '''
-        if key in self.__data:
-            return self.__data[key]
+        if key in self._data:
+            return self._data[key]
         else:
             return self.ctx.zero
 
-    def __set_element(self, key, value):
+    def _set_element(self, key, value):
         '''
         Fast assignment of the i,j element in the matrix
             This function is unsafe:
@@ -431,9 +435,9 @@ class _matrix:
                 4. Does not reset the LU cache
         '''
         if value: # only store non-zeros
-            self.__data[key] = value
-        elif key in self.__data:
-            del self.__data[key]
+            self._data[key] = value
+        elif key in self._data:
+            del self._data[key]
 
 
     def __getitem__(self, key):
@@ -494,7 +498,7 @@ class _matrix:
             # Assign elements to the output matrix
             for i,x in enumerate(rows):
                 for j,y in enumerate(columns):
-                    m.__set_element((i,j),self.__get_element((x,y)))
+                    m._set_element((i,j),self._get_element((x,y)))
 
             return m
 
@@ -502,8 +506,8 @@ class _matrix:
             # single element extraction
             if row >= n_rows or col >= n_cols:
                 raise IndexError('matrix index out of range')
-            if key in self.__data:
-                return self.__data[key]
+            if key in self._data:
+                return self._data[key]
             else:
                 return self.ctx.zero
 
@@ -559,7 +563,7 @@ class _matrix:
                 if len(rows) == value.rows and len(columns) == value.cols:
                     for i,x in enumerate(rows):
                         for j,y in enumerate(columns):
-                            self.__set_element((x,y), value.__get_element((i,j)))
+                            self._set_element((x,y), value._get_element((i,j)))
                 else:
                     raise ValueError('Dimensions do not match')
             elif _is_ndarray(value):
@@ -575,7 +579,7 @@ class _matrix:
                 value = self.ctx.convert(value)
                 for i in rows:
                     for j in columns:
-                        self.__set_element((i,j), value)
+                        self._set_element((i,j), value)
         else:
             # Single element assingment
             # Check bounds
@@ -584,9 +588,9 @@ class _matrix:
             # Convert and store value
             value = self.ctx.convert(value)
             if value: # only store non-zeros
-                self.__data[key] = value
-            elif key in self.__data:
-                del self.__data[key]
+                self._data[key] = value
+            elif key in self._data:
+                del self._data[key]
 
         self._LU = None
         return
@@ -607,8 +611,8 @@ class _matrix:
             new = self.ctx.matrix(rows, other_cols)
             for i in range(rows):
                 for j in range(other_cols):
-                    new[i, j] = self.ctx.fdot((self.__data[i,k], other.__data[k,j])
-                                              for k in range(other_rows) if (i,k) in self.__data and (k,j) in other.__data)
+                    new[i, j] = self.ctx.fdot((self._data[i,k], other._data[k,j])
+                                              for k in range(other_rows) if (i,k) in self._data and (k,j) in other._data)
         elif _is_ndarray(other):
             import numpy as np
             new = self.ctx.matrix(np.array(self).dot(other))
@@ -657,7 +661,7 @@ class _matrix:
             y = self.ctx.inverse(y)
         return y
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         # assume other is scalar and do element-wise divison
         assert not isinstance(other, self.ctx.matrix)
         assert not _is_ndarray(other)
@@ -667,8 +671,6 @@ class _matrix:
             for j in range(cols):
                 new[i,j] = self[i,j] / other
         return new
-
-    __truediv__ = __div__
 
     def __add__(self, other):
         rows, cols = self.shape
@@ -711,7 +713,7 @@ class _matrix:
 
     def __eq__(self, other):
         try:
-            return self.shape == other.shape and self.__data == other.__data
+            return self.shape == other.shape and self._data == other._data
         except AttributeError:
             return NotImplemented
 
@@ -724,29 +726,29 @@ class _matrix:
         else:
             return rows # do it like numpy
 
-    def __getrows(self):
+    @property
+    def rows(self):
+        """Number of rows."""
         return self.shape[0]
 
-    def __setrows(self, value):
-        to_del = [key for key in self.__data if key[0] >= value]
-        for key in to_del:
-            del self.__data[key]
-        self.shape = (value, self.shape[1])
-        self._LU = None
+    @rows.setter
+    def rows(self, value):
+        for key in self._data.copy():
+            if key[0] >= value:
+                del self._data[key]
+        self.shape[0] = value
 
-    rows = property(__getrows, __setrows, doc='number of rows')
+    @property
+    def cols(self):
+        """Number of columns."""
+        return self._cols
 
-    def __getcols(self):
-        return self.shape[1]
-
-    def __setcols(self, value):
-        to_del = [key for key in self.__data if key[1] >= value]
-        for key in to_del:
-            del self.__data[key]
-        self.shape = (self.shape[0], value)
-        self._LU = None
-
-    cols = property(__getcols, __setcols, doc='number of columns')
+    @cols.setter
+    def cols(self, value):
+        for key in self._data.copy():
+            if key[1] >= value:
+                del self._data[key]
+        self.shape[0] = value      
 
     def transpose(self):
         rows, cols = self.shape
@@ -768,7 +770,7 @@ class _matrix:
 
     def copy(self):
         new = self.ctx.matrix(*self.shape)
-        new.__data = self.__data.copy()
+        new._data = self._data.copy()
         new._LU = self._LU
         return new
 
@@ -1036,9 +1038,9 @@ class MatrixMethods:
             p = ctx.convert(p)
         m, n = A.shape
         if p == 1:
-            return max(ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n))
+            return max((ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n)), default=0)
         elif p == ctx.inf:
-            return max(ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m))
+            return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=0)
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
 

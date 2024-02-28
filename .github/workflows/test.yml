@@ -6,13 +6,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, pypy3.8, pypy3.9, pypy3.10]
+        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10]
+        coverage: [false]
+        nogmpy: [false]
+        default: [false]
+        include:
+          - python-version: 3.11
+            coverage: true
+            nogmpy: true
+          - python-version: 3.12
+            coverage: true
+            default: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
@@ -24,46 +36,43 @@ jobs:
       run: |
         pip install --upgrade setuptools pip
         pip install --upgrade .[develop,gmpy,docs,ci]
+    - name: Remove gmpy (for coverage tests)
+      if: matrix.nogmpy
+      run: pip uninstall -y gmpy2
     - name: Linting with flake8, etc
-      if: matrix.python-version >= 3.9
+      if: matrix.default
       run: |
         python -We:invalid -m compileall -f mpmath -q
         flake518
     - name: Tests
-      if: matrix.python-version != 3.10 && matrix.python-version != 3.11
-      run: |
-        pytest
-        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
-    - name: Remove gmpy on 3.10
-      if: matrix.python-version == 3.10
-      run: pip uninstall -y gmpy2
+      if: ${{ ! matrix.coverage }}
+      run: pytest
     - name: Run coverage tests
       env:
         PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
-      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      if: matrix.coverage
       run: |
         pytest
-        MPMATH_STRICT=Y pytest mpmath/tests/test_basic_ops.py
         coverage html
         coverage xml
     - name: Upload coverage data
-      if: matrix.python-version == 3.10 || matrix.python-version == 3.11
+      if: matrix.coverage
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
         fail_ci_if_error: true
     - name: Building docs
-      if: matrix.python-version == 3.11
+      if: matrix.default
       run: |
         sphinx-build --color -W --keep-going -b html docs build/sphinx/html
         sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
         make -C build/sphinx/latex all-pdf
     - name: Make packages
-      if: matrix.python-version == 3.11
+      if: matrix.default
       run: python -m build
     - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
-      if: matrix.python-version == 3.11
+      uses: actions/upload-artifact@v4
+      if: matrix.default
       with:
         path: |
           dist/
@@ -72,7 +81,7 @@ jobs:
           coverage.xml
           build/coverage/html/
     - name: Publish package on PyPI
-      if: matrix.python-version == 3.11 && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      if: matrix.default && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
