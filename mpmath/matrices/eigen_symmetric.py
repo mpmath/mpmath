@@ -712,7 +712,7 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
     see also: eigsy, eighe, eig
     """
 
-    iscomplex = any(type(x) is ctx.mpc for x in A)
+    iscomplex = any(type(x) is type(ctx.mpc()) for x in A)
 
     if iscomplex:
         return ctx.eighe(A, eigvals_only = eigvals_only, overwrite_a = overwrite_a)

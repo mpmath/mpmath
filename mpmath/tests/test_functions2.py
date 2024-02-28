@@ -13,8 +13,8 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
                     spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
                     whitw, zeta)
-from mpmath.ctx_mp_python import _mpf as mpf_type
 from mpmath.ctx_mp_python import mpc as mpc_type
+from mpmath.ctx_mp_python import mpf as mpf_type
 from mpmath.libmp import BACKEND, NoConvergence
 
 

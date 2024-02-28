@@ -696,7 +696,7 @@ class LinearAlgebraMethods:
         assert edps >= 0
 
         # check for complex data type
-        cmplx = any(type(x) is ctx.mpc for x in A)
+        cmplx = any(type(x) is type(ctx.mpc()) for x in A)
 
         # temporarily increase the precision and initialize
         with ctx.extradps(edps):

@@ -15,8 +15,8 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     phi, pi, power, powm1, radians, rand, re, root, sec, sech,
                     sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh,
                     twinprime, unitroots)
-from mpmath.ctx_mp_python import _mpf as mpf_type
 from mpmath.ctx_mp_python import mpc as mpc_type
+from mpmath.ctx_mp_python import mpf as mpf_type
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
                           round_ceiling, round_down, round_nearest, round_up)
