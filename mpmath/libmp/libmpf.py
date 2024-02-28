@@ -12,7 +12,7 @@ from bisect import bisect
 getrandbits = None
 
 from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_TWO, MPZ_ZERO, STRICT, gmpy)
+                      MPZ_TWO, MPZ_ZERO, gmpy)
 from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
                          lshift, numeral, rshift, sqrt_fixed, sqrtrem,
                          stddigits, trailing, trailtable)
@@ -179,23 +179,16 @@ def _normalize(sign, man, exp, bc, prec, rnd):
 
 _exp_types = (int,)
 
-def strict_normalize(sign, man, exp, bc, prec, rnd):
-    """Additional checks on the components of an mpf. Enable tests by setting
-       the environment variable MPMATH_STRICT to Y."""
+if BACKEND == 'gmpy':
+    _normalize = gmpy._mpmath_normalize
+
+def normalize(sign, man, exp, bc, prec, rnd):
     assert type(man) == MPZ
     assert type(bc) in _exp_types
     assert type(exp) in _exp_types
     assert bc == man.bit_length()
     assert man >= 0
     return _normalize(sign, man, exp, bc, prec, rnd)
-
-if BACKEND == 'gmpy':
-    _normalize = gmpy._mpmath_normalize
-
-if STRICT:
-    normalize = strict_normalize
-else:
-    normalize = _normalize
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #

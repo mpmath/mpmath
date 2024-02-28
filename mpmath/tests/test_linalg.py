@@ -82,6 +82,8 @@ A13 = matrix([[2, 6, 4],
               [3, 8, 6],
               [1, 1, 2]])
 
+A14 = matrix(0, 0)
+
 def test_LU_decomp():
     A = A3.copy()
     b = b3
@@ -213,6 +215,7 @@ def test_det():
     assert det(zeros(3)) == 0
     assert det(A11) == 0
     assert absmin(det(A12*1e-30) - 1e-30) < eps
+    assert det(A14) == 1
 
 def test_cond():
     A = matrix([[1.2969, 0.8648], [0.2161, 0.1441]])

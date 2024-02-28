@@ -458,7 +458,7 @@ def polylog_general(ctx, s, z):
     k = 0
     while 1:
         term = ctx.zeta(s-k) * t
-        if abs(term) < ctx.eps:
+        if not abs(term) >= ctx.eps:
             break
         v += term
         k += 1
