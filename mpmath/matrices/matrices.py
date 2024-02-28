@@ -379,7 +379,7 @@ class _matrix:
         for i in range(rows):
             s += '['
             for j in range(cols):
-                if not avoid_type or not isinstance(self[i,j], typ):
+                if not isinstance(self[i,j], typ):
                     a = repr(self[i,j])
                 else:
                     a = "'" + str(self[i,j]) + "'"
@@ -736,19 +736,19 @@ class _matrix:
         for key in self._data.copy():
             if key[0] >= value:
                 del self._data[key]
-        self.shape[0] = value
+        self.shape = (value, self.shape[1])
 
     @property
     def cols(self):
         """Number of columns."""
-        return self._cols
+        return self.shape[1]
 
     @cols.setter
     def cols(self, value):
         for key in self._data.copy():
             if key[1] >= value:
                 del self._data[key]
-        self.shape[0] = value      
+        self.shape = (self.shape[0], value)
 
     def transpose(self):
         rows, cols = self.shape
