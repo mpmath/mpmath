@@ -997,8 +997,8 @@ class MatrixMethods:
         """
         Calculates the tensor products of 2 or more matrices, similar to numpy.kron
         """
-        new_rows: int = 1
-        new_cols: int = 1
+        new_rows = 1
+        new_cols = 1
         for m in args:
             new_rows *= m.rows
             new_cols *= m.cols
