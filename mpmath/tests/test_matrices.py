@@ -2,7 +2,9 @@ import pytest
 
 from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
                     j, matrix, mnorm, mp, mpc, mpf, mpi, norm, nstr, ones,
-                    randmatrix, sqrt, swap_row, zeros)
+                    randmatrix, sqrt, swap_row, zeros, kron)
+
+from functools import reduce
 
 
 def test_matrix_basic():
@@ -251,3 +253,58 @@ def test_interval_matrix_mult_bug():
     assert mp.mpf('1.00000000000001998401444325291756783368705994138804689654') in C[0, 0]
     # the following caused an error before the bug was fixed
     assert iv.matrix(mp.eye(2)) * (iv.ones(2) + mpi(1, 2)) == iv.matrix([[mpi(2, 3), mpi(2, 3)], [mpi(2, 3), mpi(2, 3)]])
+
+def test_matrix_kron():
+    a = matrix(
+        [[1, 2], 
+         [3, 4]])
+    b = matrix(
+        [[5, 6], 
+         [7, 8]])
+    c = matrix(
+        [[9, 10],
+         [11, 12]])
+    d = matrix([1, 10, 100])
+    e = matrix([5, 6, 7])
+    axb = matrix(
+        [[5, 6, 10, 12],
+        [7, 8, 14, 16],
+        [15, 18, 20, 24],
+        [21, 24, 28, 32]])
+    bxc = matrix(
+        [[45, 50, 54, 60],
+         [55, 60, 66, 72],
+         [63, 70, 72, 80],
+         [77, 84, 88, 96]])
+    axbxc = matrix(
+        [[45, 50, 54, 60, 90, 100, 108, 120],
+         [55, 60, 66, 72, 110, 120, 132, 144],
+         [63, 70, 72, 80, 126, 140, 144, 160],
+         [77, 84, 88, 96, 154, 168, 176, 192],
+         [135, 150, 162, 180, 180, 200, 216, 240],
+         [165, 180, 198, 216, 220, 240, 264, 288],
+         [189, 210, 216, 240, 252, 280, 288, 320],
+         [231, 252, 264, 288, 308, 336, 352, 384]])
+    dxe = matrix(
+        [[5],
+         [6],
+         [7],
+         [50],
+         [60],
+         [70],
+         [500],
+         [600],
+         [700]])
+    assert kron(a) == a
+    assert kron(b) == b
+    assert kron(c) == c
+    assert kron(d) == d
+    assert kron(e) == e
+    assert kron(a, b, c, d, e) == reduce(kron, [a, b, c, d, e])
+    assert kron(a, b) == axb
+    assert kron(b, c) == bxc
+    assert kron(a, b, c) == axbxc == kron(kron(a, b), c) == kron(a, kron(b, c))
+    assert kron(d, e) == dxe
+    assert kron(ones(10, 9), ones(8, 7)) == ones(10 * 8, 9 * 7)
+    assert kron(eye(4), eye(4), eye(4)) == eye(4 * 4 * 4)
+    assert kron(zeros(5), d) == zeros(15, 5)
