@@ -14,11 +14,11 @@ def test_matrix_basic():
     assert A1 == eye(3)
     assert A1 == matrix(A1)
     A2 = matrix(3, 2)
-    assert not A2._matrix__data
+    assert not A2._data
     A3 = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     assert list(A3) == list(range(1, 10))
     A3[1,1] = 0
-    assert (1, 1) not in A3._matrix__data
+    assert (1, 1) not in A3._data
     A4 = matrix([[1, 2, 3], [4, 5, 6]])
     A5 = matrix([[6, -1], [3, 2], [0, -3]])
     assert A4 * A5 == matrix([[12, -6], [39, -12]])
@@ -36,7 +36,7 @@ def test_matrix_basic():
     assert A2.cols == 2
     A3.rows = 2
     A3.cols = 2
-    assert len(A3._matrix__data) == 3
+    assert len(A3._data) == 3
     assert A4 + A4 == 2*A4
     pytest.raises(ValueError, lambda: A4 + A2)
     assert sum(A1 - A1) == 0
@@ -174,7 +174,7 @@ def test_vector():
     x = matrix([0, 1, 2, 3, 4])
     assert x == matrix([[0], [1], [2], [3], [4]])
     assert x[3] == 3
-    assert len(x._matrix__data) == 4
+    assert len(x._data) == 4
     assert list(x) == list(range(5))
     x[0] = -10
     x[4] = 0
@@ -308,3 +308,7 @@ def test_matrix_kron():
     assert kron(ones(10, 9), ones(8, 7)) == ones(10 * 8, 9 * 7)
     assert kron(eye(4), eye(4), eye(4)) == eye(4 * 4 * 4)
     assert kron(zeros(5), d) == zeros(15, 5)
+
+def test_issue_156():
+    with pytest.deprecated_call():
+        matrix([[1, 2], [3, 4]], force_type=float)

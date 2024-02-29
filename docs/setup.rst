@@ -127,8 +127,6 @@ Developers may run tests from the source tree with::
 If any test fails, please send a detailed bug report to the `mpmath issue
 tracker <https://github.com/mpmath/mpmath/issues>`_.
 
-To enable extra diagnostics, use, set ``MPMATH_STRICT`` environment variable.
-
 Compiling the documentation
 ---------------------------
 

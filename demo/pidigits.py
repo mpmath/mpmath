@@ -73,7 +73,7 @@ def interactive():
     if tofile:
         tofile = open(tofile, "w")
 
-    calculateit(base, digits, tofile)
+    calculateit(int(base), int(digits), tofile)
     input("\nPress enter to close this script.")
 
 if __name__ == "__main__":
