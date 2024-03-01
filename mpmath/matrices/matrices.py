@@ -1049,8 +1049,8 @@ class MatrixMethods:
         res = ctx.ones(new_rows, new_cols)
         for i in range(new_rows):
             for j in range(new_cols):
-                partition_rows: int = 1
-                partition_cols: int = 1
+                partition_rows = 1
+                partition_cols = 1
                 for m in args:
                     partition_rows *= m.rows
                     partition_cols *= m.cols
