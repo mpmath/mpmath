@@ -998,7 +998,7 @@ class MatrixMethods:
             return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=0)
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
-        
+
     def kron(ctx, *args):
         r"""
         Gives the Kronecker product of two or more matrices
@@ -1008,7 +1008,7 @@ class MatrixMethods:
         If only one matrix is given as input, that matrix is returned
 
         **Examples**
-            
+
             >>> from mpmath import kron, matrix
             >>> a = matrix([[1, 2], [3, 4]])
             >>> b = matrix([[5, 6], [7, 8]])
@@ -1055,7 +1055,7 @@ class MatrixMethods:
                     partition_rows *= m.rows
                     partition_cols *= m.cols
                     res[i, j] *= m[
-                            int(i * partition_rows / new_rows) % m.rows, 
+                            int(i * partition_rows / new_rows) % m.rows,
                             int(j * partition_cols / new_cols) % m.cols
                         ]
         return res

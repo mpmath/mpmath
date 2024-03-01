@@ -256,10 +256,10 @@ def test_interval_matrix_mult_bug():
 
 def test_matrix_kron():
     a = matrix(
-        [[1, 2], 
+        [[1, 2],
          [3, 4]])
     b = matrix(
-        [[5, 6], 
+        [[5, 6],
          [7, 8]])
     c = matrix(
         [[9, 10],
