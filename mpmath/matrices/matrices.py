@@ -1055,7 +1055,7 @@ class MatrixMethods:
                     partition_rows *= m.rows
                     partition_cols *= m.cols
                     res[i, j] *= m[
-                            int(i * partition_rows / new_rows) % m.rows,
-                            int(j * partition_cols / new_cols) % m.cols
+                            (i * partition_rows // new_rows) % m.rows,
+                            (j * partition_cols // new_cols) % m.cols
                         ]
         return res
