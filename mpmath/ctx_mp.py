@@ -29,7 +29,6 @@ def __getattr__(name):
         return mpnumeric
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-from . import ctx_mp_python as _mpf_module
 from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 

@@ -24,6 +24,16 @@ class mpnumeric:
     def __new__(cls, val):
         raise NotImplementedError
 
+# pickling support
+def _make_mpf(x):
+    from mpmath import mp
+    return mp.mpf(x)
+
+def _make_mpc(x, y):
+    from mpmath import mp
+    return mp.mpc(x, y)
+
+
 class _mpf(mpnumeric):
     """
     An mpf instance holds a real-valued floating-point number. mpf:s
@@ -119,7 +129,7 @@ class _mpf(mpnumeric):
     def as_integer_ratio(self):
         return to_rational(self._mpf_)
 
-    def __reduce__(self): return self.__class__, (self._mpf_,)
+    def __reduce__(self): return _make_mpf, (self._mpf_,)
 
     def __repr__(s):
         if s.context.pretty:
@@ -559,7 +569,7 @@ class _mpc(mpnumeric):
     real = property(lambda self: self.context.make_mpf(self._mpc_[0]))
     imag = property(lambda self: self.context.make_mpf(self._mpc_[1]))
 
-    def __reduce__(self): return self.__class__, self._mpc_
+    def __reduce__(self): return _make_mpc, self._mpc_
 
     def __repr__(s):
         if s.context.pretty:

@@ -2,6 +2,11 @@ import warnings
 
 # TODO: interpret list as vectors (for multiplication)
 
+# pickling helper
+def _make_matrix(x):
+    from mpmath import mp
+    return mp.matrix(x)
+
 class _matrix:
     """
     Numerical matrix.
@@ -739,8 +744,10 @@ class _matrix:
         new = self.ctx.matrix(self._rows, self._cols)
         new._data = self._data.copy()
         return new
-
     __copy__ = copy
+
+    def __reduce__(self):
+        return _make_matrix, (self.tolist(),)
 
     def column(self, n):
         m = self.ctx.matrix(self.rows, 1)
