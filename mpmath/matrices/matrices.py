@@ -282,6 +282,7 @@ class _matrix:
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
+        self.shape = None
         if "force_type" in kwargs:
             warnings.warn("The force_type argument was removed, it did not work"
                 " properly anyway. If you want to force floating-point or"
@@ -291,13 +292,11 @@ class _matrix:
                 DeprecationWarning)
         if isinstance(args[0], (list, tuple)):
             if not args[0]:
-                self._rows = 0
-                self._cols = 0
+                self.shape = (0, 0)
             elif isinstance(args[0][0], (list, tuple)):
                 # interpret nested list as matrix
                 A = args[0]
-                self._rows = len(A)
-                self._cols = len(A[0])
+                self.shape = (len(A), len(A[0]))
                 for i, row in enumerate(A):
                     for j, a in enumerate(row):
                         # note: this will call __setitem__ which will call self.ctx.convert() to convert the datatype.
@@ -305,31 +304,32 @@ class _matrix:
             else:
                 # interpret list as row vector
                 v = args[0]
-                self._rows = len(v)
-                self._cols = 1
+                self.shape = (len(v), 1)
                 for i, e in enumerate(v):
                     self[i, 0] = e
         elif isinstance(args[0], int):
             # create empty matrix of given dimensions
             if len(args) == 1:
-                self._rows = self._cols = args[0]
+                self.shape = (args[0],) * 2
             else:
                 if not isinstance(args[1], int):
                     raise TypeError("expected int")
-                self._rows = args[0]
-                self._cols = args[1]
+                assert len(args) == 2
+                self.shape = tuple(args)
         elif isinstance(args[0], _matrix):
             A = args[0]
-            self._rows = A._rows
-            self._cols = A._cols
-            for i in range(A._rows):
-                for j in range(A._cols):
+            rows, cols = self.shape = A.shape
+            for i in range(rows):
+                for j in range(cols):
                     self[i, j] = A[i, j]
-        elif hasattr(args[0], 'tolist'):
-            A = self.ctx.matrix(args[0].tolist())
+        elif hasattr(args[0], 'tolist'): # A is likely a numpy array
+            A = args[0]
+            if A.ndim == 1: # convert vector to (N, 1) matrix
+                self.shape = (A.shape[0], 1)
+            else:
+                self.shape = A.shape
+            A = self.ctx.matrix(A.tolist())
             self._data = A._data
-            self._rows = A._rows
-            self._cols = A._cols
         else:
             raise TypeError('could not interpret given arguments')
 
@@ -337,9 +337,10 @@ class _matrix:
         """
         Return a copy of self with the function `f` applied elementwise.
         """
-        new = self.ctx.matrix(self._rows, self._cols)
-        for i in range(self._rows):
-            for j in range(self._cols):
+        rows, cols = self.shape
+        new = self.ctx.matrix(rows, cols)
+        for i in range(rows):
+            for j in range(cols):
                 new[i,j] = f(self[i,j])
         return new
 
@@ -376,12 +377,13 @@ class _matrix:
 
         If avoid_type: avoid multiple 'mpf's.
         """
+        rows, cols = self.shape
         # XXX: should be something like self.ctx._types
         typ = self.ctx.mpf
         s = '['
-        for i in range(self._rows):
+        for i in range(rows):
             s += '['
-            for j in range(self._cols):
+            for j in range(cols):
                 if not isinstance(self[i,j], typ):
                     a = repr(self[i,j])
                 else:
@@ -399,7 +401,15 @@ class _matrix:
         """
         Convert the matrix to a nested list.
         """
-        return [[self[i,j] for j in range(self._cols)] for i in range(self._rows)]
+        rows, cols = self.shape
+        return [[self[i,j] for j in range(cols)] for i in range(rows)]
+
+    def to_numpy(self):
+        """
+        Convert the matrix to a numpy object
+        """
+        import numpy as np
+        return np.array(self).reshape(self.shape)
 
     def __repr__(self):
         if self.ctx.pretty:
@@ -442,48 +452,50 @@ class _matrix:
             scalar to a slice of the matrix
          B = A[:,2:6]
         '''
+        n_rows, n_cols = self.shape
         # Convert vector to matrix indexing
         if isinstance(key, int) or isinstance(key,slice):
             # only sufficent for vectors
-            if self._rows == 1:
+            if n_rows == 1:
                 key = (0, key)
-            elif self._cols == 1:
+            elif n_cols == 1:
                 key = (key, 0)
             else:
                 raise IndexError('insufficient indices for matrix')
 
-        if isinstance(key[0],slice) or isinstance(key[1],slice):
+        row, col = key
+        if isinstance(row, slice) or isinstance(col, slice):
 
             #Rows
-            if isinstance(key[0],slice):
+            if isinstance(row, slice):
                 #Check bounds
-                if (key[0].start is None or key[0].start >= 0) and \
-                    (key[0].stop is None or key[0].stop <= self._rows+1):
+                if (row.start is None or row.start >= 0) and \
+                    (row.stop is None or row.stop <= n_rows+1):
                     # Generate indices
-                    rows = range(*key[0].indices(self._rows))
+                    rows = range(*row.indices(n_rows))
                 else:
                     raise IndexError('Row index out of bounds')
             else:
                 # Single row
-                if key[0] >= self._rows:
+                if row >= n_rows:
                     raise IndexError('Row index out of bounds')
-                rows = [key[0]]
+                rows = [row]
 
             # Columns
-            if isinstance(key[1],slice):
+            if isinstance(col, slice):
                 # Check bounds
-                if (key[1].start is None or key[1].start >= 0) and \
-                    (key[1].stop is None or key[1].stop <= self._cols+1):
+                if (col.start is None or col.start >= 0) and \
+                    (col.stop is None or col.stop <= n_cols+1):
                     # Generate indices
-                    columns = range(*key[1].indices(self._cols))
+                    columns = range(*col.indices(n_cols))
                 else:
                     raise IndexError('Column index out of bounds')
 
             else:
                 # Single column
-                if key[1] >= self._cols:
+                if col >= n_cols:
                     raise IndexError('Column index out of bounds')
-                columns = [key[1]]
+                columns = [col]
 
             # Create matrix slice
             m = self.ctx.matrix(len(rows),len(columns))
@@ -497,7 +509,7 @@ class _matrix:
 
         else:
             # single element extraction
-            if key[0] >= self._rows or key[1] >= self._cols:
+            if row >= n_rows or col >= n_cols:
                 raise IndexError('matrix index out of range')
             if key in self._data:
                 return self._data[key]
@@ -511,41 +523,45 @@ class _matrix:
         # A[:,2:6] = 2.5
         #  submatrix to matrix (the value matrix should be the same size as the slice size)
         # A[3,:] = B   where A is n x m  and B is n x 1
+
+        n_rows, n_cols = self.shape
         # Convert vector to matrix indexing
         if isinstance(key, int) or isinstance(key,slice):
             # only sufficent for vectors
-            if self._rows == 1:
+            if n_rows == 1:
                 key = (0, key)
-            elif self._cols == 1:
+            elif n_cols == 1:
                 key = (key, 0)
             else:
                 raise IndexError('insufficient indices for matrix')
+
+        row, col = key
         # Slice indexing
-        if isinstance(key[0],slice) or isinstance(key[1],slice):
+        if isinstance(row, slice) or isinstance(col, slice):
             # Rows
-            if isinstance(key[0],slice):
+            if isinstance(row, slice):
                 # Check bounds
-                if (key[0].start is None or key[0].start >= 0) and \
-                    (key[0].stop is None or key[0].stop <= self._rows+1):
+                if (row.start is None or row.start >= 0) and \
+                    (row.stop is None or row.stop <= n_rows+1):
                     # generate row indices
-                    rows = range(*key[0].indices(self._rows))
+                    rows = range(*row.indices(n_rows))
                 else:
                     raise IndexError('Row index out of bounds')
             else:
                 # Single row
-                rows = [key[0]]
+                rows = [row]
             # Columns
-            if isinstance(key[1],slice):
+            if isinstance(col, slice):
                 # Check bounds
-                if (key[1].start is None or key[1].start >= 0) and \
-                    (key[1].stop is None or key[1].stop <= self._cols+1):
+                if (col.start is None or col.start >= 0) and \
+                    (col.stop is None or col.stop <= n_cols+1):
                     # Generate column indices
-                    columns = range(*key[1].indices(self._cols))
+                    columns = range(*col.indices(n_cols))
                 else:
                     raise IndexError('Column index out of bounds')
             else:
                 # Single column
-                columns = [key[1]]
+                columns = [col]
             # Assign slice with a scalar
             if isinstance(value,self.ctx.matrix):
                 # Assign elements to matrix if input and output dimensions match
@@ -553,6 +569,14 @@ class _matrix:
                     for i,x in enumerate(rows):
                         for j,y in enumerate(columns):
                             self._set_element((x,y), value._get_element((i,j)))
+                else:
+                    raise ValueError('Dimensions do not match')
+            elif _is_ndarray(value):
+                assert value.ndim == 2
+                if len(rows) == value.shape[0] and len(columns) == value.shape[1]:
+                    for i,x in enumerate(rows):
+                        for j,y in enumerate(columns):
+                            self.__set_element((x,y), value[i,j])
                 else:
                     raise ValueError('Dimensions do not match')
             else:
@@ -564,7 +588,7 @@ class _matrix:
         else:
             # Single element assingment
             # Check bounds
-            if key[0] >= self._rows or key[1] >= self._cols:
+            if row >= n_rows or col >= n_cols:
                 raise IndexError('matrix index out of range')
             # Convert and store value
             value = self.ctx.convert(value)
@@ -573,41 +597,45 @@ class _matrix:
             elif key in self._data:
                 del self._data[key]
 
-        if self._LU:
-            self._LU = None
+        self._LU = None
         return
 
     def __iter__(self):
-        for i in range(self._rows):
-            for j in range(self._cols):
+        rows, cols = self.shape
+        for i in range(rows):
+            for j in range(cols):
                 yield self[i,j]
 
     def __mul__(self, other):
+        rows, cols = self.shape
         if isinstance(other, self.ctx.matrix):
             # dot multiplication
-            if self._cols != other._rows:
+            other_rows, other_cols = other.shape
+            if cols != other_rows:
                 raise ValueError('dimensions not compatible for multiplication')
-            new = self.ctx.matrix(self._rows, other._cols)
-            for i in range(self._rows):
-                for j in range(other._cols):
+            new = self.ctx.matrix(rows, other_cols)
+            for i in range(rows):
+                for j in range(other_cols):
                     new[i, j] = self.ctx.fdot((self._data[i,k], other._data[k,j])
-                                              for k in range(other._rows) if (i,k) in self._data and (k,j) in other._data)
-            return new
+                                              for k in range(other_rows) if (i,k) in self._data and (k,j) in other._data)
+        elif _is_ndarray(other):
+            import numpy as np
+            new = self.ctx.matrix(np.array(self).dot(other))
         else:
             # try scalar multiplication
-            new = self.ctx.matrix(self._rows, self._cols)
-            for i in range(self._rows):
-                for j in range(self._cols):
+            new = self.ctx.matrix(rows, cols)
+            for i in range(rows):
+                for j in range(cols):
                     new[i, j] = other * self[i, j]
-            return new
+        return new
 
     def __matmul__(self, other):
         return self.__mul__(other)
 
     def __rmul__(self, other):
         # assume other is scalar and thus commutative
-        if isinstance(other, self.ctx.matrix):
-            raise TypeError("other should not be type of ctx.matrix")
+        if isinstance(other, self.ctx.matrix) or _is_ndarray(other):
+            raise TypeError(f"other should not be type of {other.__class__}")
         return self.__mul__(other)
 
     def __pow__(self, other):
@@ -615,11 +643,12 @@ class _matrix:
         #from linalg import inverse
         if not isinstance(other, int):
             raise ValueError('only integer exponents are supported')
-        if not self._rows == self._cols:
+        rows, cols = self.shape
+        if not rows == cols:
             raise ValueError('only powers of square matrices are defined')
         n = other
         if n == 0:
-            return self.ctx.eye(self._rows)
+            return self.ctx.eye(rows)
         if n < 0:
             n = -n
             neg = True
@@ -640,26 +669,29 @@ class _matrix:
     def __truediv__(self, other):
         # assume other is scalar and do element-wise divison
         assert not isinstance(other, self.ctx.matrix)
-        new = self.ctx.matrix(self._rows, self._cols)
-        for i in range(self._rows):
-            for j in range(self._cols):
+        assert not _is_ndarray(other)
+        rows, cols = self.shape
+        new = self.ctx.matrix(rows, cols)
+        for i in range(rows):
+            for j in range(cols):
                 new[i,j] = self[i,j] / other
         return new
 
     def __add__(self, other):
-        if isinstance(other, self.ctx.matrix):
-            if not (self._rows == other._rows and self._cols == other._cols):
+        rows, cols = self.shape
+        if isinstance(other, self.ctx.matrix) or _is_ndarray(other):
+            if self.shape != other.shape:
                 raise ValueError('incompatible dimensions for addition')
-            new = self.ctx.matrix(self._rows, self._cols)
-            for i in range(self._rows):
-                for j in range(self._cols):
+            new = self.ctx.matrix(rows, cols)
+            for i in range(rows):
+                for j in range(cols):
                     new[i,j] = self[i,j] + other[i,j]
             return new
         else:
             # assume other is scalar and add element-wise
-            new = self.ctx.matrix(self._rows, self._cols)
-            for i in range(self._rows):
-                for j in range(self._cols):
+            new = self.ctx.matrix(rows, cols)
+            for i in range(rows):
+                for j in range(cols):
                     new[i,j] += self[i,j] + other
             return new
 
@@ -667,8 +699,8 @@ class _matrix:
         return self.__add__(other)
 
     def __sub__(self, other):
-        if isinstance(other, self.ctx.matrix) and not (self._rows == other._rows
-                                              and self._cols == other._cols):
+        if ((isinstance(other, self.ctx.matrix) or _is_ndarray(other)) and
+            self.shape != other.shape):
             raise ValueError('incompatible dimensions for subtraction')
         return self.__add__(other * (-1))
 
@@ -686,47 +718,48 @@ class _matrix:
 
     def __eq__(self, other):
         try:
-            return (self._rows == other._rows and self._cols == other._cols
-                    and self._data == other._data)
+            return self.shape == other.shape and self._data == other._data
         except AttributeError:
             return NotImplemented
 
     def __len__(self):
-        if self.rows == 1:
-            return self.cols
-        elif self.cols == 1:
-            return self.rows
+        rows, cols = self.shape
+        if rows == 1:
+            return cols
+        elif cols == 1:
+            return rows
         else:
-            return self.rows # do it like numpy
+            return rows # do it like numpy
 
     @property
     def rows(self):
         """Number of rows."""
-        return self._rows
+        return self.shape[0]
 
     @rows.setter
     def rows(self, value):
         for key in self._data.copy():
             if key[0] >= value:
                 del self._data[key]
-        self._rows = value
+        self.shape = (value, self.shape[1])
 
     @property
     def cols(self):
         """Number of columns."""
-        return self._cols
+        return self.shape[1]
 
     @cols.setter
     def cols(self, value):
         for key in self._data.copy():
             if key[1] >= value:
                 del self._data[key]
-        self._cols = value
+        self.shape = (self.shape[0], value)
 
     def transpose(self):
-        new = self.ctx.matrix(self._cols, self._rows)
-        for i in range(self._rows):
-            for j in range(self._cols):
+        rows, cols = self.shape
+        new = self.ctx.matrix(cols, rows)
+        for i in range(rows):
+            for j in range(cols):
                 new[j,i] = self[i,j]
         return new
 
@@ -741,8 +774,9 @@ class _matrix:
     H = property(transpose_conj)
 
     def copy(self):
-        new = self.ctx.matrix(self._rows, self._cols)
+        new = self.ctx.matrix(*self.shape)
         new._data = self._data.copy()
+        new._LU = self._LU
         return new
     __copy__ = copy
 
@@ -750,8 +784,9 @@ class _matrix:
         return _make_matrix, (self.tolist(),)
 
     def column(self, n):
-        m = self.ctx.matrix(self.rows, 1)
-        for i in range(self.rows):
+        rows = self.rows
+        m = self.ctx.matrix(rows, 1)
+        for i in range(rows):
             m[i] = self[i,n]
         return m
 
@@ -888,6 +923,8 @@ class MatrixMethods:
                 A[i,k], A[j,k] = A[j,k], A[i,k]
         elif isinstance(A, list):
             A[i], A[j] = A[j], A[i]
+        elif _is_ndarray(A):
+            A[[j,i]] = A[[i,j]]
         else:
             raise TypeError('could not interpret type')
 
@@ -895,14 +932,19 @@ class MatrixMethods:
         """
         Extend matrix A with column b and return result.
         """
-        if not isinstance(A, ctx.matrix):
+        if not (isinstance(A, ctx.matrix) or _is_ndarray(A)):
             raise TypeError("A should be a type of ctx.matrix")
-        if A.rows != len(b):
+        if A.shape[0] != len(b):
             raise ValueError("Value should be equal to len(b)")
-        A = A.copy()
-        A.cols += 1
-        for i in range(A.rows):
-            A[i, A.cols-1] = b[i]
+        if _is_ndarray(A):
+            import numpy as np
+            A = np.hstack((A, np.asarray(b)[:,None]))
+        else:
+            A = A.copy()
+            A.cols += 1
+            cols = A.shape[1]
+            for i in range(A.rows):
+                A[i, cols-1] = b[i]
         return A
 
     def norm(ctx, x, p=2):
@@ -942,6 +984,9 @@ class MatrixMethods:
             iter(x)
         except TypeError:
             return ctx.absmax(x)
+        if _is_ndarray(x):
+            x = x.ravel()
+
         if type(p) is not int:
             p = ctx.convert(p)
         if p == ctx.inf:
@@ -998,10 +1043,28 @@ class MatrixMethods:
             if type(p) is str and 'frobenius'.startswith(p.lower()):
                 return ctx.norm(A, 2)
             p = ctx.convert(p)
-        m, n = A.rows, A.cols
+        m, n = A.shape
         if p == 1:
             return max((ctx.fsum((A[i,j] for i in range(m)), absolute=1) for j in range(n)), default=0)
         elif p == ctx.inf:
             return max((ctx.fsum((A[i,j] for j in range(n)), absolute=1) for i in range(m)), default=0)
         else:
             raise NotImplementedError("matrix p-norm for arbitrary p")
+
+def _is_ndarray(obj):
+    '''Return whether an object is a numpy array.'''
+    return hasattr(obj, '__array_interface__')
+
+def _np_zeros(ctx, shape):
+    import numpy as np
+    return np.full(shape, ctx.mpf('0.0'))
+
+def _np_eye(ctx, n):
+    import numpy as np
+    a = np.full((n, n), ctx.mpf('0.0'))
+    a[np.diag_indices(n)] = ctx.mpf('1.0')
+    return a
+
+def _np_conj(ctx, a):
+    import numpy as np
+    return np.vectorize(ctx.conj)(a)

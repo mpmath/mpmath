@@ -255,3 +255,121 @@ def test_interval_matrix_mult_bug():
 def test_issue_156():
     with pytest.deprecated_call():
         matrix([[1, 2], [3, 4]], force_type=float)
+
+def test_np_compatible():
+    np = pytest.importorskip("numpy")
+    nl = np.linalg
+
+    def _check(dat, ref, tol=1e-9):
+        if isinstance(dat, tuple):
+            for x, y in zip(dat, ref):
+                _check(x, y, tol)
+            return
+
+        if not isinstance(dat, (mp.matrix, np.ndarray)):
+            assert abs(dat - ref) < tol
+            return
+
+        if hasattr(dat, 'to_numpy'):
+            dat = dat.to_numpy()
+        if hasattr(ref, 'to_numpy'):
+            ref = ref.to_numpy()
+        assert abs(dat - ref).max() < tol
+
+    n = 5
+    np.random.seed(1)
+    a = mp.matrix(np.random.rand(n, n)).to_numpy()
+    a = a.dot(a.T)
+    c = (a + 1j).dot(a.T - 1j)
+    b = np.array(mp.arange(n))
+    b1 = b[:,None]
+
+    _check(mp.lu_solve(a, b)[:,None], mp.lu_solve(mp.matrix(a), mp.matrix(b)))
+    _check(mp.lu_solve(a, b), nl.solve(a.astype(float), b.astype(float)))
+    _check(mp.lu_solve(c, b1), mp.lu_solve(mp.matrix(c), mp.matrix(b1)))
+    _check(mp.lu_solve(c, b1), nl.solve(c.astype(complex), b1.astype(float)))
+
+    _check(mp.cholesky_solve(a, b)[:,None], mp.cholesky_solve(mp.matrix(a), mp.matrix(b)))
+    _check(mp.cholesky_solve(a, b), nl.solve(a.astype(float), b.astype(float)))
+    _check(mp.cholesky_solve(c, b1), mp.cholesky_solve(mp.matrix(c), mp.matrix(b1)))
+    _check(mp.cholesky_solve(c, b1), nl.solve(c.astype(complex), b1.astype(float)))
+
+    _check(mp.qr_solve(a, b)[0][:,None], mp.qr_solve(mp.matrix(a), mp.matrix(b))[0])
+    _check(mp.qr_solve(a, b)[0], nl.solve(a.astype(float), b.astype(float)))
+    _check(mp.qr_solve(c, b1), mp.qr_solve(mp.matrix(c), mp.matrix(b1)))
+    _check(mp.qr_solve(c, b1)[0], nl.solve(c.astype(complex), b1.astype(float)))
+
+    _check(mp.inverse(a), mp.inverse(mp.matrix(a)))
+    _check(mp.inverse(c), mp.inverse(mp.matrix(c)))
+    _check(mp.det(a), mp.det(mp.matrix(a)))
+    _check(mp.det(c), mp.det(mp.matrix(c)))
+    _check(mp.cond(a), mp.cond(mp.matrix(a)))
+    _check(mp.cond(c), mp.cond(mp.matrix(c)))
+
+    _check(mp.lu(a), mp.lu(mp.matrix(a)))
+    _check(mp.lu(c), mp.lu(mp.matrix(c)))
+    _check(mp.qr(a), mp.qr(mp.matrix(a)))
+    _check(mp.qr(c), mp.qr(mp.matrix(c)))
+    _check(mp.cholesky(a), mp.cholesky(mp.matrix(a)))
+    _check(mp.cholesky(c), mp.cholesky(mp.matrix(c)))
+
+    _check(mp.eig(a)[0], mp.eig(mp.matrix(a))[0])
+    _check(np.sort(mp.eig(a)[0].astype(complex)), np.sort(nl.eig(a.astype(float))[0].astype(complex)))
+    _check(mp.eig(c)[0], mp.eig(mp.matrix(c))[0])
+    _check(np.sort(mp.eig(c)[0].astype(complex)), np.sort(nl.eig(c.astype(complex))[0].astype(complex)))
+    _check(mp.eigh(a)[0][:,None], mp.eigh(mp.matrix(a))[0])
+    _check(mp.eigh(a)[0], nl.eigh(a.astype(complex))[0])
+    _check(mp.eigh(c)[0][:,None], mp.eigh(mp.matrix(c))[0])
+    _check(mp.eigh(c)[0], nl.eigh(c.astype(complex))[0])
+    _check(mp.svd(a)[1][:,None], mp.svd(mp.matrix(a))[1])
+    _check(mp.svd(a)[1], nl.svd(a.astype(float))[1])
+    _check(mp.svd(c)[1][:,None], mp.svd(mp.matrix(c))[1])
+    _check(mp.svd(c)[1], nl.svd(c.astype(complex))[1])
+    _check(mp.schur(a), mp.schur(mp.matrix(a)))
+    _check(mp.schur(c), mp.schur(mp.matrix(c)))
+    _check(mp.hessenberg(a), mp.hessenberg(mp.matrix(a)))
+    _check(mp.hessenberg(c), mp.hessenberg(mp.matrix(c)))
+
+    _check(mp.norm(a), np.linalg.norm(a.astype(float)))
+    _check(mp.norm(c), np.linalg.norm(c.astype(complex)))
+
+def test_vs_scipy():
+    np = pytest.importorskip("numpy")
+    sl = pytest.importorskip("scipy.linalg")
+
+    def _check(dat, ref, tol=1e-9):
+        if isinstance(dat, tuple):
+            for x, y in zip(dat, ref):
+                _check(x, y, tol)
+            return
+
+        if not isinstance(dat, (mp.matrix, np.ndarray)):
+            assert abs(dat - ref) < tol
+            return
+
+        if hasattr(dat, 'to_numpy'):
+            dat = dat.to_numpy()
+        if hasattr(ref, 'to_numpy'):
+            ref = ref.to_numpy()
+        assert abs(dat - ref).max() < tol
+
+    n = 5
+    np.random.seed(1)
+    a = mp.matrix(np.random.rand(n, n)).to_numpy()
+    a = a.dot(a.T)
+    c = (a + 1j).dot(a.T - 1j)
+
+    _check(np.sort(mp.schur(a)[1].diagonal()),
+           np.sort(sl.schur(a.astype(float))[0].diagonal()))
+    _check(np.sort(mp.schur(c)[1].diagonal().astype(complex)),
+           np.sort(sl.schur(c.astype(complex))[0].diagonal()))
+
+    _check(mp.expm(a), sl.expm(a.astype(float)))
+    _check(mp.logm(a), sl.logm(a.astype(float)))
+    _check(mp.sqrtm(a), sl.sqrtm(a.astype(float)))
+    _check(mp.cosm(a), sl.cosm(a.astype(float)))
+    _check(mp.sinm(a), sl.sinm(a.astype(float)))
+    _check(mp.logm(c), sl.logm(c.astype(complex)))
+    _check(mp.sqrtm(c), sl.sqrtm(c.astype(complex)))
+    _check(mp.cosm(c), sl.cosm(c.astype(complex)))
+    _check(mp.sinm(c), sl.sinm(c.astype(complex)))
