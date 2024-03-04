@@ -749,6 +749,14 @@ class _matrix:
     def __reduce__(self):
         return _make_matrix, (self.tolist(),)
 
+    def __array__(self):
+        from numpy import empty
+        r = empty((self.rows, self.cols), object)
+        for i in range(self.rows):
+            for j in range(self.cols):
+                r[i, j] = self[i, j]
+        return r
+
     def column(self, n):
         m = self.ctx.matrix(self.rows, 1)
         for i in range(self.rows):

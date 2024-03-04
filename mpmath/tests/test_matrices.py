@@ -196,6 +196,8 @@ def test_matrix_numpy():
     l = [[1, 2], [3, 4], [5, 6]]
     a = numpy.array(l)
     assert matrix(l) == matrix(a)
+    assert (numpy.array(matrix(l)) == numpy.array(matrix(l).tolist(),
+                                                  dtype=object)).all()
 
 def test_interval_matrix_scalar_mult():
     """Multiplication of iv.matrix and any scalar type"""
