@@ -13,7 +13,8 @@ equation system::
 
 using ``lu_solve``::
 
-    >>> from mpmath import matrix, lu_solve, residual, eps, fp, lu, iv
+    >>> from mpmath import *
+    >>> mp.pretty = False
     >>> A = matrix([[1, 2], [3, 4]])
     >>> b = matrix([-10, 10])
     >>> x = lu_solve(A, b)
@@ -38,7 +39,7 @@ result.
 
 If you need more speed, use NumPy, or ``fp.lu_solve`` for a floating-point computation.
 
-    >>> fp.lu_solve(A, b)
+    >>> fp.lu_solve(A, b)   # doctest: +ELLIPSIS
     matrix(...)
 
 ``lu_solve`` accepts overdetermined systems. It is usually not possible to solve
@@ -86,13 +87,13 @@ and equation solving with rigorous error bounds::
     >>> b = iv.matrix(['4','0.6','0.5'])
     >>> c = iv.lu_solve(a, b)
     >>> print(c)
-    [  [5.2582327113062393041, 5.2582327113062749951]]
-    [[-13.155049396267856583, -13.155049396267821167]]
-    [  [7.4206915477497212555, 7.4206915477497310922]]
+    [   [5.2582327113062568605927528666, 5.25823271130625686059275702219]]
+    [[-13.1550493962678375411635581388, -13.1550493962678375411635540152]]
+    [  [7.42069154774972557628979076189, 7.42069154774972557628979190734]]
     >>> print(a*c)
-    [  [3.9999999999999866773, 4.0000000000000133227]]
-    [[0.59999999999972430942, 0.60000000000027142733]]
-    [[0.49999999999982236432, 0.50000000000018474111]]
+    [  [3.99999999999999999999999844904, 4.00000000000000000000000155096]]
+    [[0.599999999999999999999968898009, 0.600000000000000000000031763736]]
+    [[0.499999999999999999999979320485, 0.500000000000000000000020679515]]
 """
 
 # TODO:
@@ -102,8 +103,9 @@ and equation solving with rigorous error bounds::
 
 from copy import copy
 
+from ..libmp.backend import xrange
 
-class LinearAlgebraMethods:
+class LinearAlgebraMethods(object):
 
     def LU_decomp(ctx, A, overwrite=False, use_cache=True):
         """
@@ -123,35 +125,27 @@ class LinearAlgebraMethods:
         tol = ctx.absmin(ctx.mnorm(A,1) * ctx.eps) # each pivot element has to be bigger
         n = A.rows
         p = [None]*(n - 1)
-        for j in range(n - 1):
-            # pivoting, choose max(abs(reciprocal row sum)*abs(pivot element))
-            biggest = 0
-            for k in range(j, n):
-                s = ctx.fsum([ctx.absmin(A[k,l]) for l in range(j, n)])
-                if ctx.absmin(s) <= tol:
-                    raise ZeroDivisionError('matrix is numerically singular')
-                current = 1/s * ctx.absmin(A[k,j])
-                if current > biggest: # TODO: what if equal?
-                    biggest = current
-                    p[j] = k
-            # without pivot LU fails
-            if p[j] is None:
-                raise ZeroDivisionError('matrix is numerically singular')
-            # swap rows according to p
-            ctx.swap_row(A, j, p[j])
-            if ctx.absmin(A[j,j]) <= tol:
-                raise ZeroDivisionError('matrix is numerically singular')
-            # calculate elimination factors and add rows
-            for i in range(j + 1, n):
+        is_singular = False
+        for j in xrange(n - 1):
+            # Find the pivot row
+            pivot_row = max((abs(A[k,j]), k) for k in xrange(j, n))[1]
+            # Swap if the pivot row is not the current row
+            if pivot_row != j:
+                ctx.swap_row(A, j, pivot_row)
+            # Check if the pivot element is too small, indicating a singular matrix
+            if abs(A[j,j]) <= tol:
+                is_singular = True
+            # Perform the elimination process
+            for i in xrange(j + 1, n):
                 A[i,j] /= A[j,j]
-                for k in range(j + 1, n):
+                for k in xrange(j + 1, n):
                     A[i,k] -= A[i,j]*A[j,k]
-        if p and ctx.absmin(A[n - 1,n - 1]) <= tol:
-            raise ZeroDivisionError('matrix is numerically singular')
+        if ctx.absmin(A[n - 1,n - 1]) <= tol:
+            is_singular = True
         # cache decomposition
         if not overwrite and isinstance(orig, ctx.matrix):
             orig._LU = (A, p)
-        return A, p
+        return A, p, is_singular
 
     def L_solve(ctx, L, b, p=None):
         """
@@ -164,11 +158,11 @@ class LinearAlgebraMethods:
             raise ValueError("Value should be equal to n")
         b = copy(b)
         if p: # swap b according to p
-            for k in range(len(p)):
+            for k in xrange(0, len(p)):
                 ctx.swap_row(b, k, p[k])
         # solve
-        for i in range(1, n):
-            for j in range(i):
+        for i in xrange(1, n):
+            for j in xrange(i):
                 b[i] -= L[i,j] * b[j]
         return b
 
@@ -182,8 +176,8 @@ class LinearAlgebraMethods:
         if len(y) != n:
             raise ValueError("Value should be equal to n")
         x = copy(y)
-        for i in range(n - 1, -1, -1):
-            for j in range(i + 1, n):
+        for i in xrange(n - 1, -1, -1):
+            for j in xrange(i + 1, n):
                 x[i] -= U[i,j] * x[j]
             x[i] /= U[i,i]
         return x
@@ -197,6 +191,9 @@ class LinearAlgebraMethods:
         (especially for overdetermined systems), but it's twice as efficient.
         Use qr_solve if you want more precision or have to solve a very ill-
         conditioned system.
+
+        If you specify real=True, it does not check for overdeterminded complex
+        systems.
         """
         prec = ctx.prec
         try:
@@ -211,10 +208,17 @@ class LinearAlgebraMethods:
                 AH = A.H
                 A = AH * A
                 b = AH * b
-                x = ctx.cholesky_solve(A, b)
+                if (kwargs.get('real', False) or
+                    not sum(type(i) is ctx.mpc for i in A)):
+                    # TODO: necessary to check also b?
+                    x = ctx.cholesky_solve(A, b)
+                else:
+                    x = ctx.lu_solve(A, b)
             else:
                 # LU factorization
-                A, p = ctx.LU_decomp(A)
+                A, p, is_singular = ctx.LU_decomp(A)
+                if is_singular:
+                    raise ValueError('matrix is numerically singular')
                 b = ctx.L_solve(A, b, p)
                 x = ctx.U_solve(A, b)
         finally:
@@ -230,7 +234,7 @@ class LinearAlgebraMethods:
         """
         if A.rows != A.cols:
             raise RuntimeError("need n*n matrix") # TODO: really?
-        for _ in range(maxsteps):
+        for _ in xrange(maxsteps):
             r = ctx.residual(A, x, b)
             if ctx.norm(r, 2) < 10*ctx.eps:
                 break
@@ -252,12 +256,14 @@ class LinearAlgebraMethods:
         much more memory efficient.
         """
         # get factorization
-        A, p = ctx.LU_decomp(A)
+        A, p, is_singular = ctx.LU_decomp(A)
+        if is_singular:
+            raise ValueError('matrix is numerically singular')
         n = A.rows
         L = ctx.matrix(n)
         U = ctx.matrix(n)
-        for i in range(n):
-            for j in range(n):
+        for i in xrange(n):
+            for j in xrange(n):
                 if i > j:
                     L[i,j] = A[i,j]
                 elif i == j:
@@ -267,7 +273,7 @@ class LinearAlgebraMethods:
                     U[i,j] = A[i,j]
         # calculate permutation matrix
         P = ctx.eye(n)
-        for k in range(len(p)):
+        for k in xrange(len(p)):
             ctx.swap_row(P, k, p[k])
         return P, L, U
 
@@ -292,18 +298,20 @@ class LinearAlgebraMethods:
             A = ctx.matrix(A, **kwargs).copy()
             n = A.rows
             # get LU factorisation
-            A, p = ctx.LU_decomp(A)
+            A, p, is_singular = ctx.LU_decomp(A)
+            if is_singular:
+                raise ValueError('matrix is numerically singular')
             cols = []
             # calculate unit vectors and solve corresponding system to get columns
-            for i in range(1, n + 1):
+            for i in xrange(1, n + 1):
                 e = ctx.unitvector(n, i)
                 y = ctx.L_solve(A, e, p)
                 cols.append(ctx.U_solve(A, y))
             # convert columns to matrix
             inv = []
-            for i in range(n):
+            for i in xrange(n):
                 row = []
-                for j in range(n):
+                for j in xrange(n):
                     row.append(cols[j][i])
                 inv.append(row)
             result = ctx.matrix(inv, **kwargs)
@@ -328,25 +336,25 @@ class LinearAlgebraMethods:
             raise RuntimeError("Columns should not be less than rows")
         # calculate Householder matrix
         p = []
-        for j in range(n - 1):
-            s = ctx.fsum(abs(A[i,j])**2 for i in range(j, m))
+        for j in xrange(0, n - 1):
+            s = ctx.fsum(abs(A[i,j])**2 for i in xrange(j, m))
             if not abs(s) > ctx.eps:
                 raise ValueError('matrix is numerically singular')
             p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
             kappa = ctx.one / (s - p[j] * A[j,j])
             A[j,j] -= p[j]
-            for k in range(j+1, n):
-                y = ctx.fsum(ctx.conj(A[i,j]) * A[i,k] for i in range(j, m)) * kappa
-                for i in range(j, m):
+            for k in xrange(j+1, n):
+                y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in xrange(j, m)) * kappa
+                for i in xrange(j, m):
                     A[i,k] -= A[i,j] * y
         # solve Rx = c1
-        x = [A[i,n - 1] for i in range(n - 1)]
-        for i in range(n - 2, -1, -1):
-            x[i] -= ctx.fsum(A[i,j] * x[j] for j in range(i + 1, n - 1))
+        x = [A[i,n - 1] for i in xrange(n - 1)]
+        for i in xrange(n - 2, -1, -1):
+            x[i] -= ctx.fsum(A[i,j] * x[j] for j in xrange(i + 1, n - 1))
             x[i] /= p[i]
         # calculate residual
         if not m == n - 1:
-            r = [A[m-1-i, n-1] for i in range(m - n + 1)]
+            r = [A[m-1-i, n-1] for i in xrange(m - n + 1)]
         else:
             # determined system, residual should be 0
             r = [0]*m # maybe a bad idea, changing r[i] will change all elements
@@ -424,8 +432,7 @@ class LinearAlgebraMethods:
 
         Cholesky decomposition of a positive-definite symmetric matrix::
 
-            >>> from mpmath import (mp, eye, hilbert, nprint, cholesky,
-            ...                     chop, matrix)
+            >>> from mpmath import *
             >>> mp.dps = 25; mp.pretty = True
             >>> A = eye(3) + hilbert(3)
             >>> nprint(A)
@@ -477,18 +484,18 @@ class LinearAlgebraMethods:
             tol = +ctx.eps
         n = A.rows
         L = ctx.matrix(n)
-        for j in range(n):
+        for j in xrange(n):
             c = ctx.re(A[j,j])
             if abs(c-A[j,j]) > tol:
                 raise ValueError('matrix is not Hermitian')
-            s = c - ctx.fsum((L[j,k] for k in range(j)),
+            s = c - ctx.fsum((L[j,k] for k in xrange(j)),
                 absolute=True, squared=True)
             if s < tol:
                 raise ValueError('matrix is not positive-definite')
             L[j,j] = ctx.sqrt(s)
-            for i in range(j, n):
-                it1 = (L[i,k] for k in range(j))
-                it2 = (L[j,k] for k in range(j))
+            for i in xrange(j, n):
+                it1 = (L[i,k] for k in xrange(j))
+                it2 = (L[j,k] for k in xrange(j))
                 t = ctx.fdot(it1, it2, conjugate=True)
                 L[i,j] = (A[i,j] - t) / L[j,j]
         return L
@@ -518,73 +525,17 @@ class LinearAlgebraMethods:
             n = L.rows
             if len(b) != n:
                 raise ValueError("Value should be equal to n")
-            for i in range(n):
-                b[i] -= ctx.fsum(L[i,j] * b[j] for j in range(i))
+            for i in xrange(n):
+                b[i] -= ctx.fsum(L[i,j] * b[j] for j in xrange(i))
                 b[i] /= L[i,i]
-            x = ctx.U_solve(L.H, b)
+            x = ctx.U_solve(L.T, b)
             return x
         finally:
             ctx.prec = prec
 
     def det(ctx, A):
         """
-        Calculate the determinant of a square matrix.
-
-        The determinant is the normed, alternating n-linear from,
-        i.e. a multiplicative map for each matrix into the
-        field of numbers of its entries.
-
-        **Examples**
-
-        Determinant of identity is 1.
-
-        >>> from mpmath import eye, matrix, det
-        >>> A = eye(3)
-        >>> print(det(A))
-        1.0
-
-        The determinant of a 0 by 0 matrix is 1 as the product of no factors
-        is by convention the multiplicative identity.
-        >>> A = matrix(0, 0)
-        >>> print(det(A))
-        1
-
-        But in general a matrix can have any number as its determinant.
-
-        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
-        >>> print(det(A))
-        0
-
-        The determinant is vanishing if a matrix has no inverse.
-
-        >>> A = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
-        >>> print(det(A))
-        0
-
-        But, matrix has determinate different from zero full rank if and only is is equivalent to identity,
-
-        >>> A = matrix([[1, 3, -2], [1, 9, -6], [1, 4, -3]])
-        >>> print(det(A))
-        -2.0
-
-        i.e. has an inverse matrix.
-
-        >>> B = matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]]) / 2
-        >>> A*B == eye(3)
-        True
-        >>> print(det(B))
-        -0.5
-
-        Moreover, a matrix of integers has an inverse matrix of integers
-        if and only if the determinat is equal to either 1 or -1.
-
-        >>> A = matrix([[1, 0, 1],[-2, 1, -2],[-4, 1, -5]])
-        >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
-        >>> A*B == eye(3)
-        True
-        >>> print(det(A), det(B))
-        -1.0 -1.0
-
+        Calculate the determinant of a matrix.
         """
         prec = ctx.prec
         try:
@@ -599,7 +550,7 @@ class LinearAlgebraMethods:
             for i, e in enumerate(p):
                 if i != e:
                     z *= -1
-            for i in range(A.rows):
+            for i in xrange(A.rows):
                 z *= R[i,i]
             return z
         finally:
@@ -649,7 +600,7 @@ class LinearAlgebraMethods:
 
         **Examples**
 
-            >>> from mpmath import mp, qr, matrix, chop, nprint, j
+            >>> from mpmath import *
             >>> mp.dps = 15
             >>> mp.pretty = True
             >>> A = matrix([[1, 2], [3, 4], [1, 1]])
@@ -712,13 +663,13 @@ class LinearAlgebraMethods:
                 rzero = ctx.mpf('0.0')
 
                 # main loop to factor A (complex)
-                for j in range(n):
+                for j in xrange(0, n):
                     alpha = A[j,j]
                     alphr = ctx.re(alpha)
                     alphi = ctx.im(alpha)
 
                     if (m-j) >= 2:
-                        xnorm = ctx.fsum( A[i,j]*ctx.conj(A[i,j]) for i in range(j+1, m) )
+                        xnorm = ctx.fsum( A[i,j]*ctx.conj(A[i,j]) for i in xrange(j+1, m) )
                         xnorm = ctx.re( ctx.sqrt(xnorm) )
                     else:
                         xnorm = rzero
@@ -736,14 +687,14 @@ class LinearAlgebraMethods:
                     t = -ctx.conj(tau[j])
                     za = one / (alpha - beta)
 
-                    for i in range(j+1, m):
+                    for i in xrange(j+1, m):
                         A[i,j] *= za
 
                     A[j,j] = one
-                    for k in range(j+1, n):
-                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in range(j, m))
+                    for k in xrange(j+1, n):
+                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in xrange(j, m)) * kappa
                         temp = t * ctx.conj(y)
-                        for i in range(j, m):
+                        for i in xrange(j, m):
                             A[i,k] += A[i,j] * temp
 
                     A[j,j] = ctx.mpc(beta, '0.0')
@@ -752,11 +703,11 @@ class LinearAlgebraMethods:
                 zero = ctx.mpf('0.0')
 
                 # main loop to factor A (real)
-                for j in range(n):
+                for j in xrange(0, n):
                     alpha = A[j,j]
 
                     if (m-j) > 2:
-                        xnorm = ctx.fsum( (A[i,j])**2 for i in range(j+1, m) )
+                        xnorm = ctx.fsum( (A[i,j])**2 for i in xrange(j+1, m) )
                         xnorm = ctx.sqrt(xnorm)
                     elif (m-j) == 2:
                         xnorm = abs( A[m-1,j] )
@@ -776,14 +727,14 @@ class LinearAlgebraMethods:
                     t = -tau[j]
                     da = one / (alpha - beta)
 
-                    for i in range(j+1, m):
+                    for i in xrange(j+1, m):
                         A[i,j] *= da
 
                     A[j,j] = one
-                    for k in range(j+1, n):
-                        y = ctx.fsum( A[i,j] * A[i,k] for i in range(j, m) )
+                    for k in xrange(j+1, n):
+                        y = ctx.fsum( A[i,j] * A[i,k] for i in xrange(j, m) )
                         temp = t * y
-                        for i in range(j,m):
+                        for i in xrange(j,m):
                             A[i,k] += A[i,j] * temp
 
                     A[j,j] = beta
@@ -798,8 +749,8 @@ class LinearAlgebraMethods:
 
             # form R before the values are overwritten
             R = A.copy()
-            for j in range(n):
-                for i in range(j+1, m):
+            for j in xrange(0, n):
+                for i in xrange(j+1, m):
                     R[i,j] = zero
 
             # set the value of p (number of columns of Q to return)
@@ -809,28 +760,28 @@ class LinearAlgebraMethods:
 
             # add columns to A if needed and initialize
             A.cols += (p-n)
-            for j in range(p):
+            for j in xrange(0, p):
                 A[j,j] = one
-                for i in range(j):
+                for i in xrange(0, j):
                     A[i,j] = zero
 
             # main loop to form Q
-            for j in range(n-1, -1, -1):
+            for j in xrange(n-1, -1, -1):
                 t = -tau[j]
                 A[j,j] += t
 
-                for k in range(j+1, p):
+                for k in xrange(j+1, p):
                     if cmplx:
-                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in range(j+1, m))
+                        y = ctx.fsum(A[i,j] * ctx.conj(A[i,k]) for i in xrange(j+1, m))
                         temp = t * ctx.conj(y)
                     else:
-                        y = ctx.fsum(A[i,j] * A[i,k] for i in range(j+1, m))
+                        y = ctx.fsum(A[i,j] * A[i,k] for i in xrange(j+1, m))
                         temp = t * y
                     A[j,k] = temp
-                    for i in range(j+1, m):
+                    for i in xrange(j+1, m):
                         A[i,k] += A[i,j] * temp
 
-                for i in range(j+1, m):
+                for i in xrange(j+1, m):
                     A[i, j] *= t
 
             return A, R[0:p,0:n]
@@ -838,82 +789,3 @@ class LinearAlgebraMethods:
         # ------------------
         # END OF FUNCTION QR
         # ------------------
-
-    def rank(ctx, A, iszerofunc=None):
-        """
-        Calculate the rank of a matrix.
-
-        This corresponds to the maximal
-        number of linear independent
-        columns (or rows equivalently).
-
-        Rank is computed via singular value decomposition
-        by counting the number of non-zero singular values.
-
-        The argument 'iszerofunc' allows for the provision
-        of a custom function to enable zero detection customization.
-
-        **Examples**
-
-        Rank of identity is same as its dimension.
-
-        >>> from mpmath import eye, matrix, rank, zeros, qr
-        >>> A = eye(3)
-        >>> rank(A)
-        3
-
-        But in general a matrix has rank less or equal of its dimension.
-
-        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
-        >>> rank(A)
-        2
-
-        The rank is given by the number of non zero lines in an
-        equivalent triangular matrix.
-
-        >>> R = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
-        >>> rank(A)
-        2
-
-        The rank is zero if and only if the matrix is zero.
-
-        >>> A = zeros(3)
-        >>> rank(A)
-        0
-
-        The matrix has full rank if and only ist is equivalent to identity,
-
-        >>> A = matrix([[1, 0, 1],[-2, 1, -2],[-4, 1, -5]])
-        >>> rank(A)
-        3
-
-        i.e. has an inverse matrix.
-
-        >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
-        >>> A*B == eye(3)
-        True
-        >>> rank(B)
-        3
-
-        to handle numerical precision zero evaluation can be customized
-        by providing an `iszerofunc`
-
-        >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
-        >>> _, R = qr(A)
-        >>> R
-        matrix(
-        [['-3.74165738677394', '-9.8886659507597', '-7.48331477354788'],
-         ['0.0', '1.79284291400159', '-2.548055495426e-26'],
-         ['0.0', '0.0', '4.35114889954169e-27']])
-
-        to take advantage of full precision provide a custom `iszerofunc`
-
-        >>> iszerofunc = lambda x: not bool(x)
-        >>> rank(R, iszerofunc)
-        3
-
-        """
-        if iszerofunc is None:
-            iszerofunc = lambda v: ctx.absmin(v) < ctx.eps
-
-        return sum(1 for v in ctx.svd_r(A, compute_uv=False) if not iszerofunc(v))
