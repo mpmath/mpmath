@@ -16,12 +16,8 @@ class FPContext(StandardBaseContext):
     """
 
     def __init__(ctx):
-        StandardBaseContext.__init__(ctx)
-
-        # Override SpecialFunctions implementation
-        ctx.loggamma = libfp.loggamma
+        super().__init__()
         ctx.pretty = False
-
         ctx._init_aliases()
 
     NoConvergence = libmp.NoConvergence
@@ -150,6 +146,7 @@ class FPContext(StandardBaseContext):
     _e1 = staticmethod(libfp.e1)
     _zeta = _zeta_int = staticmethod(libfp.zeta)
     arg = staticmethod(cmath.phase)
+    loggamma = staticmethod(libfp.loggamma)
 
     def expj(ctx, x):
         return ctx.exp(ctx.j*x)
