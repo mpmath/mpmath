@@ -10,8 +10,9 @@ from .libmp import int_types, mpf_bernoulli, to_float
 
 class FPContext(StandardBaseContext):
     """
-    Context for fast low-precision arithmetic (53-bit precision, giving at most
-    about 15-digit accuracy), using Python's builtin float and complex.
+    Context for fast low-precision arithmetic (usually, 53-bit precision,
+    giving at most about 15 decimal digits), using Python's builtin float and
+    complex types.
     """
 
     def __init__(ctx):
@@ -25,15 +26,23 @@ class FPContext(StandardBaseContext):
 
     NoConvergence = libmp.NoConvergence
 
-    def _get_prec(ctx): return 53
-    def _set_prec(ctx, p): return
-    def _get_dps(ctx): return 15
-    def _set_dps(ctx, p): return
+    @property
+    def prec(ctx):
+        return sys.float_info.mant_dig
+
+    @prec.setter
+    def prec(ctx, p):
+        return
+
+    @property
+    def dps(ctx):
+        return sys.float_info.dig
+
+    @dps.setter
+    def dps(ctx, p):
+        return
 
     _fixed_precision = True
-
-    prec = property(_get_prec, _set_prec)
-    dps = property(_get_dps, _set_dps)
 
     zero = 0.0
     one = 1.0
@@ -58,7 +67,7 @@ class FPContext(StandardBaseContext):
 
     @functools.lru_cache
     def bernoulli(ctx, n, plus=False):
-        return to_float(mpf_bernoulli(n, 53, 'n', plus=plus), strict=True)
+        return to_float(mpf_bernoulli(n, ctx.prec, 'n', plus=plus), strict=True)
 
     pi = libfp.pi
     e = math.e
