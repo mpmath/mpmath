@@ -395,7 +395,7 @@ def nthroot_fixed(y, n, prec, exp1):
     start = 50
     try:
         y1 = rshift(y, prec - n*start)
-        r = MPZ(int(y1**(1.0/n)))
+        r = MPZ(y1**(1.0/n))
     except OverflowError:
         y1 = from_int(y1, start)
         fn = from_int(n)

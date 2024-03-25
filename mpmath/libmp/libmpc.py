@@ -324,8 +324,8 @@ def mpc_nthroot_fixed(a, b, n, prec):
         r = (a1 + 1j * b1)**(1.0/n)
         re = r.real
         im = r.imag
-        re = MPZ(int(re))
-        im = MPZ(int(im))
+        re = MPZ(re)
+        im = MPZ(im)
     except OverflowError:
         a1 = from_int(a1, start)
         b1 = from_int(b1, start)
