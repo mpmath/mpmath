@@ -1,4 +1,5 @@
-# Regular Coulomb wave functions -- equivalent to figure 14.3 in A&S
+"""Regular Coulomb wave functions -- equivalent to figure 14.3 in A&S"""
+from mpmath import *
 F1 = lambda x: coulombf(0,0,x)
 F2 = lambda x: coulombf(0,1,x)
 F3 = lambda x: coulombf(0,5,x)

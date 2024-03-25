@@ -1,4 +1,5 @@
-# Lommel function S_(u,v)(x) on the real line for a few different u,v
+"""Lommel function S_(u,v)(x) on the real line for a few different u,v"""
+from mpmath import *
 f1 = lambda x: lommels2(-1,2.5,x)
 f2 = lambda x: lommels2(1.5,2,x)
 f3 = lambda x: lommels2(2.5,1,x)

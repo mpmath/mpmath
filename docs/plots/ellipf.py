@@ -1,4 +1,5 @@
-# Elliptic integral F(z,m) for some different m
+"""Elliptic integral F(z,m) for some different m"""
+from mpmath import *
 f1 = lambda z: ellipf(z,-1)
 f2 = lambda z: ellipf(z,-0.5)
 f3 = lambda z: ellipf(z,0)

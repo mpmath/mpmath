@@ -29,6 +29,7 @@ Basic features
    general
    plotting
    cli
+   auto_plots
 
 Advanced mathematics
 --------------------

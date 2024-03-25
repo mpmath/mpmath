@@ -1,4 +1,5 @@
-# Modified Bessel function I_n(x) on the real line for n=0,1,2,3
+"""Modified Bessel function I_n(x) on the real line for n=0,1,2,3"""
+from mpmath import *
 i0 = lambda x: besseli(0,x)
 i1 = lambda x: besseli(1,x)
 i2 = lambda x: besseli(2,x)

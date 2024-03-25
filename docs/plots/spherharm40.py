@@ -1,4 +1,5 @@
-# Real part of spherical harmonic Y_(4,0)(theta,phi)
+"""Real part of spherical harmonic Y_(4,0)(theta,phi)"""
+from mpmath import *
 def Y(l,m):
     def g(theta,phi):
         R = abs(fp.re(fp.spherharm(l,m,theta,phi)))
@@ -9,7 +10,7 @@ def Y(l,m):
     return g
 
 fp.splot(Y(4,0), [0,fp.pi], [0,2*fp.pi], points=300)
-# fp.splot(Y(4,0), [0,fp.pi], [0,2*fp.pi], points=300)
-# fp.splot(Y(4,1), [0,fp.pi], [0,2*fp.pi], points=300)
-# fp.splot(Y(4,2), [0,fp.pi], [0,2*fp.pi], points=300)
-# fp.splot(Y(4,3), [0,fp.pi], [0,2*fp.pi], points=300)
+"""fp.splot(Y(4,0), [0,fp.pi], [0,2*fp.pi], points=300)"""
+"""fp.splot(Y(4,1), [0,fp.pi], [0,2*fp.pi], points=300)"""
+"""fp.splot(Y(4,2), [0,fp.pi], [0,2*fp.pi], points=300)"""
+"""fp.splot(Y(4,3), [0,fp.pi], [0,2*fp.pi], points=300)"""

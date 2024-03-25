@@ -1,4 +1,5 @@
-# Airy function Ai(x), Ai'(x) and int_0^x Ai(t) dt on the real line
+"""Airy function Ai(x), Ai'(x) and int_0^x Ai(t) dt on the real line"""
+from mpmath import *
 f = airyai
 f_diff = lambda z: airyai(z, derivative=1)
 f_int = lambda z: airyai(z, derivative=-1)

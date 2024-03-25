@@ -1,4 +1,5 @@
-# Hankel function H1_n(x) on the real line for n=0,1,2,3
+"""Hankel function H1_n(x) on the real line for n=0,1,2,3"""
+from mpmath import *
 h0 = lambda x: hankel1(0,x)
 h1 = lambda x: hankel1(1,x)
 h2 = lambda x: hankel1(2,x)

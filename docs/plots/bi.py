@@ -1,4 +1,5 @@
-# Airy function Bi(x), Bi'(x) and int_0^x Bi(t) dt on the real line
+"""Airy function Bi(x), Bi'(x) and int_0^x Bi(t) dt on the real line"""
+from mpmath import *
 f = airybi
 f_diff = lambda z: airybi(z, derivative=1)
 f_int = lambda z: airybi(z, derivative=-1)

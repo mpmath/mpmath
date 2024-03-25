@@ -15,6 +15,7 @@ import mpmath
 # Add any Sphinx extension module names here, as strings.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
               'sphinx.ext.intersphinx', 'sphinxcontrib.autoprogram',
+              'sphinx_gallery.gen_gallery',
               'matplotlib.sphinxext.plot_directive']
 
 # Sphinx will warn about all references where the target cannot be found.
@@ -50,3 +51,8 @@ plot_include_source = True
 plot_formats = [('png', 96), 'pdf']
 plot_html_show_formats = False
 plot_html_show_source_link = False
+
+sphinx_gallery_conf = {
+    'examples_dirs': 'plots',
+    'gallery_dirs': 'auto_plots',
+}

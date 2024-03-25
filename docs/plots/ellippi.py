@@ -1,4 +1,5 @@
-# Elliptic integral Pi(n,z,m) for some different n, m
+"""Elliptic integral Pi(n,z,m) for some different n, m"""
+from mpmath import *
 f1 = lambda z: ellippi(0.9,z,0.9)
 f2 = lambda z: ellippi(0.5,z,0.5)
 f3 = lambda z: ellippi(-2,z,-0.9)

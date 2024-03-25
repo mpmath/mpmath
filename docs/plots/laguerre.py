@@ -1,4 +1,5 @@
-# Hermite polynomials L_n(x) on the real line for n=0,1,2,3,4
+"""Hermite polynomials L_n(x) on the real line for n=0,1,2,3,4"""
+from mpmath import *
 f0 = lambda x: laguerre(0,0,x)
 f1 = lambda x: laguerre(1,0,x)
 f2 = lambda x: laguerre(2,0,x)

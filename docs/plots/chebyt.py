@@ -1,4 +1,5 @@
-# Chebyshev polynomials T_n(x) on [-1,1] for n=0,1,2,3,4
+"""Chebyshev polynomials T_n(x) on [-1,1] for n=0,1,2,3,4"""
+from mpmath import *
 f0 = lambda x: chebyt(0,x)
 f1 = lambda x: chebyt(1,x)
 f2 = lambda x: chebyt(2,x)
