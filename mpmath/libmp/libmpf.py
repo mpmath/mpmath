@@ -458,6 +458,8 @@ def mpf_eq(s, t):
     if not s[1] or not t[1]:
         if s == fnan or t == fnan:
             return False
+        if all(_ in (fzero, fnzero) for _ in [s, t]):
+            return True
     return s == t
 
 def mpf_hash(s):
