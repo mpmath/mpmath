@@ -198,6 +198,8 @@ def normalize(sign, man, exp, bc, prec, rnd):
     assert type(exp) in _exp_types
     assert bc == man.bit_length()
     assert man >= 0
+    if not man and not exp:
+        return sign, man, 0, 0
     return _normalize(sign, man, exp, bc, prec, rnd)
 
 #----------------------------------------------------------------------------#
@@ -337,6 +339,7 @@ def from_float(x, prec=53, rnd=round_fast):
     if x != x: return fnan
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
+    if not x: return math.copysign(1., x) == -1., MPZ(0), 0, 0
     m, e = math.frexp(x)
     return from_man_exp(MPZ(m*(1<<53)), e-53, prec, rnd)
 
@@ -379,6 +382,7 @@ def to_float(s, strict=False, rnd=round_fast):
     sign, man, exp, bc = s
     if not man:
         if s == fzero: return 0.0
+        if s == fnzero: return -0.0
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
         return math_float_inf/math_float_inf
@@ -1149,6 +1153,12 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if show_zero_exponent:
                 t += sep + '+0'
             return prefix + t
+        if s == fnzero:
+            if dps: t = '-0.0'
+            else:   t = '-.0'
+            if show_zero_exponent:
+                t += sep + '+0'
+            return prefix + t
         if s == finf: return '+inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
@@ -1221,7 +1231,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     if exponent == 0 and dps and not show_zero_exponent: return sign + digits
     return sign + digits + sep + f"{exponent:+}"
 
-def str_to_man_exp(x, base=10):
+def str_to_sign_man_exp(x, base=10):
     """Helper function for from_str."""
     x = x.lower().rstrip('l').replace('_', '')
     # Split into mantissa, exponent
@@ -1247,15 +1257,18 @@ def str_to_man_exp(x, base=10):
             exp -= len(b)*e2
         if a == '':
             a = '0'
+        if a == '-':
+            a = '-0'
         x = a + b
     int_max_str_digits = 0
     if BACKEND == 'python' and hasattr(sys, 'get_int_max_str_digits'):
         int_max_str_digits = sys.get_int_max_str_digits()
         sys.set_int_max_str_digits(0)
+    sign = '-' in x
     x = MPZ(x, base)
     if int_max_str_digits:
         sys.set_int_max_str_digits(int_max_str_digits)
-    return x, exp
+    return sign, x, exp
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan,
                'oo':finf, '+oo':finf, '-oo':fninf}
@@ -1288,7 +1301,7 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
         p, q = p.rstrip('l'), q.rstrip('l')
         return from_rational(int(p, base), int(q, base), prec, rnd)
 
-    man, exp = str_to_man_exp(x, base)
+    sign, man, exp = str_to_sign_man_exp(x, base)
 
     if base == 10:
         # XXX: appropriate cutoffs & track direction
@@ -1308,7 +1321,7 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
             s = from_man_exp(man, exp, prec, rnd)
     else:
         raise NotImplementedError
-    return s
+    return sign, *s[1:]
 
 
 #----------------------------------------------------------------------------#

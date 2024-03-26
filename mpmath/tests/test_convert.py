@@ -42,6 +42,7 @@ def test_basic_string():
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
     assert str(mpf('inf')) == '+inf'
+    assert str(mpf('-0.0')) == '-0.0'
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
@@ -102,6 +103,10 @@ def test_str_format():
     assert to_str(from_float(2.1287e15), 15, max_fixed=1000) == '2128700000000000.0'
     assert to_str(from_float(2.1287e16), 15, max_fixed=1000) == '21287000000000000.0'
     assert to_str(from_float(2.1287e30), 15, max_fixed=1000) == '2128700000000000000000000000000.0'
+    assert to_str(from_float(-0.0), 2) == '-0.0'
+    assert to_str(from_float(-0.0), 0) == '-.0'
+    assert to_str(from_float(-0.0), 2, strip_zeros=False) == '-0.0'
+    assert to_str(from_float(-0.0), 2, show_zero_exponent=True) == '-0.0e+0'
 
 def test_tight_string_conversion():
     # In an old version, '0.5' wasn't recognized as representing
