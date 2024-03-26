@@ -14,7 +14,8 @@ import mpmath
 
 # Add any Sphinx extension module names here, as strings.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
-              'sphinx.ext.intersphinx']
+              'sphinx.ext.intersphinx',
+              'matplotlib.sphinxext.plot_directive']
 
 # Sphinx will warn about all references where the target cannot be found.
 nitpicky = True
@@ -44,3 +45,8 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'sympy': ('https://docs.sympy.org/latest/', None),
 }
+
+plot_include_source = True
+plot_formats = [('png', 96), 'pdf']
+plot_html_show_formats = False
+plot_html_show_source_link = False

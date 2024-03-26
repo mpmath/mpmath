@@ -9,7 +9,7 @@ class VisualizationMethods:
     plot_ignore = (ValueError, ArithmeticError, ZeroDivisionError, NoConvergence)
 
 def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
-    singularities=[], axes=None):
+    singularities=[], axes=None, plot_kwargs={}):
     r"""
     Shows a simple 2D plot of a function `f(x)` or list of functions
     `[f_0(x), f_1(x), \ldots, f_n(x)]` over a given interval
@@ -91,10 +91,10 @@ def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
             c = colors[n % len(colors)]
             if len(segment[0]) == 3:
                 z = [s[2] for s in segment]
-                axes.plot(x, y, '--'+c, linewidth=3)
-                axes.plot(x, z, ':'+c, linewidth=3)
+                axes.plot(x, y, '--'+c, linewidth=3, **plot_kwargs)
+                axes.plot(x, z, ':'+c, linewidth=3, **plot_kwargs)
             else:
-                axes.plot(x, y, c, linewidth=3)
+                axes.plot(x, y, c, linewidth=3, **plot_kwargs)
     axes.set_xlim([float(_) for _ in xlim])
     if ylim:
         axes.set_ylim([float(_) for _ in ylim])
@@ -147,7 +147,7 @@ def phase_color_function(ctx, z):
             return ra+(rb-ra)*s, ga+(gb-ga)*s, ba+(bb-ba)*s
 
 def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
-    verbose=False, file=None, dpi=None, axes=None):
+    verbose=False, file=None, dpi=None, axes=None, imshow_kwargs={}):
     """
     Plots the given complex-valued function *f* over a rectangular part
     of the complex plane specified by the pairs of intervals *re* and *im*.
@@ -213,7 +213,7 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
         if verbose:
             print(str(n) + ' of ' + str(N))
     rea, reb, ima, imb = [float(_) for _ in [rea, reb, ima, imb]]
-    axes.imshow(w, extent=(rea, reb, ima, imb), origin='lower')
+    axes.imshow(w, extent=(rea, reb, ima, imb), origin='lower', **imshow_kwargs)
     axes.set_xlabel('Re(z)')
     axes.set_ylabel('Im(z)')
     if fig:
@@ -222,8 +222,8 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
         else:
             pylab.show()
 
-def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
-          wireframe=False, file=None, dpi=None, axes=None):
+def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True,
+          wireframe=False, file=None, dpi=None, axes=None, plot3d_kwargs={}):
     """
     Plots the surface defined by `f`.
 
@@ -279,9 +279,9 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True, \
                 if c > cab[1]:
                     cab[1] = c
     if wireframe:
-        axes.plot_wireframe(x, y, z, rstride=4, cstride=4)
+        axes.plot_wireframe(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
     else:
-        axes.plot_surface(x, y, z, rstride=4, cstride=4)
+        axes.plot_surface(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
     axes.set_xlabel('x')
     axes.set_ylabel('y')
     axes.set_zlabel('z')
