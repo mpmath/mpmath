@@ -16,10 +16,10 @@ import warnings
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
 from .libintmath import (giant_steps, ifib, isqrt_fast, lshift, rshift,
                          sqrt_fixed)
-from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
-                     from_int, from_man_exp, from_rational, fzero, mpf_abs,
-                     mpf_add, mpf_cmp, mpf_div, mpf_mul, mpf_mul_int, mpf_neg,
-                     mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
+from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fnzero,
+                     fone, from_int, from_man_exp, from_rational, fzero,
+                     mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_mul, mpf_mul_int,
+                     mpf_neg, mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
                      normalize, reciprocal_rnd, round_ceiling, round_fast,
                      round_up, to_fixed, to_int)
@@ -773,7 +773,7 @@ def mpf_log_hypot(a, b, prec, rnd):
             # at least one term is (+/- inf)^2
             return finf
         # only a is inf/nan/0
-        if a == fzero:
+        if a in (fzero, fnzero):
             # log(sqrt(0+b^2)) = log(|b|)
             return mpf_ln(mpf_abs(b), prec, rnd)
         if a == fnan:
@@ -900,6 +900,10 @@ def mpf_atan2(y, x, prec, rnd=round_fast):
             if mpf_sign(x) >= 0:
                 return fzero
             return mpf_pi(prec, rnd)
+        if y == fnzero and x != fnan:
+            if mpf_sign(x) >= 0:
+                return fnzero
+            return mpf_neg(mpf_pi(prec, rnd))
         if y in (finf, fninf):
             if x == finf:
                 if y == finf:

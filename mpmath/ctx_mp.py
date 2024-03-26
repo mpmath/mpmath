@@ -1169,14 +1169,11 @@ maxterms, or set zeroprec."""
                 im_dist = ctx.ninf
         else:
             x = ctx.convert(x)
-            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
-                return ctx.nint_distance(x)
-            else:
-                raise TypeError("requires an mpf/mpc")
+            return ctx.nint_distance(x)
         man, exp = to_man_exp(re, signed=True)
         mag = exp+man.bit_length()
         # |x| < 0.5
-        if mag < 0:
+        if man and mag < 0:
             n = 0
             re_dist = mag
         elif man:
