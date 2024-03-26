@@ -74,27 +74,6 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
-..
-    >>> import mpmath, pytest
-    >>> if mpmath.libmp.backend.BACKEND != 'python':
-    ...     pytest.skip('skip the rest')
-    >>>
-
-.. warning::
-
-   By default, mpmath uses Python integers internally.  Beware that now CPython
-   has a `global limit
-   <https://docs.python.org/3/library/stdtypes.html#integer-string-conversion-length-limitation>`_
-   for converting between :class:`int` and :class:`str`.  This affects
-   conversion to mpmath types from big decimal strings.  For example::
-
-       >>> mpf('1' * 500_000)
-       Traceback (most recent call last):
-       ...
-       ValueError: Exceeds the limit (4300 digits) for integer string conversion...
-
-   You could use ``sys.set_int_max_str_digits(0)`` to disable this limitation.
-
 Using gmpy (optional)
 ---------------------
 
