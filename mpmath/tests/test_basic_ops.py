@@ -1,4 +1,5 @@
 import decimal
+import math
 import operator
 import random
 
@@ -7,9 +8,9 @@ import pytest
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
-from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
-                          from_str, mpf_add, mpf_mul, mpf_sub, round_down,
-                          round_nearest, round_up, to_int)
+from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fone, from_float,
+                          from_int, from_str, mpf_add, mpf_mul, mpf_sub,
+                          round_down, round_nearest, round_up, to_int)
 
 
 def test_type_compare():
@@ -158,6 +159,14 @@ def test_mpf_init():
     assert mpf('0x1.4ace478p+33') == mpf(11100000000.0)
     assert mpf('0x1.4ace478p+33', base=0) == mpf(11100000000.0)
     assert mpf('1.4ace478p+33', base=16) == mpf(11100000000.0)
+    # signed zeros
+    assert mpf('-0.0')._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf('-.0')._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf('-0')._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf('-0b0')._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf('-0x0')._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf(-0.0)._mpf_ == (1, MPZ(0), 0, 0)
+    assert mpf((1, MPZ(0), 0, 0))._mpf_ == (1, MPZ(0), 0, 0)
 
 def test_mpc_init():
     class mympc:
@@ -182,6 +191,8 @@ def test_mpf_methods():
 
 def test_mpf_magic():
     assert complex(mpf(0.5)) == complex(0.5)
+    assert float(mpf(-0.0)) == 0.0
+    assert math.copysign(1., float(mpf(-0.0))) == -1.
 
 def test_complex_misc():
     # many more tests needed
