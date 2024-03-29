@@ -3586,7 +3586,7 @@ relations::
 Evaluation at integers and poles::
 
     >>> gammainc(-3, -4, -5)
-    (-0.2214577048967798566234192 + 0.0j)
+    (-0.2214577048967798566234192 - 0.0j)
     >>> lower_gamma(-3, 5)
     +inf
 
@@ -8975,7 +8975,7 @@ Some values of the Riemann zeta function::
     >>> zeta(-1)
     -0.08333333333333333333333333
     >>> zeta(-2)
-    0.0
+    -0.0
 
 For large positive `s`, `\zeta(s)` rapidly approaches 1::
 

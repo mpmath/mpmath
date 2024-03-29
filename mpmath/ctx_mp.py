@@ -1119,6 +1119,8 @@ maxterms, or set zeroprec."""
             iman, iexp = to_man_exp(im, signed=True)
             if iman:
                 im_dist = iexp + iman.bit_length()
+            elif im in (fzero, fnzero):
+                im_dist = ctx.ninf
             else:
                 im_dist = ctx.ninf
         else:

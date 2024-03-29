@@ -14,10 +14,10 @@ from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
 from .libintmath import giant_steps, lshift, rshift
 from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fnzero,
                      fone, from_float, from_int, from_man_exp, ftwo, fzero,
-                     mpf_abs, mpf_add, mpf_ceil, mpf_div, mpf_floor, mpf_frac,
-                     mpf_hash, mpf_hypot, mpf_mul, mpf_mul_int, mpf_neg,
-                     mpf_nint, mpf_pos, mpf_rdiv_int, mpf_shift, mpf_sqrt,
-                     mpf_sub, normalize, reciprocal_rnd, round_fast,
+                     mpf_abs, mpf_add, mpf_ceil, mpf_div, mpf_eq, mpf_floor,
+                     mpf_frac, mpf_hash, mpf_hypot, mpf_mul, mpf_mul_int,
+                     mpf_neg, mpf_nint, mpf_pos, mpf_rdiv_int, mpf_shift,
+                     mpf_sqrt, mpf_sub, normalize, reciprocal_rnd, round_fast,
                      round_floor, to_fixed, to_float, to_int, to_str)
 
 
@@ -68,7 +68,7 @@ def mpc_conjugate(z, prec, rnd=round_fast):
     return re, mpf_neg(im, prec, rnd)
 
 def mpc_is_nonzero(z):
-    return z != mpc_zero
+    return not all(mpf_eq(_, fzero) for _ in z)
 
 def mpc_add(z, w, prec, rnd=round_fast):
     a, b = z
@@ -235,7 +235,7 @@ def mpc_pow_mpf(z, p, prec, rnd=round_fast):
 
 def mpc_pow_int(z, n, prec, rnd=round_fast):
     a, b = z
-    if b == fzero:
+    if b in (fzero, fnzero):
         return mpf_pow_int(a, n, prec, rnd), fzero
     if a == fzero:
         v = mpf_pow_int(b, n, prec, rnd)
@@ -279,9 +279,12 @@ def mpc_sqrt(z, prec, rnd=round_fast):
     We have sqrt(a+bi) = sqrt((r+a)/2) + b/sqrt(2*(r+a))*i where
     r = abs(a+bi), when a+bi is not a negative real number."""
     a, b = z
-    if b == fzero:
-        if a == fzero:
-            return (a, b)
+    if b in (fzero, fnzero):
+        if a in (fzero, fnzero):
+            if b == fnzero:
+                return (fzero, fnzero)
+            if b == fzero:
+                return (fzero, fzero)
         # When a+bi is a negative real number, we get a real sqrt times i
         if a[0]:
             im = mpf_sqrt(mpf_neg(a), prec, rnd)

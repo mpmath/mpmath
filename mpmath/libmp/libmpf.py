@@ -339,7 +339,7 @@ def from_float(x, prec=53, rnd=round_fast):
     if x != x: return fnan
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
-    if not x: return math.copysign(1., x) == -1., MPZ(0), 0, 0
+    if not x: return int(math.copysign(1., x) == -1.), MPZ(0), 0, 0
     m, e = math.frexp(x)
     return from_man_exp(MPZ(m*(1<<53)), e-53, prec, rnd)
 
@@ -586,7 +586,8 @@ def mpf_neg(s, prec=0, rnd=round_fast):
         if exp:
             if s == finf: return fninf
             if s == fninf: return finf
-        return s
+            if s == fnan: return fnan
+        return 1-sign, *s[1:]
     if not prec:
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
@@ -704,12 +705,14 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
             return fnan
         if tman:
             return normalize(tsign, tman, texp, tbc, prec or tbc, rnd)
-        return t
+        if texp:
+            return t
+        return 0 if tsign != ssign else ssign, tman, texp, tbc
     if texp:
         return t
     if sman:
         return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
-    return s
+    return 0 if tsign != ssign else ssign, sman, sexp, sbc
 
 def mpf_sub(s, t, prec=0, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
@@ -779,7 +782,7 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     s_special = (not sman) and sexp
     t_special = (not tman) and texp
     if not s_special and not t_special:
-        return fzero
+        return sign, man, 0, 0
     if fnan in (s, t): return fnan
     if (not tman) and texp: s, t = t, s
     if t == fzero: return fnan
@@ -834,8 +837,8 @@ def mpf_frexp(x):
     """Convert x = y*2**n to (y, n) with abs(y) in [0.5, 1) if nonzero"""
     sign, man, exp, bc = x
     if not man:
-        if x == fzero:
-            return (fzero, 0)
+        if x in (fzero, fnzero):
+            return (x, 0)
         else:
             raise ValueError
     return mpf_shift(x, -bc-exp), bc+exp
@@ -845,11 +848,11 @@ def mpf_div(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if not sman or not tman:
-        if s == fzero:
-            if t == fzero: raise ZeroDivisionError
+        if s in (fzero, fnzero):
+            if t in (fzero, fnzero): raise ZeroDivisionError
             if t == fnan: return fnan
-            return fzero
-        if t == fzero:
+            return ssign^tsign, sman, sexp, sbc
+        if t in (fzero, fnzero):
             raise ZeroDivisionError
         s_special = (not sman) and sexp
         t_special = (not tman) and texp
@@ -858,7 +861,7 @@ def mpf_div(s, t, prec, rnd=round_fast):
         if s == fnan or t == fnan:
             return fnan
         if not t_special:
-            if t == fzero:
+            if t in (fnzero, fzero):
                 return fnan
             return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
         return fzero
@@ -1266,7 +1269,7 @@ def str_to_sign_man_exp(x, base=10):
     if BACKEND == 'python' and hasattr(sys, 'get_int_max_str_digits'):
         int_max_str_digits = sys.get_int_max_str_digits()
         sys.set_int_max_str_digits(0)
-    sign = '-' in x
+    sign = int('-' in x)
     x = MPZ(x, base)
     if int_max_str_digits:
         sys.set_int_max_str_digits(int_max_str_digits)
@@ -1362,7 +1365,7 @@ def mpf_sqrt(s, prec, rnd=round_fast):
 def mpf_hypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
     x and y."""
-    if y == fzero: return mpf_abs(x, prec, rnd)
-    if x == fzero: return mpf_abs(y, prec, rnd)
+    if y in (fzero, fnzero): return mpf_abs(x, prec, rnd)
+    if x in (fzero, fnzero): return mpf_abs(y, prec, rnd)
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
     return mpf_sqrt(hypot2, prec, rnd)

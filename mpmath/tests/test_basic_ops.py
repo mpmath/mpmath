@@ -10,9 +10,9 @@ from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
 from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_pickable, from_str, mpf_add, mpf_mul,
-                          mpf_sub, round_down, round_nearest, round_up, to_int,
-                          to_man_exp, to_pickable)
+                          from_int, from_pickable, from_str, mpf_add, mpf_eq,
+                          mpf_mul, mpf_sub, round_down, round_nearest,
+                          round_up, to_int, to_man_exp, to_pickable)
 
 
 def test_type_compare():
@@ -305,7 +305,7 @@ def test_exact_integer_arithmetic():
                 a = random.randint(-M2, M2)
                 b = random.randint(-M2, M2)
                 assert mpf(a) * mpf(b) == a*b
-                assert mpf_mul(from_int(a), from_int(b), mp.prec, rounding) == from_int(a*b)
+                assert mpf_eq(mpf_mul(from_int(a), from_int(b), mp.prec, rounding), from_int(a*b))
 
 def test_odd_int_bug():
     assert to_int(from_int(3), round_nearest) == 3
