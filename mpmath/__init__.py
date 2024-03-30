@@ -13,6 +13,8 @@ from .ctx_fp import FPContext
 from .ctx_mp import MPContext
 from .ctx_iv import MPIntervalContext
 
+from . import rational
+
 fp = FPContext()
 mp = MPContext()
 iv = MPIntervalContext()

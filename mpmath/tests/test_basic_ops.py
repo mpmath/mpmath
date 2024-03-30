@@ -4,6 +4,7 @@ import random
 
 import pytest
 
+import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
@@ -539,6 +540,11 @@ def test_ctx_mp_mpnumeric():
 def test_to_man_exp_deprecation():
     with pytest.deprecated_call():
         to_man_exp(fnone)
+
+def test_rational_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
+
 
 def test_rand_precision():
     """
