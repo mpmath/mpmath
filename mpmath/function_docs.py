@@ -1507,9 +1507,9 @@ Some exact high order roots::
     >>> root(75**210, 105)
     5625.0
     >>> root(1, 128, 96)
-    (0.0 - 1.0j)
+    (-0.0 - 1.0j)
     >>> root(4**128, 128, 96)
-    (0.0 - 4.0j)
+    (-0.0 - 4.0j)
 
 """
 
@@ -1537,7 +1537,7 @@ The roots of unity up to `n = 4`::
     >>> nprint(unitroots(3))
     [1.0, (-0.5 + 0.866025j), (-0.5 - 0.866025j)]
     >>> nprint(unitroots(4))
-    [1.0, (0.0 + 1.0j), -1.0, (0.0 - 1.0j)]
+    [1.0, (0.0 + 1.0j), -1.0, (-0.0 - 1.0j)]
 
 Roots of unity form a geometric series that sums to 0::
 
@@ -1555,7 +1555,7 @@ Primitive roots up to `n = 4`::
     >>> nprint(unitroots(3, primitive=True))
     [(-0.5 + 0.866025j), (-0.5 - 0.866025j)]
     >>> nprint(unitroots(4, primitive=True))
-    [(0.0 + 1.0j), (0.0 - 1.0j)]
+    [(0.0 + 1.0j), (-0.0 - 1.0j)]
 
 There are only four primitive 12th roots::
 

@@ -379,7 +379,7 @@ def test_atan():
     assert atan(mpc(-inf,0)).ae(-pi2)
     assert atan(mpc(-inf,-1)).ae(-pi2)
     assert atan(mpc(-1,-inf)).ae(-pi2)
-    assert atan(mpc(0,-inf)).ae(-pi2)
+    assert atan(mpc(0,-inf)).ae(pi2)
     assert atan(mpc(1,-inf)).ae(pi2)
 
 def test_atan2():
