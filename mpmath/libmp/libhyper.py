@@ -454,8 +454,6 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
         x = mpf_neg(x)
     sign, man, exp, bc = x
     if e1 and not sign:
-        if x == fzero:
-            return finf
         raise ComplexResult("E1(x) for x < 0")
     if man:
         xabs = 0, man, exp, bc

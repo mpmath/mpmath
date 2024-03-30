@@ -536,6 +536,9 @@ def test_frexp():
     assert frexp(1) == (0.5, 1)
     assert frexp(0.2) == (0.8, -2)
     assert frexp(1000) == (0.9765625, 10)
+    pytest.raises(ValueError, lambda: frexp(+inf))
+    pytest.raises(ValueError, lambda: frexp(-inf))
+    pytest.raises(ValueError, lambda: frexp(nan))
 
 def test_aliases():
     assert ln(7) == log(7)

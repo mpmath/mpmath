@@ -78,6 +78,7 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+math_float_nan = math.nan
 
 
 #----------------------------------------------------------------------------#
@@ -385,7 +386,7 @@ def to_float(s, strict=False, rnd=round_fast):
         if s == fnzero: return -0.0
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
-        return math_float_inf/math_float_inf
+        return math_float_nan
     if bc > 53:
         sign, man, exp, bc = normalize(sign, man, exp, bc, 53, rnd)
     if sign:
@@ -586,7 +587,7 @@ def mpf_neg(s, prec=0, rnd=round_fast):
         if exp:
             if s == finf: return fninf
             if s == fninf: return finf
-            if s == fnan: return fnan
+            return fnan
         return 1-sign, *s[1:]
     if not prec:
         return (1-sign, man, exp, bc)
@@ -710,9 +711,7 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
         return 0 if tsign != ssign else ssign, tman, texp, tbc
     if texp:
         return t
-    if sman:
-        return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
-    return 0 if tsign != ssign else ssign, sman, sexp, sbc
+    return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
 
 def mpf_sub(s, t, prec=0, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
@@ -861,8 +860,6 @@ def mpf_div(s, t, prec, rnd=round_fast):
         if s == fnan or t == fnan:
             return fnan
         if not t_special:
-            if t in (fnzero, fzero):
-                return fnan
             return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
         return fzero
     sign = ssign ^ tsign

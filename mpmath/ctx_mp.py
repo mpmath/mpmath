@@ -10,14 +10,13 @@ import warnings
 from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
 from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
-                    fninf, fnzero, fone, from_rational, fzero, int_types,
-                    mpc_add, mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul,
-                    mpc_mul_mpf, mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str,
-                    mpf_add, mpf_apery, mpf_catalan, mpf_degree, mpf_div,
-                    mpf_e, mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2,
-                    mpf_ln10, mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi,
-                    mpf_rand, mpf_sub, mpf_twinprime, repr_dps, to_man_exp,
-                    to_str)
+                    fninf, fone, from_rational, fzero, int_types, mpc_add,
+                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul, mpc_mul_mpf,
+                    mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str, mpf_add,
+                    mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
+                    mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
+                    mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
+                    mpf_sub, mpf_twinprime, repr_dps, to_man_exp, to_str)
 
 
 get_complex = re.compile(r"""
@@ -1119,20 +1118,15 @@ maxterms, or set zeroprec."""
             iman, iexp = to_man_exp(im, signed=True)
             if iman:
                 im_dist = iexp + iman.bit_length()
-            elif im in (fzero, fnzero):
-                im_dist = ctx.ninf
             else:
                 im_dist = ctx.ninf
         else:
             x = ctx.convert(x)
-            if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
-                return ctx.nint_distance(x)
-            else:
-                raise TypeError("requires an mpf/mpc")
+            return ctx.nint_distance(x)
         man, exp = to_man_exp(re, signed=True)
         mag = exp+man.bit_length()
         # |x| < 0.5
-        if mag < 0:
+        if man and mag < 0:
             n = 0
             re_dist = mag
         elif man:
@@ -1158,7 +1152,7 @@ maxterms, or set zeroprec."""
                 re_dist = exp+man.bit_length()
             if sign:
                 n = -n
-        elif re in (fzero, fnzero):
+        else:
             re_dist = ctx.ninf
             n = 0
         return n, max(re_dist, im_dist)

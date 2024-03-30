@@ -283,7 +283,7 @@ def mpc_sqrt(z, prec, rnd=round_fast):
         if a in (fzero, fnzero):
             if b == fnzero:
                 return (fzero, fnzero)
-            if b == fzero:
+            else:
                 return (fzero, fzero)
         # When a+bi is a negative real number, we get a real sqrt times i
         if a[0]:

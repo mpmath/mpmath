@@ -55,6 +55,9 @@ def test_sub():
     assert 3.0 - mpc(2.5) == 0.5
     assert (3+0j) - mpc(2.5) == 0.5
 
+def test_neg():
+    assert isnan(-mpf('nan'))
+
 def test_mul():
     assert mpf(2.5) * mpf(3) == 7.5
     assert mpf(2.5) * 3 == 7.5
@@ -84,6 +87,7 @@ def test_div():
     assert 6 / mpc(3) == 2.0
     assert 6.0 / mpc(3) == 2.0
     assert (6+0j) / mpc(3) == 2.0
+    assert isnan(mpf(0) / nan)
 
 def test_mod():
     assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
@@ -206,6 +210,7 @@ def test_mpf_magic():
     assert complex(mpf(0.5)) == complex(0.5)
     assert float(mpf(-0.0)) == 0.0
     assert math.copysign(1., float(mpf(-0.0))) == -1.
+    assert math.isnan(float(mpf('nan')))
 
 def test_complex_misc():
     # many more tests needed
@@ -351,7 +356,9 @@ def test_nint_distance():
     assert nint_distance(mpf(0)) == (0, -inf)
     assert nint_distance(mpf(0.01)) == (0, -6)
     assert nint_distance(mpf('1e-100')) == (0, -332)
+    pytest.raises(ValueError, lambda: nint_distance(inf))
     pytest.raises(ValueError, lambda: nint_distance(mpc(1, inf)))
+    pytest.raises(TypeError, lambda: nint_distance('spam'))
     pytest.raises(ValueError, lambda: nint_distance(mpc(inf, 1)))
 
 def test_floor_ceil_nint_frac():

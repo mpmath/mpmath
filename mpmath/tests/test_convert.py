@@ -6,7 +6,7 @@ from fractions import Fraction
 import pytest
 
 from mpmath import inf, isnan, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
-from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
+from mpmath.libmp import (MPZ, fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
                           to_rational, to_str)
 
@@ -43,6 +43,8 @@ def test_basic_string():
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
     assert str(mpf('inf')) == '+inf'
     assert str(mpf('-0.0')) == '-0.0'
+    assert str(mpf('nan')) == 'nan'
+    pytest.raises(ValueError, lambda: str(mpf((1, MPZ(0), -666, -666))))
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
