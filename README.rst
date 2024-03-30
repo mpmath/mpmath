@@ -180,8 +180,8 @@ Mpmath is a work in progress. Major issues include:
 5. Help and bug reports
 -----------------------
 
-General questions and comments can be sent to the mpmath mailinglist,
-mailto:mpmath@googlegroups.com
+General questions and comments can be `sent <mailto:mpmath@googlegroups.com>`_
+to the `mpmath mailinglist <https://groups.google.com/g/mpmath>`_.
 
 You can also report bugs and send patches to the mpmath issue tracker,
 https://github.com/mpmath/mpmath/issues
