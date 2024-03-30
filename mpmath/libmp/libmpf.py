@@ -16,6 +16,18 @@ from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
 
 
+def to_pickable(x):
+    warnings.warn("to_pickable helper function is deprecated",
+                  DeprecationWarning)
+    return x
+
+
+def from_pickable(x):
+    warnings.warn("from_pickable helper function is deprecated",
+                  DeprecationWarning)
+    return x
+
+
 class ComplexResult(ValueError):
     pass
 
