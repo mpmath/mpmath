@@ -29,7 +29,7 @@ or new features to mpmath:
 * Pearu Peterson <pearu.peterson@gmail.com>
 * Mario Pernici <mario.pernici@mi.infn.it>
 * Ondrej Certik <ondrej@certik.cz>
-* Vinzent Steinberg <vinzent.steinberg@gmail.cm>
+* Vinzent Steinberg <vinzent.steinberg@gmail.com>
 * Nimish Telang <ntelang@gmail.com>
 * Mike Taschuk <mtaschuk@ece.ualberta.ca>
 * Case Van Horsen <casevh@gmail.com>
