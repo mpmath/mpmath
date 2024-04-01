@@ -454,4 +454,4 @@ class _MPMathModule(types.ModuleType):
 
 
 sys.modules[__name__].__class__ = _MPMathModule
-del functools, sys, types
+del functools, sys, types, _MPMathModule
