@@ -546,6 +546,11 @@ def test_rational_deprecation():
         assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
 
 
+def test_math2_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.math2.log == mpmath.libfp.log
+
+
 def test_to_from_pickable():
     x = mpf(1.2)._mpf_
     with pytest.deprecated_call():
