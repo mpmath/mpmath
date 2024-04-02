@@ -14,7 +14,7 @@ import mpmath
 
 # Add any Sphinx extension module names here, as strings.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax',
-              'sphinx.ext.intersphinx',
+              'sphinx.ext.intersphinx', 'sphinxcontrib.autoprogram',
               'matplotlib.sphinxext.plot_directive']
 
 # Sphinx will warn about all references where the target cannot be found.

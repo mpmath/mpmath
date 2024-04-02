@@ -74,6 +74,13 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
+.. tip::
+
+   :ref:`Run mpmath as a module <cli>` for interactive work::
+
+       python -m mpmath
+
+
 Using gmpy (optional)
 ---------------------
 

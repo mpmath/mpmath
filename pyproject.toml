@@ -31,12 +31,13 @@ Homepage = 'https://mpmath.org/'
 Documentation = 'http://mpmath.org/doc/current/'
 [project.optional-dependencies]
 tests = ['pytest>=6', 'numpy; python_version<"3.13"',
-         'matplotlib; python_version<"3.13"']
+         'matplotlib; python_version<"3.13"', 'pexpect', 'ipython']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
 gmpy = ['gmpy2>=2.1.0a4; platform_python_implementation!="PyPy" and python_version<"3.12"',
         'gmpy2>=2.2.0a1; platform_python_implementation!="PyPy" and python_version>="3.12" and python_version<"3.13"']
-docs = ['sphinx', 'matplotlib; python_version<"3.13"']
+docs = ['sphinx', 'matplotlib; python_version<"3.13"',
+        'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist']
 [tool.setuptools]
 zip-safe = true
@@ -62,7 +63,8 @@ omit = ['mpmath/tests/*']
 [tool.coverage.report]
 exclude_lines = ['pragma: no cover',
                  'raise NotImplementedError',
-                 'return NotImplemented']
+                 'return NotImplemented',
+                 'if __name__ == .__main__.:']
 show_missing = true
 [tool.isort]
 lines_after_imports = 2
