@@ -380,7 +380,7 @@ def bernoulli_size(n):
 
 BERNOULLI_PREC_CUTOFF = bernoulli_size(MAX_BERNOULLI_CACHE)
 
-def mpf_bernoulli(n, prec, rnd=None, plus=False):
+def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
     """Computation of Bernoulli numbers (numerically)"""
     if n < 2:
         if n < 0:
@@ -398,7 +398,7 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
     # convert the fraction back to an mpf value at the original precision
     if prec > BERNOULLI_PREC_CUTOFF and prec > bernoulli_size(n)*1.1 + 1000:
         p, q = bernfrac(n)
-        return from_rational(p, q, prec, rnd or round_floor)
+        return from_rational(p, q, prec, rnd)
     if n > MAX_BERNOULLI_CACHE:
         return mpf_bernoulli_huge(n, prec, rnd)
     wp = prec + 30
@@ -408,8 +408,6 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
     if cached:
         numbers, state = cached
         if n in numbers:
-            if not rnd:
-                return numbers[n]
             return mpf_pos(numbers[n], prec, rnd)
         m, bin, bin1 = state
         if n - m > 10:
@@ -455,7 +453,7 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
         state[:] = [m, bin, bin1]
     return numbers[n]
 
-def mpf_bernoulli_huge(n, prec, rnd=None):
+def mpf_bernoulli_huge(n, prec, rnd=round_fast):
     wp = prec + 10
     piprec = wp + int(math.log(n,2))
     v = mpf_gamma_int(n+1, wp)
@@ -464,7 +462,7 @@ def mpf_bernoulli_huge(n, prec, rnd=None):
     v = mpf_shift(v, 1-n)
     if not n & 3:
         v = mpf_neg(v)
-    return mpf_pos(v, prec, rnd or round_fast)
+    return mpf_pos(v, prec, rnd)
 
 def bernfrac(n, plus=False):
     r"""
