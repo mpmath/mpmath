@@ -4,7 +4,6 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 
 import math
 import sys
-from bisect import bisect
 
 
 # Importing random is slow
@@ -12,10 +11,9 @@ from bisect import bisect
 getrandbits = None
 
 from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_TWO, MPZ_ZERO, gmpy)
-from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
-                         lshift, numeral, rshift, sqrt_fixed, sqrtrem,
-                         stddigits, trailing, trailtable)
+                      MPZ_ZERO, gmpy)
+from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
+                         stddigits, trailtable)
 
 
 class ComplexResult(ValueError):

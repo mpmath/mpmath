@@ -16,29 +16,26 @@ This module implements gamma- and zeta-related functions:
 import math
 import sys
 
-from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO, gmpy
+from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO
 from .libelefun import (constant_memo, cos_sin_fixed, def_mpf_constant,
                         exp_fixed, ln2_fixed, ln_sqrt2pi_fixed, log_int_fixed,
-                        mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi, mpf_cosh,
-                        mpf_cosh_sinh, mpf_exp, mpf_ln2, mpf_ln_sqrt2pi,
-                        mpf_log, mpf_pi, mpf_pow, mpf_sin_pi, mpf_sqrtpi,
-                        pi_fixed, sqrtpi_fixed)
-from .libintmath import ifac, ifac2, list_primes, moebius
+                        mpf_cos_sin_pi, mpf_exp, mpf_ln2, mpf_log, mpf_pi,
+                        mpf_pow, mpf_sin_pi, mpf_sqrtpi, pi_fixed,
+                        sqrtpi_fixed)
+from .libintmath import ifac, ifac2, isqrt_fast, list_primes, lshift, moebius
 from .libmpc import (mpc_abs, mpc_add, mpc_add_mpf, mpc_cos_pi, mpc_div,
                      mpc_div_mpf, mpc_exp, mpc_half, mpc_log, mpc_mpf_div,
                      mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_one,
                      mpc_pos, mpc_pow, mpc_pow_int, mpc_reciprocal, mpc_shift,
                      mpc_sin_pi, mpc_square, mpc_sub, mpc_sub_mpf, mpc_two,
                      mpc_zero)
-from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
-                     from_int, from_man_exp, from_rational, ftwo, fzero,
-                     isqrt_fast, lshift, mpf_abs, mpf_add, mpf_div, mpf_floor,
-                     mpf_gt, mpf_le, mpf_lt, mpf_mul, mpf_mul_int, mpf_neg,
-                     mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
-                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
-                     reciprocal_rnd, round_ceiling, round_down, round_fast,
-                     round_floor, round_nearest, round_up, sqrt_fixed,
-                     to_fixed, to_float, to_int)
+from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fone, from_int,
+                     from_man_exp, from_rational, ftwo, fzero, mpf_abs,
+                     mpf_add, mpf_div, mpf_floor, mpf_gt, mpf_le, mpf_lt,
+                     mpf_mul, mpf_mul_int, mpf_neg, mpf_perturb, mpf_pos,
+                     mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sub,
+                     negative_rnd, round_fast, round_nearest, to_fixed,
+                     to_float, to_int)
 
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
