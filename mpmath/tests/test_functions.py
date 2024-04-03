@@ -331,6 +331,7 @@ def test_atan2():
     assert atan2(inf,inf).ae(pi/4)
     assert atan2(-inf,inf).ae(-pi/4)
     assert atan2(inf,-inf).ae(3*pi/4)
+    assert atan2(-inf,-inf).ae(-3*pi/4)
     assert isnan(atan2(3,nan))
     assert isnan(atan2(nan,3))
     assert isnan(atan2(0,nan))
