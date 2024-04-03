@@ -245,7 +245,7 @@ def to_man_exp(s):
         raise ValueError("mantissa and exponent are undefined for %s" % man)
     return man, exp
 
-def to_int(s, rnd=None):
+def to_int(s, rnd=round_fast):
     """Convert a raw mpf to the nearest int. Rounding is done down by
     default (same as int(float) in Python), but can be changed. If the
     input is inf/nan, an exception is raised."""
@@ -257,7 +257,7 @@ def to_int(s, rnd=None):
             return (-man) << exp
         return man << exp
     # Make default rounding fast
-    if not rnd:
+    if rnd == round_fast:
         if sign:
             return -(man >> (-exp))
         else:
