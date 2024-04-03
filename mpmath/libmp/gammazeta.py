@@ -1683,7 +1683,7 @@ def complex_stirling_series(x, y, prec):
     return sre, sim
 
 
-def mpf_gamma(x, prec, rnd='d', type=0):
+def mpf_gamma(x, prec, rnd=round_fast, type=0):
     """
     This function implements multipurpose evaluation of the gamma
     function, G(x), as well as the following versions of the same:
@@ -1889,7 +1889,7 @@ def mpf_gamma(x, prec, rnd='d', type=0):
             return mpf_pos(w, prec, rnd)
 
 
-def mpc_gamma(z, prec, rnd='d', type=0):
+def mpc_gamma(z, prec, rnd=round_fast, type=0):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -2123,25 +2123,25 @@ def mpc_gamma(z, prec, rnd='d', type=0):
         if type == 3:
             return mpc_pos(y, prec, rnd)
 
-def mpf_factorial(x, prec, rnd='d'):
+def mpf_factorial(x, prec, rnd=round_fast):
     return mpf_gamma(x, prec, rnd, 1)
 
-def mpc_factorial(x, prec, rnd='d'):
+def mpc_factorial(x, prec, rnd=round_fast):
     return mpc_gamma(x, prec, rnd, 1)
 
-def mpf_rgamma(x, prec, rnd='d'):
+def mpf_rgamma(x, prec, rnd=round_fast):
     return mpf_gamma(x, prec, rnd, 2)
 
-def mpc_rgamma(x, prec, rnd='d'):
+def mpc_rgamma(x, prec, rnd=round_fast):
     return mpc_gamma(x, prec, rnd, 2)
 
-def mpf_loggamma(x, prec, rnd='d'):
+def mpf_loggamma(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if sign:
         raise ComplexResult
     return mpf_gamma(x, prec, rnd, 3)
 
-def mpc_loggamma(z, prec, rnd='d'):
+def mpc_loggamma(z, prec, rnd=round_fast):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
