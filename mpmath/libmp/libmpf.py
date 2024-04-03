@@ -192,7 +192,7 @@ def normalize(sign, man, exp, bc, prec, rnd):
 #                            Conversion functions                            #
 #----------------------------------------------------------------------------#
 
-def from_man_exp(man, exp, prec=None, rnd=round_fast):
+def from_man_exp(man, exp, prec=0, rnd=round_fast):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
     man = MPZ(man)
@@ -334,13 +334,13 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     if np.isneginf(x): return fninf
     return fnan
 
-def from_Decimal(x, prec=None, rnd=round_fast):
+def from_Decimal(x, prec=0, rnd=round_fast):
     """Create a raw mpf from a Decimal, rounding if necessary.
     If prec is not specified, use the equivalent bit precision
     of the number of significant digits in x."""
     if x.is_nan(): return fnan
     if x.is_infinite(): return fninf if x.is_signed() else finf
-    if prec is None:
+    if not prec:
         prec = int(len(x.as_tuple()[1])*3.3219280948873626)
     return from_str(str(x), prec, rnd)
 
@@ -545,7 +545,7 @@ def mpf_pos(s, prec=0, rnd=round_fast):
         return normalize(sign, man, exp, bc, prec, rnd)
     return s
 
-def mpf_neg(s, prec=None, rnd=round_fast):
+def mpf_neg(s, prec=0, rnd=round_fast):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
@@ -559,7 +559,7 @@ def mpf_neg(s, prec=None, rnd=round_fast):
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
 
-def mpf_abs(s, prec=None, rnd=round_fast):
+def mpf_abs(s, prec=0, rnd=round_fast):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision. The prec argument can be omitted to generate an
     exact result."""
