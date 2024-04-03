@@ -215,6 +215,13 @@ def test_log():
     assert isnan(log(mpc(1,nan)).real)
     assert isnan(log(mpc(1,nan)).imag)
 
+    # issue 774
+    assert log(mpc(+inf, +inf)) == log1p(mpc(+inf, +inf)) == mpc(inf, +pi/4)
+    assert log(mpc(+inf, -inf)) == log1p(mpc(+inf, -inf)) == mpc(inf, -pi/4)
+    assert log(mpc(-inf, +inf)) == log1p(mpc(-inf, +inf)) == mpc(inf, +3*pi/4)
+    assert log(mpc(-inf, -inf)) == log1p(mpc(-inf, -inf)) == mpc(inf, -3*pi/4)
+
+
 def test_trig_hyperb_basic():
     for x in (list(range(100)) + list(range(-100,0))):
         t = x / 4.1
@@ -321,9 +328,9 @@ def test_atan2():
     assert atan2(0,0) == 0
     assert atan2(inf,0).ae(pi/2)
     assert atan2(-inf,0).ae(-pi/2)
-    assert isnan(atan2(inf,inf))
-    assert isnan(atan2(-inf,inf))
-    assert isnan(atan2(inf,-inf))
+    assert atan2(inf,inf).ae(pi/4)
+    assert atan2(-inf,inf).ae(-pi/4)
+    assert atan2(inf,-inf).ae(3*pi/4)
     assert isnan(atan2(3,nan))
     assert isnan(atan2(nan,3))
     assert isnan(atan2(0,nan))
