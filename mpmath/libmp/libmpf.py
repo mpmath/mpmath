@@ -329,8 +329,6 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     if np.isfinite(x):
         m, e = np.frexp(x)
         return from_man_exp(int(np.ldexp(m, 113)), e-113, prec, rnd)
-    if np.isposinf(x): return finf
-    if np.isneginf(x): return fninf
     return fnan
 
 def from_Decimal(x, prec=0, rnd=round_fast):

@@ -5,7 +5,7 @@ from fractions import Fraction
 
 import pytest
 
-from mpmath import iv, mp, mpc, mpf, mpi, mpmathify, sqrt
+from mpmath import inf, isnan, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
 from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
                           to_rational, to_str)
@@ -249,6 +249,8 @@ def test_compatibility():
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
         assert diff < 2.0**-53
+    assert mpf(np.float64('inf')) == inf
+    assert isnan(mp.npconvert(np.float64('nan')))
     # issues 382 and 539
     assert mp.sqrt(np.int64(1)) == mpf('1.0')
     assert mpf(np.int64(1)) == mpf('1.0')
