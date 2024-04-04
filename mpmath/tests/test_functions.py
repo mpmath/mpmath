@@ -142,6 +142,14 @@ def test_float_sqrt():
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**0.5)
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
+def test_sqrt_special():
+    assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
+
 def test_hypot():
     assert hypot(0, 0) == 0
     assert hypot(0, 0.33) == mpf(0.33)

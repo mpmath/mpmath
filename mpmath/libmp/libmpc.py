@@ -295,6 +295,8 @@ def mpc_sqrt(z, prec, rnd=round_fast):
         else:
             re = mpf_sqrt(a, prec, rnd)
             return (re, fzero)
+    if b in (finf, fninf):
+        return (finf, b)
     wp = prec+20
     if not a[0]:                               # case a positive
         t  = mpf_add(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
