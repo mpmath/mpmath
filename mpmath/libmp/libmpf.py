@@ -64,7 +64,7 @@ fnan = (0, MPZ_ZERO, -123, -1)
 finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
-math_float_inf = 1e1000
+math_float_inf = math.inf
 
 
 #----------------------------------------------------------------------------#
