@@ -1,5 +1,5 @@
-from .backend import (BACKEND, HASH_BITS, MPQ, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_THREE, MPZ_TWO, MPZ_ZERO, gmpy, int_types)
+from .backend import (BACKEND, MPQ, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_THREE, MPZ_TWO,
+                      MPZ_ZERO, gmpy, int_types)
 from .gammazeta import (apery_fixed, bernfrac, catalan_fixed, euler_fixed,
                         glaisher_fixed, khinchin_fixed, mertens_fixed,
                         mpc_altzeta, mpc_factorial, mpc_gamma, mpc_harmonic,

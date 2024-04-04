@@ -10,7 +10,7 @@ import sys
 #from random import getrandbits
 getrandbits = None
 
-from .backend import BACKEND, HASH_BITS, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
+from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
 
@@ -447,11 +447,12 @@ def mpf_hash(s):
         if s == fninf: return -sys.hash_info.inf
 
     hash_modulus = sys.hash_info.modulus
+    hash_bits = 31 if sys.hash_info.width == 32 else 61
     h = sman % hash_modulus
     if sexp >= 0:
-        sexp = sexp % HASH_BITS
+        sexp = sexp % hash_bits
     else:
-        sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
+        sexp = hash_bits - 1 - ((-1 - sexp) % hash_bits)
     h = (h << sexp) % hash_modulus
     if ssign: h = -h
     if h == -1: h = -2
