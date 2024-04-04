@@ -10,8 +10,7 @@ import sys
 #from random import getrandbits
 getrandbits = None
 
-from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_ZERO, gmpy)
+from .backend import BACKEND, HASH_BITS, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
 
@@ -438,7 +437,7 @@ def mpf_eq(s, t):
     return s == t
 
 def mpf_hash(s):
-    # Duplicate the new hash algorithm introduces in Python 3.2.
+    # Duplicate the new hash algorithm, introduced in Python 3.2.
     ssign, sman, sexp, sbc = s
 
     # Handle special numbers
@@ -446,12 +445,14 @@ def mpf_hash(s):
         if s == fnan: return sys.hash_info.nan
         if s == finf: return sys.hash_info.inf
         if s == fninf: return -sys.hash_info.inf
-    h = sman % HASH_MODULUS
+
+    hash_modulus = sys.hash_info.modulus
+    h = sman % hash_modulus
     if sexp >= 0:
         sexp = sexp % HASH_BITS
     else:
         sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
-    h = (h << sexp) % HASH_MODULUS
+    h = (h << sexp) % hash_modulus
     if ssign: h = -h
     if h == -1: h = -2
     return int(h)

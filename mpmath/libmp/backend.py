@@ -24,7 +24,6 @@ gmpy = None
 BACKEND = 'python'
 MPZ = int
 MPQ = Fraction
-HASH_MODULUS = sys.hash_info.modulus
 HASH_BITS = 31 if sys.hash_info.width == 32 else 61
 
 
