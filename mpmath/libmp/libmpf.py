@@ -442,7 +442,11 @@ def mpf_hash(s):
 
     # Handle special numbers
     if not sman:
-        if s == fnan: return sys.hash_info.nan
+        if s == fnan:
+            if sys.version_info >= (3, 10):
+                return object.__hash__(s)
+            else:
+                return sys.hash_info.nan
         if s == finf: return sys.hash_info.inf
         if s == fninf: return -sys.hash_info.inf
 
