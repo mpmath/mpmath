@@ -51,7 +51,7 @@ def test_bisection():
     assert findroot(lambda x: x**2-1,(0,2),solver='bisect') == 1
 
 def test_mnewton():
-    f = lambda x: polyval([1,3,3,1],x)
+    f = lambda x: polyval([1,3,3,1],x,asc=True)
     x = findroot(f, -0.9, solver='mnewton')
     assert abs(f(x)) < eps
 
