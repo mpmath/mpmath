@@ -224,6 +224,12 @@ def test_mpmathify():
     assert mpmathify('(1.0+1.0j)') == mpc(1, 1)
     assert mpmathify('(1.2e-10 - 3.4e5j)') == mpc('1.2e-10', '-3.4e5')
     assert mpmathify('1j') == mpc(1j)
+    assert mpmathify('oo') == mpf('inf')
+    assert mpmathify('+oo') == mpf('inf')
+    assert mpmathify('-oo') == mpf('-inf')
+    assert mpmathify('2+3*I') == mpc(2, 3)
+    assert mpmathify('2+3I') == mpc(2, 3)
+    assert mpmathify('2/3 + 4/5j') == mpc(2/3, 4/5)
 
 def test_issue548():
     try:

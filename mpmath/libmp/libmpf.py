@@ -1236,7 +1236,8 @@ def str_to_man_exp(x, base=10):
         sys.set_int_max_str_digits(int_max_str_digits)
     return x, exp
 
-special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
+special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan,
+               'oo':finf, '+oo':finf, '-oo':fninf}
 
 def from_str(x, prec=0, rnd=round_fast, base=0):
     """Create a raw mpf from a string x in a given base, rounding in the
