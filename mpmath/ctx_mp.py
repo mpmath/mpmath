@@ -19,8 +19,13 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_sub, mpf_twinprime, repr_dps, to_str)
 
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r"""
+    \(?
+    (?P<re>[+-]?(\d*(\.\d*)?(e[+-]?\d+)?|\d+/\d+))??
+    (?P<im>[+-]?(\d*(\.\d*)?(e[+-]?\d+)?|\d+/\d+)\*?[ji])?
+    \)?$
+""", re.VERBOSE | re.IGNORECASE)
+
 
 def __getattr__(name):
     if name == 'mpnumeric':
@@ -572,13 +577,12 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
     def _convert_fallback(ctx, x, strings):
         if strings and isinstance(x, str):
-            if 'j' in x.lower():
-                x = x.lower().replace(' ', '')
-                match = get_complex.match(x)
+            match = get_complex.match(x.replace(' ', ''))
+            if match:
                 re = match.group('re')
                 if not re:
                     re = 0
-                im = match.group('im').rstrip('j')
+                im = match.group('im').rstrip('jiJI*')
                 return ctx.mpc(ctx.convert(re), ctx.convert(im))
         if hasattr(x, "_mpi_"):
             a, b = x._mpi_

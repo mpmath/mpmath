@@ -13,7 +13,7 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
                     mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
                     prec_to_dps, round_nearest, to_fixed, to_float, to_int,
-                    to_rational, to_str)
+                    to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -59,7 +59,7 @@ class _mpf(mpnumeric):
             val = val._mpf_
         elif type(val) is tuple:
             if len(val) == 4:
-                pass
+                val = val[0], MPZ(val[1]), *val[2:]
             elif len(val) == 2:
                 v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
@@ -116,7 +116,7 @@ class _mpf(mpnumeric):
             return cls.context.make_mpf(x)
         return x
 
-    man_exp = property(lambda self: self._mpf_[1:3])
+    man_exp = property(lambda self: to_man_exp(self._mpf_))
     man = property(lambda self: self._mpf_[1])
     exp = property(lambda self: self._mpf_[2])
     bc = property(lambda self: self._mpf_[3])

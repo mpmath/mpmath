@@ -155,9 +155,18 @@ def test_mpf_init():
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
     assert mpf(decimal.Decimal('1.5')) == mpf('1.5')
+    assert mpf(decimal.Decimal('+inf')) == +inf
+    assert mpf(decimal.Decimal('-inf')) == -inf
+    assert isnan(mpf(decimal.Decimal('nan')))
+    assert mpf(decimal.Decimal(1).exp(), dps=5) == mpf('2.7182807922363281', dps=5)
+    assert mpf(decimal.Decimal(1).exp(), prec=0) == mpf('2.718281828459045235360287471', prec=93)
     assert mpf('0x1.4ace478p+33') == mpf(11100000000.0)
     assert mpf('0x1.4ace478p+33', base=0) == mpf(11100000000.0)
     assert mpf('1.4ace478p+33', base=16) == mpf(11100000000.0)
+
+    assert mpf(float('+inf')) == +inf
+    assert mpf(float('-inf')) == -inf
+    assert isnan(mpf(float('nan')))
 
 def test_mpc_init():
     class mympc:
@@ -171,6 +180,8 @@ def test_mpc_init():
 def test_mpf_props():
     a = mpf(0.5)
     assert a.man_exp == (1, -1)
+    pytest.raises(ValueError, lambda: inf.man_exp)
+    pytest.raises(ValueError, lambda: nan.man_exp)
     assert a.man == 1
     assert a.exp == -1
     assert a.bc == 1
@@ -203,6 +214,7 @@ def test_hash():
     assert hash(mpc(2,3)) == hash(2+3j)
     # Check that this doesn't fail
     assert hash(inf)
+    hash(nan)
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))

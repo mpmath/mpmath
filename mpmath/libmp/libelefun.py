@@ -10,19 +10,17 @@ see libmpc and libmpi.
 """
 
 import math
-from bisect import bisect
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
-from .libintmath import ifib
-from .libmpf import (ComplexResult, bctable, fhalf, finf, fnan, fninf, fnone,
-                     fone, from_float, from_int, from_man_exp, from_rational,
-                     fzero, giant_steps, isqrt_fast, lshift, mpf_abs, mpf_add,
-                     mpf_cmp, mpf_div, mpf_mul, mpf_mul_int, mpf_neg,
+from .libintmath import (giant_steps, ifib, isqrt_fast, lshift, rshift,
+                         sqrt_fixed)
+from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
+                     from_int, from_man_exp, from_rational, fzero, mpf_abs,
+                     mpf_add, mpf_cmp, mpf_div, mpf_mul, mpf_mul_int, mpf_neg,
                      mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
-                     normalize, reciprocal_rnd, round_ceiling, round_down,
-                     round_fast, round_floor, round_nearest, round_up, rshift,
-                     sqrt_fixed, to_fixed, to_float, to_int)
+                     normalize, reciprocal_rnd, round_ceiling, round_fast,
+                     round_up, to_fixed, to_int)
 
 
 #-------------------------------------------------------------------------------

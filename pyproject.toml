@@ -54,6 +54,8 @@ testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
 addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
+filterwarnings = ['error::DeprecationWarning']
+xfail_strict = true
 [tool.coverage.run]
 branch = true
 omit = ['mpmath/tests/*']

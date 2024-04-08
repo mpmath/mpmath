@@ -4,18 +4,15 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 
 import math
 import sys
-from bisect import bisect
 
 
 # Importing random is slow
 #from random import getrandbits
 getrandbits = None
 
-from .backend import (BACKEND, HASH_BITS, HASH_MODULUS, MPZ, MPZ_FIVE, MPZ_ONE,
-                      MPZ_TWO, MPZ_ZERO, gmpy)
-from .libintmath import (bctable, bin_to_radix, giant_steps, isqrt, isqrt_fast,
-                         lshift, numeral, rshift, sqrt_fixed, sqrtrem,
-                         stddigits, trailing, trailtable)
+from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
+from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
+                         stddigits, trailtable)
 
 
 class ComplexResult(ValueError):
@@ -67,7 +64,7 @@ fnan = (0, MPZ_ZERO, -123, -1)
 finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
-math_float_inf = 1e1000
+math_float_inf = math.inf
 
 
 #----------------------------------------------------------------------------#
@@ -194,7 +191,7 @@ def normalize(sign, man, exp, bc, prec, rnd):
 #                            Conversion functions                            #
 #----------------------------------------------------------------------------#
 
-def from_man_exp(man, exp, prec=None, rnd=round_fast):
+def from_man_exp(man, exp, prec=0, rnd=round_fast):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
     man = MPZ(man)
@@ -245,7 +242,7 @@ def to_man_exp(s):
         raise ValueError("mantissa and exponent are undefined for %s" % man)
     return man, exp
 
-def to_int(s, rnd=None):
+def to_int(s, rnd=round_fast):
     """Convert a raw mpf to the nearest int. Rounding is done down by
     default (same as int(float) in Python), but can be changed. If the
     input is inf/nan, an exception is raised."""
@@ -257,7 +254,7 @@ def to_int(s, rnd=None):
             return (-man) << exp
         return man << exp
     # Make default rounding fast
-    if not rnd:
+    if rnd == round_fast:
         if sign:
             return -(man >> (-exp))
         else:
@@ -331,18 +328,16 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     import numpy as np
     if np.isfinite(x):
         m, e = np.frexp(x)
-        return from_man_exp(int(np.ldexp(m, 113)), e-113, prec, rnd)
-    if np.isposinf(x): return finf
-    if np.isneginf(x): return fninf
+        return from_man_exp(int(np.ldexp(m, 113)), int(e)-113, prec, rnd)
     return fnan
 
-def from_Decimal(x, prec=None, rnd=round_fast):
+def from_Decimal(x, prec=0, rnd=round_fast):
     """Create a raw mpf from a Decimal, rounding if necessary.
     If prec is not specified, use the equivalent bit precision
     of the number of significant digits in x."""
     if x.is_nan(): return fnan
     if x.is_infinite(): return fninf if x.is_signed() else finf
-    if prec is None:
+    if not prec:
         prec = int(len(x.as_tuple()[1])*3.3219280948873626)
     return from_str(str(x), prec, rnd)
 
@@ -440,20 +435,27 @@ def mpf_eq(s, t):
     return s == t
 
 def mpf_hash(s):
-    # Duplicate the new hash algorithm introduces in Python 3.2.
+    # Duplicate the new hash algorithm, introduced in Python 3.2.
     ssign, sman, sexp, sbc = s
 
     # Handle special numbers
     if not sman:
-        if s == fnan: return sys.hash_info.nan
+        if s == fnan:
+            if sys.version_info >= (3, 10):
+                return object.__hash__(s)
+            else:
+                return sys.hash_info.nan
         if s == finf: return sys.hash_info.inf
         if s == fninf: return -sys.hash_info.inf
-    h = sman % HASH_MODULUS
+
+    hash_modulus = sys.hash_info.modulus
+    hash_bits = 31 if sys.hash_info.width == 32 else 61
+    h = sman % hash_modulus
     if sexp >= 0:
-        sexp = sexp % HASH_BITS
+        sexp = sexp % hash_bits
     else:
-        sexp = HASH_BITS - 1 - ((-1 - sexp) % HASH_BITS)
-    h = (h << sexp) % HASH_MODULUS
+        sexp = hash_bits - 1 - ((-1 - sexp) % hash_bits)
+    h = (h << sexp) % hash_modulus
     if ssign: h = -h
     if h == -1: h = -2
     return int(h)
@@ -547,7 +549,7 @@ def mpf_pos(s, prec=0, rnd=round_fast):
         return normalize(sign, man, exp, bc, prec, rnd)
     return s
 
-def mpf_neg(s, prec=None, rnd=round_fast):
+def mpf_neg(s, prec=0, rnd=round_fast):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
@@ -561,7 +563,7 @@ def mpf_neg(s, prec=None, rnd=round_fast):
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
 
-def mpf_abs(s, prec=None, rnd=round_fast):
+def mpf_abs(s, prec=0, rnd=round_fast):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision. The prec argument can be omitted to generate an
     exact result."""
@@ -1234,7 +1236,8 @@ def str_to_man_exp(x, base=10):
         sys.set_int_max_str_digits(int_max_str_digits)
     return x, exp
 
-special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan}
+special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan,
+               'oo':finf, '+oo':finf, '-oo':fninf}
 
 def from_str(x, prec=0, rnd=round_fast, base=0):
     """Create a raw mpf from a string x in a given base, rounding in the
