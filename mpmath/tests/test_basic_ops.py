@@ -332,6 +332,8 @@ def test_nint_distance():
     assert nint_distance(mpf(0)) == (0, -inf)
     assert nint_distance(mpf(0.01)) == (0, -6)
     assert nint_distance(mpf('1e-100')) == (0, -332)
+    pytest.raises(ValueError, lambda: nint_distance(mpc(1, inf)))
+    pytest.raises(ValueError, lambda: nint_distance(mpc(inf, 1)))
 
 def test_floor_ceil_nint_frac():
     for n in range(-10,10):
@@ -514,6 +516,7 @@ def test_isnan_etc():
     assert mp.isnpint(-1.1 + 0j) is False
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
+    assert mp.isnpint(inf) is False
 
 
 def test_issue_438():
