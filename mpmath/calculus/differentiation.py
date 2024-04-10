@@ -1,5 +1,6 @@
 from .calculus import defun
 
+
 try:
     iteritems = dict.iteritems
 except AttributeError:
@@ -559,12 +560,11 @@ def taylor(ctx, f, x, n, **options):
     and supported keyword options.
 
     Note that to evaluate the Taylor polynomial as an approximation
-    of `f`, e.g. with :func:`~mpmath.polyval`, the coefficients must be reversed,
-    and the point of the Taylor expansion must be subtracted from
+    of `f`, the point of the Taylor expansion must be subtracted from
     the argument:
 
         >>> p = taylor(exp, 2.0, 10)
-        >>> polyval(p[::-1], 2.5 - 2.0)
+        >>> polyval(p, 2.5 - 2.0, asc=True)
         12.1824939606092
         >>> exp(2.5)
         12.1824939607035
@@ -608,7 +608,7 @@ def pade(ctx, a, L, M):
         >>> a = taylor(f, 0, 6)
         >>> p, q = pade(a, 3, 3)
         >>> x = 10
-        >>> polyval(p[::-1], x)/polyval(q[::-1], x)
+        >>> polyval(p, x, asc=True)/polyval(q, x, asc=True)
         1.38169105566806
         >>> f(x)
         1.38169855941551
