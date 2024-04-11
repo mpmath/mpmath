@@ -12,13 +12,13 @@ from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
                         mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh, mpf_tan,
                         mpf_tanh)
 from .libintmath import giant_steps, lshift, rshift
-from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
-                     from_float, from_int, from_man_exp, ftwo, fzero, mpf_abs,
-                     mpf_add, mpf_ceil, mpf_div, mpf_floor, mpf_frac, mpf_hash,
-                     mpf_hypot, mpf_mul, mpf_mul_int, mpf_neg, mpf_nint,
-                     mpf_pos, mpf_rdiv_int, mpf_shift, mpf_sqrt, mpf_sub,
-                     normalize, reciprocal_rnd, round_fast, round_floor,
-                     to_fixed, to_float, to_int, to_str)
+from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fnzero,
+                     fone, from_float, from_int, from_man_exp, ftwo, fzero,
+                     mpf_abs, mpf_add, mpf_ceil, mpf_div, mpf_floor, mpf_frac,
+                     mpf_hash, mpf_hypot, mpf_mul, mpf_mul_int, mpf_neg,
+                     mpf_nint, mpf_pos, mpf_rdiv_int, mpf_shift, mpf_sqrt,
+                     mpf_sub, normalize, reciprocal_rnd, round_fast,
+                     round_floor, to_fixed, to_float, to_int, to_str)
 
 
 # An mpc value is a (real, imag) tuple
@@ -474,6 +474,14 @@ def mpc_tan(z, prec, rnd=round_fast):
     """Complex tangent. Computed as tan(a+bi) = sin(2a)/M + sinh(2b)/M*i
     where M = cos(2a) + cosh(2b)."""
     a, b = z
+    if b == finf:
+        return fzero, fone
+    if b == fninf:
+        return fzero, fnone
+    if a in (finf, fninf):
+        if b in (fzero, fnzero):
+            return fnan, fzero
+        return fnan, fnan
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
     if b == fzero: return mpf_tan(a, prec, rnd), fzero
