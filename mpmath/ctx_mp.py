@@ -16,8 +16,7 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
                     mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
                     mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
-                    mpf_sign, mpf_sub, mpf_twinprime, repr_dps, to_man_exp,
-                    to_str)
+                    mpf_sub, mpf_twinprime, repr_dps, to_man_exp, to_str)
 
 
 get_complex = re.compile(r"""
@@ -339,8 +338,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return True
         if hasattr(x, '_mpf_'):
             if ctx.isfinite(x):
-                _, exp = to_man_exp(x._mpf_)
-                return mpf_sign(x._mpf_) < 0 and exp >= 0
+                man, exp = to_man_exp(x._mpf_, signed=True)
+                return man < 0 and exp >= 0
             return False
         if hasattr(x, '_mpc_'):
             return not x.imag and ctx.isnpint(x.real)
@@ -1116,7 +1115,7 @@ maxterms, or set zeroprec."""
             im_dist = ctx.ninf
         elif hasattr(x, "_mpc_"):
             re, im = x._mpc_
-            iman, iexp = to_man_exp(im)
+            iman, iexp = to_man_exp(im, signed=True)
             if iman:
                 im_dist = iexp + iman.bit_length()
             else:
@@ -1127,13 +1126,15 @@ maxterms, or set zeroprec."""
                 return ctx.nint_distance(x)
             else:
                 raise TypeError("requires an mpf/mpc")
-        man, exp = to_man_exp(re)
+        man, exp = to_man_exp(re, signed=True)
         mag = exp+man.bit_length()
         # |x| < 0.5
         if mag < 0:
             n = 0
             re_dist = mag
         elif man:
+            sign = man < 0
+            man = abs(man)
             # exact integer
             if exp >= 0:
                 n = man << exp
@@ -1152,7 +1153,7 @@ maxterms, or set zeroprec."""
                     man -= (t<<d)
                 n = t>>1   # int(t)>>1
                 re_dist = exp+man.bit_length()
-            if mpf_sign(re) < 0:
+            if sign:
                 n = -n
         else:
             re_dist = ctx.ninf

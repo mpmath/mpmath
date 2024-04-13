@@ -11,9 +11,9 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpc_to_complex, mpc_to_str, mpf_abs, mpf_add, mpf_cmp,
                     mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt,
                     mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
-                    mpf_pow_int, mpf_rdiv_int, mpf_sign, mpf_sub, mpf_sum,
-                    normalize, prec_to_dps, round_nearest, to_fixed, to_float,
-                    to_int, to_man_exp, to_rational, to_str)
+                    mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
+                    prec_to_dps, round_nearest, to_fixed, to_float, to_int,
+                    to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -116,7 +116,7 @@ class _mpf(mpnumeric):
             return cls.context.make_mpf(x)
         return x
 
-    man_exp = property(lambda self: to_man_exp(self._mpf_))
+    man_exp = property(lambda self: to_man_exp(self._mpf_, signed=False))
     man = property(lambda self: self.man_exp[0])
     exp = property(lambda self: self.man_exp[1])
     bc = property(lambda self: self.man.bit_length())
@@ -898,7 +898,7 @@ class PythonMPContext:
         """
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                return bool(to_man_exp(x._mpf_)[0])
+                return bool(to_man_exp(x._mpf_, signed=True)[0])
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
@@ -941,15 +941,15 @@ class PythonMPContext:
             return True
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                man, exp = to_man_exp(x._mpf_)
+                man, exp = to_man_exp(x._mpf_, signed=True)
                 return bool((man and exp >= 0) or x._mpf_ == fzero)
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             if ctx.isfinite(x):
-                man, exp = to_man_exp(re)
+                man, exp = to_man_exp(re, signed=True)
                 re_isint = bool((man and exp >= 0) or re == fzero)
-                man, exp = to_man_exp(im)
+                man, exp = to_man_exp(im, signed=True)
                 im_isint = bool((man and exp >= 0) or im == fzero)
             else:
                 return False
@@ -1190,11 +1190,9 @@ class PythonMPContext:
                 v = x._mpf_
             else:
                 raise NotImplementedError
-        man, exp = to_man_exp(v)
+        man, exp = to_man_exp(v, signed=True)
         if man:
             if exp >= -4:
-                if mpf_sign(v) < 0:
-                    man = -man
                 if exp >= 0:
                     return int(man) << exp, 'Z'
                 p, q = int(man), (1<<(-exp))
@@ -1210,7 +1208,7 @@ class PythonMPContext:
             return ctx.ninf
         if x in (finf, fninf, fnan):
             return ctx.make_mpf(mpf_abs(x))
-        man, exp = to_man_exp(x)
+        man, exp = to_man_exp(x, signed=True)
         return exp+man.bit_length()
 
     def mag(ctx, x):

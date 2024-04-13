@@ -4,6 +4,7 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 
 import math
 import sys
+import warnings
 
 
 # Importing random is slow
@@ -235,12 +236,20 @@ def from_int(n, prec=0, rnd=round_fast):
             return int_cache[n]
     return from_man_exp(n, 0, prec, rnd)
 
-def to_man_exp(s):
+def to_man_exp(s, signed=None):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
+    if signed is None:
+        warnings.warn("Returning unsigned mantissa value per default "
+                      "is deprecated.  Please adapt your code to use "
+                      "signed=True (return a signed mantissa).",
+                      DeprecationWarning)
+        signed = False
     sign, man, exp, bc = s
     if (not man) and exp:
         raise ValueError("mantissa and exponent are defined "
                          "for finite numbers only")
+    if signed and sign:
+        man = -man
     return man, exp
 
 def to_int(s, rnd=round_fast):
