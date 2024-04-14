@@ -316,10 +316,8 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         return ctx.one+z
     magz = ctx.mag(z)
     if magz >= 7 and not (ctx.isint(a) and ctx.re(a) <= 0):
-        if ctx.isinf(z):
-            if ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
-                return ctx.inf
-            return ctx.nan * z
+        if ctx.isinf(z) and ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
+            return ctx.inf
         try:
             try:
                 ctx.prec += magz
