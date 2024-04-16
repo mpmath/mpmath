@@ -7,9 +7,10 @@ import pytest
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
-from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
-                          from_str, mpf_add, mpf_mul, mpf_sub, round_down,
-                          round_nearest, round_up, to_int)
+from mpmath.libmp import (MPQ, finf, fnan, fninf, fnone, fone, from_float,
+                          from_int, from_str, mpf_add, mpf_mul, mpf_sub,
+                          round_down, round_nearest, round_up, to_int,
+                          to_man_exp)
 
 
 def test_type_compare():
@@ -332,6 +333,8 @@ def test_nint_distance():
     assert nint_distance(mpf(0)) == (0, -inf)
     assert nint_distance(mpf(0.01)) == (0, -6)
     assert nint_distance(mpf('1e-100')) == (0, -332)
+    pytest.raises(ValueError, lambda: nint_distance(mpc(1, inf)))
+    pytest.raises(ValueError, lambda: nint_distance(mpc(inf, 1)))
 
 def test_floor_ceil_nint_frac():
     for n in range(-10,10):
@@ -514,6 +517,7 @@ def test_isnan_etc():
     assert mp.isnpint(-1.1 + 0j) is False
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
+    assert mp.isnpint(inf) is False
 
 
 def test_issue_438():
@@ -531,6 +535,10 @@ def test_ctx_mag():
 def test_ctx_mp_mpnumeric():
     with pytest.deprecated_call():
         from mpmath.ctx_mp import mpnumeric
+
+def test_to_man_exp_deprecation():
+    with pytest.deprecated_call():
+        to_man_exp(fnone)
 
 def test_rand_precision():
     """
