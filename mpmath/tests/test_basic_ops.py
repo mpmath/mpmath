@@ -4,13 +4,14 @@ import random
 
 import pytest
 
+import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
 from mpmath.libmp import (MPQ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_str, mpf_add, mpf_mul, mpf_sub,
-                          round_down, round_nearest, round_up, to_int,
-                          to_man_exp)
+                          from_int, from_pickable, from_str, mpf_add, mpf_mul,
+                          mpf_sub, round_down, round_nearest, round_up, to_int,
+                          to_man_exp, to_pickable)
 
 
 def test_type_compare():
@@ -539,6 +540,24 @@ def test_ctx_mp_mpnumeric():
 def test_to_man_exp_deprecation():
     with pytest.deprecated_call():
         to_man_exp(fnone)
+
+def test_rational_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
+
+
+def test_math2_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.math2.log == mpmath.libfp.log
+
+
+def test_to_from_pickable():
+    x = mpf(1.2)._mpf_
+    with pytest.deprecated_call():
+        assert to_pickable(x) == x
+    with pytest.deprecated_call():
+        assert from_pickable(x) == x
+
 
 def test_rand_precision():
     """

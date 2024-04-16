@@ -13,6 +13,10 @@ from .ctx_fp import FPContext
 from .ctx_mp import MPContext
 from .ctx_iv import MPIntervalContext
 
+# deprecated modules
+from . import rational
+from . import math2
+
 fp = FPContext()
 mp = MPContext()
 iv = MPIntervalContext()
@@ -452,4 +456,4 @@ class _MPMathModule(types.ModuleType):
 
 
 sys.modules[__name__].__class__ = _MPMathModule
-del functools, sys, types
+del functools, sys, types, _MPMathModule
