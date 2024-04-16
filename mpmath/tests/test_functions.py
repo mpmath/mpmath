@@ -142,6 +142,14 @@ def test_float_sqrt():
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**0.5)
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
+def test_sqrt_special():
+    assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
+
 def test_hypot():
     assert hypot(0, 0) == 0
     assert hypot(0, 0.33) == mpf(0.33)
@@ -214,6 +222,13 @@ def test_log():
     assert isnan(log(mpc(nan,1)).imag)
     assert isnan(log(mpc(1,nan)).real)
     assert isnan(log(mpc(1,nan)).imag)
+
+    # issue 774
+    assert log(mpc(+inf, +inf)) == log1p(mpc(+inf, +inf)) == mpc(inf, +pi/4)
+    assert log(mpc(+inf, -inf)) == log1p(mpc(+inf, -inf)) == mpc(inf, -pi/4)
+    assert log(mpc(-inf, +inf)) == log1p(mpc(-inf, +inf)) == mpc(inf, +3*pi/4)
+    assert log(mpc(-inf, -inf)) == log1p(mpc(-inf, -inf)) == mpc(inf, -3*pi/4)
+
 
 def test_trig_hyperb_basic():
     for x in (list(range(100)) + list(range(-100,0))):
@@ -321,9 +336,10 @@ def test_atan2():
     assert atan2(0,0) == 0
     assert atan2(inf,0).ae(pi/2)
     assert atan2(-inf,0).ae(-pi/2)
-    assert isnan(atan2(inf,inf))
-    assert isnan(atan2(-inf,inf))
-    assert isnan(atan2(inf,-inf))
+    assert atan2(inf,inf).ae(pi/4)
+    assert atan2(-inf,inf).ae(-pi/4)
+    assert atan2(inf,-inf).ae(3*pi/4)
+    assert atan2(-inf,-inf).ae(-3*pi/4)
     assert isnan(atan2(3,nan))
     assert isnan(atan2(nan,3))
     assert isnan(atan2(0,nan))
@@ -824,6 +840,33 @@ def test_tanh():
     assert tanh(-inf) == -1
     assert isnan(tanh(nan))
     assert tanh(mpc('inf', '0')) == 1
+
+    assert tanh(mpc(+inf, +inf)) == mpc(+1, 0)
+    assert tanh(mpc(+inf, -inf)) == mpc(+1, 0)
+    assert tanh(mpc(-inf, +inf)) == mpc(-1, 0)
+    assert tanh(mpc(-inf, -inf)) == mpc(-1, 0)
+    assert tanh(mpc(+inf, 2)) == mpc(+1, 0)
+    assert tanh(mpc(-inf, 2)) == mpc(-1, 0)
+    r = tanh(mpc(0, -inf))
+    assert r.real == 0 and isnan(r.imag)
+    r = tanh(mpc(2, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    assert tanh(mpc(+inf, nan)) == mpc(+1, 0)
+    assert tanh(mpc(-inf, nan)) == mpc(-1, 0)
+
+def test_tan():
+    assert tan(mpc(+inf, +inf)) == mpc(0, +1)
+    assert tan(mpc(+inf, -inf)) == mpc(0, -1)
+    assert tan(mpc(-inf, +inf)) == mpc(0, +1)
+    assert tan(mpc(-inf, -inf)) == mpc(0, -1)
+    assert tan(mpc(2, +inf)) == mpc(0, +1)
+    assert tan(mpc(2, -inf)) == mpc(0, -1)
+    r = tan(mpc(-inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = tan(mpc(-inf, 2))
+    assert isnan(r.real) and isnan(r.imag)
+    assert tan(mpc(nan, +inf)) == mpc(0, +1)
+    assert tan(mpc(nan, -inf)) == mpc(0, -1)
 
 def test_atanh():
     assert atanh(0) == 0

@@ -16,11 +16,16 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
                     mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
                     mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
-                    mpf_sub, mpf_twinprime, repr_dps, to_str)
+                    mpf_sub, mpf_twinprime, repr_dps, to_man_exp, to_str)
 
 
-get_complex = re.compile(r'^\(?(?P<re>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?)??'
-                         r'(?P<im>[\+\-]?\d*(\.\d*)?(e[\+\-]?\d+)?j)?\)?$')
+get_complex = re.compile(r"""
+    \(?
+    (?P<re>[+-]?(\d*(\.\d*)?(e[+-]?\d+)?|\d+/\d+))??
+    (?P<im>[+-]?(\d*(\.\d*)?(e[+-]?\d+)?|\d+/\d+)\*?[ji])?
+    \)?$
+""", re.VERBOSE | re.IGNORECASE)
+
 
 def __getattr__(name):
     if name == 'mpnumeric':
@@ -29,7 +34,6 @@ def __getattr__(name):
         return mpnumeric
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-from . import ctx_mp_python as _mpf_module
 from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 
@@ -333,8 +337,10 @@ class MPContext(BaseMPContext, StandardBaseContext):
         if not x:
             return True
         if hasattr(x, '_mpf_'):
-            sign, man, exp, bc = x._mpf_
-            return sign and exp >= 0
+            if ctx.isfinite(x):
+                man, exp = to_man_exp(x._mpf_, signed=True)
+                return man < 0 and exp >= 0
+            return False
         if hasattr(x, '_mpc_'):
             return not x.imag and ctx.isnpint(x.real)
         if type(x) in int_types:
@@ -573,13 +579,12 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
     def _convert_fallback(ctx, x, strings):
         if strings and isinstance(x, str):
-            if 'j' in x.lower():
-                x = x.lower().replace(' ', '')
-                match = get_complex.match(x)
+            match = get_complex.match(x.replace(' ', ''))
+            if match:
                 re = match.group('re')
                 if not re:
                     re = 0
-                im = match.group('im').rstrip('j')
+                im = match.group('im').rstrip('jiJI*')
                 return ctx.mpc(ctx.convert(re), ctx.convert(im))
         if hasattr(x, "_mpi_"):
             a, b = x._mpi_
@@ -1110,26 +1115,26 @@ maxterms, or set zeroprec."""
             im_dist = ctx.ninf
         elif hasattr(x, "_mpc_"):
             re, im = x._mpc_
-            isign, iman, iexp, ibc = im
+            iman, iexp = to_man_exp(im, signed=True)
             if iman:
-                im_dist = iexp + ibc
-            elif im == fzero:
-                im_dist = ctx.ninf
+                im_dist = iexp + iman.bit_length()
             else:
-                raise ValueError("requires a finite number")
+                im_dist = ctx.ninf
         else:
             x = ctx.convert(x)
             if hasattr(x, "_mpf_") or hasattr(x, "_mpc_"):
                 return ctx.nint_distance(x)
             else:
                 raise TypeError("requires an mpf/mpc")
-        sign, man, exp, bc = re
-        mag = exp+bc
+        man, exp = to_man_exp(re, signed=True)
+        mag = exp+man.bit_length()
         # |x| < 0.5
         if mag < 0:
             n = 0
             re_dist = mag
         elif man:
+            sign = man < 0
+            man = abs(man)
             # exact integer
             if exp >= 0:
                 n = man << exp
@@ -1150,11 +1155,9 @@ maxterms, or set zeroprec."""
                 re_dist = exp+man.bit_length()
             if sign:
                 n = -n
-        elif re == fzero:
+        else:
             re_dist = ctx.ninf
             n = 0
-        else:
-            raise ValueError("requires a finite number")
         return n, max(re_dist, im_dist)
 
     def fprod(ctx, factors):

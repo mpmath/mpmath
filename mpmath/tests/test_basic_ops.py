@@ -4,12 +4,14 @@ import random
 
 import pytest
 
+import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, pi, workprec)
-from mpmath.libmp import (MPQ, finf, fnan, fninf, fone, from_float, from_int,
-                          from_str, mpf_add, mpf_mul, mpf_sub, round_down,
-                          round_nearest, round_up, to_int)
+from mpmath.libmp import (MPQ, finf, fnan, fninf, fnone, fone, from_float,
+                          from_int, from_pickable, from_str, mpf_add, mpf_mul,
+                          mpf_sub, round_down, round_nearest, round_up, to_int,
+                          to_man_exp, to_pickable)
 
 
 def test_type_compare():
@@ -155,9 +157,18 @@ def test_mpf_init():
     assert mpf(mympf()) == mpf(3.5)
     assert mympf() - mpf(0.5) == mpf(3.0)
     assert mpf(decimal.Decimal('1.5')) == mpf('1.5')
+    assert mpf(decimal.Decimal('+inf')) == +inf
+    assert mpf(decimal.Decimal('-inf')) == -inf
+    assert isnan(mpf(decimal.Decimal('nan')))
+    assert mpf(decimal.Decimal(1).exp(), dps=5) == mpf('2.7182807922363281', dps=5)
+    assert mpf(decimal.Decimal(1).exp(), prec=0) == mpf('2.718281828459045235360287471', prec=93)
     assert mpf('0x1.4ace478p+33') == mpf(11100000000.0)
     assert mpf('0x1.4ace478p+33', base=0) == mpf(11100000000.0)
     assert mpf('1.4ace478p+33', base=16) == mpf(11100000000.0)
+
+    assert mpf(float('+inf')) == +inf
+    assert mpf(float('-inf')) == -inf
+    assert isnan(mpf(float('nan')))
 
 def test_mpc_init():
     class mympc:
@@ -171,6 +182,8 @@ def test_mpc_init():
 def test_mpf_props():
     a = mpf(0.5)
     assert a.man_exp == (1, -1)
+    pytest.raises(ValueError, lambda: inf.man_exp)
+    pytest.raises(ValueError, lambda: nan.man_exp)
     assert a.man == 1
     assert a.exp == -1
     assert a.bc == 1
@@ -203,6 +216,7 @@ def test_hash():
     assert hash(mpc(2,3)) == hash(2+3j)
     # Check that this doesn't fail
     assert hash(inf)
+    hash(nan)
     # Check that overflow doesn't assign equal hashes to large numbers
     assert hash(mpf('1e1000')) != hash('1e10000')
     assert hash(mpc(100,'1e1000')) != hash(mpc(200,'1e1000'))
@@ -320,6 +334,8 @@ def test_nint_distance():
     assert nint_distance(mpf(0)) == (0, -inf)
     assert nint_distance(mpf(0.01)) == (0, -6)
     assert nint_distance(mpf('1e-100')) == (0, -332)
+    pytest.raises(ValueError, lambda: nint_distance(mpc(1, inf)))
+    pytest.raises(ValueError, lambda: nint_distance(mpc(inf, 1)))
 
 def test_floor_ceil_nint_frac():
     for n in range(-10,10):
@@ -502,6 +518,7 @@ def test_isnan_etc():
     assert mp.isnpint(-1.1 + 0j) is False
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
+    assert mp.isnpint(inf) is False
 
 
 def test_issue_438():
@@ -519,6 +536,28 @@ def test_ctx_mag():
 def test_ctx_mp_mpnumeric():
     with pytest.deprecated_call():
         from mpmath.ctx_mp import mpnumeric
+
+def test_to_man_exp_deprecation():
+    with pytest.deprecated_call():
+        to_man_exp(fnone)
+
+def test_rational_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
+
+
+def test_math2_deprecation():
+    with pytest.deprecated_call():
+        assert mpmath.math2.log == mpmath.libfp.log
+
+
+def test_to_from_pickable():
+    x = mpf(1.2)._mpf_
+    with pytest.deprecated_call():
+        assert to_pickable(x) == x
+    with pytest.deprecated_call():
+        assert from_pickable(x) == x
+
 
 def test_rand_precision():
     """

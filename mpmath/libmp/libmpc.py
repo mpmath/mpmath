@@ -4,22 +4,21 @@ Low-level functions for complex arithmetic.
 
 import sys
 
-from .backend import MPZ, MPZ_ONE, MPZ_TWO, MPZ_ZERO
+from .backend import MPZ
 from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
                         mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
                         mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
                         mpf_log, mpf_log_hypot, mpf_nthroot, mpf_phi, mpf_pi,
                         mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh, mpf_tan,
                         mpf_tanh)
-from .libmpf import (ComplexResult, bctable, fhalf, finf, fnan, fninf, fnone,
+from .libintmath import giant_steps, lshift, rshift
+from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fnzero,
                      fone, from_float, from_int, from_man_exp, ftwo, fzero,
-                     giant_steps, lshift, mpf_abs, mpf_add, mpf_ceil, mpf_div,
-                     mpf_floor, mpf_frac, mpf_hash, mpf_hypot, mpf_mul,
-                     mpf_mul_int, mpf_neg, mpf_nint, mpf_pos, mpf_rdiv_int,
-                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
-                     normalize, reciprocal_rnd, round_ceiling, round_down,
-                     round_fast, round_floor, round_nearest, round_up, rshift,
-                     to_fixed, to_float, to_int, to_str)
+                     mpf_abs, mpf_add, mpf_ceil, mpf_div, mpf_floor, mpf_frac,
+                     mpf_hash, mpf_hypot, mpf_mul, mpf_mul_int, mpf_neg,
+                     mpf_nint, mpf_pos, mpf_rdiv_int, mpf_shift, mpf_sqrt,
+                     mpf_sub, normalize, reciprocal_rnd, round_fast,
+                     round_floor, to_fixed, to_float, to_int, to_str)
 
 
 # An mpc value is a (real, imag) tuple
@@ -93,7 +92,7 @@ def mpc_pos(z, prec, rnd=round_fast):
     a, b = z
     return mpf_pos(a, prec, rnd), mpf_pos(b, prec, rnd)
 
-def mpc_neg(z, prec=None, rnd=round_fast):
+def mpc_neg(z, prec=0, rnd=round_fast):
     a, b = z
     return mpf_neg(a, prec, rnd), mpf_neg(b, prec, rnd)
 
@@ -295,6 +294,8 @@ def mpc_sqrt(z, prec, rnd=round_fast):
         else:
             re = mpf_sqrt(a, prec, rnd)
             return (re, fzero)
+    if b in (finf, fninf):
+        return (finf, b)
     wp = prec+20
     if not a[0]:                               # case a positive
         t  = mpf_add(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
@@ -324,8 +325,8 @@ def mpc_nthroot_fixed(a, b, n, prec):
         r = (a1 + 1j * b1)**(1.0/n)
         re = r.real
         im = r.imag
-        re = MPZ(int(re))
-        im = MPZ(int(im))
+        re = MPZ(re)
+        im = MPZ(im)
     except OverflowError:
         a1 = from_int(a1, start)
         b1 = from_int(b1, start)
@@ -473,6 +474,14 @@ def mpc_tan(z, prec, rnd=round_fast):
     """Complex tangent. Computed as tan(a+bi) = sin(2a)/M + sinh(2b)/M*i
     where M = cos(2a) + cosh(2b)."""
     a, b = z
+    if b == finf:
+        return fzero, fone
+    if b == fninf:
+        return fzero, fnone
+    if a in (finf, fninf):
+        if b in (fzero, fnzero):
+            return fnan, fzero
+        return fnan, fnan
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
     if b == fzero: return mpf_tan(a, prec, rnd), fzero
@@ -779,10 +788,10 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     u = mpc_div_mpf(u, b, prec, rnd)
     return u
 
-def mpf_expj(x, prec, rnd='f'):
+def mpf_expj(x, prec, rnd=round_floor):
     raise ComplexResult
 
-def mpc_expj(z, prec, rnd='f'):
+def mpc_expj(z, prec, rnd=round_floor):
     re, im = z
     if im == fzero:
         return mpf_cos_sin(re, prec, rnd)
@@ -794,10 +803,10 @@ def mpc_expj(z, prec, rnd='f'):
     im = mpf_mul(ey, s, prec, rnd)
     return re, im
 
-def mpf_expjpi(x, prec, rnd='f'):
+def mpf_expjpi(x, prec, rnd=round_floor):
     raise ComplexResult
 
-def mpc_expjpi(z, prec, rnd='f'):
+def mpc_expjpi(z, prec, rnd=round_floor):
     re, im = z
     if im == fzero:
         return mpf_cos_sin_pi(re, prec, rnd)

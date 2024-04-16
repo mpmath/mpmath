@@ -6,6 +6,10 @@ import pytest
 import mpmath
 
 
+collect_ignore = ['mpmath/__init__.py',
+                  'mpmath/rational.py', 'mpmath/math2.py']
+
+
 def pytest_report_header(config):
     print("mpmath backend: %s" % mpmath.libmp.backend.BACKEND)
     print("mpmath mp class: %s" % repr(mpmath.mp))

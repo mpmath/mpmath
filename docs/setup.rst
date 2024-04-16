@@ -1,8 +1,8 @@
 Setting up mpmath
 =================
 
-Mpmath requires at least Python 3.8.  It has been tested
-with CPython 3.8 through 3.11 and for PyPy.
+Mpmath requires at least Python 3.8.  It has been tested with CPython 3.8
+through 3.13 and for PyPy 3.9 through 3.10
 
 Download and installation
 -------------------------
@@ -74,26 +74,12 @@ Python interpreter and do the following::
     >>> print(2*pi)
     6.2831853071795864769252867665590057683943387987502
 
-..
-    >>> import mpmath, pytest
-    >>> if mpmath.libmp.backend.BACKEND != 'python':
-    ...     pytest.skip('skip the rest')
-    >>>
+.. tip::
 
-.. warning::
+   :ref:`Run mpmath as a module <cli>` for interactive work::
 
-   By default, mpmath uses Python integers internally.  Beware that now CPython
-   has a `global limit
-   <https://docs.python.org/3/library/stdtypes.html#integer-string-conversion-length-limitation>`_
-   for converting between :class:`int` and :class:`str`.  This affects
-   conversion to mpmath types from big decimal strings.  For example::
+       python -m mpmath
 
-       >>> mpf('1' * 500_000)
-       Traceback (most recent call last):
-       ...
-       ValueError: Exceeds the limit (4300 digits) for integer string conversion...
-
-   You could use ``sys.set_int_max_str_digits(0)`` to disable this limitation.
 
 Using gmpy (optional)
 ---------------------

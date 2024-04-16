@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10]
+        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy3.9-nightly, pypy3.10-nightly]
         coverage: [false]
         nogmpy: [false]
         default: [false]
@@ -39,11 +39,13 @@ jobs:
     - name: Remove gmpy (for coverage tests)
       if: matrix.nogmpy
       run: pip uninstall -y gmpy2
+    - name: Install ~/.python_history
+      run: touch ~/.python_history
     - name: Linting with flake8, etc
       if: matrix.default
       run: |
         python -We:invalid -m compileall -f mpmath -q
-        flake518
+        flake518 mpmath
     - name: Tests
       if: ${{ ! matrix.coverage }}
       run: pytest
@@ -53,6 +55,8 @@ jobs:
       if: matrix.coverage
       run: |
         pytest
+        pip uninstall -y ipython
+        pytest mpmath/tests/test_cli.py
         coverage html
         coverage xml
     - name: Upload coverage data
@@ -60,7 +64,7 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         files: ./coverage.xml
-        fail_ci_if_error: true
+        fail_ci_if_error: false
     - name: Building docs
       if: matrix.default
       run: |
