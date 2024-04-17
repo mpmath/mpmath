@@ -997,3 +997,9 @@ def test_issue_749():
     assert mp.asinh(mp.inf) == mp.inf
     assert mp.asinh(mp.mpc(mp.inf, 0)) == mp.mpc(mp.inf, 0)
     assert fp.asinh(fp.mpc(fp.inf, 0)) == fp.mpc(fp.inf, 0)
+
+def test_issue_786():
+    assert mp.asin(2).ae(mpc('1.5707963267948966', '1.3169578969248168'))
+    assert fp.asin(2) == 1.5707963267948966+1.3169578969248166j
+    assert mp.acos(2).ae(mpc('0.0', '-1.3169578969248168'))
+    assert fp.acos(2) == -1.3169578969248166j

@@ -642,10 +642,10 @@ def acos_asin(z, prec, rnd, n):
             else:
                 c = mpf_acosh(a, prec, rnd)
                 if n == 0:
-                    return fzero, c
+                    return fzero, mpf_neg(c)
                 else:
                     pi = mpf_pi(prec, rnd)
-                    return mpf_shift(pi, -1), mpf_neg(c)
+                    return mpf_shift(pi, -1), c
     asign = bsign = 0
     if a[0]:
         a = mpf_neg(a)
