@@ -5,7 +5,7 @@ import time
 
 import pexpect
 import pytest
-
+import sys
 
 if platform.python_implementation() == 'PyPy':
     pytest.skip("Don't run CLI tests on PyPy.",
@@ -26,7 +26,7 @@ class Console(pexpect.spawn):
 
 
 def test_bare_console_no_bare_division():
-    c = Console('python -m mpmath --no-ipython --no-wrap-floats')
+    c = Console(f'{sys.executable} -m mpmath --no-ipython --no-wrap-floats')
 
     assert c.expect_exact('>>> ') == 0
     assert c.send('1 + 2\r\n') == 7
@@ -44,7 +44,7 @@ def test_bare_console_no_bare_division():
 
 
 def test_bare_console_bare_division():
-    c = Console('python -m mpmath --no-ipython --no-wrap-division '
+    c = Console(f'{sys.executable} -m mpmath --no-ipython --no-wrap-division '
                 '--no-wrap-floats')
 
     assert c.expect_exact('>>> ') == 0
@@ -60,7 +60,7 @@ def test_bare_console_without_ipython():
     except ImportError:
         pass
 
-    c = Console('python -m mpmath')
+    c = Console(f'{sys.executable} -m mpmath')
 
     assert c.expect_exact('>>> ') == 0
     assert c.send('1 + 2\r\n') == 7
@@ -72,7 +72,7 @@ def test_bare_console_without_ipython():
 def test_ipython_console_bare_division_noauto():
     pytest.importorskip('IPython')
 
-    c = Console('python -m mpmath --simple-prompt --no-wrap-floats '
+    c = Console(f'{sys.executable} -m mpmath --simple-prompt --no-wrap-floats '
                 "--no-wrap-division --colors 'NoColor' ")
 
     assert c.expect_exact('\r\nIn [1]: ') == 0
@@ -83,7 +83,7 @@ def test_ipython_console_bare_division_noauto():
 def test_ipython_console_wrap_floats():
     pytest.importorskip('IPython')
 
-    c = Console('python -m mpmath --simple-prompt --prec 100 '
+    c = Console(f'{sys.executable} -m mpmath --simple-prompt --prec 100 '
                 "--colors 'NoColor'")
 
     assert c.expect_exact('\r\nIn [1]: ') == 0
@@ -92,7 +92,7 @@ def test_ipython_console_wrap_floats():
 
 
 def test_bare_console_wrap_floats():
-    c = Console('python -m mpmath --simple-prompt --no-ipython --prec 100 '
+    c = Console(f'{sys.executable} -m mpmath --simple-prompt --no-ipython --prec 100 '
                 "--colors 'NoColor'")
 
     assert c.expect_exact('>>> ') == 0
@@ -105,7 +105,7 @@ def test_bare_console_wrap_floats():
 
 
 def test_bare_console_pretty():
-    c = Console('python -m mpmath --simple-prompt --no-ipython --prec 100 '
+    c = Console(f'{sys.executable} -m mpmath --simple-prompt --no-ipython --prec 100 '
                 "--colors 'NoColor' --pretty")
 
     assert c.expect_exact('>>> ') == 0
@@ -114,7 +114,7 @@ def test_bare_console_pretty():
 
 
 def test_mpmath_version():
-    c = Console('python -m mpmath --version')
+    c = Console(f'{sys.executable} -m mpmath --version')
 
     assert c.expect(pexpect.EOF) == 0
     assert c.before.startswith('1.')
