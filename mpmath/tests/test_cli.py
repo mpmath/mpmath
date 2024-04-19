@@ -1,11 +1,12 @@
 """Tests for the Command-Line Interface."""
 
 import platform
+import sys
 import time
 
 import pexpect
 import pytest
-import sys
+
 
 if platform.python_implementation() == 'PyPy':
     pytest.skip("Don't run CLI tests on PyPy.",
