@@ -257,9 +257,10 @@ def test_compatibility():
         assert diff < 2.0**-53
     assert mpf(np.float64('inf')) == inf
     assert isnan(mp.npconvert(np.float64('nan')))
-    mp.prec = 113
-    assert (mp.npconvert(np.float128('0.841470984807896506652502321630298954')) ==
-            mpf('0.841470984807896506664590813295845351'))
+    if hasattr(np, "float128"):
+        mp.prec = 113
+        assert (mp.npconvert(np.float128('0.841470984807896506652502321630298954')) ==
+                mpf('0.841470984807896506664590813295845351'))
     mp.prec = 53
     # issues 382 and 539
     assert mp.sqrt(np.int64(1)) == mpf('1.0')
