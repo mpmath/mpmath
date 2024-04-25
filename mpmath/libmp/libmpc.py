@@ -242,7 +242,7 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
             return fzero, v
         elif n == 2:
             return mpf_neg(v), fzero
-        elif n == 3:
+        else:  # n == 3
             return fzero, mpf_neg(v)
     if n == 0: return mpc_one
     if n == 1: return mpc_pos(z, prec, rnd)
