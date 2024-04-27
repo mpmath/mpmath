@@ -460,6 +460,8 @@ def test_reciprocal_functions():
     assert asec(3).ae(1.23095941734077468)
     assert acsc(3).ae(0.339836909454121937)
     assert acot(3).ae(0.321750554396642193)
+    assert acot(cmath.infj) == 0
+    assert acot(cmath.inf) == 0
     assert asech(0.5).ae(1.31695789692481671)
     assert acsch(3).ae(0.327450150237258443)
     assert acoth(3).ae(0.346573590279972655)
