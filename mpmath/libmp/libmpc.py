@@ -162,15 +162,6 @@ def mpc_mul_mpf(z, p, prec, rnd=round_fast):
     im = mpf_mul(b, p, prec, rnd)
     return re, im
 
-def mpc_mul_imag_mpf(z, x, prec, rnd=round_fast):
-    """
-    Multiply the mpc value z by I*x where x is an mpf value.
-    """
-    a, b = z
-    re = mpf_neg(mpf_mul(b, x, prec, rnd))
-    im = mpf_mul(a, x, prec, rnd)
-    return re, im
-
 def mpc_mul_int(z, n, prec, rnd=round_fast):
     a, b = z
     re = mpf_mul_int(a, n, prec, rnd)
@@ -251,7 +242,7 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
             return fzero, v
         elif n == 2:
             return mpf_neg(v), fzero
-        elif n == 3:
+        else:  # n == 3
             return fzero, mpf_neg(v)
     if n == 0: return mpc_one
     if n == 1: return mpc_pos(z, prec, rnd)

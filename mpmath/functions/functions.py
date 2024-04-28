@@ -93,20 +93,20 @@ def acot(ctx, z):
     if not z:
         return ctx.pi * 0.5
     else:
-        return ctx.atan(ctx.one / z)
+        return ctx.atan(ctx.zero if ctx.isinf(z) else ctx.one / z)
 
 @defun_wrapped
-def asec(ctx, z): return ctx.acos(ctx.one / z)
+def asec(ctx, z): return ctx.acos(ctx.zero if ctx.isinf(z) else ctx.one / z)
 
 @defun_wrapped
-def acsc(ctx, z): return ctx.asin(ctx.one / z)
+def acsc(ctx, z): return ctx.asin(ctx.zero if ctx.isinf(z) else ctx.one / z)
 
 @defun_wrapped
 def acoth(ctx, z):
     if not z:
         return ctx.pi * 0.5j
     else:
-        return ctx.atanh(ctx.one / z)
+        return ctx.atanh(ctx.zero if ctx.isinf(z) else ctx.one / z)
 
 
 @defun_wrapped

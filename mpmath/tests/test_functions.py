@@ -460,6 +460,8 @@ def test_reciprocal_functions():
     assert asec(3).ae(1.23095941734077468)
     assert acsc(3).ae(0.339836909454121937)
     assert acot(3).ae(0.321750554396642193)
+    assert acot(cmath.infj) == 0
+    assert acot(cmath.inf) == 0
     assert asech(0.5).ae(1.31695789692481671)
     assert acsch(3).ae(0.327450150237258443)
     assert acoth(3).ae(0.346573590279972655)
@@ -632,6 +634,7 @@ def test_root():
     assert nthroot(j, 1) == j
     assert nthroot(j, 0) == 1
     assert nthroot(j, -1) == -j
+    assert nthroot(j, 22).ae(cos(pi/44) + sin(pi/44)*1j)
     assert isnan(nthroot(nan, 1))
     assert isnan(nthroot(nan, 0))
     assert isnan(nthroot(nan, -1))
@@ -807,6 +810,7 @@ def test_expj():
     assert expjpi(j).ae(exp(-pi))
     assert expjpi(1+j).ae(exp(j*pi*(1+j)))
     assert expjpi(-10**15 * j).ae('2.22579818340535731e+1364376353841841')
+    assert expjpi(cmath.infj) == 0
 
 def test_sinc():
     assert sinc(0) == sincpi(0) == 1
