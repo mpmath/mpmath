@@ -85,6 +85,7 @@ def test_bessel():
     assert besselk(0,3+4j).ae(-0.007239051213570155013+0.026510418350267677215j)
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
+    assert besselk(1,inf) == 0
     # test for issue 331, bug reported by Michael Hartmann
     for n in range(10,100,10):
         mp.dps = n
@@ -482,6 +483,12 @@ def test_hyper_1f1():
     assert hyp1f1(-2, 1, 10000).ae(49980001)
     # Bug
     assert hyp1f1(1j,fraction(1,3),0.415-69.739j).ae(25.857588206024346592 + 15.738060264515292063j)
+    # issue 522
+    assert hyp1f1(0, 1, +inf) == 1
+    assert hyp1f1(0, 1, -inf) == 1
+    assert hyp1f1(1, 2, -inf) == 0
+    assert hyp1f1(2, 2, -inf) == 0
+    assert hyp1f1(1, 5, -inf) == 0
 
 def test_hyper_2f1():
     v = 1.0652207633823291032
