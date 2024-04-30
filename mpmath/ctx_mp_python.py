@@ -774,7 +774,7 @@ class PythonMPContext:
         ctx.trap_complex = False
 
     def _set_prec(ctx, n):
-        if not ctx.isfinite(n):
+        if ctx.isinf(n):
             return
         ctx._prec = ctx._prec_rounding[0] = max(1, int(n))
         ctx._dps = prec_to_dps(n)
