@@ -169,7 +169,8 @@ def besselk(ctx, n, z, derivative=0, **kwargs):
     # for large real z
     # Instead represent in terms of 2F0
     else:
-        ctx.prec += M
+        if ctx.isfinite(M):
+            ctx.prec += M
         def h(n):
             return [([ctx.pi/2, z, ctx.exp(-z)], [0.5,-0.5,1], [], [], \
                 [n+0.5, 0.5-n], [], -1/(2*z))]
