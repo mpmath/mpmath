@@ -1376,7 +1376,7 @@ Computes `\log(1+x)`, accurately for small `x`.
     >>> mp.log1p(1e-100j)
     (5.0e-201 + 1.0e-100j)
     >>> mp.log1p(0)
-    0.0
+    (0.0 + 0.0j)
 
 """
 
