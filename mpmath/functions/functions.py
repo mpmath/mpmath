@@ -166,7 +166,7 @@ def expm1(ctx, x):
 def log1p(ctx, x):
     LOG1P_EXTRAPREC = 10  # ctx._wrap_specfun()
     # Note that all cases could by handled by log(1+c) provided the
-    # add is done exactly. Our aim here is be much faster than that,
+    # add is done exactly. Our aim here is to be much faster than that,
     # especially when |c| is small.
     c = ctx.convert(x)
     cmag = ctx.mag(c)
