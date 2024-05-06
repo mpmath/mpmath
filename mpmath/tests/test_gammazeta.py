@@ -7,6 +7,7 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
                     polyexp, polylog, primezeta, psi, rf, rgamma, sech,
                     siegelz, sinc, sqrt, stieltjes, superfac, zeta)
+from mpmath.ctx_mp_python import mpc as mpc_type
 from mpmath.libmp import from_float, mpf_zeta_int, round_up
 
 
@@ -554,9 +555,9 @@ def test_barnesg():
     assert [hyperfac(n) for n in range(7)] == [1, 1, 4, 108, 27648, 86400000, 4031078400000]
     assert [hyperfac(n) for n in range(0,-7,-1)] == [1,1,-1,-4,108,27648,-86400000]
     a = barnesg(-3+0j)
-    assert a == 0 and isinstance(a, mpc)
+    assert a == 0 and isinstance(a, mpc_type)
     a = hyperfac(-3+0j)
-    assert a == -4 and isinstance(a, mpc)
+    assert a == -4 and isinstance(a, mpc_type)
 
 def test_polylog():
     zs = [mpmathify(z) for z in [0, 0.5, 0.99, 4, -0.5, -4, 1j, 3+4j]]
