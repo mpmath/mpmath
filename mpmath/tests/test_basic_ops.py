@@ -550,6 +550,8 @@ def test_to_man_exp_deprecation():
 def test_rational_deprecation():
     with pytest.deprecated_call():
         assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
+    with pytest.deprecated_call():
+        pytest.raises(AttributeError, lambda: mpmath.rational.spam)
 
 
 def test_math2_deprecation():
