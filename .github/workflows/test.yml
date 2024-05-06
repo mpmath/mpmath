@@ -62,7 +62,7 @@ jobs:
         diff-cover coverage.xml --fail-under=100 --compare-branch=origin/master
     - name: Upload coverage data
       if: matrix.coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: ./coverage.xml
         fail_ci_if_error: false
