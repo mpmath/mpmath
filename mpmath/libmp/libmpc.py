@@ -727,6 +727,31 @@ def acos_asin(z, prec, rnd, n):
         re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
     if im[3] >= 0:
         im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    # Correct real part for infinities and nan in imaginary component
+    if re == fnan and mpc_is_inf(z):
+        a, b = z
+        if a in (finf, fninf):
+            if b in (finf, fninf):
+                re = mpf_shift(mpf_pi(prec, rnd), -2)
+                if a == fninf:
+                    if n == 0:
+                        re = mpf_mul_int(re, 3, prec, rnd)
+                    else:
+                        re = mpf_neg(re)
+            elif b == fnan:
+                im = finf if n == 0 else fninf
+            else:
+                if n == 0:
+                    re = fzero if a == finf else mpf_pi(prec, rnd)
+                else:
+                    re = mpf_shift(mpf_pi(prec, rnd), -1)
+                    if a == fninf:
+                        re = mpf_neg(re)
+        else:  # a == fnan
+            if n == 0:
+                return fnan, mpf_neg(b)
+            else:
+                return fnan, b
     return re, im
 
 def mpc_acos(z, prec, rnd=round_fast):
