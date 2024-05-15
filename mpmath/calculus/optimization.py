@@ -631,7 +631,7 @@ class MDNewton:
         self.f = f
         if isinstance(x0, (tuple, list)):
             x0 = ctx.matrix(x0)
-        assert x0.cols == 1, 'need a vector'
+        assert x0.shape[1] == 1, 'need a vector'
         self.x0 = x0
         if 'J' in kwargs:
             self.J = kwargs['J']
