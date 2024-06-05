@@ -184,16 +184,6 @@ class _mpf(mpnumeric):
             tval = other._mpc_
             mpc = type(other)
             return (tval[1] == fzero) and mpf_eq(tval[0], sval)
-        ttype = type(other)
-        if ttype in int_types:
-            return mpf_eq(sval, from_int(other))
-        if ttype is float:
-            tval = from_float(other)
-            return mpf_eq(sval, tval)
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            mpc = self.context.mpc
-            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
         try:
             other = mpf.context.convert(other, strings=False)
         except TypeError:
@@ -213,25 +203,6 @@ class _mpf(mpnumeric):
             tval = other._mpc_
             mpc = type(other)
             val = mpc_add_mpf(tval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_add(sval, from_int(other), prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            val = mpf_add(sval, tval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            val = mpc_add_mpf(tval, sval, prec, rounding)
-            mpc = self.context.mpc
             obj = new(mpc)
             obj._mpc_ = val
             return obj
@@ -258,25 +229,6 @@ class _mpf(mpnumeric):
             obj = new(mpc)
             obj._mpc_ = val
             return obj
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_sub(sval, from_int(other), prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            val = mpf_sub(sval, tval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            mpc = self.context.mpc
-            val = mpc_sub((sval, fzero), tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
         try:
             other = mpf.context.convert(other, strings=False)
         except TypeError:
@@ -284,11 +236,6 @@ class _mpf(mpnumeric):
         return self.__sub__(other)
 
     def __rsub__(s, t):
-        cls, new, (prec, rounding) = s._ctxdata
-        if type(t) in int_types:
-            v = new(cls)
-            v._mpf_ = mpf_sub(from_int(t), s._mpf_, prec, rounding)
-            return v
         t = s.mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -306,25 +253,6 @@ class _mpf(mpnumeric):
         if hasattr(other, '_mpc_'):
             tval = other._mpc_
             mpc = type(other)
-            val = mpc_mul_mpf(tval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_mul_int(sval, other, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            val = mpf_mul(sval, tval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            mpc = self.context.mpc
             val = mpc_mul_mpf(tval, sval, prec, rounding)
             obj = new(mpc)
             obj._mpc_ = val
@@ -352,25 +280,6 @@ class _mpf(mpnumeric):
             obj = new(mpc)
             obj._mpc_ = val
             return obj
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_div(sval, from_int(other), prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            val = mpf_div(sval, tval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            mpc = self.context.mpc
-            val = mpc_mpf_div(sval, tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
         try:
             other = mpf.context.convert(other, strings=False)
         except TypeError:
@@ -378,11 +287,6 @@ class _mpf(mpnumeric):
         return self.__truediv__(other)
 
     def __rtruediv__(s, t):
-        cls, new, (prec, rounding) = s._ctxdata
-        if isinstance(t, int_types):
-            v = new(cls)
-            v._mpf_ = mpf_rdiv_int(t, s._mpf_, prec, rounding)
-            return v
         t = s.mpf_convert_lhs(t)
         if t is NotImplemented:
             return t
@@ -398,20 +302,6 @@ class _mpf(mpnumeric):
             obj._mpf_ = val
             return obj
         if hasattr(other, '_mpc_'):
-            return NotImplemented
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_mod(sval, from_int(other), prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            val = mpf_mod(sval, tval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is complex:
             return NotImplemented
         try:
             other = mpf.context.convert(other, strings=False)
@@ -446,34 +336,6 @@ class _mpf(mpnumeric):
         if hasattr(other, '_mpc_'):
             tval = other._mpc_
             mpc = type(other)
-            val = mpc_pow((sval, fzero), tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        ttype = type(other)
-        if ttype in int_types:
-            val = mpf_pow_int(sval, other, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
-        if ttype is float:
-            tval = from_float(other)
-            try:
-                val = mpf_pow(sval, tval, prec, rounding)
-                obj = new(mpf)
-                obj._mpf_ = val
-                return obj
-            except ComplexResult:
-                if mpf.context.trap_complex:
-                    raise
-                mpc = mpf.context.mpc
-                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
-        if ttype is complex:
-            tval = from_float(other.real), from_float(other.imag)
-            mpc = self.context.mpc
             val = mpc_pow((sval, fzero), tval, prec, rounding)
             obj = new(mpc)
             obj._mpc_ = val
