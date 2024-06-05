@@ -506,6 +506,7 @@ class _mpc(mpnumeric):
         v = new(cls)
         v._mpc_ = mpc_add(s._mpc_, t._mpc_, prec, rounding)
         return v
+    __radd__ = __add__
 
     def __sub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
@@ -520,6 +521,12 @@ class _mpc(mpnumeric):
         v = new(cls)
         v._mpc_ = mpc_sub(s._mpc_, t._mpc_, prec, rounding)
         return v
+
+    def __rsub__(s, t):
+        t = s.mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t - s
 
     def __mul__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
@@ -540,6 +547,17 @@ class _mpc(mpnumeric):
         v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
 
+    def __rmul__(s, t):
+        cls, new, (prec, rounding) = s._ctxdata
+        if isinstance(t, int_types):
+            v = new(cls)
+            v._mpc_ = mpc_mul_int(s._mpc_, t, prec, rounding)
+            return v
+        t = s.mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t * s
+
     def __truediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
         if not hasattr(t, '_mpc_'):
@@ -553,6 +571,12 @@ class _mpc(mpnumeric):
         v = new(cls)
         v._mpc_ = mpc_div(s._mpc_, t._mpc_, prec, rounding)
         return v
+
+    def __rtruediv__(s, t):
+        t = s.mpc_convert_lhs(t)
+        if t is NotImplemented:
+            return t
+        return t / s
 
     def __pow__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
@@ -569,31 +593,6 @@ class _mpc(mpnumeric):
         else:
             v._mpc_ = mpc_pow(s._mpc_, t._mpc_, prec, rounding)
         return v
-
-    __radd__ = __add__
-
-    def __rsub__(s, t):
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
-        return t - s
-
-    def __rmul__(s, t):
-        cls, new, (prec, rounding) = s._ctxdata
-        if isinstance(t, int_types):
-            v = new(cls)
-            v._mpc_ = mpc_mul_int(s._mpc_, t, prec, rounding)
-            return v
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
-        return t * s
-
-    def __rtruediv__(s, t):
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
-        return t / s
 
     def __rpow__(s, t):
         t = s.mpc_convert_lhs(t)
