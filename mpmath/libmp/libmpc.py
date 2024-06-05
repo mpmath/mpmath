@@ -88,6 +88,10 @@ def mpc_sub_mpf(z, p, prec=0, rnd=round_fast):
     a, b = z
     return mpf_sub(a, p, prec, rnd), b
 
+def mpc_mpf_sub(p, z, prec=0, rnd=round_fast):
+    a, b = z
+    return mpf_sub(p, a, prec, rnd), mpf_neg(b, prec, rnd)
+
 def mpc_pos(z, prec, rnd=round_fast):
     a, b = z
     return mpf_pos(a, prec, rnd), mpf_pos(b, prec, rnd)

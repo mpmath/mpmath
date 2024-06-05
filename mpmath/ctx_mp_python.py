@@ -6,14 +6,15 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     from_npfloat, from_rational, from_str, fzero, int_types,
                     mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
                     mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg,
-                    mpc_pos, mpc_pow, mpc_pow_int, mpc_pow_mpf, mpc_sub,
-                    mpc_sub_mpf, mpc_to_complex, mpc_to_str, mpf_abs, mpf_add,
-                    mpf_cmp, mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le,
-                    mpf_lt, mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos,
-                    mpf_pow, mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum,
-                    normalize, prec_to_dps, round_nearest, to_fixed, to_float,
-                    to_int, to_man_exp, to_rational, to_str)
+                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
+                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
+                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
+                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
+                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
+                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
+                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
+                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
+                    to_rational, to_str)
 
 
 new = object.__new__
@@ -226,7 +227,7 @@ class _mpf(mpnumeric):
         if hasattr(other, '_mpc_'):
             tval = other._mpc_
             mpc = type(other)
-            val = mpc_sub((sval, fzero), tval, prec, rounding)
+            val = mpc_mpf_sub(sval, tval, prec, rounding)
             obj = new(mpc)
             obj._mpc_ = val
             return obj
