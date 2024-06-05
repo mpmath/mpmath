@@ -65,16 +65,17 @@ class _mpf(mpnumeric):
                 return v
             else:
                 raise ValueError
+        elif isinstance(val, str):
+            val = from_str(val, prec, rounding, base)
         else:
-            val = cls.mpf_convert_arg(val, prec, rounding, base)
+            val = cls.mpf_convert_arg(val, prec, rounding)
         v._mpf_ = mpf_pos(val, prec, rounding)
         return v
 
     @classmethod
-    def mpf_convert_arg(cls, x, prec, rounding, base):
+    def mpf_convert_arg(cls, x, prec, rounding):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
-        if isinstance(x, str): return from_str(x, prec, rounding, base)
         if isinstance(x, cls.context.constant): return x.func(prec, rounding)
         if isinstance(x, numbers.Rational): return from_rational(x.numerator,
                                                                  x.denominator,
