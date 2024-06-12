@@ -1,7 +1,7 @@
 mpmath
 ======
 
-|pypi version| |Build status| |Code coverage status| |Zenodo Badge|
+|pypi version| |Build status| |Code coverage status| |Zenodo Badge| |Monthly Downloads Badge|
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
@@ -11,6 +11,9 @@ mpmath
    :target: https://codecov.io/gh/mpmath/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
+.. |Monthly Downloads Badge| image:: https://assets.piptrends.com/get-last-month-downloads-badge/mpmath.svg
+   :target: https://piptrends.com/package/mpmath
+   :alt: mpmath Downloads Last Month by pip Trends
 
 A Python library for arbitrary-precision floating-point arithmetic.
 
