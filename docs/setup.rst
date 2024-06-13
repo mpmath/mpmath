@@ -84,7 +84,7 @@ Python interpreter and do the following::
 Using gmpy (optional)
 ---------------------
 
-If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.1.0a4 or later is
+If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.2.0rc1 or later is
 installed on your system, mpmath will automatically detect it and transparently
 use gmpy integers instead of Python integers.  This makes mpmath much faster,
 especially at high precision (approximately above 100 digits).

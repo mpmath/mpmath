@@ -1248,7 +1248,6 @@ def str_to_man_exp(x, base=10):
         if a == '':
             a = '0'
         x = a + b
-    x = x.replace(' ', '').replace('+', '')  # workaround aleaxit/gmpy#381
     int_max_str_digits = 0
     if BACKEND == 'python' and hasattr(sys, 'get_int_max_str_digits'):
         int_max_str_digits = sys.get_int_max_str_digits()
