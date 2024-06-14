@@ -34,8 +34,7 @@ tests = ['pytest>=6', 'numpy; python_version<"3.13"',
          'matplotlib; python_version<"3.13"', 'pexpect', 'ipython']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
-gmpy = ['gmpy2>=2.1.0a4; platform_python_implementation!="PyPy" and python_version<"3.12"',
-        'gmpy2>=2.2.0a1; platform_python_implementation!="PyPy" and python_version>="3.12" and python_version<"3.13"']
+gmpy = ['gmpy2>=2.2.0rc1; platform_python_implementation!="PyPy"']
 docs = ['sphinx', 'matplotlib; python_version<"3.13"',
         'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
