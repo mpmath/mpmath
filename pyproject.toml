@@ -30,7 +30,7 @@ Homepage = 'https://mpmath.org/'
 'Bug Tracker' = 'https://github.com/mpmath/mpmath/issues'
 Documentation = 'http://mpmath.org/doc/current/'
 [project.optional-dependencies]
-tests = ['pytest>=6', 'numpy; python_version<"3.13"',
+tests = ['pytest>=6', 'numpy<2; python_version<"3.13"',
          'matplotlib; python_version<"3.13"', 'pexpect', 'ipython']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
