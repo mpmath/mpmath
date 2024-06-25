@@ -6403,7 +6403,7 @@ Some elementary values and limits of the Barnes G-function::
     >>> barnesg(inf)
     +inf
     >>> barnesg(0), barnesg(-1), barnesg(-2)
-    (0.0, 0.0, 0.0)
+    (0.0, -0.0, -0.0)
 
 Closed-form values are known for some rational arguments::
 
@@ -6464,7 +6464,7 @@ precision::
     >>> barnesg(100)
     3.10361006263698e+6626
     >>> barnesg(-101)
-    0.0
+    -0.0
     >>> barnesg(-10.5)
     5.94463017605008e+25
     >>> barnesg(-10000.5)
