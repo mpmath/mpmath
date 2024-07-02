@@ -254,7 +254,10 @@ def test_compatibility():
         # Handle the weird types
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
-        assert diff < 2.0**-53
+        # we need to explicitly specify a sufficiently precise type
+        # for 2.0**-53, as otherwise numpy may convert it to LHS type
+        # that is not precise enough (e.g. float16)
+        assert diff < np.float64(2.0**-53)
     assert mpf(np.float64('inf')) == inf
     assert isnan(mp.npconvert(np.float64('nan')))
     if hasattr(np, "float128"):
