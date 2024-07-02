@@ -30,11 +30,11 @@ Homepage = 'https://mpmath.org/'
 'Bug Tracker' = 'https://github.com/mpmath/mpmath/issues'
 Documentation = 'http://mpmath.org/doc/current/'
 [project.optional-dependencies]
-tests = ['pytest>=6', 'numpy<2; python_version<"3.13"',
+tests = ['pytest>=6', 'numpy; python_version<"3.13"', 'packaging',
          'matplotlib; python_version<"3.13"', 'pexpect', 'ipython']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
-gmpy = ['gmpy2>=2.2.0rc1; platform_python_implementation!="PyPy"']
+gmpy = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
 docs = ['sphinx', 'matplotlib; python_version<"3.13"',
         'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
