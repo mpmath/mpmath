@@ -293,7 +293,8 @@ using ``lu_solve``::
     [['30.0'],
      ['-20.0']])
 
-If you don't trust the result, use ``residual`` to calculate the residual ||A*x-b||::
+If you don't trust the result, use ``residual`` to calculate
+the residual `||A x-b||`::
 
     >>> residual(A, x, b)
     matrix(
