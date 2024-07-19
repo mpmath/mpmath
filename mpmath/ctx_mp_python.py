@@ -356,7 +356,6 @@ class _mpf(mpnumeric):
         return t ** s
 
     def __format__(s, format_spec):
-        # TODO verify type before calling
         return format_mpf(s._mpf_, format_spec)
 
     def sqrt(s):
