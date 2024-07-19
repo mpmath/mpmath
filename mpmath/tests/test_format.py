@@ -1,19 +1,5 @@
 import mpmath as mp
 
-try:
-    import _testcapi
-except ImportError:
-    _testcapi = None
-
-INF = float("inf")
-NAN = float("nan")
-
-
-# locate files with float format test values
-format_testfile = 'format_mpf_testcases.txt'
-format_testfile_2 = 'format_mpf_testcases_2.txt'
-
-
 def test_mpf_fmt_cpython():
     '''
     These tests assure that mpf.__format__ yields the same result as regular
