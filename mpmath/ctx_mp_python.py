@@ -14,9 +14,8 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
                     mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
                     round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+                    to_rational, to_str, format_mpf)
 
-from .libmp.libfmt import format_mpf
 
 new = object.__new__
 
