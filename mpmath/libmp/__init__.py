@@ -66,3 +66,5 @@ from .libmpi import (mpci_abs, mpci_add, mpci_cos, mpci_div, mpci_exp,
                      mpi_mul, mpi_ne, mpi_neg, mpi_pos, mpi_pow, mpi_pow_int,
                      mpi_rgamma, mpi_sin, mpi_sqrt, mpi_str, mpi_sub, mpi_tan,
                      mpi_to_str)
+
+from .libfmt import (read_format_spec, format_fixed, format_scientific)

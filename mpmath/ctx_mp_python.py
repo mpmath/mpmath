@@ -16,6 +16,7 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     round_nearest, to_fixed, to_float, to_int, to_man_exp,
                     to_rational, to_str)
 
+from .libmp.libfmt import format_mpf
 
 new = object.__new__
 
@@ -353,6 +354,10 @@ class _mpf(mpnumeric):
         if t is NotImplemented:
             return t
         return t ** s
+
+    def __format__(s, format_spec):
+        # TODO verify type before calling
+        return format_mpf(s._mpf_, format_spec)
 
     def sqrt(s):
         return s.context.sqrt(s)
