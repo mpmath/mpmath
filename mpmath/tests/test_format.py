@@ -496,9 +496,9 @@ def test_mpf_fmt_special():
     assert '{:+F}'.format(ninf) == '-INF'
 
     assert '{:f}'.format(nan) == 'nan'
-    assert '{:+f}'.format(nan) == 'nan'
+    assert '{:+f}'.format(nan) == '+nan'
     assert '{:F}'.format(nan) == 'NAN'
-    assert '{:+F}'.format(nan) == 'NAN'
+    assert '{:+F}'.format(nan) == '+NAN'
 
     assert '{:e}'.format(inf) == 'inf'
     assert '{:+e}'.format(inf) == '+inf'
@@ -511,9 +511,9 @@ def test_mpf_fmt_special():
     assert '{:+E}'.format(ninf) == '-INF'
 
     assert '{:e}'.format(nan) == 'nan'
-    assert '{:+e}'.format(nan) == 'nan'
+    assert '{:+e}'.format(nan) == '+nan'
     assert '{:E}'.format(nan) == 'NAN'
-    assert '{:+E}'.format(nan) == 'NAN'
+    assert '{:+E}'.format(nan) == '+NAN'
 
     assert '{:g}'.format(inf) == 'inf'
     assert '{:+g}'.format(inf) == '+inf'
@@ -526,6 +526,6 @@ def test_mpf_fmt_special():
     assert '{:+G}'.format(ninf) == '-INF'
 
     assert '{:g}'.format(nan) == 'nan'
-    assert '{:+g}'.format(nan) == 'nan'
+    assert '{:+g}'.format(nan) == '+nan'
     assert '{:G}'.format(nan) == 'NAN'
-    assert '{:+G}'.format(nan) == 'NAN'
+    assert '{:+G}'.format(nan) == '+NAN'
