@@ -1,4 +1,87 @@
 import mpmath as mp
+import random
+
+def test_mpf_float():
+    '''
+    These are additional random tests that check that mp.mpf and fp.mpf yield
+    the same results for default precision.
+    '''
+
+    def random_fmt():
+        '''
+        This function generates valid random format strings.
+        '''
+
+        fmt_str = '{:'
+
+        # fill_char and align
+        n = random.randint(0, 2)
+        if n == 0:
+            fmt_str += random.choice('z;clxvjqwer') + random.choice('<^>=')
+            skip_0_padding = True
+        elif n == 1:
+            fmt_str += random.choice('<^>=')
+            skip_0_padding = True
+        else:
+            skip_0_padding = False
+
+        # sign character
+        n = random.randint(0, 1)
+        if n == 1:
+            fmt_str += random.choice('-+ ')
+
+        # no_neg_0 (not used yet.)
+        n = random.randint(0, 1)
+        if n == 1:
+            fmt_str += 'z'
+
+        # alternate mode
+        n = random.randint(0, 1)
+        if n == 1:
+            fmt_str += '#'
+
+        # pad with 0s
+        n = random.randint(0, 1)
+        skip_thousand_separators = False
+        if n == 1 and not skip_0_padding:
+            fmt_str += '0'
+            skip_thousand_separators = True
+
+        # Width
+        n = random.randint(0, 2)
+        if n > 0:
+            fmt_str += str(random.randint(1, 40))
+
+        # grouping character (thousand_separators)
+        n = random.randint(0, 1)
+        if n == 1 and not skip_thousand_separators:
+            fmt_str += random.choice(',_')
+
+        # Precision
+        n = random.randint(0, 2)
+        if n > 0:
+            fmt_str += '.' + str(random.randint(1, 40))
+
+        # Type
+        fmt_str += random.choice('fFgGeE')
+        fmt_str += '}'
+
+        return fmt_str
+
+    for _ in range(1000):
+        fmt_str = random_fmt()
+        num = random.uniform(-1e50, 1e50)
+
+        print(fmt_str, fmt_str.format(mp.fp.mpf(num)), fmt_str.format(mp.mp.mpf(num)))
+        assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
+
+        # Test the same random formats with special numbers
+        for num in (float('inf'), -float('inf'), float('nan'), 0):
+            fmt_str = random_fmt()
+            print(fmt_str, fmt_str.format(mp.fp.mpf(num)),
+                  fmt_str.format(mp.mp.mpf(num)))
+            assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
+
 
 def test_mpf_fmt_cpython():
     '''
