@@ -538,7 +538,7 @@ def test_errors():
         # wrong format type
         assert '{:22.15k}'.format(mp.mpf('-4'))
 
-    with pytest.raises(ValueError, match='Format specifier missing precision'):
+    with pytest.raises(ValueError, match="Invalid format specifier '<z15.e'"):
         # no precision specified after .
         assert '{:<z15.e}'.format(mp.mpf('-0.01'))
 

@@ -5,6 +5,7 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 import math
 import sys
 import warnings
+import re
 
 
 # Importing random is slow
@@ -1380,7 +1381,22 @@ def read_format_spec(format_spec):
     floats.
     '''
 
-    pos = 0
+    _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
+        (?:
+            (?P<fill_char>.)?
+            (?P<align>[<>=^])
+        )?
+        (?P<sign>[-+ ]?)
+        (?P<no_neg_0>z)?
+        (?P<alternate>\#)?
+        # A '0' that's *not* followed by another digit is parsed as a minimum width
+        # rather than a zeropad flag.
+        (?P<zeropad>0(?=[0-9]))?
+        (?P<width>0|[1-9][0-9]*)?
+        (?P<thousands_separators>[,_])?
+        (?:\.(?P<precision>0|[1-9][0-9]*))?
+        (?P<type>[eEfFgG])
+    """, re.DOTALL | re.VERBOSE).fullmatch
 
     format_dict = {
         'fill_char': ' ',
@@ -1391,125 +1407,30 @@ def read_format_spec(format_spec):
         'thousands_separators': '',
         'width': -1,
         'precision': 6,
-        'rounding': 'N',
         'type': 'f'
         }
 
-    # Check for alignment and fill characters
-    if pos+1 < len(format_spec):
-        if format_spec[pos+1] in ('<', '^', '>', '='):
-            format_dict['fill_char'] = format_spec[pos]
-            format_dict['align'] = format_spec[pos+1]
-            pos += 2
+    if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
+        format_dict['fill_char'] = match['fill_char'] or format_dict['fill_char']
+        format_dict['align'] = match['align'] or format_dict['align']
+        format_dict['sign'] = match['sign'] or format_dict['sign']
+        format_dict['no_neg_0'] = bool(match['no_neg_0']) or format_dict['no_neg_0']
+        format_dict['alternate'] = bool(match['alternate']) or format_dict['alternate']
+        format_dict['thousands_separators'] = match['thousands_separators'] or format_dict['thousands_separators']
+        format_dict['width'] = int(match['width'] or format_dict['width'])
+        format_dict['precision'] = int(match['precision'] or format_dict['precision'])
+        format_dict['type'] = match['type'] or format_dict['type']
 
-    # Check for only alignment characters
-    if pos < len(format_spec):
-        if format_spec[pos] in ('<', '^', '>', '='):
-            format_dict['fill_char'] = ' '
-            format_dict['align'] = format_spec[pos]
-            pos += 1
+        if match['zeropad'] and match['fill_char']:
+            raise ValueError('Cannot specify both 0-padding and a fill '
+                             'character')
 
-    # Check for sign character
-    if pos < len(format_spec):
-        if format_spec[pos] in ('+', '-', ' '):
-            format_dict['sign'] = format_spec[pos]
-            pos += 1
-
-    # Check if negating zero
-    if pos < len(format_spec):
-        if format_spec[pos] == 'z':
-            format_dict['no_neg_0'] = True
-            pos += 1
-
-    # Check if alternate
-    if pos < len(format_spec):
-        if format_spec[pos] == '#':
-            format_dict['alternate'] = True
-            pos += 1
-
-    # 0-padding
-    zero_padding = False
-    if pos < len(format_spec):
-        if format_spec[pos] == '0':
-            format_dict['fill_char'] = '0'
+        if match['zeropad']:
             format_dict['align'] = '='
-            zero_padding = True
-            pos += 1
-
-    # Check for width
-    if pos < len(format_spec):
-        dig_str = ''
-        while format_spec[pos].isdigit():
-            dig_str += format_spec[pos]
-            pos += 1
-
-        if len(dig_str) > 0:
-            format_dict['width'] = int(dig_str)
-
-    # Check for thousands separator
-    if pos < len(format_spec):
-        if format_spec[pos] == ',':
-            if zero_padding:
-                raise NotImplementedError('Zero padding is not available with '
-                                          'thousand separators.')
-            format_dict['thousands_separators'] = format_spec[pos]
-            pos += 1
-
-    # Underscore signifies add thousands separators
-    if pos < len(format_spec):
-        if format_spec[pos] == '_':
-            if format_dict['thousands_separators'] == ',':
-                raise ValueError("Cannot specify both ',' and '_'.")
-            if zero_padding:
-                raise NotImplementedError('Zero padding is not available with '
-                                          'thousand separators.')
-            format_dict['thousands_separators'] = format_spec[pos]
-            pos += 1
-
-    if pos < len(format_spec):
-        if format_spec[pos] == ',':
-            if format_dict['thousands_separators'] == '_':
-                raise ValueError("Cannot specify both ',' and '_'.")
-            pos += 1
-
-    # Check for precision
-    if pos < len(format_spec):
-        if format_spec[pos] == '.':
-            pos += 1
-            dig_str = ''
-            while format_spec[pos].isdigit():
-                dig_str += format_spec[pos]
-                pos += 1
-            if len(dig_str) == 0:
-                raise ValueError('Format specifier missing precision')
-            else:
-                format_dict['precision'] = int(dig_str)
-
-    # Check for rounding type
-    # if pos < len(format_spec):
-    #     if format_spec[pos] in ('U', 'D', 'Y', 'Z', 'N'):
-    #         format_dict['rounding'] = format_spec[pos]
-    #         pos += 1
-
-    # Finally, parse the type field.
-
-    if len(format_spec) - pos > 1:
-        # More than one char remains, so this is an invalid format specifier.
+            format_dict['fill_char'] = '0'
+    else:
         raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
-    if pos == len(format_spec)-1:
-        if format_spec[pos] in ('f', 'F', 'g', 'G', 'e', 'E'):
-            format_dict['type'] = format_spec[pos]
-        else:
-            raise ValueError(
-                    "Format type '{}' not recognized.".format(format_spec[pos])
-                    )
-        pos += 1
-
-    # -------------------------------------------------------------------------
-    # Now process information
-
-    # Compute actual width
     return format_dict
 
 
