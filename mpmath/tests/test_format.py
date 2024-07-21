@@ -1,5 +1,7 @@
 import mpmath as mp
 import random
+import pytest
+
 
 def test_mpf_float():
     '''
@@ -529,3 +531,19 @@ def test_mpf_fmt_special():
     assert '{:+g}'.format(nan) == '+nan'
     assert '{:G}'.format(nan) == 'NAN'
     assert '{:+G}'.format(nan) == '+NAN'
+
+
+def test_errors():
+    with pytest.raises(Exception):
+        # wrong format type
+        assert '{:22.15k}'.format(mp.mpf('-4'))
+
+    with pytest.raises(ValueError, match='Format specifier missing precision'):
+        # no precision specified after .
+        assert '{:<z15.e}'.format(mp.mpf('-0.01'))
+
+    with pytest.raises(ValueError, match="Invalid format specifier '10.5fk'") as e:
+        assert '{:10.5fk}'.format(mp.mpf('4'))
+
+    with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '") as e:
+        assert '{:12.3 E }'.format(mp.mpf('4'))

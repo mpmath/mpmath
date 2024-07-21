@@ -1481,7 +1481,7 @@ def read_format_spec(format_spec):
                 dig_str += format_spec[pos]
                 pos += 1
             if len(dig_str) == 0:
-                raise ValueError('Precision not specified')
+                raise ValueError('Format specifier missing precision')
             else:
                 format_dict['precision'] = int(dig_str)
 
