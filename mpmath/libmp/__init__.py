@@ -55,7 +55,7 @@ from .libmpf import (ComplexResult, dps_to_prec, fhalf, finf, fnan, fninf,
                      round_down, round_floor, round_int, round_nearest,
                      round_up, str_to_man_exp, to_digits_exp, to_fixed,
                      to_float, to_int, to_man_exp, to_pickable, to_rational,
-                     to_str)
+                     to_str, format_mpf)
 from .libmpi import (mpci_abs, mpci_add, mpci_cos, mpci_div, mpci_exp,
                      mpci_factorial, mpci_gamma, mpci_log, mpci_loggamma,
                      mpci_mul, mpci_neg, mpci_pos, mpci_pow, mpci_rgamma,
@@ -66,5 +66,3 @@ from .libmpi import (mpci_abs, mpci_add, mpci_cos, mpci_div, mpci_exp,
                      mpi_mul, mpi_ne, mpi_neg, mpi_pos, mpi_pow, mpi_pow_int,
                      mpi_rgamma, mpi_sin, mpi_sqrt, mpi_str, mpi_sub, mpi_tan,
                      mpi_to_str)
-
-from .libfmt import (format_mpf)
