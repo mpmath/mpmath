@@ -1227,20 +1227,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 digits = hex(n)[2:]
 
         # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in rnd_digs:
-            digits = digits[:dps]
-            i = dps - 1
-            dig = stddigits[base-1]
-            while i >= 0 and digits[i] == dig:
-                i -= 1
-            if i >= 0:
-                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
-                    '0' * (dps - i - 1)
-            else:
-                digits = '1' + '0' * (dps - 1)
-                exponent += 1
-        else:
-            digits = digits[:dps]
+        digits, exp_add = round_digits(digits, dps, base)
+        exponent += exp_add
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
