@@ -1427,6 +1427,15 @@ def read_format_spec(format_spec):
             format_dict['alternate'] = True
             pos += 1
 
+    # 0-padding
+    zero_padding = False
+    if pos < len(format_spec):
+        if format_spec[pos] == '0':
+            format_dict['fill_char'] = '0'
+            format_dict['align'] = '='
+            zero_padding = True
+            pos += 1
+
     # Check for width
     if pos < len(format_spec):
         dig_str = ''
@@ -1439,8 +1448,28 @@ def read_format_spec(format_spec):
 
     # Check for thousands separator
     if pos < len(format_spec):
-        if format_spec[pos] in (',', '_'):
+        if format_spec[pos] == ',':
+            if zero_padding:
+                raise NotImplementedError('Zero padding is not available with '
+                                          'thousand separators.')
             format_dict['thousands_separators'] = format_spec[pos]
+            pos += 1
+
+    # Underscore signifies add thousands separators
+    if pos < len(format_spec):
+        if format_spec[pos] == '_':
+            if format_dict['thousands_separators'] == ',':
+                raise ValueError("Cannot specify both ',' and '_'.")
+            if zero_padding:
+                raise NotImplementedError('Zero padding is not available with '
+                                          'thousand separators.')
+            format_dict['thousands_separators'] = format_spec[pos]
+            pos += 1
+
+    if pos < len(format_spec):
+        if format_spec[pos] == ',':
+            if format_dict['thousands_separators'] == '_':
+                raise ValueError("Cannot specify both ',' and '_'.")
             pos += 1
 
     # Check for precision
@@ -1457,13 +1486,18 @@ def read_format_spec(format_spec):
                 format_dict['precision'] = int(dig_str)
 
     # Check for rounding type
-    if pos < len(format_spec):
-        if format_spec[pos] in ('U', 'D', 'Y', 'Z', 'N'):
-            format_dict['rounding'] = format_spec[pos]
-            pos += 1
+    # if pos < len(format_spec):
+    #     if format_spec[pos] in ('U', 'D', 'Y', 'Z', 'N'):
+    #         format_dict['rounding'] = format_spec[pos]
+    #         pos += 1
 
-    # Check for format type
-    if pos < len(format_spec):
+    # Finally, parse the type field.
+
+    if len(format_spec) - pos > 1:
+        # More than one char remains, so this is an invalid format specifier.
+        raise ValueError("Invalid format specifier '{}'".format(format_spec))
+
+    if pos == len(format_spec)-1:
         if format_spec[pos] in ('f', 'F', 'g', 'G', 'e', 'E'):
             format_dict['type'] = format_spec[pos]
         else:
@@ -1609,6 +1643,35 @@ def format_scientific(s,
             return sign, digits + sep + f'{exponent:+03d}'
 
 
+def format_zero(fmt_type, precision, alternate, capitalize, 
+                thousands_separators):
+    digits = ''
+
+    if fmt_type in 'ef':
+        digits = '0'
+        # This is not used since fnzero is not used either, AFAIK.
+        # if num[0]:
+        #    sign = '-'
+
+        if precision > 0:
+            digits += '.' + precision*'0'
+        else:
+            if alternate:
+                digits += '.'
+
+        if fmt_type == 'e':
+            digits += 'E+00' if capitalize else 'e+00'
+
+    elif fmt_type == 'g':
+        if alternate:
+            return format_zero('f', precision-1, alternate, capitalize,
+                               thousands_separators)
+        else:
+            return '0'
+
+    return digits
+
+
 def format_mpf(num, format_spec):
     format_dict = read_format_spec(format_spec)
 
@@ -1623,48 +1686,22 @@ def format_mpf(num, format_spec):
     sign = ''
 
     # Special cases:
-    if num in (fzero, fnzero):
-        if fmt_type in 'ef':
-            digits = '0'
-            if num[0]:
-                sign = '-'
-
-            if precision > 0:
-                digits += '.' + precision*'0'
-            else:
-                if format_dict['alternate']:
-                    digits += '.'
-
-        elif fmt_type == 'g':
-            if format_dict['alternate']:
-                digits = '0.' + (precision-1)*'0'
-            else:
-                digits = '0'
-
-        if fmt_type == 'e':
-            sep = 'E' if capitalize else 'e'
-            digits += sep + '+00'
-
+    if num == fnan:
+        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
+        digits = 'NAN' if capitalize else 'nan'
     elif num == finf:
-        if capitalize:
-            digits = 'INF'
-        else:
-            digits = 'inf'
-
-        if format_dict['sign'] == '+':
-            digits = '+' + digits
+        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
+        digits = 'INF' if capitalize else 'inf'
     elif num == fninf:
-        if capitalize:
-            digits = '-INF'
-        else:
-            digits = '-inf'
-
-    elif num == fnan:
-        if capitalize:
-            digits = 'NAN'
-        else:
-            digits = 'nan'
-
+        sign = '-'
+        digits = 'INF' if capitalize else 'inf'
+    elif num == fzero:
+        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
+        digits = format_zero(
+                fmt_type=fmt_type,
+                precision=precision, capitalize=capitalize,
+                alternate=format_dict['alternate'],
+                thousands_separators=format_dict['thousands_separators'])
     # Now the general case
     else:
         strip_last_zero = False
@@ -1723,6 +1760,7 @@ def format_mpf(num, format_spec):
     else:
         return lpad*format_dict['fill_char'] + sign + digits \
                 + rpad*format_dict['fill_char']
+
 
 #----------------------------------------------------------------------------#
 #                                Square roots                                #
