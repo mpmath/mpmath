@@ -1230,8 +1230,20 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 digits = hex(n)[2:]
 
         # Rounding up kills some instances of "...99999"
-        digits, exp_add = round_digits(digits, dps, base)
-        exponent += exp_add
+        if len(digits) > dps and digits[dps] in rnd_digs:
+            digits = digits[:dps]
+            i = dps - 1
+            dig = stddigits[base-1]
+            while i >= 0 and digits[i] == dig:
+                i -= 1
+            if i >= 0:
+                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
+                    '0' * (dps - i - 1)
+            else:
+                digits = '1' + '0' * (dps - 1)
+                exponent += 1
+        else:
+            digits = digits[:dps]
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
@@ -1561,35 +1573,6 @@ def format_scientific(s,
             return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_zero(fmt_type, precision, alternate, capitalize,
-                thousands_separators):
-    digits = ''
-
-    if fmt_type in 'ef':
-        digits = '0'
-        # This is not used since fnzero is not used either, AFAIK.
-        # if num[0]:
-        #    sign = '-'
-
-        if precision > 0:
-            digits += '.' + precision*'0'
-        else:
-            if alternate:
-                digits += '.'
-
-        if fmt_type == 'e':
-            digits += 'E+00' if capitalize else 'e+00'
-
-    else:  # fmt_type == 'g'
-        if alternate:
-            return format_zero('f', precision-1, alternate, capitalize,
-                               thousands_separators)
-        else:
-            return '0'
-
-    return digits
-
-
 def format_mpf(num, format_spec):
     format_dict = read_format_spec(format_spec)
 
@@ -1604,22 +1587,8 @@ def format_mpf(num, format_spec):
     sign = ''
 
     # Special cases:
-    if num == fnan:
-        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
-        digits = 'NAN' if capitalize else 'nan'
-    elif num == finf:
-        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
-        digits = 'INF' if capitalize else 'inf'
-    elif num == fninf:
-        sign = '-'
-        digits = 'INF' if capitalize else 'inf'
-    elif num == fzero:
-        sign = '' if format_dict['sign'] == '-' else format_dict['sign']
-        digits = format_zero(
-                fmt_type=fmt_type,
-                precision=precision, capitalize=capitalize,
-                alternate=format_dict['alternate'],
-                thousands_separators=format_dict['thousands_separators'])
+    if num in (fnan, finf, fninf, fzero, fnzero):
+        return format(to_float(num), format_spec)
     # Now the general case
     else:
         strip_last_zero = False
