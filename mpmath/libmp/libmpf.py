@@ -3,9 +3,9 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
 import math
+import re
 import sys
 import warnings
-import re
 
 
 # Importing random is slow

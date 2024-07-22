@@ -1,7 +1,9 @@
-import mpmath as mp
 import random
-import pytest
 import sys
+
+import pytest
+
+import mpmath as mp
 
 
 def test_mpf_float():
