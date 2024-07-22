@@ -531,7 +531,7 @@ def test_mpf_fmt_special():
 
 
 def test_errors():
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         # wrong format type
         assert '{:22.15k}'.format(mp.mpf('-4'))
 
@@ -539,12 +539,12 @@ def test_errors():
         # no precision specified after .
         assert '{:<z15.e}'.format(mp.mpf('-0.01'))
 
-    with pytest.raises(ValueError, match="Invalid format specifier '10.5fk'") as e:
+    with pytest.raises(ValueError, match="Invalid format specifier '10.5fk'"):
         assert '{:10.5fk}'.format(mp.mpf('4'))
 
-    with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '") as e:
+    with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '"):
         assert '{:12.3 E }'.format(mp.mpf('4'))
 
     with pytest.raises(ValueError, match="Cannot specify both 0-padding "
-                       "and a fill character") as e:
+                       "and a fill character"):
         assert '{:q<03f}'.format(mp.mpf('4'))
