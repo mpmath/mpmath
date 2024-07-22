@@ -1,6 +1,7 @@
 import mpmath as mp
 import random
 import pytest
+import sys
 
 
 def test_mpf_float():
@@ -33,9 +34,10 @@ def test_mpf_float():
             fmt_str += random.choice('-+ ')
 
         # no_neg_0 (not used yet.)
-        n = random.randint(0, 1)
-        if n == 1:
-            fmt_str += 'z'
+        if sys.version_info[:3] > (3, 11):
+            n = random.randint(0, 1)
+            if n == 1:
+                fmt_str += 'z'
 
         # alternate mode
         n = random.randint(0, 1)
