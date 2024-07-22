@@ -414,68 +414,68 @@ def test_mpf_fmt():
     with workdps(1000):
         # Numbers with more than 15 significant digits
         # fixed format
-        assert f'{mp.mpf('1.234567890123456789'):.20f}' == '1.23456789012345678900'
-        assert f'{mp.mpf('1.234567890123456789'):.25f}' == '1.2345678901234567890000000'
-        assert f'{mp.mpf('1.234567890123456789'):.30f}' == '1.234567890123456789000000000000'
-        assert f'{mp.mpf('1e-50'):.50f}' == '0.00000000000000000000000000000000000000000000000001'
+        assert f"{mp.mpf('1.234567890123456789'):.20f}" == '1.23456789012345678900'
+        assert f"{mp.mpf('1.234567890123456789'):.25f}" == '1.2345678901234567890000000'
+        assert f"{mp.mpf('1.234567890123456789'):.30f}" == '1.234567890123456789000000000000'
+        assert f"{mp.mpf('1e-50'):.50f}" == '0.00000000000000000000000000000000000000000000000001'
 
         # scientific notation
-        assert f'{mp.mpf('1.234567890123456789'):.20e}' == '1.23456789012345678900e+00'
-        assert f'{mp.mpf('1.234567890123456789'):.25e}' == '1.2345678901234567890000000e+00'
-        assert f'{mp.mpf('1.234567890123456789'):.30e}' == '1.234567890123456789000000000000e+00'
-        assert f'{mp.mpf('1e-50'):.50e}' == '1.00000000000000000000000000000000000000000000000000e-50'
+        assert f"{mp.mpf('1.234567890123456789'):.20e}" == '1.23456789012345678900e+00'
+        assert f"{mp.mpf('1.234567890123456789'):.25e}" == '1.2345678901234567890000000e+00'
+        assert f"{mp.mpf('1.234567890123456789'):.30e}" == '1.234567890123456789000000000000e+00'
+        assert f"{mp.mpf('1e-50'):.50e}" == '1.00000000000000000000000000000000000000000000000000e-50'
 
         # width and fill char
-        assert f'{mp.mpf('0.01'):z<10.5f}' == '0.01000zzz'
-        assert f'{mp.mpf('0.01'):z^10.5f}' == 'z0.01000zz'
-        assert f'{mp.mpf('0.01'):z>10.5f}' == 'zzz0.01000'
-        assert f'{mp.mpf('0.01'):z=10.5f}' == 'zzz0.01000'
+        assert f"{mp.mpf('0.01'):z<10.5f}" == '0.01000zzz'
+        assert f"{mp.mpf('0.01'):z^10.5f}" == 'z0.01000zz'
+        assert f"{mp.mpf('0.01'):z>10.5f}" == 'zzz0.01000'
+        assert f"{mp.mpf('0.01'):z=10.5f}" == 'zzz0.01000'
 
-        assert f'{mp.mpf('0.01'):z<+10.5f}' == '+0.01000zz'
-        assert f'{mp.mpf('0.01'):z^+10.5f}' == 'z+0.01000z'
-        assert f'{mp.mpf('0.01'):z>+10.5f}' == 'zz+0.01000'
-        assert f'{mp.mpf('0.01'):z=+10.5f}' == '+zz0.01000'
+        assert f"{mp.mpf('0.01'):z<+10.5f}" == '+0.01000zz'
+        assert f"{mp.mpf('0.01'):z^+10.5f}" == 'z+0.01000z'
+        assert f"{mp.mpf('0.01'):z>+10.5f}" == 'zz+0.01000'
+        assert f"{mp.mpf('0.01'):z=+10.5f}" == '+zz0.01000'
 
-        assert f'{mp.mpf('-0.01'):z<10.5f}' == '-0.01000zz'
-        assert f'{mp.mpf('-0.01'):z^10.5f}' == 'z-0.01000z'
-        assert f'{mp.mpf('-0.01'):z>10.5f}' == 'zz-0.01000'
-        assert f'{mp.mpf('-0.01'):z=10.5f}' == '-zz0.01000'
+        assert f"{mp.mpf('-0.01'):z<10.5f}" == '-0.01000zz'
+        assert f"{mp.mpf('-0.01'):z^10.5f}" == 'z-0.01000z'
+        assert f"{mp.mpf('-0.01'):z>10.5f}" == 'zz-0.01000'
+        assert f"{mp.mpf('-0.01'):z=10.5f}" == '-zz0.01000'
 
-        assert f'{mp.mpf('0.01'):z<15.5e}' == '1.00000e-02zzzz'
-        assert f'{mp.mpf('0.01'):z^15.5e}' == 'zz1.00000e-02zz'
-        assert f'{mp.mpf('0.01'):z>15.5e}' == 'zzzz1.00000e-02'
-        assert f'{mp.mpf('0.01'):z=15.5e}' == 'zzzz1.00000e-02'
+        assert f"{mp.mpf('0.01'):z<15.5e}" == '1.00000e-02zzzz'
+        assert f"{mp.mpf('0.01'):z^15.5e}" == 'zz1.00000e-02zz'
+        assert f"{mp.mpf('0.01'):z>15.5e}" == 'zzzz1.00000e-02'
+        assert f"{mp.mpf('0.01'):z=15.5e}" == 'zzzz1.00000e-02'
 
-        assert f'{mp.mpf('0.01'):z<+15.5e}' == '+1.00000e-02zzz'
-        assert f'{mp.mpf('0.01'):z^+15.5e}' == 'z+1.00000e-02zz'
-        assert f'{mp.mpf('0.01'):z>+15.5e}' == 'zzz+1.00000e-02'
-        assert f'{mp.mpf('0.01'):z=+15.5e}' == '+zzz1.00000e-02'
+        assert f"{mp.mpf('0.01'):z<+15.5e}" == '+1.00000e-02zzz'
+        assert f"{mp.mpf('0.01'):z^+15.5e}" == 'z+1.00000e-02zz'
+        assert f"{mp.mpf('0.01'):z>+15.5e}" == 'zzz+1.00000e-02'
+        assert f"{mp.mpf('0.01'):z=+15.5e}" == '+zzz1.00000e-02'
 
-        assert f'{mp.mpf('-0.01'):z<15.5e}' == '-1.00000e-02zzz'
-        assert f'{mp.mpf('-0.01'):z^15.5e}' == 'z-1.00000e-02zz'
-        assert f'{mp.mpf('-0.01'):z>15.5e}' == 'zzz-1.00000e-02'
-        assert f'{mp.mpf('-0.01'):z=15.5e}' == '-zzz1.00000e-02'
+        assert f"{mp.mpf('-0.01'):z<15.5e}" == '-1.00000e-02zzz'
+        assert f"{mp.mpf('-0.01'):z^15.5e}" == 'z-1.00000e-02zz'
+        assert f"{mp.mpf('-0.01'):z>15.5e}" == 'zzz-1.00000e-02'
+        assert f"{mp.mpf('-0.01'):z=15.5e}" == '-zzz1.00000e-02'
 
         # capitalized scientific notation
-        assert f'{mp.mpf('-0.01'):z<15.5E}' == '-1.00000E-02zzz'
+        assert f"{mp.mpf('-0.01'):z<15.5E}" == '-1.00000E-02zzz'
 
         # generalized format
-        assert f'{mp.mpf('1.234567890123456789'):.20g}' == '1.234567890123456789'
-        assert f'{mp.mpf('1.234567890123456789'):.25g}' == '1.234567890123456789'
-        assert f'{mp.mpf('1.234567890123456789'):.30g}' == '1.234567890123456789'
-        assert f'{mp.mpf('1e-50'):.50g}' == '1e-50'
-        assert f'{mp.mpf('1e-50'):.50G}' == '1E-50'
+        assert f"{mp.mpf('1.234567890123456789'):.20g}" == '1.234567890123456789'
+        assert f"{mp.mpf('1.234567890123456789'):.25g}" == '1.234567890123456789'
+        assert f"{mp.mpf('1.234567890123456789'):.30g}" == '1.234567890123456789'
+        assert f"{mp.mpf('1e-50'):.50g}" == '1e-50'
+        assert f"{mp.mpf('1e-50'):.50G}" == '1E-50'
 
         # thousands separator
-        assert f'{mp.mpf('1e9'):,.0f}' == '1,000,000,000'
-        assert f'{mp.mpf('123456789.0123456'):,.4f}' == '123,456,789.0123'
-        assert f'{mp.mpf('1234567890.123456'):_.4f}' == '1_234_567_890.1235'
-        assert f'{mp.mpf('1234.5678'):_.4f}' == '1_234.5678'
+        assert f"{mp.mpf('1e9'):,.0f}" == '1,000,000,000'
+        assert f"{mp.mpf('123456789.0123456'):,.4f}" == '123,456,789.0123'
+        assert f"{mp.mpf('1234567890.123456'):_.4f}" == '1_234_567_890.1235'
+        assert f"{mp.mpf('1234.5678'):_.4f}" == '1_234.5678'
 
-        assert f'{mp.mpf('1e9'):,.0e}' == '1e+09'
-        assert f'{mp.mpf('123456789.0123456'):,.4e}' == '1.2346e+08'
-        assert f'{mp.mpf('1234567890.123456'):_.4e}' == '1.2346e+09'
-        assert f'{mp.mpf('1234.5678'):_.4e}' == '1.2346e+03'
+        assert f"{mp.mpf('1e9'):,.0e}" == '1e+09'
+        assert f"{mp.mpf('123456789.0123456'):,.4e}" == '1.2346e+08'
+        assert f"{mp.mpf('1234567890.123456'):_.4e}" == '1.2346e+09'
+        assert f"{mp.mpf('1234.5678'):_.4e}" == '1.2346e+03'
 
 
 def test_mpf_fmt_special():
@@ -533,18 +533,18 @@ def test_mpf_fmt_special():
 def test_errors():
     with pytest.raises(ValueError):
         # wrong format type
-        f'{mp.mpf('-4'):22.15k}'
+        f"{mp.mpf('-4'):22.15k}"
 
     with pytest.raises(ValueError, match="Invalid format specifier '<z15.e'"):
         # no precision specified after .
-        f'{mp.mpf('-0.01'):<z15.e}'
+        f"{mp.mpf('-0.01'):<z15.e}"
 
     with pytest.raises(ValueError, match="Invalid format specifier '10.5fk'"):
-        f'{mp.mpf('4'):10.5fk}'
+        f"{mp.mpf('4'):10.5fk}"
 
     with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '"):
-        f'{mp.mpf('4'):12.3 E }'
+        f"{mp.mpf('4'):12.3 E }"
 
     with pytest.raises(ValueError, match="Cannot specify both 0-padding "
                        "and a fill character"):
-        f'{mp.mpf('4'):q<03f}'
+        f"{mp.mpf('4'):q<03f}"
