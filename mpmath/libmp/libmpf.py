@@ -1108,15 +1108,9 @@ def round_digits(digits, dps, base):
     shifted.
     '''
 
-    # if len(digits) <= dps:
-    #     raise ValueError('There should be more digits than dps')
-
     exponent = 0
 
-    # if rounding == round_nearest:
     rnd_digs = stddigits[(base//2 + base % 2):base]
-    # else:
-    #    raise ValueError('Rounding: {} not implemented yet.')
 
     round_up = False
     # The first digit after dps is a 5.
@@ -1360,10 +1354,29 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
         raise NotImplementedError
     return s
 
+
 #----------------------------------------------------------------------------#
 #                              String formatting                             #
 #----------------------------------------------------------------------------#
+
 blog2_10 = 3.3219280948873626
+
+_FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
+    (?:
+        (?P<fill_char>.)?
+        (?P<align>[<>=^])
+    )?
+    (?P<sign>[-+ ]?)
+    (?P<no_neg_0>z)?
+    (?P<alternate>\#)?
+    # A '0' that's *not* followed by another digit is parsed as a minimum width
+    # rather than a zeropad flag.
+    (?P<zeropad>0(?=[0-9]))?
+    (?P<width>0|[1-9][0-9]*)?
+    (?P<thousands_separators>[,_])?
+    (?:\.(?P<precision>0|[1-9][0-9]*))?
+    (?P<type>[eEfFgG])
+""", re.DOTALL | re.VERBOSE).fullmatch
 
 
 def calc_padding(nchars, width, align):
@@ -1392,23 +1405,6 @@ def read_format_spec(format_spec):
     This is more or less copied from the CPython implementation for regular
     floats.
     '''
-
-    _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
-        (?:
-            (?P<fill_char>.)?
-            (?P<align>[<>=^])
-        )?
-        (?P<sign>[-+ ]?)
-        (?P<no_neg_0>z)?
-        (?P<alternate>\#)?
-        # A '0' that's *not* followed by another digit is parsed as a minimum width
-        # rather than a zeropad flag.
-        (?P<zeropad>0(?=[0-9]))?
-        (?P<width>0|[1-9][0-9]*)?
-        (?P<thousands_separators>[,_])?
-        (?:\.(?P<precision>0|[1-9][0-9]*))?
-        (?P<type>[eEfFgG])
-    """, re.DOTALL | re.VERBOSE).fullmatch
 
     format_dict = {
         'fill_char': ' ',
@@ -1555,7 +1551,6 @@ def format_scientific(s,
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    # Rounding up kills some instances of "...99999"
     digits, exp_add = round_digits(digits, dps, base)
     exponent += exp_add
 
@@ -1566,11 +1561,11 @@ def format_scientific(s,
 
     if precision >= 1 and len(digits) > 1:
         return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
-    else:
-        if alternate:
-            return sign, digits + '.' + sep + f'{exponent:+03d}'
-        else:
-            return sign, digits + sep + f'{exponent:+03d}'
+
+    if alternate:
+        return sign, digits + '.' + sep + f'{exponent:+03d}'
+
+    return sign, digits + sep + f'{exponent:+03d}'
 
 
 def format_mpf(num, format_spec):
@@ -1589,60 +1584,61 @@ def format_mpf(num, format_spec):
     # Special cases:
     if num in (fnan, finf, fninf, fzero, fnzero):
         return format(to_float(num), format_spec)
+
     # Now the general case
-    else:
-        strip_last_zero = False
-        strip_zeros = False
+    strip_last_zero = False
+    strip_zeros = False
 
-        if fmt_type == 'g':
-            if not format_dict['alternate']:
-                strip_last_zero = True
-                strip_zeros = True
+    if fmt_type == 'g':
+        if not format_dict['alternate']:
+            strip_last_zero = True
+            strip_zeros = True
 
-            _, _, exp = to_digits_exp(num, 53/blog2_10, 10)
-            if precision == 0:
-                precision = 1
+        _, _, exp = to_digits_exp(num, 53/blog2_10, 10)
+        if precision == 0:
+            precision = 1
 
-            if -4 <= exp < precision:
-                fmt_type = 'f'
-                precision = max(0, precision - exp - 1)
-            else:
-                fmt_type = 'e'
-                precision = max(0, precision - 1)
+        if -4 <= exp < precision:
+            fmt_type = 'f'
+            precision = max(0, precision - exp - 1)
+        else:
+            fmt_type = 'e'
+            precision = max(0, precision - 1)
 
-        if fmt_type == 'f':
-            sign, digits = format_fixed(
-                    num,
-                    precision=precision,
-                    strip_zeros=strip_zeros,
-                    strip_last_zero=strip_last_zero,
-                    thousands_separators=format_dict['thousands_separators'],
-                    sign_spec=format_dict['sign'],
-                    sep_range=3,
-                    base=10,
-                    alternate=format_dict['alternate']
-                    )
-        else:  # The format type is scientific
-            sign, digits = format_scientific(
-                    num,
-                    precision=precision,
-                    strip_zeros=strip_zeros,
-                    sign_spec=format_dict['sign'],
-                    base=10,
-                    capitalize=capitalize,
-                    alternate=format_dict['alternate']
-                    )
+    if fmt_type == 'f':
+        sign, digits = format_fixed(
+                num,
+                precision=precision,
+                strip_zeros=strip_zeros,
+                strip_last_zero=strip_last_zero,
+                thousands_separators=format_dict['thousands_separators'],
+                sign_spec=format_dict['sign'],
+                sep_range=3,
+                base=10,
+                alternate=format_dict['alternate']
+                )
+    else:  # The format type is scientific
+        sign, digits = format_scientific(
+                num,
+                precision=precision,
+                strip_zeros=strip_zeros,
+                sign_spec=format_dict['sign'],
+                base=10,
+                capitalize=capitalize,
+                alternate=format_dict['alternate']
+                )
 
     nchars = len(digits) + len(sign)
 
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
+
     if format_dict['align'] == '=':
         return sign + lpad*format_dict['fill_char'] + digits + \
                 rpad*format_dict['fill_char']
-    else:
-        return lpad*format_dict['fill_char'] + sign + digits \
-                + rpad*format_dict['fill_char']
+
+    return lpad*format_dict['fill_char'] + sign + digits \
+            + rpad*format_dict['fill_char']
 
 
 #----------------------------------------------------------------------------#
