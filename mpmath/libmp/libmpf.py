@@ -1102,29 +1102,31 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(digits, dps, base, rounding=round_nearest):
+def round_digits(digits, dps, base):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
     '''
 
+    # if len(digits) <= dps:
+    #     raise ValueError('There should be more digits than dps')
+
     exponent = 0
 
-    if rounding == round_nearest:
-        rnd_digs = stddigits[(base//2 + base % 2):base]
-    else:
-        raise ValueError('Rounding: {} not implemented yet.')
+    # if rounding == round_nearest:
+    rnd_digs = stddigits[(base//2 + base % 2):base]
+    # else:
+    #    raise ValueError('Rounding: {} not implemented yet.')
 
     round_up = False
-    if len(digits) > dps:
-        # The first digit after dps is a 5.
-        if digits[dps] == rnd_digs[0]:
-            for i in range(dps+1, len(digits)):
-                if digits[i] != '0':
-                    round_up = True
-                    break
-            if digits[dps-1] in stddigits[1:base:2]:
+    # The first digit after dps is a 5.
+    if digits[dps] == rnd_digs[0]:
+        for i in range(dps+1, len(digits)):
+            if digits[i] != '0':
                 round_up = True
+                break
+        if digits[dps-1] in stddigits[1:base:2]:
+            round_up = True
 
     if not round_up:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
@@ -1351,6 +1353,7 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
 #----------------------------------------------------------------------------#
 blog2_10 = 3.3219280948873626
 
+
 def calc_padding(nchars, width, align):
     '''
     Computes the left and right padding required to fill the required width,
@@ -1358,10 +1361,7 @@ def calc_padding(nchars, width, align):
     '''
     ntotal = max(nchars, width)
 
-    if align == '<':
-        lpad = 0
-        rpad = ntotal - nchars
-    elif align in ('>', '='):
+    if align in ('>', '='):
         lpad = ntotal - nchars
         rpad = 0
     elif align == '^':
@@ -1369,7 +1369,7 @@ def calc_padding(nchars, width, align):
         rpad = ntotal - nchars - lpad
     else:
         lpad = 0
-        rpad = 0
+        rpad = ntotal - nchars
 
     return (lpad, rpad)
 
@@ -1415,8 +1415,10 @@ def read_format_spec(format_spec):
         format_dict['align'] = match['align'] or format_dict['align']
         format_dict['sign'] = match['sign'] or format_dict['sign']
         format_dict['no_neg_0'] = bool(match['no_neg_0']) or format_dict['no_neg_0']
-        format_dict['alternate'] = bool(match['alternate']) or format_dict['alternate']
-        format_dict['thousands_separators'] = match['thousands_separators'] or format_dict['thousands_separators']
+        format_dict['alternate'] = bool(match['alternate']) or \
+            format_dict['alternate']
+        format_dict['thousands_separators'] = match['thousands_separators'] \
+            or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
         format_dict['type'] = match['type'] or format_dict['type']
@@ -1487,8 +1489,6 @@ def format_fixed(s,
             split = 1
         else:
             split = exponent + 1
-            if split > dps:
-                digits += "0"*(split-dps)
         exponent = 0
 
         # Add the thousands separator every 3 characters.
@@ -1519,11 +1519,8 @@ def format_fixed(s,
         # Clean up trailing zeros
         digits = digits.rstrip('0')
 
-    if digits[-1] == ".":
-        if strip_last_zero:
-            digits = digits[:-1]
-        elif not alternate:
-            digits += "0"
+    if digits[-1] == "." and strip_last_zero:
+        digits = digits[:-1]
 
     return sign, digits
 
@@ -1564,7 +1561,7 @@ def format_scientific(s,
             return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_zero(fmt_type, precision, alternate, capitalize, 
+def format_zero(fmt_type, precision, alternate, capitalize,
                 thousands_separators):
     digits = ''
 
@@ -1583,7 +1580,7 @@ def format_zero(fmt_type, precision, alternate, capitalize,
         if fmt_type == 'e':
             digits += 'E+00' if capitalize else 'e+00'
 
-    elif fmt_type == 'g':
+    else:  # fmt_type == 'g'
         if alternate:
             return format_zero('f', precision-1, alternate, capitalize,
                                thousands_separators)
@@ -1656,7 +1653,7 @@ def format_mpf(num, format_spec):
                     base=10,
                     alternate=format_dict['alternate']
                     )
-        elif fmt_type == 'e':
+        else:  # The format type is scientific
             sign, digits = format_scientific(
                     num,
                     precision=precision,
@@ -1666,10 +1663,6 @@ def format_mpf(num, format_spec):
                     capitalize=capitalize,
                     alternate=format_dict['alternate']
                     )
-
-        else:
-            raise ValueError(
-                    'Type {} not implemented yet'.format(format_dict['type']))
 
     nchars = len(digits) + len(sign)
 

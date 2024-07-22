@@ -74,14 +74,13 @@ def test_mpf_float():
         fmt_str = random_fmt()
         num = random.uniform(-1e50, 1e50)
 
-        print(fmt_str, fmt_str.format(mp.fp.mpf(num)), fmt_str.format(mp.mp.mpf(num)))
         assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
 
         # Test the same random formats with special numbers
         for num in (float('inf'), -float('inf'), float('nan'), 0):
             fmt_str = random_fmt()
-            print(fmt_str, fmt_str.format(mp.fp.mpf(num)),
-                  fmt_str.format(mp.mp.mpf(num)))
+            # print(fmt_str, fmt_str.format(mp.fp.mpf(num)),
+            #       fmt_str.format(mp.mp.mpf(num)))
             assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
 
 
@@ -547,3 +546,7 @@ def test_errors():
 
     with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '") as e:
         assert '{:12.3 E }'.format(mp.mpf('4'))
+
+    with pytest.raises(ValueError, match="Cannot specify both 0-padding "
+                       "and a fill character") as e:
+        assert '{:q<03f}'.format(mp.mpf('4'))
