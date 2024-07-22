@@ -1108,6 +1108,7 @@ def round_digits(digits, dps, base):
     shifted.
     '''
 
+    assert len(digits) > dps
     exponent = 0
 
     rnd_digs = stddigits[(base//2 + base % 2):base]
@@ -1126,7 +1127,7 @@ def round_digits(digits, dps, base):
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
 
     # Rounding up kills some instances of "...99999"
-    if len(digits) > dps and digits[dps] in rnd_digs:
+    if digits[dps] in rnd_digs:
         digits = digits[:dps]
         i = dps - 1
         dig = stddigits[base-1]
