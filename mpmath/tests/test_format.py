@@ -3,89 +3,70 @@ import sys
 
 import pytest
 
-import mpmath as mp
+from mpmath import fp, inf, mp, nan, ninf, workdps
 
 
-def test_mpf_float():
+def random_fmt():
     '''
-    These are additional random tests that check that mp.mpf and fp.mpf yield
-    the same results for default precision.
+    This helper generates valid random format strings.
     '''
 
-    def random_fmt():
-        '''
-        This function generates valid random format strings.
-        '''
+    fmt_str = '{:'
 
-        fmt_str = '{:'
+    # fill_char and align
+    n = random.randint(0, 2)
+    if n == 0:
+        fmt_str += random.choice('z;clxvjqwer') + random.choice('<^>=')
+        skip_0_padding = True
+    elif n == 1:
+        fmt_str += random.choice('<^>=')
+        skip_0_padding = True
+    else:
+        skip_0_padding = False
 
-        # fill_char and align
-        n = random.randint(0, 2)
-        if n == 0:
-            fmt_str += random.choice('z;clxvjqwer') + random.choice('<^>=')
-            skip_0_padding = True
-        elif n == 1:
-            fmt_str += random.choice('<^>=')
-            skip_0_padding = True
-        else:
-            skip_0_padding = False
+    # sign character
+    n = random.randint(0, 1)
+    if n == 1:
+        fmt_str += random.choice('-+ ')
 
-        # sign character
+    # no_neg_0 (not used yet.)
+    if sys.version_info[:3] > (3, 11):
         n = random.randint(0, 1)
         if n == 1:
-            fmt_str += random.choice('-+ ')
+            fmt_str += 'z'
 
-        # no_neg_0 (not used yet.)
-        if sys.version_info[:3] > (3, 11):
-            n = random.randint(0, 1)
-            if n == 1:
-                fmt_str += 'z'
+    # alternate mode
+    n = random.randint(0, 1)
+    if n == 1:
+        fmt_str += '#'
 
-        # alternate mode
-        n = random.randint(0, 1)
-        if n == 1:
-            fmt_str += '#'
+    # pad with 0s
+    n = random.randint(0, 1)
+    skip_thousand_separators = False
+    if n == 1 and not skip_0_padding:
+        fmt_str += '0'
+        skip_thousand_separators = True
 
-        # pad with 0s
-        n = random.randint(0, 1)
-        skip_thousand_separators = False
-        if n == 1 and not skip_0_padding:
-            fmt_str += '0'
-            skip_thousand_separators = True
+    # Width
+    n = random.randint(0, 2)
+    if n > 0:
+        fmt_str += str(random.randint(1, 40))
 
-        # Width
-        n = random.randint(0, 2)
-        if n > 0:
-            fmt_str += str(random.randint(1, 40))
+    # grouping character (thousand_separators)
+    n = random.randint(0, 1)
+    if n == 1 and not skip_thousand_separators:
+        fmt_str += random.choice(',_')
 
-        # grouping character (thousand_separators)
-        n = random.randint(0, 1)
-        if n == 1 and not skip_thousand_separators:
-            fmt_str += random.choice(',_')
+    # Precision
+    n = random.randint(0, 2)
+    if n > 0:
+        fmt_str += '.' + str(random.randint(1, 40))
 
-        # Precision
-        n = random.randint(0, 2)
-        if n > 0:
-            fmt_str += '.' + str(random.randint(1, 40))
+    # Type
+    fmt_str += random.choice('fFgGeE')
+    fmt_str += '}'
 
-        # Type
-        fmt_str += random.choice('fFgGeE')
-        fmt_str += '}'
-
-        return fmt_str
-
-    for _ in range(1000):
-        fmt_str = random_fmt()
-        num = random.uniform(-1e50, 1e50)
-
-        assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
-
-        # Test the same random formats with special numbers
-        for num in (float('inf'), -float('inf'), float('nan'), 0):
-            fmt_str = random_fmt()
-            # print(fmt_str, fmt_str.format(mp.fp.mpf(num)),
-            #       fmt_str.format(mp.mp.mpf(num)))
-            assert fmt_str.format(mp.fp.mpf(num)) == fmt_str.format(mp.mp.mpf(num))
+    return fmt_str
 
 
 def test_mpf_fmt_cpython():
@@ -93,6 +74,7 @@ def test_mpf_fmt_cpython():
     These tests assure that mpf.__format__ yields the same result as regular
     float.__format__, when dps is default.
     '''
+
     # zeros
     assert '{:.0f}'.format(mp.mpf(0)) == '0'
     assert '{:.1f}'.format(mp.mpf(0)) == '0.0'
@@ -411,6 +393,17 @@ def test_mpf_fmt_cpython():
     assert '{:#.6g}'.format(mp.mpf(234.56)) == '234.560'
 
 
+def test_mpf_float():
+    '''
+    These are additional random tests that check that mp.mpf and fp.mpf yield
+    the same results for default precision.
+    '''
+
+    for _ in range(10000):
+        fmt_str = random_fmt()
+        num = random.uniform(-1e50, 1e50)
+
+        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
 
 def test_mpf_fmt():
@@ -418,7 +411,7 @@ def test_mpf_fmt():
     These tests are specific to mpf.
     '''
 
-    with mp.workdps(1000):
+    with workdps(1000):
         # Numbers with more than 15 significant digits
         # fixed format
         assert '{:.20f}'.format(mp.mpf('1.234567890123456789')) == '1.23456789012345678900'
@@ -486,10 +479,6 @@ def test_mpf_fmt():
 
 
 def test_mpf_fmt_special():
-    inf = mp.inf
-    ninf = mp.ninf
-    nan = mp.nan
-
     assert '{:f}'.format(inf) == 'inf'
     assert '{:+f}'.format(inf) == '+inf'
     assert '{:F}'.format(inf) == 'INF'
@@ -534,6 +523,11 @@ def test_mpf_fmt_special():
     assert '{:+g}'.format(nan) == '+nan'
     assert '{:G}'.format(nan) == 'NAN'
     assert '{:+G}'.format(nan) == '+NAN'
+
+    # Test the same random formats with special numbers
+    for num in (float('inf'), -float('inf'), float('nan'), 0):
+        fmt_str = random_fmt()
+        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
 
 def test_errors():
