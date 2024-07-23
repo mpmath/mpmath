@@ -410,13 +410,7 @@ def test_mpf_float():
 
         assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
-
-def test_mpf_subnormal_float():
-    '''
-    These test formatting for mpf floats initialized from subnormal regular
-    floats.
-    '''
-
+    # These additional tests test for mpf initialized form subnormal floats
     for _ in range(10000):
         fmt_str = random_fmt()
         num = fp.mpf('{:.15f}e{:d}'.format(
