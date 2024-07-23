@@ -1453,7 +1453,8 @@ def format_fixed(s,
                  sign_spec='-',
                  sep_range=3,
                  base=10,
-                 alternate=False):
+                 alternate=False,
+                 no_neg_0=False):
     '''
     Format a number into fixed point.
     Returns the sign character, and the string that represents the number in
@@ -1486,6 +1487,9 @@ def format_fixed(s,
             digits = '0.' + precision*'0'
         else:
             digits = '0'
+
+        if no_neg_0:
+            sign = '' if sign_spec == '-' else sign_spec
     else:
         # Rounding up kills some instances of "...99999"
         digits, exp_add = round_digits(digits, dps, base)
@@ -1540,7 +1544,8 @@ def format_scientific(s,
                       sign_spec='-',
                       base=10,
                       capitalize=False,
-                      alternate=False):
+                      alternate=False,
+                      no_neg_0=False):
 
     sep = 'E' if capitalize else 'e'
 
@@ -1559,6 +1564,9 @@ def format_scientific(s,
         # Clean up trailing zeros
         digits = digits.rstrip('0')
         precision = len(digits)
+
+    if no_neg_0 and all(dig == '0' for dig in digits):
+        sign = '' if sign_spec == '-' else sign_spec
 
     if precision >= 1 and len(digits) > 1:
         return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
@@ -1616,7 +1624,8 @@ def format_mpf(num, format_spec):
                 sign_spec=format_dict['sign'],
                 sep_range=3,
                 base=10,
-                alternate=format_dict['alternate']
+                alternate=format_dict['alternate'],
+                no_neg_0=format_dict['no_neg_0']
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
@@ -1626,7 +1635,8 @@ def format_mpf(num, format_spec):
                 sign_spec=format_dict['sign'],
                 base=10,
                 capitalize=capitalize,
-                alternate=format_dict['alternate']
+                alternate=format_dict['alternate'],
+                no_neg_0=format_dict['no_neg_0']
                 )
 
     nchars = len(digits) + len(sign)

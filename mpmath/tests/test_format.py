@@ -401,7 +401,12 @@ def test_mpf_float():
 
     for _ in range(10000):
         fmt_str = random_fmt()
-        num = random.uniform(-1e50, 1e50)
+        num = random.choice(
+                (
+                    random.uniform(-1e300, 1e300),
+                    random.uniform(-1e-300, 1e-300)
+                    )
+                )
 
         assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
