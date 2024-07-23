@@ -1204,7 +1204,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
-    sign, digits, exponent = to_digits_exp(s, dps+3, base)
+    sign, digits, exponent = to_digits_exp(s, dps+10, base)
 
     rnd_digs = stddigits[(base//2 + base%2):base]
 
@@ -1552,7 +1552,7 @@ def format_scientific(s,
     # First, get the exponent to know how many digits we will need
     dps = precision+1
     sign, digits, exponent = to_digits_exp(
-            s, max(dps+1, int(s[3]/blog2_10)), base)
+            s, max(dps+10, int(s[3]/blog2_10)+10), base)
 
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
@@ -1564,9 +1564,6 @@ def format_scientific(s,
         # Clean up trailing zeros
         digits = digits.rstrip('0')
         precision = len(digits)
-
-    if no_neg_0 and all(dig == '0' for dig in digits):
-        sign = '' if sign_spec == '-' else sign_spec
 
     if precision >= 1 and len(digits) > 1:
         return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
