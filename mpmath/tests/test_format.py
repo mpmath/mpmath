@@ -431,7 +431,8 @@ def test_mpf_subnormal_float():
 
 def test_mpf_fmt():
     '''
-    These tests are specific to mpf.
+    These tests are either specific tests to mpf, or tests that cover 
+    code that is not covered in the CPython tests.
     '''
 
     with workdps(1000):
@@ -499,6 +500,15 @@ def test_mpf_fmt():
         assert f"{mp.mpf('123456789.0123456'):,.4e}" == '1.2346e+08'
         assert f"{mp.mpf('1234567890.123456'):_.4e}" == '1.2346e+09'
         assert f"{mp.mpf('1234.5678'):_.4e}" == '1.2346e+03'
+
+        # Tests for no_neg_0
+        assert f"{mp.mpf('-1e-4'):,.2f}" == '-0.00'
+        assert f"{mp.mpf('-1e-4'):z,.2f}" == '0.00'
+
+        # Tests for = alignment
+        assert f"{mp.mpf('0.24'):=+20.2f}" == '+               0.24'
+        assert f"{mp.mpf('0.24'):=+020.2e}" == '+000000000002.40e-01'
+        assert f"{mp.mpf('0.24'):=+020.2g}" == '+0000000000000000.24'
 
 
 def test_mpf_fmt_special():
