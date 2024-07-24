@@ -1491,7 +1491,6 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        # Rounding up kills some instances of "...99999"
         digits, exp_add = round_digits(digits, dps, base)
         exponent += exp_add
 
