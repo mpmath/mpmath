@@ -425,7 +425,7 @@ def test_mpf_float():
 
 def test_mpf_fmt():
     '''
-    These tests are either specific tests to mpf, or tests that cover 
+    These tests are either specific tests to mpf, or tests that cover
     code that is not covered in the CPython tests.
     '''
 
