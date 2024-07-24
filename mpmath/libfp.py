@@ -47,6 +47,23 @@ def _mathfun_n(f_real, f_complex):
     return f
 
 
+def _tan_complex(z):
+    if math.isinf(z.real):
+        if z.imag == 0:
+            return cmath.nan + 0j
+        elif math.isfinite(z.imag):
+            return cmath.nan + cmath.nanj
+    return cmath.tan(z)
+
+def _tanh_complex(z):
+    if math.isinf(z.imag):
+        if z.real == 0:
+            return cmath.nanj
+        elif math.isfinite(z.real):
+            return cmath.nan + cmath.nanj
+    return cmath.tanh(z)
+
+
 pow = _mathfun_n(operator.pow, lambda x, y: complex(x)**y)
 log = _mathfun_n(math.log, cmath.log)
 sqrt = _mathfun(math.sqrt, cmath.sqrt)
@@ -54,7 +71,7 @@ exp = _mathfun_real(math.exp, cmath.exp)
 
 cos = _mathfun_real(math.cos, cmath.cos)
 sin = _mathfun_real(math.sin, cmath.sin)
-tan = _mathfun_real(math.tan, cmath.tan)
+tan = _mathfun_real(math.tan, _tan_complex)
 
 acos = _mathfun(math.acos, cmath.acos)
 asin = _mathfun(math.asin, cmath.asin)
@@ -62,7 +79,7 @@ atan = _mathfun_real(math.atan, cmath.atan)
 
 cosh = _mathfun_real(math.cosh, cmath.cosh)
 sinh = _mathfun_real(math.sinh, cmath.sinh)
-tanh = _mathfun_real(math.tanh, cmath.tanh)
+tanh = _mathfun_real(math.tanh, _tanh_complex)
 
 acosh = _mathfun(math.acosh, cmath.acosh)
 asinh = _mathfun(math.asinh, cmath.asinh)

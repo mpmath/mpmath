@@ -6,24 +6,22 @@ cases are also provided.
 """
 
 import math
-import operator
 
 from .backend import MPZ_ONE, MPZ_ZERO
 from .gammazeta import euler_fixed, mpf_euler, mpf_gamma_int
-from .libelefun import (agm_fixed, mpf_cos, mpf_cos_sin, mpf_exp, mpf_log,
-                        mpf_pi, mpf_sin, mpf_sqrt, pi_fixed)
-from .libintmath import ifac
+from .libelefun import (agm_fixed, mpf_cos_sin, mpf_exp, mpf_log, mpf_pi,
+                        mpf_sin, mpf_sqrt, pi_fixed)
+from .libintmath import ifac, sqrt_fixed
 from .libmpc import (complex_int_pow, mpc_abs, mpc_add, mpc_add_mpf, mpc_div,
                      mpc_exp, mpc_is_infnan, mpc_log, mpc_mpf_div, mpc_mul,
-                     mpc_mul_mpf, mpc_neg, mpc_one, mpc_pos, mpc_shift,
-                     mpc_sqrt, mpc_square, mpc_sub, mpc_sub_mpf, mpc_zero)
+                     mpc_neg, mpc_one, mpc_pos, mpc_shift, mpc_sqrt, mpc_sub,
+                     mpc_zero)
 from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fone, from_int,
                      from_man_exp, from_rational, ftwo, fzero, mpf_abs,
-                     mpf_add, mpf_cmp, mpf_div, mpf_gt, mpf_le, mpf_lt,
-                     mpf_min_max, mpf_mul, mpf_neg, mpf_perturb, mpf_pos,
-                     mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sqrt,
-                     mpf_sub, negative_rnd, round_fast, round_nearest,
-                     sqrt_fixed, to_fixed, to_int, to_rational)
+                     mpf_add, mpf_div, mpf_le, mpf_lt, mpf_min_max, mpf_mul,
+                     mpf_neg, mpf_perturb, mpf_pos, mpf_pow_int, mpf_shift,
+                     mpf_sign, mpf_sqrt, mpf_sub, negative_rnd, round_fast,
+                     to_fixed, to_int)
 
 
 class NoConvergence(Exception):

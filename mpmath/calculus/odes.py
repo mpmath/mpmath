@@ -1,5 +1,6 @@
 from bisect import bisect
 
+
 class ODEMethods:
     pass
 
@@ -246,7 +247,7 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
     series_data = [(ser, x0, xb)]
     # We will be working with vectors of Taylor series
     def mpolyval(ser, a):
-        return [ctx.polyval(s[::-1], a) for s in ser]
+        return [ctx.polyval(s, a, asc=True) for s in ser]
     # Find nearest expansion point; compute if necessary
     def get_series(x):
         if x < x0:

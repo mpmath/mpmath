@@ -299,3 +299,40 @@ The ``prec`` and ``dps`` attributes can be changed (for interface compatibility 
     15
 
 Due to intermediate rounding and cancellation errors, results computed with ``fp`` arithmetic may be much less accurate than those computed with ``mp`` using an equivalent precision (``mp.prec = 53``), since the latter often uses increased internal precision. The accuracy is highly problem-dependent: for some functions, ``fp`` almost always gives 14-15 correct digits; for others, results can be accurate to only 2-3 digits or even completely wrong. The recommended use for ``fp`` is therefore to speed up large-scale computations where accuracy can be verified in advance on a subset of the input set, or where results can be verified afterwards.
+
+Beware that the ``fp`` context has signed zero, that can be used to distinguish
+different sides of branch cuts.  For example, ``fp.mpc(-1, -0.0)`` is treated
+as though it lies *below* the branch cut for :func:`~mpmath.sqrt()`::
+
+    >>> fp.sqrt(fp.mpc(-1, -0.0))
+    -1j
+    >>> fp.sqrt(fp.mpc(-1, -1e-10))
+    (5e-11-1j)
+
+But an argument of ``fp.mpc(-1, 0.0)`` is treated as though it lies *above* the
+branch cut::
+
+    >>> fp.sqrt(fp.mpc(-1, +0.0))
+    1j
+    >>> fp.sqrt(fp.mpc(-1, +1e-10))
+    (5e-11+1j)
+
+
+While near the branch cut, for small but nonzero deviations in components
+results agreed with the ``mp`` contexts::
+
+    >>> fp.mpc(mp.sqrt(mp.mpc(-1, -1e-10)))
+    (5e-11-1j)
+    >>> fp.mpc(mp.sqrt(mp.mpc(-1, +1e-10)))
+    (5e-11+1j)
+
+one has no signed zeros and allows to specify result *on the branch cut*
+(nonpositive part of the real axis in this example)::
+
+    >>> fp.mpc(mp.sqrt(mp.mpc(-1, 0)))
+    1j
+    >>> fp.mpc(mp.sqrt(-1))
+    1j
+
+Here it's continuous from the above of the :func:`~mpmath.sqrt()` branch
+cut (from ``0`` along the negative real axis to the negative infinity).

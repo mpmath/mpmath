@@ -85,7 +85,7 @@ def r_sy_tridiag(ctx, A, D, E, calc_ev = True):
         if scale != 0:
             scale_inv = 1/scale
 
-        # sadly there are floating point numbers not equal to zero whose reciprocal is infinity
+        # sadly there are floating-point numbers not equal to zero whose reciprocal is infinity
 
         if i == 1 or scale == 0 or ctx.isinf(scale_inv):
             E[i] = A[i-1,i]        # nothing to do
@@ -211,7 +211,7 @@ def c_he_tridiag_0(ctx, A, D, E, T):
         if scale != 0:
             scale_inv = 1 / scale
 
-        # sadly there are floating point numbers not equal to zero whose reciprocal is infinity
+        # sadly there are floating-point numbers not equal to zero whose reciprocal is infinity
 
         if scale == 0 or ctx.isinf(scale_inv):
             E[i] = 0

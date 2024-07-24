@@ -29,7 +29,7 @@ or new features to mpmath:
 * Pearu Peterson <pearu.peterson@gmail.com>
 * Mario Pernici <mario.pernici@mi.infn.it>
 * Ondrej Certik <ondrej@certik.cz>
-* Vinzent Steinberg <vinzent.steinberg@gmail.cm>
+* Vinzent Steinberg <vinzent.steinberg@gmail.com>
 * Nimish Telang <ntelang@gmail.com>
 * Mike Taschuk <mtaschuk@ece.ualberta.ca>
 * Case Van Horsen <casevh@gmail.com>
@@ -113,8 +113,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires Python 3.8 or later versions. It has been tested
-with CPython 3.8 through 3.12 and for PyPy.
+Mpmath requires Python 3.8 or later versions.  It has been tested with CPython
+3.8 through 3.13 and for PyPy 3.9 through 3.10.
 
 The latest release of mpmath can be downloaded from the mpmath
 website and from https://github.com/mpmath/mpmath/releases
@@ -180,8 +180,8 @@ Mpmath is a work in progress. Major issues include:
 5. Help and bug reports
 -----------------------
 
-General questions and comments can be sent to the mpmath mailinglist,
-mailto:mpmath@googlegroups.com
+General questions and comments can be `sent <mailto:mpmath@googlegroups.com>`_
+to the `mpmath mailinglist <https://groups.google.com/g/mpmath>`_.
 
 You can also report bugs and send patches to the mpmath issue tracker,
 https://github.com/mpmath/mpmath/issues

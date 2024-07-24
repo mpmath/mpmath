@@ -117,6 +117,110 @@ def test_fp_asinh_acosh_atanh():
     assert ae(fp.acosh(1), 0.0)
     assert ae(fp.atanh(0), 0.0)
 
+def test_fp_tanh():
+    assert fp.tanh(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(+1, 0)
+    assert fp.tanh(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(+1, 0)
+    assert fp.tanh(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(-1, 0)
+    assert fp.tanh(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(-1, 0)
+    assert fp.tanh(fp.mpc(+fp.inf, 2)) == fp.mpc(+1, 0)
+    assert fp.tanh(fp.mpc(-fp.inf, 2)) == fp.mpc(-1, 0)
+    r = fp.tanh(fp.mpc(0, -fp.inf))
+    assert r.real == 0 and fp.isnan(r.imag)
+    r = fp.tanh(fp.mpc(2, -fp.inf))
+    assert fp.isnan(r.real) and fp.isnan(r.imag)
+    assert fp.tanh(fp.mpc(+fp.inf, fp.nan)) == fp.mpc(+1, 0)
+    assert fp.tanh(fp.mpc(-fp.inf, fp.nan)) == fp.mpc(-1, 0)
+
+def test_fp_tan():
+    assert fp.tan(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(0, +1)
+    assert fp.tan(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(0, -1)
+    assert fp.tan(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(0, +1)
+    assert fp.tan(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(0, -1)
+    assert fp.tan(fp.mpc(2, +fp.inf)) == fp.mpc(0, +1)
+    assert fp.tan(fp.mpc(2, -fp.inf)) == fp.mpc(0, -1)
+    r = fp.tan(fp.mpc(-fp.inf, 0))
+    assert fp.isnan(r.real) and r.imag == 0
+    r = fp.tan(fp.mpc(-fp.inf, 2))
+    assert fp.isnan(r.real) and fp.isnan(r.imag)
+    assert fp.tan(fp.mpc(fp.nan, +fp.inf)) == fp.mpc(0, +1)
+    assert fp.tan(fp.mpc(fp.nan, -fp.inf)) == fp.mpc(0, -1)
+
+def test_fp_asin():
+    pi4 = fp.pi/4
+    assert fp.asin(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(+pi4, +fp.inf)
+    assert fp.asin(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(+pi4, -fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(-pi4, +fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(-pi4, -fp.inf)
+    r = fp.asin(fp.mpc(+fp.inf, fp.nan))
+    assert fp.isnan(r.real) and r.imag == -fp.inf
+    r = fp.asin(fp.mpc(-fp.inf, fp.nan))
+    assert fp.isnan(r.real) and r.imag == -fp.inf
+    r = fp.asin(fp.mpc(fp.nan, +fp.inf))
+    assert fp.isnan(r.real) and r.imag == +fp.inf
+    r = fp.asin(fp.mpc(fp.nan, -fp.inf))
+    assert fp.isnan(r.real) and r.imag == -fp.inf
+    pi2 = fp.pi/2
+    assert fp.asin(fp.mpc(+fp.inf, +1)) == fp.mpc(pi2, +fp.inf)
+    assert fp.asin(fp.mpc(+fp.inf, -1)) == fp.mpc(pi2, -fp.inf)
+    assert fp.asin(fp.mpc(+fp.inf, +0.0)) == fp.mpc(pi2, +fp.inf)
+    assert fp.asin(fp.mpc(+fp.inf, -0.0)) == fp.mpc(pi2, -fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, +1)) == fp.mpc(-pi2, +fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, -1)) == fp.mpc(-pi2, -fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, +0.0)) == fp.mpc(-pi2, +fp.inf)
+    assert fp.asin(fp.mpc(-fp.inf, -0.0)) == fp.mpc(-pi2, -fp.inf)
+    assert fp.asin(fp.mpc(+1, +fp.inf)) == fp.mpc(+0.0, +fp.inf)
+    assert fp.asin(fp.mpc(-1, +fp.inf)) == fp.mpc(-0.0, +fp.inf)
+    assert fp.asin(fp.mpc(+0.0, +fp.inf)) == fp.mpc(+0.0, +fp.inf)
+    assert fp.asin(fp.mpc(-0.0, +fp.inf)) == fp.mpc(-0.0, +fp.inf)
+    assert fp.asin(fp.mpc(+1, -fp.inf)) == fp.mpc(+0.0, -fp.inf)
+    assert fp.asin(fp.mpc(-1, -fp.inf)) == fp.mpc(-0.0, -fp.inf)
+    assert fp.asin(fp.mpc(+0.0, -fp.inf)) == fp.mpc(+0.0, -fp.inf)
+    assert fp.asin(fp.mpc(-0.0, -fp.inf)) == fp.mpc(-0.0, -fp.inf)
+    assert ae(fp.asin(fp.mpc(-2, +0.0)), fp.mpc(-pi2, -fp.log(2 - fp.sqrt(3))))
+    assert ae(fp.asin(fp.mpc(-2, -0.0)), fp.mpc(-pi2, +fp.log(2 - fp.sqrt(3))))
+    assert ae(fp.asin(fp.mpc(+2, +0.0)), fp.mpc(+pi2, +fp.log(2 + fp.sqrt(3))))
+    assert ae(fp.asin(fp.mpc(+2, -0.0)), fp.mpc(+pi2, -fp.log(2 + fp.sqrt(3))))
+    assert ae(fp.asin(fp.mpc(0.5, +0.0)), fp.pi/6)
+    assert ae(fp.asin(fp.mpc(0.5, -0.0)), fp.pi/6)
+
+def test_fp_acos():
+    pi4 = fp.pi/4
+    assert fp.acos(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(+pi4, -fp.inf)
+    assert fp.acos(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(+pi4, +fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(pi4*3, -fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(pi4*3, +fp.inf)
+    r = fp.acos(fp.mpc(+fp.inf, fp.nan))
+    assert fp.isnan(r.real) and r.imag == fp.inf
+    r = fp.acos(fp.mpc(-fp.inf, fp.nan))
+    assert fp.isnan(r.real) and r.imag == fp.inf
+    r = fp.acos(fp.mpc(fp.nan, +fp.inf))
+    assert fp.isnan(r.real) and r.imag == -fp.inf
+    r = fp.acos(fp.mpc(fp.nan, -fp.inf))
+    assert fp.isnan(r.real) and r.imag == +fp.inf
+    pi2 = fp.pi/2
+    assert fp.acos(fp.mpc(+fp.inf, +1)) == fp.mpc(0.0, -fp.inf)
+    assert fp.acos(fp.mpc(+fp.inf, -1)) == fp.mpc(0.0, +fp.inf)
+    assert fp.acos(fp.mpc(+fp.inf, +0.0)) == fp.mpc(0.0, -fp.inf)
+    assert fp.acos(fp.mpc(+fp.inf, -0.0)) == fp.mpc(0.0, +fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, +1)) == fp.mpc(fp.pi, -fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, -1)) == fp.mpc(fp.pi, +fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, +0.0)) == fp.mpc(fp.pi, -fp.inf)
+    assert fp.acos(fp.mpc(-fp.inf, -0.0)) == fp.mpc(fp.pi, +fp.inf)
+    assert fp.acos(fp.mpc(+1, +fp.inf)) == fp.mpc(pi2, -fp.inf)
+    assert fp.acos(fp.mpc(-1, +fp.inf)) == fp.mpc(pi2, -fp.inf)
+    assert fp.acos(fp.mpc(+0.0, +fp.inf)) == fp.mpc(pi2, -fp.inf)
+    assert fp.acos(fp.mpc(-0.0, +fp.inf)) == fp.mpc(pi2, -fp.inf)
+    assert fp.acos(fp.mpc(+1, -fp.inf)) == fp.mpc(pi2, +fp.inf)
+    assert fp.acos(fp.mpc(-1, -fp.inf)) == fp.mpc(pi2, +fp.inf)
+    assert fp.acos(fp.mpc(+0.0, -fp.inf)) == fp.mpc(pi2, +fp.inf)
+    assert fp.acos(fp.mpc(-0.0, -fp.inf)) == fp.mpc(pi2, +fp.inf)
+    assert ae(fp.acos(fp.mpc(-2, +0.0)), fp.mpc(fp.pi, +fp.log(2 - fp.sqrt(3))))
+    assert ae(fp.acos(fp.mpc(-2, -0.0)), fp.mpc(fp.pi, -fp.log(2 - fp.sqrt(3))))
+    assert ae(fp.acos(fp.mpc(+2, +0.0)), fp.mpc(0, -fp.log(2 + fp.sqrt(3))))
+    assert ae(fp.acos(fp.mpc(+2, -0.0)), fp.mpc(0, +fp.log(2 + fp.sqrt(3))))
+    assert ae(fp.acos(fp.mpc(0.5, +0.0)), fp.pi/3)
+    assert ae(fp.acos(fp.mpc(0.5, -0.0)), fp.pi/3)
+
 def test_fp_expj():
     assert ae(fp.expj(0), (1.0 + 0.0j))
     assert ae(fp.expj(1), (0.5403023058681397174 + 0.84147098480789650665j))

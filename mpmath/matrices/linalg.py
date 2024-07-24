@@ -32,7 +32,7 @@ If you don't trust the result, use ``residual`` to calculate the residual ||A*x-
     '2.22044604925031e-16'
 
 As you can see, the solution is quite accurate. The error is caused by the
-inaccuracy of the internal floating point arithmetic. Though, it's even smaller
+inaccuracy of the internal floating-point arithmetic. Though, it's even smaller
 than the current machine epsilon, which basically means you can trust the
 result.
 

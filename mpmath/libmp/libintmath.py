@@ -8,7 +8,6 @@ here from settings.py
 
 import math
 import sys
-from bisect import bisect
 from functools import lru_cache
 
 from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy

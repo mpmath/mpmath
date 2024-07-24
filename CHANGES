@@ -878,7 +878,7 @@ New features:
 
 Bugfixes, speed enhancements, and other improvements:
 * compatibility tests should now pass on systems where Python is
-  compiled to use 80-bit registers for floating point operations
+  compiled to use 80-bit registers for floating-point operations
 * fixed mpmath to work with some versions of Python 2.4 where a
   list indexing bug is present in the Python core
 * better algorithms for various complex elementary functions

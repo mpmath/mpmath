@@ -191,7 +191,10 @@ class StandardBaseContext(Context,
             False
 
         """
+        s = ctx.convert(s)
         t = ctx.convert(t)
+        if any(ctx.isinf(_) or ctx.isnan(_) for _ in [s, t]):
+            return s == t
         if abs_eps is None and rel_eps is None:
             rel_eps = abs_eps = ctx.ldexp(1, -ctx.prec+4)
         if abs_eps is None:

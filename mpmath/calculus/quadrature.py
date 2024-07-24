@@ -17,17 +17,13 @@ class QuadratureRule:
 
     def __init__(self, ctx):
         self.ctx = ctx
-        self.standard_cache = {}
         self.transformed_cache = {}
-        self.interval_count = {}
 
     def clear(self):
         """
         Delete cached node data.
         """
-        self.standard_cache = {}
         self.transformed_cache = {}
-        self.interval_count = {}
 
     def calc_nodes(self, degree, prec, verbose=False):
         r"""
@@ -57,17 +53,16 @@ class QuadratureRule:
         try:
             self.ctx.prec = prec+20
             # Get nodes on standard interval
-            if (degree, prec) in self.standard_cache:
-                nodes = self.standard_cache[degree, prec]
+            stdkey = (-1, 1, degree, prec)
+            if stdkey in self.transformed_cache:
+                nodes = self.transformed_cache[stdkey]
             else:
                 nodes = self.calc_nodes(degree, prec, verbose)
-                self.standard_cache[degree, prec] = nodes
+                self.transformed_cache[stdkey] = nodes
             # Transform to general interval
             nodes = self.transform_nodes(nodes, a, b, verbose)
-            if key in self.interval_count:
+            if key not in self.transformed_cache:
                 self.transformed_cache[key] = nodes
-            else:
-                self.interval_count[key] = True
         finally:
             self.ctx.prec = orig
         return nodes

@@ -1,12 +1,16 @@
 name: test
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 2'
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy3.8, pypy3.9, pypy3.10]
+        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, pypy3.9-nightly, pypy3.10-nightly]
         coverage: [false]
         nogmpy: [false]
         default: [false]
@@ -39,28 +43,33 @@ jobs:
     - name: Remove gmpy (for coverage tests)
       if: matrix.nogmpy
       run: pip uninstall -y gmpy2
+    - name: Install ~/.python_history
+      run: touch ~/.python_history
     - name: Linting with flake8, etc
       if: matrix.default
       run: |
         python -We:invalid -m compileall -f mpmath -q
-        flake518
+        flake518 mpmath
     - name: Tests
       if: ${{ ! matrix.coverage }}
       run: pytest
     - name: Run coverage tests
       env:
-        PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
+        PYTEST_ADDOPTS: --cov mpmath --cov-append --cov-report=xml -n auto
       if: matrix.coverage
       run: |
         pytest
+        pip uninstall -y ipython
+        pytest mpmath/tests/test_cli.py
         coverage html
         coverage xml
+        diff-cover coverage.xml --fail-under=100 --compare-branch=origin/master
     - name: Upload coverage data
       if: matrix.coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: ./coverage.xml
-        fail_ci_if_error: true
+        fail_ci_if_error: false
     - name: Building docs
       if: matrix.default
       run: |

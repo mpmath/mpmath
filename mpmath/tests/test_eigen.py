@@ -1,4 +1,4 @@
-from mpmath import mp
+from mpmath import fp, mp
 
 
 def run_hessenberg(A, verbose = 0):
@@ -162,7 +162,7 @@ def test_eig():
     AS.append(A)
     AS.append(A.transpose())
 
-    A=  mp.matrix([[0, 0, 1],  # cyclic
+    A = mp.matrix([[0, 0, 1],  # cyclic
                    [1, 0, 0],
                    [0, 1, 0]])
     AS.append(A)
@@ -175,3 +175,11 @@ def test_eig():
 
     A = mp.matrix(1)
     assert mp.eig(A, left=False, right=False) == [0]
+
+
+def test_fp_eig():
+    A = fp.matrix([[1, 2],
+                   [3, 4]])
+    E, ER = fp.eig(A)
+    assert all(_ == 0 for _ in fp.chop(A * ER[:,0] - E[0] * ER[:,0]))
+    assert all(_ == 0 for _ in fp.chop(A * ER[:,1] - E[1] * ER[:,1]))

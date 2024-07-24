@@ -86,7 +86,7 @@ def hessenberg_reduce_0(ctx, A, T):
             scale_inv = 1 / scale
 
         if scale == 0 or ctx.isinf(scale_inv):
-            # sadly there are floating point numbers not equal to zero whose reciprocal is infinity
+            # sadly there are floating-point numbers not equal to zero whose reciprocal is infinity
             T[i] = 0
             A[i,i-1] = 0
             continue

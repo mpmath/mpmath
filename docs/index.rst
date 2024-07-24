@@ -28,6 +28,7 @@ Basic features
    contexts
    general
    plotting
+   cli
 
 Advanced mathematics
 --------------------

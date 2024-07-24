@@ -16,29 +16,26 @@ This module implements gamma- and zeta-related functions:
 import math
 import sys
 
-from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO, gmpy
+from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO
 from .libelefun import (constant_memo, cos_sin_fixed, def_mpf_constant,
                         exp_fixed, ln2_fixed, ln_sqrt2pi_fixed, log_int_fixed,
-                        mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi, mpf_cosh,
-                        mpf_cosh_sinh, mpf_exp, mpf_ln2, mpf_ln_sqrt2pi,
-                        mpf_log, mpf_pi, mpf_pow, mpf_sin_pi, mpf_sqrtpi,
-                        pi_fixed, sqrtpi_fixed)
-from .libintmath import ifac, ifac2, list_primes, moebius
+                        mpf_cos_sin_pi, mpf_exp, mpf_ln2, mpf_log, mpf_pi,
+                        mpf_pow, mpf_sin_pi, mpf_sqrtpi, pi_fixed,
+                        sqrtpi_fixed)
+from .libintmath import ifac, ifac2, isqrt_fast, list_primes, lshift, moebius
 from .libmpc import (mpc_abs, mpc_add, mpc_add_mpf, mpc_cos_pi, mpc_div,
                      mpc_div_mpf, mpc_exp, mpc_half, mpc_log, mpc_mpf_div,
                      mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_one,
                      mpc_pos, mpc_pow, mpc_pow_int, mpc_reciprocal, mpc_shift,
                      mpc_sin_pi, mpc_square, mpc_sub, mpc_sub_mpf, mpc_two,
                      mpc_zero)
-from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
-                     from_int, from_man_exp, from_rational, ftwo, fzero,
-                     isqrt_fast, lshift, mpf_abs, mpf_add, mpf_div, mpf_floor,
-                     mpf_gt, mpf_le, mpf_lt, mpf_mul, mpf_mul_int, mpf_neg,
-                     mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
-                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
-                     reciprocal_rnd, round_ceiling, round_down, round_fast,
-                     round_floor, round_nearest, round_up, sqrt_fixed,
-                     to_fixed, to_float, to_int)
+from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fone, from_int,
+                     from_man_exp, from_rational, ftwo, fzero, mpf_abs,
+                     mpf_add, mpf_div, mpf_floor, mpf_gt, mpf_le, mpf_lt,
+                     mpf_mul, mpf_mul_int, mpf_neg, mpf_perturb, mpf_pos,
+                     mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sub,
+                     negative_rnd, round_fast, round_nearest, to_fixed,
+                     to_float, to_int)
 
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
@@ -380,7 +377,7 @@ def bernoulli_size(n):
 
 BERNOULLI_PREC_CUTOFF = bernoulli_size(MAX_BERNOULLI_CACHE)
 
-def mpf_bernoulli(n, prec, rnd=None, plus=False):
+def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
     """Computation of Bernoulli numbers (numerically)"""
     if n < 2:
         if n < 0:
@@ -398,7 +395,7 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
     # convert the fraction back to an mpf value at the original precision
     if prec > BERNOULLI_PREC_CUTOFF and prec > bernoulli_size(n)*1.1 + 1000:
         p, q = bernfrac(n)
-        return from_rational(p, q, prec, rnd or round_floor)
+        return from_rational(p, q, prec, rnd)
     if n > MAX_BERNOULLI_CACHE:
         return mpf_bernoulli_huge(n, prec, rnd)
     wp = prec + 30
@@ -408,8 +405,6 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
     if cached:
         numbers, state = cached
         if n in numbers:
-            if not rnd:
-                return numbers[n]
             return mpf_pos(numbers[n], prec, rnd)
         m, bin, bin1 = state
         if n - m > 10:
@@ -455,7 +450,7 @@ def mpf_bernoulli(n, prec, rnd=None, plus=False):
         state[:] = [m, bin, bin1]
     return numbers[n]
 
-def mpf_bernoulli_huge(n, prec, rnd=None):
+def mpf_bernoulli_huge(n, prec, rnd=round_fast):
     wp = prec + 10
     piprec = wp + int(math.log(n,2))
     v = mpf_gamma_int(n+1, wp)
@@ -464,7 +459,7 @@ def mpf_bernoulli_huge(n, prec, rnd=None):
     v = mpf_shift(v, 1-n)
     if not n & 3:
         v = mpf_neg(v)
-    return mpf_pos(v, prec, rnd or round_fast)
+    return mpf_pos(v, prec, rnd)
 
 def bernfrac(n, plus=False):
     r"""
@@ -1683,7 +1678,7 @@ def complex_stirling_series(x, y, prec):
     return sre, sim
 
 
-def mpf_gamma(x, prec, rnd='d', type=0):
+def mpf_gamma(x, prec, rnd=round_fast, type=0):
     """
     This function implements multipurpose evaluation of the gamma
     function, G(x), as well as the following versions of the same:
@@ -1889,7 +1884,7 @@ def mpf_gamma(x, prec, rnd='d', type=0):
             return mpf_pos(w, prec, rnd)
 
 
-def mpc_gamma(z, prec, rnd='d', type=0):
+def mpc_gamma(z, prec, rnd=round_fast, type=0):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -2123,25 +2118,25 @@ def mpc_gamma(z, prec, rnd='d', type=0):
         if type == 3:
             return mpc_pos(y, prec, rnd)
 
-def mpf_factorial(x, prec, rnd='d'):
+def mpf_factorial(x, prec, rnd=round_fast):
     return mpf_gamma(x, prec, rnd, 1)
 
-def mpc_factorial(x, prec, rnd='d'):
+def mpc_factorial(x, prec, rnd=round_fast):
     return mpc_gamma(x, prec, rnd, 1)
 
-def mpf_rgamma(x, prec, rnd='d'):
+def mpf_rgamma(x, prec, rnd=round_fast):
     return mpf_gamma(x, prec, rnd, 2)
 
-def mpc_rgamma(x, prec, rnd='d'):
+def mpc_rgamma(x, prec, rnd=round_fast):
     return mpc_gamma(x, prec, rnd, 2)
 
-def mpf_loggamma(x, prec, rnd='d'):
+def mpf_loggamma(x, prec, rnd=round_fast):
     sign, man, exp, bc = x
     if sign:
         raise ComplexResult
     return mpf_gamma(x, prec, rnd, 3)
 
-def mpc_loggamma(z, prec, rnd='d'):
+def mpc_loggamma(z, prec, rnd=round_fast):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
